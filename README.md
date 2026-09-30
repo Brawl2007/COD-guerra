@@ -2,7 +2,7 @@
 
 Vertical slice original de um FPS single-player ambientado na França de 1944. O cenário, personagens e arma são renderizados em WebGL 2 por uma camada 3D própria, e os efeitos sonoros são sintetizados pela Web Audio API.
 
-O renderer 3D usa câmera em perspectiva, malhas iluminadas, névoa, sombras projetadas simplificadas, partículas, arma em primeira pessoa e soldados articulados. Ele não baixa bibliotecas ou assets em tempo de execução, mantendo o preview autocontido no GitHub Pages.
+O renderer 3D usa câmera em perspectiva, malhas iluminadas, névoa, sombras projetadas simplificadas, partículas, uma M1 Carbine animada com braços e soldados humanoides articulados. A aldeia possui casas com telhados, interiores, estrada, becos, cercas, árvores, vegetação e posições de cobertura. Ele não baixa bibliotecas ou assets em tempo de execução, mantendo o preview autocontido no GitHub Pages.
 
 ## Jogar
 

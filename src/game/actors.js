@@ -6,15 +6,20 @@ export class Player {
   damage(amount){this.health=Math.max(0,this.health-amount);this.alive=this.health>0;}
 }
 export class Soldier {
-  constructor(pos,team='enemy'){Object.assign(this,pos);this.team=team;this.health=team==='enemy'?75:100;this.radius=12;this.cooldown=Math.random()*700;this.state='guard';this.alive=true;this.flash=0;this.shot=0;this.facing=0;}
-  damage(amount){this.health-=amount;this.flash=.12;if(this.health<=0){this.alive=false;this.state='down';}}
+  constructor(pos,team='enemy'){Object.assign(this,pos);this.team=team;this.health=team==='enemy'?75:100;this.radius=12;this.cooldown=Math.random()*700;this.state='guard';this.alive=true;this.flash=0;this.shot=0;this.facing=0;this.cover=null;this.tacticTimer=.4+Math.random();this.crouched=false;this.lastX=this.x;this.lastY=this.y;this.stuck=0;this.rounds=5;this.reloadTimer=0;this.deathBlend=0;}
+  damage(amount){this.health-=amount;this.flash=.24;this.state='hit';this.tacticTimer=.25;this.crouched=true;if(this.health<=0){this.alive=false;this.state='down';}}
   update(dt,world,target,now,allies=[]) {
-    if(!this.alive)return null; this.flash=Math.max(0,this.flash-dt);this.shot=Math.max(0,this.shot-dt);
-    const dist=distance(this,target), sees=dist<520&&world.lineOfSight(this,target);
-    if(sees){this.state='engage';this.facing=Math.atan2(target.y-this.y,target.x-this.x);this.cooldown-=dt*1000;
-      if(dist>190){const waypoint=world.nextStep(this,target),a=Math.atan2(waypoint.y-this.y,waypoint.x-this.x);world.move(this,Math.cos(a)*dt*38,Math.sin(a)*dt*38);}
-      if(this.cooldown<=0){this.cooldown=this.team==='enemy'?850+Math.random()*500:700+Math.random()*350;this.shot=.09;return {shooter:this,target,damage:this.team==='enemy'?8:24,hitChance:Math.max(.18,.78-dist/900),time:now};}
-    } else if(this.team==='ally'){const follow=allies[0]??target;if(distance(this,follow)>115){const waypoint=world.nextStep(this,follow),a=Math.atan2(waypoint.y-this.y,waypoint.x-this.x);this.facing=a;world.move(this,Math.cos(a)*dt*55,Math.sin(a)*dt*55);}this.state='advance';}
+    if(!this.alive){this.deathBlend=Math.min(1,this.deathBlend+dt*2.8);return null;}this.flash=Math.max(0,this.flash-dt);this.shot=Math.max(0,this.shot-dt);if(this.reloadTimer>0){this.reloadTimer-=dt;this.state='reload';if(this.reloadTimer<=0)this.rounds=5;return null;}
+    const dist=distance(this,target), sees=dist<520&&world.lineOfSight(this,target);this.tacticTimer-=dt;
+    if(this.state==='hit'&&this.tacticTimer>0)return null;
+    if((sees||this.cover||this.team==='ally')&&this.tacticTimer<=0){const occupied=allies.filter(Boolean);this.cover=world.findCover(this,target,occupied);this.tacticTimer=2.5+Math.random()*3;this.crouched=Math.random()>.48;}
+    if(this.cover&&distance(this,this.cover)>24){this.state=this.team==='ally'?'advance':'relocate';const waypoint=world.nextStep(this,this.cover),a=Math.atan2(waypoint.y-this.y,waypoint.x-this.x);this.facing=a;const speed=this.team==='ally'?62:48;world.move(this,Math.cos(a)*dt*speed,Math.sin(a)*dt*speed);
+      const moved=Math.hypot(this.x-this.lastX,this.y-this.lastY);this.stuck=moved<.05?this.stuck+dt:0;if(this.stuck>.8){this.cover=null;this.tacticTimer=0;this.stuck=0;}
+    } else if(sees||(this.cover&&dist<520)){this.state='engage';this.facing=Math.atan2(target.y-this.y,target.x-this.x);this.cooldown-=dt*1000;
+      if(this.cooldown<=0){if(this.rounds<=0){this.reloadTimer=1.5;this.state='reload';return null;}this.cooldown=this.team==='enemy'?850+Math.random()*500:700+Math.random()*350;this.rounds--;this.shot=.09;const exposure=sees?1:.62;return {shooter:this,target,damage:this.team==='enemy'?8:24,hitChance:Math.max(.12,(.78-dist/900)*exposure),time:now};}
+    } else if(this.team==='ally'){const follow=allies[0]??target;if(distance(this,follow)>150){const waypoint=world.nextStep(this,follow),a=Math.atan2(waypoint.y-this.y,waypoint.x-this.x);this.facing=a;world.move(this,Math.cos(a)*dt*55,Math.sin(a)*dt*55);}this.state='advance';}
+    else {this.state='guard';this.crouched=true;}
+    this.lastX=this.x;this.lastY=this.y;
     return null;
   }
 }

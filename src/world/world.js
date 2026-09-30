@@ -7,6 +7,11 @@ export class World {
       const cell=this.layout[y][x];
       if ('PEACR'.includes(cell)) { (this.spawns[cell] ??= []).push({x:(x+.5)*CONFIG.tile,y:(y+.5)*CONFIG.tile}); this.layout[y][x]='0'; }
     }
+    this.coverPoints=[];
+    for(let y=1;y<this.layout.length-1;y++)for(let x=1;x<this.layout[y].length-1;x++)if(this.layout[y][x]==='0'){
+      const walls=[[1,0],[-1,0],[0,1],[0,-1]].filter(([dx,dy])=>this.layout[y+dy]?.[x+dx]!=='0');
+      if(walls.length)this.coverPoints.push({x:(x+.5)*CONFIG.tile,y:(y+.5)*CONFIG.tile,wall:walls[0],window:(x*7+y*11)%9===0});
+    }
   }
   wallAt(x,y) { const tx=Math.floor(x/CONFIG.tile), ty=Math.floor(y/CONFIG.tile); return this.layout[ty]?.[tx] !== '0'; }
   canMove(x,y,radius=CONFIG.playerRadius) { return ![[radius,radius],[-radius,radius],[radius,-radius],[-radius,-radius]].some(([dx,dy])=>this.wallAt(x+dx,y+dy)); }
@@ -19,4 +24,10 @@ export class World {
     while(queue.length){const cur=queue.shift();if(key(cur)===key(goal)){found=cur;break;}for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const next=[cur[0]+dx,cur[1]+dy],k=key(next);if(!came.has(k)&&this.layout[next[1]]?.[next[0]]==='0'){came.set(k,cur);queue.push(next);}}}
     if(!found)return to;const path=[];while(found){path.push(found);found=came.get(key(found));}path.reverse();const step=path[1]??path[0];return {x:(step[0]+.5)*CONFIG.tile,y:(step[1]+.5)*CONFIG.tile};
   }
+  findCover(actor,threat,occupied=[]) {
+    const candidates=this.coverPoints.filter(p=>Math.hypot(p.x-actor.x,p.y-actor.y)<360&&!occupied.some(o=>Math.hypot(o.x-p.x,o.y-p.y)<35));
+    candidates.sort((a,b)=>this.coverScore(b,actor,threat)-this.coverScore(a,actor,threat));
+    return candidates[0]??null;
+  }
+  coverScore(p,actor,threat){const travel=Math.hypot(p.x-actor.x,p.y-actor.y),range=Math.hypot(p.x-threat.x,p.y-threat.y),hidden=!this.lineOfSight(p,threat);return(hidden?260:0)+(p.window?35:0)-travel*.45-Math.abs(range-260)*.08;}
 }
