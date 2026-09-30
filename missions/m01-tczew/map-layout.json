@@ -18,7 +18,7 @@
     "COMPRESSED_FOR_GAMEPLAY": "distância encurtada de propósito; o valor real está em 'realValue'"
   },
   "bounds": {
-    "playable": { "minX": -460, "maxX": 300, "minZ": -80, "maxZ": 140 },
+    "playable": { "minX": -460, "maxX": 440, "minZ": -80, "maxZ": 140 },
     "softWarningX": 288,
     "outOfBoundsX": 419,
     "outOfBoundsGraceSec": 8,

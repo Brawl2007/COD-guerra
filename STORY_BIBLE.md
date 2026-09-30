@@ -153,7 +153,7 @@ Nesta versão, só **M01 — Tczew** está detalhada. As demais missões seguem 
 | Pessoa | Papel | Como aparece |
 | --- | --- | --- |
 | Stanisław Janik | Comandante do 2.º Batalhão de Fuzileiros e do OW "Tczew" (patente divergente: ppłk/mjr) | "Ordem do comandante do batalhão", pelo mensageiro. Nome só no debrief após P1. |
-| Norbert Juchtman | Oficial do pelotão de sapadores | Silhueta distante no posto de disparo, sem fala. Nome só no debrief após P1. |
+| Norbert Juchtman | Oficial do pelotão de sapadores | Fora de cena, sem modelo nem fala. Nome só no debrief após P1. |
 | Oficial do pelotão da cabeça de ponte leste | Nome e patente divergentes nos resumos | "O pelotão do outro lado". Não nomeado. |
 
 ### Relações da secção (resumo)

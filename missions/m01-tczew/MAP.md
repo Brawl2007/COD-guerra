@@ -72,7 +72,7 @@ Regras (Prompt §71):
 
 ## 5. Limites e segurança
 
-- **Área jogável:** x −460…300, z −80…140.
+- **Área com movimento:** x −460…440, z −80…140; inclui a zona de aviso além de x=419. A rota recomendada fica a oeste de x=288. Não bloquear o jogador em x=300 antes de ele alcançar o limite anunciado.
 - **x > 288 (2.º pilar):** o fogo da margem leste se intensifica e Zieliński manda voltar.
 - **x > 419 (3.º pilar):** aviso na tela e falha legível após 8 s. Nunca parede invisível sem aviso.
 - **Zona de demolição leste** (`bz_east`, centro (806, 0, 20), raio 140 m): a demolição espera todo o pelotão leste com x < 660.

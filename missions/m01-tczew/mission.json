@@ -167,7 +167,7 @@
       "id": "hist_juchtman",
       "name": "Norbert Juchtman",
       "role": "oficial do pelotão de sapadores",
-      "appearsAs": "silhueta distante no posto de disparo, sem falas; nome só no debrief",
+      "appearsAs": "fora de cena, sem modelo nem falas; nome só no debrief após P1",
       "source": "T09"
     }
   ],
@@ -484,8 +484,9 @@
       "results": ["ignition_line danificada em repair_site_1 e repair_site_2"],
       "idempotent": true,
       "persist": true,
-      "certainty": "DOCUMENTED",
-      "sources": ["T12"]
+      "certainty": "RECONSTRUCTED",
+      "sources": ["T12", "H01-PDF"],
+      "note": "Versão escolhida para o roteiro. H01-PDF, p. 132, nota 67, registra divergência sobre se os cabos foram realmente danificados; não apresentar o corte como fato consensual."
     },
     {
       "id": "evt_m01_wounded_dragged",
@@ -651,7 +652,8 @@
       "idempotent": true,
       "persist": true,
       "certainty": "DOCUMENTED",
-      "sources": ["T01", "T04", "T07", "T09"]
+      "sources": ["T01", "T04", "T07", "T09", "H01-PDF"],
+      "note": "06:40 é a hora provisória do roteiro. H01-PDF, p. 134, usa 06:45; resolver a divergência em P1 antes de VALIDAR."
     },
     {
       "id": "evt_m01_dudek_retrieves_bak",
@@ -1428,18 +1430,21 @@
     "paragraphs": [
       {
         "id": "db_01",
-        "enabled": true,
+        "enabled": false,
+        "requires": ["P1"],
         "text": "Às 04:34, bombardeiros de mergulho alemães atacaram a estação e a cabeça de ponte oeste para cortar a linha que permitiria destruir as pontes sobre o Vístula. Os sapadores poloneses repararam a linha."
       },
       {
         "id": "db_02",
-        "enabled": true,
+        "enabled": false,
+        "requires": ["P1"],
         "text": "Por volta das 04:45, um trem de carga com sapadores alemães escondidos chegou à cabeça de ponte de Lisewo, apoiado por um trem blindado. Encontrou os portões fechados e defensores em posição."
       },
-      { "id": "db_03", "enabled": true, "text": "Por ordem do comando, as duas pontes foram demolidas às 06:10 e às 06:40. O plano de tomá-las intactas fracassou." },
+      { "id": "db_03", "enabled": false, "requires": ["P1"], "text": "Por ordem do comando, as duas pontes foram demolidas às 06:10 e às 06:40. O plano de tomá-las intactas fracassou." },
       {
         "id": "db_04",
-        "enabled": true,
+        "enabled": false,
+        "requires": ["P1"],
         "text": "A guarnição repeliu ataques durante o dia e, por ordem superior, deixou Tczew entre 18:00 e 20:00, rumo a Starogard. A campanha continuou. Uma ponte destruída atrasou o inimigo; não mudou o rumo da guerra."
       },
       {
