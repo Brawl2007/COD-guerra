@@ -10,6 +10,19 @@ npm start
 
 Acesse `http://localhost:8080`. Use **WASD** para mover, **mouse** para mirar, **clique esquerdo** para atirar, **R** para recarregar e **Shift** para correr. O navegador precisa permitir Pointer Lock e áudio.
 
+## Abrir no Chromebook com GitHub Pages
+
+Este repositório inclui o workflow `.github/workflows/pages.yml`, que publica o mesmo jogo como um site estático, sem alterar o gameplay e sem exigir instalação no Chromebook.
+
+1. Faça merge do pull request no GitHub.
+2. No repositório, abra **Settings → Pages**.
+3. Em **Build and deployment → Source**, selecione **GitHub Actions**. Se essa opção já estiver selecionada, não altere nada.
+4. Abra **Actions → Publicar preview do jogo**. Caso o workflow não tenha iniciado automaticamente, clique em **Run workflow**, selecione a branch `main` (ou `master`) e confirme.
+5. Aguarde o job **deploy** ficar verde. O endereço público aparece no resumo do workflow e em **Settings → Pages**. Normalmente ele será `https://SEU-USUARIO.github.io/NOME-DO-REPOSITORIO/`.
+6. Abra esse endereço no Chrome do Chromebook, clique em **INICIAR MISSÃO** e aceite a captura do ponteiro quando o navegador solicitar.
+
+O endereço publicado utiliza HTTPS, requisito importante para APIs de navegador como áudio e captura do ponteiro. Novos pushes para `main` ou `master` atualizam o site automaticamente. Também é possível remover o preview a qualquer momento em **Settings → Pages**.
+
 ## Arquitetura
 
 - `src/core`: entrada, áudio procedural e utilitários matemáticos;
