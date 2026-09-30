@@ -1,6 +1,8 @@
 # Operação: Estrada de Cinzas
 
-Vertical slice original de um FPS single-player ambientado na França de 1944. O protótipo não usa bibliotecas ou assets externos: cenário, personagens e arma são renderizados em Canvas, e os efeitos sonoros são sintetizados pela Web Audio API.
+Vertical slice original de um FPS single-player ambientado na França de 1944. O cenário, personagens e arma são renderizados em WebGL 2 por uma camada 3D própria, e os efeitos sonoros são sintetizados pela Web Audio API.
+
+O renderer 3D usa câmera em perspectiva, malhas iluminadas, névoa, sombras projetadas simplificadas, partículas, arma em primeira pessoa e soldados articulados. Ele não baixa bibliotecas ou assets em tempo de execução, mantendo o preview autocontido no GitHub Pages.
 
 ## Jogar
 
@@ -28,7 +30,7 @@ O endereço publicado utiliza HTTPS, requisito importante para APIs de navegador
 - `src/core`: entrada, áudio procedural e utilitários matemáticos;
 - `src/world`: mapa, colisão, raycast e linha de visão;
 - `src/game`: regras, atores, arma, checkpoint e progressão da missão;
-- `src/render`: renderer raycasting e sprites procedurais;
+- `src/render`: renderer WebGL 2, matemática matricial, malhas e personagens 3D procedurais;
 - `tests`: testes das regras independentes do navegador.
 
 Os sistemas são desacoplados para permitir a evolução futura de direção de batalha, navegação avançada, veículos, artilharia, destruição e campanhas adicionais sem misturar essas responsabilidades ao loop principal.
