@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Operação: Estrada de Cinzas</title>
+  <link rel="stylesheet" href="src/styles.css" />
+</head>
+<body>
+  <main id="game-shell">
+    <canvas id="game" width="1280" height="720" aria-label="Jogo de tiro em primeira pessoa"></canvas>
+    <section id="menu" class="overlay">
+      <p class="eyebrow">FRANÇA · OUTUBRO DE 1944</p>
+      <h1>ESTRADA<br><span>DE CINZAS</span></h1>
+      <p class="briefing">A patrulha Aliada perdeu contato com o posto avançado. Atravesse a aldeia, elimine a resistência e alcance o rádio na capela.</p>
+      <button id="start">INICIAR MISSÃO</button>
+      <p class="controls">WASD mover · MOUSE mirar · CLIQUE disparar · R recarregar · SHIFT correr</p>
+    </section>
+    <section id="pause" class="overlay hidden"><h2>PAUSADO</h2><p>Clique para retornar ao combate</p></section>
+    <div id="hud" class="hidden">
+      <div id="objective"><small>OBJETIVO ATUAL</small><strong id="objective-text">AVANCE PELA ALDEIA</strong></div>
+      <div id="crosshair"><i></i><i></i><i></i><i></i></div>
+      <div id="damage-vignette"></div>
+      <div id="status"><div id="health-wrap"><small>SAÚDE</small><b id="health">100</b><span><i id="health-bar"></i></span></div><div id="ammo"><small>M1 CARBINE</small><b id="mag">15</b><em>/</em><span id="reserve">60</span></div></div>
+      <div id="message"></div>
+      <div id="checkpoint">CHECKPOINT ALCANÇADO</div>
+    </div>
+  </main>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
