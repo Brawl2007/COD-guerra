@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 871.4285714285713" width="1200" height="871.4285714285713" font-family="system-ui, sans-serif">
+<rect width="100%" height="100%" fill="#f4f1ea"/>
+<text x="30" y="32" font-size="20" font-weight="700" fill="#222">M01 — Tczew, 1/9/1939 · layout de jogo (gerado de map-layout.json)</text>
+<g><rect x="30" y="60" width="1140" height="325.71428571428567" fill="#e6dcc6" stroke="#666"/>
+<text x="30" y="52" font-size="14" font-weight="700" fill="#222">Visão geral — Tczew (oeste) · Vístula · Lisewo (leste)</text>
+<clipPath id="clipoverview"><rect x="30" y="60" width="1140" height="325.71428571428567"/></clipPath><g clip-path="url(#clipoverview)">
+<polygon points="562,-1405.7142857142856 735.7142857142857,-1405.7142857142856 735.7142857142857,1851.4285714285713 562,1851.4285714285713" fill="#d8e4c8" />
+<polygon points="312.2857142857143,-1405.7142857142856 562,-1405.7142857142856 562,1851.4285714285713 312.2857142857143,1851.4285714285713" fill="#9cc3d9" />
+<polygon points="192.85714285714283,229.37142857142857 301.4285714285714,229.37142857142857 301.4285714285714,241.3142857142857 192.85714285714283,241.3142857142857" fill="#dccfae" stroke="#8d6e00" stroke-dasharray="8 5"/>
+<line x1="84.28571428571428" y1="60" x2="84.28571428571428" y2="385.71428571428567" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="192.85714285714283" y1="60" x2="192.85714285714283" y2="385.71428571428567" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="301.4285714285714" y1="60" x2="301.4285714285714" y2="385.71428571428567" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="409.99999999999994" y1="60" x2="409.99999999999994" y2="385.71428571428567" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="518.5714285714286" y1="60" x2="518.5714285714286" y2="385.71428571428567" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="627.1428571428571" y1="60" x2="627.1428571428571" y2="385.71428571428567" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="735.7142857142857" y1="60" x2="735.7142857142857" y2="385.71428571428567" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="844.2857142857142" y1="60" x2="844.2857142857142" y2="385.71428571428567" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="952.8571428571428" y1="60" x2="952.8571428571428" y2="385.71428571428567" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="1061.4285714285713" y1="60" x2="1061.4285714285713" y2="385.71428571428567" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="1170" y1="60" x2="1170" y2="385.71428571428567" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="30" y1="114.28571428571428" x2="1170" y2="114.28571428571428" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="30" y1="222.85714285714283" x2="1170" y2="222.85714285714283" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="30" y1="331.4285714285714" x2="1170" y2="331.4285714285714" stroke="#cfc6b0" stroke-width="0.5"/>
+<rect x="301.4285714285714" y="220.14285714285714" width="454.3714285714285" height="5.428571428571428" fill="#3b3b3b"/>
+<line x1="318.5285714285714" y1="218.5142857142857" x2="318.5285714285714" y2="227.2" stroke="#000" stroke-width="2"/>
+<line x1="388.5571428571428" y1="218.5142857142857" x2="388.5571428571428" y2="227.2" stroke="#000" stroke-width="2"/>
+<line x1="458.58571428571423" y1="218.5142857142857" x2="458.58571428571423" y2="227.2" stroke="#000" stroke-width="2"/>
+<line x1="528.6142857142856" y1="218.5142857142857" x2="528.6142857142856" y2="227.2" stroke="#000" stroke-width="2"/>
+<line x1="598.6428571428571" y1="218.5142857142857" x2="598.6428571428571" y2="227.2" stroke="#000" stroke-width="2"/>
+<line x1="668.6714285714286" y1="218.5142857142857" x2="668.6714285714286" y2="227.2" stroke="#000" stroke-width="2"/>
+<line x1="738.6999999999999" y1="218.5142857142857" x2="738.6999999999999" y2="227.2" stroke="#000" stroke-width="2"/>
+<rect x="301.4285714285714" y="241.58571428571426" width="454.53428571428566" height="5.971428571428571" fill="#3b3b3b"/>
+<line x1="315.5157142857143" y1="239.95714285714286" x2="315.5157142857143" y2="249.18571428571428" stroke="#000" stroke-width="2"/>
+<line x1="386.5757142857143" y1="239.95714285714286" x2="386.5757142857143" y2="249.18571428571428" stroke="#000" stroke-width="2"/>
+<line x1="457.63571428571424" y1="239.95714285714286" x2="457.63571428571424" y2="249.18571428571428" stroke="#000" stroke-width="2"/>
+<line x1="528.6957142857143" y1="239.95714285714286" x2="528.6957142857143" y2="249.18571428571428" stroke="#000" stroke-width="2"/>
+<line x1="599.7557142857142" y1="239.95714285714286" x2="599.7557142857142" y2="249.18571428571428" stroke="#000" stroke-width="2"/>
+<line x1="670.8157142857143" y1="239.95714285714286" x2="670.8157142857143" y2="249.18571428571428" stroke="#000" stroke-width="2"/>
+<line x1="741.8757142857141" y1="239.95714285714286" x2="741.8757142857141" y2="249.18571428571428" stroke="#000" stroke-width="2"/>
+<polygon points="297.0857142857143,240.22857142857143 301.4285714285714,240.22857142857143 301.4285714285714,248.9142857142857 297.0857142857143,248.9142857142857" fill="#b0a58c" stroke="#8d6e00" stroke-width="1.5" stroke-dasharray="8 5"/>
+<polygon points="297.0857142857143,219.05714285714285 301.4285714285714,219.05714285714285 301.4285714285714,226.65714285714284 297.0857142857143,226.65714285714284" fill="#b0a58c" stroke="#8d6e00" stroke-width="1.5" stroke-dasharray="8 5"/>
+<rect x="301.4285714285714" y="241.3142857142857" width="14.114285714285714" height="6.514285714285714" fill="none" stroke="#8d6e00" stroke-width="1.5" stroke-dasharray="8 5"/>
+<polyline points="73.42857142857142,222.85714285714283 301.4285714285714,222.85714285714283" fill="none" stroke="#b23c17" stroke-width="2" stroke-dasharray="2 4"/>
+<polyline points="192.85714285714283,229.37142857142857 236.28571428571428,227.74285714285713 279.71428571428567,228.28571428571428 301.4285714285714,229.37142857142857 308.48571428571427,242.39999999999998" fill="none" stroke="#6a1b9a" stroke-width="2.5" stroke-dasharray="8 5"/>
+<polyline points="301.4285714285714,244.57142857142856 236.28571428571428,246.74285714285713 138.57142857142856,255.42857142857142 51.71428571428571,266.2857142857143" fill="none" stroke="#8d6e00" stroke-width="2" stroke-dasharray="8 5"/>
+<polygon points="154.85714285714283,230.45714285714286 165.7142857142857,230.45714285714286 165.7142857142857,236.97142857142856 154.85714285714283,236.97142857142856" fill="#b0a58c" stroke="#8d6e00" stroke-width="1.5" stroke-dasharray="8 5"/>
+<polygon points="51.71428571428571,239.14285714285714 84.28571428571428,239.14285714285714 84.28571428571428,251.08571428571426 51.71428571428571,251.08571428571426" fill="#b0a58c" stroke="#b23c17" stroke-width="1.5" stroke-dasharray="2 4"/>
+<polyline points="738.9714285714285,-1405.7142857142856 738.9714285714285,1851.4285714285713" fill="none" stroke="#8d6e00" stroke-width="2" stroke-dasharray="8 5"/>
+<polyline points="762.8571428571428,221.5 1126.5714285714284,221.5" fill="none" stroke="#37474f" stroke-width="4" stroke-dasharray="8 5"/>
+<polyline points="792.7142857142857,224.2142857142857 849.7142857142857,224.2142857142857" fill="none" stroke="#37474f" stroke-width="4" stroke-dasharray="8 5"/>
+<polyline points="755.8,222.85714285714283 1170,222.85714285714283 2472.8571428571427,1037.142857142857 8878.571428571428,3588.5714285714284" fill="none" stroke="#8d6e00" stroke-width="2" stroke-dasharray="8 5"/>
+<polygon points="-187.14285714285714,-591.4285714285713 247.14285714285714,-591.4285714285713 247.14285714285714,-211.4285714285714 -187.14285714285714,-211.4285714285714" fill="none" stroke="#8d6e00" stroke-width="1.5" stroke-dasharray="8 5"/>
+<circle cx="738.9714285714285" cy="233.7142857142857" r="76" fill="#c62828" fill-opacity="0.07" stroke="#c62828" stroke-dasharray="6 4"/>
+<circle cx="308.48571428571427" cy="233.7142857142857" r="70.57142857142857" fill="#c62828" fill-opacity="0.07" stroke="#c62828" stroke-dasharray="6 4"/>
+<text x="51.71428571428571" y="229.14285714285714" text-anchor="start" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Estação de Tczew</text>
+<text x="361.4285714285714" y="212.85714285714283" text-anchor="start" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Ponte ferroviária</text>
+<text x="451.4285714285714" y="262.57142857142856" text-anchor="start" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Ponte rodoviária Lentze</text>
+<text x="768.1428571428571" y="268.85714285714283" text-anchor="start" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Portões das pontes, lado de Lisewo</text>
+<text x="882.8571428571428" y="209.5" text-anchor="start" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Trem de carga n.º 963</text>
+<text x="932.7142857142857" y="248.2142857142857" text-anchor="start" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Panzerzug 7</text>
+<circle cx="192.85714285714283" cy="239.14285714285714" r="3.5" fill="#6a1b9a"/>
+<text x="200.85714285714283" y="261.1428571428571" text-anchor="start" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Posto de disparo dos sapadores</text>
+<circle cx="160.28571428571428" cy="260.85714285714283" r="3.5" fill="#6a1b9a"/>
+<text x="154.28571428571428" y="276.85714285714283" text-anchor="end" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Abrigo de campanha</text>
+</g>
+<text x="30" y="401.71428571428567" font-size="11" fill="#666">Grade de 200 m · X leste → · Z sul ↓ · norte para cima</text></g>
+<g><rect x="30" y="455.71428571428567" width="1140" height="325.7142857142857" fill="#e6dcc6" stroke="#666"/>
+<text x="30" y="447.71428571428567" font-size="14" font-weight="700" fill="#222">Detalhe — cabeça de ponte oeste (x −300…190 m; limite jogável completo em map-layout.json)</text>
+<clipPath id="clipdetail"><rect x="30" y="455.71428571428567" width="1140" height="325.7142857142857"/></clipPath><g clip-path="url(#clipdetail)">
+<polygon points="1844.6938775510203,-6430.816326530612 2589.1836734693875,-6430.816326530612 2589.1836734693875,7528.367346938775 1844.6938775510203,7528.367346938775" fill="#d8e4c8" />
+<polygon points="774.4897959183673,-6430.816326530612 1844.6938775510203,-6430.816326530612 1844.6938775510203,7528.367346938775 774.4897959183673,7528.367346938775" fill="#9cc3d9" />
+<polygon points="262.65306122448976,576.6938775510204 727.9591836734694,576.6938775510204 727.9591836734694,627.8775510204081 262.65306122448976,627.8775510204081" fill="#dccfae" stroke="#8d6e00" stroke-dasharray="8 5"/>
+<line x1="30" y1="455.71428571428567" x2="30" y2="781.4285714285713" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="146.32653061224488" y1="455.71428571428567" x2="146.32653061224488" y2="781.4285714285713" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="262.65306122448976" y1="455.71428571428567" x2="262.65306122448976" y2="781.4285714285713" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="378.9795918367347" y1="455.71428571428567" x2="378.9795918367347" y2="781.4285714285713" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="495.3061224489796" y1="455.71428571428567" x2="495.3061224489796" y2="781.4285714285713" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="611.6326530612245" y1="455.71428571428567" x2="611.6326530612245" y2="781.4285714285713" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="727.9591836734694" y1="455.71428571428567" x2="727.9591836734694" y2="781.4285714285713" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="844.2857142857142" y1="455.71428571428567" x2="844.2857142857142" y2="781.4285714285713" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="960.6122448979592" y1="455.71428571428567" x2="960.6122448979592" y2="781.4285714285713" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="1076.938775510204" y1="455.71428571428567" x2="1076.938775510204" y2="781.4285714285713" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="30" y1="548.7755102040816" x2="1170" y2="548.7755102040816" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="30" y1="665.1020408163265" x2="1170" y2="665.1020408163265" stroke="#cfc6b0" stroke-width="0.5"/>
+<line x1="30" y1="781.4285714285713" x2="1170" y2="781.4285714285713" stroke="#cfc6b0" stroke-width="0.5"/>
+<rect x="727.9591836734694" y="537.1428571428571" width="1947.3061224489795" height="23.26530612244898" fill="#3b3b3b"/>
+<line x1="801.2448979591836" y1="530.1632653061224" x2="801.2448979591836" y2="567.3877551020407" stroke="#000" stroke-width="2"/>
+<line x1="1101.3673469387754" y1="530.1632653061224" x2="1101.3673469387754" y2="567.3877551020407" stroke="#000" stroke-width="2"/>
+<line x1="1401.4897959183672" y1="530.1632653061224" x2="1401.4897959183672" y2="567.3877551020407" stroke="#000" stroke-width="2"/>
+<line x1="1701.612244897959" y1="530.1632653061224" x2="1701.612244897959" y2="567.3877551020407" stroke="#000" stroke-width="2"/>
+<line x1="2001.7346938775509" y1="530.1632653061224" x2="2001.7346938775509" y2="567.3877551020407" stroke="#000" stroke-width="2"/>
+<line x1="2301.8571428571427" y1="530.1632653061224" x2="2301.8571428571427" y2="567.3877551020407" stroke="#000" stroke-width="2"/>
+<line x1="2601.9795918367345" y1="530.1632653061224" x2="2601.9795918367345" y2="567.3877551020407" stroke="#000" stroke-width="2"/>
+<rect x="727.9591836734694" y="629.0408163265306" width="1948.004081632653" height="25.591836734693878" fill="#3b3b3b"/>
+<line x1="788.3326530612244" y1="622.0612244897959" x2="788.3326530612244" y2="661.6122448979592" stroke="#000" stroke-width="2"/>
+<line x1="1092.8755102040816" y1="622.0612244897959" x2="1092.8755102040816" y2="661.6122448979592" stroke="#000" stroke-width="2"/>
+<line x1="1397.4183673469388" y1="622.0612244897959" x2="1397.4183673469388" y2="661.6122448979592" stroke="#000" stroke-width="2"/>
+<line x1="1701.9612244897958" y1="622.0612244897959" x2="1701.9612244897958" y2="661.6122448979592" stroke="#000" stroke-width="2"/>
+<line x1="2006.504081632653" y1="622.0612244897959" x2="2006.504081632653" y2="661.6122448979592" stroke="#000" stroke-width="2"/>
+<line x1="2311.04693877551" y1="622.0612244897959" x2="2311.04693877551" y2="661.6122448979592" stroke="#000" stroke-width="2"/>
+<line x1="2615.589795918367" y1="622.0612244897959" x2="2615.589795918367" y2="661.6122448979592" stroke="#000" stroke-width="2"/>
+<polygon points="709.3469387755101,623.2244897959183 727.9591836734694,623.2244897959183 727.9591836734694,660.4489795918366 709.3469387755101,660.4489795918366" fill="#b0a58c" stroke="#8d6e00" stroke-width="1.5" stroke-dasharray="8 5"/>
+<polygon points="709.3469387755101,532.4897959183672 727.9591836734694,532.4897959183672 727.9591836734694,565.0612244897959 709.3469387755101,565.0612244897959" fill="#b0a58c" stroke="#8d6e00" stroke-width="1.5" stroke-dasharray="8 5"/>
+<rect x="727.9591836734694" y="627.8775510204081" width="60.48979591836734" height="27.918367346938773" fill="none" stroke="#8d6e00" stroke-width="1.5" stroke-dasharray="8 5"/>
+<polyline points="-249.18367346938777,548.7755102040816 727.9591836734694,548.7755102040816" fill="none" stroke="#b23c17" stroke-width="2" stroke-dasharray="2 4"/>
+<polyline points="262.65306122448976,576.6938775510204 448.7755102040816,569.7142857142857 634.8979591836735,572.0408163265306 727.9591836734694,576.6938775510204 758.204081632653,632.5306122448978" fill="none" stroke="#6a1b9a" stroke-width="2.5" stroke-dasharray="8 5"/>
+<polyline points="727.9591836734694,641.8367346938775 448.7755102040816,651.1428571428571 30,688.3673469387754 -342.2448979591837,734.8979591836735" fill="none" stroke="#8d6e00" stroke-width="2" stroke-dasharray="8 5"/>
+<polygon points="99.79591836734694,581.3469387755101 146.32653061224488,581.3469387755101 146.32653061224488,609.2653061224489 99.79591836734694,609.2653061224489" fill="#b0a58c" stroke="#8d6e00" stroke-width="1.5" stroke-dasharray="8 5"/>
+<polygon points="-342.2448979591837,618.5714285714286 -202.6530612244898,618.5714285714286 -202.6530612244898,669.7551020408163 -342.2448979591837,669.7551020408163" fill="#b0a58c" stroke="#b23c17" stroke-width="1.5" stroke-dasharray="2 4"/>
+<polyline points="2603.142857142857,-6430.816326530612 2603.142857142857,7528.367346938775" fill="none" stroke="#8d6e00" stroke-width="2" stroke-dasharray="8 5"/>
+<polyline points="2705.5102040816328,542.9591836734694 4264.285714285714,542.9591836734694" fill="none" stroke="#37474f" stroke-width="4" stroke-dasharray="8 5"/>
+<polyline points="2833.469387755102,554.5918367346939 3077.7551020408164,554.5918367346939" fill="none" stroke="#37474f" stroke-width="4" stroke-dasharray="8 5"/>
+<polyline points="2675.2653061224487,548.7755102040816 4450.408163265306,548.7755102040816 10034.08163265306,4038.5714285714284 37487.142857142855,14973.265306122448" fill="none" stroke="#8d6e00" stroke-width="2" stroke-dasharray="8 5"/>
+<polygon points="-1365.9183673469388,-2941.020408163265 495.3061224489796,-2941.020408163265 495.3061224489796,-1312.4489795918366 -1365.9183673469388,-1312.4489795918366" fill="none" stroke="#8d6e00" stroke-width="1.5" stroke-dasharray="8 5"/>
+<circle cx="2603.142857142857" cy="595.3061224489795" r="325.7142857142857" fill="#c62828" fill-opacity="0.07" stroke="#c62828" stroke-dasharray="6 4"/>
+<circle cx="758.204081632653" cy="595.3061224489795" r="302.44897959183675" fill="#c62828" fill-opacity="0.07" stroke="#c62828" stroke-dasharray="6 4"/>
+<rect x="720.3061224489795" y="529.4897959183672" width="6" height="6" fill="#1565c0"><title>cv_portal_rail_n (WALL_CORNER)</title></rect>
+<rect x="720.3061224489795" y="562.0612244897959" width="6" height="6" fill="#1565c0"><title>cv_portal_rail_s (WALL_CORNER)</title></rect>
+<rect x="720.3061224489795" y="622.5510204081631" width="6" height="6" fill="#1565c0"><title>cv_portal_road_n (WALL_CORNER)</title></rect>
+<rect x="720.3061224489795" y="655.1224489795918" width="6" height="6" fill="#1565c0"><title>cv_portal_road_s (WALL_CORNER)</title></rect>
+<rect x="766.8367346938775" y="552.7551020408163" width="6" height="6" fill="#1565c0"><title>cv_forward_post (SANDBAG)</title></rect>
+<rect x="780.7959183673469" y="631.8571428571428" width="6" height="6" fill="#1565c0"><title>cv_casemate_emb_n (WINDOW)</title></rect>
+<rect x="780.7959183673469" y="645.8163265306122" width="6" height="6" fill="#1565c0"><title>cv_casemate_emb_s (WINDOW)</title></rect>
+<rect x="666.7959183673469" y="587.6530612244898" width="6" height="6" fill="#1565c0"><title>cv_sandbag_mid_1 (SANDBAG)</title></rect>
+<rect x="666.7959183673469" y="610.9183673469387" width="6" height="6" fill="#1565c0"><title>cv_sandbag_mid_2 (SANDBAG)</title></rect>
+<rect x="620.2653061224489" y="580.6734693877551" width="6" height="6" fill="#1565c0"><title>cv_trench_1 (TRENCH)</title></rect>
+<rect x="585.3673469387755" y="596.9591836734694" width="6" height="6" fill="#1565c0"><title>cv_trench_2 (TRENCH)</title></rect>
+<rect x="562.1020408163265" y="596.9591836734694" width="6" height="6" fill="#1565c0"><title>cv_squad_post (SANDBAG)</title></rect>
+<rect x="631.8979591836735" y="569.0408163265306" width="6" height="6" fill="#1565c0"><title>cv_crater_1 (LOW_COVER)</title></rect>
+<rect x="259.65306122448976" y="615.5714285714286" width="6" height="6" fill="#1565c0"><title>cv_firing_point (HIGH_COVER)</title></rect>
+<rect x="145.6530612244898" y="578.3469387755101" width="6" height="6" fill="#1565c0"><title>cv_rail_hut (BUILDING_CORNER)</title></rect>
+<rect x="-14.877551020408163" y="538.7959183673469" width="6" height="6" fill="#1565c0"><title>cv_wagon_1 (VEHICLE)</title></rect>
+<rect x="-61.408163265306115" y="571.3673469387754" width="6" height="6" fill="#1565c0"><title>cv_wagon_2 (VEHICLE)</title></rect>
+<rect x="124.71428571428571" y="699.3265306122448" width="6" height="6" fill="#1565c0"><title>cv_shelter_entrance (HIGH_COVER)</title></rect>
+<rect x="818.0204081632653" y="631.8571428571428" width="6" height="6" fill="#1565c0"><title>cv_road_truss_1 (LOW_COVER)</title></rect>
+<rect x="818.0204081632653" y="645.8163265306122" width="6" height="6" fill="#1565c0"><title>cv_road_truss_2 (LOW_COVER)</title></rect>
+<rect x="957.6122448979592" y="631.8571428571428" width="6" height="6" fill="#1565c0"><title>cv_road_truss_3 (LOW_COVER)</title></rect>
+<rect x="957.6122448979592" y="645.8163265306122" width="6" height="6" fill="#1565c0"><title>cv_road_truss_4 (LOW_COVER)</title></rect>
+<rect x="1083.2448979591836" y="624.8775510204081" width="6" height="6" fill="#1565c0"><title>cv_tower_p1_n (WALL_CORNER)</title></rect>
+<rect x="1083.2448979591836" y="652.7959183673469" width="6" height="6" fill="#1565c0"><title>cv_tower_p1_s (WALL_CORNER)</title></rect>
+<rect x="864.5510204081633" y="538.7959183673469" width="6" height="6" fill="#1565c0"><title>cv_rail_deck_1 (LOW_COVER)</title></rect>
+<circle cx="574.4081632653061" cy="599.9591836734694" r="6" fill="#fff" stroke="#1b5e20" stroke-width="2"/><text x="582.4081632653061" y="593.9591836734694" font-size="11" font-weight="700" fill="#1b5e20">CP-A</text>
+<circle cx="383.63265306122446" cy="618.5714285714286" r="6" fill="#fff" stroke="#1b5e20" stroke-width="2"/><text x="391.63265306122446" y="612.5714285714286" font-size="11" font-weight="700" fill="#1b5e20">CP-B</text>
+<circle cx="658.1632653061224" cy="604.6122448979592" r="6" fill="#fff" stroke="#1b5e20" stroke-width="2"/><text x="666.1632653061224" y="598.6122448979592" font-size="11" font-weight="700" fill="#1b5e20">CP-C</text>
+<circle cx="565.1020408163265" cy="599.9591836734694" r="3.5" fill="#6a1b9a"/>
+<text x="565.1020408163265" y="621.9591836734694" text-anchor="middle" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Posto da secção de Zieliński</text>
+<circle cx="769.8367346938775" cy="555.7551020408163" r="3.5" fill="#6a1b9a"/>
+<text x="775.8367346938775" y="543.7551020408163" text-anchor="start" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Posto avançado de Nowicki</text>
+<circle cx="634.8979591836735" cy="572.0408163265306" r="3.5" fill="#6a1b9a"/>
+<text x="634.8979591836735" y="560.0408163265306" text-anchor="middle" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Ponto de reparo 1</text>
+<circle cx="448.7755102040816" cy="569.7142857142857" r="3.5" fill="#6a1b9a"/>
+<text x="448.7755102040816" y="557.7142857142857" text-anchor="middle" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Ponto de reparo 2</text>
+<circle cx="378.9795918367347" cy="618.5714285714286" r="3.5" fill="#6a1b9a"/>
+<text x="378.9795918367347" y="640.5714285714286" text-anchor="middle" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Ponto de reunião do sargento</text>
+<circle cx="262.65306122448976" cy="618.5714285714286" r="3.5" fill="#6a1b9a"/>
+<text x="262.65306122448976" y="654.5714285714286" text-anchor="middle" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Posto de disparo dos sapadores</text>
+<circle cx="709.3469387755101" cy="660.4489795918366" r="3.5" fill="#6a1b9a"/>
+<text x="701.3469387755101" y="680.4489795918366" text-anchor="end" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Ponto do socorrista Dudek</text>
+<circle cx="855.9183673469388" cy="644.1632653061224" r="3.5" fill="#6a1b9a"/>
+<text x="861.9183673469388" y="666.1632653061224" text-anchor="start" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Local onde Bąk é ferido</text>
+<circle cx="123.06122448979592" cy="711.6326530612245" r="3.5" fill="#6a1b9a"/>
+<text x="131.0612244897959" y="715.6326530612245" text-anchor="start" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Abrigo de campanha</text>
+<circle cx="118.40816326530611" cy="599.9591836734694" r="3.5" fill="#6a1b9a"/>
+<text x="118.40816326530611" y="585.9591836734694" text-anchor="middle" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Barracão ferroviário</text>
+<text x="-337.2448979591837" y="610.5714285714286" text-anchor="start" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Estação de Tczew</text>
+<text x="767.9591836734694" y="635.8775510204081" text-anchor="start" font-size="11" fill="#222" stroke="#f4f1ea" stroke-width="3" paint-order="stroke">Casamatas do encontro oeste</text>
+</g>
+<text x="30" y="797.4285714285713" font-size="11" fill="#666">Grade de 50 m · X leste → · Z sul ↓ · norte para cima</text></g>
+<line x1="30" y1="821.4285714285713" x2="70" y2="821.4285714285713" stroke="#1b5e20" stroke-width="3" stroke-dasharray=""/><text x="78" y="825.4285714285713" font-size="12" fill="#222">EXACT (medida documentada)</text>
+<line x1="360" y1="821.4285714285713" x2="400" y2="821.4285714285713" stroke="#8d6e00" stroke-width="3" stroke-dasharray="8 5"/><text x="408" y="825.4285714285713" font-size="12" fill="#222">RECONSTRUCTED (a medir)</text>
+<line x1="690" y1="821.4285714285713" x2="730" y2="821.4285714285713" stroke="#b23c17" stroke-width="3" stroke-dasharray="2 4"/><text x="738" y="825.4285714285713" font-size="12" fill="#222">COMPRESSED_FOR_GAMEPLAY</text>
+<rect x="30" y="837.4285714285713" width="8" height="8" fill="#1565c0"/><text x="44" y="845.4285714285713" font-size="12">nó de cobertura</text>
+<circle cx="200" cy="841.4285714285713" r="4" fill="#6a1b9a"/><text x="210" y="845.4285714285713" font-size="12">ponto de objetivo / cena</text>
+<circle cx="400" cy="841.4285714285713" r="6" fill="#fff" stroke="#1b5e20" stroke-width="2"/><text x="412" y="845.4285714285713" font-size="12">checkpoint (CP-D usa a posição do momento)</text>
+<circle cx="740" cy="841.4285714285713" r="7" fill="#c62828" fill-opacity="0.1" stroke="#c62828" stroke-dasharray="6 4"/><text x="752" y="845.4285714285713" font-size="12">zona de demolição (06:10 leste · 06:40 oeste)</text>
+</svg>

@@ -1,0 +1,481 @@
+{
+  "schemaVersion": 1,
+  "missionId": "m01_tczew",
+  "title": "Tczew — cabeças de ponte do Vístula, 1/9/1939",
+  "status": "PLANEJADA",
+  "coordinateSystem": {
+    "units": "metros",
+    "axes": { "x": "leste (+) / oeste (−)", "y": "altura (+ para cima)", "z": "sul (+) / norte (−)" },
+    "handedness": "destro, compatível com Three.js (câmera padrão olha para −Z = norte)",
+    "origin": "portal oeste da ponte ferroviária, ao nível dos trilhos (y = 0)",
+    "bridgeAxisBearingDeg": 90,
+    "bridgeAxisNote": "Pontes modeladas exatamente leste–oeste. O azimute real do eixo das pontes está PENDENTE (HISTORICAL_RESEARCH P5); ao medir, rotacionar o conjunto inteiro, sem deformar distâncias.",
+    "legacyConversion": "O protótipo antigo usa (x, y) planar em pixels (CONFIG.tile = 64). Não converter coordenadas antigas para este mapa: M01 é um mapa novo. Se o adaptador precisar, planar_x = x, planar_y = z; y é só altura."
+  },
+  "classificationLegend": {
+    "EXACT": "medida documentada (fonte em 'sources')",
+    "RECONSTRUCTED": "estimada a partir de fatos documentados; medir em mapa histórico antes de VALIDAR",
+    "COMPRESSED_FOR_GAMEPLAY": "distância encurtada de propósito; o valor real está em 'realValue'"
+  },
+  "bounds": {
+    "playable": { "minX": -460, "maxX": 440, "minZ": -80, "maxZ": 140 },
+    "softWarningX": 288,
+    "outOfBoundsX": 419,
+    "outOfBoundsGraceSec": 8,
+    "note": "Além do 2.º pilar (x≈288) o fogo da margem leste se intensifica e o sargento manda voltar; além do 3.º pilar (x≈419) aviso e falha legível após 8 s. Nunca parede invisível sem aviso."
+  },
+  "sun": {
+    "source": "C01",
+    "timezone": "CET (UTC+1)",
+    "keyframes": [
+      { "clock": "04:30", "altitudeDeg": -3.7, "azimuthDeg": 70 },
+      { "clock": "04:34", "altitudeDeg": -3.2, "azimuthDeg": 71 },
+      { "clock": "04:51", "altitudeDeg": -0.8, "azimuthDeg": 74 },
+      { "clock": "05:30", "altitudeDeg": 4.8, "azimuthDeg": 82 },
+      { "clock": "06:10", "altitudeDeg": 10.6, "azimuthDeg": 90 },
+      { "clock": "06:40", "altitudeDeg": 15.0, "azimuthDeg": 96 },
+      { "clock": "07:05", "altitudeDeg": 18.6, "azimuthDeg": 101 }
+    ],
+    "note": "Azimute medido a partir do norte, sentido horário. Em coordenadas do jogo: direção do Sol = (sin(az)·cos(alt), sin(alt), −cos(az)·cos(alt))."
+  },
+  "features": [
+    {
+      "id": "rail_bridge",
+      "name": "Ponte ferroviária (1891), via dupla",
+      "type": "bridge",
+      "polyline": [[0, 0, 0], [837, 0, 0]],
+      "widthM": 10,
+      "spansM": [129, 129, 129, 129, 129, 129],
+      "pierFacesX": [31.5, 160.5, 289.5, 418.5, 547.5, 676.5, 805.5],
+      "classification": "EXACT",
+      "sources": ["T05"],
+      "notes": "Comprimento, número e comprimento dos vãos: EXACT. Largura do tabuleiro e posição dos pilares derivadas (encontros = (837 − 6×129)/2 = 31,5 m): RECONSTRUCTED. Vãos lenticulares (treliça em lente)."
+    },
+    {
+      "id": "road_bridge",
+      "name": "Ponte rodoviária Lentze (1857)",
+      "type": "bridge",
+      "polyline": [[0, 0, 40], [837.3, 0, 40]],
+      "widthM": 11,
+      "girderHeightM": 8.68,
+      "girderSpacingM": 6.43,
+      "spansM": [130.9, 130.9, 130.9, 130.9, 130.9, 130.9],
+      "pierFacesX": [25.95, 156.85, 287.75, 418.65, 549.55, 680.45, 811.35],
+      "classification": "EXACT",
+      "sources": ["T04", "T05"],
+      "notes": "40 m ao sul da ferroviária (EXACT, T05). Vãos, altura e espaçamento das vigas: EXACT (T04). Encontros derivados = 25,95 m, o que não bate com os '32 m' do resumo de T04; resolver em P1/P5. Alinhamento em X dos portais das duas pontes: RECONSTRUCTED (assumido igual)."
+    },
+    {
+      "id": "road_bridge_towers",
+      "name": "Torres neogóticas da ponte rodoviária (5 pares)",
+      "type": "landmark",
+      "points": [
+        [156.85, 0, 34],
+        [156.85, 0, 46],
+        [287.75, 0, 34],
+        [287.75, 0, 46],
+        [418.65, 0, 34],
+        [418.65, 0, 46],
+        [549.55, 0, 34],
+        [549.55, 0, 46],
+        [680.45, 0, 34],
+        [680.45, 0, 46]
+      ],
+      "heightM": 23,
+      "diameterM": 5.3,
+      "classification": "RECONSTRUCTED",
+      "sources": ["T04"],
+      "notes": "Número, altura e diâmetro: EXACT (T04). Colocação um par por pilar fluvial, fora das vigas: RECONSTRUCTED. Silhueta essencial para reconhecer Tczew."
+    },
+    {
+      "id": "portal_road_west",
+      "name": "Portal oeste da ponte rodoviária (Stüler)",
+      "type": "landmark",
+      "polygon": [[-8, 32], [0, 32], [0, 48], [-8, 48]],
+      "heightM": 18,
+      "classification": "RECONSTRUCTED",
+      "sources": ["T04", "T18"],
+      "notes": "Existência EXACT; dimensões a tirar de fotografias (T18). Destruído parcialmente às 06:40."
+    },
+    {
+      "id": "portal_rail_west",
+      "name": "Portal oeste da ponte ferroviária",
+      "type": "landmark",
+      "polygon": [[-8, -7], [0, -7], [0, 7], [-8, 7]],
+      "heightM": 16,
+      "classification": "RECONSTRUCTED",
+      "sources": ["T05", "T18"]
+    },
+    {
+      "id": "casemates_west",
+      "name": "Casamatas do encontro oeste (sob o tabuleiro)",
+      "type": "interior",
+      "box": { "min": [0, -7, 34], "max": [26, -1, 46] },
+      "embrasures": [[25, -3, 37], [25, -3, 43]],
+      "classification": "RECONSTRUCTED",
+      "sources": ["T04"],
+      "notes": "Casamatas defensivas nos encontros: DOCUMENTED (T04). Interior reconstruído para gameplay; não chamar de reconstrução exata (Prompt §74). Metralhadora ckm wz.30 na seteira sul. Área dentro da zona de demolição oeste."
+    },
+    {
+      "id": "rail_embankment_west",
+      "name": "Aterro ferroviário oeste (entre estação e ponte)",
+      "type": "terrain",
+      "polyline": [[-420, 0, 0], [0, 0, 0]],
+      "crestWidthM": 12,
+      "heightAboveGroundM": 3,
+      "classification": "COMPRESSED_FOR_GAMEPLAY",
+      "realValue": "≈1000 m entre estação e ponte (ESTIMATIVA — P4)",
+      "sources": ["T08", "T12"],
+      "notes": "Encosta SUL do aterro leva a linha de ignição (DOCUMENTED). Altura e largura: RECONSTRUCTED."
+    },
+    {
+      "id": "ignition_line",
+      "name": "Linha de ignição na encosta sul do aterro",
+      "type": "objective_path",
+      "polyline": [[-200, -2, 12], [-120, -2, 9], [-40, -2, 10], [0, -1.5, 12], [13, -3, 36]],
+      "classification": "RECONSTRUCTED",
+      "sources": ["T08", "T12"],
+      "notes": "Traçado pela encosta sul: DOCUMENTED. Ligação ao encontro da ponte rodoviária e posto de disparo: RECONSTRUCTED (P12). O jogo não mostra conexões, cargas ou procedimentos (Prompt §79); só a linha danificada e o trabalho abstrato dos sapadores."
+    },
+    {
+      "id": "road_approach_west",
+      "name": "Rampa rodoviária oeste para a cidade",
+      "type": "road",
+      "polyline": [[0, 0, 40], [-120, 0, 44], [-300, 2, 60], [-460, 6, 80]],
+      "classification": "RECONSTRUCTED",
+      "sources": [],
+      "notes": "Direção e declive a medir (P4). Cidade velha de Tczew fica além do limite jogável."
+    },
+    {
+      "id": "strip_between_approaches",
+      "name": "Faixa entre os acessos (trincheira e posições de sacos de areia)",
+      "type": "terrain",
+      "polygon": [[-200, 12], [0, 12], [0, 34], [-200, 34]],
+      "groundY": -3,
+      "classification": "RECONSTRUCTED",
+      "sources": ["T03"],
+      "notes": "Fortificações de campo construídas desde maio de 1939: DOCUMENTED (T03). Traçado específico da trincheira: GAMEPLAY_DRAMATIZATION."
+    },
+    {
+      "id": "squad_post",
+      "name": "Posto da secção de Zieliński (abrigo de madeira, fogareiro)",
+      "type": "position",
+      "point": [-70, -3, 22],
+      "classification": "RECONSTRUCTED",
+      "sources": [],
+      "notes": "Posição e aparência: GAMEPLAY_DRAMATIZATION plausível. Início da missão."
+    },
+    {
+      "id": "forward_post",
+      "name": "Posto avançado de Nowicki (sacos de areia sob o portal ferroviário)",
+      "type": "position",
+      "point": [18, 0, 3],
+      "classification": "RECONSTRUCTED",
+      "sources": [],
+      "notes": "GAMEPLAY_DRAMATIZATION. Destruído no bombardeio das 04:34 (vira cratera e escombros)."
+    },
+    {
+      "id": "repair_site_1",
+      "name": "Ponto de reparo 1 (junto à cratera)",
+      "type": "objective_point",
+      "point": [-40, -2, 10],
+      "classification": "RECONSTRUCTED",
+      "sources": ["T12"]
+    },
+    { "id": "repair_site_2", "name": "Ponto de reparo 2", "type": "objective_point", "point": [-120, -2, 9], "classification": "RECONSTRUCTED", "sources": ["T12"] },
+    {
+      "id": "rally_point",
+      "name": "Ponto de reunião do sargento (trincheira)",
+      "type": "objective_point",
+      "point": [-150, -3, 30],
+      "classification": "RECONSTRUCTED",
+      "sources": []
+    },
+    {
+      "id": "rail_hut",
+      "name": "Barracão ferroviário (material dos sapadores)",
+      "type": "building",
+      "polygon": [[-270, 14], [-250, 14], [-250, 26], [-270, 26]],
+      "pickup": [-262, -3, 22],
+      "classification": "RECONSTRUCTED",
+      "sources": ["T09"],
+      "notes": "Sapadores trabalharam disfarçados de ferroviários (T09): usar barracão ferroviário como depósito é GAMEPLAY_DRAMATIZATION plausível."
+    },
+    {
+      "id": "firing_point",
+      "name": "Posto de disparo dos sapadores (abrigo escavado na encosta)",
+      "type": "position",
+      "point": [-200, -3, 30],
+      "classification": "RECONSTRUCTED",
+      "sources": ["T04", "T08"],
+      "notes": "Fontes divergem: T04 (resumo) cita as casamatas oeste; o traçado de T08/T12 sugere posto afastado da ponte. P12 pendente. No jogo, a detonação final é comandada daqui, fora da zona de demolição."
+    },
+    {
+      "id": "aid_position",
+      "name": "Ponto do socorrista Dudek (atrás do portal rodoviário)",
+      "type": "position",
+      "point": [-8, 0, 48],
+      "classification": "RECONSTRUCTED",
+      "sources": []
+    },
+    {
+      "id": "bak_wound_point",
+      "name": "Local onde Bąk é ferido (tabuleiro da ponte rodoviária)",
+      "type": "objective_point",
+      "point": [55, 0, 41],
+      "classification": "RECONSTRUCTED",
+      "sources": []
+    },
+    {
+      "id": "shelter",
+      "name": "Abrigo de campanha (chamada final)",
+      "type": "interior",
+      "point": [-260, -4, 70],
+      "classification": "RECONSTRUCTED",
+      "sources": ["T03"],
+      "notes": "Abrigo de fortificação de campo (DOCUMENTED em geral); posição GAMEPLAY_DRAMATIZATION."
+    },
+    {
+      "id": "tczew_station",
+      "name": "Estação de Tczew (Stüler, 1856–57) e pátio",
+      "type": "building",
+      "polygon": [[-460, 30], [-400, 30], [-400, 52], [-460, 52]],
+      "classification": "COMPRESSED_FOR_GAMEPLAY",
+      "realValue": "≈1000 m a oeste da ponte (ESTIMATIVA — P4)",
+      "sources": ["T10", "T18"],
+      "notes": "Lado dos trilhos em que fica o edifício: PENDENTE. Bombardeada às 04:34."
+    },
+    {
+      "id": "freight_wagons_west",
+      "name": "Vagões de carga no desvio oeste",
+      "type": "props",
+      "points": [[-320, 0, -6], [-340, 0, 8], [-352, 0, 8]],
+      "classification": "RECONSTRUCTED",
+      "sources": [],
+      "notes": "Vagões comuns de pátio: GAMEPLAY_DRAMATIZATION plausível; servem de cobertura VEHICLE."
+    },
+    {
+      "id": "vistula_channel",
+      "name": "Canal principal do Vístula (corre para o norte)",
+      "type": "water",
+      "polygon": [[20, -3000], [480, -3000], [480, 3000], [20, 3000]],
+      "waterY": -10,
+      "flowDirection": [0, 0, -1],
+      "classification": "RECONSTRUCTED",
+      "sources": ["T06"],
+      "notes": "Direção de corrente (norte) e margens: DOCUMENTED. Larguras e nível da água: ESTIMATIVA (P4). Fronteira com a Cidade Livre pelo meio do rio (T06)."
+    },
+    {
+      "id": "east_floodplain",
+      "name": "Planície de inundação leste",
+      "type": "terrain",
+      "polygon": [[480, -3000], [800, -3000], [800, 3000], [480, 3000]],
+      "groundY": -8,
+      "classification": "RECONSTRUCTED",
+      "sources": ["T07"]
+    },
+    {
+      "id": "east_dike",
+      "name": "Dique de proteção contra cheias, cabeça de ponte leste (Lisewo)",
+      "type": "terrain",
+      "polyline": [[806, -1, -3000], [806, -1, 3000]],
+      "classification": "RECONSTRUCTED",
+      "sources": ["T07"],
+      "notes": "Cabeça de ponte leste sobre o dique: DOCUMENTED (resumo T04/T07)."
+    },
+    {
+      "id": "east_gates",
+      "name": "Portões das pontes, lado de Lisewo",
+      "type": "landmark",
+      "points": [[845, 0, 0], [845, 0, 40]],
+      "classification": "RECONSTRUCTED",
+      "sources": ["T07"],
+      "notes": "Portões fechados diante do trem 963: DOCUMENTED. Destruídos às 06:10 com o antigo portal leste (T04)."
+    },
+    {
+      "id": "train_963",
+      "name": "Trem de carga n.º 963 (65 vagões) parado diante dos portões",
+      "type": "vehicle",
+      "polyline": [[850, 0, -2.5], [1520, 0, -2.5]],
+      "classification": "RECONSTRUCTED",
+      "sources": ["T07", "T08"],
+      "notes": "Comprimento ≈ 65 vagões × ~10 m. Via ocupada: RECONSTRUCTED."
+    },
+    {
+      "id": "panzerzug_7",
+      "name": "Panzerzug 7",
+      "type": "vehicle",
+      "polyline": [[905, 0, 2.5], [1010, 0, 2.5]],
+      "classification": "RECONSTRUCTED",
+      "sources": ["T01", "T07", "T14"],
+      "notes": "Presença DOCUMENTED; posição e composição RECONSTRUCTED (P6). Na via paralela, atrás do trem de carga."
+    },
+    {
+      "id": "rail_line_east",
+      "name": "Linha para Szymankowo e Malbork",
+      "type": "rail",
+      "polyline": [[837, 0, 0], [1600, 0, 0], [4000, 0, 1500], [15800, 0, 6200]],
+      "classification": "RECONSTRUCTED",
+      "sources": ["T06", "T13"],
+      "notes": "Malbork a ~15,8 km, azimute ~113° (cálculo por coordenadas das cidades). Traçado intermediário: RECONSTRUCTED."
+    },
+    {
+      "id": "north_perimeter",
+      "name": "Fortificações de campo a norte e noroeste de Tczew (2.ª e 3.ª companhias)",
+      "type": "sector_area",
+      "polygon": [[-900, -1500], [-100, -1500], [-100, -800], [-900, -800]],
+      "classification": "RECONSTRUCTED",
+      "sources": ["T03", "T08", "T16"],
+      "notes": "Direção DOCUMENTED (T03); posições exatas PENDENTES. Representação de longa distância."
+    }
+  ],
+  "coverNodes": [
+    { "id": "cv_portal_rail_n", "type": "WALL_CORNER", "position": [-2, 0, -7], "normal": [1, 0, 0], "heightM": 3.0, "peek": ["right"] },
+    { "id": "cv_portal_rail_s", "type": "WALL_CORNER", "position": [-2, 0, 7], "normal": [1, 0, 0], "heightM": 3.0, "peek": ["left"] },
+    { "id": "cv_portal_road_n", "type": "WALL_CORNER", "position": [-2, 0, 33], "normal": [1, 0, 0], "heightM": 3.0, "peek": ["right"] },
+    { "id": "cv_portal_road_s", "type": "WALL_CORNER", "position": [-2, 0, 47], "normal": [1, 0, 0], "heightM": 3.0, "peek": ["left"] },
+    {
+      "id": "cv_forward_post",
+      "type": "SANDBAG",
+      "position": [18, 0, 3],
+      "normal": [1, 0, 0],
+      "heightM": 1.1,
+      "peek": ["over"],
+      "destroyedBy": "evt_m01_bombing_0434",
+      "afterDestructionType": "LOW_COVER"
+    },
+    {
+      "id": "cv_casemate_emb_n",
+      "type": "WINDOW",
+      "position": [24, -3, 37],
+      "normal": [1, 0, 0],
+      "heightM": 1.4,
+      "peek": ["over"],
+      "activeUntil": "evt_m01_west_demolition"
+    },
+    {
+      "id": "cv_casemate_emb_s",
+      "type": "WINDOW",
+      "position": [24, -3, 43],
+      "normal": [1, 0, 0],
+      "heightM": 1.4,
+      "peek": ["over"],
+      "reservedFor": "ckm_crew",
+      "activeUntil": "evt_m01_west_demolition"
+    },
+    { "id": "cv_sandbag_mid_1", "type": "SANDBAG", "position": [-25, -3, 18], "normal": [1, 0, 0], "heightM": 1.0, "peek": ["over", "left"] },
+    { "id": "cv_sandbag_mid_2", "type": "SANDBAG", "position": [-25, -3, 28], "normal": [1, 0, 0], "heightM": 1.0, "peek": ["over", "right"] },
+    { "id": "cv_trench_1", "type": "TRENCH", "position": [-45, -4, 15], "normal": [1, 0, 0], "heightM": 1.3, "peek": ["over"] },
+    { "id": "cv_trench_2", "type": "TRENCH", "position": [-60, -4, 22], "normal": [1, 0, 0], "heightM": 1.3, "peek": ["over"] },
+    { "id": "cv_squad_post", "type": "SANDBAG", "position": [-70, -3, 22], "normal": [1, 0, 0], "heightM": 1.1, "peek": ["over"] },
+    {
+      "id": "cv_crater_1",
+      "type": "LOW_COVER",
+      "position": [-40, -3.8, 10],
+      "normal": [1, 0, 0],
+      "heightM": 0.8,
+      "peek": ["over"],
+      "activeAfter": "evt_m01_bombing_0434"
+    },
+    { "id": "cv_firing_point", "type": "HIGH_COVER", "position": [-200, -3, 30], "normal": [1, 0, 0], "heightM": 2.0, "peek": ["left"] },
+    { "id": "cv_rail_hut", "type": "BUILDING_CORNER", "position": [-249, -3, 14], "normal": [1, 0, 0], "heightM": 3.5, "peek": ["right"] },
+    { "id": "cv_wagon_1", "type": "VEHICLE", "position": [-318, 0, -3], "normal": [1, 0, 0], "heightM": 2.5, "peek": ["left", "right"] },
+    { "id": "cv_wagon_2", "type": "VEHICLE", "position": [-338, 0, 11], "normal": [1, 0, 0], "heightM": 2.5, "peek": ["left", "right"] },
+    { "id": "cv_shelter_entrance", "type": "HIGH_COVER", "position": [-258, -4, 66], "normal": [1, 0, 0], "heightM": 2.2, "peek": [] },
+    {
+      "id": "cv_road_truss_1",
+      "type": "LOW_COVER",
+      "position": [40, 0, 37],
+      "normal": [1, 0, 0],
+      "heightM": 1.0,
+      "partial": true,
+      "peek": ["over"],
+      "notes": "Treliça: cobertura parcial; balas podem passar pelas aberturas conforme regra de obstrução."
+    },
+    { "id": "cv_road_truss_2", "type": "LOW_COVER", "position": [40, 0, 43], "normal": [1, 0, 0], "heightM": 1.0, "partial": true, "peek": ["over"] },
+    { "id": "cv_road_truss_3", "type": "LOW_COVER", "position": [100, 0, 37], "normal": [1, 0, 0], "heightM": 1.0, "partial": true, "peek": ["over"] },
+    { "id": "cv_road_truss_4", "type": "LOW_COVER", "position": [100, 0, 43], "normal": [1, 0, 0], "heightM": 1.0, "partial": true, "peek": ["over"] },
+    { "id": "cv_tower_p1_n", "type": "WALL_CORNER", "position": [154, 0, 34], "normal": [1, 0, 0], "heightM": 23, "peek": ["right"] },
+    { "id": "cv_tower_p1_s", "type": "WALL_CORNER", "position": [154, 0, 46], "normal": [1, 0, 0], "heightM": 23, "peek": ["left"] },
+    { "id": "cv_rail_deck_1", "type": "LOW_COVER", "position": [60, 0, -3], "normal": [1, 0, 0], "heightM": 1.0, "partial": true, "peek": ["over"] }
+  ],
+  "blastZones": [
+    {
+      "id": "bz_east",
+      "event": "evt_m01_east_demolition",
+      "center": [806, 0, 20],
+      "radiusM": 140,
+      "safeCondition": "todos os atores poloneses obrigatórios com x < 660",
+      "classification": "RECONSTRUCTED"
+    },
+    {
+      "id": "bz_west",
+      "event": "evt_m01_west_demolition",
+      "center": [13, -3, 20],
+      "radiusM": 130,
+      "safeCondition": "jogador e atores poloneses obrigatórios com x < −117",
+      "classification": "RECONSTRUCTED"
+    }
+  ],
+  "sightlines": [
+    { "from": "cv_portal_road_n", "to": "east_gates", "distanceM": 847, "note": "Clarão da demolição leste chega antes do som (~2,4 s; C02)." },
+    { "from": "cv_road_truss_3", "to": "train_963", "distanceM": 750, "note": "Vagões e fumaça da locomotiva visíveis; contraluz depois das 05:30." },
+    { "from": "squad_post", "to": "road_bridge_towers", "distanceM": 227, "note": "Silhueta das torres contra o céu claro a leste na abertura." }
+  ],
+  "farAnchors": [
+    {
+      "id": "anchor_elblag",
+      "name": "Elbląg (Elbing), base dos Ju 87",
+      "bearingDeg": 80,
+      "distanceKm": 39.7,
+      "classification": "EXACT",
+      "notes": "Por coordenadas das cidades. 39,7 km a ~280 km/h ≈ 8–9 min: consistente com decolagem 04:26 e ataque 04:34."
+    },
+    { "id": "anchor_malbork", "name": "Malbork (Marienburg)", "bearingDeg": 113, "distanceKm": 15.8, "classification": "EXACT" },
+    {
+      "id": "anchor_westerplatte",
+      "name": "Westerplatte",
+      "bearingDeg": 346,
+      "distanceKm": 36.1,
+      "classification": "EXACT",
+      "notes": "Não usar som de Westerplatte sem fonte (HISTORICAL_RESEARCH §10)."
+    }
+  ],
+  "stukaPath": {
+    "event": "evt_m01_bombing_0434",
+    "points": [
+      { "t": 0.0, "pos": [9800, 900, -1750] },
+      { "t": 28.0, "pos": [2200, 1600, -380] },
+      { "t": 36.0, "pos": [300, 1400, 0] },
+      { "t": 42.0, "pos": [-40, 450, 10] },
+      { "t": 44.0, "pos": [-110, 160, 12] },
+      { "t": 48.0, "pos": [-500, 300, 150] },
+      { "t": 70.0, "pos": [2500, 800, -2500] }
+    ],
+    "classification": "RECONSTRUCTED",
+    "notes": "Chegada do leste-nordeste (Elbing, 80°), vindo do céu claro. Mergulho sobre o aterro (alvo documentado) e saída para retorno. Três aviões em fila, com 3–5 s entre si."
+  },
+  "props": [
+    {
+      "id": "sapper_crate",
+      "name": "Caixa de material dos sapadores (faixa branca, fechada)",
+      "position": [-262, -3, 22],
+      "carriable": true,
+      "notes": "Objeto abstrato; nunca aberto em cena."
+    },
+    {
+      "id": "dented_mug",
+      "name": "Caneca esmaltada amassada de Nowicki",
+      "position": [-36, -3, 11],
+      "activeAfter": "evt_m01_nowicki_lost",
+      "notes": "Krawiec a recolhe durante o reparo; reaparece na chamada final."
+    },
+    { "id": "coffee_stove", "name": "Fogareiro e bule no posto da secção", "position": [-74, -3, 24] },
+    {
+      "id": "folded_map",
+      "name": "Mapa dobrado (Zieliński e Krawiec)",
+      "position": [-68, -2.2, 20],
+      "notes": "Mapa genérico da área; não reproduzir mapa de arquivo sem licença."
+    }
+  ]
+}

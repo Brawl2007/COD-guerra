@@ -1,0 +1,267 @@
+{
+  "schemaVersion": 1,
+  "description": "Linha do tempo de equipamento por país e data. Nesta versão, só os itens necessários para M01 (Tczew, 1939-09-01) e os itens que M01 deve proibir. Datas 'availableFrom' são a entrada em serviço aproximada (AAAA-MM-DD); um item só pode aparecer numa missão com data >= availableFrom. 'certainty' segue research/SOURCES.md.",
+  "certaintyLegend": {
+    "ALTA": "confirmado por fonte institucional lida ou por várias fontes concordantes",
+    "MEDIA": "conhecimento geral consistente ou fontes secundárias; confirmar antes de VALIDAR",
+    "BAIXA": "fonte única, divergente ou pendente"
+  },
+  "items": [
+    {
+      "id": "kb_wz29",
+      "name": "Karabinek wz.29 (Mauser polonês)",
+      "country": "PL",
+      "category": "rifle",
+      "caliber": "7,92×57 mm",
+      "availableFrom": "1930-01-01",
+      "specs": { "magazine": 5, "feed": "clipe de 5 cartuchos", "action": "ferrolho manual, recarregar após cada disparo" },
+      "roles": ["rifleman", "nco"],
+      "certainty": "MEDIA",
+      "sources": ["H30", "T17"],
+      "notes": "Arma inicial de Jan Wrona (Prompt §79). Comportamento, som e animação próprios; não reaproveitar a M1 Carbine."
+    },
+    {
+      "id": "kb_wz98a",
+      "name": "Karabin wz.98a",
+      "country": "PL",
+      "category": "rifle",
+      "caliber": "7,92×57 mm",
+      "availableFrom": "1936-01-01",
+      "specs": { "magazine": 5, "feed": "clipe de 5 cartuchos", "action": "ferrolho manual" },
+      "roles": ["rifleman"],
+      "certainty": "MEDIA",
+      "sources": ["H30"],
+      "notes": "Variação ocasional no esquadrão; silhueta mais longa que o wz.29."
+    },
+    {
+      "id": "rkm_wz28",
+      "name": "rkm Browning wz.28",
+      "country": "PL",
+      "category": "light_machine_gun",
+      "caliber": "7,92×57 mm",
+      "availableFrom": "1930-01-01",
+      "specs": { "magazine": 20, "feed": "carregador destacável de 20", "action": "automática" },
+      "roles": ["machine_gunner"],
+      "certainty": "MEDIA",
+      "sources": ["H30"],
+      "notes": "Arma do metralhador do esquadrão (Kowal)."
+    },
+    {
+      "id": "ckm_wz30",
+      "name": "ckm wz.30",
+      "country": "PL",
+      "category": "heavy_machine_gun",
+      "caliber": "7,92×57 mm",
+      "availableFrom": "1932-01-01",
+      "specs": { "feed": "fita de tecido", "cooling": "água", "crew": 3 },
+      "roles": ["machine_gunner", "assistant_gunner"],
+      "certainty": "MEDIA",
+      "sources": ["T03"],
+      "notes": "Batalhão tinha pelotões de metralhadoras (T03). Em M01, uma arma fixa na seteira da casamata oeste, operada por NPCs; confirmar alocação real na cabeça de ponte."
+    },
+    {
+      "id": "vis_wz35",
+      "name": "Pistola Vis wz.35",
+      "country": "PL",
+      "category": "pistol",
+      "caliber": "9×19 mm",
+      "availableFrom": "1936-01-01",
+      "specs": { "magazine": 8 },
+      "roles": ["nco", "officer"],
+      "certainty": "MEDIA",
+      "sources": ["H30"],
+      "notes": "Portada por Zieliński; não é arma do jogador em M01."
+    },
+    {
+      "id": "granat_obronny_wz33",
+      "name": "Granada defensiva wz.33",
+      "country": "PL",
+      "category": "grenade",
+      "availableFrom": "1933-01-01",
+      "specs": { "fragmentationRadiusM": 20 },
+      "roles": ["rifleman"],
+      "certainty": "BAIXA",
+      "sources": ["T17"],
+      "notes": "Resumo de busca cita fragmentos até ~20 m. Confirmar modelo exato das granadas do 2.º Batalhão. Em M01 o jogador recebe 2; uso real limitado (inimigo a média distância)."
+    },
+    {
+      "id": "bofors_wz36_37mm",
+      "name": "Canhão antitanque Bofors wz.36, 37 mm",
+      "country": "PL",
+      "category": "anti_tank_gun",
+      "caliber": "37 mm",
+      "availableFrom": "1937-01-01",
+      "roles": ["crew"],
+      "certainty": "MEDIA",
+      "sources": ["T03", "T08"],
+      "notes": "Pelotão AT do batalhão; em M01 só aparece no setor norte distante (ataque das ~07:00)."
+    },
+    {
+      "id": "pl_helmet_wz31",
+      "name": "Capacete wz.31",
+      "country": "PL",
+      "category": "uniform_helmet",
+      "availableFrom": "1932-01-01",
+      "certainty": "MEDIA",
+      "sources": ["H30", "T17"],
+      "notes": "Capacete padrão da infantaria; variar desgaste e capa. Confirmar se todos no batalhão o tinham."
+    },
+    {
+      "id": "pl_uniform_wz36",
+      "name": "Túnica wz.36",
+      "country": "PL",
+      "category": "uniform_tunic",
+      "availableFrom": "1936-01-01",
+      "certainty": "MEDIA",
+      "sources": ["T17"],
+      "notes": "Parte da tropa ainda usava modelos anteriores (T17). AssetVariationSystem deve misturar wz.36 e modelo anterior."
+    },
+    {
+      "id": "pl_rogatywka_wz37",
+      "name": "Rogatywka de campanha wz.37",
+      "country": "PL",
+      "category": "uniform_cap",
+      "availableFrom": "1937-01-01",
+      "certainty": "MEDIA",
+      "sources": ["T17"],
+      "notes": "Usada na abertura (04:30), antes de o alarme mandar pôr capacete."
+    },
+    {
+      "id": "pl_kit_1939",
+      "name": "Equipamento individual polonês 1939 (cinturão e cartucheiras de couro, bornal wz.33, máscara WSR wz.32 em estojo, cantil, pá, baioneta wz.29)",
+      "country": "PL",
+      "category": "uniform_kit",
+      "availableFrom": "1933-01-01",
+      "certainty": "MEDIA",
+      "sources": ["H30", "T17"],
+      "notes": "Detalhes de modelo a confirmar em H30."
+    },
+    {
+      "id": "kar98k",
+      "name": "Karabiner 98k",
+      "country": "DE",
+      "category": "rifle",
+      "caliber": "7,92×57 mm",
+      "availableFrom": "1935-01-01",
+      "specs": { "magazine": 5, "action": "ferrolho manual" },
+      "roles": ["rifleman"],
+      "certainty": "MEDIA",
+      "sources": [],
+      "notes": "Arma padrão dos inimigos da margem leste."
+    },
+    {
+      "id": "mg34",
+      "name": "MG 34",
+      "country": "DE",
+      "category": "machine_gun",
+      "caliber": "7,92×57 mm",
+      "availableFrom": "1936-01-01",
+      "roles": ["machine_gunner"],
+      "certainty": "MEDIA",
+      "sources": [],
+      "notes": "Metralhadoras na cabeça de ponte leste e, provavelmente, no Panzerzug 7 (armamento do trem PENDENTE)."
+    },
+    {
+      "id": "mp38",
+      "name": "MP 38",
+      "country": "DE",
+      "category": "submachine_gun",
+      "caliber": "9×19 mm",
+      "availableFrom": "1938-06-01",
+      "roles": ["nco"],
+      "certainty": "MEDIA",
+      "sources": [],
+      "notes": "Existia em 1939, mas não usar como arma padrão de pioneiros/guardas de fronteira em M01 (Prompt §79: só quando confirmado)."
+    },
+    {
+      "id": "stielhandgranate_24",
+      "name": "Stielhandgranate 24",
+      "country": "DE",
+      "category": "grenade",
+      "availableFrom": "1924-01-01",
+      "certainty": "MEDIA",
+      "sources": [],
+      "notes": "Improvável em M01 (distâncias grandes); reservar para missões seguintes."
+    },
+    {
+      "id": "de_helmet_m35",
+      "name": "Capacete M35",
+      "country": "DE",
+      "category": "uniform_helmet",
+      "availableFrom": "1935-06-01",
+      "certainty": "MEDIA",
+      "sources": [],
+      "notes": "Grenzwacht pode ter tido capacetes modelo anterior — PENDENTE (HISTORICAL_RESEARCH P7)."
+    },
+    {
+      "id": "de_tunic_m36",
+      "name": "Túnica M36 feldgrau",
+      "country": "DE",
+      "category": "uniform_tunic",
+      "availableFrom": "1936-01-01",
+      "certainty": "MEDIA",
+      "sources": [],
+      "notes": "Pioniere com cor de arma preta; Grenzwacht PENDENTE."
+    },
+    {
+      "id": "ju87b",
+      "name": "Junkers Ju 87 B (3./StG 1)",
+      "country": "DE",
+      "category": "aircraft",
+      "availableFrom": "1938-01-01",
+      "certainty": "MEDIA",
+      "sources": ["T12"],
+      "notes": "Três aviões na passagem principal das 04:34 (ver divergência em HISTORICAL_RESEARCH §3.2)."
+    },
+    {
+      "id": "panzerzug_7",
+      "name": "Panzerzug 7 (trem blindado)",
+      "country": "DE",
+      "category": "armored_train",
+      "availableFrom": "1939-01-01",
+      "certainty": "BAIXA",
+      "sources": ["T01", "T07", "T14"],
+      "notes": "Existência e papel documentados; composição e armamento PENDENTES (P6). Não jogável; alvo/ameaça distante na margem leste."
+    },
+    {
+      "id": "goods_train_963",
+      "name": "Trem de carga n.º 963 (65 vagões)",
+      "country": "DE",
+      "category": "train",
+      "availableFrom": "1939-01-01",
+      "certainty": "MEDIA",
+      "sources": ["T07", "T08"],
+      "notes": "Locomotiva e vagões comuns da época; parado diante dos portões fechados em Lisewo."
+    },
+    {
+      "id": "m1_carbine",
+      "name": "M1 Carbine",
+      "country": "US",
+      "category": "rifle",
+      "availableFrom": "1942-01-01",
+      "certainty": "ALTA",
+      "sources": [],
+      "notes": "PROIBIDA em M01 (Prompt §53/§78). Só na bancada americana/missões dos EUA."
+    },
+    {
+      "id": "mp40",
+      "name": "MP 40",
+      "country": "DE",
+      "category": "submachine_gun",
+      "availableFrom": "1940-01-01",
+      "certainty": "MEDIA",
+      "sources": [],
+      "notes": "PROIBIDA em M01 (Prompt §78/§79)."
+    },
+    {
+      "id": "mg42",
+      "name": "MG 42",
+      "country": "DE",
+      "category": "machine_gun",
+      "availableFrom": "1942-01-01",
+      "certainty": "ALTA",
+      "sources": [],
+      "notes": "PROIBIDA em M01 (Prompt §78/§79)."
+    }
+  ]
+}
