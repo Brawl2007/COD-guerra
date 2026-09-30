@@ -4,13 +4,23 @@ Vertical slice original de um FPS single-player ambientado na França de 1944. O
 
 O renderer 3D usa câmera em perspectiva, malhas iluminadas, névoa, sombras projetadas simplificadas, partículas, uma M1 Carbine animada com braços e soldados humanoides articulados. A aldeia possui casas com telhados, interiores, estrada, becos, cercas, árvores, vegetação e posições de cobertura. Ele não baixa bibliotecas ou assets em tempo de execução, mantendo o preview autocontido no GitHub Pages.
 
+## Sistemas da V4
+
+- `src/assets/obj-loader.js` carrega os modelos temporários `.obj/.mtl`, inteiramente textuais; a M1 Carbine e os torsos humanoides aliados/inimigos usam esses modelos originais em `assets/models` com fallback procedural. A pipeline `.gltf/.glb` permanece preparada em `src/assets/gltf-loader.js` para assets finais futuros.
+- `src/game/weapon.js` contém perfis de armas extensíveis para dano, cadência, spread, recoil, carregador, recarga, áudio, modelo e animações.
+- `src/game/battle-director.js` coordena intensidade, reforços e áudio distante sem substituir a IA individual.
+- `src/game/grenade.js` implementa arremesso, física, colisão, aviso à IA, explosão e dano radial.
+- `src/core/audio.js` fornece áudio procedural espacial e mantém a API de carregamento de áudio real preparada para os assets binários futuros.
+
+Todos os modelos `.obj/.mtl` em `assets/` foram produzidos originalmente para este projeto e podem ser distribuídos junto com o código. Nenhum asset de Call of Duty ou de outro jogo foi utilizado. Os binários futuros estão documentados em `assets-needed.md` e não fazem parte deste patch.
+
 ## Jogar
 
 ```bash
 npm start
 ```
 
-Acesse `http://localhost:8080`. Use **WASD** para mover, **mouse** para mirar, **clique esquerdo** para atirar, **R** para recarregar e **Shift** para correr. O navegador precisa permitir Pointer Lock e áudio.
+Acesse `http://localhost:8080`. Use **WASD** para mover, **mouse** para mirar, **clique esquerdo** para atirar, **R** para recarregar, **G** para lançar granada e **Shift** para correr. O navegador precisa permitir Pointer Lock e áudio.
 
 ## Abrir no Chromebook com GitHub Pages
 

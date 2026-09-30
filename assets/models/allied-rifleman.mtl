@@ -1,0 +1,20 @@
+newmtl Uniform
+Kd 0.31 0.34 0.21
+Ka 0.08 0.08 0.08
+Ns 24
+
+newmtl Face
+Kd 0.48 0.35 0.25
+Ka 0.08 0.08 0.08
+Ns 24
+
+newmtl Helmet
+Kd 0.27 0.3 0.18
+Ka 0.08 0.08 0.08
+Ns 24
+
+newmtl Webbing
+Kd 0.14 0.09 0.045
+Ka 0.08 0.08 0.08
+Ns 24
+
