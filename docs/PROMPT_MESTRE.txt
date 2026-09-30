@@ -1,0 +1,2631 @@
+COD-GUERRA — PROMPT MESTRE COMPLETO
+=====================================
+
+VERSÃO APRIMORADA — 30/09/2026
+Este é o prompt consolidado para implementação; não é declaração de jogo pronto.
+Ordem de leitura: contrato/diagnóstico (69–70), batalha e brutalidade (71–72), marcos (77), índice (52), fontes (78), missão em trabalho (79) e validação/retomada (80–82).
+Os roteiros e critérios novos têm precedência nas correções indicadas, preservando o escopo das demais seções.
+
+REPOSITÓRIO
+Brawl2007/COD-guerra
+
+OBJETIVO
+Transformar o protótipo atual em uma campanha FPS cinematográfica da Segunda Guerra Mundial, original, historicamente fundamentada e inspirada na intensidade, ritmo e imersão de FPS militares clássicos como Call of Duty 1, Call of Duty 2 e World at War, SEM copiar código, mapas, personagens, modelos, texturas, áudio, diálogos, músicas ou outros assets proprietários.
+
+QUALIDADE > VELOCIDADE.
+UMA MISSÃO EXCELENTE > MUITAS MISSÕES RUINS.
+GAMEPLAY REAL > CÓDIGO QUE SÓ EXISTE NO REPOSITÓRIO.
+
+============================================================
+1. REGRAS DE DESENVOLVIMENTO
+============================================================
+
+Leia TODO o projeto antes de alterar qualquer coisa.
+
+Preserve tudo que já funciona:
+- movimentação;
+- câmera;
+- tiro;
+- recarga;
+- dano;
+- checkpoints;
+- objetivos;
+- AI;
+- granadas;
+- BattleDirector;
+- World;
+- Mission;
+- Player;
+- GitHub Pages;
+- testes.
+
+NÃO recomece do zero.
+NÃO destrua sistema funcional sem substituição pronta.
+
+Fluxo obrigatório:
+ANALISAR → IMPLEMENTAR → EXECUTAR → JOGAR → TESTAR → CORRIGIR → RETESTAR → POLIR.
+
+Não considerar pronto só porque compilou ou npm test passou.
+
+============================================================
+2. ENGINE GRÁFICA / BUILD
+============================================================
+
+Migrar progressivamente a camada visual para Three.js + Vite, preservando gameplay útil por adaptador e corrigindo contratos espaciais quando necessário.
+
+Usar WebGLRenderer/WebGL2, PerspectiveCamera, GLTFLoader oficial, AnimationMixer, materiais PBR, luz direcional/ambiente, sombras, fog, tone mapping, InstancedMesh, LOD, frustum culling e partículas conforme orçamento medido.
+
+Para GitHub Pages de projeto, configurar base '/COD-guerra/' e publicar dist/. Criar scripts reais de dev/test/build/preview e dependências compatíveis; gerar e versionar o lockfile antes de validar npm ci. Atualizar o workflow existente, sem dois deploys concorrentes.
+
+Fluxo depois da configuração: instalação limpa → testes relevantes → npm run build → servir dist sob o prefixo correto → verificação no navegador. Alvo: Chrome/ChromeOS. Usar as correções da seção 70 e metas medidas da seção 75.
+
+============================================================
+3. ASSET PIPELINE
+============================================================
+
+Criar AssetManager central.
+
+Suportar:
+- GLB;
+- GLTF;
+- OBJ fallback;
+- texturas;
+- áudio;
+- animações;
+- cache.
+
+Criar:
+ASSET_PIPELINE.md
+ASSET_CREDITS.md
+assets-needed.md
+
+Se PR não aceitar binários:
+- não perder trabalho;
+- não usar Base64 gigante;
+- manter código/fallback;
+- documentar cada binário necessário;
+- adicionar binários manualmente depois.
+
+Somente assets:
+- originais;
+- CC0;
+- domínio público;
+- licença permissiva/documentada.
+
+Nunca usar assets extraídos de COD.
+
+============================================================
+4. ARMAS — IDENTIDADE COMPLETA
+============================================================
+
+Cada arma deve ter:
+- modelo 3D próprio;
+- silhueta própria;
+- materiais próprios;
+- mira própria;
+- posição nas mãos própria;
+- recoil próprio;
+- cadência própria;
+- som próprio;
+- reload próprio;
+- muzzle flash próprio;
+- animações próprias.
+
+O jogador deve reconhecer armas pela aparência, som, cadência e comportamento.
+
+Criar ViewModel:
+- arma;
+- braços;
+- mãos;
+- magazine;
+- bolt;
+- muzzle.
+
+Estados:
+IDLE
+WALK
+SPRINT
+AIM
+FIRE
+RELOAD
+EMPTY_RELOAD
+EQUIP
+HOLSTER
+
+Implementar:
+- recoil vertical/horizontal;
+- camera kick;
+- weapon kick;
+- recoil recovery;
+- sway;
+- walking bob;
+- sprint bob;
+- ADS;
+- spread;
+- accuracy por movimento;
+- muzzle flash;
+- muzzle smoke;
+- casing ejection;
+- hit reaction;
+- recarga real;
+- manipulação de ferrolho quando necessário.
+
+Sistema data-driven:
+id
+name
+damage
+headMultiplier
+fireRate
+magazine
+reserve
+reloadTime
+recoil
+spread
+range
+model
+animations
+sounds
+
+Preparar suporte para:
+Mauser polonês wz.29 / wz.98a
+Browning polonês wz.28
+Vis wz.35
+ckm wz.30 quando confirmado para a função/unidade
+M1 Carbine
+M1 Garand
+Thompson
+BAR
+Springfield
+Colt 1911
+Kar98k
+MP40
+MG34
+MG42
+Luger
+Lee-Enfield
+Bren
+Sten
+Mosin-Nagant
+PPSh-41
+Arisaka
+Type 100
+armas antitanque adequadas.
+
+Não implementar todas superficialmente. Fazer uma excelente primeiro.
+
+============================================================
+5. SOM ÚNICO DE CADA ARMA
+============================================================
+
+Cada arma precisa de assinatura sonora própria.
+
+Variantes:
+- tiro próximo;
+- médio;
+- distante;
+- interior;
+- exterior.
+
+Camadas:
+- transient;
+- body;
+- mechanical;
+- environment tail.
+
+Nunca usar áudio proprietário de COD.
+
+============================================================
+6. SOLDADOS HUMANOS
+============================================================
+
+Eliminar aparência de manequim geométrico.
+
+Cada soldado:
+- rosto;
+- cabeça;
+- pescoço;
+- torso;
+- braços;
+- mãos;
+- pernas;
+- botas;
+- capacete;
+- equipamento;
+- mochila;
+- bolsas;
+- munição;
+- arma.
+
+Usar personagens riggados.
+
+============================================================
+7. ROSTOS E VARIAÇÃO
+============================================================
+
+Não repetir o mesmo rosto.
+
+Variar:
+- formato facial;
+- nariz;
+- mandíbula;
+- sobrancelha;
+- cabelo;
+- idade aparente;
+- barba;
+- sujeira;
+- pequenos ferimentos;
+- expressão.
+
+Personagens recorrentes podem usar rosto mais detalhado.
+
+Expressões:
+NEUTRAL
+ALERT
+FEAR
+ANGER
+PAIN
+FATIGUE
+
+Adicionar:
+- blink;
+- look-at;
+- head tracking;
+- lip sync aproximado.
+
+============================================================
+8. UNIFORMES HISTÓRICOS
+============================================================
+
+REGRA:
+NÃO EXISTE “SOLDADO GENÉRICO DA SEGUNDA GUERRA”.
+
+Uniforme depende de:
+- país;
+- unidade;
+- ano;
+- teatro;
+- estação;
+- patente;
+- função.
+
+Criar UniformDefinition.
+
+Representar corretamente, conforme missão:
+- Polônia;
+- Reino Unido/Commonwealth;
+- US Army;
+- Airborne;
+- Armored;
+- US Marines;
+- União Soviética;
+- Alemanha/Heer;
+- Fallschirmjäger apenas quando histórico;
+- tripulações blindadas;
+- Japão.
+
+Não misturar equipamentos sem contexto.
+
+Variar dentro da mesma unidade:
+- rosto;
+- capacete;
+- webbing;
+- bolsas;
+- cantil;
+- mochila;
+- sujeira;
+- desgaste;
+- mangas;
+- acessórios;
+- arma.
+
+Criar AssetVariationSystem:
+head
+uniform
+helmet
+webbing
+backpack
+pouches
+weapon
+
+============================================================
+9. PATENTES E FUNÇÕES
+============================================================
+
+Criar hierarquia:
+private
+corporal
+sergeant
+lieutenant
+captain
+e equivalentes corretos de cada país.
+
+Distinguir visualmente:
+- rifleman;
+- medic;
+- radio operator;
+- NCO;
+- officer;
+- machine gunner;
+- assistant gunner;
+- tank crew.
+
+Sargento deve:
+- dar ordens;
+- mandar avançar;
+- mandar suprimir;
+- apontar posição;
+- reagrupar;
+- coordenar flanco.
+
+Ordens precisam alterar comportamento real.
+
+============================================================
+10. ANIMAÇÕES
+============================================================
+
+AnimationController com:
+- idle;
+- idle variations;
+- walk;
+- jog;
+- sprint;
+- crouch;
+- crouch walk;
+- aim;
+- hip fire;
+- aimed fire;
+- reload;
+- hit front/back/side;
+- grenade throw;
+- death front/back/side;
+- open door;
+- help wounded;
+- use radio;
+- carry ammunition;
+- mount MG;
+- exit vehicle;
+- binoculars.
+
+Usar animation blending.
+
+Evitar:
+- foot sliding;
+- braços atravessando arma;
+- cabeça girando demais;
+- magazine inexistente na recarga;
+- todos os NPCs sincronizados.
+
+Adicionar Foot IK / Aim IK quando viável.
+
+============================================================
+11. HITBOXES, FERIMENTOS E MORTE
+============================================================
+
+Separar cabeça, torso e membros quando suportado pelo rig/hitboxes; dano e multiplicadores são dados por arma/condição. Acertos dependem da trajetória em 3D e da primeira obstrução real.
+
+Usar reações visíveis, variedade de queda, estados de ferido/incapacitado/morto e persistência coerente. Soldado morto não continua atacando, não se levanta ao trocar LOD e não some imediatamente diante do jogador.
+
+Mostrar violência adulta de guerra, sangue, ferimentos graves, mutilações por explosões e queimaduras quando coerentes com o evento e o roteiro, com intensidade visual ajustável. Não repetir desmembramento em toda morte nem transformar sofrimento em pontuação. Aplicar direção humana e condições da seção 72.
+
+============================================================
+12. IA — NÃO FICAR PARADO ATIRANDO
+============================================================
+
+Estados:
+IDLE
+PATROL
+ALERT
+INVESTIGATE
+TAKE_COVER
+MOVE_TO_COVER
+PEEK
+AIM
+FIRE
+SUPPRESS
+ADVANCE
+FLANK
+RETREAT
+THROW_GRENADE
+RELOAD
+WOUNDED
+DEAD
+
+A IA avalia:
+- visão;
+- som;
+- última posição vista;
+- distância;
+- cobertura;
+- munição;
+- granadas;
+- aliados;
+- rota;
+- objetivo;
+- supressão;
+- perigo.
+
+Não dar wallhack.
+
+Percepção:
+VISION
+HEARING
+ALLY_REPORT
+
+Memória:
+- última posição;
+- direção;
+- última ameaça.
+
+============================================================
+13. FIRE AND MANEUVER
+============================================================
+
+Implementar combate de equipe.
+
+Exemplo:
+grupo A suprime;
+grupo B avança;
+depois alternam.
+
+NPCs devem:
+- mudar de cobertura;
+- flanquear;
+- suprimir;
+- recarregar em proteção;
+- reagir a granada;
+- investigar som;
+- recuar quando necessário;
+- comunicar contato.
+
+Se todos ficarem parados trocando tiros, a IA falhou.
+
+============================================================
+14. COVER SYSTEM
+============================================================
+
+Tipos:
+LOW_COVER
+HIGH_COVER
+WINDOW
+DOORWAY
+WALL_CORNER
+SANDBAG
+TRENCH
+VEHICLE
+BUILDING_CORNER
+
+Avaliar:
+- ameaça;
+- direção;
+- ocupação;
+- distância;
+- qualidade;
+- rota;
+- linha de tiro.
+
+Reservar cover nodes.
+
+============================================================
+15. SUPRESSÃO / FLANCO / PEEK
+============================================================
+
+Sob supressão:
+- abaixar;
+- hesitar;
+- procurar cobertura;
+- piorar precisão;
+- esperar oportunidade.
+
+Flanco:
+- beco;
+- lateral;
+- casa;
+- muro;
+- outra janela.
+
+Sem teleport.
+
+Peek:
+- esconder;
+- observar;
+- aparecer;
+- atirar;
+- voltar.
+
+============================================================
+16. GRANADAS
+============================================================
+
+Implementar:
+- trajectory;
+- bounce;
+- fuse;
+- radius;
+- line-of-sight damage;
+- VFX;
+- áudio;
+- AI warning;
+- AI flee.
+
+IA verifica trajetória e aliados próximos.
+
+Ao detectar:
+- grita aviso;
+- corre;
+- procura cobertura;
+- interrompe ação.
+
+============================================================
+17. SQUAD SYSTEM
+============================================================
+
+Papéis:
+SQUAD_LEADER
+RIFLEMAN
+ASSAULT
+SUPPORT
+SCOUT
+MEDIC
+RADIO_OPERATOR
+
+Não formar fila atrás do jogador.
+
+Usar:
+- espaçamento;
+- formações;
+- cover assignment;
+- fire and maneuver.
+
+Formações:
+COLUMN
+LINE
+WEDGE
+DISPERSED
+
+============================================================
+18. MEDIC / FERIDOS
+============================================================
+
+Alguns feridos podem:
+- cair;
+- pedir médico;
+- rastejar;
+- receber ajuda;
+- ser carregados/atendidos em cenas.
+
+Usar com moderação.
+
+============================================================
+19. IA, DISTÂNCIA E ORÇAMENTO
+============================================================
+
+Próximo: comportamento e animação completos para os atores relevantes. Médio: movimento/combate simplificados com posições e estados persistentes. Distante: evolução de setor, formação e eventos coerentes, sem milhares de rigs completos.
+
+Começar com orçamento compatível com 15–30 soldados visíveis de alto detalhe nas cenas relevantes, ajustando pelo hardware e pelo perfil de custo. Representações eficientes podem ampliar o panorama; não anunciar esse número como limite de toda a batalha.
+
+Frustum culling e LOD não param o combate nem reiniciam entidades. Percepção, tiro, colisão e resultados precisam corresponder à representação observada. Ver seções 71 e 75.
+
+============================================================
+20. BATTLE DIRECTOR
+============================================================
+
+Coordenar preparação, contato, combate, clímax e aftermath com o NarrativeDirector. Manter também agenda e estado de batalha de setores independentes do jogador.
+
+Controlar reforços com via de entrada, fogo de apoio, ataques/recuos, comunicação, atividade aérea/naval quando adequada e consequências. Usar condição tática e relógio de simulação além de gatilhos por área.
+
+Eventos possuem IDs estáveis, pré-condições, resultados e estado serializável. Não depender de a câmera ver o evento para ele existir. Ao mesmo tempo, objetivos obrigatórios têm condições de prontidão e avisos; não impor falha silenciosa fora de alcance.
+
+Aplicar os três níveis de distância, continuidade de setor e provas da seção 71.
+
+============================================================
+21. BATALHA PRÓXIMA, MÉDIA E LONGA
+============================================================
+
+A guerra acontece na frente, nos lados, na retaguarda, no céu e no mar quando historicamente apropriado. O jogador não inicia toda a operação nem concentra todos os inimigos à sua volta.
+
+Mostrar outros pelotões avançando, defendendo, retirando feridos, operando armas, recebendo suprimentos e recuando. Em média distância, ações precisam ser observáveis; em longa distância, panorama e som mostram evolução e consequências reais do estado da batalha.
+
+Não basta uma trilha repetida de tiros ou explosões decorativas. Origem, destino, atraso sonoro, fumaça, baixas, veículos e relatos devem concordar. Virar a câmera não pausa nem reinicia a ação. As implementações e critérios detalhados estão na seção 71.
+
+============================================================
+22. LEVEL DESIGN / CENÁRIO
+============================================================
+
+Eliminar sensação de grid.
+
+Aumentar:
+DENSIDADE
+QUALIDADE
+NATURALIDADE
+
+Campanha linear, mas com alternativas:
+- rua;
+- beco;
+- casa;
+- quintal;
+- brecha;
+- interior;
+- muro.
+
+Cada ambiente precisa refletir região real.
+
+============================================================
+23. INTERIORES
+============================================================
+
+Edifícios acessíveis com:
+- portas;
+- janelas;
+- salas;
+- móveis;
+- cobertura;
+- escadas;
+- segundo piso quando adequado.
+
+IA pode ocupar interiores e janelas.
+
+============================================================
+24. MATERIAIS / TEXTURAS
+============================================================
+
+stone
+brick
+concrete
+plaster
+wood
+metal
+dirt
+grass
+fabric
+glass
+
+PBR:
+albedo
+normal
+roughness
+AO
+
+Não usar só cores sólidas.
+
+============================================================
+25. TERRENO / VEGETAÇÃO / CÉU
+============================================================
+
+Terreno:
+- irregularidade;
+- estrada;
+- terra;
+- lama;
+- grama;
+- crateras;
+- elevação.
+
+Vegetação:
+- árvores;
+- arbustos;
+- grama;
+- vegetação regional.
+
+Céu:
+- gradient/sky dome;
+- nuvens;
+- haze;
+- horizonte.
+
+============================================================
+26. ILUMINAÇÃO
+============================================================
+
+Criar iluminação cinematográfica e legível.
+
+Usar:
+- luz solar;
+- Hemisphere/Ambient;
+- DirectionalLight;
+- sombras;
+- fog;
+- haze;
+- tone mapping.
+
+Não esconder gráfico ruim com escuridão.
+
+============================================================
+27. VFX
+============================================================
+
+VFXManager:
+- muzzle flash;
+- muzzle smoke;
+- impact;
+- sparks;
+- wood splinters;
+- dust;
+- fire;
+- smoke;
+- explosion;
+- debris;
+- shell casings.
+
+Materiais:
+WOOD = lascas
+STONE = poeira
+METAL = faísca
+DIRT = poeira
+GLASS = fragmentação simples
+
+============================================================
+28. ARTILHARIA / MORTEIRO / MG
+============================================================
+
+Artilharia:
+- whistle;
+- impact;
+- explosion;
+- dust;
+- camera shake.
+
+Morteiros:
+- eventos roteirizados;
+- aviso;
+- reação da IA.
+
+MG:
+- posições fixas;
+- operadores;
+- supressão;
+- reload plausível.
+
+============================================================
+29. DESTRUIÇÃO
+============================================================
+
+Destruição roteirizada:
+- janela;
+- porta;
+- seção de parede;
+- caixa;
+- barril;
+- fachada.
+
+Não precisa física destrutiva total.
+
+============================================================
+30. AUDIO MANAGER
+============================================================
+
+Suportar:
+- positional audio;
+- attenuation;
+- variação;
+- prioridade;
+- occlusion;
+- interior/exterior.
+
+Canais:
+MASTER
+MUSIC
+WEAPONS
+VOICES
+EXPLOSIONS
+AMBIENCE
+VEHICLES
+UI
+
+Interior:
+- reverberação;
+- tiros externos abafados;
+- menos agudos.
+
+============================================================
+31. DIÁLOGOS / SUBTÍTULOS
+============================================================
+
+DialogueSystem.
+
+Callouts:
+- inimigo;
+- janela;
+- MG;
+- granada;
+- recarregando;
+- avançar;
+- cobertura;
+- tanque;
+- médico;
+- artilharia.
+
+Fala precisa corresponder ao evento real.
+
+Legenda:
+NOME: fala
+
+============================================================
+32. CUTSCENES
+============================================================
+
+Criar CutsceneDirector.
+
+Controlar:
+- câmera;
+- jogador;
+- NPC;
+- animações;
+- diálogos;
+- áudio;
+- explosões;
+- veículos;
+- portas;
+- luz;
+- objetivos;
+- transições.
+
+Preferir cutscenes in-engine.
+
+============================================================
+33. TIMELINE CINEMATOGRÁFICA
+============================================================
+
+Sistema data-driven.
+
+Exemplo:
+0.0s porta abre
+0.8s líder entra
+1.4s soldado mira janela
+2.0s diálogo
+4.8s artilharia
+6.0s reação
+7.0s controle volta
+
+============================================================
+34. CUTSCENES EM PRIMEIRA PESSOA
+============================================================
+
+Priorizar primeira pessoa.
+
+Às vezes jogador pode olhar.
+Às vezes movimento restrito.
+Evitar retirar controle por muito tempo.
+
+Permitir câmera tradicional:
+- spline;
+- dolly;
+- pan;
+- close-up;
+- establishing shot.
+
+Permitir skip sem quebrar missão.
+
+============================================================
+35. NARRATIVE DIRECTOR
+============================================================
+
+Criar NarrativeDirector.
+
+Responsável:
+- contexto;
+- personagens;
+- diálogos;
+- sequência;
+- emoção;
+- briefing;
+- debrief.
+
+BattleDirector = guerra.
+NarrativeDirector = história.
+
+============================================================
+36. MISSION SCRIPT / EVENT BUS
+============================================================
+
+Fases:
+INTRO
+SETUP
+BUILDUP
+FIRST_CONTACT
+MAIN_COMBAT
+SET_PIECE
+CLIMAX
+AFTERMATH
+OUTRO
+
+Eventos:
+PLAYER_ENTER_AREA
+SQUAD_REACHED_POSITION
+ENEMY_GROUP_DEFEATED
+BUILDING_CLEARED
+ARTILLERY_STARTED
+VEHICLE_DESTROYED
+ALLY_WOUNDED
+RADIO_ACTIVATED
+CUTSCENE_COMPLETE
+
+============================================================
+37. DIREÇÃO DE ATORES
+============================================================
+
+NPCs durante diálogo:
+- limpam arma;
+- olham janela;
+- carregam munição;
+- usam mapa;
+- apontam;
+- caminham;
+- ajudam ferido;
+- usam rádio.
+
+Nunca ficar como estátua.
+
+============================================================
+38. PERSONAGENS RECORRENTES
+============================================================
+
+Criar personagens originais:
+- líder;
+- veterano;
+- recruta;
+- metralhador;
+- médico;
+- operador de rádio.
+
+Cada um:
+name
+personality
+role
+speech style
+relationships
+development arc
+
+Criar STORY_BIBLE.md.
+
+============================================================
+39. RITMO
+============================================================
+
+CALM
+TENSION
+CONTACT
+COMBAT
+SILENCE
+ESCALATION
+CLIMAX
+AFTERMATH
+
+Não ter explosão o tempo inteiro.
+
+Após combate:
+- vento;
+- fogo;
+- tiros distantes;
+- respiração;
+- conversa baixa.
+
+============================================================
+40. TANQUES
+============================================================
+
+Criar TankController.
+
+Separar:
+- hull;
+- turret;
+- cannon;
+- coax MG.
+
+Comportamento:
+- peso;
+- aceleração;
+- frenagem;
+- giro;
+- terreno;
+- colisão.
+
+Tripulação:
+commander
+driver
+gunner
+loader
+bow gunner quando aplicável.
+
+Combate:
+- blindagem;
+- direção do impacto;
+- ricochet visual;
+- componentes simplificados;
+- infantaria cooperando.
+
+Usar apenas tanques corretos para batalha/data.
+
+============================================================
+41. JEEP / CARRO / CAMINHÃO
+============================================================
+
+Criar veículos leves.
+
+Jogador pode:
+- dirigir;
+- ser passageiro;
+- operar arma montada.
+
+Comboios:
+- formação;
+- velocidade;
+- parada;
+- desembarque;
+- reação a emboscada.
+
+============================================================
+42. AVIÕES
+============================================================
+
+Criar AircraftController.
+
+Modelo de voo acessível:
+speed
+pitch
+roll
+yaw
+altitude
+stall simplificado
+damage
+
+Missões:
+- interceptação;
+- escolta;
+- ataque ao solo;
+- reconhecimento;
+- defesa de bombardeiros.
+
+Cockpit:
+- mira;
+- canopy;
+- instrumentos básicos.
+
+IA:
+PATROL
+INTERCEPT
+PURSUE
+EVADE
+ATTACK
+DISENGAGE
+RETURN
+
+Adicionar AA/flak quando histórico.
+
+============================================================
+43. PERFORMANCE
+============================================================
+
+Perfis:
+LOW
+MEDIUM
+HIGH
+
+Configurar:
+- shadows;
+- draw distance;
+- particles;
+- vegetation;
+- LOD;
+- AI LOD;
+- resolution scaling.
+
+Usar:
+- InstancedMesh;
+- pooling;
+- shared materials;
+- shared geometry;
+- culling;
+- AI tick throttling.
+
+============================================================
+44. DEBUG
+============================================================
+
+Debug opcional:
+- FPS;
+- draw calls;
+- triangles;
+- active AI;
+- particles;
+- cover nodes;
+- spawn points;
+- AI state;
+- paths;
+- hitboxes;
+- BattleDirector;
+- timeline;
+- mission state.
+
+============================================================
+45. HISTÓRIA REAL — REGRA ABSOLUTA
+============================================================
+
+NÃO usar:
+- cidades fictícias;
+- aldeias inventadas;
+- batalhas inventadas apresentadas como reais;
+- operações falsas;
+- geografia aleatória.
+
+Cada missão:
+LUGAR REAL
++ DATA REAL
++ BATALHA/OPERAÇÃO REAL
++ UNIDADE REAL
++ EQUIPAMENTO COMPATÍVEL.
+
+Personagens podem ser fictícios.
+Não mudam resultado histórico.
+
+============================================================
+46. CRONOLOGIA
+============================================================
+
+Começa:
+1 DE SETEMBRO DE 1939
+
+Termina:
+2 DE SETEMBRO DE 1945
+
+Avançar cronologicamente.
+
+Sempre mostrar:
+LOCAL
+DATA
+UNIDADE
+OPERAÇÃO
+CONTEXTO
+
+============================================================
+47. MAPAS REAIS
+============================================================
+
+Pesquisar:
+- mapas militares;
+- fotos aéreas;
+- fotografias da época;
+- topografia;
+- estradas;
+- rios;
+- pontes;
+- elevações;
+- costa;
+- edifícios;
+- fortificações.
+
+Criar:
+missions/<mission>/HISTORICAL_RESEARCH.md
+
+Classificar:
+EXACT
+RECONSTRUCTED
+COMPRESSED_FOR_GAMEPLAY
+
+Preservar orientação, marcos e terreno.
+
+============================================================
+48. UNIDADES / EQUIPAMENTO
+============================================================
+
+Registrar:
+UNIT
+DIVISION
+REGIMENT/BATTALION quando possível.
+
+Criar:
+equipment-timeline.json
+
+Não colocar arma/veículo/uniforme fora da data.
+
+============================================================
+49. HISTÓRIA VS DRAMATIZAÇÃO
+============================================================
+
+Classificar:
+DOCUMENTED
+RECONSTRUCTED
+GAMEPLAY_DRAMATIZATION
+
+Não apresentar dramatização como fato.
+
+============================================================
+50. FONTES
+============================================================
+
+Criar:
+research/SOURCES.md
+
+Priorizar:
+- museus;
+- arquivos nacionais;
+- história militar oficial;
+- mapas;
+- fotos documentadas;
+- livros acadêmicos;
+- fontes primárias.
+
+Cada missão precisa de fontes de:
+- cronologia;
+- unidade;
+- mapa;
+- visual;
+- equipamento.
+
+============================================================
+51. PROTAGONISTAS
+============================================================
+
+Criar arcos distintos:
+- soldado polonês;
+- britânico/Commonwealth;
+- soviético;
+- americano na Europa;
+- Marine no Pacífico;
+- piloto quando necessário.
+
+Não teletransportar o mesmo personagem por todas as frentes.
+
+============================================================
+52. CAMPANHA — 30 MISSÕES EM ORDEM CRONOLÓGICA
+============================================================
+
+Índice consolidado. Os roteiros completos, elenco, falas, progressão e checkpoints estão na seção 79. As mudanças de data dentro de uma missão aparecem no jogo e no save.
+
+01 | 1/9/1939 | Tczew | A primeira manhã | pontes, bombardeio, engenheiros e retirada.
+02 | 9–10/9/1939 | Bzura/Łęczyca | Contra-ataque | ofensiva, ligação, suprimento e retirada posterior.
+03 | 25/9/1939 | Varsóvia | Cidade cercada | defesa urbana, civis e evacuação.
+04 | 31/5/1940 | Dunquerque | Até o mar | retaguarda, perímetro e embarque.
+05 | 15/9/1940 | Inglaterra | Céu em chamas | Hurricane/RAF 303, interceptação e retorno.
+06 | 14/4/1941 | Tobruk | Perímetro | defesa australiana e ligação de postos.
+07 | 7–8/12/1941 | Kryukovo/Moscou | Inverno | avanço, evacuação e contra-ataque.
+08 | 7–8/8/1942 | Guadalcanal | Watchtower | desembarque com pouca oposição inicial e ocupação do campo.
+09 | 14–15/9/1942 | Stalingrado | O Volga | travessia, reunião e manutenção da ligação.
+10 | 14/10/1942 | Stalingrado | Fábrica | oficinas, ruptura e recuo local.
+11 | 23/10/1942 | El Alamein | Noite no deserto | artilharia, corredor e consolidação.
+12 | 20/2/1943 | Kasserine | Primeiro sangue | defesa, ruptura e retirada.
+13 | 12/7/1943 | Prokhorovka/Kursk | Aço | combate de tanque T-34/76.
+14 | 14/7/1943 | Gela–Niscemi | Estradas sicilianas | jeep, suprimento e deslocamento.
+15 | 20/11/1943 | Betio/Tarawa | Além do recife | onda posterior, água e consolidação.
+16 | 17–18/5/1944 | Monte Cassino | Montanha | encosta, feridos e reconhecimento após retirada alemã.
+17 | 6/6/1944, madrugada | Sainte-Mère-Église | Antes do amanhecer | salto e ligação entre grupos.
+18 | 6/6/1944, manhã | Omaha/Fox Green | Overlord | desembarque e objetivo acima da praia.
+19 | 13/6/1944 | Caumont/Normandia | Bocage | flanco, patrulha e transporte.
+20 | 17–25/9/1944 | Arnhem/Oosterbeek | Uma ponte longe demais | aproximação, perímetro e retirada.
+21 | 2/11/1944 | Vossenack/Hürtgen | Floresta | avanço, artilharia e evacuação.
+22 | 16–17/12/1944 | Clervaux/Ardenas | Ofensiva | ruptura e resistência local.
+23 | 23–26/12/1944 e 13/1/1945 | Bastogne/Foy | Cercados | perímetro, corredor e ataque de janeiro.
+24 | 19/2/1945 | Iwo Jima | Areia negra | primeiro dia de desembarque e consolidação.
+25 | 7/3/1945 | Remagen | Ponte ainda de pé | travessia e cabeça de ponte.
+26 | 1/4/1945 | Hagushi/Okinawa | L-Day | desembarque inicial e reconhecimento.
+27 | 16/4/1945 | Seelow | Portões de Berlim | objetivo local da ofensiva.
+28 | 1–2/5/1945 | Berlim | Últimos quarteirões | combate urbano e cessar-fogo.
+29 | 28–29/5/1945 | Wana/Shuri, Okinawa | Shuri | desgaste, retirada japonesa e consolidação.
+30 | 2/9/1945 | Baía de Tóquio/epílogos separados | Silêncio | rendição formal e consequências.
+
+============================================================
+53. ABERTURA DA PRIMEIRA MISSÃO
+============================================================
+
+Tela preta: vento e água. Cartela: TCZEW, POLÔNIA — 1 DE SETEMBRO DE 1939 — 04:30.
+
+Fade para o posto de Jan Wrona: soldados tomam café, conferem armas, observam o céu; Zieliński conversa com o engenheiro Krawiec junto de um mapa. Jan pode andar. O contexto inicial e os personagens são dramatização; local, unidade, operação e cronologia vêm da pesquisa.
+
+O prelúdio conduz ao bombardeio das 04:34, com aproximação de aeronaves observável/ouvida à distância. Alarme, poeira, ferido arrastado e ordens iniciam a reorganização. Outros postos também reagem independentemente do jogador.
+
+Tutorial orgânico de andar, observar, cobertura, mira, tiro/recarga e interação; não prender o jogador num manual. Usar armamento polonês de 1939 e mapa reconhecível, sem M1 Carbine ou renomear o antigo cenário francês. A progressão integral e os checkpoints de M01 estão na seção 79.
+
+============================================================
+54. ESTRUTURA DE CADA MISSÃO
+============================================================
+
+1. CONTEXTO
+2. INTRO
+3. APROXIMAÇÃO
+4. DIÁLOGO
+5. PRIMEIRO CONTATO
+6. ESCALADA
+7. COMBATE PRINCIPAL
+8. SET-PIECE
+9. PAUSA
+10. CLÍMAX
+11. CONSEQUÊNCIA
+12. DEBRIEF
+
+Nunca:
+spawn → matar → objetivo → fim.
+
+============================================================
+55. MOMENTO MEMORÁVEL
+============================================================
+
+Cada missão precisa ter pelo menos um momento memorável criado pela combinação de:
+- cenário;
+- som;
+- personagens;
+- gameplay;
+- história.
+
+Não depender apenas de grande explosão.
+
+============================================================
+56. AMBIENT STORYTELLING
+============================================================
+
+Usar:
+- equipamento abandonado;
+- veículos queimados;
+- mapas;
+- casas evacuadas;
+- crateras;
+- posições defensivas;
+- paredes danificadas;
+- feridos;
+- munição;
+- bloqueios.
+
+============================================================
+57. CRUELDADE E CONSEQUÊNCIAS DA GUERRA
+============================================================
+
+Mostrar medo, exaustão, sangue, ferimentos graves, mortes, corpos, queimaduras, perdas permanentes, sofrimento civil, destruição e trabalho de socorro com direção adulta e humana inspirada no peso de World at War.
+
+A violência afeta personagens, atuação, recursos e cenas posteriores. Inimigos podem demonstrar medo ou render-se; sobreviventes podem continuar feridos. Não repetir a morte de um amigo como clímax universal.
+
+Oferecer intensidade visual ajustável, preservando história e consequências por atuação/som. Não premiar atrocidades, fazer humor com genocídio ou atribuir crime inventado a pessoa/unidade histórica. Aplicar as regras detalhadas da seção 72.
+
+============================================================
+58. STORY BIBLE / SCRIPT / DADOS DE MISSÃO
+============================================================
+
+Criar STORY_BIBLE.md e missions/<id>/SCRIPT.md para as 30 missões; os roteiros da seção 79 são a base integral da progressão.
+
+Incluir contexto, fontes, certeza histórica, data/local/unidade, elenco/continuidade, equipamento, geografia, objetivos, timelines, falas, atuação, set-pieces, inimigos, aliados, veículos, cutscenes, skip, checkpoints e estado final.
+
+Adicionar dados de missão com IDs estáveis, condições de ativação/conclusão/falha, eventos idempotentes e ligação ao save. Cada missão inclui os setores de batalha independentes apropriados ao contexto, mais condição humana de entrada/saída.
+
+Usar contrato da seção 74, pesquisa da seção 78 e validação da seção 80. Documento de roteiro não conta como missão implementada.
+
+============================================================
+59. TESTES E PLAYTEST
+============================================================
+
+Preservar testes úteis de armas, AI, cobertura, granadas, diretores, missão, checkpoint, assets, veículos, cutscenes, timeline e savegame. Acrescentar regressões de comportamento real, especialmente obstrução do tiro, save completo, eventos duplicados e continuidade de setores distantes.
+
+Usar testes de navegador para fluxo integrado e carregamento do build sob o prefixo real. Fazer playtest de movimentação, mira, recarga, IA, interiores, objetivos, skip, restauração, veículos, áudio, VFX e desempenho quando o ambiente permitir.
+
+Não chamar teste de estado interno de playtest, nem usar benchmark headless como FPS de Chromebook real. Casos de validação e evidências exigidas estão na seção 80; verificações impossíveis no ambiente ficam explicitamente pendentes.
+
+============================================================
+60. BUGS A PROCURAR
+============================================================
+
+- jogador preso;
+- wall clipping;
+- IA presa;
+- IA atravessando parede;
+- aliados bloqueando jogador;
+- NPC parado;
+- armas flutuando;
+- modelo invertido;
+- escala errada;
+- mãos fora da arma;
+- foot sliding;
+- z-fighting;
+- shadow acne;
+- áudio repetitivo;
+- explosão invisível;
+- spawn visível;
+- checkpoint quebrado;
+- cutscene quebrada;
+- skip quebrando missão;
+- veículo atravessando cenário;
+- granada atravessando parede;
+- FPS baixo.
+
+============================================================
+61. FASES DE IMPLEMENTAÇÃO
+============================================================
+
+0 — Baseline e diagnóstico do protótipo; preservar regressão útil.
+1 — Build/Vite, Three.js integrado, input/áudio, assets e contratos espaciais/checkpoint.
+2 — M01/Tczew completa do início ao fim, cedo no processo, com armamento polonês apropriado.
+3 — Polimento da vertical slice: ViewModel, humanos, uniformes, animações, IA, cobertura, ambiente, VFX, som, cutscenes, feridos e batalha em distâncias.
+4 — Tanque de M13, direção de M14 e avião de M05, cada sistema integrado e validado.
+5 — M02–M07 como primeiro bloco de campanha, ajustando ordem de desenvolvimento às dependências.
+6 — M08–M30 em lotes pequenos, com integração e continuidade testadas.
+7 — Campanha completa, qualidade artística, historicidade, performance, playtest e correções finais.
+
+Não esperar terminar todas as armas e veículos para jogar a primeira missão. Uma M1 pode existir na bancada americana apropriada; ela não deve ser a arma da campanha polonesa. Usar os critérios de cada marco na seção 77.
+
+============================================================
+62. DEVELOPMENT_STATUS E CONTINUIDADE
+============================================================
+
+Criar/atualizar DEVELOPMENT_STATUS.md após cada marco, com CONCLUÍDO, PARCIAL, PENDENTE, BUGS e PRÓXIMO PASSO.
+
+Anexar evidência, comandos/ambiente/resultados, versão de checkout, assets, limitações e próximo arquivo/comando/critério. Interrupção não encerra o plano: retomar do último marco comprovado, revalidando o estado real dos arquivos.
+
+A campanha diferencia PLANEJADA, PROTÓTIPO JOGÁVEL, EM POLIMENTO e VALIDADA. Não transformar planejamento em conclusão. Ver pacote da seção 81.
+
+============================================================
+63. CRITÉRIO DE FALHA
+============================================================
+
+A versão não está pronta se:
+- soldados parecem bonecos;
+- rostos são clones;
+- uniforme é genérico;
+- arma parece bloco;
+- casas parecem caixas;
+- cenário parece grid;
+- mundo está vazio;
+- IA fica parada;
+- batalha depende só do jogador;
+- áudio parece beep;
+- VFX são mínimos;
+- cutscenes parecem manequins;
+- veículo parece só câmera presa num modelo.
+
+============================================================
+64. CRITÉRIO DE SUCESSO
+============================================================
+
+Em alguns minutos de gameplay deve ser possível ver:
+- arma convincente;
+- mãos;
+- recoil;
+- soldados humanos;
+- rostos variados;
+- uniformes corretos;
+- patentes;
+- aliados avançando;
+- IA usando cobertura;
+- flanco;
+- supressão;
+- recarga;
+- granadas;
+- ambiente histórico reconhecível;
+- texturas;
+- sombras;
+- fumaça;
+- impactos;
+- artilharia;
+- diálogo;
+- cutscene;
+- batalha ao fundo;
+- consequência pós-combate.
+
+============================================================
+65. REGRA FINAL
+============================================================
+
+NENHUM SISTEMA DEVE EXISTIR APENAS NO CÓDIGO.
+
+Se implementou:
+uniformes
+IA
+cover
+BattleDirector
+NarrativeDirector
+veículos
+cutscenes
+animações
+áudio
+
+então isso precisa aparecer claramente no gameplay.
+
+============================================================
+66. ENTREGA DO CODEX
+============================================================
+
+Informar IMPLEMENTADO, PARCIAL, PENDENTE, BUGS CONHECIDOS, TESTES EXECUTADOS, PLAYTEST REALIZADO, FPS/TEMPOS DE FRAME OBSERVADOS, ASSETS NECESSÁRIOS, ARQUIVOS ALTERADOS e PRÓXIMO CHECKPOINT.
+
+O relatório descreve o comportamento final e evidências, não apenas quantidade de classes/arquivos. Usar NÃO EXECUTADO ou NÃO MEDIDO quando apropriado. Mostrar quais missões estão realmente validadas.
+
+Criar PR para main no fluxo do projeto, com descrição concreta e validação. Não declarar criado/publicado algo que a ferramenta não confirmou. Se binários bloquearem o patch, preservar código, manter fallback técnico e documentar os arquivos/licenças necessários sem perder trabalho; qualidade final continua pendente até assets adequados entrarem.
+
+Ver seções 69, 80 e 81 para contrato de execução e continuidade.
+
+============================================================
+67. COMANDO DE CONTINUAÇÃO
+============================================================
+
+“Continue o Plano Mestre do último marco comprovado em DEVELOPMENT_STATUS.md. Leia o status, o runbook, os planos, AGENTS.md aplicáveis e os arquivos atuais. Não repita trabalho concluído nem recomece do zero. Verifique o checkout, execute a validação relevante, corrija a falha concreta e prossiga ao próximo critério de aprovação. Preserve o trabalho funcional e atualize evidências/pendências.”
+
+============================================================
+68. OBJETIVO FINAL
+============================================================
+
+Construir um FPS WWII ORIGINAL, cinematográfico, historicamente fundamentado e imersivo.
+
+A campanha deve levar o jogador de 1939 a 1945 por locais e batalhas reais.
+
+O jogador deve sentir que:
+- pertence a uma unidade;
+- NPCs têm vida;
+- soldados não são clones;
+- uniformes coincidem com país/unidade/ano;
+- cada arma tem design, animação e som próprios;
+- tanques, carros e aviões têm sistemas próprios;
+- IA se move, flanqueia, recarrega, reage e coordena;
+- a guerra continua acontecendo ao redor;
+- cutscenes, gameplay e história pertencem ao mesmo mundo;
+- cada missão tem identidade e consequência.
+
+NÃO copiar Call of Duty.
+Usar COD clássico apenas como referência de ritmo, intensidade, clareza e direção cinematográfica.
+
+============================================================
+69. CONTRATO DE EXECUÇÃO — QUALIDADE VERIFICÁVEL E CONTINUIDADE
+============================================================
+
+Você é o Codex responsável pela implementação progressiva deste projeto. Execute o trabalho autorizado no repositório, preserve o que funciona e mantenha cada alteração testável. Este documento contém uma especificação de produto e roteiros; ele não é evidência de que o jogo já foi implementado.
+
+Não prometa um jogo perfeito, ausência absoluta de bugs, gráficos AAA em qualquer Chromebook ou execução ilimitada em segundo plano. Transforme as exigências em critérios observáveis e registre as limitações reais. Qualidade alta é o objetivo; aprovação depende do que foi demonstrado funcionando.
+
+Quando duas instruções deste documento entrarem em conflito, prevalecem as correções consolidadas das seções 69–82, a cronologia revisada da seção 52 e os roteiros da seção 79. Isso não autoriza reduzir a campanha, abandonar armas, veículos, animações, personagens ou substituir mapas por arenas genéricas.
+
+Antes de trabalhar:
+1. Leia AGENTS.md aplicáveis, README, package.json, lockfile, workflows, src/, testes e documentos de progresso existentes. Inspecione todos os sistemas afetados; não tente colocar todos os arquivos e assets do projeto simultaneamente no contexto.
+2. Identifique como iniciar, testar, construir e executar o jogo atual. Rode a validação inicial e registre falhas anteriores à mudança.
+3. Produza um inventário com FUNCIONAL, PARCIAL, AUSENTE e QUEBRADO, incluindo evidência e arquivo responsável. Não confunda uma classe ou função existente com um recurso jogável.
+4. Faça um plano de marcos pequenos, com dependências e condição de aprovação. Corrija a causa da falha antes de expandir o escopo.
+5. Trabalhe até concluir um marco verificável. Não interrompa para perguntar sobre escolhas rotineiras que este documento já define. Registre decisões reversíveis e prossiga dentro da autorização existente.
+
+Documentos duráveis:
+- PROJECT_SPEC.md: requisitos do produto e ligações para este plano e a campanha.
+- IMPLEMENTATION_PLAN.md: marcos, dependências, critérios e estado.
+- DEVELOPMENT_STATUS.md: trabalho comprovado, bugs, pendências e próxima ação concreta.
+- RUNBOOK.md: comandos reais, versões, portas, configuração e diagnóstico.
+- STORY_BIBLE.md: elenco, unidades, relações, ferimentos, perdas e passagens de tempo.
+- research/SOURCES.md: fatos históricos, fontes e incertezas.
+- QUALITY_REPORT.md: evidências técnicas, playtests, desempenho e limitações.
+
+Mantenha AGENTS.md curto, com comandos e links para esses documentos. Não copie o prompt inteiro para AGENTS.md. Consulte a documentação oficial atual do Codex sobre instruções de projeto e tarefas longas; o progresso precisa continuar compreensível após uma interrupção de sessão.
+
+Um marco só está CONCLUÍDO quando a implementação está integrada, a validação relevante passou e o comportamento foi observado. Se o ambiente não permite jogar, marque a verificação manual como PENDENTE, descreva como reproduzi-la e continue o trabalho independente. Nunca invente testes, FPS, screenshots, assets, licenças ou resultados de playtest.
+
+============================================================
+70. CORREÇÕES TÉCNICAS OBRIGATÓRIAS NO PROTÓTIPO
+============================================================
+
+A revisão do protótipo encontrou um renderer WebGL próprio, scripts de iniciar/testar, lógica espacial predominantemente planar, um carregador glTF parcial e um checkpoint que precisa ser auditado como estado de mundo. Revalide esses pontos no checkout atual: o repositório pode ter mudado depois desta revisão.
+
+BUILD E PAGES:
+- Não execute npm ci como se já existisse um lockfile adequado. Configure dependências e scripts de Vite, gere o lockfile com o gerenciador escolhido e então valide uma instalação limpa.
+- Preserve testes Node úteis. Adicione scripts claros para dev, test, build, preview e testes de navegador quando necessários.
+- Use base '/COD-guerra/' para o endereço de projeto no GitHub Pages; ajuste base somente se o endereço real mudar para raiz ou domínio próprio.
+- Atualize o workflow de Pages existente para construir e publicar dist/. Evite dois workflows concorrentes publicando o mesmo site.
+- Teste o build servido sob o prefixo real, incluindo texturas, modelos, áudio, fontes, imports e recarregamento de página. Arquivo que carrega apenas na raiz local não está validado.
+- Use versões compatíveis e documentadas de Node, Three.js, Vite e demais dependências; fixe o estado no lockfile. Não invente flags ou APIs: confira a documentação primária antes de usar uma API incerta.
+- WebGLRenderer atual requer WebGL2. Detecte suporte e apresente uma mensagem legível se estiver indisponível, sem deixar uma tela preta.
+
+MIGRAÇÃO VISUAL:
+- Introduza um adaptador de renderização para manter gameplay e testes úteis enquanto substitui o renderer.
+- Defina metros, eixos, orientação, escala e conversão entre coordenadas antigas e X/Y/Z. Y representa altura na nova cena; não transforme a antiga coordenada planar Y em altura por engano.
+- Migre tiro, colisões verticais, pisos, escadas, hitboxes e linha de visão por contratos explícitos. Preservar a lógica não significa preservar um bug que permite atravessar paredes ou acertar alvos fora da mira.
+- Use GLTFLoader e AnimationMixer oficiais para modelos com rig. Um parser que só retorna posições e nomes de animações não demonstra skinning, hierarquia, UVs, materiais ou animação funcional.
+- Verifique escala, transforms, clips, sockets de mãos, emissor de tiro e colisores ao importar. Modelos sem licença ou sem rig adequado não contam como soldados finais.
+
+COMBATE E IA:
+- O tiro precisa partir de câmera/mira em 3D e respeitar posição real do cano quando uma parede o bloqueia. A inclinação vertical deve influenciar os acertos.
+- Ordene interseções por distância. Uma parede, cobertura ou terreno à frente do soldado impede o acerto, salvo um material com penetração explicitamente implementada e validada.
+- Use uma regra comum de linha de visão e obstrução para jogador e NPCs. Inimigos não podem causar dano através da parede por um teste de distância ou por estarem em estado COVER.
+- Percepção de aliados e inimigos depende de visão, audição e informação comunicada. Não selecionar sempre o inimigo globalmente mais próximo por coordenadas exatas ocultas.
+- Peek precisa mover corpo/arma para uma posição que realmente permite observar ou disparar. Um nome de estado não substitui uma ação visível.
+- Se o pathfinding não encontra caminho, retorne falha ou escolha alternativa alcançável; nunca use diretamente um destino inacessível como solução.
+- Atualize caminhos quando necessário, compartilhe dados estáticos e evite refazer buscas caras para cada soldado a cada frame.
+- Coberturas precisam de geometria, normal, altura, alcance e pontos de exposição. Não chamar qualquer parede adjacente de janela ou cobertura por uma fórmula arbitrária.
+
+CICLO DE VIDA:
+- Garanta um único loop de jogo por instância. Repetir Iniciar, reiniciar missão ou carregar save não cria loops duplicados.
+- Use relógio de simulação para recarga, cooldown, granadas, animações e eventos. Pausa, perda de foco e pointer lock não podem deixar temporizadores avançando de forma incompatível.
+- Na perda de foco, limpe teclas/botões mantidos para evitar movimento ou tiro presos. Explique como retomar o controle.
+- Solicite pointer lock e habilite áudio a partir de interação do usuário. Trate falha da solicitação, pointerlockchange, pointerlockerror e AudioContext suspenso.
+- Cancelar uma missão invalida carregamentos e callbacks antigos. Um GLB que termina de carregar depois não pode reaparecer na missão seguinte.
+- Descarte recursos GPU, listeners, timers e instâncias de áudio no ciclo correto. Assets compartilhados só são descartados quando não há usuários ativos.
+
+CHECKPOINT COMPLETO:
+- Salve versão de schema, missão/fase, relógio, jogador, armas, munição, granadas, veículos, esquadrão, inimigos, estados das coberturas, destruição, objetivos, eventos consumidos, cutscene, setores de batalha e estado do gerador aleatório quando usado.
+- Não salve referências a objetos Three.js, funções, timers nativos ou caches de assets. Salve dados serializáveis e reconstrua as instâncias.
+- Ao morrer, restaure um snapshot coerente. Não restaurar somente posição e vida mantendo inimigos mortos, reforços duplicados e objetivos já avançados.
+- Cada evento importante tem ID estável e execução idempotente. Restaurar ou pular uma cena não repete mortes roteirizadas, explosões, diálogos nem mudanças de fase.
+- Valide versões antigas de save e recuperação de save corrompido sem derrubar a aplicação.
+
+============================================================
+71. A GUERRA ACONTECE AO REDOR, MESMO SEM O JOGADOR
+============================================================
+
+REQUISITO CENTRAL DO USUÁRIO:
+A guerra ocorre em vários lados e distâncias. Ela não começa, para nem reinicia simplesmente porque o jogador chegou, se aproximou ou olhou. Mostrar combates locais, combates de outros setores e a batalha maior como acontecimentos conectados.
+
+O jogador é membro de uma unidade dentro de uma operação. Outros pelotões atacam, defendem, falham, recuam, evacuam feridos e recebem ordens independentemente dele. Uma frente histórica não precisa ter inimigos em 360 graus o tempo todo: distribua posições conforme terreno, linhas amigas/inimigas, céu e mar.
+
+TRÊS CAMADAS COERENTES, COM DISTÂNCIAS AJUSTADAS A CADA MAPA:
+1. Próxima: aproximadamente 0–150 m. Soldados com animação completa, percepção, cobertura, combate, colisão e reações. Interior e cidade exigem limites menores conforme a visibilidade.
+2. Média: aproximadamente 150–800 m. Pelotões em outras ruas, encostas, margens e campos; metralhadoras, veículos, ataques e recuos observáveis. Modelos e decisões simplificados conservam posições, IDs, baixas e objetivo do setor.
+3. Longa: aproximadamente 800 m–5 km quando o cenário comporta essa extensão. Baterias, colunas, aviões, navios, explosões, incêndios, clarões e silhuetas com representação eficiente e evolução de setor. Isso não exige milhares de humanoides com IA completa.
+
+Essas faixas são parâmetros de projeto, não limites artificiais para uma bala, um veículo ou a existência do mundo. Balística, visibilidade, áudio e qualidade gráfica usam regras próprias e compatíveis.
+
+WORLD BATTLE STATE:
+- Mantenha battleClock, setores, facções, posições, força disponível, moral/cohesão, suprimento, ordem atual, eventos agendados, baixas e estado de destruição.
+- Cada evento possui ID, setor, posição de origem/destino, início, duração, condição, resultado e vínculos de áudio/VFX/radio.
+- Um fogo de artilharia distante tem origem e impacto coerentes. A explosão produz fumaça e dano visual que permanecem; o relatório de rádio descreve esse mesmo acontecimento.
+- NPCs de outro setor não ficam imóveis aguardando a presença do jogador. Sua evolução pode usar simulação reduzida e encontros roteirizados com alternativas controladas.
+- Use agenda temporal, condição tática e mensagens entre setores, além de gatilhos por área. Proximidade não pode ser a única condição de toda a batalha.
+- Eventos fundamentais da missão usam tolerância e condições de prontidão. Não fazer o jogador perder silenciosamente um objetivo obrigatório fora de alcance enquanto aprende os controles.
+- O combate progride durante o jogo ativo; menus, pausa e carregamento suspendem o relógio conforme a política documentada. Dificuldade não depende do tempo gasto em menus.
+
+CONTINUIDADE ENTRE NÍVEIS DE DETALHE:
+- Uma entidade ou formação conserva identidade e estado quando muda de distância. Mortos não ressuscitam e tanques destruídos não reaparecem porque o jogador virou a câmera.
+- Ao aproximar, materialize atores compatíveis com o estado do setor; ao afastar, conserve os dados relevantes. Não reinicie a batalha.
+- Se uma unidade distante for atingível ou o jogador puder interferir nela, seu proxy precisa registrar o acerto e atualizar o estado correspondente.
+- Carregamento, culling e frustum servem à apresentação; não autorizam parar a lógica quando o combate sai da tela.
+- Reforços entram por vias de acesso coerentes. Evite spawn visível e aparecimento atrás do jogador em espaço já limpo, salvo infiltração com trajetória e sinais reais.
+
+SOM E LEITURA:
+- Separe tiros próximos, médios e distantes por timbre, volume, cauda e oclusão; não reutilize o mesmo sample com volume diferente para tudo.
+- Explosões muito distantes podem ter clarão antes do som, com atraso físico aproximado configurável e mixagem compreensível.
+- Localização do som deve corresponder à posição real do evento. Uma metralhadora que muda de posição muda também o som e os clarões.
+- Não encha todos os segundos com tiros. Frente ativa alterna rajadas, ordens, deslocamento, pausas, preparação e silêncio.
+- Priorize avisos importantes e diálogo; limite vozes simultâneas de modo configurável. Áudio distante não deve esconder uma granada próxima.
+
+PROVA DE ACEITAÇÃO:
+- Observar um setor distante por pelo menos 90 segundos: ver preparação, ação e resultado, sem loop perceptível de uma explosão idêntica.
+- Virar a câmera e voltar: posições e resultados continuam coerentes.
+- Ficar parado em um local seguro: pelo menos dois setores continuam sua atividade sem ativação por proximidade.
+- Aproximar um setor: o estado visto ao longe se conserva no combate próximo.
+- Salvar/carregar: não duplicar o bombardeio ou recuperar um tanque já destruído.
+- Alterar qualidade gráfica: manter os mesmos resultados e eventos de gameplay.
+
+============================================================
+72. CRUELDADE DA GUERRA — DIREÇÃO MADURA INSPIRADA EM WAW
+============================================================
+
+Mostrar a brutalidade da guerra com intensidade visual, sonora e humana. O tom deve lembrar o peso e a tensão de World at War, com cenas e personagens originais, sem copiar sua abertura, falas, mortes específicas, torturas, mapas ou enquadramentos reconhecíveis.
+
+O sofrimento precisa alterar a experiência e a história. Usar:
+- sangue e marcas de impacto compatíveis com ferimento e material;
+- ferimentos graves, mutilações por explosões e queimaduras em momentos coerentes, com intensidade visual configurável;
+- cadáveres, membros cobertos, macas, postos médicos sobrecarregados e equipamentos de pessoas que não voltaram;
+- feridos pedindo ajuda, medo durante bombardeios, soldados atordoados e companheiros tentando manter a disciplina;
+- tripulações que saem de veículos avariados, gente presa por escombros e evacuação interrompida pelo combate;
+- sofrimento civil, casas destruídas, famílias separadas e pessoas que continuam desconfiadas mesmo depois que o tiroteio acaba;
+- exaustão, frio, calor, fome, lama, insônia, ferimentos que deixam marcas e a dificuldade de voltar à vida normal.
+
+Não transformar toda morte em desmembramento. Varie impactos, quedas, postura, reação e silêncio. Não repetir a mesma baixa de companheiro em trinta missões. Algumas perdas são permanentes; outras pessoas sobrevivem, voltam feridas ou deixam de conseguir lutar.
+
+Soldados inimigos também podem demonstrar medo, recuar, carregar feridos ou se render quando a situação permite. Diferencie exército, comando e indivíduo. Não retratar nacionalidades inteiras como monstros intercambiáveis.
+
+Crimes de guerra, perseguição e genocídio só entram com contexto e pesquisa específica. Não atribuir uma atrocidade inventada a uma unidade ou pessoa histórica identificável. Não premiar execução de prisioneiros ou ataque deliberado a civis. Isso não impede cenas adultas da guerra; define o sentido e a coerência dessas cenas.
+
+FERIDOS E CONSEQUÊNCIAS JOGÁVEIS:
+- Criar estados estáveis de ferido, incapacitado, evacuado e morto, com animações e prioridades de ajuda.
+- Um resgate usa deslocamento, cobertura e interação legível, sem ensinar procedimentos médicos ou de explosivos reais.
+- O médico/socorrista não ressuscita um personagem já morto nem cura um ferimento grave em um segundo.
+- Missões podem terminar com retirada organizada, sobreviventes em silêncio ou uma posição perdida; sucesso do objetivo local não reescreve o resultado histórico.
+- Guardar consequências de objetivos opcionais nas falas e na presença posterior de personagens, mantendo a campanha completável.
+- Se o jogador não puder evitar uma morte roteirizada, apresentar isso claramente na cena; não fingir que uma escolha oferecida permitiria salvá-la.
+
+APRESENTAÇÃO E OPÇÕES:
+- Padrão artístico adulto, sério e intenso; violência detalhada onde serve à batalha e ao roteiro.
+- Oferecer níveis de sangue/ferimentos, redução de tremor de câmera, flashes e zumbido. A opção reduzida conserva a gravidade por atuação, som, cenário e consequências.
+- Limitar persistência e física de corpos conforme orçamento, sem desaparecimento instantâneo diante do jogador. Usar oclusão, distância e transições coerentes.
+- Não sobrepor música heroica a todo resgate ou toda morte. Reserve silêncio e som ambiente para permitir que a cena seja sentida.
+
+============================================================
+73. ELENCO ORIGINAL E CONTINUIDADE ENTRE FRENTES
+============================================================
+
+Todos os protagonistas e diálogos abaixo são ficcionais. Datas, batalhas, locais, formações e resultados gerais são históricos. Ações de pequenos grupos e encontros pessoais são GAMEPLAY_DRAMATIZATION; sua plausibilidade e geografia precisam ser validadas antes da aprovação de cada missão.
+
+ELENCO DOS PONTOS DE VISTA:
+- Jan Wrona: soldado polonês em Tczew, M01. Sua história não é transportada automaticamente para outra unidade.
+- Piotr Sokół: combatente do Exército Poznań em M02; sobrevivente incorporado à defesa de Varsóvia em M03, após passagem de tempo explicitada.
+- Arthur Reed: britânico da BEF em M04; em M20, após novo treinamento e ingresso ficcional na força aerotransportada durante os anos seguintes. Registrar essa trajetória, sem fingir que a BEF é a mesma unidade de Oosterbeek.
+- Tomasz Malec: piloto polonês do Esquadrão 303 da RAF em M05.
+- Daniel Hargreaves: australiano da 9ª Divisão, M06 e M11.
+- Mikhail Orlov: soviético do 16º Exército em M07; retorna em M27/M28 servindo no 8º Exército de Guardas após hospitalização e nova designação ficcional documentada. Não confundir exército e divisão por terem o mesmo número.
+- Samuel Brooks: fuzileiro do 5º Regimento de Marines, 1ª Divisão, M08/M26/M29. Mostrar os anos de desgaste entre Guadalcanal e Okinawa; ele não troca silenciosamente para as divisões de Tarawa ou Iwo Jima.
+- Pavel Antonov: soviético da 13ª Divisão de Fuzileiros de Guardas, 62º Exército, M09.
+- Aleksandr Gromov: soviético no setor da 37ª Divisão de Guardas, M10; novo ponto de vista, identificado na abertura.
+- Owen Mercer: americano de elementos do 26º Regimento de Infantaria, 1ª Divisão, defesa de Kasserine, M12.
+- Ivan Demin: tripulante soviético de tanque do 5º Exército de Tanques de Guardas, M13.
+- Edward Lane: americano do 16º Regimento de Infantaria, 1ª Divisão, M14/M18/M19.
+- Ben Turner: Marine da 2ª Divisão em Tarawa, M15.
+- Leon Ostrowski: polonês da 3ª Divisão dos Cárpatos, II Corpo Polonês, M16.
+- Nathan Cole: americano do 505º Regimento Paraquedista, 82ª Divisão Aerotransportada, M17.
+- Victor Allen: americano do 112º Regimento, 28ª Divisão, M21.
+- Paul Lewis: americano do 110º Regimento, 28ª Divisão, M22. Sua ligação com M21 vem da mesma divisão e do desgaste conhecido, não de uma troca invisível de protagonista.
+- Isaac Bennett: americano do 506º Regimento Paraquedista, 101ª Divisão, M23.
+- Leo Finch: Marine do 28º Regimento, 5ª Divisão, M24.
+- Carl Hughes: americano da Companhia A, 27º Batalhão de Infantaria Blindada, 9ª Divisão Blindada, M25.
+- William Cross: marinheiro ficcional a bordo do USS Missouri em M30; observador da cerimônia, sem substituir participantes históricos.
+
+Esses nomes não representam pessoas reais nem testemunhos autênticos. Não acrescentar falas inventadas de comandantes históricos como citações documentadas.
+
+Para cada grupo recorrente, criar líder, veterano, recruta e apoio médico/rádio conforme a composição histórica. Dar voz, rosto, gestos, comportamento e relações consistentes. Evitar um esquadrão universal com os mesmos cinco papéis em todos os países.
+
+ELENCOS RECORRENTES SUGERIDOS:
+- Polônia: sargento Marek Zieliński, engenheiro Paweł Krawiec e soldado Andrzej Lis. Lis acompanha Piotr em M02/M03; não pertence por padrão ao grupo de Jan.
+- Austrália: sargento Colin Fraser, atirador Jack Morrow e socorrista Peter Ellis.
+- EUA/1ª Divisão: sargento Luis Morgan, metralhador Marcus Bell e socorrista Samuel Price; funções e nomes são criação narrativa.
+- Marines/1ª Divisão: sargento Henry Cole, cabo Elliot Marsh e socorrista naval Nelson Gray, cuja função não deve ser apresentada como médico do Exército.
+- USSR/Orlov: sargento Viktor Saveliev e operador de rádio Yuri Makarov; sua presença em 1945 exige trajetória registrada, não uma coincidência automática.
+- Britain/Reed: em 1940, cabo George Whitfield; em 1944, outro grupo de companheiros, sem ressuscitar as baixas da retirada.
+
+Falas curtas durante combate; conversas mais longas em momentos seguros. Soldados continuam observando, recarregando, tratando feridos ou deslocando-se enquanto falam. Legendas em português; idiomas originais podem ser adicionados com pesquisa e vozes licenciadas, sem sotaques caricatos.
+
+Cada arco deve registrar: estado de entrada, vínculo com companheiros, ferimento/perda, mudança de comportamento e estado de saída. As mudanças precisam aparecer em atuação e gameplay, além de texto de debrief.
+
+============================================================
+74. CONTRATO DE UMA MISSÃO IMPLEMENTÁVEL
+============================================================
+
+Cada missions/<id>/SCRIPT.md deve ser acompanhado de dados de missão validados. Use JSON, módulos tipados ou formato equivalente já compatível com o projeto; não criar um framework novo sem necessidade.
+
+CAMPOS OBRIGATÓRIOS:
+id, título, data inicial/final, horário ou faixa aproximada, local, operação, facção, formação, subunidade quando confirmada, protagonista, elenco, fontes, certeza histórica, equipamento permitido, mapa/escala, entrada/saída e duração-alvo.
+
+OBJETIVOS:
+- ID estável, descrição para o jogador, obrigatório/opcional, condição de ativação, conclusão, falha, dependências, eventos de consequência e checkpoint associado.
+- Não usar contagem global de inimigos como requisito universal. Aceitar defesa de posição, reconhecimento, evacuação, deslocamento, suprimento, retirada e cessar-fogo.
+- Não exigir um NPC escondido ou preso para terminar uma área. Detectar e recuperar softlocks preservando a lógica do objetivo.
+
+CENAS E EVENTOS:
+- Definir ator, posição, animação, fala, câmera opcional, gatilho, duração máxima e estado final.
+- As sequências principais seguem INTRO → SETUP → BUILDUP → CONTACT → COMBAT → SETPIECE → CLIMAX → AFTERMATH → OUTRO, permitindo pausas e transições justificadas.
+- A conclusão de uma cena depende de eventos e condições robustas, não só de um timeout que supõe que todos chegaram.
+- Movimento falhado do NPC deve ter tratamento; ele não permanece parado para sempre impedindo a missão.
+- Pular cutscene aplica uma vez o estado final consistente e libera o controle no local correto. Oferecer skip das introduções e sequências longas.
+- Preserve liberdade para olhar durante cenas em primeira pessoa sempre que possível. Tomadas externas curtas servem à escala e não retiram o controle a cada poucos metros.
+
+COMBATE AO REDOR:
+- Pelo menos dois setores independentes com eventos próprios nas missões de combate em que isso é historicamente coerente.
+- Descrever combate próximo, atividade de média distância e contexto de longa distância específico para aquele lugar.
+- Não exigir a mesma quantidade de explosões em toda missão. Dunquerque, um vale, uma fábrica e um convés têm panoramas diferentes.
+
+CHECKPOINTS:
+- Criar checkpoints em locais recuperáveis, depois de mudanças claras de fase, antes de sequências críticas longas e após passagens de data.
+- Nunca salvar em dano inevitável, queda sem saída, ponte já bloqueada ou missão irrecuperável.
+- Para cada checkpoint, documentar quais atores/eventos/destruição/setores precisam ser restaurados.
+- CP-A, CP-B etc. nos roteiros são rótulos de projeto, não posições finais; devem receber coordenadas verificadas no mapa.
+
+GEOGRAFIA E HISTÓRIA:
+- Usar mapa real, fotografia, planta e relevo quando disponíveis. Marcar EXACT, RECONSTRUCTED ou COMPRESSED_FOR_GAMEPLAY para cada trecho.
+- Ruas, objetivos e setores ainda sem confirmação ficam explicitamente pendentes; não inventar precisão cartográfica.
+- Uma dramatização plausível pode usar interiores reconstruídos. Não dizer que um corredor ficcional é uma reconstrução exata de um edifício histórico.
+- Respeitar armas, veículos, uniformes, clima e equipamentos realmente disponíveis por país, unidade, data e função.
+- Uma transferência ficcional de soldado precisa de passagem de tempo e registro. Nunca usar a mudança de mapa para teleportar toda a mesma unidade entre frentes incompatíveis.
+
+============================================================
+75. DESEMPENHO, DISTÂNCIA E ESTABILIDADE EM CHROMEBOOK
+============================================================
+
+Meta inicial: preset baixo em 1280×720, 30 FPS no Chromebook de referência, com tempos de frame estáveis. Meta de 60 FPS em equipamento capaz. Essas são metas para medir, não resultados antecipados nem garantias para qualquer dispositivo.
+
+- Identificar hardware, resolução, preset, navegador e trecho do mapa ao reportar desempenho.
+- Medir tempos de frame medianos e percentil 95 após aquecimento, em caminhada, combate intenso, fumaça, cutscene e troca de missão.
+- Definir budgets de draw calls, triângulos, texturas, vozes, corpos e partículas a partir do equipamento testado. Registre o custo do renderer, IA e carregamento.
+- Usar instancing, LOD, culling, atlas quando adequado, pooling e atualização escalonada. A distância gráfica é configurável sem mudar o desfecho da batalha.
+- IA tática pode atualizar menos vezes por segundo do que movimento/colisão. Setores distantes usam simulação reduzida, mantendo estado e eventos causais.
+- Limitar sombras dinâmicas de objetos distantes. Fumaça não deve gerar milhares de partículas transparentes enormes sobrepostas.
+- Pré-carregar somente o necessário, mostrar progresso real e tratar erro com opção de tentar novamente. Não bloquear o navegador com construção gigantesca síncrona.
+- Testar repetição de carregar/iniciar/sair para detectar crescimento de memória, sons duplicados e recursos não descartados.
+- Um benchmark headless, GPU virtual ou software renderer não representa automaticamente o desempenho de um Chromebook real.
+
+Quando a qualidade precisar cair, reduza primeiro custo que não muda leitura do combate: partículas secundárias, sombras distantes, densidade decorativa e resolução. Preserve silhueta das armas, orientação dos inimigos, avisos, objetivos e clareza da cobertura.
+
+============================================================
+76. CONTROLES, INTERFACE E ACESSIBILIDADE
+============================================================
+
+- Menu inicial legível, controles configuráveis, sensibilidade, FOV adequado e volumes separados.
+- Pausa, retomada, reiniciar checkpoint, seleção das missões desbloqueadas e opções de qualidade.
+- Legendas com tamanho ajustável, nome do falante, contraste e indicação de sons relevantes quando necessário.
+- Indicadores de objetivo discretos, com opção de reduzir HUD. Não usar texto permanente cobrindo a mira.
+- Informar claramente mudanças de personagem, unidade, lugar e data.
+- Mostrar dano e supressão sem esconder todos os inimigos sob uma tela vermelha opaca.
+- Redução de head bob, tremor, flashes, blur e zumbido; aim toggle/hold e opções de contraste quando implementadas.
+- Dificuldade altera comportamento, precisão e recursos de forma legível. Não dar a inimigos percepção através de paredes ou punir quem lê uma legenda.
+- Evitar telas técnicas com informações de engenharia dentro do fluxo do jogador. Problemas de assets e diagnóstico pertencem ao relatório de desenvolvimento e às telas de erro necessárias.
+
+============================================================
+77. ORDEM DE IMPLEMENTAÇÃO E CONDIÇÕES DE APROVAÇÃO
+============================================================
+
+A missão vertical slice deve aparecer cedo, antes de expandir todo o catálogo de armas, tanques e aviões.
+
+MARCO 0 — BASELINE:
+Preservar o protótipo atual, executar testes e registrar o funcionamento. Manter a missão antiga como bancada/regressão durante a transição; não renomear uma aldeia francesa para Tczew e chamá-la de reconstrução histórica.
+
+MARCO 1 — FUNDAÇÃO:
+Vite, renderer Three.js integrado, input/áudio por gesto, assets com erro/fallback, mira/dano/colisão coerentes e checkpoint auditado. Aprovação: uma área atual jogável em build de produção, sem erros críticos.
+
+MARCO 2 — TCZEW JOGÁVEL:
+Implementar M01 do começo ao fim com um armamento polonês apropriado, esquadrão mínimo, ponte/geografia reconhecível, combate ao redor, introdução, retirada, cutscene skip e checkpoints. Primeiro completar o fluxo; em seguida substituir placeholders por qualidade final. Aprovação: partida completa, morte/restauração e conclusão sem softlock.
+
+MARCO 3 — TCZEW POLIDO:
+ViewModel convincente, mãos/recarga, soldados com rig, uniformes de 1939, animações, cover/supressão, feridos, VFX, mixagem e consequências. Aprovação: demonstração visual e playtest de uma missão representativa, dentro da meta medida.
+
+MARCO 4 — SISTEMAS ESPECIAIS:
+Desenvolver tanque em bancada que sirva a M13, direção para M14 e avião para M05, um de cada vez. Aprovação: interação, colisão/dano, entrada/saída, checkpoint e trecho real de missão. Não considerar um veículo concluído só porque a câmera foi presa ao modelo.
+
+MARCO 5 — PRIMEIRO BLOCO DE CAMPANHA:
+Integrar M02–M07, com mapa, script, pesquisa, equipamento, progressão e testes específicos. Ajustar ordem de desenvolvimento conforme dependências, conservando ordem cronológica no menu/campanha.
+
+MARCO 6 — CAMPANHA COMPLETA:
+Integrar M08–M30 em lotes pequenos. Antes do lote seguinte, testar a ligação entre as missões anteriores, salvamento e continuidade de elenco. Os roteiros completos existem desde o planejamento; a implementação jogável progride por marcos.
+
+MARCO 7 — REVISÃO FINAL:
+Executar campanha do início ao fim, revisar ritmo, historicidade, recursos, transições, desempenho e bugs. Documentar qualquer item parcial. Não chamar a campanha inteira de pronta enquanto há capítulos vazios, mapas genéricos ou missões apenas descritas em Markdown.
+
+============================================================
+78. PESQUISA E FONTES DE PARTIDA
+============================================================
+
+Fontes abaixo servem como base para cronologia, equipamentos e operações. Consultar páginas, publicações e documentos originais; registrar título, instituição, URL, data consultada, fato apoiado e grau de certeza. Uma página geral da batalha não comprova sozinha uma rua, uniforme de subunidade ou acontecimento pessoal.
+
+FONTES TÉCNICAS:
+- OpenAI, tarefas longas com Codex: https://developers.openai.com/blog/run-long-horizon-tasks-with-codex
+- OpenAI, instruções de projeto: https://developers.openai.com/codex/guides/agents-md
+- Three.js, WebGLRenderer: https://threejs.org/docs/pages/WebGLRenderer.html
+- Vite, deploy estático: https://vite.dev/guide/static-deploy.html
+- MDN, Pointer Lock API: https://developer.mozilla.org/en-US/docs/Web/API/Pointer_Lock_API
+- MDN, autoplay e áudio: https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay
+- Playwright, servidor para testes: https://playwright.dev/docs/test-webserver
+
+FONTES HISTÓRICAS:
+H01 — Muzeum II Wojny Światowej, pontes de Tczew:
+https://www.muzeum1939.pl/en/publishing/war-and-remembrance/issues-of-the-periodical/war-and-remembrance-issue-3/the-battle-for-tczew-bridges-of-1-september-1939-preparations-the-course-of-events-and-meaning
+H02 — Presidência da Polônia, Tczew, ataque às 04:34 e 2º Batalhão de Fuzileiros:
+https://www.prezydent.pl/kancelaria/archiwum/andrzej-duda/aktualnosci/wizyty-krajowe/w-tczewie-uroczystosci-upamietniajace-79-rocznice-wybuchu-ii-wojny-sw-,2531
+H03 — Muzeum II Wojny Światowej, Bzura:
+https://www.muzeum1939.pl/aktualnosci/-poznajwystaweczasowa--bitwa-nad-bzura--najwieksza-bitwa-kampanii-polskiej-1939-r--11455
+H04 — US Holocaust Memorial Museum, Varsóvia:
+https://encyclopedia.ushmm.org/content/en/article/warsaw?series=6
+H05 — Imperial War Museums, coleções e pesquisa de Operation Dynamo: consultar materiais do museu sobre evacuação de 26 de maio a 4 de junho de 1940; registrar o item específico usado para praia, perímetro e embarcação.
+H06 — RAF Museum, 303 e Hurricane:
+https://www.rafmuseum.org.uk/blog/polish-no-303-squadron-and-the-hurricane-80k/
+H07 — Australian War Memorial, Tobruk:
+https://www.awm.gov.au/tobruk
+H08 — Biblioteca Presidencial, relatório do 16º Exército sobre Kryukovo, 8/12/1941:
+https://www.prlib.ru/item/1864346
+H09 — Naval History and Heritage Command, Guadalcanal e Tulagi:
+https://www.history.navy.mil/browse-by-topic/wars-conflicts-and-operations/world-war-ii/1942/guadalcanal/guadalcanal-and-tulagi-landings.html
+H10 — Army University Press, Stalingrad Virtual Staff Ride e mapas/documentários da batalha:
+https://www.army.mil/article/193972/army_university_press_launches_stalingrad_virtual_staff_ride
+https://www.armyupress.army.mil/Portals/7/combat-studies-institute/csi-books/BlockByBlock_TheChallengesOfUrbanOperations.pdf
+https://www.armyupress.army.mil/Portals/7/combat-studies-institute/csi-books/glantz.pdf
+H11 — Australian War Memorial, El Alamein:
+https://www.awm.gov.au/articles/atwar/alamein23
+H12 — US Army Center of Military History, Northwest Africa e cronologia; guia e documentos militares de Kasserine:
+https://history.army.mil/portals/143/Images/Publications/catalog/11-1.pdf
+https://mcoecbamcoepwprd01.blob.core.usgovcloudapi.net/library/ABOLC_BA_2018/Research_Modules_C/Sidi_Bou_Zid/CMH_Staff_Ride_Guide.pdf
+H13 — Combat Studies Institute/Army University Press, estudos de Kursk e mapas operacionais:
+https://www.armyupress.army.mil/Portals/7/combat-studies-institute/csi-books/glantz2.pdf
+H14 — US Army, Sicily and the Surrender of Italy:
+https://history.army.mil/portals/143/Images/Publications/catalog/6-2.pdf
+H15 — Naval History and Heritage Command, Tarawa:
+https://www.history.navy.mil/browse-by-topic/wars-conflicts-and-operations/world-war-ii/1943/tarawa.html
+H16 — Memorial Museum of the 2nd Polish Corps in Monte Cassino, painéis:
+https://fondazionemm2c.org/en/Panel_5A.html
+H17 — US Army, D-Day:
+https://www.army.mil/d-day/history.html
+H18 — US Army, Omaha Beachhead, com mapas:
+https://history.army.mil/Portals/143/Images/Publications/Publication%20By%20Title%20Images/O%20titles%20PDF/CMH_Pub_100-11_plus-maps.pdf?ver=0R6kvzXZ9gSNCaKeIO29Dg%3D%3D
+Consultar a publicação Omaha Beachhead, 6 June–13 June 1944, no catálogo CMH se o endereço de publicação mudar; registrar o PDF efetivamente consultado.
+H19 — National Army Museum, Market Garden:
+https://www.nam.ac.uk/explore/market-garden
+H20 — US Army AMEDD, Vossenack/Schmidt e evacuação médica:
+https://achh.army.mil/history/book-wwii-schmidt2-schmidtch1/
+H21 — US Army AMEDD, 110º Regimento nas Ardenas:
+https://achh.army.mil/history/book-wwii-bulge-110thinfregt-110thirintro/
+H22 — US Army, Bastogne e alívio do cerco:
+https://www.army.mil/article/85879/
+H23 — Liberation Route Europe, ataque de Foy em 13/1/1945:
+https://www.liberationroute.com/en/pois/1165/the-attack-of-13-january-in-foy
+H24 — Naval History and Heritage Command, Iwo Jima:
+https://www.history.navy.mil/browse-by-topic/wars-conflicts-and-operations/world-war-ii/1945/battle-of-iwo-jima.html
+H25 — 7th Army Training Command, registro histórico de Remagen:
+https://www.7atc.army.mil/Media-News/Video/dvpTag/Remagen/videoid/954456/
+H26 — Naval History and Heritage Command, Okinawa:
+https://www.history.navy.mil/browse-by-topic/wars-conflicts-and-operations/world-war-ii/1945/battle-of-okinawa/okinawa-historic-overview-importance.html
+H27 — Gedenkstätte & Museum Seelower Höhen, batalha e Berlim:
+https://www.seelowerhoehen.de/schlachtfeld.php
+H28 — US Marine Corps History Division, The First Marine Division on Okinawa:
+https://www.usmcu.edu/Portals/218/Stockman_The%20First%20Marine%20Division%20on%20Okinawa.pdf
+H29 — Naval History and Heritage Command, USS Missouri e rendição:
+https://www.history.navy.mil/research/archives/digital-exhibits-highlights/vj-day/surrender/uss-missouri.html
+H30 — Muzeum II Wojny Światowej, equipamento polonês de 1939:
+https://www.muzeum1939.pl/aktualnosci/umundurowanie-i-wyposazenie-polskich-zolnierzy-we-wrzesniu-1939-roku--m2wswirtualnie-11339
+
+URLs podem mudar: confirme o documento pelo título e instituição, sem inventar uma fonte substituta ou tratar busca sem leitura como comprovação. Fontes históricas e imagens de arquivo não são automaticamente assets com licença de uso no jogo.
+
+CORREÇÕES HISTÓRICAS QUE DEVEM PERMANECER:
+- Tczew: prelúdio ficcional às 04:30; bombardeio às 04:34. Não usar M1 Carbine, MP40 ou MG42 como armamento padrão da campanha polonesa de 1939.
+- M10, fábrica em 14/10/1942, vem antes de M11, El Alamein em 23/10/1942.
+- Guadalcanal: desembarque inicial de 7/8 de agosto teve pouca oposição em Guadalcanal; Tulagi foi outra situação. Não inventar uma carnificina de praia equivalente a Omaha nesse local/data.
+- Tarawa: primeiras ondas de LVT puderam ultrapassar o recife; muitas embarcações convencionais das ondas seguintes não. Definir a onda e o veículo do jogador.
+- Foy: ataque de 13/1/1945, separado dos capítulos de Bastogne em dezembro por mudança explícita de data.
+- Iwo Jima: desembarque em 19/2; bandeira no Suribachi em 23/2. Não combinar os dois momentos numa tarde.
+- Remagen: captura em 7/3; colapso da ponte em 17/3. Não fazê-la ruir durante a tomada para fabricar um clímax.
+- Okinawa: desembarques principais de 1/4 encontraram pouca oposição inicial; a resistência terrestre mais intensa aparece depois. Shuri foi ocupada em 29/5 após retirada japonesa, sem um combate fictício de chefe dentro do castelo.
+- Berlim: capitulação das forças da cidade em 2/5; encerramento da guerra na Europa em maio; rendição formal japonesa em 2/9. Não encerrar todo o conflito mundial ao terminar Berlim.
+
+============================================================
+79. ROTEIROS DAS 30 MISSÕES — DO INÍCIO AO FIM
+============================================================
+
+Os roteiros a seguir são projetos completos de progressão, não alegações de reconstrução de ações individuais reais. Os diálogos são originais. Desenvolver atuação e animação preservando o sentido das falas; não trocar tudo por comandos genéricos ou copiar frases de COD.
+
+Primeira arma de M01: Mauser polonês wz.29, com identidade e recarga compatíveis, capacidade/munição validadas e ferrolho após o disparo. Não reaproveitar comportamento, som e animação de M1 como se fossem equivalentes. MP38/MG34 podem aparecer no equipamento alemão de 1939 quando confirmados; MP40/MG42 exigem disponibilidade posterior e validação. A data histórica de cada missão é independente da data/fuso do computador do jogador.
+
+Cada missão deve adaptar a densidade de combate ao contexto histórico. Os combates dos outros setores começam e evoluem por agenda/estado da operação, com condições de segurança para objetivos indispensáveis. As cenas humanas continuam mesmo quando o jogador não está olhando para elas.
+
+M01 — A PRIMEIRA MANHÃ
+Data/local: 1/9/1939, Tczew, Polônia. Unidade: 2º Batalhão de Fuzileiros. POV: Jan Wrona. Fontes: H01/H02/H30. Duração-alvo: 18–24 min.
+
+Abertura: cartela 04:30; água do Vístula, café, botas na posição. Zieliński conversa com Krawiec enquanto os guardas conferem armas. Jan anda, conhece o posto e segura um fuzil polonês apropriado. Pontes, ferrovia e povoação seguem geografia pesquisada.
+
+Sequência jogável:
+1. Levar uma mensagem ao posto avançado. Guardas e trabalhadores já cumprem tarefas independentes. Aviões são percebidos à distância.
+2. A passagem temporal do prelúdio leva ao ataque das 04:34, sem quatro minutos obrigatórios de espera real. Procurar cobertura, seguir a voz do sargento e localizar os engenheiros. Outro soldado arrasta um ferido mesmo fora do olhar do jogador.
+3. Proteger um acesso para o trabalho histórico de demolição. Transportar material por interação abstrata, sem ensinar preparação real de explosivos.
+4. Alternar posições de cobertura; mensageiros relatam pressão no outro acesso. Companheiros cobrem a recarga e tomam decisões próprias.
+5. Clímax: manter o corredor de retirada, resgatar o ferido opcional e abandonar a posição. A demolição tem condições de prontidão e aviso; não depende da orientação da câmera.
+
+Batalha ao redor: próximo, acessos; médio, ferrovia e margem; longe, aviões, cidade e aproximação inimiga. Seus estados continuam durante os deslocamentos de Jan.
+
+Final: num abrigo, Zieliński faz a chamada e uma resposta não vem. A caneca amassada reaparece perto de um companheiro. O debrief registra atraso imposto ao avanço e retirada, sem vitória estratégica inventada.
+
+Falas: Zieliński: “Confira o homem do posto. Ele está sozinho.” Krawiec: “Precisamos de espaço para trabalhar!” Zieliński: “Wrona, conte os nossos. Não conte os tiros.”
+Checkpoints: orientação; reorganização após ataque; proteção dos engenheiros; retirada. Restaurar pontes, feridos, eventos e setores sem duplicação.
+
+M02 — CONTRA-ATAQUE
+Data/local: 9–10/9/1939, região de Łęczyca/Bzura. Unidade: Exército Poznań na ofensiva polonesa. POV: Piotr Sokół. Fonte: H03. Duração-alvo: 20–26 min.
+
+Abertura: homens deitados na margem de um campo escutam a preparação de artilharia. Lis limpa o ferrolho. Um graduado aponta estrada, árvores e objetivo; a formação, o armamento e o lugar diferem de Tczew.
+
+Sequência jogável:
+1. Aproximar-se por vala/pomar enquanto companhias vizinhas se movimentam sem esperar o jogador.
+2. Cruzar sob cobertura, chegar a um acesso da povoação e neutralizar a posição que domina a estrada. Outros soldados tomam partes distintas do terreno.
+3. Reunir grupos separados e proteger um corredor de suprimento. Pausa curta: água, procura de desaparecidos e leitura do terreno conquistado.
+4. Pressão aérea e blindada em outros setores muda a ordem. Mostrar vias de chegada e mensageiros, sem spawn repentino atrás de cada sebe.
+5. Clímax: sustentar a passagem do último grupo e retirar feridos alcançáveis. O recuo da operação e a tentativa posterior de chegar a Varsóvia aparecem com passagem explícita de dias no debrief.
+
+Batalha ao redor: próximo, bordas da povoação; médio, ataques e recuos em campos diferentes; longe, colunas, aviação e fumaça. Os relatórios refletem o que ocorre nesses setores.
+
+Final: Lis sobrevive ferido se foi evacuado; seu estado segue para M03. Uma carroça transporta macas e equipamento. O sucesso do primeiro ataque convive com a deterioração da campanha.
+
+Falas: Lis: “Era a estrada de casa. Agora procuro onde esconder a cabeça.” Graduado: “O grupo da direita recuou. Nossa ordem mudou.” Piotr: “Você vem conosco. A arma eu levo.”
+Checkpoints: preparação; acesso; reorganização; cobertura da retirada. Persistir Lis e os resultados de cada setor.
+
+M03 — CIDADE CERCADA
+Data/local: 25/9/1939, Varsóvia. Formação: defesa da cidade. POV: Piotr Sokół após fuga ficcional de Bzura e incorporação à guarnição. Fonte: H04. Duração-alvo: 22–28 min.
+
+Abertura: uma família ocupa o porão de um prédio. Vidros tremem, o teto solta poeira e há pouca água. Cartela situa a nova data e a condição de Lis. O grupo recebe uma tarefa entre posições, não uma ordem impossível de conquistar a cidade.
+
+Sequência jogável:
+1. Levar mensagem por um quarteirão pesquisado para recompor uma ligação interrompida.
+2. Defender o cruzamento junto de soldados que já combatem em portas e janelas. Moradores procuram passagem por uma rota segura.
+3. Bombardeio corta o acesso principal. Atravessar interior danificado, ajudar a liberar uma saída e reorganizar a defesa por pátios.
+4. Objetivo opcional: transportar munição extra ou auxiliar um civil adulto ferido, conforme os recursos e a rota. A consequência muda recursos e falas, sem mudar o resultado histórico de Varsóvia.
+5. Clímax: proteger a passagem para o posto médico enquanto outro grupo cobre o flanco. Recebida a ordem, recuar ao abrigo.
+
+Batalha ao redor: próximo, barricada/interiores; médio, outras ruas, incêndios e evacuação; longe, bombardeios de diferentes áreas, agendados independentemente da proximidade.
+
+Final: um morador abre lugar para um ferido no porão. Lis mantém seu estado anterior. A transição registra a capitulação posterior; matar mais inimigos não reescreve a queda da cidade.
+
+Falas: Morador: “Ainda há gente no andar de cima.” Defensor: “Não é para tomar a rua. É para tirar os nossos dela.” Lis: “Guarda um pouco de água. Todos precisam.”
+Checkpoints: abrigo; comunicação; rota alternativa; retirada. Salvar evacuação, destruição e companheiros. Se Lis estiver ausente/incapacitado pelo resultado de M02, sua fala é removida ou atribuída a um morador/companheiro presente; ele não reaparece curado.
+
+M04 — ATÉ O MAR
+Data/local: 31/5/1940, perímetro/praia de Dunquerque. Unidade: BEF. POV: Arthur Reed. Fonte: H05. Duração-alvo: 20–28 min.
+
+Abertura: caminhões parados, pneus queimados e homens dormindo sentados. Whitfield tenta descobrir qual estrada ainda permite passagem. Incêndios e movimento distante mostram a retirada em andamento antes da chegada do jogador.
+
+Sequência jogável:
+1. Acompanhar a retaguarda até um entroncamento e reunir desgarrados, conhecendo o ritmo da retirada.
+2. Cobrir a passagem de soldados e feridos. Aeronaves atacam alvos apropriados, com som de aproximação, cobertura e tempo de reação.
+3. Uma rota torna-se impraticável. Cruzar pátios e alcançar posição do perímetro, com defensores britânicos/franceses conforme o setor confirmado.
+4. Entregar feridos ao embarque. Barcos chegam e saem por agenda própria; outros grupos têm lugares e tarefas. Nem a praia espera Reed, nem todo barco precisa explodir.
+5. Clímax: cobrir o último deslocamento do grupo e alcançar a embarcação designada. Um soldado interrompe a tentativa de retorno solitário à área perdida; não oferecer resgate impossível como escolha falsa.
+
+Batalha ao redor: médio, resistência do perímetro e outras colunas; longe, navios, incêndios e combate aéreo. O som muda da estrada para o litoral.
+
+Final: o motor abafa as vozes. Reed observa o lugar vazio de Whitfield se ele não foi evacuado. Chegar à Inglaterra representa sobrevivência, sem apagar a derrota em terra.
+
+Falas: Whitfield: “Enquanto eles passam, nós ficamos.” Marinheiro: “Devagar com a maca. Abram passagem.” Reed: “Ainda ouço a estrada.”
+Objetivo secundário: Whitfield é localizado em uma posição alcançável do perímetro; ajudar seu deslocamento ao ponto de embarque permite sua evacuação. Se essa ajuda não ocorrer, seu destino fica desaparecido/capturado conforme o script final, sem morte inventada apresentada como fato histórico. O estado muda a cena do barco.
+Checkpoints: entroncamento; perímetro; embarque; deslocamento final. Conservar barcos e grupos já evacuados.
+
+M05 — CÉU EM CHAMAS
+Data/local: 15/9/1940, Inglaterra. Unidade: Esquadrão 303 da RAF. POV: Tomasz Malec. Aeronave: Hurricane do período. Fonte: H06. Duração-alvo: 18–24 min.
+
+Abertura: mecânicos trabalham, pilotos aguardam e o controle informa uma formação inimiga. Malec entra no cockpit; a sirene inicia o scramble. Os outros pilotos seguem suas próprias tarefas, sem se alinhar atrás do jogador.
+
+Sequência jogável:
+1. Decolar e formar com o grupo. Aprender velocidade, altitude, direção e mira em trecho seguro, com assistência configurável.
+2. Interceptar bombardeiros conforme informações do controle. Outros esquadrões combatem em setores/altitudes distintos.
+3. Fazer uma passagem enquanto a escolta reage. Combustível, munição e energia do voo importam; não permitir avião parado no ar ou giros sem perda de velocidade.
+4. Proteger o ala ficcional avariado durante a separação. A missão não exige destruir toda a formação para permitir sua volta.
+5. Clímax: sobreviver à última interceptação viável, regressar e pousar. Permitir abortar a aproximação; falhar por risco real, não por timer oculto.
+
+Batalha ao redor: próximo, caças; médio, formações e outros confrontos; longe, flak, aeronaves e fumaça sobre áreas bombardeadas. O jogador vê acontecimentos que não pode resolver sozinho.
+
+Final: mãos tremem ao sair do avião. O mecânico identifica danos despercebidos. Uma cadeira vazia permanece na sala de espera; não inventar a morte de um piloto histórico.
+
+Falas: Mecânico: “Ela está pronta. Traga-a de volta, se puder.” Ala: “Vejo a costa. Fique comigo mais uma milha.” Controle: “Retornem. Outro grupo assume o setor.”
+Checkpoints: decolagem; formação; proteção do ala; retorno recuperável. Restaurar danos, combustível e aeronaves independentes.
+
+M06 — PERÍMETRO
+Data/local: 14/4/1941, Tobruk. Unidade: 9ª Divisão Australiana. POV: Daniel Hargreaves. Fonte: H07. Duração-alvo: 20–26 min.
+
+Abertura: terreno pedregoso, posições baixas e luz conforme o horário pesquisado do setor. Fraser visita postos, Ellis prepara socorro, Morrow limpa poeira da arma. Tobruk não é um deserto plano uniforme.
+
+Sequência jogável:
+1. Conferir observação, munição e ligação entre posições enquanto outro trecho do perímetro anuncia contato.
+2. Repelir infantaria com apoio de uma arma coletiva. Operador e assistente abastecem, mudam postura e reagem à supressão.
+3. A posição vizinha perde comunicação. Cruzar corredor protegido, localizar sobreviventes e recompor contato, sem esvaziar todos os postos amigos.
+4. Blindados pressionam um acesso. Usar observação e apoio antitanque historicamente adequado, com operadores próprios; nada de arma futura entregue por conveniência.
+5. Clímax: consolidar o trecho e garantir evacuação dos feridos. Outras unidades cumprem suas partes; Daniel não vence sozinho o ataque inteiro.
+
+Batalha ao redor: médio, clarões e movimentos em trechos distintos do perímetro; longe, artilharia, veículos e atividade do porto. Intensidade e direção dos sons acompanham os eventos.
+
+Final: Ellis atende um inimigo ferido e supervisionado que deixou de combater. Daniel procura sombra para um companheiro. A posição resistiu, mas o cerco continua.
+
+Falas: Fraser: “Fiquem baixos. Eles veem qualquer cabeça acima da pedra.” Morrow: “O posto da esquerda não responde.” Ellis: “Ele não está mais atirando. Tire-o do sol.”
+Checkpoints: postos; primeiro ataque; ligação retomada; defesa final. Persistir reservas e feridos.
+
+M07 — INVERNO
+Data/local: 7–8/12/1941, Kryukovo, arredores de Moscou. Unidade: 16º Exército, Frente Ocidental. POV: Mikhail Orlov. Fonte: H08. Duração-alvo: 20–27 min.
+
+Abertura: roupas molhadas soltam vapor num abrigo, um soldado tenta dobrar dedos rígidos. Orlov recebe a ordem de avanço. A cartela situa o contra-ataque; não há uma batalha inventada no centro de Moscou.
+
+Sequência jogável:
+1. Seguir o grupo por relevo e edificações pesquisados. A neve afeta visual e navegação; não introduzir um medidor de frio punitivo sem validação.
+2. Atacar um acesso da aldeia com cobertura de outra formação. Avançar por trechos e pausas, sem ondas eternas surgindo na frente da câmera.
+3. Encontrar feridos que não puderam ser retirados. Abrir passagem para carregadores e trenó de evacuação quando adequado à pesquisa.
+4. Restabelecer comunicação e avançar contra nova posição. A transição para 8/12 fica visível; não atribuir a captura histórica de Kryukovo ao dia anterior.
+5. Clímax: consolidar um cruzamento e impedir separação do grupo durante a reação local. Terminar no objetivo, não após aniquilar todo o exército inimigo.
+
+Batalha ao redor: médio, companhias cruzando campos e bordas da aldeia; longe, baterias e clarões cujas posições/intensidade mudam com o avanço.
+
+Final: Orlov senta ao lado do homem evacuado. Saveliev olha suas mãos antes de conseguir segurar o copo. Frio e perdas permanecem após o sucesso.
+
+Falas: Saveliev: “Não corra até perder os outros na neve.” Makarov: “O grupo da estrada avançou. Podemos cruzar.” Orlov: “Há lugar no trenó. Vamos levá-lo.”
+Checkpoints: saída; primeiro acesso; evacuação; mudança de data. Salvar fases e comunicação.
+
+M08 — WATCHTOWER
+Data/local: 7–8/8/1942, Guadalcanal. Unidade: 5º Marines, 1ª Divisão. POV: Samuel Brooks. Fonte: H09. Duração-alvo: 18–25 min.
+
+Abertura: embarcação aproxima-se da praia; homens procuram o primeiro disparo, mas a resistência inicial é pequena. Silêncio inseguro e escala da frota produzem tensão. Não copiar Omaha nem transferir a resistência de Tulagi para esta praia.
+
+Sequência jogável:
+1. Desembarcar, organizar material e alcançar reunião. Outras ondas trazem homens, suprimento e equipamento independentemente de Brooks.
+2. Avançar por vegetação pesquisada, lidar com visão limitada e sinais de retirada. Contatos pontuais são dramatizações a verificar por setor, não justificativa para uma praia inteiramente defendida.
+3. Conferir posição abandonada, apoiar reconhecimento e observar acessos do aeródromo. Não preencher a mata com bunkers idênticos a cada vinte metros.
+4. Passagem explícita para 8/8: ocupar o campo e estabelecer defesa. Usar o nome adequado ao momento; explicar posteriormente a denominação Henderson Field.
+5. Clímax de tensão: transportar suprimentos e um homem incapacitado por ferimento/desgaste até atendimento. Incerteza sobre situação naval e logística aumenta a pressão; não encenar uma batalha noturna posterior sem nova data.
+
+Batalha ao redor: médio, companhias e trabalho no campo; longe, frota, aeronaves e fumaça de outras áreas corretamente situadas.
+
+Final: o grupo monta posições e entende que ocupar terreno não garante abastecimento. Gray recebe homens de diferentes setores; Brooks ajuda sem resolver a carência de recursos.
+
+Falas: Cole: “Espalhem-se. O silêncio não diz onde eles estão.” Marsh: “O campo é nosso. E a comida?” Gray: “Sente-o aqui. Depois encontre água.”
+Checkpoints: desembarque; reconhecimento; nova data; defesa inicial. Conservar logística e estado do campo.
+
+M09 — O VOLGA
+Data/local: noite de 14 para 15/9/1942, Stalingrado. Unidade: 13ª Divisão de Fuzileiros de Guardas, 62º Exército. POV: Pavel Antonov. Fonte: H10. Duração-alvo: 22–28 min.
+
+Abertura: Antonov espera com arma e equipamento. Incêndios refletem na água. Um barco traz feridos no sentido contrário. Não adotar o mito de um fuzil para cada dois homens como mecânica automática.
+
+Sequência jogável:
+1. Embarcar e atravessar sob risco de bombardeio. Observar, proteger-se e auxiliar dentro dos limites da embarcação; não transformar o barco em plataforma invencível.
+2. Desembarcar e reunir sobreviventes. Defensores já combatem antes da chegada do jogador.
+3. Levar munição/informação a um acesso urbano, por pátios, interiores e desníveis compatíveis com o mapa pesquisado.
+4. Um ataque corta uma passagem. Usar rota alternativa com apoio do quarteirão vizinho e proteger evacuação, sem exigir matar todos os inimigos do mapa.
+5. Clímax: manter ligação com o rio durante nova pressão e garantir transporte de feridos/informação. Consolidar o objetivo quando chegar a ordem.
+
+Batalha ao redor: médio, outras embarcações e quarteirões; longe, incêndios e baterias em margens diferentes. Clarões e sons conservam localização e atraso coerentes.
+
+Final: Antonov aprende o nome de um homem pouco antes de vê-lo levado em maca; outro companheiro sobrevive e permanece. O rio continua transportando gente durante a última conversa, sem parar para a cutscene.
+
+Falas: Companheiro: “Quando chegarmos, procure minha voz.” Defensor: “O caminho para o rio precisa ficar aberto.” Antonov: “Qual é o nome dele? Preciso entregar isto a alguém.”
+Checkpoints: embarque; margem oeste; acesso; ligação final. Restaurar barcos, ondas e evacuados.
+
+M10 — FÁBRICA
+Data/local: 14/10/1942, fábrica de tratores de Stalingrado. Unidade: setor da 37ª Divisão de Guardas, 62º Exército. POV: Aleksandr Gromov. Fonte: H10. Duração-alvo: 22–30 min.
+
+Abertura: novo protagonista identificado. Soldados reorganizam munição entre máquinas/trilhos de um galpão danificado. Planta e função industrial determinam o espaço; não usar corredor metálico genérico.
+
+Sequência jogável:
+1. Conferir ligação entre oficinas e conduzir um mensageiro ao posto de coordenação.
+2. O ataque rompe um acesso. Combater entre máquinas, valas de serviço e pontos altos, com poeira que reduz visão sem cegar o jogador indefinidamente.
+3. Transferir munição e feridos da oficina ameaçada. Um companheiro sofre ferimento grave: sangue, atuação e ajuda mostram a violência, sem morte ornamental em câmera lenta.
+4. Notícias de penetração em outros trechos impõem recuo. Limpar um galpão não significa vencer historicamente a defesa do complexo.
+5. Clímax: conservar a rota de reunião com cobertura alternada. Ajudar o ferido se houver possibilidade real; ordem e risco deixam claro quando um espaço foi perdido.
+
+Batalha ao redor: médio, oficinas/pátios e blindados no perímetro; longe, outros complexos, aviação e artilharia. Destruição de um setor modifica panorama e comunicações.
+
+Final: numa posição menor, a chamada é interrompida pelo fogo que continua atrás dos galpões. Um sobrevivente tenta conter o tremor da mão. O debrief assume a perda de terreno.
+
+Falas: Graduado: “Defendemos a passagem entre estes homens.” Rádio: “O pátio foi rompido. Retirem os feridos.” Gromov: “Eu seguro este lado. Passe primeiro.”
+Perda fixa de roteiro: apresentar na abertura o combatente ficcional Vasili Rybin trabalhando junto de Gromov. Na ruptura do acesso, um bombardeio sinalizado o mata; a morte é confirmada, não uma falsa opção de resgate. O jogador pode ajudar o outro ferido da sequência. Um ID de evento conserva a morte nas restaurações e no skip; Rybin não reaparece na chamada.
+Checkpoints: ligação; entrada do ataque; transferência; retirada. Restaurar destruição/ocupação das oficinas.
+
+M11 — NOITE NO DESERTO
+Data/local: noite de 23/10/1942, El Alamein, Egito. Unidade: 9ª Divisão Australiana. POV: Daniel Hargreaves. Fonte: H11. Duração-alvo: 22–28 min.
+
+Abertura: antes da barragem, silêncio numa posição de reunião; Fraser confere homens, Ellis organiza macas. Daniel reconhece os sobreviventes de Tobruk e mudanças em seus rostos. O ataque de artilharia às 21:40 mostra uma frente extensa, não uma explosão isolada para o jogador.
+
+Sequência jogável:
+1. Acompanhar engenheiros pelo corredor de avanço sinalizado, reconhecendo risco de minas sem receber procedimentos reais de desativação.
+2. Avançar por etapas sob cobertura e alcançar a primeira linha defensiva. A equipe de arma coletiva sustenta um flanco sem seguir Daniel por toda parte.
+3. Garantir um acesso para suprimento/evacuação. Os blindados e outras formações enfrentam dificuldades em seus próprios corredores; não cruzam todos os obstáculos magicamente.
+4. Uma pressão lateral e a perda de contato obrigam reorganização. Levar mensagem, recompor ligação e ajudar o carregamento de um ferido opcional.
+5. Clímax: manter a posição conquistada e o corredor aberto até chegar substituição/ordem de consolidar, com sinais legíveis do objetivo.
+
+Batalha ao redor: médio, ataques em diferentes corredores e blindados observáveis; longe, baterias, clarões e linha de fumaça que muda com a operação. O som tem direção e distância.
+
+Final: o grupo permanece na posição, sem comemorar o encerramento de uma batalha que ainda durará dias. Ellis procura espaço entre macas; Daniel entrega água a Morrow, agora visivelmente exausto.
+
+Falas: Fraser: “Siga o corredor. Não escolha caminho no escuro.” Morrow: “A direita parou. A nossa passagem ainda está aberta.” Daniel: “Não sobrou muito. Beba devagar.”
+Checkpoints: preparação; primeira linha; corredor aberto; consolidação. Salvar setores, reservas e áreas perigosas.
+
+M12 — PRIMEIRO SANGUE
+Data/local: 20/2/1943, passagem de Kasserine, Tunísia. Unidade: elementos do 26º Regimento de Infantaria, 1ª Divisão, no II Corpo dos EUA. POV: Owen Mercer. Fonte: H12. Duração-alvo: 20–27 min.
+
+Abertura: posição improvisada, fios interrompidos e homens tentando descobrir a direção do ataque. O título se refere à experiência pessoal de Mercer; não afirmar que foi o primeiro combate dos EUA na guerra.
+
+Sequência jogável:
+1. Levar munição/informação a uma posição e observar aproximação inimiga por uma via real do vale.
+2. Defender o acesso junto de infantaria, engenheiros e apoio conforme o setor pesquisado. As limitações de coordenação aparecem em ordens e atrasos, sem tornar toda IA amiga incompetente.
+3. Uma posição lateral cede fora do espaço imediato do jogador. A consequência chega como ameaça ao flanco, mensageiros e mudança de rota.
+4. A ordem de retirada exige reunir sobreviventes, recuperar material útil alcançável e remover feridos para transporte. Tripulações deixam veículos avariados; fogo e ferimentos mostram a gravidade da situação.
+5. Clímax: cobrir o último transporte e retirar-se por uma rota ainda aberta. Não obrigar a destruir todos os tanques para transformar a derrota local em vitória falsa.
+
+Batalha ao redor: médio, pressão nas encostas e posições sendo abandonadas; longe, colunas, artilharia e movimentos rumo a outras passagens. A geografia organiza a ameaça.
+
+Final: Mercer chega a um ponto de reunião onde um graduado refaz a lista do grupo. Uma perda não é apagada pelo debrief. O texto situa recuo e reorganização, sem inventar uma vitória americana naquele trecho.
+
+Falas: Graduado: “Não temos contato com a encosta. Pare de esperar resposta.” Mercer: “O caminhão ainda pode levar dois.” Motorista: “Então tragam os dois. Estamos saindo.”
+Checkpoints: posição inicial; ruptura do flanco; reunião dos feridos; transporte final. Restaurar rotas e veículos corretamente.
+
+M13 — AÇO
+Data/local: 12/7/1943, setor de Prokhorovka, batalha de Kursk. Unidade: 5º Exército de Tanques de Guardas. POV: Ivan Demin. Veículo: T-34/76 apropriado ao setor. Fonte: H13. Duração-alvo: 20–28 min.
+
+Abertura: interior apertado, ruído do motor e tripulação conferindo seu trabalho. O comandante aponta a formação e o terreno. Não usar T-34/85 nem organizar uma linha infinita de Tigers como representação do combate.
+
+Sequência jogável:
+1. Conduzir o tanque com inércia, limites do terreno, casco e torre distintos. O tutorial ocorre no deslocamento para a área de combate.
+2. Avançar com outros veículos, usando valas, elevações e acessos pesquisados. Evitar atribuir superioridade ao jogador por blindagem invencível.
+3. Combater posições/veículos identificados e proteger a ligação com a infantaria. Tripulação informa orientação, dano e alvo sem HUD onisciente.
+4. Uma formação vizinha perde veículos e modifica o avanço. O tanque do grupo sofre avaria recuperável; reposicionar-se e permitir saída de homens de um veículo aliado, dentro do sistema implementado.
+5. Clímax: apoiar uma manobra local e chegar ao ponto de reunião/posição consolidada. Se o tanque for perdido, só usar saída a pé quando essa alternativa estiver projetada e validada; caso contrário, restaurar checkpoint coerente.
+
+Batalha ao redor: médio, várias formações com trajetórias próprias; longe, baterias, fumaça e combate em outros eixos. Não repetir mitos de proporções de perdas nem chamar toda a ação de vitória tática sem ressalva histórica.
+
+Final: motor desligado, metal estalando e uma tripulação que faz a chamada. Um sobrevivente sai tossindo. O debrief situa a operação e a violência do combate sem placar triunfal.
+
+Falas: Comandante: “Mantenha a formação enquanto houver passagem.” Tripulante: “Torre lenta! Preciso que você gire o casco.” Demin: “Quantos saíram daquele tanque?”
+Checkpoints: aproximação; primeiro confronto; avaria recuperável; manobra final. Salvar componentes, tripulação, formações e destroços.
+
+M14 — ESTRADAS SICILIANAS
+Data/local: 14/7/1943, eixo Gela–Niscemi, Sicília. Unidade: 16º Regimento, 1ª Divisão de Infantaria dos EUA. POV: Edward Lane. Fonte: H14. Duração-alvo: 18–25 min.
+
+Abertura: o comboio espera numa estrada estreita. Morgan distribui posições, Bell confere munição e Price atende um homem com pé ferido. Lane recebe a condução de um jeep; controles e passageiros são reais, não uma câmera atravessando o cenário.
+
+Sequência jogável:
+1. Conduzir por trecho de estrada pesquisado, mantendo espaço entre veículos. Colunas e patrulhas em outros acessos se movem por agenda própria.
+2. Uma passagem é bloqueada. Descer, reconhecer uma alternativa e informar o grupo; cenário e NPCs indicam por que a rota mudou.
+3. Contato pontual obriga a proteger o veículo de suprimento e os passageiros. Alternar combate a pé e condução, sem obrigar uma emboscada idêntica em cada curva.
+4. Encontrar moradores que procuram afastar-se da estrada e um edifício danificado. Abrir passagem segura para o comboio; auxiliar civis é opcional e modifica reação/fala posterior.
+5. Clímax: transportar o material até o destino enquanto um segundo grupo cobre a via de acesso. A entrega conclui o objetivo local, sem conquistar a ilha inteira.
+
+Batalha ao redor: médio, patrulhas e comboios noutras estradas; longe, movimento aéreo, fumaça e fogo de apoio pertinente ao setor. A vida rural e as pausas distinguem esta missão dos desembarques.
+
+Final: o destinatário confere suprimento; Price ajuda um morador sem exigir gratidão imediata. Lane vê uma casa ocupada por uma família que não pode regressar à sua.
+
+Falas: Morgan: “Distância entre os carros. Não nos amontoem numa curva.” Morador: “A estrada passa por nossa casa.” Price: “Podem ficar aqui até o comboio sair.”
+Checkpoints: saída; reconhecimento; comboio reorganizado; entrega. Salvar passageiros, carga, danos e rota.
+
+M15 — ALÉM DO RECIFE
+Data/local: 20/11/1943, Betio, Tarawa. Unidade: 2ª Divisão de Marines. POV: Ben Turner, em uma onda posterior de embarcações convencionais. Fonte: H15. Duração-alvo: 22–30 min.
+
+Abertura: Turner observa LVTs das primeiras ondas mais à frente. Sua embarcação convencional não consegue vencer o recife nas condições encontradas. Identificar a onda evita falsificar a capacidade dos LVTs ou repetir o mesmo desembarque em todas as ilhas.
+
+Sequência jogável:
+1. Sair da embarcação sob ordem e atravessar a água até cobertura, com movimento, profundidade e equipamento coerentes.
+2. Reunir sobreviventes junto à proteção disponível. Um socorrista tenta alcançar homens na água; outros grupos já combatem mais adiante.
+3. Abrir ligação com uma posição próxima da praia e levar munição à arma coletiva. Não resolver toda Betio como um corredor de bunkers.
+4. Coordenar avanço curto contra uma posição que impede trânsito. Apoio disponível atua por sua própria equipe, com sinais de fogo e risco para aliados.
+5. Clímax: manter um espaço de desembarque/evacuação e receber o grupo seguinte. O fim se refere à consolidação local do dia 20; a captura completa posterior não acontece instantaneamente.
+
+Batalha ao redor: médio, outros setores da costa e veículos com resultados persistentes; longe, navios, fogo de apoio e aeronaves. Barcos e socorro continuam durante as pausas.
+
+Final: Turner encontra equipamento do companheiro desaparecido perto da água. Um homem sobrevive seriamente ferido e segue para atendimento. Vitória local e custo humano aparecem juntos, sem coleção de mortes em câmera lenta.
+
+Falas: Graduado: “Aqueles veículos passaram. O nosso barco não vai passar.” Socorrista: “Cubra a água. Ainda há homens lá.” Turner: “Isto era dele. Não deixem aqui.”
+Checkpoints: antes de entrar na água; primeira cobertura; ligação; consolidação. Restaurar destroços, ondas e feridos.
+
+M16 — MONTANHA
+Data/local: 17–18/5/1944, Monte Cassino. Unidade: 3ª Divisão de Fuzileiros dos Cárpatos, II Corpo Polonês. POV: Leon Ostrowski. Fonte: H16. Duração-alvo: 22–30 min.
+
+Abertura: tropas se preparam sob o relevo real do maciço; uma carta de casa passa de mão em mão. Armamento/uniformes correspondem ao corpo polonês integrado à estrutura aliada em 1944, não ao equipamento de setembro de 1939.
+
+Sequência jogável:
+1. Aproximar-se por trilha pesquisada, reconhecendo cotas e campos de tiro. O cenário distingue a encosta, a cidade e o mosteiro.
+2. Apoiar avanço no setor da cota 593, conforme mapa/cronologia confirmados. Cobertura, comunicação e transporte importam tanto quanto disparar.
+3. Uma pausa protegida permite remover feridos e reunir homens separados. Corpos e equipamento no terreno mostram o custo acumulado de ataques anteriores, sem inventar identificação de pessoas reais.
+4. Retomar avanço quando chegar ordem/informação do setor. A passagem para 18/5 recebe cartela e checkpoint; outras formações avançam em seus próprios eixos.
+5. Clímax: consolidar a posição de acesso e realizar reconhecimento depois da retirada alemã. Não fabricar um chefe final dentro da abadia nem atribuir ao protagonista a primeira bandeira histórica.
+
+Batalha ao redor: médio, outras encostas e vales com deslocamento e fogo; longe, posições de apoio e panorama de Cassino. O jogador pertence a uma operação conjunta.
+
+Final: ruínas e silêncio breve. Ostrowski guarda a carta ao ajudar um ferido. A conquista não devolve casas e companheiros; o debrief preserva papel das diferentes formações.
+
+Falas: Graduado: “A cota, não o telhado. Olhem o terreno.” Companheiro: “Esta carta já viajou mais do que eu.” Ostrowski: “Depois você termina de ler. Primeiro vamos tirá-lo daqui.”
+Checkpoints: aproximação; primeiro objetivo; evacuação; nova data; reconhecimento final.
+
+M17 — ANTES DO AMANHECER
+Data/local: madrugada de 6/6/1944, Sainte-Mère-Église e arredores. Unidade: 505º Regimento Paraquedista, 82ª Divisão. POV: Nathan Cole. Fonte: H17. Duração-alvo: 20–27 min.
+
+Abertura: interior de C-47, motores, luzes e homens conferindo equipamento. Flak distante e aeronaves em outros corredores revelam a escala da operação. Não reproduzir o caso de um paraquedista histórico ou uma cena de COD como se fosse criação original.
+
+Sequência jogável:
+1. Saltar na sequência planejada, com liberdade de olhar e controle acessível apropriado ao paraquedas do período. Não usar comportamento de paraquedas moderno.
+2. Após aterrissagem dispersa, reunir parte do grupo por sinais de reconhecimento historicamente apropriados e contexto de visibilidade.
+3. Reconhecer vias/pátios pesquisados, evitar patrulha quando possível e levar informação a homens que já defendem uma posição.
+4. Apoiar ligação entre grupos e interromper trânsito inimigo num acesso confirmado. Outros paraquedistas têm missões próprias e não seguem todos Cole.
+5. Clímax: conservar a posição até a comunicação/reorganização prevista, com reação inimiga entrando por vias coerentes. Objetivo não é matar cada soldado escondido na área.
+
+Batalha ao redor: médio, grupos dispersos e combates em acessos distintos; longe, transporte aéreo, flak e clarões. Sons desconhecidos produzem tensão sem inimigos oniscientes.
+
+Final: amanhecer, chamada e tentativa de localizar desaparecidos. Cole entrega equipamento de um homem encontrado durante o percurso. A cidade e seus moradores continuam afetados depois do controle do objetivo.
+
+Falas: Graduado: “Primeiro saiba quem está ao seu lado.” Companheiro: “Vi outros homens no pomar. Não sei de que companhia.” Cole: “Temos ligação. Digam a eles que a posição está aqui.”
+Checkpoints: antes do salto; aterrissagem segura; reunião; ligação; defesa final.
+
+M18 — OVERLORD
+Data/local: manhã de 6/6/1944, Omaha Beach, setor Fox Green. Unidade: Companhia E, 16º Regimento, 1ª Divisão de Infantaria. POV: Edward Lane. Fontes: H17/H18. Duração-alvo: 24–32 min.
+
+Abertura: o grupo de Lane retorna após meses de serviço; Morgan, Bell e Price mantêm personalidade/estado plausíveis. Embarcação se aproxima. Bombardeio, desembarque e dispersão obedecem ao setor real, sem copiar composição visual ou diálogos de outro jogo.
+
+Sequência jogável:
+1. Alcançar cobertura depois da abertura da embarcação. Usar terreno, água e obstáculos legíveis, sem invulnerabilidade roteirizada disfarçada.
+2. Reunir um grupo pequeno; Price atende feridos enquanto outros soldados procuram saídas em setores vizinhos.
+3. Levar material a uma equipe que abre passagem, com interação abstrata e cobertura. Um homem sofre ferimento grave por explosão; a brutalidade aparece em impacto, ajuda e consequência, não em pontuação de mutilação.
+4. Atravessar uma saída confirmada e apoiar avanço por posições dominantes. Outros grupos também sobem; não colocar toda a invasão parada aguardando Lane.
+5. Clímax: consolidar um objetivo acima da praia, mantendo acesso para os seguintes. O volume de fogo pode diminuir localmente sem interromper a guerra abaixo.
+
+Batalha ao redor: médio, setores vizinhos e encostas; longe, frota, outras embarcações, aviação e apoio. O relevo produz som abafado ou exposto conforme a posição.
+
+Final: Lane olha a praia depois do avanço. Price permanece atendendo ou foi evacuado, conforme evento implementado. O mesmo litoral visto na abertura está cheio de destroços e trabalho de socorro. Não encerrar a campanha da Normandia no dia do desembarque.
+
+Falas: Morgan: “Encontre cobertura. Depois procure a nossa voz.” Price: “Segure a alça. Vamos levá-lo juntos.” Bell: “Há outros subindo pela esquerda.”
+Checkpoints: preparação; primeira cobertura segura; grupo reunido; passagem; objetivo acima da praia.
+
+M19 — BOCAGE
+Data/local: 13/6/1944, setor de Caumont, Normandia. Unidade: 1ª Divisão de Infantaria; Lane permanece no 16º Regimento, com ação local compatível com seu papel de reserva/proteção dos flancos. POV: Edward Lane. Fonte: H18. Duração-alvo: 20–27 min.
+
+Abertura: contraste com Omaha: sons de aves, uma propriedade abandonada e homens preparando defesa. Morgan verifica o caminho de um transporte. Price/um substituto aparece conforme a continuidade anterior, sem apagar uma evacuação.
+
+Sequência jogável:
+1. Patrulhar um flanco e reconhecer passagens entre sebes, taludes e construções pesquisadas.
+2. Encontrar sinais de uma posição inimiga e transmitir informação. Permitir aproximação cuidadosa antes do contato; não ativar tiros em cada sebe só para manter ação constante.
+3. Ao iniciar o confronto local, grupos usam cobertura, janelas e rotas laterais reais. A linha de visão não atravessa vegetação/terra sólida por conveniência.
+4. Abrir e proteger uma rota para o transporte. Outro grupo mantém o trecho seguinte; Lane não precisa escoltar toda a estrada sozinho.
+5. Clímax: repelir uma reação pontual e manter a ligação do flanco. Um inimigo que realmente se rende pode ser desarmado/supervisionado conforme sistema validado; não exigir sua execução para terminar.
+
+Batalha ao redor: médio, outras patrulhas e transporte em vias distintas; longe, artilharia e combates além de colinas. Há intervalos de silêncio e atividade que o jogador apenas observa.
+
+Final: o comboio passa, um prisioneiro aguarda sob guarda e um morador observa sem confiança imediata. Morgan percebe o desgaste de Lane e reduz a conversa a uma ordem simples.
+
+Falas: Morgan: “Devagar. A sebe esconde o que a praia deixava à vista.” Bell: “O transporte entrou. Agora precisamos da saída.” Morgan: “Beba água, Lane. Depois assumo seu posto.”
+Checkpoints: patrulha; contato; rota aberta; ligação consolidada. Salvar prisioneiro, transporte e estado do socorrista.
+
+M20 — UMA PONTE LONGE DEMAIS
+Data/local: 17, 21 e noite de 25/9/1944, eixo Arnhem/Oosterbeek. Unidade: 1ª Divisão Aerotransportada Britânica. POV: Arthur Reed após treinamento/designação ficcionais registrados. Fonte: H19. Duração-alvo: 26–35 min.
+
+Abertura: nova cartela explica os quatro anos desde Dunquerque. Confiança na operação, material recém-conferido e casas aparentemente tranquilas. Reed integra um novo grupo; os mortos de 1940 não retornam como se nada tivesse ocorrido.
+
+Sequência jogável:
+1. Em 17/9, desembarque aerotransportado e aproximação por vias pesquisadas. Outros grupos tentam seus próprios acessos; informações sobre Arnhem chegam como relatos, sem levar o protagonista automaticamente à ponte.
+2. Resistência e comunicação precária obrigam reorganização e ligação entre elementos separados.
+3. Em 21/9, cartela/checkpoint: defesa do perímetro de Oosterbeek. Munição e atendimento tornam-se problemas visíveis; visitar ponto médico e proteger uma passagem para feridos.
+4. Defender posições menores, com recuos controlados e tropas já atuando em lados diferentes do perímetro.
+5. Em 25/9, clímax: retirada noturna para a travessia do Reno. Cobrir grupos, seguir sinais de movimento e alcançar embarque. Feridos que permanecem recebem contexto; não fingir que todos podem ser resgatados por mais um inimigo morto.
+
+Batalha ao redor: médio, outros trechos do perímetro; longe, Arnhem, fogo de apoio e travessias. A escassez modifica ritmo e atuação, não cria teletransporte de reforços.
+
+Final: Reed cruza o rio entre sobreviventes, lembrando a travessia de 1940 por som e gesto originais. Objetivo cumprido é sobreviver/retirar-se; não conquistar a ponte e vencer Market Garden.
+
+Falas: Companheiro: “A notícia da ponte mudou outra vez.” Reed: “Eles ainda estão esperando macas.” Graduado: “Siga as vozes até a água. Mantenha o grupo unido.”
+Checkpoints: reunião de 17/9; nova fase em 21/9; posto médico; início da retirada em 25/9; embarque recuperável.
+
+M21 — FLORESTA
+Data/local: 2/11/1944, Vossenack, região de Hürtgen. Unidade: 112º Regimento de Infantaria, 28ª Divisão. POV: Victor Allen. Fonte: H20. Duração-alvo: 22–29 min.
+
+Abertura: homens tentam orientar-se entre árvores, lama e linhas de terreno difíceis de ler. Um graduado verifica a direção no mapa; sons distantes parecem próximos pela floresta. Diferenciar mata, ravinas, campos e povoação, em vez de plantar árvores sobre um grid plano.
+
+Sequência jogável:
+1. Deslocar-se por um acesso pesquisado até posição de observação, preservando ligação com o grupo.
+2. Apoiar o avanço a Vossenack. Relevo e obstáculos definem quem consegue ver/atirar; inimigos não enxergam automaticamente através da mata.
+3. Explosões entre árvores obrigam buscar proteção adequada. Estilhaços/queda de galhos, som e reação dos homens tornam o ataque legível; não matar o jogador arbitrariamente por um efeito invisível.
+4. Abrir uma rota de evacuação que evita trecho exposto, com carregadores que se movimentam por tarefas próprias e precisam de passagem real.
+5. Clímax: assegurar um ponto local da povoação/ligação e repelir pressão suficiente para completar a reorganização, sem afirmar que toda a campanha de Hürtgen foi vencida naquele dia.
+
+Batalha ao redor: médio, grupos nas ravinas e bordas da mata; longe, artilharia e combate em acessos distintos. Oclusão e vento variam percepção sem tornar todo som onipresente.
+
+Final: um carregador tira lama da maca para não deixar um ferido cair. Allen percebe que o homem considerado desaparecido apenas perdeu a rota, enquanto outro não voltou. A incerteza e o desgaste substituem um final de triunfo.
+
+Falas: Graduado: “Confirme a direção antes de andar.” Companheiro: “O fogo está acima das árvores!” Carregador: “Preciso da passagem, não de mais homens aqui parados.”
+Checkpoints: orientação; acesso à povoação; corredor de evacuação; posição final. Salvar rotas, feridos e destruição.
+
+M22 — OFENSIVA
+Data/local: 16–17/12/1944, setor de Clervaux, Luxemburgo. Unidade: 110º Regimento de Infantaria, 28ª Divisão. POV: Paul Lewis. Fonte: H21. Duração-alvo: 22–30 min.
+
+Abertura: um posto relativamente quieto, homens tentando descansar e um rádio de rotina. Cartela identifica o novo protagonista. O desgaste recente da divisão existe na conversa/equipamento, sem transferir Allen invisivelmente do 112º para o 110º Regimento.
+
+Sequência jogável:
+1. A preparação de artilharia e a interrupção de comunicação quebram a rotina. Procurar cobertura, reunir homens e identificar a ameaça sem um tutorial longo.
+2. Defender um acesso enquanto mensageiros relatam penetração em outros setores. O inimigo aproxima-se por terreno/vias coerentes com a ofensiva.
+3. Levar feridos e informação por uma rota que permanece aberta. Um transporte de outro grupo pode passar antes de Lewis, demonstrando uma defesa maior.
+4. Passagem explícita para 17/12: posições foram reduzidas e a retirada/reorganização exige percorrer interiores/pátios pesquisados.
+5. Clímax: proteger saída de um grupo e chegar ao ponto de reunião possível. Se a situação local termina em captura de personagens ficcionais, tratar como consequência do roteiro, sem apresentar a conquista histórica de Clervaux como vitória americana.
+
+Batalha ao redor: médio, acessos da cidade e posições em ruptura; longe, colunas, baterias e fumaça no vale. Relatos deixam claros os setores perdidos.
+
+Final: Lewis chega com menos homens e entrega uma lista incompleta. A resistência ganhou tempo para outras forças, mas não impediu a ruptura naquele setor. Vozes e sons continuam mesmo após o objetivo local.
+
+Falas: Rádio: “Não tenho contato com o posto da estrada.” Graduado: “Tirem os feridos antes que fechem a passagem.” Lewis: “Estes chegaram. Dos outros, ainda não sei.”
+Checkpoints: reorganização; defesa; evacuação; nova data; saída final. Restaurar controle dos acessos sem ressuscitar posições perdidas.
+
+M23 — CERCADOS
+Data/local: Bastogne, 23–26/12/1944; Foy, 13/1/1945. Unidade: 506º Regimento Paraquedista, 101ª Divisão. POV: Isaac Bennett. Fontes: H22/H23. Duração-alvo: 26–36 min.
+
+Abertura: 23/12, frio e posição de perímetro. Um socorrista organiza poucos materiais; um soldado guarda luvas extras para alguém que está no posto. A melhora das condições para suprimento aéreo não resolve todas as carências num instante.
+
+Sequência jogável:
+1. Levar munição/suprimento a uma posição e acompanhar chegada de material em setores diferentes, com dados e local de lançamento confirmados na pesquisa.
+2. Defender um trecho do perímetro e apoiar retirada de feridos, alternando combate intenso com espera e reorganização.
+3. Em 26/12, nova cartela/checkpoint: proteger a ligação quando forças blindadas abrem um corredor. O alívio histórico não acontece porque Bennett matou o último inimigo; outras unidades cumprem a operação.
+4. Em 13/1/1945, cartela/checkpoint e novo estado do mapa: preparação do ataque a Foy, vila ainda ocupada. Não colocar esta ação em dezembro.
+5. Clímax: avançar com o grupo por campo/edificações pesquisados, proteger um flanco e consolidar um objetivo na vila. Não reproduzir cenas, líderes ou falas de adaptações famosas de Easy Company.
+
+Batalha ao redor: médio, perímetro/colunas em dezembro e outros grupos de assalto em janeiro; longe, artilharia, atividade aérea pertinente e panorama de vias de acesso.
+
+Final: no abrigo da vila, Bennett entrega as luvas a um homem diferente daquele para quem as guardou. O socorrista atende sobreviventes. Cerco rompido e ataque bem-sucedido não apagam frio, ferimentos e perdas.
+
+Falas: Socorrista: “Não tenho mais cobertores. Procure onde o vento não entra.” Graduado: “A coluna abriu passagem. Mantenham essa estrada.” Bennett: “Eu guardei estas para ele. Agora use você.”
+Checkpoints: 23/12; defesa estabilizada; 26/12; 13/1; aproximação; consolidação. Cada passagem de data cria snapshot consistente, com suprimento e elenco atualizados.
+
+M24 — AREIA NEGRA
+Data/local: 19/2/1945, Iwo Jima. Unidade: 28º Marines, 5ª Divisão. POV: Leo Finch. Fonte: H24. Duração-alvo: 22–30 min.
+
+Abertura: Finch observa o litoral vulcânico e o Suribachi sem conhecer a posição de todas as defesas. Os instantes iniciais de desembarque e a intensificação posterior do fogo são diferentes de Omaha; não copiar a mesma sequência com outra cor de areia.
+
+Sequência jogável:
+1. Alcançar a praia e procurar cobertura conforme as condições do terreno; a areia/ash vulcânica dificulta movimento e organização.
+2. Reunir homens durante intensificação do ataque. Um socorrista trabalha entre feridos; tripulações reagem a veículos avariados e não ficam permanentemente sentadas em tanques em chamas.
+3. Levar apoio a uma posição e localizar a origem de um fogo oculto pela leitura de impactos, informação de aliados e observação, sem radar onisciente.
+4. Apoiar avanço curto em direção aos acessos pesquisados do setor do 28º Regimento. Empregar apoio adequado, sem permitir que Finch encerre sozinho todo o sistema defensivo da ilha.
+5. Clímax: manter uma ligação e consolidar a posição alcançada no primeiro dia, garantindo passagem para feridos/reforços.
+
+Batalha ao redor: médio, outros setores da praia e grupos em avanço; longe, frota, apoio e fogo em diferentes pontos do relevo. Destruição continua presente após mudar a câmera.
+
+Final: anoitecer ou pausa apropriada ao trecho; Finch percebe que o homem que gritava ao seu lado não está mais ali. A batalha prossegue. A bandeira de 23/2 pertence a outra data e não é plantada pelo protagonista em 19/2.
+
+Falas: Graduado: “Não parem todos no mesmo lugar.” Socorrista: “Tenho um homem aqui. Protejam esta passagem.” Finch: “Achamos cobertura. Ainda precisamos chegar até eles.”
+Checkpoints: primeira cobertura; reunião; apoio; avanço; consolidação. Salvar estado da praia, veículos e feridos.
+
+M25 — PONTE AINDA DE PÉ
+Data/local: 7/3/1945, Remagen, Alemanha. Unidade: Companhia A, 27º Batalhão de Infantaria Blindada, 9ª Divisão Blindada. POV: Carl Hughes. Fonte: H25. Duração-alvo: 20–27 min.
+
+Abertura: a coluna chega ao setor e identifica a ponte Ludendorff ainda utilizável. Hughes desce do transporte; ordens mudam diante da oportunidade real. A estrutura tem escala, acessos e terreno pesquisados.
+
+Sequência jogável:
+1. Acompanhar aproximação à margem e reconhecer ameaças que impedem chegar ao acesso.
+2. Apoiar o grupo que abre a rota. O jogador vê outros soldados assumindo cobertura e funções específicas; não é o único homem capaz de atravessar.
+3. Cruzar sob risco coerente de fogo/explosões. Tentativas de demolição e danos seguem a história pesquisada, sem um puzzle de fios apresentado como procedimento real.
+4. Neutralizar a ameaça local do outro acesso e estabelecer ligação entre margens. Engenharia e tropas subsequentes começam suas tarefas independentemente de Hughes olhar para elas.
+5. Clímax: consolidar a cabeça de ponte e proteger a passagem do grupo seguinte. Um bombardeio posterior só pode ser usado com nova data comprovada; não concentrar todos os ataques da semana em 7/3.
+
+Batalha ao redor: médio, combates na outra margem, fluxo de tropas e veículos; longe, baterias e retirada em vias distintas. O Reno e os relevos definem leitura/som.
+
+Final: homens observam suprimentos cruzando. Hughes percebe quanto trabalho ainda depende daquela estrutura danificada. O debrief informa o colapso posterior em 17/3, sem fazê-la ruir durante a captura.
+
+Falas: Graduado: “A ponte está de pé. Mantenham o acesso aberto.” Engenheiro: “Não amontoem os homens aqui.” Hughes: “Outro grupo está cruzando. Deixem espaço.”
+Checkpoints: acesso; antes da travessia; margem oposta; consolidação. Restaurar ponte, danos, travessias e eventos.
+
+M26 — L-DAY
+Data/local: 1/4/1945, praias de Hagushi e eixo inicial da 1ª Divisão, Okinawa. Unidade: 5º Marines, 1ª Divisão. POV: Samuel Brooks. Fonte: H26. Duração-alvo: 18–25 min.
+
+Abertura: Brooks retorna após anos de campanha, com marcas e comportamento coerentes. A frota ocupa o horizonte. O desembarque principal encontra pouca resistência inicial; a tensão vem do que não se vê, sem fingir uma carnificina de praia naquele momento.
+
+Sequência jogável:
+1. Desembarcar e organizar o grupo. Outras ondas, logística e unidades avançam por seus acessos.
+2. Reconhecer estrada/povoação no eixo confirmado da unidade. Cole manda observar sem disparar contra toda sombra.
+3. Verificar uma posição abandonada e encontrar moradores assustados. Comunicação simples, distância e atitude dos soldados permitem passagem; não exigir que os civis agradeçam.
+4. Apoiar abertura de uma rota para suprimento e patrulhar uma ameaça pontual historicamente plausível, explicitamente marcada como dramatização.
+5. Clímax de preparação: estabelecer perímetro, ligação e observação para o avanço seguinte. A primeira praia não recebe artificialmente toda a resistência da linha de Shuri semanas depois.
+
+Batalha ao redor: médio, companhias e veículos reorganizando o terreno; longe, frota, aeronaves, alarmes e atividade ao largo pertinente à data. Guerra naval e terrestre existem além de Brooks.
+
+Final: uma família permanece perto da casa danificada enquanto o grupo segue. Marsh pergunta pela região ao sul; Brooks não responde com confiança que já perdeu. O debrief avisa a mudança de caráter da resistência nas semanas seguintes.
+
+Falas: Cole: “A praia está quieta. Isso não torna a ilha segura.” Marsh: “Ele está tentando dizer onde mora.” Brooks: “Dê espaço. Eles também estão procurando saída.”
+Checkpoints: desembarque; reconhecimento; passagem de moradores; perímetro. Salvar ondas, civis e estado dos companheiros.
+
+M27 — PORTÕES DE BERLIM
+Data/local: 16/4/1945, Seelow/Oderbruch. Unidade: 8º Exército de Guardas, 1ª Frente Bielorrussa. POV: Mikhail Orlov, com sua nova designação ficcional explicitada. Fonte: H27. Duração-alvo: 24–31 min.
+
+Abertura: a escala da preparação aparece em baterias, formações e panorama, não só num tremor de câmera. Orlov reconhece Makarov ou um substituto conforme a trajetória registrada. Lama, poeira, iluminação e relevo seguem pesquisa do setor.
+
+Sequência jogável:
+1. Avançar após preparação de fogo, mantendo contato com o grupo através de terreno que dificulta observação.
+2. Alcançar cobertura e identificar posições que resistiram. Artilharia intensa não eliminou automaticamente toda defesa.
+3. Abrir passagem local junto de apoio disponível. Blindados encontram dificuldades próprias; não atravessam uma encosta/vala impossível porque o roteiro exige.
+4. Evacuar um ferido e recompor ligação enquanto notícias de outros setores mostram avanço interrompido e reorganização.
+5. Clímax: capturar/consolidar um objetivo limitado e sobreviver à pressão local. Não romper toda a profundidade defensiva no primeiro dia; o desfecho de 18–19/4 é situado na transição documental.
+
+Batalha ao redor: médio, diferentes eixos de infantaria/blindados; longe, baterias e formações com eventos causais. Virar para trás mostra a operação e a evacuação, não um cenário vazio.
+
+Final: Orlov observa um socorrista tentando manter homens fora da via dos veículos. Um sobrevivente pergunta se chegaram; a resposta distingue o objetivo local de Berlim. Cansaço permanece apesar da proximidade do fim europeu.
+
+Falas: Makarov: “A primeira linha ainda responde.” Saveliev/substituto: “Não empurrem todos para a mesma vala.” Orlov: “Chegamos aqui. A cidade ainda está adiante.”
+Checkpoints: preparação; primeira cobertura; passagem local; reorganização; objetivo limitado. Salvar formações, terreno danificado e perdas.
+
+M28 — ÚLTIMOS QUARTEIRÕES
+Data/local: 1–2/5/1945, setor central de Berlim. Unidade: 8º Exército de Guardas. POV: Mikhail Orlov. Fonte: H27. Duração-alvo: 22–29 min.
+
+Abertura: edifícios destruídos, civis em abrigos e tropas procurando passagem entre posições. Selecionar ruas/edifícios após confirmação cartográfica. Não atribuir ao 8º Exército a tomada do Reichstag por outras formações.
+
+Sequência jogável:
+1. Reconhecer um acesso e restabelecer ligação com outro grupo por pátios e interiores reconstruídos com classificação explícita.
+2. Enfrentar uma defesa local em rua/prédio, usando pavimentos, escadas e cobertura realmente funcionais.
+3. Abrir uma saída para civis e feridos sem invadir todo abrigo como se fosse posição inimiga. Marcas de perseguição podem aparecer com contexto pesquisado, sem atrocidade pessoal inventada.
+4. Consolidar o quarteirão enquanto unidades vizinhas terminam suas tarefas e notícias de rendição chegam de modo fragmentado.
+5. Em 2/5, cartela e clímax: confirmar a ordem de cessar-fogo, baixar a arma e acompanhar rendição local. Não exigir matar homens que já deixaram o combate nem criar um encontro com Hitler como chefe final.
+
+Batalha ao redor: médio, ruas e prédios distintos; longe, incêndios e baterias. O cessar-fogo é uma mudança coordenada de estado, com disparos diminuindo por setores, sem um mute artificial instantâneo.
+
+Final: um inimigo ferido recebe supervisão, um morador sai devagar e Orlov escuta a cidade sem a barragem habitual. O fim da batalha não restaura casas, confiança e pessoas. A guerra no Pacífico continua.
+
+Falas: Civil: “Posso sair?” Rádio: “Confirmem a ordem. Não retomem o fogo.” Orlov: “Abaixe a arma. Vamos abrir passagem.”
+Checkpoints: reconhecimento; ligação; evacuação; consolidação; início do cessar-fogo. Persistir rendição e não reativar combatentes ao carregar.
+
+M29 — SHURI
+Data/local: 28–29/5/1945, Wana/Shuri, Okinawa. Unidade: 5º Marines, 1ª Divisão. POV: Samuel Brooks. Fonte: H28. Duração-alvo: 24–32 min.
+
+Abertura: lama, roupas molhadas e homens exaustos depois de semanas de combate. Brooks já não tem a postura de Guadalcanal. Gray verifica um grupo de feridos; Cole fala pouco e precisa ser ouvido de perto, sem discurso heroico prolongado.
+
+Sequência jogável:
+1. Reconhecer acessos do setor com relevo real; proteger comunicação e trânsito, evitando ficar todo o grupo preso num gargalo.
+2. Apoiar avanço limitado sob resistência residual/posições confirmadas do trecho. Chuva, fumaça e ruínas afetam leitura sem esconder perigos injustamente.
+3. Ajudar retirada de feridos e assegurar passagem de suprimento. Cole sofre ferimento grave em ataque sinalizado; abrir um corredor para Gray e carregadores o remove ao atendimento. Depois, Cole permanece evacuado e incapacitado para combate, sem reaparecer ativo na consolidação. Sua fala abaixo acontece antes desse ferimento; não oferecer escolha falsa de ressuscitar uma morte confirmada.
+4. Em 29/5, cartela/checkpoint: informações indicam retirada japonesa do sistema de Shuri. Verificar a mudança, mantendo cautela e ligação com unidades vizinhas.
+5. Clímax: alcançar e reconhecer o castelo já abandonado no contexto histórico, interromper avanço em área de fogo amigo/limites de setor quando avisado e consolidar a posição. Não inventar fortaleza lotada ou chefe final no interior.
+
+Batalha ao redor: médio, outros eixos e forças de cobertura em retirada; longe, frota, apoio e atividade aérea adequada ao dia. Os eventos mudam de assalto para reconhecimento/consolidação conforme estado.
+
+Final: nas ruínas, Brooks encontra Gray trabalhando sem pausa. Marsh tenta limpar lama de uma carta sem conseguir. A ocupação de Shuri não encerra a batalha de Okinawa; a transição menciona combates posteriores no sul e sofrimento civil.
+
+Falas: Gray: “Ainda há gente chegando. Não leve as macas.” Cole: “Mantenha a ligação. Não avancem cegos.” Brooks: “Não é o fim. Precisamos tirar os homens daqui.”
+Checkpoints: reconhecimento; passagem; evacuação; 29/5; consolidação. Salvar estado de Cole, limites de setor e retirada inimiga.
+
+M30 — SILÊNCIO
+Data/local: 2/9/1945, USS Missouri, Baía de Tóquio; epílogos em lugares separados, com localização/data identificadas. Unidade: tripulação do USS Missouri, Marinha dos EUA. POV principal: William Cross. Fonte: H29. Duração-alvo: 10–15 min, sem combate.
+
+Abertura: som de água, metal do convés e passos. Cross prepara sua tarefa como marinheiro e observa o navio, a frota e a chegada dos participantes. Os eventos públicos seguem registro histórico; o jogador não assina pelos líderes nem altera a cerimônia.
+
+Sequência interativa:
+1. Andar por uma área acessível do convés e concluir uma tarefa simples de preparação, com controle de olhar e caminhada.
+2. Observar a cerimônia conforme horários/planta pesquisados. As falas históricas só serão usadas com fonte e licença apropriadas; as conversas de Cross são ficcionais.
+3. Após assinatura, acompanhar um breve deslocamento sem armas/objetivos de eliminar inimigos. A queda no nível sonoro é consequência do fim do combate.
+4. Montagem em cenas curtas, claramente separadas por lugar/data: estrada e pontes danificadas na Polônia; um sobrevivente europeu junto de casa destruída; posto médico e homens aguardando retorno no Pacífico.
+5. Fecho: objetos e gestos retomam os arcos — carta, caneca, luvas, mão ferida — conforme estados persistidos. Mostrar quem sobreviveu, foi evacuado ou continua desaparecido; não reunir todo o elenco a bordo por coincidência.
+
+Mundo ao redor: frota, embarcações, pessoas trabalhando e ruídos civis. A retirada dos sons de combate não congela o mundo. O jogador presencia o encerramento formal e suas consequências.
+
+Final: Cross permanece em silêncio olhando a baía. Uma última cena mostra reconstrução começando entre ruínas. Créditos de equipe, fontes e assets; opção de rever capítulos e continuar do save. O encerramento não sugere que todas as famílias recuperaram seus mortos ou sua antiga vida.
+
+Falas originais: Marinheiro: “Passei meses tentando ouvir a próxima ordem.” Cross: “Hoje podemos ouvir a água.” Sobrevivente, em outro lugar: “Vamos começar por esta parede.”
+Checkpoints: preparação; cerimônia; epílogos. Skip permite concluir/rever sem desbloqueios duplicados; o jogo nunca solicita disparo para terminar esta missão.
+
+============================================================
+80. VALIDAÇÃO FINAL — CASOS QUE PRECISAM SER DEMONSTRADOS
+============================================================
+
+Use testes proporcionais ao sistema alterado. Preserve a suíte útil existente, acrescente casos de regressão relevantes e não escreva testes que apenas reproduzem o código ou conferem nomes de estados. Roteiros e schemas podem ser validados automaticamente, mas isso não substitui jogar a missão.
+
+COMBATE:
+- Mirar acima/abaixo e acertar hitboxes corretas; alvo atrás de parede/piso não recebe o disparo bloqueado.
+- Soldado em COVER precisa observar/expor-se para disparar; não causa dano por uma condição falsa de distância.
+- Cadência, recarga e munição seguem relógio de simulação e permanecem coerentes depois de pausa/restauração.
+- Granada respeita colisão, quique, tempo, obstrução e distância. NPCs avisam/reagem somente quando podem perceber o risco.
+- Ator morto deixa de atacar e não reaparece ao reduzir LOD, voltar a olhar ou restaurar um checkpoint posterior à morte.
+
+NAVEGAÇÃO E ESQUADRÃO:
+- Caminho impossível retorna falha tratada; agente não anda através da parede para chegar ao alvo.
+- Aliados não bloqueiam permanentemente portas/escadas. Há espaçamento, reserva de posições e saída de gargalos.
+- Escadas, pisos, interiores e desníveis comportam jogador e NPCs, inclusive ferido carregado e saída de veículo.
+- Perder contato não dá conhecimento exato da posição do jogador. Estados de investigação, recuo e supressão produzem comportamento visível.
+
+MISSÃO E SAVE:
+- Completar cada objetivo obrigatório por um caminho válido. Testar também ausência de objetivo opcional, morte de ator dispensável e NPC atrasado.
+- Morrer/carregar em fases distintas; restaurar atores, munição, objetivos, destruição, timers e batalha ao redor.
+- Pular introdução/cena/clímax nos momentos permitidos produz estado final consistente, sem duplicar eventos nem bloquear o controle.
+- Carregar save de versão anterior suportada e tratar dados inválidos com recuperação legível.
+- Repetir iniciar/pausar/reiniciar/trocar missão sem loops, listeners, áudio ou reforços duplicados.
+
+BATALHA EM DISTÂNCIA:
+- Observar 90 segundos sem avançar; pelo menos dois setores ativos e coerentes, quando a missão prevê combate independente.
+- Virar a câmera, atravessar um interior e voltar; mortos, veículos, fumaça e posições conservam continuidade.
+- Aproximar um setor simplificado e verificar correspondência de atores/estado com o panorama anterior.
+- Atirar/interagir com uma unidade atingível de média distância atualiza a mesma entidade representada pela simulação reduzida.
+- Restaurar checkpoint e alterar preset sem gerar outro desfecho apenas pela qualidade gráfica.
+
+ASSETS E BUILD:
+- Instalação limpa com lockfile e comandos documentados; testes e build de produção realmente executados.
+- Carregamento sob /COD-guerra/, sem 404, case mismatch, CORS inesperado, exceções de shader ou erro silencioso de áudio.
+- Um asset ausente gera fallback/erro legível e não trava o restante da missão. Fallback técnico não recebe aprovação de qualidade artística final.
+- Cancela-se um carregamento antigo ao trocar de missão; não inserir NPC ou som da missão anterior.
+- Repetir trocas de missão para detectar vazamento de GPU/memória; registrar sinais medidos, sem inventar precisão de memória não disponível no navegador.
+
+VEÍCULOS:
+- Tanque: casco/torre, colisão, componentes, dano, tripulação e restauração coerentes.
+- Jeep/caminhão: condução, passageiros, entrada/saída, carga, dano e colisão.
+- Avião: energia/velocidade/altura, controles, dano, pouso/retorno, formação e checkpoint recuperável.
+- Nenhum deles conta como concluído por somente exibir um modelo com câmera presa.
+
+NAVEGADOR E PLAYTEST:
+- Iniciar por gesto real, capturar/liberar pointer lock, pausar por perda de foco e retomar sem input preso.
+- Testes de navegador cobrem o fluxo real de menu → carregamento → início → objetivo → checkpoint → conclusão.
+- Se pointer lock, áudio ou GPU não forem reproduzíveis no teste headless, registrar a limitação e concluir uma verificação manual correspondente. Não simular uma variável interna e chamar isso de comprovação do recurso do navegador.
+- Capturar evidência de uma missão completa, uma restauração, um skip e cada tipo de veículo integrado.
+- Medir combate intenso no equipamento de referência; informar trecho, resolução, preset e tempos de frame. FPS não observado deve aparecer como NÃO MEDIDO.
+
+HISTÓRIA E ROTEIRO:
+- Conferir cronologia, mapa, unidade, armas, veículos, uniformes, horários significativos e resultado geral de cada capítulo.
+- Distinguir documentado, reconstruído e dramatizado. Fonte geral não aprova automaticamente todos os detalhes.
+- Revisar todas as falas para originalidade, contexto, duração, legenda e sobreposição com avisos importantes.
+- Conferir continuidade de feridos, perdas, substituições e passagens de tempo. Personagem evacuado não reaparece no encontro seguinte sem explicação.
+- Tiroteio não deve encerrar sozinho as cenas médicas, civis, logísticas e dos outros setores. As consequências são parte da missão.
+
+LIBERAÇÃO:
+Cada missão recebe estado PLANEJADA, PROTÓTIPO JOGÁVEL, EM POLIMENTO ou VALIDADA. Só VALIDADA entra no relatório como missão pronta. Itens parciais permanecem visíveis na lista de trabalho, com uma próxima ação concreta.
+
+============================================================
+81. PACOTE DE RETOMADA E RELATÓRIO HONESTO
+============================================================
+
+Ao encerrar um marco ou aproximar-se do limite da sessão, atualizar DEVELOPMENT_STATUS.md com:
+1. Commit/branch e estado dos arquivos; alterações locais ainda não commitadas.
+2. Marco/missão/fase exata, situação atual e comportamento demonstrado.
+3. Comandos executados, ambiente, resultado e falhas anteriores à alteração.
+4. Evidências de navegador/playtest, ou indicação explícita de que essa verificação não ocorreu.
+5. Bugs reproduzíveis com passos, impacto e arquivo/sistema associado.
+6. Assets presentes, licenciados, provisórios e ausentes; não esconder pendência artística sob teste verde.
+7. Próxima ação, arquivos a ler, comando a executar e critério de aprovação.
+8. Decisões e dúvidas históricas que afetam o mapa, equipamento ou roteiro.
+
+Na retomada, ler status/runbook/planos e AGENTS.md aplicáveis; verificar o checkout e arquivos reais antes de confiar cegamente no relatório. Reproduzir a validação relevante se o estado mudou. Não recomeçar do zero, não repetir a criação de sistemas existentes e não declarar concluído o que estava apenas planejado.
+
+Se um recurso externo ou asset realmente bloquear a tarefa, explicar o bloqueio preciso e continuar sistemas independentes dentro do escopo. Um problema de obtenção de um modelo não justifica abandonar o build, o checkpoint ou o roteiro.
+
+============================================================
+82. COMANDO FINAL PARA IMPLEMENTAR ESTE PLANO
+============================================================
+
+“Leia este prompt consolidado e o projeto atual. Preserve os sistemas funcionais. Faça primeiro o diagnóstico verificável, os documentos de continuidade e a fundação de build/renderização/input/checkpoint. Integre cedo a missão M01, Tczew, com armas e uniformes de 1939, roteiro completo e combates independentes em várias distâncias. Execute, teste, jogue quando o ambiente permitir, corrija e registre evidências antes de expandir.
+
+Siga os marcos da seção 77 e os roteiros da seção 79. Desenvolva os demais capítulos progressivamente, mantendo toda a campanha planejada desde o início e respeitando as fontes históricas. Implemente a brutalidade e o sofrimento da guerra como parte da atuação, do combate e das consequências, com intensidade visual configurável. O jogador pertence a uma unidade e a guerra continua em outros setores, fora de seu campo de visão.
+
+Não entregue somente documentação, modelos soltos ou sistemas sem aparecer no jogo. Não prometa perfeição nem invente resultados. Mantenha DEVELOPMENT_STATUS.md, RUNBOOK.md e QUALITY_REPORT.md atualizados. Continue do último marco real e entregue alterações concretas, reviewáveis e verificadas.”
+
+FIM DO PROMPT MESTRE CONSOLIDADO — VERSÃO APRIMORADA.
+

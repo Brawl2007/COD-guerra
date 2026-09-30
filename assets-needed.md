@@ -16,3 +16,17 @@ Este PR mantém apenas código e assets de texto. Os modelos `.obj/.mtl` atuais 
 | Vozes de esquadrão | WAV/OGG | Ordens, alertas, granadas, avanço e contato | `assets/audio/production/voices/` |
 
 Todos os arquivos futuros deverão possuir autoria original ou licença compatível documentada antes de serem adicionados ao repositório.
+
+## M01 — Tczew (1939)
+
+Ainda não adquiridos, modelados nem licenciados. Referências históricas constam em `missions/m01-tczew/` e `research/`; fotografias de arquivo servem de referência, sem autorização automática para redistribuição.
+
+| Asset | Requisito | Estado / dependência |
+| --- | --- | --- |
+| Karabinek wz.29 e braços | Modelo próprio, cinco tiros, ferrolho após tiro, clipe, sockets e animações; sons próprios | Pendente; não adaptar o modelo M1 |
+| Pontes ferroviária e rodoviária | Treliças, torres, portais, encontros e estados de destruição separados; metros e colisores coerentes | P1/P4/P5 e fotografias verificadas |
+| Trem 963 e Panzerzug 7 | Locomotiva/vagões, LOD com identidade persistente e armamento correcto de 1939 | P6 |
+| Poloneses de 1939 | Uniformes, wz.31/wz.37, equipamento e rig humano; clips de cobertura, ferido e arrasto | P3 e autoria/licença |
+| Grenzwacht e pioneiros alemães | Uniforme/equipamento de 1939, MG34/Kar98k, sem MP40/MG42 | P7/P8 |
+| Ju 87 | Variante de 1939, escala, trajectória e som próximo/distante | Fonte e licença pendentes |
+| Vozes e sons de M01 | IDs de falas, gravações licenciadas, wz.29, ponte, comboio e ambiente | Pendente; sem clone de voz histórica |

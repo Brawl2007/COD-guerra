@@ -1,6 +1,9 @@
 export class AudioManager {
-  constructor(){this.ctx=null;this.master=null;this.buffers=new Map();}
-  init(){if(!this.ctx){this.ctx=new (window.AudioContext||window.webkitAudioContext)();this.master=this.ctx.createGain();this.master.gain.value=.68;this.master.connect(this.ctx.destination);}this.ctx.resume();}
+  constructor(){this.ctx=null;this.master=null;this.buffers=new Map();this.volume=.68;this.disposed=false;}
+  init(){if(this.disposed)return;if(!this.ctx){const Context=window.AudioContext||window.webkitAudioContext;if(!Context)return;this.ctx=new Context();this.master=this.ctx.createGain();this.master.gain.value=this.volume;this.master.connect(this.ctx.destination);}this.ctx.resume().catch(error=>console.warn('Áudio não pôde ser ativado:',error.message));}
+  setVolume(value){this.volume=Math.max(0,Math.min(1,Number(value)));if(this.master)this.master.gain.value=this.volume;}
+  suspend(){if(this.ctx&&this.ctx.state==='running')this.ctx.suspend().catch(()=>{});}
+  dispose(){if(this.disposed)return;this.disposed=true;this.buffers.clear();if(this.ctx)this.ctx.close().catch(()=>{});this.ctx=null;this.master=null;}
   async load(name,url){if(!this.ctx)return false;try{const response=await fetch(url);if(!response.ok)throw new Error(`${response.status} ${url}`);this.buffers.set(name,await this.ctx.decodeAudioData(await response.arrayBuffer()));return true;}catch(error){console.warn('Áudio procedural ativo:',error.message);return false;}}
   channel(volume=.1,pan=0){const gain=this.ctx.createGain(),panner=this.ctx.createStereoPanner();gain.gain.value=volume;panner.pan.value=Math.max(-1,Math.min(1,pan));gain.connect(panner).connect(this.master);return gain;}
   play(name,{volume=1,pan=0,rate=1}={}){const buffer=this.buffers.get(name);if(!this.ctx||!buffer)return false;const source=this.ctx.createBufferSource();source.buffer=buffer;source.playbackRate.value=rate;source.connect(this.channel(volume,pan));source.start();return true;}

@@ -4,6 +4,12 @@ export const CONFIG = Object.freeze({
   weapon: { magazine: 15, reserve: 60, damage: 38, fireDelay: 180, reloadMs: 1500, recoil: 0.025, range: 620 },
 });
 
+// Gameplay retains its planar x/y grid. Three.js uses x/z in metres, with y up.
+// A 64-unit tile is 2 metres; heights are ALWAYS expressed in metres.
+export const UNITS_PER_METRE = 32;
+export const EYE_HEIGHT = 1.64;
+export const WALL_HEIGHT = 3.4;
+
 export const MAP = [
   '11111111111111111111',
   '1PAAAAAA000000000001',

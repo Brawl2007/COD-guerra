@@ -1,0 +1,242 @@
+[
+  {
+    "id": "m01",
+    "dateLabel": "1/9/1939",
+    "place": "Tczew",
+    "title": "A primeira manhã",
+    "focus": "pontes, bombardeio, engenheiros e retirada.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m02",
+    "dateLabel": "9–10/9/1939",
+    "place": "Bzura/Łęczyca",
+    "title": "Contra-ataque",
+    "focus": "ofensiva, ligação, suprimento e retirada posterior.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m03",
+    "dateLabel": "25/9/1939",
+    "place": "Varsóvia",
+    "title": "Cidade cercada",
+    "focus": "defesa urbana, civis e evacuação.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m04",
+    "dateLabel": "31/5/1940",
+    "place": "Dunquerque",
+    "title": "Até o mar",
+    "focus": "retaguarda, perímetro e embarque.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m05",
+    "dateLabel": "15/9/1940",
+    "place": "Inglaterra",
+    "title": "Céu em chamas",
+    "focus": "Hurricane/RAF 303, interceptação e retorno.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m06",
+    "dateLabel": "14/4/1941",
+    "place": "Tobruk",
+    "title": "Perímetro",
+    "focus": "defesa australiana e ligação de postos.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m07",
+    "dateLabel": "7–8/12/1941",
+    "place": "Kryukovo/Moscou",
+    "title": "Inverno",
+    "focus": "avanço, evacuação e contra-ataque.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m08",
+    "dateLabel": "7–8/8/1942",
+    "place": "Guadalcanal",
+    "title": "Watchtower",
+    "focus": "desembarque com pouca oposição inicial e ocupação do campo.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m09",
+    "dateLabel": "14–15/9/1942",
+    "place": "Stalingrado",
+    "title": "O Volga",
+    "focus": "travessia, reunião e manutenção da ligação.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m10",
+    "dateLabel": "14/10/1942",
+    "place": "Stalingrado",
+    "title": "Fábrica",
+    "focus": "oficinas, ruptura e recuo local.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m11",
+    "dateLabel": "23/10/1942",
+    "place": "El Alamein",
+    "title": "Noite no deserto",
+    "focus": "artilharia, corredor e consolidação.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m12",
+    "dateLabel": "20/2/1943",
+    "place": "Kasserine",
+    "title": "Primeiro sangue",
+    "focus": "defesa, ruptura e retirada.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m13",
+    "dateLabel": "12/7/1943",
+    "place": "Prokhorovka/Kursk",
+    "title": "Aço",
+    "focus": "combate de tanque T-34/76.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m14",
+    "dateLabel": "14/7/1943",
+    "place": "Gela–Niscemi",
+    "title": "Estradas sicilianas",
+    "focus": "jeep, suprimento e deslocamento.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m15",
+    "dateLabel": "20/11/1943",
+    "place": "Betio/Tarawa",
+    "title": "Além do recife",
+    "focus": "onda posterior, água e consolidação.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m16",
+    "dateLabel": "17–18/5/1944",
+    "place": "Monte Cassino",
+    "title": "Montanha",
+    "focus": "encosta, feridos e reconhecimento após retirada alemã.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m17",
+    "dateLabel": "6/6/1944, madrugada",
+    "place": "Sainte-Mère-Église",
+    "title": "Antes do amanhecer",
+    "focus": "salto e ligação entre grupos.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m18",
+    "dateLabel": "6/6/1944, manhã",
+    "place": "Omaha/Fox Green",
+    "title": "Overlord",
+    "focus": "desembarque e objetivo acima da praia.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m19",
+    "dateLabel": "13/6/1944",
+    "place": "Caumont/Normandia",
+    "title": "Bocage",
+    "focus": "flanco, patrulha e transporte.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m20",
+    "dateLabel": "17–25/9/1944",
+    "place": "Arnhem/Oosterbeek",
+    "title": "Uma ponte longe demais",
+    "focus": "aproximação, perímetro e retirada.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m21",
+    "dateLabel": "2/11/1944",
+    "place": "Vossenack/Hürtgen",
+    "title": "Floresta",
+    "focus": "avanço, artilharia e evacuação.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m22",
+    "dateLabel": "16–17/12/1944",
+    "place": "Clervaux/Ardenas",
+    "title": "Ofensiva",
+    "focus": "ruptura e resistência local.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m23",
+    "dateLabel": "23–26/12/1944 e 13/1/1945",
+    "place": "Bastogne/Foy",
+    "title": "Cercados",
+    "focus": "perímetro, corredor e ataque de janeiro.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m24",
+    "dateLabel": "19/2/1945",
+    "place": "Iwo Jima",
+    "title": "Areia negra",
+    "focus": "primeiro dia de desembarque e consolidação.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m25",
+    "dateLabel": "7/3/1945",
+    "place": "Remagen",
+    "title": "Ponte ainda de pé",
+    "focus": "travessia e cabeça de ponte.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m26",
+    "dateLabel": "1/4/1945",
+    "place": "Hagushi/Okinawa",
+    "title": "L-Day",
+    "focus": "desembarque inicial e reconhecimento.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m27",
+    "dateLabel": "16/4/1945",
+    "place": "Seelow",
+    "title": "Portões de Berlim",
+    "focus": "objetivo local da ofensiva.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m28",
+    "dateLabel": "1–2/5/1945",
+    "place": "Berlim",
+    "title": "Últimos quarteirões",
+    "focus": "combate urbano e cessar-fogo.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m29",
+    "dateLabel": "28–29/5/1945",
+    "place": "Wana/Shuri, Okinawa",
+    "title": "Shuri",
+    "focus": "desgaste, retirada japonesa e consolidação.",
+    "status": "PLANEJADA"
+  },
+  {
+    "id": "m30",
+    "dateLabel": "2/9/1945",
+    "place": "Baía de Tóquio/epílogos separados",
+    "title": "Silêncio",
+    "focus": "rendição formal e consequências.",
+    "status": "PLANEJADA"
+  }
+]
