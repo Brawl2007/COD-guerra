@@ -1,0 +1,238 @@
+{
+  "kind": "production browser regression; includes genuine snapshot continuations, not a human/full mission playtest",
+  "stats": {
+    "startTime": "2026-10-01T18:36:56.429Z",
+    "duration": 372638.81999999995,
+    "expected": 18,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "errors": [],
+  "node": {
+    "passed": 110,
+    "failed": 0
+  },
+  "build": {
+    "jsKB": 1022.12,
+    "gzipKB": 264.64
+  },
+  "tests": [
+    {
+      "title": "production prefix loads assets; real click captures mouse; shooting, reload and pause work",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 9856,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "real keyboard movement reaches and stores checkpoint; restart and page reload restore it",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 15890,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "corrupt checkpoint is explained and a new mission remains available",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 5227,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "missing models are reported and procedural fallback keeps the area playable",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 4186,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 31965,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 35315,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "an optional character download failure preserves playable procedural actors without blocking bridge validation",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 12875,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "real keyboard movement traverses the approaches and E delivers the message at the rail bridge",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 70418,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "adjustment salvo at the gates restores its actual origin and follows mouse look",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 12190,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "adjustment salvo behind the truss restores its actual origin and follows mouse look",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 13711,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "demolition inside the road truss shows the actual bearing while mouse look remains free",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 18093,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "a genuine CP-D reload keeps east destruction and casualties, including restart and page reload",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 18201,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "the actual outro state can be skipped through the UI into the enabled historical debrief",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 10406,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 15096,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "the real roll-call snapshot renders seated actors and keeps their pose after page reload",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 22958,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "a real withdrawal continuation loses men only to rounds from the spans, keeps the twelve-survivor floor and shows the count in the HUD",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 28820,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "a failed M01 bridge load prevents an invisible bridge; the French sandbox remains selectable",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 13737,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "textured atmosphere survives checkpoint restart without duplicating resources; low quality reduces vegetation",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 27308,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    }
+  ]
+}

@@ -104,6 +104,16 @@ O piloto move-se, aponta com deltas de input e usa disparo/ferrolho/recarga. Nã
 
 ## Diagnóstico
 
+Os soldados e as mãos de M01 carregam GLB com texturas incorporadas sob o mesmo prefixo de produção. A qualidade baixa carrega os LOD1/2 polacos, LOD2 alemão e o ficheiro de clips; limita os soldados com skinning a 18. Falhar um destes downloads conserva a apresentação procedural. Não muda o estado do actor nem bloqueia a missão; uma ponte em falta continua a bloquear o início.
+
+Galeria dos seis LODs e quinze clips, em Chromium, com relatório e capturas:
+
+```sh
+CHROME_EXECUTABLE=/caminho/para/chromium node tools/verify-m01-characters.mjs test-results/m01-characters
+```
+
+É revisão isolada de assets. As capturas de produção por trechos e as verificações de ferrolho/clipe/cartucho usam o jogo construído. `gameDiagnostics().m01.characters` e `.viewModel` expõem apenas dados de apresentação; não são guardados no save. Créditos, limitações e provas em `docs/verification/m01-runtime/characters/README.md`.
+
 `?debug=1` habilita somente `window.gameDiagnostics()`: renderer, preset, chamadas/triângulos, assets, relógio, posição, fase e sectores. Não expõe a instância nem permite mutações. Não deixar informação de engenharia no HUD normal.
 
 Se o ecrã falha, inspeccionar consola, rede e `#error`. Ausência de WebGL2 mostra mensagem. Asset ausente aparece no diagnóstico e utiliza fallback, sem aprovar qualidade final. `base` deve continuar `/COD-guerra/`; Vite copia `assets` para `dist/assets` no build.

@@ -9,6 +9,8 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { texturedSurface } from './m01-surfaces.js';
 import { M01Atmosphere } from './m01-atmosphere.js';
 import { M01Environment } from './m01-environment.js';
+import { M01Characters } from './m01-characters.js';
+import { M01ViewModel } from './m01-viewmodel.js';
 
 // Presentation only: all actors, visible pieces, damage and clocks come from M01Simulation.
 // Original procedural art: textured environment and articulated humans; final scanned/rigged art remains pending.
@@ -48,7 +50,9 @@ export class M01View {
     this.scene.add(this.solidGroup,this.effects);this.smokes=new Map();this.grenadeViews=new Map();this.world=null;this.revision=-1;
     this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0};
     this.atmosphere=new M01Atmosphere(this.scene);
-    this.createWeapon();this.createActors();this.createContactShadows();this.createFireEffects();this.createAircraft();this.createTrains();this.ready=this.loadKit();
+    this.createWeapon();this.createActors();this.createContactShadows();this.createFireEffects();this.createAircraft();this.createTrains();
+    this.characters=new M01Characters(this.scene);this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture);
+    this.ready=Promise.all([this.loadKit(),this.characters.load(this.owner.quality)]);
   }
   mesh(shape,material,p,size,parent=this.scene){
     const m=new THREE.Mesh(this[shape],this.materials[material]);m.position.set(...p);m.scale.set(...size);
@@ -138,6 +142,7 @@ export class M01View {
     this.contactShadows.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.contactShadows.count=0;this.contactShadows.frustumCulled=false;this.scene.add(this.contactShadows);
   }
   updateActors(actors,time,player={x:0,z:0}){
+    const skinned=this.characters?.update(actors,time,player,this.owner.quality)??new Set();
     const counts={},dummy=new THREE.Object3D(),root=new THREE.Object3D(),matrix=new THREE.Matrix4();
     const up=new THREE.Vector3(0,1,0),direction=new THREE.Vector3(),tint=new THREE.Color();
     this.actorPoses={standing:0,crouched:0,pinned:0,seated:0,wounded:0,carried:0,fallen:0};
@@ -159,6 +164,7 @@ export class M01View {
         dummy.position.set(a.x,a.y+.018,a.z);dummy.rotation.set(0,-a.facing,0);dummy.scale.set(pose.name==='fallen'||pose.name==='wounded'?1.8:.7,1,.8);dummy.updateMatrix();
         this.contactShadows.setMatrixAt(shadowCount++,dummy.matrix);
       }
+      if(skinned.has(a.id))continue;
       root.position.set(a.x,a.y+pose.root.offsetY,a.z);
       root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
       const cloth=a.civilian?'#404c56':a.team==='enemy'?'#b4c0b7':'#c9bea0',helmet=a.team==='enemy'?'#465252':'#635f47';
@@ -228,6 +234,7 @@ export class M01View {
       const pose=actorPose(a,time);root.position.set(a.x,a.y+pose.root.offsetY,a.z);
       root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
       muzzle.fromArray(pose.rifle.muzzle);muzzle.y-=pose.root.pivotY;muzzle.applyMatrix4(root.matrix);
+      const skinnedMuzzle=this.characters?.muzzle(a.id);if(skinnedMuzzle)muzzle.copy(skinnedMuzzle);
       const p={x:muzzle.x,y:muzzle.y,z:muzzle.z},d=far(p);
       if(pose.firing||pose.aiming&&age>=0&&age<.25)put('muzzle',p,Math.max(.12,d*.008)*(.8+.2*Math.sin(time*90)));
       if(age>=0&&age<2.2){const k=age/2.2;put('smoke',{x:p.x,y:p.y+.4+k*1.6,z:p.z},Math.max(.25,d*.007)*(.6+k*.8)*(1-k*k),null,.65*(1-k));}
@@ -341,7 +348,7 @@ export class M01View {
     // Assets, world restore, quality and resizing still invalidate it.
     const canvas=this.owner.canvas,previous=this.lastFrame;
     const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
-      width:canvas.width,height:canvas.height,models:this.kit.length};
+      width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision};
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
@@ -373,6 +380,7 @@ export class M01View {
     this.flash.visible=time<this.flashUntil;
     this.carryBody.visible=sim.player.carrying==='jozef_bak';this.carryCrate.visible=sim.player.carrying==='sapper_crate';
     this.carryBody.position.y=this.carryCrate.position.y=bob*1.5;
+    if(this.viewModel.update(sim,this.owner.quality,this.flashUntil)){this.weaponRoot.visible=false;this.carryBody.visible=false;}
     this.bursts=this.bursts.filter(b=>{const t=(time-b.start)/b.duration;
       if(t>=1||t<0){this.effects.remove(b.mesh);b.mesh.material.dispose();return false;}
       b.mesh.scale.setScalar(b.size*(.35+.65*Math.sqrt(t)));b.mesh.material.opacity=.95*(1-t);return true;});
@@ -389,10 +397,10 @@ export class M01View {
     if(this.bursts.length>24){const old=this.bursts.shift();this.effects.remove(old.mesh);old.mesh.material.dispose();}
   }
   resetEffects(){this.lastFrame=null;this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.impacts=[];for(const b of this.bursts){this.effects.remove(b.mesh);b.mesh.material.dispose();}this.bursts=[];for(const b of Object.values(this.fireBatches))b.count=0;this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0};}
-  get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+b.count,0)??0,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
+  get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+b.count,0)??0,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx}};}
   dispose(){
-    this.disposed=true;this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
+    this.disposed=true;this.viewModel?.dispose();this.characters?.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
     const textures=new Set();for(const m of Object.values(this.materials)){if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
     this.scene.traverse(n=>{if(n.isInstancedMesh)n.dispose();});this.scene.clear();this.weaponScene.clear();
   }

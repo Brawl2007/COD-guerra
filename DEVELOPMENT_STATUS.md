@@ -8,6 +8,8 @@ Os PRs #8 e #10 de pesquisa/preparação já estão em `main`. Esta integração
 
 ## Implementado e observado
 
+- O trabalho de soldados do Claude (`b198a75`) foi preservado e ligado à missão com GLTFLoader, SkeletonUtils e AnimationMixer oficiais. Actores próximos usam rosto, mãos, uniformes, equipamento e quinze clips; actores distantes conservam os proxies e os mesmos IDs. A wz.29 e Bąk ao ombro também usam o rig em primeira pessoa. LODs, limites por qualidade, pausa/restauro, fallback e licença CC0 estão verificados em `docs/verification/m01-runtime/characters/`. Sem serviços pagos ou modelos extraídos de jogos. O ferrolho do NPC termina depois do clarão; as mãos dos sapadores param quando o reparo é suprimido.
+
 - Soldados levantam a arma ao ombro nos disparos, com mãos ligadas à coronha/guarda-mão e recuo procedural. Sob fogo, o tronco curva-se com as botas no chão; o passo levanta um pé. A animação deriva do relógio e dos dados do actor, reproduzindo o mesmo frame após pausa/reload. Galeria e provas em `docs/verification/m01-runtime/combat-animation/`; continuam geometrias provisórias. O kit Ju 87 foi separado como tarefa para um terceiro agente em `docs/THIRD_AGENT_TASK.md`, independente dos soldados atribuídos ao Claude.
 
 - A ordem de mudar de cobertura só aparece quando uma salva real é emitida. O HUD distingue portões de Lisewo e dique norte/sul, com distância e direcção relativa ao olhar por oito segundos activos. A origem restaura como dado opcional do schema 2; cobertura obstruída não gera aviso falso. Fumo da boca e poeira de impactos usam partículas suaves em vez de esferas sólidas. Provas por trechos em `docs/verification/m01-runtime/cover-origin/`.
@@ -98,7 +100,7 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 
 ## Parcial ou pendente
 
-- Humanos, ViewModel, mãos, recarga, sons e texturas são placeholders; rig/vozes/uniformes finais pendentes.
+- Soldados próximos, mãos, recarga e transporte já têm rig e clips reais. Arte, encaixe das mãos, uniformes e mixagem continuam a exigir revisão; Kowal, civis e alguns actores/armas conservam proxies. Vozes gravadas continuam ausentes.
 - Combate remoto, navegação, resgate e feridos têm comportamento reduzido. Evacuação de S3, animação de agarrar, casamatas interiores, feridos carregados pelo pelotão e direcção humana completa faltam.
 - A alça muda a referência de distância; o tiro ainda usa raio recto com dispersão, conforme fallback documentado. Queda/arrasto balístico pendentes. Pontaria e probabilidade de acerto são tuning de protótipo.
 - Trussas têm aberturas e não são paredes sólidas; colisão exacta dos membros metálicos e ruínas pendente. Juntas e posts dos portais usam aproximações conservadoras declaradas.

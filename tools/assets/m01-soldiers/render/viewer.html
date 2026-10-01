@@ -47,7 +47,7 @@ window.stage = {
     return cache.get(url);
   },
   /** Adiciona um actor: clone com SkeletonUtils, mostra só as malhas pedidas (por nome ou expressão) e toca um clip. */
-  async add(url, { position = [0, 0, 0], rotationY = 0, show = null, clip = null, time = 0, morphs = null, unskinned = false } = {}) {
+  async add(url, { position = [0, 0, 0], rotationY = 0, show = null, clip = null, time = 0, morphs = null, unskinned = false, animationUrl = null } = {}) {
     const gltf = await this.load(url);
     const root = SkeletonUtils.clone(gltf.scene);
     if (unskinned) { const list = []; root.traverse(o => { if (o.isSkinnedMesh) list.push(o); }); for (const o of list) { const m = new THREE.Mesh(o.geometry, o.material); m.name = o.name; m.userData = o.userData; o.parent.add(m); o.parent.remove(o); } }
@@ -66,7 +66,8 @@ window.stage = {
     const mixer = new THREE.AnimationMixer(root);
     let action = null;
     if (clip) {
-      const c = gltf.animations.find(a => a.name === clip);
+      const source = animationUrl ? await this.load(animationUrl) : gltf;
+      const c = source.animations.find(a => a.name === clip);
       if (!c) throw new Error(`clip ${clip} não existe; há ${gltf.animations.map(a => a.name).join(', ')}`);
       action = mixer.clipAction(c); action.setLoop(THREE.LoopOnce); action.clampWhenFinished = true; action.play(); mixer.setTime(time);
     } else mixer.update(0);

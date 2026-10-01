@@ -1,3 +1,11 @@
+## Soldados com rig e mãos da wz.29
+
+O trabalho do Claude até `b198a75` está ligado ao runtime, com seis GLB de soldados e quinze clips. SkeletonUtils conserva esqueletos independentes; geometria, materiais e atlas são partilhados. LOD/limites por qualidade, cancelamento/disposal e fallback foram verificados. A animação lê o relógio existente, sem novos campos no save. Mãos, ferrolho, clipe e transporte ao ombro usam o mesmo rig; a carga parcial oculta o clipe e mostra um cartucho.
+
+Node **110/110**; produção **18/18 navegador**, zero retries, em **372,6 s**; build **1022,12 kB / 264,64 kB gzip**, com aviso de chunk grande. A mira e recargas usam controlos reais; pausa conserva a apresentação e a qualidade alta carrega o LOD0. Abortar os GLB opcionais conserva a missão jogável. A galeria mede seis modelos/quinze clips, transforms finitos e zero erros; as capturas de missão são continuações de snapshots genuínos. Provas, autoria CC0 e limites em `docs/verification/m01-runtime/characters/`.
+
+A base `ce382ec` passou o [CI 36898464979](https://github.com/Brawl2007/COD-guerra/actions/runs/36898464979), sem publicação. Esta entrega ainda não declara playtest humano, FPS no Chromebook ou arte final. Kowal, civis e alguns actores/armas continuam proxies; vozes gravadas permanecem ausentes. M01 continua **PROTÓTIPO JOGÁVEL**.
+
 ## Animações de combate
 
 Armas de NPCs passam à altura do ombro ao disparar, com as duas mãos no mesmo referencial da coronha/cano, recuo limitado e clarão na boca. O `SUPPRESS` persistente só mantém a mira durante o fogo recente; feridos, transportados, sentados, civis e socorristas conservam prioridade. Sob supressão o tronco curva-se sobre as pernas, sem rodar as botas para dentro do chão. O passo levanta um pé e mantém o outro assente. A representação deriva do relógio e de dados existentes; matrizes reais reproduzem-se em pausa/reload e não escrevem no snapshot.

@@ -11,8 +11,11 @@
 | `bridge-colliders.json` e juntas/posts | Exportação própria dos GLB revistos e aproximações de ligação/aberturas em `TczewWorld` | Apenas dados de física; reprodutíveis. Não são levantamento histórico final nem colisão exacta das treliças/ruínas. |
 | Humanos, wz.29, mãos, comboios, aviões, solo e edifícios de M01 | Geometrias originais em `src/render/m01-view.js` e poses em `src/render/m01-actor-pose.js` | Placeholders próprios, sem assets da bancada de 1944 ou extracção de jogos. Uniformes, silhuetas, detalhes e animações finais pendentes. |
 | Disparo/ferrolho/clipe do wz.29 | Síntese original própria em `src/core/audio.js` | Não reutiliza a amostra nem a sequência de recarga da M1. Ainda falta gravação/mixagem final. |
+| `assets/models/provisional/m01/characters/` | Soldados preparados por Claude Code em `claude/busy-edison-mokkrb`, a partir de dados MakeHuman CC0; fardamento, atlas, equipamento, armas e clips gerados por código próprio | Fonte fixada em `tools/assets/m01-soldiers/makehuman.lock.json`; texto CC0 conservado em `assets/licenses/MakeHuman-CC0.md`. Não utiliza o código AGPL do MakeHuman. Integração e limites em `docs/verification/m01-runtime/characters/README.md`. |
 
 Nenhum asset profissional novo foi adquirido ou considerado licenciado sem evidência. Os requisitos seguintes permanecem em `assets-needed.md` e no prompt mestre.
+
+Os dados MakeHuman usados pertencem ao commit `a8bc2d54ff0ac92e78ff71431b1023eda42bf482` de https://github.com/makehumancommunity/makehuman. A licença de dados `LICENSE.ASSETS.md` está incluída byte a byte e o seu hash é verificado. Geometria/texturas/animações adicionais são originais deste projecto; a escolha da licença global continua com o proprietário. Os uniformes são reconstruções provisórias. A águia com suástica e decalques do capacete alemão foram omitidos deliberadamente; não se declara reprodução integral das insígnias históricas.
 
 ## Revisão visual de M01
 

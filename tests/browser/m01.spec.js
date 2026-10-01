@@ -54,6 +54,45 @@ test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, a
   expect((await page.evaluate(()=>window.gameDiagnostics())).m01.checkpoints).toEqual(['cp_m01_a_orientacao']);
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
+test('licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset',async({page},info)=>{
+  test.setTimeout(180000);
+  const {errors,failed}=await open(page);await start(page);
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.active>0&&window.gameDiagnostics().m01.viewModel.active);
+  const initial=await page.evaluate(()=>window.gameDiagnostics());
+  expect(initial.m01.characters.loaded).toEqual(expect.arrayContaining(['pl:1','pl:2','de:2']));
+  expect(initial.m01.characters.active).toBeLessThanOrEqual(18);expect(initial.m01.viewModel.lod).toBe(1);
+  await page.mouse.down({button:'right'});await expect(page.locator('#crosshair')).toBeHidden();
+  await page.evaluate(()=>document.exitPointerLock());await page.screenshot({path:info.outputPath('m01-rig-iron-sights.png')});
+  const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(300);
+  expect((await page.evaluate(()=>window.gameDiagnostics())).m01.viewModel).toEqual(frozen.m01.viewModel);
+  await page.locator('#resume').click();
+  for(let i=0;i<5;i++){
+    await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
+    await page.mouse.click(640,360);await expect(page.locator('#mag')).toHaveText(String(4-i));
+  }
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');await page.keyboard.press('KeyR');
+  await page.waitForFunction(()=>{const g=window.gameDiagnostics().m01;return g.weapon.state==='RELOAD_CLIP'&&g.viewModel.clip==='reload_clip'&&g.viewModel.clipTime>.9;});
+  await page.evaluate(()=>document.exitPointerLock());await page.screenshot({path:info.outputPath('m01-rig-clip.png')});
+  await page.locator('#resume').click();await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
+  await page.mouse.click(640,360);await expect(page.locator('#mag')).toHaveText('4');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
+  await page.keyboard.press('KeyR');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.viewModel.singleRound);
+  await page.evaluate(()=>document.exitPointerLock());await page.screenshot({path:info.outputPath('m01-rig-single-round.png')});
+  const single=await page.evaluate(()=>window.gameDiagnostics());expect(single.m01.weapon.state).toBe('RELOAD_SINGLE');
+  await page.locator('#back-menu').click();await page.locator('#quality').selectOption('high');await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.viewModel.lod===0);
+  const high=await page.evaluate(()=>window.gameDiagnostics());expect(high.m01.characters.failures).toEqual([]);
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('an optional character download failure preserves playable procedural actors without blocking bridge validation',async({page})=>{
+  await page.route('**/characters/*.glb',r=>r.abort());
+  await open(page);await start(page);
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.failures.length>0);
+  const data=await page.evaluate(()=>window.gameDiagnostics());
+  expect(data.m01.characters.active).toBe(0);expect(data.m01.viewModel.active).toBe(false);
+  expect(data.m01.assetFailures).toEqual([]);expect(data.m01.actorPoses.standing).toBeGreaterThan(0);
+});
 test('real keyboard movement traverses the approaches and E delivers the message at the rail bridge',async({page},info)=>{
   // Slow software rendering needs room for input and the final, paused evidence capture.
   test.setTimeout(process.env.CI?240000:130000);
