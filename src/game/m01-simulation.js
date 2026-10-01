@@ -628,8 +628,20 @@ export class M01Simulation {
     const progressing=t.guideDist-d>=8;t.guideAt=this.clock+15;t.guideDist=d;
     if(d<10||(t.guideShown&&progressing))return;
     t.guideShown=true;
-    const rel=Math.atan2(g.point.z-p.z,g.point.x-p.x)-p.angle,a=Math.atan2(Math.sin(rel),Math.cos(rel)),deg=Math.abs(a)*180/Math.PI;
-    this.message(`${g.label}: ${Math.round(d)} m, ${deg<35?'em frente':deg>120?'atrás de si':a>0?'à sua direita':'à sua esquerda'}`);
+    this.message(`${g.label}: ${Math.round(d)} m, ${this.directionTo(g.point)}`);
+  }
+  directionTo(point){
+    const p=this.player,rel=Math.atan2(point.z-p.z,point.x-p.x)-p.angle;
+    const a=Math.atan2(Math.sin(rel),Math.cos(rel)),deg=Math.abs(a)*180/Math.PI;
+    return deg<35?'em frente':deg>120?'atrás de si':a>0?'à sua direita':'à sua esquerda';
+  }
+  /** Direcção do impacto real, mesmo quando a treliça tapa a poeira. Não muda a câmara nem guarda estado adicional. */
+  demolitionStatus(){
+    const damage=this.sectors.damage.findLast(d=>(d.id==='east_demolition'||d.id==='west_demolition')&&
+      this.clock>=d.started&&this.clock-d.started<(d.id==='east_demolition'?12:15));
+    if(!damage)return '';
+    const east=damage.id==='east_demolition';
+    return `Demolição ${east?'leste':'oeste'} · ${Math.round(dist(this.player,damage))} m, ${this.directionTo(damage)} · ${east?'recue para o posto de disparo':'siga para o abrigo'}`;
   }
   /** Linha de estado do HUD: só lê a simulação (progresso, supressão real, contagem por ID). */
   threatStatus(){
@@ -644,7 +656,7 @@ export class M01Simulation {
       const spans=this.enemies.filter(a=>a.group==='grp_de_spans'&&a.alive&&a.active);
       return `Pelotão leste: ${n} homens · alemães no tabuleiro ${spans.some(a=>a.suppressedUntil>this.clock)?'suprimidos':'a disparar sobre eles'}`;
     }
-    return '';
+    return this.demolitionStatus();
   }
   /** Diagnóstico só de leitura: o que um jogador vê (clarões recentes) e o estado real por trás do HUD. */
   get threat(){

@@ -80,6 +80,32 @@ test('real keyboard movement traverses the approaches and E delivers the message
   await page.screenshot({path:info.outputPath('m01-message-delivered-paused.png')});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
+test('demolition inside the road truss shows the actual bearing while mouse look remains free',async({page},info)=>{
+  test.setTimeout(process.env.CI?180000:90000);
+  const snapshot=flow().combatSnapshots.eastDemolition;
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  const initial=await page.evaluate(()=>window.gameDiagnostics());
+  expect(initial.player.x).toBeGreaterThan(20);expect(initial.player.z).toBeGreaterThan(35);expect(initial.player.z).toBeLessThan(45);
+  expect(initial.eventIds).toContain('evt_m01_east_demolition');
+  const aim=Math.atan2(20-initial.player.z,800-initial.player.x);
+  const turn=angle=>page.evaluate(delta=>{
+    document.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0,bubbles:true}));
+    document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
+  },Math.atan2(Math.sin(angle),Math.cos(angle))/.0022);
+  await turn(aim+Math.PI-initial.player.angle);
+  await expect(page.locator('#objective-status')).toContainText('atrás de si');
+  const away=await page.evaluate(()=>window.gameDiagnostics());
+  await turn(aim-away.player.angle);
+  await expect(page.locator('#objective-status')).toContainText('em frente');
+  const facing=await page.evaluate(()=>window.gameDiagnostics());
+  expect(facing.m01.threat.status).toBe(await page.locator('#objective-status').textContent());
+  expect(Math.abs(Math.atan2(Math.sin(facing.player.angle-aim),Math.cos(facing.player.angle-aim)))).toBeLessThan(.01);
+  expect(facing.player.x).toBe(initial.player.x);expect(facing.player.z).toBe(initial.player.z);
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.screenshot({path:info.outputPath('m01-demolition-inside-truss.png'),timeout:120000});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
 test('a genuine CP-D reload keeps east destruction and casualties, including restart and page reload',async({page},info)=>{
   const snapshot=flow().checkpoints.cp_m01_d_retirada;
   await page.addInitScript(({key,snapshot})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(snapshot));},{key,snapshot});

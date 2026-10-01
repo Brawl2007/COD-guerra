@@ -4,6 +4,8 @@ Dados revistos nos PRs #8 e #10; runtime em **PROTÓTIPO JOGÁVEL**, com evidên
 
 ## Tempo e eventos
 
+- A indicação das demolições lê `sectors.damage` e o olhar actual: distância/direcção do impacto e destino seguro durante 12 s (leste) / 15 s (oeste) de jogo activo. Não depende da visibilidade da poeira, não força câmara, não acrescenta campos ao schema 2 e não reemite explosões ao restaurar.
+
 - Manter dois valores serializáveis: segundos de jogo activo (animação, IA, combate e tolerâncias) e hora histórica de batalha (agenda dos sectores). Ambos suspendem em pausa; um gate suspende só a hora histórica. Os sectores mantêm combate e estado durante o gate.
 - O snap de entrega da mensagem só avança: `max(horaActual, 04:33:10)`. Nunca regressar o relógio se a entrega for tardia. Ao saltar um intervalo, consumir por ordem os eventos elegíveis, sem perder os que ficaram entre as duas horas.
 - `battleClock.at` significa hora atingida ou ultrapassada, não igualdade numérica. Eventos dependentes tornam-se elegíveis quando os seus pré-requisitos terminam. Guardar IDs consumidos e a hora de consumo para `delaySec`.

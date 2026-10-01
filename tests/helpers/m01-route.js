@@ -25,6 +25,8 @@ export function driver(seed=19390901,{support=false}={}){
       events.push(e);if(e.type==='checkpoint')checkpoints[e.id]=structuredClone(sim.checkpoint);
       if(e.type==='restored')throw new Error(`Route died at ${sim.battleClock}: ${sim.failure??'combat/bounds'}`);
       if(e.type==='round-impact'&&e.pinned?.includes('pawel_krawiec')&&!combatSnapshots.repairThreat)combatSnapshots.repairThreat=sim.snapshot();
+      if(e.type==='m01-blast'&&sim.scene?.id==='cs_m01_east_blast')combatSnapshots.eastDemolition=sim.snapshot();
+      if(e.type==='m01-blast'&&sim.scene?.id==='cs_m01_west_blast')combatSnapshots.westDemolition=sim.snapshot();
     }
     if(sim.active('cover_repair')&&!combatSnapshots.repair)combatSnapshots.repair=sim.snapshot();
     if(sim.consumedEvent('evt_m01_germans_on_east_spans')&&!combatSnapshots.withdrawal)combatSnapshots.withdrawal=sim.snapshot();
