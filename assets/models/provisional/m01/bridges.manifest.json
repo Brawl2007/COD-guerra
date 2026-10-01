@@ -1,0 +1,1652 @@
+{
+  "schemaVersion": 1,
+  "status": "PROVISÓRIO — geometria de bloqueio/placeholder; não é asset final nem comparado com fotografias",
+  "generatedBy": "tools/assets/m01-bridges/build.mjs",
+  "mapLayout": {
+    "path": "missions/m01-tczew/map-layout.json",
+    "sha256_16": "d715d5689c611aec"
+  },
+  "conventions": {
+    "units": "metros",
+    "axes": "X leste (eixo das pontes), Y altura, Z sul; frente −Z (three.js)",
+    "origin": "cada ponte: x = 0 do mapa, y = 0 trilho/pavimento no portal oeste, z = 0 no eixo da ponte; aplicar `placement`"
+  },
+  "license": "Original do projeto COD-guerra, gerado por código neste repositório, sem material de terceiros. Licença: a do repositório (ainda não escolhida pelo proprietário).",
+  "materials": {
+    "steel_painted": {
+      "color": [
+        0.2,
+        0.22,
+        0.21
+      ],
+      "metallic": 0.55,
+      "roughness": 0.65,
+      "note": "Cor da pintura de 1939 INCERTA"
+    },
+    "steel_rail": {
+      "color": [
+        0.42,
+        0.4,
+        0.38
+      ],
+      "metallic": 0.9,
+      "roughness": 0.35
+    },
+    "brick_red": {
+      "color": [
+        0.47,
+        0.22,
+        0.15
+      ],
+      "metallic": 0,
+      "roughness": 0.9,
+      "note": "Tijolo das torres/portais: tom INCERTO"
+    },
+    "stone_masonry": {
+      "color": [
+        0.56,
+        0.53,
+        0.48
+      ],
+      "metallic": 0,
+      "roughness": 0.95,
+      "note": "Tipo de pedra dos pilares INCERTO"
+    },
+    "timber": {
+      "color": [
+        0.32,
+        0.23,
+        0.15
+      ],
+      "metallic": 0,
+      "roughness": 0.9
+    },
+    "road_surface": {
+      "color": [
+        0.36,
+        0.34,
+        0.31
+      ],
+      "metallic": 0,
+      "roughness": 0.95,
+      "note": "Pavimento de 1939 INCERTO"
+    },
+    "opening_dark": {
+      "color": [
+        0.03,
+        0.03,
+        0.03
+      ],
+      "metallic": 0,
+      "roughness": 1
+    },
+    "gate_timber_iron": {
+      "color": [
+        0.24,
+        0.17,
+        0.11
+      ],
+      "metallic": 0.2,
+      "roughness": 0.8
+    },
+    "rubble_mixed": {
+      "color": [
+        0.45,
+        0.42,
+        0.38
+      ],
+      "metallic": 0,
+      "roughness": 1
+    },
+    "collider": {
+      "color": [
+        1,
+        0,
+        1
+      ],
+      "alpha": 0.25,
+      "metallic": 0,
+      "roughness": 1,
+      "note": "Só para depuração: a engine deve ocultar colisores"
+    }
+  },
+  "files": [
+    {
+      "file": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+      "label": "Ponte ferroviária de Tczew (1891 + extensão 1910–1912)",
+      "lod": 0,
+      "placement": {
+        "translation": [
+          0,
+          0,
+          0
+        ]
+      },
+      "bytes": 1648360,
+      "sceneTriangles": 32672,
+      "uniqueTriangles": 23612,
+      "vertices": 45656,
+      "nodes": [
+        {
+          "name": "abutment_west",
+          "group": "intact",
+          "triangles": 36
+        },
+        {
+          "name": "portal_west",
+          "group": "intact",
+          "triangles": 1224
+        },
+        {
+          "name": "pier_01",
+          "group": "intact",
+          "triangles": 88
+        },
+        {
+          "name": "pier_02",
+          "group": "intact",
+          "triangles": 88
+        },
+        {
+          "name": "pier_03",
+          "group": "intact",
+          "triangles": 88
+        },
+        {
+          "name": "pier_04",
+          "group": "intact",
+          "triangles": 88
+        },
+        {
+          "name": "pier_05",
+          "group": "intact",
+          "triangles": 88
+        },
+        {
+          "name": "pier_06_old_east_abutment",
+          "group": "intact",
+          "triangles": 88
+        },
+        {
+          "name": "pier_07",
+          "group": "intact",
+          "triangles": 88
+        },
+        {
+          "name": "pier_08",
+          "group": "intact",
+          "triangles": 88
+        },
+        {
+          "name": "portal_old_east",
+          "group": "intact",
+          "triangles": 1224
+        },
+        {
+          "name": "abutment_east_1912",
+          "group": "intact",
+          "triangles": 36
+        },
+        {
+          "name": "span_01",
+          "group": "intact",
+          "triangles": 2724
+        },
+        {
+          "name": "span_02",
+          "group": "intact",
+          "triangles": 2724
+        },
+        {
+          "name": "span_03",
+          "group": "intact",
+          "triangles": 2724
+        },
+        {
+          "name": "span_04",
+          "group": "intact",
+          "triangles": 2724
+        },
+        {
+          "name": "span_05",
+          "group": "intact",
+          "triangles": 2724
+        },
+        {
+          "name": "span_06",
+          "group": "intact",
+          "triangles": 2724
+        },
+        {
+          "name": "span_07",
+          "group": "intact",
+          "triangles": 888
+        },
+        {
+          "name": "span_08",
+          "group": "intact",
+          "triangles": 888
+        },
+        {
+          "name": "span_09",
+          "group": "intact",
+          "triangles": 888
+        },
+        {
+          "name": "abutment_west_damaged",
+          "group": "state_destroyed",
+          "triangles": 444
+        },
+        {
+          "name": "pier_01_rubble",
+          "group": "state_destroyed",
+          "triangles": 312
+        },
+        {
+          "name": "pier_06_old_east_abutment_rubble",
+          "group": "state_destroyed",
+          "triangles": 312
+        },
+        {
+          "name": "portal_old_east_rubble",
+          "group": "state_destroyed",
+          "triangles": 312
+        },
+        {
+          "name": "span_01_collapsed",
+          "group": "state_destroyed",
+          "triangles": 2724
+        },
+        {
+          "name": "span_02_collapsed",
+          "group": "state_destroyed",
+          "triangles": 2724
+        },
+        {
+          "name": "span_06_collapsed",
+          "group": "state_destroyed",
+          "triangles": 2724
+        },
+        {
+          "name": "span_07_collapsed",
+          "group": "state_destroyed",
+          "triangles": 888
+        }
+      ],
+      "destructible": [
+        {
+          "node": "abutment_west",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "abutment_west_damaged"
+          ]
+        },
+        {
+          "node": "pier_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "pier_01_rubble"
+          ]
+        },
+        {
+          "node": "pier_06_old_east_abutment",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "pier_06_old_east_abutment_rubble"
+          ]
+        },
+        {
+          "node": "portal_old_east",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "portal_old_east_rubble"
+          ]
+        },
+        {
+          "node": "span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "span_01_collapsed"
+          ]
+        },
+        {
+          "node": "span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "span_02_collapsed"
+          ]
+        },
+        {
+          "node": "span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "span_06_collapsed"
+          ]
+        },
+        {
+          "node": "span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "span_07_collapsed"
+          ]
+        }
+      ],
+      "uncertainAppearance": [
+        "portal_west",
+        "pier_07",
+        "pier_08",
+        "portal_old_east",
+        "abutment_east_1912",
+        "span_01",
+        "span_02",
+        "span_03",
+        "span_04",
+        "span_05",
+        "span_06",
+        "span_07",
+        "span_08",
+        "span_09"
+      ]
+    },
+    {
+      "file": "assets/models/provisional/m01/bridge_rail_1891_1912.colliders.glb",
+      "label": "Ponte ferroviária de Tczew (1891 + extensão 1910–1912)",
+      "lod": "colliders",
+      "placement": {
+        "translation": [
+          0,
+          0,
+          0
+        ]
+      },
+      "bytes": 59408,
+      "sceneTriangles": 432,
+      "uniqueTriangles": 432,
+      "vertices": 864,
+      "nodes": [
+        {
+          "name": "COL_deck_span_01",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_N_span_01",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_S_span_01",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_deck_span_02",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_N_span_02",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_S_span_02",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_deck_span_03",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_N_span_03",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_S_span_03",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_deck_span_04",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_N_span_04",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_S_span_04",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_deck_span_05",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_N_span_05",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_S_span_05",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_deck_span_06",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_N_span_06",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_S_span_06",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_deck_span_07",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_N_span_07",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_S_span_07",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_deck_span_08",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_N_span_08",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_S_span_08",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_deck_span_09",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_N_span_09",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_S_span_09",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_abutment_west",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_pier_01",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_pier_02",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_pier_03",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_pier_04",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_pier_05",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_pier_06",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_pier_07",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_pier_08",
+          "group": "colliders",
+          "triangles": 12
+        }
+      ],
+      "destructible": [
+        {
+          "node": "COL_deck_span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_truss_N_span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_truss_S_span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_deck_span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_truss_N_span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_truss_S_span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_deck_span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_truss_N_span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_truss_S_span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_deck_span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_truss_N_span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_truss_S_span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_abutment_west",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_pier_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_pier_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        }
+      ],
+      "uncertainAppearance": []
+    },
+    {
+      "file": "assets/models/provisional/m01/bridge_rail_1891_1912.lod1.glb",
+      "label": "Ponte ferroviária de Tczew (1891 + extensão 1910–1912)",
+      "lod": 1,
+      "placement": {
+        "translation": [
+          0,
+          0,
+          0
+        ]
+      },
+      "bytes": 868304,
+      "sceneTriangles": 12240,
+      "uniqueTriangles": 12240,
+      "vertices": 23720,
+      "nodes": [
+        {
+          "name": "abutment_west",
+          "group": "intact",
+          "triangles": 12
+        },
+        {
+          "name": "portal_west",
+          "group": "intact",
+          "triangles": 412
+        },
+        {
+          "name": "pier_01",
+          "group": "intact",
+          "triangles": 56
+        },
+        {
+          "name": "pier_02",
+          "group": "intact",
+          "triangles": 56
+        },
+        {
+          "name": "pier_03",
+          "group": "intact",
+          "triangles": 56
+        },
+        {
+          "name": "pier_04",
+          "group": "intact",
+          "triangles": 56
+        },
+        {
+          "name": "pier_05",
+          "group": "intact",
+          "triangles": 56
+        },
+        {
+          "name": "pier_06_old_east_abutment",
+          "group": "intact",
+          "triangles": 56
+        },
+        {
+          "name": "pier_07",
+          "group": "intact",
+          "triangles": 56
+        },
+        {
+          "name": "pier_08",
+          "group": "intact",
+          "triangles": 56
+        },
+        {
+          "name": "portal_old_east",
+          "group": "intact",
+          "triangles": 412
+        },
+        {
+          "name": "abutment_east_1912",
+          "group": "intact",
+          "triangles": 12
+        },
+        {
+          "name": "span_01",
+          "group": "intact",
+          "triangles": 1512
+        },
+        {
+          "name": "span_02",
+          "group": "intact",
+          "triangles": 1512
+        },
+        {
+          "name": "span_03",
+          "group": "intact",
+          "triangles": 1512
+        },
+        {
+          "name": "span_04",
+          "group": "intact",
+          "triangles": 1512
+        },
+        {
+          "name": "span_05",
+          "group": "intact",
+          "triangles": 1512
+        },
+        {
+          "name": "span_06",
+          "group": "intact",
+          "triangles": 1512
+        },
+        {
+          "name": "span_07",
+          "group": "intact",
+          "triangles": 624
+        },
+        {
+          "name": "span_08",
+          "group": "intact",
+          "triangles": 624
+        },
+        {
+          "name": "span_09",
+          "group": "intact",
+          "triangles": 624
+        }
+      ],
+      "destructible": [
+        {
+          "node": "abutment_west",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "abutment_west_damaged"
+          ]
+        },
+        {
+          "node": "pier_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "pier_01_rubble"
+          ]
+        },
+        {
+          "node": "pier_06_old_east_abutment",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "pier_06_old_east_abutment_rubble"
+          ]
+        },
+        {
+          "node": "portal_old_east",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "portal_old_east_rubble"
+          ]
+        },
+        {
+          "node": "span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "span_01_collapsed"
+          ]
+        },
+        {
+          "node": "span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "span_02_collapsed"
+          ]
+        },
+        {
+          "node": "span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "span_06_collapsed"
+          ]
+        },
+        {
+          "node": "span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "span_07_collapsed"
+          ]
+        }
+      ],
+      "uncertainAppearance": [
+        "portal_west",
+        "pier_07",
+        "pier_08",
+        "portal_old_east",
+        "abutment_east_1912",
+        "span_01",
+        "span_02",
+        "span_03",
+        "span_04",
+        "span_05",
+        "span_06",
+        "span_07",
+        "span_08",
+        "span_09"
+      ]
+    },
+    {
+      "file": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+      "label": "Ponte rodoviária Lentze (1857 + extensão 1910–1912)",
+      "lod": 0,
+      "placement": {
+        "translation": [
+          0,
+          0,
+          40
+        ]
+      },
+      "bytes": 3027152,
+      "sceneTriangles": 62152,
+      "uniqueTriangles": 44584,
+      "vertices": 84564,
+      "nodes": [
+        {
+          "name": "abutment_west",
+          "group": "intact",
+          "triangles": 84
+        },
+        {
+          "name": "portal_west",
+          "group": "intact",
+          "triangles": 1140
+        },
+        {
+          "name": "pier_01",
+          "group": "intact",
+          "triangles": 1064
+        },
+        {
+          "name": "pier_02",
+          "group": "intact",
+          "triangles": 1064
+        },
+        {
+          "name": "pier_03",
+          "group": "intact",
+          "triangles": 1064
+        },
+        {
+          "name": "pier_04",
+          "group": "intact",
+          "triangles": 1064
+        },
+        {
+          "name": "pier_05",
+          "group": "intact",
+          "triangles": 1064
+        },
+        {
+          "name": "pier_06_old_east_abutment",
+          "group": "intact",
+          "triangles": 88
+        },
+        {
+          "name": "pier_07",
+          "group": "intact",
+          "triangles": 88
+        },
+        {
+          "name": "pier_08",
+          "group": "intact",
+          "triangles": 88
+        },
+        {
+          "name": "portal_old_east",
+          "group": "intact",
+          "triangles": 1140
+        },
+        {
+          "name": "abutment_east_1912",
+          "group": "intact",
+          "triangles": 36
+        },
+        {
+          "name": "span_01",
+          "group": "intact",
+          "triangles": 5460
+        },
+        {
+          "name": "span_02",
+          "group": "intact",
+          "triangles": 5364
+        },
+        {
+          "name": "span_03",
+          "group": "intact",
+          "triangles": 5364
+        },
+        {
+          "name": "span_04",
+          "group": "intact",
+          "triangles": 5364
+        },
+        {
+          "name": "span_05",
+          "group": "intact",
+          "triangles": 5364
+        },
+        {
+          "name": "span_06",
+          "group": "intact",
+          "triangles": 5964
+        },
+        {
+          "name": "span_07",
+          "group": "intact",
+          "triangles": 780
+        },
+        {
+          "name": "span_08",
+          "group": "intact",
+          "triangles": 780
+        },
+        {
+          "name": "span_09",
+          "group": "intact",
+          "triangles": 780
+        },
+        {
+          "name": "abutment_west_damaged",
+          "group": "state_destroyed",
+          "triangles": 444
+        },
+        {
+          "name": "pier_01_rubble",
+          "group": "state_destroyed",
+          "triangles": 312
+        },
+        {
+          "name": "pier_06_old_east_abutment_rubble",
+          "group": "state_destroyed",
+          "triangles": 312
+        },
+        {
+          "name": "portal_old_east_rubble",
+          "group": "state_destroyed",
+          "triangles": 312
+        },
+        {
+          "name": "span_01_collapsed",
+          "group": "state_destroyed",
+          "triangles": 5460
+        },
+        {
+          "name": "span_02_collapsed",
+          "group": "state_destroyed",
+          "triangles": 5364
+        },
+        {
+          "name": "span_06_collapsed",
+          "group": "state_destroyed",
+          "triangles": 5964
+        },
+        {
+          "name": "span_07_collapsed",
+          "group": "state_destroyed",
+          "triangles": 780
+        }
+      ],
+      "destructible": [
+        {
+          "node": "abutment_west",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "abutment_west_damaged"
+          ]
+        },
+        {
+          "node": "pier_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "pier_01_rubble"
+          ]
+        },
+        {
+          "node": "pier_06_old_east_abutment",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "pier_06_old_east_abutment_rubble"
+          ]
+        },
+        {
+          "node": "portal_old_east",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "portal_old_east_rubble"
+          ]
+        },
+        {
+          "node": "span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "span_01_collapsed"
+          ]
+        },
+        {
+          "node": "span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "span_02_collapsed"
+          ]
+        },
+        {
+          "node": "span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "span_06_collapsed"
+          ]
+        },
+        {
+          "node": "span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "span_07_collapsed"
+          ]
+        }
+      ],
+      "uncertainAppearance": [
+        "portal_west",
+        "pier_07",
+        "pier_08",
+        "portal_old_east",
+        "abutment_east_1912",
+        "span_06",
+        "span_07",
+        "span_08",
+        "span_09"
+      ]
+    },
+    {
+      "file": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.colliders.glb",
+      "label": "Ponte rodoviária Lentze (1857 + extensão 1910–1912)",
+      "lod": "colliders",
+      "placement": {
+        "translation": [
+          0,
+          0,
+          40
+        ]
+      },
+      "bytes": 60128,
+      "sceneTriangles": 432,
+      "uniqueTriangles": 432,
+      "vertices": 864,
+      "nodes": [
+        {
+          "name": "COL_deck_span_01",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_N_span_01",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_S_span_01",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_deck_span_02",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_N_span_02",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_S_span_02",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_deck_span_03",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_N_span_03",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_S_span_03",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_deck_span_04",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_N_span_04",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_S_span_04",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_deck_span_05",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_N_span_05",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_S_span_05",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_deck_span_06",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_N_span_06",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_S_span_06",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_deck_span_07",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_N_span_07",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_S_span_07",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_deck_span_08",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_N_span_08",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_S_span_08",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_deck_span_09",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_N_span_09",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_truss_S_span_09",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_abutment_west",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_pier_01",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_pier_02",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_pier_03",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_pier_04",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_pier_05",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_pier_06",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_pier_07",
+          "group": "colliders",
+          "triangles": 12
+        },
+        {
+          "name": "COL_pier_08",
+          "group": "colliders",
+          "triangles": 12
+        }
+      ],
+      "destructible": [
+        {
+          "node": "COL_deck_span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_truss_N_span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_truss_S_span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_deck_span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_truss_N_span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_truss_S_span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_deck_span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_truss_N_span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_truss_S_span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_deck_span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_truss_N_span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_truss_S_span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_abutment_west",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_pier_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "COL_pier_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        }
+      ],
+      "uncertainAppearance": []
+    },
+    {
+      "file": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod1.glb",
+      "label": "Ponte rodoviária Lentze (1857 + extensão 1910–1912)",
+      "lod": 1,
+      "placement": {
+        "translation": [
+          0,
+          0,
+          40
+        ]
+      },
+      "bytes": 531792,
+      "sceneTriangles": 8108,
+      "uniqueTriangles": 8108,
+      "vertices": 14020,
+      "nodes": [
+        {
+          "name": "abutment_west",
+          "group": "intact",
+          "triangles": 12
+        },
+        {
+          "name": "portal_west",
+          "group": "intact",
+          "triangles": 384
+        },
+        {
+          "name": "pier_01",
+          "group": "intact",
+          "triangles": 376
+        },
+        {
+          "name": "pier_02",
+          "group": "intact",
+          "triangles": 376
+        },
+        {
+          "name": "pier_03",
+          "group": "intact",
+          "triangles": 376
+        },
+        {
+          "name": "pier_04",
+          "group": "intact",
+          "triangles": 376
+        },
+        {
+          "name": "pier_05",
+          "group": "intact",
+          "triangles": 376
+        },
+        {
+          "name": "pier_06_old_east_abutment",
+          "group": "intact",
+          "triangles": 56
+        },
+        {
+          "name": "pier_07",
+          "group": "intact",
+          "triangles": 56
+        },
+        {
+          "name": "pier_08",
+          "group": "intact",
+          "triangles": 56
+        },
+        {
+          "name": "portal_old_east",
+          "group": "intact",
+          "triangles": 384
+        },
+        {
+          "name": "abutment_east_1912",
+          "group": "intact",
+          "triangles": 12
+        },
+        {
+          "name": "span_01",
+          "group": "intact",
+          "triangles": 588
+        },
+        {
+          "name": "span_02",
+          "group": "intact",
+          "triangles": 588
+        },
+        {
+          "name": "span_03",
+          "group": "intact",
+          "triangles": 588
+        },
+        {
+          "name": "span_04",
+          "group": "intact",
+          "triangles": 588
+        },
+        {
+          "name": "span_05",
+          "group": "intact",
+          "triangles": 588
+        },
+        {
+          "name": "span_06",
+          "group": "intact",
+          "triangles": 636
+        },
+        {
+          "name": "span_07",
+          "group": "intact",
+          "triangles": 564
+        },
+        {
+          "name": "span_08",
+          "group": "intact",
+          "triangles": 564
+        },
+        {
+          "name": "span_09",
+          "group": "intact",
+          "triangles": 564
+        }
+      ],
+      "destructible": [
+        {
+          "node": "abutment_west",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "abutment_west_damaged"
+          ]
+        },
+        {
+          "node": "pier_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "pier_01_rubble"
+          ]
+        },
+        {
+          "node": "pier_06_old_east_abutment",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "pier_06_old_east_abutment_rubble"
+          ]
+        },
+        {
+          "node": "portal_old_east",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "portal_old_east_rubble"
+          ]
+        },
+        {
+          "node": "span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "span_01_collapsed"
+          ]
+        },
+        {
+          "node": "span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "span_02_collapsed"
+          ]
+        },
+        {
+          "node": "span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "span_06_collapsed"
+          ]
+        },
+        {
+          "node": "span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "span_07_collapsed"
+          ]
+        }
+      ],
+      "uncertainAppearance": [
+        "portal_west",
+        "pier_07",
+        "pier_08",
+        "portal_old_east",
+        "abutment_east_1912",
+        "span_06",
+        "span_07",
+        "span_08",
+        "span_09"
+      ]
+    },
+    {
+      "file": "assets/models/provisional/m01/portal_lisewo_1912.glb",
+      "label": "Portal comum de 1912, Lisewo",
+      "lod": 0,
+      "placement": {
+        "translation": [
+          1049.2,
+          0,
+          20
+        ]
+      },
+      "bytes": 116276,
+      "sceneTriangles": 2020,
+      "uniqueTriangles": 2020,
+      "vertices": 3036,
+      "nodes": [
+        {
+          "name": "portal_lisewo_1912",
+          "group": "intact",
+          "triangles": 1972
+        },
+        {
+          "name": "gate_rail_left",
+          "group": "intact",
+          "triangles": 12
+        },
+        {
+          "name": "gate_rail_right",
+          "group": "intact",
+          "triangles": 12
+        },
+        {
+          "name": "gate_road_left",
+          "group": "intact",
+          "triangles": 12
+        },
+        {
+          "name": "gate_road_right",
+          "group": "intact",
+          "triangles": 12
+        }
+      ],
+      "destructible": [],
+      "uncertainAppearance": [
+        "portal_lisewo_1912",
+        "gate_rail_left",
+        "gate_rail_right",
+        "gate_road_left",
+        "gate_road_right"
+      ]
+    },
+    {
+      "file": "assets/models/provisional/m01/portal_lisewo_1912.colliders.glb",
+      "label": "Portal comum de 1912 — colisores",
+      "lod": "colliders",
+      "placement": {
+        "translation": [
+          1049.2,
+          0,
+          20
+        ]
+      },
+      "bytes": 2508,
+      "sceneTriangles": 12,
+      "uniqueTriangles": 12,
+      "vertices": 24,
+      "nodes": [
+        {
+          "name": "COL_portal_lisewo_1912",
+          "group": "colliders",
+          "triangles": 12
+        }
+      ],
+      "destructible": [],
+      "uncertainAppearance": []
+    },
+    {
+      "file": "assets/models/provisional/m01/portal_lisewo_1912.lod1.glb",
+      "label": "Portal comum de 1912, Lisewo",
+      "lod": 1,
+      "placement": {
+        "translation": [
+          1049.2,
+          0,
+          20
+        ]
+      },
+      "bytes": 35812,
+      "sceneTriangles": 644,
+      "uniqueTriangles": 644,
+      "vertices": 804,
+      "nodes": [
+        {
+          "name": "portal_lisewo_1912",
+          "group": "intact",
+          "triangles": 596
+        },
+        {
+          "name": "gate_rail_left",
+          "group": "intact",
+          "triangles": 12
+        },
+        {
+          "name": "gate_rail_right",
+          "group": "intact",
+          "triangles": 12
+        },
+        {
+          "name": "gate_road_left",
+          "group": "intact",
+          "triangles": 12
+        },
+        {
+          "name": "gate_road_right",
+          "group": "intact",
+          "triangles": 12
+        }
+      ],
+      "destructible": [],
+      "uncertainAppearance": [
+        "portal_lisewo_1912",
+        "gate_rail_left",
+        "gate_rail_right",
+        "gate_road_left",
+        "gate_road_right"
+      ]
+    }
+  ]
+}

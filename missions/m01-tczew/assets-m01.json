@@ -25,7 +25,8 @@
       "candidates": [
         { "source": "Sketchfab", "title": "Railway Bridges Pack 01", "author": "Szakal (@Grabka)", "url": "https://sketchfab.com/3d-models/railway-bridges-pack-01-877cdcd7b6f14b72aaa88fa893b812c9", "licenseStated": "CC-BY (resumo de busca)", "licenseVerified": false, "scaleVerified": false, "use": "só bloqueio/placeholder — tipo de treliça diferente" }
       ],
-      "status": "A PRODUZIR", "targetPath": "assets/models/production/m01/bridge_rail_*.glb"
+      "status": "A PRODUZIR", "targetPath": "assets/models/production/m01/bridge_rail_*.glb",
+      "provisional": { "path": "assets/models/provisional/m01/bridge_rail_1891_1912.glb", "lod1": "assets/models/provisional/m01/bridge_rail_1891_1912.lod1.glb", "colliders": "assets/models/provisional/m01/bridge_rail_1891_1912.colliders.glb", "manifest": "assets/models/provisional/m01/bridges.manifest.json", "report": "docs/assets/m01-bridges/README.md", "license": "ORIGINAL", "status": "PROVISÓRIO — bloqueio, não comparado com fotografias" }
     },
     {
       "id": "bridge_road_lentze_1857", "name": "Ponte rodoviária Lentze (1857 + extensão de 1912), torres e portais de Stüler", "category": "environment_landmark", "priority": "P0",
@@ -35,7 +36,8 @@
       "budget": { "lod0TrisPerSpan": 30000, "towerPairLod0Tris": 12000, "lods": 3, "instancing": true },
       "candidates": [],
       "referenceOnly": ["Fotografias da Skarbnica Tczewska (T18) — referência visual, não textura"],
-      "status": "A PRODUZIR", "targetPath": "assets/models/production/m01/bridge_road_*.glb"
+      "status": "A PRODUZIR", "targetPath": "assets/models/production/m01/bridge_road_*.glb",
+      "provisional": { "path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb", "lod1": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod1.glb", "colliders": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.colliders.glb", "manifest": "assets/models/provisional/m01/bridges.manifest.json", "report": "docs/assets/m01-bridges/README.md", "license": "ORIGINAL", "status": "PROVISÓRIO — bloqueio, não comparado com fotografias" }
     },
     {
       "id": "station_stary_dworzec", "name": "Estação de Tczew de 1939 (Stüler, 1856–57)", "category": "environment_building", "priority": "P1",

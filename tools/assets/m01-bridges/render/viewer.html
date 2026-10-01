@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<title>M01 — pontes de Tczew (pré-visualização)</title>
+<style>
+  html, body { margin: 0; background: #b9c3c9; font-family: system-ui, sans-serif; overflow: hidden; }
+  #labels { position: absolute; inset: 0; pointer-events: none; }
+  .lbl { position: absolute; transform: translate(-50%, -100%); background: rgba(255,255,255,.88); color: #111; font-size: 13px; padding: 2px 6px; border-radius: 3px; white-space: nowrap; border: 1px solid rgba(0,0,0,.25); }
+  .lbl.warn { background: rgba(255,236,190,.95); }
+  .lbl.meas { background: rgba(255,215,215,.95); }
+  #caption { position: absolute; left: 14px; top: 12px; background: rgba(20,24,28,.82); color: #fff; padding: 10px 14px; border-radius: 6px; max-width: 760px; font-size: 14px; line-height: 1.35; }
+  #caption b { font-size: 16px; }
+  #caption .st { color: #ffd27a; font-weight: 600; }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "/tools/assets/m01-bridges/node_modules/three/build/three.module.js",
+  "three/addons/": "/tools/assets/m01-bridges/node_modules/three/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="labels"></div>
+<div id="caption"></div>
+<script type="module" src="./viewer.mjs"></script>
+</body>
+</html>
