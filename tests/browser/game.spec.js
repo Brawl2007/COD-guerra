@@ -1,5 +1,13 @@
 import { test, expect } from '@playwright/test';
 
+test.afterEach(async({page},info)=>{
+  if(info.status===info.expectedStatus||page.isClosed())return;
+  try{
+    const diagnostic=await page.evaluate(()=>window.gameDiagnostics?.());
+    await info.attach('simulation-diagnostics',{body:JSON.stringify(diagnostic??{}),contentType:'application/json'});
+  }catch{/* The timeout may already have closed the page. The trace still records the failure. */}
+});
+
 async function open(page){
   const errors=[],failed=[];
   page.on('pageerror',error=>errors.push(error.message));
@@ -45,10 +53,10 @@ test('real keyboard movement reaches and stores checkpoint; restart and page rel
   const initial=await page.evaluate(()=>window.gameDiagnostics().player);
   // Initial facing is east. Strafe south along the open western road to checkpoint.
   await page.keyboard.down('KeyD');
-  await page.waitForFunction(()=>window.gameDiagnostics().player.y>=600,null,{timeout:20000});
+  await page.waitForFunction(()=>window.gameDiagnostics().player.y>=600,null,{timeout:process.env.CI?120000:20000});
   await page.keyboard.up('KeyD');
   await page.keyboard.down('KeyW');
-  await page.waitForFunction(()=>window.gameDiagnostics().missionPhase===1,null,{timeout:10000});
+  await page.waitForFunction(()=>window.gameDiagnostics().missionPhase===1,null,{timeout:process.env.CI?30000:10000});
   await page.keyboard.up('KeyW');
   const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('cod-guerra:checkpoint:v1')));
   expect(saved.mission.phase).toBe(1);expect(saved.player.y).toBeGreaterThan(initial.y);

@@ -24,6 +24,8 @@ CHROME_EXECUTABLE=/caminho/para/chromium npm run test:browser
 
 Essa variável é opcional e não afecta produção/CI. O renderer de teste usa SwiftShader; os resultados não medem desempenho do Chromebook. `agent-browser` foi tentado e seu daemon não arrancou neste ambiente; a verificação efectiva foi realizada com Playwright e imagens inspeccionadas.
 
+O CI mantém viewport 1280×720 e as mesmas assertions, com 180 s por teste (120 s para o percurso) por causa da renderização em software no runner. Não há retries automáticos. Traces, capturas e diagnóstico de simulação nas falhas ajudam a distinguir espera lenta de erro de jogo.
+
 ## Controlos e estado
 
 WASD: mover; mouse: olhar; clique esquerdo: um disparo semiautomático; botão direito: mira; R: recarregar; G: granada; Shift: correr; Esc: libertar rato/pausar. Iniciar/Retomar solicita pointer lock e habilita áudio por gesto. Perder foco limpa as teclas e pausa simulação/áudio.

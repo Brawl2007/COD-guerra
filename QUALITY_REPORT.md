@@ -20,6 +20,8 @@ O build emite aviso de chunk maior que 500 kB. Não é erro de compilação; red
 
 As capturas e traces ficam em `test-results/`; o CI publica `browser-evidence`. O PR deve passar o workflow antes de merge; os resultados locais não comprovam que Actions/Pages já publicaram esta branch.
 
+As duas primeiras execuções do CI passaram instalação, Node e build, mas excederam o tempo do navegador. O trace mostrou o primeiro teste a concluir disparo/recarga/pausa e a expirar ao capturar a imagem final; a caminhada também excedeu 20 s com renderização em software. Mantêm-se viewport 1280×720, controlos e assertions; o CI recebe orçamento de 180 s por teste e 120 s para o percurso, sem retries. Falhas futuras incluem diagnóstico serializável. Estes tempos não são uma aprovação de performance no Chromebook.
+
 ## Critérios ainda não aprovados
 
 M01 continua PLANEJADA. Testes que comparam cronologia e medidas ao JSON não provam historicidade. Faltam leitura integral/cartografia, ligação à engine e partida completa; CP-A..D, skip, wz.29, baixas S2 através de LOD, resgate opcional, espera visual de 90 s e demolições seguras precisam de demonstração em navegador.
