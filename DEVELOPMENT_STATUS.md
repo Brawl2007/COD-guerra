@@ -99,7 +99,12 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 **Soldados de 1939 (assets provisórios, ainda não ligados ao jogo):**
 - GLB polacos e alemães em `assets/models/provisional/m01/characters/`, gerados por `tools/assets/m01-soldiers/` a partir da malha base CC0 do MakeHuman e de geometria/texturas originais.
 - Incluem 8 cabeças polacas (elenco do `STORY_BIBLE.md`) e 3 alemãs, wz.31 com capa, *rogatywka* wz.37, M35, correame, kb wz.29/Kar98k com ferrolho e clipe de 5.
-- LOD0/1/2: 14,9k/6,0k/1,9k triângulos visíveis (PL), um atlas por nação. O GLB de animações tem 15 clips: ferrolho, recarga por clipe, sapadores normal/sob fogo, transporte de Bąk no `carry_socket`, locomoção, ferido, queda, sentado.
+- LOD0/1/2: 14,9k/6,0k/1,9k triângulos visíveis (PL), um atlas por nação. O GLB de animações tem 25 clips: ferrolho, recarga por clipe, sapadores normal/sob fogo, transporte de Bąk no `carry_socket`, locomoção, ferido, queda, sentado e 10 clips da rkm.
+- Armas de Kowal e Bąk (malhas escondidas no GLB polaco):
+  - **rkm wz.28**, 1,11 m, com carregador de 20 no osso `weapon_mag`, alavanca de armar, bípode aberto/dobrado com patins e bolsa de carregadores;
+  - **kb wz.98a**, 1,25 m, com os clips das espingardas;
+  - clips `rkm_*`: idle, marcha, corrida, pontaria, rajada de 3, deitado no bípode, troca de carregador de joelho e limpeza com pano (abertura).
+  - Fichas em `research/weapons/rkm_wz28.md` e `kb_wz98a.md`.
 - Verificados por `tests/m01-soldiers-glb.test.js` e capturas inspeccionadas em `docs/assets/m01-soldiers/`. Falta integrá-los em `src/render/` (trabalho do utilizador) e medir no Chromebook.
 
 ## Parcial ou pendente

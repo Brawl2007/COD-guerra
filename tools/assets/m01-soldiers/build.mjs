@@ -34,7 +34,7 @@ for (const nat of which.filter(w => w === 'pl' || w === 'de')) {
     const file = `m01_soldier_${nat}_${L.id}.glb`;
     const r = await writeCharacter(join(OUT, file), {
       name: `m01_soldier_${nat}`, bones: GAME_BONES, joints: N.J, materials: L.materials, meshes: L.meshes,
-      extras: { nation: nat, lod: L.id, rifle: RIFLE_OF[nat], sockets: N.rifle.sockets },
+      extras: { nation: nat, lod: L.id, rifle: RIFLE_OF[nat], sockets: N.rifle.sockets, weapons: N.sockets },
       rootExtras: { license: 'CC0 (malha base MakeHuman) + geometria, texturas e animações originais; ver ASSET_CREDITS.md' },
     });
     const visible = r.meshes.filter(m => m.visible);
