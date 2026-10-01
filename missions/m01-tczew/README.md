@@ -13,6 +13,7 @@
 | [`SCRIPT.md`](SCRIPT.md) | Roteiro completo: cenas, falas, atuação, set-pieces, checkpoints, skip, debrief, critérios de aceitação |
 | [`MAP.md`](MAP.md) + [`map-layout.svg`](map-layout.svg) | Sistema de coordenadas, EXACT/RECONSTRUCTED/COMPRESSED, setores, rota, limites, cobertura, luz e som |
 | [`mission.json`](mission.json) | Dados da missão com IDs estáveis: objetivos, eventos, relógio, setores, checkpoints, cenas, falas, debrief |
+| [`ENGINE_CONTRACT.md`](ENGINE_CONTRACT.md) | Semântica de gates, tempos, snapshots reais, segurança e campos ainda descritivos |
 | [`map-layout.json`](map-layout.json) | Geometria em metros: pontes, pilares, torres, aterro, linha de ignição, cobertura, zonas de demolição, rota dos Stukas |
 | [`tools/render-map-svg.mjs`](tools/render-map-svg.mjs) | Regenera o SVG a partir do JSON |
 | [`tools/measure_osm_overture.py`](tools/measure_osm_overture.py) | Refaz as medições (Python: `pyarrow`, `shapely`; `rasterio` opcional) |
@@ -37,7 +38,7 @@ Este pacote não altera `src/`. Pontos de encaixe sugeridos, sem impor arquitetu
 
 1. **Coordenadas.** Metros, X leste, Y altura, Z sul (norte = −Z). Ver `map-layout.json → coordinateSystem`. O `y` do protótipo antigo é planar, não altura.
 2. **Relógio de batalha.** Use `mission.json → clock.segments`: escala por segmento, *snap* ao entregar a mensagem e *gates* segurando o relógio até a prontidão. Pausa e menus suspendem.
-3. **Eventos.** Todos têm `id`, `trigger`, `readiness`, `tolerance`, `results`, `idempotent` e `persist`. Tipos de gatilho estão documentados em `SCRIPT.md` §12.
+3. **Eventos.** Todos têm `id`, `trigger`, `results`, `idempotent` e `persist`; `readiness` e `tolerance` são opcionais. Tipos de gatilho estão documentados em `SCRIPT.md` §12. Condições e efeitos escritos em prosa requerem handlers, conforme `ENGINE_CONTRACT.md`.
 4. **Checkpoints.** `restore` lista eventos consumidos, objetivos, atores, destruição, setores e flags; `neverSaveIf` diz quando não salvar. O save guarda dados, nunca objetos Three.js (Prompt §70).
 5. **Setores.** Cinco setores com agenda própria (`sectors[].schedule`), independentes do jogador. As baixas de S2 são por ID e persistem entre LODs.
 6. **Arma do jogador.** `kb_wz29`: 5 cartuchos, clipe, ferrolho após cada disparo. Alça ajustável recomendada (combate de 150 a ~1100 m). Ficha completa em `research/weapons/kb_wz29.md`. **Não reaproveitar a M1 Carbine.**
@@ -53,7 +54,7 @@ Este pacote não altera `src/`. Pontos de encaixe sugeridos, sem impor arquitetu
 
 ## O que falta
 
-- **Leitura integral das fontes institucionais.** Esta sessão não tem acesso a muzeum1939.pl, prezydent.pl, ipn.gov.pl e wikipedia.org. Ordem de leitura recomendada em `SOURCE_CHECK.md`.
-- **Mapa de 1939** (P4): traçado das vias, contorno da estação, quartel e postos de disparo. Pilares, eixos, rio e dique já foram medidos.
-- **Assets:** nenhum foi baixado ou verificado (Sketchfab bloqueado por desafio anti-bot). Lista, escalas e política de licença em `ASSETS.md`.
+- **Leitura integral das fontes.** A pesquisa original usou resumos de busca. A revisão do PR #8 leu H02 e as pp. 131–134 de H01-PDF (divergências em `HISTORICAL_RESEARCH.md` §3.3). Esta sessão continua sem acesso a muzeum1939.pl, prezydent.pl, ipn.gov.pl e wikipedia.org. Ordem de leitura recomendada em `SOURCE_CHECK.md`.
+- **Mapa de 1939** (P4): traçado das vias, contorno da estação, quartel e postos de disparo. Pilares, eixos, rio e dique já foram medidos (P5 resolvida).
+- **Assets:** nenhum foi baixado ou verificado (Sketchfab bloqueado por desafio anti-bot). Lista, escalas e política de licença em `ASSETS.md`; quando a integração começar, ligar `assets-needed.md` a ela.
 - **Integração, playtest e validação** (Marco 2 do Prompt §77).

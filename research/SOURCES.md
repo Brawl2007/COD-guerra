@@ -7,12 +7,12 @@ Registro de fontes da campanha. Nesta primeira versão, o arquivo cobre apenas *
 | Campo | Significado |
 | --- | --- |
 | **ID** | `H01`–`H30` são as fontes de partida da seção 78 do Prompt Mestre. `T..` são fontes complementares de Tczew encontradas nesta pesquisa. |
-| **Leitura** | `INTEGRAL`: documento lido por completo. `RESUMO`: conhecido apenas pelo resumo de um mecanismo de busca. `NÃO LIDO`: identificado, mas não aberto. |
+| **Leitura** | `INTEGRAL`: documento lido por completo. `PARCIAL`: trechos do documento lidos directamente. `RESUMO`: conhecido apenas pelo resumo de um mecanismo de busca. `NÃO LIDO`: identificado, mas não aberto. |
 | **Certeza** | `ALTA`: fato confirmado por fonte institucional ou primária lida, ou por várias fontes independentes concordantes. `MÉDIA`: fontes secundárias concordam, mas nenhuma foi lida por completo. `BAIXA`: fonte única, divergente ou não lida. |
 
-> **Limitação desta sessão (30/09/2026).** A política de rede do ambiente de pesquisa bloqueou o acesso direto a `muzeum1939.pl`, `prezydent.pl`, `wikipedia.org`, `openstreetmap.org`, `polona.pl`, `archiwa.gov.pl` e `web.archive.org`. Por isso, nenhuma fonte abaixo está marcada como `INTEGRAL`. Os fatos vieram de resumos de busca que citam essas páginas. A seção 78 proíbe tratar busca sem leitura como comprovação, então **todo fato desta versão depende de leitura integral antes de a missão ser VALIDADA**. A lista de verificação está em `missions/m01-tczew/HISTORICAL_RESEARCH.md` §11.
+> **Pesquisa original do Claude (30/09/2026).** O acesso directo às fontes ficou bloqueado; os factos vieram de resumos de busca. Na revisão do PR #8, foi possível ler a página H02 e trechos de H01-PDF. Isso não encerra a pesquisa: a leitura integral do artigo, as medições e P1–P12 continuam pendentes. A secção 78 proíbe tratar busca sem leitura como comprovação.
 >
-> **01/10/2026:** mesma restrição (também `ipn.gov.pl`, arquivos de mapas e o Sketchfab, por desafio anti-bot). As novas entradas T20–T30 continuam `RESUMO`. As medições usam dados abertos acessíveis (G01, G02). O estado de cada pendência está em `missions/m01-tczew/SOURCE_CHECK.md`.
+> **01/10/2026 (Claude):** sem acesso direto a `muzeum1939.pl`, `prezydent.pl`, `ipn.gov.pl`, `wikipedia.org`, arquivos de mapas e Sketchfab (desafio anti-bot). As novas entradas T20–T30 continuam `RESUMO`. As medições usam dados abertos acessíveis (G01, G02). O estado de cada pendência (P1–P16) está em `missions/m01-tczew/SOURCE_CHECK.md`.
 
 ## M01 — Tczew, 1 de setembro de 1939
 
@@ -22,9 +22,9 @@ Data de consulta de todas as entradas: **30/09/2026**.
 
 | ID | Título / instituição | URL | Fato que deve apoiar | Leitura | Certeza atual |
 | --- | --- | --- | --- | --- | --- |
-| H01 | *The battle for Tczew bridges of 1 September 1939: preparations, the course of events and meaning*, revista *War and Remembrance / Wojna i Pamięć* n.º 3 (2021), Muzeum II Wojny Światowej | https://www.muzeum1939.pl/en/publishing/war-and-remembrance/issues-of-the-periodical/war-and-remembrance-issue-3/the-battle-for-tczew-bridges-of-1-september-1939-preparations-the-course-of-events-and-meaning | Cronologia completa, forças dos dois lados, horários das demolições, geografia das posições. É a fonte principal da missão. | NÃO LIDO (bloqueado) | — |
-| H01-PDF | Versão PDF do mesmo número (*Wojna i Pamięć* 3/2021, seção *Varia — Mosty tczewskie*), Muzeum II Wojny Światowej | https://www.muzeum1939.pl/upload/2025/12/925f2e996b710392cf361d1aa7964f8128942.pdf | Mesmo conteúdo de H01, provavelmente com mapas e notas. | NÃO LIDO (bloqueado) | — |
-| H02 | Chancelaria do Presidente da Polônia — cerimônia do 79.º aniversário em Tczew | https://www.prezydent.pl/kancelaria/archiwum/andrzej-duda/aktualnosci/wizyty-krajowe/w-tczewie-uroczystosci-upamietniajace-79-rocznice-wybuchu-ii-wojny-sw-,2531 | Ataque às 04:34; 2.º Batalhão de Fuzileiros (*2 Batalion Strzelców*). | NÃO LIDO (bloqueado) | — |
+| H01 | Marcin Kłodziński, *The Battle for Tczew Bridges of 1 September 1939*, Muzeum II Wojny Światowej | https://www.muzeum1939.pl/en/publishing/war-and-remembrance/issues-of-the-periodical/war-and-remembrance-issue-3/the-battle-for-tczew-bridges-of-1-september-1939-preparations-the-course-of-events-and-meaning | Página editorial com resumo e acesso ao artigo; não contém a cronologia completa. | INTEGRAL (página editorial; artigo em H01-PDF) | ALTA para identificação do artigo |
+| H01-PDF | Kłodziński, *Wojna i Pamięć* 3/2021, pp. 120–152 (33 páginas) | https://www.muzeum1939.pl/upload/2025/12/925f2e996b710392cf361d1aa7964f8128942.pdf | Cronologia e divergências nas pp. 131–134; P1 continua pendente de leitura integral. | PARCIAL (revisão do PR #8) | Divergências registadas em HISTORICAL_RESEARCH §3.3 |
+| H02 | Chancelaria do Presidente da Polônia — cerimônia do 79.º aniversário em Tczew | https://www.prezydent.pl/kancelaria/archiwum/andrzej-duda/aktualnosci/wizyty-krajowe/w-tczewie-uroczystosci-upamietniajace-79-rocznice-wybuchu-ii-wojny-sw-,2531 | Confirma o ataque às 04:34; esta página não identifica o 2.º Batalhão. | INTEGRAL (texto da página) | ALTA para 04:34 |
 | H30 | Muzeum II Wojny Światowej — *Umundurowanie i wyposażenie polskich żołnierzy we wrześniu 1939 roku* | https://www.muzeum1939.pl/aktualnosci/umundurowanie-i-wyposazenie-polskich-zolnierzy-we-wrzesniu-1939-roku--m2wswirtualnie-11339 | Uniforme e equipamento poloneses de 1939. | NÃO LIDO (bloqueado) | — |
 
 ### Fontes complementares encontradas (Tczew)

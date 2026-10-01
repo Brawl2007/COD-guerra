@@ -298,7 +298,7 @@ Avisos antes da demolição oeste:
 - **Tolerância:** se Jan insistir em ficar, Zieliński vai buscá-lo e o puxa. **A demolição polonesa nunca mata o jogador.**
 - Detonação a ~210 m: som quase imediato e onda de pressão. O portal oeste e os primeiros vãos caem no Vístula.
 - Chuva de terra e lascas sobre o posto de disparo, depois silêncio, zumbido (reduzível), vento e água.
-- O oficial dos sapadores aparece apenas como silhueta distante, sem fala.
+- O oficial histórico dos sapadores fica fora de cena, sem modelo nem fala.
 - Lipski, perto do barracão, olha a ponte: **LIPSKI:** Meu avô atravessava por ela para ir à feira. (052)
 
 ### Cena 10 — O abrigo (07:05) · AFTERMATH/OUTRO
@@ -470,8 +470,8 @@ M02 troca de protagonista, exército e lugar. Nenhum destes personagens reaparec
 
 ### Campos dos eventos
 
-- `readiness`: condições para disparar.
-- `tolerance`: o que fazer se a prontidão demorar.
+- `readiness`: condições para disparar; quando ausente, não há condição adicional ao gatilho.
+- `tolerance`: o que fazer se a prontidão demorar; quando ausente, não há timeout automático.
 - `results`: efeitos no mundo.
 - `persist` / `idempotent`: vão para o save; nunca executam duas vezes.
 - `certainty` e `sources`: rastreio histórico.
@@ -479,6 +479,8 @@ M02 troca de protagonista, exército e lugar. Nenhum destes personagens reaparec
 ### Relógio
 
 `clock.segments` define escala, *snap* e *gate*. Pausa e menus suspendem o relógio.
+
+Detalhes obrigatórios para implementar relógios, gatilhos e snapshots sem softlock: [`ENGINE_CONTRACT.md`](ENGINE_CONTRACT.md). Os textos de prontidão e resultados ainda são especificações; precisam de handlers explícitos, não de execução automática de prosa.
 
 ### Validação
 

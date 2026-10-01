@@ -1,6 +1,6 @@
 # M01 — Tczew, 1 de setembro de 1939 · Pesquisa histórica
 
-Estado: **PESQUISA PRELIMINAR — pendente de leitura integral das fontes** (ver §11).
+Estado: **PESQUISA PRELIMINAR — H02 lida e H01-PDF parcialmente lida na revisão; restantes verificações pendentes** (ver §11).
 Atualização de 01/10/2026: medições e verificação de P1–P16 em [`SOURCE_CHECK.md`](SOURCE_CHECK.md) e [`MEASUREMENTS.md`](MEASUREMENTS.md).
 Fontes: IDs de [`research/SOURCES.md`](../../research/SOURCES.md).
 
@@ -82,7 +82,12 @@ Hora legal: **CET (UTC+1)**, igual em Polônia e Alemanha em 1939 (C01).
 | Trem em Szymankowo | Desviado para linha morta e atrasado (T13) · chegou à ponte às 04:45 (T01, T08) | Não contraditórios: atraso, aviso a Tczew e chegada posterior. Confirmar com H01. |
 | Nome da localidade do ataque das 07:00 | "Koźlin" (resumo) · "Koźliny" (localidade ao norte de Tczew) | Tratar como "ataque vindo do norte"; confirmar topônimo. |
 
+### 3.3 Leitura directa na revisão do PR #8
+
+H02 confirma **04:34**, mas não identifica o batalhão. H01-PDF foi lida parcialmente, incluindo as pp. 131–134: a nota 67 registra desacordo sobre danos nos cabos; a p. 134 dá **06:45** para a demolição oeste; as pp. 133–134 descrevem outro bombardeio às **05:30–05:34**. Manter 06:40 como decisão provisória do roteiro e o corte dos cabos como versão reconstruída. A agenda de ataques adicionais depende de P1, ainda aberto; não apresentar estas escolhas como consenso histórico.
+
 ## 4. Forças polonesas
+
 
 | Elemento | Detalhes | Classe |
 | --- | --- | --- |
@@ -189,8 +194,8 @@ Estado em 01/10/2026; detalhes em [`SOURCE_CHECK.md`](SOURCE_CHECK.md).
 
 | # | Verificar | Onde | Afeta | Estado |
 | --- | --- | --- | --- | --- |
-| P1 | Ler H01 e o PDF por completo; conferir tabela §3.1 e divergências §3.2 | H01, H01-PDF | Cronologia, vãos destruídos, unidade dos sapadores | PARCIAL (sapadores conciliados) |
-| P2 | Ler H02 e confirmar 04:34 e o nome do batalhão | H02 | Cartela, briefing | PARCIAL (várias secundárias concordam) |
+| P1 | Completar leitura de H01-PDF; resolver 06:40/06:45, danos nos cabos e ataques adicionais (§3.3) | H01, H01-PDF | Cronologia, vãos destruídos, unidade dos sapadores | PARCIAL (H01-PDF pp. 131–134 lidas na revisão; sapadores conciliados) |
+| P2 | 04:34 confirmado em H02; conferir o batalhão numa fonte apropriada (não consta nesta página) | H02, H01-PDF | Cartela, briefing | PARCIAL (04:34 confirmado em H02; batalhão por secundárias) |
 | P3 | Ler H30 e ajustar uniforme e equipamento | H30 | `equipment-timeline.json`, modelos | PARCIAL (patches de batalhão de fuzileiros, T22) |
 | P4 | Medir posição da estação, aterro, quartel, margens e dique | Messtischblatt/WIG; OSM | `map-layout.json` | PARCIAL (G01/G02/T24; falta mapa de 1939) |
 | P5 | Posição exata dos portais das duas pontes em X | Fotografias T18, planta de 1891 | `map-layout.json` | **RESOLVIDA** (G01) |

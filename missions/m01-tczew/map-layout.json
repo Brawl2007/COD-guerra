@@ -19,11 +19,11 @@
     "COMPRESSED_FOR_GAMEPLAY": "distância encurtada de propósito; o valor real está em 'realValue'"
   },
   "bounds": {
-    "playable": { "minX": -460, "maxX": 300, "minZ": -80, "maxZ": 140 },
+    "playable": { "minX": -460, "maxX": 440, "minZ": -80, "maxZ": 140 },
     "softWarningX": 270,
     "outOfBoundsX": 401,
     "outOfBoundsGraceSec": 8,
-    "note": "Além do 2.º pilar (x ≈ 270) o fogo da margem leste se intensifica e o sargento manda voltar; além do 3.º pilar (x ≈ 401) aviso e falha legível após 8 s. Nunca parede invisível sem aviso."
+    "note": "Área com movimento até x = 440, incluindo a zona de aviso além do 3.º pilar. Além do 2.º pilar (x ≈ 270) o fogo da margem leste se intensifica e o sargento manda voltar; além do 3.º pilar (x ≈ 401) aviso e falha legível após 8 s. Não bloquear o jogador antes do limite anunciado; nunca parede invisível sem aviso."
   },
   "sun": {
     "source": "C01",
@@ -452,7 +452,12 @@
     }
   ],
   "sightlines": [
-    { "from": "cv_road_truss_3", "to": "old_east_portals_1857", "distanceM": 700, "note": "Demolição das 06:10: clarão primeiro, som ~2 s depois (distância ÷ 343 m/s; C02)." },
+    {
+      "from": "cv_road_truss_3",
+      "to": "old_east_portals_1857",
+      "distanceM": 700,
+      "note": "Demolição das 06:10: clarão primeiro, som ~2 s depois (distância ÷ 343 m/s; C02)."
+    },
     { "from": "cv_portal_road_n", "to": "east_gates", "distanceM": 1054, "note": "Portal de 1912 e trem 963; clarões de MG a ~1 km." },
     { "from": "cv_road_truss_3", "to": "train_963", "distanceM": 966, "note": "Vagões e fumaça da locomotiva visíveis; contraluz depois das 05:30." },
     { "from": "squad_post", "to": "road_bridge_towers", "distanceM": 212, "note": "Silhueta das torres contra o céu claro a leste na abertura." }
