@@ -1,0 +1,75 @@
+{
+  "ready": true,
+  "verification": "Isolated visual fixture; not gameplay",
+  "clock": 10.016,
+  "actorPoses": {
+    "standing": 3,
+    "crouched": 0,
+    "pinned": 1,
+    "seated": 0,
+    "wounded": 0,
+    "carried": 0,
+    "fallen": 0
+  },
+  "actorAnimations": {
+    "aiming": 2,
+    "firing": 1,
+    "moving": 1,
+    "underFire": 1
+  },
+  "drawCalls": 18,
+  "triangles": 18778,
+  "errors": [],
+  "viewport": [
+    1280,
+    720
+  ],
+  "frames": [
+    {
+      "file": "combat-recoil.png",
+      "ready": true,
+      "verification": "Isolated visual fixture; not gameplay",
+      "clock": 10.016,
+      "actorPoses": {
+        "standing": 3,
+        "crouched": 0,
+        "pinned": 1,
+        "seated": 0,
+        "wounded": 0,
+        "carried": 0,
+        "fallen": 0
+      },
+      "actorAnimations": {
+        "aiming": 2,
+        "firing": 1,
+        "moving": 1,
+        "underFire": 1
+      },
+      "drawCalls": 18,
+      "triangles": 18778
+    },
+    {
+      "file": "combat-recovery.png",
+      "ready": true,
+      "verification": "Isolated visual fixture; not gameplay",
+      "clock": 10.12,
+      "actorPoses": {
+        "standing": 3,
+        "crouched": 0,
+        "pinned": 1,
+        "seated": 0,
+        "wounded": 0,
+        "carried": 0,
+        "fallen": 0
+      },
+      "actorAnimations": {
+        "aiming": 2,
+        "firing": 1,
+        "moving": 1,
+        "underFire": 1
+      },
+      "drawCalls": 18,
+      "triangles": 18778
+    }
+  ]
+}

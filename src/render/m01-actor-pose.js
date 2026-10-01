@@ -11,25 +11,43 @@ export function actorPoseName(actor,time=0){
 
 export function actorPose(actor,time){
   const name=actorPoseName(actor,time),seated=name==='seated',pinned=name==='pinned',crouched=name==='crouched'||pinned;
-  const low=seated||crouched,hip=seated?.46:crouched?.48:.84,lean=crouched?-.1:0;
-  const walk=name==='standing'&&['ADVANCE','RETREAT'].includes(actor.state);
-  const phase=time*7+Number(actor.id.match(/\d+$/)?.[0]??0),stride=walk?Math.sin(phase)*.16:0;
+  const low=seated||crouched,underFire=time<(actor.suppressedUntil??0);
+  const armed=!actor.civilian&&actor.role!=='MEDIC',upright=name==='standing'||name==='crouched';
+  const moving=name==='standing'&&!underFire&&!(actor.shot>0)&&['ADVANCE','RETREAT'].includes(actor.state);
+  const age=Number.isFinite(actor.firedAt)?time-actor.firedAt:actor.shot>0?Math.max(0,.25-actor.shot):Infinity;
+  // SUPPRESS can persist after a burst. Only the actual shot/recent fire keeps the weapon shouldered.
+  const aiming=armed&&upright&&!underFire&&!moving&&(actor.shot>0||
+    actor.state==='SUPPRESS'&&age>=0&&age<2.5||actor.role==='SUPPORT'&&actor.state==='GUARD');
+  const firing=aiming&&actor.shot>0;
+  const automatic=actor.weapon==='mg34'||actor.role==='SUPPORT',pulseAge=firing&&automatic?Math.max(0,age)%.075:age;
+  const kick=aiming&&pulseAge>=0&&pulseAge<.22?Math.sin(Math.min(1,pulseAge/.016)*Math.PI/2)*Math.exp(-pulseAge/.055):0;
+  const phase=time*7+Number(actor.id.match(/\d+$/)?.[0]??0),stride=moving?Math.sin(phase)*.22:0;
+  const breath=name==='standing'&&!moving?Math.sin(phase*.32)*.006:0;
+  const hip=(seated?.46:pinned?.38:crouched?.48:.84)+(moving?Math.sin(phase)**2*.025:0);
+  const lean=crouched?-.06:0,tilt=pinned?-.82:underFire&&crouched?-.35:moving?-.10:0;
+  const spine=h=>[lean-Math.sin(tilt)*h,hip+Math.cos(tilt)*h+breath,0];
+  const riflePitch=(aiming?.025:moving?-.22:0)+kick*.045;
+  const rifle=[seated?.35:lean+.35-kick*.055,hip+(seated?.13:aiming?.55:.27)+breath,.12];
+  const axis=[Math.cos(riflePitch),Math.sin(riflePitch),0];
+  const along=(distance,drop=0)=>rifle.map((v,i)=>v+axis[i]*distance+(i===1?drop:0));
+  const grip=along(-.20,-.05),support=along(.25,-.025),muzzle=along(.70,.025);
   const limbs=[],boots=[];
   for(const [i,z]of [-.14,.14].entries()){
     const step=i?stride:-stride;
-    const h=[lean,hip,z],k=[seated?.32:crouched?.16:step,.43-(crouched?.18:0),z];
-    const ankle=[seated?.32:crouched?0:-step,.07,z];
+    const lift=moving?Math.max(0,(i?1:-1)*Math.sin(phase))*.11:0;
+    const h=[lean,hip,z],k=[seated?.32:crouched?.22:step*.45+.055,.43-(crouched?.18:0)-lift*.35,z];
+    const ankle=[seated?.32:crouched?0:step,.07+lift,z];
     limbs.push({from:h,to:k,radius:.095},{from:k,to:ankle,radius:.085});
-    boots.push([ankle[0]+.045,.055,z]);
-    const shoulder=[lean,hip+.49,z*1.85];
-    const elbow=seated?[.16,hip+.23,z*1.85]:[.20,hip+.22,z*1.9];
-    const hand=seated?[.30,hip+.10,z*1.3]:[.43,hip+.26,z*1.25];
+    boots.push([ankle[0]+.045,.055+lift,z]);
+    const shoulder=spine(.49);shoulder[2]=z*1.85;
+    const elbow=seated?[.16,hip+.23,z*1.85]:aiming?[i?.12:.35,hip+(i?.27:.38)+breath,z*1.4]:[shoulder[0]+.20,hip+.22+breath,z*1.9];
+    const hand=seated?[.30,hip+.10,z*1.3]:armed?(i?grip:support):[shoulder[0]+.10,hip+.06,z*1.85];
     limbs.push({from:shoulder,to:elbow,radius:.075},{from:elbow,to:hand,radius:.065});
   }
   const lying=name==='wounded'||name==='fallen',carried=name==='carried';
-  return {name,limbs,boots,
-    root:{offsetY:lying?.42:0,pivotY:lying||carried?.84:0,pitch:lying?-Math.PI/2:0,roll:carried?-Math.PI/2:pinned?-.95:0},
-    torso:{position:[lean,hip+.34,0],size:[.24,low?.59:.65,.21]},
-    head:[lean+.02,hip+(low?.74:.79),0],helmet:[lean+.02,hip+(low?.88:.93),0],
-    rifle:[seated?.35:lean+.46,hip+(seated?.13:.27),.10]};
+  const head=spine(low?.74:.79);head[0]+=.02+(aiming?.045:0);head[2]=aiming?.07:0;
+  return {name,limbs,boots,aiming,firing,moving,underFire:upright||pinned?underFire:false,
+    root:{offsetY:lying?.42:0,pivotY:lying||carried?.84:0,pitch:lying?-Math.PI/2:0,roll:carried?-Math.PI/2:0},
+    torso:{position:spine(.34),size:[.24,low?.59:.65,.21],roll:tilt},head,
+    rifle:{position:rifle,axis,pitch:riflePitch,barrelFrom:along(.13,.025),muzzle}};
 }

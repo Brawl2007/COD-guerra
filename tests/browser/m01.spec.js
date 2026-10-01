@@ -158,12 +158,14 @@ test('German fire on the repair is drawn from the Lisewo gates and the HUD statu
   for(let i=0;i<60&&!(samples.some(s=>s.fx.muzzle>0)&&samples.some(s=>s.fx.puff>0)&&samples.some(s=>s.pinned)&&samples.some(s=>!s.pinned)&&samples.at(-1).progress>samples[0].progress);i++){
     await page.waitForTimeout(250);
     samples.push(await page.evaluate(()=>{const g=window.gameDiagnostics().m01;return {fx:g.fireEffects,hud:document.querySelector('#objective-status').textContent,
-      sim:g.threat.status,pinned:g.threat.repair.pinned,origins:g.threat.recentFire.map(f=>f.x),poses:g.actorPoses.pinned,progress:g.objectives.obj_m01_cover_repair.progress};}));
+      sim:g.threat.status,pinned:g.threat.repair.pinned,origins:g.threat.recentFire.map(f=>f.x),poses:g.actorPoses.pinned,animations:g.actorAnimations,progress:g.objectives.obj_m01_cover_repair.progress};}));
   }
   expect(samples.some(s=>s.fx.muzzle>0)).toBe(true);expect(samples.some(s=>s.fx.puff>0)).toBe(true);
   expect(samples.some(s=>s.pinned)&&samples.some(s=>!s.pinned)).toBe(true);
   // Os sapadores deitados aparecem na pose de quem está sob fogo, e o trabalho retoma depois.
   expect(samples.some(s=>s.pinned&&s.poses>0)).toBe(true);expect(samples.at(-1).progress).toBeGreaterThan(samples[0].progress);
+  expect(samples.some(s=>s.animations.aiming>0)).toBe(true);
+  expect(samples.some(s=>s.pinned&&s.animations.underFire>0)).toBe(true);
   for(const s of samples){expect(s.hud).toBe(s.sim);expect(s.hud.includes('sapadores deitados')).toBe(s.pinned);for(const x of s.origins)expect(x).toBeGreaterThanOrEqual(1050);}
   await page.screenshot({path:info.outputPath('m01-repair-under-fire.png')});
   expect(errors).toEqual([]);expect(failed).toEqual([]);

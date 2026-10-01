@@ -127,10 +127,10 @@ test('the withdrawal HUD line reports the real count by ID and whether the Germa
 test('allies under fire are drawn hunched (pinned pose) only while suppressedUntil lasts, without touching the actor',()=>{
   const base={id:'sapper_1',team:'ally',alive:true,active:true,state:'GUARD',crouched:true,suppressedUntil:10},copy=structuredClone(base);
   const pinned=actorPose(base,5),working=actorPose(base,12);
-  assert.equal(pinned.name,'pinned');assert.equal(working.name,'crouched');assert.ok(pinned.root.roll<0);assert.deepEqual(base,copy);
-  // Os pontos mais baixos da pose (botas) continuam acima do chão depois da rotação da raiz.
+  assert.equal(pinned.name,'pinned');assert.equal(working.name,'crouched');assert.ok(pinned.torso.roll<0);assert.deepEqual(base,copy);
+  // O tronco curva-se sobre as pernas; a raiz mantém os pés plantados no chão.
   const roll=pinned.root.roll,y=([x,h])=>x*Math.sin(roll)+h*Math.cos(roll);
-  for(const p of [...pinned.boots,pinned.rifle,pinned.head])assert.ok(y(p)>-.01,JSON.stringify(p));
+  for(const p of [...pinned.boots,pinned.rifle.position,pinned.head])assert.ok(y(p)>-.01,JSON.stringify(p));
   assert.ok(y(pinned.head)<working.head[1]-.3,'cabeça em baixo');
   assert.equal(actorPose({...base,team:'enemy',crouched:false},5).name,'standing','os alemães usam o crouched da simulação');
   assert.equal(actorPose({...base,pose:'seated'},5).name,'seated');assert.equal(actorPose({...base,alive:false},5).name,'fallen');

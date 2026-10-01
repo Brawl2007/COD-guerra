@@ -25,6 +25,7 @@ Dados revistos nos PRs #8 e #10; runtime em **PROTÓTIPO JOGÁVEL**, com evidên
 - Feridos e transporte são dados dos actores e entram no save: `carriedBy` (quem leva o ferido) e `task` de Dudek (`evacuate_bak` ou `stay_with_bak`). O renderer só lê estas posições.
 - Bąk nunca fica na zona da demolição oeste. Entregue pelo jogador, fica deitado junto a Dudek, que o leva para a estação depois das 06:10 e volta à secção. Recolhido por Dudek às 06:14, ambos ficam na estação (`dlg_m01_056b/057b`).
 - `pose` opcional no actor guarda a postura sentada da chamada; saves sem o campo são aceites. A representação distingue também agachados, feridos e transportados a partir dos dados existentes. Geometria procedural, sem alterar saúde, coordenadas ou resultados no renderer.
+- Mira/recuo procedural usa `shot`, `firedAt` quando presente, `state`, `role` e `suppressedUntil` no relógio de jogo activo. Mãos, arma, cano e clarão partilham o referencial de apresentação; o tronco inclina-se sobre pés assentes. A mesma hora/dados produzem as mesmas matrizes em pausa/reload, sem novos campos no save ou mudança de hitboxes. `actorAnimations` é diagnóstico de apresentação; não deve servir de autoridade para combate.
 - Na chamada das 07:05, os presentes são posicionados no abrigo com `pose: seated` e `crouched: true`, de frente para Jan; ninguém se move durante a cena. Bąk ferido, Dudek na estação e Nowicki desaparecido não são encenados.
 
 ## Fogo alemão, reparo e retirada

@@ -1,0 +1,39 @@
+{
+  "verification": "production browser suite; staged M01 continuations plus real controls and French sandbox regressions",
+  "node": {
+    "passed": 104,
+    "failed": 0
+  },
+  "browser": {
+    "cases": 16,
+    "exitCode": 0,
+    "lastRun": {
+      "status": "passed",
+      "failedTests": []
+    },
+    "retries": 0
+  },
+  "build": {
+    "javascriptKB": 1013.01,
+    "gzipKB": 261.87,
+    "chunkWarning": true
+  },
+  "environment": {
+    "node": "24.19.0",
+    "chromium": "153",
+    "webgl": "SwiftShader",
+    "viewport": [
+      1280,
+      720
+    ]
+  },
+  "captures": [
+    "production/repair-under-fire.png",
+    "production/roll-call-seated.png"
+  ],
+  "limitations": [
+    "Not a new continuous or human playtest",
+    "No Chromebook FPS measurement",
+    "Procedural characters and weapons remain provisional"
+  ]
+}
