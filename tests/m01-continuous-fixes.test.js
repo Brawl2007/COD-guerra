@@ -68,7 +68,7 @@ test('the withdrawing east platoon runs past the firing point during the corrido
     sim.tick(.05);
     for(const a of sim.actors.filter(a=>a.group==='grp_east_platoon'&&a.alive))if(near(a,fp,15))passed.add(a.id);
   }
-  const survivors=sim.actors.filter(a=>a.group==='grp_east_platoon'&&a.alive);
+  const survivors=sim.actors.filter(a=>a.group==='grp_east_platoon'&&a.alive&&a.active);
   assert.equal(sim.consumedEvent(E('west_demolition')),true);
   assert.equal(passed.size,survivors.length,'todos os sobreviventes passam junto ao posto de disparo');
   assert.equal(new Set(survivors.map(a=>`${a.x.toFixed(1)},${a.z.toFixed(1)}`)).size,survivors.length,'cada um no seu lugar');
@@ -84,8 +84,8 @@ test('a Bąk delivered by the player stays visible beside Dudek, who carries him
   Object.assign(sim.player,sim.world.point('aid_position'));sim.updateObjectives(0,true);
   assert.equal(sim.flags['m01.bak_status'],'rescued_by_player');
   assert.equal(bak.active,true);assert.equal(bak.state,'WOUNDED');assert.ok(near(bak,sim.world.point('aid_position'),2));
-  // CP-D é depois da demolição leste: entregar Bąk agora activa a evacuação no próprio tick seguinte.
-  dudek.task='evacuate_bak';
+  // CP-D é depois da demolição leste: a entrega deve iniciar a evacuação sem ajuda do teste.
+  assert.equal(dudek.task,'evacuate_bak');
   Object.assign(sim.player,{x:-291,y:-3,z:26});
   let carried=false;
   for(let i=0;i<20*400&&!sim.consumedEvent(E('west_demolition'));i++){sim.tick(.05);carried||=bak.carriedBy==='leon_dudek';}
@@ -108,7 +108,7 @@ test('when Dudek retrieves Bąk he walks to him on the deck and carries him to t
   run(sim,30);assert.ok(bak.x<-300&&dudek.x<-300,'ambos na estação');assert.equal(dudek.task,'stay_with_bak');
 });
 
-test('the roll call seats the present section in the shelter facing Jan; the absent stay away',()=>{
+test('the roll call positions the present section in the shelter facing Jan; the absent stay away',()=>{
   const sim=new M01Simulation();sim.restoreSnapshot(full().checkpoints.cp_m01_d_retirada);
   Object.assign(sim.player,{x:-291,y:-3,z:26});
   untilEvent(sim,'west_demolition');
@@ -143,6 +143,18 @@ test('Kowal hands over at most six clips of section ammunition; saves keep the a
   for(const corrupt of [s=>{s.weapon.received=31;},s=>{s.timers.kowalRounds=30;},s=>{s.weapon.reserve+=5;}]){
     const data=structuredClone(sim.snapshot());corrupt(data);assert.equal(sim.loadCheckpoint(JSON.stringify(data)).ok,false);
   }
+});
+
+test('legacy schema 2 saves receive the unused section supply and can resupply after loading',()=>{
+  const old=structuredClone(full().checkpoints.cp_m01_c_engenheiros);
+  delete old.weapon.received;delete old.timers.kowalRounds;delete old.timers.lowAmmoHint;
+  const sim=new M01Simulation();assert.equal(sim.loadCheckpoint(JSON.stringify(old)).ok,true);
+  assert.equal(sim.weapon.received,0);assert.equal(sim.timers.kowalRounds,30);
+  const w=sim.weapon,kowal=sim.actor('szymon_kowal');w.reserve=10;w.shotCount=45-w.mag-w.reserve;
+  Object.assign(sim.player,{x:kowal.x+1,y:kowal.y,z:kowal.z});
+  sim.updateObjectives(0,true);
+  assert.equal(w.reserve,25);assert.equal(w.received,15);assert.equal(sim.timers.kowalRounds,15);
+  assert.equal(sim.loadCheckpoint(JSON.stringify(sim.snapshot())).ok,true);
 });
 
 test('the bridge trusses contain movement: no falling off a span sideways or into a blown gap; the river bank still can',()=>{

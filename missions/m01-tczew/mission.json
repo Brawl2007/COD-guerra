@@ -371,7 +371,7 @@
       "required": true,
       "activation": { "event": "evt_m01_east_platoon_withdraws" },
       "completion": { "event": "evt_m01_east_demolition" },
-      "mechanic": "O pelotão leste atravessa o tabuleiro por conta própria (≈8 min de relógio). grp_de_spans avança até x ≥ 690. Tiros do jogador a menos de 3 m de um grupo alemão o suprimem (param, deitam). Cada 20 s de relógio sem supressão sobre um grupo = uma baixa a mais no pelotão leste (mínimo de 12 sobreviventes). Nunca falha a missão.",
+      "mechanic": "O pelotão leste atravessa o tabuleiro por conta própria (≈8 min de relógio). grp_de_spans avança até x ≥ 690. Tiros do jogador a menos de 3 m de um grupo alemão o suprimem (param, deitam). No protótipo, a partir de evt_m01_germans_on_east_spans, um alemão do tabuleiro não suprimido que vê o último homem pode disparar um tiro letal; a baixa só conta quando o tiro chega, com intervalo mínimo de 20 s de relógio entre baixas e mínimo de 12 sobreviventes. Sem tiro desobstruído não há baixas automáticas. Guardar os tiros em voo e cada baixa por ID. Nunca falha a missão; estes valores são tuning de gameplay, não efectivos históricos.",
       "failure": null
     },
     {

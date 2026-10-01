@@ -58,7 +58,7 @@ export class M01Simulation {
       {group:'grp_east_platoon',active:false,role:'RIFLEMAN'}));
     this.timers={boundary:0,water:0,cover:0,repairStall:0,repairSuppressedUntil:0,withdrawalCasualty:seconds('06:00:00'),
       ambient:0,nextCoverCall:40,guide:0,guideKey:null,guideAt:0,guideDist:0,guideShown:false,kowalRounds:30,lowAmmoHint:false,escort:false,escortSpoke:false,boundaryWarning:false,boundaryCountdown:0,holdAccessVisited:false,
-      occupiedCover:null,coverExposure:0,coverCallIndex:0,repairPins:0,fireEase:false,calloutAt:-1e9};
+      occupiedCover:null,coverExposure:0,coverCallIndex:0,repairPins:0,fireEase:false,calloutAt:-1e9,nextCombatCall:0};
     this.enemyFire={rounds:[],nextId:0};
     this.sectors={sectors:definition.sectors.map(s=>({id:s.id,state:s.schedule[0].state,strength:100,morale:1,supply:1})),damage:[]};
     this.mission={phase:'INTRO',complete:false,text:phaseText.INTRO,status:''};
@@ -125,7 +125,7 @@ export class M01Simulation {
   }
   readiness(id){
     if(id===E('repair_complete'))return this.objectives[O('cover_repair')].progress>=100;
-    if(id===E('east_demolition'))return this.done('hold_access')&&this.actors.filter(a=>a.alive&&a.group==='grp_east_platoon').every(a=>a.x<660)&&this.player.x<660;
+    if(id===E('east_demolition'))return this.done('hold_access')&&this.actors.filter(a=>a.alive&&a.active&&a.group==='grp_east_platoon').every(a=>a.x<660)&&this.player.x<660;
     if(id===E('west_demolition'))return this.consumedEvent(E('east_demolition'))&&this.player.x<-90&&this.actors.filter(a=>a.alive&&a.active&&a.team==='ally'&&!a.civilian).every(a=>a.x<-90);
     if(id===E('dudek_retrieves_bak'))return this.player.carrying!=='jozef_bak';
     if(id===E('roll_call'))return this.scene?.id!=='cs_m01_west_blast';
@@ -143,7 +143,7 @@ export class M01Simulation {
       if(this.battleClock>=at-30){
         if(this.gate?.id!==segment.gate)this.gate={id:segment.gate,started:this.clock,hold:0};
         this.gate.hold=this.clock-this.gate.started;
-        if(segment.gate===E('east_demolition')&&this.gate.hold>90)for(const a of this.actors.filter(a=>a.group==='grp_east_platoon'&&a.alive&&a.x>=660)){
+        if(segment.gate===E('east_demolition')&&this.gate.hold>90)for(const a of this.actors.filter(a=>a.group==='grp_east_platoon'&&a.active&&a.alive&&a.x>=660)){
           const inView=this.inView(a);
           if(!inView){a.x=655;a.state='reached_safety';this.recoveries.push({id:a.id,reason:'offscreen_straggler',clock:this.clock});}
         }
@@ -165,6 +165,7 @@ export class M01Simulation {
       case E('planes_heard'):this.mission.phase='BUILDUP';line(12);line(13);line(66);this.actor('tadeusz_nowicki').target=this.world.point('repair_site_1');break;
       case E('bombing_0434'):
         this.finish('deliver_message');this.activate('take_cover');this.player.headgear='pl_helmet_wz31';
+        this.message('Abrigue-se! Cabeça baixa, junto à cobertura!');
         this.mission.phase='FIRST_CONTACT';this.startScene('cs_m01_bombing');
         this.impact('station_bomb',this.world.point('tczew_station'),true);break;
       case E('forward_post_bombed'):{const p=this.world.point('forward_post');
@@ -193,7 +194,8 @@ export class M01Simulation {
       case E('bak_wounded'):{const bak=this.actor('jozef_bak');
         if(inside(bak,{minX:20,maxX:160,minZ:30,maxZ:50})){bak.state='WOUNDED';bak.target=null;this.flags['m01.bak_status']='wounded';this.activate('rescue_bak');line(41);line(43);}break;}
       // Os 20 s de relógio da regra de baixas contam a partir da entrada dos alemães no tabuleiro (cover_withdrawal.mechanic).
-      case E('germans_on_east_spans'):this.enemies.filter(a=>a.group==='grp_de_spans').forEach(a=>{a.active=true;});this.timers.withdrawalCasualty=this.battleClock;break;
+      case E('germans_on_east_spans'):this.enemies.filter(a=>a.group==='grp_de_spans').forEach((a,i)=>{a.active=true;a.cooldown=2+i*.7;});
+        this.timers.withdrawalCasualty=this.battleClock;this.message('Eles entram pelo tabuleiro leste! Cubra os últimos homens do pelotão.');break;
       case E('east_demolition'):
         this.finish('cover_withdrawal');this.activate('leave_bridge');this.destruction.push('east_ends_destroyed');this.mission.phase='CLIMAX';
         this.enemies.filter(a=>a.group==='grp_de_spans').forEach((a,i)=>{if(i<4){a.health=0;a.alive=false;a.state='DOWN';}else{a.state='RETREAT';}});
@@ -237,7 +239,8 @@ export class M01Simulation {
       this.finish('deliver_message');[9,10,11].forEach(n=>this.line(`dlg_m01_${String(n).padStart(3,'0')}`));
       this.battleClock=Math.max(this.battleClock,seconds('04:33:10'));
     }
-    if(this.active('take_cover')&&(this.world.coverAt(p)||this.clock-this.consumed[E('bombing_0434')]>=12)){
+    const sinceBombing=this.clock-this.consumed[E('bombing_0434')];
+    if(this.active('take_cover')&&sinceBombing>=2.5&&(this.world.coverAt(p)||sinceBombing>=12)){
       this.finish('take_cover');this.activate('follow_sergeant');this.actor('marek_zielinski').target=this.world.point('rally_point');
     }
     if(this.active('follow_sergeant')&&dist(p,this.world.point('rally_point'))<8){
@@ -246,6 +249,8 @@ export class M01Simulation {
     if(this.active('find_sappers')&&dist(p,this.world.point('repair_site_1'))<6){this.finish('find_sappers');this.activate('fetch_material');this.line('dlg_m01_021');this.line('dlg_m01_023');
       // A caixa é entregue no segundo corte (repair_site_2): os sapadores vão para lá enquanto o jogador vai ao barracão.
       const site=this.world.point('repair_site_2');
+      // Junto ao cabo, na encosta sul do aterro (z≈10–11): é aí que o fogo mergulhante dos portões de Lisewo chega e de onde o
+      // jogador vê os clarões. Mais acima (z≈8), a crista e o portal ferroviário tapam-nos desse fogo.
       this.actors.filter(a=>a.role==='ENGINEER'&&a.alive&&a.active).forEach((a,i)=>{a.target={x:site.x-1.5-i*1.2,y:site.y,z:site.z+1+i%2};});}
     if(this.active('fetch_material')&&interact){
       if(!p.carrying&&dist(p,this.world.point('rail_hut'))<5){p.carrying='sapper_crate';this.message('Material recolhido. Leve a caixa aos sapadores.');}
@@ -302,8 +307,8 @@ export class M01Simulation {
     const retreat=this.consumedEvent(E('east_demolition'));
     for(const a of this.actors){
       a.shot=Math.max(0,a.shot-dt);if(!a.alive||!a.active)continue;
+      if(a.team==='enemy')a.crouched=this.clock<a.suppressedUntil;
       if(a.group==='grp_east_platoon'){
-        if(this.flags['m01.east_platoon_survivors']<18&&Number(a.id.split('_').at(-1))>=this.flags['m01.east_platoon_survivors']){a.alive=false;a.health=0;a.state='DOWN';continue;}
         // Etapas do recuo: portal rodoviário, sul do barracão e passagem pelo posto de disparo até junto da estação.
         // Os limiares ficam aquém dos pontos (moveActor pára a 0,8 m), para nenhum soldado ficar preso numa etapa.
         // O pelotão recua a correr sob fogo (5,5 m/s): ~1,3 km até à estação dentro da fase do corredor.
@@ -344,7 +349,9 @@ export class M01Simulation {
       else if(!this.enemyFire.rounds.some(r=>r.victim)){this.timers.withdrawalCasualty=this.battleClock;this.lethalShot(spans);}
     }
   }
+  combatCall(message){if(this.clock<this.timers.nextCombatCall)return;this.timers.nextCombatCall=this.clock+4;this.message(message);}
   updateCombat(dt){
+    if(this.mission.phase==='OUTRO')return;
     const retreat=this.consumedEvent(E('east_demolition')),withdrawal=this.consumedEvent(E('east_platoon_withdraws'))&&!retreat;
     for(const a of this.enemies){
       if(!a.alive||!a.active)continue;
@@ -443,24 +450,26 @@ export class M01Simulation {
       const n=this.flags['m01.east_platoon_survivors'];this.flags['m01.east_platoon_survivors']=Math.max(12,n-1);
       if(victim.alive&&Number(victim.id.split('_').at(-1))>=this.flags['m01.east_platoon_survivors']){
         point={x:victim.x,y:victim.y+1.1,z:victim.z};material='character';victim.alive=false;victim.health=0;victim.state='DOWN';
+        this.combatCall('Um homem caiu na retirada! Suprima o fogo do tabuleiro leste.');
       }
     }else if(hit.actor===p&&this.rng.next()<(this.world.coverAt(p)?.06:.2)){   // afinação de protótipo, não dano garantido
 
       p.health=Math.max(0,p.health-8);p.alive=p.health>0;this.emit({type:'player-hit'});
     }
     // Aliados nunca são feridos por estes tiros (baixas só por ID): quem está a menos de 3 m da trajectória deita-se.
-    let pinned=false;const site=this.world.point('repair_site_2');
+    let pinned=false;const site=this.world.point('repair_site_2'),near=[];
     for(const a of this.allies){
       if(!a.alive||!a.active||a===victim||a.carriedBy||(Math.abs(a.x-point.x)>80&&Math.abs(a.x-r.ax)>80))continue;
       if(closestApproach(r,hit.t,{x:a.x,y:a.y+.9,z:a.z})>NEAR_MISS)continue;
       const working=a.role==='ENGINEER'&&this.active('cover_repair')&&dist(a,site)<6;
-      a.suppressedUntil=Math.max(a.suppressedUntil,this.clock+(working?3.5:a.group==='grp_east_platoon'?1:1.5));pinned||=working;
+      a.suppressedUntil=Math.max(a.suppressedUntil,this.clock+(working?3.5:a.group==='grp_east_platoon'?1:1.5));pinned||=working;near.push(a.id);
     }
     if(pinned){   // o trabalho pára e a equipa inteira abriga-se
       this.timers.repairSuppressedUntil=Math.max(this.timers.repairSuppressedUntil,this.clock+3.5);this.timers.repairPins++;this.line('dlg_m01_022');
-      for(const a of this.actors)if(a.role==='ENGINEER'&&a.alive&&a.active&&dist(a,site)<6)a.suppressedUntil=Math.max(a.suppressedUntil,this.timers.repairSuppressedUntil);
+      for(const a of this.actors)if(a.role==='ENGINEER'&&a.alive&&a.active&&dist(a,site)<6){a.suppressedUntil=Math.max(a.suppressedUntil,this.timers.repairSuppressedUntil);if(!near.includes(a.id))near.push(a.id);}
     }
-    this.emit({type:'round-impact',point,material,crack:closestApproach(r,hit.t,eyePosition(p))<=6,distance:dist(point,p),victim:Boolean(victim)});
+    this.emit({type:'round-impact',kind:r.kind,by:r.by,point,material,crack:closestApproach(r,hit.t,eyePosition(p))<=6,distance:dist(point,p),
+      victim:victim?victim.id:null,pinned:near});
   }
   fire(){
     const p=this.player,now=this.clock*1000;if(p.carrying||!this.weapon.shoot(now))return;
@@ -472,7 +481,7 @@ export class M01Simulation {
     let silenced=false;
     for(const a of this.enemies.filter(a=>a.alive&&a.active)){
       const d=Math.max(0,(a.x-origin.x)*dir.x+(a.y+1-origin.y)*dir.y+(a.z-origin.z)*dir.z);
-      if(d<1200&&Math.hypot(a.x-origin.x-dir.x*d,a.y+1-origin.y-dir.y*d,a.z-origin.z-dir.z*d)<3&&(!hit||d<=hit.distance+3)){
+      if(d>0&&d<1200&&Math.hypot(a.x-origin.x-dir.x*d,a.y+1-origin.y-dir.y*d,a.z-origin.z-dir.z*d)<3&&(!hit||d<=hit.distance+3)){
         silenced||=a.suppressedUntil<=this.clock&&(a.weapon==='mg34'||a.group==='grp_de_spans');a.suppressedUntil=this.clock+5;
       }
     }
@@ -579,7 +588,7 @@ export class M01Simulation {
       medic.task=this.flags['m01.bak_status']==='rescued_by_dudek'?'stay_with_bak':null;medic.target=null;medic.state='GUARD';
     }
   }
-  /** 07:05: os presentes na chamada sentam-se no abrigo, de frente para Jan; ausentes ficam onde estão. */
+  /** 07:05: os presentes na chamada reúnem-se no abrigo, de frente para Jan; ausentes ficam onde estão. */
   stageRollCall(){
     const present=['marek_zielinski','szymon_kowal','pawel_krawiec','staszek_pawlak','sapper_2','sapper_3',
       ...(this.flags['m01.dudek_status']==='unhurt'?['leon_dudek']:[]),...(this.flags['m01.bak_status']==='unhurt'?['jozef_bak']:[])]
@@ -587,7 +596,7 @@ export class M01Simulation {
     const p=this.player,shelter=this.world.point('shelter');
     Object.assign(p,{x:shelter.x-.5,z:shelter.z-1.8,crouched:true,pitch:-.06});p.y=this.world.heightAt(p.x,p.z);
     present.forEach((a,i)=>{const [x,z]=ROLL_CALL_SEATS[i%ROLL_CALL_SEATS.length];
-      Object.assign(a,{x,z,target:null,task:null,state:'GUARD'});a.y=this.world.heightAt(x,z);a.facing=Math.atan2(p.z-z,p.x-x);});
+      Object.assign(a,{x,z,target:null,task:null,state:'GUARD',pose:'seated',crouched:true});a.y=this.world.heightAt(x,z);a.facing=Math.atan2(p.z-z,p.x-x);});
     p.angle=Math.atan2(72.6-p.z,-260-p.x);
   }
   /** Destino do objectivo activo que exige deslocação (dados do mapa ou actor). */
@@ -597,6 +606,7 @@ export class M01Simulation {
     if(this.active('deliver_message'))return {label:'Posto da ponte ferroviária',point:pt('forward_post')};
     if(this.active('find_sappers'))return {label:'Sapadores no aterro',point:pt('repair_site_1')};
     if(this.active('fetch_material'))return p.carrying?{label:'Sapadores no segundo corte da linha',point:pt('repair_site_2')}:{label:'Barracão ferroviário, porta oeste',point:pt('rail_hut')};
+    if(this.active('cover_repair')){const mg=this.enemies.find(a=>a.alive&&a.active&&a.weapon==='mg34');if(mg)return {label:'Metralhadora no dique · V para alça 1000 m',point:mg};}
     if(this.active('leave_bridge'))return {label:'Posto de disparo',point:pt('firing_point')};
     if(this.active('reach_shelter'))return {label:'Abrigo',point:pt('shelter')};
     return null;
@@ -672,6 +682,10 @@ export class M01Simulation {
     for(const key of ['clock','battleClock','player','actors','consumed','objectives','flags','destruction','dialogueConsumed','dialogueQueue','subtitle',
       'scene','sceneDone','checkpointsReached','pendingCheckpoint','gate','recoveries','timers','sectors','grenades','mission'])candidate[key]=s[key];
     candidate.enemyFire=s.enemyFire??{rounds:[],nextId:0};   // saves anteriores ao fogo em voo começam sem tiros no ar
+    candidate.timers={...s.timers,kowalRounds:s.timers.kowalRounds??30,lowAmmoHint:s.timers.lowAmmoHint??false,nextCombatCall:s.timers.nextCombatCall??0};
+    // Saves anteriores activavam as 24 instâncias: só os 18 primeiros podem estar no pelotão; as reservas ficam fora de cena.
+    if(!('enemyFire' in s)&&!('withdrawalPressure' in s.timers))for(const a of candidate.actors.filter(a=>a.group==='grp_east_platoon'&&Number(a.id.split('_').at(-1))>=18))
+      Object.assign(a,{active:false,alive:false,health:0,state:'DOWN'});
     candidate.weapon.restore(s.weapon);candidate.rng.state=s.rng;candidate.events=[];candidate.world.refresh(Object.keys(s.consumed),s.flags);
     candidate.checkpoint=clone(s);Object.assign(this,candidate);return true;
   }
@@ -698,6 +712,7 @@ export function validateM01Snapshot(s){
   if(s.actors.some(a=>(a.firedAt!==undefined&&!Number.isFinite(a.firedAt))||(a.rounds!==undefined&&(!Number.isInteger(a.rounds)||a.rounds<-2||a.rounds>20))))reject('fogo dos actores');
   if(s.enemyFire!==undefined&&(!s.enemyFire||!Array.isArray(s.enemyFire.rounds)||s.enemyFire.rounds.length>200||!Number.isInteger(s.enemyFire.nextId)||s.enemyFire.nextId<0||
     new Set(s.enemyFire.rounds.map(r=>r?.id)).size!==s.enemyFire.rounds.length||s.enemyFire.rounds.some(r=>!validRound(r,s.clock))))reject('fogo em voo');
+  if(s.actors.some(a=>a.pose!=null&&a.pose!=='seated'))reject('pose');
   const w=s.weapon;
   if(w?.id!=='kb_wz29'||!Number.isInteger(w.mag)||w.mag<0||w.mag>5||!Number.isInteger(w.reserve)||w.reserve<0||w.reserve>40||
     !['READY','BOLT_CYCLE','RELOAD_CLIP','RELOAD_SINGLE'].includes(w.state)||![300,500,800,1000].includes(w.sight)||![w.until,w.started,w.lastShot,w.shotCount].every(Number.isFinite)||
@@ -726,6 +741,8 @@ export function validateM01Snapshot(s){
   if('lowAmmoHint' in s.timers&&typeof s.timers.lowAmmoHint!=='boolean')reject('timer lowAmmoHint');
   for(const key of ['repairPins','calloutAt','firstMgAt'])if(key in s.timers&&!Number.isFinite(s.timers[key]))reject('timer '+key);
   if('fireEase' in s.timers&&typeof s.timers.fireEase!=='boolean')reject('timer fireEase');
+  if('withdrawalPressure' in s.timers&&(!Number.isInteger(s.timers.withdrawalPressure)||!finite(s.timers.withdrawalPressure,0,7)))reject('timer withdrawalPressure');
+  if('nextCombatCall' in s.timers&&!finite(s.timers.nextCombatCall))reject('timer nextCombatCall');
   for(const key of ['escort','escortSpoke','boundaryWarning','holdAccessVisited'])if(typeof s.timers[key]!=='boolean')reject('timer '+key);
   if(!Array.isArray(s.destruction)||!Array.isArray(s.sceneDone)||!Array.isArray(s.dialogueConsumed)||!Array.isArray(s.dialogueQueue)||!Array.isArray(s.checkpointsReached)||!Array.isArray(s.recoveries))reject('listas');
   const knownScene=id=>definition.cutscenes.some(c=>c.id===id);

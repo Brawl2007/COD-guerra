@@ -1,7 +1,7 @@
 {
   "verification": "Automated simulation control route; not an uninterrupted browser playthrough",
   "missionId": "m01_tczew",
-  "activeSeconds": 1026.699999999614,
+  "activeSeconds": 1033.249999999608,
   "battleClock": "07:05:00",
   "health": 92,
   "completed": true,
@@ -121,8 +121,8 @@
     },
     {
       "id": "cp_m01_b_reorganizacao",
-      "activeSeconds": 95.24999999999673,
-      "battleClock": "04:35:36",
+      "activeSeconds": 97.74999999999659,
+      "battleClock": "04:35:45",
       "player": {
         "x": -142.67559338116607,
         "y": -3,
@@ -154,13 +154,13 @@
     },
     {
       "id": "cp_m01_c_engenheiros",
-      "activeSeconds": 492.20000000007764,
+      "activeSeconds": 498.7500000000791,
       "battleClock": "05:34:00",
       "player": {
         "x": -18.73891426847697,
         "y": -0.35000020265579224,
         "z": 31.99542842034276,
-        "health": 100,
+        "health": 92,
         "carrying": null
       },
       "consumedEvents": [
@@ -193,13 +193,13 @@
     },
     {
       "id": "cp_m01_d_retirada",
-      "activeSeconds": 772.699999999845,
+      "activeSeconds": 779.249999999839,
       "battleClock": "06:11:09",
       "player": {
         "x": -20.001454013746958,
         "y": -0.35000020265579224,
         "z": 39.232992953917126,
-        "health": 100,
+        "health": 92,
         "carrying": null
       },
       "consumedEvents": [

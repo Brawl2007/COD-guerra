@@ -1,6 +1,6 @@
 # M01 — contrato de integração revisto
 
-Revisão dos PRs #8 e #10. Missão **PLANEJADA**: o JSON descreve a implementação, mas não executa os seus textos de condições, efeitos e restauração. Criar handlers explícitos por ID, sem `eval` nem interpretação automática de prosa. Nunca reutilizar o mapa francês ou a M1 para M01.
+Dados revistos nos PRs #8 e #10; runtime em **PROTÓTIPO JOGÁVEL**, com evidências e limites em `QUALITY_REPORT.md`. O JSON descreve a implementação, mas não executa os seus textos de condições, efeitos e restauração. Usar handlers explícitos por ID, sem `eval` nem interpretação automática de prosa. Nunca reutilizar o mapa francês ou a M1 para M01.
 
 ## Tempo e eventos
 
@@ -22,7 +22,8 @@ Revisão dos PRs #8 e #10. Missão **PLANEJADA**: o JSON descreve a implementaç
 - Munição da arma no save: `mag + reserve + shotCount = 45 + received`. `received` (máx. 30) são carregadores que Kowal passa ao jogador; `timers.kowalRounds` guarda o que lhe resta, e os dois somam sempre 30. Saves antigos sem estes campos continuam válidos.
 - Feridos e transporte são dados dos actores e entram no save: `carriedBy` (quem leva o ferido) e `task` de Dudek (`evacuate_bak` ou `stay_with_bak`). O renderer só lê estas posições.
 - Bąk nunca fica na zona da demolição oeste. Entregue pelo jogador, fica deitado junto a Dudek, que o leva para a estação depois das 06:10 e volta à secção. Recolhido por Dudek às 06:14, ambos ficam na estação (`dlg_m01_056b/057b`).
-- Na chamada das 07:05, os presentes sentam-se no abrigo, de frente para Jan; ninguém se move durante a cena. Bąk ferido, Dudek na estação e Nowicki desaparecido não são encenados.
+- `pose` opcional no actor guarda a postura sentada da chamada; saves sem o campo são aceites. A representação distingue também agachados, feridos e transportados a partir dos dados existentes. Geometria procedural, sem alterar saúde, coordenadas ou resultados no renderer.
+- Na chamada das 07:05, os presentes são posicionados no abrigo com `pose: seated` e `crouched: true`, de frente para Jan; ninguém se move durante a cena. Bąk ferido, Dudek na estação e Nowicki desaparecido não são encenados.
 
 ## Fogo alemão, reparo e retirada
 
@@ -68,6 +69,16 @@ Revisão dos PRs #8 e #10. Missão **PLANEJADA**: o JSON descreve a implementaç
 - Janik e Juchtman ficam completamente fora de cena, sem modelo nem fala. A ficha histórica não autoriza spawn.
 - Manter P1–P16 (`SOURCE_CHECK.md`) e medidas provisórias visíveis na documentação. Parágrafos históricos de debrief ficam desactivados enquanto dependerem de verificação. Ver as leituras de H01-PDF, H30 e T23 e as divergências em `HISTORICAL_RESEARCH.md`.
 
-## Validação que falta
+## Fogo de cobertura no protótipo
 
-Jogabilidade completa com wz.29, restauração em CP-A..D, skip de cenas com estado consistente, espera de 90 s sem depender da câmera e demolições seguras. Os testes de dados não demonstram estes comportamentos.
+- Os sapadores trabalham junto ao cabo, na encosta sul do aterro, ao lado de `repair_site_2`. É aí que o fogo mergulhante dos portões chega e de onde o jogador vê os clarões. O renderer mostra-os ajoelhados a trabalhar e curvados sob fogo (pose `pinned`, lida de `suppressedUntil`).
+- O pelotão tem 18 instâncias activas. As seis posições de reserva do schema antigo ficam inactivas, incluindo na migração, e todos os IDs são preservados. A prontidão consulta só os homens activos e vivos.
+- `grp_de_spans` só dispara depois de activado pelo evento das 06:05, com cadências desfasadas. Activação, baixas e supressão não dependem da câmara, e o tempo sozinho não mata soldados.
+- `timers.withdrawalPressure` (do primeiro protótipo) e `nextCombatCall` são dados opcionais no schema 2. O validador aceita-os, e um save sem `enemyFire` nem `withdrawalPressure` recebe as reservas inactivas.
+- A supressão do jogador dura 5 s e interrompe fogo e avanço; os alemães suprimidos agacham-se.
+- Os eventos `incoming-shot` do primeiro protótipo foram substituídos por `enemy-fire` (partida) e `round-impact` (chegada, com `pinned` e `victim`).
+- `Abrigue-se!` tem chamada imediata e pelo menos 2,5 s de objectivo visível antes da conclusão por cobertura. O fallback de 12 s mantém-se.
+
+## Validação
+
+Percurso, wz.29, CP-A..D, skip, independência da câmara e demolições têm testes de simulação e verificações de navegador descritos em `QUALITY_REPORT.md`. As duas rotas de cobertura com controlos não substituem uma nova partida contínua nem um playtest humano. Historicidade fina, afinação humana do combate, encenação e Chromebook continuam pendentes.

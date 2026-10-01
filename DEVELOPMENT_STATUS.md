@@ -2,7 +2,7 @@
 
 ## Resultado desta alteração
 
-M01 passou a **PROTÓTIPO JOGÁVEL** nesta branch. O fluxo usa a fundação Three.js e as pontes do Claude, preservando os históricos dos PRs #9 e #11. A bancada francesa continua seleccionável. O marco 2 ainda não está aprovado como missão validada; falta a partida contínua no navegador e o trabalho descrito abaixo.
+M01 passou a **PROTÓTIPO JOGÁVEL** nesta branch. O fluxo usa a fundação Three.js e as pontes do Claude, preservando os históricos dos PRs #9 e #11. A bancada francesa continua seleccionável. O marco 2 ainda não está aprovado como missão validada; faltam o playtest humano, a medição no Chromebook e o trabalho descrito abaixo.
 
 Os PRs #8 e #10 de pesquisa/preparação já estão em `main`. Esta integração é proposta num PR próprio para `main`; os PRs #9 e #11 permanecem abertos. O mapa francês conserva as suas coordenadas e arma.
 
@@ -41,8 +41,12 @@ Evidências em `docs/verification/m01-runtime/continuous/`.
 - **Feito:**
   - Bąk visível ao ser levado e evacuado por Dudek;
   - clarão e coluna de poeira nas demolições, com vibração ao chegar o som;
-  - chamada encenada no abrigo;
+  - chamada no abrigo com pose sentada procedural, preservada no save;
   - carregadores de Kowal.
+
+A revisão de integração corrigiu a evacuação na entrega de Bąk depois das 06:10 e a inicialização da munição da secção ao carregar saves antigos. Regressões em `tests/m01-continuous-fixes.test.js`.
+
+As poses procedurais agora distinguem posição em pé, agachada, sentada, ferida e transportada. Joelhos/cotovelos e botas usam os mesmos lotes de instâncias, sem decidir estado de combate. A chamada marca `pose: seated` na simulação; saves anteriores continuam aceites. Imagens e limites em `docs/verification/m01-runtime/poses/`.
 
 **Terceira ronda: ameaça em "Proteja o reparo" e "Cubra a retirada".** Antes, o reparo nunca era suprimido e o pelotão leste ficava sempre no mínimo de 12. Causas:
 - os sapadores ficavam escondidos de toda a margem leste;
@@ -56,16 +60,28 @@ Agora:
 - **HUD.** Uma linha de estado no HUD lê só a simulação.
 - **Arte e apresentação.** O portal ferroviário oeste ganhou o arco que faltava no GLB (os dois arcos sobrepunham-se). Os carris da linha sudoeste assentam no terreno.
 
-| Comparação de estado, 12 sementes | Reparo (real) | Fim do reparo | Supressões | Sobreviventes |
+| Comparação de estado, 12 sementes, depois da fusão | Reparo (real) | Fim do reparo | Supressões | Sobreviventes |
 | --- | ---: | --- | ---: | ---: |
-| Jogador ajuda | 168–207 s | 05:02–05:08 | 9–27 | 15–18 |
-| Jogador ignora | 206–248 s | 05:08–05:14 | 42–81 | 12 |
+| Jogador ajuda | 180–207 s | 05:04–05:08 | 14–34 | 15–18 |
+| Jogador ignora | 206–251 s | 05:08–05:15 | 44–83 | 12 |
 
-No navegador (partidas contínuas `--cover help/ignore`, menu→debrief, 0 bloqueios/erros):
-- **ajuda:** reparo em 214 s com 29 supressões e 18 sobreviventes;
-- **ignora:** 230 s com 54 supressões e 12 sobreviventes.
+No navegador, partidas contínuas `--cover help/ignore` do menu ao debrief, com 0 bloqueios ou erros e o HUD igual à simulação em todas as leituras:
 
-As partidas revelaram um bloqueio, já corrigido: com Bąk entregue depois das 06:10, a demolição oeste ficava presa. Horários históricos, checkpoints e segurança das demolições ficam inalterados. Provas em `docs/verification/m01-runtime/continuous/round3/`.
+| | Antes da fusão | Depois da fusão |
+| --- | --- | --- |
+| Ajuda | reparo 214 s, 29 supressões, 18 sobreviventes | reparo 189 s, 18 supressões, 17 sobreviventes |
+| Ignora | 230 s, 54 supressões, 12 sobreviventes | 236 s, 55 supressões, 12 sobreviventes |
+
+As partidas revelaram um bloqueio, já corrigido: com Bąk entregue depois das 06:10, a demolição oeste ficava presa (a revisão de integração chegou à mesma correcção). Horários históricos, checkpoints e segurança das demolições ficam inalterados. Provas em `docs/verification/m01-runtime/continuous/round3/`.
+
+Este modelo substitui o primeiro protótipo de cobertura do Codex (`0ab60d7`, traços `incoming-shot` e pressão por quase-acertos). Da fusão ficaram:
+- as 18 instâncias activas do pelotão e as seis reservas inactivas;
+- o "Abrigue-se!" visível durante pelo menos 2,5 s;
+- a pose sentada da chamada;
+- os alemães agachados quando suprimidos;
+- o rumo para a MG no HUD.
+
+Os aliados sob fogo usam uma pose própria, agachados e curvados (`pinned`). O relatório `docs/verification/m01-runtime/cover-combat/` foi regenerado com o modelo actual (mesma seed, ignorar → cobrir: reparo 217 → 173 s, sobreviventes 12 → 18).
 
 ## Parcial ou pendente
 
@@ -76,11 +92,11 @@ As partidas revelaram um bloqueio, já corrigido: com Bąk entregue depois das 0
 - Humanos, comboios e aviões são geometrias provisórias próprias; as pontes são o kit GLB do Claude completado no PR #11. Fontes, licenças e incertezas em `ASSET_CREDITS.md` e `BRIDGE_ASSET_REPORT.md`.
 - Meta de 30 FPS no Chromebook não foi medida. Chromium com SwiftShader verifica funcionamento, não desempenho de GPU real.
 - Campanha M01–M30, tanque, avião, jeep, transições e save da campanha pendentes.
-- A partida contínua de M01 no navegador foi feita por piloto automático; **falta um playtest humano completo** e rotas adversas (morrer, sair dos limites, ignorar objectivos). Não houve playtest completo da missão francesa nesta sessão.
+- A partida contínua de M01 no navegador foi feita por piloto automático; **falta um playtest humano completo** e ampliar as rotas adversas (morte em combate e outros objectivos ignorados). Não houve playtest completo da missão francesa nesta sessão.
 - Ainda pendente depois da partida contínua:
   - em "Mantenha a cabeça de ponte", a salva de ajuste vem do dique, atrás das treliças: traçante e impactos à vista, origem não;
   - a flecha do fogo alemão é uma aproximação de jogo; o wz.29 continua em recta;
-  - "Abrigue-se!" pode não aparecer;
+  - afinar a legibilidade e a dificuldade do fogo no reparo e na retirada num playtest humano;
   - de dentro da treliça rodoviária, a coluna da demolição leste fica tapada;
   - o transporte de feridos usa um placeholder.
 

@@ -106,14 +106,14 @@ Partida contínua com `--adverse`, numa única sessão Chromium, do menu ao debr
 | --- | --- | --- |
 | Bąk desaparecia ao ser levado ou entregue. | Na vista vêem-se as pernas ao ombro. Entregue, fica deitado junto de Dudek. Depois das 06:10, Dudek leva-o para a estação e volta à secção. No ramo Dudek (06:14), Dudek vai buscá-lo ao tabuleiro e ambos ficam na estação (`dlg_m01_056b/057b`). Nunca seguram a demolição oeste. | [carregar](round2/31-bak-carry-deck.png), [entregue](round2/34-bak-delivered.png) |
 | Demolições sem clarão; coluna fraca; vibração só abaixo de 500 m. | Clarão no ponto real. Coluna de poeira de ~100 m que cresce em 12 s. Vibração quando chega o estrondo, até 1 km (`cs_m01_east_blast` t=2,1). | [oeste por cima do barracão](round2/51-west-demolition-6s.png), [leste fora da treliça](round2/east-blast-dust-9s.png)* |
-| Chamada: a câmara via a parede do abrigo. | Os presentes sentam-se no abrigo, de frente para Jan, e ninguém sai do lugar durante a cena. Ausentes (Bąk/Dudek na estação, Nowicki) não são encenados. | [chamada](round2/54-roll-call-10s.png) |
+| Chamada: a câmara via a parede do abrigo. | Os presentes são posicionados no abrigo, de frente para Jan (pose sentada pendente), e ninguém sai do lugar durante a cena. Ausentes (Bąk/Dudek na estação, Nowicki) não são encenados. | [chamada](round2/54-roll-call-10s.png) |
 | 45 cartuchos sem reabastecimento. | Kowal passa até 6 carregadores. O save valida `mag+reserve+shotCount = 45 + received`; saves antigos continuam válidos. | [Kowal](round2/20-kowal-ammo.png) |
 
 \* Única captura encenada: continuação do CP-C real da rota, com o jogador entre as pontes, fora da treliça. De dentro da treliça rodoviária, o lattice tapa a coluna junto ao ponto de fuga; aí o aviso é o som, a vibração e a fala de Zieliński.
 
 **Continua pendente:**
 - ameaça legível em "Proteja o reparo" e "Cubra a retirada" (tratada na terceira ronda);
-- "Abrigue-se!" pode não aparecer;
+- "Abrigue-se!" pode não aparecer (corrigido na revisão de integração do Codex);
 - arte do transporte (placeholder);
 - playtest humano;
 - Chromebook.
@@ -175,15 +175,19 @@ Partida contínua com `--adverse`, numa única sessão Chromium, do menu ao debr
 - **Ajuda:** encosta ao lado dos sapadores, a calar a MG dos portões; carregadores de Kowal; lado sul do tabuleiro, a disparar sobre os alemães do tabuleiro.
 - **Ignora:** atrás dos sacos de areia, sem disparar.
 
+Valores depois da fusão com `0ab60d7` (antes da fusão, entre parênteses):
+
 | | Ajuda | Ignora |
 | --- | --- | --- |
-| Reparo (s reais desde a entrega) | 168–207 | 206–248 |
-| Fim do reparo | 05:02–05:08 | 05:08–05:14 |
-| Vezes que os sapadores foram deitados | 9–27 | 42–81 |
+| Reparo (s reais desde a entrega) | 180–207 (168–207) | 206–251 (206–248) |
+| Fim do reparo | 05:04–05:08 (05:02–05:08) | 05:08–05:15 (05:08–05:14) |
+| Vezes que os sapadores foram deitados | 14–34 (9–27) | 44–83 (42–81) |
 | Tempo com a MG dos portões calada (reparo sob fogo) | 98 % | 4–9 % (só Kowal) |
-| Sobreviventes do pelotão leste | 15–18 (18 em 11 sementes) | 12 em todas |
+| Sobreviventes do pelotão leste | 15–18, 18 em 6 sementes (15–18, 18 em 11) | 12 em todas |
 | Saúde final do jogador | 84–100 | 76–100 |
 | Ordem de demolição / demolição leste / oeste | 05:30:00 / 06:10:00 / 06:45:00 | igual |
+
+Em cada uma das 12 sementes, ajudar acaba o reparo antes de ignorar. A formação dos sapadores do Codex (crista, z≈8) deixava o reparo quase sem supressões; a fusão mantém a encosta sul (z≈10–11), exposta ao fogo dos portões.
 
 Nos dois percursos:
 - CP-A..D, 12 objectivos e debrief;
@@ -228,7 +232,7 @@ Nos dois percursos:
 | [help/63-west-demolition-6s.png](round3/help/63-west-demolition-6s.png), [help/69-debrief.png](round3/help/69-debrief.png) | Demolição oeste às 06:45 e debrief |
 | [ignore/19-repair-ignore-6.png](round3/ignore/19-repair-ignore-6.png), [ignore/23-repair-ignore-10.png](round3/ignore/23-repair-ignore-10.png) | Atrás dos sacos de areia, sem disparar; os portões ao fundo |
 | [ignore/37-bak-carry-deck.png](round3/ignore/37-bak-carry-deck.png) | "Pelotão leste: 12 homens · alemães no tabuleiro a disparar sobre eles" |
-| [staged/sappers-pinned.png](round3/staged/sappers-pinned.png)* | Sapadores deitados em primeiro plano; HUD igual |
+| [staged/sappers-pinned.png](round3/staged/sappers-pinned.png)*, [staged/sappers-working.png](round3/staged/sappers-working.png)* | Os mesmos sapadores, depois da fusão: curvados sob fogo (pose `pinned`) e ajoelhados a trabalhar; HUD igual |
 | [staged/gate-mg-flash.png](round3/staged/gate-mg-flash.png)*, [zoom 4×](round3/staged/gate-mg-flash-zoom4x.png) | Clarão entre os portais oeste, na janela entre as pontes |
 | [staged/withdrawal-deck.png](round3/staged/withdrawal-deck.png)* | Retirada vista do tabuleiro, a contagem a descer |
 
@@ -240,4 +244,37 @@ Nos dois percursos:
 - **Balística.** A flecha do tiro alemão é aproximação de jogo; o wz.29 continua em recta.
 - **Piloto.** No reparo só mira a MG dos portões; um jogador também pode calar os atiradores.
 - **Validação.** Playtest humano e Chromebook. M01 continua **PROTÓTIPO JOGÁVEL**.
+
+**Fusão com a revisão do Codex (`0ab60d7`).** A revisão trouxe poses persistentes na chamada (`../poses/`) e um primeiro protótipo de cobertura (`../cover-combat/`). Esse protótipo usava traços `incoming-shot` e pressão por quase-acertos, e foi substituído pelo modelo desta ronda. Da fusão ficaram:
+- o "Abrigue-se!" visível durante pelo menos 2,5 s;
+- as 18 instâncias activas do pelotão;
+- os alemães agachados quando suprimidos;
+- o rumo para a MG no HUD.
+
+A comparação de estado foi repetida depois da fusão (`round3/cover-comparison.json`), e as duas partidas também. Relatórios em [round3/merged-help/report.json](round3/merged-help/report.json) e [round3/merged-ignore/report.json](round3/merged-ignore/report.json).
+
+| Depois da fusão | Ajuda | Ignora |
+| --- | --- | --- |
+| Resultado | Debrief, 12/12, CP-A..D, 1212 s reais | Debrief, 12/12, CP-A..D, 1238 s reais |
+| Bloqueios / mortes / perdas de controlo / erros de página | 0 / 0 / 0 / 0 | 0 / 0 / 0 / 0 |
+| Linha de estado do HUD diferente da simulação | 0 em 129 mudanças | 0 em 150 mudanças |
+| Reparo (s reais desde a entrega; fim) | 189 s; 05:07:43 | 236 s; 05:14:35 |
+| Vezes que os sapadores foram deitados | 18 | 55 |
+| MG dos portões calada | 96 % do tempo; duas baixas alemãs durante o reparo (04:54 e 05:06) | 9 %, só por Kowal |
+| Pelotão leste | **17** sobreviventes, uma baixa às 06:05:26 | **12**: uma baixa a cada ~20 s, das 06:05:24 às 06:07:06 |
+| Tiros do jogador | 52 (46 cartuchos gastos, com os 30 de Kowal) | 0 |
+| Demolição leste / oeste / chamada | 06:10 / 06:45 / 07:05 | igual |
+
+Depois da fusão, a diferença no reparo cresceu de 16 para 47 s. O piloto mantém a MG calada quase todo o tempo, e os sapadores na encosta sul ficam expostos aos portões. Na retirada, um homem caiu às 06:05:26, dois segundos depois do primeiro clarão no tabuleiro; a seguir, o fogo do piloto manteve os alemães deitados.
+
+| Imagem (depois da fusão) | Momento |
+| --- | --- |
+| [merged-help/17-repair-help-flash-1.png](round3/merged-help/17-repair-help-flash-1.png) | Mira na MG dos portões, rumo no HUD ("1176 m, à sua esquerda") |
+| [merged-help/20-repair-help-3.png](round3/merged-help/20-repair-help-3.png), [merged-help/21-repair-help-4.png](round3/merged-help/21-repair-help-4.png) | Portões de Lisewo à mira: "MG suprimida" e, 3 min depois, "sapadores deitados" com o clarão visível |
+| [merged-help/33-withdrawal-help-flash-1.png](round3/merged-help/33-withdrawal-help-flash-1.png), [merged-help/36-withdrawal-help-1.png](round3/merged-help/36-withdrawal-help-1.png) | Alemães no tabuleiro à mira; "Deitaram! Continua!" e "17 homens · suprimidos" |
+| [merged-help/65-roll-call-10s.png](round3/merged-help/65-roll-call-10s.png) | Chamada com a pose sentada da revisão do Codex |
+| [merged-ignore/20-repair-ignore-6.png](round3/merged-ignore/20-repair-ignore-6.png), [merged-ignore/24-repair-ignore-10.png](round3/merged-ignore/24-repair-ignore-10.png) | Sem disparar, atrás dos sacos de areia |
+| [merged-ignore/39-bak-carry-deck.png](round3/merged-ignore/39-bak-carry-deck.png) | "Pelotão leste: 12 homens · alemães no tabuleiro a disparar sobre eles" |
+
+Só estas capturas ficaram no repositório. O `report.json` lista todas as que o piloto tirou, com hora e posição.
 
