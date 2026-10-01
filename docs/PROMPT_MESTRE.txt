@@ -2628,4 +2628,3 @@ Siga os marcos da seção 77 e os roteiros da seção 79. Desenvolva os demais c
 Não entregue somente documentação, modelos soltos ou sistemas sem aparecer no jogo. Não prometa perfeição nem invente resultados. Mantenha DEVELOPMENT_STATUS.md, RUNBOOK.md e QUALITY_REPORT.md atualizados. Continue do último marco real e entregue alterações concretas, reviewáveis e verificadas.”
 
 FIM DO PROMPT MESTRE CONSOLIDADO — VERSÃO APRIMORADA.
-
