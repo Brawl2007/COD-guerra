@@ -32,6 +32,15 @@ Dados revistos nos PRs #8 e #10; runtime em **PROTÓTIPO JOGÁVEL**, com evidên
 - Janik e Juchtman ficam completamente fora de cena, sem modelo nem fala. A ficha histórica não autoriza spawn.
 - Manter P1–P16 (`SOURCE_CHECK.md`) e medidas provisórias visíveis na documentação. Parágrafos históricos de debrief ficam desactivados enquanto dependerem de verificação. Ver as leituras de H01-PDF, H30 e T23 e as divergências em `HISTORICAL_RESEARCH.md`.
 
-## Validação que falta
+## Fogo de cobertura no protótipo
 
-Jogabilidade completa com wz.29, restauração em CP-A..D, skip de cenas com estado consistente, espera de 90 s sem depender da câmera e demolições seguras. Os testes de dados não demonstram estes comportamentos.
+- Sapadores trabalham junto de `repair_site_2`, na encosta exposta do cabo. MG34 do dique só pausam o reparo quando o traço contra terreno/colisores termina a menos de 3 m dos sapadores. Eles agacham-se; o HUD distingue trabalho e supressão. A tolerância de 120 s cria uma pausa na cadência, sem alterar horários históricos.
+- O pelotão tem 18 instâncias activas. As seis posições de reserva do schema antigo ficam inactivas, incluindo na migração; preservam-se todos os IDs. A prontidão consulta só os homens activos e vivos.
+- `grp_de_spans` começa a disparar depois de activado pelo evento das 06:05, com cadências desfasadas. Sete impactos próximos acumulam uma baixa por ID, com intervalo mínimo de 20 s de batalha e piso de 12 sobreviventes. Activação, baixas e supressão continuam independentes da câmara. Contar tempo sozinho já não mata soldados.
+- `timers.withdrawalPressure` e `nextCombatCall` são dados opcionais no schema 2; saves anteriores recebem zero. Persistem pressão e mortes; nunca recriar homens ao trocar LOD ou carregar. A supressão do jogador dura 5 s e interrompe fogo/avanço.
+- Eventos `incoming-shot` transportam origem e impacto já resolvidos. O renderer ilustra traços e impactos num máximo de 48 efeitos; não decide dano. A velocidade visual de 750 m/s não é implementação de queda, arrasto, tempo de dano ou munição traçante histórica.
+- `Abrigue-se!` tem chamada imediata e pelo menos 2,5 s de objectivo visível antes da conclusão por cobertura. O fallback de 12 s mantém-se.
+
+## Validação
+
+Percurso, wz.29, CP-A..D, skip, independência da câmara e demolições têm testes de simulação e verificações de navegador descritos em `QUALITY_REPORT.md`. As duas rotas de cobertura com controlos não substituem uma nova partida contínua nem um playtest humano. Historicidade fina, afinação humana do combate, encenação e Chromebook continuam pendentes.

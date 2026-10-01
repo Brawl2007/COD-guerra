@@ -157,6 +157,11 @@ export class Game {
     if(['npc-shot','distant-shot','cover-suppression'].includes(event.type)){
       const s=this.spatial(event.point);this.audio.wz29Shot(s.pan,Math.max(40,s.distance));
     }
+    if(event.type==='incoming-shot'){
+      const s=this.spatial(event.origin);this.audio.wz29Shot(s.pan,Math.max(40,s.distance));
+      this.renderer.m01.incomingShot(event,this.sim.clock);
+      if(this.spatial(event.point).distance<15)this.audio.impact(event.material);
+    }
     if(event.type==='player-hit'){this.audio.hit();this.hitUntil=now+170;}
     if(event.type==='m01-blast'){
       // O estrondo e a vibração chegam juntos (atraso = distância/343 m/s); demolições abanam até 1 km (cs_m01_east_blast t=2,1).

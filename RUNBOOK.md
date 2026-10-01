@@ -68,6 +68,14 @@ CHROME_EXECUTABLE=/caminho/para/chromium node tools/verify-m01-poses.mjs --out t
 
 A galeria usa o renderer de personagens com dados de exemplo; não executa a missão. O teste de navegador da chamada usa um snapshot alcançado pela rota de simulação e verifica a pose após reload.
 
+Comparação do combate de cobertura, duas rotas completas da simulação com a mesma seed:
+
+```sh
+node tools/verify-m01-cover.mjs
+```
+
+O piloto move-se, aponta com deltas de input e usa disparo/ferrolho/recarga. Não altera actores, RNG, eventos ou relógios; não é uma partida no navegador. Gera `docs/verification/m01-runtime/cover-combat/report.json`. O navegador verifica por continuação o HUD/efeitos do reparo e as perdas na retirada. Os efeitos ilustram traços já resolvidos; balística continua pendente.
+
 ## Diagnóstico
 
 `?debug=1` habilita somente `window.gameDiagnostics()`: renderer, preset, chamadas/triângulos, assets, relógio, posição, fase e sectores. Não expõe a instância nem permite mutações. Não deixar informação de engenharia no HUD normal.

@@ -48,6 +48,10 @@ A revisão de integração corrigiu a evacuação na entrega de Bąk depois das 
 
 As poses procedurais agora distinguem posição em pé, agachada, sentada, ferida e transportada. Joelhos/cotovelos e botas usam os mesmos lotes de instâncias, sem decidir estado de combate. A chamada marca `pose: seated` na simulação; saves anteriores continuam aceites. Imagens e limites em `docs/verification/m01-runtime/poses/`.
 
+**Cobertura com consequências:** os sapadores trabalham na encosta exposta junto ao cabo, agacham-se sob impactos próximos e pausam o reparo. O HUD mostra progresso/supressão e rumo para os clarões. Na retirada, os atacantes do tabuleiro disparam sobre os últimos homens; pressão e baixas são guardadas por ID, com piso de 12. O pelotão activo corresponde aos 18 homens contados; as seis instâncias de reserva mantêm IDs sem participar. Traços/impactos são efeitos provisórios de eventos reais. O aviso de abrigo já não desaparece instantaneamente para quem estava em cobertura.
+
+Duas rotas completas de simulação com a mesma seed, uma sem disparar e outra a cobrir com controlos reais da simulação: reparo 107,5→77,5 s; sobreviventes 12→17. Pontaria automática precisa, não humana; sem munição infinita. Detalhes e capturas de continuação no navegador em `docs/verification/m01-runtime/cover-combat/`. Falta repetir uma partida contínua com estas mudanças e afinar dificuldade num playtest humano.
+
 ## Parcial ou pendente
 
 - Humanos, ViewModel, mãos, recarga, sons e texturas são placeholders; rig/vozes/uniformes finais pendentes.
@@ -59,8 +63,7 @@ As poses procedurais agora distinguem posição em pé, agachada, sentada, ferid
 - Campanha M01–M30, tanque, avião, jeep, transições e save da campanha pendentes.
 - A partida contínua de M01 no navegador foi feita por piloto automático; **falta um playtest humano completo** e ampliar as rotas adversas (morte em combate e outros objectivos ignorados). Não houve playtest completo da missão francesa nesta sessão.
 - Ainda pendente depois da partida contínua:
-  - ameaça legível em "Proteja o reparo" e "Cubra a retirada";
-  - "Abrigue-se!" pode não aparecer;
+  - afinar legibilidade/dificuldade do novo fogo no reparo/retirada num playtest humano e repetir a partida contínua;
   - de dentro da treliça rodoviária, a coluna da demolição leste fica tapada;
   - o transporte de feridos usa um placeholder.
 
@@ -68,6 +71,6 @@ As poses procedurais agora distinguem posição em pé, agachada, sentada, ferid
 
 ## Próximo passo
 
-Playtest humano completo de M01 e rotas adversas. Depois, dar ameaça legível às tarefas de cobertura. Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02.
+Repetir a partida contínua com o novo combate e fazer playtest humano de M01, incluindo cobertura, morte e objectivos ignorados. Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02.
 
 O trabalho das pontes de Claude foi preservado e completado, incluindo dano persistente em LOD0/1/2. Mapas históricos e inventários específicos continuam úteis para as pendências de P4/P13 e de arte. Não recomeçar essa entrega.

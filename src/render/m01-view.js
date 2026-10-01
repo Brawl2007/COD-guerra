@@ -37,7 +37,10 @@ export class M01View {
     this.cylinder=new THREE.CylinderGeometry(1,1,1,8);this.geometry=[this.box,this.sphere,this.cylinder];
     this.kit=[];this.batches=new Map();this.solidGroup=new THREE.Group();this.effects=new THREE.Group();
     this.scene.add(this.solidGroup,this.effects);this.smokes=new Map();this.grenadeViews=new Map();this.world=null;this.revision=-1;
-    this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];
+    this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.incoming=[];this.incomingShots=0;
+    this.traceBatch=new THREE.InstancedMesh(this.box,this.materials.glow,48);
+    this.impactBatch=new THREE.InstancedMesh(this.sphere,this.materials.dust,48);
+    for(const batch of [this.traceBatch,this.impactBatch]){batch.count=0;batch.frustumCulled=false;batch.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.effects.add(batch);}
     this.createWeapon();this.createActors();this.createAircraft();this.createTrains();this.ready=this.loadKit();
   }
   mesh(shape,material,p,size,parent=this.scene){
@@ -136,7 +139,7 @@ export class M01View {
       }
       for(const foot of pose.boots)put('boots',foot,[.22,.11,.13]);
       if(!a.civilian&&a.role!=='MEDIC')put('rifle',pose.rifle,[.9,.07,.06]);
-      if(a.alive&&a.shot>0)put('flash',[pose.rifle[0]+.5,pose.rifle[1],pose.rifle[2]],[.2,.07,.07]);
+      if(a.alive&&a.shot>0)put('flash',[pose.rifle[0]+.5,pose.rifle[1],pose.rifle[2]],a.weapon==='mg34'?[.6,.18,.18]:[.2,.07,.07]);
     }
     for(const [name,batch]of this.batches){batch.count=counts[name]??0;batch.instanceMatrix.needsUpdate=true;if(batch.instanceColor)batch.instanceColor.needsUpdate=true;}
   }
@@ -226,7 +229,7 @@ export class M01View {
   render(sim){
     this.syncSolids(sim.world);const state=sim.renderState,time=sim.clock,dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
-    this.updateActors(sim.actors,time);this.syncDamage(sim,state);this.lighting(sim);
+    this.updateActors(sim.actors,time);this.syncDamage(sim,state);this.syncIncoming(time);this.lighting(sim);
     this.train.visible=state.train963;this.panzerzug.visible=state.panzerzug;
     const planes=state.stukas;
     this.planes.forEach((p,i)=>{p.visible=planes;p.position.set(80+Math.sin(time*.02+i)*250,160+i*20,240-time%90*4+i*30);p.rotation.y=.1;});
@@ -259,14 +262,34 @@ export class M01View {
   }
   muzzle(clock){this.flashUntil=clock+.06;this.shakeUntil=clock+.1;}
   blast(clock){this.shakeUntil=clock+.4;}
+  incomingShot(event,clock){
+    // Ilustração do traço já resolvido na simulação; não decide dano nem simula balística.
+    const origin=new THREE.Vector3(event.origin.x,event.origin.y,event.origin.z),end=new THREE.Vector3(event.point.x,event.point.y,event.point.z);
+    const length=origin.distanceTo(end);this.incoming.push({origin,end,length,start:clock,direction:end.clone().sub(origin).normalize()});
+    if(this.incoming.length>48)this.incoming.shift();this.incomingShots++;
+  }
+  syncIncoming(clock){
+    const dummy=new THREE.Object3D(),up=new THREE.Vector3(0,1,0);let traces=0,impacts=0;
+    this.incoming=this.incoming.filter(s=>clock>=s.start&&clock-s.start<s.length/750+.3);
+    for(const s of this.incoming){const age=clock-s.start,head=Math.min(s.length,age*750),tail=Math.max(0,head-24);
+      if(head<s.length&&head>tail){dummy.position.copy(s.origin).addScaledVector(s.direction,(head+tail)/2);
+        dummy.quaternion.setFromUnitVectors(up,s.direction);dummy.scale.set(.018,head-tail,.018);dummy.updateMatrix();this.traceBatch.setMatrixAt(traces++,dummy.matrix);}
+      if(age>=s.length/750){dummy.position.copy(s.end);dummy.quaternion.identity();dummy.scale.setScalar(.15+(age-s.length/750)*1.5);
+        dummy.updateMatrix();this.impactBatch.setMatrixAt(impacts++,dummy.matrix);}
+    }
+    this.traceBatch.count=traces;this.impactBatch.count=impacts;
+    this.traceBatch.instanceMatrix.needsUpdate=this.impactBatch.instanceMatrix.needsUpdate=true;
+  }
   /** Clarão de uma explosão no ponto real; demolições são maiores e duram mais. */
   explosion(point,clock,aerial){
     const material=new THREE.MeshBasicMaterial({color:'#ffcf7a',transparent:true,opacity:.95,depthWrite:false,toneMapped:false});
     const mesh=new THREE.Mesh(this.sphere,material);mesh.position.set(point.x,(point.y??0)+(aerial?3:8),point.z);this.effects.add(mesh);
     this.bursts.push({mesh,start:clock,duration:aerial?.7:1.4,size:aerial?12:30});
   }
-  resetEffects(){this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;for(const b of this.bursts){this.effects.remove(b.mesh);b.mesh.material.dispose();}this.bursts=[];}
+  resetEffects(){this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;for(const b of this.bursts){this.effects.remove(b.mesh);b.mesh.material.dispose();}this.bursts=[];
+    this.incoming=[];this.incomingShots=0;this.traceBatch.count=this.impactBatch.count=0;}
   get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,actorPoses:{...this.actorPoses},
+    incomingShots:this.incomingShots,shotTrails:this.traceBatch.count,shotImpacts:this.impactBatch.count,
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0)};}
   dispose(){
     this.disposed=true;this.assets.dispose();this.geometry.forEach(g=>g.dispose());Object.values(this.materials).forEach(m=>m.dispose());

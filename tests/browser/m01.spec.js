@@ -103,6 +103,31 @@ test('the real roll-call snapshot renders seated actors and keeps their pose aft
   await start(page,'#continue');await page.waitForFunction(n=>window.gameDiagnostics().m01.actorPoses.seated===n,seated);
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
+test('a real repair continuation shows incoming fire, the stalled-work cue and resumed progress in production',async({page},info)=>{
+  test.setTimeout(process.env.CI?180000:90000);
+  const snapshot=flow().combatSnapshots.repairThreat;
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.incomingShots>0);
+  await expect(page.locator('#objective')).toContainText('Sapadores abrigados');
+  await page.screenshot({path:info.outputPath('m01-repair-under-fire.png')});
+  const d=await page.evaluate(()=>window.gameDiagnostics());expect(d.m01.objectives.obj_m01_cover_repair.state).toBe('active');
+  expect(d.m01.objectives.obj_m01_cover_repair.progress).toBeLessThan(100);
+  await page.waitForFunction(n=>window.gameDiagnostics().m01.objectives.obj_m01_cover_repair.progress>n+1,d.m01.objectives.obj_m01_cover_repair.progress);
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('a real withdrawal continuation displays casualties from incoming fire and keeps the twelve-survivor safety floor',async({page},info)=>{
+  test.setTimeout(process.env.CI?180000:90000);
+  const snapshot=flow().combatSnapshots.withdrawal;
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.flags['m01.east_platoon_survivors']<18);
+  const d=await page.evaluate(()=>window.gameDiagnostics());expect(d.m01.incomingShots).toBeGreaterThan(0);
+  expect(d.m01.flags['m01.east_platoon_survivors']).toBeGreaterThanOrEqual(12);
+  await expect(page.locator('#objective')).toContainText('/18 homens em retirada');
+  await page.screenshot({path:info.outputPath('m01-withdrawal-under-fire.png')});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
 test('a failed M01 bridge load prevents an invisible bridge; the French sandbox remains selectable',async({page})=>{
   await page.route('**/*.glb',r=>r.fulfill({status:404,body:'missing M01 test asset'}));
   await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.assetFailures.length===9);

@@ -1,0 +1,75 @@
+{
+  "verification": "Two full simulation routes using movement, aim deltas, bolt, reload and shots; not a browser or human playtest",
+  "limitations": "One fixed seed, precise automated aim, prototype pressure/accuracy. Shot trails illustrate an already resolved ray; they do not implement ballistic flight or measured tracer ammunition.",
+  "runs": [
+    {
+      "support": false,
+      "seed": 19390901,
+      "completed": true,
+      "battleClock": "07:05:00",
+      "activeSeconds": 959.649999999675,
+      "repairSeconds": 107.50000000002441,
+      "repairIncomingShots": 13,
+      "withdrawalIncomingShots": 55,
+      "survivors": 12,
+      "playerHealth": 100,
+      "playerShots": 0,
+      "roundsRemaining": 45,
+      "consumedEvents": 26,
+      "completedRequired": 11,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "platoonCasualties": [
+        "pl_east_2",
+        "pl_east_3",
+        "pl_east_6",
+        "pl_east_7",
+        "pl_east_11",
+        "pl_east_15"
+      ],
+      "enemyCasualties": [
+        "de_spans_0",
+        "de_spans_1",
+        "de_spans_2",
+        "de_spans_3"
+      ]
+    },
+    {
+      "support": true,
+      "seed": 19390901,
+      "completed": true,
+      "battleClock": "07:05:00",
+      "activeSeconds": 939.9499999996929,
+      "repairSeconds": 77.5000000000176,
+      "repairIncomingShots": 1,
+      "withdrawalIncomingShots": 10,
+      "survivors": 17,
+      "playerHealth": 100,
+      "playerShots": 33,
+      "roundsRemaining": 12,
+      "consumedEvents": 26,
+      "completedRequired": 11,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "platoonCasualties": [
+        "pl_east_3"
+      ],
+      "enemyCasualties": [
+        "de_east_0",
+        "de_east_1",
+        "de_spans_0",
+        "de_spans_1",
+        "de_spans_2",
+        "de_spans_3"
+      ]
+    }
+  ]
+}

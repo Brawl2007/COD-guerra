@@ -117,3 +117,5 @@ Partida contínua com `--adverse`, numa única sessão Chromium, do menu ao debr
 - arte do transporte (placeholder);
 - playtest humano;
 - Chromebook.
+
+**Actualização posterior:** a chamada recebeu poses persistentes (`../poses/`). O fogo no reparo/retirada e o aviso de abrigo receberam a revisão descrita em [`../cover-combat/`](../cover-combat/README.md). Essa revisão tem comparação de simulação e verificações por continuação no navegador; os relatórios contínuos acima precedem-na e não comprovam a dificuldade actual. É necessário repetir a partida contínua e fazer playtest humano.

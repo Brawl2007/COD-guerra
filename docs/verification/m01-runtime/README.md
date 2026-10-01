@@ -12,6 +12,8 @@ Capturas reais em Chromium 153/SwiftShader, 1280×720, sobre o build servido em 
 
 CP-D e outro foram atingidos pelo percurso de simulação e continuados no navegador. A suíte não constitui uma partida contínua de M01.
 
+Revisões posteriores: [poses e chamada](poses/README.md) e [fogo de cobertura](cover-combat/README.md). A comparação de cobertura usa duas rotas completas de simulação e continuações por trechos no navegador. As partidas contínuas abaixo precedem estas mudanças.
+
 **Partida contínua:** [continuous/README.md](continuous/README.md). Três partidas de M01, cada uma numa única sessão Chromium do menu ao debrief, conduzidas por um piloto automático com input do navegador. Não houve snapshots injectados. Inclui os problemas encontrados, as correcções e as capturas de resgate, feridos e retardatários. Não é playtest humano. O teste Node verifica morte/restauração dos quatro checkpoints, resgate opcional, relógios/gates, guardas de save e sectores durante 90 s.
 
 [simulation-report.json](simulation-report.json) contém as horas e posições reais dos checkpoints, flags, baixas e eventos do percurso. Reproduzir:

@@ -68,7 +68,7 @@ test('the withdrawing east platoon runs past the firing point during the corrido
     sim.tick(.05);
     for(const a of sim.actors.filter(a=>a.group==='grp_east_platoon'&&a.alive))if(near(a,fp,15))passed.add(a.id);
   }
-  const survivors=sim.actors.filter(a=>a.group==='grp_east_platoon'&&a.alive);
+  const survivors=sim.actors.filter(a=>a.group==='grp_east_platoon'&&a.alive&&a.active);
   assert.equal(sim.consumedEvent(E('west_demolition')),true);
   assert.equal(passed.size,survivors.length,'todos os sobreviventes passam junto ao posto de disparo');
   assert.equal(new Set(survivors.map(a=>`${a.x.toFixed(1)},${a.z.toFixed(1)}`)).size,survivors.length,'cada um no seu lugar');
