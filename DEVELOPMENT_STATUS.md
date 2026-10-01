@@ -83,6 +83,12 @@ Este modelo substitui o primeiro protótipo de cobertura do Codex (`0ab60d7`, tr
 
 Os aliados sob fogo usam uma pose própria, agachados e curvados (`pinned`). O relatório `docs/verification/m01-runtime/cover-combat/` foi regenerado com o modelo actual (mesma seed, ignorar → cobrir: reparo 217 → 173 s, sobreviventes 12 → 18).
 
+## Revisão visual de M01
+
+Texturas em metros no cenário/kit, terreno mais amostrado, céu com nuvens e fumaça/poeira suave em partículas limitadas substituem as cores planas/esferas. Há vegetação e detalhes ferroviários/arquitectónicos, troncos sólidos fora dos percursos, faces/equipamento procedurais com LOD e wz.29 mais detalhado. Comparações reais em `docs/verification/m01-runtime/visual-sprint/`. A simulação conserva horários, actores/sectores, checkpoints e segurança. Árvores próximas acrescentam colisão estática reproduzível; não são levantamento histórico de árvores de 1939.
+
+Os humanos continuam estilizados e o cenário continua provisório: não foi atingido o realismo das referências. Faltam arte/rigs/rostos/animações profissionais, composição e validação em hardware real. Esta revisão não transforma o protótipo numa missão VALIDADA.
+
 ## Parcial ou pendente
 
 - Humanos, ViewModel, mãos, recarga, sons e texturas são placeholders; rig/vozes/uniformes finais pendentes.

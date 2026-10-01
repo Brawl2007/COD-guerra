@@ -1,6 +1,7 @@
 import layout from '../../missions/m01-tczew/map-layout.json' with { type: 'json' };
 import kit from '../../assets/models/provisional/m01/bridge-colliders.json' with { type: 'json' };
 import { visible } from './spatial.js';
+import {M01_TREES} from './m01-decoration-layout.js';
 
 const xyz=a=>({x:a[0],y:a[1],z:a[2]});
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
@@ -49,7 +50,9 @@ export class TczewWorld {
       box('rail_portal_top',[-6.5,8.4,-4.2],[-1.5,11.5,4.2]),
       box('road_portal_n',[-7,-1,29.9],[-1,14,37]),box('road_portal_s',[-7,-1,43],[-1,14,50.1]),
       box('road_portal_top',[-6.5,8.6,37],[-1.5,12.5,43])];
-    this.obstacles=[...this.colliders.filter(c=>c.collider==='solid'),...this.portals,...this.buildings,...this.covers];this.revision++;
+    this.trees=M01_TREES.map(t=>({...t,y:this.terrainHeightAt(t.x,t.z)}));
+    this.treeObstacles=this.trees.map(t=>box(t.id,[t.x-t.radius,t.y,t.z-t.radius],[t.x+t.radius,t.y+t.height*.78,t.z+t.radius],{material:'wood'}));
+    this.obstacles=[...this.colliders.filter(c=>c.collider==='solid'),...this.portals,...this.buildings,...this.covers,...this.treeObstacles];this.revision++;
   }
   heightAt(x,z){
     let deck=-Infinity;

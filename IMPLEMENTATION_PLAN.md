@@ -16,3 +16,5 @@ Os critérios completos estão na secção 77 de `docs/PROMPT_MESTRE.txt`.
 ## Próxima integração
 
 Os PRs #8 e #10 estão integrados; esta branch reúne a fundação do PR #9, as pontes do PR #11 e o runtime de M01. `M01Simulation`, `TczewWorld`, `Wz29` e `M01View` usam o mesmo `Game` e loop. A partida contínua anterior está verificada (`docs/verification/m01-runtime/continuous/`). O fogo de cobertura tem comparação com/sem apoio na simulação (várias sementes), verificações por trechos e duas partidas contínuas `--cover help/ignore` no navegador (`docs/verification/m01-runtime/continuous/round3/`). Fazer playtest humano, seguido de feridos/encenação e orçamento. Não contar snapshots de teste como playtest integral nem iniciar M02 antes da aprovação do marco 2.
+
+A revisão visual fornece materiais originais, nuvens, partículas suaves, detalhes de cenário e atributos/LOD de humanos. A evidência está em `docs/verification/m01-runtime/visual-sprint/`. Não aprova o marco 3: faltam humanos/rigs/rostos profissionais, mãos/recarga, vozes, composição e performance medida.

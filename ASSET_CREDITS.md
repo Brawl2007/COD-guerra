@@ -13,3 +13,7 @@
 | Disparo/ferrolho/clipe do wz.29 | Síntese original própria em `src/core/audio.js` | Não reutiliza a amostra nem a sequência de recarga da M1. Ainda falta gravação/mixagem final. |
 
 Nenhum asset profissional novo foi adquirido ou considerado licenciado sem evidência. Os requisitos seguintes permanecem em `assets-needed.md` e no prompt mestre.
+
+## Revisão visual de M01
+
+`m01-surfaces.js`, `m01-atmosphere.js`, `m01-environment.js` e o perfil/atributos adicionais de humanos/wz.29 são código e arte procedural originais. Texturas geradas uma vez no cliente, sem downloads nem conteúdo extraído de COD. O kit GLB original do Claude é preservado; a apresentação aplica novos materiais em tempo de execução. As posições de `m01-decoration-layout.js` são composição artística, não cartografia histórica. Folhagem/detalhes pequenos são não sólidos; os 17 troncos próximos têm caixas de física reproduzíveis. Humanos continuam provisórios e estilizados, sem aprovação de uniformes/rig/arte final. A licença global do projecto continua por decidir pelo proprietário.

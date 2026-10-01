@@ -62,8 +62,11 @@ test('real keyboard movement traverses the approaches and E delivers the message
     await page.waitForFunction(({axis,target,direction})=>window.gameDiagnostics().player[axis]*direction>=target*direction,{axis,target,direction},{timeout:process.env.CI?90000:45000});
     await page.keyboard.up(code);
   }
-  await axis('KeyD','z',32,1);await axis('KeyW','x',-15,1);await axis('KeyA','z',2,-1);await axis('KeyW','x',15,1);
-  await page.keyboard.up('ShiftLeft');await expect(page.locator('#interaction')).toContainText('entregar mensagem');
+  await axis('KeyD','z',32,1);await axis('KeyW','x',-15,1);await page.keyboard.up('ShiftLeft');
+  // Walk the final approach. A key-up queued behind a slow software-rendered frame
+  // can carry a sprint several metres beyond the point's actual interaction radius.
+  await axis('KeyA','z',3,-1);await axis('KeyW','x',17,1);
+  await expect(page.locator('#interaction')).toContainText('entregar mensagem');
   await page.keyboard.press('KeyE');await page.waitForFunction(()=>window.gameDiagnostics().m01.objectives.obj_m01_deliver_message.state==='done');
   const data=await page.evaluate(()=>window.gameDiagnostics());expect(data.m01.battleClock).toBeGreaterThanOrEqual(4*3600+33*60+10);expect(data.eventIds).toContain('evt_m01_planes_heard');
   await page.screenshot({path:info.outputPath('m01-message-delivered.png')});
@@ -149,4 +152,29 @@ test('a failed M01 bridge load prevents an invisible bridge; the French sandbox 
   await page.locator('#close-error').click();await page.locator('#mission-select').selectOption('sandbox-1944');
   await expect(page.locator('#start')).toBeEnabled();await page.locator('#start').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused);await expect(page.locator('#weapon-name')).toHaveText('M1 CARBINE');
+});
+
+test('textured atmosphere survives checkpoint restart without duplicating resources; low quality reduces vegetation',async({page},info)=>{
+  test.setTimeout(180000);
+  const snapshot=flow().checkpoints.cp_m01_d_retirada,shaderErrors=[];
+  page.on('console',m=>{if(m.type()==='error')shaderErrors.push(m.text());});
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors,failed}=await open(page);await page.locator('#quality').selectOption('medium');await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.smokePuffs>0&&window.gameDiagnostics().m01.environmentInstances>2000);
+  const initial=await page.evaluate(()=>window.gameDiagnostics());
+  expect(initial.m01.smokePuffs).toBeLessThanOrEqual(192);
+  await page.screenshot({path:info.outputPath('m01-visual-medium.png')});
+  await page.evaluate(()=>document.exitPointerLock());await page.locator('#restart-checkpoint').click();
+  await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
+  const restored=await page.evaluate(()=>window.gameDiagnostics());
+  expect(restored.m01.environmentInstances).toBe(initial.m01.environmentInstances);
+  expect(restored.textures).toBeLessThanOrEqual(initial.textures+2);expect(restored.geometries).toBeLessThanOrEqual(initial.geometries+2);
+  expect(restored.m01.parts.road_span_06.visible).toBe(false);
+  await page.evaluate(()=>document.exitPointerLock());await page.locator('#back-menu').click();
+  await page.locator('#quality').selectOption('low');await start(page,'#continue');
+  await page.waitForFunction(n=>window.gameDiagnostics().m01.environmentInstances<n,initial.m01.environmentInstances);
+  const low=await page.evaluate(()=>window.gameDiagnostics());expect(low.m01.smokePuffs).toBeLessThanOrEqual(112);
+  expect(low.m01.models.length).toBe(9);expect(low.eventIds).toContain('evt_m01_east_demolition');
+  await page.screenshot({path:info.outputPath('m01-visual-low.png')});
+  expect(errors).toEqual([]);expect(shaderErrors).toEqual([]);expect(failed).toEqual([]);
 });
