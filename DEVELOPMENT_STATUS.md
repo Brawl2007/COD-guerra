@@ -2,7 +2,7 @@
 
 ## Resultado desta alteração
 
-M01 passou a **PROTÓTIPO JOGÁVEL** nesta branch. O fluxo usa a fundação Three.js e as pontes do Claude, preservando os históricos dos PRs #9 e #11. A bancada francesa continua seleccionável. O marco 2 ainda não está aprovado como missão validada; falta a partida contínua no navegador e o trabalho descrito abaixo.
+M01 passou a **PROTÓTIPO JOGÁVEL** nesta branch. O fluxo usa a fundação Three.js e as pontes do Claude, preservando os históricos dos PRs #9 e #11. A bancada francesa continua seleccionável. O marco 2 ainda não está aprovado como missão validada; faltam o playtest humano, a medição no Chromebook e o trabalho descrito abaixo.
 
 Os PRs #8 e #10 de pesquisa/preparação já estão em `main`. Esta integração é proposta num PR próprio para `main`; os PRs #9 e #11 permanecem abertos. O mapa francês conserva as suas coordenadas e arma.
 
@@ -41,8 +41,10 @@ Evidências em `docs/verification/m01-runtime/continuous/`.
 - **Feito:**
   - Bąk visível ao ser levado e evacuado por Dudek;
   - clarão e coluna de poeira nas demolições, com vibração ao chegar o som;
-  - chamada encenada no abrigo;
+  - chamada posicionada no abrigo (pose sentada pendente);
   - carregadores de Kowal.
+
+A revisão de integração corrigiu a evacuação na entrega de Bąk depois das 06:10 e a inicialização da munição da secção ao carregar saves antigos. Regressões em `tests/m01-continuous-fixes.test.js`.
 
 ## Parcial ou pendente
 
@@ -53,7 +55,7 @@ Evidências em `docs/verification/m01-runtime/continuous/`.
 - Humanos, comboios e aviões são geometrias provisórias próprias; as pontes são o kit GLB do Claude completado no PR #11. Fontes, licenças e incertezas em `ASSET_CREDITS.md` e `BRIDGE_ASSET_REPORT.md`.
 - Meta de 30 FPS no Chromebook não foi medida. Chromium com SwiftShader verifica funcionamento, não desempenho de GPU real.
 - Campanha M01–M30, tanque, avião, jeep, transições e save da campanha pendentes.
-- A partida contínua de M01 no navegador foi feita por piloto automático; **falta um playtest humano completo** e rotas adversas (morrer, sair dos limites, ignorar objectivos). Não houve playtest completo da missão francesa nesta sessão.
+- A partida contínua de M01 no navegador foi feita por piloto automático; **falta um playtest humano completo** e ampliar as rotas adversas (morte em combate e outros objectivos ignorados). Não houve playtest completo da missão francesa nesta sessão.
 - Ainda pendente depois da partida contínua:
   - ameaça legível em "Proteja o reparo" e "Cubra a retirada";
   - "Abrigue-se!" pode não aparecer;

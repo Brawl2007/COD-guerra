@@ -273,7 +273,7 @@ try {
   await path([[-292, 68], [-262, 70]], 'abrigo');
   await wait('chamada', s => s.scene === 'cs_m01_roll_call', { limitReal: 120 });
   await shot('roll-call', 'Chamada no abrigo (outro)');
-  await page.waitForTimeout(10000); await shot('roll-call-10s', 'Chamada: secção sentada no abrigo');
+  await page.waitForTimeout(10000); await shot('roll-call-10s', 'Chamada: secção reunida no abrigo');
   if (SKIP_CUTSCENES) await page.keyboard.press('Space');
   await wait('outro até ao debrief', s => s.complete && s.completeVisible, { limitReal: 300 });
   await shot('debrief', 'Debrief');
