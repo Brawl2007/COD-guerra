@@ -14,6 +14,10 @@ const inside=(p,a)=>p.x>=a.minX&&p.x<=a.maxX&&p.z>=a.minZ&&p.z<=a.maxZ;
 const entity=(id,point,team='ally',extra={})=>({id,space:'metres',...point,team,health:100,alive:true,active:true,
   state:'GUARD',facing:0,shot:0,radius:.3,crouched:false,suppressedUntil:0,cooldown:0,rounds:5,...extra});
 const phaseText={INTRO:'04:30 · Tczew, Polónia',OUTRO:'07:05 · Chamada no abrigo'};
+// Dudek leva Bąk para junto da estação ("Levaram o Bąk para a estação", dlg_m01_056b), fora da zona de demolição oeste.
+const EVACUATION={x:-332,y:-3,z:24};
+// Lugares no abrigo de campanha (interior x −264…−256, z 66…75) para a chamada das 07:05.
+const ROLL_CALL_SEATS=[[-262.8,73.6],[-261.2,73.9],[-259.6,73.9],[-258,73.6],[-263.2,71.6],[-256.9,71.6],[-262.9,69.6],[-257.1,69.6]];
 
 export class M01Simulation {
   constructor(seed=19390901){this.reset(seed);}
@@ -38,7 +42,7 @@ export class M01Simulation {
     for(let i=0;i<24;i++)this.actors.push(entity(`pl_east_${i}`,{x:1040+i%4*2,y:0,z:38+i%4*.65},'ally',
       {group:'grp_east_platoon',active:false,role:'RIFLEMAN'}));
     this.timers={boundary:0,water:0,cover:0,repairStall:0,repairSuppressedUntil:0,withdrawalCasualty:seconds('06:00:00'),
-      ambient:0,nextCoverCall:40,guide:0,guideKey:null,guideAt:0,guideDist:0,guideShown:false,escort:false,escortSpoke:false,boundaryWarning:false,boundaryCountdown:0,holdAccessVisited:false,
+      ambient:0,nextCoverCall:40,guide:0,guideKey:null,guideAt:0,guideDist:0,guideShown:false,kowalRounds:30,lowAmmoHint:false,escort:false,escortSpoke:false,boundaryWarning:false,boundaryCountdown:0,holdAccessVisited:false,
       occupiedCover:null,coverExposure:0,coverCallIndex:0};
     this.sectors={sectors:definition.sectors.map(s=>({id:s.id,state:s.schedule[0].state,strength:100,morale:1,supply:1})),damage:[]};
     this.mission={phase:'INTRO',complete:false,text:phaseText.INTRO};
@@ -173,14 +177,14 @@ export class M01Simulation {
       case E('east_demolition'):
         this.finish('cover_withdrawal');this.activate('leave_bridge');this.destruction.push('east_ends_destroyed');this.mission.phase='CLIMAX';
         this.enemies.filter(a=>a.group==='grp_de_spans').forEach((a,i)=>{if(i<4){a.health=0;a.alive=false;a.state='DOWN';}else{a.state='RETREAT';}});
-        this.startScene('cs_m01_east_blast');this.impact('east_demolition',{x:800,y:0,z:20},false);break;
+        this.startScene('cs_m01_east_blast');this.impact('east_demolition',{x:800,y:0,z:20},false);
+        if(this.flags['m01.bak_status']==='rescued_by_player'&&this.actor('jozef_bak').active)this.actor('leon_dudek').task='evacuate_bak';break;
       case E('dudek_retrieves_bak'):this.flags['m01.bak_status']='rescued_by_dudek';this.flags['m01.dudek_status']='wounded_arm';
-        this.objectives[O('rescue_bak')].state='expired';this.player.carrying=null;this.actor('jozef_bak').active=false;
-        this.actor('leon_dudek').target={x:-310,y:-3,z:22};break;
+        this.objectives[O('rescue_bak')].state='expired';this.player.carrying=null;this.actor('leon_dudek').task='evacuate_bak';break;
       case E('west_demolition'):if(this.done('leave_bridge'))this.finish('hold_corridor');this.activate('reach_shelter');this.destruction.push('west_end_destroyed');this.mission.phase='AFTERMATH';
         this.startScene('cs_m01_west_blast');this.impact('west_demolition',{x:70,y:0,z:20},false);break;
       case E('kozliny_attack_distant'):this.emit({type:'distant-shot',point:{x:-500,y:0,z:-1300}});break;
-      case E('roll_call'):this.battleClock=Math.max(this.battleClock,seconds('07:05:00'));this.mission.phase='OUTRO';this.startScene('cs_m01_roll_call');break;
+      case E('roll_call'):this.battleClock=Math.max(this.battleClock,seconds('07:05:00'));this.mission.phase='OUTRO';this.startScene('cs_m01_roll_call');this.stageRollCall();break;
       case E('debrief'):this.flags['m01.completed']=true;this.mission.complete=true;this.checkpoint=this.snapshot();this.emit({type:'complete'});break;
       default:throw new Error(`Evento M01 sem resultado implementado: ${id}`);
     }
@@ -236,7 +240,17 @@ export class M01Simulation {
       const bak=this.actor('jozef_bak');
       if(!p.carrying&&dist(p,bak)<3){p.carrying='jozef_bak';bak.active=false;this.message('Bąk está consigo. Leve-o ao socorrista.');}
       else if(p.carrying==='jozef_bak'&&dist(p,this.world.point('aid_position'))<4){p.carrying=null;this.finish('rescue_bak');
-        this.flags['m01.bak_status']='rescued_by_player';this.flags['m01.dudek_status']='unhurt';bak.active=false;this.message('Bąk entregue ao socorrista.');}
+        this.flags['m01.bak_status']='rescued_by_player';this.flags['m01.dudek_status']='unhurt';this.message('Bąk entregue ao socorrista.');
+        const aid=this.world.point('aid_position');Object.assign(bak,{active:true,state:'WOUNDED',target:null,x:aid.x-1.2,z:aid.z+.6});bak.y=this.world.heightAt(bak.x,bak.z);}
+    }
+    const kowal=this.actor('szymon_kowal'),kowalRounds=this.timers.kowalRounds??0;
+    if(interact&&!p.carrying&&kowalRounds>0&&kowal.alive&&kowal.active&&dist(p,kowal)<3&&this.weapon.reserve<=25){
+      const given=this.weapon.resupply(Math.min(15,kowalRounds));this.timers.kowalRounds=kowalRounds-given;this.timers.lowAmmoHint=false;
+      this.message(`Kowal passa-lhe ${given/5} carregador${given>5?'es':''} (+${given}).`);
+    }
+    if(!this.timers.lowAmmoHint&&kowalRounds>0&&this.weapon.mag+this.weapon.reserve<=10&&kowal.alive&&kowal.active){
+      this.timers.lowAmmoHint=true;const d=dist(p,kowal),rel=Math.atan2(kowal.z-p.z,kowal.x-p.x)-p.angle,a=Math.atan2(Math.sin(rel),Math.cos(rel)),deg=Math.abs(a)*180/Math.PI;
+      this.message(`Pouca munição. Kowal tem carregadores: ${Math.round(d)} m, ${deg<35?'em frente':deg>120?'atrás de si':a>0?'à sua direita':'à sua esquerda'}`);
     }
     if(this.active('hold_access')&&inside(p,{minX:-10,maxX:160,minZ:30,maxZ:50})){this.timers.holdAccessVisited=true;if(this.consumedEvent(E('east_platoon_withdraws')))this.finish('hold_access');}
     if(this.active('leave_bridge')&&dist(p,this.world.point('firing_point'))<12){this.finish('leave_bridge');this.activate('hold_corridor');this.line('dlg_m01_048');this.line('dlg_m01_049');}
@@ -275,9 +289,16 @@ export class M01Simulation {
         if(this.clock>=a.suppressedUntil){a.x+=Math.sign(destination-a.x)*Math.min(Math.abs(destination-a.x),dt*1.5);a.state=retreat?'RETREAT':'ADVANCE';}
         continue;
       }
+      if(a.task==='evacuate_bak'){this.evacuate(a,dt);continue;}
+      if(a.task==='stay_with_bak'||(this.mission.phase==='OUTRO'&&a.team==='ally'))continue;   // chamada: ninguém sai do lugar
       if(retreat&&a.team==='ally'&&!a.civilian&&a.state!=='WOUNDED')a.target={x:-170,z:22};
       if(this.timers.escort&&a.id==='marek_zielinski')a.target=this.player;
       if(a.target)this.moveActor(a,a.target,dt);
+    }
+    for(const a of this.actors)if(a.carriedBy){
+      // Ferido ao ombro (presentação deriva só destes dados): atravessado sobre o carregador, um pouco atrás.
+      const c=this.actor(a.carriedBy);a.facing=c.facing+Math.PI/2;
+      a.x=c.x-Math.cos(c.facing)*.25;a.z=c.z-Math.sin(c.facing)*.25;a.y=c.y+1.15;
     }
     if(this.timers.escort){const leader=this.actor('marek_zielinski');
       if(dist(leader,this.player)<3){this.world.move(this.player,-dt*3,0);
@@ -403,6 +424,33 @@ export class M01Simulation {
     if(this.subtitle&&this.clock>=this.subtitle.until)this.subtitle=null;
     if(!this.subtitle&&this.dialogueQueue.length){this.subtitle=this.dialogueQueue.shift();this.subtitle.until=this.clock+this.subtitle.duration;}
   }
+  /** Dudek vai até Bąk, carrega-o e deixa-o junto à estação; Bąk nunca fica na zona de demolição oeste. */
+  evacuate(medic,dt){
+    const bak=this.actor('jozef_bak');
+    if(!bak.alive||!bak.active){medic.task=null;return;}
+    if(bak.carriedBy!==medic.id){
+      this.moveActor(medic,bak,dt,4.5);
+      if(dist(medic,bak)<1.6)bak.carriedBy=medic.id;
+      return;
+    }
+    this.moveActor(medic,EVACUATION,dt,3);
+    if(dist(medic,EVACUATION)<1.2){
+      bak.carriedBy=null;bak.x=medic.x+.9;bak.z=medic.z+.7;bak.y=this.world.heightAt(bak.x,bak.z);bak.facing=medic.facing;
+      // Ramo Dudek: fica com Bąk na estação (dlg_m01_056b/057b). Ramo do jogador: volta à secção (dlg_m01_057a).
+      medic.task=this.flags['m01.bak_status']==='rescued_by_dudek'?'stay_with_bak':null;medic.target=null;medic.state='GUARD';
+    }
+  }
+  /** 07:05: os presentes na chamada sentam-se no abrigo, de frente para Jan; ausentes ficam onde estão. */
+  stageRollCall(){
+    const present=['marek_zielinski','szymon_kowal','pawel_krawiec','staszek_pawlak','sapper_2','sapper_3',
+      ...(this.flags['m01.dudek_status']==='unhurt'?['leon_dudek']:[]),...(this.flags['m01.bak_status']==='unhurt'?['jozef_bak']:[])]
+      .map(id=>this.actor(id)).filter(a=>a&&a.alive&&a.active&&!a.carriedBy&&a.state!=='WOUNDED');
+    const p=this.player,shelter=this.world.point('shelter');
+    Object.assign(p,{x:shelter.x-.5,z:shelter.z-1.8,crouched:true,pitch:-.06});p.y=this.world.heightAt(p.x,p.z);
+    present.forEach((a,i)=>{const [x,z]=ROLL_CALL_SEATS[i%ROLL_CALL_SEATS.length];
+      Object.assign(a,{x,z,target:null,task:null,state:'GUARD'});a.y=this.world.heightAt(x,z);a.facing=Math.atan2(p.z-z,p.x-x);});
+    p.angle=Math.atan2(72.6-p.z,-260-p.x);
+  }
   /** Destino do objectivo activo que exige deslocação (dados do mapa ou actor). */
   guideTarget(){
     const p=this.player,pt=id=>this.world.point(id);
@@ -433,6 +481,8 @@ export class M01Simulation {
     if(this.active('deliver_message')&&dist(p,this.world.point('forward_post'))<4)return 'E · entregar mensagem e café';
     if(this.active('fetch_material')&&dist(p,this.world.point(p.carrying?'repair_site_2':'rail_hut'))<6)return p.carrying?'E · entregar material':'E · carregar material';
     if(this.active('rescue_bak')&&dist(p,p.carrying?this.world.point('aid_position'):this.actor('jozef_bak'))<4)return p.carrying?'E · entregar Bąk':'E · levar Bąk';
+    const kowal=this.actor('szymon_kowal');
+    if(!p.carrying&&(this.timers.kowalRounds??0)>0&&kowal.alive&&kowal.active&&dist(p,kowal)<3&&this.weapon.reserve<=25)return 'E · pedir munição a Kowal';
     return p.carrying?'Está a transportar '+(p.carrying==='jozef_bak'?'Bąk':'material dos sapadores'):'';
   }
   get renderState(){
@@ -479,10 +529,12 @@ export function validateM01Snapshot(s){
   if(s.actors.some(a=>a.team!==(a.id.startsWith('de_')?'enemy':'ally')||
     !['GUARD','ADVANCE','SUPPRESS','RETREAT','HIT_REACTION','DOWN','WOUNDED','reached_safety'].includes(a.state)||
     ![a.facing,a.shot,a.cooldown,a.suppressedUntil].every(Number.isFinite)||typeof a.active!=='boolean'||(a.target&&![a.target.x,a.target.z].every(Number.isFinite))))reject('estado dos actores');
+  if(s.actors.some(a=>(a.carriedBy!=null&&!s.actors.some(c=>c.id===a.carriedBy&&c.alive))||(a.task!=null&&!['evacuate_bak','stay_with_bak'].includes(a.task))))reject('transporte');
   const w=s.weapon;
   if(w?.id!=='kb_wz29'||!Number.isInteger(w.mag)||w.mag<0||w.mag>5||!Number.isInteger(w.reserve)||w.reserve<0||w.reserve>40||
     !['READY','BOLT_CYCLE','RELOAD_CLIP','RELOAD_SINGLE'].includes(w.state)||![300,500,800,1000].includes(w.sight)||![w.until,w.started,w.lastShot,w.shotCount].every(Number.isFinite)||
-    !Number.isInteger(w.shotCount)||w.shotCount<0||w.mag+w.reserve+w.shotCount!==45)reject('arma');
+    !Number.isInteger(w.shotCount)||w.shotCount<0||!Number.isInteger(w.received??0)||(w.received??0)<0||(w.received??0)>30||
+    w.mag+w.reserve+w.shotCount!==45+(w.received??0))reject('arma');
   if(!s.consumed||Object.keys(s.consumed).some(id=>!definition.events.some(e=>e.id===id))||Object.values(s.consumed).some(t=>!Number.isFinite(t)||t<0||t>s.clock))reject('eventos');
   if(!s.objectives||definition.objectives.some(o=>!s.objectives[o.id]||!['locked','active','done','expired'].includes(s.objectives[o.id].state)||!Number.isFinite(s.objectives[o.id].progress)||s.objectives[o.id].progress<0||s.objectives[o.id].progress>100))reject('objectivos');
   if(!s.flags||!Number.isInteger(s.flags['m01.east_platoon_survivors'])||s.flags['m01.east_platoon_survivors']<12||s.flags['m01.east_platoon_survivors']>18)reject('continuidade');
@@ -501,6 +553,9 @@ export function validateM01Snapshot(s){
   for(const key of ['guideAt','guideDist'])if(key in s.timers&&!finite(s.timers[key]))reject('timer '+key);
   if('guideKey' in s.timers&&s.timers.guideKey!==null&&typeof s.timers.guideKey!=='string')reject('timer guideKey');
   if('guideShown' in s.timers&&typeof s.timers.guideShown!=='boolean')reject('timer guideShown');
+  if('kowalRounds' in s.timers&&(!Number.isInteger(s.timers.kowalRounds)||s.timers.kowalRounds<0||s.timers.kowalRounds>30))reject('timer kowalRounds');
+  if((s.timers.kowalRounds??30)+(s.weapon?.received??0)!==30)reject('munição da secção');
+  if('lowAmmoHint' in s.timers&&typeof s.timers.lowAmmoHint!=='boolean')reject('timer lowAmmoHint');
   for(const key of ['escort','escortSpoke','boundaryWarning','holdAccessVisited'])if(typeof s.timers[key]!=='boolean')reject('timer '+key);
   if(!Array.isArray(s.destruction)||!Array.isArray(s.sceneDone)||!Array.isArray(s.dialogueConsumed)||!Array.isArray(s.dialogueQueue)||!Array.isArray(s.checkpointsReached)||!Array.isArray(s.recoveries))reject('listas');
   const knownScene=id=>definition.cutscenes.some(c=>c.id===id);

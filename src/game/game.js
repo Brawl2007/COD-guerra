@@ -98,7 +98,7 @@ export class Game {
       }
       const due=this.pendingSounds.filter(sound=>sound.at<=this.sim.clock);
       this.pendingSounds=this.pendingSounds.filter(sound=>sound.at>this.sim.clock);
-      due.forEach(sound=>this.audio.explosion(sound.pan,sound.distance*UNITS_PER_METRE));
+      due.forEach(sound=>{this.audio.explosion(sound.pan,sound.distance*UNITS_PER_METRE);if(sound.shake&&this.isM01)this.renderer.m01.blast(this.sim.clock);});
     }
     if(this.isM01)this.renderer.renderMission(this.sim);
     else this.renderer.render(this.sim.world,this.sim.player,this.sim.combatants,this.sim.radio,
@@ -159,8 +159,9 @@ export class Game {
     }
     if(event.type==='player-hit'){this.audio.hit();this.hitUntil=now+170;}
     if(event.type==='m01-blast'){
-      const s=this.spatial(event.point);this.pendingSounds.push({...s,at:event.soundAt});
-      if(s.distance<500)this.renderer.m01.blast(this.sim.clock);
+      // O estrondo e a vibração chegam juntos (atraso = distância/343 m/s); demolições abanam até 1 km (cs_m01_east_blast t=2,1).
+      const s=this.spatial(event.point);this.pendingSounds.push({...s,at:event.soundAt,shake:s.distance<(event.aerial?500:1000)});
+      this.renderer.m01.explosion(event.point,this.sim.clock,event.aerial);
     }
     if(event.type==='checkpoint'){
       this.checkpointUntil=now+2400;this.persistCheckpoint();

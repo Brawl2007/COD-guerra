@@ -80,3 +80,40 @@ CHROME_EXECUTABLE=/caminho/para/chromium node tools/m01-browser-playthrough.mjs 
 ```
 
 Cada partida demora ~18–21 min reais com SwiftShader.
+
+## Segunda ronda: feridos, demolições, chamada, munição e rotas adversas
+
+Partida contínua com `--adverse`, numa única sessão Chromium, do menu ao debrief:
+- **Resultado:** 1308 s reais, 12/12 objectivos, CP-A..D.
+- **Restauros:** dois, ambos intencionais (rotas adversas abaixo).
+- **Sem incidentes:** 0 perdas de controlo, 0 erros de página, 0 pedidos falhados.
+- Relatório: [round2/report.json](round2/report.json).
+
+| Rota adversa | Resultado |
+| --- | --- |
+| Sair a leste pelo tabuleiro (x>401) | Aviso a x>270. Depois "Volte em 8…1 s", falha legível e restauro de CP-A em (−66, 22). |
+| Cair no Vístula pela margem | "Você caiu no Vístula." e restauro de CP-A. |
+| Ficar 2 min parado em "Siga a voz do sargento" | Zieliński continua a chamar; nada falha nem avança sozinho; o relógio corre 04:34→04:40. |
+| Gastar a munição | "Pouca munição. Kowal tem carregadores: 46 m, em frente"; Kowal passa 30 cartuchos (reserva 10→40). |
+
+**Problema encontrado nesta ronda e corrigido.** Na primeira tentativa da rota leste, o piloto contornou os sacos de areia e caiu do tabuleiro ao rio pelas aberturas da treliça. `TczewWorld.move` passa a impedir quedas de mais de 1,5 m a partir de um tabuleiro de vão:
+- vale para a lateral e para um vão demolido, e não afecta as balas;
+- da margem continua a cair-se ao Vístula, porque essa falha é intencional.
+
+**Mudanças, todas com regressões em `tests/m01-continuous-fixes.test.js`:**
+
+| Antes | Agora | Captura |
+| --- | --- | --- |
+| Bąk desaparecia ao ser levado ou entregue. | Na vista vêem-se as pernas ao ombro. Entregue, fica deitado junto de Dudek. Depois das 06:10, Dudek leva-o para a estação e volta à secção. No ramo Dudek (06:14), Dudek vai buscá-lo ao tabuleiro e ambos ficam na estação (`dlg_m01_056b/057b`). Nunca seguram a demolição oeste. | [carregar](round2/31-bak-carry-deck.png), [entregue](round2/34-bak-delivered.png) |
+| Demolições sem clarão; coluna fraca; vibração só abaixo de 500 m. | Clarão no ponto real. Coluna de poeira de ~100 m que cresce em 12 s. Vibração quando chega o estrondo, até 1 km (`cs_m01_east_blast` t=2,1). | [oeste por cima do barracão](round2/51-west-demolition-6s.png), [leste fora da treliça](round2/east-blast-dust-9s.png)* |
+| Chamada: a câmara via a parede do abrigo. | Os presentes sentam-se no abrigo, de frente para Jan, e ninguém sai do lugar durante a cena. Ausentes (Bąk/Dudek na estação, Nowicki) não são encenados. | [chamada](round2/54-roll-call-10s.png) |
+| 45 cartuchos sem reabastecimento. | Kowal passa até 6 carregadores. O save valida `mag+reserve+shotCount = 45 + received`; saves antigos continuam válidos. | [Kowal](round2/20-kowal-ammo.png) |
+
+\* Única captura encenada: continuação do CP-C real da rota, com o jogador entre as pontes, fora da treliça. De dentro da treliça rodoviária, o lattice tapa a coluna junto ao ponto de fuga; aí o aviso é o som, a vibração e a fala de Zieliński.
+
+**Continua pendente:**
+- ameaça legível em "Proteja o reparo" e "Cubra a retirada";
+- "Abrigue-se!" pode não aparecer;
+- arte do transporte (placeholder);
+- playtest humano;
+- Chromebook.

@@ -4,7 +4,7 @@ export class Wz29 {
   constructor(){this.profile={id:profile.id,label:profile.name,type:'bolt_action',damage:profile.gameplay.damage,
     range:profile.gameplay.rangeM.maxEngage,reload:{duration:profile.gameplay.reloadClipSec*1000}};
     this.mag=5;this.reserve=40;this.state='READY';this.until=0;this.started=0;this.lastShot=-1e9;
-    this.shotCount=0;this.sight=300;this.reloadMode=null;}
+    this.shotCount=0;this.received=0;this.sight=300;this.reloadMode=null;}
   get reloading(){return this.state.startsWith('RELOAD');}
   get boltCycling(){return this.state==='BOLT_CYCLE';}
   reloadProgress(now){return this.reloading?Math.min(1,(now-this.started)/(this.until-this.started)):0;}
@@ -28,6 +28,8 @@ export class Wz29 {
     this.mag--;this.lastShot=now;this.shotCount++;this.state='BOLT_CYCLE';this.started=now;
     this.until=now+profile.gameplay.boltCycleSec*1000;return true;
   }
+  /** Carregadores recebidos da secção: entram na reserva (máx. 40) e ficam contados para o save. */
+  resupply(rounds){const given=Math.max(0,Math.min(rounds,40-this.reserve));this.reserve+=given;this.received+=given;return given;}
   adjustSight(){const presets=profile.gameplay.ballistics.sightPresetsM;this.sight=presets[(presets.indexOf(this.sight)+1)%presets.length];return this.sight;}
   shotDirection(angle,pitch,aiming,moving,random){
     // Documented fallback: straight ray with angular dispersion. Sight remains a range reference;
@@ -36,6 +38,6 @@ export class Wz29 {
     return {angle:angle+(random()-.5)*spread,pitch:pitch+(random()-.5)*spread};
   }
   snapshot(){return {id:this.profile.id,mag:this.mag,reserve:this.reserve,state:this.state,until:this.until,
-    started:this.started,lastShot:this.lastShot,shotCount:this.shotCount,sight:this.sight,reloadMode:this.reloadMode};}
+    started:this.started,lastShot:this.lastShot,shotCount:this.shotCount,received:this.received,sight:this.sight,reloadMode:this.reloadMode};}
   restore(s){Object.assign(this,s);return this;}
 }
