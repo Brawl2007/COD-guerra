@@ -5,7 +5,7 @@
     "m01_soldier_pl_lod0.glb": {
       "nation": "pl",
       "lod": "lod0",
-      "bytes": 2371880,
+      "bytes": 2371720,
       "height_m": 1.745,
       "bones": 60,
       "triangles_visible": 14861,
@@ -121,7 +121,7 @@
     "m01_soldier_pl_lod1.glb": {
       "nation": "pl",
       "lod": "lod1",
-      "bytes": 873916,
+      "bytes": 873804,
       "height_m": 1.745,
       "bones": 60,
       "triangles_visible": 6002,
@@ -236,7 +236,7 @@
     "m01_soldier_pl_lod2.glb": {
       "nation": "pl",
       "lod": "lod2",
-      "bytes": 287620,
+      "bytes": 287572,
       "height_m": 1.745,
       "bones": 27,
       "triangles_visible": 1896,

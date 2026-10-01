@@ -47,8 +47,8 @@ window.stage = {
     return cache.get(url);
   },
   /** Adiciona um actor: clone com SkeletonUtils, mostra só as malhas pedidas (por nome ou expressão) e toca um clip. */
-  async add(url, { position = [0, 0, 0], rotationY = 0, show = null, clip = null, time = 0, morphs = null, unskinned = false } = {}) {
-    const gltf = await this.load(url);
+  async add(url, { position = [0, 0, 0], rotationY = 0, show = null, clip = null, time = 0, morphs = null, unskinned = false, anims = null } = {}) {
+    const gltf = await this.load(url), clipSrc = anims ? await this.load(anims) : gltf;
     const root = SkeletonUtils.clone(gltf.scene);
     if (unskinned) { const list = []; root.traverse(o => { if (o.isSkinnedMesh) list.push(o); }); for (const o of list) { const m = new THREE.Mesh(o.geometry, o.material); m.name = o.name; m.userData = o.userData; o.parent.add(m); o.parent.remove(o); } }
     root.position.set(...position); root.rotation.y = rotationY;
@@ -66,8 +66,8 @@ window.stage = {
     const mixer = new THREE.AnimationMixer(root);
     let action = null;
     if (clip) {
-      const c = gltf.animations.find(a => a.name === clip);
-      if (!c) throw new Error(`clip ${clip} não existe; há ${gltf.animations.map(a => a.name).join(', ')}`);
+      const c = clipSrc.animations.find(a => a.name === clip);
+      if (!c) throw new Error(`clip ${clip} não existe; há ${clipSrc.animations.map(a => a.name).join(', ')}`);
       action = mixer.clipAction(c); action.setLoop(THREE.LoopOnce); action.clampWhenFinished = true; action.play(); mixer.setTime(time);
     } else mixer.update(0);
     root.updateMatrixWorld(true);

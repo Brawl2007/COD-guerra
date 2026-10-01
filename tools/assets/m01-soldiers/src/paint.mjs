@@ -297,7 +297,8 @@ function gearPainters(nat) {
     },
     helmet_inner: ({ p }) => ({ c: mul([0.22, 0.15, 0.09], 1 + fbm(p, 40, 2) * 0.2), r: 0.6, m: 0, h: 0 }),
     cap: ({ p }) => wool(p, NATIONS[nat].cloth, { dirt: 0 }),
-    cap_band: ({ p }) => wool(p, nat === 'pl' ? [0.10, 0.12, 0.25] : NATIONS.de.patch, { dirt: 0 }),
+    // Rogatywka de campanha wz.37: cinta do mesmo pano, um pouco mais escura (a cinta azul é do boné de passeio).
+    cap_band: ({ p }) => wool(p, mul(NATIONS[nat].cloth, 0.82), { dirt: 0 }),
     badge: ({ p }) => ({ c: mul([0.7, 0.7, 0.68], 1 + fbm(p, 200, 2) * 0.1), r: 0.35, m: 0.9, h: 0.0006 }),
     leather: ({ p, uv }) => leatherBand(p, [0, 1, 0], uv[1] * 2 - 1, nat === 'pl' ? NATIONS.pl.belt : NATIONS.de.belt, 'none'),
     leather_light: ({ p, uv }) => leatherBand(p, [0, 1, 0], uv[1] * 2 - 1, nat === 'pl' ? [0.42, 0.27, 0.13] : NATIONS.de.belt, 'none'),

@@ -52,9 +52,15 @@ As poses procedurais agora distinguem posição em pé, agachada, sentada, ferid
 
 Duas rotas completas de simulação com a mesma seed, uma sem disparar e outra a cobrir com controlos reais da simulação: reparo 107,5→77,5 s; sobreviventes 12→17. Pontaria automática precisa, não humana; sem munição infinita. Detalhes e capturas de continuação no navegador em `docs/verification/m01-runtime/cover-combat/`. Falta repetir uma partida contínua com estas mudanças e afinar dificuldade num playtest humano.
 
+**Soldados de 1939 (assets provisórios, ainda não ligados ao jogo):**
+- GLB polacos e alemães em `assets/models/provisional/m01/characters/`, gerados por `tools/assets/m01-soldiers/` a partir da malha base CC0 do MakeHuman e de geometria/texturas originais.
+- Incluem 8 cabeças polacas (elenco do `STORY_BIBLE.md`) e 3 alemãs, wz.31 com capa, *rogatywka* wz.37, M35, correame, kb wz.29/Kar98k com ferrolho e clipe de 5.
+- LOD0/1/2: 14,9k/6,0k/1,9k triângulos visíveis (PL), um atlas por nação. O GLB de animações tem 15 clips: ferrolho, recarga por clipe, sapadores normal/sob fogo, transporte de Bąk no `carry_socket`, locomoção, ferido, queda, sentado.
+- Verificados por `tests/m01-soldiers-glb.test.js` e capturas inspeccionadas em `docs/assets/m01-soldiers/`. Falta integrá-los em `src/render/` (trabalho do utilizador) e medir no Chromebook.
+
 ## Parcial ou pendente
 
-- Humanos, ViewModel, mãos, recarga, sons e texturas são placeholders; rig/vozes/uniformes finais pendentes.
+- No jogo, humanos, ViewModel, mãos, recarga, sons e texturas continuam placeholders. Os soldados riggados provisórios de `docs/assets/m01-soldiers/` aguardam integração; ViewModel, vozes e uniformes finais estão pendentes.
 - Combate remoto, navegação, resgate e feridos têm comportamento reduzido. Evacuação de S3, animação de agarrar, casamatas interiores, feridos carregados pelo pelotão e direcção humana completa faltam.
 - A alça muda a referência de distância; o tiro ainda usa raio recto com dispersão, conforme fallback documentado. Queda/arrasto balístico pendentes. Pontaria e probabilidade de acerto são tuning de protótipo.
 - Trussas têm aberturas e não são paredes sólidas; colisão exacta dos membros metálicos e ruínas pendente. Juntas e posts dos portais usam aproximações conservadoras declaradas.
