@@ -1,25 +1,29 @@
 # M01 — consequências do fogo de cobertura
 
-Comparação de duas rotas completas de **simulação**, com a mesma seed (19390901). O piloto usa movimento, mira por deltas, disparo, ferrolho e recarga; não injecta eventos, RNG, objectivos ou relógios. A pontaria é automática e precisa. Não é playtest humano nem uma nova partida contínua no navegador.
+Este relatório nasceu com o primeiro protótipo de cobertura do Codex (`0ab60d7`): traços `incoming-shot` e pressão de sete quase-acertos por baixa. Na fusão com a terceira ronda, esse modelo foi substituído pelo fogo alemão como dados, descrito em [`../continuous/README.md`](../continuous/README.md#terceira-ronda-ameaça-no-reparo-e-na-retirada) e em `missions/m01-tczew/ENGINE_CONTRACT.md`:
+- tiros com origem nos portões de Lisewo, em voo e gravados no save;
+- supressão a 3 m;
+- baixas da retirada só por tiro real dos alemães do tabuleiro.
+
+Os números abaixo foram regenerados com o modelo actual.
+
+Comparação de duas rotas completas de **simulação**, com a mesma seed (19390901). O piloto usa movimento, mira por deltas, disparo, ferrolho e recarga. Não injecta eventos, RNG, objectivos ou relógios. A pontaria é automática e precisa. Não é playtest humano nem partida no navegador.
 
 | Observação | Ignorar o fogo | Cobrir o reparo e a retirada |
 | --- | ---: | ---: |
-| Reparo, segundos activos desde a entrega | 107,5 | 77,5 |
-| Tiros próximos dos sapadores | 13 | 1 |
-| Tiros próximos do pelotão em retirada | 55 | 10 |
-| Sobreviventes | 12 | 17 |
-| Disparos do jogador / cartuchos restantes | 0 / 45 | 33 / 12 |
+| Reparo, segundos activos desde a entrega | 217,5 | 173,4 |
+| Tiros a menos de 3 m dos sapadores (cada um deita a equipa) | 48 | 8 |
+| Tiros a menos de 3 m do pelotão em retirada | 277 | 146 |
+| Tiros letais (baixas por ID) | 6 | 0 |
+| Sobreviventes | 12 | 18 |
+| Disparos do jogador / cartuchos restantes | 0 / 45 | 30 / 15 |
 | Conclusão | Debrief, 26 eventos, CP-A..D | Debrief, 26 eventos, CP-A..D |
 
-[report.json](report.json) conserva valores e IDs das baixas. Os 18 homens activos correspondem à contagem; seis slots antigos ficam reservados e inactivos. Uma perda exige pressão de sete impactos próximos, com pelo menos 20 s de batalha entre baixas. Tuning de gameplay, sem afirmação de efectivos históricos. Inimigos inactivos, suprimidos ou tapados por parede não causam perdas pelo simples avanço do relógio. Olhar para trás não suspende o combate. Save/reload conserva pressão e IDs.
+[report.json](report.json) conserva os valores e os IDs das baixas. O pelotão tem 18 homens activos; as seis posições de reserva do schema antigo ficam inactivas (`reserveSlots`). A comparação em 12 sementes está em [`../continuous/round3/cover-comparison.json`](../continuous/round3/cover-comparison.json).
 
-Os sapadores trabalham junto ao cabo no ponto de entrega; a formação anterior ficava escondida pela crista do aterro. Impactos a menos de 3 m fazem-nos agachar e pausar. O HUD indica progresso, trabalho/supressão e rumo dos clarões. O aviso de abrigo fica visível por pelo menos 2,5 s mesmo quando o jogador já está em cobertura.
+Capturas do build de produção em Chromium/SwiftShader, 1280×720, por **continuação de snapshots alcançados pela rota de simulação** (testes `tests/browser/m01.spec.js`):
 
-Os eventos de tiro incluem origem e impacto contra terreno/colisores. Traços e impactos usam dois lotes de até 48 instâncias, sem alterar a simulação. Velocidade visual de 750 m/s apenas ilustra o raio já resolvido; não implementa queda, arrasto, atraso de dano nem comprova uso histórico de munição traçante. Modelos e áudio continuam provisórios.
+- [repair-under-fire.png](repair-under-fire.png): linha de estado "sapadores deitados sob fogo", igual à simulação, e o callout de Kowal.
+- [withdrawal-under-fire.png](withdrawal-under-fire.png): primeira baixa real da retirada e contagem por ID no HUD.
 
-Capturas do build de produção em Chromium 153/SwiftShader, 1280×720, por **continuação de snapshots alcançados pela rota de simulação**:
-
-- [repair-under-fire.png](repair-under-fire.png): HUD de supressão e efeitos de tiros recebidos.
-- [withdrawal-under-fire.png](withdrawal-under-fire.png): perdas reais da simulação e contagem da retirada.
-
-Reproduzir a comparação com `node tools/verify-m01-cover.mjs`; executar `npm run build` e `npm run test:browser` para as continuações. Não houve medição de GPU/Chromebook nem playtest humano. A partida contínua anterior do Claude precede esta mudança. Repetir a partida e afinar legibilidade/dificuldade com uma pessoa antes de aprovar M01.
+Reproduzir com `node tools/verify-m01-cover.mjs` e, para as continuações, `npm run build` e `npm run test:browser`. Não houve medição de GPU/Chromebook nem playtest humano.

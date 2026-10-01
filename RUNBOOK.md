@@ -58,6 +58,24 @@ O piloto usa teclado/cliques reais e olhar por `mousemove` relativo, e só lê `
 - ficar 2 min parado sem seguir o sargento;
 - gastar a munição e pedir carregadores a Kowal.
 
+`--cover help|ignore` compara as duas maneiras de jogar "Proteja o reparo" e "Cubra a retirada":
+- `help`: o piloto fica na encosta ao lado dos sapadores e cala a MG dos portões, mirando o último clarão visto (`threat.recentFire`). Depois pede carregadores a Kowal e, do lado sul do tabuleiro, dispara sobre os alemães do tabuleiro.
+- `ignore`: o piloto espera abrigado sem disparar.
+
+O relatório guarda em `cover`:
+- duração do reparo, supressões e percentagem de tempo com a MG calada;
+- baixas do pelotão e sobreviventes;
+- tiros dados;
+- as linhas de estado do HUD e cada vez que divergem da simulação.
+
+Comparação de estado (simulação, sem navegador), por sementes:
+
+```sh
+node tools/m01-cover-comparison.mjs [--seeds 19390901,1,2] [--out caminho.json]
+```
+
+Os modelos provisórios das pontes regeneram-se com `cd tools/assets/m01-bridges && npm ci && npm run build`; a exportação é determinística. Depois correr `npm run assets:m01:colliders -- --check` e `npm test`.
+
 O verificador grava `docs/verification/m01-runtime/simulation-report.json`. Usa controlos e física reais da simulação com passos de 50 ms, sem injectar relógios/eventos/objectivos. Não é playtest no navegador. Testes de CP-D/outro no navegador continuam snapshots alcançados por esse percurso; estão identificados como verificações por trechos.
 
 Verificação isolada das poses (porta 5181, servidor/browser fechados ao terminar):
@@ -68,13 +86,21 @@ CHROME_EXECUTABLE=/caminho/para/chromium node tools/verify-m01-poses.mjs --out t
 
 A galeria usa o renderer de personagens com dados de exemplo; não executa a missão. O teste de navegador da chamada usa um snapshot alcançado pela rota de simulação e verifica a pose após reload.
 
+Para a galeria de combate (mira, recuo, postura sob fogo e passo), com dois instantes do mesmo relógio de apresentação:
+
+```sh
+CHROME_EXECUTABLE=/caminho/para/chromium node tools/verify-m01-poses.mjs --combat --out test-results/m01-combat-poses
+```
+
+Os controlos de relógio desta galeria existem apenas na fixture de verificação. `gameDiagnostics().m01.actorAnimations` mostra as contagens renderizadas de mira, disparo, movimento e supressão; não é estado de gameplay. Provas e limites em `docs/verification/m01-runtime/combat-animation/`.
+
 Comparação do combate de cobertura, duas rotas completas da simulação com a mesma seed:
 
 ```sh
 node tools/verify-m01-cover.mjs
 ```
 
-O piloto move-se, aponta com deltas de input e usa disparo/ferrolho/recarga. Não altera actores, RNG, eventos ou relógios; não é uma partida no navegador. Gera `docs/verification/m01-runtime/cover-combat/report.json`. O navegador verifica por continuação o HUD/efeitos do reparo e as perdas na retirada. Os efeitos ilustram traços já resolvidos; balística continua pendente.
+O piloto move-se, aponta com deltas de input e usa disparo/ferrolho/recarga. Não altera actores, RNG, eventos ou relógios; não é uma partida no navegador. Gera `docs/verification/m01-runtime/cover-combat/report.json`, com tiros a menos de 3 m (`round-impact.pinned`) e baixas por tiro real (`victim`). O navegador verifica por continuação o HUD, os efeitos e a pose dos sapadores no reparo, e as perdas na retirada. A flecha do tiro alemão é aproximação de jogo; a balística continua pendente.
 
 ## Diagnóstico
 
@@ -85,3 +111,29 @@ Se o ecrã falha, inspeccionar consola, rede e `#error`. Ausência de WebGL2 mos
 ## Publicação
 
 Há um único workflow `.github/workflows/pages.yml`. PRs executam validação; pushes para main/master ou workflow_dispatch validam e publicam somente dist. Deploy depende da validação e tem concorrência Pages própria. Esta alteração deve chegar por PR para main; não publicar directamente uma bancada como campanha concluída.
+
+## Verificação visual de M01
+
+Para verificar a origem da salva nos portões e atrás da treliça, depois do build:
+
+```sh
+CHROME_EXECUTABLE=/caminho/chromium node tools/capture-m01-visual.mjs test-results/m01-cover-origin --cover-origin-only
+```
+
+São continuações de snapshots alcançados por controlos da simulação, esperando em cobertura até uma salva real. O script fecha preview/browser; não é uma partida humana ou contínua.
+
+Para capturar somente a demolição leste, por continuação de snapshots alcançados pela rota de simulação, dentro e fora da treliça:
+
+```sh
+npm run build
+CHROME_EXECUTABLE=/caminho/chromium node tools/capture-m01-visual.mjs test-results/m01-demolition --demolition-only
+```
+
+O script inicia e fecha o seu preview/browser. Guarda capturas originais e erros/diagnóstico; não é partida contínua nem playtest humano. Os snapshots exteriores usam movimento real na simulação até x < −100 depois da demolição.
+
+```sh
+npm run build
+CHROME_EXECUTABLE=/caminho/chromium node tools/capture-m01-visual.mjs docs/verification/m01-runtime/visual-sprint/after
+```
+
+O script gere o seu preview, importa a rota do directório corrente e continua snapshots genuínos no browser; não é playtest contínuo/humano. Captura reparo, estação, retirada e chamada, com diagnóstico e erros. Antes de comparar, usar a mesma qualidade/viewport. Não executar com outro servidor na porta 4173. Guardar capturas fora de `test-results/` se precisarem sobreviver ao próximo Playwright, que limpa essa pasta.

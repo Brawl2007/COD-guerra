@@ -166,6 +166,11 @@ export function tower(cx, cz, { r = 2.65, baseY, height = 23, lod = 0 }) {
   return p;
 }
 
+// Passagem ferroviária: um arco com a largura da abertura dos colisores (|z| < 4,2 m, fecho a 8,4 m). Os dois arcos de 4,4 m
+// centrados em ±2 m sobrepunham-se 0,4 m; a triangulação descartava os furos e o portal ficava um muro fechado à vista,
+// atravessado pelo jogador e opaco ao fogo da margem leste que os colisores deixam passar.
+const RAIL_PORTAL_ARCHES = [{ centerZ: 0, width: 8.4, springY: 5.0, apexY: 8.4 }];
+
 /** Portal neogótico: muro com arcos ogivais entre duas torres. Forma INCERTA (sem fotografia consultada). */
 export function portal({ x, halfWidth, arches, height = 13, towerR = 3.0, towerH = 21, thickness = 5, lod = 0 }) {
   const p = new Part();
@@ -417,8 +422,8 @@ export function railBridge(layout, lod = 0) {
     span: (L, lod) => lensSpan(L, { lod }),
     spanCertainty: C.uncertain,
     spanNotes: 'Vão lenticular (soczewkowy) de 1891: tipo DOCUMENTED (T05). Flecha superior 11 m, inferior 5 m, 9,6 m entre treliças e painéis de ~8 m são SUPOSIÇÕES.',
-    portalWest: lod => portal({ x: -4, halfWidth: 7.2, arches: [{ centerZ: -2, width: 4.4, springY: 5.0, apexY: 8.4 }, { centerZ: 2, width: 4.4, springY: 5.0, apexY: 8.4 }], height: 11.5, towerR: 2.6, towerH: portalHeight, lod }),
-    portalOldEast: lod => portal({ x: 0, halfWidth: 7.2, arches: [{ centerZ: -2, width: 4.4, springY: 5.0, apexY: 8.4 }, { centerZ: 2, width: 4.4, springY: 5.0, apexY: 8.4 }], height: 11.5, towerR: 2.6, towerH: portalHeight, lod }),
+    portalWest: lod => portal({ x: -4, halfWidth: 7.2, arches: RAIL_PORTAL_ARCHES, height: 11.5, towerR: 2.6, towerH: portalHeight, lod }),
+    portalOldEast: lod => portal({ x: 0, halfWidth: 7.2, arches: RAIL_PORTAL_ARCHES, height: 11.5, towerR: 2.6, towerH: portalHeight, lod }),
   };
   return { spec, ...buildBridge(spec, lod) };
 }

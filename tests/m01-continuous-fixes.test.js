@@ -166,3 +166,15 @@ test('the bridge trusses contain movement: no falling off a span sideways or int
   Object.assign(p,{x:655,y:0,z:40});w.move(p,20,0);assert.ok(p.y===0&&p.x<662,`beira do vão 6 demolido: ${p.x.toFixed(1)}`);
   Object.assign(p,{x:20,y:-3,z:30});w.move(p,10,0);assert.ok(p.y<=-9,'da margem ainda se cai ao Vístula (falha intencional)');
 });
+test('a Bąk delivered after the east demolition is still evacuated, so the west demolition is not held forever',()=>{
+  // Found by the --cover help browser run: Bąk carried in after 06:10 stayed at the aid post (x≈−9) and held the 06:45 gate.
+  const sim=new M01Simulation();sim.restoreSnapshot(full().checkpoints.cp_m01_d_retirada);
+  const bak=sim.actor('jozef_bak');assert.equal(sim.active('rescue_bak'),true);assert.equal(sim.consumedEvent(E('east_demolition')),true);
+  Object.assign(sim.player,{x:bak.x,z:bak.z});sim.updateObjectives(0,true);
+  Object.assign(sim.player,sim.world.point('aid_position'));sim.updateObjectives(0,true);
+  assert.equal(sim.flags['m01.bak_status'],'rescued_by_player');assert.equal(sim.actor('leon_dudek').task,'evacuate_bak');
+  sim.player.x=-292;sim.player.z=26;sim.player.y=sim.world.heightAt(-292,26);
+  for(let i=0;i<20*400&&!sim.consumedEvent(E('west_demolition'));i++)sim.tick(.05);
+  assert.equal(sim.consumedEvent(E('west_demolition')),true);assert.ok(bak.x<-90&&bak.active&&bak.alive);
+});
+

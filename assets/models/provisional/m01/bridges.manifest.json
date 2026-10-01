@@ -129,12 +129,12 @@
         ],
         "appliedToRoot": true
       },
-      "bytes": 1649092,
-      "sceneTriangles": 32624,
-      "uniqueTriangles": 23564,
-      "vertices": 45560,
+      "bytes": 1642496,
+      "sceneTriangles": 32528,
+      "uniqueTriangles": 23468,
+      "vertices": 45372,
       "drawCallsIntact": 43,
-      "intactTriangles": 22184,
+      "intactTriangles": 22088,
       "nodes": [
         {
           "name": "rail_support_00",
@@ -154,7 +154,7 @@
           "logicalId": "rail_portal_west",
           "mapFeatureId": "rail_bridge",
           "group": "intact",
-          "triangles": 1200,
+          "triangles": 1152,
           "pivot": [
             -4,
             0,
@@ -271,7 +271,7 @@
           "logicalId": "rail_portal_old_east",
           "mapFeatureId": "rail_bridge",
           "group": "intact",
-          "triangles": 1200,
+          "triangles": 1152,
           "pivot": [
             793.8,
             0,
@@ -1168,12 +1168,12 @@
         ],
         "appliedToRoot": true
       },
-      "bytes": 935256,
-      "sceneTriangles": 18244,
-      "uniqueTriangles": 13084,
-      "vertices": 25264,
+      "bytes": 931464,
+      "sceneTriangles": 18188,
+      "uniqueTriangles": 13028,
+      "vertices": 25156,
       "drawCallsIntact": 41,
-      "intactTriangles": 12400,
+      "intactTriangles": 12344,
       "nodes": [
         {
           "name": "rail_support_00",
@@ -1193,7 +1193,7 @@
           "logicalId": "rail_portal_west",
           "mapFeatureId": "rail_bridge",
           "group": "intact",
-          "triangles": 492,
+          "triangles": 464,
           "pivot": [
             -4,
             0,
@@ -1310,7 +1310,7 @@
           "logicalId": "rail_portal_old_east",
           "mapFeatureId": "rail_bridge",
           "group": "intact",
-          "triangles": 492,
+          "triangles": 464,
           "pivot": [
             793.8,
             0,
@@ -1640,12 +1640,12 @@
         ],
         "appliedToRoot": true
       },
-      "bytes": 353096,
-      "sceneTriangles": 6156,
-      "uniqueTriangles": 4620,
-      "vertices": 8720,
+      "bytes": 349304,
+      "sceneTriangles": 6100,
+      "uniqueTriangles": 4564,
+      "vertices": 8612,
       "drawCallsIntact": 41,
-      "intactTriangles": 4392,
+      "intactTriangles": 4336,
       "nodes": [
         {
           "name": "rail_support_00",
@@ -1665,7 +1665,7 @@
           "logicalId": "rail_portal_west",
           "mapFeatureId": "rail_bridge",
           "group": "intact",
-          "triangles": 332,
+          "triangles": 304,
           "pivot": [
             -4,
             0,
@@ -1782,7 +1782,7 @@
           "logicalId": "rail_portal_old_east",
           "mapFeatureId": "rail_bridge",
           "group": "intact",
-          "triangles": 332,
+          "triangles": 304,
           "pivot": [
             793.8,
             0,
