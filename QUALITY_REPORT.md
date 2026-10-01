@@ -1,3 +1,7 @@
+## Captura do percurso no CI
+
+O [CI 36863795190](https://github.com/Brawl2007/COD-guerra/actions/runs/36863795190) passou Node e build e 12/13 testes de navegador. O trace do percurso inicial confirma entrega, objectivo concluído e assertions aos 170,7 s; a captura final demorou 24,4 s e ultrapassou os 180 s do caso. O orçamento desse caso no CI passa para 240 s. Viewport, qualidade, controlos, percurso e assertions permanecem iguais, sem retries. Não é aprovação de performance. A nova execução deve confirmar a captura.
+
 ## Integração do PR #15 com o sprint visual
 
 Revisão local: **95/95 testes Node**, build **1008,84 kB / 260,28 kB gzip**, 83 colisores GLB verificados e rota completa (26 eventos / CP-A..D). O aviso de chunk grande permanece. A suíte de navegador do conjunto passou **13/13 em 7,6 min**, Chromium/SwiftShader, sem retries.
