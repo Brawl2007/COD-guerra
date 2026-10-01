@@ -185,7 +185,10 @@ export class M01Simulation {
       case E('runner_pressure_report'):line(37);break;
       case E('north_contact_distant'):this.emit({type:'distant-shot',point:{x:-500,y:2,z:-1100}});break;
       case E('east_platoon_withdraws'):if(this.timers.holdAccessVisited)this.finish('hold_access');this.activate('cover_withdrawal');this.mission.phase='SET_PIECE';line(39);
-        this.actors.filter(a=>a.group==='grp_east_platoon').forEach(a=>{a.active=true;});
+        // Recuam os sobreviventes (18 no máximo, survivorsRange); os outros caíram antes, na cabeça de ponte leste, fora de cena.
+        // Assim cada baixa seguinte é um homem a menos à vista, e não vários de uma vez.
+        this.actors.filter(a=>a.group==='grp_east_platoon').forEach(a=>{a.active=Number(a.id.split('_').at(-1))<this.flags['m01.east_platoon_survivors'];
+          if(!a.active)Object.assign(a,{alive:false,health:0,state:'DOWN'});});
         this.actor('jozef_bak').target=this.world.point('bak_wound_point');break;
       case E('bak_wounded'):{const bak=this.actor('jozef_bak');
         if(inside(bak,{minX:20,maxX:160,minZ:30,maxZ:50})){bak.state='WOUNDED';bak.target=null;this.flags['m01.bak_status']='wounded';this.activate('rescue_bak');line(41);line(43);}break;}
@@ -449,7 +452,10 @@ export class M01Simulation {
       const working=a.role==='ENGINEER'&&this.active('cover_repair')&&dist(a,site)<6;
       a.suppressedUntil=Math.max(a.suppressedUntil,this.clock+(working?3.5:a.group==='grp_east_platoon'?1:1.5));pinned||=working;
     }
-    if(pinned){this.timers.repairSuppressedUntil=Math.max(this.timers.repairSuppressedUntil,this.clock+3.5);this.timers.repairPins++;this.line('dlg_m01_022');}
+    if(pinned){   // o trabalho pára e a equipa inteira abriga-se
+      this.timers.repairSuppressedUntil=Math.max(this.timers.repairSuppressedUntil,this.clock+3.5);this.timers.repairPins++;this.line('dlg_m01_022');
+      for(const a of this.actors)if(a.role==='ENGINEER'&&a.alive&&a.active&&dist(a,site)<6)a.suppressedUntil=Math.max(a.suppressedUntil,this.timers.repairSuppressedUntil);
+    }
     this.emit({type:'round-impact',point,material,crack:closestApproach(r,hit.t,eyePosition(p))<=6,distance:dist(point,p),victim:Boolean(victim)});
   }
   fire(){

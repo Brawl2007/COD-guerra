@@ -1,0 +1,1029 @@
+{
+  "verification": "Comparação de estado na simulação de M01 (controlos e clarões visíveis em sim.threat); não é partida no navegador nem playtest humano.",
+  "seeds": [
+    19390901,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "summary": {
+    "help": {
+      "repairRealSeconds": [
+        167.9,
+        206.95
+      ],
+      "repairEnd": [
+        "05:02:27",
+        "05:02:28",
+        "05:04:05",
+        "05:04:16",
+        "05:04:39",
+        "05:04:41",
+        "05:04:43",
+        "05:04:57",
+        "05:05:20",
+        "05:05:35",
+        "05:06:04",
+        "05:08:19"
+      ],
+      "repairPins": [
+        9,
+        27
+      ],
+      "gateMgSuppressedPct": [
+        98,
+        98
+      ],
+      "survivors": [
+        15,
+        18
+      ],
+      "health": [
+        84,
+        100
+      ],
+      "activeSeconds": [
+        998.5,
+        1024.5
+      ]
+    },
+    "ignore": {
+      "repairRealSeconds": [
+        205.7,
+        247.8
+      ],
+      "repairEnd": [
+        "05:08:07",
+        "05:08:47",
+        "05:09:38",
+        "05:09:59",
+        "05:10:26",
+        "05:10:31",
+        "05:10:53",
+        "05:11:03",
+        "05:11:35",
+        "05:12:09",
+        "05:13:04",
+        "05:14:26"
+      ],
+      "repairPins": [
+        42,
+        81
+      ],
+      "gateMgSuppressedPct": [
+        4,
+        9
+      ],
+      "survivors": [
+        12,
+        12
+      ],
+      "health": [
+        76,
+        100
+      ],
+      "activeSeconds": [
+        1023.7,
+        1051.8
+      ]
+    }
+  },
+  "runs": [
+    {
+      "seed": 19390901,
+      "mode": "help",
+      "shots": 45,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:06:04",
+        "realSeconds": 192,
+        "pins": 25
+      },
+      "casualties": [],
+      "repairMgSuppressed": 137.79999999999708,
+      "repairUnderFire": 140.4499999999977,
+      "survivors": 18,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 98,
+      "health": 100,
+      "activeSeconds": 1014.6,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 0,
+      "enemyFire": 1288
+    },
+    {
+      "seed": 19390901,
+      "mode": "ignore",
+      "shots": 0,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:08:47",
+        "realSeconds": 210.15,
+        "pins": 42
+      },
+      "casualties": [
+        "06:05:23",
+        "06:05:43",
+        "06:06:03",
+        "06:06:24",
+        "06:06:44",
+        "06:07:04"
+      ],
+      "repairMgSuppressed": 7.99999999999998,
+      "repairUnderFire": 158.6000000000018,
+      "survivors": 12,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 5,
+      "health": 92,
+      "activeSeconds": 1026.7,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 6,
+      "enemyFire": 1442
+    },
+    {
+      "seed": 1,
+      "mode": "help",
+      "shots": 42,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:04:39",
+        "realSeconds": 182.6,
+        "pins": 18
+      },
+      "casualties": [],
+      "repairMgSuppressed": 128.39999999999495,
+      "repairUnderFire": 131.04999999999555,
+      "survivors": 18,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 98,
+      "health": 92,
+      "activeSeconds": 1008.3,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 0,
+      "enemyFire": 1274
+    },
+    {
+      "seed": 1,
+      "mode": "ignore",
+      "shots": 0,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:08:07",
+        "realSeconds": 205.7,
+        "pins": 44
+      },
+      "casualties": [
+        "06:05:23",
+        "06:05:43",
+        "06:06:03",
+        "06:06:24",
+        "06:06:44",
+        "06:07:04"
+      ],
+      "repairMgSuppressed": 5.999999999999987,
+      "repairUnderFire": 154.1500000000008,
+      "survivors": 12,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 4,
+      "health": 92,
+      "activeSeconds": 1023.7,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 6,
+      "enemyFire": 1468
+    },
+    {
+      "seed": 2,
+      "mode": "help",
+      "shots": 42,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:04:05",
+        "realSeconds": 178.75,
+        "pins": 16
+      },
+      "casualties": [
+        "06:05:23",
+        "06:07:04",
+        "06:07:24"
+      ],
+      "repairMgSuppressed": 124.54999999999507,
+      "repairUnderFire": 127.19999999999492,
+      "survivors": 15,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 98,
+      "health": 84,
+      "activeSeconds": 1005.7,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 3,
+      "enemyFire": 1265
+    },
+    {
+      "seed": 2,
+      "mode": "ignore",
+      "shots": 0,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:09:38",
+        "realSeconds": 215.75,
+        "pins": 57
+      },
+      "casualties": [
+        "06:05:23",
+        "06:05:43",
+        "06:06:03",
+        "06:06:24",
+        "06:06:44",
+        "06:07:04"
+      ],
+      "repairMgSuppressed": 10.000000000000007,
+      "repairUnderFire": 164.2000000000031,
+      "survivors": 12,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 6,
+      "health": 100,
+      "activeSeconds": 1030.4,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 6,
+      "enemyFire": 1444
+    },
+    {
+      "seed": 3,
+      "mode": "help",
+      "shots": 48,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:08:19",
+        "realSeconds": 206.95,
+        "pins": 27
+      },
+      "casualties": [],
+      "repairMgSuppressed": 152.75000000000048,
+      "repairUnderFire": 155.40000000000109,
+      "survivors": 18,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 98,
+      "health": 100,
+      "activeSeconds": 1024.5,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 0,
+      "enemyFire": 1326
+    },
+    {
+      "seed": 3,
+      "mode": "ignore",
+      "shots": 0,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:10:53",
+        "realSeconds": 224.05,
+        "pins": 63
+      },
+      "casualties": [
+        "06:05:23",
+        "06:05:43",
+        "06:06:03",
+        "06:06:24",
+        "06:06:44",
+        "06:07:04"
+      ],
+      "repairMgSuppressed": 15.400000000000084,
+      "repairUnderFire": 172.50000000000497,
+      "survivors": 12,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 9,
+      "health": 92,
+      "activeSeconds": 1035.9,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 6,
+      "enemyFire": 1473
+    },
+    {
+      "seed": 4,
+      "mode": "help",
+      "shots": 43,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:05:20",
+        "realSeconds": 187.15,
+        "pins": 19
+      },
+      "casualties": [],
+      "repairMgSuppressed": 132.94999999999598,
+      "repairUnderFire": 135.59999999999658,
+      "survivors": 18,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 98,
+      "health": 100,
+      "activeSeconds": 1011.3,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 0,
+      "enemyFire": 1290
+    },
+    {
+      "seed": 4,
+      "mode": "ignore",
+      "shots": 0,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:14:26",
+        "realSeconds": 247.8,
+        "pins": 81
+      },
+      "casualties": [
+        "06:05:23",
+        "06:05:43",
+        "06:06:03",
+        "06:06:24",
+        "06:06:44",
+        "06:07:04"
+      ],
+      "repairMgSuppressed": 16.000000000000092,
+      "repairUnderFire": 196.25000000001037,
+      "survivors": 12,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 8,
+      "health": 84,
+      "activeSeconds": 1051.8,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 6,
+      "enemyFire": 1540
+    },
+    {
+      "seed": 5,
+      "mode": "help",
+      "shots": 42,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:04:41",
+        "realSeconds": 182.75,
+        "pins": 15
+      },
+      "casualties": [],
+      "repairMgSuppressed": 128.54999999999498,
+      "repairUnderFire": 131.19999999999558,
+      "survivors": 18,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 98,
+      "health": 100,
+      "activeSeconds": 1008.4,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 0,
+      "enemyFire": 1270
+    },
+    {
+      "seed": 5,
+      "mode": "ignore",
+      "shots": 0,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:12:09",
+        "realSeconds": 232.6,
+        "pins": 63
+      },
+      "casualties": [
+        "06:05:23",
+        "06:05:43",
+        "06:06:03",
+        "06:06:24",
+        "06:06:44",
+        "06:07:04"
+      ],
+      "repairMgSuppressed": 14.000000000000064,
+      "repairUnderFire": 181.05000000000692,
+      "survivors": 12,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 8,
+      "health": 92,
+      "activeSeconds": 1041.6,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 6,
+      "enemyFire": 1507
+    },
+    {
+      "seed": 6,
+      "mode": "help",
+      "shots": 43,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:04:57",
+        "realSeconds": 184.5,
+        "pins": 21
+      },
+      "casualties": [],
+      "repairMgSuppressed": 130.29999999999538,
+      "repairUnderFire": 132.94999999999598,
+      "survivors": 18,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 98,
+      "health": 84,
+      "activeSeconds": 1009.6,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 0,
+      "enemyFire": 1242
+    },
+    {
+      "seed": 6,
+      "mode": "ignore",
+      "shots": 0,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:09:59",
+        "realSeconds": 218.1,
+        "pins": 56
+      },
+      "casualties": [
+        "06:05:23",
+        "06:05:43",
+        "06:06:03",
+        "06:06:24",
+        "06:06:44",
+        "06:07:04"
+      ],
+      "repairMgSuppressed": 7.99999999999998,
+      "repairUnderFire": 166.55000000000362,
+      "survivors": 12,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 5,
+      "health": 100,
+      "activeSeconds": 1032,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 6,
+      "enemyFire": 1459
+    },
+    {
+      "seed": 7,
+      "mode": "help",
+      "shots": 43,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:04:16",
+        "realSeconds": 179.95,
+        "pins": 17
+      },
+      "casualties": [],
+      "repairMgSuppressed": 125.749999999995,
+      "repairUnderFire": 128.39999999999495,
+      "survivors": 18,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 98,
+      "health": 92,
+      "activeSeconds": 1006.5,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 0,
+      "enemyFire": 1266
+    },
+    {
+      "seed": 7,
+      "mode": "ignore",
+      "shots": 0,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:10:31",
+        "realSeconds": 221.7,
+        "pins": 73
+      },
+      "casualties": [
+        "06:05:23",
+        "06:05:43",
+        "06:06:03",
+        "06:06:24",
+        "06:06:44",
+        "06:07:04"
+      ],
+      "repairMgSuppressed": 14.000000000000064,
+      "repairUnderFire": 170.15000000000444,
+      "survivors": 12,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 8,
+      "health": 100,
+      "activeSeconds": 1034.4,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 6,
+      "enemyFire": 1450
+    },
+    {
+      "seed": 8,
+      "mode": "help",
+      "shots": 39,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:02:27",
+        "realSeconds": 167.9,
+        "pins": 9
+      },
+      "casualties": [],
+      "repairMgSuppressed": 113.69999999999568,
+      "repairUnderFire": 116.34999999999553,
+      "survivors": 18,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 98,
+      "health": 100,
+      "activeSeconds": 998.5,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 0,
+      "enemyFire": 1224
+    },
+    {
+      "seed": 8,
+      "mode": "ignore",
+      "shots": 0,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:13:04",
+        "realSeconds": 238.65,
+        "pins": 67
+      },
+      "casualties": [
+        "06:05:23",
+        "06:05:43",
+        "06:06:03",
+        "06:06:24",
+        "06:06:44",
+        "06:07:04"
+      ],
+      "repairMgSuppressed": 7.99999999999998,
+      "repairUnderFire": 187.1000000000083,
+      "survivors": 12,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 4,
+      "health": 84,
+      "activeSeconds": 1045.7,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 6,
+      "enemyFire": 1500
+    },
+    {
+      "seed": 9,
+      "mode": "help",
+      "shots": 42,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:04:43",
+        "realSeconds": 182.95,
+        "pins": 17
+      },
+      "casualties": [],
+      "repairMgSuppressed": 128.74999999999503,
+      "repairUnderFire": 131.39999999999563,
+      "survivors": 18,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 98,
+      "health": 100,
+      "activeSeconds": 1008.5,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 0,
+      "enemyFire": 1269
+    },
+    {
+      "seed": 9,
+      "mode": "ignore",
+      "shots": 0,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:11:35",
+        "realSeconds": 228.8,
+        "pins": 71
+      },
+      "casualties": [
+        "06:05:23",
+        "06:05:43",
+        "06:06:03",
+        "06:06:24",
+        "06:06:44",
+        "06:07:04"
+      ],
+      "repairMgSuppressed": 12.000000000000036,
+      "repairUnderFire": 177.25000000000605,
+      "survivors": 12,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 7,
+      "health": 100,
+      "activeSeconds": 1039.1,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 6,
+      "enemyFire": 1487
+    },
+    {
+      "seed": 10,
+      "mode": "help",
+      "shots": 45,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:05:35",
+        "realSeconds": 188.8,
+        "pins": 23
+      },
+      "casualties": [],
+      "repairMgSuppressed": 134.59999999999636,
+      "repairUnderFire": 137.24999999999696,
+      "survivors": 18,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 98,
+      "health": 100,
+      "activeSeconds": 1012.4,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 0,
+      "enemyFire": 1277
+    },
+    {
+      "seed": 10,
+      "mode": "ignore",
+      "shots": 0,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:11:03",
+        "realSeconds": 225.2,
+        "pins": 47
+      },
+      "casualties": [
+        "06:05:23",
+        "06:05:43",
+        "06:06:03",
+        "06:06:24",
+        "06:06:44",
+        "06:07:04"
+      ],
+      "repairMgSuppressed": 7.99999999999998,
+      "repairUnderFire": 173.65000000000524,
+      "survivors": 12,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 5,
+      "health": 92,
+      "activeSeconds": 1036.7,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 6,
+      "enemyFire": 1453
+    },
+    {
+      "seed": 11,
+      "mode": "help",
+      "shots": 39,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:02:28",
+        "realSeconds": 168,
+        "pins": 11
+      },
+      "casualties": [],
+      "repairMgSuppressed": 113.79999999999568,
+      "repairUnderFire": 116.44999999999553,
+      "survivors": 18,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 98,
+      "health": 100,
+      "activeSeconds": 998.6,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 0,
+      "enemyFire": 1274
+    },
+    {
+      "seed": 11,
+      "mode": "ignore",
+      "shots": 0,
+      "repair": {
+        "deliveredAt": 204.85000000001233,
+        "start": "04:42:00",
+        "end": "05:10:26",
+        "realSeconds": 221.15,
+        "pins": 62
+      },
+      "casualties": [
+        "06:05:23",
+        "06:05:43",
+        "06:06:03",
+        "06:06:24",
+        "06:06:44",
+        "06:07:04"
+      ],
+      "repairMgSuppressed": 7.99999999999998,
+      "repairUnderFire": 169.60000000000431,
+      "survivors": 12,
+      "times": {
+        "order_demolish": "05:30:00",
+        "east_platoon_withdraws": "06:00:00",
+        "germans_on_east_spans": "06:05:00",
+        "east_demolition": "06:10:00",
+        "west_demolition": "06:45:00",
+        "roll_call": "07:05:00"
+      },
+      "repairMgSuppressedPct": 5,
+      "health": 76,
+      "activeSeconds": 1034,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "lethalRounds": 6,
+      "enemyFire": 1487
+    }
+  ]
+}
