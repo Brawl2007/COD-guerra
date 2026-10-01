@@ -55,7 +55,9 @@ test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, a
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 test('real keyboard movement traverses the approaches and E delivers the message at the rail bridge',async({page},info)=>{
-  test.setTimeout(process.env.CI?180000:130000);
+  // CI run 36863795190 completed input/assertions at 171 s; readback took another 24 s.
+  // Leave room for evidence capture without changing gameplay, quality or assertions.
+  test.setTimeout(process.env.CI?240000:130000);
   const {errors,failed}=await open(page);await start(page);await page.keyboard.down('ShiftLeft');
   async function axis(code,axis,target,direction){
     await page.keyboard.down(code);
