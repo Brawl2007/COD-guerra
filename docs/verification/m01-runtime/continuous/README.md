@@ -189,3 +189,55 @@ Nos dois percursos:
 - CP-A..D, 12 objectivos e debrief;
 - nenhum sobrevivente a leste de x = 660 na demolição;
 - cada baixa do pelotão é um tiro que chegou (`round-impact` com vítima), por ID e de 20 em 20 s de relógio a partir das 06:05:20.
+
+**Partidas contínuas no navegador**:
+- uma sessão Chromium cada, do menu ao debrief, com input real;
+- `--cover help` e `--cover ignore`, depois das correcções abaixo;
+- relatórios em [round3/help/report.json](round3/help/report.json) e [round3/ignore/report.json](round3/ignore/report.json).
+
+| | Ajuda | Ignora |
+| --- | --- | --- |
+| Resultado | Debrief, 12/12, CP-A..D, 1241 s reais | Debrief, 12/12, CP-A..D, 1223 s reais |
+| Bloqueios / mortes / perdas de controlo / erros de página | 0 / 0 / 0 / 0 | 0 / 0 / 0 / 0 |
+| Linha de estado do HUD diferente da simulação | 0 em 132 mudanças | 0 em 151 mudanças |
+| Reparo (s reais desde a entrega; fim) | 214 s; 05:11:13 | 230 s; 05:13:12 |
+| Vezes que os sapadores foram deitados | 29 | 54 |
+| MG dos portões | guarnição abatida pelo jogador por volta das 04:47–04:49 (2 baixas alemãs nos portões) | calada 6 % do tempo, só por Kowal |
+| Pelotão leste | **18** sobreviventes, nenhuma baixa | **12**: uma baixa a cada ~20 s de relógio, das 06:05:24 às 06:07:06 |
+| Tiros do jogador | 18 | 0 |
+| Bąk | levado depois das 06:10 e evacuado por Dudek; demolição oeste às 06:45 | levado às 06:09 |
+
+**Observado na diferença:**
+- **Reparo.** Calar a MG dos portões deixa menos supressões (29 contra 54) e acaba o reparo antes. A diferença é pequena no navegador (16 s), porque os atiradores dos portões continuam a disparar sobre os sapadores e o piloto só mira a MG. Na comparação de estado, com a MG viva e calada, a diferença é de ~40 s.
+- **Retirada.** Aqui a diferença é decisiva: o fogo de cobertura sobre o tabuleiro mantém os alemães deitados, e os 18 homens chegam vivos. Sem ele, o pelotão cai até ao mínimo de 12, e cada queda é um tiro visível de um alemão do tabuleiro.
+
+**Problemas encontrados pelas partidas e corrigidos nesta ronda:**
+1. **Bąk entregue depois das 06:10 bloqueava a demolição oeste.** Ficava ferido junto ao portal (x≈−9), dentro da zona; a hora parou às 06:44:30 durante 997 s. Dudek passa a evacuá-lo logo; há uma regressão em `tests/m01-continuous-fixes.test.js`.
+2. **Piloto a disparar contra uma posição calada.** Depois de abater a guarnição da MG, o piloto continuava a disparar sobre o último clarão e ficava sem munição. Passa a esperar por clarões (12 s), como um jogador.
+
+**Capturas:**
+
+| Imagem | Momento |
+| --- | --- |
+| [help/16-repair-help-flash-1.png](round3/help/16-repair-help-flash-1.png) | Clarão da MG dos portões, visto da encosta dos sapadores |
+| [help/15-repair-help-2.png](round3/help/15-repair-help-2.png) | "Reparo 29 % · sapadores a trabalhar · metralhadora do dique suprimida" |
+| [help/19-repair-help-3.png](round3/help/19-repair-help-3.png), [help/22-repair-help-6.png](round3/help/22-repair-help-6.png) | "sapadores deitados sob fogo da metralhadora do dique" |
+| [help/33-withdrawal-help-flash-1.png](round3/help/33-withdrawal-help-flash-1.png) | Alemães no tabuleiro: clarão à mira, do lado sul |
+| [help/36-withdrawal-help-1.png](round3/help/36-withdrawal-help-1.png), [help/41-withdrawal-help-6.png](round3/help/41-withdrawal-help-6.png) | "Pelotão leste: 18 homens · alemães no tabuleiro suprimidos" |
+| [help/45-bak-carry-deck.png](round3/help/45-bak-carry-deck.png), [help/48-bak-delivered.png](round3/help/48-bak-delivered.png) | Bąk levado depois da demolição leste |
+| [help/63-west-demolition-6s.png](round3/help/63-west-demolition-6s.png), [help/69-debrief.png](round3/help/69-debrief.png) | Demolição oeste às 06:45 e debrief |
+| [ignore/19-repair-ignore-6.png](round3/ignore/19-repair-ignore-6.png), [ignore/23-repair-ignore-10.png](round3/ignore/23-repair-ignore-10.png) | Atrás dos sacos de areia, sem disparar; os portões ao fundo |
+| [ignore/37-bak-carry-deck.png](round3/ignore/37-bak-carry-deck.png) | "Pelotão leste: 12 homens · alemães no tabuleiro a disparar sobre eles" |
+| [staged/sappers-pinned.png](round3/staged/sappers-pinned.png)* | Sapadores deitados em primeiro plano; HUD igual |
+| [staged/gate-mg-flash.png](round3/staged/gate-mg-flash.png)*, [zoom 4×](round3/staged/gate-mg-flash-zoom4x.png) | Clarão entre os portais oeste, na janela entre as pontes |
+| [staged/withdrawal-deck.png](round3/staged/withdrawal-deck.png)* | Retirada vista do tabuleiro, a contagem a descer |
+
+\* Continuações de saves gerados pela rota da simulação (estado real, sem injecção), carregados no build de produção. Não são partida contínua. O teste de navegador `German fire on the repair is drawn from the Lisewo gates…` faz o mesmo no CI e exige três coisas: clarão e poeira desenhados, os dois estados do reparo, e o HUD igual à simulação em todas as amostras.
+
+**Continua pendente:**
+- **Arte.** Humanos, MG e fumo são placeholders. O clarão tem tamanho mínimo no ecrã para ser legível a 1,2 km; falta validar isso num playtest humano.
+- **"Mantenha a cabeça de ponte".** A salva de ajuste vem do dique, atrás das treliças: traçante e impactos à vista, origem não.
+- **Balística.** A flecha do tiro alemão é aproximação de jogo; o wz.29 continua em recta.
+- **Piloto.** No reparo só mira a MG dos portões; um jogador também pode calar os atiradores.
+- **Validação.** Playtest humano e Chromebook. M01 continua **PROTÓTIPO JOGÁVEL**.
+

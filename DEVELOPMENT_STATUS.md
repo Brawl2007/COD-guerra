@@ -61,7 +61,11 @@ Agora:
 | Jogador ajuda | 168–207 s | 05:02–05:08 | 9–27 | 15–18 |
 | Jogador ignora | 206–248 s | 05:08–05:14 | 42–81 | 12 |
 
-Horários históricos, checkpoints e segurança das demolições inalterados. Partidas no navegador e capturas em `docs/verification/m01-runtime/continuous/round3/`.
+No navegador (partidas contínuas `--cover help/ignore`, menu→debrief, 0 bloqueios/erros):
+- **ajuda:** reparo em 214 s com 29 supressões e 18 sobreviventes;
+- **ignora:** 230 s com 54 supressões e 12 sobreviventes.
+
+As partidas revelaram um bloqueio, já corrigido: com Bąk entregue depois das 06:10, a demolição oeste ficava presa. Horários históricos, checkpoints e segurança das demolições ficam inalterados. Provas em `docs/verification/m01-runtime/continuous/round3/`.
 
 ## Parcial ou pendente
 
