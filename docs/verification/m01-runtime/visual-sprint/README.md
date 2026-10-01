@@ -42,3 +42,6 @@ Os humanos e as mãos continuam estilizados/procedurais; **não atingem o realis
 
 
 A revisão do PR #15 corrigiu a baixa por ID que ignorava o resultado do traçado. Agora só um impacto no actor vivo reduz a contagem. Um teste cobre parede, tiro falhado, acerto e chegada duplicada. A pontaria antecipa os 5,5 m/s do pelotão no tabuleiro; continua a ser tuning de protótipo. As partidas contínuas do Claude são evidência da versão dele, não desta fusão visual.
+
+
+Validação da fusão: **95/95 Node**, build, **13/13 navegador em 7,6 min**, 83 colisores e rota integral de simulação. [Captura do reparo após a fusão](integration-repair-under-fire.png): HUD e pose sob fogo, obtidos pela continuação real usada no teste de navegador. As 12 sementes estão em [integration-cover-comparison.json](integration-cover-comparison.json).

@@ -1,6 +1,6 @@
 ## Integração do PR #15 com o sprint visual
 
-Revisão local: **95/95 testes Node**, build **1008,84 kB / 260,28 kB gzip**, 83 colisores GLB verificados e rota completa (26 eventos / CP-A..D). O aviso de chunk grande permanece. A suíte de navegador do conjunto está em execução.
+Revisão local: **95/95 testes Node**, build **1008,84 kB / 260,28 kB gzip**, 83 colisores GLB verificados e rota completa (26 eventos / CP-A..D). O aviso de chunk grande permanece. A suíte de navegador do conjunto passou **13/13 em 7,6 min**, Chromium/SwiftShader, sem retries.
 
 Corrigido na revisão: o impacto com `victim` ignorava o obstáculo/actor retornado pelo traçado e podia reduzir sobreviventes sem acerto. Agora exige colisão com o soldado vivo; a pontaria antecipa o recuo no tabuleiro. Regressão cobre parede, falha, acerto e chegada duplicada. Comparação em 12 sementes preserva reparo ajuda 180–207 s / ignora 206–251 s e sobreviventes ajuda 15–18 / ignora 12; prova em `visual-sprint/integration-cover-comparison.json`.
 
