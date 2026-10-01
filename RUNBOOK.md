@@ -30,6 +30,8 @@ O CI mantém viewport 1280×720 e as mesmas assertions, com 180 s por teste (120
 
 WASD: mover; mouse: olhar; clique esquerdo: um disparo semiautomático; botão direito: mira; R: recarregar; G: granada; Shift: correr; Esc: libertar rato/pausar. Iniciar/Retomar solicita pointer lock e habilita áudio por gesto. Perder foco limpa as teclas e pausa simulação/áudio.
 
+Ao capturar o rato, o input espera a confirmação de pointer lock e descarta a primeira amostra relativa para evitar o salto de coordenadas do cursor. Os movimentos seguintes controlam yaw/pitch normalmente, incluindo após retomar.
+
 Checkpoint automático ao atingir C; restaurar pelo menu de pausa. Estado persistido na origem do navegador: `cod-guerra:checkpoint:v1`. Saves inválidos mostram erro legível e permitem iniciar nova missão. Nenhuma versão anterior completa foi identificada; versões desconhecidas são rejeitadas.
 
 ## Diagnóstico

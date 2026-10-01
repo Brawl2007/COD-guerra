@@ -31,19 +31,36 @@ test('production prefix loads assets; real click captures mouse; shooting, reloa
   await page.locator('#quality').selectOption('medium');
   expect((await page.evaluate(()=>window.gameDiagnostics())).quality).toBe('medium');
   await start(page);
-  await page.mouse.click(640,360);
+  const orientation=await page.evaluate(()=>window.gameDiagnostics().player);
+  expect(orientation.angle).toBe(0);expect(orientation.pitch).toBe(0);
+  // Headless absolute mouse moves generate cancelling cursor-recentring pairs.
+  // Exercise relative look through DOM events; other controls use real browser input.
+  await page.evaluate(()=>{
+    window.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0}));
+    window.dispatchEvent(new MouseEvent('mousemove',{movementX:12,movementY:8}));
+  });
+  await page.waitForFunction(({angle,pitch})=>{
+    const player=window.gameDiagnostics().player;
+    return player.angle!==angle&&player.pitch!==pitch;
+  },orientation,{timeout:12000});
+  // Keep the locked cursor in place; an absolute move is not relative game input.
+  await page.mouse.down();await page.mouse.up();
   await expect(page.locator('#mag')).toHaveText('14');
   await page.keyboard.press('KeyR');
   await expect(page.locator('#mag')).toHaveText('—');
   await page.evaluate(()=>document.exitPointerLock());
   await expect(page.locator('#pause')).toBeVisible();
   const paused=await page.evaluate(()=>window.gameDiagnostics().clock);
+  const pausedPlayer=await page.evaluate(()=>window.gameDiagnostics().player);
   await page.waitForTimeout(400);
   expect(await page.evaluate(()=>window.gameDiagnostics().clock)).toBe(paused);
   await page.locator('#resume').click();
   await page.waitForFunction(()=>document.pointerLockElement?.id==='game');
   await expect(page.locator('#mag')).toHaveText('15',{timeout:12000});
   await expect(page.locator('#reserve')).toHaveText('59');
+  const resumedPlayer=await page.evaluate(()=>window.gameDiagnostics().player);
+  expect(resumedPlayer.angle).toBeCloseTo(pausedPlayer.angle,4);
+  expect(resumedPlayer.pitch).toBeCloseTo(pausedPlayer.pitch,4);
   await page.screenshot({path:info.outputPath('playing.png')});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
@@ -51,6 +68,7 @@ test('production prefix loads assets; real click captures mouse; shooting, reloa
 test('real keyboard movement reaches and stores checkpoint; restart and page reload restore it',async({page},info)=>{
   const {errors,failed}=await open(page);await start(page);
   const initial=await page.evaluate(()=>window.gameDiagnostics().player);
+  expect(initial.angle).toBe(0);expect(initial.pitch).toBe(0);
   // Initial facing is east. Strafe south along the open western road to checkpoint.
   await page.keyboard.down('KeyD');
   await page.waitForFunction(()=>window.gameDiagnostics().player.y>=600,null,{timeout:process.env.CI?120000:20000});
@@ -92,7 +110,7 @@ test('missing models are reported and procedural fallback keeps the area playabl
   await page.waitForFunction(()=>window.gameDiagnostics?.().assetFailures.length===3);
   expect((await page.evaluate(()=>window.gameDiagnostics())).models).toEqual([]);
   await expect(page.locator('#error')).toBeHidden();await start(page);
-  await page.mouse.click(640,360);await expect(page.locator('#mag')).toHaveText('14');
+  await page.mouse.down();await page.mouse.up();await expect(page.locator('#mag')).toHaveText('14');
   await page.screenshot({path:info.outputPath('fallback.png')});
   expect(errors).toEqual([]);
 });

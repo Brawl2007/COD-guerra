@@ -4,6 +4,7 @@ export class Input {
     this.keys = new Set(); this.pressed = new Set();
     this.fire = false; this.firePressed = false; this.aim = false;
     this.lookDelta = 0; this.lookDeltaY = 0;
+    this.pointerLocked = false; this.discardLookSample = false;
     this.listeners = [];
     const listen = (target, event, handler) => {
       target.addEventListener(event, handler);
@@ -17,7 +18,10 @@ export class Input {
     });
     listen(window, 'keyup', e => this.keys.delete(e.code));
     listen(window, 'mousemove', e => {
-      if (document.pointerLockElement === canvas) {
+      if (this.pointerLocked && document.pointerLockElement === canvas) {
+        // Some browsers deliver a cursor repositioning sample at lock entry.
+        // Wait for pointerlockchange and discard that first relative sample.
+        if (this.discardLookSample) { this.discardLookSample = false; return; }
         this.lookDelta += e.movementX; this.lookDeltaY += e.movementY;
       }
     });
@@ -33,7 +37,11 @@ export class Input {
     listen(canvas, 'contextmenu', e => e.preventDefault());
     listen(window, 'blur', () => this.clear());
     listen(document, 'visibilitychange', () => { if (document.hidden) this.clear(); });
-    listen(document, 'pointerlockchange', () => this.clear());
+    listen(document, 'pointerlockchange', () => {
+      this.clear();
+      this.pointerLocked = document.pointerLockElement === canvas;
+      this.discardLookSample = this.pointerLocked;
+    });
   }
   clear() {
     this.keys.clear(); this.pressed.clear(); this.fire = false; this.firePressed = false;
