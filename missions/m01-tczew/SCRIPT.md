@@ -242,7 +242,7 @@ O comandante histórico não aparece. A ordem chega pelo mensageiro, como chegar
 
 **Objetivo: "Cubra a retirada do pelotão leste".**
 - Tiros a menos de 3 m de um grupo alemão fazem o grupo se deitar e parar.
-- A cada 20 s de relógio sem supressão, o pelotão leste perde mais um homem, até o mínimo de 12 sobreviventes. **A missão nunca falha por isso.** O número fica gravado e aparece na contagem.
+- No protótipo, a perda exige fogo real: um alemão do tabuleiro, activo e sem supressão, que vê o último homem dispara um tiro letal, e a baixa só conta quando o tiro chega. Há pelo menos 20 s de relógio entre baixas, contados desde as 06:05, até o mínimo de 12 sobreviventes. Sem tiro desobstruído não há perda automática. **A missão nunca falha por isso.** Os tiros em voo, os IDs das baixas e o número ficam gravados e aparecem na contagem. São parâmetros de gameplay, não efectivos históricos.
 - Soldados do pelotão leste passam pela secção a partir de 06:06: **SOLDADO:** Não parem! Eles estão no tabuleiro atrás de nós! (040)
 
 **06:04 — Bąk é ferido** no tabuleiro, a 55 m do portal (`evt_m01_bak_wounded`).

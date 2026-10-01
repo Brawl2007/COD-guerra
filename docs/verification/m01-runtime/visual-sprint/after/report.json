@@ -1,0 +1,1995 @@
+{
+  "kind": "staged production browser continuations",
+  "shots": [
+    {
+      "name": "repair",
+      "errors": [],
+      "diagnostics": {
+        "renderer": "Three.js",
+        "quality": "medium",
+        "drawCalls": 278,
+        "triangles": 397160,
+        "geometries": 128,
+        "textures": 15,
+        "assetFailures": [],
+        "models": [
+          "weapon",
+          "ally",
+          "enemy"
+        ],
+        "missionId": "m01_tczew",
+        "clock": 260.88320000002494,
+        "paused": false,
+        "missionPhase": "FIRST_CONTACT",
+        "complete": false,
+        "player": {
+          "x": -29.031662158118294,
+          "y": -3,
+          "z": 27.978035144077193,
+          "angle": -6.261897778318308,
+          "pitch": 0,
+          "health": 100
+        },
+        "sectors": [
+          {
+            "id": "s1_west_bridgehead",
+            "state": "reorganizing",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          },
+          {
+            "id": "s2_east_bridgehead",
+            "state": "train_arrives",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          },
+          {
+            "id": "s3_station_yard",
+            "state": "wounded_evacuation",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          },
+          {
+            "id": "s4_north_perimeter",
+            "state": "quiet",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          },
+          {
+            "id": "s5_sky_east",
+            "state": "train_smoke_east",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          }
+        ],
+        "eventIds": [
+          "evt_m01_intro_card",
+          "evt_m01_prelude_start",
+          "evt_m01_railway_worker_report",
+          "evt_m01_planes_heard",
+          "evt_m01_bombing_0434",
+          "evt_m01_cable_cut",
+          "evt_m01_forward_post_bombed",
+          "evt_m01_nowicki_lost",
+          "evt_m01_wounded_dragged",
+          "evt_m01_second_air_pass",
+          "evt_m01_train963_arrives"
+        ],
+        "m01": {
+          "models": [
+            "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+            "assets/models/provisional/m01/bridge_rail_1891_1912.lod1.glb",
+            "assets/models/provisional/m01/bridge_rail_1891_1912.lod2.glb",
+            "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod1.glb",
+            "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod2.glb",
+            "assets/models/provisional/m01/portal_lisewo_1912.glb",
+            "assets/models/provisional/m01/portal_lisewo_1912.lod1.glb",
+            "assets/models/provisional/m01/portal_lisewo_1912.lod2.glb",
+            "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb"
+          ],
+          "assetFailures": [],
+          "smokePuffs": 51,
+          "environmentInstances": 9251,
+          "actorPoses": {
+            "standing": 48,
+            "crouched": 3,
+            "seated": 0,
+            "wounded": 0,
+            "carried": 0,
+            "fallen": 0
+          },
+          "incomingShots": 1,
+          "shotTrails": 1,
+          "shotImpacts": 0,
+          "visiblePieces": 57,
+          "battleClock": 17140.348800000058,
+          "weapon": {
+            "id": "kb_wz29",
+            "mag": 5,
+            "reserve": 40,
+            "state": "READY",
+            "until": 0,
+            "started": 0,
+            "lastShot": -1000000000,
+            "shotCount": 0,
+            "received": 0,
+            "sight": 300,
+            "reloadMode": null
+          },
+          "checkpoints": [
+            "cp_m01_a_orientacao",
+            "cp_m01_b_reorganizacao"
+          ],
+          "flags": {
+            "m01.completed": false,
+            "m01.nowicki_status": "missing",
+            "m01.bak_status": "unhurt",
+            "m01.dudek_status": "unhurt",
+            "m01.east_platoon_survivors": 18,
+            "m01.second_raid_state": "pending",
+            "m01.forward_post_state": "intact_near_miss"
+          },
+          "scene": null,
+          "gate": null,
+          "objectives": {
+            "obj_m01_deliver_message": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_take_cover": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_follow_sergeant": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_find_sappers": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_fetch_material": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_cover_repair": {
+              "state": "active",
+              "progress": 66.26666666666803
+            },
+            "obj_m01_hold_access": {
+              "state": "locked",
+              "progress": 0
+            },
+            "obj_m01_cover_withdrawal": {
+              "state": "locked",
+              "progress": 0
+            },
+            "obj_m01_rescue_bak": {
+              "state": "locked",
+              "progress": 0
+            },
+            "obj_m01_leave_bridge": {
+              "state": "locked",
+              "progress": 0
+            },
+            "obj_m01_hold_corridor": {
+              "state": "locked",
+              "progress": 0
+            },
+            "obj_m01_reach_shelter": {
+              "state": "locked",
+              "progress": 0
+            }
+          },
+          "parts": {
+            "rail_support_00": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_portal_west": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_support_01": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_support_02": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_support_03": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_support_04": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_support_05": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_support_06": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_support_07": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_support_08": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_portal_old_east": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_support_09": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_span_01": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_span_02": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_span_03": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_span_04": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_span_05": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_span_06": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_span_07": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_span_08": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_span_09": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_support_00_damaged": {
+              "lod": 0,
+              "visible": false
+            },
+            "rail_support_01_rubble": {
+              "lod": 0,
+              "visible": false
+            },
+            "rail_support_06_rubble": {
+              "lod": 2,
+              "visible": false
+            },
+            "rail_portal_old_east_rubble": {
+              "lod": 2,
+              "visible": false
+            },
+            "rail_span_01_collapsed": {
+              "lod": 0,
+              "visible": false
+            },
+            "rail_span_02_collapsed": {
+              "lod": 0,
+              "visible": false
+            },
+            "rail_span_06_collapsed": {
+              "lod": 1,
+              "visible": false
+            },
+            "rail_span_07_collapsed": {
+              "lod": 2,
+              "visible": false
+            },
+            "road_support_00": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_portal_west": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_tower_01_n": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_tower_01_s": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_support_01": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_tower_02_n": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_tower_02_s": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_support_02": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_tower_03_n": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_03_s": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_support_03": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_04_n": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_04_s": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_support_04": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_05_n": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_05_s": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_support_05": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_support_06": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_support_07": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_support_08": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_portal_old_east": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_support_09": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_span_01": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_span_02": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_span_03": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_span_04": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_span_05": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_span_06": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_span_07": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_span_08": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_span_09": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_support_00_damaged": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_tower_01_n_rubble": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_tower_01_s_rubble": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_support_01_rubble": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_support_06_rubble": {
+              "lod": 2,
+              "visible": false
+            },
+            "road_portal_old_east_rubble": {
+              "lod": 2,
+              "visible": false
+            },
+            "road_span_01_collapsed": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_span_02_collapsed": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_span_06_collapsed": {
+              "lod": 1,
+              "visible": false
+            },
+            "road_span_07_collapsed": {
+              "lod": 2,
+              "visible": false
+            },
+            "portal_lisewo_1912": {
+              "lod": 0,
+              "visible": true
+            },
+            "gate_rail_left": {
+              "lod": 0,
+              "visible": true
+            },
+            "gate_rail_right": {
+              "lod": 0,
+              "visible": true
+            },
+            "gate_road_left": {
+              "lod": 0,
+              "visible": true
+            },
+            "gate_road_right": {
+              "lod": 0,
+              "visible": true
+            }
+          },
+          "enemyAlive": 50
+        }
+      }
+    },
+    {
+      "name": "station-damage",
+      "errors": [],
+      "diagnostics": {
+        "renderer": "Three.js",
+        "quality": "medium",
+        "drawCalls": 111,
+        "triangles": 357892,
+        "geometries": 128,
+        "textures": 15,
+        "assetFailures": [],
+        "models": [
+          "weapon",
+          "ally",
+          "enemy"
+        ],
+        "missionId": "m01_tczew",
+        "clock": 260.7500000000249,
+        "paused": false,
+        "missionPhase": "FIRST_CONTACT",
+        "complete": false,
+        "player": {
+          "x": -29.031662158118294,
+          "y": -3,
+          "z": 27.978035144077193,
+          "angle": -3.1422977783183077,
+          "pitch": 0,
+          "health": 100
+        },
+        "sectors": [
+          {
+            "id": "s1_west_bridgehead",
+            "state": "reorganizing",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          },
+          {
+            "id": "s2_east_bridgehead",
+            "state": "train_arrives",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          },
+          {
+            "id": "s3_station_yard",
+            "state": "wounded_evacuation",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          },
+          {
+            "id": "s4_north_perimeter",
+            "state": "quiet",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          },
+          {
+            "id": "s5_sky_east",
+            "state": "train_smoke_east",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          }
+        ],
+        "eventIds": [
+          "evt_m01_intro_card",
+          "evt_m01_prelude_start",
+          "evt_m01_railway_worker_report",
+          "evt_m01_planes_heard",
+          "evt_m01_bombing_0434",
+          "evt_m01_cable_cut",
+          "evt_m01_forward_post_bombed",
+          "evt_m01_nowicki_lost",
+          "evt_m01_wounded_dragged",
+          "evt_m01_second_air_pass",
+          "evt_m01_train963_arrives"
+        ],
+        "m01": {
+          "models": [
+            "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+            "assets/models/provisional/m01/bridge_rail_1891_1912.lod1.glb",
+            "assets/models/provisional/m01/bridge_rail_1891_1912.lod2.glb",
+            "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod1.glb",
+            "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod2.glb",
+            "assets/models/provisional/m01/portal_lisewo_1912.glb",
+            "assets/models/provisional/m01/portal_lisewo_1912.lod1.glb",
+            "assets/models/provisional/m01/portal_lisewo_1912.lod2.glb",
+            "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb"
+          ],
+          "assetFailures": [],
+          "smokePuffs": 51,
+          "environmentInstances": 9251,
+          "actorPoses": {
+            "standing": 48,
+            "crouched": 3,
+            "seated": 0,
+            "wounded": 0,
+            "carried": 0,
+            "fallen": 0
+          },
+          "incomingShots": 1,
+          "shotTrails": 1,
+          "shotImpacts": 0,
+          "visiblePieces": 57,
+          "battleClock": 17139.150000000056,
+          "weapon": {
+            "id": "kb_wz29",
+            "mag": 5,
+            "reserve": 40,
+            "state": "READY",
+            "until": 0,
+            "started": 0,
+            "lastShot": -1000000000,
+            "shotCount": 0,
+            "received": 0,
+            "sight": 300,
+            "reloadMode": null
+          },
+          "checkpoints": [
+            "cp_m01_a_orientacao",
+            "cp_m01_b_reorganizacao"
+          ],
+          "flags": {
+            "m01.completed": false,
+            "m01.nowicki_status": "missing",
+            "m01.bak_status": "unhurt",
+            "m01.dudek_status": "unhurt",
+            "m01.east_platoon_survivors": 18,
+            "m01.second_raid_state": "pending",
+            "m01.forward_post_state": "intact_near_miss"
+          },
+          "scene": null,
+          "gate": null,
+          "objectives": {
+            "obj_m01_deliver_message": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_take_cover": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_follow_sergeant": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_find_sappers": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_fetch_material": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_cover_repair": {
+              "state": "active",
+              "progress": 66.33333333333469
+            },
+            "obj_m01_hold_access": {
+              "state": "locked",
+              "progress": 0
+            },
+            "obj_m01_cover_withdrawal": {
+              "state": "locked",
+              "progress": 0
+            },
+            "obj_m01_rescue_bak": {
+              "state": "locked",
+              "progress": 0
+            },
+            "obj_m01_leave_bridge": {
+              "state": "locked",
+              "progress": 0
+            },
+            "obj_m01_hold_corridor": {
+              "state": "locked",
+              "progress": 0
+            },
+            "obj_m01_reach_shelter": {
+              "state": "locked",
+              "progress": 0
+            }
+          },
+          "parts": {
+            "rail_support_00": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_portal_west": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_support_01": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_support_02": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_support_03": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_support_04": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_support_05": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_support_06": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_support_07": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_support_08": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_portal_old_east": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_support_09": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_span_01": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_span_02": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_span_03": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_span_04": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_span_05": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_span_06": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_span_07": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_span_08": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_span_09": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_support_00_damaged": {
+              "lod": 0,
+              "visible": false
+            },
+            "rail_support_01_rubble": {
+              "lod": 0,
+              "visible": false
+            },
+            "rail_support_06_rubble": {
+              "lod": 2,
+              "visible": false
+            },
+            "rail_portal_old_east_rubble": {
+              "lod": 2,
+              "visible": false
+            },
+            "rail_span_01_collapsed": {
+              "lod": 0,
+              "visible": false
+            },
+            "rail_span_02_collapsed": {
+              "lod": 0,
+              "visible": false
+            },
+            "rail_span_06_collapsed": {
+              "lod": 1,
+              "visible": false
+            },
+            "rail_span_07_collapsed": {
+              "lod": 2,
+              "visible": false
+            },
+            "road_support_00": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_portal_west": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_tower_01_n": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_tower_01_s": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_support_01": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_tower_02_n": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_tower_02_s": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_support_02": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_tower_03_n": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_03_s": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_support_03": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_04_n": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_04_s": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_support_04": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_05_n": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_05_s": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_support_05": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_support_06": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_support_07": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_support_08": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_portal_old_east": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_support_09": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_span_01": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_span_02": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_span_03": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_span_04": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_span_05": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_span_06": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_span_07": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_span_08": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_span_09": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_support_00_damaged": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_tower_01_n_rubble": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_tower_01_s_rubble": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_support_01_rubble": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_support_06_rubble": {
+              "lod": 2,
+              "visible": false
+            },
+            "road_portal_old_east_rubble": {
+              "lod": 2,
+              "visible": false
+            },
+            "road_span_01_collapsed": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_span_02_collapsed": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_span_06_collapsed": {
+              "lod": 1,
+              "visible": false
+            },
+            "road_span_07_collapsed": {
+              "lod": 2,
+              "visible": false
+            },
+            "portal_lisewo_1912": {
+              "lod": 0,
+              "visible": true
+            },
+            "gate_rail_left": {
+              "lod": 0,
+              "visible": true
+            },
+            "gate_rail_right": {
+              "lod": 0,
+              "visible": true
+            },
+            "gate_road_left": {
+              "lod": 0,
+              "visible": true
+            },
+            "gate_road_right": {
+              "lod": 0,
+              "visible": true
+            }
+          },
+          "enemyAlive": 50
+        }
+      }
+    },
+    {
+      "name": "withdrawal",
+      "errors": [],
+      "diagnostics": {
+        "renderer": "Three.js",
+        "quality": "medium",
+        "drawCalls": 351,
+        "triangles": 645874,
+        "geometries": 153,
+        "textures": 17,
+        "assetFailures": [],
+        "models": [
+          "weapon",
+          "ally",
+          "enemy"
+        ],
+        "missionId": "m01_tczew",
+        "clock": 662.2499999999455,
+        "paused": false,
+        "missionPhase": "SET_PIECE",
+        "complete": false,
+        "player": {
+          "x": 28.849398752978303,
+          "y": 0,
+          "z": 39.967102258363504,
+          "angle": -6.25460131112508,
+          "pitch": 0,
+          "health": 100
+        },
+        "sectors": [
+          {
+            "id": "s1_west_bridgehead",
+            "state": "withdrawal_cover",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          },
+          {
+            "id": "s2_east_bridgehead",
+            "state": "germans_on_spans",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          },
+          {
+            "id": "s3_station_yard",
+            "state": "carts_evacuating",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          },
+          {
+            "id": "s4_north_perimeter",
+            "state": "contact",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          },
+          {
+            "id": "s5_sky_east",
+            "state": "train_smoke_east",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          }
+        ],
+        "eventIds": [
+          "evt_m01_intro_card",
+          "evt_m01_prelude_start",
+          "evt_m01_railway_worker_report",
+          "evt_m01_planes_heard",
+          "evt_m01_bombing_0434",
+          "evt_m01_cable_cut",
+          "evt_m01_forward_post_bombed",
+          "evt_m01_nowicki_lost",
+          "evt_m01_wounded_dragged",
+          "evt_m01_second_air_pass",
+          "evt_m01_train963_arrives",
+          "evt_m01_panzerzug_arrives",
+          "evt_m01_repair_complete",
+          "evt_m01_order_demolish",
+          "evt_m01_bombing_0530",
+          "evt_m01_runner_pressure_report",
+          "evt_m01_north_contact_distant",
+          "evt_m01_east_platoon_withdraws",
+          "evt_m01_bak_wounded",
+          "evt_m01_germans_on_east_spans"
+        ],
+        "m01": {
+          "models": [
+            "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+            "assets/models/provisional/m01/bridge_rail_1891_1912.lod1.glb",
+            "assets/models/provisional/m01/bridge_rail_1891_1912.lod2.glb",
+            "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod1.glb",
+            "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod2.glb",
+            "assets/models/provisional/m01/portal_lisewo_1912.glb",
+            "assets/models/provisional/m01/portal_lisewo_1912.lod1.glb",
+            "assets/models/provisional/m01/portal_lisewo_1912.lod2.glb",
+            "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb"
+          ],
+          "assetFailures": [],
+          "smokePuffs": 17,
+          "environmentInstances": 9251,
+          "actorPoses": {
+            "standing": 78,
+            "crouched": 0,
+            "seated": 0,
+            "wounded": 1,
+            "carried": 0,
+            "fallen": 0
+          },
+          "incomingShots": 7,
+          "shotTrails": 3,
+          "shotImpacts": 0,
+          "visiblePieces": 57,
+          "battleClock": 21934.800000007763,
+          "weapon": {
+            "id": "kb_wz29",
+            "mag": 5,
+            "reserve": 40,
+            "state": "READY",
+            "until": 0,
+            "started": 0,
+            "lastShot": -1000000000,
+            "shotCount": 0,
+            "received": 0,
+            "sight": 300,
+            "reloadMode": null
+          },
+          "checkpoints": [
+            "cp_m01_a_orientacao",
+            "cp_m01_b_reorganizacao",
+            "cp_m01_c_engenheiros"
+          ],
+          "flags": {
+            "m01.completed": false,
+            "m01.nowicki_status": "missing",
+            "m01.bak_status": "wounded",
+            "m01.dudek_status": "unhurt",
+            "m01.east_platoon_survivors": 18,
+            "m01.second_raid_state": "ended",
+            "m01.forward_post_state": "intact_near_miss"
+          },
+          "scene": null,
+          "gate": null,
+          "objectives": {
+            "obj_m01_deliver_message": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_take_cover": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_follow_sergeant": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_find_sappers": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_fetch_material": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_cover_repair": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_hold_access": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_cover_withdrawal": {
+              "state": "active",
+              "progress": 0
+            },
+            "obj_m01_rescue_bak": {
+              "state": "active",
+              "progress": 0
+            },
+            "obj_m01_leave_bridge": {
+              "state": "locked",
+              "progress": 0
+            },
+            "obj_m01_hold_corridor": {
+              "state": "locked",
+              "progress": 0
+            },
+            "obj_m01_reach_shelter": {
+              "state": "locked",
+              "progress": 0
+            }
+          },
+          "parts": {
+            "rail_support_00": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_portal_west": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_support_01": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_support_02": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_support_03": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_support_04": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_support_05": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_support_06": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_support_07": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_support_08": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_portal_old_east": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_support_09": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_span_01": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_span_02": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_span_03": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_span_04": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_span_05": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_span_06": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_span_07": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_span_08": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_span_09": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_support_00_damaged": {
+              "lod": 0,
+              "visible": false
+            },
+            "rail_support_01_rubble": {
+              "lod": 0,
+              "visible": false
+            },
+            "rail_support_06_rubble": {
+              "lod": 1,
+              "visible": false
+            },
+            "rail_portal_old_east_rubble": {
+              "lod": 1,
+              "visible": false
+            },
+            "rail_span_01_collapsed": {
+              "lod": 0,
+              "visible": false
+            },
+            "rail_span_02_collapsed": {
+              "lod": 0,
+              "visible": false
+            },
+            "rail_span_06_collapsed": {
+              "lod": 1,
+              "visible": false
+            },
+            "rail_span_07_collapsed": {
+              "lod": 1,
+              "visible": false
+            },
+            "road_support_00": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_portal_west": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_tower_01_n": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_tower_01_s": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_support_01": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_tower_02_n": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_tower_02_s": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_support_02": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_tower_03_n": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_tower_03_s": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_support_03": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_tower_04_n": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_04_s": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_support_04": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_05_n": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_05_s": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_support_05": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_support_06": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_support_07": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_support_08": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_portal_old_east": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_support_09": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_span_01": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_span_02": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_span_03": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_span_04": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_span_05": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_span_06": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_span_07": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_span_08": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_span_09": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_support_00_damaged": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_tower_01_n_rubble": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_tower_01_s_rubble": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_support_01_rubble": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_support_06_rubble": {
+              "lod": 1,
+              "visible": false
+            },
+            "road_portal_old_east_rubble": {
+              "lod": 1,
+              "visible": false
+            },
+            "road_span_01_collapsed": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_span_02_collapsed": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_span_06_collapsed": {
+              "lod": 1,
+              "visible": false
+            },
+            "road_span_07_collapsed": {
+              "lod": 1,
+              "visible": false
+            },
+            "portal_lisewo_1912": {
+              "lod": 0,
+              "visible": true
+            },
+            "gate_rail_left": {
+              "lod": 0,
+              "visible": true
+            },
+            "gate_rail_right": {
+              "lod": 0,
+              "visible": true
+            },
+            "gate_road_left": {
+              "lod": 0,
+              "visible": true
+            },
+            "gate_road_right": {
+              "lod": 0,
+              "visible": true
+            }
+          },
+          "enemyAlive": 50
+        }
+      }
+    },
+    {
+      "name": "roll-call",
+      "errors": [],
+      "diagnostics": {
+        "renderer": "Three.js",
+        "quality": "medium",
+        "drawCalls": 114,
+        "triangles": 586622,
+        "geometries": 128,
+        "textures": 17,
+        "assetFailures": [],
+        "models": [
+          "ally",
+          "weapon",
+          "enemy"
+        ],
+        "missionId": "m01_tczew",
+        "clock": 964.2999999996708,
+        "paused": false,
+        "missionPhase": "OUTRO",
+        "complete": false,
+        "player": {
+          "x": -260.5,
+          "y": -4,
+          "z": 68.2,
+          "angle": 1.4576453452044118,
+          "pitch": -0.06,
+          "health": 100
+        },
+        "sectors": [
+          {
+            "id": "s1_west_bridgehead",
+            "state": "west_blown",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          },
+          {
+            "id": "s2_east_bridgehead",
+            "state": "smoke_and_sporadic_fire",
+            "strength": 92,
+            "morale": 1,
+            "supply": 1
+          },
+          {
+            "id": "s3_station_yard",
+            "state": "dust_fall",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          },
+          {
+            "id": "s4_north_perimeter",
+            "state": "kozliny_attack",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          },
+          {
+            "id": "s5_sky_east",
+            "state": "train_smoke_east",
+            "strength": 100,
+            "morale": 1,
+            "supply": 1
+          }
+        ],
+        "eventIds": [
+          "evt_m01_intro_card",
+          "evt_m01_prelude_start",
+          "evt_m01_railway_worker_report",
+          "evt_m01_planes_heard",
+          "evt_m01_bombing_0434",
+          "evt_m01_cable_cut",
+          "evt_m01_forward_post_bombed",
+          "evt_m01_nowicki_lost",
+          "evt_m01_wounded_dragged",
+          "evt_m01_second_air_pass",
+          "evt_m01_train963_arrives",
+          "evt_m01_panzerzug_arrives",
+          "evt_m01_repair_complete",
+          "evt_m01_order_demolish",
+          "evt_m01_bombing_0530",
+          "evt_m01_runner_pressure_report",
+          "evt_m01_north_contact_distant",
+          "evt_m01_east_platoon_withdraws",
+          "evt_m01_bak_wounded",
+          "evt_m01_germans_on_east_spans",
+          "evt_m01_east_demolition",
+          "evt_m01_dudek_retrieves_bak",
+          "evt_m01_west_demolition",
+          "evt_m01_roll_call",
+          "evt_m01_kozliny_attack_distant"
+        ],
+        "m01": {
+          "models": [
+            "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+            "assets/models/provisional/m01/bridge_rail_1891_1912.lod1.glb",
+            "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod1.glb",
+            "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod2.glb",
+            "assets/models/provisional/m01/bridge_rail_1891_1912.lod2.glb",
+            "assets/models/provisional/m01/portal_lisewo_1912.glb",
+            "assets/models/provisional/m01/portal_lisewo_1912.lod1.glb",
+            "assets/models/provisional/m01/portal_lisewo_1912.lod2.glb",
+            "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb"
+          ],
+          "assetFailures": [],
+          "smokePuffs": 47,
+          "environmentInstances": 9251,
+          "actorPoses": {
+            "standing": 62,
+            "crouched": 0,
+            "seated": 6,
+            "wounded": 1,
+            "carried": 0,
+            "fallen": 10
+          },
+          "incomingShots": 0,
+          "shotTrails": 0,
+          "shotImpacts": 0,
+          "visiblePieces": 55,
+          "battleClock": 25500,
+          "weapon": {
+            "id": "kb_wz29",
+            "mag": 5,
+            "reserve": 40,
+            "state": "READY",
+            "until": 0,
+            "started": 0,
+            "lastShot": -1000000000,
+            "shotCount": 0,
+            "received": 0,
+            "sight": 300,
+            "reloadMode": null
+          },
+          "checkpoints": [
+            "cp_m01_a_orientacao",
+            "cp_m01_b_reorganizacao",
+            "cp_m01_c_engenheiros",
+            "cp_m01_d_retirada"
+          ],
+          "flags": {
+            "m01.completed": false,
+            "m01.nowicki_status": "missing",
+            "m01.bak_status": "rescued_by_dudek",
+            "m01.dudek_status": "wounded_arm",
+            "m01.east_platoon_survivors": 12,
+            "m01.second_raid_state": "ended",
+            "m01.forward_post_state": "intact_near_miss"
+          },
+          "scene": "cs_m01_roll_call",
+          "gate": null,
+          "objectives": {
+            "obj_m01_deliver_message": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_take_cover": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_follow_sergeant": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_find_sappers": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_fetch_material": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_cover_repair": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_hold_access": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_cover_withdrawal": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_rescue_bak": {
+              "state": "expired",
+              "progress": 0
+            },
+            "obj_m01_leave_bridge": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_hold_corridor": {
+              "state": "done",
+              "progress": 100
+            },
+            "obj_m01_reach_shelter": {
+              "state": "done",
+              "progress": 100
+            }
+          },
+          "parts": {
+            "rail_support_00": {
+              "lod": 0,
+              "visible": false
+            },
+            "rail_portal_west": {
+              "lod": 0,
+              "visible": false
+            },
+            "rail_support_01": {
+              "lod": 1,
+              "visible": false
+            },
+            "rail_support_02": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_support_03": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_support_04": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_support_05": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_support_06": {
+              "lod": 2,
+              "visible": false
+            },
+            "rail_support_07": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_support_08": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_portal_old_east": {
+              "lod": 2,
+              "visible": false
+            },
+            "rail_support_09": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_span_01": {
+              "lod": 0,
+              "visible": false
+            },
+            "rail_span_02": {
+              "lod": 1,
+              "visible": false
+            },
+            "rail_span_03": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_span_04": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_span_05": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_span_06": {
+              "lod": 2,
+              "visible": false
+            },
+            "rail_span_07": {
+              "lod": 2,
+              "visible": false
+            },
+            "rail_span_08": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_span_09": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_support_00_damaged": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_support_01_rubble": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_support_06_rubble": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_portal_old_east_rubble": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_span_01_collapsed": {
+              "lod": 0,
+              "visible": true
+            },
+            "rail_span_02_collapsed": {
+              "lod": 1,
+              "visible": true
+            },
+            "rail_span_06_collapsed": {
+              "lod": 2,
+              "visible": true
+            },
+            "rail_span_07_collapsed": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_support_00": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_portal_west": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_tower_01_n": {
+              "lod": 1,
+              "visible": false
+            },
+            "road_tower_01_s": {
+              "lod": 1,
+              "visible": false
+            },
+            "road_support_01": {
+              "lod": 1,
+              "visible": false
+            },
+            "road_tower_02_n": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_02_s": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_support_02": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_03_n": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_03_s": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_support_03": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_04_n": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_04_s": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_support_04": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_05_n": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_tower_05_s": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_support_05": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_support_06": {
+              "lod": 2,
+              "visible": false
+            },
+            "road_support_07": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_support_08": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_portal_old_east": {
+              "lod": 2,
+              "visible": false
+            },
+            "road_support_09": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_span_01": {
+              "lod": 0,
+              "visible": false
+            },
+            "road_span_02": {
+              "lod": 1,
+              "visible": false
+            },
+            "road_span_03": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_span_04": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_span_05": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_span_06": {
+              "lod": 2,
+              "visible": false
+            },
+            "road_span_07": {
+              "lod": 2,
+              "visible": false
+            },
+            "road_span_08": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_span_09": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_support_00_damaged": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_tower_01_n_rubble": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_tower_01_s_rubble": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_support_01_rubble": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_support_06_rubble": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_portal_old_east_rubble": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_span_01_collapsed": {
+              "lod": 0,
+              "visible": true
+            },
+            "road_span_02_collapsed": {
+              "lod": 1,
+              "visible": true
+            },
+            "road_span_06_collapsed": {
+              "lod": 2,
+              "visible": true
+            },
+            "road_span_07_collapsed": {
+              "lod": 2,
+              "visible": true
+            },
+            "portal_lisewo_1912": {
+              "lod": 0,
+              "visible": true
+            },
+            "gate_rail_left": {
+              "lod": 0,
+              "visible": true
+            },
+            "gate_rail_right": {
+              "lod": 0,
+              "visible": true
+            },
+            "gate_road_left": {
+              "lod": 0,
+              "visible": true
+            },
+            "gate_road_right": {
+              "lod": 0,
+              "visible": true
+            }
+          },
+          "enemyAlive": 46
+        }
+      }
+    }
+  ]
+}

@@ -1,10 +1,10 @@
 export const WEAPON_PROFILES=Object.freeze({
-  m1_carbine:Object.freeze({id:'m1_carbine',label:'M1 CARBINE',type:'semi_auto',damage:38,fireDelay:180,magazine:15,reserve:60,range:620,spread:.009,recoil:{vertical:.028,horizontal:.012,recovery:9},reload:{duration:1500,blockStart:.05,blockEnd:.92},audio:{shot:'shot',reload:'reload'},model:'assets/models/m1-carbine.obj',animations:{fire:'fire',reload:'reload',sprint:'sprint'}}),
+  m1_carbine:Object.freeze({id:'m1_carbine',label:'M1 CARBINE',type:'semi_auto',damage:38,fireDelay:180,magazine:15,reserve:60,range:16000,spread:.009,recoil:{vertical:.028,horizontal:.012,recovery:9},reload:{duration:1500,blockStart:.05,blockEnd:.92},audio:{shot:'shot',reload:'reload'},model:'assets/models/m1-carbine.obj',animations:{fire:'fire',reload:'reload',sprint:'sprint'}}),
 });
 
 export class WeaponSystem {
   constructor(profile='m1_carbine'){this.equip(profile);}
-  equip(profile){this.profile=typeof profile==='string'?WEAPON_PROFILES[profile]:profile;this.config={...this.profile,magazine:this.profile.magazine,reloadMs:this.profile.reload.duration,recoil:this.profile.recoil.vertical};this.mag=this.profile.magazine;this.reserve=this.profile.reserve;this.lastShot=-Infinity;this.reloadUntil=0;this.reloadStarted=0;this.shotCount=0;}
+  equip(profile){this.profile=typeof profile==='string'?WEAPON_PROFILES[profile]:profile;if(!this.profile)throw new Error('Perfil de arma desconhecido');this.config={...this.profile,magazine:this.profile.magazine,reloadMs:this.profile.reload.duration,recoil:this.profile.recoil.vertical};this.mag=this.profile.magazine;this.reserve=this.profile.reserve;this.lastShot=-1e9;this.reloadUntil=0;this.reloadStarted=0;this.shotCount=0;}
   get reloading(){return this.reloadUntil>0;}
   reloadProgress(now){return this.reloading?Math.max(0,Math.min(1,(now-this.reloadStarted)/this.profile.reload.duration)):0;}
   shoot(now){if(this.reloading||this.mag<=0||now-this.lastShot<this.profile.fireDelay)return false;this.mag--;this.lastShot=now;this.shotCount++;return true;}

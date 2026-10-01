@@ -1,0 +1,2012 @@
+{
+  "schemaVersion": 1,
+  "units": "metres",
+  "generatedBy": "tools/assets/m01-bridges/export-colliders.mjs",
+  "boxes": [
+    {
+      "id": "rail_collider_deck_span_01",
+      "min": [
+        10.399998664855957,
+        -0.5,
+        -4.599999904632568
+      ],
+      "max": [
+        139.6999969482422,
+        0,
+        4.599999904632568
+      ],
+      "collider": "walkable",
+      "of": "rail_span_01",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "rail_collider_deck_span_01",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "rail_collider_truss_N_span_01",
+      "min": [
+        10.399998664855957,
+        0,
+        -5.199999809265137
+      ],
+      "max": [
+        139.6999969482422,
+        10,
+        -4.400000095367432
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_01",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "rail_collider_truss_N_span_01",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "rail_collider_truss_S_span_01",
+      "min": [
+        10.399998664855957,
+        0,
+        4.400000095367432
+      ],
+      "max": [
+        139.6999969482422,
+        10,
+        5.199999809265137
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_01",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "rail_collider_truss_S_span_01",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "rail_collider_deck_span_02",
+      "min": [
+        142.10000610351562,
+        -0.5,
+        -4.599999904632568
+      ],
+      "max": [
+        269,
+        0,
+        4.599999904632568
+      ],
+      "collider": "walkable",
+      "of": "rail_span_02",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "rail_collider_deck_span_02",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "rail_collider_truss_N_span_02",
+      "min": [
+        142.10000610351562,
+        0,
+        -5.199999809265137
+      ],
+      "max": [
+        269,
+        10,
+        -4.400000095367432
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_02",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "rail_collider_truss_N_span_02",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "rail_collider_truss_S_span_02",
+      "min": [
+        142.10000610351562,
+        0,
+        4.400000095367432
+      ],
+      "max": [
+        269,
+        10,
+        5.199999809265137
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_02",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "rail_collider_truss_S_span_02",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "rail_collider_deck_span_03",
+      "min": [
+        271.3999938964844,
+        -0.5,
+        -4.599999904632568
+      ],
+      "max": [
+        399.8999938964844,
+        0,
+        4.599999904632568
+      ],
+      "collider": "walkable",
+      "of": "rail_span_03",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_deck_span_03",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_truss_N_span_03",
+      "min": [
+        271.3999938964844,
+        0,
+        -5.199999809265137
+      ],
+      "max": [
+        399.8999938964844,
+        10,
+        -4.400000095367432
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_03",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_N_span_03",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_truss_S_span_03",
+      "min": [
+        271.3999938964844,
+        0,
+        4.400000095367432
+      ],
+      "max": [
+        399.8999938964844,
+        10,
+        5.199999809265137
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_03",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_S_span_03",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_deck_span_04",
+      "min": [
+        402.29998779296875,
+        -0.5,
+        -4.599999904632568
+      ],
+      "max": [
+        530.5,
+        0,
+        4.599999904632568
+      ],
+      "collider": "walkable",
+      "of": "rail_span_04",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_deck_span_04",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_truss_N_span_04",
+      "min": [
+        402.29998779296875,
+        0,
+        -5.199999809265137
+      ],
+      "max": [
+        530.5,
+        10,
+        -4.400000095367432
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_04",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_N_span_04",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_truss_S_span_04",
+      "min": [
+        402.29998779296875,
+        0,
+        4.400000095367432
+      ],
+      "max": [
+        530.5,
+        10,
+        5.199999809265137
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_04",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_S_span_04",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_deck_span_05",
+      "min": [
+        532.9000244140625,
+        -0.5,
+        -4.599999904632568
+      ],
+      "max": [
+        661.0999755859375,
+        0,
+        4.599999904632568
+      ],
+      "collider": "walkable",
+      "of": "rail_span_05",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_deck_span_05",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_truss_N_span_05",
+      "min": [
+        532.9000244140625,
+        0,
+        -5.199999809265137
+      ],
+      "max": [
+        661.0999755859375,
+        10,
+        -4.400000095367432
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_05",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_N_span_05",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_truss_S_span_05",
+      "min": [
+        532.9000244140625,
+        0,
+        4.400000095367432
+      ],
+      "max": [
+        661.0999755859375,
+        10,
+        5.199999809265137
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_05",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_S_span_05",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_deck_span_06",
+      "min": [
+        663.5,
+        -0.5,
+        -4.599999904632568
+      ],
+      "max": [
+        792.5999755859375,
+        0,
+        4.599999904632568
+      ],
+      "collider": "walkable",
+      "of": "rail_span_06",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "rail_collider_deck_span_06",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "rail_collider_truss_N_span_06",
+      "min": [
+        663.5,
+        0,
+        -5.199999809265137
+      ],
+      "max": [
+        792.5999755859375,
+        10,
+        -4.400000095367432
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_06",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "rail_collider_truss_N_span_06",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "rail_collider_truss_S_span_06",
+      "min": [
+        663.5,
+        0,
+        4.400000095367432
+      ],
+      "max": [
+        792.5999755859375,
+        10,
+        5.199999809265137
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_06",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "rail_collider_truss_S_span_06",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "rail_collider_deck_span_07",
+      "min": [
+        795,
+        -0.5,
+        -4.599999904632568
+      ],
+      "max": [
+        877.7000122070312,
+        0,
+        4.599999904632568
+      ],
+      "collider": "walkable",
+      "of": "rail_span_07",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "rail_collider_deck_span_07",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "rail_collider_truss_N_span_07",
+      "min": [
+        795,
+        0,
+        -5.199999809265137
+      ],
+      "max": [
+        877.7000122070312,
+        8,
+        -4.400000095367432
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_07",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "rail_collider_truss_N_span_07",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "rail_collider_truss_S_span_07",
+      "min": [
+        795,
+        0,
+        4.400000095367432
+      ],
+      "max": [
+        877.7000122070312,
+        8,
+        5.199999809265137
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_07",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "rail_collider_truss_S_span_07",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "rail_collider_deck_span_08",
+      "min": [
+        880.0999755859375,
+        -0.5,
+        -4.599999904632568
+      ],
+      "max": [
+        960.5,
+        0,
+        4.599999904632568
+      ],
+      "collider": "walkable",
+      "of": "rail_span_08",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_deck_span_08",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_truss_N_span_08",
+      "min": [
+        880.0999755859375,
+        0,
+        -5.199999809265137
+      ],
+      "max": [
+        960.5,
+        8,
+        -4.400000095367432
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_08",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_N_span_08",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_truss_S_span_08",
+      "min": [
+        880.0999755859375,
+        0,
+        4.400000095367432
+      ],
+      "max": [
+        960.5,
+        8,
+        5.199999809265137
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_08",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_S_span_08",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_deck_span_09",
+      "min": [
+        962.9000244140625,
+        -0.5,
+        -4.599999904632568
+      ],
+      "max": [
+        1044.699951171875,
+        0,
+        4.599999904632568
+      ],
+      "collider": "walkable",
+      "of": "rail_span_09",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_deck_span_09",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_truss_N_span_09",
+      "min": [
+        962.9000244140625,
+        0,
+        -5.199999809265137
+      ],
+      "max": [
+        1044.699951171875,
+        8,
+        -4.400000095367432
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_09",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_N_span_09",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_truss_S_span_09",
+      "min": [
+        962.9000244140625,
+        0,
+        4.400000095367432
+      ],
+      "max": [
+        1044.699951171875,
+        8,
+        5.199999809265137
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_09",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_S_span_09",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_abutment_west",
+      "min": [
+        -20.100000381469727,
+        -12,
+        -9.5
+      ],
+      "max": [
+        11.899999618530273,
+        -0.35000020265579224,
+        9.5
+      ],
+      "collider": "walkable",
+      "of": "rail_support_00",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "rail_collider_abutment_west",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "rail_collider_pier_01",
+      "min": [
+        137.89999389648438,
+        -16,
+        -7.5
+      ],
+      "max": [
+        143.89999389648438,
+        -1.1999999284744263,
+        7.5
+      ],
+      "collider": "solid",
+      "of": "rail_support_01",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "rail_collider_pier_01",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "rail_collider_pier_02",
+      "min": [
+        267.20001220703125,
+        -16,
+        -7.5
+      ],
+      "max": [
+        273.20001220703125,
+        -1.1999999284744263,
+        7.5
+      ],
+      "collider": "solid",
+      "of": "rail_support_02",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_pier_02",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_pier_03",
+      "min": [
+        398.1000061035156,
+        -8,
+        -7.5
+      ],
+      "max": [
+        404.1000061035156,
+        -1.1999999284744263,
+        7.5
+      ],
+      "collider": "solid",
+      "of": "rail_support_03",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_pier_03",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_pier_04",
+      "min": [
+        528.7000122070312,
+        -8,
+        -7.5
+      ],
+      "max": [
+        534.7000122070312,
+        -1.1999999284744263,
+        7.5
+      ],
+      "collider": "solid",
+      "of": "rail_support_04",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_pier_04",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_pier_05",
+      "min": [
+        659.2999877929688,
+        -8,
+        -7.5
+      ],
+      "max": [
+        665.2999877929688,
+        -1.1999999284744263,
+        7.5
+      ],
+      "collider": "solid",
+      "of": "rail_support_05",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_pier_05",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_pier_06",
+      "min": [
+        786.7999877929688,
+        -8,
+        -7.5
+      ],
+      "max": [
+        800.7999877929688,
+        -1.1999999284744263,
+        7.5
+      ],
+      "collider": "solid",
+      "of": "rail_support_06",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "rail_collider_pier_06",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "rail_collider_pier_07",
+      "min": [
+        876.4000244140625,
+        -8,
+        -7.5
+      ],
+      "max": [
+        881.4000244140625,
+        -1.1999999284744263,
+        7.5
+      ],
+      "collider": "solid",
+      "of": "rail_support_07",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_pier_07",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "rail_collider_pier_08",
+      "min": [
+        959.2000122070312,
+        -8,
+        -7.5
+      ],
+      "max": [
+        964.2000122070312,
+        -1.1999999284744263,
+        7.5
+      ],
+      "collider": "solid",
+      "of": "rail_support_08",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_pier_08",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_tower_01_n",
+      "min": [
+        138.24999990463257,
+        -1.2,
+        31.34999990463257
+      ],
+      "max": [
+        143.55000009536744,
+        21.8,
+        36.65000009536743
+      ],
+      "collider": "solid",
+      "of": "road_tower_01_n",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_tower_01_n",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        140.9,
+        -1.2,
+        -6
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "road_collider_tower_01_s",
+      "min": [
+        138.24999990463257,
+        -1.2,
+        43.34999990463257
+      ],
+      "max": [
+        143.55000009536744,
+        21.8,
+        48.65000009536743
+      ],
+      "collider": "solid",
+      "of": "road_tower_01_s",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_tower_01_s",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        140.9,
+        -1.2,
+        6
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "road_collider_tower_02_n",
+      "min": [
+        268.24999990463255,
+        -1.2,
+        31.34999990463257
+      ],
+      "max": [
+        273.5500000953674,
+        21.8,
+        36.65000009536743
+      ],
+      "collider": "solid",
+      "of": "road_tower_02_n",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_02_n",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        270.9,
+        -1.2,
+        -6
+      ]
+    },
+    {
+      "id": "road_collider_tower_02_s",
+      "min": [
+        268.24999990463255,
+        -1.2,
+        43.34999990463257
+      ],
+      "max": [
+        273.5500000953674,
+        21.8,
+        48.65000009536743
+      ],
+      "collider": "solid",
+      "of": "road_tower_02_s",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_02_s",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        270.9,
+        -1.2,
+        6
+      ]
+    },
+    {
+      "id": "road_collider_tower_03_n",
+      "min": [
+        398.24999990463255,
+        -1.2,
+        31.34999990463257
+      ],
+      "max": [
+        403.5500000953674,
+        21.8,
+        36.65000009536743
+      ],
+      "collider": "solid",
+      "of": "road_tower_03_n",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_03_n",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        400.9,
+        -1.2,
+        -6
+      ]
+    },
+    {
+      "id": "road_collider_tower_03_s",
+      "min": [
+        398.24999990463255,
+        -1.2,
+        43.34999990463257
+      ],
+      "max": [
+        403.5500000953674,
+        21.8,
+        48.65000009536743
+      ],
+      "collider": "solid",
+      "of": "road_tower_03_s",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_03_s",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        400.9,
+        -1.2,
+        6
+      ]
+    },
+    {
+      "id": "road_collider_tower_04_n",
+      "min": [
+        529.0499999046326,
+        -1.2,
+        31.34999990463257
+      ],
+      "max": [
+        534.3500000953675,
+        21.8,
+        36.65000009536743
+      ],
+      "collider": "solid",
+      "of": "road_tower_04_n",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_04_n",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        531.7,
+        -1.2,
+        -6
+      ]
+    },
+    {
+      "id": "road_collider_tower_04_s",
+      "min": [
+        529.0499999046326,
+        -1.2,
+        43.34999990463257
+      ],
+      "max": [
+        534.3500000953675,
+        21.8,
+        48.65000009536743
+      ],
+      "collider": "solid",
+      "of": "road_tower_04_s",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_04_s",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        531.7,
+        -1.2,
+        6
+      ]
+    },
+    {
+      "id": "road_collider_tower_05_n",
+      "min": [
+        659.4499999046326,
+        -1.2,
+        31.34999990463257
+      ],
+      "max": [
+        664.7500000953675,
+        21.8,
+        36.65000009536743
+      ],
+      "collider": "solid",
+      "of": "road_tower_05_n",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_05_n",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        662.1,
+        -1.2,
+        -6
+      ]
+    },
+    {
+      "id": "road_collider_tower_05_s",
+      "min": [
+        659.4499999046326,
+        -1.2,
+        43.34999990463257
+      ],
+      "max": [
+        664.7500000953675,
+        21.8,
+        48.65000009536743
+      ],
+      "collider": "solid",
+      "of": "road_tower_05_s",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_05_s",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        662.1,
+        -1.2,
+        6
+      ]
+    },
+    {
+      "id": "road_collider_deck_span_01",
+      "min": [
+        8.500001907348633,
+        -0.5,
+        37.234999895095825
+      ],
+      "max": [
+        139.6999969482422,
+        0,
+        42.765000104904175
+      ],
+      "collider": "walkable",
+      "of": "road_span_01",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_deck_span_01",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "road_collider_truss_N_span_01",
+      "min": [
+        8.500001907348633,
+        -1.5258788721439487e-7,
+        36.38499999046326
+      ],
+      "max": [
+        139.6999969482422,
+        8.680000305175781,
+        37.18499994277954
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_01",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_truss_N_span_01",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "road_collider_truss_S_span_01",
+      "min": [
+        8.500001907348633,
+        -1.5258788721439487e-7,
+        42.81500005722046
+      ],
+      "max": [
+        139.6999969482422,
+        8.680000305175781,
+        43.61500000953674
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_01",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_truss_S_span_01",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "road_collider_deck_span_02",
+      "min": [
+        142.10000610351562,
+        -0.5,
+        37.234999895095825
+      ],
+      "max": [
+        269.70001220703125,
+        0,
+        42.765000104904175
+      ],
+      "collider": "walkable",
+      "of": "road_span_02",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_deck_span_02",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "road_collider_truss_N_span_02",
+      "min": [
+        142.10000610351562,
+        -1.5258788721439487e-7,
+        36.38499999046326
+      ],
+      "max": [
+        269.70001220703125,
+        8.680000305175781,
+        37.18499994277954
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_02",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_truss_N_span_02",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "road_collider_truss_S_span_02",
+      "min": [
+        142.10000610351562,
+        -1.5258788721439487e-7,
+        42.81500005722046
+      ],
+      "max": [
+        269.70001220703125,
+        8.680000305175781,
+        43.61500000953674
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_02",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_truss_S_span_02",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "road_collider_deck_span_03",
+      "min": [
+        272.1000061035156,
+        -0.5,
+        37.234999895095825
+      ],
+      "max": [
+        399.70001220703125,
+        0,
+        42.765000104904175
+      ],
+      "collider": "walkable",
+      "of": "road_span_03",
+      "destroyedBy": null,
+      "logicalId": "road_collider_deck_span_03",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_truss_N_span_03",
+      "min": [
+        272.1000061035156,
+        -1.5258788721439487e-7,
+        36.38499999046326
+      ],
+      "max": [
+        399.70001220703125,
+        8.680000305175781,
+        37.18499994277954
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_03",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_N_span_03",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_truss_S_span_03",
+      "min": [
+        272.1000061035156,
+        -1.5258788721439487e-7,
+        42.81500005722046
+      ],
+      "max": [
+        399.70001220703125,
+        8.680000305175781,
+        43.61500000953674
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_03",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_S_span_03",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_deck_span_04",
+      "min": [
+        402.1000061035156,
+        -0.5,
+        37.234999895095825
+      ],
+      "max": [
+        530.5,
+        0,
+        42.765000104904175
+      ],
+      "collider": "walkable",
+      "of": "road_span_04",
+      "destroyedBy": null,
+      "logicalId": "road_collider_deck_span_04",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_truss_N_span_04",
+      "min": [
+        402.1000061035156,
+        -1.5258788721439487e-7,
+        36.38499999046326
+      ],
+      "max": [
+        530.5,
+        8.680000305175781,
+        37.18499994277954
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_04",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_N_span_04",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_truss_S_span_04",
+      "min": [
+        402.1000061035156,
+        -1.5258788721439487e-7,
+        42.81500005722046
+      ],
+      "max": [
+        530.5,
+        8.680000305175781,
+        43.61500000953674
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_04",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_S_span_04",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_deck_span_05",
+      "min": [
+        532.9000244140625,
+        -0.5,
+        37.234999895095825
+      ],
+      "max": [
+        660.9000244140625,
+        0,
+        42.765000104904175
+      ],
+      "collider": "walkable",
+      "of": "road_span_05",
+      "destroyedBy": null,
+      "logicalId": "road_collider_deck_span_05",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_truss_N_span_05",
+      "min": [
+        532.9000244140625,
+        -1.5258788721439487e-7,
+        36.38499999046326
+      ],
+      "max": [
+        660.9000244140625,
+        8.680000305175781,
+        37.18499994277954
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_05",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_N_span_05",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_truss_S_span_05",
+      "min": [
+        532.9000244140625,
+        -1.5258788721439487e-7,
+        42.81500005722046
+      ],
+      "max": [
+        660.9000244140625,
+        8.680000305175781,
+        43.61500000953674
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_05",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_S_span_05",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_deck_span_06",
+      "min": [
+        663.2999877929688,
+        -0.5,
+        37.234999895095825
+      ],
+      "max": [
+        806.2999877929688,
+        0,
+        42.765000104904175
+      ],
+      "collider": "walkable",
+      "of": "road_span_06",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "road_collider_deck_span_06",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "road_collider_truss_N_span_06",
+      "min": [
+        663.2999877929688,
+        -1.5258788721439487e-7,
+        36.38499999046326
+      ],
+      "max": [
+        806.2999877929688,
+        8.680000305175781,
+        37.18499994277954
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_06",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "road_collider_truss_N_span_06",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "road_collider_truss_S_span_06",
+      "min": [
+        663.2999877929688,
+        -1.5258788721439487e-7,
+        42.81500005722046
+      ],
+      "max": [
+        806.2999877929688,
+        8.680000305175781,
+        43.61500000953674
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_06",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "road_collider_truss_S_span_06",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "road_collider_deck_span_07",
+      "min": [
+        808.7000122070312,
+        -0.5,
+        37.234999895095825
+      ],
+      "max": [
+        877.7999877929688,
+        0,
+        42.765000104904175
+      ],
+      "collider": "walkable",
+      "of": "road_span_07",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "road_collider_deck_span_07",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "road_collider_truss_N_span_07",
+      "min": [
+        808.7000122070312,
+        0,
+        36.38499999046326
+      ],
+      "max": [
+        877.7999877929688,
+        8,
+        37.18499994277954
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_07",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "road_collider_truss_N_span_07",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "road_collider_truss_S_span_07",
+      "min": [
+        808.7000122070312,
+        0,
+        42.81500005722046
+      ],
+      "max": [
+        877.7999877929688,
+        8,
+        43.61500000953674
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_07",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "road_collider_truss_S_span_07",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "road_collider_deck_span_08",
+      "min": [
+        880.2000122070312,
+        -0.5,
+        37.234999895095825
+      ],
+      "max": [
+        960.7999877929688,
+        0,
+        42.765000104904175
+      ],
+      "collider": "walkable",
+      "of": "road_span_08",
+      "destroyedBy": null,
+      "logicalId": "road_collider_deck_span_08",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_truss_N_span_08",
+      "min": [
+        880.2000122070312,
+        0,
+        36.38499999046326
+      ],
+      "max": [
+        960.7999877929688,
+        8,
+        37.18499994277954
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_08",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_N_span_08",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_truss_S_span_08",
+      "min": [
+        880.2000122070312,
+        0,
+        42.81500005722046
+      ],
+      "max": [
+        960.7999877929688,
+        8,
+        43.61500000953674
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_08",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_S_span_08",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_deck_span_09",
+      "min": [
+        963.2000122070312,
+        -0.5,
+        37.234999895095825
+      ],
+      "max": [
+        1044.5999755859375,
+        0,
+        42.765000104904175
+      ],
+      "collider": "walkable",
+      "of": "road_span_09",
+      "destroyedBy": null,
+      "logicalId": "road_collider_deck_span_09",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_truss_N_span_09",
+      "min": [
+        963.2000122070312,
+        0,
+        36.38499999046326
+      ],
+      "max": [
+        1044.5999755859375,
+        8,
+        37.18499994277954
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_09",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_N_span_09",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_truss_S_span_09",
+      "min": [
+        963.2000122070312,
+        0,
+        42.81500005722046
+      ],
+      "max": [
+        1044.5999755859375,
+        8,
+        43.61500000953674
+      ],
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_09",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_S_span_09",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_abutment_west",
+      "min": [
+        -22,
+        -12,
+        29.5
+      ],
+      "max": [
+        10,
+        -0.35000020265579224,
+        50.5
+      ],
+      "collider": "walkable",
+      "of": "road_support_00",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_abutment_west",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "road_collider_pier_01",
+      "min": [
+        137.39999389648438,
+        -16,
+        31
+      ],
+      "max": [
+        144.39999389648438,
+        -1.1999999284744263,
+        49
+      ],
+      "collider": "solid",
+      "of": "road_support_01",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_pier_01",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "road_collider_pier_02",
+      "min": [
+        267.3999938964844,
+        -16,
+        31
+      ],
+      "max": [
+        274.3999938964844,
+        -1.1999999284744263,
+        49
+      ],
+      "collider": "solid",
+      "of": "road_support_02",
+      "destroyedBy": null,
+      "logicalId": "road_collider_pier_02",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_pier_03",
+      "min": [
+        397.3999938964844,
+        -8,
+        31
+      ],
+      "max": [
+        404.3999938964844,
+        -1.1999999284744263,
+        49
+      ],
+      "collider": "solid",
+      "of": "road_support_03",
+      "destroyedBy": null,
+      "logicalId": "road_collider_pier_03",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_pier_04",
+      "min": [
+        528.2000122070312,
+        -8,
+        31
+      ],
+      "max": [
+        535.2000122070312,
+        -1.1999999284744263,
+        49
+      ],
+      "collider": "solid",
+      "of": "road_support_04",
+      "destroyedBy": null,
+      "logicalId": "road_collider_pier_04",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_pier_05",
+      "min": [
+        658.5999755859375,
+        -8,
+        31
+      ],
+      "max": [
+        665.5999755859375,
+        -1.1999999284744263,
+        49
+      ],
+      "collider": "solid",
+      "of": "road_support_05",
+      "destroyedBy": null,
+      "logicalId": "road_collider_pier_05",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_pier_06",
+      "min": [
+        800.5,
+        -8,
+        31
+      ],
+      "max": [
+        814.5,
+        -1.1999999284744263,
+        49
+      ],
+      "collider": "solid",
+      "of": "road_support_06",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "road_collider_pier_06",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER"
+    },
+    {
+      "id": "road_collider_pier_07",
+      "min": [
+        876.5,
+        -8,
+        31
+      ],
+      "max": [
+        881.5,
+        -1.1999999284744263,
+        49
+      ],
+      "collider": "solid",
+      "of": "road_support_07",
+      "destroyedBy": null,
+      "logicalId": "road_collider_pier_07",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "road_collider_pier_08",
+      "min": [
+        959.5,
+        -8,
+        31
+      ],
+      "max": [
+        964.5,
+        -1.1999999284744263,
+        49
+      ],
+      "collider": "solid",
+      "of": "road_support_08",
+      "destroyedBy": null,
+      "logicalId": "road_collider_pier_08",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "COL_portal_lisewo_1912",
+      "min": [
+        1058.7,
+        -1,
+        -8
+      ],
+      "max": [
+        1067.7,
+        13,
+        48
+      ],
+      "collider": "solid",
+      "notes": "Bloco simples; as passagens estão fechadas pelos portões."
+    }
+  ]
+}

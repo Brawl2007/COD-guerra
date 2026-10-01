@@ -91,3 +91,13 @@ Data de consulta de todas as entradas: **30/09/2026**.
 1. Uma página geral sobre a batalha não comprova sozinha uma rua, um uniforme de subunidade ou um acontecimento pessoal (seção 78).
 2. Fotografias de arquivo são referência visual, não assets. Não podem ir para `assets/` sem licença documentada em `ASSET_CREDITS.md`.
 3. Divergências entre fontes ficam registradas. Não se escolhe silenciosamente a versão mais dramática (ver `missions/m01-tczew/HISTORICAL_RESEARCH.md` §3.2).
+
+## Fontes técnicas consultadas na fundação
+
+| Fonte primária | URL | Aplicação |
+| --- | --- | --- |
+| Vite — Static Deploy | https://vite.dev/guide/static-deploy.html | Build/preview, prefixo de project Pages e publicação de dist |
+| Three.js — WebGLRenderer | https://threejs.org/docs/pages/WebGLRenderer.html | Renderer e configuração WebGL2 |
+| Three.js — GLTFLoader | https://threejs.org/docs/pages/GLTFLoader.html | Loader oficial, scene graph e clips |
+
+Consulta na sessão de 30/09/2026. A especificação integral e as fontes de partida H01–H30 permanecem em `docs/PROMPT_MESTRE.txt`; uma URL fornecida não equivale a leitura realizada.

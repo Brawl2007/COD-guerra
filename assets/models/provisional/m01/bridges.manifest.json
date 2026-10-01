@@ -1,0 +1,5041 @@
+{
+  "schemaVersion": 2,
+  "status": "PROVISÓRIO — geometria de bloqueio/placeholder; não é asset final nem comparado com fotografias",
+  "generatedBy": "tools/assets/m01-bridges/build.mjs",
+  "mapLayout": {
+    "path": "missions/m01-tczew/map-layout.json",
+    "sha256_16": "50b8e90a69804bff"
+  },
+  "conventions": {
+    "units": "metros",
+    "axes": "X leste (eixo das pontes), Y altura, Z sul; frente −Z (three.js)",
+    "origin": "referencial do mapa; placement já aplicado ao nó raiz. Importar com transformação identidade.",
+    "state": "Aplicar consumedEventIds através de src/state.mjs ao carregar, trocar LOD ou restaurar save. Extras não alteram visibilidade automaticamente."
+  },
+  "lodDistancesM": [
+    0,
+    400,
+    800
+  ],
+  "license": "Malhas e materiais originais do projeto COD-guerra, gerados por código neste repositório, sem modelos, texturas ou fotografias de terceiros. Licença das criações: a do repositório (ainda não escolhida pelo proprietário). Medições G01: © OpenStreetMap contributors, via Overture Maps Foundation; ODbL, ver MEASUREMENTS.md.",
+  "materials": {
+    "steel_painted": {
+      "color": [
+        0.2,
+        0.22,
+        0.21
+      ],
+      "metallic": 0.55,
+      "roughness": 0.65,
+      "note": "Cor da pintura de 1939 INCERTA"
+    },
+    "steel_rail": {
+      "color": [
+        0.42,
+        0.4,
+        0.38
+      ],
+      "metallic": 0.9,
+      "roughness": 0.35
+    },
+    "brick_red": {
+      "color": [
+        0.47,
+        0.22,
+        0.15
+      ],
+      "metallic": 0,
+      "roughness": 0.9,
+      "note": "Tijolo das torres/portais: tom INCERTO"
+    },
+    "stone_masonry": {
+      "color": [
+        0.56,
+        0.53,
+        0.48
+      ],
+      "metallic": 0,
+      "roughness": 0.95,
+      "note": "Tipo de pedra dos pilares INCERTO"
+    },
+    "timber": {
+      "color": [
+        0.32,
+        0.23,
+        0.15
+      ],
+      "metallic": 0,
+      "roughness": 0.9
+    },
+    "road_surface": {
+      "color": [
+        0.36,
+        0.34,
+        0.31
+      ],
+      "metallic": 0,
+      "roughness": 0.95,
+      "note": "Pavimento de 1939 INCERTO"
+    },
+    "opening_dark": {
+      "color": [
+        0.03,
+        0.03,
+        0.03
+      ],
+      "metallic": 0,
+      "roughness": 1
+    },
+    "gate_timber_iron": {
+      "color": [
+        0.24,
+        0.17,
+        0.11
+      ],
+      "metallic": 0.2,
+      "roughness": 0.8
+    },
+    "rubble_mixed": {
+      "color": [
+        0.45,
+        0.42,
+        0.38
+      ],
+      "metallic": 0,
+      "roughness": 1
+    },
+    "collider": {
+      "color": [
+        1,
+        0,
+        1
+      ],
+      "alpha": 0.25,
+      "metallic": 0,
+      "roughness": 1,
+      "note": "Só para depuração: a engine deve ocultar colisores"
+    }
+  },
+  "files": [
+    {
+      "file": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+      "label": "Ponte ferroviária de Tczew (1891 + extensão 1910–1912)",
+      "lod": 0,
+      "placement": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "appliedToRoot": true
+      },
+      "bytes": 1642496,
+      "sceneTriangles": 32528,
+      "uniqueTriangles": 23468,
+      "vertices": 45372,
+      "drawCallsIntact": 43,
+      "intactTriangles": 22088,
+      "nodes": [
+        {
+          "name": "rail_support_00",
+          "logicalId": "rail_support_00",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 36,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_portal_west",
+          "logicalId": "rail_portal_west",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 1152,
+          "pivot": [
+            -4,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_01",
+          "logicalId": "rail_support_01",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 88,
+          "pivot": [
+            140.9,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_support_02",
+          "logicalId": "rail_support_02",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 88,
+          "pivot": [
+            270.2,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_03",
+          "logicalId": "rail_support_03",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 88,
+          "pivot": [
+            401.1,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_04",
+          "logicalId": "rail_support_04",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 88,
+          "pivot": [
+            531.7,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_05",
+          "logicalId": "rail_support_05",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 88,
+          "pivot": [
+            662.3,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_06",
+          "logicalId": "rail_support_06",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 88,
+          "pivot": [
+            793.8,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_support_07",
+          "logicalId": "rail_support_07",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 88,
+          "pivot": [
+            878.9,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_08",
+          "logicalId": "rail_support_08",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 88,
+          "pivot": [
+            961.7,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_portal_old_east",
+          "logicalId": "rail_portal_old_east",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 1152,
+          "pivot": [
+            793.8,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_support_09",
+          "logicalId": "rail_support_09",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 36,
+          "pivot": [
+            1049.2,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_span_01",
+          "logicalId": "rail_span_01",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 2724,
+          "pivot": [
+            10.400000000000006,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_span_02",
+          "logicalId": "rail_span_02",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 2724,
+          "pivot": [
+            142.1,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_span_03",
+          "logicalId": "rail_span_03",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 2724,
+          "pivot": [
+            271.4,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_span_04",
+          "logicalId": "rail_span_04",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 2724,
+          "pivot": [
+            402.3,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_span_05",
+          "logicalId": "rail_span_05",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 2724,
+          "pivot": [
+            532.9000000000001,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_span_06",
+          "logicalId": "rail_span_06",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 2724,
+          "pivot": [
+            663.5,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_span_07",
+          "logicalId": "rail_span_07",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 888,
+          "pivot": [
+            795,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_span_08",
+          "logicalId": "rail_span_08",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 888,
+          "pivot": [
+            880.1,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_span_09",
+          "logicalId": "rail_span_09",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 888,
+          "pivot": [
+            962.9000000000001,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_00_damaged",
+          "logicalId": "rail_support_00_damaged",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 444,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_support_01_rubble",
+          "logicalId": "rail_support_01_rubble",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 312,
+          "pivot": [
+            140.9,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_support_06_rubble",
+          "logicalId": "rail_support_06_rubble",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 312,
+          "pivot": [
+            793.8,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_portal_old_east_rubble",
+          "logicalId": "rail_portal_old_east_rubble",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 312,
+          "pivot": [
+            793.8,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_span_01_collapsed",
+          "logicalId": "rail_span_01_collapsed",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 2724,
+          "pivot": [
+            10.41925302828514,
+            -8.004233377092849,
+            0.08987854919801104
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_span_02_collapsed",
+          "logicalId": "rail_span_02_collapsed",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 2724,
+          "pivot": [
+            142.02153951024619,
+            -10.004336385024237,
+            -0.04997916927067833
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_span_06_collapsed",
+          "logicalId": "rail_span_06_collapsed",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 2724,
+          "pivot": [
+            663.5270520423911,
+            -0.0021660935158588357,
+            0.059964006479444595
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_span_07_collapsed",
+          "logicalId": "rail_span_07_collapsed",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 888,
+          "pivot": [
+            794.9577500287935,
+            -3.501693537492439,
+            -0.03998933418663416
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        }
+      ],
+      "destructible": [
+        {
+          "node": "rail_support_00",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "rail_support_00_damaged"
+          ]
+        },
+        {
+          "node": "rail_support_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "rail_support_01_rubble"
+          ]
+        },
+        {
+          "node": "rail_support_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "rail_support_06_rubble"
+          ]
+        },
+        {
+          "node": "rail_portal_old_east",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "rail_portal_old_east_rubble"
+          ]
+        },
+        {
+          "node": "rail_span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "rail_span_01_collapsed"
+          ]
+        },
+        {
+          "node": "rail_span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "rail_span_02_collapsed"
+          ]
+        },
+        {
+          "node": "rail_span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "rail_span_06_collapsed"
+          ]
+        },
+        {
+          "node": "rail_span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "rail_span_07_collapsed"
+          ]
+        }
+      ],
+      "uncertainAppearance": [
+        "rail_portal_west",
+        "rail_support_07",
+        "rail_support_08",
+        "rail_portal_old_east",
+        "rail_support_09",
+        "rail_span_01",
+        "rail_span_02",
+        "rail_span_03",
+        "rail_span_04",
+        "rail_span_05",
+        "rail_span_06",
+        "rail_span_07",
+        "rail_span_08",
+        "rail_span_09"
+      ]
+    },
+    {
+      "file": "assets/models/provisional/m01/bridge_rail_1891_1912.colliders.glb",
+      "label": "Ponte ferroviária de Tczew (1891 + extensão 1910–1912)",
+      "lod": "colliders",
+      "placement": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "appliedToRoot": true
+      },
+      "bytes": 64080,
+      "sceneTriangles": 432,
+      "uniqueTriangles": 432,
+      "vertices": 864,
+      "drawCallsIntact": 0,
+      "intactTriangles": 0,
+      "nodes": [
+        {
+          "name": "rail_collider_deck_span_01",
+          "logicalId": "rail_collider_deck_span_01",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_collider_truss_N_span_01",
+          "logicalId": "rail_collider_truss_N_span_01",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_collider_truss_S_span_01",
+          "logicalId": "rail_collider_truss_S_span_01",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_collider_deck_span_02",
+          "logicalId": "rail_collider_deck_span_02",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_collider_truss_N_span_02",
+          "logicalId": "rail_collider_truss_N_span_02",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_collider_truss_S_span_02",
+          "logicalId": "rail_collider_truss_S_span_02",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_collider_deck_span_03",
+          "logicalId": "rail_collider_deck_span_03",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_truss_N_span_03",
+          "logicalId": "rail_collider_truss_N_span_03",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_truss_S_span_03",
+          "logicalId": "rail_collider_truss_S_span_03",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_deck_span_04",
+          "logicalId": "rail_collider_deck_span_04",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_truss_N_span_04",
+          "logicalId": "rail_collider_truss_N_span_04",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_truss_S_span_04",
+          "logicalId": "rail_collider_truss_S_span_04",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_deck_span_05",
+          "logicalId": "rail_collider_deck_span_05",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_truss_N_span_05",
+          "logicalId": "rail_collider_truss_N_span_05",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_truss_S_span_05",
+          "logicalId": "rail_collider_truss_S_span_05",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_deck_span_06",
+          "logicalId": "rail_collider_deck_span_06",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_collider_truss_N_span_06",
+          "logicalId": "rail_collider_truss_N_span_06",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_collider_truss_S_span_06",
+          "logicalId": "rail_collider_truss_S_span_06",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_collider_deck_span_07",
+          "logicalId": "rail_collider_deck_span_07",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_collider_truss_N_span_07",
+          "logicalId": "rail_collider_truss_N_span_07",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_collider_truss_S_span_07",
+          "logicalId": "rail_collider_truss_S_span_07",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_collider_deck_span_08",
+          "logicalId": "rail_collider_deck_span_08",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_truss_N_span_08",
+          "logicalId": "rail_collider_truss_N_span_08",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_truss_S_span_08",
+          "logicalId": "rail_collider_truss_S_span_08",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_deck_span_09",
+          "logicalId": "rail_collider_deck_span_09",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_truss_N_span_09",
+          "logicalId": "rail_collider_truss_N_span_09",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_truss_S_span_09",
+          "logicalId": "rail_collider_truss_S_span_09",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_abutment_west",
+          "logicalId": "rail_collider_abutment_west",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_collider_pier_01",
+          "logicalId": "rail_collider_pier_01",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_collider_pier_02",
+          "logicalId": "rail_collider_pier_02",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_pier_03",
+          "logicalId": "rail_collider_pier_03",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_pier_04",
+          "logicalId": "rail_collider_pier_04",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_pier_05",
+          "logicalId": "rail_collider_pier_05",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_pier_06",
+          "logicalId": "rail_collider_pier_06",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_collider_pier_07",
+          "logicalId": "rail_collider_pier_07",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_collider_pier_08",
+          "logicalId": "rail_collider_pier_08",
+          "mapFeatureId": "rail_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        }
+      ],
+      "destructible": [
+        {
+          "node": "rail_collider_deck_span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "rail_collider_truss_N_span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "rail_collider_truss_S_span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "rail_collider_deck_span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "rail_collider_truss_N_span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "rail_collider_truss_S_span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "rail_collider_deck_span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "rail_collider_truss_N_span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "rail_collider_truss_S_span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "rail_collider_deck_span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "rail_collider_truss_N_span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "rail_collider_truss_S_span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "rail_collider_abutment_west",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "rail_collider_pier_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "rail_collider_pier_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        }
+      ],
+      "uncertainAppearance": []
+    },
+    {
+      "file": "assets/models/provisional/m01/bridge_rail_1891_1912.lod1.glb",
+      "label": "Ponte ferroviária de Tczew (1891 + extensão 1910–1912)",
+      "lod": 1,
+      "placement": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "appliedToRoot": true
+      },
+      "bytes": 931464,
+      "sceneTriangles": 18188,
+      "uniqueTriangles": 13028,
+      "vertices": 25156,
+      "drawCallsIntact": 41,
+      "intactTriangles": 12344,
+      "nodes": [
+        {
+          "name": "rail_support_00",
+          "logicalId": "rail_support_00",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_portal_west",
+          "logicalId": "rail_portal_west",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 464,
+          "pivot": [
+            -4,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_01",
+          "logicalId": "rail_support_01",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 56,
+          "pivot": [
+            140.9,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_support_02",
+          "logicalId": "rail_support_02",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 56,
+          "pivot": [
+            270.2,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_03",
+          "logicalId": "rail_support_03",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 56,
+          "pivot": [
+            401.1,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_04",
+          "logicalId": "rail_support_04",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 56,
+          "pivot": [
+            531.7,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_05",
+          "logicalId": "rail_support_05",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 56,
+          "pivot": [
+            662.3,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_06",
+          "logicalId": "rail_support_06",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 56,
+          "pivot": [
+            793.8,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_support_07",
+          "logicalId": "rail_support_07",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 56,
+          "pivot": [
+            878.9,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_08",
+          "logicalId": "rail_support_08",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 56,
+          "pivot": [
+            961.7,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_portal_old_east",
+          "logicalId": "rail_portal_old_east",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 464,
+          "pivot": [
+            793.8,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_support_09",
+          "logicalId": "rail_support_09",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            1049.2,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_span_01",
+          "logicalId": "rail_span_01",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 1512,
+          "pivot": [
+            10.400000000000006,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_span_02",
+          "logicalId": "rail_span_02",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 1512,
+          "pivot": [
+            142.1,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_span_03",
+          "logicalId": "rail_span_03",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 1512,
+          "pivot": [
+            271.4,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_span_04",
+          "logicalId": "rail_span_04",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 1512,
+          "pivot": [
+            402.3,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_span_05",
+          "logicalId": "rail_span_05",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 1512,
+          "pivot": [
+            532.9000000000001,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_span_06",
+          "logicalId": "rail_span_06",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 1512,
+          "pivot": [
+            663.5,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_span_07",
+          "logicalId": "rail_span_07",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 624,
+          "pivot": [
+            795,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_span_08",
+          "logicalId": "rail_span_08",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 624,
+          "pivot": [
+            880.1,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_span_09",
+          "logicalId": "rail_span_09",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 624,
+          "pivot": [
+            962.9000000000001,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_00_damaged",
+          "logicalId": "rail_support_00_damaged",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 216,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_support_01_rubble",
+          "logicalId": "rail_support_01_rubble",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 156,
+          "pivot": [
+            140.9,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_support_06_rubble",
+          "logicalId": "rail_support_06_rubble",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 156,
+          "pivot": [
+            793.8,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_portal_old_east_rubble",
+          "logicalId": "rail_portal_old_east_rubble",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 156,
+          "pivot": [
+            793.8,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_span_01_collapsed",
+          "logicalId": "rail_span_01_collapsed",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 1512,
+          "pivot": [
+            10.41925302828514,
+            -8.004233377092849,
+            0.08987854919801104
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_span_02_collapsed",
+          "logicalId": "rail_span_02_collapsed",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 1512,
+          "pivot": [
+            142.02153951024619,
+            -10.004336385024237,
+            -0.04997916927067833
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_span_06_collapsed",
+          "logicalId": "rail_span_06_collapsed",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 1512,
+          "pivot": [
+            663.5270520423911,
+            -0.0021660935158588357,
+            0.059964006479444595
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_span_07_collapsed",
+          "logicalId": "rail_span_07_collapsed",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 624,
+          "pivot": [
+            794.9577500287935,
+            -3.501693537492439,
+            -0.03998933418663416
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        }
+      ],
+      "destructible": [
+        {
+          "node": "rail_support_00",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "rail_support_00_damaged"
+          ]
+        },
+        {
+          "node": "rail_support_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "rail_support_01_rubble"
+          ]
+        },
+        {
+          "node": "rail_support_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "rail_support_06_rubble"
+          ]
+        },
+        {
+          "node": "rail_portal_old_east",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "rail_portal_old_east_rubble"
+          ]
+        },
+        {
+          "node": "rail_span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "rail_span_01_collapsed"
+          ]
+        },
+        {
+          "node": "rail_span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "rail_span_02_collapsed"
+          ]
+        },
+        {
+          "node": "rail_span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "rail_span_06_collapsed"
+          ]
+        },
+        {
+          "node": "rail_span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "rail_span_07_collapsed"
+          ]
+        }
+      ],
+      "uncertainAppearance": [
+        "rail_portal_west",
+        "rail_support_07",
+        "rail_support_08",
+        "rail_portal_old_east",
+        "rail_support_09",
+        "rail_span_01",
+        "rail_span_02",
+        "rail_span_03",
+        "rail_span_04",
+        "rail_span_05",
+        "rail_span_06",
+        "rail_span_07",
+        "rail_span_08",
+        "rail_span_09"
+      ]
+    },
+    {
+      "file": "assets/models/provisional/m01/bridge_rail_1891_1912.lod2.glb",
+      "label": "Ponte ferroviária de Tczew (1891 + extensão 1910–1912)",
+      "lod": 2,
+      "placement": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "appliedToRoot": true
+      },
+      "bytes": 349304,
+      "sceneTriangles": 6100,
+      "uniqueTriangles": 4564,
+      "vertices": 8612,
+      "drawCallsIntact": 41,
+      "intactTriangles": 4336,
+      "nodes": [
+        {
+          "name": "rail_support_00",
+          "logicalId": "rail_support_00",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_portal_west",
+          "logicalId": "rail_portal_west",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 304,
+          "pivot": [
+            -4,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_01",
+          "logicalId": "rail_support_01",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 40,
+          "pivot": [
+            140.9,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_support_02",
+          "logicalId": "rail_support_02",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 40,
+          "pivot": [
+            270.2,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_03",
+          "logicalId": "rail_support_03",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 40,
+          "pivot": [
+            401.1,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_04",
+          "logicalId": "rail_support_04",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 40,
+          "pivot": [
+            531.7,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_05",
+          "logicalId": "rail_support_05",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 40,
+          "pivot": [
+            662.3,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_06",
+          "logicalId": "rail_support_06",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 40,
+          "pivot": [
+            793.8,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_support_07",
+          "logicalId": "rail_support_07",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 40,
+          "pivot": [
+            878.9,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_08",
+          "logicalId": "rail_support_08",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 40,
+          "pivot": [
+            961.7,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_portal_old_east",
+          "logicalId": "rail_portal_old_east",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 304,
+          "pivot": [
+            793.8,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_support_09",
+          "logicalId": "rail_support_09",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            1049.2,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_span_01",
+          "logicalId": "rail_span_01",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 408,
+          "pivot": [
+            10.400000000000006,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_span_02",
+          "logicalId": "rail_span_02",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 408,
+          "pivot": [
+            142.1,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_span_03",
+          "logicalId": "rail_span_03",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 408,
+          "pivot": [
+            271.4,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_span_04",
+          "logicalId": "rail_span_04",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 408,
+          "pivot": [
+            402.3,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_span_05",
+          "logicalId": "rail_span_05",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 408,
+          "pivot": [
+            532.9000000000001,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_span_06",
+          "logicalId": "rail_span_06",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 408,
+          "pivot": [
+            663.5,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_span_07",
+          "logicalId": "rail_span_07",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 312,
+          "pivot": [
+            795,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_span_08",
+          "logicalId": "rail_span_08",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 312,
+          "pivot": [
+            880.1,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_span_09",
+          "logicalId": "rail_span_09",
+          "mapFeatureId": "rail_bridge",
+          "group": "intact",
+          "triangles": 312,
+          "pivot": [
+            962.9000000000001,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "rail_support_00_damaged",
+          "logicalId": "rail_support_00_damaged",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 72,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_support_01_rubble",
+          "logicalId": "rail_support_01_rubble",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 48,
+          "pivot": [
+            140.9,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_support_06_rubble",
+          "logicalId": "rail_support_06_rubble",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 48,
+          "pivot": [
+            793.8,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_portal_old_east_rubble",
+          "logicalId": "rail_portal_old_east_rubble",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 60,
+          "pivot": [
+            793.8,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_span_01_collapsed",
+          "logicalId": "rail_span_01_collapsed",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 408,
+          "pivot": [
+            10.41925302828514,
+            -8.004233377092849,
+            0.08987854919801104
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_span_02_collapsed",
+          "logicalId": "rail_span_02_collapsed",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 408,
+          "pivot": [
+            142.02153951024619,
+            -10.004336385024237,
+            -0.04997916927067833
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "rail_span_06_collapsed",
+          "logicalId": "rail_span_06_collapsed",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 408,
+          "pivot": [
+            663.5270520423911,
+            -0.0021660935158588357,
+            0.059964006479444595
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "name": "rail_span_07_collapsed",
+          "logicalId": "rail_span_07_collapsed",
+          "mapFeatureId": "rail_bridge",
+          "group": "state_destroyed",
+          "triangles": 312,
+          "pivot": [
+            794.9577500287935,
+            -3.501693537492439,
+            -0.03998933418663416
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        }
+      ],
+      "destructible": [
+        {
+          "node": "rail_support_00",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "rail_support_00_damaged"
+          ]
+        },
+        {
+          "node": "rail_support_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "rail_support_01_rubble"
+          ]
+        },
+        {
+          "node": "rail_support_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "rail_support_06_rubble"
+          ]
+        },
+        {
+          "node": "rail_portal_old_east",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "rail_portal_old_east_rubble"
+          ]
+        },
+        {
+          "node": "rail_span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "rail_span_01_collapsed"
+          ]
+        },
+        {
+          "node": "rail_span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "rail_span_02_collapsed"
+          ]
+        },
+        {
+          "node": "rail_span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "rail_span_06_collapsed"
+          ]
+        },
+        {
+          "node": "rail_span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "rail_span_07_collapsed"
+          ]
+        }
+      ],
+      "uncertainAppearance": [
+        "rail_portal_west",
+        "rail_support_07",
+        "rail_support_08",
+        "rail_portal_old_east",
+        "rail_support_09",
+        "rail_span_01",
+        "rail_span_02",
+        "rail_span_03",
+        "rail_span_04",
+        "rail_span_05",
+        "rail_span_06",
+        "rail_span_07",
+        "rail_span_08",
+        "rail_span_09"
+      ]
+    },
+    {
+      "file": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+      "label": "Ponte rodoviária Lentze (1857 + extensão 1910–1912)",
+      "lod": 0,
+      "placement": {
+        "translation": [
+          0,
+          0,
+          40
+        ],
+        "appliedToRoot": true
+      },
+      "bytes": 3092296,
+      "sceneTriangles": 62728,
+      "uniqueTriangles": 45160,
+      "vertices": 85716,
+      "drawCallsIntact": 74,
+      "intactTriangles": 43156,
+      "nodes": [
+        {
+          "name": "road_support_00",
+          "logicalId": "road_support_00",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 84,
+          "pivot": [
+            2.4,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_portal_west",
+          "logicalId": "road_portal_west",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 1116,
+          "pivot": [
+            -4,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_01_n",
+          "logicalId": "road_tower_01_n",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 488,
+          "pivot": [
+            140.9,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_tower_01_s",
+          "logicalId": "road_tower_01_s",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 488,
+          "pivot": [
+            140.9,
+            -1.2,
+            6
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_support_01",
+          "logicalId": "road_support_01",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 88,
+          "pivot": [
+            140.9,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_tower_02_n",
+          "logicalId": "road_tower_02_n",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 488,
+          "pivot": [
+            270.9,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_02_s",
+          "logicalId": "road_tower_02_s",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 488,
+          "pivot": [
+            270.9,
+            -1.2,
+            6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_02",
+          "logicalId": "road_support_02",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 88,
+          "pivot": [
+            270.9,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_03_n",
+          "logicalId": "road_tower_03_n",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 488,
+          "pivot": [
+            400.9,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_03_s",
+          "logicalId": "road_tower_03_s",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 488,
+          "pivot": [
+            400.9,
+            -1.2,
+            6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_03",
+          "logicalId": "road_support_03",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 88,
+          "pivot": [
+            400.9,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_04_n",
+          "logicalId": "road_tower_04_n",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 488,
+          "pivot": [
+            531.7,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_04_s",
+          "logicalId": "road_tower_04_s",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 488,
+          "pivot": [
+            531.7,
+            -1.2,
+            6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_04",
+          "logicalId": "road_support_04",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 88,
+          "pivot": [
+            531.7,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_05_n",
+          "logicalId": "road_tower_05_n",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 488,
+          "pivot": [
+            662.1,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_05_s",
+          "logicalId": "road_tower_05_s",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 488,
+          "pivot": [
+            662.1,
+            -1.2,
+            6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_05",
+          "logicalId": "road_support_05",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 88,
+          "pivot": [
+            662.1,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_06",
+          "logicalId": "road_support_06",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 88,
+          "pivot": [
+            807.5,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_support_07",
+          "logicalId": "road_support_07",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 88,
+          "pivot": [
+            879,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_08",
+          "logicalId": "road_support_08",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 88,
+          "pivot": [
+            962,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_portal_old_east",
+          "logicalId": "road_portal_old_east",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 1116,
+          "pivot": [
+            807.5,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_support_09",
+          "logicalId": "road_support_09",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 36,
+          "pivot": [
+            1049.1,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_span_01",
+          "logicalId": "road_span_01",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 5460,
+          "pivot": [
+            8.5,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_span_02",
+          "logicalId": "road_span_02",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 5364,
+          "pivot": [
+            142.1,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_span_03",
+          "logicalId": "road_span_03",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 5364,
+          "pivot": [
+            272.09999999999997,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_span_04",
+          "logicalId": "road_span_04",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 5364,
+          "pivot": [
+            402.09999999999997,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_span_05",
+          "logicalId": "road_span_05",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 5364,
+          "pivot": [
+            532.9000000000001,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_span_06",
+          "logicalId": "road_span_06",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 5964,
+          "pivot": [
+            663.3000000000001,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_span_07",
+          "logicalId": "road_span_07",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 780,
+          "pivot": [
+            808.7,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_span_08",
+          "logicalId": "road_span_08",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 780,
+          "pivot": [
+            880.2,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_span_09",
+          "logicalId": "road_span_09",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 780,
+          "pivot": [
+            963.2,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_00_damaged",
+          "logicalId": "road_support_00_damaged",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 444,
+          "pivot": [
+            2.4,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_tower_01_n_rubble",
+          "logicalId": "road_tower_01_n_rubble",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 312,
+          "pivot": [
+            140.9,
+            0,
+            -6
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_tower_01_s_rubble",
+          "logicalId": "road_tower_01_s_rubble",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 312,
+          "pivot": [
+            140.9,
+            0,
+            6
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_support_01_rubble",
+          "logicalId": "road_support_01_rubble",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 312,
+          "pivot": [
+            140.9,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_support_06_rubble",
+          "logicalId": "road_support_06_rubble",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 312,
+          "pivot": [
+            807.5,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_portal_old_east_rubble",
+          "logicalId": "road_portal_old_east_rubble",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 312,
+          "pivot": [
+            807.5,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_span_01_collapsed",
+          "logicalId": "road_span_01_collapsed",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 5460,
+          "pivot": [
+            8.518974313506165,
+            -8.004228027196472,
+            0.08987854919801104
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_span_02_collapsed",
+          "logicalId": "road_span_02_collapsed",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 5364,
+          "pivot": [
+            142.0219673014578,
+            -10.004302766601596,
+            -0.04997916927067833
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_span_06_collapsed",
+          "logicalId": "road_span_06_collapsed",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 5964,
+          "pivot": [
+            663.3244241671775,
+            -0.0020983124652897978,
+            0.059964006479444595
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_span_07_collapsed",
+          "logicalId": "road_span_07_collapsed",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 780,
+          "pivot": [
+            808.6494540829125,
+            -3.502079179785747,
+            -0.03998933418663416
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        }
+      ],
+      "destructible": [
+        {
+          "node": "road_support_00",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "road_support_00_damaged"
+          ]
+        },
+        {
+          "node": "road_tower_01_n",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "road_tower_01_n_rubble"
+          ]
+        },
+        {
+          "node": "road_tower_01_s",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "road_tower_01_s_rubble"
+          ]
+        },
+        {
+          "node": "road_support_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "road_support_01_rubble"
+          ]
+        },
+        {
+          "node": "road_support_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "road_support_06_rubble"
+          ]
+        },
+        {
+          "node": "road_portal_old_east",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "road_portal_old_east_rubble"
+          ]
+        },
+        {
+          "node": "road_span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "road_span_01_collapsed"
+          ]
+        },
+        {
+          "node": "road_span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "road_span_02_collapsed"
+          ]
+        },
+        {
+          "node": "road_span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "road_span_06_collapsed"
+          ]
+        },
+        {
+          "node": "road_span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "road_span_07_collapsed"
+          ]
+        }
+      ],
+      "uncertainAppearance": [
+        "road_portal_west",
+        "road_tower_01_n",
+        "road_tower_01_s",
+        "road_tower_02_n",
+        "road_tower_02_s",
+        "road_tower_03_n",
+        "road_tower_03_s",
+        "road_tower_04_n",
+        "road_tower_04_s",
+        "road_tower_05_n",
+        "road_tower_05_s",
+        "road_support_07",
+        "road_support_08",
+        "road_portal_old_east",
+        "road_support_09",
+        "road_span_06",
+        "road_span_07",
+        "road_span_08",
+        "road_span_09"
+      ]
+    },
+    {
+      "file": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.colliders.glb",
+      "label": "Ponte rodoviária Lentze (1857 + extensão 1910–1912)",
+      "lod": "colliders",
+      "placement": {
+        "translation": [
+          0,
+          0,
+          40
+        ],
+        "appliedToRoot": true
+      },
+      "bytes": 82080,
+      "sceneTriangles": 552,
+      "uniqueTriangles": 552,
+      "vertices": 1104,
+      "drawCallsIntact": 0,
+      "intactTriangles": 0,
+      "nodes": [
+        {
+          "name": "road_collider_tower_01_n",
+          "logicalId": "road_collider_tower_01_n",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            140.9,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_collider_tower_01_s",
+          "logicalId": "road_collider_tower_01_s",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            140.9,
+            -1.2,
+            6
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_collider_tower_02_n",
+          "logicalId": "road_collider_tower_02_n",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            270.9,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_tower_02_s",
+          "logicalId": "road_collider_tower_02_s",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            270.9,
+            -1.2,
+            6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_tower_03_n",
+          "logicalId": "road_collider_tower_03_n",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            400.9,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_tower_03_s",
+          "logicalId": "road_collider_tower_03_s",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            400.9,
+            -1.2,
+            6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_tower_04_n",
+          "logicalId": "road_collider_tower_04_n",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            531.7,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_tower_04_s",
+          "logicalId": "road_collider_tower_04_s",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            531.7,
+            -1.2,
+            6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_tower_05_n",
+          "logicalId": "road_collider_tower_05_n",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            662.1,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_tower_05_s",
+          "logicalId": "road_collider_tower_05_s",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            662.1,
+            -1.2,
+            6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_deck_span_01",
+          "logicalId": "road_collider_deck_span_01",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_collider_truss_N_span_01",
+          "logicalId": "road_collider_truss_N_span_01",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_collider_truss_S_span_01",
+          "logicalId": "road_collider_truss_S_span_01",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_collider_deck_span_02",
+          "logicalId": "road_collider_deck_span_02",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_collider_truss_N_span_02",
+          "logicalId": "road_collider_truss_N_span_02",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_collider_truss_S_span_02",
+          "logicalId": "road_collider_truss_S_span_02",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_collider_deck_span_03",
+          "logicalId": "road_collider_deck_span_03",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_truss_N_span_03",
+          "logicalId": "road_collider_truss_N_span_03",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_truss_S_span_03",
+          "logicalId": "road_collider_truss_S_span_03",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_deck_span_04",
+          "logicalId": "road_collider_deck_span_04",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_truss_N_span_04",
+          "logicalId": "road_collider_truss_N_span_04",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_truss_S_span_04",
+          "logicalId": "road_collider_truss_S_span_04",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_deck_span_05",
+          "logicalId": "road_collider_deck_span_05",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_truss_N_span_05",
+          "logicalId": "road_collider_truss_N_span_05",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_truss_S_span_05",
+          "logicalId": "road_collider_truss_S_span_05",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_deck_span_06",
+          "logicalId": "road_collider_deck_span_06",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_collider_truss_N_span_06",
+          "logicalId": "road_collider_truss_N_span_06",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_collider_truss_S_span_06",
+          "logicalId": "road_collider_truss_S_span_06",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_collider_deck_span_07",
+          "logicalId": "road_collider_deck_span_07",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_collider_truss_N_span_07",
+          "logicalId": "road_collider_truss_N_span_07",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_collider_truss_S_span_07",
+          "logicalId": "road_collider_truss_S_span_07",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_collider_deck_span_08",
+          "logicalId": "road_collider_deck_span_08",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_truss_N_span_08",
+          "logicalId": "road_collider_truss_N_span_08",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_truss_S_span_08",
+          "logicalId": "road_collider_truss_S_span_08",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_deck_span_09",
+          "logicalId": "road_collider_deck_span_09",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_truss_N_span_09",
+          "logicalId": "road_collider_truss_N_span_09",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_truss_S_span_09",
+          "logicalId": "road_collider_truss_S_span_09",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_abutment_west",
+          "logicalId": "road_collider_abutment_west",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_collider_pier_01",
+          "logicalId": "road_collider_pier_01",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_collider_pier_02",
+          "logicalId": "road_collider_pier_02",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_pier_03",
+          "logicalId": "road_collider_pier_03",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_pier_04",
+          "logicalId": "road_collider_pier_04",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_pier_05",
+          "logicalId": "road_collider_pier_05",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_pier_06",
+          "logicalId": "road_collider_pier_06",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_collider_pier_07",
+          "logicalId": "road_collider_pier_07",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_collider_pier_08",
+          "logicalId": "road_collider_pier_08",
+          "mapFeatureId": "road_bridge",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        }
+      ],
+      "destructible": [
+        {
+          "node": "road_collider_tower_01_n",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "road_collider_tower_01_s",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "road_collider_deck_span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "road_collider_truss_N_span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "road_collider_truss_S_span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "road_collider_deck_span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "road_collider_truss_N_span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "road_collider_truss_S_span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "road_collider_deck_span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "road_collider_truss_N_span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "road_collider_truss_S_span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "road_collider_deck_span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "road_collider_truss_N_span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "road_collider_truss_S_span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "road_collider_abutment_west",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "road_collider_pier_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": []
+        },
+        {
+          "node": "road_collider_pier_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": []
+        }
+      ],
+      "uncertainAppearance": []
+    },
+    {
+      "file": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod1.glb",
+      "label": "Ponte rodoviária Lentze (1857 + extensão 1910–1912)",
+      "lod": 1,
+      "placement": {
+        "translation": [
+          0,
+          0,
+          40
+        ],
+        "appliedToRoot": true
+      },
+      "bytes": 654632,
+      "sceneTriangles": 12040,
+      "uniqueTriangles": 9664,
+      "vertices": 16628,
+      "drawCallsIntact": 52,
+      "intactTriangles": 8668,
+      "nodes": [
+        {
+          "name": "road_support_00",
+          "logicalId": "road_support_00",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            2.4,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_portal_west",
+          "logicalId": "road_portal_west",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 464,
+          "pivot": [
+            -4,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_01_n",
+          "logicalId": "road_tower_01_n",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 200,
+          "pivot": [
+            140.9,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_tower_01_s",
+          "logicalId": "road_tower_01_s",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 200,
+          "pivot": [
+            140.9,
+            -1.2,
+            6
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_support_01",
+          "logicalId": "road_support_01",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 56,
+          "pivot": [
+            140.9,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_tower_02_n",
+          "logicalId": "road_tower_02_n",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 200,
+          "pivot": [
+            270.9,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_02_s",
+          "logicalId": "road_tower_02_s",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 200,
+          "pivot": [
+            270.9,
+            -1.2,
+            6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_02",
+          "logicalId": "road_support_02",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 56,
+          "pivot": [
+            270.9,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_03_n",
+          "logicalId": "road_tower_03_n",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 200,
+          "pivot": [
+            400.9,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_03_s",
+          "logicalId": "road_tower_03_s",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 200,
+          "pivot": [
+            400.9,
+            -1.2,
+            6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_03",
+          "logicalId": "road_support_03",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 56,
+          "pivot": [
+            400.9,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_04_n",
+          "logicalId": "road_tower_04_n",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 200,
+          "pivot": [
+            531.7,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_04_s",
+          "logicalId": "road_tower_04_s",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 200,
+          "pivot": [
+            531.7,
+            -1.2,
+            6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_04",
+          "logicalId": "road_support_04",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 56,
+          "pivot": [
+            531.7,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_05_n",
+          "logicalId": "road_tower_05_n",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 200,
+          "pivot": [
+            662.1,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_05_s",
+          "logicalId": "road_tower_05_s",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 200,
+          "pivot": [
+            662.1,
+            -1.2,
+            6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_05",
+          "logicalId": "road_support_05",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 56,
+          "pivot": [
+            662.1,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_06",
+          "logicalId": "road_support_06",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 56,
+          "pivot": [
+            807.5,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_support_07",
+          "logicalId": "road_support_07",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 56,
+          "pivot": [
+            879,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_08",
+          "logicalId": "road_support_08",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 56,
+          "pivot": [
+            962,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_portal_old_east",
+          "logicalId": "road_portal_old_east",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 464,
+          "pivot": [
+            807.5,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_support_09",
+          "logicalId": "road_support_09",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            1049.1,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_span_01",
+          "logicalId": "road_span_01",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 588,
+          "pivot": [
+            8.5,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_span_02",
+          "logicalId": "road_span_02",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 588,
+          "pivot": [
+            142.1,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_span_03",
+          "logicalId": "road_span_03",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 588,
+          "pivot": [
+            272.09999999999997,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_span_04",
+          "logicalId": "road_span_04",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 588,
+          "pivot": [
+            402.09999999999997,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_span_05",
+          "logicalId": "road_span_05",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 588,
+          "pivot": [
+            532.9000000000001,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_span_06",
+          "logicalId": "road_span_06",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 636,
+          "pivot": [
+            663.3000000000001,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_span_07",
+          "logicalId": "road_span_07",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 564,
+          "pivot": [
+            808.7,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_span_08",
+          "logicalId": "road_span_08",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 564,
+          "pivot": [
+            880.2,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_span_09",
+          "logicalId": "road_span_09",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 564,
+          "pivot": [
+            963.2,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_00_damaged",
+          "logicalId": "road_support_00_damaged",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 216,
+          "pivot": [
+            2.4,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_tower_01_n_rubble",
+          "logicalId": "road_tower_01_n_rubble",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 156,
+          "pivot": [
+            140.9,
+            0,
+            -6
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_tower_01_s_rubble",
+          "logicalId": "road_tower_01_s_rubble",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 156,
+          "pivot": [
+            140.9,
+            0,
+            6
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_support_01_rubble",
+          "logicalId": "road_support_01_rubble",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 156,
+          "pivot": [
+            140.9,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_support_06_rubble",
+          "logicalId": "road_support_06_rubble",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 156,
+          "pivot": [
+            807.5,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_portal_old_east_rubble",
+          "logicalId": "road_portal_old_east_rubble",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 156,
+          "pivot": [
+            807.5,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_span_01_collapsed",
+          "logicalId": "road_span_01_collapsed",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 588,
+          "pivot": [
+            8.518974313506165,
+            -8.004228027196472,
+            0.08987854919801104
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_span_02_collapsed",
+          "logicalId": "road_span_02_collapsed",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 588,
+          "pivot": [
+            142.0219673014578,
+            -10.004302766601596,
+            -0.04997916927067833
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_span_06_collapsed",
+          "logicalId": "road_span_06_collapsed",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 636,
+          "pivot": [
+            663.3244241671775,
+            -0.0020983124652897978,
+            0.059964006479444595
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_span_07_collapsed",
+          "logicalId": "road_span_07_collapsed",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 564,
+          "pivot": [
+            808.6494540829125,
+            -3.502079179785747,
+            -0.03998933418663416
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        }
+      ],
+      "destructible": [
+        {
+          "node": "road_support_00",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "road_support_00_damaged"
+          ]
+        },
+        {
+          "node": "road_tower_01_n",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "road_tower_01_n_rubble"
+          ]
+        },
+        {
+          "node": "road_tower_01_s",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "road_tower_01_s_rubble"
+          ]
+        },
+        {
+          "node": "road_support_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "road_support_01_rubble"
+          ]
+        },
+        {
+          "node": "road_support_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "road_support_06_rubble"
+          ]
+        },
+        {
+          "node": "road_portal_old_east",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "road_portal_old_east_rubble"
+          ]
+        },
+        {
+          "node": "road_span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "road_span_01_collapsed"
+          ]
+        },
+        {
+          "node": "road_span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "road_span_02_collapsed"
+          ]
+        },
+        {
+          "node": "road_span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "road_span_06_collapsed"
+          ]
+        },
+        {
+          "node": "road_span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "road_span_07_collapsed"
+          ]
+        }
+      ],
+      "uncertainAppearance": [
+        "road_portal_west",
+        "road_tower_01_n",
+        "road_tower_01_s",
+        "road_tower_02_n",
+        "road_tower_02_s",
+        "road_tower_03_n",
+        "road_tower_03_s",
+        "road_tower_04_n",
+        "road_tower_04_s",
+        "road_tower_05_n",
+        "road_tower_05_s",
+        "road_support_07",
+        "road_support_08",
+        "road_portal_old_east",
+        "road_support_09",
+        "road_span_06",
+        "road_span_07",
+        "road_span_08",
+        "road_span_09"
+      ]
+    },
+    {
+      "file": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod2.glb",
+      "label": "Ponte rodoviária Lentze (1857 + extensão 1910–1912)",
+      "lod": 2,
+      "placement": {
+        "translation": [
+          0,
+          0,
+          40
+        ],
+        "appliedToRoot": true
+      },
+      "bytes": 304504,
+      "sceneTriangles": 4888,
+      "uniqueTriangles": 4168,
+      "vertices": 6820,
+      "drawCallsIntact": 52,
+      "intactTriangles": 3844,
+      "nodes": [
+        {
+          "name": "road_support_00",
+          "logicalId": "road_support_00",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            2.4,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_portal_west",
+          "logicalId": "road_portal_west",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 304,
+          "pivot": [
+            -4,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_01_n",
+          "logicalId": "road_tower_01_n",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 120,
+          "pivot": [
+            140.9,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_tower_01_s",
+          "logicalId": "road_tower_01_s",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 120,
+          "pivot": [
+            140.9,
+            -1.2,
+            6
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_support_01",
+          "logicalId": "road_support_01",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 40,
+          "pivot": [
+            140.9,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_tower_02_n",
+          "logicalId": "road_tower_02_n",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 120,
+          "pivot": [
+            270.9,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_02_s",
+          "logicalId": "road_tower_02_s",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 120,
+          "pivot": [
+            270.9,
+            -1.2,
+            6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_02",
+          "logicalId": "road_support_02",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 40,
+          "pivot": [
+            270.9,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_03_n",
+          "logicalId": "road_tower_03_n",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 120,
+          "pivot": [
+            400.9,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_03_s",
+          "logicalId": "road_tower_03_s",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 120,
+          "pivot": [
+            400.9,
+            -1.2,
+            6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_03",
+          "logicalId": "road_support_03",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 40,
+          "pivot": [
+            400.9,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_04_n",
+          "logicalId": "road_tower_04_n",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 120,
+          "pivot": [
+            531.7,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_04_s",
+          "logicalId": "road_tower_04_s",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 120,
+          "pivot": [
+            531.7,
+            -1.2,
+            6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_04",
+          "logicalId": "road_support_04",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 40,
+          "pivot": [
+            531.7,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_05_n",
+          "logicalId": "road_tower_05_n",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 120,
+          "pivot": [
+            662.1,
+            -1.2,
+            -6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_tower_05_s",
+          "logicalId": "road_tower_05_s",
+          "mapFeatureId": "road_bridge_towers",
+          "group": "intact",
+          "triangles": 120,
+          "pivot": [
+            662.1,
+            -1.2,
+            6
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_05",
+          "logicalId": "road_support_05",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 40,
+          "pivot": [
+            662.1,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_06",
+          "logicalId": "road_support_06",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 40,
+          "pivot": [
+            807.5,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_support_07",
+          "logicalId": "road_support_07",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 40,
+          "pivot": [
+            879,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_08",
+          "logicalId": "road_support_08",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 40,
+          "pivot": [
+            962,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_portal_old_east",
+          "logicalId": "road_portal_old_east",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 304,
+          "pivot": [
+            807.5,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_support_09",
+          "logicalId": "road_support_09",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            1049.1,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_span_01",
+          "logicalId": "road_span_01",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 156,
+          "pivot": [
+            8.5,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_span_02",
+          "logicalId": "road_span_02",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 156,
+          "pivot": [
+            142.1,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_span_03",
+          "logicalId": "road_span_03",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 156,
+          "pivot": [
+            272.09999999999997,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_span_04",
+          "logicalId": "road_span_04",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 156,
+          "pivot": [
+            402.09999999999997,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_span_05",
+          "logicalId": "road_span_05",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 156,
+          "pivot": [
+            532.9000000000001,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_span_06",
+          "logicalId": "road_span_06",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 156,
+          "pivot": [
+            663.3000000000001,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_span_07",
+          "logicalId": "road_span_07",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 252,
+          "pivot": [
+            808.7,
+            0,
+            0
+          ],
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_span_08",
+          "logicalId": "road_span_08",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 252,
+          "pivot": [
+            880.2,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_span_09",
+          "logicalId": "road_span_09",
+          "mapFeatureId": "road_bridge",
+          "group": "intact",
+          "triangles": 252,
+          "pivot": [
+            963.2,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "road_support_00_damaged",
+          "logicalId": "road_support_00_damaged",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 72,
+          "pivot": [
+            2.4,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_tower_01_n_rubble",
+          "logicalId": "road_tower_01_n_rubble",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 48,
+          "pivot": [
+            140.9,
+            0,
+            -6
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_tower_01_s_rubble",
+          "logicalId": "road_tower_01_s_rubble",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 48,
+          "pivot": [
+            140.9,
+            0,
+            6
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_support_01_rubble",
+          "logicalId": "road_support_01_rubble",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 48,
+          "pivot": [
+            140.9,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_support_06_rubble",
+          "logicalId": "road_support_06_rubble",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 48,
+          "pivot": [
+            807.5,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_portal_old_east_rubble",
+          "logicalId": "road_portal_old_east_rubble",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 60,
+          "pivot": [
+            807.5,
+            0,
+            0
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_span_01_collapsed",
+          "logicalId": "road_span_01_collapsed",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 156,
+          "pivot": [
+            8.518974313506165,
+            -8.004228027196472,
+            0.08987854919801104
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_span_02_collapsed",
+          "logicalId": "road_span_02_collapsed",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 156,
+          "pivot": [
+            142.0219673014578,
+            -10.004302766601596,
+            -0.04997916927067833
+          ],
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "name": "road_span_06_collapsed",
+          "logicalId": "road_span_06_collapsed",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 156,
+          "pivot": [
+            663.3244241671775,
+            -0.0020983124652897978,
+            0.059964006479444595
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "name": "road_span_07_collapsed",
+          "logicalId": "road_span_07_collapsed",
+          "mapFeatureId": "road_bridge",
+          "group": "state_destroyed",
+          "triangles": 252,
+          "pivot": [
+            808.6494540829125,
+            -3.502079179785747,
+            -0.03998933418663416
+          ],
+          "showAfterEvent": "evt_m01_east_demolition"
+        }
+      ],
+      "destructible": [
+        {
+          "node": "road_support_00",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "road_support_00_damaged"
+          ]
+        },
+        {
+          "node": "road_tower_01_n",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "road_tower_01_n_rubble"
+          ]
+        },
+        {
+          "node": "road_tower_01_s",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "road_tower_01_s_rubble"
+          ]
+        },
+        {
+          "node": "road_support_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "road_support_01_rubble"
+          ]
+        },
+        {
+          "node": "road_support_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "road_support_06_rubble"
+          ]
+        },
+        {
+          "node": "road_portal_old_east",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "road_portal_old_east_rubble"
+          ]
+        },
+        {
+          "node": "road_span_01",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "road_span_01_collapsed"
+          ]
+        },
+        {
+          "node": "road_span_02",
+          "destroyedBy": "evt_m01_west_demolition",
+          "replacedBy": [
+            "road_span_02_collapsed"
+          ]
+        },
+        {
+          "node": "road_span_06",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "road_span_06_collapsed"
+          ]
+        },
+        {
+          "node": "road_span_07",
+          "destroyedBy": "evt_m01_east_demolition",
+          "replacedBy": [
+            "road_span_07_collapsed"
+          ]
+        }
+      ],
+      "uncertainAppearance": [
+        "road_portal_west",
+        "road_tower_01_n",
+        "road_tower_01_s",
+        "road_tower_02_n",
+        "road_tower_02_s",
+        "road_tower_03_n",
+        "road_tower_03_s",
+        "road_tower_04_n",
+        "road_tower_04_s",
+        "road_tower_05_n",
+        "road_tower_05_s",
+        "road_support_07",
+        "road_support_08",
+        "road_portal_old_east",
+        "road_support_09",
+        "road_span_06",
+        "road_span_07",
+        "road_span_08",
+        "road_span_09"
+      ]
+    },
+    {
+      "file": "assets/models/provisional/m01/portal_lisewo_1912.glb",
+      "label": "Portal comum de 1912, Lisewo",
+      "lod": 0,
+      "placement": {
+        "translation": [
+          1049.2,
+          0,
+          20
+        ],
+        "appliedToRoot": true
+      },
+      "bytes": 114820,
+      "sceneTriangles": 1996,
+      "uniqueTriangles": 1996,
+      "vertices": 2988,
+      "drawCallsIntact": 7,
+      "intactTriangles": 1996,
+      "nodes": [
+        {
+          "name": "portal_lisewo_1912",
+          "logicalId": "portal_lisewo_1912",
+          "group": "intact",
+          "triangles": 1948,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "gate_rail_left",
+          "logicalId": "gate_rail_left",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "gate_rail_right",
+          "logicalId": "gate_rail_right",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "gate_road_left",
+          "logicalId": "gate_road_left",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "gate_road_right",
+          "logicalId": "gate_road_right",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "destructible": [],
+      "uncertainAppearance": [
+        "portal_lisewo_1912",
+        "gate_rail_left",
+        "gate_rail_right",
+        "gate_road_left",
+        "gate_road_right"
+      ]
+    },
+    {
+      "file": "assets/models/provisional/m01/portal_lisewo_1912.colliders.glb",
+      "label": "Portal comum de 1912 — colisores",
+      "lod": "colliders",
+      "placement": {
+        "translation": [
+          1049.2,
+          0,
+          20
+        ],
+        "appliedToRoot": true
+      },
+      "bytes": 2592,
+      "sceneTriangles": 12,
+      "uniqueTriangles": 12,
+      "vertices": 24,
+      "drawCallsIntact": 0,
+      "intactTriangles": 0,
+      "nodes": [
+        {
+          "name": "COL_portal_lisewo_1912",
+          "logicalId": "COL_portal_lisewo_1912",
+          "group": "colliders",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "destructible": [],
+      "uncertainAppearance": []
+    },
+    {
+      "file": "assets/models/provisional/m01/portal_lisewo_1912.lod1.glb",
+      "label": "Portal comum de 1912, Lisewo",
+      "lod": 1,
+      "placement": {
+        "translation": [
+          1049.2,
+          0,
+          20
+        ],
+        "appliedToRoot": true
+      },
+      "bytes": 40960,
+      "sceneTriangles": 764,
+      "uniqueTriangles": 764,
+      "vertices": 936,
+      "drawCallsIntact": 6,
+      "intactTriangles": 764,
+      "nodes": [
+        {
+          "name": "portal_lisewo_1912",
+          "logicalId": "portal_lisewo_1912",
+          "group": "intact",
+          "triangles": 716,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "gate_rail_left",
+          "logicalId": "gate_rail_left",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "gate_rail_right",
+          "logicalId": "gate_rail_right",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "gate_road_left",
+          "logicalId": "gate_road_left",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "gate_road_right",
+          "logicalId": "gate_road_right",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "destructible": [],
+      "uncertainAppearance": [
+        "portal_lisewo_1912",
+        "gate_rail_left",
+        "gate_rail_right",
+        "gate_road_left",
+        "gate_road_right"
+      ]
+    },
+    {
+      "file": "assets/models/provisional/m01/portal_lisewo_1912.lod2.glb",
+      "label": "Portal comum de 1912, Lisewo",
+      "lod": 2,
+      "placement": {
+        "translation": [
+          1049.2,
+          0,
+          20
+        ],
+        "appliedToRoot": true
+      },
+      "bytes": 31840,
+      "sceneTriangles": 524,
+      "uniqueTriangles": 524,
+      "vertices": 696,
+      "drawCallsIntact": 6,
+      "intactTriangles": 524,
+      "nodes": [
+        {
+          "name": "portal_lisewo_1912",
+          "logicalId": "portal_lisewo_1912",
+          "group": "intact",
+          "triangles": 476,
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "destroyedBy": null
+        },
+        {
+          "name": "gate_rail_left",
+          "logicalId": "gate_rail_left",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "gate_rail_right",
+          "logicalId": "gate_rail_right",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "gate_road_left",
+          "logicalId": "gate_road_left",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "gate_road_right",
+          "logicalId": "gate_road_right",
+          "group": "intact",
+          "triangles": 12,
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "destructible": [],
+      "uncertainAppearance": [
+        "portal_lisewo_1912",
+        "gate_rail_left",
+        "gate_rail_right",
+        "gate_road_left",
+        "gate_road_right"
+      ]
+    }
+  ]
+}

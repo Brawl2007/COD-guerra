@@ -1,50 +1,60 @@
-# Operação: Estrada de Cinzas
+# COD Guerra
 
-Vertical slice original de um FPS single-player ambientado na França de 1944. O cenário, personagens e arma são renderizados em WebGL 2 por uma camada 3D própria, e os efeitos sonoros são sintetizados pela Web Audio API.
+FPS original da Segunda Guerra Mundial em desenvolvimento. Nesta branch, **M01 — Tczew: A Primeira Manhã** é um protótipo jogável. A bancada ficcional **Estrada de Cinzas**, França de 1944, continua acessível no selector de missão. A campanha de 30 capítulos permanece em desenvolvimento; nenhuma missão está declarada VALIDADA.
 
-O renderer 3D usa câmera em perspectiva, malhas iluminadas, névoa, sombras projetadas simplificadas, partículas, uma M1 Carbine animada com braços e soldados humanoides articulados. A aldeia possui casas com telhados, interiores, estrada, becos, cercas, árvores, vegetação e posições de cobertura. Ele não baixa bibliotecas ou assets em tempo de execução, mantendo o preview autocontido no GitHub Pages.
+A fundação usa Three.js e Vite. Preserva os modelos OBJ originais e acrescenta mira/dano em 3D, obstrução do cano, cobertura com exposição real, checkpoints completos e pausa consistente. Modelos, mãos, texturas e sons ainda são provisórios.
 
-## Sistemas da V4
+## Executar
 
-- `src/assets/obj-loader.js` carrega os modelos temporários `.obj/.mtl`, inteiramente textuais; a M1 Carbine e os torsos humanoides aliados/inimigos usam esses modelos originais em `assets/models` com fallback procedural. A pipeline `.gltf/.glb` permanece preparada em `src/assets/gltf-loader.js` para assets finais futuros.
-- `src/game/weapon.js` contém perfis de armas extensíveis para dano, cadência, spread, recoil, carregador, recarga, áudio, modelo e animações.
-- `src/game/battle-director.js` coordena intensidade, reforços e áudio distante sem substituir a IA individual.
-- `src/game/grenade.js` implementa arremesso, física, colisão, aviso à IA, explosão e dano radial.
-- `src/core/audio.js` fornece áudio procedural espacial e mantém a API de carregamento de áudio real preparada para os assets binários futuros.
+Node >=22.12 (CI usa Node 24):
 
-Todos os modelos `.obj/.mtl` em `assets/` foram produzidos originalmente para este projeto e podem ser distribuídos junto com o código. Nenhum asset de Call of Duty ou de outro jogo foi utilizado. Os binários futuros estão documentados em `assets-needed.md` e não fazem parte deste patch.
-
-## Jogar
-
-```bash
-npm start
+```sh
+npm ci
+npm run dev
 ```
 
-Acesse `http://localhost:8080`. Use **WASD** para mover, **mouse** para mirar, **clique esquerdo** para atirar, **R** para recarregar, **G** para lançar granada e **Shift** para correr. O navegador precisa permitir Pointer Lock e áudio.
+Abrir `http://127.0.0.1:5173/COD-guerra/`. WASD move; rato olha; clique esquerdo dispara; botão direito mira; R recarrega; G lança granada; Shift corre; Esc pausa. M01 acrescenta E para interagir, C para agachar, V para alça de mira e Espaço para saltar intro/outro. Iniciar e Retomar capturam o rato e habilitam áudio por gesto.
 
-## Abrir no Chromebook com GitHub Pages
+```sh
+npm test
+npm run build
+npm run preview
+```
 
-Este repositório inclui o workflow `.github/workflows/pages.yml`, que publica o mesmo jogo como um site estático, sem alterar o gameplay e sem exigir instalação no Chromebook.
+Preview de produção: `http://127.0.0.1:4173/COD-guerra/`.
 
-1. Faça merge do pull request no GitHub.
-2. No repositório, abra **Settings → Pages**.
-3. Em **Build and deployment → Source**, selecione **GitHub Actions**. Se essa opção já estiver selecionada, não altere nada.
-4. Abra **Actions → Publicar preview do jogo**. Caso o workflow não tenha iniciado automaticamente, clique em **Run workflow**, selecione a branch `main` (ou `master`) e confirme.
-5. Aguarde o job **deploy** ficar verde. O endereço público aparece no resumo do workflow e em **Settings → Pages**. Normalmente ele será `https://SEU-USUARIO.github.io/NOME-DO-REPOSITORIO/`.
-6. Abra esse endereço no Chrome do Chromebook, clique em **INICIAR MISSÃO** e aceite a captura do ponteiro quando o navegador solicitar.
+```sh
+npx playwright install --with-deps chromium
+npm run test:browser
+```
 
-O endereço publicado utiliza HTTPS, requisito importante para APIs de navegador como áudio e captura do ponteiro. Novos pushes para `main` ou `master` atualizam o site automaticamente. Também é possível remover o preview a qualquer momento em **Settings → Pages**.
+Os testes de navegador iniciam o preview do build e usam controlos reais para disparo, recarga, movimento, pausa e restauração. Instruções completas, diagnóstico e alternativa de Chromium estão em [RUNBOOK.md](RUNBOOK.md).
 
-## Arquitetura
+## Estado e especificação
 
-- `src/core`: entrada, áudio procedural e utilitários matemáticos;
-- `src/world`: mapa, colisão, raycast e linha de visão;
-- `src/game`: regras, atores, arma, checkpoint e progressão da missão;
-- `src/render`: renderer WebGL 2, matemática matricial, malhas e personagens 3D procedurais;
-- `tests`: testes das regras independentes do navegador.
+| Documento | Conteúdo |
+| --- | --- |
+| [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) | O que funciona, o que é parcial e o próximo passo |
+| [QUALITY_REPORT.md](QUALITY_REPORT.md) | Evidências, limites dos testes e performance ainda não medida |
+| [PROJECT_SPEC.md](PROJECT_SPEC.md) / [docs/PROMPT_MESTRE.txt](docs/PROMPT_MESTRE.txt) | Requisitos e especificação integral |
+| [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) | Marcos de implementação |
+| [missions/m01-tczew/README.md](missions/m01-tczew/README.md) | Pesquisa, mapa, roteiro e contrato de M01 integrados do PR #8 |
+| [STORY_BIBLE.md](STORY_BIBLE.md) / [research/SOURCES.md](research/SOURCES.md) | Elenco, continuidade e fontes com grau de verificação |
+| [ASSET_PIPELINE.md](ASSET_PIPELINE.md) / [ASSET_CREDITS.md](ASSET_CREDITS.md) | Carregamento, licenças e placeholders |
 
-Os sistemas são desacoplados para permitir a evolução futura de direção de batalha, navegação avançada, veículos, artilharia, destruição e campanhas adicionais sem misturar essas responsabilidades ao loop principal.
+## Arquitectura
 
-## Escopo do vertical slice
+- `src/game/simulation.js` contém a simulação independente do navegador. `Game` coordena input, áudio, HUD e um único loop.
+- `src/game/m01-simulation.js`, `src/world/tczew-world.js` e `src/game/wz29.js` implementam o estado separado de Tczew em metros, eventos, objectivos, gates e checkpoints. `src/render/m01-view.js` apresenta esse estado na mesma engine.
+- `src/world/spatial.js` partilha raycasts 3D entre jogador, NPCs e explosões. 32 unidades do mapa legado equivalem a um metro; Y planar converte para Z da cena.
+- `src/render/three-renderer.js` representa o estado; não decide dano, percepção nem progressão. O renderer antigo permanece no repositório como referência.
+- `src/assets/asset-manager.js` usa os loaders oficiais, cache e fallback. GLB riggado final ainda precisa de assets e validação.
+- `src/game/sector-battle.js` mantém duas batalhas reduzidas da bancada. M01 tem cinco agendas próprias, actores e baixas com IDs persistentes; a encenação continua simplificada.
 
-Atravesse a aldeia, acione o checkpoint, combata três soldados com o apoio do Sargento Hale e alcance o rádio. A morte restaura o jogador no último checkpoint. Este é um protótipo técnico deliberadamente curto, não uma campanha completa.
+O checkpoint guarda JSON de actores, munição, recarga, granadas, missão, sectores, relógio e gerador aleatório. Continuar usa `localStorage` na origem do navegador; saves incompatíveis mostram erro recuperável.
+
+## GitHub Pages
+
+O workflow único `.github/workflows/pages.yml` testa PRs. Após merge, testa e publica `dist` em Pages; o deploy depende da validação. Em Settings → Pages, escolher GitHub Actions como source se ainda não estiver configurado. O prefixo de produção é `/COD-guerra/`; a branch de engine só actualiza o site após merge.
+
+Não há conteúdo extraído de Call of Duty. Assets finais precisam de autoria ou licença documentada em [ASSET_CREDITS.md](ASSET_CREDITS.md).

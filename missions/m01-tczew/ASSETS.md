@@ -2,7 +2,9 @@
 
 Dados: [`assets-m01.json`](assets-m01.json) · Ficha da arma: [`../../research/weapons/kb_wz29.md`](../../research/weapons/kb_wz29.md)
 
-**Estado:** lista de necessidades. **Nenhum asset foi baixado, importado ou verificado nesta sessão.**
+**Estado:** lista de necessidades. As duas pontes e o portal de Lisewo têm modelos originais **provisórios verificados**, com três LODs, colisores e estados de demolição por ID. Ver [relatório das pontes](BRIDGE_ASSET_REPORT.md) e [capturas/visualizador](../../docs/assets/m01-bridges/README.md). M01 continua **PLANEJADA**, sem playtest da missão.
+
+Os candidatos de terceiros continuam pendentes de importação e verificação directa:
 - O Sketchfab respondeu com desafio anti-bot (WAF) e ambientCG e Poly Haven estavam bloqueados.
 - Os candidatos e as licenças abaixo vêm de **resumos de busca** e estão marcados `licenseVerified: false` e `scaleVerified: false`.
 
@@ -36,17 +38,17 @@ Prioridades:
 
 | Asset | Prioridade | Dimensões de referência | Estratégia | Candidatos (licença declarada) | Estado |
 | --- | --- | --- | --- | --- | --- |
-| Ponte ferroviária 1891/1912 | P0 | 1030–1037 m; 6 × 129 m (lenticulares) + 3 × 81,6 m; via dupla; pilares em `map-layout.json` | **Original**, kit modular instanciável com estados de dano das 06:10 e 06:45 | *Railway Bridges Pack 01* (Szakal, CC-BY) — só placeholder, treliça diferente | A PRODUZIR |
-| Ponte rodoviária Lentze 1857/1912 | P0 | 6 × 130,9 m + 3 × 81,6 m; vigas de 8,68 m a 6,43 m entre si; 5 pares de torres de ~23 m, Ø 5,3 m | **Original**: vão Lentze, par de torres, portal oeste de Stüler, antigo portal leste | — (fotos da Skarbnica só como referência) | A PRODUZIR |
+| Ponte ferroviária 1891/1912 | P0 | 1030–1037 m; 6 × 129 m (lenticulares) + 3 × 81,6 m; via dupla; pilares em `map-layout.json` | **Original**, kit modular instanciável com estados de dano das 06:10 e 06:45 | *Railway Bridges Pack 01* (Szakal, CC-BY) — só placeholder, treliça diferente | FINAL A PRODUZIR · [provisório verificado, 3 LODs](BRIDGE_ASSET_REPORT.md) |
+| Ponte rodoviária Lentze 1857/1912 | P0 | 6 × 130,9 m + 3 × 81,6 m; vigas de 8,68 m a 6,43 m entre si; 5 pares de torres de ~23 m, Ø 5,3 m | **Original**: vão Lentze, par de torres, portal oeste de Stüler, antigo portal leste | — (fotos da Skarbnica só como referência) | FINAL A PRODUZIR · [provisório verificado, 3 LODs](BRIDGE_ASSET_REPORT.md) |
 | Estação de 1939 (Stüler) | P1 | Contorno pendente (P4) | **Original**, fachada de média distância com dano | — | depois de P4 |
 | Ju 87 B-1 | P0 | 11,1 × 13,8 × 4,24 m | CC-BY ou original; conferir variante **B** (não D/G) | scorpion81 · manilov.ap · philano · helijah (todos CC-BY); museu @wwIImuseum só como referência | A VERIFICAR |
 | Locomotiva do trem 963 | P1 | Classe desconhecida (P16) | **Original** genérica da época | BR 52 (rejeitada: 1942) · BR 01 (rejeitada: expresso) | depois de P16 |
 | Vagões (65) | P1 | ~9–10 m entre para-choques (a confirmar) | **Original**, 2–3 tipos instanciados com portas de correr | — | A PRODUZIR |
 | Panzerzug 7 | P1 | 2 × 7,5 cm + 2 × 2 cm antiaéreos (T20) | **Original**, silhueta a ~1,1 km | — | depois de P6 |
-| Soldado polonês 1939 (rig) | P0 | 1,65–1,85 m; wz.36 ou anterior, capacete wz.31, *rogatywka* wz.37, patches azul-marinho com vivo verde-claro | **Original** modular (cabeças e peças trocáveis, Prompt §6–8) | *Polish soldier* (buh, CC-BY): verificar época e rig · capacete wz.31 da CGTrader: **rejeitado** (licença de loja) | A PRODUZIR |
-| Soldado alemão 1939 (rig) | P1 | 1,65–1,85 m; M35, M36; Grenzwacht pendente (P7) | Corpo original + capacete CC0/CC-BY | *WW2 headwear* (britdawgmasterfunk, **CC0**) · *Stahlhelm M35* (PL_historyfan_K, CC-BY) · *M35 Stahlhelm* (Cyril Demetrius, CC-BY) | A VERIFICAR |
-| Kar98k (inimigos) | P1 | ~1,11 m, alavanca **dobrada** | CC-BY ou original | Dima_Biliakkk (CC-BY) · The Unknown... (CC-BY) | A VERIFICAR |
-| **kb wz.29 (jogador)** | P0 | 1,10 m; cano 0,60 m; 4,0 kg; alavanca **reta** | **Original** (ViewModel ≤ 12 k triângulos) | TomPL (mod de BF1942, sem licença) — só referência | A PRODUZIR |
+| Soldado polonês 1939 (rig) | P0 | 1,65–1,85 m; wz.36 ou anterior, capacete wz.31, *rogatywka* wz.37, patches azul-marinho com vivo verde-claro | **Original** modular (cabeças e peças trocáveis, Prompt §6–8) | *Polish soldier* (buh, CC-BY): verificar época e rig · capacete wz.31 da CGTrader: **rejeitado** (licença de loja) | FINAL A PRODUZIR · [provisório verificado: 8 cabeças, wz.31/rogatywka, 3 LODs, 15 clips](../../docs/assets/m01-soldiers/README.md) |
+| Soldado alemão 1939 (rig) | P1 | 1,65–1,85 m; M35, M36; Grenzwacht pendente (P7) | Corpo original + capacete CC0/CC-BY | *WW2 headwear* (britdawgmasterfunk, **CC0**) · *Stahlhelm M35* (PL_historyfan_K, CC-BY) · *M35 Stahlhelm* (Cyril Demetrius, CC-BY) | [provisório original verificado](../../docs/assets/m01-soldiers/README.md) (M35 próprio, sem decalques); Grenzwacht pendente (P7) |
+| Kar98k (inimigos) | P1 | ~1,11 m, alavanca **dobrada** | CC-BY ou original | Dima_Biliakkk (CC-BY) · The Unknown... (CC-BY) | [provisório original](../../docs/assets/m01-soldiers/README.md): modelo de mundo de 1,11 m com ferrolho animável |
+| **kb wz.29 (jogador)** | P0 | 1,10 m; cano 0,60 m; 4,0 kg; alavanca **reta** | **Original** (ViewModel ≤ 12 k triângulos) | TomPL (mod de BF1942, sem licença) — só referência | ViewModel A PRODUZIR · [modelo de mundo provisório](../../docs/assets/m01-soldiers/README.md) (1,10 m, alavanca recta, clipe de 5) |
 | rkm wz.28, ckm wz.30, Vis wz.35, granada wz.33 | P1 | A levantar (H30) | **Original** | — | A PRODUZIR |
 | Materiais PBR | P0 | Aço rebitado, tijolo, cantaria, lastro, terra/lama, grama seca, sacos de areia, madeira velha, água | **CC0** (ambientCG, Poly Haven) | Bibliotecas inteiras CC0 (licença declarada pelas plataformas) | A ESCOLHER |
 | Céu / HDRI | P1 | Crepúsculo civil (Sol a −3°, faixa clara a ENE) e manhã | CC0 ou procedural | Poly Haven (CC0) | A ESCOLHER |

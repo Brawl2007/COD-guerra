@@ -1,0 +1,259 @@
+{
+  "verification": "Automated simulation control route; not an uninterrupted browser playthrough",
+  "missionId": "m01_tczew",
+  "activeSeconds": 1033.249999999608,
+  "battleClock": "07:05:00",
+  "health": 92,
+  "completed": true,
+  "consumedEvents": [
+    "evt_m01_intro_card",
+    "evt_m01_prelude_start",
+    "evt_m01_railway_worker_report",
+    "evt_m01_planes_heard",
+    "evt_m01_bombing_0434",
+    "evt_m01_cable_cut",
+    "evt_m01_forward_post_bombed",
+    "evt_m01_nowicki_lost",
+    "evt_m01_wounded_dragged",
+    "evt_m01_second_air_pass",
+    "evt_m01_train963_arrives",
+    "evt_m01_panzerzug_arrives",
+    "evt_m01_repair_complete",
+    "evt_m01_order_demolish",
+    "evt_m01_bombing_0530",
+    "evt_m01_runner_pressure_report",
+    "evt_m01_north_contact_distant",
+    "evt_m01_east_platoon_withdraws",
+    "evt_m01_bak_wounded",
+    "evt_m01_germans_on_east_spans",
+    "evt_m01_east_demolition",
+    "evt_m01_dudek_retrieves_bak",
+    "evt_m01_west_demolition",
+    "evt_m01_roll_call",
+    "evt_m01_kozliny_attack_distant",
+    "evt_m01_debrief"
+  ],
+  "objectives": {
+    "obj_m01_deliver_message": {
+      "state": "done",
+      "progress": 100
+    },
+    "obj_m01_take_cover": {
+      "state": "done",
+      "progress": 100
+    },
+    "obj_m01_follow_sergeant": {
+      "state": "done",
+      "progress": 100
+    },
+    "obj_m01_find_sappers": {
+      "state": "done",
+      "progress": 100
+    },
+    "obj_m01_fetch_material": {
+      "state": "done",
+      "progress": 100
+    },
+    "obj_m01_cover_repair": {
+      "state": "done",
+      "progress": 100
+    },
+    "obj_m01_hold_access": {
+      "state": "done",
+      "progress": 100
+    },
+    "obj_m01_cover_withdrawal": {
+      "state": "done",
+      "progress": 100
+    },
+    "obj_m01_rescue_bak": {
+      "state": "expired",
+      "progress": 0
+    },
+    "obj_m01_leave_bridge": {
+      "state": "done",
+      "progress": 100
+    },
+    "obj_m01_hold_corridor": {
+      "state": "done",
+      "progress": 100
+    },
+    "obj_m01_reach_shelter": {
+      "state": "done",
+      "progress": 100
+    }
+  },
+  "flags": {
+    "m01.completed": true,
+    "m01.nowicki_status": "missing",
+    "m01.bak_status": "rescued_by_dudek",
+    "m01.dudek_status": "wounded_arm",
+    "m01.east_platoon_survivors": 12,
+    "m01.second_raid_state": "ended",
+    "m01.forward_post_state": "intact_near_miss"
+  },
+  "checkpoints": [
+    {
+      "id": "cp_m01_a_orientacao",
+      "activeSeconds": 0.05,
+      "battleClock": "04:30:44",
+      "player": {
+        "x": -66,
+        "y": -3,
+        "z": 22,
+        "health": 100,
+        "carrying": null
+      },
+      "consumedEvents": [
+        "evt_m01_intro_card",
+        "evt_m01_prelude_start"
+      ],
+      "flags": {
+        "m01.completed": false,
+        "m01.nowicki_status": "present",
+        "m01.bak_status": "unhurt",
+        "m01.dudek_status": "unhurt",
+        "m01.east_platoon_survivors": 18,
+        "m01.second_raid_state": "pending",
+        "m01.forward_post_state": "pending"
+      },
+      "casualties": []
+    },
+    {
+      "id": "cp_m01_b_reorganizacao",
+      "activeSeconds": 97.74999999999659,
+      "battleClock": "04:35:45",
+      "player": {
+        "x": -142.67559338116607,
+        "y": -3,
+        "z": 10.968519358772877,
+        "health": 100,
+        "carrying": null
+      },
+      "consumedEvents": [
+        "evt_m01_intro_card",
+        "evt_m01_prelude_start",
+        "evt_m01_railway_worker_report",
+        "evt_m01_planes_heard",
+        "evt_m01_bombing_0434",
+        "evt_m01_cable_cut",
+        "evt_m01_forward_post_bombed",
+        "evt_m01_nowicki_lost",
+        "evt_m01_wounded_dragged"
+      ],
+      "flags": {
+        "m01.completed": false,
+        "m01.nowicki_status": "missing",
+        "m01.bak_status": "unhurt",
+        "m01.dudek_status": "unhurt",
+        "m01.east_platoon_survivors": 18,
+        "m01.second_raid_state": "pending",
+        "m01.forward_post_state": "intact_near_miss"
+      },
+      "casualties": []
+    },
+    {
+      "id": "cp_m01_c_engenheiros",
+      "activeSeconds": 498.7500000000791,
+      "battleClock": "05:34:00",
+      "player": {
+        "x": -18.73891426847697,
+        "y": -0.35000020265579224,
+        "z": 31.99542842034276,
+        "health": 92,
+        "carrying": null
+      },
+      "consumedEvents": [
+        "evt_m01_intro_card",
+        "evt_m01_prelude_start",
+        "evt_m01_railway_worker_report",
+        "evt_m01_planes_heard",
+        "evt_m01_bombing_0434",
+        "evt_m01_cable_cut",
+        "evt_m01_forward_post_bombed",
+        "evt_m01_nowicki_lost",
+        "evt_m01_wounded_dragged",
+        "evt_m01_second_air_pass",
+        "evt_m01_train963_arrives",
+        "evt_m01_panzerzug_arrives",
+        "evt_m01_repair_complete",
+        "evt_m01_order_demolish",
+        "evt_m01_bombing_0530"
+      ],
+      "flags": {
+        "m01.completed": false,
+        "m01.nowicki_status": "missing",
+        "m01.bak_status": "unhurt",
+        "m01.dudek_status": "unhurt",
+        "m01.east_platoon_survivors": 18,
+        "m01.second_raid_state": "ended",
+        "m01.forward_post_state": "intact_near_miss"
+      },
+      "casualties": []
+    },
+    {
+      "id": "cp_m01_d_retirada",
+      "activeSeconds": 779.249999999839,
+      "battleClock": "06:11:09",
+      "player": {
+        "x": -20.001454013746958,
+        "y": -0.35000020265579224,
+        "z": 39.232992953917126,
+        "health": 92,
+        "carrying": null
+      },
+      "consumedEvents": [
+        "evt_m01_intro_card",
+        "evt_m01_prelude_start",
+        "evt_m01_railway_worker_report",
+        "evt_m01_planes_heard",
+        "evt_m01_bombing_0434",
+        "evt_m01_cable_cut",
+        "evt_m01_forward_post_bombed",
+        "evt_m01_nowicki_lost",
+        "evt_m01_wounded_dragged",
+        "evt_m01_second_air_pass",
+        "evt_m01_train963_arrives",
+        "evt_m01_panzerzug_arrives",
+        "evt_m01_repair_complete",
+        "evt_m01_order_demolish",
+        "evt_m01_bombing_0530",
+        "evt_m01_runner_pressure_report",
+        "evt_m01_north_contact_distant",
+        "evt_m01_east_platoon_withdraws",
+        "evt_m01_bak_wounded",
+        "evt_m01_germans_on_east_spans",
+        "evt_m01_east_demolition"
+      ],
+      "flags": {
+        "m01.completed": false,
+        "m01.nowicki_status": "missing",
+        "m01.bak_status": "wounded",
+        "m01.dudek_status": "unhurt",
+        "m01.east_platoon_survivors": 12,
+        "m01.second_raid_state": "ended",
+        "m01.forward_post_state": "intact_near_miss"
+      },
+      "casualties": [
+        "de_spans_0",
+        "de_spans_1",
+        "de_spans_2",
+        "de_spans_3",
+        "pl_east_12",
+        "pl_east_13",
+        "pl_east_14",
+        "pl_east_15",
+        "pl_east_16",
+        "pl_east_17",
+        "pl_east_18",
+        "pl_east_19",
+        "pl_east_20",
+        "pl_east_21",
+        "pl_east_22",
+        "pl_east_23"
+      ]
+    }
+  ],
+  "completionEvents": 1,
+  "recoveries": []
+}

@@ -1,0 +1,1580 @@
+{
+ "adverse": true,
+ "adverseResults": [
+  {
+   "label": "limite leste (x > 401)",
+   "real": 114.5,
+   "restoredTo": [
+    -66,
+    22
+   ],
+   "battle": "04:30:44",
+   "checkpoints": [
+    "cp_m01_a_orientacao"
+   ],
+   "messages": [
+    "Você se afastou da sua secção. Volte em 4 s.",
+    "Você se afastou da sua secção. Volte em 3 s.",
+    "Você se afastou da sua secção. Volte em 2 s.",
+    "Você se afastou da sua secção. Volte em 1 s.",
+    "Você se afastou da sua secção.",
+    "Posto da ponte ferroviária: 74 m, em frente",
+    "Posto da ponte ferroviária: 10 m, atrás de si",
+    "Posto da ponte ferroviária: 100 m, atrás de si",
+    "Posto da ponte ferroviária: 190 m, atrás de si",
+    "Você está demasiado longe. Volte à sua secção, para oeste.",
+    "Posto da ponte ferroviária: 281 m, atrás de si",
+    "Posto da ponte ferroviária: 351 m, atrás de si",
+    "Você se afastou da sua secção. Volte em 8 s.",
+    "Você se afastou da sua secção. Volte em 7 s.",
+    "Você se afastou da sua secção. Volte em 6 s.",
+    "Você se afastou da sua secção. Volte em 5 s."
+   ]
+  },
+  {
+   "label": "Vístula (margem a x ≈ 25)",
+   "real": 27,
+   "restoredTo": [
+    -66,
+    22
+   ],
+   "battle": "04:30:44",
+   "checkpoints": [
+    "cp_m01_a_orientacao"
+   ],
+   "messages": [
+    "Você caiu no Vístula.",
+    "Posto da ponte ferroviária: 78 m, em frente"
+   ]
+  },
+  {
+   "label": "parado 2 min em \"Siga a voz do sargento\"",
+   "battleFrom": "04:34:06",
+   "battleTo": "04:40:45",
+   "objective": "Siga a voz do sargento",
+   "messages": [
+    "Zieliński chama-o da trincheira, a oeste."
+   ]
+  },
+  {
+   "label": "munição da secção (Kowal)",
+   "hint": "Pouca munição. Kowal tem carregadores: 46 m, em frente",
+   "reserveBefore": 10,
+   "reserveAfter": 40,
+   "received": 30
+  }
+ ],
+ "verification": "Partida contínua de M01 numa única sessão Chromium (piloto automático com input do navegador); não é playtest humano.",
+ "startedAt": "2026-10-01T05:47:56.457Z",
+ "viewport": [
+  1280,
+  720
+ ],
+ "timeline": [
+  {
+   "real": 4.9,
+   "game": 1.6,
+   "battle": "04:30:02",
+   "objective": "04:30 · Tczew, Polónia",
+   "pos": [
+    -66,
+    22
+   ]
+  },
+  {
+   "real": 47.9,
+   "game": 44,
+   "battle": "04:30:44",
+   "objective": "Leve a mensagem e o café ao posto da ponte",
+   "pos": [
+    -66,
+    22
+   ]
+  },
+  {
+   "real": 162.3,
+   "game": 44,
+   "battle": "04:30:44",
+   "objective": "04:30 · Tczew, Polónia",
+   "pos": [
+    -66,
+    22
+   ]
+  },
+  {
+   "real": 163.5,
+   "game": 45,
+   "battle": "04:30:45",
+   "objective": "Leve a mensagem e o café ao posto da ponte",
+   "pos": [
+    -66,
+    22
+   ]
+  },
+  {
+   "real": 211.9,
+   "game": 64,
+   "battle": "04:33:10",
+   "objective": "Mantenha contacto com a secção",
+   "pos": [
+    16,
+    2
+   ]
+  },
+  {
+   "real": 265.2,
+   "game": 113.9,
+   "battle": "04:34:00",
+   "objective": "Siga a voz do sargento",
+   "pos": [
+    16,
+    2
+   ]
+  },
+  {
+   "real": 415.6,
+   "game": 257.9,
+   "battle": "04:42:24",
+   "objective": "Encontre os sapadores no aterro",
+   "pos": [
+    -143.1,
+    11
+   ]
+  },
+  {
+   "real": 433.5,
+   "game": 275.3,
+   "battle": "04:43:25",
+   "objective": "Traga o material dos sapadores do barracão ferroviário",
+   "pos": [
+    -45.5,
+    11
+   ]
+  },
+  {
+   "real": 529.9,
+   "game": 371.2,
+   "battle": "04:55:18",
+   "objective": "Proteja o reparo da linha",
+   "pos": [
+    -123.6,
+    8
+   ]
+  },
+  {
+   "real": 605.4,
+   "game": 446.2,
+   "battle": "05:06:36",
+   "objective": "Mantenha contacto com a secção",
+   "pos": [
+    -80.8,
+    23.9
+   ]
+  },
+  {
+   "real": 658.8,
+   "game": 498.3,
+   "battle": "05:30:01",
+   "objective": "Mantenha a cabeça de ponte — mude de cobertura quando mandarem",
+   "pos": [
+    -28.4,
+    28
+   ]
+  },
+  {
+   "real": 894.9,
+   "game": 723.6,
+   "battle": "06:00:03",
+   "objective": "Cubra a retirada do pelotão leste",
+   "pos": [
+    29.8,
+    40
+   ]
+  },
+  {
+   "real": 927.3,
+   "game": 753.2,
+   "battle": "06:04:00",
+   "objective": "Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista",
+   "pos": [
+    29.8,
+    40
+   ]
+  },
+  {
+   "real": 958.3,
+   "game": 783,
+   "battle": "06:07:58",
+   "objective": "Cubra a retirada do pelotão leste",
+   "pos": [
+    -9.8,
+    45.1
+   ]
+  },
+  {
+   "real": 977.7,
+   "game": 800.7,
+   "battle": "06:10:01",
+   "objective": "Saia da ponte! Para o posto de disparo",
+   "pos": [
+    -5.6,
+    40.6
+   ]
+  },
+  {
+   "real": 1033,
+   "game": 855.5,
+   "battle": "06:17:47",
+   "objective": "Mantenha o corredor — conte os que passam",
+   "pos": [
+    -279.4,
+    26.7
+   ]
+  },
+  {
+   "real": 1227.4,
+   "game": 1047.7,
+   "battle": "06:45:00",
+   "objective": "Vá para o abrigo",
+   "pos": [
+    -291.3,
+    26
+   ]
+  },
+  {
+   "real": 1247,
+   "game": 1067.2,
+   "battle": "07:05:00",
+   "objective": "07:05 · Chamada no abrigo",
+   "pos": [
+    -260.5,
+    68.2
+   ]
+  },
+  {
+   "real": 1307.2,
+   "game": 1127.1,
+   "battle": "07:05:00",
+   "objective": "Mantenha contacto com a secção",
+   "pos": [
+    -260.5,
+    68.2
+   ]
+  }
+ ],
+ "blockers": [
+  {
+   "real": 72.6,
+   "battle": "04:31:07",
+   "at": [
+    17.12,
+    1.68
+   ],
+   "to": [
+    380,
+    1
+   ],
+   "label": "limite leste (x > 401)",
+   "objective": "Leve a mensagem e o café ao posto da ponte"
+  },
+  {
+   "real": 79.6,
+   "battle": "04:31:14",
+   "at": [
+    17.18,
+    4.47
+   ],
+   "to": [
+    380,
+    1
+   ],
+   "label": "limite leste (x > 401)",
+   "objective": "Leve a mensagem e o café ao posto da ponte"
+  }
+ ],
+ "waits": [
+  {
+   "label": "intro",
+   "real": 42.4,
+   "game": 41.4,
+   "battleFrom": "04:30:03",
+   "battleTo": "04:30:44"
+  },
+  {
+   "label": "bombardeamento e abrigo",
+   "real": 52.7,
+   "game": 48.6,
+   "battleFrom": "04:33:11",
+   "battleTo": "04:34:00"
+  },
+  {
+   "label": "reparo e ordem de demolição",
+   "real": 33.7,
+   "game": 32.2,
+   "battleFrom": "05:15:34",
+   "battleTo": "05:30:01"
+  },
+  {
+   "label": "retirada do pelotão leste",
+   "real": 193.4,
+   "game": 183.3,
+   "battleFrom": "05:35:36",
+   "battleTo": "06:00:03"
+  },
+  {
+   "label": "Bąk ferido",
+   "real": 31.7,
+   "game": 28.4,
+   "battleFrom": "06:00:13",
+   "battleTo": "06:04:00"
+  },
+  {
+   "label": "demolição leste",
+   "real": 17.8,
+   "game": 15.6,
+   "battleFrom": "06:08:16",
+   "battleTo": "06:10:01"
+  },
+  {
+   "label": "demolição oeste",
+   "real": 192.5,
+   "game": 189.8,
+   "battleFrom": "06:18:07",
+   "battleTo": "06:45:00"
+  },
+  {
+   "label": "chamada",
+   "real": 0.3,
+   "game": 0.2,
+   "battleFrom": "07:05:00",
+   "battleTo": "07:05:00"
+  },
+  {
+   "label": "outro até ao debrief",
+   "real": 49.2,
+   "game": 48.4,
+   "battleFrom": "07:05:00",
+   "battleTo": "07:05:00"
+  }
+ ],
+ "pauses": [],
+ "deaths": [
+  {
+   "real": 162.9,
+   "battle": "04:30:44",
+   "restoredTo": 44
+  },
+  {
+   "real": 190.5,
+   "battle": "04:30:44",
+   "restoredTo": 44
+  }
+ ],
+ "subtitles": [
+  {
+   "real": 16.5,
+   "battle": "04:30:13",
+   "text": "Szymon Kowal: Café de verdade hoje. Mau sinal."
+  },
+  {
+   "real": 21.6,
+   "battle": "04:30:18",
+   "text": "Marek Zieliński: Se um trem de Szymankowo vier fora de hora, quero saber antes do maquinista."
+  },
+  {
+   "real": 26.8,
+   "battle": "04:30:23",
+   "text": "Paweł Krawiec: Os meus rapazes conferiram tudo duas vezes. Só não quero ninguém tropeçando no que é nosso."
+  },
+  {
+   "real": 31.9,
+   "battle": "04:30:28",
+   "text": "Józef Bąk: Dudek, se eu desmaiar, você me carrega?"
+  },
+  {
+   "real": 34.7,
+   "battle": "04:30:31",
+   "text": "Leon Dudek: Carrego. Depois cobro."
+  },
+  {
+   "real": 39,
+   "battle": "04:30:35",
+   "text": "Marek Zieliński: Wrona. Leve isto ao posto da ponte. E o café, antes que esfrie."
+  },
+  {
+   "real": 43.9,
+   "battle": "04:30:40",
+   "text": "Marek Zieliński: Confira o homem do posto. Ele está sozinho."
+  },
+  {
+   "real": 64.5,
+   "battle": "04:31:00",
+   "text": "Marek Zieliński: O posto da ponte levou uma bomba. Depois. Agora, os sapadores."
+  },
+  {
+   "real": 212.6,
+   "battle": "04:33:10",
+   "text": "Jan Wrona: O sargento mandou isto. E o café."
+  },
+  {
+   "real": 214.8,
+   "battle": "04:33:13",
+   "text": "Tadeusz Nowicki: Na caneca amassada. Então ainda gostam de mim."
+  },
+  {
+   "real": 217.9,
+   "battle": "04:33:15",
+   "text": "Tadeusz Nowicki: \"Atenção redobrada a leste.\" Como se desse para olhar para outro lado."
+  },
+  {
+   "real": 221.2,
+   "battle": "04:33:18",
+   "text": "Tadeusz Nowicki: Ouve isso? Não é trem."
+  },
+  {
+   "real": 223.7,
+   "battle": "04:33:21",
+   "text": "Tadeusz Nowicki: Aviões! A leste, contra a claridade!"
+  },
+  {
+   "real": 226.3,
+   "battle": "04:33:23",
+   "text": "Tadeusz Nowicki: Vou avisar os sapadores! Fique no chão!"
+  },
+  {
+   "real": 267.6,
+   "battle": "04:34:07",
+   "text": "Marek Zieliński: Para o chão! Todo mundo no chão!"
+  },
+  {
+   "real": 276.1,
+   "battle": "04:34:35",
+   "text": "Soldado: O aterro! Acertaram o aterro!"
+  },
+  {
+   "real": 279.2,
+   "battle": "04:34:45",
+   "text": "Marek Zieliński: Wrona! Para a trincheira! Siga a minha voz!"
+  },
+  {
+   "real": 292.3,
+   "battle": "04:35:30",
+   "text": "Leon Dudek: Segura a perna dele! Segura, eu disse!"
+  },
+  {
+   "real": 416,
+   "battle": "04:42:24",
+   "text": "Marek Zieliński: Wrona, com o Kowal. Achem o Krawiec no aterro."
+  },
+  {
+   "real": 434.1,
+   "battle": "04:43:25",
+   "text": "Paweł Krawiec: Cortaram a linha em dois lugares. Eu sei onde. Não sei é se vão me deixar trabalhar."
+  },
+  {
+   "real": 437,
+   "battle": "04:43:37",
+   "text": "Paweł Krawiec: Wrona! A caixa no barracão ferroviário, a da faixa branca. Corre!"
+  },
+  {
+   "real": 460.6,
+   "battle": "04:45:00",
+   "text": "Stanisław „Staszek” Pawlak: Trem na cabeça de ponte leste! Os portões estão fechados — estão atirando!"
+  },
+  {
+   "real": 463.8,
+   "battle": "04:45:28",
+   "text": "Marek Zieliński: Wrona, alça em mil. Mire nos clarões, não na fumaça."
+  },
+  {
+   "real": 507.8,
+   "battle": "04:52:00",
+   "text": "Szymon Kowal: Trem blindado! Na outra via, atrás dos vagões!"
+  },
+  {
+   "real": 530.5,
+   "battle": "04:55:18",
+   "text": "Paweł Krawiec: Isso. Agora vire para o rio e não olhe para mim."
+  },
+  {
+   "real": 532.6,
+   "battle": "04:55:42",
+   "text": "Paweł Krawiec: Precisamos de espaço para trabalhar!"
+  },
+  {
+   "real": 605.4,
+   "battle": "05:06:32",
+   "text": "Paweł Krawiec: Linha inteira. Avisem o oficial: está pronta."
+  },
+  {
+   "real": 607.9,
+   "battle": "05:07:43",
+   "text": "Marek Zieliński: Pawlak, vai."
+  },
+  {
+   "real": 660.2,
+   "battle": "05:30:12",
+   "text": "Stanisław „Staszek” Pawlak: Ordem do comandante do batalhão: destruir as pontes. O pelotão do outro lado recua primeiro."
+  },
+  {
+   "real": 665.2,
+   "battle": "05:30:52",
+   "text": "Marek Zieliński: Ouviram. Quando os sapadores disserem, ninguém fica na ponte."
+  },
+  {
+   "real": 737.3,
+   "battle": "05:40:01",
+   "text": "Stanisław „Staszek” Pawlak: Do outro lado dizem que não aguentam muito. Perderam uma metralhadora."
+  },
+  {
+   "real": 895.8,
+   "battle": "06:00:03",
+   "text": "Marek Zieliński: Aí vêm os nossos. Fogo em quem vem atrás deles. Nos nossos, não!"
+  },
+  {
+   "real": 928.4,
+   "battle": "06:04:00",
+   "text": "Józef Bąk: Estou bem… Não. Não estou."
+  },
+  {
+   "real": 930.7,
+   "battle": "06:04:22",
+   "text": "Marek Zieliński: Wrona! Traga o Bąk até o Dudek. Eu cubro!"
+  },
+  {
+   "real": 978.5,
+   "battle": "06:10:01",
+   "text": "Marek Zieliński: Cabeças baixas! Lá do outro lado!"
+  },
+  {
+   "real": 987,
+   "battle": "06:11:16",
+   "text": "Szymon Kowal: …Lá se foi o outro lado."
+  },
+  {
+   "real": 989.2,
+   "battle": "06:11:34",
+   "text": "Marek Zieliński: Todos fora da ponte! Para o posto de disparo, agora!"
+  },
+  {
+   "real": 1033.4,
+   "battle": "06:17:47",
+   "text": "Marek Zieliński: Wrona, conte os nossos. Não conte os tiros."
+  },
+  {
+   "real": 1035.7,
+   "battle": "06:18:09",
+   "text": "Jan Wrona: doze. São doze do pelotão leste."
+  },
+  {
+   "real": 1163.4,
+   "battle": "06:36:02",
+   "text": "Paweł Krawiec: Última chamada! Quem estiver no encontro, sai agora!"
+  },
+  {
+   "real": 1181.2,
+   "battle": "06:38:31",
+   "text": "Marek Zieliński: Boca aberta, cabeça baixa."
+  },
+  {
+   "real": 1238.4,
+   "battle": "06:45:11",
+   "text": "Franciszek Lipski: Meu avô atravessava por ela para ir à feira."
+  },
+  {
+   "real": 1258.7,
+   "battle": "07:05:00",
+   "text": "Szymon Kowal: Presente."
+  },
+  {
+   "real": 1260.5,
+   "battle": "07:05:00",
+   "text": "Marek Zieliński: Bąk."
+  },
+  {
+   "real": 1263,
+   "battle": "07:05:00",
+   "text": "Leon Dudek: Bąk está no posto de socorro. Vivo. Diz que agora a dívida é com o Wrona, não comigo."
+  },
+  {
+   "real": 1266.9,
+   "battle": "07:05:00",
+   "text": "Marek Zieliński: Dudek."
+  },
+  {
+   "real": 1269.2,
+   "battle": "07:05:00",
+   "text": "Leon Dudek: Presente."
+  },
+  {
+   "real": 1271.7,
+   "battle": "07:05:00",
+   "text": "Marek Zieliński: Wrona."
+  },
+  {
+   "real": 1274.3,
+   "battle": "07:05:00",
+   "text": "Jan Wrona: Presente."
+  },
+  {
+   "real": 1276.8,
+   "battle": "07:05:00",
+   "text": "Marek Zieliński: Nowicki."
+  },
+  {
+   "real": 1288,
+   "battle": "07:05:00",
+   "text": "Marek Zieliński: Continuamos."
+  },
+  {
+   "real": 1297,
+   "battle": "07:05:00",
+   "text": "Szymon Kowal: Agora é no norte."
+  },
+  {
+   "real": 1301,
+   "battle": "07:05:00",
+   "text": "Marek Zieliński: O norte é de quem está lá. Bebam água. Durmam se conseguirem."
+  }
+ ],
+ "messages": [
+  {
+   "real": 48.4,
+   "battle": "04:30:44",
+   "text": "CP-A · progresso guardado"
+  },
+  {
+   "real": 52,
+   "battle": "04:30:48",
+   "text": "Posto da ponte ferroviária: 74 m, em frente"
+  },
+  {
+   "real": 84.1,
+   "battle": "04:31:18",
+   "text": "Posto da ponte ferroviária: 10 m, atrás de si"
+  },
+  {
+   "real": 100.1,
+   "battle": "04:31:33",
+   "text": "Posto da ponte ferroviária: 100 m, atrás de si"
+  },
+  {
+   "real": 116.6,
+   "battle": "04:31:48",
+   "text": "Posto da ponte ferroviária: 190 m, atrás de si"
+  },
+  {
+   "real": 127.6,
+   "battle": "04:31:58",
+   "text": "Você está demasiado longe. Volte à sua secção, para oeste."
+  },
+  {
+   "real": 132.6,
+   "battle": "04:32:03",
+   "text": "Posto da ponte ferroviária: 281 m, atrás de si"
+  },
+  {
+   "real": 148.4,
+   "battle": "04:32:18",
+   "text": "Posto da ponte ferroviária: 351 m, atrás de si"
+  },
+  {
+   "real": 154,
+   "battle": "04:32:24",
+   "text": "Você se afastou da sua secção. Volte em 8 s."
+  },
+  {
+   "real": 155.1,
+   "battle": "04:32:25",
+   "text": "Você se afastou da sua secção. Volte em 7 s."
+  },
+  {
+   "real": 156.2,
+   "battle": "04:32:26",
+   "text": "Você se afastou da sua secção. Volte em 6 s."
+  },
+  {
+   "real": 157.1,
+   "battle": "04:32:27",
+   "text": "Você se afastou da sua secção. Volte em 5 s."
+  },
+  {
+   "real": 158.2,
+   "battle": "04:32:28",
+   "text": "Você se afastou da sua secção. Volte em 4 s."
+  },
+  {
+   "real": 159.2,
+   "battle": "04:32:29",
+   "text": "Você se afastou da sua secção. Volte em 3 s."
+  },
+  {
+   "real": 160.3,
+   "battle": "04:32:30",
+   "text": "Você se afastou da sua secção. Volte em 2 s."
+  },
+  {
+   "real": 161.3,
+   "battle": "04:32:31",
+   "text": "Você se afastou da sua secção. Volte em 1 s."
+  },
+  {
+   "real": 162.9,
+   "battle": "04:30:44",
+   "text": "Você se afastou da sua secção."
+  },
+  {
+   "real": 166.6,
+   "battle": "04:30:48",
+   "text": "Posto da ponte ferroviária: 78 m, em frente"
+  },
+  {
+   "real": 190.5,
+   "battle": "04:30:44",
+   "text": "Você caiu no Vístula."
+  },
+  {
+   "real": 194.7,
+   "battle": "04:30:48",
+   "text": "Posto da ponte ferroviária: 75 m, em frente"
+  },
+  {
+   "real": 266.2,
+   "battle": "04:34:00",
+   "text": "Zieliński chama-o da trincheira, a oeste."
+  },
+  {
+   "real": 416,
+   "battle": "04:42:24",
+   "text": "CP-B · progresso guardado"
+  },
+  {
+   "real": 419.7,
+   "battle": "04:42:38",
+   "text": "Sapadores no aterro: 87 m, em frente"
+  },
+  {
+   "real": 437.5,
+   "battle": "04:43:39",
+   "text": "Barracão ferroviário, porta oeste: 204 m, em frente"
+  },
+  {
+   "real": 476.9,
+   "battle": "04:47:26",
+   "text": "Material recolhido. Leve a caixa aos sapadores."
+  },
+  {
+   "real": 480.7,
+   "battle": "04:48:01",
+   "text": "Sapadores no segundo corte da linha: 153 m, à sua direita"
+  },
+  {
+   "real": 595.3,
+   "battle": "05:05:02",
+   "text": "Pouca munição. Kowal tem carregadores: 46 m, em frente"
+  },
+  {
+   "real": 603.8,
+   "battle": "05:06:18",
+   "text": "Kowal passa-lhe 3 carregadores (+15)."
+  },
+  {
+   "real": 626,
+   "battle": "05:15:39",
+   "text": "Alça: 500 m"
+  },
+  {
+   "real": 689.2,
+   "battle": "05:34:01",
+   "text": "CP-C · progresso guardado"
+  },
+  {
+   "real": 934.8,
+   "battle": "06:04:54",
+   "text": "Bąk está consigo. Leve-o ao socorrista."
+  },
+  {
+   "real": 938.7,
+   "battle": "06:05:25",
+   "text": "Socorrista Dudek: 53 m, em frente"
+  },
+  {
+   "real": 958.8,
+   "battle": "06:07:58",
+   "text": "Bąk entregue ao socorrista."
+  },
+  {
+   "real": 989.7,
+   "battle": "06:11:39",
+   "text": "CP-D · progresso guardado"
+  }
+ ],
+ "shots": 53,
+ "screenshots": [
+  {
+   "file": "01-menu.png",
+   "note": "Menu com Tczew seleccionado",
+   "real": 2.7,
+   "battle": "04:30:00",
+   "pos": [
+    -66,
+    22
+   ],
+   "angle": 0,
+   "objective": "04:30 · Tczew, Polónia"
+  },
+  {
+   "file": "02-obj-1.png",
+   "note": "Ao aparecer: 04:30 · Tczew, Polónia",
+   "real": 5.4,
+   "battle": "04:30:02",
+   "pos": [
+    -66,
+    22
+   ],
+   "angle": 0,
+   "objective": "04:30 · Tczew, Polónia"
+  },
+  {
+   "file": "03-intro.png",
+   "note": "Intro (cartela 04:30)",
+   "real": 6,
+   "battle": "04:30:03",
+   "pos": [
+    -66,
+    22
+   ],
+   "angle": 0,
+   "objective": "04:30 · Tczew, Polónia"
+  },
+  {
+   "file": "04-obj-2.png",
+   "note": "Ao aparecer: Leve a mensagem e o café ao posto da ponte",
+   "real": 48.4,
+   "battle": "04:30:45",
+   "pos": [
+    -66,
+    22
+   ],
+   "angle": 0,
+   "objective": "Leve a mensagem e o café ao posto da ponte"
+  },
+  {
+   "file": "05-blocked-1.png",
+   "note": "Bloqueado a caminho de limite leste (x > 401)",
+   "real": 73.4,
+   "battle": "04:31:08",
+   "pos": [
+    17.1,
+    1.7
+   ],
+   "angle": 0,
+   "objective": "Leve a mensagem e o café ao posto da ponte"
+  },
+  {
+   "file": "06-blocked-2.png",
+   "note": "Bloqueado a caminho de limite leste (x > 401)",
+   "real": 80.3,
+   "battle": "04:31:15",
+   "pos": [
+    17.2,
+    4.5
+   ],
+   "angle": 0,
+   "objective": "Leve a mensagem e o café ao posto da ponte"
+  },
+  {
+   "file": "07-obj-3.png",
+   "note": "Ao aparecer: 04:30 · Tczew, Polónia",
+   "real": 162.9,
+   "battle": "04:30:44",
+   "pos": [
+    -66,
+    22
+   ],
+   "angle": 0,
+   "objective": "Leve a mensagem e o café ao posto da ponte"
+  },
+  {
+   "file": "08-adverse-1.png",
+   "note": "limite leste (x > 401): depois de restaurar",
+   "real": 163.5,
+   "battle": "04:30:45",
+   "pos": [
+    -66,
+    22
+   ],
+   "angle": 0,
+   "objective": "Leve a mensagem e o café ao posto da ponte"
+  },
+  {
+   "file": "09-obj-4.png",
+   "note": "Ao aparecer: Leve a mensagem e o café ao posto da ponte",
+   "real": 164,
+   "battle": "04:30:46",
+   "pos": [
+    -66,
+    22
+   ],
+   "angle": 0,
+   "objective": "Leve a mensagem e o café ao posto da ponte"
+  },
+  {
+   "file": "10-adverse-2.png",
+   "note": "Vístula (margem a x ≈ 25): depois de restaurar",
+   "real": 191.2,
+   "battle": "04:30:45",
+   "pos": [
+    -66,
+    22
+   ],
+   "angle": 0,
+   "objective": "Leve a mensagem e o café ao posto da ponte"
+  },
+  {
+   "file": "11-obj-5.png",
+   "note": "Ao aparecer: Mantenha contacto com a secção",
+   "real": 212.6,
+   "battle": "04:33:11",
+   "pos": [
+    16,
+    2
+   ],
+   "angle": -6.32,
+   "objective": "Mantenha contacto com a secção"
+  },
+  {
+   "file": "12-delivered.png",
+   "note": "Entrega ao posto da ponte",
+   "real": 213.5,
+   "battle": "04:33:11",
+   "pos": [
+    16,
+    2
+   ],
+   "angle": -6.32,
+   "objective": "Mantenha contacto com a secção"
+  },
+  {
+   "file": "13-obj-6.png",
+   "note": "Ao aparecer: Siga a voz do sargento",
+   "real": 266.2,
+   "battle": "04:34:03",
+   "pos": [
+    16,
+    2
+   ],
+   "angle": -6.32,
+   "objective": "Siga a voz do sargento"
+  },
+  {
+   "file": "14-bombing.png",
+   "note": "Depois do bombardeamento das 04:34",
+   "real": 267,
+   "battle": "04:34:06",
+   "pos": [
+    16,
+    2
+   ],
+   "angle": -6.32,
+   "objective": "Siga a voz do sargento"
+  },
+  {
+   "file": "15-obj-7.png",
+   "note": "Ao aparecer: Encontre os sapadores no aterro",
+   "real": 416,
+   "battle": "04:42:25",
+   "pos": [
+    -144.9,
+    11
+   ],
+   "angle": -9.41,
+   "objective": "Encontre os sapadores no aterro"
+  },
+  {
+   "file": "16-obj-8.png",
+   "note": "Ao aparecer: Traga o material dos sapadores do barracão ferroviário",
+   "real": 434.1,
+   "battle": "04:43:27",
+   "pos": [
+    -41.9,
+    11.2
+   ],
+   "angle": -6.24,
+   "objective": "Traga o material dos sapadores do barracão ferroviário"
+  },
+  {
+   "file": "17-sappers-site2.png",
+   "note": "Sapadores no segundo corte (ponto de entrega)",
+   "real": 524.5,
+   "battle": "04:54:30",
+   "pos": [
+    -140.8,
+    8
+   ],
+   "angle": -6.27,
+   "objective": "Traga o material dos sapadores do barracão ferroviário"
+  },
+  {
+   "file": "18-obj-9.png",
+   "note": "Ao aparecer: Proteja o reparo da linha",
+   "real": 530.5,
+   "battle": "04:55:24",
+   "pos": [
+    -123.6,
+    8
+   ],
+   "angle": -6.29,
+   "objective": "Proteja o reparo da linha"
+  },
+  {
+   "file": "19-repair.png",
+   "note": "Reparo da linha a decorrer",
+   "real": 531.1,
+   "battle": "04:55:29",
+   "pos": [
+    -123.6,
+    8
+   ],
+   "angle": -6.29,
+   "objective": "Proteja o reparo da linha"
+  },
+  {
+   "file": "20-kowal-ammo.png",
+   "note": "Kowal passa carregadores",
+   "real": 605.2,
+   "battle": "05:06:31",
+   "pos": [
+    -80,
+    23.8
+   ],
+   "angle": -5.94,
+   "objective": "Proteja o reparo da linha"
+  },
+  {
+   "file": "21-obj-10.png",
+   "note": "Ao aparecer: Mantenha contacto com a secção",
+   "real": 605.9,
+   "battle": "05:06:46",
+   "pos": [
+    -83.1,
+    24.1
+   ],
+   "angle": -3.23,
+   "objective": "Mantenha contacto com a secção"
+  },
+  {
+   "file": "22-obj-11.png",
+   "note": "Ao aparecer: Mantenha a cabeça de ponte — mude de cobertura quando mandarem",
+   "real": 659.4,
+   "battle": "05:30:06",
+   "pos": [
+    -28.4,
+    28
+   ],
+   "angle": -6.28,
+   "objective": "Mantenha a cabeça de ponte — mude de cobertura quando mandarem"
+  },
+  {
+   "file": "23-hold-access.png",
+   "note": "Na ponte rodoviária, a manter o acesso",
+   "real": 702.4,
+   "battle": "05:35:36",
+   "pos": [
+    29.8,
+    40
+   ],
+   "angle": -6.25,
+   "objective": "Mantenha a cabeça de ponte — mude de cobertura quando mandarem"
+  },
+  {
+   "file": "24-obj-12.png",
+   "note": "Ao aparecer: Cubra a retirada do pelotão leste",
+   "real": 895.8,
+   "battle": "06:00:09",
+   "pos": [
+    29.8,
+    40
+   ],
+   "angle": -6.28,
+   "objective": "Cubra a retirada do pelotão leste"
+  },
+  {
+   "file": "25-withdrawal.png",
+   "note": "Pelotão leste em retirada",
+   "real": 896.7,
+   "battle": "06:00:13",
+   "pos": [
+    29.8,
+    40
+   ],
+   "angle": -6.28,
+   "objective": "Cubra a retirada do pelotão leste"
+  },
+  {
+   "file": "26-withdrawal-1.png",
+   "note": "Bąk ferido: vista para leste",
+   "real": 909.6,
+   "battle": "06:01:51",
+   "pos": [
+    29.8,
+    40
+   ],
+   "angle": -6.28,
+   "objective": "Cubra a retirada do pelotão leste"
+  },
+  {
+   "file": "27-withdrawal-2.png",
+   "note": "Bąk ferido: vista para leste",
+   "real": 922,
+   "battle": "06:03:18",
+   "pos": [
+    29.8,
+    40
+   ],
+   "angle": -6.28,
+   "objective": "Cubra a retirada do pelotão leste"
+  },
+  {
+   "file": "28-obj-13.png",
+   "note": "Ao aparecer: Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista",
+   "real": 928.4,
+   "battle": "06:04:07",
+   "pos": [
+    29.8,
+    40
+   ],
+   "angle": -6.28,
+   "objective": "Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista"
+  },
+  {
+   "file": "29-bak-wounded.png",
+   "note": "Bąk ferido na ponte rodoviária",
+   "real": 929.4,
+   "battle": "06:04:12",
+   "pos": [
+    29.8,
+    40
+   ],
+   "angle": -6.28,
+   "objective": "Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista"
+  },
+  {
+   "file": "30-bak-found.png",
+   "note": "Junto de Bąk: aviso \"levar Bąk\"",
+   "real": 934.6,
+   "battle": "06:04:52",
+   "pos": [
+    54.4,
+    40.1
+   ],
+   "angle": -6.21,
+   "objective": "Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista"
+  },
+  {
+   "file": "31-bak-carry-deck.png",
+   "note": "Bąk ao ombro, no tabuleiro",
+   "real": 943.8,
+   "battle": "06:06:02",
+   "pos": [
+    30.9,
+    40
+   ],
+   "angle": -3.14,
+   "objective": "Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista"
+  },
+  {
+   "file": "32-bak-carry.png",
+   "note": "A levar Bąk ao socorrista",
+   "real": 958.1,
+   "battle": "06:07:56",
+   "pos": [
+    -9.8,
+    45.1
+   ],
+   "angle": -4.52,
+   "objective": "Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista"
+  },
+  {
+   "file": "33-obj-14.png",
+   "note": "Ao aparecer: Cubra a retirada do pelotão leste",
+   "real": 958.8,
+   "battle": "06:08:02",
+   "pos": [
+    -9.8,
+    45.1
+   ],
+   "angle": -4.52,
+   "objective": "Cubra a retirada do pelotão leste"
+  },
+  {
+   "file": "34-bak-delivered.png",
+   "note": "Bąk entregue ao socorrista",
+   "real": 959.3,
+   "battle": "06:08:06",
+   "pos": [
+    -9.8,
+    45.1
+   ],
+   "angle": -4.52,
+   "objective": "Cubra a retirada do pelotão leste"
+  },
+  {
+   "file": "35-obj-15.png",
+   "note": "Ao aparecer: Saia da ponte! Para o posto de disparo",
+   "real": 978.5,
+   "battle": "06:10:09",
+   "pos": [
+    -5.6,
+    40.6
+   ],
+   "angle": -6.28,
+   "objective": "Saia da ponte! Para o posto de disparo"
+  },
+  {
+   "file": "36-east-demolition.png",
+   "note": "Demolição leste das 06:10: clarão",
+   "real": 980.2,
+   "battle": "06:10:21",
+   "pos": [
+    -5.6,
+    40.6
+   ],
+   "angle": -6.28,
+   "objective": "Saia da ponte! Para o posto de disparo"
+  },
+  {
+   "file": "37-east-demolition-6s.png",
+   "note": "Demolição leste, coluna de poeira 6 s depois",
+   "real": 987,
+   "battle": "06:11:16",
+   "pos": [
+    -5.6,
+    40.6
+   ],
+   "angle": -6.28,
+   "objective": "Saia da ponte! Para o posto de disparo"
+  },
+  {
+   "file": "38-obj-16.png",
+   "note": "Ao aparecer: Mantenha o corredor — conte os que passam",
+   "real": 1033.4,
+   "battle": "06:17:50",
+   "pos": [
+    -281.7,
+    26.6
+   ],
+   "angle": -9.37,
+   "objective": "Mantenha o corredor — conte os que passam"
+  },
+  {
+   "file": "39-firing-point.png",
+   "note": "No posto de disparo; corredor",
+   "real": 1035.4,
+   "battle": "06:18:07",
+   "pos": [
+    -291.3,
+    26
+   ],
+   "angle": -9.37,
+   "objective": "Mantenha o corredor — conte os que passam"
+  },
+  {
+   "file": "40-corridor-1.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 1056.1,
+   "battle": "06:20:59",
+   "pos": [
+    -291.3,
+    26
+   ],
+   "angle": -12.48,
+   "objective": "Mantenha o corredor — conte os que passam"
+  },
+  {
+   "file": "41-corridor-2.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 1076.3,
+   "battle": "06:23:49",
+   "pos": [
+    -291.3,
+    26
+   ],
+   "angle": -12.48,
+   "objective": "Mantenha o corredor — conte os que passam"
+  },
+  {
+   "file": "42-corridor-3.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 1096.5,
+   "battle": "06:26:36",
+   "pos": [
+    -291.3,
+    26
+   ],
+   "angle": -12.48,
+   "objective": "Mantenha o corredor — conte os que passam"
+  },
+  {
+   "file": "43-corridor-4.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 1116.7,
+   "battle": "06:29:28",
+   "pos": [
+    -291.3,
+    26
+   ],
+   "angle": -12.48,
+   "objective": "Mantenha o corredor — conte os que passam"
+  },
+  {
+   "file": "44-corridor-5.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 1136.7,
+   "battle": "06:32:15",
+   "pos": [
+    -291.3,
+    26
+   ],
+   "angle": -12.48,
+   "objective": "Mantenha o corredor — conte os que passam"
+  },
+  {
+   "file": "45-corridor-6.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 1156.8,
+   "battle": "06:35:05",
+   "pos": [
+    -291.3,
+    26
+   ],
+   "angle": -12.48,
+   "objective": "Mantenha o corredor — conte os que passam"
+  },
+  {
+   "file": "46-corridor-7.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 1176.9,
+   "battle": "06:37:55",
+   "pos": [
+    -291.3,
+    26
+   ],
+   "angle": -12.48,
+   "objective": "Mantenha o corredor — conte os que passam"
+  },
+  {
+   "file": "47-corridor-8.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 1197,
+   "battle": "06:40:45",
+   "pos": [
+    -291.3,
+    26
+   ],
+   "angle": -12.48,
+   "objective": "Mantenha o corredor — conte os que passam"
+  },
+  {
+   "file": "48-corridor-9.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 1217.1,
+   "battle": "06:43:35",
+   "pos": [
+    -291.3,
+    26
+   ],
+   "angle": -12.48,
+   "objective": "Mantenha o corredor — conte os que passam"
+  },
+  {
+   "file": "49-obj-17.png",
+   "note": "Ao aparecer: Vá para o abrigo",
+   "real": 1227.9,
+   "battle": "06:45:01",
+   "pos": [
+    -291.3,
+    26
+   ],
+   "angle": -12.48,
+   "objective": "Vá para o abrigo"
+  },
+  {
+   "file": "50-west-demolition.png",
+   "note": "Demolição oeste das 06:45",
+   "real": 1228.4,
+   "battle": "06:45:01",
+   "pos": [
+    -291.3,
+    26
+   ],
+   "angle": -12.48,
+   "objective": "Vá para o abrigo"
+  },
+  {
+   "file": "51-west-demolition-6s.png",
+   "note": "Demolição oeste, coluna de poeira 6 s depois, acima do barracão",
+   "real": 1235,
+   "battle": "06:45:08",
+   "pos": [
+    -291.3,
+    26
+   ],
+   "angle": -12.42,
+   "objective": "Vá para o abrigo"
+  },
+  {
+   "file": "52-obj-18.png",
+   "note": "Ao aparecer: 07:05 · Chamada no abrigo",
+   "real": 1247.3,
+   "battle": "07:05:00",
+   "pos": [
+    -260.5,
+    68.2
+   ],
+   "angle": 1.46,
+   "objective": "07:05 · Chamada no abrigo"
+  },
+  {
+   "file": "53-roll-call.png",
+   "note": "Chamada no abrigo (outro)",
+   "real": 1248,
+   "battle": "07:05:00",
+   "pos": [
+    -260.5,
+    68.2
+   ],
+   "angle": 1.46,
+   "objective": "07:05 · Chamada no abrigo"
+  },
+  {
+   "file": "54-roll-call-10s.png",
+   "note": "Chamada: secção sentada no abrigo",
+   "real": 1258.4,
+   "battle": "07:05:00",
+   "pos": [
+    -260.5,
+    68.2
+   ],
+   "angle": 1.46,
+   "objective": "07:05 · Chamada no abrigo"
+  },
+  {
+   "file": "55-obj-19.png",
+   "note": "Ao aparecer: Mantenha contacto com a secção",
+   "real": 1307.6,
+   "battle": "07:05:00",
+   "pos": [
+    -260.5,
+    68.2
+   ],
+   "angle": 1.46,
+   "objective": "Mantenha contacto com a secção"
+  },
+  {
+   "file": "56-debrief.png",
+   "note": "Debrief",
+   "real": 1308,
+   "battle": "07:05:00",
+   "pos": [
+    -260.5,
+    68.2
+   ],
+   "angle": 1.46,
+   "objective": "Mantenha contacto com a secção"
+  }
+ ],
+ "finishedAt": "2026-10-01T06:09:44.454Z",
+ "realSeconds": 1308,
+ "outcome": "debrief",
+ "failure": null,
+ "pageErrors": [],
+ "failedRequests": [],
+ "final": {
+  "game": 1127.1,
+  "battle": "07:05:00",
+  "complete": true,
+  "flags": {
+   "m01.completed": true,
+   "m01.nowicki_status": "missing",
+   "m01.bak_status": "rescued_by_player",
+   "m01.dudek_status": "unhurt",
+   "m01.east_platoon_survivors": 12,
+   "m01.second_raid_state": "ended",
+   "m01.forward_post_state": "intact_near_miss"
+  },
+  "checkpoints": [
+   "cp_m01_a_orientacao",
+   "cp_m01_b_reorganizacao",
+   "cp_m01_c_engenheiros",
+   "cp_m01_d_retirada"
+  ],
+  "objectives": {
+   "obj_m01_deliver_message": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_take_cover": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_follow_sergeant": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_find_sappers": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_fetch_material": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_cover_repair": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_hold_access": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_cover_withdrawal": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_rescue_bak": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_leave_bridge": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_hold_corridor": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_reach_shelter": {
+    "state": "done",
+    "progress": 100
+   }
+  },
+  "health": 84,
+  "weapon": {
+   "id": "kb_wz29",
+   "mag": 2,
+   "reserve": 20,
+   "state": "READY",
+   "until": 0,
+   "started": 748920.799999864,
+   "lastShot": 748920.799999864,
+   "shotCount": 53,
+   "received": 30,
+   "sight": 500,
+   "reloadMode": null
+  },
+  "enemyAlive": 46,
+  "events": 25
+ },
+ "debrief": "Às 04:34, bombardeiros alemães atacaram Tczew. O dano nos cabos e o reparo representados nesta missão seguem uma versão histórica disputada.\n\nPor volta das 04:45, um trem de carga com sapadores alemães escondidos chegou à cabeça de ponte de Lisewo, apoiado por um trem blindado. Encontrou os portões fechados e defensores em posição.\n\nO roteiro adopta demolições às 06:10 e 06:45, conforme H01-PDF; outras fontes dão 06:40 para a segunda. O plano alemão de tomar as pontes intactas fracassou.\n\nA guarnição continuou a combater e retirou-se de Tczew até às 20:00. A campanha continuou. Destruir as pontes atrasou o inimigo; não mudou o rumo da guerra.\n\nStanisław Janik comandava o 2.º Batalhão de Fuzileiros. Os sapadores eram comandados pelo subtenente Norbert Juchtman.\n\nO pelotão da cabeça de ponte leste, que recuou pela ponte antes da primeira explosão, era comandado por Walenty Faterkowski.\n\nEm Szymankowo, ferroviários e aduaneiros poloneses avisaram Tczew e atrasaram o plano alemão. Em represália, combatentes alemães assassinaram 21 poloneses, sobretudo ferroviários e aduaneiros.\n\nJan Wrona, Marek Zieliński, Paweł Krawiec e os demais membros da secção são personagens fictícios."
+}

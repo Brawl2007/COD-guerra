@@ -3,8 +3,8 @@
   "id": "m01_tczew",
   "order": 1,
   "title": "A Primeira Manhã",
-  "status": "PLANEJADA",
-  "statusNote": "Dados de roteiro, mapa e pesquisa prontos para integração. Não é missão jogável até a engine consumir estes dados (Prompt §58: documento de roteiro não conta como missão implementada).",
+  "status": "PROTÓTIPO JOGÁVEL",
+  "statusNote": "Fluxo ligado à engine Three.js com mapa próprio, wz.29, eventos e CP-A..D. Percurso completo verificado na simulação e trechos verificados no navegador. Arte, encenação e combate são provisórios; partida contínua no navegador e validação no Chromebook pendentes. Não é missão VALIDADA.",
   "dateStart": "1939-09-01T04:30:00+01:00",
   "dateEnd": "1939-09-01T07:05:00+01:00",
   "timezone": "CET (UTC+01:00) — hora legal na Polônia e na Alemanha em 1939; independente do relógio do computador",
@@ -228,7 +228,14 @@
       "sizeVisible": 40,
       "weapons": ["kar98k", "mg34"],
       "sector": "s2_east_bridgehead",
-      "note": "Tamanho visível é valor de gameplay."
+      "note": "Tamanho visível é valor de gameplay.",
+      "firePositions": [
+        { "id": "fp_m01_mg_gates_road", "actor": "de_east_0", "weapon": "mg34", "position": [1055, 0, 32], "targets": "obj_m01_cover_repair: sapadores no segundo corte", "classification": "RECONSTRUCTED", "note": "MG junto aos portões de Lisewo (x ≈ 1052), do lado alemão, entre as duas pontes e à frente do portal de 1912. Posição de jogo: entre as pontes a água deixa a margem leste à vista da cabeça de ponte oeste (as treliças tapam o resto). Daqui o fogo mergulhante a ~1,2 km cai sobre a encosta do aterro onde os sapadores trabalham, e o jogador, junto deles, vê o clarão a menos de 1200 m (alcance máximo do wz.29 no perfil)." },
+        { "id": "fp_m01_mg_gates_rail", "actor": "de_east_1", "weapon": "mg34", "position": [1055, 0, 13], "targets": "jogador e posto da secção (Kowal)", "classification": "RECONSTRUCTED", "note": "MG junto ao portão ferroviário, à frente do trem 963 (\"Clarões junto aos vagões\", dlg_m01_027). Kowal responde-lhe do posto da secção." },
+        { "id": "fp_m01_riflemen_gates", "actors": "de_east_2..de_east_13", "weapon": "kar98k", "line": { "x": [1053, 1057], "z": [9.5, 31.5] }, "classification": "GAMEPLAY_DRAMATIZATION", "note": "Atiradores na mesma faixa dos portões, visíveis da margem oeste. Metade do fogo vai para a cabeça de ponte leste até às 06:00 (evt_m01_panzerzug_arrives: fogo esporádico sobre a oeste)." },
+        { "id": "fp_m01_riflemen_dike", "actors": "de_east_14..de_east_39", "weapon": "kar98k", "line": { "north": { "x": [1076, 1097], "z": [-80, -12] }, "south": { "x": [1076, 1094], "z": [52, 100] } }, "classification": "GAMEPLAY_DRAMATIZATION", "note": "Atiradores no dique, escondidos da margem oeste pelas treliças: só disparam sobre a cabeça de ponte leste e, a partir das 06:00, sobre o pelotão que recua. Sobre o jogador, só na salva de ajuste de obj_m01_hold_access (\"mude de cobertura\"): traçante e impactos à vista, origem atrás das treliças (pendente)." }
+      ],
+      "fireModel": "Aproximação de jogo, não balística medida: cada tiro é uma recta da boca ao ponto visado com flecha parabólica h = 6e-6·R² (≈9 m a 1,2 km) e ~620 m/s de média (≈1,6 s a 1 km, dentro dos 1,5–2 s do perfil do wz.29). Dispersão em milésimos por rajada e por tiro. Tiros que passam a menos de 3 m de um sapador suprimem o reparo (obj_m01_cover_repair.mechanic)."
     },
     {
       "id": "grp_de_spans",
@@ -245,7 +252,7 @@
   "clock": {
     "start": "04:30:00",
     "end": "07:05:00",
-    "policy": "battleClock só avança durante jogo ativo; menus, pausa e carregamento suspendem. Segmentos têm escala própria; eventos marcados como 'gate' seguram o relógio (escala cai para 1,0 a 60 s de jogo do gate e para em gate − 30 s) enquanto setores seguem comportamentos 'sustain' sem repetição perceptível.",
+    "policy": "battleClock só avança durante jogo ativo; menus, pausa e carregamento suspendem. Segmentos têm escala própria; um segmento com 'readyScale' usa essa escala quando o seu gate já está pronto; eventos marcados como 'gate' seguram o relógio (escala cai para 1,0 a 60 s de jogo do gate e para em gate − 30 s) enquanto setores seguem comportamentos 'sustain' sem repetição perceptível.",
     "segments": [
       {
         "id": "seg_prelude",
@@ -256,7 +263,7 @@
         "targetRealMin": 3.0
       },
       { "id": "seg_bombing", "from": "04:34:00", "to": "04:45:00", "scale": 3.5, "targetRealMin": 3.1 },
-      { "id": "seg_repair", "from": "04:45:00", "to": "05:30:00", "scale": 9.0, "gate": "evt_m01_repair_complete", "targetRealMin": 5.0 },
+      { "id": "seg_repair", "from": "04:45:00", "to": "05:30:00", "scale": 9.0, "gate": "evt_m01_repair_complete", "readyScale": 27.0, "targetRealMin": 5.0, "readyScaleNote": "Partida contínua no navegador: com o reparo concluído (~04:49) restavam ~4,5 min reais sem tarefa até às 05:30. Com o gate pronto, o resto do segmento corre a 27× (~1,5 min). Horários dos eventos inalterados." },
       { "id": "seg_hold", "from": "05:30:00", "to": "06:10:00", "scale": 8.0, "gate": "evt_m01_east_demolition", "targetRealMin": 5.0 },
       { "id": "seg_climax", "from": "06:10:00", "to": "06:45:00", "scale": 8.5, "gate": "evt_m01_west_demolition", "targetRealMin": 4.1 },
       {
@@ -364,7 +371,7 @@
       "required": true,
       "activation": { "event": "evt_m01_east_platoon_withdraws" },
       "completion": { "event": "evt_m01_east_demolition" },
-      "mechanic": "O pelotão leste atravessa o tabuleiro por conta própria (≈8 min de relógio). grp_de_spans avança até x ≥ 690. Tiros do jogador a menos de 3 m de um grupo alemão o suprimem (param, deitam). Cada 20 s de relógio sem supressão sobre um grupo = uma baixa a mais no pelotão leste (mínimo de 12 sobreviventes). Nunca falha a missão.",
+      "mechanic": "O pelotão leste atravessa o tabuleiro por conta própria (≈8 min de relógio). grp_de_spans avança até x ≥ 690. Tiros do jogador a menos de 3 m de um grupo alemão o suprimem (param, deitam). No protótipo, a partir de evt_m01_germans_on_east_spans, um alemão do tabuleiro não suprimido que vê o último homem pode disparar um tiro letal; a baixa só conta quando o tiro chega, com intervalo mínimo de 20 s de relógio entre baixas e mínimo de 12 sobreviventes. Sem tiro desobstruído não há baixas automáticas. Guardar os tiros em voo e cada baixa por ID. Nunca falha a missão; estes valores são tuning de gameplay, não efectivos históricos.",
       "failure": null
     },
     {
@@ -1472,13 +1479,13 @@
   "callouts": {
     "note": "Falas curtas acionadas por eventos reais (Prompt §31). Só tocar quando o evento correspondente acontece de fato; limite de 2 vozes simultâneas; granada/aviso de demolição têm prioridade sobre ambiente.",
     "lines": [
-      { "event": "enemy_mg_fire_on_squad", "speaker": "szymon_kowal", "text": "Metralhadora no dique!" },
+      { "id": "co_m01_enemy_mg_fire_on_squad", "event": "enemy_mg_fire_on_squad", "speaker": "szymon_kowal", "text": "Metralhadora no dique!" },
       { "event": "npc_reloading", "speaker": "any_pl", "text": "Recarregando!" },
       { "event": "player_reloading_near_ally", "speaker": "jozef_bak", "text": "Cubro você!" },
       { "event": "ally_hit", "speaker": "any_pl", "text": "Sanitário!" },
       { "event": "cover_rotation", "speaker": "marek_zielinski", "text": "Mudar! Próxima posição!" },
       { "event": "sun_glare_player_facing_east", "speaker": "marek_zielinski", "text": "Tira os olhos do sol!" },
-      { "event": "enemy_group_suppressed", "speaker": "szymon_kowal", "text": "Deitaram! Continua!" }
+      { "id": "co_m01_enemy_group_suppressed", "event": "enemy_group_suppressed", "speaker": "szymon_kowal", "text": "Deitaram! Continua!" }
     ]
   },
   "continuityFlags": {

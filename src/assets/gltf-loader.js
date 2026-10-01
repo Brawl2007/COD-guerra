@@ -1,16 +1,3 @@
-const COMPONENTS={5126:Float32Array,5123:Uint16Array,5125:Uint32Array};
-const SIZES={SCALAR:1,VEC2:2,VEC3:3,VEC4:4,MAT4:16};
-
-export class GltfLoader {
-  async load(url){const response=await fetch(url);if(!response.ok)throw new Error(`Falha ao carregar ${url}: ${response.status}`);if(url.endsWith('.glb'))return this.parseGlb(await response.arrayBuffer(),url);return this.parse(await response.json(),url);}
-  async parse(json,url=''){const buffers=await Promise.all((json.buffers||[]).map(async buffer=>{if(buffer.uri?.startsWith('data:'))return Uint8Array.from(atob(buffer.uri.split(',')[1]),c=>c.charCodeAt(0)).buffer;const base=typeof location!=='undefined'?location.href:'file:///';const response=await fetch(new URL(buffer.uri,new URL(url||'.',base)));return response.arrayBuffer();}));return this.build(json,buffers);}
-  parseGlb(data,url=''){const view=new DataView(data);if(view.getUint32(0,true)!==0x46546c67)throw new Error(`GLB inválido: ${url}`);let offset=12,json,binary;while(offset<data.byteLength){const length=view.getUint32(offset,true),type=view.getUint32(offset+4,true),chunk=data.slice(offset+8,offset+8+length);if(type===0x4e4f534a)json=JSON.parse(new TextDecoder().decode(chunk));if(type===0x004e4942)binary=chunk;offset+=8+length;}return this.build(json,[binary]);}
-  build(json,buffers){const accessor=index=>{const a=json.accessors[index],v=json.bufferViews[a.bufferView],Ctor=COMPONENTS[a.componentType],size=SIZES[a.type],offset=(v.byteOffset||0)+(a.byteOffset||0);return new Ctor(buffers[v.buffer],offset,a.count*size);};const materials=(json.materials||[]).map(m=>m.pbrMetallicRoughness?.baseColorFactor?.slice(0,3)||[.5,.5,.5]);const meshes=(json.meshes||[]).flatMap((mesh,meshIndex)=>mesh.primitives.map(primitive=>{let positions=accessor(primitive.attributes.POSITION),normals=primitive.attributes.NORMAL!==undefined?accessor(primitive.attributes.NORMAL):null;const indices=primitive.indices!==undefined?accessor(primitive.indices):null;if(indices){const expanded=new Float32Array(indices.length*3),expandedNormals=normals?new Float32Array(indices.length*3):null;indices.forEach((source,index)=>{expanded.set(positions.subarray(source*3,source*3+3),index*3);if(expandedNormals)expandedNormals.set(normals.subarray(source*3,source*3+3),index*3);});positions=expanded;normals=expandedNormals;}if(!normals)normals=this.generateNormals(positions);return{name:mesh.name||`mesh-${meshIndex}`,positions,normals,color:materials[primitive.material]||[.5,.5,.5]};}));return{json,meshes,nodes:json.nodes||[],animations:json.animations||[]};}
-  generateNormals(positions){const normals=new Float32Array(positions.length);for(let i=0;i<positions.length;i+=9){const ax=positions[i+3]-positions[i],ay=positions[i+4]-positions[i+1],az=positions[i+5]-positions[i+2],bx=positions[i+6]-positions[i],by=positions[i+7]-positions[i+1],bz=positions[i+8]-positions[i+2],nx=ay*bz-az*by,ny=az*bx-ax*bz,nz=ax*by-ay*bx,length=Math.hypot(nx,ny,nz)||1;for(let v=0;v<3;v++)normals.set([nx/length,ny/length,nz/length],i+v*3);}return normals;}
-}
-
-export class AssetManager {
-  constructor(){this.loader=new GltfLoader();this.assets=new Map();}
-  async load(name,url){if(this.assets.has(name))return this.assets.get(name);const promise=this.loader.load(url);this.assets.set(name,promise);try{const asset=await promise;this.assets.set(name,asset);return asset;}catch(error){this.assets.delete(name);throw error;}}
-  get(name){const value=this.assets.get(name);return value?.then?null:value;}
-}
+// Compatibility exports; skinning, hierarchy, UVs, materials and animation use Three.js.
+export { GLTFLoader as GltfLoader } from 'three/addons/loaders/GLTFLoader.js';
+export { AssetManager } from './asset-manager.js';
