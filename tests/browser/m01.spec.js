@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-import {route,driver,toRepair} from '../helpers/m01-route.js';
+import {route,driver,toRepair,toCoverAdjustment} from '../helpers/m01-route.js';
 import {seconds} from '../../src/game/m01-simulation.js';
 
 let result;
@@ -78,6 +78,25 @@ test('real keyboard movement traverses the approaches and E delivers the message
   const still=await page.evaluate(()=>window.gameDiagnostics());
   expect(still.clock).toBe(paused.clock);expect(still.m01.renderedFrames).toBe(paused.m01.renderedFrames);
   await page.screenshot({path:info.outputPath('m01-message-delivered-paused.png')});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+for(const truss of [false,true])test(`adjustment salvo ${truss?'behind the truss':'at the gates'} restores its actual origin and follows mouse look`,async({page},info)=>{
+  test.setTimeout(process.env.CI?180000:90000);
+  const snapshot=toCoverAdjustment({truss}).sim.snapshot(),source=snapshot.timers.coverFire;
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  await expect(page.locator('#objective-status')).toContainText(truss?'Salva do dique norte':'Metralhadora nos portões de Lisewo');
+  const before=await page.evaluate(()=>window.gameDiagnostics());
+  expect(before.m01.threat.coverFire.by).toBe(source.by);expect(before.m01.threat.coverFire.x).toBe(source.x);
+  expect(before.m01.threat.status).toBe(await page.locator('#objective-status').textContent());
+  const aim=Math.atan2(source.z-before.player.z,source.x-before.player.x);
+  await page.evaluate(delta=>{
+    document.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0,bubbles:true}));
+    document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
+  },Math.atan2(Math.sin(aim+Math.PI-before.player.angle),Math.cos(aim+Math.PI-before.player.angle))/.0022);
+  await expect(page.locator('#objective-status')).toContainText('atrás de si');
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 test('demolition inside the road truss shows the actual bearing while mouse look remains free',async({page},info)=>{

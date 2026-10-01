@@ -202,25 +202,28 @@ export class M01View {
     this.materials.gunSmoke=new THREE.MeshBasicMaterial({color:'#b9b8ae',transparent:true,opacity:.55,depthWrite:false,fog:false});
     this.fireBatches={};this.fireDummy=new THREE.Object3D();
     for(const [name,material,capacity]of [['muzzle','flash',96],['tracer','tracer',48],['puff','puff',96],['spark','flash',48],['smoke','gunSmoke',64]]){
-      const batch=new THREE.InstancedMesh(this.sphere,this.materials[material],capacity);
+      const soft=name==='smoke'||name==='puff';
+      const batch=soft?this.atmosphere.billboardBatch(capacity,this.materials[material].color,this.effects):
+        new THREE.InstancedMesh(this.sphere,this.materials[material],capacity);
       batch.instanceMatrix.setUsage(THREE.DynamicDrawUsage);batch.count=0;batch.frustumCulled=false;this.effects.add(batch);this.fireBatches[name]=batch;
     }
   }
   updateFire(sim){
     const time=sim.clock,cam=this.camera.position,dummy=this.fireDummy,counts={muzzle:0,tracer:0,puff:0,spark:0,smoke:0};
     const far=p=>Math.hypot(p.x-cam.x,p.y-cam.y,p.z-cam.z);
-    const put=(name,p,scale,dir=null)=>{
+    const put=(name,p,scale,dir=null,opacity=1)=>{
       const batch=this.fireBatches[name];if(counts[name]>=batch.instanceMatrix.count)return;
       dummy.position.set(p.x,p.y,p.z);dummy.rotation.set(0,0,0);
       if(dir){dummy.lookAt(p.x+dir.x,p.y+dir.y,p.z+dir.z);dummy.scale.set(scale[0],scale[1],scale[2]);}else dummy.scale.setScalar(scale);
-      dummy.updateMatrix();batch.setMatrixAt(counts[name]++,dummy.matrix);
+      dummy.updateMatrix();batch.setMatrixAt(counts[name],dummy.matrix);
+      batch.geometry.attributes.puffOpacity?.setX(counts[name],opacity);counts[name]++;
     };
     // Clarão enquanto o atirador dispara (actor.shot, visível pelo menos 0,25 s) e fumo da boca durante ~2 s, à frente dos olhos.
     for(const a of sim.actors)if(a.team==='enemy'&&a.alive&&a.active){
       const age=time-(a.firedAt??-1e9);if(a.shot<=0&&age>2.2)continue;
       const p={x:a.x+Math.cos(a.facing)*.9,y:a.y+1.55,z:a.z+Math.sin(a.facing)*.9},d=far(p);
       if(a.shot>0||age<.25)put('muzzle',p,Math.max(.12,d*.008)*(.8+.2*Math.sin(time*90)));
-      if(age>=0&&age<2.2){const k=age/2.2;put('smoke',{x:p.x,y:p.y+.4+k*1.6,z:p.z},Math.max(.25,d*.007)*(.6+k*.8)*(1-k*k));}
+      if(age>=0&&age<2.2){const k=age/2.2;put('smoke',{x:p.x,y:p.y+.4+k*1.6,z:p.z},Math.max(.25,d*.007)*(.6+k*.8)*(1-k*k),null,.65*(1-k));}
     }
     for(const r of sim.enemyFire.rounds){
       const t=(time-r.firedAt)/(r.arriveAt-r.firedAt);if(!r.tracer||t<0||t>1)continue;
@@ -231,9 +234,10 @@ export class M01View {
     for(const i of this.impacts){
       const age=time-i.start,d=far(i);
       if(i.material==='metal'||i.material==='stone'){if(age<.1)put('spark',i,Math.max(.06,d*.003));}
-      if(i.material!=='metal'){const k=age<.15?age/.15:Math.max(0,1-(age-.15)/.75);put('puff',{x:i.x,y:i.y+.35*k,z:i.z},Math.max(.3,d*.004)*Math.max(.08,k));}
+      if(i.material!=='metal'){const k=age<.15?age/.15:Math.max(0,1-(age-.15)/.75);put('puff',{x:i.x,y:i.y+.35*k,z:i.z},Math.max(.3,d*.004)*Math.max(.08,k),null,.7*k);}
     }
-    for(const [name,batch]of Object.entries(this.fireBatches)){batch.count=counts[name];batch.instanceMatrix.needsUpdate=true;}
+    for(const [name,batch]of Object.entries(this.fireBatches)){batch.count=counts[name];batch.instanceMatrix.needsUpdate=true;
+      if(batch.geometry.attributes.puffOpacity)batch.geometry.attributes.puffOpacity.needsUpdate=true;}
     this.fx=counts;
   }
   /** Impacto de um tiro alemão (evento round-impact da simulação): poeira na terra, faísca no metal. */

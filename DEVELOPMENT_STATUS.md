@@ -8,6 +8,8 @@ Os PRs #8 e #10 de pesquisa/preparação já estão em `main`. Esta integração
 
 ## Implementado e observado
 
+- A ordem de mudar de cobertura só aparece quando uma salva real é emitida. O HUD distingue portões de Lisewo e dique norte/sul, com distância e direcção relativa ao olhar por oito segundos activos. A origem restaura como dado opcional do schema 2; cobertura obstruída não gera aviso falso. Fumo da boca e poeira de impactos usam partículas suaves em vez de esferas sólidas. Provas por trechos em `docs/verification/m01-runtime/cover-origin/`.
+
 - Demolições leste/oeste mostram durante 12/15 s activos a distância e direcção do impacto real e o destino seguro. A indicação acompanha o olhar, incluindo quem olha para trás dentro da treliça; não roda a câmara. Usa o dano já guardado no save. A poeira continua sujeita à obstrução da ponte; composição e playtest humano permanecem pendentes. Prova por continuação em `docs/verification/m01-runtime/demolition-cue/`.
 - A poeira das demolições sobe como uma nuvem única, expande-se e dissipa-se, sem partículas a saltar do topo para a base. Fumo contínuo desvanece antes de repetir o ciclo; emissores finitos desvanecem nos últimos 30 s. Mantêm-se limites e obstrução. Capturas de produção dentro/fora da treliça em `docs/verification/m01-runtime/demolition-dust/`; não aprovam a encenação do colapso.
 

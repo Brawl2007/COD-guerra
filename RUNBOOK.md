@@ -106,6 +106,14 @@ Há um único workflow `.github/workflows/pages.yml`. PRs executam validação; 
 
 ## Verificação visual de M01
 
+Para verificar a origem da salva nos portões e atrás da treliça, depois do build:
+
+```sh
+CHROME_EXECUTABLE=/caminho/chromium node tools/capture-m01-visual.mjs test-results/m01-cover-origin --cover-origin-only
+```
+
+São continuações de snapshots alcançados por controlos da simulação, esperando em cobertura até uma salva real. O script fecha preview/browser; não é uma partida humana ou contínua.
+
 Para capturar somente a demolição leste, por continuação de snapshots alcançados pela rota de simulação, dentro e fora da treliça:
 
 ```sh

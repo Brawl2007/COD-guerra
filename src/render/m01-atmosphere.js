@@ -39,11 +39,17 @@ export class M01Atmosphere {
           #include <tonemapping_fragment>
           #include <colorspace_fragment>
         }`});
-    this.puffs=new THREE.InstancedMesh(this.quad,this.material,this.capacity);
-    this.puffs.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.puffs.count=0;this.puffs.frustumCulled=false;
-    this.puffs.geometry.setAttribute('puffOpacity',new THREE.InstancedBufferAttribute(new Float32Array(this.capacity),1));
-    for(let i=0;i<this.capacity;i++)this.puffs.setColorAt(i,new THREE.Color());scene.add(this.puffs);
+    this.puffBatches=[];this.puffs=this.billboardBatch(this.capacity,'#ffffff',scene);
     this.dummy=new THREE.Object3D();this.color=new THREE.Color();this.fade=this.puffs.geometry.attributes.puffOpacity;
+  }
+  /** Camera-facing soft particles share one material/texture; each bounded pool owns its opacity buffer. */
+  billboardBatch(capacity,color,parent){
+    const geometry=this.quad.clone(),opacity=new THREE.InstancedBufferAttribute(new Float32Array(capacity).fill(1),1);
+    opacity.setUsage(THREE.DynamicDrawUsage);geometry.setAttribute('puffOpacity',opacity);
+    const batch=new THREE.InstancedMesh(geometry,this.material,capacity);
+    batch.instanceMatrix.setUsage(THREE.DynamicDrawUsage);batch.count=0;batch.frustumCulled=false;
+    const tint=new THREE.Color(color);for(let i=0;i<capacity;i++)batch.setColorAt(i,tint);
+    parent.add(batch);this.puffBatches.push(batch);return batch;
   }
   lighting(player,day,alt,az,clock){
     this.sky.position.set(player.x,player.y,player.z);this.skyMaterial.uniforms.day.value=day;this.skyMaterial.uniforms.time.value=clock;
@@ -72,5 +78,6 @@ export class M01Atmosphere {
     }
     this.count=count;this.puffs.count=count;this.puffs.instanceMatrix.needsUpdate=true;this.puffs.instanceColor.needsUpdate=true;this.fade.needsUpdate=true;
   }
-  dispose(){this.scene.remove(this.sky,this.puffs);this.puffs.dispose();this.quad.dispose();this.skyGeometry.dispose();this.skyMaterial.dispose();this.material.dispose();this.texture.dispose();this.cloudTexture.dispose();}
+  dispose(){this.scene.remove(this.sky);for(const batch of this.puffBatches){batch.removeFromParent();batch.dispose();batch.geometry.dispose();}this.puffBatches=[];
+    this.quad.dispose();this.skyGeometry.dispose();this.skyMaterial.dispose();this.material.dispose();this.texture.dispose();this.cloudTexture.dispose();}
 }
