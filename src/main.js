@@ -4,7 +4,8 @@ import './styles.css';
 const $=selector=>document.querySelector(selector);
 const canvas=$('#game'),menu=$('#menu'),pause=$('#pause'),hudRoot=$('#hud'),complete=$('#complete'),errorPanel=$('#error');
 const hud={health:$('#health'),healthBar:$('#health-bar'),grenades:$('#grenades'),mag:$('#mag'),reserve:$('#reserve'),
-  objective:$('#objective-text'),message:$('#message'),checkpoint:$('#checkpoint'),vignette:$('#damage-vignette')};
+  objective:$('#objective-text'),message:$('#message'),checkpoint:$('#checkpoint'),vignette:$('#damage-vignette'),
+  weaponName:$('#weapon-name'),weaponState:$('#weapon-state'),clock:$('#battle-clock'),interaction:$('#interaction'),subtitle:$('#subtitle'),crosshair:$('#crosshair')};
 let game;
 const showError=message=>{$('#error-text').textContent=message;errorPanel.classList.remove('hidden');};
 function stateChanged(state,detail){
@@ -18,11 +19,38 @@ function stateChanged(state,detail){
     $('#pause-text').textContent=state==='control-error'?'O Chrome não capturou o rato. Clique em Retomar para tentar novamente.':'A batalha está em pausa. Retome quando estiver pronto.';
   }
   if(state==='save-error'){showError(`Não foi possível abrir o checkpoint: ${detail} Pode iniciar uma nova missão.`);menu.classList.remove('hidden');}
-  if(state==='complete'){pause.classList.add('hidden');complete.classList.remove('hidden');hudRoot.classList.add('hidden');}
+  if(state==='complete'){
+    pause.classList.add('hidden');complete.classList.remove('hidden');hudRoot.classList.add('hidden');
+    $('#complete-place').textContent=game.isM01?game.sim.definition.debrief.title:'COMUNICAÇÕES RESTABELECIDAS';
+    $('#debrief').replaceChildren();
+    const paragraphs=game.isM01?game.sim.renderState.debrief.map(p=>p.text):['O rádio está activo. A patrulha aguarda a próxima ordem.'];
+    for(const text of paragraphs){const p=document.createElement('p');p.textContent=text;$('#debrief').append(p);}
+  }
+}
+function missionMenu(){
+  const m01=game.isM01;$('#mission-select').value=m01?'m01_tczew':'sandbox-1944';
+  $('#mission-place').textContent=m01?'POLÓNIA · 1 SETEMBRO 1939':'FRANÇA · 1944';
+  $('#mission-title').innerHTML=m01?'A PRIMEIRA<br><span>MANHÃ</span>':'ESTRADA<br><span>DE CINZAS</span>';
+  $('#mission-briefing').textContent=m01?'Tczew, 04:30. Leve a mensagem ao posto da ponte. Mantenha contacto com a secção e cubra os sapadores.':'O posto avançado deixou de responder. Atravesse a aldeia com a patrulha e restabeleça as comunicações na capela.';
+  $('#mission-note').textContent=m01?'AS PONTES DO VÍSTULA':'COMUNICAÇÕES INTERROMPIDAS';
+  $('#mission-status').textContent=m01?'PROTÓTIPO · MODELOS E ÁUDIO PROVISÓRIOS':'BANCADA FICCIONAL · FRANÇA, 1944';
+  $('#continue').classList.toggle('hidden',!game.hasSave);
+  $('#start').disabled=false;$('#continue').disabled=false;
+  if(m01){
+    $('#start').disabled=true;$('#continue').disabled=true;
+    game.renderer.m01.ready.then(()=>{
+      if(!game.isM01)return;
+      const failed=game.renderer.m01.diagnostics.assetFailures.length;
+      $('#start').disabled=Boolean(failed);$('#continue').disabled=Boolean(failed);
+      if(failed)showError('Não foi possível carregar as pontes de Tczew. Recarregue a página para tentar novamente. A bancada francesa continua disponível no selector de missão.');
+    });
+  }
 }
 try{
-  game=new Game(canvas,hud,stateChanged);
-  $('#continue').classList.toggle('hidden',!game.hasSave);
+  const params=new URLSearchParams(location.search);
+  game=new Game(canvas,hud,stateChanged,params.get('mission')==='sandbox-1944'?'sandbox-1944':'m01_tczew');
+  missionMenu();
+  $('#mission-select').addEventListener('change',e=>{game.selectMission(e.target.value);missionMenu();});
   $('#start').addEventListener('click',()=>{
     menu.classList.add('hidden');errorPanel.classList.add('hidden');hudRoot.classList.remove('hidden');
     game.restartMission();

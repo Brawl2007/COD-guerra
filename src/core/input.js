@@ -12,7 +12,7 @@ export class Input {
     };
     listen(window, 'keydown', e => {
       if (document.pointerLockElement !== canvas) return;
-      if (['KeyW','KeyA','KeyS','KeyD','KeyR','KeyG','Space'].includes(e.code)) e.preventDefault();
+      if (['KeyW','KeyA','KeyS','KeyD','KeyR','KeyG','KeyE','KeyC','KeyV','Space'].includes(e.code)) e.preventDefault();
       if (!this.keys.has(e.code)) this.pressed.add(e.code);
       this.keys.add(e.code);
     });

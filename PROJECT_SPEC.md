@@ -17,4 +17,4 @@ A especificação integral entregue pelo utilizador está em [docs/PROMPT_MESTRE
 
 ## Estado actual
 
-A aldeia de 1944 permanece uma bancada ficcional jogável, com M1 Carbine provisória. A fundação foi migrada para Three.js/Vite e recebeu regressões de combate, pausa e checkpoint. Ela não representa a missão M01. As 30 missões da campanha estão PLANEJADAS. Consultar [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) para resultados observados.
+A aldeia de 1944 permanece uma bancada ficcional jogável, com M1 Carbine provisória. M01 — Tczew usa mapa separado em metros e wz.29, com fluxo de protótipo ligado à mesma engine. M01 está PROTÓTIPO JOGÁVEL; M02–M30 permanecem PLANEJADAS. Nenhuma missão está VALIDADA. Consultar [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) para resultados observados e limites.

@@ -4,6 +4,7 @@ import { CONFIG, UNITS_PER_METRE, EYE_HEIGHT } from '../config.js';
 import { toScene, aimDirection } from '../world/spatial.js';
 import { AssetManager } from '../assets/asset-manager.js';
 import { surface } from './materials.js';
+import { M01View } from './m01-view.js';
 
 const QUALITY={low:{ratio:1,shadows:false,particles:70},medium:{ratio:1.25,shadows:true,particles:120},high:{ratio:1.5,shadows:true,particles:180}};
 const matrix=new THREE.Object3D();
@@ -52,6 +53,8 @@ export class Renderer {
     if(!QUALITY[quality])return;
     this.quality=quality;this.engine.shadowMap.enabled=QUALITY[quality].shadows;this.resize();
   }
+  prepareM01(){if(!this.m01)this.m01=new M01View(this);return this.m01;}
+  renderMission(sim){this.prepareM01().render(sim);}
   resize(){
     if(!this.engine)return;
     const width=this.canvas.clientWidth||innerWidth,height=this.canvas.clientHeight||innerHeight;
@@ -295,13 +298,13 @@ export class Renderer {
     this.shake=12;
   }
   muzzle(now){this.muzzleUntil=now+60;this.shake=2;}
-  resetEffects(){this.particles=[];this.muzzleUntil=0;this.shake=0;}
+  resetEffects(){this.particles=[];this.muzzleUntil=0;this.shake=0;this.m01?.resetEffects();}
   get diagnostics(){return {renderer:'Three.js',quality:this.quality,drawCalls:this.engine.info.render.calls,
     triangles:this.engine.info.render.triangles,geometries:this.engine.info.memory.geometries,textures:this.engine.info.memory.textures,
     assetFailures:this.assets.failures,models:Object.keys(this.models)};}
   dispose(){
     if(this.disposed)return;this.disposed=true;
-    this.mixers.forEach(m=>m.stopAllAction());this.assets.dispose();
+    this.mixers.forEach(m=>m.stopAllAction());this.assets.dispose();this.m01?.dispose();
     for(const view of this.actorViews.values())this.releaseActor(view);
     Object.values(this.geometries).forEach(g=>g.dispose());
     this.scene.traverse(node=>{if(node.isInstancedMesh)node.dispose();});

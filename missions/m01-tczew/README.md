@@ -1,6 +1,6 @@
 # M01 — Tczew, 1/9/1939 · "A Primeira Manhã"
 
-**Estado da missão: PLANEJADA.** Pesquisa, mapa, roteiro e dados estão prontos para integração. Nada disto é jogável até a engine consumir os dados (Prompt §58, §62).
+**Estado da missão: PROTÓTIPO JOGÁVEL.** Os dados já são consumidos pelo runtime desta branch, com mapa próprio, wz.29 e CP-A..D. Percurso integral verificado na simulação; controlos, entrega e continuações de CP-D/outro verificados no navegador. Partida contínua, encenação/arte final e performance ainda pendentes; a missão não está VALIDADA.
 
 ## Arquivos
 
@@ -35,7 +35,7 @@ python3 missions/m01-tczew/tools/measure_osm_overture.py --dem  # refaz measurem
 
 ## Integração com a engine (para quem está na engine, no combate e nos checkpoints)
 
-Este pacote não altera `src/`. Pontos de encaixe sugeridos, sem impor arquitetura:
+A entrega original de pesquisa/preparação preservou `src/`. A integração agora vive em `M01Simulation`, `TczewWorld`, `Wz29` e `M01View`, no mesmo `Game` e loop da bancada. O contrato permanece:
 
 1. **Coordenadas.** Metros, X leste, Y altura, Z sul (norte = −Z). Ver `map-layout.json → coordinateSystem`. O `y` do protótipo antigo é planar, não altura.
 2. **Relógio de batalha.** Use `mission.json → clock.segments`: escala por segmento, *snap* ao entregar a mensagem e *gates* segurando o relógio até a prontidão. Pausa e menus suspendem.
@@ -57,5 +57,5 @@ Este pacote não altera `src/`. Pontos de encaixe sugeridos, sem impor arquitetu
 
 - **Verificações específicas:** H01-PDF, H02, H30 e T23 foram lidas; dúvidas remanescentes estão em `SOURCE_CHECK.md`. A leitura não comprova números de perdas do pelotão nem transforma geografia moderna em mapa de 1939.
 - **Mapa de 1939** (P4): traçado das vias, contorno da estação, quartel e postos de disparo. Pilares, eixos, rio e dique já foram medidos (P5 resolvida).
-- **Assets:** nenhum foi baixado ou verificado (Sketchfab bloqueado por desafio anti-bot). Lista, escalas e política de licença em `ASSETS.md`; quando a integração começar, ligar `assets-needed.md` a ela.
-- **Integração, playtest e validação** (Marco 2 do Prompt §77).
+- **Assets:** pontes GLB provisórias do Claude com LODs/dano revistos; restantes actores, arma, comboios e aviões são placeholders próprios. Lista, escalas, política de licença e incertezas em `ASSETS.md`, `BRIDGE_ASSET_REPORT.md` e `../../ASSET_CREDITS.md`.
+- **Playtest contínuo, direcção humana, navegação/encenação completas e validação** (Marco 2 do Prompt §77). Ver `../../QUALITY_REPORT.md` para distinguir provas de simulação e de navegador.

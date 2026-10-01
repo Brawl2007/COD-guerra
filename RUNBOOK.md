@@ -30,9 +30,23 @@ O CI mantém viewport 1280×720 e as mesmas assertions, com 180 s por teste (120
 
 WASD: mover; mouse: olhar; clique esquerdo: um disparo semiautomático; botão direito: mira; R: recarregar; G: granada; Shift: correr; Esc: libertar rato/pausar. Iniciar/Retomar solicita pointer lock e habilita áudio por gesto. Perder foco limpa as teclas e pausa simulação/áudio.
 
+O selector inicia M01 por defeito. A bancada francesa continua seleccionável; `?mission=sandbox-1944` abre-a directamente. M01: E entrega mensagem/material e leva/entrega Bąk; C agacha; V alterna alça 300/500/800/1000 m; Espaço salta somente intro/outro. A referência da alça não implementa queda balística. O wz.29 tem 5 + 40 cartuchos, 2 granadas, ferrolho e recarga por clipe quando vazio; cargas parciais inserem um cartucho de cada vez.
+
+Rota inicial de M01: contorne a trincheira pelo lado sul, atravesse a passagem aberta do portal ferroviário e use E junto de Nowicki. Depois do ataque siga Zieliński até à reorganização, encontre Krawiec no aterro e entre no barracão pela porta oeste para recolher material. Regresse aos sapadores, mantenha o acesso rodoviário, cubra o pelotão e recue ao posto de disparo/abrigo quando receber ordem.
+
 Ao capturar o rato, o input espera a confirmação de pointer lock e descarta a primeira amostra relativa para evitar o salto de coordenadas do cursor. Os movimentos seguintes controlam yaw/pitch normalmente, incluindo após retomar.
 
-Checkpoint automático ao atingir C; restaurar pelo menu de pausa. Estado persistido na origem do navegador: `cod-guerra:checkpoint:v1`. Saves inválidos mostram erro legível e permitem iniciar nova missão. Nenhuma versão anterior completa foi identificada; versões desconhecidas são rejeitadas.
+Na bancada, checkpoint automático ao atingir C e chave `cod-guerra:checkpoint:v1`. Em M01, CP-A..D usam `cod-guerra:checkpoint:m01:v2`, com os dois relógios, estado real da arma, actores, eventos, flags, diálogos, sectores e destruição. CP-C é adiado até 05:34; CP-D usa posição/hora actuais. Reiniciar Checkpoint restaura o snapshot vivo; Continuar restaura após reload da página. Saves inválidos mostram erro e deixam iniciar de novo. Versões desconhecidas são rejeitadas.
+
+As pontes usam nove GLB de apresentação e colisores em JSON. Se um GLB de M01 falhar, o menu mostra erro e bloqueia início/continuação para não criar uma ponte invisível; a bancada francesa mantém o fallback próprio. Para verificar a exportação e repetir o percurso de simulação:
+
+```sh
+npm run assets:m01:colliders -- --check
+node tools/verify-m01-route.mjs
+node --test tests/m01-runtime.test.js
+```
+
+O verificador grava `docs/verification/m01-runtime/simulation-report.json`. Usa controlos e física reais da simulação com passos de 50 ms, sem injectar relógios/eventos/objectivos. Não é playtest no navegador. Testes de CP-D/outro no navegador continuam snapshots alcançados por esse percurso; estão identificados como verificações por trechos.
 
 ## Diagnóstico
 

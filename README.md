@@ -1,6 +1,6 @@
 # COD Guerra
 
-FPS original da Segunda Guerra Mundial em desenvolvimento. A campanha cronológica de 30 capítulos está **PLANEJADA**. O jogo disponível nesta branch é a bancada ficcional **Estrada de Cinzas**, França de 1944; M01 — Tczew ainda não está ligada à engine.
+FPS original da Segunda Guerra Mundial em desenvolvimento. Nesta branch, **M01 — Tczew: A Primeira Manhã** é um protótipo jogável. A bancada ficcional **Estrada de Cinzas**, França de 1944, continua acessível no selector de missão. A campanha de 30 capítulos permanece em desenvolvimento; nenhuma missão está declarada VALIDADA.
 
 A fundação usa Three.js e Vite. Preserva os modelos OBJ originais e acrescenta mira/dano em 3D, obstrução do cano, cobertura com exposição real, checkpoints completos e pausa consistente. Modelos, mãos, texturas e sons ainda são provisórios.
 
@@ -13,7 +13,7 @@ npm ci
 npm run dev
 ```
 
-Abrir `http://127.0.0.1:5173/COD-guerra/`. WASD move; mouse olha; clique esquerdo dispara; botão direito mira; R recarrega; G lança granada; Shift corre; Esc pausa. Iniciar e Retomar capturam o rato e habilitam áudio por gesto.
+Abrir `http://127.0.0.1:5173/COD-guerra/`. WASD move; rato olha; clique esquerdo dispara; botão direito mira; R recarrega; G lança granada; Shift corre; Esc pausa. M01 acrescenta E para interagir, C para agachar, V para alça de mira e Espaço para saltar intro/outro. Iniciar e Retomar capturam o rato e habilitam áudio por gesto.
 
 ```sh
 npm test
@@ -45,10 +45,11 @@ Os testes de navegador iniciam o preview do build e usam controlos reais para di
 ## Arquitectura
 
 - `src/game/simulation.js` contém a simulação independente do navegador. `Game` coordena input, áudio, HUD e um único loop.
+- `src/game/m01-simulation.js`, `src/world/tczew-world.js` e `src/game/wz29.js` implementam o estado separado de Tczew em metros, eventos, objectivos, gates e checkpoints. `src/render/m01-view.js` apresenta esse estado na mesma engine.
 - `src/world/spatial.js` partilha raycasts 3D entre jogador, NPCs e explosões. 32 unidades do mapa legado equivalem a um metro; Y planar converte para Z da cena.
 - `src/render/three-renderer.js` representa o estado; não decide dano, percepção nem progressão. O renderer antigo permanece no repositório como referência.
 - `src/assets/asset-manager.js` usa os loaders oficiais, cache e fallback. GLB riggado final ainda precisa de assets e validação.
-- `src/game/sector-battle.js` mantém duas batalhas reduzidas da bancada, com IDs, eventos e baixas persistentes. Os cinco sectores de Tczew ainda são especificação.
+- `src/game/sector-battle.js` mantém duas batalhas reduzidas da bancada. M01 tem cinco agendas próprias, actores e baixas com IDs persistentes; a encenação continua simplificada.
 
 O checkpoint guarda JSON de actores, munição, recarga, granadas, missão, sectores, relógio e gerador aleatório. Continuar usa `localStorage` na origem do navegador; saves incompatíveis mostram erro recuperável.
 

@@ -12,7 +12,7 @@ async function open(page){
   const errors=[],failed=[];
   page.on('pageerror',error=>errors.push(error.message));
   page.on('response',response=>{if(response.status()>=400)failed.push(`${response.status()} ${response.url()}`);});
-  await page.goto('?debug=1');
+  await page.goto('?debug=1&mission=sandbox-1944');
   await expect(page.locator('#start')).toBeVisible();
   await page.waitForFunction(()=>window.gameDiagnostics?.().models.length===3);
   await expect(page.locator('#error')).toBeHidden();
@@ -106,7 +106,7 @@ test('corrupt checkpoint is explained and a new mission remains available',async
 test('missing models are reported and procedural fallback keeps the area playable',async({page},info)=>{
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
   await page.route('**/assets/models/**',route=>route.fulfill({status:404,body:'missing test asset'}));
-  await page.goto('?debug=1');
+  await page.goto('?debug=1&mission=sandbox-1944');
   await page.waitForFunction(()=>window.gameDiagnostics?.().assetFailures.length===3);
   expect((await page.evaluate(()=>window.gameDiagnostics())).models).toEqual([]);
   await expect(page.locator('#error')).toBeHidden();await start(page);

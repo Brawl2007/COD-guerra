@@ -1,4 +1,40 @@
-# Relatório de qualidade — fundação
+# Relatório de qualidade — integração M01
+
+## Evidências desta integração
+
+M01 está **PROTÓTIPO JOGÁVEL**, usando a fundação do PR #9 e o kit de pontes do Claude completado no PR #11. Nenhuma missão está declarada VALIDADA. O mesmo `Game`/renderer/loop oferece Tczew e a bancada francesa, com estados e saves separados.
+
+| Verificação local | Resultado | Alcance |
+| --- | --- | --- |
+| Testes Node | 60/60 | 43 regressões/dados/GLB já existentes e 17 testes do runtime de M01; inclui arma, percurso, restauração, gates, segurança, sectores e blast obstruído. |
+| Build de produção | Passa | Vite com `/COD-guerra/`, sem recursos externos do jogo. JS ~925 kB / 233 kB gzip; aviso de chunk grande permanece. |
+| Navegador de produção | 9/9 | Quatro testes da bancada preservados; cinco de M01: modelos/controlos/arma/CP-A, caminhada e entrega, CP-D/reload, outro/debrief e erro de asset. |
+| Percurso automático de simulação | Completo, 26 eventos, CP-A..D | Controlos com passos de 50 ms, colisão e relógios reais da simulação. Todos os objectivos obrigatórios terminam. Não injecta progressão; **não é partida no navegador**. |
+| Morte e restauração | Passam nos quatro snapshots | Actores, baixas, RNG, diálogo, timers, arma, destruição e hora real restaurados. Saves corrompidos rejeitados atomicamente. |
+| LOD/destruição | Passa | Peças demolidas e baixas conservadas ao trocar distância/LOD, carregar JSON e reiniciar CP-D no navegador. |
+| Cinco agendas durante 90 s | Passa na simulação | Mesmo estado com jogador olhando para frente ou para trás; perdas persistem. Não aprova a direcção visual da batalha. |
+| Demolição oeste | Passa na simulação | Gate segura em 06:44:30, libera quando seguros; timeout chama Zieliński, que caminha e escolta o jogador. Sem dano de demolição ao jogador. |
+| Colisores | 83 caixas GLB reproduzidas | JSON verificado contra GLB; juntas completam os pequenos intervalos entre vãos. Posts conservadores deixam abertos os arcos dos portais. |
+
+Chromium 153/SwiftShader, viewport 1280×720, Node 24.19.0, Three.js 0.186.1, Vite 8.3.1, Playwright 1.58.2. O daemon `agent-browser` continuou indisponível; Playwright executou a verificação efectiva. Caminhada, captura, cliques, teclas, mira, recarga e skip usam input do navegador. Os testes de CP-D e outro continuam snapshots produzidos pelo percurso integral de simulação; **não comprovam uma partida contínua de M01 no navegador**.
+
+O primeiro teste de caminhada ficou bloqueado num saco de areia: o alvo de strafe deixava pouca folga ao raio do jogador e à amostragem do teclado. O percurso agora contorna a cobertura pelo sul com margem. M01 subdivide frames lentos em passos de até 50 ms, num total máximo de 250 ms por frame, dentro do mesmo loop; teclas de acção/olhar são consumidos uma vez. Isso reduz a desaceleração em software, sem aprovar performance. Um teste de simulação também detectou o pelotão a cair nos intervalos de 2,4 m entre vãos; as juntas visuais/físicas derivadas dos limites GLB corrigem a travessia, sem preencher vãos demolidos.
+
+Capturas e relatório reprodutível em [docs/verification/m01-runtime/README.md](docs/verification/m01-runtime/README.md). O CI publica evidências em `browser-evidence`. Resultados locais são separados de GitHub Actions/Pages; o PR de integração precisa passar o workflow antes do merge.
+
+A rota automática testa movimento/objectivos e não dispara a arma; tiro, recarga, obstrução e resgate são verificados separadamente. Chegar ao debrief nessa rota não aprova a qualidade ou dificuldade do combate.
+
+## Limites de M01
+
+- Partida contínua no navegador, performance no Chromebook, rotas adversas e revisão de ritmo pendentes. Não há medição ou alegação de FPS de hardware.
+- Modelos humanos, arma/mãos, comboios, aviões, terreno e prédios são placeholders originais. Vozes, animações finais e uniformes completos pendentes. As pontes são o kit GLB provisório revisto.
+- Feridos/resgate e navegação têm comportamento reduzido; falta a encenação completa de S3, pelotão carregando feridos, interiores de casamata e animação de agarrar do sargento.
+- Sectores conservam estados/IDs mas não representam todos os sistemas de suprimento, moral, ferimentos e munição de NPCs exigidos no plano. Fogo e precisão usam tuning explícito de protótipo.
+- Alça 300/500/800/1000 m é referência, com raio recto/dispersão; queda/arrasto balístico pendentes. Treliças não são paredes opacas; colisão exacta de barras/ruínas pendente.
+- P4/P13, medidas modernas versus 1939, poses de dano e forma/presença de portais continuam classificados em `SOURCE_CHECK.md` e `BRIDGE_ASSET_REPORT.md`. Remover o portal oeste é resultado do roteiro do protótipo; não comprova o dano histórico exacto do portal.
+- M02–M30 e o save/transições da campanha permanecem por implementar.
+
+## Histórico da fundação
 
 ## Evidências locais
 
@@ -28,6 +64,6 @@ Na [execução 36797484230](https://github.com/Brawl2007/COD-guerra/actions/runs
 
 ## Critérios ainda não aprovados
 
-M01 continua PLANEJADA. Testes que comparam cronologia e medidas ao JSON não provam historicidade. Faltam cartografia histórica, respostas específicas em SOURCE_CHECK, ligação à engine e partida completa; CP-A..D, skip, wz.29, baixas S2 através de LOD, resgate opcional, espera visual de 90 s e demolições seguras precisam de demonstração em navegador.
+Na entrega anterior, M01 permanecia PLANEJADA. Esta integração já fornece runtime e verificações descritos no início do relatório; cartografia histórica, respostas específicas, partida contínua e validação de todos os critérios visuais ainda pendentes. Testes de cronologia/medidas continuam sem comprovar historicidade.
 
 Arte final, soldados riggados, mãos convincentes, áudio gravado, mixagem e validação no Chromebook são trabalho posterior. A bancada francesa permite testar a fundação e não representa Tczew.

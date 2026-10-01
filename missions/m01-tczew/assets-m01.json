@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "missionId": "m01_tczew",
-  "status": "LISTA DE NECESSIDADES — nenhum asset baixado ou verificado nesta sessão (Sketchfab bloqueado por desafio anti-bot; licenças tiradas de resumos de busca)",
+  "status": "LISTA DE NECESSIDADES — pontes e portal originais provisórios importados e verificados no navegador; candidatos de terceiros continuam sem verificação directa",
   "scaleConvention": {
     "unit": "1 unidade = 1 metro",
     "up": "+Y",
@@ -25,7 +25,8 @@
       "candidates": [
         { "source": "Sketchfab", "title": "Railway Bridges Pack 01", "author": "Szakal (@Grabka)", "url": "https://sketchfab.com/3d-models/railway-bridges-pack-01-877cdcd7b6f14b72aaa88fa893b812c9", "licenseStated": "CC-BY (resumo de busca)", "licenseVerified": false, "scaleVerified": false, "use": "só bloqueio/placeholder — tipo de treliça diferente" }
       ],
-      "status": "A PRODUZIR", "targetPath": "assets/models/production/m01/bridge_rail_*.glb"
+      "status": "A PRODUZIR", "targetPath": "assets/models/production/m01/bridge_rail_*.glb",
+      "provisional": {"path": "assets/models/provisional/m01/bridge_rail_1891_1912.glb", "lod1": "assets/models/provisional/m01/bridge_rail_1891_1912.lod1.glb", "colliders": "assets/models/provisional/m01/bridge_rail_1891_1912.colliders.glb", "manifest": "assets/models/provisional/m01/bridges.manifest.json", "report": "missions/m01-tczew/BRIDGE_ASSET_REPORT.md", "license": "ORIGINAL", "status": "PROVISÓRIO VERIFICADO — 3 LODs e destruição por IDs; escala do mapa, aceitação histórica final pendente", "lod2": "assets/models/provisional/m01/bridge_rail_1891_1912.lod2.glb", "review": "docs/assets/m01-bridges/review-results.json", "stateAdapter": "tools/assets/m01-bridges/src/state.mjs", "placementAppliedToRoot": true}
     },
     {
       "id": "bridge_road_lentze_1857", "name": "Ponte rodoviária Lentze (1857 + extensão de 1912), torres e portais de Stüler", "category": "environment_landmark", "priority": "P0",
@@ -35,7 +36,8 @@
       "budget": { "lod0TrisPerSpan": 30000, "towerPairLod0Tris": 12000, "lods": 3, "instancing": true },
       "candidates": [],
       "referenceOnly": ["Fotografias da Skarbnica Tczewska (T18) — referência visual, não textura"],
-      "status": "A PRODUZIR", "targetPath": "assets/models/production/m01/bridge_road_*.glb"
+      "status": "A PRODUZIR", "targetPath": "assets/models/production/m01/bridge_road_*.glb",
+      "provisional": {"path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb", "lod1": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod1.glb", "colliders": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.colliders.glb", "manifest": "assets/models/provisional/m01/bridges.manifest.json", "report": "missions/m01-tczew/BRIDGE_ASSET_REPORT.md", "license": "ORIGINAL", "status": "PROVISÓRIO VERIFICADO — 3 LODs e destruição por IDs; escala do mapa, aceitação histórica final pendente", "lod2": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod2.glb", "review": "docs/assets/m01-bridges/review-results.json", "stateAdapter": "tools/assets/m01-bridges/src/state.mjs", "placementAppliedToRoot": true}
     },
     {
       "id": "station_stary_dworzec", "name": "Estação de Tczew de 1939 (Stüler, 1856–57)", "category": "environment_building", "priority": "P1",

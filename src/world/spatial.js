@@ -1,9 +1,8 @@
 import { EYE_HEIGHT, UNITS_PER_METRE } from '../config.js';
 
-export const toScene = (point, height = 0) => ({
-  x: point.x / UNITS_PER_METRE, y: height, z: point.y / UNITS_PER_METRE,
-});
-export const eyePosition = actor => toScene(actor, (actor.feetHeight || 0) +
+export const toScene = (point, height) => point.space==='metres'?
+  ({x:point.x,y:height??point.y,z:point.z}):({x:point.x/UNITS_PER_METRE,y:height??0,z:point.y/UNITS_PER_METRE});
+export const eyePosition = actor => toScene(actor, (actor.space==='metres'?actor.y:actor.feetHeight||0) +
   (actor.eyeHeight ?? (actor.crouched ? 1.08 : EYE_HEIGHT)));
 export const aimDirection = (angle, pitch = 0) => ({
   x: Math.cos(angle) * Math.cos(pitch), y: Math.sin(pitch),
@@ -35,7 +34,7 @@ export function rayBox(origin, direction, min, max, limit = Infinity) {
 }
 
 export function actorHitboxes(actor) {
-  const p = toScene(actor, actor.feetHeight || 0), crouch = actor.crouched ? .48 : 0;
+  const p = toScene(actor, actor.space==='metres'?actor.y:actor.feetHeight||0), crouch = actor.crouched ? .48 : 0;
   return [
     { part: 'head', multiplier: 2, min: { x: p.x-.18, y: p.y+1.48-crouch, z: p.z-.18 },
       max: { x: p.x+.18, y: p.y+1.88-crouch, z: p.z+.18 } },
@@ -53,7 +52,10 @@ export function traceObstruction(world, origin, direction, range) {
     if (distance !== null && (!result || distance < result.distance))
       result = { ...box, distance, kind: 'world' };
   }
-  if (direction.y < -1e-9) {
+  if(world.traceTerrain){
+    const terrain=world.traceTerrain(origin,direction,range);
+    if(terrain&&(!result||terrain.distance<result.distance))result=terrain;
+  }else if (direction.y < -1e-9) {
     const distance = -origin.y / direction.y;
     if (distance >= 0 && distance <= range && (!result || distance < result.distance))
       result = { distance, kind: 'world', material: 'earth' };

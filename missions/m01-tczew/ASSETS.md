@@ -2,7 +2,9 @@
 
 Dados: [`assets-m01.json`](assets-m01.json) · Ficha da arma: [`../../research/weapons/kb_wz29.md`](../../research/weapons/kb_wz29.md)
 
-**Estado:** lista de necessidades. **Nenhum asset foi baixado, importado ou verificado nesta sessão.**
+**Estado:** lista de necessidades. As duas pontes e o portal de Lisewo têm modelos originais **provisórios verificados**, com três LODs, colisores e estados de demolição por ID. Ver [relatório das pontes](BRIDGE_ASSET_REPORT.md) e [capturas/visualizador](../../docs/assets/m01-bridges/README.md). M01 continua **PLANEJADA**, sem playtest da missão.
+
+Os candidatos de terceiros continuam pendentes de importação e verificação directa:
 - O Sketchfab respondeu com desafio anti-bot (WAF) e ambientCG e Poly Haven estavam bloqueados.
 - Os candidatos e as licenças abaixo vêm de **resumos de busca** e estão marcados `licenseVerified: false` e `scaleVerified: false`.
 
@@ -36,8 +38,8 @@ Prioridades:
 
 | Asset | Prioridade | Dimensões de referência | Estratégia | Candidatos (licença declarada) | Estado |
 | --- | --- | --- | --- | --- | --- |
-| Ponte ferroviária 1891/1912 | P0 | 1030–1037 m; 6 × 129 m (lenticulares) + 3 × 81,6 m; via dupla; pilares em `map-layout.json` | **Original**, kit modular instanciável com estados de dano das 06:10 e 06:45 | *Railway Bridges Pack 01* (Szakal, CC-BY) — só placeholder, treliça diferente | A PRODUZIR |
-| Ponte rodoviária Lentze 1857/1912 | P0 | 6 × 130,9 m + 3 × 81,6 m; vigas de 8,68 m a 6,43 m entre si; 5 pares de torres de ~23 m, Ø 5,3 m | **Original**: vão Lentze, par de torres, portal oeste de Stüler, antigo portal leste | — (fotos da Skarbnica só como referência) | A PRODUZIR |
+| Ponte ferroviária 1891/1912 | P0 | 1030–1037 m; 6 × 129 m (lenticulares) + 3 × 81,6 m; via dupla; pilares em `map-layout.json` | **Original**, kit modular instanciável com estados de dano das 06:10 e 06:45 | *Railway Bridges Pack 01* (Szakal, CC-BY) — só placeholder, treliça diferente | FINAL A PRODUZIR · [provisório verificado, 3 LODs](BRIDGE_ASSET_REPORT.md) |
+| Ponte rodoviária Lentze 1857/1912 | P0 | 6 × 130,9 m + 3 × 81,6 m; vigas de 8,68 m a 6,43 m entre si; 5 pares de torres de ~23 m, Ø 5,3 m | **Original**: vão Lentze, par de torres, portal oeste de Stüler, antigo portal leste | — (fotos da Skarbnica só como referência) | FINAL A PRODUZIR · [provisório verificado, 3 LODs](BRIDGE_ASSET_REPORT.md) |
 | Estação de 1939 (Stüler) | P1 | Contorno pendente (P4) | **Original**, fachada de média distância com dano | — | depois de P4 |
 | Ju 87 B-1 | P0 | 11,1 × 13,8 × 4,24 m | CC-BY ou original; conferir variante **B** (não D/G) | scorpion81 · manilov.ap · philano · helijah (todos CC-BY); museu @wwIImuseum só como referência | A VERIFICAR |
 | Locomotiva do trem 963 | P1 | Classe desconhecida (P16) | **Original** genérica da época | BR 52 (rejeitada: 1942) · BR 01 (rejeitada: expresso) | depois de P16 |

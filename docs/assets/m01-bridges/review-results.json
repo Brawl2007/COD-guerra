@@ -1,0 +1,7684 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-01T01:41:40.652Z",
+  "browser": "153.0.8010.0",
+  "rendering": "Chromium WebGL / SwiftShader; revisão de assets, sem medição de desempenho em hardware real",
+  "gameplay": "M01 PLANEJADA; não ligada à engine e não jogada",
+  "screenshots": [
+    "overview.png",
+    "west.png",
+    "towers.png",
+    "road_elevation.png",
+    "pier_detail.png",
+    "rail_elevation.png",
+    "extension_elevation.png",
+    "plan_measured.png",
+    "destroyed_west.png",
+    "destroyed_east.png",
+    "lisewo.png",
+    "lod1.png",
+    "lod2.png",
+    "destroyed_west_lod1.png",
+    "destroyed_west_lod2.png",
+    "destroyed_east_lod1.png",
+    "destroyed_east_lod2.png"
+  ],
+  "states": [
+    {
+      "state": "intact",
+      "lod": 0,
+      "consumedEventIds": [],
+      "parts": [
+        {
+          "id": "rail_support_00",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_portal_west",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_02",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_06",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_support_07",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_portal_old_east",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_support_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_02",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_06",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_07",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_00_damaged",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_01_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_06_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_portal_old_east_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_01_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_02_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_06_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_07_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_00",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_portal_west",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_01_n",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_s",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_02_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_02_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_02",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_03_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_03_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_04_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_04_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_05_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_05_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_06",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_07",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_portal_old_east",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_02",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_06",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_07",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_00_damaged",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_n_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_s_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_01_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_06_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_portal_old_east_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_01_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_02_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_06_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_07_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        }
+      ],
+      "bounds": {
+        "rail_bridge": {
+          "min": [
+            -20.100000381469727,
+            -16,
+            -14.5
+          ],
+          "max": [
+            1067.1999504089356,
+            15,
+            12.25
+          ],
+          "size": [
+            1087.2999507904053,
+            31,
+            26.75
+          ]
+        },
+        "road_bridge": {
+          "min": [
+            -21.999999618530275,
+            -16,
+            24
+          ],
+          "max": [
+            1067.0999752044677,
+            21.8,
+            54
+          ],
+          "size": [
+            1089.0999748229979,
+            37.8,
+            30
+          ]
+        },
+        "lisewo_portal": {
+          "min": [
+            1058.45,
+            -1,
+            -11.75
+          ],
+          "max": [
+            1067.7499992370606,
+            21,
+            51.75
+          ],
+          "size": [
+            9.299999237060547,
+            22,
+            63.5
+          ]
+        }
+      },
+      "supportPositions": {
+        "rail_support_00": [
+          0,
+          0,
+          0
+        ],
+        "rail_support_01": [
+          140.9,
+          0,
+          0
+        ],
+        "rail_support_02": [
+          270.2,
+          0,
+          0
+        ],
+        "rail_support_03": [
+          401.1,
+          0,
+          0
+        ],
+        "rail_support_04": [
+          531.7,
+          0,
+          0
+        ],
+        "rail_support_05": [
+          662.3,
+          0,
+          0
+        ],
+        "rail_support_06": [
+          793.8,
+          0,
+          0
+        ],
+        "rail_support_07": [
+          878.9,
+          0,
+          0
+        ],
+        "rail_support_08": [
+          961.7,
+          0,
+          0
+        ],
+        "rail_support_09": [
+          1049.2,
+          0,
+          0
+        ],
+        "road_support_00": [
+          2.4,
+          0,
+          40
+        ],
+        "road_support_01": [
+          140.9,
+          0,
+          40
+        ],
+        "road_support_02": [
+          270.9,
+          0,
+          40
+        ],
+        "road_support_03": [
+          400.9,
+          0,
+          40
+        ],
+        "road_support_04": [
+          531.7,
+          0,
+          40
+        ],
+        "road_support_05": [
+          662.1,
+          0,
+          40
+        ],
+        "road_support_06": [
+          807.5,
+          0,
+          40
+        ],
+        "road_support_07": [
+          879,
+          0,
+          40
+        ],
+        "road_support_08": [
+          962,
+          0,
+          40
+        ],
+        "road_support_09": [
+          1049.1,
+          0,
+          40
+        ]
+      },
+      "towerBounds": {
+        "road_tower_01_n": {
+          "min": [
+            137.9,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            143.9,
+            21.8,
+            37
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_01_s": {
+          "min": [
+            137.9,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            143.9,
+            21.8,
+            49
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_02_n": {
+          "min": [
+            267.9,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            273.9,
+            21.8,
+            37
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_02_s": {
+          "min": [
+            267.9,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            273.9,
+            21.8,
+            49
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_03_n": {
+          "min": [
+            397.9,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            403.9,
+            21.8,
+            37
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_03_s": {
+          "min": [
+            397.9,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            403.9,
+            21.8,
+            49
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_04_n": {
+          "min": [
+            528.7,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            534.7,
+            21.8,
+            37
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_04_s": {
+          "min": [
+            528.7,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            534.7,
+            21.8,
+            49
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_05_n": {
+          "min": [
+            659.1,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            665.1,
+            21.8,
+            37
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_05_s": {
+          "min": [
+            659.1,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            665.1,
+            21.8,
+            49
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        }
+      },
+      "portalBounds": {
+        "rail_portal_west": {
+          "min": [
+            -6.949999809265137,
+            -1,
+            -12.25
+          ],
+          "max": [
+            -1.0499999523162842,
+            15,
+            12.25
+          ],
+          "size": [
+            5.8999998569488525,
+            16,
+            24.5
+          ]
+        },
+        "rail_portal_old_east": {
+          "min": [
+            790.8499999523162,
+            -1,
+            -12.25
+          ],
+          "max": [
+            796.7500000476837,
+            15,
+            12.25
+          ],
+          "size": [
+            5.900000095367432,
+            16,
+            24.5
+          ]
+        },
+        "road_portal_west": {
+          "min": [
+            -7.349999904632568,
+            -1,
+            29.550000190734863
+          ],
+          "max": [
+            -0.6500000953674316,
+            17,
+            50.44999980926514
+          ],
+          "size": [
+            6.699999809265137,
+            18,
+            20.899999618530273
+          ]
+        },
+        "road_portal_old_east": {
+          "min": [
+            804.1500000953674,
+            -1,
+            29.550000190734863
+          ],
+          "max": [
+            810.8499999046326,
+            17,
+            50.44999980926514
+          ],
+          "size": [
+            6.699999809265137,
+            18,
+            20.899999618530273
+          ]
+        }
+      },
+      "colliderStates": {
+        "rail_collider_deck_span_01": true,
+        "rail_collider_truss_N_span_01": true,
+        "rail_collider_truss_S_span_01": true,
+        "rail_collider_deck_span_02": true,
+        "rail_collider_truss_N_span_02": true,
+        "rail_collider_truss_S_span_02": true,
+        "rail_collider_deck_span_03": true,
+        "rail_collider_truss_N_span_03": true,
+        "rail_collider_truss_S_span_03": true,
+        "rail_collider_deck_span_04": true,
+        "rail_collider_truss_N_span_04": true,
+        "rail_collider_truss_S_span_04": true,
+        "rail_collider_deck_span_05": true,
+        "rail_collider_truss_N_span_05": true,
+        "rail_collider_truss_S_span_05": true,
+        "rail_collider_deck_span_06": true,
+        "rail_collider_truss_N_span_06": true,
+        "rail_collider_truss_S_span_06": true,
+        "rail_collider_deck_span_07": true,
+        "rail_collider_truss_N_span_07": true,
+        "rail_collider_truss_S_span_07": true,
+        "rail_collider_deck_span_08": true,
+        "rail_collider_truss_N_span_08": true,
+        "rail_collider_truss_S_span_08": true,
+        "rail_collider_deck_span_09": true,
+        "rail_collider_truss_N_span_09": true,
+        "rail_collider_truss_S_span_09": true,
+        "rail_collider_abutment_west": true,
+        "rail_collider_pier_01": true,
+        "rail_collider_pier_02": true,
+        "rail_collider_pier_03": true,
+        "rail_collider_pier_04": true,
+        "rail_collider_pier_05": true,
+        "rail_collider_pier_06": true,
+        "rail_collider_pier_07": true,
+        "rail_collider_pier_08": true,
+        "road_collider_tower_01_n": true,
+        "road_collider_tower_01_s": true,
+        "road_collider_tower_02_n": true,
+        "road_collider_tower_02_s": true,
+        "road_collider_tower_03_n": true,
+        "road_collider_tower_03_s": true,
+        "road_collider_tower_04_n": true,
+        "road_collider_tower_04_s": true,
+        "road_collider_tower_05_n": true,
+        "road_collider_tower_05_s": true,
+        "road_collider_deck_span_01": true,
+        "road_collider_truss_N_span_01": true,
+        "road_collider_truss_S_span_01": true,
+        "road_collider_deck_span_02": true,
+        "road_collider_truss_N_span_02": true,
+        "road_collider_truss_S_span_02": true,
+        "road_collider_deck_span_03": true,
+        "road_collider_truss_N_span_03": true,
+        "road_collider_truss_S_span_03": true,
+        "road_collider_deck_span_04": true,
+        "road_collider_truss_N_span_04": true,
+        "road_collider_truss_S_span_04": true,
+        "road_collider_deck_span_05": true,
+        "road_collider_truss_N_span_05": true,
+        "road_collider_truss_S_span_05": true,
+        "road_collider_deck_span_06": true,
+        "road_collider_truss_N_span_06": true,
+        "road_collider_truss_S_span_06": true,
+        "road_collider_deck_span_07": true,
+        "road_collider_truss_N_span_07": true,
+        "road_collider_truss_S_span_07": true,
+        "road_collider_deck_span_08": true,
+        "road_collider_truss_N_span_08": true,
+        "road_collider_truss_S_span_08": true,
+        "road_collider_deck_span_09": true,
+        "road_collider_truss_N_span_09": true,
+        "road_collider_truss_S_span_09": true,
+        "road_collider_abutment_west": true,
+        "road_collider_pier_01": true,
+        "road_collider_pier_02": true,
+        "road_collider_pier_03": true,
+        "road_collider_pier_04": true,
+        "road_collider_pier_05": true,
+        "road_collider_pier_06": true,
+        "road_collider_pier_07": true,
+        "road_collider_pier_08": true,
+        "COL_portal_lisewo_1912": true
+      },
+      "invalidNormals": 0,
+      "renderStats": {
+        "frame": 3,
+        "calls": 238,
+        "triangles": 131770,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "state": "intact",
+      "lod": 1,
+      "consumedEventIds": [],
+      "parts": [
+        {
+          "id": "rail_support_00",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_portal_west",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_02",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_06",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_support_07",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_portal_old_east",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_support_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_02",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_06",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_07",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_00_damaged",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_01_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_06_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_portal_old_east_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_01_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_02_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_06_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_07_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_00",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_portal_west",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_01_n",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_s",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_02_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_02_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_02",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_03_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_03_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_04_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_04_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_05_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_05_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_06",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_07",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_portal_old_east",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_02",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_06",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_07",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_00_damaged",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_n_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_s_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_01_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_06_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_portal_old_east_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_01_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_02_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_06_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_07_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        }
+      ],
+      "bounds": {
+        "rail_bridge": {
+          "min": [
+            -20.100000381469727,
+            -16,
+            -14.5
+          ],
+          "max": [
+            1067.1999504089356,
+            15,
+            12.25
+          ],
+          "size": [
+            1087.2999507904053,
+            31,
+            26.75
+          ]
+        },
+        "road_bridge": {
+          "min": [
+            -21.999999618530275,
+            -16,
+            24
+          ],
+          "max": [
+            1067.0999752044677,
+            21.8,
+            54
+          ],
+          "size": [
+            1089.0999748229979,
+            37.8,
+            30
+          ]
+        },
+        "lisewo_portal": {
+          "min": [
+            1058.45,
+            -1,
+            -11.75
+          ],
+          "max": [
+            1067.7,
+            21,
+            51.75
+          ],
+          "size": [
+            9.25,
+            22,
+            63.5
+          ]
+        }
+      },
+      "supportPositions": {
+        "rail_support_00": [
+          0,
+          0,
+          0
+        ],
+        "rail_support_01": [
+          140.9,
+          0,
+          0
+        ],
+        "rail_support_02": [
+          270.2,
+          0,
+          0
+        ],
+        "rail_support_03": [
+          401.1,
+          0,
+          0
+        ],
+        "rail_support_04": [
+          531.7,
+          0,
+          0
+        ],
+        "rail_support_05": [
+          662.3,
+          0,
+          0
+        ],
+        "rail_support_06": [
+          793.8,
+          0,
+          0
+        ],
+        "rail_support_07": [
+          878.9,
+          0,
+          0
+        ],
+        "rail_support_08": [
+          961.7,
+          0,
+          0
+        ],
+        "rail_support_09": [
+          1049.2,
+          0,
+          0
+        ],
+        "road_support_00": [
+          2.4,
+          0,
+          40
+        ],
+        "road_support_01": [
+          140.9,
+          0,
+          40
+        ],
+        "road_support_02": [
+          270.9,
+          0,
+          40
+        ],
+        "road_support_03": [
+          400.9,
+          0,
+          40
+        ],
+        "road_support_04": [
+          531.7,
+          0,
+          40
+        ],
+        "road_support_05": [
+          662.1,
+          0,
+          40
+        ],
+        "road_support_06": [
+          807.5,
+          0,
+          40
+        ],
+        "road_support_07": [
+          879,
+          0,
+          40
+        ],
+        "road_support_08": [
+          962,
+          0,
+          40
+        ],
+        "road_support_09": [
+          1049.1,
+          0,
+          40
+        ]
+      },
+      "towerBounds": {
+        "road_tower_01_n": {
+          "min": [
+            138.04683055877686,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            143.75316944122315,
+            21.8,
+            37
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_01_s": {
+          "min": [
+            138.04683055877686,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            143.75316944122315,
+            21.8,
+            49
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_02_n": {
+          "min": [
+            268.04683055877683,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            273.7531694412231,
+            21.8,
+            37
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_02_s": {
+          "min": [
+            268.04683055877683,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            273.7531694412231,
+            21.8,
+            49
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_03_n": {
+          "min": [
+            398.04683055877683,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            403.7531694412231,
+            21.8,
+            37
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_03_s": {
+          "min": [
+            398.04683055877683,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            403.7531694412231,
+            21.8,
+            49
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_04_n": {
+          "min": [
+            528.8468305587769,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            534.5531694412232,
+            21.8,
+            37
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_04_s": {
+          "min": [
+            528.8468305587769,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            534.5531694412232,
+            21.8,
+            49
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_05_n": {
+          "min": [
+            659.2468305587769,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            664.9531694412232,
+            21.8,
+            37
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_05_s": {
+          "min": [
+            659.2468305587769,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            664.9531694412232,
+            21.8,
+            49
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        }
+      },
+      "portalBounds": {
+        "rail_portal_west": {
+          "min": [
+            -6.80561637878418,
+            -1,
+            -12.25
+          ],
+          "max": [
+            -1.1943833827972412,
+            15,
+            12.25
+          ],
+          "size": [
+            5.6112329959869385,
+            16,
+            24.5
+          ]
+        },
+        "rail_portal_old_east": {
+          "min": [
+            790.9943833827972,
+            -1,
+            -12.25
+          ],
+          "max": [
+            796.6056166172027,
+            15,
+            12.25
+          ],
+          "size": [
+            5.611233234405518,
+            16,
+            24.5
+          ]
+        },
+        "road_portal_west": {
+          "min": [
+            -7.186039447784424,
+            -1,
+            29.550000190734863
+          ],
+          "max": [
+            -0.8139605522155762,
+            17,
+            50.44999980926514
+          ],
+          "size": [
+            6.372078895568848,
+            18,
+            20.899999618530273
+          ]
+        },
+        "road_portal_old_east": {
+          "min": [
+            804.3139605522156,
+            -1,
+            29.550000190734863
+          ],
+          "max": [
+            810.6860394477844,
+            17,
+            50.44999980926514
+          ],
+          "size": [
+            6.372078895568848,
+            18,
+            20.899999618530273
+          ]
+        }
+      },
+      "colliderStates": {
+        "rail_collider_deck_span_01": true,
+        "rail_collider_truss_N_span_01": true,
+        "rail_collider_truss_S_span_01": true,
+        "rail_collider_deck_span_02": true,
+        "rail_collider_truss_N_span_02": true,
+        "rail_collider_truss_S_span_02": true,
+        "rail_collider_deck_span_03": true,
+        "rail_collider_truss_N_span_03": true,
+        "rail_collider_truss_S_span_03": true,
+        "rail_collider_deck_span_04": true,
+        "rail_collider_truss_N_span_04": true,
+        "rail_collider_truss_S_span_04": true,
+        "rail_collider_deck_span_05": true,
+        "rail_collider_truss_N_span_05": true,
+        "rail_collider_truss_S_span_05": true,
+        "rail_collider_deck_span_06": true,
+        "rail_collider_truss_N_span_06": true,
+        "rail_collider_truss_S_span_06": true,
+        "rail_collider_deck_span_07": true,
+        "rail_collider_truss_N_span_07": true,
+        "rail_collider_truss_S_span_07": true,
+        "rail_collider_deck_span_08": true,
+        "rail_collider_truss_N_span_08": true,
+        "rail_collider_truss_S_span_08": true,
+        "rail_collider_deck_span_09": true,
+        "rail_collider_truss_N_span_09": true,
+        "rail_collider_truss_S_span_09": true,
+        "rail_collider_abutment_west": true,
+        "rail_collider_pier_01": true,
+        "rail_collider_pier_02": true,
+        "rail_collider_pier_03": true,
+        "rail_collider_pier_04": true,
+        "rail_collider_pier_05": true,
+        "rail_collider_pier_06": true,
+        "rail_collider_pier_07": true,
+        "rail_collider_pier_08": true,
+        "road_collider_tower_01_n": true,
+        "road_collider_tower_01_s": true,
+        "road_collider_tower_02_n": true,
+        "road_collider_tower_02_s": true,
+        "road_collider_tower_03_n": true,
+        "road_collider_tower_03_s": true,
+        "road_collider_tower_04_n": true,
+        "road_collider_tower_04_s": true,
+        "road_collider_tower_05_n": true,
+        "road_collider_tower_05_s": true,
+        "road_collider_deck_span_01": true,
+        "road_collider_truss_N_span_01": true,
+        "road_collider_truss_S_span_01": true,
+        "road_collider_deck_span_02": true,
+        "road_collider_truss_N_span_02": true,
+        "road_collider_truss_S_span_02": true,
+        "road_collider_deck_span_03": true,
+        "road_collider_truss_N_span_03": true,
+        "road_collider_truss_S_span_03": true,
+        "road_collider_deck_span_04": true,
+        "road_collider_truss_N_span_04": true,
+        "road_collider_truss_S_span_04": true,
+        "road_collider_deck_span_05": true,
+        "road_collider_truss_N_span_05": true,
+        "road_collider_truss_S_span_05": true,
+        "road_collider_deck_span_06": true,
+        "road_collider_truss_N_span_06": true,
+        "road_collider_truss_S_span_06": true,
+        "road_collider_deck_span_07": true,
+        "road_collider_truss_N_span_07": true,
+        "road_collider_truss_S_span_07": true,
+        "road_collider_deck_span_08": true,
+        "road_collider_truss_N_span_08": true,
+        "road_collider_truss_S_span_08": true,
+        "road_collider_deck_span_09": true,
+        "road_collider_truss_N_span_09": true,
+        "road_collider_truss_S_span_09": true,
+        "road_collider_abutment_west": true,
+        "road_collider_pier_01": true,
+        "road_collider_pier_02": true,
+        "road_collider_pier_03": true,
+        "road_collider_pier_04": true,
+        "road_collider_pier_05": true,
+        "road_collider_pier_06": true,
+        "road_collider_pier_07": true,
+        "road_collider_pier_08": true,
+        "COL_portal_lisewo_1912": true
+      },
+      "invalidNormals": 0,
+      "renderStats": {
+        "frame": 4,
+        "calls": 192,
+        "triangles": 42506,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "state": "intact",
+      "lod": 2,
+      "consumedEventIds": [],
+      "parts": [
+        {
+          "id": "rail_support_00",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_portal_west",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_02",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_06",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_support_07",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_portal_old_east",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_support_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_02",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_06",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_07",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_00_damaged",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_01_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_06_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_portal_old_east_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_01_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_02_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_06_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_07_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_00",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_portal_west",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_01_n",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_s",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_02_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_02_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_02",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_03_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_03_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_04_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_04_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_05_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_05_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_06",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_07",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_portal_old_east",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_02",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_06",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_07",
+          "visible": true,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_00_damaged",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_n_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_s_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_01_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_06_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_portal_old_east_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_01_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_02_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_06_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_07_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_east_demolition"
+        }
+      ],
+      "bounds": {
+        "rail_bridge": {
+          "min": [
+            -20.100000381469727,
+            -16,
+            -14.5
+          ],
+          "max": [
+            1067.1999504089356,
+            15,
+            12.25
+          ],
+          "size": [
+            1087.2999507904053,
+            31,
+            26.75
+          ]
+        },
+        "road_bridge": {
+          "min": [
+            -21.999999618530275,
+            -16,
+            24
+          ],
+          "max": [
+            1067.0999752044677,
+            21.8,
+            54
+          ],
+          "size": [
+            1089.0999748229979,
+            37.8,
+            30
+          ]
+        },
+        "lisewo_portal": {
+          "min": [
+            1058.45,
+            -1,
+            -11.75
+          ],
+          "max": [
+            1067.7,
+            21,
+            51.75
+          ],
+          "size": [
+            9.25,
+            22,
+            63.5
+          ]
+        }
+      },
+      "supportPositions": {
+        "rail_support_00": [
+          0,
+          0,
+          0
+        ],
+        "rail_support_01": [
+          140.9,
+          0,
+          0
+        ],
+        "rail_support_02": [
+          270.2,
+          0,
+          0
+        ],
+        "rail_support_03": [
+          401.1,
+          0,
+          0
+        ],
+        "rail_support_04": [
+          531.7,
+          0,
+          0
+        ],
+        "rail_support_05": [
+          662.3,
+          0,
+          0
+        ],
+        "rail_support_06": [
+          793.8,
+          0,
+          0
+        ],
+        "rail_support_07": [
+          878.9,
+          0,
+          0
+        ],
+        "rail_support_08": [
+          961.7,
+          0,
+          0
+        ],
+        "rail_support_09": [
+          1049.2,
+          0,
+          0
+        ],
+        "road_support_00": [
+          2.4,
+          0,
+          40
+        ],
+        "road_support_01": [
+          140.9,
+          0,
+          40
+        ],
+        "road_support_02": [
+          270.9,
+          0,
+          40
+        ],
+        "road_support_03": [
+          400.9,
+          0,
+          40
+        ],
+        "road_support_04": [
+          531.7,
+          0,
+          40
+        ],
+        "road_support_05": [
+          662.1,
+          0,
+          40
+        ],
+        "road_support_06": [
+          807.5,
+          0,
+          40
+        ],
+        "road_support_07": [
+          879,
+          0,
+          40
+        ],
+        "road_support_08": [
+          962,
+          0,
+          40
+        ],
+        "road_support_09": [
+          1049.1,
+          0,
+          40
+        ]
+      },
+      "towerBounds": {
+        "road_tower_01_n": {
+          "min": [
+            138.3019238948822,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            143.4980761051178,
+            21.8,
+            37
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_01_s": {
+          "min": [
+            138.3019238948822,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            143.4980761051178,
+            21.8,
+            49
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_02_n": {
+          "min": [
+            268.3019238948822,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            273.4980761051178,
+            21.8,
+            37
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_02_s": {
+          "min": [
+            268.3019238948822,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            273.4980761051178,
+            21.8,
+            49
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_03_n": {
+          "min": [
+            398.3019238948822,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            403.4980761051178,
+            21.8,
+            37
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_03_s": {
+          "min": [
+            398.3019238948822,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            403.4980761051178,
+            21.8,
+            49
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_04_n": {
+          "min": [
+            529.1019238948822,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            534.2980761051178,
+            21.8,
+            37
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_04_s": {
+          "min": [
+            529.1019238948822,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            534.2980761051178,
+            21.8,
+            49
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_05_n": {
+          "min": [
+            659.5019238948822,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            664.6980761051178,
+            21.8,
+            37
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_05_s": {
+          "min": [
+            659.5019238948822,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            664.6980761051178,
+            21.8,
+            49
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        }
+      },
+      "portalBounds": {
+        "rail_portal_west": {
+          "min": [
+            -6.554775238037109,
+            -1,
+            -12.25
+          ],
+          "max": [
+            -1.4452250003814697,
+            15,
+            12.25
+          ],
+          "size": [
+            5.10955023765564,
+            16,
+            24.5
+          ]
+        },
+        "rail_portal_old_east": {
+          "min": [
+            791.2452250003814,
+            -1,
+            -12.25
+          ],
+          "max": [
+            796.3547749996185,
+            15,
+            12.25
+          ],
+          "size": [
+            5.1095499992370605,
+            16,
+            24.5
+          ]
+        },
+        "road_portal_west": {
+          "min": [
+            -6.901185035705566,
+            -1,
+            29.550000190734863
+          ],
+          "max": [
+            -1.0988149642944336,
+            17,
+            50.44999980926514
+          ],
+          "size": [
+            5.802370071411133,
+            18,
+            20.899999618530273
+          ]
+        },
+        "road_portal_old_east": {
+          "min": [
+            804.5988149642944,
+            -1,
+            29.550000190734863
+          ],
+          "max": [
+            810.4011850357056,
+            17,
+            50.44999980926514
+          ],
+          "size": [
+            5.802370071411133,
+            18,
+            20.899999618530273
+          ]
+        }
+      },
+      "colliderStates": {
+        "rail_collider_deck_span_01": true,
+        "rail_collider_truss_N_span_01": true,
+        "rail_collider_truss_S_span_01": true,
+        "rail_collider_deck_span_02": true,
+        "rail_collider_truss_N_span_02": true,
+        "rail_collider_truss_S_span_02": true,
+        "rail_collider_deck_span_03": true,
+        "rail_collider_truss_N_span_03": true,
+        "rail_collider_truss_S_span_03": true,
+        "rail_collider_deck_span_04": true,
+        "rail_collider_truss_N_span_04": true,
+        "rail_collider_truss_S_span_04": true,
+        "rail_collider_deck_span_05": true,
+        "rail_collider_truss_N_span_05": true,
+        "rail_collider_truss_S_span_05": true,
+        "rail_collider_deck_span_06": true,
+        "rail_collider_truss_N_span_06": true,
+        "rail_collider_truss_S_span_06": true,
+        "rail_collider_deck_span_07": true,
+        "rail_collider_truss_N_span_07": true,
+        "rail_collider_truss_S_span_07": true,
+        "rail_collider_deck_span_08": true,
+        "rail_collider_truss_N_span_08": true,
+        "rail_collider_truss_S_span_08": true,
+        "rail_collider_deck_span_09": true,
+        "rail_collider_truss_N_span_09": true,
+        "rail_collider_truss_S_span_09": true,
+        "rail_collider_abutment_west": true,
+        "rail_collider_pier_01": true,
+        "rail_collider_pier_02": true,
+        "rail_collider_pier_03": true,
+        "rail_collider_pier_04": true,
+        "rail_collider_pier_05": true,
+        "rail_collider_pier_06": true,
+        "rail_collider_pier_07": true,
+        "rail_collider_pier_08": true,
+        "road_collider_tower_01_n": true,
+        "road_collider_tower_01_s": true,
+        "road_collider_tower_02_n": true,
+        "road_collider_tower_02_s": true,
+        "road_collider_tower_03_n": true,
+        "road_collider_tower_03_s": true,
+        "road_collider_tower_04_n": true,
+        "road_collider_tower_04_s": true,
+        "road_collider_tower_05_n": true,
+        "road_collider_tower_05_s": true,
+        "road_collider_deck_span_01": true,
+        "road_collider_truss_N_span_01": true,
+        "road_collider_truss_S_span_01": true,
+        "road_collider_deck_span_02": true,
+        "road_collider_truss_N_span_02": true,
+        "road_collider_truss_S_span_02": true,
+        "road_collider_deck_span_03": true,
+        "road_collider_truss_N_span_03": true,
+        "road_collider_truss_S_span_03": true,
+        "road_collider_deck_span_04": true,
+        "road_collider_truss_N_span_04": true,
+        "road_collider_truss_S_span_04": true,
+        "road_collider_deck_span_05": true,
+        "road_collider_truss_N_span_05": true,
+        "road_collider_truss_S_span_05": true,
+        "road_collider_deck_span_06": true,
+        "road_collider_truss_N_span_06": true,
+        "road_collider_truss_S_span_06": true,
+        "road_collider_deck_span_07": true,
+        "road_collider_truss_N_span_07": true,
+        "road_collider_truss_S_span_07": true,
+        "road_collider_deck_span_08": true,
+        "road_collider_truss_N_span_08": true,
+        "road_collider_truss_S_span_08": true,
+        "road_collider_deck_span_09": true,
+        "road_collider_truss_N_span_09": true,
+        "road_collider_truss_S_span_09": true,
+        "road_collider_abutment_west": true,
+        "road_collider_pier_01": true,
+        "road_collider_pier_02": true,
+        "road_collider_pier_03": true,
+        "road_collider_pier_04": true,
+        "road_collider_pier_05": true,
+        "road_collider_pier_06": true,
+        "road_collider_pier_07": true,
+        "road_collider_pier_08": true,
+        "COL_portal_lisewo_1912": true
+      },
+      "invalidNormals": 0,
+      "renderStats": {
+        "frame": 5,
+        "calls": 192,
+        "triangles": 16730,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "state": "east",
+      "lod": 0,
+      "consumedEventIds": [
+        "evt_m01_east_demolition"
+      ],
+      "parts": [
+        {
+          "id": "rail_support_00",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_portal_west",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_02",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_support_07",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_portal_old_east",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_support_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_02",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_07",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_00_damaged",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_01_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_06_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_portal_old_east_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_01_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_02_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_06_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_07_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_00",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_portal_west",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_01_n",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_s",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_02_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_02_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_02",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_03_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_03_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_04_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_04_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_05_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_05_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_07",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_portal_old_east",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_02",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_07",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_00_damaged",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_n_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_s_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_01_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_06_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_portal_old_east_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_01_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_02_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_06_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_07_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        }
+      ],
+      "bounds": {
+        "rail_bridge": {
+          "min": [
+            -20.100000381469727,
+            -16,
+            -12.25
+          ],
+          "max": [
+            1067.1999504089356,
+            15,
+            12.25
+          ],
+          "size": [
+            1087.2999507904053,
+            31,
+            24.5
+          ]
+        },
+        "road_bridge": {
+          "min": [
+            -21.999999618530275,
+            -16,
+            27.5
+          ],
+          "max": [
+            1067.0999752044677,
+            21.8,
+            54
+          ],
+          "size": [
+            1089.0999748229979,
+            37.8,
+            26.5
+          ]
+        },
+        "lisewo_portal": {
+          "min": [
+            1058.45,
+            -1,
+            -11.75
+          ],
+          "max": [
+            1067.7499992370606,
+            21,
+            51.75
+          ],
+          "size": [
+            9.299999237060547,
+            22,
+            63.5
+          ]
+        }
+      },
+      "supportPositions": {
+        "rail_support_00": [
+          0,
+          0,
+          0
+        ],
+        "rail_support_01": [
+          140.9,
+          0,
+          0
+        ],
+        "rail_support_02": [
+          270.2,
+          0,
+          0
+        ],
+        "rail_support_03": [
+          401.1,
+          0,
+          0
+        ],
+        "rail_support_04": [
+          531.7,
+          0,
+          0
+        ],
+        "rail_support_05": [
+          662.3,
+          0,
+          0
+        ],
+        "rail_support_06": [
+          793.8,
+          0,
+          0
+        ],
+        "rail_support_07": [
+          878.9,
+          0,
+          0
+        ],
+        "rail_support_08": [
+          961.7,
+          0,
+          0
+        ],
+        "rail_support_09": [
+          1049.2,
+          0,
+          0
+        ],
+        "road_support_00": [
+          2.4,
+          0,
+          40
+        ],
+        "road_support_01": [
+          140.9,
+          0,
+          40
+        ],
+        "road_support_02": [
+          270.9,
+          0,
+          40
+        ],
+        "road_support_03": [
+          400.9,
+          0,
+          40
+        ],
+        "road_support_04": [
+          531.7,
+          0,
+          40
+        ],
+        "road_support_05": [
+          662.1,
+          0,
+          40
+        ],
+        "road_support_06": [
+          807.5,
+          0,
+          40
+        ],
+        "road_support_07": [
+          879,
+          0,
+          40
+        ],
+        "road_support_08": [
+          962,
+          0,
+          40
+        ],
+        "road_support_09": [
+          1049.1,
+          0,
+          40
+        ]
+      },
+      "towerBounds": {
+        "road_tower_01_n": {
+          "min": [
+            137.9,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            143.9,
+            21.8,
+            37
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_01_s": {
+          "min": [
+            137.9,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            143.9,
+            21.8,
+            49
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_02_n": {
+          "min": [
+            267.9,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            273.9,
+            21.8,
+            37
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_02_s": {
+          "min": [
+            267.9,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            273.9,
+            21.8,
+            49
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_03_n": {
+          "min": [
+            397.9,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            403.9,
+            21.8,
+            37
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_03_s": {
+          "min": [
+            397.9,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            403.9,
+            21.8,
+            49
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_04_n": {
+          "min": [
+            528.7,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            534.7,
+            21.8,
+            37
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_04_s": {
+          "min": [
+            528.7,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            534.7,
+            21.8,
+            49
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_05_n": {
+          "min": [
+            659.1,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            665.1,
+            21.8,
+            37
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_05_s": {
+          "min": [
+            659.1,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            665.1,
+            21.8,
+            49
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        }
+      },
+      "portalBounds": {
+        "rail_portal_west": {
+          "min": [
+            -6.949999809265137,
+            -1,
+            -12.25
+          ],
+          "max": [
+            -1.0499999523162842,
+            15,
+            12.25
+          ],
+          "size": [
+            5.8999998569488525,
+            16,
+            24.5
+          ]
+        },
+        "rail_portal_old_east": {
+          "min": [
+            null,
+            null,
+            null
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        },
+        "road_portal_west": {
+          "min": [
+            -7.349999904632568,
+            -1,
+            29.550000190734863
+          ],
+          "max": [
+            -0.6500000953674316,
+            17,
+            50.44999980926514
+          ],
+          "size": [
+            6.699999809265137,
+            18,
+            20.899999618530273
+          ]
+        },
+        "road_portal_old_east": {
+          "min": [
+            null,
+            null,
+            null
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "colliderStates": {
+        "rail_collider_deck_span_01": true,
+        "rail_collider_truss_N_span_01": true,
+        "rail_collider_truss_S_span_01": true,
+        "rail_collider_deck_span_02": true,
+        "rail_collider_truss_N_span_02": true,
+        "rail_collider_truss_S_span_02": true,
+        "rail_collider_deck_span_03": true,
+        "rail_collider_truss_N_span_03": true,
+        "rail_collider_truss_S_span_03": true,
+        "rail_collider_deck_span_04": true,
+        "rail_collider_truss_N_span_04": true,
+        "rail_collider_truss_S_span_04": true,
+        "rail_collider_deck_span_05": true,
+        "rail_collider_truss_N_span_05": true,
+        "rail_collider_truss_S_span_05": true,
+        "rail_collider_deck_span_06": false,
+        "rail_collider_truss_N_span_06": false,
+        "rail_collider_truss_S_span_06": false,
+        "rail_collider_deck_span_07": false,
+        "rail_collider_truss_N_span_07": false,
+        "rail_collider_truss_S_span_07": false,
+        "rail_collider_deck_span_08": true,
+        "rail_collider_truss_N_span_08": true,
+        "rail_collider_truss_S_span_08": true,
+        "rail_collider_deck_span_09": true,
+        "rail_collider_truss_N_span_09": true,
+        "rail_collider_truss_S_span_09": true,
+        "rail_collider_abutment_west": true,
+        "rail_collider_pier_01": true,
+        "rail_collider_pier_02": true,
+        "rail_collider_pier_03": true,
+        "rail_collider_pier_04": true,
+        "rail_collider_pier_05": true,
+        "rail_collider_pier_06": false,
+        "rail_collider_pier_07": true,
+        "rail_collider_pier_08": true,
+        "road_collider_tower_01_n": true,
+        "road_collider_tower_01_s": true,
+        "road_collider_tower_02_n": true,
+        "road_collider_tower_02_s": true,
+        "road_collider_tower_03_n": true,
+        "road_collider_tower_03_s": true,
+        "road_collider_tower_04_n": true,
+        "road_collider_tower_04_s": true,
+        "road_collider_tower_05_n": true,
+        "road_collider_tower_05_s": true,
+        "road_collider_deck_span_01": true,
+        "road_collider_truss_N_span_01": true,
+        "road_collider_truss_S_span_01": true,
+        "road_collider_deck_span_02": true,
+        "road_collider_truss_N_span_02": true,
+        "road_collider_truss_S_span_02": true,
+        "road_collider_deck_span_03": true,
+        "road_collider_truss_N_span_03": true,
+        "road_collider_truss_S_span_03": true,
+        "road_collider_deck_span_04": true,
+        "road_collider_truss_N_span_04": true,
+        "road_collider_truss_S_span_04": true,
+        "road_collider_deck_span_05": true,
+        "road_collider_truss_N_span_05": true,
+        "road_collider_truss_S_span_05": true,
+        "road_collider_deck_span_06": false,
+        "road_collider_truss_N_span_06": false,
+        "road_collider_truss_S_span_06": false,
+        "road_collider_deck_span_07": false,
+        "road_collider_truss_N_span_07": false,
+        "road_collider_truss_S_span_07": false,
+        "road_collider_deck_span_08": true,
+        "road_collider_truss_N_span_08": true,
+        "road_collider_truss_S_span_08": true,
+        "road_collider_deck_span_09": true,
+        "road_collider_truss_N_span_09": true,
+        "road_collider_truss_S_span_09": true,
+        "road_collider_abutment_west": true,
+        "road_collider_pier_01": true,
+        "road_collider_pier_02": true,
+        "road_collider_pier_03": true,
+        "road_collider_pier_04": true,
+        "road_collider_pier_05": true,
+        "road_collider_pier_06": false,
+        "road_collider_pier_07": true,
+        "road_collider_pier_08": true,
+        "COL_portal_lisewo_1912": true
+      },
+      "invalidNormals": 0,
+      "renderStats": {
+        "frame": 8,
+        "calls": 234,
+        "triangles": 129282,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "state": "east",
+      "lod": 1,
+      "consumedEventIds": [
+        "evt_m01_east_demolition"
+      ],
+      "parts": [
+        {
+          "id": "rail_support_00",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_portal_west",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_02",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_support_07",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_portal_old_east",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_support_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_02",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_07",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_00_damaged",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_01_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_06_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_portal_old_east_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_01_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_02_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_06_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_07_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_00",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_portal_west",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_01_n",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_s",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_02_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_02_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_02",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_03_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_03_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_04_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_04_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_05_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_05_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_07",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_portal_old_east",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_02",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_07",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_00_damaged",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_n_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_s_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_01_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_06_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_portal_old_east_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_01_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_02_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_06_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_07_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        }
+      ],
+      "bounds": {
+        "rail_bridge": {
+          "min": [
+            -20.100000381469727,
+            -16,
+            -12.25
+          ],
+          "max": [
+            1067.1999504089356,
+            15,
+            12.25
+          ],
+          "size": [
+            1087.2999507904053,
+            31,
+            24.5
+          ]
+        },
+        "road_bridge": {
+          "min": [
+            -21.999999618530275,
+            -16,
+            27.5
+          ],
+          "max": [
+            1067.0999752044677,
+            21.8,
+            54
+          ],
+          "size": [
+            1089.0999748229979,
+            37.8,
+            26.5
+          ]
+        },
+        "lisewo_portal": {
+          "min": [
+            1058.45,
+            -1,
+            -11.75
+          ],
+          "max": [
+            1067.7,
+            21,
+            51.75
+          ],
+          "size": [
+            9.25,
+            22,
+            63.5
+          ]
+        }
+      },
+      "supportPositions": {
+        "rail_support_00": [
+          0,
+          0,
+          0
+        ],
+        "rail_support_01": [
+          140.9,
+          0,
+          0
+        ],
+        "rail_support_02": [
+          270.2,
+          0,
+          0
+        ],
+        "rail_support_03": [
+          401.1,
+          0,
+          0
+        ],
+        "rail_support_04": [
+          531.7,
+          0,
+          0
+        ],
+        "rail_support_05": [
+          662.3,
+          0,
+          0
+        ],
+        "rail_support_06": [
+          793.8,
+          0,
+          0
+        ],
+        "rail_support_07": [
+          878.9,
+          0,
+          0
+        ],
+        "rail_support_08": [
+          961.7,
+          0,
+          0
+        ],
+        "rail_support_09": [
+          1049.2,
+          0,
+          0
+        ],
+        "road_support_00": [
+          2.4,
+          0,
+          40
+        ],
+        "road_support_01": [
+          140.9,
+          0,
+          40
+        ],
+        "road_support_02": [
+          270.9,
+          0,
+          40
+        ],
+        "road_support_03": [
+          400.9,
+          0,
+          40
+        ],
+        "road_support_04": [
+          531.7,
+          0,
+          40
+        ],
+        "road_support_05": [
+          662.1,
+          0,
+          40
+        ],
+        "road_support_06": [
+          807.5,
+          0,
+          40
+        ],
+        "road_support_07": [
+          879,
+          0,
+          40
+        ],
+        "road_support_08": [
+          962,
+          0,
+          40
+        ],
+        "road_support_09": [
+          1049.1,
+          0,
+          40
+        ]
+      },
+      "towerBounds": {
+        "road_tower_01_n": {
+          "min": [
+            138.04683055877686,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            143.75316944122315,
+            21.8,
+            37
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_01_s": {
+          "min": [
+            138.04683055877686,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            143.75316944122315,
+            21.8,
+            49
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_02_n": {
+          "min": [
+            268.04683055877683,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            273.7531694412231,
+            21.8,
+            37
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_02_s": {
+          "min": [
+            268.04683055877683,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            273.7531694412231,
+            21.8,
+            49
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_03_n": {
+          "min": [
+            398.04683055877683,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            403.7531694412231,
+            21.8,
+            37
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_03_s": {
+          "min": [
+            398.04683055877683,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            403.7531694412231,
+            21.8,
+            49
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_04_n": {
+          "min": [
+            528.8468305587769,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            534.5531694412232,
+            21.8,
+            37
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_04_s": {
+          "min": [
+            528.8468305587769,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            534.5531694412232,
+            21.8,
+            49
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_05_n": {
+          "min": [
+            659.2468305587769,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            664.9531694412232,
+            21.8,
+            37
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_05_s": {
+          "min": [
+            659.2468305587769,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            664.9531694412232,
+            21.8,
+            49
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        }
+      },
+      "portalBounds": {
+        "rail_portal_west": {
+          "min": [
+            -6.80561637878418,
+            -1,
+            -12.25
+          ],
+          "max": [
+            -1.1943833827972412,
+            15,
+            12.25
+          ],
+          "size": [
+            5.6112329959869385,
+            16,
+            24.5
+          ]
+        },
+        "rail_portal_old_east": {
+          "min": [
+            null,
+            null,
+            null
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        },
+        "road_portal_west": {
+          "min": [
+            -7.186039447784424,
+            -1,
+            29.550000190734863
+          ],
+          "max": [
+            -0.8139605522155762,
+            17,
+            50.44999980926514
+          ],
+          "size": [
+            6.372078895568848,
+            18,
+            20.899999618530273
+          ]
+        },
+        "road_portal_old_east": {
+          "min": [
+            null,
+            null,
+            null
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "colliderStates": {
+        "rail_collider_deck_span_01": true,
+        "rail_collider_truss_N_span_01": true,
+        "rail_collider_truss_S_span_01": true,
+        "rail_collider_deck_span_02": true,
+        "rail_collider_truss_N_span_02": true,
+        "rail_collider_truss_S_span_02": true,
+        "rail_collider_deck_span_03": true,
+        "rail_collider_truss_N_span_03": true,
+        "rail_collider_truss_S_span_03": true,
+        "rail_collider_deck_span_04": true,
+        "rail_collider_truss_N_span_04": true,
+        "rail_collider_truss_S_span_04": true,
+        "rail_collider_deck_span_05": true,
+        "rail_collider_truss_N_span_05": true,
+        "rail_collider_truss_S_span_05": true,
+        "rail_collider_deck_span_06": false,
+        "rail_collider_truss_N_span_06": false,
+        "rail_collider_truss_S_span_06": false,
+        "rail_collider_deck_span_07": false,
+        "rail_collider_truss_N_span_07": false,
+        "rail_collider_truss_S_span_07": false,
+        "rail_collider_deck_span_08": true,
+        "rail_collider_truss_N_span_08": true,
+        "rail_collider_truss_S_span_08": true,
+        "rail_collider_deck_span_09": true,
+        "rail_collider_truss_N_span_09": true,
+        "rail_collider_truss_S_span_09": true,
+        "rail_collider_abutment_west": true,
+        "rail_collider_pier_01": true,
+        "rail_collider_pier_02": true,
+        "rail_collider_pier_03": true,
+        "rail_collider_pier_04": true,
+        "rail_collider_pier_05": true,
+        "rail_collider_pier_06": false,
+        "rail_collider_pier_07": true,
+        "rail_collider_pier_08": true,
+        "road_collider_tower_01_n": true,
+        "road_collider_tower_01_s": true,
+        "road_collider_tower_02_n": true,
+        "road_collider_tower_02_s": true,
+        "road_collider_tower_03_n": true,
+        "road_collider_tower_03_s": true,
+        "road_collider_tower_04_n": true,
+        "road_collider_tower_04_s": true,
+        "road_collider_tower_05_n": true,
+        "road_collider_tower_05_s": true,
+        "road_collider_deck_span_01": true,
+        "road_collider_truss_N_span_01": true,
+        "road_collider_truss_S_span_01": true,
+        "road_collider_deck_span_02": true,
+        "road_collider_truss_N_span_02": true,
+        "road_collider_truss_S_span_02": true,
+        "road_collider_deck_span_03": true,
+        "road_collider_truss_N_span_03": true,
+        "road_collider_truss_S_span_03": true,
+        "road_collider_deck_span_04": true,
+        "road_collider_truss_N_span_04": true,
+        "road_collider_truss_S_span_04": true,
+        "road_collider_deck_span_05": true,
+        "road_collider_truss_N_span_05": true,
+        "road_collider_truss_S_span_05": true,
+        "road_collider_deck_span_06": false,
+        "road_collider_truss_N_span_06": false,
+        "road_collider_truss_S_span_06": false,
+        "road_collider_deck_span_07": false,
+        "road_collider_truss_N_span_07": false,
+        "road_collider_truss_S_span_07": false,
+        "road_collider_deck_span_08": true,
+        "road_collider_truss_N_span_08": true,
+        "road_collider_truss_S_span_08": true,
+        "road_collider_deck_span_09": true,
+        "road_collider_truss_N_span_09": true,
+        "road_collider_truss_S_span_09": true,
+        "road_collider_abutment_west": true,
+        "road_collider_pier_01": true,
+        "road_collider_pier_02": true,
+        "road_collider_pier_03": true,
+        "road_collider_pier_04": true,
+        "road_collider_pier_05": true,
+        "road_collider_pier_06": false,
+        "road_collider_pier_07": true,
+        "road_collider_pier_08": true,
+        "COL_portal_lisewo_1912": true
+      },
+      "invalidNormals": 0,
+      "renderStats": {
+        "frame": 9,
+        "calls": 192,
+        "triangles": 41618,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "state": "east",
+      "lod": 2,
+      "consumedEventIds": [
+        "evt_m01_east_demolition"
+      ],
+      "parts": [
+        {
+          "id": "rail_support_00",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_portal_west",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_02",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_support_07",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_portal_old_east",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_support_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_02",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_07",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_00_damaged",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_01_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_06_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_portal_old_east_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_01_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_02_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_06_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_07_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_00",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_portal_west",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_01_n",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_s",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_02_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_02_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_02",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_03_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_03_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_04_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_04_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_05_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_05_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_07",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_portal_old_east",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_01",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_02",
+          "visible": true,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_07",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_00_damaged",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_n_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_s_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_01_rubble",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_06_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_portal_old_east_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_01_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_02_collapsed",
+          "visible": false,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_06_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_07_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        }
+      ],
+      "bounds": {
+        "rail_bridge": {
+          "min": [
+            -20.100000381469727,
+            -16,
+            -12.25
+          ],
+          "max": [
+            1067.1999504089356,
+            15,
+            12.25
+          ],
+          "size": [
+            1087.2999507904053,
+            31,
+            24.5
+          ]
+        },
+        "road_bridge": {
+          "min": [
+            -21.999999618530275,
+            -16,
+            27.5
+          ],
+          "max": [
+            1067.0999752044677,
+            21.8,
+            54
+          ],
+          "size": [
+            1089.0999748229979,
+            37.8,
+            26.5
+          ]
+        },
+        "lisewo_portal": {
+          "min": [
+            1058.45,
+            -1,
+            -11.75
+          ],
+          "max": [
+            1067.7,
+            21,
+            51.75
+          ],
+          "size": [
+            9.25,
+            22,
+            63.5
+          ]
+        }
+      },
+      "supportPositions": {
+        "rail_support_00": [
+          0,
+          0,
+          0
+        ],
+        "rail_support_01": [
+          140.9,
+          0,
+          0
+        ],
+        "rail_support_02": [
+          270.2,
+          0,
+          0
+        ],
+        "rail_support_03": [
+          401.1,
+          0,
+          0
+        ],
+        "rail_support_04": [
+          531.7,
+          0,
+          0
+        ],
+        "rail_support_05": [
+          662.3,
+          0,
+          0
+        ],
+        "rail_support_06": [
+          793.8,
+          0,
+          0
+        ],
+        "rail_support_07": [
+          878.9,
+          0,
+          0
+        ],
+        "rail_support_08": [
+          961.7,
+          0,
+          0
+        ],
+        "rail_support_09": [
+          1049.2,
+          0,
+          0
+        ],
+        "road_support_00": [
+          2.4,
+          0,
+          40
+        ],
+        "road_support_01": [
+          140.9,
+          0,
+          40
+        ],
+        "road_support_02": [
+          270.9,
+          0,
+          40
+        ],
+        "road_support_03": [
+          400.9,
+          0,
+          40
+        ],
+        "road_support_04": [
+          531.7,
+          0,
+          40
+        ],
+        "road_support_05": [
+          662.1,
+          0,
+          40
+        ],
+        "road_support_06": [
+          807.5,
+          0,
+          40
+        ],
+        "road_support_07": [
+          879,
+          0,
+          40
+        ],
+        "road_support_08": [
+          962,
+          0,
+          40
+        ],
+        "road_support_09": [
+          1049.1,
+          0,
+          40
+        ]
+      },
+      "towerBounds": {
+        "road_tower_01_n": {
+          "min": [
+            138.3019238948822,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            143.4980761051178,
+            21.8,
+            37
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_01_s": {
+          "min": [
+            138.3019238948822,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            143.4980761051178,
+            21.8,
+            49
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_02_n": {
+          "min": [
+            268.3019238948822,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            273.4980761051178,
+            21.8,
+            37
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_02_s": {
+          "min": [
+            268.3019238948822,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            273.4980761051178,
+            21.8,
+            49
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_03_n": {
+          "min": [
+            398.3019238948822,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            403.4980761051178,
+            21.8,
+            37
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_03_s": {
+          "min": [
+            398.3019238948822,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            403.4980761051178,
+            21.8,
+            49
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_04_n": {
+          "min": [
+            529.1019238948822,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            534.2980761051178,
+            21.8,
+            37
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_04_s": {
+          "min": [
+            529.1019238948822,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            534.2980761051178,
+            21.8,
+            49
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_05_n": {
+          "min": [
+            659.5019238948822,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            664.6980761051178,
+            21.8,
+            37
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_05_s": {
+          "min": [
+            659.5019238948822,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            664.6980761051178,
+            21.8,
+            49
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        }
+      },
+      "portalBounds": {
+        "rail_portal_west": {
+          "min": [
+            -6.554775238037109,
+            -1,
+            -12.25
+          ],
+          "max": [
+            -1.4452250003814697,
+            15,
+            12.25
+          ],
+          "size": [
+            5.10955023765564,
+            16,
+            24.5
+          ]
+        },
+        "rail_portal_old_east": {
+          "min": [
+            null,
+            null,
+            null
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        },
+        "road_portal_west": {
+          "min": [
+            -6.901185035705566,
+            -1,
+            29.550000190734863
+          ],
+          "max": [
+            -1.0988149642944336,
+            17,
+            50.44999980926514
+          ],
+          "size": [
+            5.802370071411133,
+            18,
+            20.899999618530273
+          ]
+        },
+        "road_portal_old_east": {
+          "min": [
+            null,
+            null,
+            null
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "colliderStates": {
+        "rail_collider_deck_span_01": true,
+        "rail_collider_truss_N_span_01": true,
+        "rail_collider_truss_S_span_01": true,
+        "rail_collider_deck_span_02": true,
+        "rail_collider_truss_N_span_02": true,
+        "rail_collider_truss_S_span_02": true,
+        "rail_collider_deck_span_03": true,
+        "rail_collider_truss_N_span_03": true,
+        "rail_collider_truss_S_span_03": true,
+        "rail_collider_deck_span_04": true,
+        "rail_collider_truss_N_span_04": true,
+        "rail_collider_truss_S_span_04": true,
+        "rail_collider_deck_span_05": true,
+        "rail_collider_truss_N_span_05": true,
+        "rail_collider_truss_S_span_05": true,
+        "rail_collider_deck_span_06": false,
+        "rail_collider_truss_N_span_06": false,
+        "rail_collider_truss_S_span_06": false,
+        "rail_collider_deck_span_07": false,
+        "rail_collider_truss_N_span_07": false,
+        "rail_collider_truss_S_span_07": false,
+        "rail_collider_deck_span_08": true,
+        "rail_collider_truss_N_span_08": true,
+        "rail_collider_truss_S_span_08": true,
+        "rail_collider_deck_span_09": true,
+        "rail_collider_truss_N_span_09": true,
+        "rail_collider_truss_S_span_09": true,
+        "rail_collider_abutment_west": true,
+        "rail_collider_pier_01": true,
+        "rail_collider_pier_02": true,
+        "rail_collider_pier_03": true,
+        "rail_collider_pier_04": true,
+        "rail_collider_pier_05": true,
+        "rail_collider_pier_06": false,
+        "rail_collider_pier_07": true,
+        "rail_collider_pier_08": true,
+        "road_collider_tower_01_n": true,
+        "road_collider_tower_01_s": true,
+        "road_collider_tower_02_n": true,
+        "road_collider_tower_02_s": true,
+        "road_collider_tower_03_n": true,
+        "road_collider_tower_03_s": true,
+        "road_collider_tower_04_n": true,
+        "road_collider_tower_04_s": true,
+        "road_collider_tower_05_n": true,
+        "road_collider_tower_05_s": true,
+        "road_collider_deck_span_01": true,
+        "road_collider_truss_N_span_01": true,
+        "road_collider_truss_S_span_01": true,
+        "road_collider_deck_span_02": true,
+        "road_collider_truss_N_span_02": true,
+        "road_collider_truss_S_span_02": true,
+        "road_collider_deck_span_03": true,
+        "road_collider_truss_N_span_03": true,
+        "road_collider_truss_S_span_03": true,
+        "road_collider_deck_span_04": true,
+        "road_collider_truss_N_span_04": true,
+        "road_collider_truss_S_span_04": true,
+        "road_collider_deck_span_05": true,
+        "road_collider_truss_N_span_05": true,
+        "road_collider_truss_S_span_05": true,
+        "road_collider_deck_span_06": false,
+        "road_collider_truss_N_span_06": false,
+        "road_collider_truss_S_span_06": false,
+        "road_collider_deck_span_07": false,
+        "road_collider_truss_N_span_07": false,
+        "road_collider_truss_S_span_07": false,
+        "road_collider_deck_span_08": true,
+        "road_collider_truss_N_span_08": true,
+        "road_collider_truss_S_span_08": true,
+        "road_collider_deck_span_09": true,
+        "road_collider_truss_N_span_09": true,
+        "road_collider_truss_S_span_09": true,
+        "road_collider_abutment_west": true,
+        "road_collider_pier_01": true,
+        "road_collider_pier_02": true,
+        "road_collider_pier_03": true,
+        "road_collider_pier_04": true,
+        "road_collider_pier_05": true,
+        "road_collider_pier_06": false,
+        "road_collider_pier_07": true,
+        "road_collider_pier_08": true,
+        "COL_portal_lisewo_1912": true
+      },
+      "invalidNormals": 0,
+      "renderStats": {
+        "frame": 10,
+        "calls": 188,
+        "triangles": 15730,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "state": "west",
+      "lod": 0,
+      "consumedEventIds": [
+        "evt_m01_east_demolition",
+        "evt_m01_west_demolition"
+      ],
+      "parts": [
+        {
+          "id": "rail_support_00",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_portal_west",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_01",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_02",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_support_07",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_portal_old_east",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_support_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_01",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_02",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_07",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_00_damaged",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_01_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_06_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_portal_old_east_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_01_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_02_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_06_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_07_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_00",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_portal_west",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_01_n",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_s",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_01",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_02_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_02_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_02",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_03_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_03_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_04_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_04_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_05_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_05_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_07",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_portal_old_east",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_01",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_02",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_07",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_00_damaged",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_n_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_s_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_01_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_06_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_portal_old_east_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_01_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_02_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_06_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_07_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        }
+      ],
+      "bounds": {
+        "rail_bridge": {
+          "min": [
+            -20.100000381469727,
+            -17.243736175430143,
+            -12.25
+          ],
+          "max": [
+            1067.1999504089356,
+            15,
+            12.25
+          ],
+          "size": [
+            1087.2999507904053,
+            32.24373617543014,
+            24.5
+          ]
+        },
+        "road_bridge": {
+          "min": [
+            -21.999999618530275,
+            -16,
+            27.5
+          ],
+          "max": [
+            1067.0999752044677,
+            21.8,
+            54
+          ],
+          "size": [
+            1089.0999748229979,
+            37.8,
+            26.5
+          ]
+        },
+        "lisewo_portal": {
+          "min": [
+            1058.45,
+            -1,
+            -11.75
+          ],
+          "max": [
+            1067.7499992370606,
+            21,
+            51.75
+          ],
+          "size": [
+            9.299999237060547,
+            22,
+            63.5
+          ]
+        }
+      },
+      "supportPositions": {
+        "rail_support_00": [
+          0,
+          0,
+          0
+        ],
+        "rail_support_01": [
+          140.9,
+          0,
+          0
+        ],
+        "rail_support_02": [
+          270.2,
+          0,
+          0
+        ],
+        "rail_support_03": [
+          401.1,
+          0,
+          0
+        ],
+        "rail_support_04": [
+          531.7,
+          0,
+          0
+        ],
+        "rail_support_05": [
+          662.3,
+          0,
+          0
+        ],
+        "rail_support_06": [
+          793.8,
+          0,
+          0
+        ],
+        "rail_support_07": [
+          878.9,
+          0,
+          0
+        ],
+        "rail_support_08": [
+          961.7,
+          0,
+          0
+        ],
+        "rail_support_09": [
+          1049.2,
+          0,
+          0
+        ],
+        "road_support_00": [
+          2.4,
+          0,
+          40
+        ],
+        "road_support_01": [
+          140.9,
+          0,
+          40
+        ],
+        "road_support_02": [
+          270.9,
+          0,
+          40
+        ],
+        "road_support_03": [
+          400.9,
+          0,
+          40
+        ],
+        "road_support_04": [
+          531.7,
+          0,
+          40
+        ],
+        "road_support_05": [
+          662.1,
+          0,
+          40
+        ],
+        "road_support_06": [
+          807.5,
+          0,
+          40
+        ],
+        "road_support_07": [
+          879,
+          0,
+          40
+        ],
+        "road_support_08": [
+          962,
+          0,
+          40
+        ],
+        "road_support_09": [
+          1049.1,
+          0,
+          40
+        ]
+      },
+      "towerBounds": {
+        "road_tower_01_n": {
+          "min": [
+            null,
+            null,
+            null
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        },
+        "road_tower_01_s": {
+          "min": [
+            null,
+            null,
+            null
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        },
+        "road_tower_02_n": {
+          "min": [
+            267.9,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            273.9,
+            21.8,
+            37
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_02_s": {
+          "min": [
+            267.9,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            273.9,
+            21.8,
+            49
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_03_n": {
+          "min": [
+            397.9,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            403.9,
+            21.8,
+            37
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_03_s": {
+          "min": [
+            397.9,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            403.9,
+            21.8,
+            49
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_04_n": {
+          "min": [
+            528.7,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            534.7,
+            21.8,
+            37
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_04_s": {
+          "min": [
+            528.7,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            534.7,
+            21.8,
+            49
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_05_n": {
+          "min": [
+            659.1,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            665.1,
+            21.8,
+            37
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_05_s": {
+          "min": [
+            659.1,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            665.1,
+            21.8,
+            49
+          ],
+          "size": [
+            6,
+            23.00000001192093,
+            6
+          ]
+        }
+      },
+      "portalBounds": {
+        "rail_portal_west": {
+          "min": [
+            -6.949999809265137,
+            -1,
+            -12.25
+          ],
+          "max": [
+            -1.0499999523162842,
+            15,
+            12.25
+          ],
+          "size": [
+            5.8999998569488525,
+            16,
+            24.5
+          ]
+        },
+        "rail_portal_old_east": {
+          "min": [
+            null,
+            null,
+            null
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        },
+        "road_portal_west": {
+          "min": [
+            -7.349999904632568,
+            -1,
+            29.550000190734863
+          ],
+          "max": [
+            -0.6500000953674316,
+            17,
+            50.44999980926514
+          ],
+          "size": [
+            6.699999809265137,
+            18,
+            20.899999618530273
+          ]
+        },
+        "road_portal_old_east": {
+          "min": [
+            null,
+            null,
+            null
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "colliderStates": {
+        "rail_collider_deck_span_01": false,
+        "rail_collider_truss_N_span_01": false,
+        "rail_collider_truss_S_span_01": false,
+        "rail_collider_deck_span_02": false,
+        "rail_collider_truss_N_span_02": false,
+        "rail_collider_truss_S_span_02": false,
+        "rail_collider_deck_span_03": true,
+        "rail_collider_truss_N_span_03": true,
+        "rail_collider_truss_S_span_03": true,
+        "rail_collider_deck_span_04": true,
+        "rail_collider_truss_N_span_04": true,
+        "rail_collider_truss_S_span_04": true,
+        "rail_collider_deck_span_05": true,
+        "rail_collider_truss_N_span_05": true,
+        "rail_collider_truss_S_span_05": true,
+        "rail_collider_deck_span_06": false,
+        "rail_collider_truss_N_span_06": false,
+        "rail_collider_truss_S_span_06": false,
+        "rail_collider_deck_span_07": false,
+        "rail_collider_truss_N_span_07": false,
+        "rail_collider_truss_S_span_07": false,
+        "rail_collider_deck_span_08": true,
+        "rail_collider_truss_N_span_08": true,
+        "rail_collider_truss_S_span_08": true,
+        "rail_collider_deck_span_09": true,
+        "rail_collider_truss_N_span_09": true,
+        "rail_collider_truss_S_span_09": true,
+        "rail_collider_abutment_west": false,
+        "rail_collider_pier_01": false,
+        "rail_collider_pier_02": true,
+        "rail_collider_pier_03": true,
+        "rail_collider_pier_04": true,
+        "rail_collider_pier_05": true,
+        "rail_collider_pier_06": false,
+        "rail_collider_pier_07": true,
+        "rail_collider_pier_08": true,
+        "road_collider_tower_01_n": false,
+        "road_collider_tower_01_s": false,
+        "road_collider_tower_02_n": true,
+        "road_collider_tower_02_s": true,
+        "road_collider_tower_03_n": true,
+        "road_collider_tower_03_s": true,
+        "road_collider_tower_04_n": true,
+        "road_collider_tower_04_s": true,
+        "road_collider_tower_05_n": true,
+        "road_collider_tower_05_s": true,
+        "road_collider_deck_span_01": false,
+        "road_collider_truss_N_span_01": false,
+        "road_collider_truss_S_span_01": false,
+        "road_collider_deck_span_02": false,
+        "road_collider_truss_N_span_02": false,
+        "road_collider_truss_S_span_02": false,
+        "road_collider_deck_span_03": true,
+        "road_collider_truss_N_span_03": true,
+        "road_collider_truss_S_span_03": true,
+        "road_collider_deck_span_04": true,
+        "road_collider_truss_N_span_04": true,
+        "road_collider_truss_S_span_04": true,
+        "road_collider_deck_span_05": true,
+        "road_collider_truss_N_span_05": true,
+        "road_collider_truss_S_span_05": true,
+        "road_collider_deck_span_06": false,
+        "road_collider_truss_N_span_06": false,
+        "road_collider_truss_S_span_06": false,
+        "road_collider_deck_span_07": false,
+        "road_collider_truss_N_span_07": false,
+        "road_collider_truss_S_span_07": false,
+        "road_collider_deck_span_08": true,
+        "road_collider_truss_N_span_08": true,
+        "road_collider_truss_S_span_08": true,
+        "road_collider_deck_span_09": true,
+        "road_collider_truss_N_span_09": true,
+        "road_collider_truss_S_span_09": true,
+        "road_collider_abutment_west": false,
+        "road_collider_pier_01": false,
+        "road_collider_pier_02": true,
+        "road_collider_pier_03": true,
+        "road_collider_pier_04": true,
+        "road_collider_pier_05": true,
+        "road_collider_pier_06": false,
+        "road_collider_pier_07": true,
+        "road_collider_pier_08": true,
+        "COL_portal_lisewo_1912": true
+      },
+      "invalidNormals": 0,
+      "renderStats": {
+        "frame": 13,
+        "calls": 236,
+        "triangles": 130206,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "state": "west",
+      "lod": 1,
+      "consumedEventIds": [
+        "evt_m01_east_demolition",
+        "evt_m01_west_demolition"
+      ],
+      "parts": [
+        {
+          "id": "rail_support_00",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_portal_west",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_01",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_02",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_support_07",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_portal_old_east",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_support_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_01",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_02",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_07",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_00_damaged",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_01_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_06_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_portal_old_east_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_01_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_02_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_06_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_07_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_00",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_portal_west",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_01_n",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_s",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_01",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_02_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_02_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_02",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_03_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_03_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_04_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_04_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_05_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_05_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_07",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_portal_old_east",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_01",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_02",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_07",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_00_damaged",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_n_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_s_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_01_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_06_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_portal_old_east_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_01_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_02_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_06_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_07_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        }
+      ],
+      "bounds": {
+        "rail_bridge": {
+          "min": [
+            -20.100000381469727,
+            -17.243736175430143,
+            -12.25
+          ],
+          "max": [
+            1067.1999504089356,
+            15,
+            12.25
+          ],
+          "size": [
+            1087.2999507904053,
+            32.24373617543014,
+            24.5
+          ]
+        },
+        "road_bridge": {
+          "min": [
+            -21.999999618530275,
+            -16,
+            27.5
+          ],
+          "max": [
+            1067.0999752044677,
+            21.8,
+            54
+          ],
+          "size": [
+            1089.0999748229979,
+            37.8,
+            26.5
+          ]
+        },
+        "lisewo_portal": {
+          "min": [
+            1058.45,
+            -1,
+            -11.75
+          ],
+          "max": [
+            1067.7,
+            21,
+            51.75
+          ],
+          "size": [
+            9.25,
+            22,
+            63.5
+          ]
+        }
+      },
+      "supportPositions": {
+        "rail_support_00": [
+          0,
+          0,
+          0
+        ],
+        "rail_support_01": [
+          140.9,
+          0,
+          0
+        ],
+        "rail_support_02": [
+          270.2,
+          0,
+          0
+        ],
+        "rail_support_03": [
+          401.1,
+          0,
+          0
+        ],
+        "rail_support_04": [
+          531.7,
+          0,
+          0
+        ],
+        "rail_support_05": [
+          662.3,
+          0,
+          0
+        ],
+        "rail_support_06": [
+          793.8,
+          0,
+          0
+        ],
+        "rail_support_07": [
+          878.9,
+          0,
+          0
+        ],
+        "rail_support_08": [
+          961.7,
+          0,
+          0
+        ],
+        "rail_support_09": [
+          1049.2,
+          0,
+          0
+        ],
+        "road_support_00": [
+          2.4,
+          0,
+          40
+        ],
+        "road_support_01": [
+          140.9,
+          0,
+          40
+        ],
+        "road_support_02": [
+          270.9,
+          0,
+          40
+        ],
+        "road_support_03": [
+          400.9,
+          0,
+          40
+        ],
+        "road_support_04": [
+          531.7,
+          0,
+          40
+        ],
+        "road_support_05": [
+          662.1,
+          0,
+          40
+        ],
+        "road_support_06": [
+          807.5,
+          0,
+          40
+        ],
+        "road_support_07": [
+          879,
+          0,
+          40
+        ],
+        "road_support_08": [
+          962,
+          0,
+          40
+        ],
+        "road_support_09": [
+          1049.1,
+          0,
+          40
+        ]
+      },
+      "towerBounds": {
+        "road_tower_01_n": {
+          "min": [
+            null,
+            null,
+            null
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        },
+        "road_tower_01_s": {
+          "min": [
+            null,
+            null,
+            null
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        },
+        "road_tower_02_n": {
+          "min": [
+            268.04683055877683,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            273.7531694412231,
+            21.8,
+            37
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_02_s": {
+          "min": [
+            268.04683055877683,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            273.7531694412231,
+            21.8,
+            49
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_03_n": {
+          "min": [
+            398.04683055877683,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            403.7531694412231,
+            21.8,
+            37
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_03_s": {
+          "min": [
+            398.04683055877683,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            403.7531694412231,
+            21.8,
+            49
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_04_n": {
+          "min": [
+            528.8468305587769,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            534.5531694412232,
+            21.8,
+            37
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_04_s": {
+          "min": [
+            528.8468305587769,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            534.5531694412232,
+            21.8,
+            49
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_05_n": {
+          "min": [
+            659.2468305587769,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            664.9531694412232,
+            21.8,
+            37
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_05_s": {
+          "min": [
+            659.2468305587769,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            664.9531694412232,
+            21.8,
+            49
+          ],
+          "size": [
+            5.706338882446289,
+            23.00000001192093,
+            6
+          ]
+        }
+      },
+      "portalBounds": {
+        "rail_portal_west": {
+          "min": [
+            -6.80561637878418,
+            -1,
+            -12.25
+          ],
+          "max": [
+            -1.1943833827972412,
+            15,
+            12.25
+          ],
+          "size": [
+            5.6112329959869385,
+            16,
+            24.5
+          ]
+        },
+        "rail_portal_old_east": {
+          "min": [
+            null,
+            null,
+            null
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        },
+        "road_portal_west": {
+          "min": [
+            -7.186039447784424,
+            -1,
+            29.550000190734863
+          ],
+          "max": [
+            -0.8139605522155762,
+            17,
+            50.44999980926514
+          ],
+          "size": [
+            6.372078895568848,
+            18,
+            20.899999618530273
+          ]
+        },
+        "road_portal_old_east": {
+          "min": [
+            null,
+            null,
+            null
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "colliderStates": {
+        "rail_collider_deck_span_01": false,
+        "rail_collider_truss_N_span_01": false,
+        "rail_collider_truss_S_span_01": false,
+        "rail_collider_deck_span_02": false,
+        "rail_collider_truss_N_span_02": false,
+        "rail_collider_truss_S_span_02": false,
+        "rail_collider_deck_span_03": true,
+        "rail_collider_truss_N_span_03": true,
+        "rail_collider_truss_S_span_03": true,
+        "rail_collider_deck_span_04": true,
+        "rail_collider_truss_N_span_04": true,
+        "rail_collider_truss_S_span_04": true,
+        "rail_collider_deck_span_05": true,
+        "rail_collider_truss_N_span_05": true,
+        "rail_collider_truss_S_span_05": true,
+        "rail_collider_deck_span_06": false,
+        "rail_collider_truss_N_span_06": false,
+        "rail_collider_truss_S_span_06": false,
+        "rail_collider_deck_span_07": false,
+        "rail_collider_truss_N_span_07": false,
+        "rail_collider_truss_S_span_07": false,
+        "rail_collider_deck_span_08": true,
+        "rail_collider_truss_N_span_08": true,
+        "rail_collider_truss_S_span_08": true,
+        "rail_collider_deck_span_09": true,
+        "rail_collider_truss_N_span_09": true,
+        "rail_collider_truss_S_span_09": true,
+        "rail_collider_abutment_west": false,
+        "rail_collider_pier_01": false,
+        "rail_collider_pier_02": true,
+        "rail_collider_pier_03": true,
+        "rail_collider_pier_04": true,
+        "rail_collider_pier_05": true,
+        "rail_collider_pier_06": false,
+        "rail_collider_pier_07": true,
+        "rail_collider_pier_08": true,
+        "road_collider_tower_01_n": false,
+        "road_collider_tower_01_s": false,
+        "road_collider_tower_02_n": true,
+        "road_collider_tower_02_s": true,
+        "road_collider_tower_03_n": true,
+        "road_collider_tower_03_s": true,
+        "road_collider_tower_04_n": true,
+        "road_collider_tower_04_s": true,
+        "road_collider_tower_05_n": true,
+        "road_collider_tower_05_s": true,
+        "road_collider_deck_span_01": false,
+        "road_collider_truss_N_span_01": false,
+        "road_collider_truss_S_span_01": false,
+        "road_collider_deck_span_02": false,
+        "road_collider_truss_N_span_02": false,
+        "road_collider_truss_S_span_02": false,
+        "road_collider_deck_span_03": true,
+        "road_collider_truss_N_span_03": true,
+        "road_collider_truss_S_span_03": true,
+        "road_collider_deck_span_04": true,
+        "road_collider_truss_N_span_04": true,
+        "road_collider_truss_S_span_04": true,
+        "road_collider_deck_span_05": true,
+        "road_collider_truss_N_span_05": true,
+        "road_collider_truss_S_span_05": true,
+        "road_collider_deck_span_06": false,
+        "road_collider_truss_N_span_06": false,
+        "road_collider_truss_S_span_06": false,
+        "road_collider_deck_span_07": false,
+        "road_collider_truss_N_span_07": false,
+        "road_collider_truss_S_span_07": false,
+        "road_collider_deck_span_08": true,
+        "road_collider_truss_N_span_08": true,
+        "road_collider_truss_S_span_08": true,
+        "road_collider_deck_span_09": true,
+        "road_collider_truss_N_span_09": true,
+        "road_collider_truss_S_span_09": true,
+        "road_collider_abutment_west": false,
+        "road_collider_pier_01": false,
+        "road_collider_pier_02": true,
+        "road_collider_pier_03": true,
+        "road_collider_pier_04": true,
+        "road_collider_pier_05": true,
+        "road_collider_pier_06": false,
+        "road_collider_pier_07": true,
+        "road_collider_pier_08": true,
+        "COL_portal_lisewo_1912": true
+      },
+      "invalidNormals": 0,
+      "renderStats": {
+        "frame": 14,
+        "calls": 199,
+        "triangles": 42238,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "state": "west",
+      "lod": 2,
+      "consumedEventIds": [
+        "evt_m01_east_demolition",
+        "evt_m01_west_demolition"
+      ],
+      "parts": [
+        {
+          "id": "rail_support_00",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_portal_west",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_01",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_02",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_support_07",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_portal_old_east",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_support_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_01",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_02",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_07",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_span_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "rail_support_00_damaged",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_01_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_support_06_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_portal_old_east_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_01_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_02_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "rail_span_06_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "rail_span_07_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_00",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_portal_west",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_01_n",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_s",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_01",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_02_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_02_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_02",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_03_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_03_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_04_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_04_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_05_n",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_tower_05_s",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_07",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_portal_old_east",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_support_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_01",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_02",
+          "visible": false,
+          "destroyedBy": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_03",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_04",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_05",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_06",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_07",
+          "visible": false,
+          "destroyedBy": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_08",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_span_09",
+          "visible": true,
+          "destroyedBy": null
+        },
+        {
+          "id": "road_support_00_damaged",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_n_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_tower_01_s_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_01_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_support_06_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_portal_old_east_rubble",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_01_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_02_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_west_demolition"
+        },
+        {
+          "id": "road_span_06_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        },
+        {
+          "id": "road_span_07_collapsed",
+          "visible": true,
+          "showAfterEvent": "evt_m01_east_demolition"
+        }
+      ],
+      "bounds": {
+        "rail_bridge": {
+          "min": [
+            -20.100000381469727,
+            -17.243527255278394,
+            -12.25
+          ],
+          "max": [
+            1067.1999504089356,
+            15,
+            12.25
+          ],
+          "size": [
+            1087.2999507904053,
+            32.243527255278394,
+            24.5
+          ]
+        },
+        "road_bridge": {
+          "min": [
+            -21.999999618530275,
+            -16,
+            27.5
+          ],
+          "max": [
+            1067.0999752044677,
+            21.8,
+            54
+          ],
+          "size": [
+            1089.0999748229979,
+            37.8,
+            26.5
+          ]
+        },
+        "lisewo_portal": {
+          "min": [
+            1058.45,
+            -1,
+            -11.75
+          ],
+          "max": [
+            1067.7,
+            21,
+            51.75
+          ],
+          "size": [
+            9.25,
+            22,
+            63.5
+          ]
+        }
+      },
+      "supportPositions": {
+        "rail_support_00": [
+          0,
+          0,
+          0
+        ],
+        "rail_support_01": [
+          140.9,
+          0,
+          0
+        ],
+        "rail_support_02": [
+          270.2,
+          0,
+          0
+        ],
+        "rail_support_03": [
+          401.1,
+          0,
+          0
+        ],
+        "rail_support_04": [
+          531.7,
+          0,
+          0
+        ],
+        "rail_support_05": [
+          662.3,
+          0,
+          0
+        ],
+        "rail_support_06": [
+          793.8,
+          0,
+          0
+        ],
+        "rail_support_07": [
+          878.9,
+          0,
+          0
+        ],
+        "rail_support_08": [
+          961.7,
+          0,
+          0
+        ],
+        "rail_support_09": [
+          1049.2,
+          0,
+          0
+        ],
+        "road_support_00": [
+          2.4,
+          0,
+          40
+        ],
+        "road_support_01": [
+          140.9,
+          0,
+          40
+        ],
+        "road_support_02": [
+          270.9,
+          0,
+          40
+        ],
+        "road_support_03": [
+          400.9,
+          0,
+          40
+        ],
+        "road_support_04": [
+          531.7,
+          0,
+          40
+        ],
+        "road_support_05": [
+          662.1,
+          0,
+          40
+        ],
+        "road_support_06": [
+          807.5,
+          0,
+          40
+        ],
+        "road_support_07": [
+          879,
+          0,
+          40
+        ],
+        "road_support_08": [
+          962,
+          0,
+          40
+        ],
+        "road_support_09": [
+          1049.1,
+          0,
+          40
+        ]
+      },
+      "towerBounds": {
+        "road_tower_01_n": {
+          "min": [
+            null,
+            null,
+            null
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        },
+        "road_tower_01_s": {
+          "min": [
+            null,
+            null,
+            null
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        },
+        "road_tower_02_n": {
+          "min": [
+            268.3019238948822,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            273.4980761051178,
+            21.8,
+            37
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_02_s": {
+          "min": [
+            268.3019238948822,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            273.4980761051178,
+            21.8,
+            49
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_03_n": {
+          "min": [
+            398.3019238948822,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            403.4980761051178,
+            21.8,
+            37
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_03_s": {
+          "min": [
+            398.3019238948822,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            403.4980761051178,
+            21.8,
+            49
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_04_n": {
+          "min": [
+            529.1019238948822,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            534.2980761051178,
+            21.8,
+            37
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_04_s": {
+          "min": [
+            529.1019238948822,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            534.2980761051178,
+            21.8,
+            49
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_05_n": {
+          "min": [
+            659.5019238948822,
+            -1.200000011920929,
+            31
+          ],
+          "max": [
+            664.6980761051178,
+            21.8,
+            37
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        },
+        "road_tower_05_s": {
+          "min": [
+            659.5019238948822,
+            -1.200000011920929,
+            43
+          ],
+          "max": [
+            664.6980761051178,
+            21.8,
+            49
+          ],
+          "size": [
+            5.196152210235596,
+            23.00000001192093,
+            6
+          ]
+        }
+      },
+      "portalBounds": {
+        "rail_portal_west": {
+          "min": [
+            -6.554775238037109,
+            -1,
+            -12.25
+          ],
+          "max": [
+            -1.4452250003814697,
+            15,
+            12.25
+          ],
+          "size": [
+            5.10955023765564,
+            16,
+            24.5
+          ]
+        },
+        "rail_portal_old_east": {
+          "min": [
+            null,
+            null,
+            null
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        },
+        "road_portal_west": {
+          "min": [
+            -6.901185035705566,
+            -1,
+            29.550000190734863
+          ],
+          "max": [
+            -1.0988149642944336,
+            17,
+            50.44999980926514
+          ],
+          "size": [
+            5.802370071411133,
+            18,
+            20.899999618530273
+          ]
+        },
+        "road_portal_old_east": {
+          "min": [
+            null,
+            null,
+            null
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "colliderStates": {
+        "rail_collider_deck_span_01": false,
+        "rail_collider_truss_N_span_01": false,
+        "rail_collider_truss_S_span_01": false,
+        "rail_collider_deck_span_02": false,
+        "rail_collider_truss_N_span_02": false,
+        "rail_collider_truss_S_span_02": false,
+        "rail_collider_deck_span_03": true,
+        "rail_collider_truss_N_span_03": true,
+        "rail_collider_truss_S_span_03": true,
+        "rail_collider_deck_span_04": true,
+        "rail_collider_truss_N_span_04": true,
+        "rail_collider_truss_S_span_04": true,
+        "rail_collider_deck_span_05": true,
+        "rail_collider_truss_N_span_05": true,
+        "rail_collider_truss_S_span_05": true,
+        "rail_collider_deck_span_06": false,
+        "rail_collider_truss_N_span_06": false,
+        "rail_collider_truss_S_span_06": false,
+        "rail_collider_deck_span_07": false,
+        "rail_collider_truss_N_span_07": false,
+        "rail_collider_truss_S_span_07": false,
+        "rail_collider_deck_span_08": true,
+        "rail_collider_truss_N_span_08": true,
+        "rail_collider_truss_S_span_08": true,
+        "rail_collider_deck_span_09": true,
+        "rail_collider_truss_N_span_09": true,
+        "rail_collider_truss_S_span_09": true,
+        "rail_collider_abutment_west": false,
+        "rail_collider_pier_01": false,
+        "rail_collider_pier_02": true,
+        "rail_collider_pier_03": true,
+        "rail_collider_pier_04": true,
+        "rail_collider_pier_05": true,
+        "rail_collider_pier_06": false,
+        "rail_collider_pier_07": true,
+        "rail_collider_pier_08": true,
+        "road_collider_tower_01_n": false,
+        "road_collider_tower_01_s": false,
+        "road_collider_tower_02_n": true,
+        "road_collider_tower_02_s": true,
+        "road_collider_tower_03_n": true,
+        "road_collider_tower_03_s": true,
+        "road_collider_tower_04_n": true,
+        "road_collider_tower_04_s": true,
+        "road_collider_tower_05_n": true,
+        "road_collider_tower_05_s": true,
+        "road_collider_deck_span_01": false,
+        "road_collider_truss_N_span_01": false,
+        "road_collider_truss_S_span_01": false,
+        "road_collider_deck_span_02": false,
+        "road_collider_truss_N_span_02": false,
+        "road_collider_truss_S_span_02": false,
+        "road_collider_deck_span_03": true,
+        "road_collider_truss_N_span_03": true,
+        "road_collider_truss_S_span_03": true,
+        "road_collider_deck_span_04": true,
+        "road_collider_truss_N_span_04": true,
+        "road_collider_truss_S_span_04": true,
+        "road_collider_deck_span_05": true,
+        "road_collider_truss_N_span_05": true,
+        "road_collider_truss_S_span_05": true,
+        "road_collider_deck_span_06": false,
+        "road_collider_truss_N_span_06": false,
+        "road_collider_truss_S_span_06": false,
+        "road_collider_deck_span_07": false,
+        "road_collider_truss_N_span_07": false,
+        "road_collider_truss_S_span_07": false,
+        "road_collider_deck_span_08": true,
+        "road_collider_truss_N_span_08": true,
+        "road_collider_truss_S_span_08": true,
+        "road_collider_deck_span_09": true,
+        "road_collider_truss_N_span_09": true,
+        "road_collider_truss_S_span_09": true,
+        "road_collider_abutment_west": false,
+        "road_collider_pier_01": false,
+        "road_collider_pier_02": true,
+        "road_collider_pier_03": true,
+        "road_collider_pier_04": true,
+        "road_collider_pier_05": true,
+        "road_collider_pier_06": false,
+        "road_collider_pier_07": true,
+        "road_collider_pier_08": true,
+        "COL_portal_lisewo_1912": true
+      },
+      "invalidNormals": 0,
+      "renderStats": {
+        "frame": 15,
+        "calls": 185,
+        "triangles": 15582,
+        "points": 0,
+        "lines": 0
+      }
+    }
+  ],
+  "saveRestoration": {
+    "format": "JSON contendo apenas consumedEventIds",
+    "fromLod": 0,
+    "toLod": 2,
+    "passed": true
+  },
+  "checks": {
+    "lodRoundTrips": 3,
+    "lodStateCombinations": 9,
+    "stableIds": true,
+    "worldSupportPlacement": true,
+    "separateTowerHeights": true,
+    "westPortalHeights": true,
+    "unitNormals": true,
+    "eventLinkedVisibility": true,
+    "removedDeckColliders": true,
+    "browserErrors": 0
+  }
+}
