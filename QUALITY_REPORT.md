@@ -6,9 +6,9 @@ M01 está **PROTÓTIPO JOGÁVEL**, usando a fundação do PR #9 e o kit de ponte
 
 | Verificação local | Resultado | Alcance |
 | --- | --- | --- |
-| Testes Node | 73/73 | 43 regressões/dados/GLB já existentes, 18 testes do runtime de M01 e 12 regressões da partida contínua. Cobrem sapadores, Bąk, rumo, `readyScale`, corredor, evacuação nos dois ramos, chamada, munição de Kowal, contenção na treliça e rota. Inclui arma, percurso, restauração, gates, segurança, sectores, blast obstruído e diagnóstico sem acesso mutável. |
-| Build de produção | Passa | Vite com `/COD-guerra/`, sem recursos externos do jogo. JS ~933 kB / 235 kB gzip; aviso de chunk grande permanece. |
-| Navegador de produção | 9/9 | Quatro testes da bancada preservados; cinco de M01: modelos/controlos/arma/CP-A, caminhada e entrega, CP-D/reload, outro/debrief e erro de asset. |
+| Testes Node | 76/76 | 43 regressões/dados/GLB já existentes, 18 testes do runtime de M01 e 12 regressões da partida contínua e três verificações de poses/saves. Cobrem sapadores, Bąk, rumo, `readyScale`, corredor, evacuação nos dois ramos, chamada, munição de Kowal, contenção na treliça e rota. Inclui arma, percurso, restauração, gates, segurança, sectores, blast obstruído e diagnóstico sem acesso mutável. |
+| Build de produção | Passa | Vite com `/COD-guerra/`, sem recursos externos do jogo. JS ~934 kB / 236 kB gzip; aviso de chunk grande permanece. |
+| Navegador de produção | 10/10 | Quatro testes da bancada preservados; seis de M01, incluindo pose sentada após reload: modelos/controlos/arma/CP-A, caminhada e entrega, CP-D/reload, outro/debrief e erro de asset. |
 | **Partida contínua no navegador** | 3 sessões menu→debrief; final: 1083 s reais, 12/12 objectivos, CP-A..D, 0 bloqueios/mortes/perdas de controlo | Piloto automático com teclado/cliques/pointer lock reais e olhar por `mousemove` relativo; lê só `gameDiagnostics()`/HUD, sem injectar estado. Encontrou e verificou cinco correcções. A segunda ronda (`--adverse`, 1308 s) verificou limites, Vístula, jogador parado e munição, e corrigiu a queda pela treliça. **Não é playtest humano.** Ver `docs/verification/m01-runtime/continuous/`. |
 | Percurso automático de simulação | Completo, 26 eventos, CP-A..D | Controlos com passos de 50 ms, colisão e relógios reais da simulação. Todos os objectivos obrigatórios terminam. Não injecta progressão; **não é partida no navegador**. |
 | Morte e restauração | Passam nos quatro snapshots | Actores, baixas, RNG, diálogo, timers, arma, destruição e hora real restaurados. Saves corrompidos rejeitados atomicamente. |
@@ -29,11 +29,13 @@ O primeiro [CI da integração](https://github.com/Brawl2007/COD-guerra/actions/
 
 A revisão de integração do PR #14 reproduziu e corrigiu dois casos: entrega de Bąk depois da demolição leste sem iniciar evacuação, e saves antigos aceites sem repor os 30 cartuchos de Kowal. O teste de entrega já não atribui a tarefa ao socorrista; a regressão de save antigo verifica o reabastecimento e a conservação da munição. As partidas contínuas anexadas são as do Claude, anteriores a estas duas correcções; a revisão verifica os casos na simulação e repete a suíte de navegador.
 
+Poses: os três testes novos verificam a chamada e o save, matrizes reais dos lotes (altura da cabeça, botas no chão, ferido horizontal e corpo transportado), capacidade para o elenco completo, ausência de mutação do actor e rejeição atómica de pose desconhecida. A captura de produção continua o outro alcançado pela simulação; a galeria isolada compara modelos e não é uma partida. Ambas foram inspeccionadas. Geometrias e movimentos continuam provisórios, sem rig/vozes finais ou alegação de FPS. Reprodução em `docs/verification/m01-runtime/poses/README.md`.
+
 ## Limites de M01
 
 - Playtest humano, performance no Chromebook e novas rotas adversas pendentes. Limites, Vístula, espera de dois minutos e reabastecimento já foram observados na segunda ronda. A partida contínua por piloto automático e a primeira revisão de ritmo estão feitas. Não há medição ou alegação de FPS de hardware.
 - Modelos humanos, arma/mãos, comboios, aviões, terreno e prédios são placeholders originais. Vozes, animações finais e uniformes completos pendentes. As pontes são o kit GLB provisório revisto.
-- Feridos/resgate e navegação têm comportamento reduzido; a chamada reúne os presentes, mas a pose sentada ainda está pendente; falta a encenação completa de S3, pelotão carregando feridos, interiores de casamata e animação de agarrar do sargento.
+- Feridos/resgate e navegação têm comportamento reduzido; a chamada usa uma pose sentada procedural; falta a encenação completa de S3, pelotão carregando feridos, interiores de casamata e animação de agarrar do sargento.
 - Sectores conservam estados/IDs mas não representam todos os sistemas de suprimento, moral, ferimentos e munição de NPCs exigidos no plano. Fogo e precisão usam tuning explícito de protótipo.
 - Alça 300/500/800/1000 m é referência, com raio recto/dispersão; queda/arrasto balístico pendentes. Treliças não são paredes opacas; colisão exacta de barras/ruínas pendente.
 - P4/P13, medidas modernas versus 1939, poses de dano e forma/presença de portais continuam classificados em `SOURCE_CHECK.md` e `BRIDGE_ASSET_REPORT.md`. Remover o portal oeste é resultado do roteiro do protótipo; não comprova o dano histórico exacto do portal.

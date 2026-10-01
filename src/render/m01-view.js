@@ -3,6 +3,7 @@ import { AssetManager } from '../assets/asset-manager.js';
 import manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with {type:'json'};
 import { eyePosition, aimDirection } from '../world/spatial.js';
 import { seconds } from '../game/m01-simulation.js';
+import { actorPose } from './m01-actor-pose.js';
 
 // Presentation only: all actors, visible pieces, damage and clocks come from M01Simulation.
 // Characters, trains, aircraft, terrain and the wz.29 are original procedural placeholders.
@@ -102,33 +103,40 @@ export class M01View {
   }
   createActors(){
     for(const [name,shape,material]of [['torso','cylinder','cloth'],['head','sphere','skin'],['helmet','sphere','metal'],
-      ['limbs','cylinder','cloth'],['rifle','box','wood'],['flash','sphere','glow']]){
-      const capacity=name==='limbs'?360:90;
+      ['limbs','cylinder','cloth'],['boots','box','dark'],['rifle','box','wood'],['flash','sphere','glow']]){
+      const capacity=name==='limbs'?720:name==='boots'?180:90;
       const batch=new THREE.InstancedMesh(this[shape],this.materials[material],capacity);
       batch.instanceMatrix.setUsage(THREE.DynamicDrawUsage);batch.count=0;batch.frustumCulled=false;
       batch.castShadow=name!=='flash';this.scene.add(batch);this.batches.set(name,batch);
     }
   }
   updateActors(actors,time){
-    const counts={},dummy=new THREE.Object3D(),root=new THREE.Object3D();
-    const put=(name,p,size,color,rotation=0)=>{
+    const counts={},dummy=new THREE.Object3D(),root=new THREE.Object3D(),matrix=new THREE.Matrix4();
+    const up=new THREE.Vector3(0,1,0),direction=new THREE.Vector3(),tint=new THREE.Color();
+    this.actorPoses={standing:0,crouched:0,seated:0,wounded:0,carried:0,fallen:0};
+    let pivot=0;
+    const put=(name,p,size,color,bone=null)=>{
       const batch=this.batches.get(name),i=counts[name]??0;counts[name]=i+1;
-      dummy.position.set(...p);dummy.scale.set(...size);dummy.rotation.set(rotation,0,0);dummy.updateMatrix();
-      batch.setMatrixAt(i,new THREE.Matrix4().multiplyMatrices(root.matrix,dummy.matrix));if(color)batch.setColorAt(i,new THREE.Color(color));
+      dummy.position.set(p[0],p[1]-pivot,p[2]);dummy.scale.set(...size);dummy.quaternion.identity();
+      if(bone){direction.set(bone.to[0]-bone.from[0],bone.to[1]-bone.from[1],bone.to[2]-bone.from[2]).normalize();dummy.quaternion.setFromUnitVectors(up,direction);}
+      dummy.updateMatrix();batch.setMatrixAt(i,matrix.multiplyMatrices(root.matrix,dummy.matrix));
+      if(color)batch.setColorAt(i,tint.set(color));
     };
     for(const a of actors){
       if(!a.active)continue;
-      root.position.set(a.x,a.y,a.z);root.rotation.set(0,-a.facing,a.alive?(a.state==='WOUNDED'?-1.25:0):1.45);root.updateMatrix();
+      const pose=actorPose(a,time);this.actorPoses[pose.name]++;pivot=pose.root.pivotY;
+      root.position.set(a.x,a.y+pose.root.offsetY,a.z);
+      root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
       const cloth=a.civilian?'#404c56':a.team==='enemy'?'#657273':'#858065',helmet=a.team==='enemy'?'#465252':'#635f47';
-      const walk=a.alive&&['ADVANCE','RETREAT'].includes(a.state),phase=time*7+Number(a.id.match(/\d+$/)?.[0]??0);
-      put('torso',[0,1.08,0],[.26,.65,.21],cloth);put('head',[0,1.63,0],[.17,.2,.15]);
-      put('helmet',[0,1.77,0],[.21,.12,.19],helmet);
-      for(const [i,z]of [-.14,.14].entries()){
-        put('limbs',[0,.43,z],[.105,.72,.10],cloth,walk?Math.sin(phase+i*Math.PI)*.48:0);
-        put('limbs',[.14,1.05,z*1.8],[.08,.58,.08],cloth,-.65+(walk?Math.sin(phase+i*Math.PI)*.2:0));
+      put('torso',pose.torso.position,pose.torso.size,cloth);put('head',pose.head,[.17,.2,.15]);
+      put('helmet',pose.helmet,[.21,.12,.19],helmet);
+      for(const bone of pose.limbs){
+        const midpoint=bone.from.map((v,i)=>(v+bone.to[i])/2),length=Math.hypot(...bone.from.map((v,i)=>v-bone.to[i]));
+        put('limbs',midpoint,[bone.radius,length,bone.radius],cloth,bone);
       }
-      if(!a.civilian&&a.role!=='MEDIC')put('rifle',[.43,1.12,.18],[.9,.07,.06]);
-      if(a.alive&&a.shot>0)put('flash',[.93,1.13,.18],[.2,.07,.07]);
+      for(const foot of pose.boots)put('boots',foot,[.22,.11,.13]);
+      if(!a.civilian&&a.role!=='MEDIC')put('rifle',pose.rifle,[.9,.07,.06]);
+      if(a.alive&&a.shot>0)put('flash',[pose.rifle[0]+.5,pose.rifle[1],pose.rifle[2]],[.2,.07,.07]);
     }
     for(const [name,batch]of this.batches){batch.count=counts[name]??0;batch.instanceMatrix.needsUpdate=true;if(batch.instanceColor)batch.instanceColor.needsUpdate=true;}
   }
@@ -258,7 +266,7 @@ export class M01View {
     this.bursts.push({mesh,start:clock,duration:aerial?.7:1.4,size:aerial?12:30});
   }
   resetEffects(){this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;for(const b of this.bursts){this.effects.remove(b.mesh);b.mesh.material.dispose();}this.bursts=[];}
-  get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,
+  get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,actorPoses:{...this.actorPoses},
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0)};}
   dispose(){
     this.disposed=true;this.assets.dispose();this.geometry.forEach(g=>g.dispose());Object.values(this.materials).forEach(m=>m.dispose());

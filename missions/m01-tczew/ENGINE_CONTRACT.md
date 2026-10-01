@@ -1,6 +1,6 @@
 # M01 — contrato de integração revisto
 
-Revisão dos PRs #8 e #10. Missão **PLANEJADA**: o JSON descreve a implementação, mas não executa os seus textos de condições, efeitos e restauração. Criar handlers explícitos por ID, sem `eval` nem interpretação automática de prosa. Nunca reutilizar o mapa francês ou a M1 para M01.
+Dados revistos nos PRs #8 e #10; runtime em **PROTÓTIPO JOGÁVEL**, com evidências e limites em `QUALITY_REPORT.md`. O JSON descreve a implementação, mas não executa os seus textos de condições, efeitos e restauração. Usar handlers explícitos por ID, sem `eval` nem interpretação automática de prosa. Nunca reutilizar o mapa francês ou a M1 para M01.
 
 ## Tempo e eventos
 
@@ -22,7 +22,8 @@ Revisão dos PRs #8 e #10. Missão **PLANEJADA**: o JSON descreve a implementaç
 - Munição da arma no save: `mag + reserve + shotCount = 45 + received`. `received` (máx. 30) são carregadores que Kowal passa ao jogador; `timers.kowalRounds` guarda o que lhe resta, e os dois somam sempre 30. Saves antigos sem estes campos continuam válidos.
 - Feridos e transporte são dados dos actores e entram no save: `carriedBy` (quem leva o ferido) e `task` de Dudek (`evacuate_bak` ou `stay_with_bak`). O renderer só lê estas posições.
 - Bąk nunca fica na zona da demolição oeste. Entregue pelo jogador, fica deitado junto a Dudek, que o leva para a estação depois das 06:10 e volta à secção. Recolhido por Dudek às 06:14, ambos ficam na estação (`dlg_m01_056b/057b`).
-- Na chamada das 07:05, os presentes são posicionados no abrigo (pose sentada ainda pendente no protótipo), de frente para Jan; ninguém se move durante a cena. Bąk ferido, Dudek na estação e Nowicki desaparecido não são encenados.
+- `pose` opcional no actor guarda a postura sentada da chamada; saves sem o campo são aceites. A representação distingue também agachados, feridos e transportados a partir dos dados existentes. Geometria procedural, sem alterar saúde, coordenadas ou resultados no renderer.
+- Na chamada das 07:05, os presentes são posicionados no abrigo com `pose: seated` e `crouched: true`, de frente para Jan; ninguém se move durante a cena. Bąk ferido, Dudek na estação e Nowicki desaparecido não são encenados.
 
 ## Espaço, segurança e história
 

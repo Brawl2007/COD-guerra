@@ -41,10 +41,12 @@ Evidências em `docs/verification/m01-runtime/continuous/`.
 - **Feito:**
   - Bąk visível ao ser levado e evacuado por Dudek;
   - clarão e coluna de poeira nas demolições, com vibração ao chegar o som;
-  - chamada posicionada no abrigo (pose sentada pendente);
+  - chamada no abrigo com pose sentada procedural, preservada no save;
   - carregadores de Kowal.
 
 A revisão de integração corrigiu a evacuação na entrega de Bąk depois das 06:10 e a inicialização da munição da secção ao carregar saves antigos. Regressões em `tests/m01-continuous-fixes.test.js`.
+
+As poses procedurais agora distinguem posição em pé, agachada, sentada, ferida e transportada. Joelhos/cotovelos e botas usam os mesmos lotes de instâncias, sem decidir estado de combate. A chamada marca `pose: seated` na simulação; saves anteriores continuam aceites. Imagens e limites em `docs/verification/m01-runtime/poses/`.
 
 ## Parcial ou pendente
 

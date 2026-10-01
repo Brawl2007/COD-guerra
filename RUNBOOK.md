@@ -60,6 +60,14 @@ O piloto usa teclado/cliques reais e olhar por `mousemove` relativo, e só lê `
 
 O verificador grava `docs/verification/m01-runtime/simulation-report.json`. Usa controlos e física reais da simulação com passos de 50 ms, sem injectar relógios/eventos/objectivos. Não é playtest no navegador. Testes de CP-D/outro no navegador continuam snapshots alcançados por esse percurso; estão identificados como verificações por trechos.
 
+Verificação isolada das poses (porta 5181, servidor/browser fechados ao terminar):
+
+```sh
+CHROME_EXECUTABLE=/caminho/para/chromium node tools/verify-m01-poses.mjs --out test-results/m01-poses
+```
+
+A galeria usa o renderer de personagens com dados de exemplo; não executa a missão. O teste de navegador da chamada usa um snapshot alcançado pela rota de simulação e verifica a pose após reload.
+
 ## Diagnóstico
 
 `?debug=1` habilita somente `window.gameDiagnostics()`: renderer, preset, chamadas/triângulos, assets, relógio, posição, fase e sectores. Não expõe a instância nem permite mutações. Não deixar informação de engenharia no HUD normal.

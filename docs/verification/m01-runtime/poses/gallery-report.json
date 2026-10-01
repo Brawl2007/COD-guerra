@@ -1,0 +1,19 @@
+{
+  "ready": true,
+  "verification": "Isolated visual fixture; not gameplay",
+  "actorPoses": {
+    "standing": 2,
+    "crouched": 0,
+    "seated": 1,
+    "wounded": 1,
+    "carried": 1,
+    "fallen": 0
+  },
+  "drawCalls": 7,
+  "triangles": 2410,
+  "errors": [],
+  "viewport": [
+    1280,
+    720
+  ]
+}

@@ -91,6 +91,18 @@ test('the actual outro state can be skipped through the UI into the enabled hist
   const d=await page.evaluate(()=>window.gameDiagnostics());expect(d.complete).toBe(true);expect(d.m01.flags['m01.completed']).toBe(true);expect(d.m01.parts.road_span_01.visible).toBe(false);expect(d.m01.parts.road_portal_west.visible).toBe(false);
   await page.screenshot({path:info.outputPath('m01-debrief.png')});expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
+test('the real roll-call snapshot renders seated actors and keeps their pose after page reload',async({page},info)=>{
+  // Visual verification by continuation of a snapshot reached with simulation controls.
+  const snapshot=flow().outro,seated=snapshot.actors.filter(a=>a.active&&a.alive&&a.pose==='seated').length;
+  expect(seated).toBeGreaterThanOrEqual(6);
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(n=>window.gameDiagnostics().m01.actorPoses.seated===n,seated);
+  await page.screenshot({path:info.outputPath('m01-roll-call-seated.png')});
+  await page.reload();await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);
+  await start(page,'#continue');await page.waitForFunction(n=>window.gameDiagnostics().m01.actorPoses.seated===n,seated);
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
 test('a failed M01 bridge load prevents an invisible bridge; the French sandbox remains selectable',async({page})=>{
   await page.route('**/*.glb',r=>r.fulfill({status:404,body:'missing M01 test asset'}));
   await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.assetFailures.length===9);
