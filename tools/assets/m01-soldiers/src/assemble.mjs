@@ -40,26 +40,29 @@ export function buildNation(nat, { heads = HEADS[nat] } = {}) {
 }
 
 /** Funde as peças de um grupo (já com atlasUV) numa malha com pesos. */
-export function mergeGroup(g) {
+export function mergeGroup(g, { dropInner = false } = {}) {
   const positions = [], normals = [], uvs = [], indices = [], skin = [];
   for (const p of g.parts) {
     const base = positions.length / 3;
     positions.push(...p.positions); normals.push(...p.normals); uvs.push(...p.atlasUV);
-    for (const i of p.indices) indices.push(i + base);
+    for (let t = 0; t < p.indices.length; t += 3) {
+      if (dropInner && p.innerTris?.[t / 3]) continue;
+      indices.push(p.indices[t] + base, p.indices[t + 1] + base, p.indices[t + 2] + base);
+    }
     skin.push(...p.skin);
   }
   return { name: g.name, positions, normals, uvs, indices, skin, visible: g.visible };
 }
 
 /** Simplificação com meshoptimizer (posição + normal + UV), remove vértices não usados. */
-export async function simplify(mesh, ratio, { error = 0.02 } = {}) {
+export async function simplify(mesh, ratio, { error = 0.02, flags = [] } = {}) {
   if (ratio >= 1) return mesh;
   await MeshoptSimplifier.ready;
   const n = mesh.positions.length / 3;
   const pos = Float32Array.from(mesh.positions), attr = new Float32Array(n * 5);
   for (let i = 0; i < n; i++) attr.set([mesh.normals[i * 3], mesh.normals[i * 3 + 1], mesh.normals[i * 3 + 2], mesh.uvs[i * 2], mesh.uvs[i * 2 + 1]], i * 5);
   const target = Math.max(36, Math.floor(mesh.indices.length * ratio / 3) * 3);
-  const [idx] = MeshoptSimplifier.simplifyWithAttributes(Uint32Array.from(mesh.indices), pos, 3, attr, 5, [0.4, 0.4, 0.4, 2, 2], null, target, error, []);
+  const [idx] = MeshoptSimplifier.simplifyWithAttributes(Uint32Array.from(mesh.indices), pos, 3, attr, 5, [0.4, 0.4, 0.4, 2, 2], null, target, error, flags);
   const remap = new Map(), out = { ...mesh, positions: [], normals: [], uvs: [], indices: [], skin: [] };
   for (const i of idx) {
     if (!remap.has(i)) {
@@ -81,23 +84,28 @@ export function liftWeights(skin) {
   return skin.map(list => { const m = new Map(); for (const [b, w] of list) m.set(keep(b), (m.get(keep(b)) ?? 0) + w); return [...m.entries()]; });
 }
 
-/** LODs: razão de triângulos por grupo (o corpo e as cabeças são densos; armas e equipamento já são leves). */
+/**
+ * LODs: razão de triângulos por categoria de malha, erro máximo (relativo ao tamanho da malha) e opções do
+ * simplificador. LOD2 (Chromebook/longe) aceita colapsar costuras de UV ('Permissive') e usa o esqueleto leve.
+ */
 export const LODS = [
-  { id: 'lod0', ratio: { body: 0.55, head: 0.45, default: 1 }, color: 2048, orm: 1024, normal: 1024, bones: 'full' },
-  { id: 'lod1', ratio: { body: 0.2, head: 0.16, default: 0.45 }, color: 1024, orm: 512, normal: 512, bones: 'full' },
-  { id: 'lod2', ratio: { body: 0.065, head: 0.05, default: 0.18 }, color: 512, orm: null, normal: null, bones: 'light' },
+  { id: 'lod0', ratio: { body: 0.33, head: 0.3, helmet: 0.45, gear: 0.6, rifle: 0.8, clip: 0.4 }, error: 0.01, flags: [], color: 2048, orm: 1024, normal: 1024, bones: 'full' },
+  { id: 'lod1', ratio: { body: 0.12, head: 0.1, helmet: 0.15, gear: 0.3, rifle: 0.3, clip: 0.2 }, error: 0.05, flags: [], color: 1024, orm: 512, normal: null, bones: 'full' },
+  { id: 'lod2', ratio: { body: 0.045, head: 0.035, helmet: 0.06, gear: 0.08, rifle: 0.1, clip: 0.1 }, error: 0.3, flags: ['Permissive'], color: 512, orm: null, normal: null, bones: 'light' },
 ];
+const category = name => name === 'body' ? 'body' : name.startsWith('head_') ? 'head' : /^(helmet|cap)_/.test(name) ? 'helmet' : name === 'rifle' ? 'rifle' : name === 'clip' ? 'clip' : 'gear';
 
 /** Atlas da nação (uma vez) e malhas de cada LOD, prontos para writeCharacter. */
 export async function bakeNation(N, { size = 2048 } = {}) {
   const parts = N.groups.flatMap(g => g.parts);
-  const atlas = bakeAtlas(parts, N.painters, { size, ormSize: 1024, normalSize: 1024, extraSizes: [1024, 512] });
+  const atlas = bakeAtlas(parts, N.painters, { size, ormSize: 1024, normalSize: 1024, extraSizes: [1024, 512], ormExtra: [512] });
   const lods = [];
   for (const L of LODS) {
     const meshes = [];
     for (const g of N.groups) {
-      const m = mergeGroup(g), key = g.name === 'body' ? 'body' : g.name.startsWith('head_') ? 'head' : 'default';
-      const s = await simplify(m, L.ratio[key]);
+      // Capacetes: nos LOD1/LOD2 sai a cúpula interior (escondida pela cabeça; atravessaria a exterior ao simplificar).
+      const m = mergeGroup(g, { dropInner: L.id !== 'lod0' });
+      const s = await simplify(m, L.ratio[category(g.name)], { error: L.error, flags: L.flags });
       if (L.bones === 'light') s.skin = liftWeights(s.skin);
       const sk = skinArrays(s.skin);
       const skinBones = L.bones === 'light' ? GAME_BONES.map(b => b.name).filter(b => !LIGHT_DROP.has(b)) : undefined;
@@ -106,7 +114,7 @@ export async function bakeNation(N, { size = 2048 } = {}) {
     }
     const img = atlas.images;
     const material = L.id === 'lod0' ? { baseColor: img.color, metallicRoughness: img.orm, normal: img.normal, roughness: 1, metallic: 1 }
-      : L.id === 'lod1' ? { baseColor: img.color_1024, metallicRoughness: img.orm, roughness: 1, metallic: 1 }
+      : L.id === 'lod1' ? { baseColor: img.color_1024, metallicRoughness: img.orm_512, roughness: 1, metallic: 1 }
         : { baseColor: img.color_512, roughness: 0.85, metallic: 0 };
     lods.push({ id: L.id, meshes, materials: { atlas: material } });
   }

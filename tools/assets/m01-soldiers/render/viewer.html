@@ -75,6 +75,8 @@ window.stage = {
     actors.push(a);
     return actors.length - 1;
   },
+  /** Prende a raiz do actor i ao osso `bone` do actor j (p. ex. ferido ao carry_socket do transportador). */
+  attach(i, j, bone) { const b = actors[j].root.getObjectByName(bone); const r = actors[i].root; r.position.set(0, 0, 0); r.rotation.set(0, 0, 0); b.add(r); actors[j].root.updateMatrixWorld(true); },
   setTime(i, t) { actors[i].mixer.setTime(t); actors[i].root.updateMatrixWorld(true); },
   clear() { for (const a of actors) scene.remove(a.root); actors.length = 0; },
   info(i) { return actors[i].info; },

@@ -53,6 +53,10 @@ function shellHelmet(fit, { thetaMax, flare, rings = 14, segments = 40, thicknes
   }
   const shell = loft([...outer, ...inner.slice().reverse()], { caps: 'both' });
   orientOutward(shell, c);
+  // Triângulos da cúpula interior (largados nos LOD1/LOD2): fica a orla interior (aba + 3 anéis), visível por baixo.
+  const quads = (outer.length * 2 - 1) * segments * 6, innerStart = (outer.length + nRim + 3) * segments * 6;
+  shell.innerTris = new Uint8Array(shell.indices.length / 3);
+  for (let t = 0; t < shell.indices.length; t += 3) if ((t >= innerStart && t < quads) || t >= quads + segments * 3) shell.innerTris[t / 3] = 1;
   return shell;
 }
 
@@ -243,7 +247,7 @@ export function buildGear(nat, h, o) {
     }
     throw new Error(`túnica sem topo em ${x}, ${z}`);
   };
-  const sets = {}, add = (set, ...ps) => { if (process.env.GEAR_DEBUG) console.log(set, ps.flat().map(p => p.name).join(" "), Date.now() % 100000); (sets[set] ??= []).push(...ps.flat()); };
+  const sets = {}, add = (set, ...ps) => (sets[set] ??= []).push(...ps.flat());
   const onBody = (parts, filter) => { for (const p of parts) skinFromBody(h, lm, p, filter); return parts; };
   const rigid = (parts, bone) => { for (const p of parts) p.bone = bone; return parts; };
   const nearBelt = v => Math.abs(h.positions[v * 3 + 1] - lm.waistY) < 0.12 && h.skin[v].every(([b]) => !/arm|hand|clavicle/.test(b));

@@ -31,7 +31,7 @@ function packNormal(n, size) {
  * parts: peças com positions, normals, uvs (locais), indices, paint, texel opcional, attrs opcionais.
  * Devolve as imagens (cor, ORM e normal nos tamanhos pedidos) e escreve part.atlasUV em cada peça.
  */
-export function bakeAtlas(parts, painters, { size = 2048, ormSize = 1024, normalSize = 1024, extraSizes = [], normalStrength = 1 } = {}) {
+export function bakeAtlas(parts, painters, { size = 2048, ormSize = 1024, normalSize = 1024, extraSizes = [], ormExtra = [], normalStrength = 1 } = {}) {
   const islands = collectIslands(parts);
   const packed = pack(islands, size, Math.max(3, Math.round(size / 400)));
   for (const p of parts) atlasUVs(p, islands, size);
@@ -44,5 +44,6 @@ export function bakeAtlas(parts, painters, { size = 2048, ormSize = 1024, normal
   const shrink = (data, to) => { let d = data, s = size; while (s > to) { d = downsample(d, s, 3); s /= 2; } return d; };
   const images = { color: encodeJPEG(tex.color, size), orm: encodePNG(shrink(orm, ormSize), ormSize), normal: encodePNG(shrink(nPacked, normalSize), normalSize) };
   for (const s of extraSizes) images[`color_${s}`] = encodeJPEG(shrink(tex.color, s), s, 85);
+  for (const s of ormExtra) images[`orm_${s}`] = encodePNG(shrink(orm, s), s);
   return { images, density: packed.density, islands: islands.length, size, color: tex.color };
 }
