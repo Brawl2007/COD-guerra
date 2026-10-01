@@ -3,7 +3,7 @@
 import { buildHuman } from './human.mjs';
 import { loadTarget } from './mh.mjs';
 import { fromBase, computeNormals, v3, smoothstep } from './meshops.mjs';
-import { bodyNormals, classify, landmarks, facesWhere, shell } from './garments.mjs';
+import { bodyNormals, classify, landmarks, facesWhere, shell, orientOutward } from './garments.mjs';
 import { lathe } from './geom.mjs';
 
 const ARM = /^(clavicle|upperarm|lowerarm|hand|thumb|index|middle|ring|pinky)_/;
@@ -62,10 +62,11 @@ export function faceRegions(h) {
   }
   const masks = {
     lips: raw.lips.map(x => smoothstep(0.3, 0.65, x)),
-    brows: raw.brows.map((x, i) => { const p = P(i); const above = p[1] - eyeMid[1]; return smoothstep(0.35, 0.8, x) * smoothstep(0.008, 0.016, above) * smoothstep(0.042, 0.03, above) * smoothstep(0.012, 0.022, Math.abs(p[0])); }),
+    brows: raw.brows.map((x, i) => { const p = P(i); const above = p[1] - eyeMid[1]; return smoothstep(0.35, 0.8, x) * smoothstep(0.011, 0.016, above) * smoothstep(0.03, 0.023, above) * smoothstep(0.012, 0.022, Math.abs(p[0])); }),
     ears: raw.ears.map(x => smoothstep(0.2, 0.6, x)), nose: raw.nose.map(x => smoothstep(0.2, 0.7, x)),
     lids: raw.lids.map(x => smoothstep(0.25, 0.7, x)), cheeks: raw.cheeks.map(x => smoothstep(0.3, 0.8, x)),
-    moustache: raw.philtrum.map((x, i) => { const p = P(i); return smoothstep(0.1, 0.4, x) * smoothstep(mouth[1] + 0.004, mouth[1] + 0.009, p[1]) * smoothstep(0.034, 0.022, Math.abs(p[0])) * (1 - smoothstep(0.3, 0.6, raw.lips[i])); }),
+    // Bigode: faixa entre o lábio superior e a base do nariz, à frente.
+    moustache: raw.philtrum.map((x, i) => { const p = P(i), dy = p[1] - mouth[1]; return smoothstep(0.003, 0.007, dy) * smoothstep(0.024, 0.016, dy) * smoothstep(0.032, 0.024, Math.abs(p[0])) * smoothstep(lm.headZ - 0.05, lm.headZ - 0.07, p[2]) * (1 - smoothstep(0.35, 0.6, raw.lips[i])) * (1 - smoothstep(0.5, 0.8, raw.nose[i])); }),
     hair, beard,
   };
   return { masks, lm };
@@ -88,9 +89,10 @@ export function buildHead(h0, macro, variant, style) {
   head.name = `head_${variant.id}`; head.paint = `head:${variant.id}`; head.texel = 2.6;
 
   // Cabelo: casca de 1–5 mm onde a máscara é > 0 (mais espessa no topo), pintada com o mesmo cabelo.
-  const hairFaces = hv.base.faces.filter(f => f.group === 'body' && f.v.every(v => masks.hair[v] > 0.05 && headMask[v]));
+  const hairFaces = hv.base.faces.filter(f => f.group === 'body' && f.v.some(v => masks.hair[v] > 0.12) && f.v.every(v => headMask[v]));
   const N = bodyNormals(hv);
-  const thick = s => 0.0012 + (variant.hairLength ?? 0.004) * masks.hair[s] * smoothstep(lm.eyeMid[1] - 0.02, lm.top - 0.02, hv.positions[s * 3 + 1]);
+  // Na orla a casca afunda sob a pele (o couro cabeludo pintado faz a transição), sem degraus na linha do cabelo.
+  const thick = s => -0.0012 + (0.0027 + (variant.hairLength ?? 0.004) * smoothstep(lm.eyeMid[1] - 0.02, lm.top - 0.02, hv.positions[s * 3 + 1])) * smoothstep(0.1, 0.6, masks.hair[s]);
   const hair = shell(hv, hairFaces, N, thick, { iterations: 2, minFn: s => thick(s) * 0.8 });
   computeNormals(hair);
   hair.skin = hair.src.map(() => [['head', 1]]);
@@ -111,6 +113,7 @@ export function buildHead(h0, macro, variant, style) {
     eye.name = `eye_${side}_${variant.id}`; eye.paint = `eye:${variant.id}`; eye.texel = 3;
     eye.skin = Array.from({ length: eye.positions.length / 3 }, () => [['head', 1]]);
     eye.size = [2 * Math.PI * r, Math.PI * r];
+    orientOutward(eye, c);
     computeNormals(eye, null);
     return eye;
   });
