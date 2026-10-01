@@ -4,6 +4,7 @@
 .mission-choice{display:grid;gap:8px;font:600 .65rem Arial,sans-serif;letter-spacing:.2em;color:#bcb99f;max-width:460px}
 .mission-choice select{background:#242b22;color:#ede4cd;border:1px solid #606650;padding:10px;font:400 .85rem Arial,sans-serif;max-width:100%}
 button:disabled{opacity:.45;cursor:wait}#battle-clock{position:absolute;right:28px;top:30px;color:#ded4b9;font:600 1rem monospace;letter-spacing:.12em}
+#objective-status{display:block;max-width:min(560px,70vw);font:600 .78rem/1.5 Arial,sans-serif;color:#e9cf8e}#objective-status:empty{display:none}
 #subtitle{position:absolute;bottom:21%;left:15%;width:70%;text-align:center;font:500 1rem/1.5 Arial,sans-serif;color:#eee8da}
 #subtitle:not(:empty){background:rgba(7,10,8,.65);padding:10px 16px;border-radius:3px}#interaction{position:absolute;bottom:11%;width:100%;text-align:center;color:#ead9a7;font:600 .85rem Arial,sans-serif}
 #weapon-state{margin-top:10px;font-size:.55rem}#complete{overflow:auto;justify-content:flex-start;padding:30px 10vw}

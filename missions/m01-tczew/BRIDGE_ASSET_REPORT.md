@@ -8,14 +8,14 @@ A branch incorpora o `main` revisto após PR #10. Em relação a esse `main`, es
 
 ## Entrega e contagens
 
-São 12 GLB: duas pontes e portal comum de Lisewo, cada um com LOD0/1/2 e colisores separados. O manifesto conserva contagens por peça, eventos, pivôs, referências ao mapa e o hash da entrada (`50b8e90a69804bff`). Os ficheiros de origem são o código do gerador; não existe ficheiro Blender.
+Os portais ferroviários (oeste e antigo leste) têm um arco único com a largura da abertura dos colisores (|z| < 4,2 m). Os dois arcos de 4,4 m sobrepunham-se e deixavam o portal fechado à vista. São 12 GLB: duas pontes e portal comum de Lisewo, cada um com LOD0/1/2 e colisores separados. O manifesto conserva contagens por peça, eventos, pivôs, referências ao mapa e o hash da entrada (`50b8e90a69804bff`). Os ficheiros de origem são o código do gerador; não existe ficheiro Blender.
 
 | Ficheiro | LOD | Triângulos intactos | Todos os estados | Únicos | Chamadas intactas¹ | KiB |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| `bridge_rail_1891_1912.glb` | 0 | 22184 | 32624 | 23564 | 43 | 1610.4 |
+| `bridge_rail_1891_1912.glb` | 0 | 22088 | 32528 | 23468 | 43 | 1604.0 |
 | `bridge_rail_1891_1912.colliders.glb` | colliders | 0 | 432 | 432 | — | 62.6 |
-| `bridge_rail_1891_1912.lod1.glb` | 1 | 12400 | 18244 | 13084 | 41 | 913.3 |
-| `bridge_rail_1891_1912.lod2.glb` | 2 | 4392 | 6156 | 4620 | 41 | 344.8 |
+| `bridge_rail_1891_1912.lod1.glb` | 1 | 12344 | 18188 | 13028 | 41 | 909.6 |
+| `bridge_rail_1891_1912.lod2.glb` | 2 | 4336 | 6100 | 4564 | 41 | 341.1 |
 | `bridge_road_lentze_1857_1912.glb` | 0 | 43156 | 62728 | 45160 | 74 | 3019.8 |
 | `bridge_road_lentze_1857_1912.colliders.glb` | colliders | 0 | 552 | 552 | — | 80.2 |
 | `bridge_road_lentze_1857_1912.lod1.glb` | 1 | 8668 | 12040 | 9664 | 52 | 639.3 |

@@ -4,7 +4,7 @@ import './styles.css';
 const $=selector=>document.querySelector(selector);
 const canvas=$('#game'),menu=$('#menu'),pause=$('#pause'),hudRoot=$('#hud'),complete=$('#complete'),errorPanel=$('#error');
 const hud={health:$('#health'),healthBar:$('#health-bar'),grenades:$('#grenades'),mag:$('#mag'),reserve:$('#reserve'),
-  objective:$('#objective-text'),message:$('#message'),checkpoint:$('#checkpoint'),vignette:$('#damage-vignette'),
+  objective:$('#objective-text'),objectiveStatus:$('#objective-status'),message:$('#message'),checkpoint:$('#checkpoint'),vignette:$('#damage-vignette'),
   weaponName:$('#weapon-name'),weaponState:$('#weapon-state'),clock:$('#battle-clock'),interaction:$('#interaction'),subtitle:$('#subtitle'),crosshair:$('#crosshair')};
 let game;
 const showError=message=>{$('#error-text').textContent=message;errorPanel.classList.remove('hidden');};

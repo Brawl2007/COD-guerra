@@ -1,5 +1,6 @@
 import {test,expect} from '@playwright/test';
-import {route} from '../helpers/m01-route.js';
+import {route,driver,toRepair} from '../helpers/m01-route.js';
+import {seconds} from '../../src/game/m01-simulation.js';
 
 let result;
 const flow=()=>result??=route();
@@ -91,6 +92,26 @@ test('the actual outro state can be skipped through the UI into the enabled hist
   const d=await page.evaluate(()=>window.gameDiagnostics());expect(d.complete).toBe(true);expect(d.m01.flags['m01.completed']).toBe(true);expect(d.m01.parts.road_span_01.visible).toBe(false);expect(d.m01.parts.road_portal_west.visible).toBe(false);
   await page.screenshot({path:info.outputPath('m01-debrief.png')});expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
+test('German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state',async({page},info)=>{
+  test.setTimeout(process.env.CI?180000:90000);
+  // Staged continuation of a state reached by the simulation route (crate delivered, train 963 firing).
+  const d=toRepair(driver());d.walk(-134,13);d.until(()=>d.sim.battleClock>=seconds('04:45:40'),120);
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  const samples=[];
+  for(let i=0;i<60&&!(samples.some(s=>s.fx.muzzle>0)&&samples.some(s=>s.fx.puff>0)&&samples.some(s=>s.pinned)&&samples.some(s=>!s.pinned)&&samples.at(-1).progress>samples[0].progress);i++){
+    await page.waitForTimeout(250);
+    samples.push(await page.evaluate(()=>{const g=window.gameDiagnostics().m01;return {fx:g.fireEffects,hud:document.querySelector('#objective-status').textContent,
+      sim:g.threat.status,pinned:g.threat.repair.pinned,origins:g.threat.recentFire.map(f=>f.x),poses:g.actorPoses.pinned,progress:g.objectives.obj_m01_cover_repair.progress};}));
+  }
+  expect(samples.some(s=>s.fx.muzzle>0)).toBe(true);expect(samples.some(s=>s.fx.puff>0)).toBe(true);
+  expect(samples.some(s=>s.pinned)&&samples.some(s=>!s.pinned)).toBe(true);
+  // Os sapadores deitados aparecem na pose de quem está sob fogo, e o trabalho retoma depois.
+  expect(samples.some(s=>s.pinned&&s.poses>0)).toBe(true);expect(samples.at(-1).progress).toBeGreaterThan(samples[0].progress);
+  for(const s of samples){expect(s.hud).toBe(s.sim);expect(s.hud.includes('sapadores deitados')).toBe(s.pinned);for(const x of s.origins)expect(x).toBeGreaterThanOrEqual(1050);}
+  await page.screenshot({path:info.outputPath('m01-repair-under-fire.png')});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
 test('the real roll-call snapshot renders seated actors and keeps their pose after page reload',async({page},info)=>{
   // Visual verification by continuation of a snapshot reached with simulation controls.
   const snapshot=flow().outro,seated=snapshot.actors.filter(a=>a.active&&a.alive&&a.pose==='seated').length;
@@ -103,28 +124,21 @@ test('the real roll-call snapshot renders seated actors and keeps their pose aft
   await start(page,'#continue');await page.waitForFunction(n=>window.gameDiagnostics().m01.actorPoses.seated===n,seated);
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
-test('a real repair continuation shows incoming fire, the stalled-work cue and resumed progress in production',async({page},info)=>{
-  test.setTimeout(process.env.CI?180000:90000);
-  const snapshot=flow().combatSnapshots.repairThreat;
-  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
-  const {errors,failed}=await open(page);await start(page,'#continue');
-  await page.waitForFunction(()=>window.gameDiagnostics().m01.incomingShots>0);
-  await expect(page.locator('#objective')).toContainText('Sapadores abrigados');
-  await page.screenshot({path:info.outputPath('m01-repair-under-fire.png')});
-  const d=await page.evaluate(()=>window.gameDiagnostics());expect(d.m01.objectives.obj_m01_cover_repair.state).toBe('active');
-  expect(d.m01.objectives.obj_m01_cover_repair.progress).toBeLessThan(100);
-  await page.waitForFunction(n=>window.gameDiagnostics().m01.objectives.obj_m01_cover_repair.progress>n+1,d.m01.objectives.obj_m01_cover_repair.progress);
-  expect(errors).toEqual([]);expect(failed).toEqual([]);
-});
-test('a real withdrawal continuation displays casualties from incoming fire and keeps the twelve-survivor safety floor',async({page},info)=>{
+test('a real withdrawal continuation loses men only to rounds from the spans, keeps the twelve-survivor floor and shows the count in the HUD',async({page},info)=>{
   test.setTimeout(process.env.CI?180000:90000);
   const snapshot=flow().combatSnapshots.withdrawal;
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
   const {errors,failed}=await open(page);await start(page,'#continue');
-  await page.waitForFunction(()=>window.gameDiagnostics().m01.flags['m01.east_platoon_survivors']<18);
-  const d=await page.evaluate(()=>window.gameDiagnostics());expect(d.m01.incomingShots).toBeGreaterThan(0);
-  expect(d.m01.flags['m01.east_platoon_survivors']).toBeGreaterThanOrEqual(12);
-  await expect(page.locator('#objective')).toContainText('/18 homens em retirada');
+  // O clarão da boca dura uma fracção de segundo e apaga-se antes de o tiro chegar: amostrar até à primeira baixa.
+  const samples=[];
+  for(let i=0;i<300&&!(samples.length&&samples.at(-1).n<18);i++){
+    await page.waitForTimeout(250);
+    samples.push(await page.evaluate(()=>{const g=window.gameDiagnostics().m01;return {n:g.flags['m01.east_platoon_survivors'],muzzle:g.fireEffects.muzzle,
+      hud:document.querySelector('#objective-status').textContent,sim:g.threat.status,origins:g.threat.recentFire.map(f=>f.id)};}));
+  }
+  const n=samples.at(-1).n;expect(n).toBeLessThan(18);expect(n).toBeGreaterThanOrEqual(12);
+  expect(samples.some(s=>s.muzzle>0)).toBe(true);
+  for(const s of samples){expect(s.hud).toBe(s.sim);expect(s.hud).toContain(`Pelotão leste: ${s.n} homens`);}
   await page.screenshot({path:info.outputPath('m01-withdrawal-under-fire.png')});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });

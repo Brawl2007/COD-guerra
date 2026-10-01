@@ -67,7 +67,7 @@ A rota de simulação ([`../simulation-report.json`](../simulation-report.json))
 - **A demolição oeste não se vê do posto de disparo.** O barracão (x −270…−250, z 14…26) tapa a linha de vista para as pontes. A demolição leste (06:10, ~810 m) só se ouve: o clarão só é desenhado abaixo de 500 m. Decidir entre mover posto/barracão no mapa (P12) e encenar o olhar.
 - **Chamada final sem encenação.** A câmara mostra a parede do abrigo e as legendas; não há personagens em cena.
 - **Munição.** 45 cartuchos sem reabastecimento em M01. Na partida 1, o piloto disparou a cada 6 s e ficou sem munição às 05:35, antes da retirada. O validador exige `mag+reserve+shotCount = 45`, por isso um reabastecimento precisa de mudar esse invariante.
-- **Sem ameaça nas tarefas de cobertura.** "Proteja o reparo" e "Cubra a retirada" não mostram ameaça legível. O reparo não foi suprimido em nenhuma partida, e os sobreviventes do pelotão leste chegaram sempre ao mínimo de 12: a supressão a ~650 m com alça aberta é improvável.
+- **Sem ameaça nas tarefas de cobertura.** "Proteja o reparo" e "Cubra a retirada" não mostram ameaça legível. O reparo não foi suprimido em nenhuma partida, e os sobreviventes do pelotão leste chegaram sempre ao mínimo de 12: a supressão a ~650 m com alça aberta é improvável. *Tratado na [terceira ronda](#terceira-ronda-ameaça-no-reparo-e-na-retirada).*
 - **"Abrigue-se!" pode não aparecer.** O objectivo conclui-se logo se o jogador já estiver na cobertura do posto avançado.
 - **Ainda falta:** playtest humano completo, medição no Chromebook e rotas adversas (morrer, sair dos limites, ignorar objectivos).
 
@@ -112,10 +112,169 @@ Partida contínua com `--adverse`, numa única sessão Chromium, do menu ao debr
 \* Única captura encenada: continuação do CP-C real da rota, com o jogador entre as pontes, fora da treliça. De dentro da treliça rodoviária, o lattice tapa a coluna junto ao ponto de fuga; aí o aviso é o som, a vibração e a fala de Zieliński.
 
 **Continua pendente:**
-- ameaça legível em "Proteja o reparo" e "Cubra a retirada";
-- "Abrigue-se!" pode não aparecer;
+- ameaça legível em "Proteja o reparo" e "Cubra a retirada" (tratada na terceira ronda);
+- "Abrigue-se!" pode não aparecer (corrigido na revisão de integração do Codex);
 - arte do transporte (placeholder);
 - playtest humano;
 - Chromebook.
 
-**Actualização posterior:** a chamada recebeu poses persistentes (`../poses/`). O fogo no reparo/retirada e o aviso de abrigo receberam a revisão descrita em [`../cover-combat/`](../cover-combat/README.md). Essa revisão tem comparação de simulação e verificações por continuação no navegador; os relatórios contínuos acima precedem-na e não comprovam a dificuldade actual. É necessário repetir a partida contínua e fazer playtest humano.
+## Terceira ronda: ameaça no reparo e na retirada
+
+**Pedido:**
+- dar ao fogo alemão uma origem visível na margem leste, com sons, impactos e reacções dos aliados;
+- verificar se a supressão interrompe de facto o reparo e se a cobertura do jogador muda a retirada;
+- testar "jogador ajuda" e "jogador ignora".
+
+### Porque não havia ameaça
+
+| Causa | Evidência |
+| --- | --- |
+| Os sapadores em `repair_site_2` ficam abaixo do tabuleiro e atrás do poste sul do portal ferroviário. Nenhuma linha recta vinda da margem leste lhes chega. | Varrimento de linhas de visão com os colisores: 0/44 posições do dique viam os sapadores; os tiros em recta batiam no tabuleiro ou nas torres. |
+| Os 40 alemães estavam atrás do portal de Lisewo (colisor sólido x 1058,7–1067,7, z −8…48). | `COL_portal_lisewo_1912` era o primeiro obstáculo de quase todas as linhas. |
+| Dois terços do reparo terminavam antes de o trem 963 chegar (04:45). | Com a caixa entregue às 04:42, 75 s de trabalho a 3,5× davam 68 % antes de qualquer tiro. |
+| O tiro do jogador só conta até 1200 m (perfil do wz.29), e as posições alemãs estavam a ~1210 m. | — |
+| Na retirada, o pelotão corria pelo meio do tabuleiro, na linha de tiro do jogador ("Nos nossos, não!"). A contagem de 20 s começava às 06:00, por isso a primeira baixa caía no instante em que os alemães apareciam. | Instrumentação: 3 de 11 tiros bateram em soldados polacos; 4 baixas nos primeiros 7,5 s reais. |
+| **Arte:** os dois arcos do portal ferroviário oeste (centros ±2 m, 4,4 m de largura) sobrepunham-se 0,4 m. A triangulação descartava os furos e o portal era um muro fechado: o jogador atravessava-o e não via a margem leste através dele. | Raios contra o GLB: face sólida em x = −6,5 em toda a passagem. |
+
+### O que mudou
+
+- **Origem visível.** Vistas da cabeça de ponte oeste, as treliças tapam o dique. Só a faixa dos portões de Lisewo, entre as pontes, se vê por cima da água (raios contra os GLB e contra os colisores).
+  - Ficam lá as duas MG34 e 12 atiradores (`grp_de_east.firePositions`); só eles disparam sobre a margem oeste.
+  - Os 26 do dique disparam sobre a cabeça de ponte leste e, depois das 06:00, sobre o pelotão.
+- **Tiros como dados.** Cada tiro guarda origem, ponto visado, flecha e horas de partida e chegada, e entra no save. A flecha (≈9 m a 1,2 km) é uma aproximação de jogo, não balística medida. O impacto resolve-se à chegada.
+- **Apresentação:**
+  - clarão (~8 px mínimo no ecrã) e fumo da boca durante ~2 s;
+  - um traçante por rajada de MG;
+  - poeira na terra, faísca no metal;
+  - estampido com atraso de 343 m/s;
+  - estalo quando um tiro passa a menos de 6 m do jogador.
+- **Reacções:**
+  - sapadores ajoelhados a trabalhar e deitados sob fogo (a equipa toda);
+  - Kowal responde ao clarão mais recente que vê e diz "Trocando carregador!" quando a rkm recarrega;
+  - falas reais: `dlg_m01_022` (primeira supressão), `026`, `027`, `040`, e os callouts "Metralhadora no dique!" e "Deitaram! Continua!" (quando o tiro do jogador cala uma MG).
+- **Reparo:**
+  - 150 s de trabalho sem supressão;
+  - um tiro a menos de 3 m pára 3,5 s;
+  - a MG calada precisa de 2,5 s para voltar à arma;
+  - tolerância de 120 s sem aviso.
+- **Retirada:**
+  - recuam os 18 sobreviventes por ID;
+  - a contagem de 20 s começa às 06:05;
+  - cada baixa é um tiro real de um alemão do tabuleiro que vê o último homem;
+  - o pelotão corre junto à treliça norte e os alemães pela metade sul.
+- **HUD.** Linha de estado sob o objectivo, lida só da simulação: "Reparo 47 % · sapadores deitados sob fogo da metralhadora do dique" ou "… a trabalhar · metralhadora do dique suprimida"; "Pelotão leste: 16 homens · alemães no tabuleiro suprimidos".
+- **Correcções de arte e apresentação:**
+  - arco único no portal ferroviário oeste e no antigo portal leste, com a largura da abertura dos colisores;
+  - carris da linha sudoeste assentes no terreno, numa só instância (antes flutuavam até 3 m e passavam à altura dos olhos junto aos sapadores).
+
+### "Jogador ajuda" e "jogador ignora"
+
+**Comparação de estado** ([round3/cover-comparison.json](round3/cover-comparison.json), `node tools/m01-cover-comparison.mjs`).
+- 12 sementes × 2 percursos completos até ao debrief, só com controlos e com o que o jogador vê (`threat.recentFire`).
+- Não é partida no navegador.
+- **Ajuda:** encosta ao lado dos sapadores, a calar a MG dos portões; carregadores de Kowal; lado sul do tabuleiro, a disparar sobre os alemães do tabuleiro.
+- **Ignora:** atrás dos sacos de areia, sem disparar.
+
+Valores depois da fusão com `0ab60d7` (antes da fusão, entre parênteses):
+
+| | Ajuda | Ignora |
+| --- | --- | --- |
+| Reparo (s reais desde a entrega) | 180–207 (168–207) | 206–251 (206–248) |
+| Fim do reparo | 05:04–05:08 (05:02–05:08) | 05:08–05:15 (05:08–05:14) |
+| Vezes que os sapadores foram deitados | 14–34 (9–27) | 44–83 (42–81) |
+| Tempo com a MG dos portões calada (reparo sob fogo) | 98 % | 4–9 % (só Kowal) |
+| Sobreviventes do pelotão leste | 15–18, 18 em 6 sementes (15–18, 18 em 11) | 12 em todas |
+| Saúde final do jogador | 84–100 | 76–100 |
+| Ordem de demolição / demolição leste / oeste | 05:30:00 / 06:10:00 / 06:45:00 | igual |
+
+Em cada uma das 12 sementes, ajudar acaba o reparo antes de ignorar. A formação dos sapadores do Codex (crista, z≈8) deixava o reparo quase sem supressões; a fusão mantém a encosta sul (z≈10–11), exposta ao fogo dos portões.
+
+Nos dois percursos:
+- CP-A..D, 12 objectivos e debrief;
+- nenhum sobrevivente a leste de x = 660 na demolição;
+- cada baixa do pelotão é um tiro que chegou (`round-impact` com vítima), por ID e de 20 em 20 s de relógio a partir das 06:05:20.
+
+**Partidas contínuas no navegador**:
+- uma sessão Chromium cada, do menu ao debrief, com input real;
+- `--cover help` e `--cover ignore`, depois das correcções abaixo;
+- relatórios em [round3/help/report.json](round3/help/report.json) e [round3/ignore/report.json](round3/ignore/report.json).
+
+| | Ajuda | Ignora |
+| --- | --- | --- |
+| Resultado | Debrief, 12/12, CP-A..D, 1241 s reais | Debrief, 12/12, CP-A..D, 1223 s reais |
+| Bloqueios / mortes / perdas de controlo / erros de página | 0 / 0 / 0 / 0 | 0 / 0 / 0 / 0 |
+| Linha de estado do HUD diferente da simulação | 0 em 132 mudanças | 0 em 151 mudanças |
+| Reparo (s reais desde a entrega; fim) | 214 s; 05:11:13 | 230 s; 05:13:12 |
+| Vezes que os sapadores foram deitados | 29 | 54 |
+| MG dos portões | guarnição abatida pelo jogador por volta das 04:47–04:49 (2 baixas alemãs nos portões) | calada 6 % do tempo, só por Kowal |
+| Pelotão leste | **18** sobreviventes, nenhuma baixa | **12**: uma baixa a cada ~20 s de relógio, das 06:05:24 às 06:07:06 |
+| Tiros do jogador | 18 | 0 |
+| Bąk | levado depois das 06:10 e evacuado por Dudek; demolição oeste às 06:45 | levado às 06:09 |
+
+**Observado na diferença:**
+- **Reparo.** Calar a MG dos portões deixa menos supressões (29 contra 54) e acaba o reparo antes. A diferença é pequena no navegador (16 s), porque os atiradores dos portões continuam a disparar sobre os sapadores e o piloto só mira a MG. Na comparação de estado, com a MG viva e calada, a diferença é de ~40 s.
+- **Retirada.** Aqui a diferença é decisiva: o fogo de cobertura sobre o tabuleiro mantém os alemães deitados, e os 18 homens chegam vivos. Sem ele, o pelotão cai até ao mínimo de 12, e cada queda é um tiro visível de um alemão do tabuleiro.
+
+**Problemas encontrados pelas partidas e corrigidos nesta ronda:**
+1. **Bąk entregue depois das 06:10 bloqueava a demolição oeste.** Ficava ferido junto ao portal (x≈−9), dentro da zona; a hora parou às 06:44:30 durante 997 s. Dudek passa a evacuá-lo logo; há uma regressão em `tests/m01-continuous-fixes.test.js`.
+2. **Piloto a disparar contra uma posição calada.** Depois de abater a guarnição da MG, o piloto continuava a disparar sobre o último clarão e ficava sem munição. Passa a esperar por clarões (12 s), como um jogador.
+
+**Capturas:**
+
+| Imagem | Momento |
+| --- | --- |
+| [help/16-repair-help-flash-1.png](round3/help/16-repair-help-flash-1.png) | Clarão da MG dos portões, visto da encosta dos sapadores |
+| [help/15-repair-help-2.png](round3/help/15-repair-help-2.png) | "Reparo 29 % · sapadores a trabalhar · metralhadora do dique suprimida" |
+| [help/19-repair-help-3.png](round3/help/19-repair-help-3.png), [help/22-repair-help-6.png](round3/help/22-repair-help-6.png) | "sapadores deitados sob fogo da metralhadora do dique" |
+| [help/33-withdrawal-help-flash-1.png](round3/help/33-withdrawal-help-flash-1.png) | Alemães no tabuleiro: clarão à mira, do lado sul |
+| [help/36-withdrawal-help-1.png](round3/help/36-withdrawal-help-1.png), [help/41-withdrawal-help-6.png](round3/help/41-withdrawal-help-6.png) | "Pelotão leste: 18 homens · alemães no tabuleiro suprimidos" |
+| [help/45-bak-carry-deck.png](round3/help/45-bak-carry-deck.png), [help/48-bak-delivered.png](round3/help/48-bak-delivered.png) | Bąk levado depois da demolição leste |
+| [help/63-west-demolition-6s.png](round3/help/63-west-demolition-6s.png), [help/69-debrief.png](round3/help/69-debrief.png) | Demolição oeste às 06:45 e debrief |
+| [ignore/19-repair-ignore-6.png](round3/ignore/19-repair-ignore-6.png), [ignore/23-repair-ignore-10.png](round3/ignore/23-repair-ignore-10.png) | Atrás dos sacos de areia, sem disparar; os portões ao fundo |
+| [ignore/37-bak-carry-deck.png](round3/ignore/37-bak-carry-deck.png) | "Pelotão leste: 12 homens · alemães no tabuleiro a disparar sobre eles" |
+| [staged/sappers-pinned.png](round3/staged/sappers-pinned.png)*, [staged/sappers-working.png](round3/staged/sappers-working.png)* | Os mesmos sapadores, depois da fusão: curvados sob fogo (pose `pinned`) e ajoelhados a trabalhar; HUD igual |
+| [staged/gate-mg-flash.png](round3/staged/gate-mg-flash.png)*, [zoom 4×](round3/staged/gate-mg-flash-zoom4x.png) | Clarão entre os portais oeste, na janela entre as pontes |
+| [staged/withdrawal-deck.png](round3/staged/withdrawal-deck.png)* | Retirada vista do tabuleiro, a contagem a descer |
+
+\* Continuações de saves gerados pela rota da simulação (estado real, sem injecção), carregados no build de produção. Não são partida contínua. O teste de navegador `German fire on the repair is drawn from the Lisewo gates…` faz o mesmo no CI e exige três coisas: clarão e poeira desenhados, os dois estados do reparo, e o HUD igual à simulação em todas as amostras.
+
+**Continua pendente:**
+- **Arte.** Humanos, MG e fumo são placeholders. O clarão tem tamanho mínimo no ecrã para ser legível a 1,2 km; falta validar isso num playtest humano.
+- **"Mantenha a cabeça de ponte".** A salva de ajuste vem do dique, atrás das treliças: traçante e impactos à vista, origem não.
+- **Balística.** A flecha do tiro alemão é aproximação de jogo; o wz.29 continua em recta.
+- **Piloto.** No reparo só mira a MG dos portões; um jogador também pode calar os atiradores.
+- **Validação.** Playtest humano e Chromebook. M01 continua **PROTÓTIPO JOGÁVEL**.
+
+**Fusão com a revisão do Codex (`0ab60d7`).** A revisão trouxe poses persistentes na chamada (`../poses/`) e um primeiro protótipo de cobertura (`../cover-combat/`). Esse protótipo usava traços `incoming-shot` e pressão por quase-acertos, e foi substituído pelo modelo desta ronda. Da fusão ficaram:
+- o "Abrigue-se!" visível durante pelo menos 2,5 s;
+- as 18 instâncias activas do pelotão;
+- os alemães agachados quando suprimidos;
+- o rumo para a MG no HUD.
+
+A comparação de estado foi repetida depois da fusão (`round3/cover-comparison.json`), e as duas partidas também. Relatórios em [round3/merged-help/report.json](round3/merged-help/report.json) e [round3/merged-ignore/report.json](round3/merged-ignore/report.json).
+
+| Depois da fusão | Ajuda | Ignora |
+| --- | --- | --- |
+| Resultado | Debrief, 12/12, CP-A..D, 1212 s reais | Debrief, 12/12, CP-A..D, 1238 s reais |
+| Bloqueios / mortes / perdas de controlo / erros de página | 0 / 0 / 0 / 0 | 0 / 0 / 0 / 0 |
+| Linha de estado do HUD diferente da simulação | 0 em 129 mudanças | 0 em 150 mudanças |
+| Reparo (s reais desde a entrega; fim) | 189 s; 05:07:43 | 236 s; 05:14:35 |
+| Vezes que os sapadores foram deitados | 18 | 55 |
+| MG dos portões calada | 96 % do tempo; duas baixas alemãs durante o reparo (04:54 e 05:06) | 9 %, só por Kowal |
+| Pelotão leste | **17** sobreviventes, uma baixa às 06:05:26 | **12**: uma baixa a cada ~20 s, das 06:05:24 às 06:07:06 |
+| Tiros do jogador | 52 (46 cartuchos gastos, com os 30 de Kowal) | 0 |
+| Demolição leste / oeste / chamada | 06:10 / 06:45 / 07:05 | igual |
+
+Depois da fusão, a diferença no reparo cresceu de 16 para 47 s. O piloto mantém a MG calada quase todo o tempo, e os sapadores na encosta sul ficam expostos aos portões. Na retirada, um homem caiu às 06:05:26, dois segundos depois do primeiro clarão no tabuleiro; a seguir, o fogo do piloto manteve os alemães deitados.
+
+| Imagem (depois da fusão) | Momento |
+| --- | --- |
+| [merged-help/17-repair-help-flash-1.png](round3/merged-help/17-repair-help-flash-1.png) | Mira na MG dos portões, rumo no HUD ("1176 m, à sua esquerda") |
+| [merged-help/20-repair-help-3.png](round3/merged-help/20-repair-help-3.png), [merged-help/21-repair-help-4.png](round3/merged-help/21-repair-help-4.png) | Portões de Lisewo à mira: "MG suprimida" e, 3 min depois, "sapadores deitados" com o clarão visível |
+| [merged-help/33-withdrawal-help-flash-1.png](round3/merged-help/33-withdrawal-help-flash-1.png), [merged-help/36-withdrawal-help-1.png](round3/merged-help/36-withdrawal-help-1.png) | Alemães no tabuleiro à mira; "Deitaram! Continua!" e "17 homens · suprimidos" |
+| [merged-help/65-roll-call-10s.png](round3/merged-help/65-roll-call-10s.png) | Chamada com a pose sentada da revisão do Codex |
+| [merged-ignore/20-repair-ignore-6.png](round3/merged-ignore/20-repair-ignore-6.png), [merged-ignore/24-repair-ignore-10.png](round3/merged-ignore/24-repair-ignore-10.png) | Sem disparar, atrás dos sacos de areia |
+| [merged-ignore/39-bak-carry-deck.png](round3/merged-ignore/39-bak-carry-deck.png) | "Pelotão leste: 12 homens · alemães no tabuleiro a disparar sobre eles" |
+
+Só estas capturas ficaram no repositório. O `report.json` lista todas as que o piloto tirou, com hora e posição.
+

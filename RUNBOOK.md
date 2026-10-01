@@ -58,6 +58,24 @@ O piloto usa teclado/cliques reais e olhar por `mousemove` relativo, e só lê `
 - ficar 2 min parado sem seguir o sargento;
 - gastar a munição e pedir carregadores a Kowal.
 
+`--cover help|ignore` compara as duas maneiras de jogar "Proteja o reparo" e "Cubra a retirada":
+- `help`: o piloto fica na encosta ao lado dos sapadores e cala a MG dos portões, mirando o último clarão visto (`threat.recentFire`). Depois pede carregadores a Kowal e, do lado sul do tabuleiro, dispara sobre os alemães do tabuleiro.
+- `ignore`: o piloto espera abrigado sem disparar.
+
+O relatório guarda em `cover`:
+- duração do reparo, supressões e percentagem de tempo com a MG calada;
+- baixas do pelotão e sobreviventes;
+- tiros dados;
+- as linhas de estado do HUD e cada vez que divergem da simulação.
+
+Comparação de estado (simulação, sem navegador), por sementes:
+
+```sh
+node tools/m01-cover-comparison.mjs [--seeds 19390901,1,2] [--out caminho.json]
+```
+
+Os modelos provisórios das pontes regeneram-se com `cd tools/assets/m01-bridges && npm ci && npm run build`; a exportação é determinística. Depois correr `npm run assets:m01:colliders -- --check` e `npm test`.
+
 O verificador grava `docs/verification/m01-runtime/simulation-report.json`. Usa controlos e física reais da simulação com passos de 50 ms, sem injectar relógios/eventos/objectivos. Não é playtest no navegador. Testes de CP-D/outro no navegador continuam snapshots alcançados por esse percurso; estão identificados como verificações por trechos.
 
 Verificação isolada das poses (porta 5181, servidor/browser fechados ao terminar):
@@ -74,7 +92,7 @@ Comparação do combate de cobertura, duas rotas completas da simulação com a 
 node tools/verify-m01-cover.mjs
 ```
 
-O piloto move-se, aponta com deltas de input e usa disparo/ferrolho/recarga. Não altera actores, RNG, eventos ou relógios; não é uma partida no navegador. Gera `docs/verification/m01-runtime/cover-combat/report.json`. O navegador verifica por continuação o HUD/efeitos do reparo e as perdas na retirada. Os efeitos ilustram traços já resolvidos; balística continua pendente.
+O piloto move-se, aponta com deltas de input e usa disparo/ferrolho/recarga. Não altera actores, RNG, eventos ou relógios; não é uma partida no navegador. Gera `docs/verification/m01-runtime/cover-combat/report.json`, com tiros a menos de 3 m (`round-impact.pinned`) e baixas por tiro real (`victim`). O navegador verifica por continuação o HUD, os efeitos e a pose dos sapadores no reparo, e as perdas na retirada. A flecha do tiro alemão é aproximação de jogo; a balística continua pendente.
 
 ## Diagnóstico
 

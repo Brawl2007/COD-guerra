@@ -25,6 +25,43 @@ Dados revistos nos PRs #8 e #10; runtime em **PROTÓTIPO JOGÁVEL**, com evidên
 - `pose` opcional no actor guarda a postura sentada da chamada; saves sem o campo são aceites. A representação distingue também agachados, feridos e transportados a partir dos dados existentes. Geometria procedural, sem alterar saúde, coordenadas ou resultados no renderer.
 - Na chamada das 07:05, os presentes são posicionados no abrigo com `pose: seated` e `crouched: true`, de frente para Jan; ninguém se move durante a cena. Bąk ferido, Dudek na estação e Nowicki desaparecido não são encenados.
 
+## Fogo alemão, reparo e retirada
+
+- **Tiros como dados.** Cada tiro alemão é um registo em `enemyFire.rounds`, com:
+  - atirador (`by`), arma e tipo;
+  - origem e ponto visado;
+  - flecha `h` e horas de partida e chegada.
+
+  O impacto só se resolve à chegada, contra o mundo e as posições actuais. Os tiros em voo entram no save e são validados: origem a x≥690, atirador `de_*` e vítima só `pl_east_*`. Saves sem `enemyFire` começam sem tiros no ar.
+- **Trajectória.** É uma aproximação de jogo, não balística medida (`grp_de_east.fireModel`):
+  - recta com flecha parabólica de 6e-6·R² (≈9 m a 1,2 km);
+  - ~620 m/s de média.
+
+  Sem a flecha, o tabuleiro e o portal ferroviário oeste tapariam os sapadores. O wz.29 do jogador mantém o fallback em recta.
+- **Origem visível.** Da cabeça de ponte oeste, as treliças tapam o dique. Vê-se só a faixa dos portões de Lisewo, entre as pontes (x≈1053–1057, z≈9–33), por cima da água.
+  - Ficam lá as duas MG34 e 12 atiradores (`firePositions`).
+  - Só esses disparam sobre a margem oeste.
+  - Os 26 do dique disparam sobre a cabeça de ponte leste e, depois das 06:00, sobre o pelotão.
+  - Excepção: a salva de ajuste de `hold_access`, cuja origem fica atrás das treliças (pendente).
+  - O renderer desenha clarão e fumo da boca com tamanho mínimo no ecrã, traçante nas rajadas de MG, e poeira ou faísca no impacto. Os estampidos chegam com o atraso de 343 m/s.
+- **Reparo.** O trabalho dura 150 s de jogo sem supressão; com 75 s, dois terços acabavam antes do trem das 04:45.
+  - Um tiro que passe a menos de 3 m de um sapador no corte pára o trabalho 3,5 s, e a equipa inteira deita-se (`suppressedUntil`).
+  - Tiros do jogador a menos de 3 m de uma MG calam-na 5 s; a guarnição precisa de mais 2,5 s para voltar à arma. Kowal responde ao clarão mais recente que vê, com 2 s.
+  - Ao fim de 120 s parado, a cadência sobre o reparo cai sem aviso até o trabalho retomar.
+  - A fala obrigatória `dlg_m01_022` toca na primeira supressão real (ou aos 40 %, se não houver).
+- **Retirada.**
+  - Às 06:00 recuam os sobreviventes por ID; os restantes caíram antes, fora de cena.
+  - Os 20 s de relógio da regra de baixas contam a partir de `germans_on_east_spans`.
+  - Cada baixa é um tiro real de um alemão do tabuleiro que vê o último homem (`victim`); a contagem desce quando o tiro chega.
+  - O pelotão corre em fila junto à treliça norte, e os alemães avançam pela metade sul: o fogo de cobertura do jogador não atravessa os próprios soldados.
+  - Kowal nunca suprime os alemães do tabuleiro.
+- **HUD.** `mission.status` é a linha de estado do HUD e só lê a simulação:
+  - percentagem do reparo e se os sapadores estão deitados;
+  - estado da MG dos portões;
+  - contagem por ID do pelotão;
+  - se os alemães do tabuleiro estão suprimidos.
+- **Falas e callouts.** Só tocam quando o evento acontece: `dlg_m01_026/027/029/040`, `co_m01_enemy_mg_fire_on_squad`, `co_m01_enemy_group_suppressed`. Os callouts usados ganharam IDs e o validador de legendas aceita-os.
+
 ## Espaço, segurança e história
 
 - Coordenadas são metros, X leste, Y altura, Z sul. O limite de movimento (até x=440) inclui o 3.º pilar medido, x≈401 (`bounds.outOfBoundsX`), e a sua zona de aviso. Em x>401, explicar a falha e contar oito segundos de jogo activo; regressar limpa o contador. Ler os valores de `map-layout.json → bounds`, sem os fixar no código.
@@ -34,11 +71,12 @@ Dados revistos nos PRs #8 e #10; runtime em **PROTÓTIPO JOGÁVEL**, com evidên
 
 ## Fogo de cobertura no protótipo
 
-- Sapadores trabalham junto de `repair_site_2`, na encosta exposta do cabo. MG34 do dique só pausam o reparo quando o traço contra terreno/colisores termina a menos de 3 m dos sapadores. Eles agacham-se; o HUD distingue trabalho e supressão. A tolerância de 120 s cria uma pausa na cadência, sem alterar horários históricos.
-- O pelotão tem 18 instâncias activas. As seis posições de reserva do schema antigo ficam inactivas, incluindo na migração; preservam-se todos os IDs. A prontidão consulta só os homens activos e vivos.
-- `grp_de_spans` começa a disparar depois de activado pelo evento das 06:05, com cadências desfasadas. Sete impactos próximos acumulam uma baixa por ID, com intervalo mínimo de 20 s de batalha e piso de 12 sobreviventes. Activação, baixas e supressão continuam independentes da câmara. Contar tempo sozinho já não mata soldados.
-- `timers.withdrawalPressure` e `nextCombatCall` são dados opcionais no schema 2; saves anteriores recebem zero. Persistem pressão e mortes; nunca recriar homens ao trocar LOD ou carregar. A supressão do jogador dura 5 s e interrompe fogo/avanço.
-- Eventos `incoming-shot` transportam origem e impacto já resolvidos. O renderer ilustra traços e impactos num máximo de 48 efeitos; não decide dano. A velocidade visual de 750 m/s não é implementação de queda, arrasto, tempo de dano ou munição traçante histórica.
+- Os sapadores trabalham junto ao cabo, na encosta sul do aterro, ao lado de `repair_site_2`. É aí que o fogo mergulhante dos portões chega e de onde o jogador vê os clarões. O renderer mostra-os ajoelhados a trabalhar e curvados sob fogo (pose `pinned`, lida de `suppressedUntil`).
+- O pelotão tem 18 instâncias activas. As seis posições de reserva do schema antigo ficam inactivas, incluindo na migração, e todos os IDs são preservados. A prontidão consulta só os homens activos e vivos.
+- `grp_de_spans` só dispara depois de activado pelo evento das 06:05, com cadências desfasadas. Activação, baixas e supressão não dependem da câmara, e o tempo sozinho não mata soldados.
+- `timers.withdrawalPressure` (do primeiro protótipo) e `nextCombatCall` são dados opcionais no schema 2. O validador aceita-os, e um save sem `enemyFire` nem `withdrawalPressure` recebe as reservas inactivas.
+- A supressão do jogador dura 5 s e interrompe fogo e avanço; os alemães suprimidos agacham-se.
+- Os eventos `incoming-shot` do primeiro protótipo foram substituídos por `enemy-fire` (partida) e `round-impact` (chegada, com `pinned` e `victim`).
 - `Abrigue-se!` tem chamada imediata e pelo menos 2,5 s de objectivo visível antes da conclusão por cobertura. O fallback de 12 s mantém-se.
 
 ## Validação

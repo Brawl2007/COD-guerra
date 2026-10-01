@@ -1,18 +1,27 @@
 {
   "verification": "Two full simulation routes using movement, aim deltas, bolt, reload and shots; not a browser or human playtest",
-  "limitations": "One fixed seed, precise automated aim, prototype pressure/accuracy. Shot trails illustrate an already resolved ray; they do not implement ballistic flight or measured tracer ammunition.",
+  "limitations": "One fixed seed, precise automated aim. German rounds are data in flight with a game-approximation arc (6e-6 R^2, ~620 m/s), not measured ballistics; the player wz.29 keeps the straight-ray fallback. Multi-seed comparison: tools/m01-cover-comparison.mjs.",
   "runs": [
     {
       "support": false,
       "seed": 19390901,
       "completed": true,
       "battleClock": "07:05:00",
-      "activeSeconds": 959.649999999675,
-      "repairSeconds": 107.50000000002441,
-      "repairIncomingShots": 13,
-      "withdrawalIncomingShots": 55,
+      "activeSeconds": 1033.249999999608,
+      "repairSeconds": 217.4500000000494,
+      "repairNearRounds": 48,
+      "repairPins": 48,
+      "withdrawalNearRounds": 277,
+      "lethalRounds": [
+        "pl_east_17",
+        "pl_east_16",
+        "pl_east_15",
+        "pl_east_14",
+        "pl_east_13",
+        "pl_east_12"
+      ],
       "survivors": 12,
-      "playerHealth": 100,
+      "playerHealth": 92,
       "playerShots": 0,
       "roundsRemaining": 45,
       "consumedEvents": 26,
@@ -24,13 +33,14 @@
         "cp_m01_d_retirada"
       ],
       "platoonCasualties": [
-        "pl_east_2",
-        "pl_east_3",
-        "pl_east_6",
-        "pl_east_7",
-        "pl_east_11",
-        "pl_east_15"
+        "pl_east_12",
+        "pl_east_13",
+        "pl_east_14",
+        "pl_east_15",
+        "pl_east_16",
+        "pl_east_17"
       ],
+      "reserveSlots": 6,
       "enemyCasualties": [
         "de_spans_0",
         "de_spans_1",
@@ -43,14 +53,16 @@
       "seed": 19390901,
       "completed": true,
       "battleClock": "07:05:00",
-      "activeSeconds": 939.9499999996929,
-      "repairSeconds": 77.5000000000176,
-      "repairIncomingShots": 1,
-      "withdrawalIncomingShots": 10,
-      "survivors": 17,
-      "playerHealth": 100,
-      "playerShots": 33,
-      "roundsRemaining": 12,
+      "activeSeconds": 1003.8499999996347,
+      "repairSeconds": 173.3500000000394,
+      "repairNearRounds": 8,
+      "repairPins": 8,
+      "withdrawalNearRounds": 146,
+      "lethalRounds": [],
+      "survivors": 18,
+      "playerHealth": 92,
+      "playerShots": 30,
+      "roundsRemaining": 15,
       "consumedEvents": 26,
       "completedRequired": 11,
       "checkpoints": [
@@ -59,9 +71,8 @@
         "cp_m01_c_engenheiros",
         "cp_m01_d_retirada"
       ],
-      "platoonCasualties": [
-        "pl_east_3"
-      ],
+      "platoonCasualties": [],
+      "reserveSlots": 6,
       "enemyCasualties": [
         "de_east_0",
         "de_east_1",

@@ -48,9 +48,40 @@ A revisão de integração corrigiu a evacuação na entrega de Bąk depois das 
 
 As poses procedurais agora distinguem posição em pé, agachada, sentada, ferida e transportada. Joelhos/cotovelos e botas usam os mesmos lotes de instâncias, sem decidir estado de combate. A chamada marca `pose: seated` na simulação; saves anteriores continuam aceites. Imagens e limites em `docs/verification/m01-runtime/poses/`.
 
-**Cobertura com consequências:** os sapadores trabalham na encosta exposta junto ao cabo, agacham-se sob impactos próximos e pausam o reparo. O HUD mostra progresso/supressão e rumo para os clarões. Na retirada, os atacantes do tabuleiro disparam sobre os últimos homens; pressão e baixas são guardadas por ID, com piso de 12. O pelotão activo corresponde aos 18 homens contados; as seis instâncias de reserva mantêm IDs sem participar. Traços/impactos são efeitos provisórios de eventos reais. O aviso de abrigo já não desaparece instantaneamente para quem estava em cobertura.
+**Terceira ronda: ameaça em "Proteja o reparo" e "Cubra a retirada".** Antes, o reparo nunca era suprimido e o pelotão leste ficava sempre no mínimo de 12. Causas:
+- os sapadores ficavam escondidos de toda a margem leste;
+- os atiradores estavam atrás do portal de Lisewo;
+- dois terços do reparo terminavam antes do trem das 04:45.
 
-Duas rotas completas de simulação com a mesma seed, uma sem disparar e outra a cobrir com controlos reais da simulação: reparo 107,5→77,5 s; sobreviventes 12→17. Pontaria automática precisa, não humana; sem munição infinita. Detalhes e capturas de continuação no navegador em `docs/verification/m01-runtime/cover-combat/`. Falta repetir uma partida contínua com estas mudanças e afinar dificuldade num playtest humano.
+Agora:
+- **Origem visível.** O fogo alemão vem da faixa dos portões de Lisewo, entre as pontes: é o que a cabeça de ponte oeste vê por cima da água, porque as treliças tapam o dique. Cada tiro é um dado em voo, com clarão, fumo da boca, traçante (MG), poeira ou faísca, estampido atrasado e estalo perto do jogador.
+- **Reparo.** Tiros a menos de 3 m deitam a equipa e param o trabalho. Calar a MG dos portões encurta-o; ignorá-la deixa os sapadores deitados dezenas de vezes.
+- **Retirada.** Cada baixa é um tiro real dos alemães do tabuleiro, de 20 em 20 s de relógio sem supressão. O fogo de cobertura do jogador salva homens.
+- **HUD.** Uma linha de estado no HUD lê só a simulação.
+- **Arte e apresentação.** O portal ferroviário oeste ganhou o arco que faltava no GLB (os dois arcos sobrepunham-se). Os carris da linha sudoeste assentam no terreno.
+
+| Comparação de estado, 12 sementes, depois da fusão | Reparo (real) | Fim do reparo | Supressões | Sobreviventes |
+| --- | ---: | --- | ---: | ---: |
+| Jogador ajuda | 180–207 s | 05:04–05:08 | 14–34 | 15–18 |
+| Jogador ignora | 206–251 s | 05:08–05:15 | 44–83 | 12 |
+
+No navegador, partidas contínuas `--cover help/ignore` do menu ao debrief, com 0 bloqueios ou erros e o HUD igual à simulação em todas as leituras:
+
+| | Antes da fusão | Depois da fusão |
+| --- | --- | --- |
+| Ajuda | reparo 214 s, 29 supressões, 18 sobreviventes | reparo 189 s, 18 supressões, 17 sobreviventes |
+| Ignora | 230 s, 54 supressões, 12 sobreviventes | 236 s, 55 supressões, 12 sobreviventes |
+
+As partidas revelaram um bloqueio, já corrigido: com Bąk entregue depois das 06:10, a demolição oeste ficava presa (a revisão de integração chegou à mesma correcção). Horários históricos, checkpoints e segurança das demolições ficam inalterados. Provas em `docs/verification/m01-runtime/continuous/round3/`.
+
+Este modelo substitui o primeiro protótipo de cobertura do Codex (`0ab60d7`, traços `incoming-shot` e pressão por quase-acertos). Da fusão ficaram:
+- as 18 instâncias activas do pelotão e as seis reservas inactivas;
+- o "Abrigue-se!" visível durante pelo menos 2,5 s;
+- a pose sentada da chamada;
+- os alemães agachados quando suprimidos;
+- o rumo para a MG no HUD.
+
+Os aliados sob fogo usam uma pose própria, agachados e curvados (`pinned`). O relatório `docs/verification/m01-runtime/cover-combat/` foi regenerado com o modelo actual (mesma seed, ignorar → cobrir: reparo 217 → 173 s, sobreviventes 12 → 18).
 
 ## Parcial ou pendente
 
@@ -63,7 +94,9 @@ Duas rotas completas de simulação com a mesma seed, uma sem disparar e outra a
 - Campanha M01–M30, tanque, avião, jeep, transições e save da campanha pendentes.
 - A partida contínua de M01 no navegador foi feita por piloto automático; **falta um playtest humano completo** e ampliar as rotas adversas (morte em combate e outros objectivos ignorados). Não houve playtest completo da missão francesa nesta sessão.
 - Ainda pendente depois da partida contínua:
-  - afinar legibilidade/dificuldade do novo fogo no reparo/retirada num playtest humano e repetir a partida contínua;
+  - em "Mantenha a cabeça de ponte", a salva de ajuste vem do dique, atrás das treliças: traçante e impactos à vista, origem não;
+  - a flecha do fogo alemão é uma aproximação de jogo; o wz.29 continua em recta;
+  - afinar a legibilidade e a dificuldade do fogo no reparo e na retirada num playtest humano;
   - de dentro da treliça rodoviária, a coluna da demolição leste fica tapada;
   - o transporte de feridos usa um placeholder.
 
@@ -71,6 +104,6 @@ Duas rotas completas de simulação com a mesma seed, uma sem disparar e outra a
 
 ## Próximo passo
 
-Repetir a partida contínua com o novo combate e fazer playtest humano de M01, incluindo cobertura, morte e objectivos ignorados. Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02.
+Playtest humano completo de M01, com atenção ao fogo de cobertura a ~1,2 km (clarões de ~8 px e raio de supressão de 3 m). Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02.
 
 O trabalho das pontes de Claude foi preservado e completado, incluindo dano persistente em LOD0/1/2. Mapas históricos e inventários específicos continuam úteis para as pendências de P4/P13 e de arte. Não recomeçar essa entrega.
