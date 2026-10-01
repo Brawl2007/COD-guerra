@@ -55,8 +55,7 @@ test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, a
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 test('real keyboard movement traverses the approaches and E delivers the message at the rail bridge',async({page},info)=>{
-  // CI run 36863795190 completed input/assertions at 171 s; readback took another 24 s.
-  // Leave room for evidence capture without changing gameplay, quality or assertions.
+  // Slow software rendering needs room for input and the final, paused evidence capture.
   test.setTimeout(process.env.CI?240000:130000);
   const {errors,failed}=await open(page);await start(page);await page.keyboard.down('ShiftLeft');
   async function axis(code,axis,target,direction){
@@ -71,7 +70,14 @@ test('real keyboard movement traverses the approaches and E delivers the message
   await expect(page.locator('#interaction')).toContainText('entregar mensagem');
   await page.keyboard.press('KeyE');await page.waitForFunction(()=>window.gameDiagnostics().m01.objectives.obj_m01_deliver_message.state==='done');
   const data=await page.evaluate(()=>window.gameDiagnostics());expect(data.m01.battleClock).toBeGreaterThanOrEqual(4*3600+33*60+10);expect(data.eventIds).toContain('evt_m01_planes_heard');
-  await page.screenshot({path:info.outputPath('m01-message-delivered.png')});
+  // A real pause stops animation and avoids competing GPU frames during readback.
+  // Headless Chromium does not release pointer lock from Playwright's Escape key.
+  // Use the browser release API, as in the existing pause/control tests.
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  const paused=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(300);
+  const still=await page.evaluate(()=>window.gameDiagnostics());
+  expect(still.clock).toBe(paused.clock);expect(still.m01.renderedFrames).toBe(paused.m01.renderedFrames);
+  await page.screenshot({path:info.outputPath('m01-message-delivered-paused.png')});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 test('a genuine CP-D reload keeps east destruction and casualties, including restart and page reload',async({page},info)=>{

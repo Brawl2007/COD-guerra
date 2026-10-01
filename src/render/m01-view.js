@@ -326,6 +326,14 @@ export class M01View {
     this.atmosphere.lighting(p,daylight,alt,az,sim.clock);this.environment?.sync(sim.world,this.owner.quality);
   }
   render(sim){
+    // Retain the last canvas frame while the mission clock is frozen (menu/pause).
+    // Assets, world restore, quality and resizing still invalidate it.
+    const canvas=this.owner.canvas,previous=this.lastFrame;
+    const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
+      width:canvas.width,height:canvas.height,models:this.kit.length};
+    if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
+    this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
+    for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
     this.syncSolids(sim.world);const state=sim.renderState,time=sim.clock,dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
     this.updateActors(sim.actors,time,sim.player);this.syncDamage(sim,state);this.lighting(sim);
@@ -369,8 +377,8 @@ export class M01View {
     mesh.scale.setScalar(aerial?12:30);this.bursts.push({mesh,start:clock,duration:aerial?.7:1.4,size:aerial?12:30});
     if(this.bursts.length>24){const old=this.bursts.shift();this.effects.remove(old.mesh);old.mesh.material.dispose();}
   }
-  resetEffects(){this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.impacts=[];for(const b of this.bursts){this.effects.remove(b.mesh);b.mesh.material.dispose();}this.bursts=[];for(const b of Object.values(this.fireBatches))b.count=0;this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0};}
-  get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+b.count,0)??0,actorPoses:{...this.actorPoses},
+  resetEffects(){this.lastFrame=null;this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.impacts=[];for(const b of this.bursts){this.effects.remove(b.mesh);b.mesh.material.dispose();}this.bursts=[];for(const b of Object.values(this.fireBatches))b.count=0;this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0};}
+  get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+b.count,0)??0,actorPoses:{...this.actorPoses},
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx}};}
   dispose(){
     this.disposed=true;this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
