@@ -98,7 +98,10 @@ export class Game {
       }
       const due=this.pendingSounds.filter(sound=>sound.at<=this.sim.clock);
       this.pendingSounds=this.pendingSounds.filter(sound=>sound.at>this.sim.clock);
-      due.forEach(sound=>{this.audio.explosion(sound.pan,sound.distance*UNITS_PER_METRE);if(sound.shake&&this.isM01)this.renderer.m01.blast(this.sim.clock);});
+      due.forEach(sound=>{
+        if(sound.kind==='fire'){this.audio.distantFire(sound.pan,sound.distance,sound.rounds,sound.interval);return;}
+        this.audio.explosion(sound.pan,sound.distance*UNITS_PER_METRE);if(sound.shake&&this.isM01)this.renderer.m01.blast(this.sim.clock);
+      });
     }
     if(this.isM01)this.renderer.renderMission(this.sim);
     else this.renderer.render(this.sim.world,this.sim.player,this.sim.combatants,this.sim.radio,
@@ -154,8 +157,14 @@ export class Game {
       this.audio.wz29Shot();this.audio.wz29Mechanism('bolt');this.renderer.m01.muzzle(this.sim.clock);
       if(event.material&&event.material!=='character')this.audio.impact(event.material);
     }
-    if(['npc-shot','distant-shot','cover-suppression'].includes(event.type)){
-      const s=this.spatial(event.point);this.audio.wz29Shot(s.pan,Math.max(40,s.distance));
+    if(['npc-shot','distant-shot'].includes(event.type)){
+      const s=this.spatial(event.point);if(event.rounds>1)this.audio.distantFire(s.pan,s.distance,event.rounds,.11);else this.audio.wz29Shot(s.pan,Math.max(40,s.distance));
+    }
+    // Fogo alemão: o estampido chega com o atraso da distância (343 m/s); o impacto e o estalo de quem passa perto, à chegada do tiro.
+    if(event.type==='enemy-fire'){const s=this.spatial(event.origin);this.pendingSounds.push({...s,at:event.at+s.distance/343,kind:'fire',rounds:event.rounds,interval:event.interval});}
+    if(event.type==='round-impact'){
+      this.renderer.m01.impact(event.point,event.material,this.sim.clock);const s=this.spatial(event.point);
+      if(event.crack)this.audio.crack(s.pan);if(event.distance<30)this.audio.impact(event.material,s.pan,event.distance);
     }
     if(event.type==='player-hit'){this.audio.hit();this.hitUntil=now+170;}
     if(event.type==='m01-blast'){
@@ -184,7 +193,7 @@ export class Game {
     this.hud.health.textContent=Math.ceil(p.health);this.hud.healthBar.style.width=`${p.health}%`;
     this.hud.grenades.textContent=`GRANADAS ×${this.sim.grenades.ammo}`;
     this.hud.mag.textContent=this.sim.weapon.reloading?'—':this.sim.weapon.mag;this.hud.reserve.textContent=this.sim.weapon.reserve;
-    this.hud.objective.textContent=this.sim.mission.text;
+    this.hud.objective.textContent=this.sim.mission.text;if(this.hud.objectiveStatus)this.hud.objectiveStatus.textContent=this.isM01?this.sim.mission.status??'':'';
     this.hud.weaponName.textContent=this.isM01?'KARABINEK WZ.29':'M1 CARBINE';
     this.hud.clock.textContent=this.isM01?clockText(this.sim.battleClock):'';
     this.hud.weaponState.textContent=this.isM01?`${this.sim.weapon.sight} m · ${this.sim.weapon.boltCycling?'FERROLHO':this.sim.weapon.reloading?'A CARREGAR':'5 CARTUCHOS'}`:'';
@@ -201,7 +210,8 @@ export class Game {
     sectors:this.sim.sectors.sectors.map(s=>({...s})),eventIds:this.isM01?Object.keys(this.sim.consumed):[...this.sim.sectors.consumed],
     ...(this.isM01?{m01:{...this.renderer.m01.diagnostics,battleClock:this.sim.battleClock,weapon:this.sim.weapon.snapshot(),
       checkpoints:[...this.sim.checkpointsReached],flags:{...this.sim.flags},scene:this.sim.scene?.id??null,gate:this.sim.gate,
-      objectives:structuredClone(this.sim.objectives),parts:this.sim.renderState.parts,enemyAlive:this.sim.enemies.filter(a=>a.alive).length}}:{})});}
+      objectives:structuredClone(this.sim.objectives),parts:this.sim.renderState.parts,enemyAlive:this.sim.enemies.filter(a=>a.alive).length,
+      threat:this.sim.threat,hudStatus:this.hud?.objectiveStatus?.textContent??''}}:{})});}
   dispose(){
     if(this.disposed)return;this.disposed=true;cancelAnimationFrame(this.frame);
     this.listeners.forEach(remove=>remove());this.input.dispose();this.audio.dispose?.();this.renderer.dispose();

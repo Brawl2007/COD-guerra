@@ -2,7 +2,7 @@ import { M01Simulation, seconds } from '../../src/game/m01-simulation.js';
 
 // A bounded route through the real simulation; no event, clock or objective injection.
 // This is an automated state/control test, not a browser playthrough.
-export function route(seed=19390901){
+export function driver(seed=19390901){
   const sim=new M01Simulation(seed),checkpoints={},events=[];
   function step(controls={}){
     sim.tick(.05,controls);
@@ -12,7 +12,7 @@ export function route(seed=19390901){
     }
   }
   function until(predicate,limit=240,controls={}){
-    for(let i=0;i<limit*20;i++){if(predicate())return;step(controls);}
+    for(let i=0;i<limit*20;i++){if(predicate())return;step(typeof controls==='function'?controls():controls);}
     throw new Error(`Route stalled: ${sim.mission.text}; battle ${sim.battleClock}, gate ${JSON.stringify(sim.gate)}, unsafe allies ${JSON.stringify(sim.allies.filter(a=>a.alive&&a.active&&!a.civilian&&a.x>=-90).map(({id,x,z,state})=>({id,x,z,state})))}`);
   }
   // Steering is applied through the same controls as Game; simulation remains authoritative.
@@ -25,6 +25,11 @@ export function route(seed=19390901){
     }
     throw new Error(`Movement blocked en route to ${x},${z}: ${JSON.stringify(sim.player)}`);
   }
+  return {sim,checkpoints,events,step,until,walk};
+}
+/** The route's own steps up to the crate delivery, i.e. the start of obj_m01_cover_repair. */
+export function toRepair(d){
+  const {sim,step,until,walk}=d;
   step({skip:true});
   walk(-66,26);walk(-15,26);walk(-15,2);walk(16,2);step({interact:true});
   until(()=>sim.active('follow_sergeant'),120);
@@ -32,6 +37,11 @@ export function route(seed=19390901){
   walk(-50,11);walk(-44,11);
   walk(-245,9);walk(-274,9);walk(-274,21);walk(-265,21);step({interact:true});
   walk(-274,21);walk(-274,8);walk(-123,8);step({interact:true});
+  if(!sim.active('cover_repair'))throw new Error('Route did not deliver the crate');
+  return d;
+}
+export function route(seed=19390901){
+  const {sim,checkpoints,events,step,until,walk}=toRepair(driver(seed));
   walk(-115,27);walk(-28,28);step({crouch:true});
   until(()=>sim.active('hold_access'),500);
   step({crouch:true});

@@ -19,7 +19,11 @@ export class AudioManager {
     else if(kind==='clip'){this.tone(970,.04,'square',.017,-400,0,.25);this.noise(.1,.021,0,1.15);this.tone(360,.045,'square',.024,-140,0,2.8);}
     else{this.tone(710,.03,'square',.014,-230);this.noise(.045,.012,0,.46);}
   }
-  impact(material='stone',pan=0){if(material==='metal')this.tone(1700,.12,'square',.04,-700,pan);else if(!this.play('impactStone',{volume:.34,pan}))this.noise(.12,.04,pan);}
+  impact(material='stone',pan=0,distance=0){const v=1/(1+distance/8);if(material==='metal')this.tone(1700,.12,'square',.04*v,-700,pan);else if(!this.play('impactStone',{volume:.34*v,pan}))this.noise(.12,.04*v,pan);}
+  // Estampidos distantes (MG34 em rajada, Kar98k, rkm de Kowal): abafados e mais baixos com a distância. Síntese original.
+  distantFire(pan=0,distance=0,rounds=1,interval=.075){const v=.2/(1+distance/160);for(let i=0;i<rounds;i++){this.noise(.13,v,pan,i*interval);this.tone(72,.18,'triangle',v*.55,-24,pan,i*interval);}}
+  // Estalo supersónico de um tiro que passa a poucos metros.
+  crack(pan=0){this.tone(2500,.025,'square',.05,-1900,pan);this.noise(.03,.07,pan);}
   explosion(pan=0,distance=0){if(!this.play('explosion',{volume:Math.max(.12,.9-distance/900),pan})){const volume=Math.max(.04,.24-distance/3800);this.noise(.85,volume,pan);this.tone(52,.7,'triangle',volume,-18,pan);}}
   ambience(kind,pan=0){const name=kind==='artillery'?'artillery':'distantGunfire';if(this.play(name,{volume:kind==='artillery'?.16:.11,pan,rate:.88+Math.random()*.2}))return;if(kind==='artillery'){this.tone(44,1.3,'triangle',.035,-10,pan,.4);this.noise(.8,.025,pan,.4);}else for(const delay of [0,.19,.57]){this.noise(.08,.018,pan,delay);this.tone(95,.1,'square',.012,-40,pan,delay);}}
   hit(){this.tone(95,.08,'sawtooth',.04,-45);}
