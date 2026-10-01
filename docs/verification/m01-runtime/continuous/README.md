@@ -117,3 +117,75 @@ Partida contínua com `--adverse`, numa única sessão Chromium, do menu ao debr
 - arte do transporte (placeholder);
 - playtest humano;
 - Chromebook.
+
+## Terceira ronda: ameaça no reparo e na retirada
+
+**Pedido:**
+- dar ao fogo alemão uma origem visível na margem leste, com sons, impactos e reacções dos aliados;
+- verificar se a supressão interrompe de facto o reparo e se a cobertura do jogador muda a retirada;
+- testar "jogador ajuda" e "jogador ignora".
+
+### Porque não havia ameaça
+
+| Causa | Evidência |
+| --- | --- |
+| Os sapadores em `repair_site_2` ficam abaixo do tabuleiro e atrás do poste sul do portal ferroviário. Nenhuma linha recta vinda da margem leste lhes chega. | Varrimento de linhas de visão com os colisores: 0/44 posições do dique viam os sapadores; os tiros em recta batiam no tabuleiro ou nas torres. |
+| Os 40 alemães estavam atrás do portal de Lisewo (colisor sólido x 1058,7–1067,7, z −8…48). | `COL_portal_lisewo_1912` era o primeiro obstáculo de quase todas as linhas. |
+| Dois terços do reparo terminavam antes de o trem 963 chegar (04:45). | Com a caixa entregue às 04:42, 75 s de trabalho a 3,5× davam 68 % antes de qualquer tiro. |
+| O tiro do jogador só conta até 1200 m (perfil do wz.29), e as posições alemãs estavam a ~1210 m. | — |
+| Na retirada, o pelotão corria pelo meio do tabuleiro, na linha de tiro do jogador ("Nos nossos, não!"). A contagem de 20 s começava às 06:00, por isso a primeira baixa caía no instante em que os alemães apareciam. | Instrumentação: 3 de 11 tiros bateram em soldados polacos; 4 baixas nos primeiros 7,5 s reais. |
+| **Arte:** os dois arcos do portal ferroviário oeste (centros ±2 m, 4,4 m de largura) sobrepunham-se 0,4 m. A triangulação descartava os furos e o portal era um muro fechado: o jogador atravessava-o e não via a margem leste através dele. | Raios contra o GLB: face sólida em x = −6,5 em toda a passagem. |
+
+### O que mudou
+
+- **Origem visível.** Vistas da cabeça de ponte oeste, as treliças tapam o dique. Só a faixa dos portões de Lisewo, entre as pontes, se vê por cima da água (raios contra os GLB e contra os colisores).
+  - Ficam lá as duas MG34 e 12 atiradores (`grp_de_east.firePositions`); só eles disparam sobre a margem oeste.
+  - Os 26 do dique disparam sobre a cabeça de ponte leste e, depois das 06:00, sobre o pelotão.
+- **Tiros como dados.** Cada tiro guarda origem, ponto visado, flecha e horas de partida e chegada, e entra no save. A flecha (≈9 m a 1,2 km) é uma aproximação de jogo, não balística medida. O impacto resolve-se à chegada.
+- **Apresentação:**
+  - clarão (~8 px mínimo no ecrã) e fumo da boca durante ~2 s;
+  - um traçante por rajada de MG;
+  - poeira na terra, faísca no metal;
+  - estampido com atraso de 343 m/s;
+  - estalo quando um tiro passa a menos de 6 m do jogador.
+- **Reacções:**
+  - sapadores ajoelhados a trabalhar e deitados sob fogo (a equipa toda);
+  - Kowal responde ao clarão mais recente que vê e diz "Trocando carregador!" quando a rkm recarrega;
+  - falas reais: `dlg_m01_022` (primeira supressão), `026`, `027`, `040`, e os callouts "Metralhadora no dique!" e "Deitaram! Continua!" (quando o tiro do jogador cala uma MG).
+- **Reparo:**
+  - 150 s de trabalho sem supressão;
+  - um tiro a menos de 3 m pára 3,5 s;
+  - a MG calada precisa de 2,5 s para voltar à arma;
+  - tolerância de 120 s sem aviso.
+- **Retirada:**
+  - recuam os 18 sobreviventes por ID;
+  - a contagem de 20 s começa às 06:05;
+  - cada baixa é um tiro real de um alemão do tabuleiro que vê o último homem;
+  - o pelotão corre junto à treliça norte e os alemães pela metade sul.
+- **HUD.** Linha de estado sob o objectivo, lida só da simulação: "Reparo 47 % · sapadores deitados sob fogo da metralhadora do dique" ou "… a trabalhar · metralhadora do dique suprimida"; "Pelotão leste: 16 homens · alemães no tabuleiro suprimidos".
+- **Correcções de arte e apresentação:**
+  - arco único no portal ferroviário oeste e no antigo portal leste, com a largura da abertura dos colisores;
+  - carris da linha sudoeste assentes no terreno, numa só instância (antes flutuavam até 3 m e passavam à altura dos olhos junto aos sapadores).
+
+### "Jogador ajuda" e "jogador ignora"
+
+**Comparação de estado** ([round3/cover-comparison.json](round3/cover-comparison.json), `node tools/m01-cover-comparison.mjs`).
+- 12 sementes × 2 percursos completos até ao debrief, só com controlos e com o que o jogador vê (`threat.recentFire`).
+- Não é partida no navegador.
+- **Ajuda:** encosta ao lado dos sapadores, a calar a MG dos portões; carregadores de Kowal; lado sul do tabuleiro, a disparar sobre os alemães do tabuleiro.
+- **Ignora:** atrás dos sacos de areia, sem disparar.
+
+| | Ajuda | Ignora |
+| --- | --- | --- |
+| Reparo (s reais desde a entrega) | 168–207 | 206–248 |
+| Fim do reparo | 05:02–05:08 | 05:08–05:14 |
+| Vezes que os sapadores foram deitados | 9–27 | 42–81 |
+| Tempo com a MG dos portões calada (reparo sob fogo) | 98 % | 4–9 % (só Kowal) |
+| Sobreviventes do pelotão leste | 15–18 (18 em 11 sementes) | 12 em todas |
+| Saúde final do jogador | 84–100 | 76–100 |
+| Ordem de demolição / demolição leste / oeste | 05:30:00 / 06:10:00 / 06:45:00 | igual |
+
+Nos dois percursos:
+- CP-A..D, 12 objectivos e debrief;
+- nenhum sobrevivente a leste de x = 660 na demolição;
+- cada baixa do pelotão é um tiro que chegou (`round-impact` com vítima), por ID e de 20 em 20 s de relógio a partir das 06:05:20.
