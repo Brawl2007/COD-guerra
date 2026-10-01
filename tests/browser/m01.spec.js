@@ -188,10 +188,13 @@ test('a real withdrawal continuation loses men only to rounds from the spans, ke
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
   const {errors,failed}=await open(page);await start(page,'#continue');
   // O clarão da boca dura uma fracção de segundo e apaga-se antes de o tiro chegar: amostrar até à primeira baixa.
+  // Um contador na própria página regista os clarões de cada frame desenhado; a amostragem a 250 ms podia perdê-los
+  // no CI com renderização por software (run 36920430287).
+  await page.evaluate(()=>{window.__m01MuzzleSeen=0;const tick=()=>{const m=window.gameDiagnostics?.().m01?.fireEffects?.muzzle??0;if(m>window.__m01MuzzleSeen)window.__m01MuzzleSeen=m;requestAnimationFrame(tick);};requestAnimationFrame(tick);});
   const samples=[];
   for(let i=0;i<300&&!(samples.length&&samples.at(-1).n<18);i++){
     await page.waitForTimeout(250);
-    samples.push(await page.evaluate(()=>{const g=window.gameDiagnostics().m01;return {n:g.flags['m01.east_platoon_survivors'],muzzle:g.fireEffects.muzzle,
+    samples.push(await page.evaluate(()=>{const g=window.gameDiagnostics().m01;return {n:g.flags['m01.east_platoon_survivors'],muzzle:Math.max(g.fireEffects.muzzle,window.__m01MuzzleSeen),
       hud:document.querySelector('#objective-status').textContent,sim:g.threat.status,origins:g.threat.recentFire.map(f=>f.id)};}));
   }
   const n=samples.at(-1).n;expect(n).toBeLessThan(18);expect(n).toBeGreaterThanOrEqual(12);
