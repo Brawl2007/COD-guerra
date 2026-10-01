@@ -35,6 +35,15 @@ O percurso automático com controlos chega ao debrief, passa pelos quatro checkp
 
 Evidências em `docs/verification/m01-runtime/continuous/`.
 
+**Segunda ronda** (`--adverse`, 1308 s, 12/12, sem perdas de controlo nem erros):
+- **Rotas adversas verificadas:** sair dos limites, cair no Vístula, ficar parado e ficar sem munição. As duas primeiras restauram o CP-A.
+- **Corrigido:** quedas do tabuleiro pelas aberturas da treliça.
+- **Feito:**
+  - Bąk visível ao ser levado e evacuado por Dudek;
+  - clarão e coluna de poeira nas demolições, com vibração ao chegar o som;
+  - chamada encenada no abrigo;
+  - carregadores de Kowal.
+
 ## Parcial ou pendente
 
 - Humanos, ViewModel, mãos, recarga, sons e texturas são placeholders; rig/vozes/uniformes finais pendentes.
@@ -45,18 +54,16 @@ Evidências em `docs/verification/m01-runtime/continuous/`.
 - Meta de 30 FPS no Chromebook não foi medida. Chromium com SwiftShader verifica funcionamento, não desempenho de GPU real.
 - Campanha M01–M30, tanque, avião, jeep, transições e save da campanha pendentes.
 - A partida contínua de M01 no navegador foi feita por piloto automático; **falta um playtest humano completo** e rotas adversas (morrer, sair dos limites, ignorar objectivos). Não houve playtest completo da missão francesa nesta sessão.
-- Observado na partida contínua e ainda pendente:
-  - Bąk transportado ou entregue não é representado;
-  - a demolição oeste fica tapada pelo barracão vista do posto de disparo;
-  - a leste (06:10) só se ouve;
-  - a chamada final não tem encenação;
-  - os 45 cartuchos não têm reabastecimento;
-  - "Proteja o reparo" e "Cubra a retirada" não mostram ameaça legível.
+- Ainda pendente depois da partida contínua:
+  - ameaça legível em "Proteja o reparo" e "Cubra a retirada";
+  - "Abrigue-se!" pode não aparecer;
+  - de dentro da treliça rodoviária, a coluna da demolição leste fica tapada;
+  - o transporte de feridos usa um placeholder.
 
   Detalhes em `docs/verification/m01-runtime/continuous/README.md`.
 
 ## Próximo passo
 
-Playtest humano completo de M01 e rotas adversas. Depois, decidir as pendências visuais da partida contínua: representação de Bąk, linha de vista do posto de disparo, encenação da chamada e ameaça legível nas tarefas de cobertura. Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02.
+Playtest humano completo de M01 e rotas adversas. Depois, dar ameaça legível às tarefas de cobertura. Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02.
 
 O trabalho das pontes de Claude foi preservado e completado, incluindo dano persistente em LOD0/1/2. Mapas históricos e inventários específicos continuam úteis para as pendências de P4/P13 e de arte. Não recomeçar essa entrega.

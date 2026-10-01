@@ -28,6 +28,8 @@ export class TczewWorld {
       }
     }
     this.walkSurfaces=[...this.decks,...this.joints];
+    // Tabuleiros dos vãos e juntas: a treliça/guarda-corpo segura quem anda nelas (encontros e margens ficam de fora).
+    this.spanDecks=[...this.decks.filter(c=>c.id.includes('_deck_')),...this.joints];
     this.coverNodes=layout.coverNodes.filter(c=>(!c.activeAfter||consumed.has(c.activeAfter))&&(!c.activeUntil||!consumed.has(c.activeUntil))&&
       !(consumed.has('evt_m01_west_demolition')&&c.position[0]>-90));
     this.covers=this.coverNodes.filter(c=>!c.partial&&!['WINDOW','WALL_CORNER','BUILDING_CORNER','VEHICLE'].includes(c.type)).map(c=>{
@@ -72,10 +74,13 @@ export class TczewWorld {
   }
   move(actor,dx,dz){
     const blocked=(x,z)=>this.obstacles.some(b=>actor.y+1.45>b.min.y&&actor.y+.1<b.max.y&&x+actor.radius>b.min.x&&x-actor.radius<b.max.x&&z+actor.radius>b.min.z&&z-actor.radius<b.max.z);
+    // Sobre um vão, não se cai pela lateral nem para um vão demolido: a treliça contém o movimento (não as balas).
+    const onSpan=(x,z)=>this.spanDecks.some(c=>x>=c.min.x&&x<=c.max.x&&z>=c.min.z&&z<=c.max.z);
+    const falls=(x,z)=>onSpan(actor.x,actor.z)&&!onSpan(x,z)&&this.heightAt(x,z)<actor.y-1.5;
     const steps=Math.max(1,Math.ceil(Math.hypot(dx,dz)/.2));
     for(let i=0;i<steps;i++){
-      if(!blocked(actor.x+dx/steps,actor.z))actor.x+=dx/steps;
-      if(!blocked(actor.x,actor.z+dz/steps))actor.z+=dz/steps;
+      if(!blocked(actor.x+dx/steps,actor.z)&&!falls(actor.x+dx/steps,actor.z))actor.x+=dx/steps;
+      if(!blocked(actor.x,actor.z+dz/steps)&&!falls(actor.x,actor.z+dz/steps))actor.z+=dz/steps;
     }
     actor.y=this.heightAt(actor.x,actor.z);
   }

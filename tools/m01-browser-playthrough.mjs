@@ -14,6 +14,8 @@ const opt = (name, fallback) => { const i = args.indexOf(name); return i >= 0 ? 
 const OUT = opt('--out', 'docs/verification/m01-runtime/continuous');
 const URL_BASE = opt('--url', 'http://127.0.0.1:4173/COD-guerra/');
 const SKIP_CUTSCENES = args.includes('--skip-cutscenes');
+// --adverse: antes da rota normal, sair dos limites e cair no Vístula (cada um restaura CP-A) e ficar parado sem seguir o sargento.
+const ADVERSE = args.includes('--adverse');
 const { chromium } = createRequire(import.meta.url)('@playwright/test');
 
 await mkdir(OUT, { recursive: true });
@@ -21,7 +23,7 @@ const logFile = `${OUT}/log.jsonl`;
 await writeFile(logFile, '');
 const t0 = Date.now();
 const real = () => +((Date.now() - t0) / 1000).toFixed(1);
-const report = { verification: 'Partida contínua de M01 numa única sessão Chromium (piloto automático com input do navegador); não é playtest humano.',
+const report = { adverse: ADVERSE, adverseResults: [], verification: 'Partida contínua de M01 numa única sessão Chromium (piloto automático com input do navegador); não é playtest humano.',
   startedAt: new Date().toISOString(), viewport: [1280, 720], timeline: [], blockers: [], waits: [], pauses: [], deaths: [], subtitles: [], messages: [], shots: 0, screenshots: [] };
 
 const browser = await chromium.launch({
@@ -90,11 +92,12 @@ async function tick(ms = 120) { await page.waitForTimeout(ms); const s = await s
 async function walk(x, z, { sprint = true, tolerance = 1.2, label = '', limitReal = 240 } = {}) {
   const start = Date.now();
   let lastPos = null, lastMove = Date.now(), recovering = 0;
+  const deathsAtStart = report.deaths.length;
   await hold('ShiftLeft', sprint);
   for (;;) {
     const s = await state(); await observe(s);
     const p = s.player, dx = x - p.x, dz = z - p.z, d = Math.hypot(dx, dz);
-    if (d < tolerance || s.phase === 'OUTRO') break;
+    if (d < tolerance || s.phase === 'OUTRO' || report.deaths.length !== deathsAtStart) break;   // chegou, outro, ou o jogo restaurou o checkpoint
     const turn = wrap(Math.atan2(dz, dx) - p.angle);
     const pitchFix = Math.abs(p.pitch) > 0.03 ? p.pitch / 0.0022 : 0;
     if (Math.abs(turn) > 0.02 || pitchFix) await look(Math.max(-700, Math.min(700, turn / 0.0022)), Math.max(-300, Math.min(300, pitchFix)));
@@ -114,6 +117,25 @@ async function walk(x, z, { sprint = true, tolerance = 1.2, label = '', limitRea
     await page.waitForTimeout(80);
   }
   await hold('KeyW', false); await hold('ShiftLeft', false);
+}
+/** Rota adversa: segue até ao ponto e continua a andar até o jogo restaurar o checkpoint; regista o que o jogador viu. */
+async function untilRestored(label, points, { limitReal = 240 } = {}) {
+  const r0 = Date.now(), before = report.deaths.length, seen = new Set();
+  for (const [x, z] of points) {
+    try { await walk(x, z, { label, limitReal: 120 }); } catch (e) { if (report.deaths.length === before) throw e; }
+    if (report.deaths.length > before) break;
+  }
+  await hold('KeyW', true);
+  while (report.deaths.length === before) {
+    const s = await tick(200); if (s.hud.message) seen.add(s.hud.message);
+    if ((Date.now() - r0) / 1000 > limitReal) throw new Error(`${label}: o jogo não restaurou o checkpoint`);
+  }
+  await releaseAll();
+  for (const m of report.messages.filter(m => m.real * 1000 >= r0 - t0)) seen.add(m.text);
+  const s = await state();
+  const result = { label, real: +((Date.now() - r0) / 1000).toFixed(1), restoredTo: [+s.player.x.toFixed(1), +s.player.z.toFixed(1)], battle: hms(s.battle), checkpoints: s.checkpoints, messages: [...seen] };
+  report.adverseResults.push(result); await log('adverse', result); await shot(`adverse-${report.adverseResults.length}`, `${label}: depois de restaurar`);
+  return result;
 }
 async function path(points, label, opts) { for (const [x, z] of points) await walk(x, z, { label, ...opts }); await log('arrived', { label }); }
 async function press(code, expectPrompt) {
@@ -158,6 +180,10 @@ try {
   if (SKIP_CUTSCENES) await page.keyboard.press('Space');
   await wait('intro', s => s.checkpoints.includes('cp_m01_a_orientacao'), { limitReal: 400 });
 
+  if (ADVERSE) {
+    await untilRestored('limite leste (x > 401)', [[-66, 26], [-15, 26], [-15, 2], [16, 2], [380, 1], [430, 1]]);
+    await untilRestored('Vístula (margem a x ≈ 25)', [[-66, 26], [-15, 26], [10, 30], [45, 30]]);
+  }
   // 1. Mensagem e café ao posto da ponte ferroviária (RUNBOOK: contornar a trincheira pelo sul, portal ferroviário).
   await path([[-66, 26], [-15, 26], [-15, 2], [16, 2]], 'posto da ponte');
   await press('KeyE', 'entregar mensagem');
@@ -165,6 +191,14 @@ try {
   // 2. Bombardeamento: abrigar-se e seguir o sargento.
   await wait('bombardeamento e abrigo', s => active(s, 'follow_sergeant') || done(s, 'follow_sergeant'), { limitReal: 300 });
   await shot('bombing', 'Depois do bombardeamento das 04:34');
+  if (ADVERSE) {
+    // Ignorar o objectivo: 2 min parado. O jogo deve continuar a chamar sem falhar nem avançar sozinho.
+    const s0 = await state(), r0 = Date.now(), msgs = new Set();
+    while (Date.now() - r0 < 120000) { const s = await tick(500); if (s.hud.message) msgs.add(s.hud.message); }
+    const s1 = await state();
+    const result = { label: 'parado 2 min em "Siga a voz do sargento"', battleFrom: hms(s0.battle), battleTo: hms(s1.battle), objective: s1.hud.objective, messages: [...msgs] };
+    report.adverseResults.push(result); await log('adverse', result);
+  }
   await path([[-15, 2], [-15, 11], [-147, 11]], 'reorganização (Zieliński)');
   // 3. Sapadores no aterro e material do barracão.
   await path([[-50, 11], [-44, 11]], 'sapadores no aterro');
@@ -175,6 +209,24 @@ try {
   await path([[-123, 8]], 'entregar material', { sprint: true });
   await press('KeyE', 'entregar material');
   await shot('repair', 'Reparo da linha a decorrer');
+  if (ADVERSE) {
+    // Gastar a munição até ao aviso e pedir carregadores a Kowal (munição da secção).
+    let s = await state(), r0 = Date.now();
+    while (s.weapon.mag + s.weapon.reserve > 10 && Date.now() - r0 < 180000) {
+      if (s.weapon.state === 'READY' && s.weapon.mag > 0) { await page.mouse.down(); await page.mouse.up(); report.shots++; }
+      else if (s.weapon.state === 'READY' && s.weapon.mag === 0) await page.keyboard.press('KeyR');
+      s = await tick(300);
+    }
+    await tick(500);
+    const hint = report.messages.find(m => m.text.startsWith('Pouca munição'));
+    await walk(-79.5, 24, { label: 'Kowal (munição)', tolerance: 1.6 });
+    const before = (await state()).weapon.reserve;
+    await press('KeyE', 'pedir munição a Kowal'); await tick(300);
+    await press('KeyE', 'pedir munição a Kowal'); await tick(300);
+    const after = await state();
+    const result = { label: 'munição da secção (Kowal)', hint: hint?.text ?? null, reserveBefore: before, reserveAfter: after.weapon.reserve, received: after.weapon.received ?? 0 };
+    report.adverseResults.push(result); await log('adverse', result); await shot('kowal-ammo', 'Kowal passa carregadores');
+  }
   // 4. Proteger o reparo e manter a cabeça de ponte até à ordem de demolição.
   await path([[-115, 27], [-28, 28]], 'posição de cobertura do reparo');
   await page.keyboard.press('KeyC'); await page.keyboard.press('KeyV'); await page.keyboard.press('KeyV'); await page.keyboard.press('KeyV');
@@ -198,23 +250,30 @@ try {
     else {
       await shot('bak-found', 'Junto de Bąk: aviso "levar Bąk"');
       await press('KeyE', 'levar Bąk');
+      await path([[30, 40]], 'socorrista com Bąk');
+      await shot('bak-carry-deck', 'Bąk ao ombro, no tabuleiro');
       await path([[12, 40], [-10, 40], [-10, 46]], 'socorrista com Bąk');
       await shot('bak-carry', 'A levar Bąk ao socorrista');
       await press('KeyE', 'entregar Bąk');
       await shot('bak-delivered', 'Bąk entregue ao socorrista');
     }
   }
-  // 6. Demolição leste e saída da ponte.
+  // 6. Demolição leste e saída da ponte. Esperar no eixo do portal rodoviário, com vista livre para leste.
+  if (!(await state()).eventIds.includes('evt_m01_east_demolition')) await path([[-10, 46], [-5, 40]], 'eixo do portal rodoviário');
   await wait('demolição leste', s => s.eventIds.includes('evt_m01_east_demolition'), { limitReal: 900, faceAngle: 0 });
-  await shot('east-demolition', 'Demolição leste das 06:10');
+  await page.waitForTimeout(700); await shot('east-demolition', 'Demolição leste das 06:10: clarão');
+  await page.waitForTimeout(6000); await shot('east-demolition-6s', 'Demolição leste, coluna de poeira 6 s depois');
   await path([[-15, 40], [-115, 27], [-275, 27], [-292, 26]], 'posto de disparo');
   await shot('firing-point', 'No posto de disparo; corredor');
   // Olhar para o corredor para ver os retardatários passarem.
   await wait('demolição oeste', s => s.eventIds.includes('evt_m01_west_demolition'), { limitReal: 1200, faceAngle: 0.08, snapEvery: 20, snapLabel: 'corridor' });
   await shot('west-demolition', 'Demolição oeste das 06:45');
+  { const s = await state(); const turn = wrap(0.15 - s.player.angle); await look(turn / 0.0022, (s.player.pitch + 0.12) / 0.0022); }
+  await page.waitForTimeout(6000); await shot('west-demolition-6s', 'Demolição oeste, coluna de poeira 6 s depois, acima do barracão');
   await path([[-292, 68], [-262, 70]], 'abrigo');
   await wait('chamada', s => s.scene === 'cs_m01_roll_call', { limitReal: 120 });
   await shot('roll-call', 'Chamada no abrigo (outro)');
+  await page.waitForTimeout(10000); await shot('roll-call-10s', 'Chamada: secção sentada no abrigo');
   if (SKIP_CUTSCENES) await page.keyboard.press('Space');
   await wait('outro até ao debrief', s => s.complete && s.completeVisible, { limitReal: 300 });
   await shot('debrief', 'Debrief');

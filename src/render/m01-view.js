@@ -30,12 +30,13 @@ export class M01View {
       water:new THREE.MeshStandardMaterial({color:'#526b73',roughness:.45,metalness:.15}),
       cloth:new THREE.MeshStandardMaterial({color:'#75765e',roughness:1}),
       glow:new THREE.MeshBasicMaterial({color:'#ffb14b',toneMapped:false}),
-      smoke:new THREE.MeshBasicMaterial({color:'#454744',transparent:true,opacity:.3,depthWrite:false})};
+      smoke:new THREE.MeshBasicMaterial({color:'#454744',transparent:true,opacity:.3,depthWrite:false}),
+      dust:new THREE.MeshBasicMaterial({color:'#7d6f5c',transparent:true,opacity:.42,depthWrite:false})};
     this.box=new THREE.BoxGeometry(1,1,1);this.sphere=new THREE.SphereGeometry(1,8,6);
     this.cylinder=new THREE.CylinderGeometry(1,1,1,8);this.geometry=[this.box,this.sphere,this.cylinder];
     this.kit=[];this.batches=new Map();this.solidGroup=new THREE.Group();this.effects=new THREE.Group();
     this.scene.add(this.solidGroup,this.effects);this.smokes=new Map();this.grenadeViews=new Map();this.world=null;this.revision=-1;
-    this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;
+    this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];
     this.createWeapon();this.createActors();this.createAircraft();this.createTrains();this.ready=this.loadKit();
   }
   mesh(shape,material,p,size,parent=this.scene){
@@ -149,6 +150,16 @@ export class M01View {
     this.clip=new THREE.Group();r.add(this.clip);
     for(let i=0;i<5;i++)this.mesh('cylinder','brass',[(i-2)*.012,.14,-.03],[.006,.075,.006],this.clip);
     this.flash=this.mesh('sphere','glow',[0,.045,-.65],[.045,.045,.15],r);this.flash.visible=false;
+    // Bąk ao ombro: tronco e pernas atravessados à direita, mão esquerda a segurar; a caixa dos sapadores à frente.
+    this.carryBody=new THREE.Group();this.weaponScene.add(this.carryBody);
+    // Transporte ao ombro: na vista só se vêem as pernas à frente, no canto inferior direito, e a mão que as segura.
+    for(const dx of [-.035,.035]){const leg=this.mesh('cylinder','cloth',[.27+dx,-.29,-.52],[.042,.34,.042],this.carryBody);leg.rotation.set(-.35,0,1.05);}
+    for(const dx of [-.035,.035])this.mesh('box','dark',[.13+dx,-.36,-.6],[.05,.045,.09],this.carryBody);
+    this.mesh('sphere','skin',[.33,-.25,-.47],[.04,.048,.055],this.carryBody);
+    this.carryCrate=new THREE.Group();this.weaponScene.add(this.carryCrate);
+    this.mesh('box','wood',[0,-.28,-.48],[.42,.24,.26],this.carryCrate);this.mesh('box','stone',[0,-.28,-.346],[.43,.04,.005],this.carryCrate);
+    for(const x of [-.19,.19])this.mesh('sphere','skin',[x,-.2,-.42],[.05,.06,.07],this.carryCrate);
+    this.carryBody.visible=this.carryCrate.visible=false;
   }
   createAircraft(){
     this.planes=[];for(let i=0;i<3;i++){
@@ -177,9 +188,14 @@ export class M01View {
     const active=new Set();
     for(const d of state.damage){
       active.add(d.id);let smoke=this.smokes.get(d.id);
-      if(!smoke){smoke=new THREE.Group();for(let i=0;i<5;i++)this.mesh('sphere','smoke',[Math.sin(i*3)*3,i*6,Math.cos(i*4)*3],[5+i,4+i*2,5+i],smoke);
+      const demolition=d.id.endsWith('_demolition');
+      if(!smoke){smoke=new THREE.Group();
+        // Demolição: "clarão e coluna de poeira" (cs_m01_east_blast/west_blast), legível acima do barracão e a ~800 m.
+        if(demolition)for(let i=0;i<10;i++)this.mesh('sphere','dust',[Math.sin(i*2.3)*6,i*11,Math.cos(i*1.7)*6],[12+i*2,9+i*1.4,12+i*2],smoke);
+        else for(let i=0;i<5;i++)this.mesh('sphere','smoke',[Math.sin(i*3)*3,i*6,Math.cos(i*4)*3],[5+i,4+i*2,5+i],smoke);
         this.effects.add(smoke);this.smokes.set(d.id,smoke);}
       smoke.position.set(d.x,d.y+3,d.z);smoke.rotation.y=(sim.clock-d.started)*.015;
+      if(demolition)smoke.scale.setScalar(.25+.75*Math.min(1,Math.max(0,sim.clock-d.started)/12));
       smoke.visible=d.smokeVisible;
     }
     for(const [id,m]of this.smokes)if(!active.has(id)){this.effects.remove(m);this.smokes.delete(id);}
@@ -225,12 +241,23 @@ export class M01View {
     this.clip.visible=w.state==='RELOAD_CLIP'&&reload>.2&&reload<.85;this.clip.position.y=.08-Math.sin(reload*Math.PI)*.13;
     this.loadingHand.position.set(-.055+Math.sin(reload*Math.PI)*.06,-.04+Math.sin(reload*Math.PI)*.16,-.2+Math.sin(reload*Math.PI)*.15);
     this.flash.visible=time<this.flashUntil;
+    this.carryBody.visible=sim.player.carrying==='jozef_bak';this.carryCrate.visible=sim.player.carrying==='sapper_crate';
+    this.carryBody.position.y=this.carryCrate.position.y=bob*1.5;
+    this.bursts=this.bursts.filter(b=>{const t=(time-b.start)/b.duration;
+      if(t>=1||t<0){this.effects.remove(b.mesh);b.mesh.material.dispose();return false;}
+      b.mesh.scale.setScalar(b.size*(.35+.65*Math.sqrt(t)));b.mesh.material.opacity=.95*(1-t);return true;});
     this.engine.info.autoReset=false;this.engine.info.reset();this.engine.clear();this.engine.render(this.scene,this.camera);
     this.engine.clearDepth();this.engine.render(this.weaponScene,this.weaponCamera);
   }
   muzzle(clock){this.flashUntil=clock+.06;this.shakeUntil=clock+.1;}
   blast(clock){this.shakeUntil=clock+.4;}
-  resetEffects(){this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;}
+  /** Clarão de uma explosão no ponto real; demolições são maiores e duram mais. */
+  explosion(point,clock,aerial){
+    const material=new THREE.MeshBasicMaterial({color:'#ffcf7a',transparent:true,opacity:.95,depthWrite:false,toneMapped:false});
+    const mesh=new THREE.Mesh(this.sphere,material);mesh.position.set(point.x,(point.y??0)+(aerial?3:8),point.z);this.effects.add(mesh);
+    this.bursts.push({mesh,start:clock,duration:aerial?.7:1.4,size:aerial?12:30});
+  }
+  resetEffects(){this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;for(const b of this.bursts){this.effects.remove(b.mesh);b.mesh.material.dispose();}this.bursts=[];}
   get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0)};}
   dispose(){
