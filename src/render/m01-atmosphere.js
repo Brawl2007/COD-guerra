@@ -55,14 +55,19 @@ export class M01Atmosphere {
     for(const d of damage){
       if(!d.smokeVisible)continue;
       const demolition=d.id.endsWith('_demolition'),age=Math.max(0,clock-d.started),number=demolition?30:17;
-      const growth=demolition?Math.min(1,.15+age/14):1;
+      // Demolition is one rising cloud, not a chimney with particles looping back to the base.
+      const growth=demolition?.15+.85*(1-Math.exp(-age/5)):1;
+      const disperse=demolition?1+Math.min(age,120)/100:1;
+      const endFade=d.id==='station_bomb'?1:Math.max(0,Math.min(1,(240-age)/30));
       for(let i=0;i<number&&count<max;i++){
-        const phase=(age*.032+i*.618)%1,height=(demolition?105:42)*phase*growth;
-        const width=(demolition?20:7)+(demolition?25:12)*phase;
-        const x=d.x+Math.sin(i*2.39)*width*.3+height*.19,z=d.z+Math.cos(i*1.93)*width*.28;
+        const phase=((demolition?0:age*.032)+(i+.5)*.618)%1,height=(demolition?105:42)*phase*growth;
+        const width=((demolition?20:7)+(demolition?25:12)*phase)*disperse;
+        const x=d.x+Math.sin(i*2.39)*width*.3+height*.19+(demolition?Math.min(age,120)*.35:0),z=d.z+Math.cos(i*1.93)*width*.28;
         this.dummy.position.set(x,d.y+3+height,z);this.dummy.scale.set(width*(.8+i%3*.12)*growth,width*(1.1+i%2*.24)*growth,1);this.dummy.updateMatrix();
         this.puffs.setMatrixAt(count,this.dummy.matrix);this.puffs.setColorAt(count,this.color.set(demolition?'#aaa18b':i<4?'#5d5648':'#606365'));
-        this.fade.setX(count,(demolition?.65:.72)*(1-phase*.65)*Math.min(1,age/2+.3));count++;
+        // Chimney smoke fades before each respawn; all finite emitters fade before removal at 240 s.
+        const cycleFade=demolition?1:Math.min(1,phase/.12,(1-phase)/.18);
+        this.fade.setX(count,(demolition?.65:.72)*(1-phase*.65)*Math.min(1,age/2+.3)*cycleFade*endFade);count++;
       }
     }
     this.count=count;this.puffs.count=count;this.puffs.instanceMatrix.needsUpdate=true;this.puffs.instanceColor.needsUpdate=true;this.fade.needsUpdate=true;
