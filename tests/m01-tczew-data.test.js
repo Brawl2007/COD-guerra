@@ -10,6 +10,7 @@ const layout = JSON.parse(read('missions/m01-tczew/map-layout.json'));
 const equipment = JSON.parse(read('research/equipment-timeline.json'));
 const research = read('missions/m01-tczew/HISTORICAL_RESEARCH.md');
 const sourcesDoc = read('research/SOURCES.md');
+const sourceChecks = read('missions/m01-tczew/SOURCE_CHECK.md');
 const measured = JSON.parse(read('missions/m01-tczew/measurements.json'));
 
 const ids = list => new Set(list.map(item => item.id));
@@ -72,7 +73,15 @@ test('M01 keeps the documented chronology on the battle clock', () => {
   assert.equal(at('evt_m01_train963_arrives'), clockSeconds('04:45:00'));
   assert.equal(at('evt_m01_order_demolish'), clockSeconds('05:30:00'));
   assert.equal(at('evt_m01_east_demolition'), clockSeconds('06:10:00'));
-  assert.equal(at('evt_m01_west_demolition'), clockSeconds('06:40:00'));
+  assert.equal(at('evt_m01_west_demolition'), clockSeconds('06:45:00'));
+  const secondRaid = eventById('evt_m01_bombing_0530');
+  assert.equal(at(secondRaid.id), clockSeconds('05:30:00'));
+  assert.deepEqual(secondRaid.window, { from: '05:30:00', to: '05:34:00' });
+  assert.ok(secondRaid.idempotent && secondRaid.persist);
+  const sky = mission.sectors.find(s => s.id === secondRaid.sector);
+  assert.ok(sky.independentOfPlayer);
+  assert.ok(sky.schedule.some(s => s.at === secondRaid.window.from && s.event === secondRaid.id));
+  assert.ok(sky.schedule.some(s => s.at === secondRaid.window.to));
   for (const id of ['evt_m01_bombing_0434', 'evt_m01_train963_arrives', 'evt_m01_east_demolition', 'evt_m01_west_demolition']) assert.equal(eventById(id).certainty, 'DOCUMENTED', id);
   const segments = mission.clock.segments;
   assert.equal(segments[0].from, mission.clock.start);
@@ -122,7 +131,7 @@ test('M01 labels history and space only with the agreed vocabularies', () => {
     if (feature.classification === 'COMPRESSED_FOR_GAMEPLAY') assert.ok(feature.realValue, `${feature.id} precisa registrar o valor real`);
   }
   const knownSources = new Set(sourcesDoc.match(/^\| (H\d{2}(?:-PDF)?|T\d{2}|C\d{2}|G\d{2}) \|/gm).map(row => row.slice(2, -2)));
-  const cited = [...mission.sources, ...mission.events.flatMap(e => e.sources), ...layout.features.flatMap(f => f.sources ?? []), ...equipment.items.flatMap(i => i.sources)];
+  const cited = [...mission.sources, ...mission.events.flatMap(e => e.sources), ...mission.debrief.paragraphs.flatMap(p => p.sources ?? []), ...layout.features.flatMap(f => f.sources ?? []), ...equipment.items.flatMap(i => i.sources)];
   for (const id of cited) assert.ok(knownSources.has(id), `fonte sem registro em research/SOURCES.md: ${id}`);
 });
 
@@ -130,6 +139,11 @@ test('M01 checkpoints accumulate state and never save inside a demolition zone',
   const [a, b, c, d] = ['cp_m01_a_orientacao', 'cp_m01_b_reorganizacao', 'cp_m01_c_engenheiros', 'cp_m01_d_retirada'].map(id => mission.checkpoints.find(cp => cp.id === id));
   for (const [earlier, later] of [[a, b], [b, c], [c, d]]) {
     for (const id of earlier.restore.eventsConsumed) assert.ok(later.restore.eventsConsumed.includes(id), `${later.id} perdeu ${id}`);
+  }
+  assert.equal(c.savePolicy, 'deferUntilSafe', 'a ordem e o segundo raid não podem eliminar CP-C');
+  for (const cp of [c, d]) {
+    assert.ok(cp.restore.eventsConsumed.includes('evt_m01_bombing_0530'));
+    assert.ok(cp.restore.flags.includes('m01.second_raid_state'));
   }
   const west = layout.blastZones.find(z => z.id === 'bz_west'), east = layout.blastZones.find(z => z.id === 'bz_east');
   for (const cp of mission.checkpoints) {
@@ -175,7 +189,7 @@ test('M01 map geometry matches the documented bridges of 1939 and the measured p
   assert.deepEqual(road.supportsX, measured.roadBridge.supportsX);
   const east = layout.blastZones.find(z => z.id === 'bz_east'), west = layout.blastZones.find(z => z.id === 'bz_west');
   assert.ok(Math.abs(east.center[0] - rail.supportsX[6]) < 15, '06:10 no 6.º pilar (antigo encontro leste; T07, P13)');
-  for (const v of rail.supportsX.slice(0, 2)) assert.ok(Math.abs(v - west.center[0]) < west.radiusM, '06:40 cobre o encontro oeste e o 1.º pilar (T07)');
+  for (const v of rail.supportsX.slice(0, 2)) assert.ok(Math.abs(v - west.center[0]) < west.radiusM, '06:45 cobre o encontro oeste e o 1.º pilar (reconstrução T07/P13)');
   const bounds = layout.bounds.playable;
   for (const node of layout.coverNodes) assert.ok(inBox(node.position, bounds) && node.position[0] <= layout.bounds.softWarningX, `${node.id} fora da área jogável`);
   assert.equal(new Set(layout.coverNodes.map(n => n.id)).size, layout.coverNodes.length);
@@ -183,9 +197,19 @@ test('M01 map geometry matches the documented bridges of 1939 and the measured p
 
 test('M01 debrief keeps unconfirmed paragraphs disabled until their checks pass', () => {
   const pending = new Set(research.match(/^\| (P\d+) \|/gm).map(row => row.slice(2, -2)));
+  const checks = new Map(sourceChecks.split('\n').filter(row => /^\| P\d+ \|/.test(row)).map(row => {
+    const columns = row.split('|');
+    return [columns[1].trim(), columns[3].trim().replaceAll('`', '')];
+  }));
+  assert.deepEqual([...mission.historicalCertainty.pendingChecks].sort(), [...checks].filter(([, state]) => state !== 'RESOLVIDA').map(([id]) => id).sort(), 'JSON e verificação documental discordam');
+  const readSources = new Set(sourcesDoc.split('\n').filter(row => /^\| (H\d{2}(?:-PDF)?|T\d{2}) \|/.test(row) && row.split('|')[5]?.includes('INTEGRAL')).map(row => row.split('|')[1].trim()));
   for (const id of mission.historicalCertainty.pendingChecks) assert.ok(pending.has(id), `pendência ${id} sem registro`);
   for (const paragraph of mission.debrief.paragraphs) if (paragraph.requires?.length) {
     assert.equal(paragraph.enabled, false, `${paragraph.id} depende de ${paragraph.requires} e não pode estar habilitado`);
     for (const id of paragraph.requires) assert.ok(pending.has(id));
+  }
+  for (const paragraph of mission.debrief.paragraphs.filter(p => p.enabled && p.id !== 'db_07')) {
+    assert.ok(paragraph.sources?.length, `${paragraph.id}: texto histórico sem fonte`);
+    for (const id of paragraph.sources) assert.ok(readSources.has(id), `${paragraph.id}: ${id} ainda não lida`);
   }
 });

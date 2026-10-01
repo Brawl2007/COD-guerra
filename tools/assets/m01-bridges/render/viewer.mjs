@@ -1,6 +1,7 @@
 // Pré-visualização dos GLB provisórios das pontes. Uso: viewer.html?view=<nome>
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { applyBridgeState } from '../src/state.mjs';
 
 window.addEventListener('error', e => { window.__error = String(e.message ?? e); });
 window.addEventListener('unhandledrejection', e => { window.__error = String(e.reason?.message ?? e.reason); });
@@ -15,7 +16,7 @@ const rail = layout.features.find(f => f.id === 'rail_bridge'), road = layout.fe
 
 const RAIL = 'bridge_rail_1891_1912', ROAD = 'bridge_road_lentze_1857_1912', LISEWO = 'portal_lisewo_1912';
 const all = [RAIL, ROAD, LISEWO];
-const STATUS = 'PROVISÓRIO · geometria de bloqueio · não comparado com fotografias (bloqueadas nesta sessão)';
+const STATUS = 'PROVISÓRIO · geometria para integração · detalhes e poses de destruição ainda INCERTOS';
 
 const views = {
   overview: { cam: { pos: [-260, 115, 340], target: [520, -4, 20], fov: 34 }, files: all, caption: 'Visão geral — ponte ferroviária (norte) e rodoviária Lentze (sul), 9 vãos cada; à direita o portal comum de 1912 em Lisewo.' },
@@ -67,13 +68,18 @@ const views = {
     ],
     lines: () => [[[-30, 12, measured.roadBridge.axisOffsetZ], [1100, 12, measured.roadBridge.axisOffsetZ]]],
   },
-  destroyed_west: { cam: { pos: [-40, 26, 120], target: [120, -7, 18], fov: 44 }, files: all, state: 'evt_m01_west_demolition', caption: 'Estado provisório após 06:40 — encontro oeste e pilar 1 demolidos, vãos 1–2 caídos (pose sem fotografia: PLACEHOLDER).' },
+  destroyed_west: { cam: { pos: [-40, 26, 120], target: [120, -7, 18], fov: 44 }, files: all, state: 'evt_m01_west_demolition', caption: 'Estado provisório após 06:45 — ambas as demolições consumidas; encontro oeste, pilar 1 e vãos 1–2 caídos (pose PLACEHOLDER).' },
   destroyed_east: { cam: { pos: [700, 30, 150], target: [800, -4, 18], fov: 42 }, files: all, state: 'evt_m01_east_demolition', caption: 'Estado provisório após 06:10 — pilar 6 (antigo encontro leste) e antigo portal demolidos, vãos 6–7 caídos (PLACEHOLDER).' },
   lisewo: { cam: { pos: [1175, 22, 105], target: [1063, 5, 20], fov: 44 }, files: all, caption: 'Portal comum de 1912 em Lisewo com os portões fechados (04:45, T07) — existência DOCUMENTED, forma INCERTA.' },
   lod1: { cam: { pos: [-260, 115, 340], target: [520, -4, 20], fov: 34 }, files: all, lod1: true, caption: 'LOD1 (para > ~400 m): treliças simplificadas — ponte Lentze como chapa, como a treliça densa "imitava viga de alma cheia" (T04).' },
+  lod2: { cam: { pos: [-260, 115, 340], target: [520, -4, 20], fov: 34 }, files: all, lod: 2, caption: 'LOD2: silhueta distante, com os mesmos IDs e estados de destruição.' },
 };
 
-const view = views[viewName];
+const baseViewName = viewName.replace(/_lod[12]$/, '');
+const view = views[baseViewName];
+if (!view) throw new Error(`Vista desconhecida: ${viewName}`);
+let activeLod = +(params.get('lod') ?? viewName.match(/_lod([12])$/)?.[1] ?? view.lod ?? (view.lod1 ? 1 : 0));
+let activeEvents = view.state === 'evt_m01_west_demolition' ? ['evt_m01_east_demolition', view.state] : view.state ? [view.state] : [];
 const width = view.w ?? W, height = view.h ?? H;
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
 renderer.setSize(width, height);
@@ -121,32 +127,35 @@ bank(275, 265, -10.5, -5, 0x6b6a50);
 bank(1075, 1060, -5, -2, 0x707a4c);
 
 const loader = new GLTFLoader();
-for (const file of view.files) {
-  const name = view.lod1 && file !== LISEWO ? `${file}.lod1.glb` : view.lod1 ? `${file}.lod1.glb` : `${file}.glb`;
-  const gltf = await loader.loadAsync(BASE + name);
-  // gltf.scene tem o mesmo nome do nó raiz; procurar o nó que traz a colocação nos extras.
-  let root = null;
-  gltf.scene.traverse(o => { if (!root && o.userData?.m01?.placement) root = o; });
-  const t = root.userData.m01.placement.translation;
-  gltf.scene.position.set(...t);
-  gltf.scene.traverse(o => {
-    if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; }
-    // O grupo dos estados destruídos fica oculto por padrão (extras do grupo: initiallyHidden).
-    if (o.userData?.initiallyHidden && o.userData?.state === 'destroyed') o.visible = Boolean(view.state);
-    const m = o.userData?.m01;
-    if (m && view.state && m.destroyedBy === view.state) o.visible = false;
-  });
-  if (view.state) gltf.scene.traverse(o => {
-    const m = o.userData?.m01;
-    if (m?.state === 'destroyed') {
-      const replaced = gltf.scene.getObjectByName(m.replaces);
-      o.visible = replaced?.userData?.m01?.destroyedBy === view.state;
-    }
-  });
-  scene.add(gltf.scene);
-}
+const cache = new Map();
+let models = [], colliders = [];
+const loaded = async name => {
+  if (!cache.has(name)) cache.set(name, loader.loadAsync(BASE + name).then(gltf => {
+    gltf.scene.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+    return gltf.scene;
+  }));
+  return cache.get(name);
+};
+const setEvents = eventIds => {
+  const allowed = new Set(['evt_m01_east_demolition', 'evt_m01_west_demolition']);
+  if (!Array.isArray(eventIds) || eventIds.some(id => !allowed.has(id))) throw new Error('Eventos de revisão inválidos.');
+  activeEvents = [...new Set(eventIds)];
+  for (const model of [...models, ...colliders]) applyBridgeState(model, activeEvents);
+  if (camera) renderer.render(scene, camera);
+};
+const switchLod = async lod => {
+  if (![0, 1, 2].includes(lod)) throw new Error('LOD inválido.');
+  const next = await Promise.all(view.files.map(file => loaded(`${file}${lod ? `.lod${lod}` : ''}.glb`)));
+  for (const model of models) scene.remove(model);
+  models = next; activeLod = lod;
+  for (const model of models) { applyBridgeState(model, activeEvents); scene.add(model); }
+  if (camera) renderer.render(scene, camera);
+};
 
 let camera;
+colliders = await Promise.all(view.files.map(file => loaded(`${file}.colliders.glb`)));
+setEvents(activeEvents);
+await switchLod(activeLod);
 if (view.ortho) {
   const { center, width: wm, axis } = view.ortho;
   const hm = wm * height / width;
@@ -179,4 +188,53 @@ for (const l of view.lines?.() ?? []) addLine(l, 0x1f5fbf, true);
 
 document.getElementById('caption').innerHTML = `<b>M01 · Tczew — ${viewName}</b><br>${view.caption}<br><span class="st">${STATUS}</span>`;
 renderer.render(scene, camera);
+const visibleBounds = object => {
+  object.updateMatrixWorld(true);
+  const bounds = new THREE.Box3();
+  object.traverseVisible(child => {
+    if (!child.isMesh) return;
+    child.geometry.computeBoundingBox();
+    bounds.union(child.geometry.boundingBox.clone().applyMatrix4(child.matrixWorld));
+  });
+  return { min: bounds.min.toArray(), max: bounds.max.toArray(), size: bounds.getSize(new THREE.Vector3()).toArray() };
+};
+window.bridgeReview = {
+  switchLod, setEvents,
+  diagnostics() {
+    const parts = [], bounds = {}, supportPositions = {}, towerBounds = {}, portalBounds = {}, colliderStates = {};
+    let invalidNormals = 0;
+    for (const model of models) {
+      let root;
+      model.traverse(o => { if (o.userData?.m01?.placement) root = o; });
+      bounds[root.name] = visibleBounds(model);
+      model.traverse(o => {
+        const m = o.userData?.m01;
+        if (m?.logicalId && (m.kind || m.showAfterEvent)) {
+          parts.push({ id: m.logicalId, visible: o.visible, destroyedBy: m.destroyedBy, showAfterEvent: m.showAfterEvent });
+          if (m.supportIndex !== undefined && m.kind !== 'tower' && !m.showAfterEvent) supportPositions[m.logicalId] = o.getWorldPosition(new THREE.Vector3()).toArray();
+          if (m.kind === 'tower') towerBounds[m.logicalId] = visibleBounds(o);
+          if (m.kind === 'portal' && !m.showAfterEvent) portalBounds[m.logicalId] = visibleBounds(o);
+        }
+        if (o.isMesh) {
+          const normal = o.geometry.attributes.normal;
+          if (!normal) { invalidNormals++; return; }
+          for (let i = 0; i < normal.count; i++) {
+            const n = Math.hypot(normal.getX(i), normal.getY(i), normal.getZ(i));
+            if (!Number.isFinite(n) || Math.abs(n - 1) > 0.001) invalidNormals++;
+          }
+        }
+      });
+    }
+    for (const model of colliders) model.traverse(o => {
+      if (o.userData?.m01?.collider) colliderStates[o.userData.m01.logicalId ?? o.name] = o.userData.colliderEnabled;
+    });
+    return { lod: activeLod, consumedEventIds: [...activeEvents], parts, bounds, supportPositions, towerBounds, portalBounds, colliderStates, invalidNormals,
+      renderStats: { ...renderer.info.render } };
+  },
+};
+document.querySelector('#review-lod').value = String(activeLod);
+document.querySelector('#review-lod').addEventListener('change', async e => { await switchLod(+e.target.value); });
+document.querySelector('#review-state').value = activeEvents.length === 2 ? 'west' : activeEvents.length ? 'east' : 'intact';
+document.querySelector('#review-state').addEventListener('change', e => setEvents(e.target.value === 'west'
+  ? ['evt_m01_east_demolition', 'evt_m01_west_demolition'] : e.target.value === 'east' ? ['evt_m01_east_demolition'] : []));
 window.__done = true;

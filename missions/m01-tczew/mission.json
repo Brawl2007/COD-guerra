@@ -54,8 +54,8 @@
     "T27"
   ],
   "historicalCertainty": {
-    "summary": "Datas, horários principais, unidades e resultado: DOCUMENTED em fontes secundárias concordantes, pendentes de leitura integral de H01/H02/H30. Geografia fina: RECONSTRUCTED. Personagens e ações da secção: GAMEPLAY_DRAMATIZATION.",
-    "pendingChecks": ["P1", "P2", "P3", "P4", "P6", "P7", "P8", "P9", "P10", "P11", "P12", "P13", "P15", "P16"]
+    "summary": "H01-PDF, H02, H30 e T23 lidos. Demolição oeste conforme H01-PDF; outras decisões e divergências em SOURCE_CHECK.md. Geografia fina: RECONSTRUCTED. Personagens e ações da secção: GAMEPLAY_DRAMATIZATION. P8/P13 permanecem parciais.",
+    "pendingChecks": ["P3", "P4", "P6", "P7", "P8", "P9", "P10", "P11", "P12", "P13", "P15", "P16"]
   },
   "map": "map-layout.json",
   "equipmentTimeline": "../../research/equipment-timeline.json",
@@ -193,7 +193,7 @@
       "id": "hist_juchtman",
       "name": "Norbert Juchtman",
       "role": "oficial do pelotão de sapadores",
-      "appearsAs": "fora de cena, sem modelo nem falas; nome só no debrief após P1",
+      "appearsAs": "fora de cena, sem modelo nem falas; nome só no debrief verificado",
       "source": "T09"
     },
     {
@@ -258,10 +258,10 @@
       { "id": "seg_bombing", "from": "04:34:00", "to": "04:45:00", "scale": 3.5, "targetRealMin": 3.1 },
       { "id": "seg_repair", "from": "04:45:00", "to": "05:30:00", "scale": 9.0, "gate": "evt_m01_repair_complete", "targetRealMin": 5.0 },
       { "id": "seg_hold", "from": "05:30:00", "to": "06:10:00", "scale": 8.0, "gate": "evt_m01_east_demolition", "targetRealMin": 5.0 },
-      { "id": "seg_climax", "from": "06:10:00", "to": "06:40:00", "scale": 8.5, "gate": "evt_m01_west_demolition", "targetRealMin": 3.5 },
+      { "id": "seg_climax", "from": "06:10:00", "to": "06:45:00", "scale": 8.5, "gate": "evt_m01_west_demolition", "targetRealMin": 4.1 },
       {
         "id": "seg_aftermath",
-        "from": "06:40:00",
+        "from": "06:45:00",
         "to": "07:05:00",
         "scale": 1.0,
         "jump": { "after": "obj_m01_reach_shelter", "to": "07:05:00", "presentation": "fade com cartela 07:05" },
@@ -458,11 +458,11 @@
           { "type": "battleClock", "at": "04:33:10" }
         ]
       },
-      "results": ["som de motores a 80° (Elbing), aumentando por 40 s", "NPCs olham para leste; Nowicki fala dlg_m01_012/013"],
+      "results": ["som de motores distante a leste (Elbing), aumentando por 40 s; aproximação final pelo sul", "NPCs olham para leste; Nowicki fala dlg_m01_012/013"],
       "idempotent": true,
       "persist": true,
       "certainty": "RECONSTRUCTED",
-      "sources": ["T12", "C01"]
+      "sources": ["T12", "C01", "H01-PDF"]
     },
     {
       "id": "evt_m01_bombing_0434",
@@ -479,7 +479,7 @@
       "idempotent": true,
       "persist": true,
       "certainty": "DOCUMENTED",
-      "sources": ["H02", "T08", "T10", "T12"],
+      "sources": ["H02", "T08", "T10", "T12", "H01-PDF"],
       "cutscene": "cs_m01_bombing"
     },
     {
@@ -559,7 +559,7 @@
       "idempotent": true,
       "persist": true,
       "certainty": "DOCUMENTED",
-      "sources": ["T01", "T07", "T08"]
+      "sources": ["T01", "T07", "T08", "H01-PDF"]
     },
     {
       "id": "evt_m01_panzerzug_arrives",
@@ -569,8 +569,8 @@
       "idempotent": true,
       "persist": true,
       "certainty": "RECONSTRUCTED",
-      "sources": ["T01", "T07", "T14", "T20"],
-      "note": "Presença DOCUMENTED; hora e posição RECONSTRUCTED. Armamento em 1939 (T20): 2 × 7,5 cm e 2 × 2 cm antiaéreos. Uso de canhão contra a margem oeste em 1/9 não documentado: usar MG e 2 cm em rajadas esporádicas; 7,5 cm só contra a cabeça de ponte leste, e só se H01 confirmar."
+      "sources": ["T01", "T07", "T14", "T20", "H01-PDF"],
+      "note": "Presença DOCUMENTED; hora e posição RECONSTRUCTED. H01-PDF p. 133 relata fogo de artilharia contra ambos os acessos. Calibres e composição ainda dependem de P6/T20: esta versão usa só MGs, sem transformar 2 cm antiaéreos em fogo contra o jogador."
     },
     {
       "id": "evt_m01_repair_complete",
@@ -579,9 +579,9 @@
       "results": ["Krawiec fala dlg_m01_031; Pawlak parte para o posto de comando"],
       "idempotent": true,
       "persist": true,
-      "certainty": "DOCUMENTED",
-      "sources": ["T12"],
-      "note": "O reparo é documentado; o jogador protegê-lo é dramatização."
+      "certainty": "RECONSTRUCTED",
+      "sources": ["T12", "H01-PDF"],
+      "note": "Segue a versão de danos e reparo escolhida para o roteiro; a nota 67 de H01-PDF registra a divergência."
     },
     {
       "id": "evt_m01_order_demolish",
@@ -596,8 +596,26 @@
       "results": ["cs_m01_order", "ativar obj_m01_hold_access"],
       "idempotent": true,
       "persist": true,
+      "certainty": "RECONSTRUCTED",
+      "sources": ["T01", "T09", "H01-PDF"],
+      "note": "Hora da mensagem reconstruída de T01/T09; H01-PDF situa a decisão de demolição às ~06:00."
+    },
+    {
+      "id": "evt_m01_bombing_0530",
+      "sector": "s5_sky_east",
+      "trigger": { "type": "battleClock", "at": "05:30:00" },
+      "window": { "from": "05:30:00", "to": "05:34:00" },
+      "readiness": ["cada impacto e alternativa a pelo menos 30 m da posição actual do jogador"],
+      "results": [
+        "m01.second_raid_state = 'active'; bombardamento de altitude, sem mergulho de Stukas",
+        "sons e fumaça na direção da cidade; nenhum impacto roteirizado no reparo ou no jogador",
+        "às 05:34:00, m01.second_raid_state = 'ended'; terminar a passagem e permitir o checkpoint pendente"
+      ],
+      "idempotent": true,
+      "persist": true,
       "certainty": "DOCUMENTED",
-      "sources": ["T01", "T09"]
+      "sources": ["H01-PDF"],
+      "note": "H01-PDF pp. 133–134, nota 76: Do 17 Z. Número de aviões e posições dos impactos não são documentados; representação distante é reconstruída. Restaurar o timer e a janela, sem repetir o início."
     },
     {
       "id": "evt_m01_runner_pressure_report",
@@ -607,7 +625,7 @@
       "idempotent": true,
       "persist": true,
       "certainty": "RECONSTRUCTED",
-      "sources": ["T01", "T08"]
+      "sources": ["T01", "T08", "H01-PDF"]
     },
     {
       "id": "evt_m01_north_contact_distant",
@@ -632,7 +650,7 @@
       "idempotent": true,
       "persist": true,
       "certainty": "DOCUMENTED",
-      "sources": ["T01", "T08"]
+      "sources": ["T01", "T08", "H01-PDF"]
     },
     {
       "id": "evt_m01_bak_wounded",
@@ -685,7 +703,8 @@
       "idempotent": true,
       "persist": true,
       "certainty": "DOCUMENTED",
-      "sources": ["T01", "T04", "T07", "T09", "T25", "G01"]
+      "sources": ["T01", "T04", "T07", "T09", "T25", "G01", "H01-PDF"],
+      "note": "Hora e demolição leste documentadas em H01-PDF; pilar 6 e portal são reconstrução espacial ainda parcial (P13)."
     },
     {
       "id": "evt_m01_dudek_retrieves_bak",
@@ -707,7 +726,7 @@
       "id": "evt_m01_west_demolition",
       "sector": "s1_west_bridgehead",
       "phase": "AFTERMATH",
-      "trigger": { "type": "battleClock", "at": "06:40:00", "gate": true },
+      "trigger": { "type": "battleClock", "at": "06:45:00", "gate": true },
       "readiness": [
         "jogador fora de bz_west",
         "Zieliński, Krawiec, Kowal, Pawlak, Dudek e Bąk fora de bz_west ou em estado 'reached_safety'",
@@ -731,7 +750,7 @@
       "persist": true,
       "certainty": "DOCUMENTED",
       "sources": ["G01", "H01-PDF", "T01", "T04", "T07", "T09"],
-      "note": "06:40 é a hora provisória do roteiro. H01-PDF, p. 134, usa 06:45; resolver a divergência em P1 antes de VALIDAR."
+      "note": "06:45 adoptado de H01-PDF p. 134. 06:40 permanece como versão alternativa em SOURCE_CHECK.md. Identificação exacta dos pilares continua pendente de P13."
     },
     {
       "id": "evt_m01_kozliny_attack_distant",
@@ -783,7 +802,7 @@
         { "at": "06:00:00", "state": "withdrawal_cover" },
         { "at": "06:10:00", "state": "east_blown" },
         { "at": "06:12:00", "state": "evacuating_bridgehead" },
-        { "at": "06:40:00", "state": "west_blown", "activity": "poeira, silêncio, zumbido; ferroviários olham a ponte" }
+        { "at": "06:45:00", "state": "west_blown", "activity": "poeira, silêncio, zumbido; ferroviários olham a ponte" }
       ],
       "certainty": "RECONSTRUCTED"
     },
@@ -804,7 +823,7 @@
         { "at": "06:05:00", "state": "germans_on_spans" },
         { "at": "06:10:00", "state": "east_blown", "activity": "alemães recuam com feridos; alguns ficam no chão; nenhum reaparece" },
         { "at": "06:20:00", "state": "german_regroup", "activity": "fogo esporádico da margem leste; atiradores no dique" },
-        { "at": "06:40:00", "state": "smoke_and_sporadic_fire" }
+        { "at": "06:45:00", "state": "smoke_and_sporadic_fire" }
       ],
       "audioEmitters": [
         { "id": "ae_s2_mg_dike", "weapon": "mg34", "position": [1075, 1, 12] },
@@ -824,8 +843,10 @@
         { "at": "04:34:00", "state": "bombed", "activity": "incêndio num vagão, vidros quebrados, gritos" },
         { "at": "04:35:30", "state": "wounded_evacuation" },
         { "at": "04:50:00", "state": "aid_post", "activity": "posto de socorro improvisado na estação" },
+        { "at": "05:30:00", "state": "second_raid", "activity": "bombardeio distante na cidade; manter o socorro" },
+        { "at": "05:34:00", "state": "aid_post" },
         { "at": "05:40:00", "state": "carts_evacuating", "activity": "carroça e padiolas levando feridos para oeste" },
-        { "at": "06:40:00", "state": "dust_fall" }
+        { "at": "06:45:00", "state": "dust_fall" }
       ],
       "certainty": "RECONSTRUCTED"
     },
@@ -857,7 +878,9 @@
         { "at": "04:34:00", "state": "stukas_attack" },
         { "at": "04:36:00", "state": "stukas_depart" },
         { "at": "04:40:00", "state": "second_pass_distant" },
-        { "at": "04:45:00", "state": "train_smoke_east" }
+        { "at": "04:45:00", "state": "train_smoke_east" },
+        { "at": "05:30:00", "state": "high_altitude_raid", "event": "evt_m01_bombing_0530" },
+        { "at": "05:34:00", "state": "train_smoke_east" }
       ],
       "certainty": "RECONSTRUCTED"
     }
@@ -919,7 +942,10 @@
       "name": "Proteção dos engenheiros",
       "trigger": { "event": "evt_m01_order_demolish" },
       "player": { "position": [-30, -3, 24], "facing": [1, 0, 0] },
-      "clock": "05:30:00",
+      "clock": "05:34:00",
+      "clockNote": "hora nominal; guardar a hora real após terminar o segundo bombardeio",
+      "savePolicy": "deferUntilSafe",
+      "neverSaveIf": "m01.second_raid_state = 'active'; manter o pedido de CP-C pendente até a janela terminar",
       "restore": {
         "eventsConsumed": [
           "evt_m01_intro_card",
@@ -935,7 +961,8 @@
           "evt_m01_train963_arrives",
           "evt_m01_panzerzug_arrives",
           "evt_m01_repair_complete",
-          "evt_m01_order_demolish"
+          "evt_m01_order_demolish",
+          "evt_m01_bombing_0530"
         ],
         "objectives": {
           "done": [
@@ -964,7 +991,7 @@
           "s4_north_perimeter": "sporadic_fire",
           "s5_sky_east": "train_smoke_east"
         },
-        "flags": ["m01.forward_post_state"]
+        "flags": ["m01.forward_post_state", "m01.second_raid_state"]
       }
     },
     {
@@ -996,6 +1023,7 @@
           "evt_m01_panzerzug_arrives",
           "evt_m01_repair_complete",
           "evt_m01_order_demolish",
+          "evt_m01_bombing_0530",
           "evt_m01_runner_pressure_report",
           "evt_m01_north_contact_distant",
           "evt_m01_east_platoon_withdraws",
@@ -1034,7 +1062,7 @@
           "s4_north_perimeter": "contact",
           "s5_sky_east": "train_smoke_east"
         },
-        "flags": ["m01.forward_post_state", "m01.bak_status", "m01.dudek_status", "m01.east_platoon_survivors"]
+        "flags": ["m01.forward_post_state", "m01.bak_status", "m01.dudek_status", "m01.east_platoon_survivors", "m01.second_raid_state"]
       },
       "neverSaveIf": "jogador dentro de bz_west depois das 06:36 ou carregando Bąk",
       "clockNote": "relógio no momento do salvamento (≥ 06:10)"
@@ -1120,7 +1148,7 @@
         { "t": -6.0, "line": "dlg_m01_051" },
         { "t": -1.0, "action": "Zieliński abaixa a cabeça de Jan com a mão (se o jogador estiver a até 3 m)" },
         { "t": 0.0, "action": "detonação a ~210 m: clarão, som quase imediato (0,6 s), onda de pressão, poeira" },
-        { "t": 1.5, "action": "portal oeste e primeiros vãos caem no Vístula; torres do 1.º pilar ficam de pé ou caem conforme P1/P11" },
+        { "t": 1.5, "action": "portal oeste e primeiros vãos caem no Vístula; torres do 1.º pilar ficam de pé ou caem conforme P13/P11" },
         { "t": 5.0, "action": "chuva de terra e pedaços de madeira no abrigo do posto de disparo" },
         { "t": 8.0, "action": "silêncio, zumbido (opção reduzível), só vento e água" },
         { "t": 11.0, "line": "dlg_m01_052" },
@@ -1296,7 +1324,8 @@
       "context": "cs_m01_order, 05:30",
       "priority": 1,
       "certainty": "DOCUMENTED",
-      "sources": ["T01", "T09"]
+      "sources": ["T01", "T09", "H01-PDF"],
+      "note": "Hora da mensagem reconstruída de T01/T09; H01-PDF situa a decisão de demolição às ~06:00."
     },
     {
       "id": "dlg_m01_034",
@@ -1457,7 +1486,8 @@
     "m01.nowicki_status": "sempre 'missing' (perda roteirizada e inevitável; mostrada claramente na chamada)",
     "m01.bak_status": "'rescued_by_player' | 'rescued_by_dudek' | 'unhurt'",
     "m01.dudek_status": "'unhurt' | 'wounded_arm'",
-    "m01.east_platoon_survivors": "inteiro 12–18",
+    "m01.east_platoon_survivors": "inteiro 12–18 — GAMEPLAY_DRAMATIZATION, não é o efetivo histórico nem uma relação de baixas (P8)",
+    "m01.second_raid_state": "'pending' | 'active' | 'ended' (só dentro da missão; salvar com os timers)",
     "m01.forward_post_state": "'destroyed' | 'intact_near_miss' (só dentro da missão)",
     "note": "Nenhum destes personagens aparece em M02/M03 (outro protagonista e outro exército). Flags ficam no save da campanha para o arquivo de personagens e eventual referência; Jan não é transportado para outra frente (Prompt §73)."
   },
@@ -1466,46 +1496,46 @@
     "paragraphs": [
       {
         "id": "db_01",
-        "enabled": false,
-        "requires": ["P1"],
-        "text": "Às 04:34, bombardeiros de mergulho alemães atacaram a estação e a cabeça de ponte oeste para cortar a linha que permitiria destruir as pontes sobre o Vístula. Os sapadores poloneses repararam a linha."
+        "enabled": true,
+        "sources": ["H01-PDF", "H02"],
+        "text": "Às 04:34, bombardeiros alemães atacaram Tczew. O dano nos cabos e o reparo representados nesta missão seguem uma versão histórica disputada."
       },
       {
         "id": "db_02",
-        "enabled": false,
-        "requires": ["P1"],
+        "enabled": true,
+        "sources": ["H01-PDF"],
         "text": "Por volta das 04:45, um trem de carga com sapadores alemães escondidos chegou à cabeça de ponte de Lisewo, apoiado por um trem blindado. Encontrou os portões fechados e defensores em posição."
       },
       {
         "id": "db_03",
-        "enabled": false,
-        "requires": ["P1"],
-        "text": "Por ordem do comando, as duas pontes foram demolidas às 06:10 e às 06:40. O plano de tomá-las intactas fracassou."
+        "enabled": true,
+        "sources": ["H01-PDF"],
+        "text": "O roteiro adopta demolições às 06:10 e 06:45, conforme H01-PDF; outras fontes dão 06:40 para a segunda. O plano alemão de tomar as pontes intactas fracassou."
       },
       {
         "id": "db_04",
-        "enabled": false,
-        "requires": ["P1"],
-        "text": "A guarnição repeliu ataques durante o dia e, por ordem superior, deixou Tczew entre 18:00 e 20:00, rumo a Starogard. A campanha continuou. Uma ponte destruída atrasou o inimigo; não mudou o rumo da guerra."
+        "enabled": true,
+        "sources": ["H01-PDF"],
+        "text": "A guarnição continuou a combater e retirou-se de Tczew até às 20:00. A campanha continuou. Destruir as pontes atrasou o inimigo; não mudou o rumo da guerra."
       },
       {
         "id": "db_05",
-        "enabled": false,
-        "requires": ["P1"],
-        "text": "O 2.º Batalhão de Fuzileiros era comandado por Stanisław Janik. A demolição foi conduzida pelo pelotão de sapadores do subtenente Norbert Juchtman, morto em 22 de setembro de 1939 perto de Łomianki."
+        "enabled": true,
+        "sources": ["H01-PDF"],
+        "text": "Stanisław Janik comandava o 2.º Batalhão de Fuzileiros. Os sapadores eram comandados pelo subtenente Norbert Juchtman."
       },
       {
         "id": "db_05b",
-        "enabled": false,
-        "requires": ["P8"],
+        "enabled": true,
+        "sources": ["H01-PDF"],
         "text": "O pelotão da cabeça de ponte leste, que recuou pela ponte antes da primeira explosão, era comandado por Walenty Faterkowski."
       },
       {
         "id": "db_06",
-        "enabled": false,
-        "requires": ["P10"],
-        "text": "Na mesma madrugada, em Szymankowo, 21 poloneses — ferroviários, aduaneiros e familiares — que haviam desviado o trem e avisado Tczew foram mortos por gendarmes e membros da SA da Cidade Livre.",
-        "note": "Números e autores segundo IPN Gdańsk e imprensa (T23, resumo). Habilitar só após leitura integral da página do IPN (P10)."
+        "enabled": true,
+        "sources": ["T23"],
+        "text": "Em Szymankowo, ferroviários e aduaneiros poloneses avisaram Tczew e atrasaram o plano alemão. Em represália, combatentes alemães assassinaram 21 poloneses, sobretudo ferroviários e aduaneiros.",
+        "note": "Texto limitado ao que consta na página do IPN lida. Atribuição a SA/gendarmes, horário exacto e divisão das vítimas continuam pendentes em P10."
       },
       { "id": "db_07", "enabled": true, "text": "Jan Wrona, Marek Zieliński, Paweł Krawiec e os demais membros da secção são personagens fictícios." }
     ]

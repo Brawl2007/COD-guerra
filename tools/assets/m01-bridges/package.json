@@ -6,7 +6,8 @@
   "description": "Gera os modelos provisórios (.glb) das pontes de Tczew de M01 a partir de missions/m01-tczew/map-layout.json.",
   "scripts": {
     "build": "node build.mjs",
-    "render": "node render/render.mjs"
+    "render": "node render/render.mjs",
+    "verify": "node render/render.mjs --verify"
   },
   "engines": { "node": ">=22.12.0" },
   "dependencies": {

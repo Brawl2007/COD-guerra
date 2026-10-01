@@ -47,7 +47,7 @@ Nenhum interior é apresentado como reconstrução exata de edifício histórico
 | `s3_station_yard` | próxima/média | 250–470 m | Estação de 1939 bombardeada, incêndio no pátio, ferido arrastado, posto de socorro, carroças | Acontece com ou sem olhar do jogador |
 | `s2_east_bridgehead` | média/longa | 780–1250 m | Portal de 1912 e dique (~1,05 km), trem 963, Panzerzug 7, pelotão leste, clarões de MG, avanço alemão pelos vãos de 1912 até x = 690, explosão no pilar 6 (~800 m) | Relógio de batalha; estado persistido |
 | `s4_north_perimeter` | longa | 800–1500 m | Clarões e som de combate a norte; ataque das ~07:00 | Relógio de batalha |
-| `s5_sky_east` | longa | 0,8–40 km | Stukas vindos de ENE, fumaça de locomotivas | Relógio de batalha |
+| `s5_sky_east` | longa | 0,8–40 km | Stukas de Elbing, aproximação final pelo sul; fumaça de locomotivas | Relógio de batalha |
 
 Regras (Prompt §71):
 
@@ -66,8 +66,8 @@ Regras (Prompt §71):
 | 5 | Posições sobre o aterro, sandbags e portal | ±60 m | 04:55–05:30 | `obj_m01_cover_repair` |
 | 6 | Rotação de cobertura: `cv_sandbag_mid_2` → portal → treliças → torre do 1.º pilar (138, 34) | até 140 m | 05:30–06:00 | `obj_m01_hold_access` |
 | 7 | Tabuleiro da ponte rodoviária (x 20–160) | — | 06:00–06:10 | `obj_m01_cover_withdrawal`; opcional `obj_m01_rescue_bak`: carregar Bąk 63 m até `aid_position` |
-| 8 | Tabuleiro → `firing_point` (−290, 22), no terreno da estação | 310–450 m | 06:10–06:40 | `obj_m01_leave_bridge`, `obj_m01_hold_corridor` |
-| 9 | `firing_point` → `shelter` (−260, 70) | 57 m | 06:40–06:45 | `obj_m01_reach_shelter` |
+| 8 | Tabuleiro → `firing_point` (−290, 22), no terreno da estação | 310–450 m | 06:10–06:45 | `obj_m01_leave_bridge`, `obj_m01_hold_corridor` |
+| 9 | `firing_point` → `shelter` (−260, 70) | 57 m | 06:45–07:05 | `obj_m01_reach_shelter` |
 
 **Alternativas de rota (Prompt §22):**
 - Trincheira de ligação ou faixa aberta entre os acessos (atravessada pelo aterro da linha para Bydgoszcz, que também serve de cobertura).
@@ -91,17 +91,17 @@ Regras (Prompt §71):
 - **Nós dinâmicos:**
   - `cv_forward_post` pode ser destruído às 04:34.
   - `cv_crater_1` surge após o bombardeio.
-  - As seteiras das casamatas desaparecem às 06:40.
+  - As seteiras das casamatas desaparecem às 06:45.
 - **Reserva:** `cv_casemate_emb_s` fica reservado à guarnição da ckm wz.30.
 
 ## 7. Luz (cálculo C01)
 
 | Hora | Sol | Leitura |
 | --- | --- | --- |
-| 04:30–04:34 | −3,7° a −3,2°, azimute ~70° | Crepúsculo civil. Faixa clara a ENE; margem oeste escura. Stukas chegam **do lado claro**. |
+| 04:30–04:34 | −3,7° a −3,2°, azimute ~70° | Crepúsculo civil. Faixa clara a ENE; margem oeste escura. A aproximação final dos Stukas vem do sul. |
 | 04:51 | nascer, ~74° | — |
 | 05:30–06:10 | +4,8° a +10,6°, 82° a 90° | Sol baixo **exatamente atrás do inimigo**: contraluz e ofuscamento para quem olha a leste. Sombras das torres e treliças servem de abrigo visual (dlg_m01_036). |
-| 06:40–07:05 | +15° a +18,6° | Luz de manhã clara; poeira em suspensão depois da demolição. |
+| 06:45–07:05 | ~15° a ~19° | Luz de manhã clara; poeira em suspensão depois da demolição. |
 
 Não esconder gráfico ruim com escuridão (Prompt §26). A abertura precisa ser legível com tone mapping e névoa leve.
 

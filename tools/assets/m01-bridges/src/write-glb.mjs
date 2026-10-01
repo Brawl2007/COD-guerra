@@ -15,7 +15,7 @@ export const MATERIALS = {
   collider: { color: [1, 0, 1], alpha: 0.25, metallic: 0, roughness: 1, note: 'Só para depuração: a engine deve ocultar colisores' },
 };
 
-export async function writeGlb(path, { rootName, rootExtras, groups }) {
+export async function writeGlb(path, { rootName, rootExtras, rootTranslation = [0, 0, 0], groups }) {
   const doc = new Document();
   const buffer = doc.createBuffer();
   const mats = new Map();
@@ -51,11 +51,12 @@ export async function writeGlb(path, { rootName, rootExtras, groups }) {
     }
     stats.uniqueTriangles += tris;
     meshes.set(name, { mesh, tris });
+    meshes.get(name).drawCalls = mesh.listPrimitives().length;
     return meshes.get(name);
   };
-  const root = doc.createNode(rootName).setExtras(rootExtras);
+  const root = doc.createNode(rootName).setExtras(rootExtras).setTranslation(rootTranslation);
   for (const [groupName, list, groupExtras] of groups) {
-    const g = doc.createNode(groupName).setExtras(groupExtras ?? {});
+    const g = doc.createNode(`${rootName}_${groupName}`).setExtras(groupExtras ?? {});
     root.addChild(g);
     for (const n of list) {
       const node = doc.createNode(n.name).setExtras({ m01: n.extras ?? {} });
@@ -66,11 +67,13 @@ export async function writeGlb(path, { rootName, rootExtras, groups }) {
       else if (n.meshFrom) tris = meshes.get(n.meshFrom).tris;
       if (n.part || n.meshFrom) node.setMesh((meshes.get(n.part ? n.name : n.meshFrom)).mesh);
       stats.sceneTriangles += tris;
-      stats.nodes.push({ name: n.name, group: groupName, triangles: tris, extras: n.extras ?? {} });
+      stats.nodes.push({ name: n.name, group: groupName, triangles: tris,
+        drawCalls: n.part || n.meshFrom ? meshes.get(n.part ? n.name : n.meshFrom).drawCalls : 0,
+        pivot: n.translation ?? [0, 0, 0], extras: n.extras ?? {} });
       g.addChild(node);
     }
   }
-  doc.createScene(rootName).addChild(root);
+  doc.createScene(`${rootName}_scene`).addChild(root);
   doc.getRoot().getAsset().generator = 'COD-guerra tools/assets/m01-bridges (gltf-transform)';
   doc.getRoot().setExtras({ units: 'meters', axes: 'X leste, Y altura, Z sul (frente −Z, three.js)' });
   await new NodeIO().write(path, doc);

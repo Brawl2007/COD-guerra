@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "missionId": "m01_tczew",
-  "status": "LISTA DE NECESSIDADES — nenhum asset baixado ou verificado nesta sessão (Sketchfab bloqueado por desafio anti-bot; licenças tiradas de resumos de busca)",
+  "status": "LISTA DE NECESSIDADES — pontes e portal originais provisórios importados e verificados no navegador; candidatos de terceiros continuam sem verificação directa",
   "scaleConvention": {
     "unit": "1 unidade = 1 metro",
     "up": "+Y",
@@ -20,13 +20,13 @@
       "id": "bridge_rail_1891_1912", "name": "Ponte ferroviária de Tczew (1891 + extensão de 1912)", "category": "environment_landmark", "priority": "P0",
       "realDimensions": { "lengthM": [1030, 1037], "spansM": "6 × 129 (lenticulares) + 3 × 81,6", "supportsXm": "ver map-layout.json → rail_bridge.supportsX", "tracks": 2, "sources": ["T05", "T25", "G01"] },
       "strategy": "ORIGINAL",
-      "build": "Kit modular instanciável: vão lenticular de 129 m, vão de extensão de 81,6 m, pilar, portal oeste, portal comum de 1912. Estados de dano: pilar 6 (06:10) e encontro oeste + pilar 1 (06:40), com vãos caídos.",
+      "build": "Kit modular instanciável: vão lenticular de 129 m, vão de extensão de 81,6 m, pilar, portal oeste, portal comum de 1912. Estados de dano: pilar 6 (06:10) e encontro oeste + pilar 1 (06:45), com vãos caídos.",
       "budget": { "lod0TrisPerSpan": 25000, "lods": 3, "instancing": true },
       "candidates": [
         { "source": "Sketchfab", "title": "Railway Bridges Pack 01", "author": "Szakal (@Grabka)", "url": "https://sketchfab.com/3d-models/railway-bridges-pack-01-877cdcd7b6f14b72aaa88fa893b812c9", "licenseStated": "CC-BY (resumo de busca)", "licenseVerified": false, "scaleVerified": false, "use": "só bloqueio/placeholder — tipo de treliça diferente" }
       ],
       "status": "A PRODUZIR", "targetPath": "assets/models/production/m01/bridge_rail_*.glb",
-      "provisional": { "path": "assets/models/provisional/m01/bridge_rail_1891_1912.glb", "lod1": "assets/models/provisional/m01/bridge_rail_1891_1912.lod1.glb", "colliders": "assets/models/provisional/m01/bridge_rail_1891_1912.colliders.glb", "manifest": "assets/models/provisional/m01/bridges.manifest.json", "report": "docs/assets/m01-bridges/README.md", "license": "ORIGINAL", "status": "PROVISÓRIO — bloqueio, não comparado com fotografias" }
+      "provisional": {"path": "assets/models/provisional/m01/bridge_rail_1891_1912.glb", "lod1": "assets/models/provisional/m01/bridge_rail_1891_1912.lod1.glb", "colliders": "assets/models/provisional/m01/bridge_rail_1891_1912.colliders.glb", "manifest": "assets/models/provisional/m01/bridges.manifest.json", "report": "missions/m01-tczew/BRIDGE_ASSET_REPORT.md", "license": "ORIGINAL", "status": "PROVISÓRIO VERIFICADO — 3 LODs e destruição por IDs; escala do mapa, aceitação histórica final pendente", "lod2": "assets/models/provisional/m01/bridge_rail_1891_1912.lod2.glb", "review": "docs/assets/m01-bridges/review-results.json", "stateAdapter": "tools/assets/m01-bridges/src/state.mjs", "placementAppliedToRoot": true}
     },
     {
       "id": "bridge_road_lentze_1857", "name": "Ponte rodoviária Lentze (1857 + extensão de 1912), torres e portais de Stüler", "category": "environment_landmark", "priority": "P0",
@@ -37,7 +37,7 @@
       "candidates": [],
       "referenceOnly": ["Fotografias da Skarbnica Tczewska (T18) — referência visual, não textura"],
       "status": "A PRODUZIR", "targetPath": "assets/models/production/m01/bridge_road_*.glb",
-      "provisional": { "path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb", "lod1": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod1.glb", "colliders": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.colliders.glb", "manifest": "assets/models/provisional/m01/bridges.manifest.json", "report": "docs/assets/m01-bridges/README.md", "license": "ORIGINAL", "status": "PROVISÓRIO — bloqueio, não comparado com fotografias" }
+      "provisional": {"path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb", "lod1": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod1.glb", "colliders": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.colliders.glb", "manifest": "assets/models/provisional/m01/bridges.manifest.json", "report": "missions/m01-tczew/BRIDGE_ASSET_REPORT.md", "license": "ORIGINAL", "status": "PROVISÓRIO VERIFICADO — 3 LODs e destruição por IDs; escala do mapa, aceitação histórica final pendente", "lod2": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod2.glb", "review": "docs/assets/m01-bridges/review-results.json", "stateAdapter": "tools/assets/m01-bridges/src/state.mjs", "placementAppliedToRoot": true}
     },
     {
       "id": "station_stary_dworzec", "name": "Estação de Tczew de 1939 (Stüler, 1856–57)", "category": "environment_building", "priority": "P1",
@@ -82,7 +82,7 @@
     {
       "id": "panzerzug_7", "name": "Panzerzug 7", "category": "vehicle_rail", "priority": "P1",
       "realDimensions": { "armament": "2 × 7,5 cm + 2 × 2 cm antiaéreos (T20)", "note": "Composição dos vagões pendente (P6)", "sources": ["T20", "T14"] },
-      "strategy": "ORIGINAL", "build": "Silhueta para ~1,1 km: locomotiva blindada, vagões de canhão e vagão antiaéreo. Clarões das MGs e dos 2 cm.",
+      "strategy": "ORIGINAL", "build": "Silhueta para ~1,1 km: locomotiva blindada, vagões de canhão e vagão antiaéreo. Clarões das MGs. Canhões e 2 cm ficam sem disparo nesta versão; P6 ainda parcial.",
       "budget": { "lod0Tris": 18000, "lods": 2 }, "candidates": [], "status": "A PRODUZIR (depois de P6)", "targetPath": "assets/models/production/m01/panzerzug7.glb"
     },
     {

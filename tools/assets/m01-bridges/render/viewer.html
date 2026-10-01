@@ -12,6 +12,8 @@
   #caption { position: absolute; left: 14px; top: 12px; background: rgba(20,24,28,.82); color: #fff; padding: 10px 14px; border-radius: 6px; max-width: 760px; font-size: 14px; line-height: 1.35; }
   #caption b { font-size: 16px; }
   #caption .st { color: #ffd27a; font-weight: 600; }
+  #controls { position:absolute; right:14px; bottom:14px; background:#20282c; color:white; padding:10px; border-radius:5px; }
+  #controls label { margin-right:12px; }
 </style>
 <script type="importmap">
 { "imports": {
@@ -23,6 +25,10 @@
 <body>
 <div id="labels"></div>
 <div id="caption"></div>
+<div id="controls">
+  <label>Detalhe <select id="review-lod"><option value="0">LOD0</option><option value="1">LOD1</option><option value="2">LOD2</option></select></label>
+  <label>Estado <select id="review-state"><option value="intact">Intacto</option><option value="east">Após 06:10</option><option value="west">Após 06:45</option></select></label>
+</div>
 <script type="module" src="./viewer.mjs"></script>
 </body>
 </html>

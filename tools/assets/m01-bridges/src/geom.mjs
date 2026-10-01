@@ -13,6 +13,7 @@ export class Part {
     return this;
   }
   merge(other) { for (const [m, list] of other.byMaterial) for (const g of list) this.add(m, g); return this; }
+  translate(x, y, z) { for (const list of this.byMaterial.values()) for (const g of list) g.translate(x, y, z); return this; }
   /** Devolve [{ material, geometry }] com geometria fundida e reindexada. */
   build() {
     const out = [];
