@@ -38,13 +38,13 @@ Dados executáveis: [`mission.json`](mission.json) (IDs estáveis de objetivos, 
 | 2. Intro | `cs_m01_intro`: cartela, café, mapa | 04:30 |
 | 3. Aproximação | Levar a mensagem ao posto da ponte; ferroviário na via | 04:30–04:33 |
 | 4. Diálogo | Nowicki e a caneca; "Não é trem." | 04:33 |
-| 5. Primeiro contato | Stukas vindos do céu claro; bombardeio | 04:34 |
+| 5. Primeiro contato | Stukas em aproximação pelo sul; bombardeio | 04:34 |
 | 6. Escalada | Reorganização; linha cortada; trem na margem leste | 04:36–04:52 |
-| 7. Combate principal | Proteger o reparo; fogo a 700–850 m; rotação de cobertura | 04:52–06:00 |
+| 7. Combate principal | Proteger o reparo; fogo a ~1–1,2 km; rotação de cobertura | 04:52–06:00 |
 | 8. Set-piece | Retirada do pelotão leste pelo tabuleiro; ferimento de Bąk; explosão leste | 06:00–06:10 |
 | 9. Pausa | Silêncio de 2 s após a explosão; contagem dos homens | 06:10–06:15 |
-| 10. Clímax | Sair da ponte; manter o corredor; demolição oeste | 06:15–06:40 |
-| 11. Consequência | Poeira, ferroviário olhando a ponte, abrigo, chamada | 06:40–07:05 |
+| 10. Clímax | Sair da ponte; manter o corredor; demolição oeste | 06:15–06:45 |
+| 11. Consequência | Poeira, ferroviário olhando a ponte, abrigo, chamada | 06:45–07:05 |
 | 12. Debrief | Texto histórico sóbrio; atraso imposto e retirada à noite | — |
 
 Nunca: spawn → matar → objetivo → fim.
@@ -129,7 +129,7 @@ Entregar a mensagem aciona `evt_m01_planes_heard`. O relógio salta para 04:33:1
 
 `evt_m01_bombing_0434` · `cs_m01_bombing`. Jogável, não pula e dura no máximo 14 s.
 
-Três Ju 87 descem do céu claro, um atrás do outro, com a sirene de mergulho. A pesquisa registra divergência sobre o número de aviões, então a tela não mostra número.
+Três Ju 87 aproximam-se pelo sul e descem, um atrás do outro, com a sirene de mergulho. A pesquisa registra divergência sobre o número de aviões, então a tela não mostra número.
 
 - **t 0,6** — **ZIELIŃSKI:** Para o chão! Todo mundo no chão! (014)
 - **t 2,1** — Primeira bomba (`evt_m01_forward_post_bombed`). Se Jan já saiu do posto, ela o destrói; se não, cai no rio 40 m a norte e levanta uma coluna de água e lama. **Nenhuma bomba cai a menos de 30 m do jogador.** Onda de choque e zumbido (configurável).
@@ -177,14 +177,14 @@ Krawiec recolhe do chão a **caneca amassada**, sem comentário. Um jogador aten
 
 ### Cena 5 — O trem de Lisewo (04:45–05:30) · COMBATE PRINCIPAL
 
-`evt_m01_train963_arrives` (04:45). Da margem oeste, a 850 m, vê-se a fumaça de uma locomotiva parada diante dos portões fechados. Pioneiros alemães descem dos vagões e o pelotão leste abre fogo.
+`evt_m01_train963_arrives` (04:45). Da margem oeste, a ~1,05 km, vê-se a fumaça de uma locomotiva parada diante dos portões fechados do portal de 1912 (as pontes tinham sido prolongadas em 1910–1912, T25). Pioneiros alemães descem dos vagões e o pelotão leste abre fogo.
 
 | ID | Fala |
 | --- | --- |
 | 025 | **PAWLAK** (chega correndo): Trem na cabeça de ponte leste! Os portões estão fechados — estão atirando! |
 | 026 | **ZIELIŃSKI:** Kowal, rajadas curtas nos clarões do dique. Ninguém desperdiça. |
-| 027 | **KOWAL:** Clarões junto aos vagões. Setecentos, oitocentos metros. |
-| 028 | **ZIELIŃSKI:** Wrona, alça em oitocentos. Mire nos clarões, não na fumaça. |
+| 027 | **KOWAL:** Clarões junto aos vagões. Mil metros, talvez mais. |
+| 028 | **ZIELIŃSKI:** Wrona, alça em mil. Mire nos clarões, não na fumaça. |
 
 É aqui que o jogo ensina **mira, tiro, ferrolho e recarga por clipe** com propósito.
 
@@ -213,7 +213,9 @@ O relógio segura em 05:29:30 até o reparo terminar. Os setores continuam com c
 | 033 | **PAWLAK:** Ordem do comandante do batalhão: destruir as pontes. O pelotão do outro lado recua primeiro. |
 | 034 | **ZIELIŃSKI:** Ouviram. Quando os sapadores disserem, ninguém fica na ponte. |
 
-→ **CP-C (Proteção dos engenheiros)**.
+→ **CP-C (Proteção dos engenheiros)**, pedido após a ordem e salvo quando o segundo bombardeio terminar.
+
+`evt_m01_bombing_0530`: janela histórica 05:30–05:34, independente do jogador. Bombardeio de altitude (Do 17 Z, H01-PDF nota 76), representado por som e fumaça distantes na cidade. Não repetir os mergulhos de Stukas. Cada impacto ou alternativa respeita 30 m da posição actual de Jan. O pedido de checkpoint fica pendente durante a janela; o snapshot guarda estado e timers reais.
 
 O comandante histórico não aparece. A ordem chega pelo mensageiro, como chegaria.
 
@@ -259,14 +261,14 @@ O comandante histórico não aparece. A ordem chega pelo mensageiro, como chegar
 - **−4 s:** apito de sinal dos sapadores, três toques curtos.
 - **−2 s:** **ZIELIŃSKI:** Cabeças baixas! Lá do outro lado! (044)
 - **0 s:** clarão e coluna de poeira na extremidade leste. Os vãos cedem. **Ainda sem som.**
-- **2,4 s:** o estrondo chega (C02) e o tabuleiro vibra sob os pés.
+- **~2 s** (distância real ÷ 343 m/s, calculada em tempo de execução; ~1,9–2,3 s do tabuleiro): o estrondo chega (C02) e o tabuleiro vibra sob os pés.
 - **4 s:** detritos caem no rio e a fumaça cobre o trem 963.
 - **6,5 s:** dois segundos de silêncio. A mixagem baixa tudo menos o vento.
 - **KOWAL:** …Lá se foi o outro lado. (045)
 
 Consequência na margem leste: alemães recuam carregando feridos; alguns ficam no chão; **nenhum reaparece** (Prompt §71). Sem close e sem humilhação do inimigo.
 
-### Cena 9 — O corredor (06:10–06:40) · CLÍMAX
+### Cena 9 — O corredor (06:10–06:45) · CLÍMAX
 
 | ID | Fala |
 | --- | --- |
@@ -293,7 +295,7 @@ Avisos antes da demolição oeste:
 | 06:36 | 050 | **KRAWIEC:** Última chamada! Quem estiver no encontro, sai agora! |
 | 06:38:30 | 051 | **ZIELIŃSKI:** Boca aberta, cabeça baixa. |
 
-**06:40 — Demolição oeste** (`evt_m01_west_demolition`, `cs_m01_west_blast`).
+**06:45 — Demolição oeste** (`evt_m01_west_demolition`, `cs_m01_west_blast`).
 - **Prontidão:** jogador e atores obrigatórios fora de `bz_west`; guarnição da metralhadora fora da casamata.
 - **Tolerância:** se Jan insistir em ficar, Zieliński vai buscá-lo e o puxa. **A demolição polonesa nunca mata o jogador.**
 - Detonação a ~210 m: som quase imediato e onda de pressão. O portal oeste e os primeiros vãos caem no Vístula.
@@ -362,15 +364,7 @@ Fade para o debrief.
 
 ## 4. Debrief
 
-Texto em `mission.json → debrief`. Parágrafos com `enabled: false` esperam confirmação de fonte:
-- `db_05`: nomes de Janik e Juchtman, depende de P1.
-- `db_06`: Szymankowo, depende de P10.
-
-> Às 04:34, bombardeiros de mergulho alemães atacaram a estação e a cabeça de ponte oeste para cortar a linha que permitiria destruir as pontes sobre o Vístula. Os sapadores poloneses repararam a linha.
-> Por volta das 04:45, um trem de carga com sapadores alemães escondidos chegou à cabeça de ponte de Lisewo, apoiado por um trem blindado. Encontrou os portões fechados e defensores em posição.
-> Por ordem do comando, as duas pontes foram demolidas às 06:10 e às 06:40. O plano de tomá-las intactas fracassou.
-> A guarnição repeliu ataques durante o dia e, por ordem superior, deixou Tczew entre 18:00 e 20:00, rumo a Starogard. A campanha continuou. Uma ponte destruída atrasou o inimigo; não mudou o rumo da guerra.
-> Jan Wrona, Marek Zieliński, Paweł Krawiec e os demais membros da secção são personagens fictícios.
+Texto canónico em `mission.json → debrief`. A revisão do PR #10 habilitou `db_01`–`db_06` com fontes lidas e limitou cada texto às afirmações verificadas. `db_05b` confirma apenas a identidade do comandante; P8 continua aberto para efetivos e baixas. P10 continua parcial para detalhes que não entram em `db_06`.
 
 Sem vitória estratégica inventada (Prompt §79). Não afirmar "o primeiro ataque da Segunda Guerra"; a formulação segura é "minutos antes de Westerplatte".
 
@@ -380,7 +374,7 @@ Sem vitória estratégica inventada (Prompt §79). Não afirmar "o primeiro ataq
 | --- | --- | --- |
 | Próxima (0–150 m) | Secção, sapadores, guarnição da ckm na casamata, ferroviários, feridos arrastados, pelotão leste chegando | S1 |
 | Próxima/média (250–460 m) | Pátio da estação: incêndio, posto de socorro improvisado, carroças levando feridos para oeste às 05:40 | S3 |
-| Média/longa (700–1000 m) | Cabeça de ponte leste: trem 963, Panzerzug 7, MGs, pelotão leste, avanço alemão, demolição e recuo alemão com feridos | S2 |
+| Média/longa (780–1250 m) | Cabeça de ponte leste: trem 963, Panzerzug 7, MGs, pelotão leste, avanço alemão, demolição e recuo alemão com feridos | S2 |
 | Longa (0,8–1,5 km) | Perímetro norte: combate a partir de 05:50; ataque das 07:00 com canhão AT | S4 |
 | Muito longa | Céu a leste: Stukas de Elbing; fumaça de locomotivas na linha de Szymankowo | S5 |
 
@@ -388,7 +382,7 @@ Todos os setores seguem o relógio de batalha e mantêm estado ao virar a câmer
 
 ## 6. Momento memorável (Prompt §55)
 
-**A ponte explode longe e o som demora.** No tabuleiro de ferro, com o sol baixo nos olhos, Jan vê os seus correndo em sua direção. Depois vê o clarão a 800 m e só então ouve o estrondo, com o chão tremendo sob os pés. Em seguida vem o silêncio.
+**A ponte explode longe e o som demora.** No tabuleiro de ferro, com o sol baixo nos olhos, Jan vê os seus correndo em sua direção. Depois vê o clarão no antigo encontro leste, a ~700 m, e só então ouve o estrondo, com o chão tremendo sob os pés. Em seguida vem o silêncio.
 
 Combina cenário (as pontes reais de Tczew, as torres e o sol nascente), som (atraso físico), personagens (Bąk ferido, o pelotão chegando) e gameplay (suprimir quem os persegue).
 
@@ -400,7 +394,7 @@ O segundo momento é a chamada: a caneca amassada nas mãos de Krawiec e um nome
 | --- | --- | --- | --- | --- |
 | CP-A | `cp_m01_a_orientacao` | Fim da intro | (−66, −3, 22) | Tudo inicial; Nowicki no posto |
 | CP-B | `cp_m01_b_reorganizacao` | Chegada ao ponto de reunião | (−148, −3, 30) | Bombardeio consumido; Nowicki `missing`; crateras; posto conforme `m01.forward_post_state`; incêndio no pátio; ferido de S3 no posto de socorro |
-| CP-C | `cp_m01_c_engenheiros` | Ordem das 05:30 | (−30, −3, 24) | Linha reparada; caneca com Krawiec; trem 963 e Panzerzug 7 parados; baixas de S2 por ID |
+| CP-C | `cp_m01_c_engenheiros` | Após a ordem, quando terminar o segundo bombardeio | (−30, −3, 24) | Linha reparada; caneca com Krawiec; trem 963 e Panzerzug 7 parados; baixas de S2 por ID |
 | CP-D | `cp_m01_d_retirada` | Após 06:10, com Jan em x < −20 e sem carregar ninguém | posição do momento | Pontas leste destruídas; sobreviventes do pelotão leste; estados de Bąk e Dudek; baixas alemãs da explosão |
 
 As listas completas de eventos consumidos, objetivos, destruição e setores estão em `mission.json → checkpoints`.
@@ -503,5 +497,5 @@ A demonstrar em navegador. Hoje, todos estão **PENDENTES**.
 4. Ficar parado 90 s às 05:40: S2 e S4 continuam ativos e coerentes.
 5. Virar a câmera durante a explosão leste: o estado depois confere com o antes.
 6. Não resgatar Bąk: Dudek o busca, a chamada muda e a missão termina.
-7. Ficar dentro de `bz_west` às 06:40: Zieliński busca Jan e a demolição espera. O jogador não morre.
+7. Ficar dentro de `bz_west` às 06:45: Zieliński busca Jan e a demolição espera. O jogador não morre.
 8. Jan usa só o karabinek wz.29 (5 tiros, clipe, ferrolho), com som e animação próprios. Nenhuma M1 Carbine aparece.

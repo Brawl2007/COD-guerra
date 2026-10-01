@@ -1,6 +1,6 @@
 # M01 — contrato de integração revisto
 
-Revisão do PR #8. Missão **PLANEJADA**: o JSON descreve a implementação, mas não executa os seus textos de condições, efeitos e restauração. Criar handlers explícitos por ID, sem `eval` nem interpretação automática de prosa. Nunca reutilizar o mapa francês ou a M1 para M01.
+Revisão dos PRs #8 e #10. Missão **PLANEJADA**: o JSON descreve a implementação, mas não executa os seus textos de condições, efeitos e restauração. Criar handlers explícitos por ID, sem `eval` nem interpretação automática de prosa. Nunca reutilizar o mapa francês ou a M1 para M01.
 
 ## Tempo e eventos
 
@@ -17,12 +17,14 @@ Revisão do PR #8. Missão **PLANEJADA**: o JSON descreve a implementação, mas
 - Restaurar mortes, feridos, objectivos opcionais e a posição actual de CP-D. Validar todos os dados antes de substituir o estado em execução. Nunca guardar nem ressuscitar actores através de objectos Three.js.
 - LOD e visibilidade alteram só a representação. S2 mantém os mesmos IDs e baixas. Fontes sonoras seguem ataques reais e persistentes; a proximidade não inicia um sector.
 
+- CP-C usa `savePolicy: deferUntilSafe`: não perder o pedido de checkpoint quando o raid das 05:30 estiver activo. Guardar ao terminar a janela das 05:34, com hora e eventos reais. Restaurar `m01.second_raid_state`, timers e impactos já consumidos; não repetir a passagem.
+
 ## Espaço, segurança e história
 
-- Coordenadas são metros, X leste, Y altura, Z sul. O limite de movimento inclui x=419 e a sua zona de aviso. Em x>419, explicar a falha e contar oito segundos de jogo activo; regressar limpa o contador.
+- Coordenadas são metros, X leste, Y altura, Z sul. O limite de movimento (até x=440) inclui o 3.º pilar medido, x≈401 (`bounds.outOfBoundsX`), e a sua zona de aviso. Em x>401, explicar a falha e contar oito segundos de jogo activo; regressar limpa o contador. Ler os valores de `map-layout.json → bounds`, sem os fixar no código.
 - Escolher cada impacto aéreo a pelo menos 30 m da posição actual do jogador, incluindo alternativas de quase-acerto. A substituição de um impacto não pode criar outro impacto inseguro.
 - Janik e Juchtman ficam completamente fora de cena, sem modelo nem fala. A ficha histórica não autoriza spawn.
-- Manter P1–P12 e medidas provisórias visíveis na documentação. Parágrafos históricos de debrief ficam desactivados enquanto dependerem de verificação. Ver a leitura parcial de H01-PDF e as divergências em `HISTORICAL_RESEARCH.md`.
+- Manter P1–P16 (`SOURCE_CHECK.md`) e medidas provisórias visíveis na documentação. Parágrafos históricos de debrief ficam desactivados enquanto dependerem de verificação. Ver as leituras de H01-PDF, H30 e T23 e as divergências em `HISTORICAL_RESEARCH.md`.
 
 ## Validação que falta
 
