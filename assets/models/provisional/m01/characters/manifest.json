@@ -5,7 +5,7 @@
     "m01_soldier_pl_lod0.glb": {
       "nation": "pl",
       "lod": "lod0",
-      "bytes": 2371720,
+      "bytes": 2371952,
       "height_m": 1.745,
       "bones": 60,
       "triangles_visible": 14861,
@@ -121,10 +121,10 @@
     "m01_soldier_pl_lod1.glb": {
       "nation": "pl",
       "lod": "lod1",
-      "bytes": 873804,
+      "bytes": 874588,
       "height_m": 1.745,
       "bones": 60,
-      "triangles_visible": 6002,
+      "triangles_visible": 6026,
       "draw_calls_visible": 6,
       "textures": {
         "baseColor": "image/jpeg",
@@ -143,7 +143,7 @@
         },
         {
           "name": "head_zielinski",
-          "triangles": 984,
+          "triangles": 983,
           "visible": false
         },
         {
@@ -193,7 +193,7 @@
         },
         {
           "name": "gear",
-          "triangles": 1044,
+          "triangles": 1068,
           "visible": true
         },
         {
@@ -236,10 +236,10 @@
     "m01_soldier_pl_lod2.glb": {
       "nation": "pl",
       "lod": "lod2",
-      "bytes": 287572,
+      "bytes": 287012,
       "height_m": 1.745,
       "bones": 27,
-      "triangles_visible": 1896,
+      "triangles_visible": 1893,
       "draw_calls_visible": 6,
       "textures": {
         "baseColor": "image/jpeg"
@@ -252,7 +252,7 @@
         },
         {
           "name": "head_wrona",
-          "triangles": 344,
+          "triangles": 343,
           "visible": true
         },
         {
@@ -307,7 +307,7 @@
         },
         {
           "name": "gear",
-          "triangles": 204,
+          "triangles": 202,
           "visible": true
         },
         {
@@ -350,10 +350,10 @@
     "m01_soldier_de_lod0.glb": {
       "nation": "de",
       "lod": "lod0",
-      "bytes": 1700480,
+      "bytes": 1717696,
       "height_m": 1.745,
       "bones": 60,
-      "triangles_visible": 16056,
+      "triangles_visible": 16055,
       "draw_calls_visible": 6,
       "textures": {
         "baseColor": "image/jpeg",
@@ -363,7 +363,7 @@
       "meshes": [
         {
           "name": "body",
-          "triangles": 6057,
+          "triangles": 6058,
           "visible": true
         },
         {
@@ -398,7 +398,7 @@
         },
         {
           "name": "clip",
-          "triangles": 620,
+          "triangles": 618,
           "visible": true
         }
       ]
@@ -406,10 +406,10 @@
     "m01_soldier_de_lod1.glb": {
       "nation": "de",
       "lod": "lod1",
-      "bytes": 601060,
+      "bytes": 604164,
       "height_m": 1.745,
       "bones": 60,
-      "triangles_visible": 6429,
+      "triangles_visible": 6446,
       "draw_calls_visible": 6,
       "textures": {
         "baseColor": "image/jpeg",
@@ -418,7 +418,7 @@
       "meshes": [
         {
           "name": "body",
-          "triangles": 2203,
+          "triangles": 2202,
           "visible": true
         },
         {
@@ -443,7 +443,7 @@
         },
         {
           "name": "gear",
-          "triangles": 1726,
+          "triangles": 1744,
           "visible": true
         },
         {
@@ -461,10 +461,10 @@
     "m01_soldier_de_lod2.glb": {
       "nation": "de",
       "lod": "lod2",
-      "bytes": 188008,
+      "bytes": 187440,
       "height_m": 1.745,
       "bones": 27,
-      "triangles_visible": 2058,
+      "triangles_visible": 2059,
       "draw_calls_visible": 6,
       "textures": {
         "baseColor": "image/jpeg"
@@ -477,12 +477,12 @@
         },
         {
           "name": "head_de_a",
-          "triangles": 343,
+          "triangles": 344,
           "visible": true
         },
         {
           "name": "head_de_b",
-          "triangles": 343,
+          "triangles": 344,
           "visible": false
         },
         {

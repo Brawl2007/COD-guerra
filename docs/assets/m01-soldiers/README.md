@@ -12,11 +12,11 @@
 | Ficheiro | Triângulos visíveis | Draw calls | Ossos na skin | Texturas | Tamanho |
 | --- | --- | --- | --- | --- | --- |
 | `m01_soldier_pl_lod0.glb` | 14 861 | 6 | 60 | cor 2048² JPEG, ORM 1024², normal 1024² | 2,4 MB |
-| `m01_soldier_pl_lod1.glb` | 6 002 | 6 | 60 | cor 1024², ORM 512² | 0,9 MB |
-| `m01_soldier_pl_lod2.glb` (Chromebook/longe) | 1 896 | 6 | 27 | cor 512² | 0,29 MB |
-| `m01_soldier_de_lod0.glb` | 16 056 | 6 | 60 | cor 2048², ORM 1024², normal 1024² | 1,7 MB |
-| `m01_soldier_de_lod1.glb` | 6 429 | 6 | 60 | cor 1024², ORM 512² | 0,6 MB |
-| `m01_soldier_de_lod2.glb` (Chromebook/longe) | 2 058 | 6 | 27 | cor 512² | 0,19 MB |
+| `m01_soldier_pl_lod1.glb` | 6 026 | 6 | 60 | cor 1024², ORM 512² | 0,9 MB |
+| `m01_soldier_pl_lod2.glb` (Chromebook/longe) | 1 893 | 6 | 27 | cor 512² | 0,29 MB |
+| `m01_soldier_de_lod0.glb` | 16 055 | 6 | 60 | cor 2048², ORM 1024², normal 1024² | 1,7 MB |
+| `m01_soldier_de_lod1.glb` | 6 446 | 6 | 60 | cor 1024², ORM 512² | 0,6 MB |
+| `m01_soldier_de_lod2.glb` (Chromebook/longe) | 2 059 | 6 | 27 | cor 512² | 0,19 MB |
 | `m01_soldier_animations.glb` | — | — | só esqueleto | — | 1,4 MB |
 
 Cada nação usa **um único material com atlas** partilhado por todas as instâncias e variantes. O alvo inicial de cerca de 1,2 mil triângulos no LOD2 não foi atingido: ficaram entre 1,9 e 2,1 mil. Abaixo disso, o capacete e as cabeças degradam-se visivelmente (`lods.png`).

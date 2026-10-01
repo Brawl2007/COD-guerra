@@ -322,8 +322,8 @@ function shovel(o, axes, name) {
   const parts = [];
   const carrier = roundedBox([0.16, 0.2, 0.025], { r: 0.03, segments: 20, rings: 4 }); place(carrier, [0, -0.06, 0.02]);
   parts.push(tag(carrier, `${name}_carrier`, 'leather'));
-  const handle = cylinder(0.016, 0.24, { segments: 10 });
-  place(handle, [0.0, -0.27, 0.024]);
+  const handle = cylinder(0.016, 0.15, { segments: 10 });
+  place(handle, [0.0, -0.225, 0.024]);
   parts.push(tag(orientOutward(handle), `${name}_handle`, 'shovel_handle'));
   for (const p of parts) place(p, o, axes);
   return parts;

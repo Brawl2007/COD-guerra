@@ -91,7 +91,7 @@ const VIEWS = {
   async clip_poses() {
     const tiles = [];
     for (const [clip, f, az] of [['standing_idle', 0, 25], ['aim', 0, 60], ['crouched_idle', 0, 40], ['pinned', 0.4, 40], ['seated', 0, 30], ['wounded', 0, 70], ['fallen', 0.35, 70], ['fallen', 1, 70]])
-      tiles.push(await actorTile(PL, { clip, f }, 'root', 2.7, az, 10, `${clip} ${f ? `(${Math.round(f * 100)} %)` : ''}`));
+      tiles.push(await actorTile(PL, { clip, f }, 'hips', 2.9, az, 10, `${clip} ${f ? `(${Math.round(f * 100)} %)` : ''}`));
     save('clip_poses.png', grid(tiles, 4));
   },
   async clip_locomotion() {
@@ -117,7 +117,7 @@ const VIEWS = {
     const tiles = [];
     const show = ['body', 'gear', 'rifle', 'clip', 'head_krawiec', 'helmet_wz31', 'helmet_cover_wz31', 'sapper', 'rank_kapral'];
     for (const [clip, f, az] of [['sapper_work', 0, 30], ['sapper_work', 0.3, 90], ['sapper_work_pinned', 0, 30], ['sapper_work_pinned', 0.4, 90]])
-      tiles.push(await actorTile(PL, { clip, f, show }, 'root', 2.2, az, 14, clip));
+      tiles.push(await actorTile(PL, { clip, f, show }, 'spine_01', 2.3, az, 14, clip));
     save('clip_sappers.png', grid(tiles, 4));
   },
   async clip_carry() {
