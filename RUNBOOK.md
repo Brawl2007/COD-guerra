@@ -86,6 +86,14 @@ CHROME_EXECUTABLE=/caminho/para/chromium node tools/verify-m01-poses.mjs --out t
 
 A galeria usa o renderer de personagens com dados de exemplo; não executa a missão. O teste de navegador da chamada usa um snapshot alcançado pela rota de simulação e verifica a pose após reload.
 
+Para a galeria de combate (mira, recuo, postura sob fogo e passo), com dois instantes do mesmo relógio de apresentação:
+
+```sh
+CHROME_EXECUTABLE=/caminho/para/chromium node tools/verify-m01-poses.mjs --combat --out test-results/m01-combat-poses
+```
+
+Os controlos de relógio desta galeria existem apenas na fixture de verificação. `gameDiagnostics().m01.actorAnimations` mostra as contagens renderizadas de mira, disparo, movimento e supressão; não é estado de gameplay. Provas e limites em `docs/verification/m01-runtime/combat-animation/`.
+
 Comparação do combate de cobertura, duas rotas completas da simulação com a mesma seed:
 
 ```sh

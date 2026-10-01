@@ -141,17 +141,20 @@ export class M01View {
     const counts={},dummy=new THREE.Object3D(),root=new THREE.Object3D(),matrix=new THREE.Matrix4();
     const up=new THREE.Vector3(0,1,0),direction=new THREE.Vector3(),tint=new THREE.Color();
     this.actorPoses={standing:0,crouched:0,pinned:0,seated:0,wounded:0,carried:0,fallen:0};
+    this.actorAnimations={aiming:0,firing:0,moving:0,underFire:0};
     let pivot=0,shadowCount=0;
     const put=(name,p,size,color,bone=null)=>{
       const batch=this.batches.get(name),i=counts[name]??0;counts[name]=i+1;
       dummy.position.set(p[0],p[1]-pivot,p[2]);dummy.scale.set(...size);dummy.quaternion.identity();
-      if(bone){direction.set(bone.to[0]-bone.from[0],bone.to[1]-bone.from[1],bone.to[2]-bone.from[2]).normalize();dummy.quaternion.setFromUnitVectors(up,direction);}
+      if(bone?.from){direction.set(bone.to[0]-bone.from[0],bone.to[1]-bone.from[1],bone.to[2]-bone.from[2]).normalize();dummy.quaternion.setFromUnitVectors(up,direction);}
+      else if(bone?.roll)dummy.rotation.z=bone.roll;
       dummy.updateMatrix();batch.setMatrixAt(i,matrix.multiplyMatrices(root.matrix,dummy.matrix));
       if(color)batch.setColorAt(i,tint.set(color));
     };
     for(const a of actors){
       if(!a.active)continue;
       const pose=actorPose(a,time);this.actorPoses[pose.name]++;pivot=pose.root.pivotY;
+      for(const key of Object.keys(this.actorAnimations))if(pose[key])this.actorAnimations[key]++;
       if(this.contactShadows&&!a.carriedBy&&Math.hypot(a.x-player.x,a.z-player.z)<90){
         dummy.position.set(a.x,a.y+.018,a.z);dummy.rotation.set(0,-a.facing,0);dummy.scale.set(pose.name==='fallen'||pose.name==='wounded'?1.8:.7,1,.8);dummy.updateMatrix();
         this.contactShadows.setMatrixAt(shadowCount++,dummy.matrix);
@@ -161,7 +164,7 @@ export class M01View {
       const cloth=a.civilian?'#404c56':a.team==='enemy'?'#b4c0b7':'#c9bea0',helmet=a.team==='enemy'?'#465252':'#635f47';
       const [hx,hy,hz]=pose.head,[tx,ty,tz]=pose.torso.position;
       const near=Math.hypot(a.x-player.x,a.z-player.z)<45;
-      put('torso',pose.torso.position,[.30,pose.torso.size[1],.46],cloth);put(near?'head':'farHead',pose.head,[.125,.18,.137]);
+      put('torso',pose.torso.position,[.30,pose.torso.size[1],.46],cloth,{roll:pose.torso.roll});put(near?'head':'farHead',pose.head,[.125,.18,.137]);
       put('helmet',[hx,hy+.105,hz],[.175,.14,.188],helmet);
       put('brim',[hx+.01,hy+.12,hz],[.186,.022,.2],helmet);
       if(near){put('nose',[hx+.126,hy+.005,hz],[.020,.039,.022]);
@@ -185,11 +188,11 @@ export class M01View {
       if(near)put('hands',[hx-.005,hy-.17,hz],[.058,.072,.060]);
       if(near)for(const i of [3,7])put('hands',pose.limbs[i].to,[.043,.066,.048]);
       if(!a.civilian&&a.role!=='MEDIC'){
-        put('rifle',pose.rifle,[.82,.095,.06]);
-        const from=[pose.rifle[0]+.13,pose.rifle[1]+.045,pose.rifle[2]],to=[pose.rifle[0]+.70,pose.rifle[1]+.045,pose.rifle[2]];
-        put('barrel',[(from[0]+to[0])/2,from[1],from[2]],[.012,.57,.012],null,{from,to});
+        put('rifle',pose.rifle.position,[.82,.095,.06],null,{roll:pose.rifle.pitch});
+        const from=pose.rifle.barrelFrom,to=pose.rifle.muzzle;
+        put('barrel',from.map((v,i)=>(v+to[i])/2),[.012,.57,.012],null,{from,to});
       }
-      if(a.alive&&a.shot>0)put('flash',[pose.rifle[0]+.5,pose.rifle[1],pose.rifle[2]],a.weapon==='mg34'?[.6,.18,.18]:[.2,.07,.07]);
+      if(pose.firing)put('flash',pose.rifle.muzzle,a.weapon==='mg34'?[.6,.18,.18]:[.2,.07,.07]);
     }
     for(const [name,batch]of this.batches){batch.count=counts[name]??0;batch.instanceMatrix.needsUpdate=true;if(batch.instanceColor)batch.instanceColor.needsUpdate=true;}
     if(this.contactShadows){this.contactShadows.count=shadowCount;this.contactShadows.instanceMatrix.needsUpdate=true;}
@@ -219,10 +222,14 @@ export class M01View {
       batch.geometry.attributes.puffOpacity?.setX(counts[name],opacity);counts[name]++;
     };
     // Clarão enquanto o atirador dispara (actor.shot, visível pelo menos 0,25 s) e fumo da boca durante ~2 s, à frente dos olhos.
+    const root=new THREE.Object3D(),muzzle=new THREE.Vector3();
     for(const a of sim.actors)if(a.team==='enemy'&&a.alive&&a.active){
       const age=time-(a.firedAt??-1e9);if(a.shot<=0&&age>2.2)continue;
-      const p={x:a.x+Math.cos(a.facing)*.9,y:a.y+1.55,z:a.z+Math.sin(a.facing)*.9},d=far(p);
-      if(a.shot>0||age<.25)put('muzzle',p,Math.max(.12,d*.008)*(.8+.2*Math.sin(time*90)));
+      const pose=actorPose(a,time);root.position.set(a.x,a.y+pose.root.offsetY,a.z);
+      root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
+      muzzle.fromArray(pose.rifle.muzzle);muzzle.y-=pose.root.pivotY;muzzle.applyMatrix4(root.matrix);
+      const p={x:muzzle.x,y:muzzle.y,z:muzzle.z},d=far(p);
+      if(pose.firing||pose.aiming&&age>=0&&age<.25)put('muzzle',p,Math.max(.12,d*.008)*(.8+.2*Math.sin(time*90)));
       if(age>=0&&age<2.2){const k=age/2.2;put('smoke',{x:p.x,y:p.y+.4+k*1.6,z:p.z},Math.max(.25,d*.007)*(.6+k*.8)*(1-k*k),null,.65*(1-k));}
     }
     for(const r of sim.enemyFire.rounds){
@@ -382,7 +389,7 @@ export class M01View {
     if(this.bursts.length>24){const old=this.bursts.shift();this.effects.remove(old.mesh);old.mesh.material.dispose();}
   }
   resetEffects(){this.lastFrame=null;this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.impacts=[];for(const b of this.bursts){this.effects.remove(b.mesh);b.mesh.material.dispose();}this.bursts=[];for(const b of Object.values(this.fireBatches))b.count=0;this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0};}
-  get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+b.count,0)??0,actorPoses:{...this.actorPoses},
+  get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+b.count,0)??0,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx}};}
   dispose(){
     this.disposed=true;this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
