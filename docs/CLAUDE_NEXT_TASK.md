@@ -1,17 +1,15 @@
-# Claude Code — humanos e animações de M01
+# Claude Code — continuação dos assets de M01
 
-Trabalhar numa branch própria a partir de `codex/m01-runtime` actualizado. Ler `AGENTS.md`, `ASSET_CREDITS.md`, `missions/m01-tczew/ASSETS.md`, `assets-m01.json`, `SOURCE_CHECK.md` e `research/weapons/kb_wz29.md`.
+A entrega de soldados até `b198a75` foi preservada e integrada na branch de trabalho do Codex. Não refazer os seis modelos, os quinze clips, a fonte MakeHuman CC0 ou os geradores. Ver `docs/verification/m01-runtime/characters/README.md` para evidências e limites; GLTFLoader, SkeletonUtils e AnimationMixer já estão ligados à engine.
 
-## Entrega
+O Codex continua a encenação da estação e a lógica da missão. Se Claude voltar a colaborar, trabalhar numa branch própria a partir de `main` actualizado, sem alterar `src/`, saves, combate, relógios ou workflows.
 
-Criar um kit de soldados polacos e alemães de Setembro de 1939, em GLB, com rosto, mãos, anatomia, uniforme, capacete, cartucheiras, equipamento e arma correctos. Priorizar um soldado polaco completo antes de multiplicar variantes. O alemão permanece na margem leste; MP40, MG42 e M1 Carbine não entram em M01.
+## Próxima entrega independente
 
-Usar metros, Y para cima, pés na origem e frente/rig documentados. Incluir esqueleto e animações de: parado, andar, correr, agachar, sapador a trabalhar, sapador sob fogo (`pinned`), sentado, ferido e transporte de ferido. Para as mãos da primeira pessoa: disparo, ferrolho após cada tiro, recarga por clipe de cinco e inserção individual parcial do wz.29. Documentar nomes/duração de clips, ossos, sockets e transições; a integração com a simulação fica com o Codex.
+Completar o equipamento dos actores que ainda usam proxies: primeiro o rkm wz.28 de Kowal e depois o kb wz.98a de Bąk saudável. Ler `AGENTS.md`, `ASSET_CREDITS.md`, `missions/m01-tczew/ASSETS.md`, `assets-m01.json`, `SOURCE_CHECK.md`, `research/equipment-timeline.json` e os contratos do kit existente. Medidas e referências devem ter fontes e incertezas identificadas; não reaproveitar uma arma com outro nome.
 
-Entregar LODs e contagens de triângulos, materiais, texturas, tamanho dos ficheiros e capturas de cada pose em luz de madrugada. Dar orçamento proposto para o Chromebook e explicar como medir; não declarar FPS sem medição. Texturas PBR devem ser próprias ou ter licença compatível com repositório público, identificada por ficheiro e origem. Não extrair assets de Call of Duty ou outros jogos comerciais.
+Entregar GLB em metros, rig/sockets compatíveis, LODs, nomes de malhas/ossos, poses de pega e manifesto de dimensões/triângulos/texturas/licença. Capturar a arma nas mãos, incluindo magazine e ferrolho, para permitir revisão antes de ligar à simulação. Evitar dependências e ferramentas pagas. Usar geometria/texturas originais ou dados com licença compatível; não extrair de jogos comerciais. A licença global permanece decisão do proprietário.
 
-## Limites de trabalho
+Depois, rever a anatomia/encaixe das mãos e mangas do kit já integrado, sobretudo em primeira pessoa, propondo geometria própria com terminações fora do enquadramento. Os actuais clips de arma são usados pela engine; preservar os nomes e timings ou documentar qualquer mudança necessária, sem editar a engine.
 
-Não alterar `src/`, combate, relógios, saves, mapa histórico, build ou workflows. Colocar assets numa pasta nova, com manifesto, autoria/licenças e documento de integração. Se alguma animação exigir outro dado do actor, propor o contrato no documento sem implementar a engine.
-
-Abrir PR para `codex/m01-runtime`. M01 continua PROTÓTIPO JOGÁVEL; merge em `main` e publicação ficam para o utilizador. Não começar M02 antes da aprovação do marco 2.
+Abrir PR para `codex/m01-runtime`. Não começar M02. M01 continua PROTÓTIPO JOGÁVEL; merge em `main` e publicação ficam para o utilizador. Não alegar playtest humano nem FPS de Chromebook a partir de SwiftShader.

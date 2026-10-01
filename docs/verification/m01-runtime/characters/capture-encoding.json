@@ -1,0 +1,82 @@
+{
+  "note": "JPEG export of real rendered test frames for a smaller repository. Same full viewport, no resizing or invented content. The original test tools still output PNG into their evidence directory.",
+  "images": [
+    {
+      "file": "controls/m01-rig-clip.jpg",
+      "sourcePNG": "m01-rig-clip.png",
+      "sourcePNG_SHA256": "30ab5e335c1be595eaadef2700aba20896760617f01be8e7095ac3112b916829",
+      "sourcePNG_bytes": 821910,
+      "jpegBytes": 99078,
+      "width": 1280,
+      "height": 720,
+      "quality": 72,
+      "resized": false
+    },
+    {
+      "file": "controls/m01-rig-iron-sights.jpg",
+      "sourcePNG": "m01-rig-iron-sights.png",
+      "sourcePNG_SHA256": "f15d3e4aa9cb9885a57ad12a53a742117fb6c2dd6027d4b74b306222c56e47bf",
+      "sourcePNG_bytes": 723740,
+      "jpegBytes": 86155,
+      "width": 1280,
+      "height": 720,
+      "quality": 72,
+      "resized": false
+    },
+    {
+      "file": "controls/m01-rig-single-round.jpg",
+      "sourcePNG": "m01-rig-single-round.png",
+      "sourcePNG_SHA256": "2b32f33d7dd6bb31cb5eba79a03786d897b2a4cb524968c01bce47fe4eec8088",
+      "sourcePNG_bytes": 832102,
+      "jpegBytes": 100511,
+      "width": 1280,
+      "height": 720,
+      "quality": 72,
+      "resized": false
+    },
+    {
+      "file": "production/station-damage.jpg",
+      "sourcePNG": "station-damage.png",
+      "sourcePNG_SHA256": "0f881fe9091e67965150d5b4ce71d06bc95bafab8299eeb9cb918058addbe3dd",
+      "sourcePNG_bytes": 794239,
+      "jpegBytes": 94594,
+      "width": 1280,
+      "height": 720,
+      "quality": 72,
+      "resized": false
+    },
+    {
+      "file": "production/roll-call.jpg",
+      "sourcePNG": "roll-call.png",
+      "sourcePNG_SHA256": "0e75804f76057319ef6923e90337f1a49b3b68ebfe5e97679dda11a6cd4f26c8",
+      "sourcePNG_bytes": 990587,
+      "jpegBytes": 96219,
+      "width": 1280,
+      "height": 720,
+      "quality": 72,
+      "resized": false
+    },
+    {
+      "file": "production/withdrawal.jpg",
+      "sourcePNG": "withdrawal.png",
+      "sourcePNG_SHA256": "fc1f8fb01b8b34c356786964fe1afc8ad26886b6bded7f44d2255809368c11bb",
+      "sourcePNG_bytes": 947821,
+      "jpegBytes": 134981,
+      "width": 1280,
+      "height": 720,
+      "quality": 72,
+      "resized": false
+    },
+    {
+      "file": "production/repair.jpg",
+      "sourcePNG": "repair.png",
+      "sourcePNG_SHA256": "93399641e850788023cc0273c961a64ed1116598863323d7e6476d74390af33d",
+      "sourcePNG_bytes": 990741,
+      "jpegBytes": 97960,
+      "width": 1280,
+      "height": 720,
+      "quality": 72,
+      "resized": false
+    }
+  ]
+}
