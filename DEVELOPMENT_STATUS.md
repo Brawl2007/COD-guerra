@@ -44,6 +44,25 @@ Evidências em `docs/verification/m01-runtime/continuous/`.
   - chamada encenada no abrigo;
   - carregadores de Kowal.
 
+**Terceira ronda: ameaça em "Proteja o reparo" e "Cubra a retirada".** Antes, o reparo nunca era suprimido e o pelotão leste ficava sempre no mínimo de 12. Causas:
+- os sapadores ficavam escondidos de toda a margem leste;
+- os atiradores estavam atrás do portal de Lisewo;
+- dois terços do reparo terminavam antes do trem das 04:45.
+
+Agora:
+- **Origem visível.** O fogo alemão vem da faixa dos portões de Lisewo, entre as pontes: é o que a cabeça de ponte oeste vê por cima da água, porque as treliças tapam o dique. Cada tiro é um dado em voo, com clarão, fumo da boca, traçante (MG), poeira ou faísca, estampido atrasado e estalo perto do jogador.
+- **Reparo.** Tiros a menos de 3 m deitam a equipa e param o trabalho. Calar a MG dos portões encurta-o; ignorá-la deixa os sapadores deitados dezenas de vezes.
+- **Retirada.** Cada baixa é um tiro real dos alemães do tabuleiro, de 20 em 20 s de relógio sem supressão. O fogo de cobertura do jogador salva homens.
+- **HUD.** Uma linha de estado no HUD lê só a simulação.
+- **Arte e apresentação.** O portal ferroviário oeste ganhou o arco que faltava no GLB (os dois arcos sobrepunham-se). Os carris da linha sudoeste assentam no terreno.
+
+| Comparação de estado, 12 sementes | Reparo (real) | Fim do reparo | Supressões | Sobreviventes |
+| --- | ---: | --- | ---: | ---: |
+| Jogador ajuda | 168–207 s | 05:02–05:08 | 9–27 | 15–18 |
+| Jogador ignora | 206–248 s | 05:08–05:14 | 42–81 | 12 |
+
+Horários históricos, checkpoints e segurança das demolições inalterados. Partidas no navegador e capturas em `docs/verification/m01-runtime/continuous/round3/`.
+
 ## Parcial ou pendente
 
 - Humanos, ViewModel, mãos, recarga, sons e texturas são placeholders; rig/vozes/uniformes finais pendentes.
@@ -55,7 +74,8 @@ Evidências em `docs/verification/m01-runtime/continuous/`.
 - Campanha M01–M30, tanque, avião, jeep, transições e save da campanha pendentes.
 - A partida contínua de M01 no navegador foi feita por piloto automático; **falta um playtest humano completo** e rotas adversas (morrer, sair dos limites, ignorar objectivos). Não houve playtest completo da missão francesa nesta sessão.
 - Ainda pendente depois da partida contínua:
-  - ameaça legível em "Proteja o reparo" e "Cubra a retirada";
+  - em "Mantenha a cabeça de ponte", a salva de ajuste vem do dique, atrás das treliças: traçante e impactos à vista, origem não;
+  - a flecha do fogo alemão é uma aproximação de jogo; o wz.29 continua em recta;
   - "Abrigue-se!" pode não aparecer;
   - de dentro da treliça rodoviária, a coluna da demolição leste fica tapada;
   - o transporte de feridos usa um placeholder.
@@ -64,6 +84,6 @@ Evidências em `docs/verification/m01-runtime/continuous/`.
 
 ## Próximo passo
 
-Playtest humano completo de M01 e rotas adversas. Depois, dar ameaça legível às tarefas de cobertura. Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02.
+Playtest humano completo de M01, com atenção ao fogo de cobertura a ~1,2 km (clarões de ~8 px e raio de supressão de 3 m). Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02.
 
 O trabalho das pontes de Claude foi preservado e completado, incluindo dano persistente em LOD0/1/2. Mapas históricos e inventários específicos continuam úteis para as pendências de P4/P13 e de arte. Não recomeçar essa entrega.

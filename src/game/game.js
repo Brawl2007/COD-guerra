@@ -206,7 +206,7 @@ export class Game {
   }
   get diagnostics(){return structuredClone({...this.renderer.diagnostics,missionId:this.sim.missionId,clock:this.sim.clock,paused:this.paused,
     missionPhase:this.sim.mission.phase,complete:this.sim.mission.complete,
-    player:{x:this.player.x,y:this.player.y,z:this.player.z,angle:this.player.angle,pitch:this.player.pitch,health:this.player.health},
+    player:{x:this.player.x,y:this.player.y,z:this.player.z,angle:this.player.angle,pitch:this.player.pitch,health:this.player.health,crouched:Boolean(this.player.crouched)},
     sectors:this.sim.sectors.sectors.map(s=>({...s})),eventIds:this.isM01?Object.keys(this.sim.consumed):[...this.sim.sectors.consumed],
     ...(this.isM01?{m01:{...this.renderer.m01.diagnostics,battleClock:this.sim.battleClock,weapon:this.sim.weapon.snapshot(),
       checkpoints:[...this.sim.checkpointsReached],flags:{...this.sim.flags},scene:this.sim.scene?.id??null,gate:this.sim.gate,

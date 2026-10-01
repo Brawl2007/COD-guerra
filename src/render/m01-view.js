@@ -143,7 +143,7 @@ export class M01View {
     for(const [name,batch]of this.batches){batch.count=counts[name]??0;batch.instanceMatrix.needsUpdate=true;if(batch.instanceColor)batch.instanceColor.needsUpdate=true;}
   }
   createFireEffects(){
-    // Clarões, traçantes e impactos do fogo alemão. Tamanho mínimo no ecrã (~4–5 px): a 1,2 km a origem continua legível.
+    // Clarões, fumo da boca, traçantes e impactos do fogo alemão. Tamanho mínimo no ecrã (clarão ~8 px): a 1,2 km a origem continua legível.
     this.materials.flash=new THREE.MeshBasicMaterial({color:'#ffd98c',toneMapped:false,fog:false});
     this.materials.tracer=new THREE.MeshBasicMaterial({color:'#ffb35a',toneMapped:false,fog:false});
     this.materials.puff=new THREE.MeshBasicMaterial({color:'#8c7c66',transparent:true,opacity:.62,depthWrite:false});

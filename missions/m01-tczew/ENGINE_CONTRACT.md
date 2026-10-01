@@ -24,6 +24,43 @@ Revisão dos PRs #8 e #10. Missão **PLANEJADA**: o JSON descreve a implementaç
 - Bąk nunca fica na zona da demolição oeste. Entregue pelo jogador, fica deitado junto a Dudek, que o leva para a estação depois das 06:10 e volta à secção. Recolhido por Dudek às 06:14, ambos ficam na estação (`dlg_m01_056b/057b`).
 - Na chamada das 07:05, os presentes sentam-se no abrigo, de frente para Jan; ninguém se move durante a cena. Bąk ferido, Dudek na estação e Nowicki desaparecido não são encenados.
 
+## Fogo alemão, reparo e retirada
+
+- **Tiros como dados.** Cada tiro alemão é um registo em `enemyFire.rounds`, com:
+  - atirador (`by`), arma e tipo;
+  - origem e ponto visado;
+  - flecha `h` e horas de partida e chegada.
+
+  O impacto só se resolve à chegada, contra o mundo e as posições actuais. Os tiros em voo entram no save e são validados: origem a x≥690, atirador `de_*` e vítima só `pl_east_*`. Saves sem `enemyFire` começam sem tiros no ar.
+- **Trajectória.** É uma aproximação de jogo, não balística medida (`grp_de_east.fireModel`):
+  - recta com flecha parabólica de 6e-6·R² (≈9 m a 1,2 km);
+  - ~620 m/s de média.
+
+  Sem a flecha, o tabuleiro e o portal ferroviário oeste tapariam os sapadores. O wz.29 do jogador mantém o fallback em recta.
+- **Origem visível.** Da cabeça de ponte oeste, as treliças tapam o dique. Vê-se só a faixa dos portões de Lisewo, entre as pontes (x≈1053–1057, z≈9–33), por cima da água.
+  - Ficam lá as duas MG34 e 12 atiradores (`firePositions`).
+  - Só esses disparam sobre a margem oeste.
+  - Os 26 do dique disparam sobre a cabeça de ponte leste e, depois das 06:00, sobre o pelotão.
+  - Excepção: a salva de ajuste de `hold_access`, cuja origem fica atrás das treliças (pendente).
+  - O renderer desenha clarão e fumo da boca com tamanho mínimo no ecrã, traçante nas rajadas de MG, e poeira ou faísca no impacto. Os estampidos chegam com o atraso de 343 m/s.
+- **Reparo.** O trabalho dura 150 s de jogo sem supressão; com 75 s, dois terços acabavam antes do trem das 04:45.
+  - Um tiro que passe a menos de 3 m de um sapador no corte pára o trabalho 3,5 s, e a equipa inteira deita-se (`suppressedUntil`).
+  - Tiros do jogador a menos de 3 m de uma MG calam-na 5 s; a guarnição precisa de mais 2,5 s para voltar à arma. Kowal responde ao clarão mais recente que vê, com 2 s.
+  - Ao fim de 120 s parado, a cadência sobre o reparo cai sem aviso até o trabalho retomar.
+  - A fala obrigatória `dlg_m01_022` toca na primeira supressão real (ou aos 40 %, se não houver).
+- **Retirada.**
+  - Às 06:00 recuam os sobreviventes por ID; os restantes caíram antes, fora de cena.
+  - Os 20 s de relógio da regra de baixas contam a partir de `germans_on_east_spans`.
+  - Cada baixa é um tiro real de um alemão do tabuleiro que vê o último homem (`victim`); a contagem desce quando o tiro chega.
+  - O pelotão corre em fila junto à treliça norte, e os alemães avançam pela metade sul: o fogo de cobertura do jogador não atravessa os próprios soldados.
+  - Kowal nunca suprime os alemães do tabuleiro.
+- **HUD.** `mission.status` é a linha de estado do HUD e só lê a simulação:
+  - percentagem do reparo e se os sapadores estão deitados;
+  - estado da MG dos portões;
+  - contagem por ID do pelotão;
+  - se os alemães do tabuleiro estão suprimidos.
+- **Falas e callouts.** Só tocam quando o evento acontece: `dlg_m01_026/027/029/040`, `co_m01_enemy_mg_fire_on_squad`, `co_m01_enemy_group_suppressed`. Os callouts usados ganharam IDs e o validador de legendas aceita-os.
+
 ## Espaço, segurança e história
 
 - Coordenadas são metros, X leste, Y altura, Z sul. O limite de movimento (até x=440) inclui o 3.º pilar medido, x≈401 (`bounds.outOfBoundsX`), e a sua zona de aviso. Em x>401, explicar a falha e contar oito segundos de jogo activo; regressar limpa o contador. Ler os valores de `map-layout.json → bounds`, sem os fixar no código.

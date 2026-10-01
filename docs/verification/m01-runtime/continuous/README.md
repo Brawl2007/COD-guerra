@@ -67,7 +67,7 @@ A rota de simulação ([`../simulation-report.json`](../simulation-report.json))
 - **A demolição oeste não se vê do posto de disparo.** O barracão (x −270…−250, z 14…26) tapa a linha de vista para as pontes. A demolição leste (06:10, ~810 m) só se ouve: o clarão só é desenhado abaixo de 500 m. Decidir entre mover posto/barracão no mapa (P12) e encenar o olhar.
 - **Chamada final sem encenação.** A câmara mostra a parede do abrigo e as legendas; não há personagens em cena.
 - **Munição.** 45 cartuchos sem reabastecimento em M01. Na partida 1, o piloto disparou a cada 6 s e ficou sem munição às 05:35, antes da retirada. O validador exige `mag+reserve+shotCount = 45`, por isso um reabastecimento precisa de mudar esse invariante.
-- **Sem ameaça nas tarefas de cobertura.** "Proteja o reparo" e "Cubra a retirada" não mostram ameaça legível. O reparo não foi suprimido em nenhuma partida, e os sobreviventes do pelotão leste chegaram sempre ao mínimo de 12: a supressão a ~650 m com alça aberta é improvável.
+- **Sem ameaça nas tarefas de cobertura.** "Proteja o reparo" e "Cubra a retirada" não mostram ameaça legível. O reparo não foi suprimido em nenhuma partida, e os sobreviventes do pelotão leste chegaram sempre ao mínimo de 12: a supressão a ~650 m com alça aberta é improvável. *Tratado na [terceira ronda](#terceira-ronda-ameaça-no-reparo-e-na-retirada).*
 - **"Abrigue-se!" pode não aparecer.** O objectivo conclui-se logo se o jogador já estiver na cobertura do posto avançado.
 - **Ainda falta:** playtest humano completo, medição no Chromebook e rotas adversas (morrer, sair dos limites, ignorar objectivos).
 
@@ -112,7 +112,7 @@ Partida contínua com `--adverse`, numa única sessão Chromium, do menu ao debr
 \* Única captura encenada: continuação do CP-C real da rota, com o jogador entre as pontes, fora da treliça. De dentro da treliça rodoviária, o lattice tapa a coluna junto ao ponto de fuga; aí o aviso é o som, a vibração e a fala de Zieliński.
 
 **Continua pendente:**
-- ameaça legível em "Proteja o reparo" e "Cubra a retirada";
+- ameaça legível em "Proteja o reparo" e "Cubra a retirada" (tratada na terceira ronda);
 - "Abrigue-se!" pode não aparecer;
 - arte do transporte (placeholder);
 - playtest humano;

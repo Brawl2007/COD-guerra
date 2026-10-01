@@ -1,5 +1,6 @@
 import {test,expect} from '@playwright/test';
-import {route} from '../helpers/m01-route.js';
+import {route,driver,toRepair} from '../helpers/m01-route.js';
+import {seconds} from '../../src/game/m01-simulation.js';
 
 let result;
 const flow=()=>result??=route();
@@ -90,6 +91,24 @@ test('the actual outro state can be skipped through the UI into the enabled hist
   expect(await page.locator('#debrief p').count()).toBe(8);await expect(page.locator('#debrief')).toContainText('06:45');await expect(page.locator('#debrief')).toContainText('personagens fictícios');
   const d=await page.evaluate(()=>window.gameDiagnostics());expect(d.complete).toBe(true);expect(d.m01.flags['m01.completed']).toBe(true);expect(d.m01.parts.road_span_01.visible).toBe(false);expect(d.m01.parts.road_portal_west.visible).toBe(false);
   await page.screenshot({path:info.outputPath('m01-debrief.png')});expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state',async({page},info)=>{
+  test.setTimeout(process.env.CI?180000:90000);
+  // Staged continuation of a state reached by the simulation route (crate delivered, train 963 firing).
+  const d=toRepair(driver());d.walk(-134,13);d.until(()=>d.sim.battleClock>=seconds('04:45:40'),120);
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  const samples=[];
+  for(let i=0;i<60&&!(samples.some(s=>s.fx.muzzle>0)&&samples.some(s=>s.fx.puff>0)&&samples.some(s=>s.pinned)&&samples.some(s=>!s.pinned));i++){
+    await page.waitForTimeout(250);
+    samples.push(await page.evaluate(()=>{const g=window.gameDiagnostics().m01;return {fx:g.fireEffects,hud:document.querySelector('#objective-status').textContent,
+      sim:g.threat.status,pinned:g.threat.repair.pinned,origins:g.threat.recentFire.map(f=>f.x)};}));
+  }
+  expect(samples.some(s=>s.fx.muzzle>0)).toBe(true);expect(samples.some(s=>s.fx.puff>0)).toBe(true);
+  expect(samples.some(s=>s.pinned)&&samples.some(s=>!s.pinned)).toBe(true);
+  for(const s of samples){expect(s.hud).toBe(s.sim);expect(s.hud.includes('sapadores deitados')).toBe(s.pinned);for(const x of s.origins)expect(x).toBeGreaterThanOrEqual(1050);}
+  await page.screenshot({path:info.outputPath('m01-repair-under-fire.png')});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 test('a failed M01 bridge load prevents an invisible bridge; the French sandbox remains selectable',async({page})=>{
   await page.route('**/*.glb',r=>r.fulfill({status:404,body:'missing M01 test asset'}));

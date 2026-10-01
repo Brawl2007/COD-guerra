@@ -332,6 +332,8 @@ export class M01Simulation {
         if(!this.timers.escortSpoke){this.timers.escortSpoke=true;this.message('Zieliński: venha comigo, para oeste!');}}
       if(this.player.x<-95)this.timers.escort=false;
     }
+    // O primeiro homem do pelotão que passa pelo jogador grita o que vem atrás deles (dlg_m01_040, "soldado do pelotão leste passando").
+    if(this.consumedEvent(E('germans_on_east_spans'))&&this.withdrawingPlatoon().some(a=>dist(a,this.player)<25))this.line('dlg_m01_040');
     if(this.consumedEvent(E('germans_on_east_spans'))&&!retreat&&this.battleClock-this.timers.withdrawalCasualty>=20){
       // cover_withdrawal.mechanic: cada 20 s de relógio sem supressão sobre os alemães do tabuleiro, um tiro certeiro no último
       // homem do pelotão (baixa por ID ao chegar). Enquanto esse tiro voa, a contagem espera por ele.

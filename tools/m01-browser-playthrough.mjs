@@ -16,6 +16,9 @@ const URL_BASE = opt('--url', 'http://127.0.0.1:4173/COD-guerra/');
 const SKIP_CUTSCENES = args.includes('--skip-cutscenes');
 // --adverse: antes da rota normal, sair dos limites e cair no Vístula (cada um restaura CP-A) e ficar parado sem seguir o sargento.
 const ADVERSE = args.includes('--adverse');
+// --cover help|ignore: em "Proteja o reparo" e "Cubra a retirada", o piloto cala a MG dos portões e os alemães do tabuleiro
+// (mirando o último clarão que viu) ou não dispara e espera abrigado. Sem a opção, mantém o fogo esporádico para leste.
+const COVER = opt('--cover', null);
 const { chromium } = createRequire(import.meta.url)('@playwright/test');
 
 await mkdir(OUT, { recursive: true });
@@ -23,7 +26,7 @@ const logFile = `${OUT}/log.jsonl`;
 await writeFile(logFile, '');
 const t0 = Date.now();
 const real = () => +((Date.now() - t0) / 1000).toFixed(1);
-const report = { adverse: ADVERSE, adverseResults: [], verification: 'Partida contínua de M01 numa única sessão Chromium (piloto automático com input do navegador); não é playtest humano.',
+const report = { adverse: ADVERSE, cover: COVER && { mode: COVER, shots: 0, suppressingShots: 0, repair: {}, mgSamples: 0, mgSuppressedSamples: 0, casualties: [], statusLines: [], hudMismatches: [], fxFrames: 0 }, adverseResults: [], verification: 'Partida contínua de M01 numa única sessão Chromium (piloto automático com input do navegador); não é playtest humano.',
   startedAt: new Date().toISOString(), viewport: [1280, 720], timeline: [], blockers: [], waits: [], pauses: [], deaths: [], subtitles: [], messages: [], shots: 0, screenshots: [] };
 
 const browser = await chromium.launch({
@@ -39,8 +42,8 @@ const state = () => page.evaluate(() => {
   const d = window.gameDiagnostics(), t = id => document.getElementById(id)?.textContent ?? '';
   return { clock: d.clock, paused: d.paused, complete: d.complete, phase: d.missionPhase, player: d.player, eventIds: d.eventIds,
     battle: d.m01.battleClock, weapon: d.m01.weapon, checkpoints: d.m01.checkpoints, flags: d.m01.flags, scene: d.m01.scene, gate: d.m01.gate,
-    objectives: d.m01.objectives, enemyAlive: d.m01.enemyAlive, fps: d.fps ?? null, drawCalls: d.drawCalls ?? null,
-    hud: { objective: t('objective-text'), interaction: t('interaction'), subtitle: t('subtitle'), message: t('message'), clock: t('battle-clock'), mag: t('mag'), reserve: t('reserve') },
+    objectives: d.m01.objectives, enemyAlive: d.m01.enemyAlive, fps: d.fps ?? null, drawCalls: d.drawCalls ?? null, threat: d.m01.threat, fx: d.m01.fireEffects,
+    hud: { status: t('objective-status'), objective: t('objective-text'), interaction: t('interaction'), subtitle: t('subtitle'), message: t('message'), clock: t('battle-clock'), mag: t('mag'), reserve: t('reserve') },
     locked: document.pointerLockElement?.id === 'game', pauseVisible: !document.getElementById('pause').classList.contains('hidden'),
     completeVisible: !document.getElementById('complete').classList.contains('hidden') };
 });
@@ -75,6 +78,16 @@ async function observe(s) {
   }
   if (s.hud.subtitle && s.hud.subtitle !== last.subtitle) { report.subtitles.push({ real: real(), battle: hms(s.battle), text: s.hud.subtitle }); last.subtitle = s.hud.subtitle; }
   if (s.hud.message && s.hud.message !== last.message) { report.messages.push({ real: real(), battle: hms(s.battle), text: s.hud.message }); last.message = s.hud.message; await log('message', { text: s.hud.message }); }
+  if (report.cover) {
+    const c = report.cover;
+    // A linha de estado do HUD tem de ser a da simulação no mesmo instante.
+    if (s.hud.status !== s.threat.status) c.hudMismatches.push({ real: real(), battle: hms(s.battle), hud: s.hud.status, sim: s.threat.status });
+    if (s.hud.status && s.hud.status !== c.statusLines.at(-1)?.text) c.statusLines.push({ real: real(), battle: hms(s.battle), text: s.hud.status });
+    if (s.objectives.obj_m01_cover_repair?.state === 'active' && s.eventIds.includes('evt_m01_train963_arrives')) { c.mgSamples++; if (s.threat.mgSuppressed.includes('de_east_0')) c.mgSuppressedSamples++; }
+    if (last.survivors !== undefined && s.threat.survivors < last.survivors) c.casualties.push(hms(s.battle));
+    last.survivors = s.threat.survivors;
+    if (s.fx.muzzle + s.fx.tracer + s.fx.puff + s.fx.spark > 0) c.fxFrames++;
+  }
   if (s.checkpoints.length !== last.checkpoints) { last.checkpoints = s.checkpoints.length; await log('checkpoint', { id: s.checkpoints.at(-1) }); }
   if (s.clock + 0.5 < last.clock) { report.deaths.push({ real: real(), battle: hms(s.battle), restoredTo: +s.clock.toFixed(1) }); await log('restored', {}); }
   last.clock = s.clock;
@@ -165,6 +178,36 @@ async function wait(label, predicate, { limitReal = 900, engageEast = false, fac
     if ((Date.now() - r0) / 1000 > limitReal) throw new Error(`Espera esgotada: ${label}; ${JSON.stringify({ battle: hms(s.battle), gate: s.gate, objective: s.hud.objective })}`);
   }
 }
+/** Fogo de cobertura: mira o último clarão visto (sim.threat.recentFire, o que o jogador vê) e dispara com a mira quando o ferrolho
+ *  está pronto e o erro é de no máximo uma contagem do rato. `keepDown` diz quando o alvo já está suprimido e não precisa de tiro. */
+async function coverFire(label, who, keepDown, until, { limitReal = 600, snapEvery = 0, snapLabel = 'cover', flashSnaps = 3 } = {}) {
+  const r0 = Date.now(); let flash = null, lastShot = -1e9, lastSnap = Date.now(), snaps = 0, flashShots = 0;
+  await page.mouse.down({ button: 'right' });
+  try {
+    for (;;) {
+      const s = await tick(90);
+      if (until(s)) break;
+      const seen = s.threat.recentFire.filter(who).sort((a, b) => a.age - b.age)[0]; if (seen) flash = seen;
+      if (snapEvery && Date.now() - lastSnap > snapEvery * 1000) { lastSnap = Date.now(); await shot(`${snapLabel}-${++snaps}`, `${label}: estado ${s.hud.status}`); }
+      if (flash && flashShots < flashSnaps && s.fx.muzzle > 0 && seen) { flashShots++; await shot(`${snapLabel}-flash-${flashShots}`, `${label}: clarão à mira (${seen.id})`); }
+      if (!flash) continue;
+      const p = s.player, eye = p.y + (p.crouched ? 1.08 : 1.6), dx = flash.x - p.x, dz = flash.z - p.z, dy = flash.y - 0.6 - eye;
+      const turn = Math.round(wrap(Math.atan2(dz, dx) - p.angle) / 0.0022), lift = Math.round(-(Math.atan2(dy, Math.hypot(dx, dz)) - p.pitch) / 0.0022);
+      if (turn || lift) {   // esperar que o jogo aplique o movimento antes de corrigir outra vez (SwiftShader: poucos fotogramas)
+        await look(turn, lift);
+        await page.waitForFunction(([a, b]) => { const q = window.gameDiagnostics().player; return q.angle !== a || q.pitch !== b; }, [p.angle, p.pitch], { timeout: 1500 }).catch(() => {});
+        continue;
+      }
+      if (s.weapon.state === 'READY' && s.weapon.mag === 0 && s.weapon.reserve > 0) { await page.keyboard.press('KeyR'); continue; }
+      if (s.weapon.state !== 'READY' || !s.weapon.mag || (s.clock - lastShot < (label.includes('retirada') ? 3.5 : 4) && keepDown(s))) continue;
+      const before = keepDown(s);
+      await page.mouse.down(); await page.mouse.up(); lastShot = s.clock; report.shots++; report.cover.shots++;
+      const after = await tick(60); if (!before && keepDown(after)) report.cover.suppressingShots++;
+      if ((Date.now() - r0) / 1000 > limitReal) throw new Error(`Fogo de cobertura esgotado: ${label}`);
+    }
+  } finally { await page.mouse.up({ button: 'right' }); }
+  await log('covered', { label, real: +((Date.now() - r0) / 1000).toFixed(1) });
+}
 const active = (s, id) => s.objectives[`obj_m01_${id}`]?.state === 'active';
 const done = (s, id) => s.objectives[`obj_m01_${id}`]?.state === 'done';
 
@@ -228,16 +271,41 @@ try {
     report.adverseResults.push(result); await log('adverse', result); await shot('kowal-ammo', 'Kowal passa carregadores');
   }
   // 4. Proteger o reparo e manter a cabeça de ponte até à ordem de demolição.
+  { const s = await state(); report.cover && Object.assign(report.cover.repair, { deliveredReal: real(), deliveredGame: s.clock, start: hms(s.battle) }); }
+  const repairDone = async () => { const s = await state(); if (report.cover && !report.cover.repair.end) Object.assign(report.cover.repair, { end: hms(s.battle), realSeconds: +(s.clock - report.cover.repair.deliveredGame).toFixed(1), pins: s.threat.repair.pins }); };
+  if (COVER === 'help') {
+    // Ao lado dos sapadores (não à frente, na linha de tiro), na encosta de onde se vê a faixa dos portões.
+    await path([[-120, 16.5]], 'encosta junto aos sapadores'); await page.keyboard.press('KeyC');
+    await page.keyboard.press('KeyV'); await page.keyboard.press('KeyV'); await page.keyboard.press('KeyV');
+    await coverFire('reparo', f => f.id === 'de_east_0', s => s.threat.mgSuppressed.includes('de_east_0'), s => !active(s, 'cover_repair'), { snapEvery: 20, snapLabel: 'repair-help' });
+    await repairDone(); await page.keyboard.press('KeyC');
+    await walk(-79.3, 24, { label: 'Kowal (munição)', tolerance: 1.6 });
+    await press('KeyE', 'pedir munição a Kowal'); await tick(300); await press('KeyE', 'pedir munição a Kowal');
+  }
   await path([[-115, 27], [-28, 28]], 'posição de cobertura do reparo');
-  await page.keyboard.press('KeyC'); await page.keyboard.press('KeyV'); await page.keyboard.press('KeyV'); await page.keyboard.press('KeyV');
-  await wait('reparo e ordem de demolição', s => active(s, 'hold_access'), { limitReal: 1200, engageEast: true, faceAngle: 0, aimPitch: 0.01, keepRounds: 30, every: 15 });
+  await page.keyboard.press('KeyC');
+  if (COVER !== 'help') { await page.keyboard.press('KeyV'); await page.keyboard.press('KeyV'); await page.keyboard.press('KeyV'); }
+  if (COVER === 'ignore') {
+    await wait('reparo sem fogo de cobertura', s => !active(s, 'cover_repair'), { limitReal: 900, faceAngle: 0, aimPitch: 0.01, snapEvery: 20, snapLabel: 'repair-ignore' });
+    await repairDone();
+  }
+  await wait('reparo e ordem de demolição', s => active(s, 'hold_access'), { limitReal: 1200, engageEast: !COVER, faceAngle: 0, aimPitch: 0.01, keepRounds: 30, every: 15 });
   await page.keyboard.press('KeyC');
   await path([[-115, 32], [-10, 32], [-10, 40], [30, 40]], 'acesso rodoviário');
   await shot('hold-access', 'Na ponte rodoviária, a manter o acesso');
-  await wait('retirada do pelotão leste', s => s.eventIds.includes('evt_m01_east_platoon_withdraws'), { limitReal: 1200, engageEast: true, faceAngle: 0, aimPitch: 0.01, keepRounds: 25, every: 15 });
+  await wait('retirada do pelotão leste', s => s.eventIds.includes('evt_m01_east_platoon_withdraws'), { limitReal: 1200, engageEast: !COVER, faceAngle: 0, aimPitch: 0.01, keepRounds: 25, every: 15 });
   await shot('withdrawal', 'Pelotão leste em retirada');
+  if (COVER === 'help') {
+    // Lado sul do tabuleiro: o pelotão recua em fila junto à treliça norte e não fica na linha de tiro.
+    await path([[38, 42.4]], 'lado sul do tabuleiro');
+    await wait('alemães no tabuleiro', s => s.eventIds.includes('evt_m01_germans_on_east_spans'), { limitReal: 300, faceAngle: 0 });
+    await coverFire('retirada', f => f.id.startsWith('de_spans'), s => s.threat.spansSuppressed, s => s.eventIds.includes('evt_m01_east_demolition'), { snapEvery: 8, snapLabel: 'withdrawal-help' });
+  } else if (COVER === 'ignore') {
+    await wait('alemães no tabuleiro', s => s.eventIds.includes('evt_m01_germans_on_east_spans'), { limitReal: 300, faceAngle: 0, snapEvery: 8, snapLabel: 'withdrawal-ignore' });
+  }
   // 5. Bąk ferido (opcional): procurá-lo pelo aviso de interacção e levá-lo ao socorrista.
-  const wounded = await wait('Bąk ferido', s => active(s, 'rescue_bak') || s.eventIds.includes('evt_m01_east_demolition'), { limitReal: 600, engageEast: true, faceAngle: 0, aimPitch: 0.005, every: 5, snapEvery: 12, snapLabel: 'withdrawal' });
+  const wounded = await wait('Bąk ferido', s => active(s, 'rescue_bak') || s.eventIds.includes('evt_m01_east_demolition'), { limitReal: 600, engageEast: !COVER, faceAngle: 0, aimPitch: 0.005, every: 5, snapEvery: 12, snapLabel: 'withdrawal' });
+  if (report.cover) report.cover.survivorsAtDemolition = null;
   if (active(wounded, 'rescue_bak')) {
     await shot('bak-wounded', 'Bąk ferido na ponte rodoviária');
     let found = false;
@@ -260,7 +328,8 @@ try {
   }
   // 6. Demolição leste e saída da ponte. Esperar no eixo do portal rodoviário, com vista livre para leste.
   if (!(await state()).eventIds.includes('evt_m01_east_demolition')) await path([[-10, 46], [-5, 40]], 'eixo do portal rodoviário');
-  await wait('demolição leste', s => s.eventIds.includes('evt_m01_east_demolition'), { limitReal: 900, faceAngle: 0 });
+  const blast = await wait('demolição leste', s => s.eventIds.includes('evt_m01_east_demolition'), { limitReal: 900, faceAngle: 0 });
+  if (report.cover) report.cover.survivorsAtDemolition = blast.threat.survivors;
   await page.waitForTimeout(700); await shot('east-demolition', 'Demolição leste das 06:10: clarão');
   await page.waitForTimeout(6000); await shot('east-demolition-6s', 'Demolição leste, coluna de poeira 6 s depois');
   await path([[-15, 40], [-115, 27], [-275, 27], [-292, 26]], 'posto de disparo');
@@ -283,6 +352,7 @@ try {
   try { await shot('failure', error.message.slice(0, 120)); } catch { /* página fechada */ }
 } finally {
   const s = await state().catch(() => null);
+  if (report.cover) report.cover.mgSuppressedPct = Math.round(report.cover.mgSuppressedSamples / Math.max(1, report.cover.mgSamples) * 100);
   Object.assign(report, { finishedAt: new Date().toISOString(), realSeconds: real(), outcome, failure, pageErrors, failedRequests: failed,
     final: s && { game: +s.clock.toFixed(1), battle: hms(s.battle), complete: s.complete, flags: s.flags, checkpoints: s.checkpoints, objectives: s.objectives,
       health: s.player.health, weapon: s.weapon, enemyAlive: s.enemyAlive, events: s.eventIds.length },
