@@ -52,7 +52,7 @@ Dados revistos nos PRs #8 e #10; runtime em **PROTÓTIPO JOGÁVEL**, com evidên
 - **Retirada.**
   - Às 06:00 recuam os sobreviventes por ID; os restantes caíram antes, fora de cena.
   - Os 20 s de relógio da regra de baixas contam a partir de `germans_on_east_spans`.
-  - Cada baixa é um tiro real de um alemão do tabuleiro que vê o último homem (`victim`); a contagem desce quando o tiro chega.
+  - Cada baixa é um tiro real de um alemão do tabuleiro que vê o último homem (`victim`); a contagem desce somente se o traçado colidir com o soldado vivo ao chegar. A pontaria antecipa o recuo no tabuleiro; obstáculos, falhas e alvos já mortos não causam baixa.
   - O pelotão corre em fila junto à treliça norte, e os alemães avançam pela metade sul: o fogo de cobertura do jogador não atravessa os próprios soldados.
   - Kowal nunca suprime os alemães do tabuleiro.
 - **HUD.** `mission.status` é a linha de estado do HUD e só lê a simulação:

@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
+import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { M01Simulation } from '../src/game/m01-simulation.js';
 import { M01View } from '../src/render/m01-view.js';
 import { route } from './helpers/m01-route.js';
@@ -10,9 +11,11 @@ const outro=()=>structuredClone((completed??=route()).outro);
 const harness=()=>{
   const view=Object.create(M01View.prototype);view.scene=new THREE.Scene();view.batches=new Map();
   view.box=new THREE.BoxGeometry(1,1,1);view.sphere=new THREE.SphereGeometry(1,8,6);view.cylinder=new THREE.CylinderGeometry(1,1,1,8);
-  view.materials=Object.fromEntries(['cloth','skin','metal','dark','wood','glow'].map(k=>[k,new THREE.MeshBasicMaterial()]));
+  view.roundBox=new RoundedBoxGeometry(1,1,1,2,.12);view.accessoryBox=new RoundedBoxGeometry(1,1,1,1,.1);view.featureSphere=view.sphere;
+  view.helmetGeometry=new THREE.SphereGeometry(1,20,8,0,Math.PI*2,0,Math.PI/2);
+  view.materials=Object.fromEntries(['cloth','skin','metal','dark','wood','glow','leather','brass'].map(k=>[k,new THREE.MeshBasicMaterial()]));
   view.createActors();
-  view.cleanup=()=>{view.batches.forEach(b=>b.dispose());[view.box,view.sphere,view.cylinder].forEach(g=>g.dispose());Object.values(view.materials).forEach(m=>m.dispose());};
+  view.cleanup=()=>{view.batches.forEach(b=>b.dispose());[view.box,view.sphere,view.cylinder,view.roundBox,view.accessoryBox,view.helmetGeometry].forEach(g=>g.dispose());Object.values(view.materials).forEach(m=>m.dispose());};
   return view;
 };
 const matrix=(view,batch,index=0)=>{const m=new THREE.Matrix4();view.batches.get(batch).getMatrixAt(index,m);return m;};
@@ -37,7 +40,7 @@ test('actual instance matrices lower seated/crouched heads, keep seated feet on 
     const seated={...base,pose:'seated',crouched:true},copy=structuredClone(seated);
     view.updateActors([seated],0);const head=center(matrix(view,'head')),foot=matrix(view,'boots');
     assert.ok(standing.y-head.y>.35&&standing.y-head.y<.6);
-    const bounds=new THREE.Box3().setFromBufferAttribute(view.box.attributes.position).applyMatrix4(foot);
+    const bounds=new THREE.Box3().setFromBufferAttribute(view.accessoryBox.attributes.position).applyMatrix4(foot);
     assert.ok(Math.abs(bounds.min.y)<1e-6,'a bota assenta no chão');
     const still=view.batches.get('limbs').instanceMatrix.array.slice(0,view.batches.get('limbs').count*16);
     view.updateActors([seated],40);assert.deepEqual(view.batches.get('limbs').instanceMatrix.array.slice(0,still.length),still);
@@ -62,4 +65,15 @@ test('legacy actors without pose remain accepted and an unknown saved pose is re
   assert.equal(sim.loadCheckpoint(JSON.stringify(old)).ok,true);
   const before=sim.snapshot(),bad=structuredClone(before);bad.actors[0].pose='floating';
   assert.equal(sim.loadCheckpoint(JSON.stringify(bad)).ok,false);assert.deepEqual(sim.snapshot(),before);
+});
+
+test('distance removes face accessories while retaining the same head position, pose and immutable actor',()=>{
+  const view=harness(),actor={id:'sample',x:90,y:0,z:0,facing:0,team:'ally',alive:true,active:true,state:'GUARD',shot:0},saved=structuredClone(actor);
+  try{
+    view.updateActors([actor],0,{x:89,z:0});const close=center(matrix(view,'head'));
+    assert.equal(view.batches.get('farHead').count,0);assert.ok(view.batches.get('eyes').count>0);
+    view.updateActors([actor],0,{x:0,z:0});
+    assert.equal(view.batches.get('head').count,0);assert.equal(view.batches.get('farHead').count,1);assert.equal(view.batches.get('eyes').count,0);
+    assert.deepEqual(center(matrix(view,'farHead')),close);assert.equal(view.actorPoses.standing,1);assert.deepEqual(actor,saved);
+  }finally{view.cleanup();}
 });

@@ -403,7 +403,13 @@ export class M01Simulation {
     const n=this.flags['m01.east_platoon_survivors'],victim=this.actor(`pl_east_${n-1}`);
     if(n<=12||!victim?.alive||!victim.active)return;
     const shooter=spans.find(a=>this.world.lineOfSight(a,victim));
-    if(shooter)this.burst(shooter,victim,'platoon',{rounds:1,bias:[0,0],cone:[0,0],victim:victim.id});
+    if(shooter){
+      // Lead the running soldier. A designated ID never bypasses the actual collision at arrival.
+      const flight=Math.hypot(victim.x-shooter.x,victim.z-shooter.z)/620;
+      const aim={x:victim.x-5.5*flight,z:37.8+(Number(victim.id.split('_').at(-1))%2)*.35};
+      aim.y=this.world.heightAt(aim.x,aim.z)+.1;
+      this.burst(shooter,aim,'platoon',{rounds:1,bias:[0,0],cone:[0,0],victim:victim.id});
+    }
   }
   withdrawingPlatoon(){return this.actors.filter(a=>a.group==='grp_east_platoon'&&a.alive&&a.active);}
   repairAim(){
@@ -446,7 +452,8 @@ export class M01Simulation {
     const p=this.player,victim=r.victim&&!this.consumedEvent(E('east_demolition'))?this.actor(r.victim):null;
     const hit=traceRound(this.world,r,victim?.alive?[p,victim]:[p]);
     let point=hit.point,material=hit.material??'earth';
-    if(victim){
+    const casualty=victim?.alive&&hit.actor===victim;
+    if(casualty){
       const n=this.flags['m01.east_platoon_survivors'];this.flags['m01.east_platoon_survivors']=Math.max(12,n-1);
       if(victim.alive&&Number(victim.id.split('_').at(-1))>=this.flags['m01.east_platoon_survivors']){
         point={x:victim.x,y:victim.y+1.1,z:victim.z};material='character';victim.alive=false;victim.health=0;victim.state='DOWN';
@@ -469,7 +476,7 @@ export class M01Simulation {
       for(const a of this.actors)if(a.role==='ENGINEER'&&a.alive&&a.active&&dist(a,site)<6){a.suppressedUntil=Math.max(a.suppressedUntil,this.timers.repairSuppressedUntil);if(!near.includes(a.id))near.push(a.id);}
     }
     this.emit({type:'round-impact',kind:r.kind,by:r.by,point,material,crack:closestApproach(r,hit.t,eyePosition(p))<=6,distance:dist(point,p),
-      victim:victim?victim.id:null,pinned:near});
+      victim:casualty?victim.id:null,pinned:near});
   }
   fire(){
     const p=this.player,now=this.clock*1000;if(p.carrying||!this.weapon.shoot(now))return;

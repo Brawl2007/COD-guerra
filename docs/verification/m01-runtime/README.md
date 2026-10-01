@@ -27,3 +27,5 @@ node tools/verify-m01-route.mjs
 ```
 
 O Playwright gera estas capturas em `test-results/`; o CI conserva o mesmo conjunto no artefacto `browser-evidence`. `CHROME_EXECUTABLE` é uma alternativa opcional descrita em `RUNBOOK.md`. Consultar `QUALITY_REPORT.md` para pendências de encenação, navegação, arte e validação.
+
+Revisão de cenário, céu, fumaça e atributos procedurais: [visual-sprint/README.md](visual-sprint/README.md), com comparação antes/depois no navegador.

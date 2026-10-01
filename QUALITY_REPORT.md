@@ -1,4 +1,22 @@
+## Integração do PR #15 com o sprint visual
+
+Revisão local: **95/95 testes Node**, build **1008,84 kB / 260,28 kB gzip**, 83 colisores GLB verificados e rota completa (26 eventos / CP-A..D). O aviso de chunk grande permanece. A suíte de navegador do conjunto está em execução.
+
+Corrigido na revisão: o impacto com `victim` ignorava o obstáculo/actor retornado pelo traçado e podia reduzir sobreviventes sem acerto. Agora exige colisão com o soldado vivo; a pontaria antecipa o recuo no tabuleiro. Regressão cobre parede, falha, acerto e chegada duplicada. Comparação em 12 sementes preserva reparo ajuda 180–207 s / ignora 206–251 s e sobreviventes ajuda 15–18 / ignora 12; prova em `visual-sprint/integration-cover-comparison.json`.
+
+Conflitos de apresentação resolvidos preservando `pinned`, tiros em voo e os materiais/atmosfera/LOD do sprint. As capturas `visual-sprint/before` e `after` pertencem à revisão visual anterior ao PR #15. As partidas contínuas de `round3` pertencem ao trabalho do Claude. Não equivalem a uma nova partida contínua desta integração nem a playtest humano. Humanos finais e Chromebook continuam pendentes.
+
 # Relatório de qualidade — integração M01
+
+## Sprint visual de M01
+
+Base `0ab60d7`; evidência em `docs/verification/m01-runtime/visual-sprint/`. Node **84/84** e build **995,22 kB / 255,53 kB gzip**, com o aviso de chunk grande. Quatro capturas de antes e quatro de depois, qualidade média/1280×720, sem erros de página/shader/rede no capturador. São continuações de snapshots reais; não uma partida contínua/humana.
+
+A primeira suíte do código final passou 12/13 casos de navegador, incluindo recursos após restauro, troca médio→baixo e bancada francesa. O percurso de entrega falhou com x=15,00/z=−0,60: sprint ultrapassou a posição final, fora do raio real de interação. A aproximação final agora caminha para x=17/z=3, preservando teclas, assertions e orçamentos. A correcção passou o teste isolado e a suíte completa de navegador: **13/13**, sem retries. Não foi ampliado o raio de interação nem alterada a missão.
+
+O primeiro capturador do cenário detalhado excedeu 30 s numa screenshot da retirada. Detalhes de rosto têm LOD, acessórios usam geometria mais leve e pedras pequenas não projectam sombras. As capturas finais de qualidade média registam 397.160 triângulos no reparo e 645.874 na retirada, incluindo passes de sombra; isto não é FPS. Presets baixo/médio/alto têm limites de 112/192/256 puffs; as demolições têm prioridade. Sombras de contacto são aproximações visuais.
+
+Troncos próximos têm obstrução real e caixas reproduzíveis, testadas ao reconstruir destruição. Árvores/detalhes artísticos não são levantamento histórico. Humanos/mãos permanecem procedurais e estilizados, abaixo do realismo das referências; rigs/rostos/uniformes profissionais, composição, playtest humano e GPU do Chromebook continuam pendentes. M01 permanece **PROTÓTIPO JOGÁVEL**.
 
 ## Evidências desta integração
 

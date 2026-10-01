@@ -135,3 +135,21 @@ test('allies under fire are drawn hunched (pinned pose) only while suppressedUnt
   assert.equal(actorPose({...base,team:'enemy',crouched:false},5).name,'standing','os alemães usam o crouched da simulação');
   assert.equal(actorPose({...base,pose:'seated'},5).name,'seated');assert.equal(actorPose({...base,alive:false},5).name,'fallen');
 });
+
+
+test('a designated withdrawal casualty needs an actual actor hit; a wall, a miss or an already dead target cannot lower the count',()=>{
+  const sim=new M01Simulation(),victim=sim.actor('pl_east_17');
+  Object.assign(victim,{x:700,y:0,z:40,alive:true,active:true,health:100,crouched:false});
+  Object.assign(sim.player,{x:-200,y:0,z:0});
+  const r={id:'m01_round_test',by:'de_spans_0',weapon:'kar98k',kind:'platoon',ox:720,oy:1.1,oz:40,
+    ax:700,ay:1.1,az:40,h:0,firedAt:0,arriveAt:1,tracer:false,victim:victim.id};
+  // Deterministic collision fixtures, exercising landRound and the production traceRound.
+  sim.world.traceTerrain=()=>null;
+  sim.world.obstacles=[{min:{x:709,y:0,z:39},max:{x:710,y:3,z:41},material:'stone'}];
+  sim.landRound(r);assert.equal(victim.alive,true);assert.equal(sim.flags['m01.east_platoon_survivors'],18);
+  assert.equal(sim.drainEvents().find(e=>e.type==='round-impact').victim,null);
+  sim.world.obstacles=[];
+  sim.landRound({...r,az:50});assert.equal(victim.alive,true);assert.equal(sim.flags['m01.east_platoon_survivors'],18);
+  sim.landRound(r);assert.equal(victim.alive,false);assert.equal(sim.flags['m01.east_platoon_survivors'],17);
+  sim.landRound(r);assert.equal(sim.flags['m01.east_platoon_survivors'],17,'a duplicate arrival cannot consume another survivor');
+});
