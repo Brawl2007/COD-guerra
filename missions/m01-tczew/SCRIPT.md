@@ -40,7 +40,7 @@ Dados executáveis: [`mission.json`](mission.json) (IDs estáveis de objetivos, 
 | 4. Diálogo | Nowicki e a caneca; "Não é trem." | 04:33 |
 | 5. Primeiro contato | Stukas vindos do céu claro; bombardeio | 04:34 |
 | 6. Escalada | Reorganização; linha cortada; trem na margem leste | 04:36–04:52 |
-| 7. Combate principal | Proteger o reparo; fogo a 700–850 m; rotação de cobertura | 04:52–06:00 |
+| 7. Combate principal | Proteger o reparo; fogo a ~1–1,2 km; rotação de cobertura | 04:52–06:00 |
 | 8. Set-piece | Retirada do pelotão leste pelo tabuleiro; ferimento de Bąk; explosão leste | 06:00–06:10 |
 | 9. Pausa | Silêncio de 2 s após a explosão; contagem dos homens | 06:10–06:15 |
 | 10. Clímax | Sair da ponte; manter o corredor; demolição oeste | 06:15–06:40 |
@@ -177,14 +177,14 @@ Krawiec recolhe do chão a **caneca amassada**, sem comentário. Um jogador aten
 
 ### Cena 5 — O trem de Lisewo (04:45–05:30) · COMBATE PRINCIPAL
 
-`evt_m01_train963_arrives` (04:45). Da margem oeste, a 850 m, vê-se a fumaça de uma locomotiva parada diante dos portões fechados. Pioneiros alemães descem dos vagões e o pelotão leste abre fogo.
+`evt_m01_train963_arrives` (04:45). Da margem oeste, a ~1,05 km, vê-se a fumaça de uma locomotiva parada diante dos portões fechados do portal de 1912 (as pontes tinham sido prolongadas em 1910–1912, T25). Pioneiros alemães descem dos vagões e o pelotão leste abre fogo.
 
 | ID | Fala |
 | --- | --- |
 | 025 | **PAWLAK** (chega correndo): Trem na cabeça de ponte leste! Os portões estão fechados — estão atirando! |
 | 026 | **ZIELIŃSKI:** Kowal, rajadas curtas nos clarões do dique. Ninguém desperdiça. |
-| 027 | **KOWAL:** Clarões junto aos vagões. Setecentos, oitocentos metros. |
-| 028 | **ZIELIŃSKI:** Wrona, alça em oitocentos. Mire nos clarões, não na fumaça. |
+| 027 | **KOWAL:** Clarões junto aos vagões. Mil metros, talvez mais. |
+| 028 | **ZIELIŃSKI:** Wrona, alça em mil. Mire nos clarões, não na fumaça. |
 
 É aqui que o jogo ensina **mira, tiro, ferrolho e recarga por clipe** com propósito.
 
@@ -259,7 +259,7 @@ O comandante histórico não aparece. A ordem chega pelo mensageiro, como chegar
 - **−4 s:** apito de sinal dos sapadores, três toques curtos.
 - **−2 s:** **ZIELIŃSKI:** Cabeças baixas! Lá do outro lado! (044)
 - **0 s:** clarão e coluna de poeira na extremidade leste. Os vãos cedem. **Ainda sem som.**
-- **2,4 s:** o estrondo chega (C02) e o tabuleiro vibra sob os pés.
+- **~2 s** (distância real ÷ 343 m/s, calculada em tempo de execução; ~1,9–2,3 s do tabuleiro): o estrondo chega (C02) e o tabuleiro vibra sob os pés.
 - **4 s:** detritos caem no rio e a fumaça cobre o trem 963.
 - **6,5 s:** dois segundos de silêncio. A mixagem baixa tudo menos o vento.
 - **KOWAL:** …Lá se foi o outro lado. (045)
@@ -388,7 +388,7 @@ Todos os setores seguem o relógio de batalha e mantêm estado ao virar a câmer
 
 ## 6. Momento memorável (Prompt §55)
 
-**A ponte explode longe e o som demora.** No tabuleiro de ferro, com o sol baixo nos olhos, Jan vê os seus correndo em sua direção. Depois vê o clarão a 800 m e só então ouve o estrondo, com o chão tremendo sob os pés. Em seguida vem o silêncio.
+**A ponte explode longe e o som demora.** No tabuleiro de ferro, com o sol baixo nos olhos, Jan vê os seus correndo em sua direção. Depois vê o clarão no antigo encontro leste, a ~700 m, e só então ouve o estrondo, com o chão tremendo sob os pés. Em seguida vem o silêncio.
 
 Combina cenário (as pontes reais de Tczew, as torres e o sol nascente), som (atraso físico), personagens (Bąk ferido, o pelotão chegando) e gameplay (suprimir quem os persegue).
 

@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "missionId": "m01_tczew",
+  "status": "LISTA DE NECESSIDADES — nenhum asset baixado ou verificado nesta sessão (Sketchfab bloqueado por desafio anti-bot; licenças tiradas de resumos de busca)",
+  "scaleConvention": {
+    "unit": "1 unidade = 1 metro",
+    "up": "+Y",
+    "forward": "−Z (frente da câmera Three.js); armas com o cano para −Z",
+    "format": "glTF 2.0 (.glb), texturas PNG ou KTX2",
+    "acceptance": "Bounding box medida após importar = dimensão real ± 2 %. Corrigir a escala na importação, uma vez, nunca por instância."
+  },
+  "licensePolicy": {
+    "allowed": ["original do projeto", "CC0 / domínio público", "CC-BY 3.0/4.0 com crédito em ASSET_CREDITS.md"],
+    "conditional": ["CC-BY-SA: só se o projeto aceitar compartilhar o asset derivado sob a mesma licença"],
+    "forbidden": ["CC-BY-NC", "CC-BY-ND", "licenças de loja 'royalty free' que proíbem redistribuir o arquivo-fonte (o repositório é público)", "uso editorial", "qualquer asset extraído de jogos"],
+    "note": "O repositório é público, então incluir um arquivo .glb no Git é redistribuí-lo. Licenças de loja (Sketchfab Store, CGTrader 'Royalty Free') normalmente permitem usar no jogo, mas não distribuir o arquivo; por isso ficam fora."
+  },
+  "items": [
+    {
+      "id": "bridge_rail_1891_1912", "name": "Ponte ferroviária de Tczew (1891 + extensão de 1912)", "category": "environment_landmark", "priority": "P0",
+      "realDimensions": { "lengthM": [1030, 1037], "spansM": "6 × 129 (lenticulares) + 3 × 81,6", "supportsXm": "ver map-layout.json → rail_bridge.supportsX", "tracks": 2, "sources": ["T05", "T25", "G01"] },
+      "strategy": "ORIGINAL",
+      "build": "Kit modular instanciável: vão lenticular de 129 m, vão de extensão de 81,6 m, pilar, portal oeste, portal comum de 1912. Estados de dano: pilar 6 (06:10) e encontro oeste + pilar 1 (06:40), com vãos caídos.",
+      "budget": { "lod0TrisPerSpan": 25000, "lods": 3, "instancing": true },
+      "candidates": [
+        { "source": "Sketchfab", "title": "Railway Bridges Pack 01", "author": "Szakal (@Grabka)", "url": "https://sketchfab.com/3d-models/railway-bridges-pack-01-877cdcd7b6f14b72aaa88fa893b812c9", "licenseStated": "CC-BY (resumo de busca)", "licenseVerified": false, "scaleVerified": false, "use": "só bloqueio/placeholder — tipo de treliça diferente" }
+      ],
+      "status": "A PRODUZIR", "targetPath": "assets/models/production/m01/bridge_rail_*.glb"
+    },
+    {
+      "id": "bridge_road_lentze_1857", "name": "Ponte rodoviária Lentze (1857 + extensão de 1912), torres e portais de Stüler", "category": "environment_landmark", "priority": "P0",
+      "realDimensions": { "lengthM": [1030, 1037], "spansM": "6 × 130,9 (treliça múltipla) + 3 × 81,6", "girderHeightM": 8.68, "girderSpacingM": 6.43, "towers": "5 pares, ~23 m de altura, Ø 5,3 m", "sources": ["T04", "T25", "G01"] },
+      "strategy": "ORIGINAL",
+      "build": "Vão de treliça múltipla Lentze, par de torres neogóticas, portal oeste de Stüler, antigo portal leste (pilar 6), vãos de extensão. Mesmos estados de dano da ferroviária.",
+      "budget": { "lod0TrisPerSpan": 30000, "towerPairLod0Tris": 12000, "lods": 3, "instancing": true },
+      "candidates": [],
+      "referenceOnly": ["Fotografias da Skarbnica Tczewska (T18) — referência visual, não textura"],
+      "status": "A PRODUZIR", "targetPath": "assets/models/production/m01/bridge_road_*.glb"
+    },
+    {
+      "id": "station_stary_dworzec", "name": "Estação de Tczew de 1939 (Stüler, 1856–57)", "category": "environment_building", "priority": "P1",
+      "realDimensions": { "note": "Edifício grande entre as linhas para Gdańsk e Bydgoszcz; contorno pendente (P4)", "sources": ["T24"] },
+      "strategy": "ORIGINAL", "build": "Fachada para média distância (S3), com dano do bombardeio de 1/9 e incêndio num vagão.",
+      "budget": { "lod0Tris": 40000, "lods": 2 }, "candidates": [], "status": "A PRODUZIR (depois de P4)", "targetPath": "assets/models/production/m01/station_1939.glb"
+    },
+    {
+      "id": "ju87b", "name": "Junkers Ju 87 B-1 (3./StG 1)", "category": "vehicle_aircraft", "priority": "P0",
+      "realDimensions": { "lengthM": 11.1, "wingspanM": 13.8, "heightM": 4.24, "sources": ["T29"] },
+      "strategy": "CANDIDATE_CC_BY_OR_ORIGINAL",
+      "build": "Só voo e mergulho (sem cockpit): hélice animada, freios de mergulho, sirene. Variante B (não D/G): conferir capota, carenagem do motor e radiador.",
+      "budget": { "lod0Tris": 15000, "lods": 2 },
+      "candidates": [
+        { "source": "Sketchfab", "title": "Junkers Ju 87 Stuka", "author": "scorpion81", "url": "https://sketchfab.com/3d-models/junkers-ju-87-stuka-80fe9909938a44159d1906a81092c006", "licenseStated": "CC-BY (resumo de busca)", "licenseVerified": false, "scaleVerified": false },
+        { "source": "Sketchfab", "title": "Ju87", "author": "manilov.ap", "url": "https://sketchfab.com/3d-models/ju87-a03d335e5dd740b0a4e5ba30f2038472", "licenseStated": "CC-BY (resumo de busca)", "licenseVerified": false, "scaleVerified": false },
+        { "source": "Sketchfab", "title": "Junkers Ju87 Stuka", "author": "philano", "url": "https://sketchfab.com/3d-models/junkers-ju87-stuka-e7b653c1e57f454f8b994d29d289087a", "licenseStated": "CC-BY (resumo de busca)", "licenseVerified": false, "scaleVerified": false },
+        { "source": "Sketchfab", "title": "Junkers Ju 87", "author": "helijah", "url": "https://sketchfab.com/3d-models/junkers-ju-87-vdq9z1uuBN6lEtAaXLDROZ9xiS4", "licenseStated": "CC-BY (resumo de busca)", "licenseVerified": false, "scaleVerified": false }
+      ],
+      "referenceOnly": ["Museum of the Second World War (@wwIImuseum) — modelo Ju 87 no Sketchfab, referência institucional"],
+      "notes": "Insígnias históricas: definir política de símbolos por país antes da publicação. Algumas jurisdições restringem a suástica; a Balkenkreuz não tem essa restrição.",
+      "status": "A VERIFICAR", "targetPath": "assets/models/production/m01/ju87b.glb"
+    },
+    {
+      "id": "locomotive_freight_1939", "name": "Locomotiva do trem 963", "category": "vehicle_rail", "priority": "P1",
+      "realDimensions": { "note": "Classe desconhecida (P16)", "sources": ["T07"] },
+      "strategy": "ORIGINAL",
+      "build": "Locomotiva a vapor de carga genérica da época, sem afirmar classe na tela. Fumaça e vapor ativos.",
+      "budget": { "lod0Tris": 20000, "lods": 2 },
+      "candidates": [
+        { "source": "Sketchfab", "title": "BR52 Steam Locomotive Animation", "author": "Ryan.Qin", "url": "https://sketchfab.com/3d-models/br52-steam-locomotive-animation-852f498c26ee457d933f7fbeeb50c8ab", "licenseStated": "CC-BY (resumo de busca)", "licenseVerified": false, "scaleVerified": false, "use": "REJEITADO para M01: BR 52 é de 1942" },
+        { "source": "Sketchfab", "title": "BR 01 german steam locomotive", "author": "Tom Zimmermann (@tomm8)", "url": "https://sketchfab.com/3d-models/br-01-german-steam-locomotive-cdf7e415aa75441897c0b5dfb384302f", "licenseStated": "CC-BY (resumo de busca)", "licenseVerified": false, "scaleVerified": false, "use": "REJEITADO: locomotiva de expresso, não de trem de carga" }
+      ],
+      "status": "A PRODUZIR (depois de P16)", "targetPath": "assets/models/production/m01/loco_freight.glb"
+    },
+    {
+      "id": "freight_wagons", "name": "Vagões do trem 963 (65)", "category": "vehicle_rail", "priority": "P1",
+      "realDimensions": { "note": "Tipos pendentes (P16); vagão coberto padrão da época com ~9–10 m entre para-choques (a confirmar)", "sources": ["T07"] },
+      "strategy": "ORIGINAL", "build": "2–3 tipos instanciados (coberto, aberto); portas de correr que abrem para o desembarque dos pioneiros.",
+      "budget": { "lod0Tris": 2500, "lods": 3, "instancing": true }, "candidates": [], "status": "A PRODUZIR", "targetPath": "assets/models/production/m01/wagon_*.glb"
+    },
+    {
+      "id": "panzerzug_7", "name": "Panzerzug 7", "category": "vehicle_rail", "priority": "P1",
+      "realDimensions": { "armament": "2 × 7,5 cm + 2 × 2 cm antiaéreos (T20)", "note": "Composição dos vagões pendente (P6)", "sources": ["T20", "T14"] },
+      "strategy": "ORIGINAL", "build": "Silhueta para ~1,1 km: locomotiva blindada, vagões de canhão e vagão antiaéreo. Clarões das MGs e dos 2 cm.",
+      "budget": { "lod0Tris": 18000, "lods": 2 }, "candidates": [], "status": "A PRODUZIR (depois de P6)", "targetPath": "assets/models/production/m01/panzerzug7.glb"
+    },
+    {
+      "id": "pl_soldier_1939", "name": "Soldado polonês 1939 (2.º Batalhão de Fuzileiros), com rig", "category": "character", "priority": "P0",
+      "realDimensions": { "heightM": [1.65, 1.85], "uniform": "túnica wz.36 ou modelo anterior; capacete wz.31; rogatywka wz.37; patches azul-marinho com vivo verde-claro (batalhões de fuzileiros)", "sources": ["T17", "T22", "H30"] },
+      "strategy": "ORIGINAL",
+      "build": "Corpo com rig humanoide, cabeças variáveis (Prompt §7) e peças trocáveis: capacete/rogatywka, cinturão, cartucheiras, bornal wz.33, máscara wz.32, cantil, pá. Funções: fuzileiro, NCO, sapador, socorrista, mensageiro.",
+      "budget": { "lod0Tris": 25000, "lods": 3 },
+      "candidates": [
+        { "source": "Sketchfab", "title": "Polish soldier", "author": "buh (@buh-late)", "url": "https://sketchfab.com/3d-models/polish-soldier-fb96a663fc4a4246a57ca85de3228c00", "licenseStated": "CC-BY (resumo de busca)", "licenseVerified": false, "scaleVerified": false, "use": "verificar época e rig; provavelmente só referência" },
+        { "source": "CGTrader", "title": "WZ 31 Polish Helmet", "url": "https://www.cgtrader.com/3d-models/military/military-character/wz-31-polish-helmet-wwii", "licenseStated": "licença de loja", "licenseVerified": false, "use": "REJEITADO para o repositório público (redistribuição)" }
+      ],
+      "status": "A PRODUZIR", "targetPath": "assets/models/production/characters/pl_1939_*.glb"
+    },
+    {
+      "id": "de_soldier_1939", "name": "Soldado alemão 1939 (pioneiro / Grenzwacht), com rig", "category": "character", "priority": "P1",
+      "realDimensions": { "heightM": [1.65, 1.85], "uniform": "capacete M35, túnica M36 cinza-campo; detalhes do Grenzwacht pendentes (P7)", "sources": ["P7"] },
+      "strategy": "ORIGINAL (corpo) + CC0/CC-BY (capacete)",
+      "build": "Visto sobretudo a 700–1100 m em M01: LOD de média distância primeiro; LOD0 para missões seguintes.",
+      "budget": { "lod0Tris": 22000, "lods": 3 },
+      "candidates": [
+        { "source": "Sketchfab", "title": "WW2 headwear (CC0)", "author": "britdawgmasterfunk", "url": "https://sketchfab.com/3d-models/ww2-headwear-cc0-7092309d3b0d4ca6bcd4bfeec9640e29", "licenseStated": "CC0 (resumo de busca)", "licenseVerified": false, "scaleVerified": false, "use": "capacete M35 (preferido pela licença)" },
+        { "source": "Sketchfab", "title": "Stahlhelm M35", "author": "PL_historyfan_K", "url": "https://sketchfab.com/3d-models/stahlhelm-m35-bd2ea998e509496fbffc7c9aaba9c304", "licenseStated": "CC-BY (resumo de busca)", "licenseVerified": false, "scaleVerified": false },
+        { "source": "Sketchfab", "title": "M35 Stahlhelm german helmet", "author": "Cyril Demetrius (@oyez)", "url": "https://sketchfab.com/3d-models/m35-stahlhelm-german-helmet-f99b9c47667b4d16bd8c55cc01bcb09a", "licenseStated": "CC-BY (resumo de busca)", "licenseVerified": false, "scaleVerified": false }
+      ],
+      "status": "A VERIFICAR", "targetPath": "assets/models/production/characters/de_1939_*.glb"
+    },
+    {
+      "id": "kar98k", "name": "Kar98k (inimigos)", "category": "weapon", "priority": "P1",
+      "realDimensions": { "lengthM": 1.11, "note": "Alavanca DOBRADA (contraste com o wz.29); comprimento a confirmar", "sources": [] },
+      "strategy": "CANDIDATE_CC_BY_OR_ORIGINAL", "budget": { "worldLod0Tris": 3000 },
+      "candidates": [
+        { "source": "Sketchfab", "title": "Kar98K", "author": "Dima_Biliakkk", "url": "https://sketchfab.com/3d-models/kar98k-b2643e9d88234b3c80918e28e276109a", "licenseStated": "CC-BY (resumo de busca)", "licenseVerified": false, "scaleVerified": false },
+        { "source": "Sketchfab", "title": "Kar98k", "author": "The Unknown... (@1514112)", "url": "https://sketchfab.com/3d-models/kar98k-ea432831fe4848cf9fe83091df50c602", "licenseStated": "CC-BY (resumo de busca)", "licenseVerified": false, "scaleVerified": false }
+      ],
+      "status": "A VERIFICAR", "targetPath": "assets/models/production/weapons/kar98k.glb"
+    },
+    {
+      "id": "kb_wz29", "name": "Karabinek wz.29 (jogador) — ViewModel + mundo", "category": "weapon", "priority": "P0",
+      "realDimensions": { "lengthM": 1.10, "barrelM": 0.60, "massKg": 4.0, "boltHandle": "reta", "sources": ["T21"] },
+      "strategy": "ORIGINAL", "spec": "research/weapons/kb_wz29.md",
+      "budget": { "viewModelTris": 12000, "worldLod0Tris": 3000, "worldLod1Tris": 800 },
+      "candidates": [
+        { "source": "Sketchfab", "title": "Karabinek wz.29 + Bayonet", "author": "TomPL", "url": "https://sketchfab.com/3d-models/karabinek-wz29-bayonet-15e314ad5144440e9650a4df91e14db5", "licenseStated": "sem download/licença indicada", "licenseVerified": false, "use": "só referência visual" }
+      ],
+      "status": "A PRODUZIR", "targetPath": "assets/models/production/weapons/kb_wz29.glb"
+    },
+    {
+      "id": "pl_support_weapons", "name": "rkm wz.28, ckm wz.30 (com tripé e fita), Vis wz.35, granada wz.33", "category": "weapon", "priority": "P1",
+      "realDimensions": { "note": "Dimensões a levantar (H30 e literatura)", "sources": ["H30"] },
+      "strategy": "ORIGINAL", "budget": { "worldLod0Tris": 4000 }, "candidates": [], "status": "A PRODUZIR"
+    },
+    {
+      "id": "materials_cc0", "name": "Materiais PBR de cenário", "category": "texture", "priority": "P0",
+      "need": ["aço rebitado pintado e enferrujado (treliças)", "tijolo vermelho e reboco (portais, estação)", "pedra de cantaria (pilares e encontros)", "brita de lastro e dormentes de madeira", "terra, lama e grama seca de setembro", "sacos de areia (lona)", "madeira envelhecida (barracão, abrigo)", "água de rio (shader)"],
+      "strategy": "CC0_LIBRARY",
+      "candidates": [
+        { "source": "ambientCG", "url": "https://ambientcg.com/", "licenseStated": "CC0 (documentação da própria plataforma, segundo resumo)", "licenseVerified": false },
+        { "source": "Poly Haven", "url": "https://polyhaven.com/license", "licenseStated": "CC0 (página de licença, segundo resumo)", "licenseVerified": false }
+      ],
+      "status": "A ESCOLHER (sites bloqueados nesta sessão)", "targetPath": "assets/textures/production/"
+    },
+    {
+      "id": "sky_dawn", "name": "Céu de amanhecer / HDRI", "category": "texture", "priority": "P1",
+      "need": ["céu do crepúsculo civil com faixa clara a ENE (Sol a −3°)", "céu da manhã (Sol a +10–18°)"],
+      "strategy": "CC0_LIBRARY ou procedural",
+      "candidates": [{ "source": "Poly Haven (HDRIs)", "url": "https://polyhaven.com/license", "licenseStated": "CC0", "licenseVerified": false }],
+      "status": "A ESCOLHER"
+    }
+  ]
+}

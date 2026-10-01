@@ -7,10 +7,11 @@
     "units": "metros",
     "axes": { "x": "leste (+) / oeste (−)", "y": "altura (+ para cima)", "z": "sul (+) / norte (−)" },
     "handedness": "destro, compatível com Three.js (câmera padrão olha para −Z = norte)",
-    "origin": "portal oeste da ponte ferroviária, ao nível dos trilhos (y = 0)",
-    "bridgeAxisBearingDeg": 90,
-    "bridgeAxisNote": "Pontes modeladas exatamente leste–oeste. O azimute real do eixo das pontes está PENDENTE (HISTORICAL_RESEARCH P5); ao medir, rotacionar o conjunto inteiro, sem deformar distâncias.",
-    "legacyConversion": "O protótipo antigo usa (x, y) planar em pixels (CONFIG.tile = 64). Não converter coordenadas antigas para este mapa: M01 é um mapa novo. Se o adaptador precisar, planar_x = x, planar_y = z; y é só altura."
+    "origin": "encontro oeste da ponte ferroviária (pilar mais a oeste medido em G01), ao nível dos trilhos (y = 0)",
+    "bridgeAxisBearingDeg": 89.7,
+    "bridgeAxisNote": "Medido em G01 (measurements.json): ponte ferroviária 89,7°, rodoviária 89,9°. O eixo X segue a ponte ferroviária; o norte verdadeiro fica a 0,3° de −Z (desprezível para o jogo). P5 resolvida.",
+    "legacyConversion": "O protótipo antigo usa (x, y) planar em pixels (CONFIG.tile = 64). Não converter coordenadas antigas para este mapa: M01 é um mapa novo. Se o adaptador precisar, planar_x = x, planar_y = z; y é só altura.",
+    "measurements": "measurements.json (gerado por tools/measure_osm_overture.py)"
   },
   "classificationLegend": {
     "EXACT": "medida documentada (fonte em 'sources')",
@@ -19,10 +20,10 @@
   },
   "bounds": {
     "playable": { "minX": -460, "maxX": 300, "minZ": -80, "maxZ": 140 },
-    "softWarningX": 288,
-    "outOfBoundsX": 419,
+    "softWarningX": 270,
+    "outOfBoundsX": 401,
     "outOfBoundsGraceSec": 8,
-    "note": "Além do 2.º pilar (x≈288) o fogo da margem leste se intensifica e o sargento manda voltar; além do 3.º pilar (x≈419) aviso e falha legível após 8 s. Nunca parede invisível sem aviso."
+    "note": "Além do 2.º pilar (x ≈ 270) o fogo da margem leste se intensifica e o sargento manda voltar; além do 3.º pilar (x ≈ 401) aviso e falha legível após 8 s. Nunca parede invisível sem aviso."
   },
   "sun": {
     "source": "C01",
@@ -41,51 +42,64 @@
   "features": [
     {
       "id": "rail_bridge",
-      "name": "Ponte ferroviária (1891), via dupla",
+      "name": "Ponte ferroviária (1891; prolongada em 1910–1912), via dupla",
       "type": "bridge",
-      "polyline": [[0, 0, 0], [837, 0, 0]],
+      "polyline": [[0, 0, 0], [1049.2, 0, 0]],
       "widthM": 10,
-      "spansM": [129, 129, 129, 129, 129, 129],
-      "pierFacesX": [31.5, 160.5, 289.5, 418.5, 547.5, 676.5, 805.5],
+      "lengthM": { "1891": 837, "1912": [1030, 1037] },
+      "spansM": [129, 129, 129, 129, 129, 129, 81.6, 81.6, 81.6],
+      "supportsX": [0, 140.9, 270.2, 401.1, 531.7, 662.3, 793.8, 878.9, 961.7, 1049.2],
+      "postwarSupportsX": [727.6],
       "classification": "EXACT",
-      "sources": ["T05"],
-      "notes": "Comprimento, número e comprimento dos vãos: EXACT. Largura do tabuleiro e posição dos pilares derivadas (encontros = (837 − 6×129)/2 = 31,5 m): RECONSTRUCTED. Vãos lenticulares (treliça em lente)."
+      "sources": ["T05", "T25", "G01"],
+      "notes": "Seis vãos lenticulares de 1891 (129 m) + três vãos de 81,6 m acrescentados em 1910–1912, quando o dique de Lisewo foi afastado do rio (T25). Pilares medidos na geometria atual (G01): o padrão de 1939 coincide com a documentação. O pilar em x = 727,6 divide o 6.º vão e é posterior à guerra: não existe em 1939. supportsX são eixos de pilar/encontro (±5 m)."
     },
     {
       "id": "road_bridge",
-      "name": "Ponte rodoviária Lentze (1857)",
+      "name": "Ponte rodoviária Lentze (1857; prolongada em 1910–1912)",
       "type": "bridge",
-      "polyline": [[0, 0, 40], [837.3, 0, 40]],
+      "polyline": [[0, 0, 40], [1049.1, 0, 40]],
       "widthM": 11,
       "girderHeightM": 8.68,
       "girderSpacingM": 6.43,
-      "spansM": [130.9, 130.9, 130.9, 130.9, 130.9, 130.9],
-      "pierFacesX": [25.95, 156.85, 287.75, 418.65, 549.55, 680.45, 811.35],
+      "lengthM": { "1857": 837.3, "1912": [1030, 1037] },
+      "spansM": [130.9, 130.9, 130.9, 130.9, 130.9, 130.9, 81.6, 81.6, 81.6],
+      "supportsX": [2.4, 140.9, 270.9, 400.9, 531.7, 662.1, 807.5, 879.0, 962.0, 1049.1],
+      "measuredAxisOffsetZ": 38.8,
       "classification": "EXACT",
-      "sources": ["T04", "T05"],
-      "notes": "40 m ao sul da ferroviária (EXACT, T05). Vãos, altura e espaçamento das vigas: EXACT (T04). Encontros derivados = 25,95 m, o que não bate com os '32 m' do resumo de T04; resolver em P1/P5. Alinhamento em X dos portais das duas pontes: RECONSTRUCTED (assumido igual)."
+      "sources": ["T04", "T05", "T25", "G01"],
+      "notes": "Documentado: 40 m ao sul da ferroviária (T05); medido 38,8 m (G01). Pilares alinhados com os da ferroviária até o 5.º (diferença < 3 m) — P5 resolvida. O 6.º vão medido (145 m) e os vãos da extensão (71–87 m) refletem trocas de vãos depois de 1945 (T04: vãos transferidos em 1958); para 1939 usar spansM documentados."
     },
     {
       "id": "road_bridge_towers",
       "name": "Torres neogóticas da ponte rodoviária (5 pares)",
       "type": "landmark",
       "points": [
-        [156.85, 0, 34],
-        [156.85, 0, 46],
-        [287.75, 0, 34],
-        [287.75, 0, 46],
-        [418.65, 0, 34],
-        [418.65, 0, 46],
-        [549.55, 0, 34],
-        [549.55, 0, 46],
-        [680.45, 0, 34],
-        [680.45, 0, 46]
+        [140.9, 0, 34],
+        [140.9, 0, 46],
+        [270.9, 0, 34],
+        [270.9, 0, 46],
+        [400.9, 0, 34],
+        [400.9, 0, 46],
+        [531.7, 0, 34],
+        [531.7, 0, 46],
+        [662.1, 0, 34],
+        [662.1, 0, 46]
       ],
       "heightM": 23,
       "diameterM": 5.3,
       "classification": "RECONSTRUCTED",
       "sources": ["T04"],
-      "notes": "Número, altura e diâmetro: EXACT (T04). Colocação um par por pilar fluvial, fora das vigas: RECONSTRUCTED. Silhueta essencial para reconhecer Tczew."
+      "notes": "Número, altura e diâmetro: EXACT (T04). Um par por pilar fluvial original, sobre os pilares medidos em G01. Não há torres nos vãos da extensão de 1912. Silhueta essencial para reconhecer Tczew."
+    },
+    {
+      "id": "old_east_portals_1857",
+      "name": "Antigo encontro leste e antigo portal (\"dawna brama\") — pilar 6",
+      "type": "landmark",
+      "points": [[793.8, 0, 0], [807.5, 0, 40]],
+      "classification": "RECONSTRUCTED",
+      "sources": ["T04", "T07", "T25", "G01"],
+      "notes": "Fim das pontes originais, que depois de 1912 ficou no meio do tabuleiro prolongado. Alvo da demolição das 06:10: o 6.º de 8 pilares (T07) e o antigo portal do lado de Lisewo (T04). Presença do portal antigo em 1939: a confirmar em fotografias (P11)."
     },
     {
       "id": "portal_road_west",
@@ -114,28 +128,36 @@
       "embrasures": [[25, -3, 37], [25, -3, 43]],
       "classification": "RECONSTRUCTED",
       "sources": ["T04"],
-      "notes": "Casamatas defensivas nos encontros: DOCUMENTED (T04). Interior reconstruído para gameplay; não chamar de reconstrução exata (Prompt §74). Metralhadora ckm wz.30 na seteira sul. Área dentro da zona de demolição oeste."
+      "notes": "Casamatas defensivas nos encontros: DOCUMENTED (T04). Um dos dois postos de disparo das cargas era um bunker na cabeça de ponte oeste (T08/T27). Interior reconstruído para gameplay; não chamar de reconstrução exata (Prompt §74). Metralhadora ckm wz.30 na seteira sul. Dentro da zona de demolição oeste."
     },
     {
       "id": "rail_embankment_west",
-      "name": "Aterro ferroviário oeste (entre estação e ponte)",
-      "type": "terrain",
-      "polyline": [[-420, 0, 0], [0, 0, 0]],
+      "name": "Linha principal para Gdańsk (aterro a oeste da ponte, curva para noroeste)",
+      "type": "rail",
+      "polyline": [[0, 0, 0], [-140, 0, -1], [-227, 0, -6], [-390, 0, -17], [-466, 0, -32], [-526, 0, -61], [-604, 0, -128]],
       "crestWidthM": 12,
       "heightAboveGroundM": 3,
-      "classification": "COMPRESSED_FOR_GAMEPLAY",
-      "realValue": "≈1000 m entre estação e ponte (ESTIMATIVA — P4)",
-      "sources": ["T08", "T12"],
-      "notes": "Encosta SUL do aterro leva a linha de ignição (DOCUMENTED). Altura e largura: RECONSTRUCTED."
+      "classification": "RECONSTRUCTED",
+      "sources": ["T08", "T12", "G01"],
+      "notes": "Traçado atual (G01); o traçado das vias em 1939 está pendente de mapa histórico (P4). A encosta SUL do aterro levava a linha de ignição até a estação (DOCUMENTED, T08/T12). Altura e largura do aterro: estimadas."
+    },
+    {
+      "id": "rail_line_southwest",
+      "name": "Linha original para Bydgoszcz (Ostbahn), sai para sudoeste",
+      "type": "rail",
+      "polyline": [[-53, 0, 4], [-121, 0, 17], [-222, 0, 68], [-299, 0, 105], [-596, 0, 208]],
+      "classification": "RECONSTRUCTED",
+      "sources": ["T24", "G01"],
+      "notes": "A estação de 1939 ficava entre a linha para Gdańsk e a linha para Bydgoszcz (T24). Traçado atual (G01); confirmar o de 1939 (P4). Cria a cunha onde ficam a estação, o barracão e o abrigo de disparo."
     },
     {
       "id": "ignition_line",
       "name": "Linha de ignição na encosta sul do aterro",
       "type": "objective_path",
-      "polyline": [[-200, -2, 12], [-120, -2, 9], [-40, -2, 10], [0, -1.5, 12], [13, -3, 36]],
+      "polyline": [[-290, -2, 22], [-200, -2, 4], [-120, -2, 8], [-40, -2, 10], [0, -1.5, 12], [13, -3, 36]],
       "classification": "RECONSTRUCTED",
       "sources": ["T08", "T12"],
-      "notes": "Traçado pela encosta sul: DOCUMENTED. Ligação ao encontro da ponte rodoviária e posto de disparo: RECONSTRUCTED (P12). O jogo não mostra conexões, cargas ou procedimentos (Prompt §79); só a linha danificada e o trabalho abstrato dos sapadores."
+      "notes": "Traçado pela encosta sul entre a estação e a ponte: DOCUMENTED (T08/T12). Havia dois postos de disparo: bunker na cabeça de ponte oeste e abrigo no terreno da estação (T08/T27). O jogo não mostra conexões, cargas ou procedimentos (Prompt §79); só a linha danificada e o trabalho abstrato dos sapadores."
     },
     {
       "id": "road_approach_west",
@@ -154,7 +176,7 @@
       "groundY": -3,
       "classification": "RECONSTRUCTED",
       "sources": ["T03"],
-      "notes": "Fortificações de campo construídas desde maio de 1939: DOCUMENTED (T03). Traçado específico da trincheira: GAMEPLAY_DRAMATIZATION."
+      "notes": "Fortificações de campo construídas desde maio de 1939: DOCUMENTED (T03). A linha para Bydgoszcz atravessa a faixa em diagonal (rail_line_southwest). Traçado específico da trincheira: GAMEPLAY_DRAMATIZATION."
     },
     {
       "id": "squad_post",
@@ -187,9 +209,10 @@
       "id": "rally_point",
       "name": "Ponto de reunião do sargento (trincheira)",
       "type": "objective_point",
-      "point": [-150, -3, 30],
+      "point": [-150, -3, 14],
       "classification": "RECONSTRUCTED",
-      "sources": []
+      "sources": [],
+      "notes": "Na cunha entre as duas linhas, protegido pelos dois aterros."
     },
     {
       "id": "rail_hut",
@@ -203,12 +226,12 @@
     },
     {
       "id": "firing_point",
-      "name": "Posto de disparo dos sapadores (abrigo escavado na encosta)",
+      "name": "Abrigo de disparo no terreno da estação",
       "type": "position",
-      "point": [-200, -3, 30],
+      "point": [-290, -3, 22],
       "classification": "RECONSTRUCTED",
-      "sources": ["T04", "T08"],
-      "notes": "Fontes divergem: T04 (resumo) cita as casamatas oeste; o traçado de T08/T12 sugere posto afastado da ponte. P12 pendente. No jogo, a detonação final é comandada daqui, fora da zona de demolição."
+      "sources": ["T08", "T27"],
+      "notes": "DOCUMENTED: um dos dois postos de disparo ficava num abrigo no terreno da estação (T08/T27). Posição exata pendente (P12). O jogo comanda daqui a detonação das 06:40, fora da zona de demolição."
     },
     {
       "id": "aid_position",
@@ -237,13 +260,12 @@
     },
     {
       "id": "tczew_station",
-      "name": "Estação de Tczew (Stüler, 1856–57) e pátio",
+      "name": "Estação de Tczew de 1939 (\"Stary Dworzec\", Stüler, 1856–57)",
       "type": "building",
-      "polygon": [[-460, 30], [-400, 30], [-400, 52], [-460, 52]],
-      "classification": "COMPRESSED_FOR_GAMEPLAY",
-      "realValue": "≈1000 m a oeste da ponte (ESTIMATIVA — P4)",
-      "sources": ["T10", "T18"],
-      "notes": "Lado dos trilhos em que fica o edifício: PENDENTE. Bombardeada às 04:34."
+      "polygon": [[-470, 20], [-330, 20], [-330, 55], [-470, 55]],
+      "classification": "RECONSTRUCTED",
+      "sources": ["T10", "T18", "T24", "G01"],
+      "notes": "Ficava no sítio da atual rua 1 Maja e da rotunda, entre as linhas para Gdańsk e Bydgoszcz, perto das pontes (T24). Bombardeada em 1/9/1939, danificada de novo em fevereiro de 1945 e queimada em março de 1945. A estação atual (anos 1940), a ~1 km a oeste-noroeste (G01: x −918, z −463), NÃO existia em 1939. Contorno do edifício pendente de mapa histórico (P4)."
     },
     {
       "id": "freight_wagons_west",
@@ -258,45 +280,46 @@
       "id": "vistula_channel",
       "name": "Canal principal do Vístula (corre para o norte)",
       "type": "water",
-      "polygon": [[20, -3000], [480, -3000], [480, 3000], [20, 3000]],
+      "polygon": [[25, -3000], [265, -3000], [265, 3000], [25, 3000]],
       "waterY": -10,
       "flowDirection": [0, 0, -1],
       "classification": "RECONSTRUCTED",
-      "sources": ["T06"],
-      "notes": "Direção de corrente (norte) e margens: DOCUMENTED. Larguras e nível da água: ESTIMATIVA (P4). Fronteira com a Cidade Livre pelo meio do rio (T06)."
+      "sources": ["T06", "G01", "G02"],
+      "notes": "Direção (norte) DOCUMENTED. Canal medido na geometria atual (G01): x 25–265 nos dois eixos. Nível da água ~0,5 m acima do geoide (G02), cerca de 10 m abaixo dos trilhos no portal oeste. O regime de 1939 pode diferir. Fronteira com a Cidade Livre pelo meio do rio (T06)."
     },
     {
       "id": "east_floodplain",
       "name": "Planície de inundação leste",
       "type": "terrain",
-      "polygon": [[480, -3000], [800, -3000], [800, 3000], [480, 3000]],
-      "groundY": -8,
+      "polygon": [[265, -3000], [1055, -3000], [1055, 3000], [265, 3000]],
+      "groundY": -5,
       "classification": "RECONSTRUCTED",
-      "sources": ["T07"]
+      "sources": ["T25", "G01", "G02"],
+      "notes": "Planície entre o canal e o dique de 1912, a 6–7 m acima do geoide (G02; DSM de 30 m, baixa confiança)."
     },
     {
       "id": "east_dike",
-      "name": "Dique de proteção contra cheias, cabeça de ponte leste (Lisewo)",
+      "name": "Dique de Lisewo (posição de 1910–1912)",
       "type": "terrain",
-      "polyline": [[806, -1, -3000], [806, -1, 3000]],
+      "polyline": [[1075, -1, -3000], [1075, -1, 3000]],
       "classification": "RECONSTRUCTED",
-      "sources": ["T07"],
-      "notes": "Cabeça de ponte leste sobre o dique: DOCUMENTED (resumo T04/T07)."
+      "sources": ["T25", "G01"],
+      "notes": "Em 1910–1912 o dique do lado de Lisewo foi afastado do rio e as pontes ganharam três vãos (T25). Em 1939 o dique estava, portanto, junto ao fim das pontes prolongadas (x ≈ 1050–1100). Proxy medido: estrada de serviço N–S em x 1057–1099 (G01)."
     },
     {
       "id": "east_gates",
-      "name": "Portões das pontes, lado de Lisewo",
+      "name": "Portal comum de 1912 e portões, lado de Lisewo",
       "type": "landmark",
-      "points": [[845, 0, 0], [845, 0, 40]],
+      "points": [[1052, 0, 0], [1052, 0, 40]],
       "classification": "RECONSTRUCTED",
-      "sources": ["T07"],
-      "notes": "Portões fechados diante do trem 963: DOCUMENTED. Destruídos às 06:10 com o antigo portal leste (T04)."
+      "sources": ["T07", "T25", "G01"],
+      "notes": "Grande portal comum às duas pontes construído do lado de Lisewo na extensão de 1912 (T25). Portões fechados diante do trem 963: DOCUMENTED (T07)."
     },
     {
       "id": "train_963",
       "name": "Trem de carga n.º 963 (65 vagões) parado diante dos portões",
       "type": "vehicle",
-      "polyline": [[850, 0, -2.5], [1520, 0, -2.5]],
+      "polyline": [[1065, 0, -2.5], [1715, 0, -2.5]],
       "classification": "RECONSTRUCTED",
       "sources": ["T07", "T08"],
       "notes": "Comprimento ≈ 65 vagões × ~10 m. Via ocupada: RECONSTRUCTED."
@@ -305,19 +328,28 @@
       "id": "panzerzug_7",
       "name": "Panzerzug 7",
       "type": "vehicle",
-      "polyline": [[905, 0, 2.5], [1010, 0, 2.5]],
+      "polyline": [[1110, 0, 2.5], [1215, 0, 2.5]],
       "classification": "RECONSTRUCTED",
-      "sources": ["T01", "T07", "T14"],
-      "notes": "Presença DOCUMENTED; posição e composição RECONSTRUCTED (P6). Na via paralela, atrás do trem de carga."
+      "sources": ["T01", "T07", "T14", "T20"],
+      "notes": "Presença DOCUMENTED. Armamento em 1939 segundo T20: dois canhões de 7,5 cm e dois de 2 cm antiaéreos (fonte secundária). Posição e composição RECONSTRUCTED. Disparos de canhão contra a margem oeste em 1/9 não documentados."
     },
     {
       "id": "rail_line_east",
       "name": "Linha para Szymankowo e Malbork",
       "type": "rail",
-      "polyline": [[837, 0, 0], [1600, 0, 0], [4000, 0, 1500], [15800, 0, 6200]],
+      "polyline": [[1049, 0, 0], [1431, 0, 5], [4000, 0, 1500], [15800, 0, 6200]],
       "classification": "RECONSTRUCTED",
       "sources": ["T06", "T13"],
       "notes": "Malbork a ~15,8 km, azimute ~113° (cálculo por coordenadas das cidades). Traçado intermediário: RECONSTRUCTED."
+    },
+    {
+      "id": "lisewo_halt",
+      "name": "Lisewo (parada atual; postos de fronteira em 1939)",
+      "type": "position",
+      "point": [1431, 0, 5],
+      "classification": "RECONSTRUCTED",
+      "sources": ["T06", "G01"],
+      "notes": "Parada atual medida em G01. Em 1939 as passagens de fronteira ferroviária e rodoviária ficavam em Lisewo (T06); posição exata pendente."
     },
     {
       "id": "north_perimeter",
@@ -377,7 +409,7 @@
       "peek": ["over"],
       "activeAfter": "evt_m01_bombing_0434"
     },
-    { "id": "cv_firing_point", "type": "HIGH_COVER", "position": [-200, -3, 30], "normal": [1, 0, 0], "heightM": 2.0, "peek": ["left"] },
+    { "id": "cv_firing_point", "type": "HIGH_COVER", "position": [-286, -3, 22], "normal": [1, 0, 0], "heightM": 2.0, "peek": ["left"] },
     { "id": "cv_rail_hut", "type": "BUILDING_CORNER", "position": [-249, -3, 14], "normal": [1, 0, 0], "heightM": 3.5, "peek": ["right"] },
     { "id": "cv_wagon_1", "type": "VEHICLE", "position": [-318, 0, -3], "normal": [1, 0, 0], "heightM": 2.5, "peek": ["left", "right"] },
     { "id": "cv_wagon_2", "type": "VEHICLE", "position": [-338, 0, 11], "normal": [1, 0, 0], "heightM": 2.5, "peek": ["left", "right"] },
@@ -395,32 +427,35 @@
     { "id": "cv_road_truss_2", "type": "LOW_COVER", "position": [40, 0, 43], "normal": [1, 0, 0], "heightM": 1.0, "partial": true, "peek": ["over"] },
     { "id": "cv_road_truss_3", "type": "LOW_COVER", "position": [100, 0, 37], "normal": [1, 0, 0], "heightM": 1.0, "partial": true, "peek": ["over"] },
     { "id": "cv_road_truss_4", "type": "LOW_COVER", "position": [100, 0, 43], "normal": [1, 0, 0], "heightM": 1.0, "partial": true, "peek": ["over"] },
-    { "id": "cv_tower_p1_n", "type": "WALL_CORNER", "position": [154, 0, 34], "normal": [1, 0, 0], "heightM": 23, "peek": ["right"] },
-    { "id": "cv_tower_p1_s", "type": "WALL_CORNER", "position": [154, 0, 46], "normal": [1, 0, 0], "heightM": 23, "peek": ["left"] },
+    { "id": "cv_tower_p1_n", "type": "WALL_CORNER", "position": [138, 0, 34], "normal": [1, 0, 0], "heightM": 23, "peek": ["right"] },
+    { "id": "cv_tower_p1_s", "type": "WALL_CORNER", "position": [138, 0, 46], "normal": [1, 0, 0], "heightM": 23, "peek": ["left"] },
     { "id": "cv_rail_deck_1", "type": "LOW_COVER", "position": [60, 0, -3], "normal": [1, 0, 0], "heightM": 1.0, "partial": true, "peek": ["over"] }
   ],
   "blastZones": [
     {
       "id": "bz_east",
       "event": "evt_m01_east_demolition",
-      "center": [806, 0, 20],
+      "center": [800, 0, 20],
       "radiusM": 140,
       "safeCondition": "todos os atores poloneses obrigatórios com x < 660",
-      "classification": "RECONSTRUCTED"
+      "classification": "RECONSTRUCTED",
+      "notes": "Pilar 6 / antigo encontro leste (T04, T07)."
     },
     {
       "id": "bz_west",
       "event": "evt_m01_west_demolition",
-      "center": [13, -3, 20],
-      "radiusM": 130,
-      "safeCondition": "jogador e atores poloneses obrigatórios com x < −117",
-      "classification": "RECONSTRUCTED"
+      "center": [70, -3, 20],
+      "radiusM": 160,
+      "safeCondition": "jogador e atores poloneses obrigatórios com x < −90",
+      "classification": "RECONSTRUCTED",
+      "notes": "Encontro oeste e pilar 1 (x ≈ 141): os dois primeiros vãos caem no Vístula (T04, T07)."
     }
   ],
   "sightlines": [
-    { "from": "cv_portal_road_n", "to": "east_gates", "distanceM": 847, "note": "Clarão da demolição leste chega antes do som (~2,4 s; C02)." },
-    { "from": "cv_road_truss_3", "to": "train_963", "distanceM": 750, "note": "Vagões e fumaça da locomotiva visíveis; contraluz depois das 05:30." },
-    { "from": "squad_post", "to": "road_bridge_towers", "distanceM": 227, "note": "Silhueta das torres contra o céu claro a leste na abertura." }
+    { "from": "cv_road_truss_3", "to": "old_east_portals_1857", "distanceM": 700, "note": "Demolição das 06:10: clarão primeiro, som ~2 s depois (distância ÷ 343 m/s; C02)." },
+    { "from": "cv_portal_road_n", "to": "east_gates", "distanceM": 1054, "note": "Portal de 1912 e trem 963; clarões de MG a ~1 km." },
+    { "from": "cv_road_truss_3", "to": "train_963", "distanceM": 966, "note": "Vagões e fumaça da locomotiva visíveis; contraluz depois das 05:30." },
+    { "from": "squad_post", "to": "road_bridge_towers", "distanceM": 212, "note": "Silhueta das torres contra o céu claro a leste na abertura." }
   ],
   "farAnchors": [
     {

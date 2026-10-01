@@ -104,7 +104,7 @@ Nesta versão, só **M01 — Tczew** está detalhada. As demais missões seguem 
 | Função | Atirador do rkm Browning wz.28 (SUPPORT) |
 | Idade | 25 anos |
 | Personalidade | Calmo, prático, fala em números e distâncias. |
-| Estilo de fala | "Setecentos, oitocentos metros." "Trocando carregador!" |
+| Estilo de fala | "Mil metros, talvez mais." "Trocando carregador!" |
 | Arco | Âncora de estabilidade. Humor seco na abertura ("Café de verdade hoje. Mau sinal."). Frase única depois da explosão ("…Lá se foi o outro lado."). |
 | Visual | Ombros largos, cartucheiras do rkm, rosto queimado de sol. |
 
