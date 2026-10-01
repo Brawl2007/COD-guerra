@@ -65,6 +65,16 @@ export function toRepair(d){
   if(!sim.active('cover_repair'))throw new Error('Route did not deliver the crate');
   return d;
 }
+/** Stay in the real sandbag cover until an actual adjustment salvo is emitted. */
+export function toCoverAdjustment({truss=false}={}){
+  const d=toRepair(driver()),{sim,walk,step,until}=d;
+  walk(-115,27);walk(-26.5,28);step({crouch:true});
+  until(()=>sim.active('hold_access'),500);
+  if(truss){step({crouch:true});walk(-115,32);walk(-10,32);walk(-10,40);walk(30,40);walk(38.5,37);step({crouch:true});}
+  d.beforeCoverAdjustment=sim.snapshot();
+  until(()=>sim.timers.coverFire,65);
+  return d;
+}
 // support: on the embankment slope beside the sappers (where the Lisewo gates are in sight) and on the south side of the deck.
 export function route(seed=19390901,{support=false}={}){
   const {sim,checkpoints,events,combatSnapshots,step,until,walk}=toRepair(driver(seed,{support}));

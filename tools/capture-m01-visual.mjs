@@ -3,7 +3,7 @@ import {mkdir,writeFile} from 'node:fs/promises';
 import {spawn} from 'node:child_process';
 import {pathToFileURL} from 'node:url';
 import {resolve} from 'node:path';
-const {route}=await import(pathToFileURL(resolve('tests/helpers/m01-route.js')));
+const {route,toCoverAdjustment}=await import(pathToFileURL(resolve('tests/helpers/m01-route.js')));
 
 // Staged visual continuations of genuine route snapshots, never a human playtest.
 const out=process.argv[2]??'docs/verification/m01-runtime/visual-sprint/after';
@@ -17,8 +17,12 @@ for(let i=0;i<60;i++){
 }
 const browser=await chromium.launch({headless:true,...(process.env.CHROME_EXECUTABLE?{executablePath:process.env.CHROME_EXECUTABLE}:{}),
   args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
-const flow=route(),report={kind:'staged production browser continuations',shots:[]};
-const shots=process.argv.includes('--demolition-only')?
+const coverOnly=process.argv.includes('--cover-origin-only');
+const flow=coverOnly?null:route(),report={kind:'staged production browser continuations',shots:[]};
+const shots=coverOnly?[false,true].map(truss=>{
+  const snapshot=toCoverAdjustment({truss}).sim.snapshot(),source=snapshot.timers.coverFire;
+  return [truss?'cover-truss-origin':'cover-gate-origin',snapshot,Math.atan2(source.z-snapshot.player.z,source.x-snapshot.player.x)];
+}):process.argv.includes('--demolition-only')?
   [['demolition-inside',flow.combatSnapshots.eastDemolition],['demolition-outside',flow.combatSnapshots.eastDemolitionOutside]]
     .map(([name,snapshot])=>[name,snapshot,Math.atan2(20-snapshot.player.z,800-snapshot.player.x)]):
   [['repair',flow.combatSnapshots.repairThreat],['station-damage',flow.combatSnapshots.repairThreat,Math.PI],['withdrawal',flow.combatSnapshots.withdrawal],['roll-call',flow.outro]];

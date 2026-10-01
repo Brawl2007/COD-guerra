@@ -73,6 +73,8 @@ Dados revistos nos PRs #8 e #10; runtime em **PROTÓTIPO JOGÁVEL**, com evidên
 
 ## Fogo de cobertura no protótipo
 
+- A salva de ajuste só reserva a próxima cobertura e avisa depois de emitir tiros. Sem atirador elegível com visão, reavalia a cada quatro segundos activos. `timers.coverFire` é opcional no schema 2 e guarda somente ID, origem e instante da salva real; o validador rejeita dados inválidos. O HUD indica a origem por oito segundos activos, incluindo quando o dique está tapado pela treliça; não altera a câmara nem faz o efeito atravessar geometria.
+
 - Os sapadores trabalham junto ao cabo, na encosta sul do aterro, ao lado de `repair_site_2`. É aí que o fogo mergulhante dos portões chega e de onde o jogador vê os clarões. O renderer mostra-os ajoelhados a trabalhar e curvados sob fogo (pose `pinned`, lida de `suppressedUntil`).
 - O pelotão tem 18 instâncias activas. As seis posições de reserva do schema antigo ficam inactivas, incluindo na migração, e todos os IDs são preservados. A prontidão consulta só os homens activos e vivos.
 - `grp_de_spans` só dispara depois de activado pelo evento das 06:05, com cadências desfasadas. Activação, baixas e supressão não dependem da câmara, e o tempo sozinho não mata soldados.

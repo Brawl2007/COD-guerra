@@ -289,11 +289,11 @@ export class M01Simulation {
     if(this.pendingCheckpoint==='cp_m01_b_reorganizacao'&&this.clock-this.consumed[E('bombing_0434')]>=20)this.saveCheckpoint(this.pendingCheckpoint);
     if(this.pendingCheckpoint==='cp_m01_c_engenheiros'&&this.flags['m01.second_raid_state']==='ended')this.saveCheckpoint(this.pendingCheckpoint);
     if(this.consumedEvent(E('east_demolition'))&&p.x<-20&&!p.carrying&&!(this.battleClock>=seconds('06:36:00')&&p.x>=-90))this.saveCheckpoint('cp_m01_d_retirada');
-    this.mission.status=this.scene?.id==='cs_m01_roll_call'?'':this.threatStatus();
     const active=definition.objectives.find(o=>o.required&&this.objectives[o.id].state==='active');
     const optional=definition.objectives.find(o=>!o.required&&this.objectives[o.id].state==='active');
     this.mission.text=this.scene?.id==='cs_m01_intro'?phaseText.INTRO:this.scene?.id==='cs_m01_roll_call'?phaseText.OUTRO:
       (active?.text??'Mantenha contacto com a secção')+(optional?` · ${optional.text}`:'');
+    this.mission.status=this.scene?.id==='cs_m01_roll_call'?'':this.threatStatus();
   }
   moveActor(a,target,dt,speed=3.6){
     if(!a.alive||!a.active||a.state==='WOUNDED')return;
@@ -426,6 +426,7 @@ export class M01Simulation {
     for(let k=0;k<rounds;k++)this.enemyFire.rounds.push(makeRound({id:`m01_round_${this.enemyFire.nextId++}`,by:a.id,weapon:a.weapon,kind,origin,aim,
       firedAt:this.clock+k*interval,bias:shared,cone,gauss:()=>this.gauss(),tracer:tracer&&k===Math.min(1,rounds-1),victim}));
     a.shot=rounds*interval+.06;a.firedAt=this.clock;a.state='SUPPRESS';a.facing=Math.atan2(aim.z-a.z,aim.x-a.x);
+    if(kind==='cover')this.timers.coverFire={by:a.id,at:this.clock,...origin};
     this.emit({type:'enemy-fire',origin,rounds,interval,weapon:a.weapon,at:this.clock});
   }
   /** Kowal (rkm wz.28) responde aos clarões: rajadas curtas na posição do dique que disparou há menos tempo e que ele vê. */
@@ -565,15 +566,17 @@ export class M01Simulation {
       else if(cover)this.timers.coverExposure+=dt;
       if(this.timers.coverExposure>=42&&this.clock>this.timers.nextCoverCall){
         const rotation=['cv_sandbag_mid_2','cv_portal_road_n','cv_road_truss_1','cv_road_truss_3','cv_tower_p1_n'];
-        this.flags['m01.suggested_cover']=rotation[this.timers.coverCallIndex++%rotation.length];
-        this.timers.nextCoverCall=this.clock+42;this.message('Zieliński: estão a ajustar o fogo! Mude de cobertura.');
         // "Ajusta sobre a cobertura": rajada real de uma MG que vê o jogador (impactos na cobertura, não dano garantido).
         // Uma MG que o veja dispara uma rajada; sem MG, uma salva de até quatro atiradores (um tiro cada).
         const shooters=this.enemies.filter(a=>a.group==='grp_de_east'&&a.alive&&a.active&&this.clock>=a.suppressedUntil).sort((a,b)=>(b.weapon==='mg34')-(a.weapon==='mg34'))
           .filter(a=>this.world.lineOfSight(a,p)).slice(0,4);
+        // No warning or cover reservation until a real salvo is emitted. Retry at a bounded cadence.
+        this.timers.nextCoverCall=this.clock+(shooters.length?42:4);
+        if(shooters.length)this.flags['m01.suggested_cover']=rotation[this.timers.coverCallIndex++%rotation.length];
         for(const a of shooters[0]?.weapon==='mg34'?shooters.slice(0,1):shooters){
           this.burst(a,p,'cover',a.weapon==='mg34'?{rounds:7,bias:[.5,.3],cone:[.6,.4],tracer:true}:{rounds:1,bias:[.8,.5],cone:[0,0]});a.cooldown=Math.max(a.cooldown,6);
         }
+        if(shooters.length){this.mission.status=this.coverFireStatus();this.message(`Zieliński: ${this.mission.status}.`);}
       }
     }
     if(this.subtitle&&this.clock>=this.subtitle.until)this.subtitle=null;
@@ -656,12 +659,21 @@ export class M01Simulation {
       const spans=this.enemies.filter(a=>a.group==='grp_de_spans'&&a.alive&&a.active);
       return `Pelotão leste: ${n} homens · alemães no tabuleiro ${spans.some(a=>a.suppressedUntil>this.clock)?'suprimidos':'a disparar sobre eles'}`;
     }
-    return this.demolitionStatus();
+    return this.coverFireStatus()||this.demolitionStatus();
+  }
+  /** A origem da salva real continua legível depois de os tiros chegarem, sem exigir ver através da treliça. */
+  coverFireStatus(){
+    const fire=this.timers.coverFire;
+    if(!this.active('hold_access')||!fire||this.clock<fire.at||this.clock-fire.at>=8)return '';
+    const actor=this.actor(fire.by),gate=gateShooter(actor);
+    const source=gate?(actor.weapon==='mg34'?'Metralhadora':'Atiradores')+' nos portões de Lisewo':`Salva do dique ${fire.z<0?'norte':'sul'}`;
+    return `${source} · ${Math.round(dist(this.player,fire))} m, ${this.directionTo(fire)} · mude de cobertura`;
   }
   /** Diagnóstico só de leitura: o que um jogador vê (clarões recentes) e o estado real por trás do HUD. */
   get threat(){
     const repair=this.objectives[O('cover_repair')];
     return {inFlight:this.enemyFire.rounds.length,status:this.mission.status??'',
+      coverFire:this.timers.coverFire?{...this.timers.coverFire,age:this.clock-this.timers.coverFire.at}:null,
       recentFire:this.enemies.filter(a=>a.alive&&a.active&&this.clock-a.firedAt<2.5).map(a=>({id:a.id,weapon:a.weapon,...eyePosition(a),age:this.clock-a.firedAt})),
       repair:{progress:repair.progress,state:repair.state,pinned:this.clock<this.timers.repairSuppressedUntil,pins:this.timers.repairPins??0,fireEase:Boolean(this.timers.fireEase)},
       survivors:this.flags['m01.east_platoon_survivors'],
@@ -762,6 +774,11 @@ export function validateM01Snapshot(s){
   if('fireEase' in s.timers&&typeof s.timers.fireEase!=='boolean')reject('timer fireEase');
   if('withdrawalPressure' in s.timers&&(!Number.isInteger(s.timers.withdrawalPressure)||!finite(s.timers.withdrawalPressure,0,7)))reject('timer withdrawalPressure');
   if('nextCombatCall' in s.timers&&!finite(s.timers.nextCombatCall))reject('timer nextCombatCall');
+  if(s.timers.coverFire!==undefined){
+    const fire=s.timers.coverFire,actor=s.actors.find(a=>a.id===fire?.by);
+    if(!fire||!actor||actor.group!=='grp_de_east'||!finite(fire.at,0,s.clock)||
+      !finite(fire.x,690,1400)||!finite(fire.y,-50,100)||!finite(fire.z,-200,200))reject('timer coverFire');
+  }
   for(const key of ['escort','escortSpoke','boundaryWarning','holdAccessVisited'])if(typeof s.timers[key]!=='boolean')reject('timer '+key);
   if(!Array.isArray(s.destruction)||!Array.isArray(s.sceneDone)||!Array.isArray(s.dialogueConsumed)||!Array.isArray(s.dialogueQueue)||!Array.isArray(s.checkpointsReached)||!Array.isArray(s.recoveries))reject('listas');
   const knownScene=id=>definition.cutscenes.some(c=>c.id===id);
