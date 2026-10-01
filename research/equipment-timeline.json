@@ -17,7 +17,7 @@
       "specs": {
         "magazine": 5,
         "feed": "clipe de 5 cartuchos",
-        "action": "ferrolho manual, recarregar após cada disparo",
+        "action": "ferrolho manual, ciclar após cada disparo",
         "boltHandle": "reta",
         "lengthM": 1.1,
         "barrelM": 0.6,

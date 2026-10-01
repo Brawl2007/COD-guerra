@@ -36,7 +36,7 @@ Prioridades:
 
 | Asset | Prioridade | Dimensões de referência | Estratégia | Candidatos (licença declarada) | Estado |
 | --- | --- | --- | --- | --- | --- |
-| Ponte ferroviária 1891/1912 | P0 | 1030–1037 m; 6 × 129 m (lenticulares) + 3 × 81,6 m; via dupla; pilares em `map-layout.json` | **Original**, kit modular instanciável com estados de dano das 06:10 e 06:40 | *Railway Bridges Pack 01* (Szakal, CC-BY) — só placeholder, treliça diferente | A PRODUZIR |
+| Ponte ferroviária 1891/1912 | P0 | 1030–1037 m; 6 × 129 m (lenticulares) + 3 × 81,6 m; via dupla; pilares em `map-layout.json` | **Original**, kit modular instanciável com estados de dano das 06:10 e 06:45 | *Railway Bridges Pack 01* (Szakal, CC-BY) — só placeholder, treliça diferente | A PRODUZIR |
 | Ponte rodoviária Lentze 1857/1912 | P0 | 6 × 130,9 m + 3 × 81,6 m; vigas de 8,68 m a 6,43 m entre si; 5 pares de torres de ~23 m, Ø 5,3 m | **Original**: vão Lentze, par de torres, portal oeste de Stüler, antigo portal leste | — (fotos da Skarbnica só como referência) | A PRODUZIR |
 | Estação de 1939 (Stüler) | P1 | Contorno pendente (P4) | **Original**, fachada de média distância com dano | — | depois de P4 |
 | Ju 87 B-1 | P0 | 11,1 × 13,8 × 4,24 m | CC-BY ou original; conferir variante **B** (não D/G) | scorpion81 · manilov.ap · philano · helijah (todos CC-BY); museu @wwIImuseum só como referência | A VERIFICAR |

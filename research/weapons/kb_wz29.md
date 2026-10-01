@@ -1,8 +1,8 @@
 # Ficha — Karabinek wz.29 (Mauser polonês)
 
 Arma inicial de Jan Wrona em M01 (Prompt §79). Perfil data-driven: [`kb_wz29.profile.json`](kb_wz29.profile.json).
-Fontes: T21 (Karabinek wz. 1929 — Wikipédia en; opisybroni.pl; dobroni.pl; Muzeum Zgierz), H30 (a ler).
-Estado: **ficha preliminar**. Os dados documentados vêm de resumos concordantes de várias fontes; nenhuma foi lida por completo nesta sessão.
+Fontes: T21 (Karabinek wz. 1929 — Wikipédia en; opisybroni.pl; dobroni.pl; Muzeum Zgierz), H30 (lida; confirma os dois tipos de Mauser, sem ficha técnica).
+Estado: **ficha preliminar**. Os dados documentados vêm de resumos concordantes de várias fontes; H30 foi lida na revisão do PR #10; T21 continua conhecido por resumos. P15 continua aberto para o armamento específico do batalhão.
 
 ## 1. Identidade histórica
 

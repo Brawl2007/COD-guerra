@@ -20,7 +20,7 @@
       "id": "bridge_rail_1891_1912", "name": "Ponte ferroviária de Tczew (1891 + extensão de 1912)", "category": "environment_landmark", "priority": "P0",
       "realDimensions": { "lengthM": [1030, 1037], "spansM": "6 × 129 (lenticulares) + 3 × 81,6", "supportsXm": "ver map-layout.json → rail_bridge.supportsX", "tracks": 2, "sources": ["T05", "T25", "G01"] },
       "strategy": "ORIGINAL",
-      "build": "Kit modular instanciável: vão lenticular de 129 m, vão de extensão de 81,6 m, pilar, portal oeste, portal comum de 1912. Estados de dano: pilar 6 (06:10) e encontro oeste + pilar 1 (06:40), com vãos caídos.",
+      "build": "Kit modular instanciável: vão lenticular de 129 m, vão de extensão de 81,6 m, pilar, portal oeste, portal comum de 1912. Estados de dano: pilar 6 (06:10) e encontro oeste + pilar 1 (06:45), com vãos caídos.",
       "budget": { "lod0TrisPerSpan": 25000, "lods": 3, "instancing": true },
       "candidates": [
         { "source": "Sketchfab", "title": "Railway Bridges Pack 01", "author": "Szakal (@Grabka)", "url": "https://sketchfab.com/3d-models/railway-bridges-pack-01-877cdcd7b6f14b72aaa88fa893b812c9", "licenseStated": "CC-BY (resumo de busca)", "licenseVerified": false, "scaleVerified": false, "use": "só bloqueio/placeholder — tipo de treliça diferente" }
@@ -80,7 +80,7 @@
     {
       "id": "panzerzug_7", "name": "Panzerzug 7", "category": "vehicle_rail", "priority": "P1",
       "realDimensions": { "armament": "2 × 7,5 cm + 2 × 2 cm antiaéreos (T20)", "note": "Composição dos vagões pendente (P6)", "sources": ["T20", "T14"] },
-      "strategy": "ORIGINAL", "build": "Silhueta para ~1,1 km: locomotiva blindada, vagões de canhão e vagão antiaéreo. Clarões das MGs e dos 2 cm.",
+      "strategy": "ORIGINAL", "build": "Silhueta para ~1,1 km: locomotiva blindada, vagões de canhão e vagão antiaéreo. Clarões das MGs. Canhões e 2 cm ficam sem disparo nesta versão; P6 ainda parcial.",
       "budget": { "lod0Tris": 18000, "lods": 2 }, "candidates": [], "status": "A PRODUZIR (depois de P6)", "targetPath": "assets/models/production/m01/panzerzug7.glb"
     },
     {

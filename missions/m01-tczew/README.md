@@ -9,6 +9,7 @@
 | [`HISTORICAL_RESEARCH.md`](HISTORICAL_RESEARCH.md) | Cronologia do dia, forças, geografia, equipamento, divergências entre fontes, pendências P1–P16 com estado |
 | [`SOURCE_CHECK.md`](SOURCE_CHECK.md) | Verificação de P1–P16: o que foi resolvido, com que fonte, o que falta e o que ler primeiro |
 | [`MEASUREMENTS.md`](MEASUREMENTS.md) + [`measurements.json`](measurements.json) | Medições de pontes, pilares, rio, dique, linhas e estação (OSM via Overture, Copernicus DEM) e como reproduzi-las |
+| [`CLAUDE_BRIDGE_TASK.md`](CLAUDE_BRIDGE_TASK.md) | Trabalho independente para Claude: kit modular das pontes, sem editar a engine |
 | [`ASSETS.md`](ASSETS.md) + [`assets-m01.json`](assets-m01.json) | Lista de assets com dimensões reais, escala, licença, candidatos e política para repositório público |
 | [`SCRIPT.md`](SCRIPT.md) | Roteiro completo: cenas, falas, atuação, set-pieces, checkpoints, skip, debrief, critérios de aceitação |
 | [`MAP.md`](MAP.md) + [`map-layout.svg`](map-layout.svg) | Sistema de coordenadas, EXACT/RECONSTRUCTED/COMPRESSED, setores, rota, limites, cobertura, luz e som |
@@ -54,7 +55,7 @@ Este pacote não altera `src/`. Pontos de encaixe sugeridos, sem impor arquitetu
 
 ## O que falta
 
-- **Leitura integral das fontes.** A pesquisa original usou resumos de busca. A revisão do PR #8 leu H02 e as pp. 131–134 de H01-PDF (divergências em `HISTORICAL_RESEARCH.md` §3.3). Esta sessão continua sem acesso a muzeum1939.pl, prezydent.pl, ipn.gov.pl e wikipedia.org. Ordem de leitura recomendada em `SOURCE_CHECK.md`.
+- **Verificações específicas:** H01-PDF, H02, H30 e T23 foram lidas; dúvidas remanescentes estão em `SOURCE_CHECK.md`. A leitura não comprova números de perdas do pelotão nem transforma geografia moderna em mapa de 1939.
 - **Mapa de 1939** (P4): traçado das vias, contorno da estação, quartel e postos de disparo. Pilares, eixos, rio e dique já foram medidos (P5 resolvida).
 - **Assets:** nenhum foi baixado ou verificado (Sketchfab bloqueado por desafio anti-bot). Lista, escalas e política de licença em `ASSETS.md`; quando a integração começar, ligar `assets-needed.md` a ela.
 - **Integração, playtest e validação** (Marco 2 do Prompt §77).

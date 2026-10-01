@@ -109,7 +109,7 @@
       "heightM": 18,
       "classification": "RECONSTRUCTED",
       "sources": ["T04", "T18"],
-      "notes": "Existência EXACT; dimensões a tirar de fotografias (T18). Destruído parcialmente às 06:40."
+      "notes": "Existência EXACT; dimensões a tirar de fotografias (T18). Destruído parcialmente às 06:45."
     },
     {
       "id": "portal_rail_west",
@@ -231,7 +231,7 @@
       "point": [-290, -3, 22],
       "classification": "RECONSTRUCTED",
       "sources": ["T08", "T27"],
-      "notes": "DOCUMENTED: um dos dois postos de disparo ficava num abrigo no terreno da estação (T08/T27). Posição exata pendente (P12). O jogo comanda daqui a detonação das 06:40, fora da zona de demolição."
+      "notes": "DOCUMENTED: um dos dois postos de disparo ficava num abrigo no terreno da estação (T08/T27). Posição exata pendente (P12). O jogo comanda daqui a detonação das 06:45, fora da zona de demolição."
     },
     {
       "id": "aid_position",
@@ -485,15 +485,15 @@
     "event": "evt_m01_bombing_0434",
     "points": [
       { "t": 0.0, "pos": [9800, 900, -1750] },
-      { "t": 28.0, "pos": [2200, 1600, -380] },
-      { "t": 36.0, "pos": [300, 1400, 0] },
-      { "t": 42.0, "pos": [-40, 450, 10] },
+      { "t": 28.0, "pos": [500, 1600, 2200] },
+      { "t": 36.0, "pos": [100, 1400, 1400] },
+      { "t": 42.0, "pos": [-40, 450, 200] },
       { "t": 44.0, "pos": [-110, 160, 12] },
       { "t": 48.0, "pos": [-500, 300, 150] },
       { "t": 70.0, "pos": [2500, 800, -2500] }
     ],
     "classification": "RECONSTRUCTED",
-    "notes": "Chegada do leste-nordeste (Elbing, 80°), vindo do céu claro. Mergulho sobre o aterro (alvo documentado) e saída para retorno. Três aviões em fila, com 3–5 s entre si."
+    "notes": "Partida de Elbing a leste-nordeste; aproximação final pelo sul (H01-PDF p. 131, nota 65). Curva e coordenadas são reconstruídas. Mergulho sobre o aterro (alvo documentado) e saída para retorno. Três aviões em fila, com 3–5 s entre si."
   },
   "props": [
     {
