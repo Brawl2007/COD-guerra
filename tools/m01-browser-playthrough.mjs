@@ -87,6 +87,8 @@ async function observe(s) {
     if (last.survivors !== undefined && s.threat.survivors < last.survivors) c.casualties.push(hms(s.battle));
     last.survivors = s.threat.survivors;
     if (s.fx.muzzle + s.fx.tracer + s.fx.puff + s.fx.spark > 0) c.fxFrames++;
+    if (last.enemyAlive !== undefined && s.enemyAlive < last.enemyAlive && !s.eventIds.includes('evt_m01_east_demolition')) (c.germanCasualties ??= []).push(hms(s.battle));
+    last.enemyAlive = s.enemyAlive;
   }
   if (s.checkpoints.length !== last.checkpoints) { last.checkpoints = s.checkpoints.length; await log('checkpoint', { id: s.checkpoints.at(-1) }); }
   if (s.clock + 0.5 < last.clock) { report.deaths.push({ real: real(), battle: hms(s.battle), restoredTo: +s.clock.toFixed(1) }); await log('restored', {}); }
@@ -181,13 +183,13 @@ async function wait(label, predicate, { limitReal = 900, engageEast = false, fac
 /** Fogo de cobertura: mira o último clarão visto (sim.threat.recentFire, o que o jogador vê) e dispara com a mira quando o ferrolho
  *  está pronto e o erro é de no máximo uma contagem do rato. `keepDown` diz quando o alvo já está suprimido e não precisa de tiro. */
 async function coverFire(label, who, keepDown, until, { limitReal = 600, snapEvery = 0, snapLabel = 'cover', flashSnaps = 3 } = {}) {
-  const r0 = Date.now(); let flash = null, lastShot = -1e9, lastSnap = Date.now(), snaps = 0, flashShots = 0;
+  const r0 = Date.now(); let flash = null, flashAt = -1e9, lastShot = -1e9, lastSnap = Date.now(), snaps = 0, flashShots = 0;
   await page.mouse.down({ button: 'right' });
   try {
     for (;;) {
       const s = await tick(90);
       if (until(s)) break;
-      const seen = s.threat.recentFire.filter(who).sort((a, b) => a.age - b.age)[0]; if (seen) flash = seen;
+      const seen = s.threat.recentFire.filter(who).sort((a, b) => a.age - b.age)[0]; if (seen) { flash = seen; flashAt = s.clock - seen.age; }
       if (snapEvery && Date.now() - lastSnap > snapEvery * 1000) { lastSnap = Date.now(); await shot(`${snapLabel}-${++snaps}`, `${label}: estado ${s.hud.status}`); }
       if (flash && flashShots < flashSnaps && s.fx.muzzle > 0 && seen) { flashShots++; await shot(`${snapLabel}-flash-${flashShots}`, `${label}: clarão à mira (${seen.id})`); }
       if (!flash) continue;
@@ -200,6 +202,7 @@ async function coverFire(label, who, keepDown, until, { limitReal = 600, snapEve
       }
       if (s.weapon.state === 'READY' && s.weapon.mag === 0 && s.weapon.reserve > 0) { await page.keyboard.press('KeyR'); continue; }
       if (s.weapon.state !== 'READY' || !s.weapon.mag || (s.clock - lastShot < (label.includes('retirada') ? 3.5 : 4) && keepDown(s))) continue;
+      if (s.clock - flashAt > 12 && !keepDown(s)) continue;   // sem clarões há 12 s (abatido ou calado): não gastar munição
       const before = keepDown(s);
       await page.mouse.down(); await page.mouse.up(); lastShot = s.clock; report.shots++; report.cover.shots++;
       const after = await tick(60); if (!before && keepDown(after)) report.cover.suppressingShots++;

@@ -111,6 +111,11 @@
       "casualties": [],
       "repairMgSuppressed": 137.79999999999708,
       "repairUnderFire": 140.4499999999977,
+      "germanCasualties": [
+        "04:51:52",
+        "06:05:49",
+        "06:06:46"
+      ],
       "survivors": 18,
       "times": {
         "order_demolish": "05:30:00",
@@ -188,6 +193,10 @@
       "casualties": [],
       "repairMgSuppressed": 128.39999999999495,
       "repairUnderFire": 131.04999999999555,
+      "germanCasualties": [
+        "04:45:42",
+        "06:07:14"
+      ],
       "survivors": 18,
       "times": {
         "order_demolish": "05:30:00",
@@ -269,6 +278,12 @@
       ],
       "repairMgSuppressed": 124.54999999999507,
       "repairUnderFire": 127.19999999999492,
+      "germanCasualties": [
+        "04:45:42",
+        "06:06:46",
+        "06:07:52",
+        "06:08:33"
+      ],
       "survivors": 15,
       "times": {
         "order_demolish": "05:30:00",
@@ -346,6 +361,11 @@
       "casualties": [],
       "repairMgSuppressed": 152.75000000000048,
       "repairUnderFire": 155.40000000000109,
+      "germanCasualties": [
+        "04:46:54",
+        "06:09:02",
+        "06:09:55"
+      ],
       "survivors": 18,
       "times": {
         "order_demolish": "05:30:00",
@@ -423,6 +443,10 @@
       "casualties": [],
       "repairMgSuppressed": 132.94999999999598,
       "repairUnderFire": 135.59999999999658,
+      "germanCasualties": [
+        "04:45:42",
+        "06:08:11"
+      ],
       "survivors": 18,
       "times": {
         "order_demolish": "05:30:00",
@@ -500,6 +524,9 @@
       "casualties": [],
       "repairMgSuppressed": 128.54999999999498,
       "repairUnderFire": 131.19999999999558,
+      "germanCasualties": [
+        "04:52:28"
+      ],
       "survivors": 18,
       "times": {
         "order_demolish": "05:30:00",
@@ -519,7 +546,7 @@
         "cp_m01_d_retirada"
       ],
       "lethalRounds": 0,
-      "enemyFire": 1270
+      "enemyFire": 1278
     },
     {
       "seed": 5,
@@ -574,10 +601,16 @@
         "realSeconds": 184.5,
         "pins": 21
       },
-      "casualties": [],
+      "casualties": [
+        "06:09:46"
+      ],
       "repairMgSuppressed": 130.29999999999538,
       "repairUnderFire": 132.94999999999598,
-      "survivors": 18,
+      "germanCasualties": [
+        "04:45:42",
+        "06:06:09"
+      ],
+      "survivors": 17,
       "times": {
         "order_demolish": "05:30:00",
         "east_platoon_withdraws": "06:00:00",
@@ -595,8 +628,8 @@
         "cp_m01_c_engenheiros",
         "cp_m01_d_retirada"
       ],
-      "lethalRounds": 0,
-      "enemyFire": 1242
+      "lethalRounds": 1,
+      "enemyFire": 1245
     },
     {
       "seed": 6,
@@ -654,6 +687,10 @@
       "casualties": [],
       "repairMgSuppressed": 125.749999999995,
       "repairUnderFire": 128.39999999999495,
+      "germanCasualties": [
+        "04:53:04",
+        "06:06:09"
+      ],
       "survivors": 18,
       "times": {
         "order_demolish": "05:30:00",
@@ -731,6 +768,9 @@
       "casualties": [],
       "repairMgSuppressed": 113.69999999999568,
       "repairUnderFire": 116.34999999999553,
+      "germanCasualties": [
+        "04:45:42"
+      ],
       "survivors": 18,
       "times": {
         "order_demolish": "05:30:00",
@@ -808,6 +848,10 @@
       "casualties": [],
       "repairMgSuppressed": 128.74999999999503,
       "repairUnderFire": 131.39999999999563,
+      "germanCasualties": [
+        "04:46:54",
+        "06:07:14"
+      ],
       "survivors": 18,
       "times": {
         "order_demolish": "05:30:00",
@@ -885,6 +929,10 @@
       "casualties": [],
       "repairMgSuppressed": 134.59999999999636,
       "repairUnderFire": 137.24999999999696,
+      "germanCasualties": [
+        "04:54:16",
+        "06:06:46"
+      ],
       "survivors": 18,
       "times": {
         "order_demolish": "05:30:00",
@@ -962,6 +1010,11 @@
       "casualties": [],
       "repairMgSuppressed": 113.79999999999568,
       "repairUnderFire": 116.44999999999553,
+      "germanCasualties": [
+        "04:45:42",
+        "06:07:52",
+        "06:08:58"
+      ],
       "survivors": 18,
       "times": {
         "order_demolish": "05:30:00",

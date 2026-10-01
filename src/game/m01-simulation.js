@@ -264,7 +264,9 @@ export class M01Simulation {
       if(!p.carrying&&dist(p,bak)<3){p.carrying='jozef_bak';bak.active=false;this.message('Bąk está consigo. Leve-o ao socorrista.');}
       else if(p.carrying==='jozef_bak'&&dist(p,this.world.point('aid_position'))<4){p.carrying=null;this.finish('rescue_bak');
         this.flags['m01.bak_status']='rescued_by_player';this.flags['m01.dudek_status']='unhurt';this.message('Bąk entregue ao socorrista.');
-        const aid=this.world.point('aid_position');Object.assign(bak,{active:true,state:'WOUNDED',target:null,x:aid.x-1.2,z:aid.z+.6});bak.y=this.world.heightAt(bak.x,bak.z);}
+        const aid=this.world.point('aid_position');Object.assign(bak,{active:true,state:'WOUNDED',target:null,x:aid.x-1.2,z:aid.z+.6});bak.y=this.world.heightAt(bak.x,bak.z);
+        // Entregue depois das 06:10, Dudek leva-o já: ninguém pode ficar ferido junto ao portal (x≈−9) à espera da demolição oeste.
+        if(this.consumedEvent(E('east_demolition')))this.actor('leon_dudek').task='evacuate_bak';}
     }
     const kowal=this.actor('szymon_kowal'),kowalRounds=this.timers.kowalRounds??0;
     if(interact&&!p.carrying&&kowalRounds>0&&kowal.alive&&kowal.active&&dist(p,kowal)<3&&this.weapon.reserve<=25){
