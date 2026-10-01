@@ -30,6 +30,7 @@ export function driver(seed=19390901,{support=false}={}){
     }
     if(sim.active('cover_repair')&&!combatSnapshots.repair)combatSnapshots.repair=sim.snapshot();
     if(sim.consumedEvent('evt_m01_germans_on_east_spans')&&!combatSnapshots.withdrawal)combatSnapshots.withdrawal=sim.snapshot();
+    if(sim.consumedEvent('evt_m01_east_demolition')&&sim.player.x<-100&&!combatSnapshots.eastDemolitionOutside)combatSnapshots.eastDemolitionOutside=sim.snapshot();
   }
   function until(predicate,limit=240,controls={}){
     for(let i=0;i<limit*20;i++){

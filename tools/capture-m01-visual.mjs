@@ -18,8 +18,12 @@ for(let i=0;i<60;i++){
 const browser=await chromium.launch({headless:true,...(process.env.CHROME_EXECUTABLE?{executablePath:process.env.CHROME_EXECUTABLE}:{}),
   args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const flow=route(),report={kind:'staged production browser continuations',shots:[]};
+const shots=process.argv.includes('--demolition-only')?
+  [['demolition-inside',flow.combatSnapshots.eastDemolition],['demolition-outside',flow.combatSnapshots.eastDemolitionOutside]]
+    .map(([name,snapshot])=>[name,snapshot,Math.atan2(20-snapshot.player.z,800-snapshot.player.x)]):
+  [['repair',flow.combatSnapshots.repairThreat],['station-damage',flow.combatSnapshots.repairThreat,Math.PI],['withdrawal',flow.combatSnapshots.withdrawal],['roll-call',flow.outro]];
 try{
-  for(const [name,snapshot,lookAt]of [['repair',flow.combatSnapshots.repairThreat],['station-damage',flow.combatSnapshots.repairThreat,Math.PI],['withdrawal',flow.combatSnapshots.withdrawal],['roll-call',flow.outro]]){
+  for(const [name,snapshot,lookAt]of shots){
     console.log(`Capturing ${name}`);
     const context=await browser.newContext({viewport:{width:1280,height:720}}),page=await context.newPage(),errors=[];
     page.on('pageerror',e=>errors.push(e.message));

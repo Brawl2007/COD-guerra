@@ -106,6 +106,15 @@ Há um único workflow `.github/workflows/pages.yml`. PRs executam validação; 
 
 ## Verificação visual de M01
 
+Para capturar somente a demolição leste, por continuação de snapshots alcançados pela rota de simulação, dentro e fora da treliça:
+
+```sh
+npm run build
+CHROME_EXECUTABLE=/caminho/chromium node tools/capture-m01-visual.mjs test-results/m01-demolition --demolition-only
+```
+
+O script inicia e fecha o seu preview/browser. Guarda capturas originais e erros/diagnóstico; não é partida contínua nem playtest humano. Os snapshots exteriores usam movimento real na simulação até x < −100 depois da demolição.
+
 ```sh
 npm run build
 CHROME_EXECUTABLE=/caminho/chromium node tools/capture-m01-visual.mjs docs/verification/m01-runtime/visual-sprint/after

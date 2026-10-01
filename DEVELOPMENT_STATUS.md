@@ -9,6 +9,7 @@ Os PRs #8 e #10 de pesquisa/preparação já estão em `main`. Esta integração
 ## Implementado e observado
 
 - Demolições leste/oeste mostram durante 12/15 s activos a distância e direcção do impacto real e o destino seguro. A indicação acompanha o olhar, incluindo quem olha para trás dentro da treliça; não roda a câmara. Usa o dano já guardado no save. A poeira continua sujeita à obstrução da ponte; composição e playtest humano permanecem pendentes. Prova por continuação em `docs/verification/m01-runtime/demolition-cue/`.
+- A poeira das demolições sobe como uma nuvem única, expande-se e dissipa-se, sem partículas a saltar do topo para a base. Fumo contínuo desvanece antes de repetir o ciclo; emissores finitos desvanecem nos últimos 30 s. Mantêm-se limites e obstrução. Capturas de produção dentro/fora da treliça em `docs/verification/m01-runtime/demolition-dust/`; não aprovam a encenação do colapso.
 
 - Build de produção servido em `/COD-guerra/`, com três modelos OBJ/MTL e materiais próprios. Fallback e diagnóstico para modelos ausentes.
 - Disparo semiautomático com yaw/pitch, hitboxes 3D, obstrução por paredes/terreno e teste do cano. NPCs só atacam com visão e exposição; caminhos impossíveis não atravessam paredes. Explosões respeitam obstrução.
