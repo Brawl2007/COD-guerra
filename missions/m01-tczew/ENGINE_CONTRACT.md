@@ -8,6 +8,7 @@ Revisão dos PRs #8 e #10. Missão **PLANEJADA**: o JSON descreve a implementaç
 - O snap de entrega da mensagem só avança: `max(horaActual, 04:33:10)`. Nunca regressar o relógio se a entrega for tardia. Ao saltar um intervalo, consumir por ordem os eventos elegíveis, sem perder os que ficaram entre as duas horas.
 - `battleClock.at` significa hora atingida ou ultrapassada, não igualdade numérica. Eventos dependentes tornam-se elegíveis quando os seus pré-requisitos terminam. Guardar IDs consumidos e a hora de consumo para `delaySec`.
 - Um gate consulta prontidão, sem exigir que o próprio evento já tenha sido consumido. Quando a prontidão é verdadeira, permite atingir a hora e disparar o evento uma vez. Tolerâncias contam segundos de jogo activo durante a espera. A demolição espera indefinidamente pela saída do jogador, mesmo após o timeout.
+- `readyScale` (opcional, segmento com gate): quando a prontidão do gate já é verdadeira, a hora histórica usa essa escala até ao fim do segmento. `seg_repair` usa 27× porque, na partida contínua, o reparo terminava às ~04:49 e restavam ~4,5 min reais sem tarefa até às 05:30. Os horários dos eventos não mudam.
 - Ausência de `readiness` equivale a nenhuma condição adicional; ausência de `tolerance` equivale a nenhum timeout automático. `results` ainda requer implementação explícita.
 
 ## Checkpoints e representação

@@ -38,7 +38,7 @@ export class M01Simulation {
     for(let i=0;i<24;i++)this.actors.push(entity(`pl_east_${i}`,{x:1040+i%4*2,y:0,z:38+i%4*.65},'ally',
       {group:'grp_east_platoon',active:false,role:'RIFLEMAN'}));
     this.timers={boundary:0,water:0,cover:0,repairStall:0,repairSuppressedUntil:0,withdrawalCasualty:seconds('06:00:00'),
-      ambient:0,nextCoverCall:40,guide:0,escort:false,escortSpoke:false,boundaryWarning:false,boundaryCountdown:0,holdAccessVisited:false,
+      ambient:0,nextCoverCall:40,guide:0,guideKey:null,guideAt:0,guideDist:0,guideShown:false,escort:false,escortSpoke:false,boundaryWarning:false,boundaryCountdown:0,holdAccessVisited:false,
       occupiedCover:null,coverExposure:0,coverCallIndex:0};
     this.sectors={sectors:definition.sectors.map(s=>({id:s.id,state:s.schedule[0].state,strength:100,morale:1,supply:1})),damage:[]};
     this.mission={phase:'INTRO',complete:false,text:phaseText.INTRO};
@@ -114,7 +114,8 @@ export class M01Simulation {
   advanceBattle(dt){
     const segment=definition.clock.segments.find(s=>this.battleClock>=seconds(s.from)&&this.battleClock<seconds(s.to));
     if(!segment)return;
-    let scale=segment.scale,next=this.battleClock+dt*scale;
+    // readyScale: com o gate já pronto (ex.: reparo concluído), encurta a espera sem tarefa até à hora seguinte.
+    let scale=segment.gate&&segment.readyScale&&this.readiness(segment.gate)?segment.readyScale:segment.scale,next=this.battleClock+dt*scale;
     if(segment.gate&&!this.readiness(segment.gate)){
       const at=seconds(segment.to);
       if(at-this.battleClock<=60)scale=1;
@@ -157,7 +158,9 @@ export class M01Simulation {
       case E('train963_arrives'):this.enemies.filter(a=>a.group==='grp_de_east').forEach(a=>{a.active=true;});line(25);line(28);break;
       case E('panzerzug_arrives'):line(38);break;
       case E('repair_complete'):this.finish('cover_repair');this.destruction.push('ignition_line_repaired');line(31);line(32);break;
-      case E('order_demolish'):this.activate('hold_access');this.pendingCheckpoint='cp_m01_c_engenheiros';this.startScene('cs_m01_order');this.mission.phase='MAIN_COMBAT';break;
+      case E('order_demolish'):this.activate('hold_access');this.pendingCheckpoint='cp_m01_c_engenheiros';this.startScene('cs_m01_order');this.mission.phase='MAIN_COMBAT';
+        // Bąk ocupa cedo a posição no tabuleiro: às 06:04 cai em bak_wound_point, à frente do jogador, e não no caminho.
+        this.actor('jozef_bak').target=this.world.point('bak_wound_point');break;
       case E('bombing_0530'):this.flags['m01.second_raid_state']='active';this.impact('raid_0530',{x:-600,y:0,z:100},true);break;
       case E('runner_pressure_report'):line(37);break;
       case E('north_contact_distant'):this.emit({type:'distant-shot',point:{x:-500,y:2,z:-1100}});break;
@@ -216,7 +219,10 @@ export class M01Simulation {
     if(this.active('follow_sergeant')&&dist(p,this.world.point('rally_point'))<8){
       this.finish('follow_sergeant');this.activate('find_sappers');this.pendingCheckpoint='cp_m01_b_reorganizacao';this.line('dlg_m01_020');
     }
-    if(this.active('find_sappers')&&dist(p,this.world.point('repair_site_1'))<6){this.finish('find_sappers');this.activate('fetch_material');this.line('dlg_m01_021');this.line('dlg_m01_023');}
+    if(this.active('find_sappers')&&dist(p,this.world.point('repair_site_1'))<6){this.finish('find_sappers');this.activate('fetch_material');this.line('dlg_m01_021');this.line('dlg_m01_023');
+      // A caixa é entregue no segundo corte (repair_site_2): os sapadores vão para lá enquanto o jogador vai ao barracão.
+      const site=this.world.point('repair_site_2');
+      this.actors.filter(a=>a.role==='ENGINEER'&&a.alive&&a.active).forEach((a,i)=>{a.target={x:site.x-1.5-i*1.2,y:site.y,z:site.z+1+i%2};});}
     if(this.active('fetch_material')&&interact){
       if(!p.carrying&&dist(p,this.world.point('rail_hut'))<5){p.carrying='sapper_crate';this.message('Material recolhido. Leve a caixa aos sapadores.');}
       else if(p.carrying==='sapper_crate'&&dist(p,this.world.point('repair_site_2'))<6){p.carrying=null;this.finish('fetch_material');this.activate('cover_repair');this.line('dlg_m01_024');this.line('dlg_m01_022');}
@@ -240,7 +246,9 @@ export class M01Simulation {
     if(this.pendingCheckpoint==='cp_m01_c_engenheiros'&&this.flags['m01.second_raid_state']==='ended')this.saveCheckpoint(this.pendingCheckpoint);
     if(this.consumedEvent(E('east_demolition'))&&p.x<-20&&!p.carrying&&!(this.battleClock>=seconds('06:36:00')&&p.x>=-90))this.saveCheckpoint('cp_m01_d_retirada');
     const active=definition.objectives.find(o=>o.required&&this.objectives[o.id].state==='active');
-    this.mission.text=this.scene?.id==='cs_m01_intro'?phaseText.INTRO:this.scene?.id==='cs_m01_roll_call'?phaseText.OUTRO:active?.text??'Mantenha contacto com a secção';
+    const optional=definition.objectives.find(o=>!o.required&&this.objectives[o.id].state==='active');
+    this.mission.text=this.scene?.id==='cs_m01_intro'?phaseText.INTRO:this.scene?.id==='cs_m01_roll_call'?phaseText.OUTRO:
+      (active?.text??'Mantenha contacto com a secção')+(optional?` · ${optional.text}`:'');
   }
   moveActor(a,target,dt,speed=3.6){
     if(!a.alive||!a.active||a.state==='WOUNDED')return;
@@ -256,7 +264,11 @@ export class M01Simulation {
       a.shot=Math.max(0,a.shot-dt);if(!a.alive||!a.active)continue;
       if(a.group==='grp_east_platoon'){
         if(this.flags['m01.east_platoon_survivors']<18&&Number(a.id.split('_').at(-1))>=this.flags['m01.east_platoon_survivors']){a.alive=false;a.health=0;a.state='DOWN';continue;}
-        this.moveActor(a,a.x>-110?{x:-110,z:40}:{x:-240,z:22},dt);continue;
+        // Etapas do recuo: portal rodoviário, sul do barracão e passagem pelo posto de disparo até junto da estação.
+        // Os limiares ficam aquém dos pontos (moveActor pára a 0,8 m), para nenhum soldado ficar preso numa etapa.
+        // O pelotão recua a correr sob fogo (5,5 m/s): ~1,3 km até à estação dentro da fase do corredor.
+        const k=Number(a.id.split('_').at(-1));   // lugar próprio no fim, para não se sobreporem
+        this.moveActor(a,a.x>-105?{x:-110,z:40}:a.x>-230?{x:-235,z:30}:{x:-322-(k%4)*1.6,z:30+Math.floor(k/4)%6*1.3},dt,5.5);continue;
       }
       if(a.group==='grp_de_spans'){
         const destination=retreat?1080:690;
@@ -375,6 +387,7 @@ export class M01Simulation {
     if(this.battleClock>=seconds('06:36:00')&&!this.consumedEvent(E('west_demolition')))this.line('dlg_m01_050');
     if(this.battleClock>=seconds('06:38:30')&&!this.consumedEvent(E('west_demolition')))this.line('dlg_m01_051');
     if(this.active('follow_sergeant')&&this.clock>this.timers.guide){this.timers.guide=this.clock+7;this.message('Zieliński chama-o da trincheira, a oeste.');}
+    this.updateGuide();
     if(this.active('hold_access')){
       const cover=this.world.coverAt(p)?.id??null;
       if(cover!==this.timers.occupiedCover){this.timers.occupiedCover=cover;this.timers.coverExposure=0;}
@@ -389,6 +402,30 @@ export class M01Simulation {
     }
     if(this.subtitle&&this.clock>=this.subtitle.until)this.subtitle=null;
     if(!this.subtitle&&this.dialogueQueue.length){this.subtitle=this.dialogueQueue.shift();this.subtitle.until=this.clock+this.subtitle.duration;}
+  }
+  /** Destino do objectivo activo que exige deslocação (dados do mapa ou actor). */
+  guideTarget(){
+    const p=this.player,pt=id=>this.world.point(id);
+    if(this.active('rescue_bak'))return p.carrying==='jozef_bak'?{label:'Socorrista Dudek',point:pt('aid_position')}:{label:'Bąk ferido',point:this.actor('jozef_bak')};
+    if(this.active('deliver_message'))return {label:'Posto da ponte ferroviária',point:pt('forward_post')};
+    if(this.active('find_sappers'))return {label:'Sapadores no aterro',point:pt('repair_site_1')};
+    if(this.active('fetch_material'))return p.carrying?{label:'Sapadores no segundo corte da linha',point:pt('repair_site_2')}:{label:'Barracão ferroviário, porta oeste',point:pt('rail_hut')};
+    if(this.active('leave_bridge'))return {label:'Posto de disparo',point:pt('firing_point')};
+    if(this.active('reach_shelter'))return {label:'Abrigo',point:pt('shelter')};
+    return null;
+  }
+  /** Mostra destino, distância e lado quando o jogador não se aproxima; cala-se enquanto ele progride. */
+  updateGuide(){
+    const t=this.timers,g=this.scene?.id==='cs_m01_intro'||this.scene?.id==='cs_m01_roll_call'?null:this.guideTarget();
+    if(!g){t.guideKey=null;return;}
+    const p=this.player,d=dist(p,g.point);
+    if(t.guideKey!==g.label){t.guideKey=g.label;t.guideAt=this.clock+4;t.guideDist=d;t.guideShown=false;return;}
+    if(this.clock<t.guideAt)return;
+    const progressing=t.guideDist-d>=8;t.guideAt=this.clock+15;t.guideDist=d;
+    if(d<10||(t.guideShown&&progressing))return;
+    t.guideShown=true;
+    const rel=Math.atan2(g.point.z-p.z,g.point.x-p.x)-p.angle,a=Math.atan2(Math.sin(rel),Math.cos(rel)),deg=Math.abs(a)*180/Math.PI;
+    this.message(`${g.label}: ${Math.round(d)} m, ${deg<35?'em frente':deg>120?'atrás de si':a>0?'à sua direita':'à sua esquerda'}`);
   }
   get interaction(){
     const p=this.player;
@@ -461,6 +498,9 @@ export function validateM01Snapshot(s){
   if(!Number.isInteger(s.grenades.nextId)||s.grenades.nextId<0||s.grenades.active.length>2||s.grenades.active.some(g=>typeof g.id!=='string'||![g.x,g.y,g.z,g.vx,g.vy,g.vz,g.fuse].every(Number.isFinite)||g.fuse<=0))reject('granadas em voo');
   for(const key of ['boundary','water','cover','repairStall','repairSuppressedUntil','withdrawalCasualty','ambient','nextCoverCall','guide',
     'boundaryCountdown','coverExposure','coverCallIndex'])if(!finite(s.timers[key]))reject('timer '+key);
+  for(const key of ['guideAt','guideDist'])if(key in s.timers&&!finite(s.timers[key]))reject('timer '+key);
+  if('guideKey' in s.timers&&s.timers.guideKey!==null&&typeof s.timers.guideKey!=='string')reject('timer guideKey');
+  if('guideShown' in s.timers&&typeof s.timers.guideShown!=='boolean')reject('timer guideShown');
   for(const key of ['escort','escortSpoke','boundaryWarning','holdAccessVisited'])if(typeof s.timers[key]!=='boolean')reject('timer '+key);
   if(!Array.isArray(s.destruction)||!Array.isArray(s.sceneDone)||!Array.isArray(s.dialogueConsumed)||!Array.isArray(s.dialogueQueue)||!Array.isArray(s.checkpointsReached)||!Array.isArray(s.recoveries))reject('listas');
   const knownScene=id=>definition.cutscenes.some(c=>c.id===id);

@@ -245,7 +245,7 @@
   "clock": {
     "start": "04:30:00",
     "end": "07:05:00",
-    "policy": "battleClock só avança durante jogo ativo; menus, pausa e carregamento suspendem. Segmentos têm escala própria; eventos marcados como 'gate' seguram o relógio (escala cai para 1,0 a 60 s de jogo do gate e para em gate − 30 s) enquanto setores seguem comportamentos 'sustain' sem repetição perceptível.",
+    "policy": "battleClock só avança durante jogo ativo; menus, pausa e carregamento suspendem. Segmentos têm escala própria; um segmento com 'readyScale' usa essa escala quando o seu gate já está pronto; eventos marcados como 'gate' seguram o relógio (escala cai para 1,0 a 60 s de jogo do gate e para em gate − 30 s) enquanto setores seguem comportamentos 'sustain' sem repetição perceptível.",
     "segments": [
       {
         "id": "seg_prelude",
@@ -256,7 +256,7 @@
         "targetRealMin": 3.0
       },
       { "id": "seg_bombing", "from": "04:34:00", "to": "04:45:00", "scale": 3.5, "targetRealMin": 3.1 },
-      { "id": "seg_repair", "from": "04:45:00", "to": "05:30:00", "scale": 9.0, "gate": "evt_m01_repair_complete", "targetRealMin": 5.0 },
+      { "id": "seg_repair", "from": "04:45:00", "to": "05:30:00", "scale": 9.0, "gate": "evt_m01_repair_complete", "readyScale": 27.0, "targetRealMin": 5.0, "readyScaleNote": "Partida contínua no navegador: com o reparo concluído (~04:49) restavam ~4,5 min reais sem tarefa até às 05:30. Com o gate pronto, o resto do segmento corre a 27× (~1,5 min). Horários dos eventos inalterados." },
       { "id": "seg_hold", "from": "05:30:00", "to": "06:10:00", "scale": 8.0, "gate": "evt_m01_east_demolition", "targetRealMin": 5.0 },
       { "id": "seg_climax", "from": "06:10:00", "to": "06:45:00", "scale": 8.5, "gate": "evt_m01_west_demolition", "targetRealMin": 4.1 },
       {

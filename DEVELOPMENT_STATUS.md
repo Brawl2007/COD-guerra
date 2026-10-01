@@ -24,7 +24,16 @@ A revisão do PR #10 integrou medidas modernas com incertezas históricas, ponte
 
 `M01Simulation` guarda apenas dados. O relógio usa segmentos, snap monotónico e gates; CP-C espera o fim do segundo raid e CP-D guarda a posição/hora reais. O wz.29 exige ferrolho e carrega cinco cartuchos por clipe quando vazio; cargas parciais inserem cartuchos individualmente. O mapa utiliza os colisores GLB exportados em JSON, juntas de tabuleiro, coberturas e prédios provisórios. Não há infantaria alemã na margem oeste. Bombas respeitam 30 m; a demolição oeste espera e o sargento pode escoltar o jogador.
 
-O percurso automático com controlos chega ao debrief, passa pelos quatro checkpoints e conserva baixas/destruição ao restaurar. O navegador de produção verificou controlos, caminhada/entrega, CP-D/restauração e outro/debrief por continuação de snapshots reais. Isso ainda não é uma partida contínua de M01 no navegador. Evidências e limites em `QUALITY_REPORT.md` e `docs/verification/m01-runtime/`.
+O percurso automático com controlos chega ao debrief, passa pelos quatro checkpoints e conserva baixas/destruição ao restaurar. O navegador de produção verificou controlos, caminhada/entrega, CP-D/restauração e outro/debrief por continuação de snapshots reais.
+
+**Partida contínua no navegador:** M01 foi jogada três vezes do menu ao debrief, cada uma numa única sessão Chromium/SwiftShader (`tools/m01-browser-playthrough.mjs`). Usou teclado, cliques e captura do rato reais, sem snapshots injectados. A partida final demorou 1083 s reais, com 12/12 objectivos e os quatro checkpoints, sem bloqueios, mortes ou perdas de controlo. É um piloto automático, não um playtest humano. A primeira partida revelou cinco problemas, corrigidos nesta branch:
+- sapadores longe do ponto de entrega da caixa;
+- objectivos sem rumo;
+- 4,5 min sem tarefa depois do reparo;
+- Bąk ferido atrás do jogador e fora de `bak_wound_point`;
+- pelotão leste parado em x≈−109, sem passar pelo corredor.
+
+Evidências em `docs/verification/m01-runtime/continuous/`.
 
 ## Parcial ou pendente
 
@@ -35,10 +44,19 @@ O percurso automático com controlos chega ao debrief, passa pelos quatro checkp
 - Humanos, comboios e aviões são geometrias provisórias próprias; as pontes são o kit GLB do Claude completado no PR #11. Fontes, licenças e incertezas em `ASSET_CREDITS.md` e `BRIDGE_ASSET_REPORT.md`.
 - Meta de 30 FPS no Chromebook não foi medida. Chromium com SwiftShader verifica funcionamento, não desempenho de GPU real.
 - Campanha M01–M30, tanque, avião, jeep, transições e save da campanha pendentes.
-- Não foi jogada uma partida contínua completa de M01 no navegador. O percurso integral de simulação e as continuações no navegador são evidências diferentes. Não houve playtest completo da missão francesa nesta sessão.
+- A partida contínua de M01 no navegador foi feita por piloto automático; **falta um playtest humano completo** e rotas adversas (morrer, sair dos limites, ignorar objectivos). Não houve playtest completo da missão francesa nesta sessão.
+- Observado na partida contínua e ainda pendente:
+  - Bąk transportado ou entregue não é representado;
+  - a demolição oeste fica tapada pelo barracão vista do posto de disparo;
+  - a leste (06:10) só se ouve;
+  - a chamada final não tem encenação;
+  - os 45 cartuchos não têm reabastecimento;
+  - "Proteja o reparo" e "Cubra a retirada" não mostram ameaça legível.
+
+  Detalhes em `docs/verification/m01-runtime/continuous/README.md`.
 
 ## Próximo passo
 
-Jogar M01 continuamente no navegador, testar rotas adversas e a recuperação visual de retardatários/feridos, melhorar orientação do jogador e navegação, modelar encenações/colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02.
+Playtest humano completo de M01 e rotas adversas. Depois, decidir as pendências visuais da partida contínua: representação de Bąk, linha de vista do posto de disparo, encenação da chamada e ameaça legível nas tarefas de cobertura. Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02.
 
 O trabalho das pontes de Claude foi preservado e completado, incluindo dano persistente em LOD0/1/2. Mapas históricos e inventários específicos continuam úteis para as pendências de P4/P13 e de arte. Não recomeçar essa entrega.
