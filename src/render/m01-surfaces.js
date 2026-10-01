@@ -48,10 +48,12 @@ export function artTexture(kind,size=512){
 export function texturedSurface(kind,{worldScale=0,bump=.045,...options}={}){
   const map=artTexture(kind),material=new THREE.MeshStandardMaterial({map,bumpMap:map,bumpScale:bump,
     roughness:kind==='metal'?.63:kind==='water'?.35:.96,metalness:kind==='metal'?.55:kind==='water'?.1:0,...options});
+  material.userData.m01LowDetail={value:0};
   if(worldScale){
     // glTF parts and very long terrain boxes do not share a UV scale. Project in metres.
     material.onBeforeCompile=shader=>{
       shader.uniforms.m01Scale={value:worldScale};
+      shader.uniforms.m01LowDetail=material.userData.m01LowDetail;
       shader.vertexShader='varying vec3 vM01Position;\n'+shader.vertexShader;
       shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
         vec4 artPosition=vec4(transformed,1.0);
@@ -59,12 +61,19 @@ export function texturedSurface(kind,{worldScale=0,bump=.045,...options}={}){
           artPosition=instanceMatrix*artPosition;
         #endif
         vM01Position=(modelMatrix*artPosition).xyz;`);
-      shader.fragmentShader='varying vec3 vM01Position; uniform float m01Scale;\n'+shader.fragmentShader;
+      shader.fragmentShader='varying vec3 vM01Position; uniform float m01Scale; uniform float m01LowDetail;\n'+shader.fragmentShader;
       shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`
-        vec3 artNormal=abs(normalize(cross(dFdx(vM01Position),dFdy(vM01Position))));
-        vec3 artWeights=pow(artNormal,vec3(6.0));artWeights/=max(.001,artWeights.x+artWeights.y+artWeights.z);
+        vec3 artNormal=abs(cross(dFdx(vM01Position),dFdy(vM01Position)));
         vec3 artUV=vM01Position*m01Scale;
-        vec4 artColor=texture2D(map,artUV.zy)*artWeights.x+texture2D(map,artUV.xz)*artWeights.y+texture2D(map,artUV.xy)*artWeights.z;
+        vec4 artColor;
+        if(m01LowDetail>.5){
+          // Dominant-axis mapping: same metre scale, one sample and no blending powers.
+          vec2 uv=artNormal.y>=max(artNormal.x,artNormal.z)?artUV.xz:artNormal.x>=artNormal.z?artUV.zy:artUV.xy;
+          artColor=texture2D(map,uv);
+        }else{
+          vec3 artWeights=pow(normalize(artNormal),vec3(6.0));artWeights/=max(.001,artWeights.x+artWeights.y+artWeights.z);
+          artColor=texture2D(map,artUV.zy)*artWeights.x+texture2D(map,artUV.xz)*artWeights.y+texture2D(map,artUV.xy)*artWeights.z;
+        }
         diffuseColor*=artColor;`);
       // Original UV bump would stretch across a kilometre; metre-space grain supplies detail.
       shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>',`
