@@ -6,6 +6,7 @@ import { TczewWorld } from '../src/world/tczew-world.js';
 import { eyePosition, traceShot, aimDirection } from '../src/world/spatial.js';
 import { route } from './helpers/m01-route.js';
 import { execFileSync } from 'node:child_process';
+import { Game } from '../src/game/game.js';
 
 const E=name=>'evt_m01_'+name;
 let completed;
@@ -14,6 +15,12 @@ const run=(sim,seconds,controls={})=>{for(let i=0;i<seconds*20;i++)sim.tick(.05,
 
 test('the pure collision JSON remains reproducible from the checked GLB translations',()=>{
   assert.match(execFileSync(process.execPath,['tools/assets/m01-bridges/export-colliders.mjs','--check'],{encoding:'utf8'}),/Verified 83/);
+});
+test('debug diagnostics return copies; editing a returned gate or failure cannot change live state',()=>{
+  const game=Object.create(Game.prototype);game.sim=new M01Simulation();game.sim.gate={id:E('west_demolition'),started:0,hold:1};
+  const failures=[{path:'test.glb',message:'test failure'}];game.renderer={diagnostics:{assetFailures:failures},m01:{diagnostics:{models:[],assetFailures:failures}}};
+  const before=game.sim.snapshot(),d=game.diagnostics;d.m01.gate.started=999;d.m01.objectives.obj_m01_deliver_message.state='done';d.assetFailures.length=0;
+  assert.deepEqual(game.sim.snapshot(),before);assert.equal(failures.length,1);
 });
 
 test('wz.29 requires a bolt cycle; an empty magazine uses a clip of five, preserving ammunition',()=>{

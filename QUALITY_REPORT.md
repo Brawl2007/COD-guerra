@@ -6,7 +6,7 @@ M01 está **PROTÓTIPO JOGÁVEL**, usando a fundação do PR #9 e o kit de ponte
 
 | Verificação local | Resultado | Alcance |
 | --- | --- | --- |
-| Testes Node | 60/60 | 43 regressões/dados/GLB já existentes e 17 testes do runtime de M01; inclui arma, percurso, restauração, gates, segurança, sectores e blast obstruído. |
+| Testes Node | 61/61 | 43 regressões/dados/GLB já existentes e 18 testes do runtime de M01; inclui arma, percurso, restauração, gates, segurança, sectores, blast obstruído e diagnóstico sem acesso mutável. |
 | Build de produção | Passa | Vite com `/COD-guerra/`, sem recursos externos do jogo. JS ~925 kB / 233 kB gzip; aviso de chunk grande permanece. |
 | Navegador de produção | 9/9 | Quatro testes da bancada preservados; cinco de M01: modelos/controlos/arma/CP-A, caminhada e entrega, CP-D/reload, outro/debrief e erro de asset. |
 | Percurso automático de simulação | Completo, 26 eventos, CP-A..D | Controlos com passos de 50 ms, colisão e relógios reais da simulação. Todos os objectivos obrigatórios terminam. Não injecta progressão; **não é partida no navegador**. |
@@ -23,6 +23,8 @@ O primeiro teste de caminhada ficou bloqueado num saco de areia: o alvo de straf
 Capturas e relatório reprodutível em [docs/verification/m01-runtime/README.md](docs/verification/m01-runtime/README.md). O CI publica evidências em `browser-evidence`. Resultados locais são separados de GitHub Actions/Pages; o PR de integração precisa passar o workflow antes do merge.
 
 A rota automática testa movimento/objectivos e não dispara a arma; tiro, recarga, obstrução e resgate são verificados separadamente. Chegar ao debrief nessa rota não aprova a qualidade ou dificuldade do combate.
+
+O primeiro [CI da integração](https://github.com/Brawl2007/COD-guerra/actions/runs/36810870354) passou Node/build e oito testes de navegador. A assertion de recusa do segundo disparo falhou porque a espera pelo HUD/transporte ultrapassou o ciclo de 1,05 s; o segundo disparo era então legítimo. O teste agora agrupa um double-click nativo antes de ler o HUD, preservando a verificação de uma única bala, e mantém a recusa temporal exacta no teste da arma. Sem retries ou mudança de orçamento.
 
 ## Limites de M01
 

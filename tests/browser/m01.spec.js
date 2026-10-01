@@ -30,10 +30,12 @@ test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, a
   const {errors,failed}=await open(page);await page.screenshot({path:info.outputPath('m01-menu.png')});await start(page);
   const initial=await page.evaluate(()=>window.gameDiagnostics());
   expect(initial.missionId).toBe('m01_tczew');expect(initial.m01.visiblePieces).toBeGreaterThan(40);expect(initial.player.angle).toBe(0);
-  for(let i=0;i<5;i++){
+  // One native double-click before reading the HUD. Separate remote assertions/clicks
+  // can outlast the 1.05 s bolt cycle on CI, so they cannot assert a timed refusal.
+  await page.mouse.dblclick(640,360,{delay:0});await expect(page.locator('#mag')).toHaveText('4');
+  for(let i=1;i<5;i++){
     await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
     await page.mouse.down();await page.mouse.up();await expect(page.locator('#mag')).toHaveText(String(4-i));
-    if(i===0){await page.mouse.down();await page.mouse.up();await expect(page.locator('#mag')).toHaveText('4');}
   }
   await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
   await page.keyboard.press('KeyR');await expect(page.locator('#mag')).toHaveText('—');

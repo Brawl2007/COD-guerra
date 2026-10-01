@@ -194,13 +194,13 @@ export class Game {
     this.hud.checkpoint.classList.toggle('show',now<this.checkpointUntil);
     this.hud.vignette.classList.toggle('hit',now<this.hitUntil);
   }
-  get diagnostics(){return {...this.renderer.diagnostics,missionId:this.sim.missionId,clock:this.sim.clock,paused:this.paused,
+  get diagnostics(){return structuredClone({...this.renderer.diagnostics,missionId:this.sim.missionId,clock:this.sim.clock,paused:this.paused,
     missionPhase:this.sim.mission.phase,complete:this.sim.mission.complete,
     player:{x:this.player.x,y:this.player.y,z:this.player.z,angle:this.player.angle,pitch:this.player.pitch,health:this.player.health},
     sectors:this.sim.sectors.sectors.map(s=>({...s})),eventIds:this.isM01?Object.keys(this.sim.consumed):[...this.sim.sectors.consumed],
     ...(this.isM01?{m01:{...this.renderer.m01.diagnostics,battleClock:this.sim.battleClock,weapon:this.sim.weapon.snapshot(),
       checkpoints:[...this.sim.checkpointsReached],flags:{...this.sim.flags},scene:this.sim.scene?.id??null,gate:this.sim.gate,
-      objectives:structuredClone(this.sim.objectives),parts:this.sim.renderState.parts,enemyAlive:this.sim.enemies.filter(a=>a.alive).length}}:{})};}
+      objectives:structuredClone(this.sim.objectives),parts:this.sim.renderState.parts,enemyAlive:this.sim.enemies.filter(a=>a.alive).length}}:{})});}
   dispose(){
     if(this.disposed)return;this.disposed=true;cancelAnimationFrame(this.frame);
     this.listeners.forEach(remove=>remove());this.input.dispose();this.audio.dispose?.();this.renderer.dispose();
