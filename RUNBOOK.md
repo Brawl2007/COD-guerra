@@ -46,6 +46,15 @@ node tools/verify-m01-route.mjs
 node --test tests/m01-runtime.test.js
 ```
 
+Partida contínua de M01 no navegador, do menu ao debrief, numa única sessão (≈19 min reais em SwiftShader):
+
+```sh
+npm run build && npm run preview &
+CHROME_EXECUTABLE=/caminho/para/chromium node tools/m01-browser-playthrough.mjs --out test-results/m01-continuous
+```
+
+O piloto usa teclado/cliques reais e olhar por `mousemove` relativo, e só lê `gameDiagnostics()` e o HUD: não injecta snapshots, relógios, eventos ou objectivos. Regista bloqueios de movimento, esperas, legendas, mensagens e uma captura por objectivo em `report.json`/`log.jsonl`. É um piloto automático; não substitui um playtest humano. `--skip-cutscenes` salta intro/outro com Espaço.
+
 O verificador grava `docs/verification/m01-runtime/simulation-report.json`. Usa controlos e física reais da simulação com passos de 50 ms, sem injectar relógios/eventos/objectivos. Não é playtest no navegador. Testes de CP-D/outro no navegador continuam snapshots alcançados por esse percurso; estão identificados como verificações por trechos.
 
 ## Diagnóstico

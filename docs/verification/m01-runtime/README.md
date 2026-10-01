@@ -10,7 +10,9 @@ Capturas reais em Chromium 153/SwiftShader, 1280×720, sobre o build servido em 
 | [cp-d.png](cp-d.png) | Continuação do CP-D genuíno, com baixas e demolição leste persistidas. |
 | [debrief.png](debrief.png) | Continuação do estado de outro e skip por Espaço; debrief habilitado, conclusão persistida. |
 
-CP-D e outro foram atingidos pelo percurso de simulação e continuados no navegador. A suíte não constitui uma partida contínua de M01. O teste Node verifica morte/restauração dos quatro checkpoints, resgate opcional, relógios/gates, guardas de save e sectores durante 90 s.
+CP-D e outro foram atingidos pelo percurso de simulação e continuados no navegador. A suíte não constitui uma partida contínua de M01.
+
+**Partida contínua:** [continuous/README.md](continuous/README.md). Três partidas de M01, cada uma numa única sessão Chromium do menu ao debrief, conduzidas por um piloto automático com input do navegador. Não houve snapshots injectados. Inclui os problemas encontrados, as correcções e as capturas de resgate, feridos e retardatários. Não é playtest humano. O teste Node verifica morte/restauração dos quatro checkpoints, resgate opcional, relógios/gates, guardas de save e sectores durante 90 s.
 
 [simulation-report.json](simulation-report.json) contém as horas e posições reais dos checkpoints, flags, baixas e eventos do percurso. Reproduzir:
 

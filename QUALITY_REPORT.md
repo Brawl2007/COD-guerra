@@ -6,9 +6,10 @@ M01 está **PROTÓTIPO JOGÁVEL**, usando a fundação do PR #9 e o kit de ponte
 
 | Verificação local | Resultado | Alcance |
 | --- | --- | --- |
-| Testes Node | 61/61 | 43 regressões/dados/GLB já existentes e 18 testes do runtime de M01; inclui arma, percurso, restauração, gates, segurança, sectores, blast obstruído e diagnóstico sem acesso mutável. |
+| Testes Node | 67/67 | 43 regressões/dados/GLB já existentes, 18 testes do runtime de M01 e 6 regressões da partida contínua (sapadores, Bąk, indicação de rumo, `readyScale`, corredor, rota). Inclui arma, percurso, restauração, gates, segurança, sectores, blast obstruído e diagnóstico sem acesso mutável. |
 | Build de produção | Passa | Vite com `/COD-guerra/`, sem recursos externos do jogo. JS ~925 kB / 233 kB gzip; aviso de chunk grande permanece. |
 | Navegador de produção | 9/9 | Quatro testes da bancada preservados; cinco de M01: modelos/controlos/arma/CP-A, caminhada e entrega, CP-D/reload, outro/debrief e erro de asset. |
+| **Partida contínua no navegador** | 3 sessões menu→debrief; final: 1083 s reais, 12/12 objectivos, CP-A..D, 0 bloqueios/mortes/perdas de controlo | Piloto automático com teclado/cliques/pointer lock reais e olhar por `mousemove` relativo; lê só `gameDiagnostics()`/HUD, sem injectar estado. Encontrou e verificou cinco correcções. **Não é playtest humano.** Ver `docs/verification/m01-runtime/continuous/`. |
 | Percurso automático de simulação | Completo, 26 eventos, CP-A..D | Controlos com passos de 50 ms, colisão e relógios reais da simulação. Todos os objectivos obrigatórios terminam. Não injecta progressão; **não é partida no navegador**. |
 | Morte e restauração | Passam nos quatro snapshots | Actores, baixas, RNG, diálogo, timers, arma, destruição e hora real restaurados. Saves corrompidos rejeitados atomicamente. |
 | LOD/destruição | Passa | Peças demolidas e baixas conservadas ao trocar distância/LOD, carregar JSON e reiniciar CP-D no navegador. |
@@ -28,7 +29,7 @@ O primeiro [CI da integração](https://github.com/Brawl2007/COD-guerra/actions/
 
 ## Limites de M01
 
-- Partida contínua no navegador, performance no Chromebook, rotas adversas e revisão de ritmo pendentes. Não há medição ou alegação de FPS de hardware.
+- Playtest humano, performance no Chromebook e rotas adversas pendentes. A partida contínua por piloto automático e a primeira revisão de ritmo estão feitas. Não há medição ou alegação de FPS de hardware.
 - Modelos humanos, arma/mãos, comboios, aviões, terreno e prédios são placeholders originais. Vozes, animações finais e uniformes completos pendentes. As pontes são o kit GLB provisório revisto.
 - Feridos/resgate e navegação têm comportamento reduzido; falta a encenação completa de S3, pelotão carregando feridos, interiores de casamata e animação de agarrar do sargento.
 - Sectores conservam estados/IDs mas não representam todos os sistemas de suprimento, moral, ferimentos e munição de NPCs exigidos no plano. Fogo e precisão usam tuning explícito de protótipo.
