@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "id": "kb_wz29",
+  "name": "Karabinek wz.29",
+  "status": "PROPOSTA — valores GAMEPLAY a afinar em playtest; valores DOCUMENTED vêm de T21 (resumos concordantes)",
+  "units": { "distance": "m", "time": "s", "angle": "graus", "velocity": "m/s" },
+  "documented": {
+    "caliber": "7,92×57 mm Mauser",
+    "lengthM": 1.10,
+    "barrelM": 0.60,
+    "massKg": 4.0,
+    "muzzleVelocity": 745,
+    "magazine": 5,
+    "feed": "clipe de 5 cartuchos (carregador interno)",
+    "action": "ferrolho Mauser, alavanca reta",
+    "rearSightM": { "min": 100, "max": 2000, "step": 100 },
+    "practicalRateRpm": [10, 15],
+    "sources": ["T21"]
+  },
+  "gameplay": {
+    "damage": 110,
+    "headMultiplier": 2.0,
+    "limbMultiplier": 0.7,
+    "damageFalloff": [{ "rangeM": 0, "factor": 1.0 }, { "rangeM": 800, "factor": 0.95 }, { "rangeM": 1200, "factor": 0.85 }],
+    "boltCycleSec": 1.05,
+    "fireRateNote": "Sem cadência fixa: o próximo disparo só existe após BOLT_CYCLE completo.",
+    "magazine": 5,
+    "reserve": 40,
+    "reloadClipSec": 3.4,
+    "reloadSingleRoundSec": 0.8,
+    "reloadRules": ["clipe só com carregador vazio", "parcialmente cheio: cartucho a cartucho, interrompível", "clipe vazio é expelido ao fechar o ferrolho"],
+    "aimInSec": 0.30,
+    "aimOutSec": 0.22,
+    "recoil": { "verticalDeg": 3.2, "horizontalDeg": [-0.6, 0.6], "cameraKickDeg": 1.4, "recoverySec": 0.35 },
+    "spreadDeg": { "hip": 2.5, "aim": 0.05, "aimMovingAdd": 0.6, "aimSuppressedAdd": 0.35 },
+    "ballistics": {
+      "mode": "trajetória com queda (preferido) ou reta com dispersão por distância (fallback)",
+      "sightPresetsM": [300, 500, 800, 1000],
+      "notes": "Afinar arrasto para tempo de voo plausível a 1000 m, na ordem de 1,5–2 s, e queda que exija a alça. Validar em playtest; não são valores medidos."
+    },
+    "rangeM": { "effective": 600, "maxEngage": 1200 },
+    "model": "assets/models/production/kb_wz29.glb",
+    "worldModelLods": ["assets/models/production/kb_wz29_lod1.glb"],
+    "sockets": ["muzzle", "ejection_port", "bolt_handle", "clip_guide", "rear_sight", "sling_front", "sling_rear", "grip_r", "grip_l"],
+    "animations": {
+      "EQUIP": 0.7, "HOLSTER": 0.5, "AIM_IN": 0.30, "AIM_OUT": 0.22, "FIRE": 0.12,
+      "BOLT_CYCLE": 1.05, "RELOAD": 3.4, "EMPTY_RELOAD": 3.4, "RELOAD_SINGLE": 0.8,
+      "SIGHT_ADJUST": 0.6, "DRY_FIRE": 0.25, "IDLE": "loop", "WALK": "loop", "SPRINT": "loop"
+    },
+    "sounds": {
+      "shot": ["shot_close", "shot_mid", "shot_far", "shot_interior"],
+      "tail": ["tail_water", "tail_field", "tail_stone"],
+      "mechanical": ["bolt_up", "bolt_back", "bolt_forward", "bolt_down", "casing_drop_dirt", "casing_drop_stone", "casing_drop_wood", "casing_drop_iron", "clip_insert", "rounds_strip", "clip_eject", "dry_fire", "sight_click"]
+    }
+  }
+}

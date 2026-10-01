@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "missions/m01-tczew/tools/measure_osm_overture.py",
+  "source": {
+    "dataset": "Overture Maps Foundation, release 2026-09-23.1 (themes transportation/segment, base/infrastructure, base/water)",
+    "attribution": "© OpenStreetMap contributors (ODbL) via Overture Maps Foundation",
+    "note": "Geometria ATUAL (2026). Pilares e eixos das pontes existem desde 1857/1891/1912; mudanças pós-guerra marcadas em map-layout.json."
+  },
+  "frame": {
+    "originLonLat": [
+      18.803807,
+      54.093042
+    ],
+    "origin": "pilar/encontro mais a oeste da ponte ferroviária",
+    "x": "ao longo do eixo da ponte ferroviária, + para leste",
+    "z": "+ para sul (perpendicular)",
+    "approximation": "projeção local equiretangular; erro < 0,3 % no raio de 2 km"
+  },
+  "railBridge": {
+    "azimuthDeg": 89.7,
+    "deckEndsX": [
+      8.4,
+      9.8,
+      1014.2,
+      1015.9
+    ],
+    "supportsX": [
+      0.0,
+      140.9,
+      270.2,
+      401.1,
+      531.7,
+      662.3,
+      727.6,
+      793.8,
+      878.9,
+      961.7,
+      1049.2
+    ]
+  },
+  "roadBridge": {
+    "azimuthDeg": [
+      89.88
+    ],
+    "supportsX": [
+      2.4,
+      140.9,
+      270.9,
+      400.9,
+      531.7,
+      662.1,
+      807.5,
+      879.0,
+      962.0,
+      1049.1
+    ],
+    "axisOffsetZ": 38.8
+  },
+  "river": {
+    "rail": [
+      [
+        24.9,
+        264.3
+      ]
+    ],
+    "road": [
+      [
+        27.4,
+        267.0
+      ]
+    ]
+  },
+  "stationModern": [
+    -918.2,
+    -463.0
+  ],
+  "lisewoHalt": [
+    1430.9,
+    5.3
+  ],
+  "street1MajaExtent": {
+    "minX": -651.4,
+    "maxX": -188.7,
+    "minZ": -159.2,
+    "maxZ": 305.9
+  },
+  "eastBankNorthSouthRoadsX": [
+    [
+      1057.5,
+      1099.1
+    ]
+  ],
+  "demProfile": {
+    "dataset": "Copernicus DEM GLO-30 (DSM, 30 m; inclui estruturas e vegetação)",
+    "heightsM": "acima do geoide EGM2008",
+    "rows": [
+      {
+        "x": -600,
+        "railAxis": 19.6,
+        "south100m": 20.5
+      },
+      {
+        "x": -500,
+        "railAxis": 20.1,
+        "south100m": 21.7
+      },
+      {
+        "x": -400,
+        "railAxis": 20.1,
+        "south100m": 18.3
+      },
+      {
+        "x": -300,
+        "railAxis": 17.7,
+        "south100m": 16.4
+      },
+      {
+        "x": -200,
+        "railAxis": 18.5,
+        "south100m": 11.5
+      },
+      {
+        "x": -100,
+        "railAxis": 17.4,
+        "south100m": 9.9
+      },
+      {
+        "x": 0,
+        "railAxis": 11.2,
+        "south100m": 3.2
+      },
+      {
+        "x": 100,
+        "railAxis": 0.5,
+        "south100m": 0.5
+      },
+      {
+        "x": 200,
+        "railAxis": 0.5,
+        "south100m": 0.5
+      },
+      {
+        "x": 300,
+        "railAxis": 12.6,
+        "south100m": 5.6
+      },
+      {
+        "x": 400,
+        "railAxis": 12.2,
+        "south100m": 5.9
+      },
+      {
+        "x": 500,
+        "railAxis": 13.9,
+        "south100m": 5.9
+      },
+      {
+        "x": 600,
+        "railAxis": 13.3,
+        "south100m": 6.1
+      },
+      {
+        "x": 700,
+        "railAxis": 11.3,
+        "south100m": 6.7
+      },
+      {
+        "x": 800,
+        "railAxis": 14.0,
+        "south100m": 6.7
+      },
+      {
+        "x": 900,
+        "railAxis": 14.5,
+        "south100m": 7.3
+      },
+      {
+        "x": 1000,
+        "railAxis": 13.6,
+        "south100m": 7.1
+      },
+      {
+        "x": 1100,
+        "railAxis": 11.1,
+        "south100m": 9.1
+      },
+      {
+        "x": 1200,
+        "railAxis": 16.2,
+        "south100m": 7.8
+      },
+      {
+        "x": 1300,
+        "railAxis": 15.4,
+        "south100m": 7.0
+      }
+    ]
+  }
+}

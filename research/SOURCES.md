@@ -10,7 +10,11 @@ Registro de fontes da campanha. Nesta primeira versão, o arquivo cobre apenas *
 | **Leitura** | `INTEGRAL`: documento lido por completo. `PARCIAL`: trechos do documento lidos directamente. `RESUMO`: conhecido apenas pelo resumo de um mecanismo de busca. `NÃO LIDO`: identificado, mas não aberto. |
 | **Certeza** | `ALTA`: fato confirmado por fonte institucional ou primária lida, ou por várias fontes independentes concordantes. `MÉDIA`: fontes secundárias concordam, mas nenhuma foi lida por completo. `BAIXA`: fonte única, divergente ou não lida. |
 
-> **Pesquisa original do Claude (30/09/2026).** O acesso directo às fontes ficou bloqueado; os factos vieram de resumos de busca. Na revisão do PR #8, foi possível ler a página H02 e trechos de H01-PDF. Isso não encerra a pesquisa: a leitura integral do artigo, as medições e P1–P12 continuam pendentes. A secção 78 proíbe tratar busca sem leitura como comprovação.
+> **Pesquisa original do Claude (30/09/2026).** O acesso directo às fontes ficou bloqueado; os factos vieram de resumos de busca. Na revisão do PR #8, foi possível ler a página H02 e trechos de H01-PDF. Isso não encerra a pesquisa: a leitura integral do artigo, as medições e verificações específicas continuam pendentes. A secção 78 proíbe tratar busca sem leitura como comprovação.
+>
+> **01/10/2026 (Claude):** sem acesso direto a `muzeum1939.pl`, `prezydent.pl`, `ipn.gov.pl`, `wikipedia.org`, arquivos de mapas e Sketchfab (desafio anti-bot). As novas entradas T20–T30 continuam `RESUMO`. As medições usam dados abertos acessíveis (G01, G02). O estado de cada pendência (P1–P16) está em `missions/m01-tczew/SOURCE_CHECK.md`.
+
+> **Revisão do PR #10, 01/10/2026 UTC:** H01-PDF, H30 e T23 lidas. Decisões e limites em `missions/m01-tczew/SOURCE_CHECK.md`; resumos T.. restantes não passam automaticamente a leitura integral.
 
 ## M01 — Tczew, 1 de setembro de 1939
 
@@ -21,9 +25,9 @@ Data de consulta de todas as entradas: **30/09/2026**.
 | ID | Título / instituição | URL | Fato que deve apoiar | Leitura | Certeza atual |
 | --- | --- | --- | --- | --- | --- |
 | H01 | Marcin Kłodziński, *The Battle for Tczew Bridges of 1 September 1939*, Muzeum II Wojny Światowej | https://www.muzeum1939.pl/en/publishing/war-and-remembrance/issues-of-the-periodical/war-and-remembrance-issue-3/the-battle-for-tczew-bridges-of-1-september-1939-preparations-the-course-of-events-and-meaning | Página editorial com resumo e acesso ao artigo; não contém a cronologia completa. | INTEGRAL (página editorial; artigo em H01-PDF) | ALTA para identificação do artigo |
-| H01-PDF | Kłodziński, *Wojna i Pamięć* 3/2021, pp. 120–152 (33 páginas) | https://www.muzeum1939.pl/upload/2025/12/925f2e996b710392cf361d1aa7964f8128942.pdf | Cronologia e divergências nas pp. 131–134; P1 continua pendente de leitura integral. | PARCIAL (revisão do PR #8) | Divergências registadas em HISTORICAL_RESEARCH §3.3 |
+| H01-PDF | Kłodziński, *Wojna i Pamięć* 3/2021, pp. 120–152 (33 páginas) | https://www.muzeum1939.pl/upload/2025/12/925f2e996b710392cf361d1aa7964f8128942.pdf | Cronologia, unidades e limites da pesquisa. | INTEGRAL (pp. 120–152; texto, anexos e bibliografia, revisão do PR #10) | ALTA para afirmações identificadas; divergências em SOURCE_CHECK |
 | H02 | Chancelaria do Presidente da Polônia — cerimônia do 79.º aniversário em Tczew | https://www.prezydent.pl/kancelaria/archiwum/andrzej-duda/aktualnosci/wizyty-krajowe/w-tczewie-uroczystosci-upamietniajace-79-rocznice-wybuchu-ii-wojny-sw-,2531 | Confirma o ataque às 04:34; esta página não identifica o 2.º Batalhão. | INTEGRAL (texto da página) | ALTA para 04:34 |
-| H30 | Muzeum II Wojny Światowej — *Umundurowanie i wyposażenie polskich żołnierzy we wrześniu 1939 roku* | https://www.muzeum1939.pl/aktualnosci/umundurowanie-i-wyposazenie-polskich-zolnierzy-we-wrzesniu-1939-roku--m2wswirtualnie-11339 | Uniforme e equipamento poloneses de 1939. | NÃO LIDO (bloqueado) | — |
+| H30 | Muzeum II Wojny Światowej — *Umundurowanie i wyposażenie polskich żołnierzy we wrześniu 1939 roku* | https://www.muzeum1939.pl/aktualnosci/umundurowanie-i-wyposazenie-polskich-zolnierzy-we-wrzesniu-1939-roku--m2wswirtualnie-11339 | Uniforme e equipamento gerais; não é inventário do 2.º Batalhão. | INTEGRAL (revisão do PR #10) | ALTA para o geral; P3/P15 específicos pendentes |
 
 ### Fontes complementares encontradas (Tczew)
 
@@ -48,13 +52,31 @@ Data de consulta de todas as entradas: **30/09/2026**.
 | T17 | Army 1914–1945 — *Strzelec piechoty polskiej 1939 r.* | https://army1914-1945.org.pl/polska/wojska-ladowe-ii-rp/uzbrojenie-wyposazenie-i-sprzet-wojsk-ladowych-ii-rp/ekwipunek-mundury-urzadzenia-i-sprzet-ii-rp/101-strzelec-piechoty-polskiej-1939-r | Kit do soldado polonês de 1939: rogatywka wz.37, capacete wz.31, túnica wz.36, máscara wz.32, bornal wz.33, cartucheiras de couro, cantil e baioneta. | RESUMO | MÉDIA (confirmar em H30) |
 | T18 | Skarbnica Tczewska (biblioteca municipal de Tczew) — fotografias das pontes, portais e estação | https://skarbnica.tczew.pl/1832/tczew-mosty-przez-wisle-widok-od-strony-zachodniej-portale-wjazdowe/ | Referência visual: portais, torres, estação e pontes destruídas. **Imagens não são assets licenciados.** | NÃO LIDO | — |
 | T19 | *Tczew* — Wikipédia (en) | https://en.wikipedia.org/wiki/Tczew | Afirma que as pontes foram destruídas às 05:30. Diverge de T01/T04/T07/T09, que dão 05:30 como hora da ordem e 06:10/06:40 como hora das demolições. Registrada só como versão divergente. | RESUMO | BAIXA |
+| T20 | Artigos da Wikipédia (en) sobre trens blindados poloneses de 1939. O resumo de busca citou o duelo do trem polonês n.º 15 "Śmierć" com o trem alemão n.º 7 em Modlin; página exata a confirmar entre os resultados (p. ex. *Śmiały (armoured train)*). | https://en.wikipedia.org/wiki/%C5%9Amia%C5%82y_(armoured_train) | Em 19/9/1939, o trem blindado alemão n.º 7 é descrito como pequeno, com dois canhões de 7,5 cm e dois de 2 cm antiaéreos. | RESUMO | BAIXA (fonte única; página exata incerta) |
+| T21 | *Karabinek wz. 1929* — Wikipédia (en); opisybroni.pl; dobroni.pl; Muzeum Zgierz | https://en.wikipedia.org/wiki/Karabinek_wz._1929 | Ficha do wz.29: 1100 mm, cano de 600 mm, 4,0 kg, ~745 m/s, 5 cartuchos, alça de 100–2000 m, alavanca do ferrolho reta, produção em Radom desde 1930. Distribuição na infantaria e retorno a fuzis longos (dobroni.pl). | RESUMO | MÉDIA |
+| T22 | *Barwy broni i służb Wojska Polskiego II RP* — Wikipédia (pl) | https://pl.wikipedia.org/wiki/Barwy_broni_i_s%C5%82u%C5%BCb_Wojska_Polskiego_II_RP | Batalhões de fuzileiros: patches de gola azul-marinho com vivo verde-claro (seledyn). | RESUMO | MÉDIA |
+| T23 | IPN Gdańsk — *84. rocznica wybuchu II wojny światowej (Malbork, Kałdowo, Szymankowo, Tczew)* | https://gdansk.ipn.gov.pl/pl2/aktualnosci/190140,84-rocznica-wybuchu-II-wojny-swiatowej-Malbork-Kaldowo-Szymankowo-Tczew-1-wrzesn.html | Alerta, atraso e 21 vítimas em Szymankowo; SA/gendarmes e divisão de vítimas não constam nesta página. | INTEGRAL (página do IPN, revisão do PR #10) | ALTA para o texto limitado de db_06 |
+| T24 | *Tczew railway station* — Wikipédia (en); fotopolska.eu; kociewie24.eu; tcz.pl | https://en.wikipedia.org/wiki/Tczew_railway_station | A estação de 1939 (Stüler, 1856–57) ficava perto das pontes, no sítio da atual rua 1 Maja e da rotunda, entre as linhas para Gdańsk e Bydgoszcz. Danificada em 1/9/1939 e em fev./1945; queimada em março de 1945. A estação atual é posterior. | RESUMO | MÉDIA |
+| T25 | mostytczewskie.pl (*Most kolejowy*); tcz.pl (*Tajemnice mostu kolejowego w Tczewie*) | https://mostytczewskie.pl/index.php/pl/historia/most-kolejowy | Em 1910–1912 o dique de Lisewo foi afastado do rio; as duas pontes ganharam três vãos de 81,6 m e passaram a ~1030–1037 m; portal comum do lado de Lisewo. | RESUMO | MÉDIA |
+| T26 | Fundação PKP — *Pamiętamy o bohaterach: kpt. Walenty Faterkowski*; Dziennik Bałtycki; tczew.pl | https://www.pkp.pl/pl/fundacja-aktualnosci/2413-pamietamy-o-bohaterach-kpt-walenty-faterkowski | Faterkowski (1912–2013) comandava o 2.º pelotão da 1.ª companhia do 2.º Batalhão de Fuzileiros na cabeça de ponte leste. Cidadão honorário de Tczew; nome de rua. | RESUMO | MÉDIA |
+| T27 | pionier39.pl — *Pionier-Bataillon 41 w walce o Tczew 1 września 1939 r.* | https://pionier39.pl/pionier-bataillon-41-w-walce-o-tczew-1-wrzesnia-1939-r/ | Combinado com T08: dois postos de disparo (bunker na cabeça de ponte oeste e abrigo no terreno da estação); cabos na encosta sul do aterro; ~10 t de TNT em câmaras nos encontros e pilares. | RESUMO | MÉDIA |
+| T28 | *8 Batalion Saperów (1939)* — Wikipédia (pl) | https://pl.wikipedia.org/wiki/8_Batalion_Saper%C3%B3w_(1939) | ppor. Norbert Juchtman listado como comandante de pelotão do 8.º Batalhão de Sapadores; o 8.º mobilizou o 15.º Batalhão de Sapadores para a 15.ª DI. | RESUMO | MÉDIA |
+| T29 | flugzeuginfo.net; airpages.ru — Ju 87 B-1 | https://www.flugzeuginfo.net/acdata_php/acdata_ju87_en.php | Ju 87 B-1: comprimento 11,10 m, envergadura 13,80 m, altura 4,24 m, vazio ~2760 kg. | RESUMO | MÉDIA |
+| T30 | polskaniezwykla.pl — *Tczew, koszary wojskowe* | http://www.polskaniezwykla.pl/web/place/2298,tczew-koszary-wojskowe.html | Quartel construído em 1928–1930; o 2.º Batalhão chegou em 6/6/1930. Depois de setembro de 1939: campo de trânsito alemão (~1500 pessoas, ~100 mortos) e "Lützow-Kaserne". **Contexto pós-M01; não usar em M01.** | RESUMO | MÉDIA |
+
+### Dados geográficos abertos (medição)
+
+| ID | Dados | Acesso | Uso | Licença / atribuição |
+| --- | --- | --- | --- | --- |
+| G01 | Overture Maps Foundation, release `2026-09-23.1` (transportation/segment, base/infrastructure, base/water), derivada do OpenStreetMap | S3 público `overturemaps-us-west-2`, leitura parcial de Parquet; script `missions/m01-tczew/tools/measure_osm_overture.py` | Pontes, pilares, rio, linhas férreas, ruas, estação atual — ver `missions/m01-tczew/MEASUREMENTS.md` | ODbL — "© OpenStreetMap contributors, via Overture Maps Foundation" |
+| G02 | Copernicus DEM GLO-30 (DSM, 30 m), tile N54 E018 | S3 público `copernicus-dem-30m` | Perfil aproximado de alturas (baixa confiança) | Uso livre com atribuição ao programa Copernicus (ESA/UE); confirmar o texto da atribuição antes de distribuir derivados |
 
 ### Cálculo próprio
 
 | ID | Descrição | Método | Resultado | Certeza |
 | --- | --- | --- | --- | --- |
 | C01 | Posição do Sol em Tczew (54,09° N, 18,80° E) em 1/9/1939 | Algoritmo solar da NOAA. Hora legal em 1939 na Polônia e na Alemanha: CET (UTC+1), sem horário de verão (conferido com `zoneinfo`). | Início do crepúsculo náutico às 03:27. Crepúsculo civil às 04:14. Nascer do sol às 04:51, azimute ≈74°. Às 04:34, Sol a −3,2° (crepúsculo civil). Às 06:10, +10,6° a 90° (leste). Às 06:40, +15,0°. Pôr do sol às 18:39; fim do crepúsculo civil às 19:16. | ALTA (astronomia; lat/lon aproximados em ±0,01°) |
-| C02 | Atraso do som na demolição leste vista da cabeça de ponte oeste | Distância ≈ 806–837 m ÷ 343 m/s (ar a ~20 °C) | ≈ 2,4 s entre o clarão e o estrondo | ALTA (física), distância RECONSTRUCTED |
+| C02 | Atraso do som na demolição leste vista da cabeça de ponte oeste | Distância até o pilar 6 (≈ 700–800 m conforme a posição de Jan) ÷ 343 m/s (ar a ~20 °C) | ≈ 2,0–2,4 s entre o clarão e o estrondo | ALTA (física); posição do pilar medida em G01 |
 
 ### Fontes a obter (ainda não identificadas com URL)
 

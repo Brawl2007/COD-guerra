@@ -14,11 +14,21 @@
       "category": "rifle",
       "caliber": "7,92×57 mm",
       "availableFrom": "1930-01-01",
-      "specs": { "magazine": 5, "feed": "clipe de 5 cartuchos", "action": "ferrolho manual, recarregar após cada disparo" },
+      "specs": {
+        "magazine": 5,
+        "feed": "clipe de 5 cartuchos",
+        "action": "ferrolho manual, ciclar após cada disparo",
+        "boltHandle": "reta",
+        "lengthM": 1.1,
+        "barrelM": 0.6,
+        "massKg": 4.0,
+        "muzzleVelocity": 745,
+        "rearSightM": [100, 2000]
+      },
       "roles": ["rifleman", "nco"],
       "certainty": "MEDIA",
-      "sources": ["H30", "T17"],
-      "notes": "Arma inicial de Jan Wrona (Prompt §79). Comportamento, som e animação próprios; não reaproveitar a M1 Carbine."
+      "sources": ["H30", "T17", "T21"],
+      "notes": "Arma inicial de Jan Wrona (Prompt §79). Ficha completa: research/weapons/kb_wz29.md. Em 1939 o wz.29 estava sobretudo com sapadores, transmissões, artilharia e parte da cavalaria; parte da infantaria voltou ao wz.98a (P15). Não reaproveitar a M1 Carbine."
     },
     {
       "id": "kb_wz98a",
@@ -210,8 +220,9 @@
       "category": "aircraft",
       "availableFrom": "1938-01-01",
       "certainty": "MEDIA",
-      "sources": ["T12"],
-      "notes": "Três aviões na passagem principal das 04:34 (ver divergência em HISTORICAL_RESEARCH §3.2)."
+      "sources": ["T12", "T29"],
+      "notes": "Três aviões na passagem principal das 04:34 (ver divergência em HISTORICAL_RESEARCH §3.2).",
+      "specs": { "lengthM": 11.1, "wingspanM": 13.8, "heightM": 4.24 }
     },
     {
       "id": "panzerzug_7",
@@ -220,8 +231,9 @@
       "category": "armored_train",
       "availableFrom": "1939-01-01",
       "certainty": "BAIXA",
-      "sources": ["T01", "T07", "T14"],
-      "notes": "Existência e papel documentados; composição e armamento PENDENTES (P6). Não jogável; alvo/ameaça distante na margem leste."
+      "sources": ["T01", "T07", "T14", "T20"],
+      "notes": "Existência e papel documentados; armamento segundo T20 (fonte única). Composição dos vagões pendente (P6). Não jogável. Disparos de canhão contra a margem oeste em 1/9 não documentados.",
+      "specs": { "guns": "2 × 7,5 cm", "antiAircraft": "2 × 2 cm", "machineGuns": "a confirmar" }
     },
     {
       "id": "goods_train_963",

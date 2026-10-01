@@ -38,7 +38,7 @@ function panel({ x0, y0, w, h, minX, maxX, minZ, maxZ, title, detail }) {
     if (f.type === 'bridge') {
       const [[ax, , az], [bx, , bz]] = f.polyline, half = f.widthM / 2;
       out.push(`<rect x="${X(ax)}" y="${Y(az - half)}" width="${(bx - ax) * s}" height="${Math.max(2, f.widthM * s)}" fill="${C.bridge}"/>`);
-      for (const px of f.pierFacesX) out.push(`<line x1="${X(px)}" y1="${Y(az - half - 3)}" x2="${X(px)}" y2="${Y(az + half + 3)}" stroke="#000" stroke-width="2"/>`);
+      for (const px of f.supportsX) out.push(`<line x1="${X(px)}" y1="${Y(az - half - 3)}" x2="${X(px)}" y2="${Y(az + half + 3)}" stroke="#000" stroke-width="2"/>`);
     } else if (f.polyline && ['terrain', 'road', 'rail', 'objective_path', 'vehicle'].includes(f.type)) {
       const w = f.type === 'vehicle' ? 4 : f.type === 'objective_path' ? 2.5 : 2;
       const stroke = f.type === 'objective_path' ? C.objective : f.type === 'vehicle' ? '#37474f' : col;
@@ -59,7 +59,7 @@ function panel({ x0, y0, w, h, minX, maxX, minZ, maxZ, title, detail }) {
   }
   const labels = detail
     ? ['squad_post', 'forward_post', 'repair_site_1', 'repair_site_2', 'rally_point', 'firing_point', 'aid_position', 'bak_wound_point', 'shelter', 'rail_hut', 'tczew_station', 'casemates_west']
-    : ['tczew_station', 'rail_bridge', 'road_bridge', 'east_gates', 'train_963', 'panzerzug_7', 'firing_point', 'shelter'];
+    : ['tczew_station', 'rail_bridge', 'road_bridge', 'old_east_portals_1857', 'east_gates', 'train_963', 'panzerzug_7', 'firing_point', 'lisewo_halt'];
   for (const id of labels) {
     const f = feature(id);
     const p = f.point ?? f.pickup ?? (f.polygon ? f.polygon[0].concat() : null) ?? (f.box ? f.box.min : null) ?? (f.points ? f.points[0] : null) ?? (f.polyline ? f.polyline[0] : null);
@@ -77,19 +77,20 @@ function panel({ x0, y0, w, h, minX, maxX, minZ, maxZ, title, detail }) {
 // Deslocamentos de rótulo [dx, dy, âncora] em pixels, só para legibilidade do diagrama.
 const OVERVIEW_LABELS = {
   rail_bridge: [60, -10, 'start'], road_bridge: [150, 18, 'start'], tczew_station: [0, -10, 'start'],
-  firing_point: [8, 22, 'start'], shelter: [-6, 16, 'end'], east_gates: [8, 46, 'start'],
-  train_963: [120, -12, 'start'], panzerzug_7: [140, 24, 'start'],
+  firing_point: [8, 26, 'start'], shelter: [-6, 16, 'end'], east_gates: [8, 46, 'start'],
+  old_east_portals_1857: [-4, -40, 'middle'], lisewo_halt: [6, 20, 'start'],
+  train_963: [120, -12, 'start'], panzerzug_7: [40, 36, 'start'],
 };
 const DETAIL_LABELS = {
   squad_post: [0, 22, 'middle'], forward_post: [6, -12, 'start'], repair_site_1: [0, -12, 'middle'],
-  repair_site_2: [0, -12, 'middle'], rally_point: [0, 22, 'middle'], firing_point: [0, 36, 'middle'],
+  repair_site_2: [0, -12, 'middle'], rally_point: [-8, 4, 'end'], firing_point: [6, 18, 'start'],
   aid_position: [-8, 20, 'end'], bak_wound_point: [6, 22, 'start'], shelter: [8, 4, 'start'],
   rail_hut: [0, -14, 'middle'], casemates_west: [40, 8, 'start'],
 };
 
 const W = 1200;
-const over = panel({ x0: 30, y0: 60, w: W - 60, h: 330, minX: -500, maxX: 1600, minZ: -300, maxZ: 300, title: 'Visão geral — Tczew (oeste) · Vístula · Lisewo (leste)', detail: false });
-const det = panel({ x0: 30, y0: 60 + over.height + 70, w: W - 60, h: 520, minX: -300, maxX: 190, minZ: -40, maxZ: 100, title: 'Detalhe — cabeça de ponte oeste (x −300…190 m; limite jogável completo em map-layout.json)', detail: true });
+const over = panel({ x0: 30, y0: 60, w: W - 60, h: 330, minX: -500, maxX: 1800, minZ: -300, maxZ: 300, title: 'Visão geral — Tczew (oeste) · Vístula · Lisewo (leste)', detail: false });
+const det = panel({ x0: 30, y0: 60 + over.height + 70, w: W - 60, h: 520, minX: -330, maxX: 190, minZ: -40, maxZ: 100, title: 'Detalhe — cabeça de ponte oeste (x −330…190 m; limite jogável completo em map-layout.json)', detail: true });
 const legendY = 60 + over.height + 70 + det.height + 40;
 const legend = [
   [C.exact, '', 'EXACT (medida documentada)'], [C.recon, '8 5', 'RECONSTRUCTED (a medir)'], [C.compressed, '2 4', 'COMPRESSED_FOR_GAMEPLAY'],
