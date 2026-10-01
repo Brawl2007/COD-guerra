@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="data:,">
+<title>Soldados M01 — verificação</title>
+<style>html,body{margin:0;background:#8d969a;overflow:hidden}canvas{display:block}#label{position:fixed;left:10px;top:8px;font:13px/1.35 system-ui,sans-serif;color:#111;background:#ffffffc0;padding:4px 8px;border-radius:3px;white-space:pre}</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+</head>
+<body>
+<div id="label"></div>
+<script type="module">
+// Página de verificação: carrega os GLB com o GLTFLoader e o AnimationMixer oficiais e expõe window.stage
+// para o script de captura (Playwright). Não faz parte do jogo.
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#8d969a');
+const camera = new THREE.PerspectiveCamera(30, 1, 0.05, 2000);
+scene.add(new THREE.HemisphereLight('#d7e2ea', '#4d4433', 1.4));
+const sun = new THREE.DirectionalLight('#fff1dc', 2.4);
+sun.position.set(-3, 6, -4); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -4, right: 4, top: 4, bottom: -4, near: 0.5, far: 30 });
+scene.add(sun);
+const fill = new THREE.DirectionalLight('#c9d6ff', 0.6); fill.position.set(4, 2, 3); scene.add(fill);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshStandardMaterial({ color: '#6f6a58', roughness: 1 }));
+ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+const grid = new THREE.GridHelper(4, 8, '#3a3a3a', '#555'); grid.position.y = 0.002; scene.add(grid);
+const loader = new GLTFLoader();
+const cache = new Map();
+const actors = [];
+
+function resize(w, h) { renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+resize(innerWidth, innerHeight);
+
+window.stage = {
+  async load(url) {
+    if (!cache.has(url)) cache.set(url, await loader.loadAsync(url));
+    return cache.get(url);
+  },
+  /** Adiciona um actor: clone com SkeletonUtils, mostra só as malhas pedidas (por nome ou expressão) e toca um clip. */
+  async add(url, { position = [0, 0, 0], rotationY = 0, show = null, clip = null, time = 0, morphs = null, unskinned = false } = {}) {
+    const gltf = await this.load(url);
+    const root = SkeletonUtils.clone(gltf.scene);
+    if (unskinned) { const list = []; root.traverse(o => { if (o.isSkinnedMesh) list.push(o); }); for (const o of list) { const m = new THREE.Mesh(o.geometry, o.material); m.name = o.name; m.userData = o.userData; o.parent.add(m); o.parent.remove(o); } }
+    root.position.set(...position); root.rotation.y = rotationY;
+    const info = { meshes: [], triangles: 0, drawCalls: 0, bones: 0 };
+    root.traverse(o => {
+      if (o.isMesh) {
+        const vis = show ? show.some(s => s instanceof RegExp ? s.test(o.name) : s === o.name) : o.userData.visible !== false;
+        o.visible = vis; o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false;
+        if (vis) { info.meshes.push(o.name); info.triangles += o.geometry.index.count / 3; info.drawCalls++; }
+        if (o.isSkinnedMesh) info.bones = Math.max(info.bones, o.skeleton.bones.length);
+        if (morphs && o.morphTargetDictionary) for (const [k, v] of Object.entries(morphs)) if (k in o.morphTargetDictionary) o.morphTargetInfluences[o.morphTargetDictionary[k]] = v;
+      }
+    });
+    scene.add(root);
+    const mixer = new THREE.AnimationMixer(root);
+    let action = null;
+    if (clip) {
+      const c = gltf.animations.find(a => a.name === clip);
+      if (!c) throw new Error(`clip ${clip} não existe; há ${gltf.animations.map(a => a.name).join(', ')}`);
+      action = mixer.clipAction(c); action.setLoop(THREE.LoopOnce); action.clampWhenFinished = true; action.play(); mixer.setTime(time);
+    } else mixer.update(0);
+    root.updateMatrixWorld(true);
+    const a = { root, mixer, action, info, gltf };
+    actors.push(a);
+    return actors.length - 1;
+  },
+  setTime(i, t) { actors[i].mixer.setTime(t); actors[i].root.updateMatrixWorld(true); },
+  clear() { for (const a of actors) scene.remove(a.root); actors.length = 0; },
+  info(i) { return actors[i].info; },
+  clips(url) { return cache.get(url).animations.map(c => ({ name: c.name, duration: c.duration, tracks: c.tracks.length })); },
+  bbox(i) {
+    const b = new THREE.Box3(); const tmp = new THREE.Vector3();
+    actors[i].root.traverse(o => {
+      if (!o.isSkinnedMesh || !o.visible) return;
+      const pos = o.geometry.attributes.position;
+      for (let k = 0; k < pos.count; k++) { o.getVertexPosition(k, tmp); b.expandByPoint(tmp.applyMatrix4(o.matrixWorld)); }
+    });
+    return { min: b.min.toArray(), max: b.max.toArray() };
+  },
+  bone(i, name) { const o = actors[i].root.getObjectByName(name); o.updateWorldMatrix(true, false); return new THREE.Vector3().setFromMatrixPosition(o.matrixWorld).toArray(); },
+  camera(pos, target, fov = 30) { camera.position.set(...pos); camera.fov = fov; camera.updateProjectionMatrix(); camera.lookAt(...target); },
+  label(text) { document.getElementById('label').textContent = text; document.getElementById('label').style.display = text ? 'block' : 'none'; },
+  ground(v) { ground.visible = v; grid.visible = v; },
+  background(c) { scene.background = new THREE.Color(c); },
+  render() { renderer.render(scene, camera); return renderer.info.render; },
+  resize,
+};
+window.ready = true;
+</script>
+</body>
+</html>
