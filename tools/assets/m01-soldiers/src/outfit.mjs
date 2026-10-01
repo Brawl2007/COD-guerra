@@ -100,7 +100,9 @@ export function buildOutfit(h, style) {
   };
   const trunkPts = bodyPoints(h, lm, v => armW(h, v) < 0.3);
   const armpitY = J.upperarm_l[1] - 0.07;
-  const torsoDrape = makeDrape(trunkPts.filter(p => p[1] < armpitY + 0.12), [0, lm.waistY - 0.08, J.spine_01[2]], [0, armpitY + 0.1, J.spine_03[2]], { levels: 20, hint: [0, 0, -1] });
+  const torsoBase = smoothedBody(h, v => armW(h, v) < 0.25 && h.positions[v * 3 + 1] > lm.waistY - 0.1 && h.positions[v * 3 + 1] < armpitY + 0.04, 40);
+  const smoothPts = lm.bodyVerts.filter(v => armW(h, v) < 0.3).map(v => [torsoBase[v * 3], torsoBase[v * 3 + 1], torsoBase[v * 3 + 2]]);
+  const torsoDrape = makeDrape(smoothPts.filter(p => p[1] < armpitY + 0.12), [0, lm.waistY - 0.08, J.spine_01[2]], [0, armpitY + 0.1, J.spine_03[2]], { levels: 20, hint: [0, 0, -1] });
   const tunicAdjust = (s, p) => {
     if (armW(h, s) >= 0.35) return p;
     const y = p[1], w = smoothstep(armpitY + 0.08, armpitY - 0.02, y);
@@ -118,7 +120,6 @@ export function buildOutfit(h, style) {
   const tunicPost = (P, uniq, border, laplace) => {
     const torsoI = uniq.map((s, i) => [s, i]).filter(([s]) => armW(h, s) < 0.35).map(([, i]) => i);
     const torso = new Set(torsoI.map(i => uniq[i]));
-    laplace(8, s => torso.has(s) && h.positions[s * 3 + 1] < armpitY + 0.03);   // apaga mamilos e pequenos relevos
     const normalOf = i => [N[uniq[i] * 3], N[uniq[i] * 3 + 1], N[uniq[i] * 3 + 2]];
     const opts = { normalOf, y0: lm.waistY + 0.03, y1: armpitY + 0.06 };
     // Frente/costas só na faixa central; os lados só na faixa lateral — transições suaves entre colunas.
@@ -128,11 +129,9 @@ export function buildOutfit(h, style) {
     verticalEnvelope(P, torsoI, [0, 0, 1], [1, 0, 0], { ...opts, weight: central });      // costas: das omoplatas ao cinto
     verticalEnvelope(P, torsoI, [1, 0, 0], [0, 0, 1], { ...opts, minDot: 0.5, weight: lateralW });
     verticalEnvelope(P, torsoI, [-1, 0, 0], [0, 0, 1], { ...opts, minDot: 0.5, weight: lateralW });
-    laplace(4, s => torso.has(s) && h.positions[s * 3 + 1] < armpitY + 0.03);
     for (const i of torsoI) P[i] = cinch(P[i]);
   };
   // Tronco sem mamilos, abdominais nem costelas (só para a túnica); ombros e braços ficam como estão.
-  const torsoBase = smoothedBody(h, v => armW(h, v) < 0.25 && h.positions[v * 3 + 1] > lm.waistY - 0.1 && h.positions[v * 3 + 1] < armpitY + 0.04, 40);
   const tunic = shell(h, tunicFaces, bodyNormals(h, torsoBase), tunicT, { base: torsoBase, iterations: 14, adjust: tunicAdjust, post: tunicPost,
     minFn: s => armW(h, s) < 0.35 ? 0.003 : Math.min(tunicT(s), 0.008) });
   tunic.name = 'tunic'; tunic.paint = 'tunic';

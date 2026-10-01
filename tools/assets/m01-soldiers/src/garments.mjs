@@ -76,12 +76,13 @@ export function smoothedBody(h, mask, iterations = 30) {
     nbr.get(a).add(b); nbr.get(b).add(a);
   }
   const moving = [...nbr.keys()].filter(v => mask(v));
-  for (let it = 0; it < iterations; it++) {
-    const next = new Map();
+  // Taubin (λ/μ): alisa sem encolher o volume (o laplaciano simples estreitava o tronco).
+  for (let it = 0; it < iterations * 2; it++) {
+    const lambda = it % 2 ? -0.53 : 0.5, next = new Map();
     for (const v of moving) {
       const ns = [...nbr.get(v)], avg = [0, 0, 0];
       for (const u of ns) for (let k = 0; k < 3; k++) avg[k] += P[u * 3 + k] / ns.length;
-      next.set(v, avg.map((a, k) => P[v * 3 + k] + 0.5 * (a - P[v * 3 + k])));
+      next.set(v, avg.map((a, k) => P[v * 3 + k] + lambda * (a - P[v * 3 + k])));
     }
     for (const [v, p] of next) P.set(p, v * 3);
   }
