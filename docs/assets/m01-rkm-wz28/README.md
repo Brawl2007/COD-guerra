@@ -24,7 +24,7 @@
 | `m01_rkm_wz28_lod0.glb` | 1 476 | 4 | cor 1024² JPEG, ORM 512², normal 512² | 260 kB | perto, até 15 m |
 | `m01_rkm_wz28_lod1.glb` | 744 | 4 | cor 512², ORM 256² | 96 kB | 15 a 40 m |
 | `m01_rkm_wz28_lod2.glb` | 234 | 4 | cor 256² | 27 kB | longe; Chromebook |
-| `m01_rkm_wz28_animations.glb` | — | — | — | 282 kB | `rkm_carry`, `rkm_aim`, `rkm_fire_burst` |
+| `m01_rkm_wz28_animations.glb` | — | — | — | 219 kB | `rkm_carry`, `rkm_aim`, `rkm_fire_burst` |
 
 - **Material:** um só, `rkm_wz28`, com um atlas pintado por procedimento:
   - nogueira envernizada e gasta (coronha, punho e fuste);
@@ -52,6 +52,8 @@
 - `bipod_mount`, `bipod_feet`.
 
 ## Ligação ao rig dos soldados
+
+**Na base actual (`codex/m01-runtime`, ec02e91), o runtime já mostra a rkm embutida nos `m01_soldier_*` (nó `rkm_wz28`) e usa os 10 clips `rkm_*` do GLB dos soldados** (`src/render/m01-characters.js`). Este kit é a arma isolada: LODs próprios para a arma no chão, na vista de primeira pessoa ou em cenas sem soldado, sockets e manifesto. Os nomes `rkm_aim` e `rkm_fire_burst` repetem-se nos dois GLB; ao carregar ambos, preferir os dos soldados ou renomear ao importar.
 
 O referencial da rkm é o do osso `weapon` dos `m01_soldier_*`. Prender a cena ao osso com transformação nula e esconder `rifle` e `clip`. Os clips da rkm põem as mãos no punho de pistola e no fuste, e o olho atrás da alça. Os clips de espingarda (`aim`, `standing_idle`…) não servem para a rkm, porque o punho de pistola e a coronha em linha recta mudam a pega.
 
@@ -108,7 +110,7 @@ Todo o kit é original e foi gerado por código neste repositório pelo Claude C
 
 ## Limitações
 
-- Não há clips de troca de carregador, de tiro deitado com bípode, de marcha ou de corrida com a rkm.
+- Este kit não tem clips de troca de carregador, de tiro deitado com bípode, de marcha ou de corrida; o GLB dos soldados na base já tem `rkm_reload`, `rkm_walk`, `rkm_run` e outros.
 - O `rkm_fire_burst` não anima a alavanca de armar. O nó `rkm_charging_handle` e o socket `charging_handle_forward` permitem fazê-lo no jogo.
 - A bandoleira, a bolsa de carregadores do atirador e o tapa-chamas não foram modelados, por falta de fonte.
 - A cor da madeira e o acabamento do aço são escolhas plausíveis, não verificadas em peças de museu.
