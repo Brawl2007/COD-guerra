@@ -1,0 +1,484 @@
+{
+  "asset": "rkm wz.28 (Browning polaca) — Szymon Kowal, M01 Tczew",
+  "status": "PROVISÓRIO VERIFICADO (M01 continua PROTÓTIPO JOGÁVEL)",
+  "generator": "tools/assets/m01-rkm-wz28 (node build.mjs)",
+  "author": "Claude Code (geometria, texturas e clips gerados por código original neste repositório)",
+  "license": "Original do projecto; a licença global do repositório continua por decidir pelo proprietário (ASSET_CREDITS.md). Sem conteúdo de terceiros nem de jogos.",
+  "tools": [
+    "Node.js",
+    "@gltf-transform/core 4.5.1 (MIT)",
+    "meshoptimizer 1.3.0 (MIT)",
+    "jpeg-js 0.4.4 (BSD-3)",
+    "pngjs 7.0.0 (MIT)",
+    "three.js 0.186.1 (MIT, capturas)",
+    "Playwright/Chromium (capturas)"
+  ],
+  "units": "metros; +Y para cima; cano para −Z; lado direito da arma em +X",
+  "frame": "referencial do osso `weapon` dos soldados (origem perto do punho): prender a cena ao osso com transformação nula",
+  "sources": {
+    "T31": [
+      "https://en.wikipedia.org/wiki/Rkm_wz._28",
+      "https://pl.wikipedia.org/wiki/Karabin_maszynowy_Browning_wz._28",
+      "https://opisybroni.pl/browning-wz-28/",
+      "http://www.1939.pl/uzbrojenie/polskie/bron-strzelecka/rkm_792mm_wz28_browning/index.html",
+      "https://ioh.pl/artykuly/pokaz/rczny-karabin-maszynowy-wz,1023/"
+    ],
+    "H30": [
+      "https://www.muzeum1939.pl/aktualnosci/umundurowanie-i-wyposazenie-polskich-zolnierzy-we-wrzesniu-1939-roku--m2wswirtualnie-11339"
+    ],
+    "note": "T31 só por resumos concordantes de busca: as páginas estão bloqueadas neste ambiente (wikipedia.org e opisybroni sem ligação, 1939.pl 403). H30 lida (confirma a rkm como arma da secção, sem ficha técnica)."
+  },
+  "specs": {
+    "caliber": "7,92×57 mm Mauser",
+    "rounds": 20,
+    "rate_rpm": 600,
+    "rate_note": "teórica; prática 80–400",
+    "mass_kg": 9,
+    "action": "gases, ferrolho aberto; selector tiro a tiro / contínuo",
+    "sights": "alça em quadro 300–1600 m; massa prismática"
+  },
+  "measures": [
+    {
+      "id": "length_total",
+      "value_m": 1.11,
+      "source": "T31",
+      "estimated": false,
+      "note": "comprimento total 1110 mm (certeza MÉDIA)"
+    },
+    {
+      "id": "barrel",
+      "value_m": 0.611,
+      "source": "T31",
+      "estimated": false,
+      "note": "cano 611 mm, da face da culatra (z −0,144, dentro da caixa) à boca"
+    },
+    {
+      "id": "mass",
+      "value_kg": 9,
+      "source": "T31",
+      "estimated": false,
+      "note": "massa vazia 9,0 kg (há fontes com 9,5 kg); não afecta a geometria"
+    },
+    {
+      "id": "magazine",
+      "value_m": [
+        0.03,
+        0.118,
+        0.086
+      ],
+      "source": "BAR M1918 (proporções)",
+      "estimated": true,
+      "note": "20 cartuchos 7,92×57 [T31]; largura × saliência × profundidade estimadas"
+    },
+    {
+      "id": "bipod_position",
+      "value_m": -0.585,
+      "source": "T31",
+      "estimated": true,
+      "note": "no tubo de gases logo atrás do regulador [T31]; cota z estimada"
+    },
+    {
+      "id": "bipod_legs",
+      "value_m": 0.27,
+      "source": "fotos de museu (resumo)",
+      "estimated": true,
+      "note": "pernas tubulares com patins (płozy) [T31]; comprimento e abertura estimados"
+    },
+    {
+      "id": "stock",
+      "value_m": 0.31,
+      "source": "BAR M1918 (proporções)",
+      "estimated": true,
+      "note": "coronha de madeira do fim da caixa à chapa"
+    },
+    {
+      "id": "receiver",
+      "value_m": [
+        0.034,
+        0.09,
+        0.296
+      ],
+      "source": "BAR M1918 (proporções)",
+      "estimated": true,
+      "note": "caixa da culatra, largura × altura × comprimento"
+    },
+    {
+      "id": "pistol_grip",
+      "value_m": 0.11,
+      "source": "T31",
+      "estimated": true,
+      "note": "punho de pistola inclinado para trás (tipo Colt Monitor) [T31]; ângulo e comprimento estimados"
+    },
+    {
+      "id": "sights",
+      "value_m": [
+        0.088,
+        0.069
+      ],
+      "source": "T31",
+      "estimated": true,
+      "note": "alça em quadro 300–1600 m e massa prismática [T31]; alturas acima do eixo estimadas"
+    },
+    {
+      "id": "muzzle",
+      "value_m": null,
+      "source": null,
+      "estimated": true,
+      "note": "boca lisa com base da massa; tapa-chamas/forma exacta por confirmar"
+    }
+  ],
+  "parts": [
+    {
+      "node": "rkm_body",
+      "visible": true,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "contents": "coronha, caixa, punho, cano, tubo de gases, fuste, miras, abraçadeira",
+      "pieces": [
+        "stock",
+        "buttplate",
+        "receiver",
+        "grip",
+        "trigger_guard",
+        "trigger",
+        "selector",
+        "barrel",
+        "gas_tube",
+        "gas_block",
+        "gas_regulator",
+        "front_sight_base",
+        "front_sight",
+        "rear_sight_base",
+        "rear_sight_frame_l",
+        "rear_sight_frame_r",
+        "forend",
+        "ejection_port",
+        "handle_slot",
+        "bipod_clamp"
+      ]
+    },
+    {
+      "node": "rkm_magazine",
+      "visible": true,
+      "pivot": [
+        0,
+        -0.03,
+        -0.112
+      ],
+      "contents": "carregador de 20",
+      "pieces": [
+        "magazine",
+        "magazine_floor",
+        "magazine_rib_l",
+        "magazine_rib_r"
+      ]
+    },
+    {
+      "node": "rkm_charging_handle",
+      "visible": true,
+      "pivot": [
+        -0.017,
+        -0.004,
+        -0.07
+      ],
+      "contents": "alavanca de armar (esquerda), atrás = armada",
+      "pieces": [
+        "handle",
+        "handle_knob"
+      ]
+    },
+    {
+      "node": "rkm_bipod_folded",
+      "visible": true,
+      "pivot": [
+        0,
+        -0.004,
+        -0.585
+      ],
+      "contents": "bípode dobrado ao longo do fuste",
+      "pieces": [
+        "leg_l",
+        "skid_l",
+        "leg_r",
+        "skid_r"
+      ]
+    },
+    {
+      "node": "rkm_bipod_open",
+      "visible": false,
+      "pivot": [
+        0,
+        -0.004,
+        -0.585
+      ],
+      "contents": "bípode aberto, patins no chão",
+      "pieces": [
+        "leg_l",
+        "skid_l",
+        "leg_r",
+        "skid_r"
+      ]
+    }
+  ],
+  "sockets": {
+    "grip_r": [
+      0,
+      -0.06,
+      0.05
+    ],
+    "grip_l": [
+      0,
+      -0.03,
+      -0.36
+    ],
+    "cheek": [
+      0,
+      0.088,
+      0.205
+    ],
+    "muzzle": [
+      0,
+      0.035,
+      -0.755
+    ],
+    "ejection_port": [
+      0.018,
+      0.03,
+      -0.08
+    ],
+    "charging_handle": [
+      -0.046,
+      -0.004,
+      -0.07
+    ],
+    "charging_handle_forward": [
+      -0.046,
+      -0.004,
+      -0.17
+    ],
+    "mag_well": [
+      0,
+      -0.03,
+      -0.112
+    ],
+    "rear_sight": [
+      0,
+      0.088,
+      0.03
+    ],
+    "front_sight": [
+      0,
+      0.078,
+      -0.735
+    ],
+    "butt": [
+      0,
+      -0.025,
+      0.362
+    ],
+    "bipod_mount": [
+      0,
+      -0.004,
+      -0.585
+    ],
+    "bipod_feet": [
+      0,
+      -0.268,
+      -0.655
+    ]
+  },
+  "hands": {
+    "right": {
+      "pos": [
+        0.034,
+        -0.032,
+        0.1
+      ],
+      "fdir": [
+        -0.3010858672138876,
+        -0.6222441255753677,
+        -0.7226060813133302
+      ],
+      "palm": [
+        -0.9877295966495897,
+        0.04938647983247949,
+        0.14815943949743846
+      ]
+    },
+    "left": {
+      "pos": [
+        -0.03,
+        -0.05,
+        -0.37
+      ],
+      "fdir": [
+        0.5484119048844308,
+        0.11965350652023944,
+        -0.8276034200983228
+      ],
+      "palm": [
+        -0.2422507915557546,
+        0.9690031662230184,
+        0.048450158311150925
+      ]
+    },
+    "note": "pulso, direcção dos dedos e normal da palma no referencial da arma (usados pelos clips)"
+  },
+  "textures": {
+    "atlas_px": 1024,
+    "density_px_per_m": 1179,
+    "painters": [
+      "wood",
+      "blued",
+      "bare_metal"
+    ]
+  },
+  "files": {
+    "m01_rkm_wz28_lod0.glb": {
+      "lod": "lod0",
+      "use": "perto (< 15 m) e capturas",
+      "bytes": 260444,
+      "triangles_visible": 1476,
+      "draw_calls_visible": 4,
+      "meshes": [
+        {
+          "name": "rkm_body",
+          "triangles": 1140,
+          "visible": true
+        },
+        {
+          "name": "rkm_magazine",
+          "triangles": 128,
+          "visible": true
+        },
+        {
+          "name": "rkm_charging_handle",
+          "triangles": 64,
+          "visible": true
+        },
+        {
+          "name": "rkm_bipod_folded",
+          "triangles": 144,
+          "visible": true
+        },
+        {
+          "name": "rkm_bipod_open",
+          "triangles": 144,
+          "visible": false
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 1024²",
+        "metallicRoughness": "image/png 512²",
+        "normal": "image/png 512²"
+      }
+    },
+    "m01_rkm_wz28_lod1.glb": {
+      "lod": "lod1",
+      "use": "médio (15–40 m)",
+      "bytes": 96288,
+      "triangles_visible": 744,
+      "draw_calls_visible": 4,
+      "meshes": [
+        {
+          "name": "rkm_body",
+          "triangles": 512,
+          "visible": true
+        },
+        {
+          "name": "rkm_magazine",
+          "triangles": 112,
+          "visible": true
+        },
+        {
+          "name": "rkm_charging_handle",
+          "triangles": 56,
+          "visible": true
+        },
+        {
+          "name": "rkm_bipod_folded",
+          "triangles": 64,
+          "visible": true
+        },
+        {
+          "name": "rkm_bipod_open",
+          "triangles": 64,
+          "visible": false
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 512²",
+        "metallicRoughness": "image/png 256²"
+      }
+    },
+    "m01_rkm_wz28_lod2.glb": {
+      "lod": "lod2",
+      "use": "longe / Chromebook",
+      "bytes": 26736,
+      "triangles_visible": 234,
+      "draw_calls_visible": 4,
+      "meshes": [
+        {
+          "name": "rkm_body",
+          "triangles": 158,
+          "visible": true
+        },
+        {
+          "name": "rkm_magazine",
+          "triangles": 38,
+          "visible": true
+        },
+        {
+          "name": "rkm_charging_handle",
+          "triangles": 18,
+          "visible": true
+        },
+        {
+          "name": "rkm_bipod_folded",
+          "triangles": 20,
+          "visible": true
+        },
+        {
+          "name": "rkm_bipod_open",
+          "triangles": 20,
+          "visible": false
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 256²"
+      }
+    },
+    "m01_rkm_wz28_animations.glb": {
+      "bytes": 218776,
+      "clips": [
+        {
+          "name": "rkm_carry",
+          "duration": 4,
+          "loop": true,
+          "events": null
+        },
+        {
+          "name": "rkm_aim",
+          "duration": 2,
+          "loop": true,
+          "events": null
+        },
+        {
+          "name": "rkm_fire_burst",
+          "duration": 0.8,
+          "loop": false,
+          "events": {
+            "fire": [
+              0,
+              0.1,
+              0.2
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

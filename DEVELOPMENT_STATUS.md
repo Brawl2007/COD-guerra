@@ -107,6 +107,10 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 - LOD0/1/2: 14,9k/6,0k/1,9k triângulos visíveis (PL), um atlas por nação. O GLB de animações tem 25 clips, incluindo as armas de Kowal e Bąk: ferrolho, recarga por clipe, sapadores normal/sob fogo, transporte de Bąk no `carry_socket`, locomoção, ferido, queda, sentado.
 - Verificados por `tests/m01-soldiers-glb.test.js` e capturas inspeccionadas em `docs/assets/m01-soldiers/`. A integração em `src/render/` está nesta branch, com provas em `docs/verification/m01-runtime/characters/`; falta medir no Chromebook.
 
+**rkm wz.28 de Kowal (arma isolada, provisória; o runtime usa a rkm embutida nos GLB dos soldados e os clips `rkm_*` deles, com os mesmos nomes `rkm_aim`/`rkm_fire_burst`):**
+- Kit em `assets/models/provisional/m01/weapons/rkm_wz28/`, gerado por `tools/assets/m01-rkm-wz28/`: LOD0/1/2 com 1476/744/234 triângulos, carregador, alavanca de armar e bípode dobrado/aberto em nós separados, sockets e manifesto com medidas estimadas identificadas.
+- Prende-se ao osso `weapon` do rig existente; `m01_rkm_wz28_animations.glb` traz `rkm_carry`, `rkm_aim` e `rkm_fire_burst` (3 tiros, como a simulação). Verificado por `tests/m01-rkm-wz28-glb.test.js` e capturas inspeccionadas em `docs/assets/m01-rkm-wz28/`. Falta ligá-lo a Kowal em `src/render/` (Codex), clips de troca de carregador/deitado e confirmar T31 em leitura integral.
+
 **Ju 87 B-1 do raid (asset provisório, ainda não ligado ao jogo):** kit original em `assets/models/provisional/m01-aircraft/` (`tools/assets/m01-aircraft/`), LOD0/1/2 com 13 102/4 730/1 636 triângulos, nós `fuselage`, `propeller`, `dive_brake_l/r` e `bomb_sc250`, clips `propeller_spin` e `dive_brakes_extend`. Verificado por `tests/m01-ju87-glb.test.js`, relatório de importação three.js e galeria isolada em `docs/assets/m01-aircraft/` (não é playtest). Falta ligá-lo aos raids (Codex) e confirmar T29/T12 em leitura integral.
 
 ## Parcial ou pendente
