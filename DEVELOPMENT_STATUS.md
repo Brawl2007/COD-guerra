@@ -96,6 +96,8 @@ Texturas em metros no cenário/kit, terreno mais amostrado, céu com nuvens e fu
 
 Os humanos continuam estilizados e o cenário continua provisório: não foi atingido o realismo das referências. Faltam arte/rigs/rostos/animações profissionais, composição e validação em hardware real. Esta revisão não transforma o protótipo numa missão VALIDADA.
 
+**Ju 87 B-1 do raid (asset provisório, ainda não ligado ao jogo):** kit original em `assets/models/provisional/m01-aircraft/` (`tools/assets/m01-aircraft/`), LOD0/1/2 com 13 102/4 730/1 636 triângulos, nós `fuselage`, `propeller`, `dive_brake_l/r` e `bomb_sc250`, clips `propeller_spin` e `dive_brakes_extend`. Verificado por `tests/m01-ju87-glb.test.js`, relatório de importação three.js e galeria isolada em `docs/assets/m01-aircraft/` (não é playtest). Falta ligá-lo aos raids (Codex) e confirmar T29/T12 em leitura integral.
+
 ## Parcial ou pendente
 
 - Humanos, ViewModel, mãos, recarga, sons e texturas são placeholders; rig/vozes/uniformes finais pendentes.

@@ -1,0 +1,18 @@
+{
+  "name": "m01-aircraft-generator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Gera o Ju 87 B-1 de M01 (GLB LOD0–2, hélice e freios de mergulho animados, manifesto) com geometria e pintura procedurais originais.",
+  "scripts": {
+    "build": "node build.mjs",
+    "render": "node render/capture.mjs"
+  },
+  "engines": { "node": ">=22.12.0" },
+  "dependencies": {
+    "@gltf-transform/core": "4.5.1",
+    "jpeg-js": "0.4.4",
+    "meshoptimizer": "1.3.0",
+    "pngjs": "7.0.0"
+  }
+}
