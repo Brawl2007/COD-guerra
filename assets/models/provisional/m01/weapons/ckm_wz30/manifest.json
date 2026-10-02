@@ -788,7 +788,12 @@
     "max_triangles": 4000,
     "before": 5004,
     "after": 3904,
-    "method": "só o LOD0: cartuchos sem as partes escondidas no tecido (aro com tampo; frente do estojo, gargalo e bala numa peça de 3 anéis com a ponta fechada) e tampos poligonais em vez de leque; aros da manga sem tampos (a manga tapa o interior); tecido do troço livre por Douglas–Peucker a 0,2 mm. Mesmas peças, grupos, pivôs, sockets e comprimento; LOD1, LOD2 e os clips não mudam"
+    "method": "só o LOD0: cartuchos sem as partes escondidas no tecido (aro com tampo; frente do estojo, gargalo e bala numa peça de 3 anéis com a ponta fechada) e tampos poligonais em vez de leque; aros da manga sem tampos (a manga tapa o interior); tecido do troço livre por Douglas–Peucker a 0,2 mm. Mesmas peças, grupos, pivôs, sockets e comprimento; LOD1, LOD2 e os clips não mudam",
+    "preserved_sha256": {
+      "m01_ckm_wz30_lod1.glb": "30fa7424df859c7c4c5be6b347955cf636284041c9eccfc1e30f1063f1fd0168",
+      "m01_ckm_wz30_lod2.glb": "a00f9a301b11523d3398c360a3c7bf8a15c5c0481abec56ec48efe80f9c5f875",
+      "m01_ckm_wz30_animations.glb": "dda588e9163da7aa0bfe9b3f7189d96c84a9e4788b9707ffbee7b70dfe936865"
+    }
   },
   "files": {
     "m01_ckm_wz30_lod0.glb": {

@@ -17,6 +17,12 @@
       "triangles": 3904,
       "drawCalls": 9,
       "bones": 0,
+      "rendered": {
+        "triangles": 7808,
+        "calls": 18,
+        "passes": 2,
+        "note": "mapa de sombra + cor"
+      },
       "clips": [
         {
           "name": "ckm_wz30_gun_idle",
@@ -60,6 +66,12 @@
       "triangles": 2298,
       "drawCalls": 9,
       "bones": 0,
+      "rendered": {
+        "triangles": 4596,
+        "calls": 18,
+        "passes": 2,
+        "note": "mapa de sombra + cor"
+      },
       "clips": [
         {
           "name": "ckm_wz30_gun_idle",
@@ -103,6 +115,12 @@
       "triangles": 754,
       "drawCalls": 9,
       "bones": 0,
+      "rendered": {
+        "triangles": 1508,
+        "calls": 18,
+        "passes": 2,
+        "note": "mapa de sombra + cor"
+      },
       "clips": [
         {
           "name": "ckm_wz30_gun_idle",

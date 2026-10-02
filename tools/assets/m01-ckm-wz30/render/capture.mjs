@@ -125,29 +125,36 @@ const VIEWS = {
     mkdirSync(join(ROOT, '.artifacts/ckm-lod0-before'), { recursive: true });
     writeFileSync(join(ROOT, BEFORE_URL), execFileSync('git', ['show', `${BEFORE}:${W.slice(1)}m01_ckm_wz30_lod0.glb`], { cwd: ROOT, maxBuffer: 1 << 24 }));
     const views = [
-      { d: 2.8, az: -60, el: 18, what: 'conjunto 3/4' },
+      { d: 2.8, az: -60, el: 18, what: '3/4 da frente, esquerda' },
+      { d: 3.2, az: 90, el: 6, what: 'lado direito' },
+      { d: 2.4, az: 150, el: 28, what: '3/4 de trás' },
       { d: 0.75, az: -60, el: 35, target: [-0.08, 0.66, 0.08], what: 'alimentação (7 cartuchos)' },
       { d: 0.55, az: -150, el: 20, target: [-0.18, 0.5, 0.08], what: 'troço livre, por trás' },
       { d: 0.6, az: -20, el: 15, target: [-0.17, 0.42, 0.08], what: 'troço livre, balas' },
-      { d: 0.5, az: 70, el: 15, target: [0, 0.64, -0.33], what: 'aro da manga' },
+      { d: 1.0, az: -120, el: 30, target: [-0.33, 0.15, 0.08], what: 'caixa, tampa e boca da fita' },
+      { d: 0.45, az: 150, el: 15, target: [0, 0.72, 0.3], what: 'alça em quadro e tampa' },
+      { d: 0.4, az: 60, el: 12, target: [0, 0.66, -0.62], what: 'massa e aro da frente' },
+      { d: 0.5, az: 70, el: 15, target: [0, 0.64, -0.33], what: 'aro do meio da manga' },
       { d: 0.2, az: -35, el: 12, target: [-0.08, 0.655, 0.05], fov: 35, what: 'pontas: estojo, gargalo, bala' },
       { d: 0.2, az: 160, el: 15, target: [-0.1, 0.655, 0.1], fov: 35, what: 'fundos dos estojos (aros)' },
     ];
-    const tiles = [];
-    for (const v of views) {
-      for (const [url, when] of [[BEFORE_URL, 'antes'], [CKM, 'depois']]) {
-        const t = await tile({ ...v, url, label: '' });
-        tiles.push(await tile({ ...v, url, label: `${when} — LOD0 ${t.out.ckm.triangles} triângulos — ${v.what}` }));
-      }
-    }
-    console.log('antes', tiles[0].out.ckm.triangles, 'depois', tiles[1].out.ckm.triangles);
-    save('ckm_lod0_budget.png', grid(tiles, 2));
+    const tris = {}, tiles = [];
+    for (const [url, when] of [[BEFORE_URL, 'antes'], [CKM, 'depois']]) tris[when] = (await tile({ ...views[0], url, label: '' })).out.ckm.triangles;
+    for (const v of views) for (const [url, when] of [[BEFORE_URL, 'antes'], [CKM, 'depois']]) tiles.push(await tile({ ...v, url, label: `${when} (${tris[when]}) — ${v.what}` }));
+    console.log('antes', tris.antes, 'depois', tris.depois);
+    save('ckm_lod0_budget.png', grid(tiles, 4));
   },
   async report() {
     const out = {};
     for (const lod of ['lod0', 'lod1', 'lod2']) {
       const u = W + `m01_ckm_wz30_${lod}.glb`;
-      out[`m01_ckm_wz30_${lod}.glb`] = await st.eval(async u => { const s = window.stage; s.clear(); const i = await s.add(u); return { ...s.info(i), clips: s.clips(u) }; }, u);
+      // rendered: o que o three.js desenha com o LOD sozinho no palco (sem chão nem grelha), com a arma inteira enquadrada;
+      // o palco faz duas passagens por imagem (mapa de sombra e cor), por isso conta cada triângulo e chamada duas vezes.
+      out[`m01_ckm_wz30_${lod}.glb`] = await st.eval(async u => {
+        const s = window.stage; s.clear(); s.ground(false); const i = await s.add(u);
+        s.camera([2.2, 1.4, -2.2], [0, 0.4, -0.1], 40); const r = s.render(); s.ground(true);
+        return { ...s.info(i), rendered: { triangles: r.triangles, calls: r.calls, passes: 2, note: 'mapa de sombra + cor' }, clips: s.clips(u) };
+      }, u);
     }
     out['m01_ckm_wz30_animations.glb'] = await st.eval(async u => { const s = window.stage; await s.load(u); return s.clips(u); }, ANIM);
     writeFileSync(join(OUT, 'import-report.json'), JSON.stringify({ viewer: 'three.js 0.186.1 GLTFLoader (Chromium/SwiftShader)', note: 'galeria isolada; não é playtest nem medição de FPS', files: out }, null, 2) + '\n');

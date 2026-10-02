@@ -3,7 +3,8 @@
 // manifest.json. Uso: node build.mjs [--out dir]. Precisa de `npm ci` aqui e em ../m01-soldiers e de `npm run fetch` lá
 // (malha base do MakeHuman, para os clips); sem ela a geração pára. `--geometry-only --out dir` gera só a geometria
 // noutra pasta, sem nunca tocar nos entregáveis completos.
-import { mkdirSync, writeFileSync, statSync } from 'node:fs';
+import { mkdirSync, writeFileSync, statSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join, resolve } from 'node:path';
 import { Document, NodeIO } from '@gltf-transform/core';
 import { computeNormals, v3 } from '../m01-soldiers/src/meshops.mjs';
@@ -167,4 +168,7 @@ if (people) {
   manifest.gun_clips = people.gun.map(c => ({ name: c.name, duration: sec(c), loop: c.extras.loop, events: c.extras.events }));
   console.log(file, (r.bytes / 1e3).toFixed(0), 'kB;', people.people.map(c => c.name).join(', '));
 }
+// SHA-256 dos ficheiros que a redução do LOD0 não pode mudar (iguais aos da entrega #31; o teste confirma-os).
+manifest.lod0_budget.preserved_sha256 = Object.fromEntries(['m01_ckm_wz30_lod1.glb', 'm01_ckm_wz30_lod2.glb', ...(people ? ['m01_ckm_wz30_animations.glb'] : [])]
+  .map(f => [f, createHash('sha256').update(readFileSync(join(OUT, f))).digest('hex')]));
 writeFileSync(join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');

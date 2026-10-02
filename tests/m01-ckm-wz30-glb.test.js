@@ -162,7 +162,18 @@ test('M01 ckm wz.30: LOD0 dentro dos 4000 triângulos sem mudar silhueta, pivôs
   }));
   // Só o LOD0 mudou: LOD1, LOD2 e o GLB dos clips da guarnição continuam byte a byte os da entrega da ckm.
   const sha = file => createHash('sha256').update(read(DIR + file)).digest('hex');
-  assert.equal(sha('m01_ckm_wz30_lod1.glb'), '30fa7424df859c7c4c5be6b347955cf636284041c9eccfc1e30f1063f1fd0168');
-  assert.equal(sha('m01_ckm_wz30_lod2.glb'), 'a00f9a301b11523d3398c360a3c7bf8a15c5c0481abec56ec48efe80f9c5f875');
-  assert.equal(sha('m01_ckm_wz30_animations.glb'), 'dda588e9163da7aa0bfe9b3f7189d96c84a9e4788b9707ffbee7b70dfe936865');
+  const kept = {
+    'm01_ckm_wz30_lod1.glb': '30fa7424df859c7c4c5be6b347955cf636284041c9eccfc1e30f1063f1fd0168',
+    'm01_ckm_wz30_lod2.glb': 'a00f9a301b11523d3398c360a3c7bf8a15c5c0481abec56ec48efe80f9c5f875',
+    'm01_ckm_wz30_animations.glb': 'dda588e9163da7aa0bfe9b3f7189d96c84a9e4788b9707ffbee7b70dfe936865',
+  };
+  for (const [file, hash] of Object.entries(kept)) assert.equal(sha(file), hash, `${file} mudou`);
+  assert.deepEqual(b.preserved_sha256, kept);
+  // Importação real (three.js): todos os triângulos do LOD0 são desenhados, sem malhas escondidas (o palco desenha cada
+  // imagem em duas passagens, sombra e cor).
+  const report = JSON.parse(read('docs/assets/m01-ckm-wz30/import-report.json')).files['m01_ckm_wz30_lod0.glb'];
+  assert.equal(report.triangles, lod0.triangles);
+  assert.equal(report.rendered.passes, 2);
+  assert.equal(report.rendered.triangles, lod0.triangles * report.rendered.passes, 'triângulos desenhados = triângulos do LOD0');
+  assert.equal(report.rendered.calls, lod0.draw_calls * report.rendered.passes);
 });

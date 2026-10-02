@@ -12,7 +12,7 @@ Kit isolado para `grp_ckm_crew`, a metralhadora da casamata oeste de M01 — Tcz
 | Escala e eixos | `tests/m01-ckm-wz30-glb.test.js` | Arma 1,211 m (1,2 m ± 2 %), boca do cone em −Z, +Y para cima, tripé no chão |
 | Transforms finitos | Teste: translações/rotações/escalas dos nós, limites dos vértices e todas as amostras dos clips | Finitos |
 | LODs | Teste: orçamento (LOD0 ≤ 4000), ordem decrescente, bytes iguais ao manifesto, normal map só no LOD0 | 3904 → 2298 → 754 triângulos |
-| Redução do LOD0 | Teste: caixa da cena, comprimento, volume de cada nó, pivôs, sockets, peças da fita e clips da arma iguais; SHA-256 do LOD1, LOD2 e GLB dos clips fixos; captura antes/depois | 5004 → 3904; LOD1, LOD2 e clips byte a byte |
+| Redução do LOD0 | Teste: caixa da cena, comprimento, volume de cada nó, pivôs, sockets, peças da fita e clips da arma iguais; SHA-256 do LOD1, LOD2 e GLB dos clips iguais aos de `lod0_budget.preserved_sha256`; no three.js, todos os triângulos e as 9 malhas do LOD0 são desenhados (`import-report.json` → `rendered`, duas passagens: sombra e cor); captura antes/depois | 5004 → 3904 (365 kB, 9 draw calls, bbox igual); LOD1, LOD2 e clips byte a byte |
 | Pivôs e hierarquia | Teste: tradução local e pai de cada nó iguais ao manifesto; tampa a 110° | OK |
 | Clips da arma | Teste: alvos só nos nós móveis; rajada de 8 a 0,1 s; a alavanca recua ~0,055 m por tiro; a fita volta ao pivô (serra); na alimentação a ponta começa fora, a fita vazia aparece depois de puxada e a alavanca vai 0,10 m atrás duas vezes | OK |
 | Clips da guarnição | Teste: todos os canais apontam para ossos do esqueleto de `m01_soldier_pl_lod0.glb`; os nomes não repetem os clips dos soldados nem os da rkm; `weapon` e `weapon_clip` com escala 0 (uma só arma) | OK |
@@ -92,7 +92,7 @@ Os nomes são `ckm_wz30_gunner_<sufixo>` e `ckm_wz30_loader_<sufixo>`. Nenhum cl
 
 - [`ckm_views.png`](ckm_views.png) — direita, esquerda, 3/4 da frente e de trás, alimentação, saída da fita, cone, caixa e punho.
 - [`ckm_lods.png`](ckm_lods.png) — LOD0/1/2 inteiros e de perto.
-- [`ckm_lod0_budget.png`](ckm_lod0_budget.png) — LOD0 antes (5004, tirado do git em `4170eea`) e depois (3904), lado a lado: conjunto, alimentação, troço livre de trás e de lado, aro da manga, pontas e fundos dos cartuchos. As silhuetas coincidem; as pontas mostram o latão a passar para tombak.
+- [`ckm_lod0_budget.png`](ckm_lod0_budget.png) — LOD0 antes (5004, tirado do git em `4170eea`) e depois (3904), aos pares: três ângulos inteiros (3/4 da frente, lado direito, 3/4 de trás), alimentação, troço livre de trás e de lado, caixa com tampa e boca da fita, alça, massa e aro da frente, aro do meio da manga, pontas e fundos dos cartuchos. As silhuetas coincidem; as pontas mostram o latão a passar para tombak.
 - [`ckm_hands.png`](ckm_hands.png) — mãos do atirador (punho, lado da caixa, ponta da fita, alavanca), olho na linha de mira, mãos do municiador e rajada.
 - [`ckm_crew.png`](ckm_crew.png) — equipa em `aim` (três ângulos), `idle`, `fire_burst` e `abandon`.
 - [`ckm_clips.png`](ckm_clips.png) — sequências de `feed` e `abandon`.
