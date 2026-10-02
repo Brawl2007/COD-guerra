@@ -131,7 +131,28 @@
       "status": "A PRODUZIR", "targetPath": "assets/models/production/weapons/kb_wz29.glb"
     },
     {
-      "id": "pl_support_weapons", "name": "rkm wz.28, ckm wz.30 (com tripé e fita), Vis wz.35, granada wz.33", "category": "weapon", "priority": "P1",
+      "id": "rkm_wz28", "name": "rkm wz.28 (Kowal), com bípode e carregador de 20", "category": "weapon", "priority": "P1",
+      "realDimensions": { "lengthM": 1.11, "barrelM": 0.611, "massKg": 9.0, "magazine": 20, "sources": ["T31"] },
+      "strategy": "ORIGINAL", "spec": "research/weapons/rkm_wz28.md", "budget": { "worldLod0Tris": 4000 }, "candidates": [],
+      "status": "A PRODUZIR (final)",
+      "provisional": { "path": "assets/models/provisional/m01/characters/m01_soldier_pl_lod0.glb", "meshes": ["rkm_wz28", "rkm_bipod_open", "rkm_bipod_folded", "rkm_pouch"], "clips": "assets/models/provisional/m01/characters/m01_soldier_animations.glb (rkm_*)", "license": "ORIGINAL", "status": "PROVISÓRIO VERIFICADO — 1,11 m, carregador no osso weapon_mag, 10 clips rkm_*; ligado ao runtime nesta branch", "review": "docs/assets/m01-soldiers/README.md" }
+    },
+    {
+      "id": "kb_wz98a", "name": "kb wz.98a (Bąk)", "category": "weapon", "priority": "P1",
+      "realDimensions": { "lengthM": 1.25, "barrelM": 0.74, "massKg": 4.4, "boltHandle": "reta", "sources": ["T32"] },
+      "strategy": "ORIGINAL", "spec": "research/weapons/kb_wz98a.md", "budget": { "worldLod0Tris": 3000 }, "candidates": [],
+      "status": "A PRODUZIR (final)",
+      "provisional": { "path": "assets/models/provisional/m01/characters/m01_soldier_pl_lod0.glb", "meshes": ["rifle_wz98a"], "license": "ORIGINAL", "status": "PROVISÓRIO VERIFICADO — 1,25 m, usa os clips das espingardas; ligado ao runtime nesta branch", "review": "docs/assets/m01-soldiers/README.md" }
+    },
+    {
+      "id": "mg34", "name": "MG 34 de 1939 (grp_de_east, Panzerzug 7), com bípode e tambor de cinta de 50", "category": "weapon", "priority": "P1",
+      "realDimensions": { "lengthM": 1.219, "barrelM": 0.627, "massKg": 12.1, "rateRpm": [800, 900], "sources": ["T33"] },
+      "strategy": "ORIGINAL", "spec": "research/weapons/mg34.md", "budget": { "worldLod0Tris": 4000 }, "candidates": [],
+      "status": "A PRODUZIR (final)",
+      "provisional": { "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod0.glb", "clips": "assets/models/provisional/m01/weapons/mg34/m01_mg34_animations.glb (mg34_aim, mg34_fire_burst, mg34_reload)", "license": "ORIGINAL", "status": "PROVISÓRIO VERIFICADO — 1,219 m, 3 LODs, tampa/alavanca/tambor/cinta animáveis; não ligada ao runtime", "review": "docs/assets/m01-mg34/README.md" }
+    },
+    {
+      "id": "pl_support_weapons", "name": "ckm wz.30 (com tripé e fita), Vis wz.35, granada wz.33", "category": "weapon", "priority": "P1",
       "realDimensions": { "note": "Dimensões a levantar (H30 e literatura)", "sources": ["H30"] },
       "strategy": "ORIGINAL", "budget": { "worldLod0Tris": 4000 }, "candidates": [], "status": "A PRODUZIR"
     },

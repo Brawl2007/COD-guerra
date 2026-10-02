@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-import {route,driver,toRepair,toCoverAdjustment} from '../helpers/m01-route.js';
+import {route,driver,toRepair,toCoverAdjustment,toStationEvacuation} from '../helpers/m01-route.js';
 import {seconds} from '../../src/game/m01-simulation.js';
 
 let result;
@@ -52,6 +52,136 @@ test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, a
   await page.reload();await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);
   await expect(page.locator('#continue')).toBeVisible();await start(page,'#continue');
   expect((await page.evaluate(()=>window.gameDiagnostics())).m01.checkpoints).toEqual(['cp_m01_a_orientacao']);
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset',async({page},info)=>{
+  test.setTimeout(180000);
+  const {errors,failed}=await open(page);await start(page);
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.active>0&&window.gameDiagnostics().m01.viewModel.active);
+  const initial=await page.evaluate(()=>window.gameDiagnostics());
+  expect(initial.m01.characters.loaded).toEqual(expect.arrayContaining(['pl:0','pl:1','pl:2','de:2']));
+  expect(initial.m01.characters.active).toBeLessThanOrEqual(18);expect(initial.m01.viewModel.lod).toBe(0);
+  expect(initial.m01.viewModel.armTriangles).toBeGreaterThan(200);
+  const kowal=initial.m01.characters.actors.find(a=>a.id==='szymon_kowal'),bak=initial.m01.characters.actors.find(a=>a.id==='jozef_bak');
+  expect(kowal.weaponMeshes).toEqual(expect.arrayContaining(['rkm_wz28','rkm_bipod_folded','rkm_pouch']));
+  expect(kowal.weaponMeshes).not.toContain('rifle');expect(bak.weaponMeshes).toContain('rifle_wz98a');expect(bak.weaponMeshes).not.toContain('rifle');
+  async function horizontal(){
+    // Native headless clicks can move the locked cursor; restore the view with the same relative look controls.
+    const view=await page.evaluate(()=>window.gameDiagnostics().player);
+    await page.evaluate(({angle,pitch})=>window.dispatchEvent(new MouseEvent('mousemove',{movementX:-angle/.0022,movementY:pitch/.0022})),view);
+    await page.waitForFunction(()=>Math.abs(window.gameDiagnostics().player.pitch)<.03);
+  }
+  async function capture(name){
+    await page.evaluate(()=>document.exitPointerLock());
+    await expect(page.locator('#pause')).toBeVisible();
+    await page.screenshot({path:info.outputPath(name),style:'#pause { visibility:hidden !important; }'});
+  }
+  await page.mouse.down({button:'right'});await expect(page.locator('#crosshair')).toBeHidden();
+  await horizontal();
+  await capture('m01-rig-iron-sights.png');
+  const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(300);
+  expect((await page.evaluate(()=>window.gameDiagnostics())).m01.viewModel).toEqual(frozen.m01.viewModel);
+  await page.locator('#resume').click();
+  for(let i=0;i<5;i++){
+    await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
+    await page.mouse.click(640,360);await expect(page.locator('#mag')).toHaveText(String(4-i));
+  }
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');await horizontal();
+  const clipVisible=page.waitForFunction(()=>{const g=window.gameDiagnostics().m01;if(g.weapon.state==='RELOAD_CLIP'&&g.viewModel.clip==='reload_clip'&&g.viewModel.clipTime>1.1){document.exitPointerLock();return true;}return false;});
+  await page.keyboard.press('KeyR');await clipVisible;
+  await capture('m01-rig-clip.png');
+  await page.locator('#resume').click();await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
+  await page.mouse.click(640,360);await expect(page.locator('#mag')).toHaveText('4');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
+  await horizontal();
+  const singleVisible=page.waitForFunction(()=>{const v=window.gameDiagnostics().m01.viewModel;if(v.singleRound&&v.clipTime>1.1){document.exitPointerLock();return true;}return false;});
+  await page.keyboard.press('KeyR');await singleVisible;
+  await capture('m01-rig-single-round.png');
+  const single=await page.evaluate(()=>window.gameDiagnostics());expect(single.m01.weapon.state).toBe('RELOAD_SINGLE');
+  await page.locator('#back-menu').click();await page.locator('#quality').selectOption('high');await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.viewModel.lod===0);
+  const high=await page.evaluate(()=>window.gameDiagnostics());expect(high.m01.characters.failures).toEqual([]);
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('an optional character download failure preserves playable procedural actors without blocking bridge validation',async({page})=>{
+  await page.route('**/characters/*.glb',r=>r.abort());
+  await open(page);await start(page);
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.failures.length>0);
+  const data=await page.evaluate(()=>window.gameDiagnostics());
+  expect(data.m01.characters.active).toBe(0);expect(data.m01.viewModel.active).toBe(false);
+  expect(data.m01.assetFailures).toEqual([]);expect(data.m01.actorPoses.standing).toBeGreaterThan(0);
+});
+test('Kowal fires and changes the rkm magazine from actual combat state, preserving both poses in pause',async({page},info)=>{
+  test.setTimeout(process.env.CI?180000:120000);
+  const d=toRepair(driver());d.walk(-115,32);d.walk(-74,30);d.step({crouch:true});
+  d.until(()=>d.sim.actor('szymon_kowal').rounds===2,240);
+  const k=d.sim.actor('szymon_kowal'),p=d.sim.player,angle=Math.atan2(k.z-p.z,k.x-p.x);
+  d.step({lookX:Math.atan2(Math.sin(angle-p.angle),Math.cos(angle-p.angle))/.0022});
+  const snapshot=d.sim.snapshot();
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  const samples=[];
+  for(const [clip,file]of [['rkm_fire_burst','m01-kowal-rkm-burst.png'],['rkm_reload','m01-kowal-rkm-reload.png']]){
+    await page.waitForFunction(clip=>{
+      const g=window.gameDiagnostics();
+      if(!g.paused&&g.m01.characters.actors?.some(a=>a.id==='szymon_kowal'&&a.clip===clip)){document.exitPointerLock();return true;}
+      return false;
+    },clip,{timeout:90000});
+    await expect(page.locator('#pause')).toBeVisible();
+    const frozen=await page.evaluate(()=>window.gameDiagnostics()),actor=frozen.m01.characters.actors.find(a=>a.id==='szymon_kowal');
+    expect(actor.clip).toBe(clip);expect(actor.weapon).toBe('rkm_wz28');expect(actor.weaponMeshes).toContain('rkm_wz28');
+    expect(actor.weaponMeshes).not.toContain('rifle');expect(actor.weaponMeshes).not.toContain('clip');
+    await page.waitForTimeout(300);const still=await page.evaluate(()=>window.gameDiagnostics());
+    expect(still.clock).toBe(frozen.clock);expect(still.m01.characters).toEqual(frozen.m01.characters);
+    await page.screenshot({path:info.outputPath(file),style:'#pause { visibility:hidden !important; }',timeout:120000});
+    samples.push({clip,clock:frozen.clock,battleClock:frozen.m01.battleClock,actor});
+    if(clip==='rkm_fire_burst')await page.locator('#resume').click();
+  }
+  await info.attach('kowal-rkm-samples',{body:JSON.stringify({kind:'production browser continuation of a genuine simulation-control snapshot',samples,errors,failed}),contentType:'application/json'});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('missing close-up LOD0 falls back to intact LOD1 hands while the light world actors remain available',async({page})=>{
+  await page.route('**/m01_soldier_pl_lod0.glb',r=>r.abort());
+  await open(page);await start(page);
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.viewModel.active);
+  const data=await page.evaluate(()=>window.gameDiagnostics());
+  expect(data.m01.viewModel.lod).toBe(1);expect(data.m01.viewModel.armTriangles).toBeGreaterThan(200);
+  expect(data.m01.characters.active).toBeGreaterThan(0);expect(data.m01.assetFailures).toEqual([]);
+});
+test('the station clip alone cannot enable a viewmodel when the required weapon animations fail to download',async({page})=>{
+  await page.route('**/m01_soldier_animations.glb',r=>r.abort());
+  const {errors}=await open(page);await start(page);
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.failures.length>0);
+  const data=await page.evaluate(()=>window.gameDiagnostics());
+  expect(data.m01.viewModel.active).toBe(false);expect(data.m01.characters.active).toBe(0);
+  expect(data.m01.assetFailures).toEqual([]);expect(data.m01.actorPoses.standing).toBeGreaterThan(0);expect(errors).toEqual([]);
+});
+test('the station evacuation restores its grounded drag, pauses with the mission and delivers the casualty',async({page},info)=>{
+  test.setTimeout(process.env.CI?240000:180000);
+  // Staged continuation of real simulation controls; not an uninterrupted browser playthrough.
+  const snapshot=toStationEvacuation(driver(),{observe:true}).sim.snapshot();
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.actors?.some(a=>a.id==='leon_dudek'&&a.clip==='drag_wounded'));
+  const current=await page.evaluate(()=>window.gameDiagnostics()),pair=current.m01.stationEvacuation;
+  expect(pair.patient.carriedBy).toBe('leon_dudek');expect(pair.patient.y).toBeLessThanOrEqual(pair.medic.y+.1);
+  expect(current.m01.characters.actors).toContainEqual(expect.objectContaining({id:'generic_rifleman',clip:'wounded'}));
+  const angle=Math.atan2(pair.patient.z-current.player.z,pair.patient.x-current.player.x);
+  await page.evaluate(({delta,pitch})=>{
+    window.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0}));
+    window.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:(pitch+.18)/.0022}));
+  },{delta:Math.atan2(Math.sin(angle-current.player.angle),Math.cos(angle-current.player.angle))/.0022,pitch:current.player.pitch});
+  await page.waitForFunction(angle=>Math.abs(Math.atan2(Math.sin(window.gameDiagnostics().player.angle-angle),Math.cos(window.gameDiagnostics().player.angle-angle)))<.02,angle);
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(300);
+  expect((await page.evaluate(()=>window.gameDiagnostics())).m01.stationEvacuation).toEqual(frozen.m01.stationEvacuation);
+  await page.screenshot({path:info.outputPath('m01-station-ground-drag.png'),style:'#pause { visibility:hidden !important; }',timeout:120000});
+  await page.locator('#resume').click();
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.stationEvacuation.delivered,null,{timeout:120000});
+  const delivered=await page.evaluate(()=>window.gameDiagnostics());
+  expect(delivered.m01.stationEvacuation.patient.carriedBy).toBeNull();expect(delivered.m01.stationEvacuation.patient.x).toBe(-334);
+  expect(delivered.m01.stationEvacuation.patient.state).toBe('WOUNDED');expect(delivered.m01.flags['m01.bak_status']).toBe('unhurt');
+  await info.attach('station-evacuation',{body:JSON.stringify({kind:'production browser continuation of a genuine simulation-control snapshot',drag:frozen.m01.stationEvacuation,delivered:delivered.m01.stationEvacuation,errors,failed}),contentType:'application/json'});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 test('real keyboard movement traverses the approaches and E delivers the message at the rail bridge',async({page},info)=>{

@@ -1,0 +1,250 @@
+{
+  "kind": "simulation controls only; no browser or human playtest",
+  "seed": 19390901,
+  "drag": {
+    "patient": {
+      "id": "generic_rifleman",
+      "x": -309.114064077206,
+      "y": -3,
+      "z": 28.97163754688349,
+      "alive": true,
+      "active": true,
+      "state": "WOUNDED",
+      "task": "station_wounded",
+      "carriedBy": "leon_dudek"
+    },
+    "medic": {
+      "id": "leon_dudek",
+      "x": -310.0130954001062,
+      "y": -3,
+      "z": 28.77633603525498,
+      "alive": true,
+      "active": true,
+      "state": "ADVANCE",
+      "task": "evacuate_station_wounded",
+      "carriedBy": null
+    },
+    "delivered": false
+  },
+  "delivered": {
+    "patient": {
+      "id": "generic_rifleman",
+      "x": -334,
+      "y": -3,
+      "z": 26.2,
+      "alive": true,
+      "active": true,
+      "state": "WOUNDED",
+      "task": "station_aid_post",
+      "carriedBy": null
+    },
+    "medic": {
+      "id": "leon_dudek",
+      "x": -330.84716910036525,
+      "y": -3,
+      "z": 24.250435787514725,
+      "alive": true,
+      "active": true,
+      "state": "GUARD",
+      "task": null,
+      "carriedBy": null
+    },
+    "delivered": true
+  },
+  "durationFromSample": 32.80000000000746,
+  "completed": {
+    "patient": {
+      "id": "generic_rifleman",
+      "x": -334,
+      "y": -3,
+      "z": 26.2,
+      "alive": true,
+      "active": true,
+      "state": "WOUNDED",
+      "task": "station_aid_post",
+      "carriedBy": null
+    },
+    "medic": {
+      "id": "leon_dudek",
+      "x": -9.156408812578958,
+      "y": -0.35000020265579224,
+      "z": 47.91493124927576,
+      "alive": true,
+      "active": true,
+      "state": "ADVANCE",
+      "task": null,
+      "carriedBy": null
+    },
+    "delivered": true
+  },
+  "routes": [
+    {
+      "support": false,
+      "complete": true,
+      "battleClock": 25500,
+      "station": {
+        "patient": {
+          "id": "generic_rifleman",
+          "x": -334,
+          "y": -3,
+          "z": 26.2,
+          "alive": true,
+          "active": true,
+          "state": "WOUNDED",
+          "task": "station_aid_post",
+          "carriedBy": null
+        },
+        "medic": {
+          "id": "leon_dudek",
+          "x": -330.86672844846254,
+          "y": -3,
+          "z": 24.049694728018775,
+          "alive": true,
+          "active": true,
+          "state": "GUARD",
+          "task": "stay_with_bak",
+          "carriedBy": null
+        },
+        "delivered": true
+      },
+      "bak": "rescued_by_dudek",
+      "survivors": 12,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "required": [
+        {
+          "id": "obj_m01_deliver_message",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_take_cover",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_follow_sergeant",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_find_sappers",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_fetch_material",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_cover_repair",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_hold_access",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_cover_withdrawal",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_leave_bridge",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_hold_corridor",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_reach_shelter",
+          "state": "done"
+        }
+      ]
+    },
+    {
+      "support": true,
+      "complete": true,
+      "battleClock": 25500,
+      "station": {
+        "patient": {
+          "id": "generic_rifleman",
+          "x": -334,
+          "y": -3,
+          "z": 26.2,
+          "alive": true,
+          "active": true,
+          "state": "WOUNDED",
+          "task": "station_aid_post",
+          "carriedBy": null
+        },
+        "medic": {
+          "id": "leon_dudek",
+          "x": -330.86672844846254,
+          "y": -3,
+          "z": 24.049694728018775,
+          "alive": true,
+          "active": true,
+          "state": "GUARD",
+          "task": "stay_with_bak",
+          "carriedBy": null
+        },
+        "delivered": true
+      },
+      "bak": "rescued_by_dudek",
+      "survivors": 18,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "required": [
+        {
+          "id": "obj_m01_deliver_message",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_take_cover",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_follow_sergeant",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_find_sappers",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_fetch_material",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_cover_repair",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_hold_access",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_cover_withdrawal",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_leave_bridge",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_hold_corridor",
+          "state": "done"
+        },
+        {
+          "id": "obj_m01_reach_shelter",
+          "state": "done"
+        }
+      ]
+    }
+  ]
+}

@@ -17,6 +17,8 @@ const entity=(id,point,team='ally',extra={})=>({id,space:'metres',...point,team,
 const phaseText={INTRO:'04:30 · Tczew, Polónia',OUTRO:'07:05 · Chamada no abrigo'};
 // Dudek leva Bąk para junto da estação ("Levaram o Bąk para a estação", dlg_m01_056b), fora da zona de demolição oeste.
 const EVACUATION={x:-332,y:-3,z:24};
+// The scripted station casualty is fictional and already in the yard before the raid, avoiding a visible relocation.
+const STATION_YARD={x:-300,y:-3,z:30},STATION_PATIENT='generic_rifleman';
 // Lugares no abrigo de campanha (interior x −264…−256, z 66…75) para a chamada das 07:05.
 const ROLL_CALL_SEATS=[[-262.8,73.6],[-261.2,73.9],[-259.6,73.9],[-258,73.6],[-263.2,71.6],[-256.9,71.6],[-262.9,69.6],[-257.1,69.6]];
 // Trabalho dos sapadores sem supressão, em segundos de jogo. Com 75 s, a caixa entregue por volta das 04:42 deixava
@@ -46,7 +48,7 @@ export class M01Simulation {
       aiming:false,moveBlend:0,sprinting:false,weaponShotAt:-1e9,carrying:null,headgear:'pl_rogatywka_wz37'});
     this.weapon=new Wz29();this.grenades={ammo:2,active:[],nextId:0};this.projectileTraces=[];
     this.actors=definition.cast.filter(c=>c.id!=='jan_wrona').map((c,i)=>entity(c.id,
-      c.id==='tadeusz_nowicki'?{x:17,y:0,z:3}:c.role==='ENGINEER'?{x:-42-i*.6,y:-2,z:10}:
+      c.id==='tadeusz_nowicki'?{x:17,y:0,z:3}:c.id===STATION_PATIENT?STATION_YARD:c.role==='ENGINEER'?{x:-42-i*.6,y:-2,z:10}:
       c.role==='MEDIC'?this.world.point('aid_position'):{x:-76-i*1.6,y:-3,z:24+i%3*2},'ally',{role:c.role,essential:Boolean(c.essential),civilian:c.role==='CIVILIAN',
       ...(c.id==='szymon_kowal'?{rounds:20}:{})}));   // Kowal: carregador de 20 da rkm wz.28
     for(let i=0;i<40;i++)this.actors.push(entity(`de_east_${i}`,eastPosition(i),'enemy',
@@ -174,7 +176,15 @@ export class M01Simulation {
       case E('nowicki_lost'):this.flags['m01.nowicki_status']='missing';this.actor('tadeusz_nowicki').active=false;
         this.impact('repair_crater',this.world.point('repair_site_1'),true);break;
       case E('cable_cut'):this.destruction.push('ignition_line_damaged');break;
-      case E('wounded_dragged'):this.destruction.push('station_wagon_fire');line(17);break;
+      case E('wounded_dragged'):{
+        this.destruction.push('station_wagon_fire');
+        const patient=this.actor(STATION_PATIENT),medic=this.actor('leon_dudek');
+        if(patient.alive&&patient.active){
+          Object.assign(patient,{health:Math.min(patient.health,45),state:'WOUNDED',task:'station_wounded',target:null,crouched:false});
+          if(medic.alive&&medic.active){medic.task='evacuate_station_wounded';medic.target=null;}
+        }
+        break;
+      }
       case E('second_air_pass'):this.emit({type:'distant-shot',point:{x:-550,y:20,z:60}});break;
       case E('train963_arrives'):this.enemies.filter(a=>a.group==='grp_de_east').forEach(a=>{a.active=true;});line(25);line(28);break;
       case E('panzerzug_arrives'):line(38);break;
@@ -323,6 +333,7 @@ export class M01Simulation {
         continue;
       }
       if(a.task==='evacuate_bak'){this.evacuate(a,dt);continue;}
+      if(a.task==='evacuate_station_wounded'){this.evacuateStation(a,dt);continue;}
       if(a.task==='stay_with_bak'||(this.mission.phase==='OUTRO'&&a.team==='ally'))continue;   // chamada: ninguém sai do lugar
       if(retreat&&a.team==='ally'&&!a.civilian&&a.state!=='WOUNDED')a.target={x:-170,z:22};
       if(this.timers.escort&&a.id==='marek_zielinski')a.target=this.player;
@@ -330,8 +341,15 @@ export class M01Simulation {
       if(a.target)this.moveActor(a,a.target,dt);
     }
     for(const a of this.actors)if(a.carriedBy){
+      const c=this.actor(a.carriedBy);
+      if(!c?.alive||!c.active){a.carriedBy=null;a.y=this.world.heightAt(a.x,a.z);continue;}
+      if(a.task==='station_wounded'){
+        // The casualty trails a backward-walking medic, at ground height rather than at the shoulder socket.
+        a.facing=c.facing;a.x=c.x+Math.cos(c.facing)*.92;a.z=c.z+Math.sin(c.facing)*.92;
+        a.y=this.world.heightAt(a.x,a.z);continue;
+      }
       // Ferido ao ombro (presentação deriva só destes dados): atravessado sobre o carregador, um pouco atrás.
-      const c=this.actor(a.carriedBy);a.facing=c.facing+Math.PI/2;
+      a.facing=c.facing+Math.PI/2;
       a.x=c.x-Math.cos(c.facing)*.25;a.z=c.z-Math.sin(c.facing)*.25;a.y=c.y+1.15;
     }
     if(this.timers.escort){const leader=this.actor('marek_zielinski');
@@ -438,7 +456,7 @@ export class M01Simulation {
     const target=dike.filter(a=>this.clock-a.firedAt<10).sort((a,b)=>b.firedAt-a.firedAt).find(a=>this.world.lineOfSight(kowal,a))??
       dike.find(a=>a.weapon==='mg34'&&this.world.lineOfSight(kowal,a));
     if(!target)return;
-    kowal.shot=.25;kowal.facing=Math.atan2(target.z-kowal.z,target.x-kowal.x);kowal.rounds-=3;
+    kowal.shot=.25;kowal.firedAt=this.clock;kowal.facing=Math.atan2(target.z-kowal.z,target.x-kowal.x);kowal.rounds-=3;
     target.suppressedUntil=Math.max(target.suppressedUntil,this.clock+2);this.emit({type:'npc-shot',point:eyePosition(kowal),rounds:3});
     if(kowal.rounds<=0){kowal.rounds=20;kowal.cooldown=5;if(dist(kowal,this.player)<120)this.line('dlg_m01_029',`dlg_m01_029:${Math.floor(this.clock/90)}`);}
   }
@@ -582,6 +600,30 @@ export class M01Simulation {
     if(this.subtitle&&this.clock>=this.subtitle.until)this.subtitle=null;
     if(!this.subtitle&&this.dialogueQueue.length){this.subtitle=this.dialogueQueue.shift();this.subtitle.until=this.clock+this.subtitle.duration;}
   }
+  /** 04:35:30: Dudek reaches the station casualty, drags him to the aid point, then returns to his bridge post. */
+  evacuateStation(medic,dt){
+    const patient=this.actor(STATION_PATIENT);
+    if(!patient.alive||!patient.active){
+      if(patient.carriedBy===medic.id){patient.carriedBy=null;patient.y=this.world.heightAt(patient.x,patient.z);}
+      medic.task=null;medic.crouched=false;medic.target=this.world.point('aid_position');return;
+    }
+    if(patient.carriedBy!==medic.id){
+      // Reach the head from the side instead of walking through the casualty's body.
+      const head={x:patient.x-.92,z:patient.z};
+      this.moveActor(medic,medic.x>patient.x-.7?{x:patient.x-1.4,z:patient.z+2.3}:head,dt,4.5);
+      if(dist(medic,head)<.9){
+        patient.carriedBy=medic.id;medic.crouched=true;medic.facing=0;
+        this.line('dlg_m01_017',`${E('wounded_dragged')}:17`);
+      }
+      return;
+    }
+    this.moveActor(medic,EVACUATION,dt,.65);medic.facing+=Math.PI;
+    if(dist(medic,EVACUATION)<1.2){
+      Object.assign(patient,{carriedBy:null,task:'station_aid_post',x:EVACUATION.x-2,z:EVACUATION.z+2.2,facing:medic.facing});
+      patient.y=this.world.heightAt(patient.x,patient.z);
+      Object.assign(medic,{task:null,crouched:false,state:'GUARD',target:this.world.point('aid_position')});
+    }
+  }
   /** Dudek vai até Bąk, carrega-o e deixa-o junto à estação; Bąk nunca fica na zona de demolição oeste. */
   evacuate(medic,dt){
     const bak=this.actor('jozef_bak');
@@ -670,6 +712,11 @@ export class M01Simulation {
     return `${source} · ${Math.round(dist(this.player,fire))} m, ${this.directionTo(fire)} · mude de cobertura`;
   }
   /** Diagnóstico só de leitura: o que um jogador vê (clarões recentes) e o estado real por trás do HUD. */
+  get stationEvacuation(){
+    const patient=this.actor(STATION_PATIENT),medic=this.actor('leon_dudek');
+    const data=a=>({id:a.id,x:a.x,y:a.y,z:a.z,alive:a.alive,active:a.active,state:a.state,task:a.task??null,carriedBy:a.carriedBy??null});
+    return {patient:data(patient),medic:data(medic),delivered:patient.task==='station_aid_post'};
+  }
   get threat(){
     const repair=this.objectives[O('cover_repair')];
     return {inFlight:this.enemyFire.rounds.length,status:this.mission.status??'',
@@ -739,7 +786,10 @@ export function validateM01Snapshot(s){
   if(s.actors.some(a=>a.team!==(a.id.startsWith('de_')?'enemy':'ally')||
     !['GUARD','ADVANCE','SUPPRESS','RETREAT','HIT_REACTION','DOWN','WOUNDED','reached_safety'].includes(a.state)||
     ![a.facing,a.shot,a.cooldown,a.suppressedUntil].every(Number.isFinite)||typeof a.active!=='boolean'||(a.target&&![a.target.x,a.target.z].every(Number.isFinite))))reject('estado dos actores');
-  if(s.actors.some(a=>(a.carriedBy!=null&&!s.actors.some(c=>c.id===a.carriedBy&&c.alive))||(a.task!=null&&!['evacuate_bak','stay_with_bak'].includes(a.task))))reject('transporte');
+  if(s.actors.some(a=>(a.carriedBy!=null&&!s.actors.some(c=>c.id===a.carriedBy&&c.alive&&c.active))||
+    (a.task!=null&&!['evacuate_bak','stay_with_bak','evacuate_station_wounded','station_wounded','station_aid_post'].includes(a.task))))reject('transporte');
+  if(s.actors.some(a=>['station_wounded','station_aid_post'].includes(a.task)&&(a.id!==STATION_PATIENT||!['WOUNDED','DOWN'].includes(a.state)||
+    (a.carriedBy!=null&&(a.carriedBy!=='leon_dudek'||a.task==='station_aid_post')))||a.task==='evacuate_station_wounded'&&a.id!=='leon_dudek'))reject('evacuação da estação');
   if(s.actors.some(a=>(a.firedAt!==undefined&&!Number.isFinite(a.firedAt))||(a.rounds!==undefined&&(!Number.isInteger(a.rounds)||a.rounds<-2||a.rounds>20))))reject('fogo dos actores');
   if(s.enemyFire!==undefined&&(!s.enemyFire||!Array.isArray(s.enemyFire.rounds)||s.enemyFire.rounds.length>200||!Number.isInteger(s.enemyFire.nextId)||s.enemyFire.nextId<0||
     new Set(s.enemyFire.rounds.map(r=>r?.id)).size!==s.enemyFire.rounds.length||s.enemyFire.rounds.some(r=>!validRound(r,s.clock))))reject('fogo em voo');
