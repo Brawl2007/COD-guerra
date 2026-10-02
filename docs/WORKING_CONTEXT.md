@@ -73,3 +73,7 @@ Context-compression: resumo estruturado com intenção, caminhos, decisões, est
 3. Graphify permanece **em pausa**; checkpoint preservado, sem reextracções.
 4. Claude: novo pedido em `docs/CLAUDE_NEXT_TASK.md`: ckm LOD0 até 4000 já entregue/revisto no #35; próxima entrega são os pares de agarrar/soltar no arrasto da estação. #31/#33/#34/#35 já revistos; não repetir kits. Guarnição ckm/deitado MG34, identificação de vagão/estado e altura das coberturas do pátio são dependências explícitas da integração futura.
 5. Rever arte/transições/áudio, playtest humano e Chromebook; M02 espera pela aprovação de M01.
+
+## Continuação sem Claude — 2026-10-02
+
+O utilizador informou que Claude atingiu o limite semanal e pediu continuidade sem esperar cinco dias. Codex assume as tarefas pendentes. Encontrada entrega completa na branch `claude/m01-station-drag-transitions`, head `27353ef207c5d0d97102db5b60d1d4fd16943194`, sem PR. Kit de quatro clips revisto e integrado como asset: 158/158 Node e build, regeneração byte a byte idêntica, galeria original inspeccionada; rig/clips anteriores conservados. Provas em `docs/verification/m01-runtime/station-drag-review-2026-10-02/`. Sem alteração de src/browser/workflows/saves ou Graphify; JavaScript de produção idêntico. Os clips ainda não são tocados pelo runtime. Próximo passo do Codex: ligar entrada/saída e pose segura ao estado real da evacuação, com pausa/restauro/fallback; não inventar relógios ou sucesso do resgate no renderer. Claude está em pausa; as tarefas anteriores de orçamento e criação dos clips estão entregues.

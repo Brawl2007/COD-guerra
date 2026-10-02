@@ -143,10 +143,15 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 - Cotovelos, joelhos e botas medidos na pele (LBS) a poucos milímetros do chão; mão no punho e face na coronha. Verificado por `tests/m01-mg34-prone-glb.test.js` (incluindo o mixer do three.js) e pelas capturas inspeccionadas em `docs/assets/m01-mg34-prone/` (não é playtest).
 - Falta: implementar `pose: prone` e ligar a dupla a `grp_de_east` (Codex); rever arte e posturas em jogo.
 
+**Transições do arrasto do ferido da estação (clips provisórios, ainda não ligados ao jogo):**
+- `assets/models/provisional/m01/characters/station-drag-transitions/m01_station_drag_transitions.glb`, gerado por `tools/assets/m01-station-drag-transitions/`, traz `station_drag_{medic,patient}_{grab,release}` (1,6 s estimados, pares com o mesmo relógio) para os 61 ossos do rig actual, sem malhas e sem deslocar a raiz. Extremos exactos: médico `crouched_idle` ↔ `drag_wounded` t=0, ferido `wounded` ↔ pose de arrasto (tronco erguido pelos sovacos, de costas no chão); a libertação é o agarrar invertido. Eventos `hands_contact`/`grip_ready`/`hands_release`/`settled` só em `extras`; offset do ferido `[0, 0, −0,92]` m e sockets `shoulder_on_ground`/`armpit_grip` no manifesto. Clips e rig reutilizados intactos (SHA-256 no manifesto).
+- Verificado por `tests/m01-station-drag-transitions-glb.test.js` (incluindo o mixer do three.js: ferido de costas, mãos a < 0,2 m dos ombros na pega, apertos medidos por cápsulas) e pelas capturas inspeccionadas em `docs/assets/m01-station-drag-transitions/` (não é playtest).
+- Falta: o Codex tocar os pares na entrada/saída do arrasto de S3 e segurar o último frame de `station_drag_patient_grab` durante `drag_wounded` (hoje as mãos ficam a 0,33 m dos ombros; com a pose, 0,12 m); rever em jogo.
+
 ## Parcial ou pendente
 
 - Soldados próximos, mãos, recarga e transporte já têm rig e clips reais. Arte, encaixe das mãos, uniformes e mixagem continuam a exigir revisão; Civis e alguns actores distantes conservam proxies. Vozes gravadas continuam ausentes.
-- Combate remoto, navegação, resgate e feridos têm comportamento reduzido. O arrasto de S3 está encenado; ainda faltam transições refinadas de agarrar/soltar, casamatas interiores, feridos carregados pelo pelotão e direcção humana completa. Provas do arrasto em `docs/verification/m01-runtime/station-evacuation/`.
+- Combate remoto, navegação, resgate e feridos têm comportamento reduzido. O arrasto de S3 está encenado; as transições de agarrar/soltar têm clips provisórios ainda por ligar (acima); faltam casamatas interiores, feridos carregados pelo pelotão e direcção humana completa. Provas do arrasto em `docs/verification/m01-runtime/station-evacuation/`.
 - A alça muda a referência de distância; o tiro ainda usa raio recto com dispersão, conforme fallback documentado. Queda/arrasto balístico pendentes. Pontaria e probabilidade de acerto são tuning de protótipo.
 - Trussas têm aberturas e não são paredes sólidas; colisão exacta dos membros metálicos e ruínas pendente. Juntas e posts dos portais usam aproximações conservadoras declaradas.
 - Humanos, comboios e aviões são geometrias provisórias próprias; as pontes são o kit GLB do Claude completado no PR #11. Fontes, licenças e incertezas em `ASSET_CREDITS.md` e `BRIDGE_ASSET_REPORT.md`.
@@ -167,3 +172,5 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 Ligar os kits revistos de vagões/MG34 à apresentação com dados da simulação, rever a ckm wz.30 do PR #31 e realizar o playtest humano completo de M01, com atenção ao fogo de cobertura a ~1,2 km (clarões de ~8 px e raio de supressão de 3 m). Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02. Graphify permanece em pausa no checkpoint existente.
 
 O trabalho das pontes de Claude foi preservado e completado, incluindo dano persistente em LOD0/1/2. Mapas históricos e inventários específicos continuam úteis para as pendências de P4/P13 e de arte. Não recomeçar essa entrega.
+
+Continuação sem Claude em 2026-10-02: kit de quatro transições do arrasto em 27353ef revisto pelo Codex, 158/158 Node e build. Regeneração preserva GLB/manifesto; galeria isolada inspeccionada. Runtime ainda não toca os novos clips. Codex assume a integração e as próximas tarefas durante a pausa semanal do Claude.
