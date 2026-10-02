@@ -1,0 +1,673 @@
+{
+  "asset": "MG 34 (1939) — metralhadoras alemãs de M01 Tczew (grp_de_east, Panzerzug 7)",
+  "status": "PROVISÓRIO VERIFICADO (M01 continua PROTÓTIPO JOGÁVEL)",
+  "generator": "tools/assets/m01-mg34 (node build.mjs)",
+  "author": "Claude Code (geometria, texturas e clips gerados por código original neste repositório)",
+  "license": "Original do projecto; a licença global do repositório continua por decidir pelo proprietário (ASSET_CREDITS.md). Sem conteúdo de terceiros nem de jogos.",
+  "tools": [
+    "Node.js",
+    "@gltf-transform/core 4.5.1 (MIT)",
+    "meshoptimizer 1.3.0 (MIT)",
+    "jpeg-js 0.4.4 (BSD-3)",
+    "pngjs 7.0.0 (MIT)",
+    "three.js 0.186.1 (MIT, capturas)",
+    "Playwright/Chromium (capturas)"
+  ],
+  "units": "metros; +Y para cima; cano para −Z; lado direito da arma em +X",
+  "scale": {
+    "unit_m": 1,
+    "length_m": 1.219,
+    "measured": "ver files.*.bbox_m"
+  },
+  "frame": "referencial do osso `weapon` dos soldados (origem perto do punho): prender a cena ao osso com transformação nula",
+  "variant": "MG 34 de produção de 1939: manga perfurada, coronha fixa, gatilho E/D, bípode na posição dianteira, tambor de cinta de 50 à esquerda. Não é a MG 42 (proibida em M01) nem a MG 34 de carro (manga blindada sem furos)",
+  "sources": {
+    "T33": [
+      "https://en.wikipedia.org/wiki/MG_34",
+      "https://www.lonesentry.com/manuals/german-infantry-weapons/mg34-machine-gun.html",
+      "https://www.militaryfactory.com/smallarms/detail.php?smallarms_id=63",
+      "https://modernfirearms.net/en/machineguns/germany-machineguns/mg-34-eng/",
+      "https://www.apexgunparts.com/mg42-53-ammo-drum-german-gd.html",
+      "https://forum.axishistory.com/viewtopic.php?t=143065&start=15"
+    ],
+    "note": "T33 só por resumos concordantes de busca (2026-10-02): wikipedia.org, lonesentry.com, modernfirearms.net, ww2db.com e dday-overlord.com estão bloqueados neste ambiente. Nenhuma página foi lida por inteiro."
+  },
+  "specs": {
+    "caliber": "7,92×57 mm Mauser",
+    "rounds": 50,
+    "feed": "cinta de 50/250 (Patronengurt 34) ou tambor de cinta de 50 (Gurttrommel 34) à esquerda",
+    "rate_rpm": [
+      800,
+      900
+    ],
+    "mass_kg": 12.1,
+    "action": "recuo com reforçador na boca, ferrolho rotativo, ferrolho aberto",
+    "trigger": "crescente de duas partes: E (Einzelfeuer, tiro a tiro), D (Dauerfeuer, contínuo)",
+    "sights": "alça tangente rebatível 200–2000 m; massa rebatível; mira antiaérea não modelada"
+  },
+  "measures": [
+    {
+      "id": "length_total",
+      "value_m": 1.219,
+      "source": "T33",
+      "estimated": false,
+      "note": "comprimento total 1219 mm (da chapa da coronha à boca do reforçador de recuo)"
+    },
+    {
+      "id": "barrel",
+      "value_m": 0.627,
+      "source": "T33",
+      "estimated": false,
+      "note": "cano 627 mm, da face da culatra (z −0,127, dentro da caixa) à boca"
+    },
+    {
+      "id": "mass",
+      "value_kg": 12.1,
+      "source": "T33",
+      "estimated": false,
+      "note": "massa 12,1 kg com bípode; não afecta a geometria"
+    },
+    {
+      "id": "rate",
+      "value_rpm": [
+        800,
+        900
+      ],
+      "source": "T33",
+      "estimated": false,
+      "note": "cadência 800–900 tiros/min; os clips usam 800 (intervalo de 0,075 s de src/game/m01-simulation.js)"
+    },
+    {
+      "id": "drum",
+      "value_m": [
+        0.152,
+        0.14,
+        0.121
+      ],
+      "source": "T33 (Gurttrommel 34)",
+      "estimated": false,
+      "note": "tambor de cinta de 50 à esquerda; 6 × 5,5 × 4,75 pol (comprimento × altura × largura) num anúncio de peça; orientação e ganchos estimados"
+    },
+    {
+      "id": "jacket",
+      "value_m": [
+        0.048,
+        0.582
+      ],
+      "source": "T33",
+      "estimated": true,
+      "note": "manga do cano perfurada [T33]; diâmetro, comprimento e o padrão de furos ovais estimados"
+    },
+    {
+      "id": "stock",
+      "value_m": 0.33,
+      "source": "fotografias (resumo)",
+      "estimated": true,
+      "note": "coronha em linha com o cano; material (baquelite ou madeira) por confirmar para 1939"
+    },
+    {
+      "id": "receiver",
+      "value_m": [
+        0.05,
+        0.06,
+        0.23
+      ],
+      "source": "fotografias (resumo)",
+      "estimated": true,
+      "note": "caixa da culatra cilíndrica, largura × altura × comprimento"
+    },
+    {
+      "id": "feed_cover",
+      "value_m": 0.166,
+      "source": "fotografias (resumo)",
+      "estimated": true,
+      "note": "tampa da alimentação com dobradiça à frente e fecho atrás; comprimento e abertura (80°) estimados"
+    },
+    {
+      "id": "trigger",
+      "value_m": null,
+      "source": "T33",
+      "estimated": true,
+      "note": "gatilho em crescente de duas partes: E (tiro a tiro, em cima) e D (contínuo, em baixo) [T33]; formas estimadas"
+    },
+    {
+      "id": "sights",
+      "value_m": [
+        0.085,
+        0.08
+      ],
+      "source": "T33",
+      "estimated": true,
+      "note": "alça tangente rebatível 200–2000 m e massa rebatível [T33]; alturas acima do eixo estimadas; sem a mira antiaérea"
+    },
+    {
+      "id": "bipod",
+      "value_m": 0.35,
+      "source": "T33",
+      "estimated": true,
+      "note": "bípode à frente da manga (posição dianteira; havia também a posição junto à caixa) [T33]; pernas e abertura estimadas"
+    },
+    {
+      "id": "cocking_handle",
+      "value_m": 0.12,
+      "source": "fotografias (resumo)",
+      "estimated": true,
+      "note": "alavanca de armar à direita, não acompanha o ferrolho; curso estimado"
+    }
+  ],
+  "parts": [
+    {
+      "node": "mg34_body",
+      "visible": true,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "moving": null,
+      "contents": "coronha, caixa, caixa de alimentação, punho e gatilho E/D, manga perfurada, reforçador de recuo, miras, abraçadeira do bípode",
+      "pieces": [
+        "stock",
+        "buttplate",
+        "receiver",
+        "receiver_top",
+        "feed_tray",
+        "drum_ear_l",
+        "drum_ear_r",
+        "handle_slot",
+        "ejection_port",
+        "trigger_housing",
+        "grip",
+        "trigger_guard",
+        "trigger_e",
+        "trigger_d",
+        "jacket",
+        "jacket_front",
+        "recoil_booster",
+        "muzzle_cone",
+        "bore",
+        "front_sight_base",
+        "front_sight",
+        "rear_sight_base",
+        "rear_sight_leaf",
+        "rear_sight_notch",
+        "bipod_clamp",
+        "sling_rear"
+      ]
+    },
+    {
+      "node": "mg34_feed_cover",
+      "visible": true,
+      "pivot": [
+        0,
+        0.072,
+        -0.106
+      ],
+      "moving": "rotação em X na dobradiça da frente; a traseira sobe (−80° = aberta)",
+      "contents": "tampa da alimentação com fecho",
+      "pieces": [
+        "cover",
+        "cover_latch",
+        "cover_hinge"
+      ]
+    },
+    {
+      "node": "mg34_cocking_handle",
+      "visible": true,
+      "pivot": [
+        0.031,
+        0.012,
+        -0.035
+      ],
+      "moving": "translação em +Z até 0.12 m (atrás = puxada)",
+      "contents": "alavanca de armar (direita), à frente em repouso",
+      "pieces": [
+        "handle",
+        "handle_knob"
+      ]
+    },
+    {
+      "node": "mg34_drum",
+      "visible": true,
+      "pivot": [
+        -0.105,
+        -0.008,
+        -0.035
+      ],
+      "moving": "translação, rotação e escala (troca do tambor)",
+      "contents": "tambor de cinta de 50 (Gurttrommel 34), à esquerda",
+      "pieces": [
+        "drum_can",
+        "drum_mouth",
+        "drum_handle",
+        "drum_latch"
+      ]
+    },
+    {
+      "node": "mg34_belt",
+      "visible": true,
+      "pivot": [
+        -0.03,
+        0.061,
+        -0.035
+      ],
+      "moving": "translação e escala (cinta na caixa)",
+      "contents": "início da cinta na caixa de alimentação (5 cartuchos)",
+      "pieces": [
+        "round_0",
+        "bullet_0",
+        "link_0",
+        "round_1",
+        "bullet_1",
+        "link_1",
+        "round_2",
+        "bullet_2",
+        "link_2",
+        "round_3",
+        "bullet_3",
+        "link_3",
+        "round_4",
+        "bullet_4",
+        "link_4"
+      ]
+    },
+    {
+      "node": "mg34_bipod_folded",
+      "visible": true,
+      "pivot": [
+        0,
+        0.004,
+        -0.645
+      ],
+      "moving": null,
+      "contents": "bípode dobrado para trás por baixo da manga",
+      "pieces": [
+        "leg_l",
+        "foot_l",
+        "leg_r",
+        "foot_r"
+      ]
+    },
+    {
+      "node": "mg34_bipod_open",
+      "visible": false,
+      "pivot": [
+        0,
+        0.004,
+        -0.645
+      ],
+      "moving": null,
+      "contents": "bípode aberto, patas no chão (alternativa ao dobrado)",
+      "pieces": [
+        "leg_l",
+        "foot_l",
+        "leg_r",
+        "foot_r"
+      ]
+    }
+  ],
+  "sockets": {
+    "grip_r": [
+      0,
+      -0.07,
+      0.1
+    ],
+    "grip_l": [
+      0,
+      -0.03,
+      -0.42
+    ],
+    "cheek": [
+      0,
+      0.084,
+      0.22
+    ],
+    "muzzle": [
+      0,
+      0.03,
+      -0.769
+    ],
+    "ejection_port": [
+      0,
+      -0.014,
+      -0.03
+    ],
+    "charging_handle": [
+      0.061,
+      0.012,
+      -0.035
+    ],
+    "charging_handle_back": [
+      0.061,
+      0.012,
+      0.08499999999999999
+    ],
+    "feed_cover_hinge": [
+      0,
+      0.072,
+      -0.106
+    ],
+    "feed_cover_latch": [
+      0,
+      0.104,
+      0.05
+    ],
+    "feed_tray": [
+      -0.03,
+      0.064,
+      -0.04
+    ],
+    "drum_center": [
+      -0.105,
+      -0.008,
+      -0.035
+    ],
+    "rear_sight": [
+      0,
+      0.085,
+      -0.12
+    ],
+    "front_sight": [
+      0,
+      0.087,
+      -0.704
+    ],
+    "butt": [
+      0,
+      -0.026,
+      0.453
+    ],
+    "bipod_mount": [
+      0,
+      0.004,
+      -0.645
+    ],
+    "bipod_feet": [
+      0,
+      -0.336,
+      -0.7
+    ]
+  },
+  "hands": {
+    "right": {
+      "pos": [
+        0.034,
+        -0.03,
+        0.155
+      ],
+      "fdir": [
+        -0.3010858672138876,
+        -0.6222441255753677,
+        -0.7226060813133302
+      ],
+      "palm": [
+        -0.9877295966495897,
+        0.04938647983247949,
+        0.14815943949743846
+      ]
+    },
+    "left": {
+      "pos": [
+        -0.03,
+        -0.03,
+        -0.38
+      ],
+      "fdir": [
+        0.5484119048844308,
+        0.11965350652023944,
+        -0.8276034200983228
+      ],
+      "palm": [
+        -0.2422507915557546,
+        0.9690031662230184,
+        0.048450158311150925
+      ]
+    },
+    "note": "pulso, direcção dos dedos e normal da palma no referencial da arma (usados pelos clips): direita no punho, esquerda nas pernas do bípode dobrado"
+  },
+  "materials": [
+    {
+      "name": "mg34",
+      "painters": [
+        "steel",
+        "jacket",
+        "bakelite",
+        "drum",
+        "bare_metal",
+        "brass",
+        "bullet",
+        "bore"
+      ],
+      "note": "um material com atlas; aço fosfatado escuro, baquelite, tambor pintado, latão; furos da manga pintados (cor escura e relevo no mapa normal)"
+    }
+  ],
+  "textures": {
+    "atlas_px": 1024,
+    "density_px_per_m": 1088
+  },
+  "files": {
+    "m01_mg34_lod0.glb": {
+      "lod": "lod0",
+      "use": "perto (< 15 m), primeira pessoa e capturas",
+      "bytes": 331304,
+      "triangles_visible": 2432,
+      "draw_calls_visible": 6,
+      "meshes": [
+        {
+          "name": "mg34_body",
+          "triangles": 1352,
+          "visible": true
+        },
+        {
+          "name": "mg34_feed_cover",
+          "triangles": 176,
+          "visible": true
+        },
+        {
+          "name": "mg34_cocking_handle",
+          "triangles": 64,
+          "visible": true
+        },
+        {
+          "name": "mg34_drum",
+          "triangles": 296,
+          "visible": true
+        },
+        {
+          "name": "mg34_belt",
+          "triangles": 400,
+          "visible": true
+        },
+        {
+          "name": "mg34_bipod_folded",
+          "triangles": 144,
+          "visible": true
+        },
+        {
+          "name": "mg34_bipod_open",
+          "triangles": 144,
+          "visible": false
+        }
+      ],
+      "bbox_m": {
+        "min": [
+          -0.175,
+          -0.1396,
+          -0.769
+        ],
+        "max": [
+          0.071,
+          0.104,
+          0.45
+        ]
+      },
+      "textures": {
+        "baseColor": "image/jpeg 1024²",
+        "metallicRoughness": "image/png 512²",
+        "normal": "image/png 512²"
+      }
+    },
+    "m01_mg34_lod1.glb": {
+      "lod": "lod1",
+      "use": "médio (15–40 m)",
+      "bytes": 124380,
+      "triangles_visible": 1262,
+      "draw_calls_visible": 6,
+      "meshes": [
+        {
+          "name": "mg34_body",
+          "triangles": 608,
+          "visible": true
+        },
+        {
+          "name": "mg34_feed_cover",
+          "triangles": 78,
+          "visible": true
+        },
+        {
+          "name": "mg34_cocking_handle",
+          "triangles": 56,
+          "visible": true
+        },
+        {
+          "name": "mg34_drum",
+          "triangles": 146,
+          "visible": true
+        },
+        {
+          "name": "mg34_belt",
+          "triangles": 310,
+          "visible": true
+        },
+        {
+          "name": "mg34_bipod_folded",
+          "triangles": 64,
+          "visible": true
+        },
+        {
+          "name": "mg34_bipod_open",
+          "triangles": 64,
+          "visible": false
+        }
+      ],
+      "bbox_m": {
+        "min": [
+          -0.1719,
+          -0.1393,
+          -0.769
+        ],
+        "max": [
+          0.0703,
+          0.1036,
+          0.45
+        ]
+      },
+      "textures": {
+        "baseColor": "image/jpeg 512²",
+        "metallicRoughness": "image/png 256²"
+      }
+    },
+    "m01_mg34_lod2.glb": {
+      "lod": "lod2",
+      "use": "longe (dique a ~1,2 km) / Chromebook",
+      "bytes": 37144,
+      "triangles_visible": 368,
+      "draw_calls_visible": 6,
+      "meshes": [
+        {
+          "name": "mg34_body",
+          "triangles": 202,
+          "visible": true
+        },
+        {
+          "name": "mg34_feed_cover",
+          "triangles": 26,
+          "visible": true
+        },
+        {
+          "name": "mg34_cocking_handle",
+          "triangles": 16,
+          "visible": true
+        },
+        {
+          "name": "mg34_drum",
+          "triangles": 44,
+          "visible": true
+        },
+        {
+          "name": "mg34_belt",
+          "triangles": 60,
+          "visible": true
+        },
+        {
+          "name": "mg34_bipod_folded",
+          "triangles": 20,
+          "visible": true
+        },
+        {
+          "name": "mg34_bipod_open",
+          "triangles": 20,
+          "visible": false
+        }
+      ],
+      "bbox_m": {
+        "min": [
+          -0.1719,
+          -0.1393,
+          -0.769
+        ],
+        "max": [
+          0.0703,
+          0.0989,
+          0.45
+        ]
+      },
+      "textures": {
+        "baseColor": "image/jpeg 256²"
+      }
+    },
+    "m01_mg34_animations.glb": {
+      "bytes": 256984,
+      "clips": [
+        {
+          "name": "mg34_aim",
+          "duration": 2,
+          "loop": true,
+          "events": null
+        },
+        {
+          "name": "mg34_fire_burst",
+          "duration": 1.02,
+          "loop": false,
+          "events": {
+            "fire": [
+              0,
+              0.075,
+              0.15,
+              0.225,
+              0.3,
+              0.375,
+              0.45
+            ]
+          }
+        },
+        {
+          "name": "mg34_reload",
+          "duration": 4.4,
+          "loop": false,
+          "events": {
+            "cover_open": 0.85,
+            "drum_off": 1.35,
+            "drum_drop": 1.75,
+            "drum_from_assistant": 1.85,
+            "drum_on": 2.5,
+            "belt_in": 2.8,
+            "cover_closed": 3.2,
+            "handle_back": 3.6,
+            "handle_forward": 3.9
+          }
+        }
+      ]
+    }
+  }
+}

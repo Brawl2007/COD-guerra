@@ -111,6 +111,15 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 - Kit em `assets/models/provisional/m01/weapons/rkm_wz28/`, gerado por `tools/assets/m01-rkm-wz28/`: LOD0/1/2 com 1476/744/234 triângulos, carregador, alavanca de armar e bípode dobrado/aberto em nós separados, sockets e manifesto com medidas estimadas identificadas.
 - Prende-se ao osso `weapon` do rig existente; `m01_rkm_wz28_animations.glb` traz `rkm_carry`, `rkm_aim` e `rkm_fire_burst` (3 tiros, como a simulação). Verificado por `tests/m01-rkm-wz28-glb.test.js` e capturas inspeccionadas em `docs/assets/m01-rkm-wz28/`. Falta ligá-lo a Kowal em `src/render/` (Codex), clips de troca de carregador/deitado e confirmar T31 em leitura integral.
 
+**MG 34 de 1939 (arma isolada, provisória; ainda não ligada ao runtime):**
+- Kit em `assets/models/provisional/m01/weapons/mg34/`, gerado por `tools/assets/m01-mg34/`: 1,219 m, LOD0/1/2 com 2432/1262/368 triângulos. Tem manga perfurada, coronha, alça e massa, bípode dobrado/aberto e tambor de cinta de 50. A tampa, a alavanca de armar, o tambor e a cinta são nós com pivô. O manifesto traz sockets, mãos, materiais, bytes, fontes (T33, por resumo) e as medidas estimadas marcadas.
+- Prende-se ao osso `weapon` do soldado alemão actual, com a Kar98k e o clipe escondidos. `m01_mg34_animations.glb` traz `mg34_aim`, `mg34_fire_burst` (7 tiros a 800/min, como o intervalo da simulação) e `mg34_reload` (troca do tambor), que animam também os nós da arma pelo nome. Verificado por `tests/m01-mg34-glb.test.js` e pelas capturas inspeccionadas em `docs/assets/m01-mg34/`.
+- Falta:
+  - ligá-la às posições `grp_de_east` em `src/render/` (Codex);
+  - o tiro deitado com bípode, porque não há pose `prone`;
+  - a cinta de 250, o municiador e a mira antiaérea;
+  - confirmar T33 em leitura integral.
+
 ## Parcial ou pendente
 
 - Soldados próximos, mãos, recarga e transporte já têm rig e clips reais. Arte, encaixe das mãos, uniformes e mixagem continuam a exigir revisão; Civis e alguns actores distantes conservam proxies. Vozes gravadas continuam ausentes.

@@ -166,9 +166,10 @@
       "category": "machine_gun",
       "caliber": "7,92×57 mm",
       "availableFrom": "1936-01-01",
+      "specs": { "lengthM": 1.219, "barrelM": 0.627, "massKg": 12.1, "rateRpm": [800, 900], "feed": "cinta de 50/250 ou tambor de cinta de 50 (Gurttrommel 34)", "rearSightM": [200, 2000], "trigger": "E/D (tiro a tiro / contínuo)" },
       "roles": ["machine_gunner"],
       "certainty": "MEDIA",
-      "sources": [],
+      "sources": ["T33"],
       "notes": "Metralhadoras na cabeça de ponte leste e, provavelmente, no Panzerzug 7 (armamento do trem PENDENTE)."
     },
     {
