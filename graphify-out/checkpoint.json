@@ -1,0 +1,25 @@
+{
+  "status": "INCOMPLETE",
+  "code_files_last_scan": 168,
+  "document_files_last_scan": 55,
+  "image_files_last_scan": 155,
+  "completed_initial_images": 120,
+  "initial_images_total": 151,
+  "supplemental_images_total": 4,
+  "completed_initial_doc_chunks": 2,
+  "ast_nodes": 1537,
+  "ast_edges": 3558,
+  "archive_sha256": "54647d13cc9b860c18b777cbd3d4cdc693d4a2af0cb015082171c2667dd32e32",
+  "agent_block": "usage limit; user requested handoff",
+  "unavailable": "no final graph, HTML, clustering, health check or benchmark; token usage not exposed",
+  "refresh_documents": [
+    "docs/CLAUDE_NEXT_TASK.md",
+    "DEVELOPMENT_STATUS.md",
+    "RUNBOOK.md",
+    "docs/THIRD_AGENT_TASK.md",
+    "ASSET_CREDITS.md",
+    "missions/m01-tczew/ASSETS.md",
+    "docs/assets/m01-aircraft/README.md"
+  ],
+  "new_documents": "WORKING_CONTEXT, context/memory, aircraft verification and next chat context added after initial scan"
+}

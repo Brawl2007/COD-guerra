@@ -4,16 +4,18 @@
 
 M01 passou a **PROTÓTIPO JOGÁVEL** nesta branch. O fluxo usa a fundação Three.js e as pontes do Claude, preservando os históricos dos PRs #9 e #11. A bancada francesa continua seleccionável. O marco 2 ainda não está aprovado como missão validada; faltam o playtest humano, a medição no Chromebook e o trabalho descrito abaixo.
 
-Os PRs #8 e #10 de pesquisa/preparação já estão em `main`. A integração actual está no PR #26 para `codex/m01-runtime`; #9/#11 já foram substituídos e fechados. O merge em `main` e a publicação pertencem ao utilizador. O mapa francês conserva as suas coordenadas e arma.
+Os PRs #8 e #10 de pesquisa/preparação já estão em `main`. Os PRs #26/#27 estão integrados em `codex/m01-runtime`; #9/#11 já foram substituídos e fechados. Esta revisão preserva o kit e a ligação do Ju 87 do PR #28, com LOD pela distância e provas do raid real, e integra os kits provisórios revistos de vagões #29 e MG34 #30. Os dois novos kits ainda aguardam ligação ao renderer; revisão e limites em `docs/verification/m01-runtime/asset-review-2026-10-02/`. O PR #31 da ckm wz.30 já existe, ainda por rever. O merge em `main` e a publicação pertencem ao utilizador. O mapa francês conserva as suas coordenadas e arma.
 
 ## Implementado e observado
+
+Continuação de 2026-10-02: o handoff `f758daa` passou novamente **132/132 Node**, build e **24/24 navegador** em 538,6 s, zero retries. A integração dos kits #29/#30 passou **136/136 Node** e build; o runtime e o JS de produção são idênticos aos do handoff testado. Evidências e proveniência em `docs/verification/m01-runtime/asset-review-2026-10-02/`. O CI do candidato do PR para main é uma verificação separada.
 
 - PR #25 do Claude preservado nesta branch: Kowal usa a rkm wz.28 (cabeça, divisa, bolsa e bípode), Bąk saudável a wz.98a. Mira, rajada e troca de carregador de Kowal lêem o disparo/munição/cooldown já guardados; não acrescentam regras de combate. Clarões usam os sockets da arma escolhida.
 - S3 encena o ferido ficcional das 04:35:30: começa no pátio, Dudek aproxima-se pela cabeça, arrasta-o de costas no chão, entrega-o na estação e volta ao posto. Saves schema 2 preservam a operação e aceitam estados antigos; os resgates posteriores de Bąk e as demolições conservam-se.
 
 - O trabalho de soldados do Claude (PRs #23/#25, `055da03`) foi preservado e ligado à missão com GLTFLoader, SkeletonUtils e AnimationMixer oficiais. Actores próximos usam rosto, mãos, uniformes, equipamento e 25 clips; actores distantes conservam os proxies e os mesmos IDs. A wz.29 e Bąk ao ombro também usam o rig em primeira pessoa. LODs, limites por qualidade, pausa/restauro, fallback e licença CC0 estão verificados em `docs/verification/m01-runtime/characters/`. Sem serviços pagos ou modelos extraídos de jogos. O ferrolho do NPC termina depois do clarão; as mãos dos sapadores param quando o reparo é suprimido.
 
-- Soldados levantam a arma ao ombro nos disparos, com mãos ligadas à coronha/guarda-mão e recuo procedural. Sob fogo, o tronco curva-se com as botas no chão; o passo levanta um pé. A animação deriva do relógio e dos dados do actor, reproduzindo o mesmo frame após pausa/reload. Galeria e provas em `docs/verification/m01-runtime/combat-animation/`; continuam geometrias provisórias. O kit Ju 87 foi separado como tarefa para um terceiro agente em `docs/THIRD_AGENT_TASK.md`, independente dos soldados atribuídos ao Claude.
+- Soldados levantam a arma ao ombro nos disparos, com mãos ligadas à coronha/guarda-mão e recuo procedural. Sob fogo, o tronco curva-se com as botas no chão; o passo levanta um pé. A animação deriva do relógio e dos dados do actor, reproduzindo o mesmo frame após pausa/reload. Galeria e provas em `docs/verification/m01-runtime/combat-animation/`; continuam geometrias provisórias. A tarefa independente do Ju 87 em `docs/THIRD_AGENT_TASK.md` foi entregue no PR #28; a próxima tarefa do Claude está em `docs/CLAUDE_NEXT_TASK.md`.
 
 - A ordem de mudar de cobertura só aparece quando uma salva real é emitida. O HUD distingue portões de Lisewo e dique norte/sul, com distância e direcção relativa ao olhar por oito segundos activos. A origem restaura como dado opcional do schema 2; cobertura obstruída não gera aviso falso. Fumo da boca e poeira de impactos usam partículas suaves em vez de esferas sólidas. Provas por trechos em `docs/verification/m01-runtime/cover-origin/`.
 
@@ -109,7 +111,19 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 
 **rkm wz.28 de Kowal (arma isolada, provisória; o runtime usa a rkm embutida nos GLB dos soldados e os clips `rkm_*` deles, com os mesmos nomes `rkm_aim`/`rkm_fire_burst`):**
 - Kit em `assets/models/provisional/m01/weapons/rkm_wz28/`, gerado por `tools/assets/m01-rkm-wz28/`: LOD0/1/2 com 1476/744/234 triângulos, carregador, alavanca de armar e bípode dobrado/aberto em nós separados, sockets e manifesto com medidas estimadas identificadas.
-- Prende-se ao osso `weapon` do rig existente; `m01_rkm_wz28_animations.glb` traz `rkm_carry`, `rkm_aim` e `rkm_fire_burst` (3 tiros, como a simulação). Verificado por `tests/m01-rkm-wz28-glb.test.js` e capturas inspeccionadas em `docs/assets/m01-rkm-wz28/`. Falta ligá-lo a Kowal em `src/render/` (Codex), clips de troca de carregador/deitado e confirmar T31 em leitura integral.
+- Prende-se ao osso `weapon` do rig existente; `m01_rkm_wz28_animations.glb` traz `rkm_carry`, `rkm_aim` e `rkm_fire_burst` (3 tiros, como a simulação). Verificado por `tests/m01-rkm-wz28-glb.test.js` e capturas inspeccionadas em `docs/assets/m01-rkm-wz28/`. A rkm embutida já funciona em Kowal com os dez clips dos soldados; este kit isolado fica disponível para usos futuros, sem duplicar a arma nem substituir os clips. Faltam clips específicos de troca/deitado neste kit e confirmar T31 em leitura integral.
+
+**Ju 87 B-1 do raid (asset provisório ligado aos três aviões):** kit original em `assets/models/provisional/m01-aircraft/` (`tools/assets/m01-aircraft/`), LOD0/1/2 com 13 102/4 730/1 636 triângulos, nós `fuselage`, `propeller`, `dive_brake_l/r` e `bomb_sc250`, clips `propeller_spin` e `dive_brakes_extend`. Verificado por `tests/m01-ju87-glb.test.js`, relatório de importação three.js e galeria isolada em `docs/assets/m01-aircraft/` (não é playtest). Três clones partilham geometria/materiais, com LOD nativo por distância (mínimo LOD1 em médio e LOD2 em baixo), hélice amostrada do relógio e fallback por silhueta. Não muda trajectórias ou eventos; a carga SC 250 não documentada fica oculta. O segundo raid conserva o modelo anterior. Provas de produção em `docs/verification/m01-runtime/aircraft/`; falta confirmar T29/T12, freios/lançamento ligados a dados reais e arte final.
+**Vagões do trem 963 e do pátio (assets provisórios, ainda não ligados ao jogo):** kit original em `assets/models/provisional/m01-wagons/` (`tools/assets/m01-wagons/`), coberto (tipo G, portas de correr) e aberto (tipo O), genéricos da época porque P16 continua aberta. LOD0/1/2 com 2 332/1 128/516 e 1 948/846/364 triângulos, nós `body`, `wheelset_1/2` e `door_l/r`, clips `wheels_roll` e `doors_open`. Verificado por `tests/m01-wagons-glb.test.js`, relatório de importação three.js e galeria isolada em `docs/assets/m01-wagons/` (não é playtest). Falta ligá-los ao trem 963 e ao pátio (Codex) e identificar os tipos reais (P16).
+
+**MG 34 de 1939 (arma isolada, provisória; ainda não ligada ao runtime):**
+- Kit em `assets/models/provisional/m01/weapons/mg34/`, gerado por `tools/assets/m01-mg34/`: 1,219 m, LOD0/1/2 com 2432/1262/368 triângulos. Tem manga perfurada, coronha, alça e massa, bípode dobrado/aberto e tambor de cinta de 50. A tampa, a alavanca de armar, o tambor e a cinta são nós com pivô. O manifesto traz sockets, mãos, materiais, bytes, fontes (T33, por resumo) e as medidas estimadas marcadas.
+- Prende-se ao osso `weapon` do soldado alemão actual, com a Kar98k e o clipe escondidos. `m01_mg34_animations.glb` traz `mg34_aim`, `mg34_fire_burst` (7 tiros a 800/min, como o intervalo da simulação) e `mg34_reload` (troca do tambor), que animam também os nós da arma pelo nome. Verificado por `tests/m01-mg34-glb.test.js` e pelas capturas inspeccionadas em `docs/assets/m01-mg34/`.
+- Falta:
+  - ligá-la às posições `grp_de_east` em `src/render/` (Codex);
+  - o tiro deitado com bípode, porque não há pose `prone`;
+  - a cinta de 250, o municiador e a mira antiaérea;
+  - confirmar T33 em leitura integral.
 
 **ckm wz.30 da casamata (`grp_ckm_crew`; kit isolado, não ligado ao jogo):**
 - Kit em `assets/models/provisional/m01/weapons/ckm_wz30/`, gerado por `tools/assets/m01-ckm-wz30/`: arma de 1,211 m no tripé baixo (cano a 0,64 m), fita de tecido pela esquerda e caixa de aço caqui de 355 × 175 × 85 mm. LOD0/1/2 com 5004/2298/754 triângulos. Direcção, elevação, alavanca, fita e tampa estão em nós com pivô; o manifesto traz sockets, pontos de pega e medidas estimadas identificadas.
@@ -141,6 +155,6 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 
 ## Próximo passo
 
-Playtest humano completo de M01, com atenção ao fogo de cobertura a ~1,2 km (clarões de ~8 px e raio de supressão de 3 m). Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02.
+Ligar os kits revistos de vagões/MG34 à apresentação com dados da simulação, rever a ckm wz.30 do PR #31 e realizar o playtest humano completo de M01, com atenção ao fogo de cobertura a ~1,2 km (clarões de ~8 px e raio de supressão de 3 m). Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02. Graphify permanece em pausa no checkpoint existente.
 
 O trabalho das pontes de Claude foi preservado e completado, incluindo dano persistente em LOD0/1/2. Mapas históricos e inventários específicos continuam úteis para as pendências de P4/P13 e de arte. Não recomeçar essa entrega.

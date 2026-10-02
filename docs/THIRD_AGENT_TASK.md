@@ -1,5 +1,7 @@
 # Terceiro agente — Ju 87 B-1 de M01
 
+**Tarefa entregue no PR #28.** Contrato preservado como referência; a próxima tarefa independente está em `CLAUDE_NEXT_TASK.md`.
+
 Tarefa independente da engine e dos soldados atribuídos ao Claude. Pode ser entregue a um agente de código com acesso ao repositório; este documento não activa nem contrata um serviço.
 
 Criar uma branch própria a partir de `codex/m01-runtime` actualizado e abrir PR para essa mesma branch. Ler `AGENTS.md`, `DEVELOPMENT_STATUS.md`, `ASSET_CREDITS.md`, `missions/m01-tczew/ASSETS.md`, `assets-m01.json`, `SOURCE_CHECK.md` e as fontes de avião em `research/SOURCES.md`.
