@@ -11,6 +11,7 @@ import { M01Atmosphere } from './m01-atmosphere.js';
 import { M01Environment } from './m01-environment.js';
 import { M01Characters } from './m01-characters.js';
 import { M01ViewModel } from './m01-viewmodel.js';
+import { M01TrainWagons } from './m01-train-wagons.js';
 
 // Presentation only: all actors, visible pieces, damage and clocks come from M01Simulation.
 // Original procedural art: textured environment and articulated humans; final scanned/rigged art remains pending.
@@ -52,7 +53,7 @@ export class M01View {
     this.atmosphere=new M01Atmosphere(this.scene);
     this.createWeapon();this.createActors();this.createContactShadows();this.createFireEffects();this.createAircraft();this.createTrains();
     this.characters=new M01Characters(this.scene);this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture);
-    this.ready=Promise.all([this.loadKit(),this.characters.load(this.owner.quality),this.loadAircraft()]);
+    this.ready=Promise.all([this.loadKit(),this.characters.load(this.owner.quality),this.loadAircraft(),this.wagons.load()]);
   }
   mesh(shape,material,p,size,parent=this.scene){
     const m=new THREE.Mesh(this[shape],this.materials[material]);m.position.set(...p);m.scale.set(...size);
@@ -352,10 +353,10 @@ export class M01View {
   }
   createTrains(){
     this.train=new THREE.Group();this.panzerzug=new THREE.Group();this.scene.add(this.train,this.panzerzug);
-    for(let i=0;i<32;i++){
-      this.mesh('box',i===0?'dark':'wood',[1075+i*20,2,-2.5],[17,3.2,2.8],this.train);
-      for(const x of [-5,5])this.mesh('cylinder','metal',[1075+i*20+x,.4,-2.5],[.6,3.1,.6],this.train).rotation.x=Math.PI/2;
-    }
+    // Locomotive identification remains open (P16); keep its original placeholder.
+    this.mesh('box','dark',[1075,2,-2.5],[17,3.2,2.8],this.train);
+    for(const x of [-5,5])this.mesh('cylinder','metal',[1075+x,.4,-2.5],[.6,3.1,.6],this.train).rotation.x=Math.PI/2;
+    this.wagons=new M01TrainWagons(this.train,this.assets,this.box,this.cylinder,this.materials.wood,this.materials.metal);
     for(let i=0;i<5;i++)this.mesh('box','metal',[1119+i*19,2,2.5],[17,3.1,2.9],this.panzerzug);
     for(const x of [1120,1197])this.mesh('cylinder','metal',[x,4,2.5],[1,1,1],this.panzerzug);
   }
@@ -384,7 +385,7 @@ export class M01View {
     // Assets, world restore, quality and resizing still invalidate it.
     const canvas=this.owner.canvas,previous=this.lastFrame;
     const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
-      width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision};
+      width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,wagons:this.wagons.revision};
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
@@ -433,12 +434,12 @@ export class M01View {
   resetEffects(){this.lastFrame=null;this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.impacts=[];for(const b of this.bursts){this.effects.remove(b.mesh);b.mesh.material.dispose();}this.bursts=[];for(const b of Object.values(this.fireBatches))b.count=0;this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0};}
   get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,
     requiredAssetFailures:this.assets.failures.filter(f=>manifest.files.some(m=>typeof m.lod==='number'&&m.file===f.path)),
-    characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,
+    characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,wagons:this.wagons.diagnostics,
     aircraft:{loaded:[...this.aircraftSources.keys()].sort(),planes:this.planes.map(p=>{const model=p.levels.find(l=>l.object.visible)?.object,prop=model?.getObjectByName('propeller');return {visible:p.visible,lod:model?.userData.lod,position:p.position.toArray(),propeller:prop?.quaternion.toArray()};})},
     renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+b.count,0)??0,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx}};}
   dispose(){
-    this.disposed=true;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}this.viewModel?.dispose();this.characters?.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
+    this.disposed=true;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}this.viewModel?.dispose();this.characters?.dispose();this.wagons.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
     const textures=new Set();for(const m of Object.values(this.materials)){if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
     this.scene.traverse(n=>{if(n.isInstancedMesh)n.dispose();});this.scene.clear();this.weaponScene.clear();
   }

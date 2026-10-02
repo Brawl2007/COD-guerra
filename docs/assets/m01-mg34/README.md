@@ -154,3 +154,7 @@ Todo o kit é original e foi gerado por código neste repositório pelo Claude C
 - **Material da coronha:** baquelite ou madeira em 1939, por confirmar.
 - **Cores:** aproximadas; sem mapa de ambiente, o aço aparece escuro.
 - **Contacto das mãos:** aproximado (FK, IK de 2 ossos e dedos por flexão, sem colisão). A mão esquerda fica por baixo das pernas do bípode, sem as envolver por completo.
+
+## Integração do Codex — 2026-10-02
+
+Os dois atiradores existentes `de_east_0/1` usam agora uma MG34 por rig, no osso weapon, antes de criar as acções; Kar98k/clipe escondidos. A rajada lê firedAt/shot e acaba no comprimento real de 4–7 tiros. Não simula recarga/deitado/municiador. O kit deitado #33 está integrado, aguardando representação dessa postura e guarnição na simulação. Provas de produção e limites em [`support-runtime-2026-10-02`](../../verification/m01-runtime/support-runtime-2026-10-02/README.md). As capturas e o relatório acima conservam a origem da galeria original.
