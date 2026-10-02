@@ -15,16 +15,18 @@ Trabalhar em branch própria. Integrações em `codex/m01-runtime` e PRs estão 
 | Referência | Estado observado | Conteúdo |
 | --- | --- | --- |
 | `main` | `72bbcdd156603c9399801c95d43d9365ba50fc82` | Publicação reservada ao utilizador. |
-| `codex/m01-runtime` | Base remota verificada `a07fcd955dcaccae8173a5b4773675af27bd476a`; esta entrega contém código/merges até `ded5d4b` e evidências posteriores | PRs #26/#27, Ju 87 revisto e kits #29/#30; main continua separado. Confirmar HEAD remoto antes de continuar. |
+| `codex/m01-runtime` | Continuação de `dcffd4a`; código/merges até `e6f4bdc`, tree `81b4a71f35230fb89451b9029644afc2c8120d56`, seguidos de evidências/contexto | Ju 87, vagões/MG34 ligados; kits #31/#33/#34 preservados; main continua separado. Confirmar HEAD remoto antes de continuar. |
 | PR #26 | Head `82dd3f06e383dfca0277e5416a27c7bb302fd931` | Revisão final da recarga, tiros de Kowal e provas reais. Tree `ca79370b443cf02d2bc7646d897b8819f0e75a4f`. |
 | PR #25 | Conteúdo preservado `055da03e4461a13f844ff93c0dad8d54ffa0a1ac` (a branch foi reutilizada pelo #30) | Claude: rkm/wz.98a embutidas, 61 ossos e 25 clips. Já preservado no #26; não fazer merge separado em main automaticamente. |
 | PR #27 | Head revisto `afdbe9e50b6f841c108cf250b2eef851213322bb` | Claude: kit **isolado** da rkm. Integrado em staging por `a07fcd9`; clips regenerados para o rig actual e galeria refeita. |
 
 | PR #28 | Head observado `3fa1d0d4e62e5c48c300d1929ca5455ee6737563` | Claude: kit Ju 87 e primeira ligação. Esta revisão acrescenta LOD por distância, prova do raid genuíno e falha opcional. |
-| PR #29 | Head `0667af008549f15947c10ab09b814338d701bf2c` | Kit de vagões genéricos revisto e integrado por `b880cd4`; ligação ao renderer pendente, P16 aberta. |
-| PR #30 | Head `ad0253e9e370c80b96163d01b061047750dd93df` | Kit MG34 revisto e integrado por `ded5d4b`; ligação ao renderer e pose deitada pendentes. |
-| PR #31 | Head `f4275ff227885777c1876a318d673bfcb9c3d93e` | ckm wz.30/guarnição já entregue; ainda por rever/integrar. Não repetir o pedido ao Claude. |
+| PR #29 | Head `0667af008549f15947c10ab09b814338d701bf2c` | Kit de vagões genéricos revisto e integrado por `b880cd4`; 65 vagões do trem ligados em LOD2 instanciado; pátio/identificação P16 pendentes. |
+| PR #30 | Head `ad0253e9e370c80b96163d01b061047750dd93df` | Kit MG34 revisto e integrado por `ded5d4b`; ligada a de_east_0/1, uma arma por rig; deitado/municiador pendentes na simulação. |
+| PR #31 | Head `4170eea6ca5ed5f882727f9678bd2a763927e5b1` | Kit revisto/integrado por `ec87e3f`; guarnição/ligação e orçamento do LOD0 pendentes. |
 | `codex/m01-assets-review` | Código/merges em `ded5d4bd06e0790360698f05bfb4f6ee9e917627`, tree `c43075bd03dc7049658b872dd1a6bcb43928686e` | Handoff + kits #29/#30, preservando os históricos; commits seguintes só registam evidências/contexto. |
+
+Continuação actual em `codex/m01-support-runtime`, também avançando o candidato `codex/m01-assets-review` do PR #32 e staging. #33 (`c6e5ed4`) integrado por `26c803c`; runtime `456d216` equivale à tree local testada `ec27af68ec9c25f9603a2329437ee4891ace8319`; #34 (`11554d9`) integrado por `e6f4bdc`. As linhas antigas são âncoras históricas.
 
 Verificar refs antes de escrever no GitHub. Estes hashes são âncoras desta etapa, não uma promessa de que as branches nunca avançarão.
 
@@ -32,6 +34,7 @@ Verificar refs antes de escrever no GitHub. Estes hashes são âncoras desta eta
 
 | Ficheiro/sistema | Trabalho entregue / decisão |
 | --- | --- |
+| `src/render/m01-train-wagons.js` | 65 vagões (49 cobertos/16 abertos genéricos), 9,10 m, LOD2 partilhado/instanciado, fallback parcial/total. Cache possui geometria/material; módulo liberta buffers de instâncias. Sem velocidade/desembarque inventados. |
 | `src/render/m01-characters.js` | `M01Characters.load/create/sample/update/release`: GLTFLoader, SkeletonUtils e AnimationMixer; esqueletos independentes, geometria/texturas partilhadas; 18/24/28 instâncias por qualidade. LODs e cache/fallback preservados. |
 | `src/render/m01-characters.js` — Kowal | Usa a rkm **embutida** e os dez clips `rkm_*` do PR #25. Rajada/recarga derivam de `firedAt`, `rounds` e `cooldown`; não inventar novos relógios ou munição. Bąk saudável usa wz.98a. |
 | `assets/models/provisional/m01/weapons/rkm_wz28/` | PR #27: geometria isolada com LODs 1476/744/234 triângulos, pivôs, sockets, texturas e manifesto; três clips próprios. Os nomes `rkm_aim` e `rkm_fire_burst` sobrepõem os dos soldados. **Não substituir os clips completos nem carregar duas armas em Kowal.** Não trocar a arma funcional por um kit alternativo sem necessidade concreta. |
@@ -52,7 +55,8 @@ Ficheiros de orientação lidos: `AGENTS.md`, `DEVELOPMENT_STATUS.md`, `QUALITY_
 - Revisão final `82dd3f0`: 126/126 Node, build, **3/3 casos de equipamento**, 82,8 s. Inclui rajada/recarga real de Kowal e fallback LOD1. O conjunto final tem **22** casos; não chamar aos 21 anteriores uma execução integral desta revisão.
 - Tree `8a77c66b6fd848e22b10b3ff192bf0775bf6d1a5` do PR #27/base staging: **128/128 Node**, build 1026,94 kB / 266,11 kB gzip e **22/22 navegador** em 502,8 s, zero retries/instáveis/erros globais.
 - Handoff `f758daa`, revalidado em 2026-10-02: **132/132 Node**, build e **24/24 navegador** em **538,6 s**, zero retries/skips/instáveis/erros globais; inclui a regressão das nove pontes obrigatórias e a bancada francesa. Relatório bruto, casos e capturas em `docs/verification/m01-runtime/asset-review-2026-10-02/`.
-- Integração dos kits #29/#30, código `ded5d4b`: **136/136 Node** e build. `src/`, testes de navegador e JS de produção idênticos ao handoff validado (SHA-256 no relatório); não foi atribuída uma segunda execução local do navegador à integração. O CI do PR para main valida o candidato separadamente. Os kits ainda aguardam ligação ao renderer.
+- Integração dos kits #29/#30, código `ded5d4b`: **136/136 Node** e build. `src/`, testes de navegador e JS de produção idênticos ao handoff validado (SHA-256 no relatório); não foi atribuída uma segunda execução local do navegador à integração. Essa etapa precedeu a ligação dos kits. O CI #32 terminou com 136/136 Node, build e 24/24 browser (20,8 min), deploy ignorado.
+- Runtime `bf59e6f` / remoto equivalente `456d216`: **148/148 Node**, build e **26/26 navegador**, **552,1 s**, zero retries/skips/instáveis/erros globais. Após #34: **153/153 Node** e build, JS idêntico (`6e8d87a1653f4495add54fa4176c9da41cb1416c3362f2615b17cc16116c56fa`). Relatório distingue os dois candidatos em `support-runtime-2026-10-02/`.
 - Não há medição no Chromebook nem playtest humano completo. As partidas contínuas históricas do Claude em `continuous/round1..3` pertencem a builds anteriores.
 
 ## Skills pedidas e contexto
@@ -63,8 +67,8 @@ Context-compression: resumo estruturado com intenção, caminhos, decisões, est
 
 ## Próximos passos
 
-1. Preservar a revisão concluída do Ju 87, LOD/fallback e os 24 casos validados. Somente as nove pontes obrigatórias bloqueiam M01; `requiredAssetFailures` distingue-as da falha opcional do avião. A SC 250 permanece oculta por falta de fonte da carga real.
-2. Observar o CI do PR em rascunho para main; merge/publicação pertencem ao utilizador. Consultar o relatório final, sem repetir a validação do handoff se não houver alteração de comportamento.
-3. Graphify permanece **em pausa**, conforme prioridade explícita do utilizador. Preservar `graphify-out/extraction-checkpoint.json.gz`; não repetir extracções concluídas.
-4. Ligar os kits revistos #29/#30 ao renderer com dados reais da simulação, e rever a ckm wz.30/guarnição já entregue no #31. `docs/CLAUDE_CKM_TASK_REFERENCE.md` preserva a especificação da ckm. O pedido adicional do utilizador está em `docs/CLAUDE_NEXT_TASK.md`: MG34 deitada/equipa e variantes queimadas/danificadas dos vagões, dois PRs separados em pastas novas. Reservar engine, combate, saves, relógios e workflows ao Codex.
-5. Depois, melhorar transições/feridos e concluir arte/áudio, seguido de playtest humano e medição no Chromebook. M02 espera pela aprovação de M01.
+1. Preservar Ju 87, vagões/MG34, fallback e os 26 casos. As nove pontes obrigatórias continuam a ser as únicas falhas de art que bloqueiam M01. Sem mudanças em saves/relógios/combate para ligar kits visuais.
+2. Observar o novo CI do PR #32 após avançar staging/candidato; não apresentar o CI anterior de dcffd4a como validação remota da nova revisão. Main/publicação reservados ao utilizador.
+3. Graphify permanece **em pausa**; checkpoint preservado, sem reextracções.
+4. Claude: novo pedido em `docs/CLAUDE_NEXT_TASK.md`: ckm LOD0 até 4000 e pares de agarrar/soltar no arrasto da estação. #31/#33/#34 já revistos; não repetir kits. Guarnição ckm/deitado MG34, identificação de vagão/estado e altura das coberturas do pátio são dependências explícitas da integração futura.
+5. Rever arte/transições/áudio, playtest humano e Chromebook; M02 espera pela aprovação de M01.

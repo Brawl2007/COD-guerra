@@ -77,7 +77,8 @@
       "id": "freight_wagons", "name": "Vagões do trem 963 (65)", "category": "vehicle_rail", "priority": "P1",
       "realDimensions": { "note": "Tipos pendentes (P16); vagão coberto padrão da época com ~9–10 m entre para-choques (a confirmar)", "sources": ["T07"] },
       "strategy": "ORIGINAL", "build": "2–3 tipos instanciados (coberto, aberto); portas de correr que abrem para o desembarque dos pioneiros.",
-      "budget": { "lod0Tris": 2500, "lods": 3, "instancing": true }, "candidates": [], "status": "A PRODUZIR", "targetPath": "assets/models/production/m01/wagon_*.glb"
+      "budget": { "lod0Tris": 2500, "lods": 3, "instancing": true }, "candidates": [], "status": "A PRODUZIR", "targetPath": "assets/models/production/m01/wagon_*.glb",
+      "provisional": { "path": "assets/models/provisional/m01-wagons/", "manifest": "assets/models/provisional/m01-wagons/manifest.json", "license": "ORIGINAL", "status": "PROVISÓRIO VERIFICADO — 65 vagões do trem 963 em LOD2 instanciado, passo 9,10 m; composição genérica (P16), pátio/rodados/portas pendentes", "review": "docs/verification/m01-runtime/support-runtime-2026-10-02/README.md" }
     },
     {
       "id": "panzerzug_7", "name": "Panzerzug 7", "category": "vehicle_rail", "priority": "P1",
@@ -149,7 +150,7 @@
       "realDimensions": { "lengthM": 1.219, "barrelM": 0.627, "massKg": 12.1, "rateRpm": [800, 900], "sources": ["T33"] },
       "strategy": "ORIGINAL", "spec": "research/weapons/mg34.md", "budget": { "worldLod0Tris": 4000 }, "candidates": [],
       "status": "A PRODUZIR (final)",
-      "provisional": { "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod0.glb", "clips": "assets/models/provisional/m01/weapons/mg34/m01_mg34_animations.glb (mg34_aim, mg34_fire_burst, mg34_reload)", "license": "ORIGINAL", "status": "PROVISÓRIO VERIFICADO — 1,219 m, 3 LODs, tampa/alavanca/tambor/cinta animáveis; não ligada ao runtime", "review": "docs/assets/m01-mg34/README.md" }
+      "provisional": { "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod0.glb", "clips": "assets/models/provisional/m01/weapons/mg34/m01_mg34_animations.glb (mg34_aim, mg34_fire_burst, mg34_reload)", "license": "ORIGINAL", "status": "PROVISÓRIO VERIFICADO — 1,219 m, 3 LODs, tampa/alavanca/tambor/cinta animáveis; ligada a de_east_0/1 com rajadas reais, uma arma por rig; kit mg34-prone #33 integrado mas guarnição/deitado pendentes na simulação", "review": "docs/assets/m01-mg34/README.md" }
     },
     {
       "id": "ckm_wz30", "name": "ckm wz.30 (grp_ckm_crew), com tripé, fita de 330 e caixa", "category": "weapon", "priority": "P1",

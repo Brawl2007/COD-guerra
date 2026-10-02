@@ -138,3 +138,7 @@ Todo o kit é original e foi gerado por código neste repositório pelo Claude C
 - As rodas de raios estão pintadas sobre um disco, e os raios só se lêem de perto.
 - A densidade do atlas (44–55 px/m) chega para o pátio a mais de 10 m; ao perto as tábuas ficam suaves.
 - Sem mapa de ambiente, o aço do aro e dos pratos dos tampões fica escuro nas capturas.
+
+## Integração do Codex — 2026-10-02
+
+O trem 963 usa agora 65 vagões LOD2 instanciados com passo 9,10 m e fallback. A composição é genérica (49 cobertos/16 abertos); P16 continua aberta. Pátio oeste, velocidade e desembarque ficam pendentes; não alterar colisão por inferência visual. Provas de produção e limites em [`support-runtime-2026-10-02`](../../verification/m01-runtime/support-runtime-2026-10-02/README.md). As capturas e o relatório acima conservam a origem da galeria original.

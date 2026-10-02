@@ -1,38 +1,34 @@
-# Novas tarefas para Claude — equipa MG34 e dano dos vagões
+# Próximas tarefas do Claude — orçamento da ckm e transições do arrasto
 
-Pedido adicional do utilizador em 2026-10-02. A ckm wz.30 já foi entregue no PR #31 e aguarda revisão; a especificação está preservada em `docs/CLAUDE_CKM_TASK_REFERENCE.md`. Não repetir rkm, Ju 87, vagões intactos, MG34 de pé ou ckm.
+Pedido do utilizador em 2026-10-02, depois da entrega dos vagões danificados #34. Continuar sem reiniciar nem repetir entregas. A ckm #31 (head 4170eea) e a MG34 deitada #33 (c6e5ed4) já foram revistas/integradas na branch do Codex. Os vagões danificados #34 (11554d9) foram revistos e integrados como kit; a escolha de vagão/estado continua pendente na simulação. Especificações anteriores preservadas em `docs/CLAUDE_CKM_TASK_REFERENCE.md` e `docs/CLAUDE_MG34_WAGON_TASK_REFERENCE.md`.
 
-Continuar **Brawl2007/COD-guerra**, sem reiniciar. Partir de `codex/m01-runtime` actualizado, ler `AGENTS.md` e consultar apenas os contratos dos assets afectados. Entregar dois PRs independentes para staging, nesta ordem. Usar branches novas; não reutilizar as branches dos PRs #25/#28/#29/#30/#31.
+Codex reserva o renderer, engine, combate, saves, relógios, mapa e integração. Claude trabalha apenas nos assets e nas suas ferramentas/testes/documentação. M01 continua **PROTÓTIPO JOGÁVEL**.
 
-## 1. Prioridade: MG34 deitada, atirador e municiador
+## 1. Prioridade: ckm wz.30 dentro do orçamento
 
-Branch sugerida: `claude/m01-mg34-prone`. Reutilizar o kit MG34 do #30 e o rig alemão existente. Ler `docs/assets/m01-mg34/README.md`, o manifesto da arma e o contrato dos soldados. Preservar a arma, os LODs e os clips de pé byte a byte.
+Branch nova `claude/m01-ckm-budget`. Usar `codex/m01-runtime` actualizado; se #31 ainda não estiver na staging, partir do head `4170eea6ca5ed5f882727f9678bd2a763927e5b1` numa branch nova. Não refazer o kit.
 
-- Criar clips novos `mg34_prone_enter`, `mg34_prone_idle`, `mg34_prone_aim`, `mg34_prone_fire_burst`, `mg34_prone_reload`, `mg34_prone_exit`. Para o municiador: `mg34_loader_prone_idle`, `mg34_loader_prone_feed`, `mg34_loader_prone_leave`. Não substituir nomes existentes.
-- Uma só MG34 presa ao osso `weapon`, bípode aberto com pés no chão; esconder Kar98k/clipe e bípode dobrado. Prender a arma antes de criar as acções do mixer.
-- Corpo apoiado, cotovelos/joelhos no solo, mãos nas pegas, face na coronha e cano livre. Entrada/saída sem saltos de raiz ou membros a atravessar o chão; documentar contactos aproximados.
-- Rajada de sete tiros, eventos separados por 0,075 s, conforme o contrato actual. Documentar janela de disparo e interrupção após quatro/seis tiros. Eventos de clips descrevem apresentação; não causam dano, tiros ou gasto de munição.
-- Recarga deitada com tampa, tambor, cinta e alavanca; municiador entrega o tambor em tempo coordenado. Manter o sistema de tambor do kit. Documentar qualquer limite em vez de criar regras de combate.
-- Demonstrar ambos na galeria. A dupla é uma proposta visual, sem identificar pessoas históricas ou alterar o número de actores da missão.
-- Novas pastas: `assets/models/provisional/m01/weapons/mg34-prone/`, `tools/assets/m01-mg34-prone/`, `docs/assets/m01-mg34-prone/`; teste `tests/m01-mg34-prone-glb.test.js`. Reutilizar funções existentes sem editar geradores partilhados.
+- O LOD0 actual tem **5004 triângulos**, acima do limite **4000** em `missions/m01-tczew/assets-m01.json`; a fita livre/cartuchos ocupa 1832. Reduzir tesselação/peças pequenas até **no máximo 4000 triângulos visíveis**, conservando silhueta, fita, alimentação e legibilidade da arma.
+- Manter comprimento 1,211 m, metros, +Y, frente −Z, tripé, caixa, root, hierarquia, nomes, pivôs e sockets. Não encurtar a arma/fita nem esconder peças só para cumprir a contagem.
+- **Preservar LOD1/LOD2, GLB de animações e os clips da arma/guarnição byte a byte.** Aplicar a simplificação só ao LOD0 no gerador existente; actualizar manifesto, relatório e teste para o limite real de 4000. Não relaxar o orçamento.
+- Registar os SHA-256 preservados, triângulos visíveis/totais, draw calls, bytes e bbox. Galeria antes/depois em três ângulos, pormenor da fita/caixa/miras e importação real no three.js.
+- Editar apenas `tools/assets/m01-ckm-wz30/`, LOD0/manifesto em `assets/models/provisional/m01/weapons/ckm_wz30/`, teste do kit e documentação/créditos afectados. Não tocar soldados, outras armas ou `src/`.
+- Fontes T34 e detalhes estimados continuam explícitos. Não declarar historicidade final nem ligação à casamata. A simulação ainda não representa `grp_ckm_crew` por actores.
 
-Manifesto: clips/durações/eventos, escala, raiz/offsets da dupla, nós/sockets, postura/bípode, fontes/estimativas, autoria/licença e hashes dos assets reutilizados. Capturas: corpo inteiro lateral/frontal, bípode/cotovelos, mãos/face, início/fim da rajada e pelo menos seis instantes da recarga. Testar alvos no rig actual, valores finitos, quaterniões normalizados, ligação das peças móveis e reprodução do mesmo frame após pausa/restauro do tempo do mixer. A galeria não implementa `pose: prone` na engine; integração com o Codex.
+## 2. Depois: agarrar e soltar o ferido no arrasto da estação
 
-## 2. Depois: estados queimado/danificado dos vagões
+Branch nova independente `claude/m01-station-drag-transitions`, a partir da staging; não derivar da tarefa 1. Ler `tools/assets/m01-station/build.mjs`, o manifesto de `m01_station_animations.glb`, os clips `drag_wounded`/`wounded`/`crouched_idle` do rig actual e a secção `stationEvacuation` da simulação só para compreender o contrato.
 
-Branch sugerida: `claude/m01-wagon-damage`. Partir da staging, não da branch da tarefa 1. Ler `docs/assets/m01-wagons/README.md` e o manifesto. Preservar os vagões intactos do #29 byte a byte.
+- Criar quatro clips novos, sem substituir existentes: `station_drag_medic_grab`, `station_drag_patient_grab`, `station_drag_medic_release`, `station_drag_patient_release`. Pares grab/release com a mesma duração e relógio; documentar durações estimadas e eventos de apresentação `hands_contact`, `grip_ready`, `hands_release`, `settled`.
+- Usar os **61 ossos existentes**, sem alterar nomes, bind, malhas, rig ou clips anteriores. O começo/fim deve ligar às poses reais: médico agachado → frame 0 do `drag_wounded`; paciente ferido no chão → pose de arrasto; libertação faz o percurso inverso e deixa o ferido no chão.
+- A raiz do paciente no arrasto é `+0,92 m` na direcção facing do médico (no referencial do rig orientado para −Z, offset `[0,0,−0.92]`). Documentar offsets e sockets; confirmar mãos junto dos ombros/cabeça, braços/pernas sem atravessar os corpos e o paciente de costas no chão. Não levantar o paciente como Bąk ao ombro.
+- Clips in-place, sem deslocação de raízes. A simulação decide trajecto, associação, entrega e baixa. Eventos dos clips são metadados; não implementar transporte, horários, gameplay, checkpoints ou flags no renderer/engine.
+- Médico sem arma visível; não duplicar nem alterar equipamento. Paciente desarmado durante a evacuação.
+- Pastas novas `assets/models/provisional/m01/characters/station-drag-transitions/`, `tools/assets/m01-station-drag-transitions/`, `docs/assets/m01-station-drag-transitions/` e teste `tests/m01-station-drag-transitions-glb.test.js`. Registar SHA-256 do rig e clips reutilizados.
+- Testar alvos do rig, valores finitos/quaternões, continuidade nos extremos e os contactos com AnimationMixer. Galeria em vários instantes dos dois pares, vista lateral/frontal/superior, pausa e restauro do mesmo tempo. Não executar outra partida completa para produzir uma galeria.
 
-- Variantes **queimada** e **danificada** para coberto e aberto, cada uma com LOD0/1/2. Madeira carbonizada, metal escurecido/deformado e tábuas/painéis partidos devem dar leitura de dano; não apenas pintar tudo de preto.
-- Conservar origem no topo do carril, metros, +Y vertical, frente −Z, passo de 9,10 m, pivôs dos rodados e sockets de engate/fogo/fumo. Separar peças partidas como nós quando útil; sem física/temporizadores de gameplay.
-- Máximo 2500 triângulos visíveis no LOD0, redução por LOD e materiais/texturas limitados. Registar triângulos, draw calls, bytes e alterações da bbox; colisão futura não deve ser inferida de uma peça visual partida.
-- Não criar locomotiva/inscrições. P16 continua aberta: variantes genéricas para composição, sem afirmar quais vagões históricos arderam ou foram atingidos.
-- Novas pastas: `assets/models/provisional/m01-wagon-damage/`, `tools/assets/m01-wagon-damage/`, `docs/assets/m01-wagon-damage/`; teste `tests/m01-wagon-damage-glb.test.js`. Não editar o kit original.
-- Galeria: intacto/queimado/danificado lado a lado, interiores, rodas/engates, sockets, três LODs e leitura do LOD2 à distância. Testar importação, valores finitos, escala, sockets/pivôs e orçamentos. Documentar estados disponíveis/limitações.
+## Entrega comum
 
-O evento `station_wagon_fire` e a escolha do vagão pertencem à simulação. Não adicionar fogo/fumo autónomo, detonar vagões, editar mapa, inventar vagão-alvo ou alterar coberturas/colisão.
+Ler `AGENTS.md`; usar buscas pontuais e ferramentas gratuitas, arte original/licenciada. Um PR pequeno por tarefa para `codex/m01-runtime`, fonte reproduzível, manifesto, importação real e capturas inspeccionadas. Executar testes dos assets afectados, `npm test` e `npm run build`, com contagens reais. Não apresentar galeria como playtest humano ou FPS no Chromebook.
 
-## Limites comuns e entrega
-
-Ferramentas gratuitas, arte original/licenciada, sem extracção de jogos. Não alterar `src/`, engine, combate, saves, RNG, checkpoints, relógios, demolições, mapa, bancada francesa, workflows, Graphify ou assets existentes. Alterações mínimas de créditos/status devem ser descritas separadamente. Modelos/poses continuam provisórios.
-
-Guardar fonte reproduzível, manifesto, relatório real de importação e capturas inspeccionadas. Executar testes dos assets afectados, `npm test` e `npm run build`, indicando contagens reais e limites. Não declarar playtest humano, FPS no Chromebook, historicidade final ou ligação ao runtime a partir da galeria. Um PR pequeno por tarefa para `codex/m01-runtime`. Merge em main, publicação e `workflow_dispatch` pertencem ao utilizador.
+Não alterar `src/`, engine/combate, saves, RNG, CP-A..D, relógios/gates, demolições, mapa, bancada francesa, workflows ou Graphify. Não fazer merge em main, publicar ou usar workflow_dispatch. Não repetir Ju 87, rkm, vagões intactos/danificados ou MG34 de pé/deitada. A integração pertence ao Codex.
