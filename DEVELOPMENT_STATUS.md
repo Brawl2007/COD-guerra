@@ -107,6 +107,10 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 - LOD0/1/2: 14,9k/6,0k/1,9k triângulos visíveis (PL), um atlas por nação. O GLB de animações tem 25 clips, incluindo as armas de Kowal e Bąk: ferrolho, recarga por clipe, sapadores normal/sob fogo, transporte de Bąk no `carry_socket`, locomoção, ferido, queda, sentado.
 - Verificados por `tests/m01-soldiers-glb.test.js` e capturas inspeccionadas em `docs/assets/m01-soldiers/`. A integração em `src/render/` está nesta branch, com provas em `docs/verification/m01-runtime/characters/`; falta medir no Chromebook.
 
+**rkm wz.28 de Kowal (arma isolada, provisória; o runtime usa a rkm embutida nos GLB dos soldados e os clips `rkm_*` deles, com os mesmos nomes `rkm_aim`/`rkm_fire_burst`):**
+- Kit em `assets/models/provisional/m01/weapons/rkm_wz28/`, gerado por `tools/assets/m01-rkm-wz28/`: LOD0/1/2 com 1476/744/234 triângulos, carregador, alavanca de armar e bípode dobrado/aberto em nós separados, sockets e manifesto com medidas estimadas identificadas.
+- Prende-se ao osso `weapon` do rig existente; `m01_rkm_wz28_animations.glb` traz `rkm_carry`, `rkm_aim` e `rkm_fire_burst` (3 tiros, como a simulação). Verificado por `tests/m01-rkm-wz28-glb.test.js` e capturas inspeccionadas em `docs/assets/m01-rkm-wz28/`. Falta ligá-lo a Kowal em `src/render/` (Codex), clips de troca de carregador/deitado e confirmar T31 em leitura integral.
+
 ## Parcial ou pendente
 
 - Soldados próximos, mãos, recarga e transporte já têm rig e clips reais. Arte, encaixe das mãos, uniformes e mixagem continuam a exigir revisão; Civis e alguns actores distantes conservam proxies. Vozes gravadas continuam ausentes.
