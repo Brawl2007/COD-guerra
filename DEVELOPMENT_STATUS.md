@@ -4,9 +4,11 @@
 
 M01 passou a **PROTÓTIPO JOGÁVEL** nesta branch. O fluxo usa a fundação Three.js e as pontes do Claude, preservando os históricos dos PRs #9 e #11. A bancada francesa continua seleccionável. O marco 2 ainda não está aprovado como missão validada; faltam o playtest humano, a medição no Chromebook e o trabalho descrito abaixo.
 
-Os PRs #8 e #10 de pesquisa/preparação já estão em `main`. Os PRs #26/#27 estão integrados em `codex/m01-runtime`; #9/#11 já foram substituídos e fechados. Esta revisão preserva o kit e a ligação do Ju 87 do PR #28, com LOD pela distância e provas do raid real. O merge em `main` e a publicação pertencem ao utilizador. O mapa francês conserva as suas coordenadas e arma.
+Os PRs #8 e #10 de pesquisa/preparação já estão em `main`. Os PRs #26/#27 estão integrados em `codex/m01-runtime`; #9/#11 já foram substituídos e fechados. Esta revisão preserva o kit e a ligação do Ju 87 do PR #28, com LOD pela distância e provas do raid real, e integra os kits provisórios revistos de vagões #29 e MG34 #30. Os dois novos kits ainda aguardam ligação ao renderer; revisão e limites em `docs/verification/m01-runtime/asset-review-2026-10-02/`. O PR #31 da ckm wz.30 já existe, ainda por rever. O merge em `main` e a publicação pertencem ao utilizador. O mapa francês conserva as suas coordenadas e arma.
 
 ## Implementado e observado
+
+Continuação de 2026-10-02: o handoff `f758daa` passou novamente **132/132 Node**, build e **24/24 navegador** em 538,6 s, zero retries. A integração dos kits #29/#30 passou **136/136 Node** e build; o runtime e o JS de produção são idênticos aos do handoff testado. Evidências e proveniência em `docs/verification/m01-runtime/asset-review-2026-10-02/`. O CI do candidato do PR para main é uma verificação separada.
 
 - PR #25 do Claude preservado nesta branch: Kowal usa a rkm wz.28 (cabeça, divisa, bolsa e bípode), Bąk saudável a wz.98a. Mira, rajada e troca de carregador de Kowal lêem o disparo/munição/cooldown já guardados; não acrescentam regras de combate. Clarões usam os sockets da arma escolhida.
 - S3 encena o ferido ficcional das 04:35:30: começa no pátio, Dudek aproxima-se pela cabeça, arrasta-o de costas no chão, entrega-o na estação e volta ao posto. Saves schema 2 preservam a operação e aceitam estados antigos; os resgates posteriores de Bąk e as demolições conservam-se.
@@ -144,6 +146,6 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 
 ## Próximo passo
 
-Playtest humano completo de M01, com atenção ao fogo de cobertura a ~1,2 km (clarões de ~8 px e raio de supressão de 3 m). Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02.
+Ligar os kits revistos de vagões/MG34 à apresentação com dados da simulação, rever a ckm wz.30 do PR #31 e realizar o playtest humano completo de M01, com atenção ao fogo de cobertura a ~1,2 km (clarões de ~8 px e raio de supressão de 3 m). Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02. Graphify permanece em pausa no checkpoint existente.
 
 O trabalho das pontes de Claude foi preservado e completado, incluindo dano persistente em LOD0/1/2. Mapas históricos e inventários específicos continuam úteis para as pendências de P4/P13 e de arte. Não recomeçar essa entrega.

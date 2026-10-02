@@ -15,14 +15,16 @@ Trabalhar em branch própria. Integrações em `codex/m01-runtime` e PRs estão 
 | Referência | Estado observado | Conteúdo |
 | --- | --- | --- |
 | `main` | `72bbcdd156603c9399801c95d43d9365ba50fc82` | Publicação reservada ao utilizador. |
-| `codex/m01-runtime` | `a07fcd955dcaccae8173a5b4773675af27bd476a` | PRs #26/#27 integrados na staging; engine, soldados, armas, evacuação e rkm isolada. |
+| `codex/m01-runtime` | Base remota verificada `a07fcd955dcaccae8173a5b4773675af27bd476a`; esta entrega contém código/merges até `ded5d4b` e evidências posteriores | PRs #26/#27, Ju 87 revisto e kits #29/#30; main continua separado. Confirmar HEAD remoto antes de continuar. |
 | PR #26 | Head `82dd3f06e383dfca0277e5416a27c7bb302fd931` | Revisão final da recarga, tiros de Kowal e provas reais. Tree `ca79370b443cf02d2bc7646d897b8819f0e75a4f`. |
 | PR #25 | Conteúdo preservado `055da03e4461a13f844ff93c0dad8d54ffa0a1ac` (a branch foi reutilizada pelo #30) | Claude: rkm/wz.98a embutidas, 61 ossos e 25 clips. Já preservado no #26; não fazer merge separado em main automaticamente. |
 | PR #27 | Head revisto `afdbe9e50b6f841c108cf250b2eef851213322bb` | Claude: kit **isolado** da rkm. Integrado em staging por `a07fcd9`; clips regenerados para o rig actual e galeria refeita. |
 
 | PR #28 | Head observado `3fa1d0d4e62e5c48c300d1929ca5455ee6737563` | Claude: kit Ju 87 e primeira ligação. Esta revisão acrescenta LOD por distância, prova do raid genuíno e falha opcional. |
-| PR #29 | Head `0667af008549f15947c10ab09b814338d701bf2c` | Claude: vagões genéricos; ainda por rever/integrar. |
-| PR #30 | Head `ad0253e9e370c80b96163d01b061047750dd93df` | Claude: MG34; ainda por rever/integrar. |
+| PR #29 | Head `0667af008549f15947c10ab09b814338d701bf2c` | Kit de vagões genéricos revisto e integrado por `b880cd4`; ligação ao renderer pendente, P16 aberta. |
+| PR #30 | Head `ad0253e9e370c80b96163d01b061047750dd93df` | Kit MG34 revisto e integrado por `ded5d4b`; ligação ao renderer e pose deitada pendentes. |
+| PR #31 | Head `f4275ff227885777c1876a318d673bfcb9c3d93e` | ckm wz.30/guarnição já entregue; ainda por rever/integrar. Não repetir o pedido ao Claude. |
+| `codex/m01-assets-review` | Código/merges em `ded5d4bd06e0790360698f05bfb4f6ee9e917627`, tree `c43075bd03dc7049658b872dd1a6bcb43928686e` | Handoff + kits #29/#30, preservando os históricos; commits seguintes só registam evidências/contexto. |
 
 Verificar refs antes de escrever no GitHub. Estes hashes são âncoras desta etapa, não uma promessa de que as branches nunca avançarão.
 
@@ -49,7 +51,8 @@ Ficheiros de orientação lidos: `AGENTS.md`, `DEVELOPMENT_STATUS.md`, `QUALITY_
 - `ef7d68a`: 126/126 Node, build e **21/21 navegador**, 453,8 s, sem retries; inclui a bancada francesa.
 - Revisão final `82dd3f0`: 126/126 Node, build, **3/3 casos de equipamento**, 82,8 s. Inclui rajada/recarga real de Kowal e fallback LOD1. O conjunto final tem **22** casos; não chamar aos 21 anteriores uma execução integral desta revisão.
 - Tree `8a77c66b6fd848e22b10b3ff192bf0775bf6d1a5` do PR #27/base staging: **128/128 Node**, build 1026,94 kB / 266,11 kB gzip e **22/22 navegador** em 502,8 s, zero retries/instáveis/erros globais.
-- Integração Ju 87: **132/132 Node**; dois novos casos verificam o raid visível, pausa e fallback. Suíte final de **24** casos interrompida antes de completar devido à passagem de contexto. Não declarar 24/24; executar novamente, incluindo a regressão de falha das pontes já corrigida.
+- Handoff `f758daa`, revalidado em 2026-10-02: **132/132 Node**, build e **24/24 navegador** em **538,6 s**, zero retries/skips/instáveis/erros globais; inclui a regressão das nove pontes obrigatórias e a bancada francesa. Relatório bruto, casos e capturas em `docs/verification/m01-runtime/asset-review-2026-10-02/`.
+- Integração dos kits #29/#30, código `ded5d4b`: **136/136 Node** e build. `src/`, testes de navegador e JS de produção idênticos ao handoff validado (SHA-256 no relatório); não foi atribuída uma segunda execução local do navegador à integração. O CI do PR para main valida o candidato separadamente. Os kits ainda aguardam ligação ao renderer.
 - Não há medição no Chromebook nem playtest humano completo. As partidas contínuas históricas do Claude em `continuous/round1..3` pertencem a builds anteriores.
 
 ## Skills pedidas e contexto
@@ -60,8 +63,8 @@ Context-compression: resumo estruturado com intenção, caminhos, decisões, est
 
 ## Próximos passos
 
-1. Concluir a revisão do Ju 87 do PR #28, preservando a geometria e a integração do Claude, LOD pela distância e fallback. Somente as nove pontes obrigatórias bloqueiam M01; `requiredAssetFailures` distingue-as da falha opcional do avião. A SC 250 permanece oculta por falta de fonte da carga real.
-2. Confirmar os 24 casos finais de navegador, guardar relatório com hashes e abrir/observar CI do PR para main sem publicação.
-3. Concluir e guardar o mapa Graphify com todas as imagens, auditando relações e custos não expostos pelas ferramentas.
-4. Claude pode produzir ckm wz.30 e clips da guarnição da casamata em novas pastas: tarefa completa em `docs/CLAUDE_NEXT_TASK.md`. A MG34 já foi entregue no #30. Rever os vagões #29 e MG34 #30 antes de integrar. Reservar engine, combate, saves, relógios e workflows ao Codex.
+1. Preservar a revisão concluída do Ju 87, LOD/fallback e os 24 casos validados. Somente as nove pontes obrigatórias bloqueiam M01; `requiredAssetFailures` distingue-as da falha opcional do avião. A SC 250 permanece oculta por falta de fonte da carga real.
+2. Observar o CI do PR em rascunho para main; merge/publicação pertencem ao utilizador. Consultar o relatório final, sem repetir a validação do handoff se não houver alteração de comportamento.
+3. Graphify permanece **em pausa**, conforme prioridade explícita do utilizador. Preservar `graphify-out/extraction-checkpoint.json.gz`; não repetir extracções concluídas.
+4. Ligar os kits revistos #29/#30 ao renderer com dados reais da simulação, e rever a ckm wz.30/guarnição já entregue no #31. `docs/CLAUDE_CKM_TASK_REFERENCE.md` preserva a especificação da ckm. O pedido adicional do utilizador está em `docs/CLAUDE_NEXT_TASK.md`: MG34 deitada/equipa e variantes queimadas/danificadas dos vagões, dois PRs separados em pastas novas. Reservar engine, combate, saves, relógios e workflows ao Codex.
 5. Depois, melhorar transições/feridos e concluir arte/áudio, seguido de playtest humano e medição no Chromebook. M02 espera pela aprovação de M01.
