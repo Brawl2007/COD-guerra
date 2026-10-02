@@ -16,7 +16,7 @@ import { M01ViewModel } from './m01-viewmodel.js';
 // Original procedural art: textured environment and articulated humans; final scanned/rigged art remains pending.
 export class M01View {
   constructor(renderer){
-    this.owner=renderer;this.engine=renderer.engine;this.assets=new AssetManager();this.disposed=false;
+    this.owner=renderer;this.engine=renderer.engine;this.assets=new AssetManager();this.aircraftAssets=new AssetManager();this.disposed=false;
     this.scene=new THREE.Scene();this.scene.fog=new THREE.Fog('#a0a7a8',420,2800);
     this.camera=new THREE.PerspectiveCamera(70,1,.05,7500);this.weaponCamera=new THREE.PerspectiveCamera(58,1,.03,6);
     this.weaponScene=new THREE.Scene();this.weaponRoot=new THREE.Group();this.weaponScene.add(this.weaponRoot);
@@ -52,7 +52,7 @@ export class M01View {
     this.atmosphere=new M01Atmosphere(this.scene);
     this.createWeapon();this.createActors();this.createContactShadows();this.createFireEffects();this.createAircraft();this.createTrains();
     this.characters=new M01Characters(this.scene);this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture);
-    this.ready=Promise.all([this.loadKit(),this.characters.load(this.owner.quality)]);
+    this.ready=Promise.all([this.loadKit(),this.loadAircraft(),this.characters.load(this.owner.quality)]);
   }
   mesh(shape,material,p,size,parent=this.scene){
     const m=new THREE.Mesh(this[shape],this.materials[material]);m.position.set(...p);m.scale.set(...size);
@@ -314,6 +314,22 @@ export class M01View {
     this.mesh('box','dark',[0,0,0],[18,.3,3],this.raidPlane);
     for(const x of [-4,4])this.mesh('box','dark',[x,-.5,-.6],[1.3,1.5,3.7],this.raidPlane);
   }
+  /** Ju 87 B-1 do raid (kit do Claude, PR #28): substitui as caixas dos três aviões. Opcional (gestor próprio, fora da
+   *  validação das pontes): se o GLB falhar, as caixas ficam e a missão arranca. */
+  async loadAircraft(){
+    const lod=this.owner.quality==='low'?2:1;
+    try{
+      const g=await this.aircraftAssets.load('m01-ju87',`assets/models/provisional/m01-aircraft/m01_ju87_b1_lod${lod}.glb`);if(this.disposed)return;
+      const spin=THREE.AnimationClip.findByName(g.animations,'propeller_spin');
+      for(const plane of this.planes){
+        const model=g.scene.clone();model.traverse(n=>{if(n.isMesh)n.castShadow=n.receiveShadow=true;});
+        plane.clear();plane.add(model);
+        // Hélice amostrada do relógio da missão (sem temporizadores do renderer): ~1500 rpm estimadas no kit.
+        if(spin){plane.userData.mixer=new THREE.AnimationMixer(model);plane.userData.mixer.clipAction(spin).play();}
+      }
+      this.aircraft=`ju87_b1_lod${lod}`;
+    }catch(error){if(!this.disposed)console.warn(`Ju 87 M01: ${error.message}; mantidos os aviões procedurais.`);}
+  }
   createTrains(){
     this.train=new THREE.Group();this.panzerzug=new THREE.Group();this.scene.add(this.train,this.panzerzug);
     for(let i=0;i<32;i++){
@@ -348,7 +364,7 @@ export class M01View {
     // Assets, world restore, quality and resizing still invalidate it.
     const canvas=this.owner.canvas,previous=this.lastFrame;
     const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
-      width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision};
+      width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraft};
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
@@ -357,7 +373,7 @@ export class M01View {
     this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.lighting(sim);
     this.train.visible=state.train963;this.panzerzug.visible=state.panzerzug;
     const planes=state.stukas;
-    this.planes.forEach((p,i)=>{p.visible=planes;p.position.set(80+Math.sin(time*.02+i)*250,160+i*20,240-time%90*4+i*30);p.rotation.y=.1;});
+    this.planes.forEach((p,i)=>{p.visible=planes;p.position.set(80+Math.sin(time*.02+i)*250,160+i*20,240-time%90*4+i*30);p.rotation.y=.1;if(planes)p.userData.mixer?.setTime((time*25+i*.3)%1);});
     this.raidPlane.visible=state.secondRaid;this.raidPlane.position.set(-700,1100,800-(time%150)*8);
     const player=sim.player,eye=eyePosition(player),dir=aimDirection(player.angle,player.pitch);
     const bob=player.moveBlend*Math.sin(time*(player.sprinting?14:9))*.014;
@@ -397,10 +413,10 @@ export class M01View {
     if(this.bursts.length>24){const old=this.bursts.shift();this.effects.remove(old.mesh);old.mesh.material.dispose();}
   }
   resetEffects(){this.lastFrame=null;this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.impacts=[];for(const b of this.bursts){this.effects.remove(b.mesh);b.mesh.material.dispose();}this.bursts=[];for(const b of Object.values(this.fireBatches))b.count=0;this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0};}
-  get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+b.count,0)??0,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
+  get diagnostics(){return {models:this.kit.map(k=>k.file.file),aircraft:this.aircraft??'procedural',aircraftFailures:this.aircraftAssets.failures,assetFailures:this.assets.failures,characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+b.count,0)??0,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx}};}
   dispose(){
-    this.disposed=true;this.viewModel?.dispose();this.characters?.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
+    this.disposed=true;this.viewModel?.dispose();this.characters?.dispose();this.assets.dispose();this.aircraftAssets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
     const textures=new Set();for(const m of Object.values(this.materials)){if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
     this.scene.traverse(n=>{if(n.isInstancedMesh)n.dispose();});this.scene.clear();this.weaponScene.clear();
   }

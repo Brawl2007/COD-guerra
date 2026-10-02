@@ -1,6 +1,6 @@
 # M01 — Ju 87 B-1 do raid das 04:34 (provisório, gerado)
 
-**PROVISÓRIO VERIFICADO em galeria isolada.** Junkers Ju 87 B-1 da 3./StG 1, para substituir a silhueta de caixas dos três aviões de `src/render/m01-view.js` (`createAircraft`, `this.planes`). Não está ligado ao jogo: M01 continua **PROTÓTIPO JOGÁVEL**. As capturas não são playtest nem medição de FPS no Chromebook.
+**PROVISÓRIO VERIFICADO em galeria isolada.** Junkers Ju 87 B-1 da 3./StG 1, para substituir a silhueta de caixas dos três aviões de `src/render/m01-view.js` (`createAircraft`, `this.planes`). Está ligado aos três aviões do raid em `src/render/m01-view.js` (ver Integração). M01 continua **PROTÓTIPO JOGÁVEL**. As capturas não são playtest nem medição de FPS no Chromebook.
 
 - **Ficheiros:** `assets/models/provisional/m01-aircraft/`, com `m01_ju87_b1_lod{0,1,2}.glb`, `manifest.json`, e `docs/assets/m01-aircraft/import-report.json`.
 - **Gerador:** `tools/assets/m01-aircraft/`, com ferramentas gratuitas (Node, gltf-transform, meshoptimizer, jpeg-js e pngjs; MIT/BSD). Comandos:
@@ -97,9 +97,14 @@ As capturas foram renderizadas com o GLTFLoader e o AnimationMixer do three.js e
 - `ju87_details.png`: radiador e escapes, capota e MG 15, trem e sirene, cauda e montantes, freio recolhido e aberto, e a hélice a t = 0 e a t = 1/12 s (30°).
 - `ju87_flight.png`: silhueta a 300 m (LOD1), a 800 m (LOD2) e em mergulho a 70° a 400 m. A linha de cima tem o tamanho real com FOV vertical de 60°; a de baixo é a mesma cena com FOV de 15° (cerca de 4×).
 
-## Integração (Codex)
+## Integração
 
-- Substituir as caixas de `createAircraft()` por três clones do LOD1, escolhendo o LOD pela distância. As trajectórias, as horas e o estado ficam como estão na simulação. O `raidPlane` (18 m de envergadura) não é um Ju 87 e fica fora deste kit.
+- **Feita:** `M01View.loadAircraft()` troca as caixas de `createAircraft()` por três clones do LOD1, ou do LOD2 na qualidade baixa.
+  - A hélice é amostrada do relógio da missão (`propeller_spin`, ~1500 rpm), sem temporizadores do renderer.
+  - As trajectórias, as horas e o estado continuam a vir da simulação.
+  - O GLB carrega com um gestor de assets próprio, fora da validação das pontes. Se falhar, as caixas ficam e a missão arranca.
+  - `tests/browser/m01.spec.js` verifica os dois casos; o diagnóstico expõe `m01.aircraft` e `m01.aircraftFailures`.
+- O `raidPlane` (18 m de envergadura) não é um Ju 87 e fica fora deste kit.
 - **Dados que a engine poderia expor** (proposta, não implementada):
   - início do mergulho de cada avião, para abrir os freios;
   - instante de lançamento, para esconder a `bomb_sc250` e criar a bomba em queda a partir de `bomb_release`;

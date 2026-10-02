@@ -111,6 +111,19 @@ test('an optional character download failure preserves playable procedural actor
   expect(data.m01.characters.active).toBe(0);expect(data.m01.viewModel.active).toBe(false);
   expect(data.m01.assetFailures).toEqual([]);expect(data.m01.actorPoses.standing).toBeGreaterThan(0);
 });
+test('the Ju 87 B-1 GLB replaces the procedural raid aircraft',async({page})=>{
+  const {errors,failed}=await open(page);
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.aircraft!=='procedural');
+  expect((await page.evaluate(()=>window.gameDiagnostics())).m01.aircraft).toMatch(/^ju87_b1_lod[12]$/);
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('a failed Ju 87 download keeps the procedural aircraft and the mission startable',async({page})=>{
+  await page.route('**/m01-aircraft/*.glb',r=>r.abort());
+  const {errors}=await open(page);
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.aircraftFailures.some(f=>f.path.includes('m01_ju87_b1')));
+  const data=await page.evaluate(()=>window.gameDiagnostics());expect(data.m01.aircraft).toBe('procedural');expect(data.m01.assetFailures).toEqual([]);
+  await start(page);expect((await page.evaluate(()=>window.gameDiagnostics())).m01.visiblePieces).toBeGreaterThan(40);expect(errors).toEqual([]);
+});
 test('Kowal fires and changes the rkm magazine from actual combat state, preserving both poses in pause',async({page},info)=>{
   test.setTimeout(process.env.CI?180000:120000);
   const d=toRepair(driver());d.walk(-115,32);d.walk(-74,30);d.step({crouch:true});
