@@ -5,10 +5,11 @@
 - **Ficheiros:** `assets/models/provisional/m01-aircraft/`, com `m01_ju87_b1_lod{0,1,2}.glb`, `manifest.json`, e `docs/assets/m01-aircraft/import-report.json`.
 - **Gerador:** `tools/assets/m01-aircraft/`, com ferramentas gratuitas (Node, gltf-transform, meshoptimizer, jpeg-js e pngjs; MIT/BSD). Comandos:
   ```
+  (cd tools/assets/m01-soldiers && npm ci)        # geometria, atlas e texturas partilhados
   cd tools/assets/m01-aircraft && npm ci && node build.mjs
   CHROME_EXECUTABLE=… node render/capture.mjs     # usa o three.js e o Playwright do repositório
   ```
-  Os módulos genéricos de geometria e atlas (`src/lib/`) são cópias dos do gerador dos soldados em `main`, porque `codex/m01-runtime` ainda não os tem.
+  Os módulos genéricos de geometria, atlas, ruído e texturas são os de `tools/assets/m01-soldiers/src/` (sem a malha do MakeHuman, que só os soldados usam).
 - **Verificação:**
   - `tests/m01-ju87-glb.test.js` verifica:
     - comprimento, envergadura, altura e simetria;

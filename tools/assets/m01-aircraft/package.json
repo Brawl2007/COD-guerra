@@ -8,10 +8,11 @@
     "build": "node build.mjs",
     "render": "node render/capture.mjs"
   },
-  "engines": { "node": ">=22.12.0" },
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "dependencies": {
     "@gltf-transform/core": "4.5.1",
-    "jpeg-js": "0.4.4",
     "meshoptimizer": "1.3.0",
     "pngjs": "7.0.0"
   }

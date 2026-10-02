@@ -1,9 +1,10 @@
 // Junkers Ju 87 B-1 (1939) em loft/torno, original. Metros; +Y para cima; nariz para −Z; asa direita (estibordo) em
 // +X. Origem = centro de gravidade estimado sobre o eixo de tracção (pivô de voo). Sem coordenadas de Tczew.
 // Medidas de T29 (comprimento 11,10 m, envergadura 13,80 m, altura 4,24 m); o resto é estimado (ver MEASURES).
-import { loft, lathe } from './lib/geom.mjs';
-import { v3, clamp, smoothstep, orientOutward } from './lib/meshops.mjs';
-import { fbm } from './lib/noise.mjs';
+import { loft, lathe } from '../../m01-soldiers/src/geom.mjs';
+import { v3, clamp, smoothstep } from '../../m01-soldiers/src/meshops.mjs';
+import { orientOutward } from '../../m01-soldiers/src/garments.mjs';
+import { fbm } from '../../m01-soldiers/src/noise.mjs';
 
 const deg = Math.PI / 180;
 const lerp = (a, b, t) => a + (b - a) * t;

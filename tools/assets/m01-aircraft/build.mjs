@@ -4,8 +4,8 @@ import { mkdirSync, writeFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { Document, NodeIO } from '@gltf-transform/core';
 import { MeshoptSimplifier } from 'meshoptimizer';
-import { computeNormals } from './src/lib/meshops.mjs';
-import { bakeAtlas } from './src/lib/textures.mjs';
+import { computeNormals } from '../m01-soldiers/src/meshops.mjs';
+import { bakeAtlas } from '../m01-soldiers/src/textures.mjs';
 import { buildJu87, PIVOTS, PAINTERS, JU87, MEASURES, sockets, BRAKE } from './src/ju87.mjs';
 
 const args = process.argv.slice(2), opt = (k, d) => { const i = args.indexOf(`--${k}`); return i >= 0 ? args[i + 1] : d; };
