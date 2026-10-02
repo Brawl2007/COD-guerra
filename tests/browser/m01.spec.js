@@ -94,7 +94,7 @@ test('licensed character rigs and first-person hands follow real weapon state, p
   await page.mouse.click(640,360);await expect(page.locator('#mag')).toHaveText('4');
   await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
   await horizontal();
-  const singleVisible=page.waitForFunction(()=>{if(window.gameDiagnostics().m01.viewModel.singleRound){document.exitPointerLock();return true;}return false;});
+  const singleVisible=page.waitForFunction(()=>{const v=window.gameDiagnostics().m01.viewModel;if(v.singleRound&&v.clipTime>1.1){document.exitPointerLock();return true;}return false;});
   await page.keyboard.press('KeyR');await singleVisible;
   await capture('m01-rig-single-round.png');
   const single=await page.evaluate(()=>window.gameDiagnostics());expect(single.m01.weapon.state).toBe('RELOAD_SINGLE');
@@ -110,6 +110,35 @@ test('an optional character download failure preserves playable procedural actor
   const data=await page.evaluate(()=>window.gameDiagnostics());
   expect(data.m01.characters.active).toBe(0);expect(data.m01.viewModel.active).toBe(false);
   expect(data.m01.assetFailures).toEqual([]);expect(data.m01.actorPoses.standing).toBeGreaterThan(0);
+});
+test('Kowal fires and changes the rkm magazine from actual combat state, preserving both poses in pause',async({page},info)=>{
+  test.setTimeout(process.env.CI?180000:120000);
+  const d=toRepair(driver());d.walk(-115,32);d.walk(-74,30);d.step({crouch:true});
+  d.until(()=>d.sim.actor('szymon_kowal').rounds===2,240);
+  const k=d.sim.actor('szymon_kowal'),p=d.sim.player,angle=Math.atan2(k.z-p.z,k.x-p.x);
+  d.step({lookX:Math.atan2(Math.sin(angle-p.angle),Math.cos(angle-p.angle))/.0022});
+  const snapshot=d.sim.snapshot();
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  const samples=[];
+  for(const [clip,file]of [['rkm_fire_burst','m01-kowal-rkm-burst.png'],['rkm_reload','m01-kowal-rkm-reload.png']]){
+    await page.waitForFunction(clip=>{
+      const g=window.gameDiagnostics();
+      if(!g.paused&&g.m01.characters.actors?.some(a=>a.id==='szymon_kowal'&&a.clip===clip)){document.exitPointerLock();return true;}
+      return false;
+    },clip,{timeout:90000});
+    await expect(page.locator('#pause')).toBeVisible();
+    const frozen=await page.evaluate(()=>window.gameDiagnostics()),actor=frozen.m01.characters.actors.find(a=>a.id==='szymon_kowal');
+    expect(actor.clip).toBe(clip);expect(actor.weapon).toBe('rkm_wz28');expect(actor.weaponMeshes).toContain('rkm_wz28');
+    expect(actor.weaponMeshes).not.toContain('rifle');expect(actor.weaponMeshes).not.toContain('clip');
+    await page.waitForTimeout(300);const still=await page.evaluate(()=>window.gameDiagnostics());
+    expect(still.clock).toBe(frozen.clock);expect(still.m01.characters).toEqual(frozen.m01.characters);
+    await page.screenshot({path:info.outputPath(file),style:'#pause { visibility:hidden !important; }',timeout:120000});
+    samples.push({clip,clock:frozen.clock,battleClock:frozen.m01.battleClock,actor});
+    if(clip==='rkm_fire_burst')await page.locator('#resume').click();
+  }
+  await info.attach('kowal-rkm-samples',{body:JSON.stringify({kind:'production browser continuation of a genuine simulation-control snapshot',samples,errors,failed}),contentType:'application/json'});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 test('missing close-up LOD0 falls back to intact LOD1 hands while the light world actors remain available',async({page})=>{
   await page.route('**/m01_soldier_pl_lod0.glb',r=>r.abort());
@@ -152,6 +181,7 @@ test('the station evacuation restores its grounded drag, pauses with the mission
   const delivered=await page.evaluate(()=>window.gameDiagnostics());
   expect(delivered.m01.stationEvacuation.patient.carriedBy).toBeNull();expect(delivered.m01.stationEvacuation.patient.x).toBe(-334);
   expect(delivered.m01.stationEvacuation.patient.state).toBe('WOUNDED');expect(delivered.m01.flags['m01.bak_status']).toBe('unhurt');
+  await info.attach('station-evacuation',{body:JSON.stringify({kind:'production browser continuation of a genuine simulation-control snapshot',drag:frozen.m01.stationEvacuation,delivered:delivered.m01.stationEvacuation,errors,failed}),contentType:'application/json'});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 test('real keyboard movement traverses the approaches and E delivers the message at the rail bridge',async({page},info)=>{

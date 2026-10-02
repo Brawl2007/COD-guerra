@@ -149,6 +149,12 @@ test('the actual reload rig keeps the open action, clip and hand in the first-pe
           assert.ok(point.z<-.03,`${name} must remain ahead of the camera, LOD${lod} at ${time}`);
           point.project(camera);assert.ok(Math.abs(point.x)<.95&&Math.abs(point.y)<.95,`${name} visible during reload: ${point.toArray()}`);
         }
+        const arms=view.root.getObjectByName('body');
+        for(const index of new Set(arms.geometry.index.array)){
+          const point=new THREE.Vector3().fromBufferAttribute(arms.geometry.getAttribute('position'),index);
+          arms.applyBoneTransform(index,point).applyMatrix4(arms.matrixWorld);
+          assert.ok(point.z<-.03,`sleeves stay clear of the near plane, LOD${lod} at ${time}: ${point.z}`);
+        }
         const first=view.root.getObjectByName('weapon').matrixWorld.toArray();view.update(sim,'low',0);
         assert.deepEqual(view.root.getObjectByName('weapon').matrixWorld.toArray(),first,'a paused frame is reproducible');
       }

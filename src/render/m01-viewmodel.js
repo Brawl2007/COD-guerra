@@ -71,12 +71,13 @@ export class M01ViewModel {
     // The world reload lowers the rifle to the chest, behind the forward-leaning eye. Pivot the first-person
     // presentation about that eye to see the same action, keeping upper arms below the frame and the camera free.
     const reloadDown=w.reloading?THREE.MathUtils.smoothstep(sample,0,.3)-THREE.MathUtils.smoothstep(sample,2.75,3.3):0;
-    if(!carry)this.root.rotation.x=reloadDown*Math.PI*.42;
+    if(!carry)this.root.rotation.x=reloadDown*Math.PI*.25;
     this.root.position.copy(eye.applyQuaternion(this.root.quaternion)).multiplyScalar(-1);
     if(!carry){
       this.root.position.z-=.16;
       if(!p.aiming)this.root.position.addScaledVector(new THREE.Vector3(.16,-.23,.02),1-reloadDown);
-      this.root.position.addScaledVector(new THREE.Vector3(.06,.07,-.08),reloadDown);
+      // Keep forearms clear of the near plane while showing the world rig's reload.
+      this.root.position.addScaledVector(new THREE.Vector3(.06,.07,-.38),reloadDown);
     }
     const bob=p.moveBlend*Math.sin(t*(p.sprinting?14:9))*.014;
     this.root.position.y+=Math.abs(bob);if(p.sprinting&&!carry)this.root.rotation.z=.1;

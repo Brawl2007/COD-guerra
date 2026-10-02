@@ -4,7 +4,7 @@
 
 M01 passou a **PROTÓTIPO JOGÁVEL** nesta branch. O fluxo usa a fundação Three.js e as pontes do Claude, preservando os históricos dos PRs #9 e #11. A bancada francesa continua seleccionável. O marco 2 ainda não está aprovado como missão validada; faltam o playtest humano, a medição no Chromebook e o trabalho descrito abaixo.
 
-Os PRs #8 e #10 de pesquisa/preparação já estão em `main`. Esta integração é proposta num PR próprio para `main`; os PRs #9 e #11 permanecem abertos. O mapa francês conserva as suas coordenadas e arma.
+Os PRs #8 e #10 de pesquisa/preparação já estão em `main`. A integração actual está no PR #26 para `codex/m01-runtime`; #9/#11 já foram substituídos e fechados. O merge em `main` e a publicação pertencem ao utilizador. O mapa francês conserva as suas coordenadas e arma.
 
 ## Implementado e observado
 
@@ -110,7 +110,7 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 ## Parcial ou pendente
 
 - Soldados próximos, mãos, recarga e transporte já têm rig e clips reais. Arte, encaixe das mãos, uniformes e mixagem continuam a exigir revisão; Civis e alguns actores distantes conservam proxies. Vozes gravadas continuam ausentes.
-- Combate remoto, navegação, resgate e feridos têm comportamento reduzido. O arrasto de S3 está encenado; ainda faltam transições refinadas de agarrar/soltar, casamatas interiores, feridos carregados pelo pelotão e direcção humana completa.
+- Combate remoto, navegação, resgate e feridos têm comportamento reduzido. O arrasto de S3 está encenado; ainda faltam transições refinadas de agarrar/soltar, casamatas interiores, feridos carregados pelo pelotão e direcção humana completa. Provas do arrasto em `docs/verification/m01-runtime/station-evacuation/`.
 - A alça muda a referência de distância; o tiro ainda usa raio recto com dispersão, conforme fallback documentado. Queda/arrasto balístico pendentes. Pontaria e probabilidade de acerto são tuning de protótipo.
 - Trussas têm aberturas e não são paredes sólidas; colisão exacta dos membros metálicos e ruínas pendente. Juntas e posts dos portais usam aproximações conservadoras declaradas.
 - Humanos, comboios e aviões são geometrias provisórias próprias; as pontes são o kit GLB do Claude completado no PR #11. Fontes, licenças e incertezas em `ASSET_CREDITS.md` e `BRIDGE_ASSET_REPORT.md`.
@@ -122,7 +122,7 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
   - a flecha do fogo alemão é uma aproximação de jogo; o wz.29 continua em recta;
   - afinar a legibilidade e a dificuldade do fogo no reparo e na retirada num playtest humano;
   - de dentro da treliça rodoviária, a coluna da demolição leste fica tapada;
-  - o transporte de feridos usa um placeholder.
+  - o transporte usa o rig; faltam as transições refinadas de agarrar/soltar e os feridos do pelotão.
 
   Detalhes em `docs/verification/m01-runtime/continuous/README.md`.
 
