@@ -1,0 +1,261 @@
+{
+  "kind": "production browser regression; snapshot continuations are not a human/full mission playtest",
+  "stats": {
+    "startTime": "2026-10-01T19:47:06.642Z",
+    "duration": 406613.618,
+    "expected": 19,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "errors": [],
+  "node": {
+    "passed": 112,
+    "failed": 0
+  },
+  "tests": [
+    {
+      "title": "production prefix loads assets; real click captures mouse; shooting, reload and pause work",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 9868,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "real keyboard movement reaches and stores checkpoint; restart and page reload restore it",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 19232,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "corrupt checkpoint is explained and a new mission remains available",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 4530,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "missing models are reported and procedural fallback keeps the area playable",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 4613,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 32331,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 46571,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "an optional character download failure preserves playable procedural actors without blocking bridge validation",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 11951,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "missing close-up LOD0 falls back to intact LOD1 hands while the light world actors remain available",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 13174,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "real keyboard movement traverses the approaches and E delivers the message at the rail bridge",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 71568,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "adjustment salvo at the gates restores its actual origin and follows mouse look",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 12654,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "adjustment salvo behind the truss restores its actual origin and follows mouse look",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 14544,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "demolition inside the road truss shows the actual bearing while mouse look remains free",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 17241,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "a genuine CP-D reload keeps east destruction and casualties, including restart and page reload",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 21300,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "the actual outro state can be skipped through the UI into the enabled historical debrief",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 12750,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 15797,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "the real roll-call snapshot renders seated actors and keeps their pose after page reload",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 24053,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "a real withdrawal continuation loses men only to rounds from the spans, keeps the twelve-survivor floor and shows the count in the HUD",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 27865,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "a failed M01 bridge load prevents an invisible bridge; the French sandbox remains selectable",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 11525,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "textured atmosphere survives checkpoint restart without duplicating resources; low quality reduces vegetation",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 28169,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    }
+  ],
+  "finalFirstPersonChecks": {
+    "stats": {
+      "startTime": "2026-10-01T19:55:58.069Z",
+      "duration": 77962.925,
+      "expected": 3,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "errors": [],
+    "reason": "Final eye-pivot presentation of the reload, followed by real-control and optional-download checks on the final build."
+  },
+  "build": {
+    "log": "> operation-ashen-road@0.2.0 build\n> vite build\n\nvite v8.3.1 building client environment for production...\ntransforming...\n\u2713 49 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                     3.99 kB \u2502 gzip:   1.79 kB\ndist/assets/index-B2xtJFEf.css      8.12 kB \u2502 gzip:   2.69 kB\ndist/assets/index-CsLAUfpK.js   1,023.08 kB \u2502 gzip: 265.03 kB\n\n\u2713 built in 235ms"
+  }
+}

@@ -1,0 +1,736 @@
+{
+  "generator": "tools/assets/m01-soldiers (node build.mjs)",
+  "units": "metros; +Y para cima; personagem e cano da arma para −Z",
+  "files": {
+    "m01_soldier_pl_lod0.glb": {
+      "nation": "pl",
+      "lod": "lod0",
+      "bytes": 2602908,
+      "height_m": 1.745,
+      "bones": 61,
+      "triangles_visible": 14861,
+      "draw_calls_visible": 6,
+      "textures": {
+        "baseColor": "image/jpeg",
+        "metallicRoughness": "image/png",
+        "normal": "image/png"
+      },
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 6742,
+          "visible": true
+        },
+        {
+          "name": "head_wrona",
+          "triangles": 2955,
+          "visible": true
+        },
+        {
+          "name": "head_zielinski",
+          "triangles": 2953,
+          "visible": false
+        },
+        {
+          "name": "head_krawiec",
+          "triangles": 2953,
+          "visible": false
+        },
+        {
+          "name": "head_nowicki",
+          "triangles": 2949,
+          "visible": false
+        },
+        {
+          "name": "head_bak",
+          "triangles": 2949,
+          "visible": false
+        },
+        {
+          "name": "head_kowal",
+          "triangles": 2951,
+          "visible": false
+        },
+        {
+          "name": "head_dudek",
+          "triangles": 2951,
+          "visible": false
+        },
+        {
+          "name": "head_pl_a",
+          "triangles": 2948,
+          "visible": false
+        },
+        {
+          "name": "helmet_wz31",
+          "triangles": 1558,
+          "visible": true
+        },
+        {
+          "name": "helmet_cover_wz31",
+          "triangles": 1440,
+          "visible": false
+        },
+        {
+          "name": "cap_wz37",
+          "triangles": 363,
+          "visible": false
+        },
+        {
+          "name": "gear",
+          "triangles": 1574,
+          "visible": true
+        },
+        {
+          "name": "sapper",
+          "triangles": 332,
+          "visible": false
+        },
+        {
+          "name": "rkm_pouch",
+          "triangles": 344,
+          "visible": false
+        },
+        {
+          "name": "nco",
+          "triangles": 348,
+          "visible": false
+        },
+        {
+          "name": "rank_kapral",
+          "triangles": 176,
+          "visible": false
+        },
+        {
+          "name": "rank_sierzant",
+          "triangles": 176,
+          "visible": false
+        },
+        {
+          "name": "rank_st_strzelec",
+          "triangles": 88,
+          "visible": false
+        },
+        {
+          "name": "rifle",
+          "triangles": 1414,
+          "visible": true
+        },
+        {
+          "name": "clip",
+          "triangles": 618,
+          "visible": true
+        },
+        {
+          "name": "rifle_wz98a",
+          "triangles": 1366,
+          "visible": false
+        },
+        {
+          "name": "rkm_wz28",
+          "triangles": 1064,
+          "visible": false
+        },
+        {
+          "name": "rkm_bipod_open",
+          "triangles": 128,
+          "visible": false
+        },
+        {
+          "name": "rkm_bipod_folded",
+          "triangles": 128,
+          "visible": false
+        },
+        {
+          "name": "rag",
+          "triangles": 220,
+          "visible": false
+        }
+      ]
+    },
+    "m01_soldier_pl_lod1.glb": {
+      "nation": "pl",
+      "lod": "lod1",
+      "bytes": 1041440,
+      "height_m": 1.745,
+      "bones": 61,
+      "triangles_visible": 6022,
+      "draw_calls_visible": 6,
+      "textures": {
+        "baseColor": "image/jpeg",
+        "metallicRoughness": "image/png"
+      },
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 2451,
+          "visible": true
+        },
+        {
+          "name": "head_wrona",
+          "triangles": 984,
+          "visible": true
+        },
+        {
+          "name": "head_zielinski",
+          "triangles": 984,
+          "visible": false
+        },
+        {
+          "name": "head_krawiec",
+          "triangles": 983,
+          "visible": false
+        },
+        {
+          "name": "head_nowicki",
+          "triangles": 982,
+          "visible": false
+        },
+        {
+          "name": "head_bak",
+          "triangles": 983,
+          "visible": false
+        },
+        {
+          "name": "head_kowal",
+          "triangles": 983,
+          "visible": false
+        },
+        {
+          "name": "head_dudek",
+          "triangles": 984,
+          "visible": false
+        },
+        {
+          "name": "head_pl_a",
+          "triangles": 982,
+          "visible": false
+        },
+        {
+          "name": "helmet_wz31",
+          "triangles": 381,
+          "visible": true
+        },
+        {
+          "name": "helmet_cover_wz31",
+          "triangles": 342,
+          "visible": false
+        },
+        {
+          "name": "cap_wz37",
+          "triangles": 206,
+          "visible": false
+        },
+        {
+          "name": "gear",
+          "triangles": 1066,
+          "visible": true
+        },
+        {
+          "name": "sapper",
+          "triangles": 244,
+          "visible": false
+        },
+        {
+          "name": "rkm_pouch",
+          "triangles": 254,
+          "visible": false
+        },
+        {
+          "name": "nco",
+          "triangles": 218,
+          "visible": false
+        },
+        {
+          "name": "rank_kapral",
+          "triangles": 144,
+          "visible": false
+        },
+        {
+          "name": "rank_sierzant",
+          "triangles": 144,
+          "visible": false
+        },
+        {
+          "name": "rank_st_strzelec",
+          "triangles": 72,
+          "visible": false
+        },
+        {
+          "name": "rifle",
+          "triangles": 846,
+          "visible": true
+        },
+        {
+          "name": "clip",
+          "triangles": 294,
+          "visible": true
+        },
+        {
+          "name": "rifle_wz98a",
+          "triangles": 784,
+          "visible": false
+        },
+        {
+          "name": "rkm_wz28",
+          "triangles": 904,
+          "visible": false
+        },
+        {
+          "name": "rkm_bipod_open",
+          "triangles": 128,
+          "visible": false
+        },
+        {
+          "name": "rkm_bipod_folded",
+          "triangles": 128,
+          "visible": false
+        },
+        {
+          "name": "rag",
+          "triangles": 140,
+          "visible": false
+        }
+      ]
+    },
+    "m01_soldier_pl_lod2.glb": {
+      "nation": "pl",
+      "lod": "lod2",
+      "bytes": 321668,
+      "height_m": 1.745,
+      "bones": 28,
+      "triangles_visible": 1895,
+      "draw_calls_visible": 6,
+      "textures": {
+        "baseColor": "image/jpeg"
+      },
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 918,
+          "visible": true
+        },
+        {
+          "name": "head_wrona",
+          "triangles": 343,
+          "visible": true
+        },
+        {
+          "name": "head_zielinski",
+          "triangles": 343,
+          "visible": false
+        },
+        {
+          "name": "head_krawiec",
+          "triangles": 344,
+          "visible": false
+        },
+        {
+          "name": "head_nowicki",
+          "triangles": 344,
+          "visible": false
+        },
+        {
+          "name": "head_bak",
+          "triangles": 344,
+          "visible": false
+        },
+        {
+          "name": "head_kowal",
+          "triangles": 344,
+          "visible": false
+        },
+        {
+          "name": "head_dudek",
+          "triangles": 344,
+          "visible": false
+        },
+        {
+          "name": "head_pl_a",
+          "triangles": 342,
+          "visible": false
+        },
+        {
+          "name": "helmet_wz31",
+          "triangles": 150,
+          "visible": true
+        },
+        {
+          "name": "helmet_cover_wz31",
+          "triangles": 135,
+          "visible": false
+        },
+        {
+          "name": "cap_wz37",
+          "triangles": 38,
+          "visible": false
+        },
+        {
+          "name": "gear",
+          "triangles": 204,
+          "visible": true
+        },
+        {
+          "name": "sapper",
+          "triangles": 42,
+          "visible": false
+        },
+        {
+          "name": "rkm_pouch",
+          "triangles": 34,
+          "visible": false
+        },
+        {
+          "name": "nco",
+          "triangles": 32,
+          "visible": false
+        },
+        {
+          "name": "rank_kapral",
+          "triangles": 14,
+          "visible": false
+        },
+        {
+          "name": "rank_sierzant",
+          "triangles": 14,
+          "visible": false
+        },
+        {
+          "name": "rank_st_strzelec",
+          "triangles": 12,
+          "visible": false
+        },
+        {
+          "name": "rifle",
+          "triangles": 176,
+          "visible": true
+        },
+        {
+          "name": "clip",
+          "triangles": 104,
+          "visible": true
+        },
+        {
+          "name": "rifle_wz98a",
+          "triangles": 170,
+          "visible": false
+        },
+        {
+          "name": "rkm_wz28",
+          "triangles": 132,
+          "visible": false
+        },
+        {
+          "name": "rkm_bipod_open",
+          "triangles": 14,
+          "visible": false
+        },
+        {
+          "name": "rkm_bipod_folded",
+          "triangles": 14,
+          "visible": false
+        },
+        {
+          "name": "rag",
+          "triangles": 22,
+          "visible": false
+        }
+      ]
+    },
+    "m01_soldier_de_lod0.glb": {
+      "nation": "de",
+      "lod": "lod0",
+      "bytes": 1718132,
+      "height_m": 1.745,
+      "bones": 61,
+      "triangles_visible": 16055,
+      "draw_calls_visible": 6,
+      "textures": {
+        "baseColor": "image/jpeg",
+        "metallicRoughness": "image/png",
+        "normal": "image/png"
+      },
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 6058,
+          "visible": true
+        },
+        {
+          "name": "head_de_a",
+          "triangles": 2953,
+          "visible": true
+        },
+        {
+          "name": "head_de_b",
+          "triangles": 2951,
+          "visible": false
+        },
+        {
+          "name": "head_de_c",
+          "triangles": 2953,
+          "visible": false
+        },
+        {
+          "name": "helmet_m35",
+          "triangles": 1558,
+          "visible": true
+        },
+        {
+          "name": "gear",
+          "triangles": 3448,
+          "visible": true
+        },
+        {
+          "name": "rifle",
+          "triangles": 1420,
+          "visible": true
+        },
+        {
+          "name": "clip",
+          "triangles": 618,
+          "visible": true
+        }
+      ]
+    },
+    "m01_soldier_de_lod1.glb": {
+      "nation": "de",
+      "lod": "lod1",
+      "bytes": 604600,
+      "height_m": 1.745,
+      "bones": 61,
+      "triangles_visible": 6446,
+      "draw_calls_visible": 6,
+      "textures": {
+        "baseColor": "image/jpeg",
+        "metallicRoughness": "image/png"
+      },
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 2202,
+          "visible": true
+        },
+        {
+          "name": "head_de_a",
+          "triangles": 984,
+          "visible": true
+        },
+        {
+          "name": "head_de_b",
+          "triangles": 983,
+          "visible": false
+        },
+        {
+          "name": "head_de_c",
+          "triangles": 984,
+          "visible": false
+        },
+        {
+          "name": "helmet_m35",
+          "triangles": 380,
+          "visible": true
+        },
+        {
+          "name": "gear",
+          "triangles": 1744,
+          "visible": true
+        },
+        {
+          "name": "rifle",
+          "triangles": 842,
+          "visible": true
+        },
+        {
+          "name": "clip",
+          "triangles": 294,
+          "visible": true
+        }
+      ]
+    },
+    "m01_soldier_de_lod2.glb": {
+      "nation": "de",
+      "lod": "lod2",
+      "bytes": 187880,
+      "height_m": 1.745,
+      "bones": 28,
+      "triangles_visible": 2059,
+      "draw_calls_visible": 6,
+      "textures": {
+        "baseColor": "image/jpeg"
+      },
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 825,
+          "visible": true
+        },
+        {
+          "name": "head_de_a",
+          "triangles": 344,
+          "visible": true
+        },
+        {
+          "name": "head_de_b",
+          "triangles": 344,
+          "visible": false
+        },
+        {
+          "name": "head_de_c",
+          "triangles": 344,
+          "visible": false
+        },
+        {
+          "name": "helmet_m35",
+          "triangles": 152,
+          "visible": true
+        },
+        {
+          "name": "gear",
+          "triangles": 458,
+          "visible": true
+        },
+        {
+          "name": "rifle",
+          "triangles": 176,
+          "visible": true
+        },
+        {
+          "name": "clip",
+          "triangles": 104,
+          "visible": true
+        }
+      ]
+    },
+    "m01_soldier_animations.glb": {
+      "bytes": 876612,
+      "clips": [
+        {
+          "name": "standing_idle",
+          "duration": 4,
+          "loop": true
+        },
+        {
+          "name": "aim",
+          "duration": 2,
+          "loop": true
+        },
+        {
+          "name": "fire_bolt",
+          "duration": 1.17,
+          "loop": false
+        },
+        {
+          "name": "reload_clip",
+          "duration": 3.4,
+          "loop": false
+        },
+        {
+          "name": "walk",
+          "duration": 1,
+          "loop": true
+        },
+        {
+          "name": "run",
+          "duration": 0.68,
+          "loop": true
+        },
+        {
+          "name": "crouched_idle",
+          "duration": 3,
+          "loop": true
+        },
+        {
+          "name": "pinned",
+          "duration": 2.4,
+          "loop": true
+        },
+        {
+          "name": "sapper_work",
+          "duration": 3,
+          "loop": true
+        },
+        {
+          "name": "sapper_work_pinned",
+          "duration": 2,
+          "loop": true
+        },
+        {
+          "name": "carry_wounded",
+          "duration": 1.25,
+          "loop": true
+        },
+        {
+          "name": "carried",
+          "duration": 2.5,
+          "loop": true
+        },
+        {
+          "name": "wounded",
+          "duration": 2,
+          "loop": true
+        },
+        {
+          "name": "fallen",
+          "duration": 1.4,
+          "loop": false
+        },
+        {
+          "name": "seated",
+          "duration": 4,
+          "loop": true
+        },
+        {
+          "name": "rkm_standing_idle",
+          "duration": 4,
+          "loop": true
+        },
+        {
+          "name": "rkm_walk",
+          "duration": 1.05,
+          "loop": true
+        },
+        {
+          "name": "rkm_run",
+          "duration": 0.72,
+          "loop": true
+        },
+        {
+          "name": "rkm_aim",
+          "duration": 2,
+          "loop": true
+        },
+        {
+          "name": "rkm_fire_burst",
+          "duration": 0.8,
+          "loop": false
+        },
+        {
+          "name": "rkm_crouched_idle",
+          "duration": 3,
+          "loop": true
+        },
+        {
+          "name": "rkm_prone",
+          "duration": 3,
+          "loop": true
+        },
+        {
+          "name": "rkm_prone_fire",
+          "duration": 0.8,
+          "loop": false
+        },
+        {
+          "name": "rkm_reload",
+          "duration": 3.4,
+          "loop": false
+        },
+        {
+          "name": "rkm_clean",
+          "duration": 6,
+          "loop": true
+        }
+      ]
+    }
+  }
+}
