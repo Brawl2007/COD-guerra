@@ -769,6 +769,7 @@
         "bare_metal",
         "brass",
         "bullet",
+        "round_tip",
         "bore"
       ],
       "note": "um material com atlas; aço oxidado escuro, tripé verde-caqui, caixa caqui [T34], madeira, tecido caqui, latão e balas de tombak"
@@ -776,14 +777,25 @@
   ],
   "textures": {
     "atlas_px": 1024,
-    "density_px_per_m": 689
+    "density_px_per_m": 689,
+    "lod0": {
+      "atlas_px": 1024,
+      "density_px_per_m": 689,
+      "note": "o LOD0 leve tem atlas próprio (mesmos pintores); LOD1 e LOD2 usam o atlas da variante completa"
+    }
+  },
+  "lod0_budget": {
+    "max_triangles": 4000,
+    "before": 5004,
+    "after": 3904,
+    "method": "só o LOD0: cartuchos sem as partes escondidas no tecido (aro com tampo; frente do estojo, gargalo e bala numa peça de 3 anéis com a ponta fechada) e tampos poligonais em vez de leque; aros da manga sem tampos (a manga tapa o interior); tecido do troço livre por Douglas–Peucker a 0,2 mm. Mesmas peças, grupos, pivôs, sockets e comprimento; LOD1, LOD2 e os clips não mudam"
   },
   "files": {
     "m01_ckm_wz30_lod0.glb": {
       "lod": "lod0",
       "use": "perto (< 15 m) e capturas",
-      "bytes": 405024,
-      "triangles": 5004,
+      "bytes": 364660,
+      "triangles": 3904,
       "draw_calls": 9,
       "meshes": [
         {
@@ -796,7 +808,7 @@
         },
         {
           "name": "ckm_elevate",
-          "triangles": 1268
+          "triangles": 1160
         },
         {
           "name": "ckm_cocking_handle",
@@ -804,7 +816,7 @@
         },
         {
           "name": "ckm_feed_belt",
-          "triangles": 568
+          "triangles": 372
         },
         {
           "name": "ckm_belt_spent",
@@ -812,7 +824,7 @@
         },
         {
           "name": "ckm_belt_free",
-          "triangles": 1832
+          "triangles": 1036
         },
         {
           "name": "ckm_ammo_box",
