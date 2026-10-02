@@ -1,0 +1,1176 @@
+{
+  "asset": "ckm wz.30 (1939) no tripé, com fita e caixa — metralhadora da casamata de M01 Tczew (grp_ckm_crew)",
+  "status": "PROVISÓRIO VERIFICADO (M01 continua PROTÓTIPO JOGÁVEL)",
+  "generator": "tools/assets/m01-ckm-wz30 (node build.mjs)",
+  "author": "Claude Code (geometria, texturas e clips gerados por código original neste repositório)",
+  "license": "Original do projecto; a licença global do repositório continua por decidir pelo proprietário (ASSET_CREDITS.md). Sem conteúdo de terceiros nem de jogos.",
+  "tools": [
+    "Node.js",
+    "@gltf-transform/core 4.5.1 (MIT)",
+    "meshoptimizer 1.3.0 (MIT)",
+    "jpeg-js 0.4.4 (BSD-3)",
+    "pngjs 7.0.0 (MIT)",
+    "three.js 0.186.1 (MIT, capturas)",
+    "Playwright/Chromium (capturas)"
+  ],
+  "units": "metros; +Y para cima; cano para −Z; lado direito da arma em +X",
+  "scale": {
+    "unit_m": 1,
+    "length_m": 1.2,
+    "measured": "ver files.*.gun_length_m e bbox_m"
+  },
+  "frame": "raiz ckm_wz30 no chão, por baixo do pião do tripé; a arma (nó ckm_elevate) tem origem nos munhões, a 0,60 m do chão",
+  "variant": "ckm wz.30 (Browning M1917 polaca, 7,92 mm) de produção 1931–1939, manga de água e tapa-chamas cónico, no tripé de 1939 (wz.30/wz.34) na posição baixa, com fita de tecido de 330 e a caixa de aço caqui. Sem o adaptador antiaéreo, a lata de água e a mangueira de condensação",
+  "sources": {
+    "T34": [
+      "https://en.wikipedia.org/wiki/Ckm_wz._30",
+      "https://muzeum.skarzysko.pl/encyklopedia/item/518-ciezki-karabin-maszynowy-wz-30-browning.html",
+      "https://opisybroni.pl/ciezki-karabin-maszynowy-browning-wz-30/",
+      "http://www.1939.pl/uzbrojenie/polskie/bron-strzelecka/ckm_792mm_wz30_browning/index.html",
+      "https://dobroni.pl/artykul/ciezki-karabin-maszynowy-n565088",
+      "https://mhki.kielce.eu/zawartosc/polska-skrzynka-amunicyjna-do-ckm-wz",
+      "https://polski-kolekcjoner.pl/2020/03/16/skrzynka-na-tasme-ckm-wz-30-1937/",
+      "https://www.imfdb.org/wiki/Wz._30_Browning",
+      "https://en.wikipedia.org/wiki/M1917_Browning_machine_gun",
+      "https://www.americanrifleman.org/content/mr-browning-s-gun-the-u-s-model-of-1917-browning-machine-gun/"
+    ],
+    "note": "T34 só por resumos concordantes de busca (2026-10-02): wikipedia.org, opisybroni.pl, 1939.pl, muzeum.skarzysko.pl, mhki.kielce.eu e archive.org estão bloqueados neste ambiente. Nenhuma página foi lida por inteiro."
+  },
+  "specs": {
+    "caliber": "7,92×57 mm Mauser",
+    "belt": 330,
+    "feed": "fita de tecido de 330, da esquerda para a direita",
+    "rate_rpm": [
+      600,
+      "400–450 práticos"
+    ],
+    "mass_kg": 13.6,
+    "water_l": 3,
+    "action": "recuo curto, ferrolho fechado; alavanca de armar à direita acompanha o ferrolho",
+    "sights": "alça em quadro até 2000 m; massa na frente da manga",
+    "tripod": "wz.30 (29,3 kg, até 880 mm) ou wz.34 (26,3 kg)"
+  },
+  "measures": [
+    {
+      "id": "length_total",
+      "value_m": 1.2,
+      "source": "T34",
+      "estimated": false,
+      "note": "comprimento total 1200 mm com o tapa-chamas cónico (do punho à boca do cone)"
+    },
+    {
+      "id": "barrel",
+      "value_m": 0.72,
+      "source": "T34",
+      "estimated": false,
+      "note": "cano 720 mm, da culatra (z 0,04 na caixa) à boca (z −0,68, dentro do cone)"
+    },
+    {
+      "id": "mass",
+      "value_kg": [
+        13.6,
+        65
+      ],
+      "source": "T34",
+      "estimated": false,
+      "note": "arma 13,6 kg sem água; ~65 kg em combate com tripé, água e munição; não afecta a geometria"
+    },
+    {
+      "id": "rate",
+      "value_rpm": [
+        600,
+        450
+      ],
+      "source": "T34",
+      "estimated": false,
+      "note": "600 tiros/min teóricos, 400–450 práticos; os clips usam 600 (intervalo de 0,1 s)"
+    },
+    {
+      "id": "belt",
+      "value": 330,
+      "source": "T34",
+      "estimated": false,
+      "note": "fita de tecido de 330 cartuchos, alimentação pela esquerda (como a M1917); passo de 16 mm e largura da fita estimados"
+    },
+    {
+      "id": "ammo_box",
+      "value_m": [
+        0.355,
+        0.175,
+        0.085
+      ],
+      "source": "T34 (mhki.kielce.eu, polski-kolekcjoner.pl)",
+      "estimated": false,
+      "note": "caixa de aço pintada de caqui, pegas em cima e nos lados; tampa com dobradiça ao comprido; fecho e posição da dobradiça estimados"
+    },
+    {
+      "id": "water_jacket",
+      "value_m": [
+        0.084,
+        0.615
+      ],
+      "source": "T34",
+      "estimated": true,
+      "note": "manga de água de ~3 l [T34]; diâmetro 84 mm e comprimento 615 mm estimados para dar ~3 l à volta do cano"
+    },
+    {
+      "id": "flash_funnel",
+      "value_m": 0.15,
+      "source": "T34",
+      "estimated": true,
+      "note": "tapa-chamas cónico (\"lejek\") incluído no comprimento [T34]; diâmetros e comprimento estimados"
+    },
+    {
+      "id": "receiver",
+      "value_m": [
+        0.06,
+        0.13,
+        0.33
+      ],
+      "source": "fotografias (resumo)",
+      "estimated": true,
+      "note": "caixa da culatra rectangular com tampa articulada, largura × altura × comprimento"
+    },
+    {
+      "id": "grip",
+      "value_m": 0.11,
+      "source": "fotografias (resumo)",
+      "estimated": true,
+      "note": "punho de pistola de madeira sob a chapa de trás, gatilho à frente; forma do mecanismo de 1938 por confirmar"
+    },
+    {
+      "id": "sights",
+      "value_m": [
+        0.095,
+        0.095
+      ],
+      "source": "T34",
+      "estimated": true,
+      "note": "alça em quadro até 2000 m [T34] e massa na frente da manga; alturas acima do eixo (95 mm) estimadas"
+    },
+    {
+      "id": "tripod",
+      "value_m": 0.88,
+      "source": "T34",
+      "estimated": true,
+      "note": "tripé wz.30 de 29,3 kg, altura máxima 880 mm (wz.34: 26,3 kg) [T34]; modelado na posição baixa (pião a 0,55 m, cano a 0,64 m); pernas, sapatas e barra estimadas; adaptador antiaéreo não modelado"
+    },
+    {
+      "id": "cocking_handle",
+      "value_m": 0.1,
+      "source": "M1917 (resumo)",
+      "estimated": true,
+      "note": "alavanca à direita, acompanha o ferrolho; curso de 0,10 m à mão e 0,055 m por tiro estimados"
+    }
+  ],
+  "parts": [
+    {
+      "node": "ckm_tripod",
+      "parent": "ckm_wz30",
+      "pivot_scene": [
+        0,
+        0,
+        0
+      ],
+      "translation_local": [
+        0,
+        0,
+        0
+      ],
+      "rest_rotation": null,
+      "moving": null,
+      "contents": "tripé de três pernas (posição baixa): cabeça com prato de direcção, pernas com sapatas e espigões, barra de pontaria",
+      "pieces": [
+        "tripod_head",
+        "traversing_dial",
+        "leg_front",
+        "shoe_front",
+        "spike_front",
+        "leg_clamp_front",
+        "leg_rear_l",
+        "shoe_rear_l",
+        "spike_rear_l",
+        "leg_clamp_rear_l",
+        "leg_rear_r",
+        "shoe_rear_r",
+        "spike_rear_r",
+        "leg_clamp_rear_r",
+        "traversing_bar"
+      ]
+    },
+    {
+      "node": "ckm_traverse",
+      "parent": "ckm_wz30",
+      "pivot_scene": [
+        0,
+        0.55,
+        0
+      ],
+      "translation_local": [
+        0,
+        0.55,
+        0
+      ],
+      "rest_rotation": null,
+      "moving": "rotação em Y (direcção) no pião",
+      "contents": "pião, berço com o garfo dos munhões, fuso e volante de elevação, corrediça na barra",
+      "pieces": [
+        "pintle",
+        "cradle",
+        "yoke_l",
+        "yoke_r",
+        "elevating_screw",
+        "traverse_slide",
+        "elevating_handwheel_axle",
+        "elevating_handwheel"
+      ]
+    },
+    {
+      "node": "ckm_elevate",
+      "parent": "ckm_traverse",
+      "pivot_scene": [
+        0,
+        0.6,
+        0
+      ],
+      "translation_local": [
+        0,
+        0.04999999999999993,
+        0
+      ],
+      "rest_rotation": null,
+      "moving": "rotação em X (elevação) nos munhões; + = boca para cima",
+      "contents": "arma: caixa da culatra, tampa, chapa de trás, punho de madeira e gatilho, manga de água com bujões e tubo de vapor, bucim, tapa-chamas cónico, miras",
+      "pieces": [
+        "trunnion_block",
+        "trunnion_pin",
+        "receiver",
+        "cover",
+        "cover_latch",
+        "backplate",
+        "feedway_l",
+        "feedway_r",
+        "handle_slot",
+        "grip",
+        "trigger_housing",
+        "trigger",
+        "trigger_guard",
+        "jacket",
+        "jacket_band_4",
+        "jacket_band_33",
+        "jacket_band_63",
+        "water_fill",
+        "steam_tube",
+        "water_drain",
+        "muzzle_gland",
+        "flash_funnel",
+        "bore",
+        "front_sight_base",
+        "front_sight",
+        "rear_sight_base",
+        "rear_sight_frame_l",
+        "rear_sight_frame_r",
+        "rear_sight_notch"
+      ]
+    },
+    {
+      "node": "ckm_cocking_handle",
+      "parent": "ckm_elevate",
+      "pivot_scene": [
+        0.031,
+        0.6,
+        0.13
+      ],
+      "translation_local": [
+        0.031,
+        0,
+        0.13
+      ],
+      "rest_rotation": null,
+      "moving": "translação em +Z: 0.055 m por tiro (acompanha o ferrolho) e 0.1 m à mão",
+      "contents": "alavanca de armar (direita)",
+      "pieces": [
+        "handle",
+        "handle_knob"
+      ]
+    },
+    {
+      "node": "ckm_feed_belt",
+      "parent": "ckm_elevate",
+      "pivot_scene": [
+        -0.03,
+        0.655,
+        0.08
+      ],
+      "translation_local": [
+        -0.03,
+        0.05500000000000005,
+        0.08
+      ],
+      "rest_rotation": null,
+      "moving": "translação em X: +0.016 m por tiro (serra) e entrada pela esquerda na alimentação",
+      "contents": "troço recto da fita na entrada (7 cartuchos) com a ponta",
+      "pieces": [
+        "belt_feed_fabric",
+        "belt_tab",
+        "feed_round_0_case",
+        "feed_round_0_bullet",
+        "feed_round_1_case",
+        "feed_round_1_bullet",
+        "feed_round_2_case",
+        "feed_round_2_bullet",
+        "feed_round_3_case",
+        "feed_round_3_bullet",
+        "feed_round_4_case",
+        "feed_round_4_bullet",
+        "feed_round_5_case",
+        "feed_round_5_bullet",
+        "feed_round_6_case",
+        "feed_round_6_bullet"
+      ]
+    },
+    {
+      "node": "ckm_belt_spent",
+      "parent": "ckm_elevate",
+      "pivot_scene": [
+        0.03,
+        0.655,
+        0.08
+      ],
+      "translation_local": [
+        0.03,
+        0.05500000000000005,
+        0.08
+      ],
+      "rest_rotation": null,
+      "moving": "translação em X por tiro; escala 0 antes de a ponta ser puxada",
+      "contents": "fita vazia a sair pela direita",
+      "pieces": [
+        "belt_spent_fabric"
+      ]
+    },
+    {
+      "node": "ckm_belt_free",
+      "parent": "ckm_wz30",
+      "pivot_scene": [
+        -0.13,
+        0.655,
+        0.08
+      ],
+      "translation_local": [
+        -0.13,
+        0.655,
+        0.08
+      ],
+      "rest_rotation": null,
+      "moving": "translação (folga e entrada da fita)",
+      "contents": "troço livre da fita da caixa à entrada",
+      "pieces": [
+        "belt_free_fabric",
+        "free_round_0_case",
+        "free_round_0_bullet",
+        "free_round_1_case",
+        "free_round_1_bullet",
+        "free_round_2_case",
+        "free_round_2_bullet",
+        "free_round_3_case",
+        "free_round_3_bullet",
+        "free_round_4_case",
+        "free_round_4_bullet",
+        "free_round_5_case",
+        "free_round_5_bullet",
+        "free_round_6_case",
+        "free_round_6_bullet",
+        "free_round_7_case",
+        "free_round_7_bullet",
+        "free_round_8_case",
+        "free_round_8_bullet",
+        "free_round_9_case",
+        "free_round_9_bullet",
+        "free_round_10_case",
+        "free_round_10_bullet",
+        "free_round_11_case",
+        "free_round_11_bullet",
+        "free_round_12_case",
+        "free_round_12_bullet",
+        "free_round_13_case",
+        "free_round_13_bullet",
+        "free_round_14_case",
+        "free_round_14_bullet",
+        "free_round_15_case",
+        "free_round_15_bullet",
+        "free_round_16_case",
+        "free_round_16_bullet",
+        "free_round_17_case",
+        "free_round_17_bullet",
+        "free_round_18_case",
+        "free_round_18_bullet",
+        "free_round_19_case",
+        "free_round_19_bullet",
+        "free_round_20_case",
+        "free_round_20_bullet",
+        "free_round_21_case",
+        "free_round_21_bullet",
+        "free_round_22_case",
+        "free_round_22_bullet",
+        "free_round_23_case",
+        "free_round_23_bullet",
+        "free_round_24_case",
+        "free_round_24_bullet",
+        "free_round_25_case",
+        "free_round_25_bullet",
+        "free_round_26_case",
+        "free_round_26_bullet",
+        "free_round_27_case",
+        "free_round_27_bullet",
+        "free_round_28_case",
+        "free_round_28_bullet",
+        "free_round_29_case",
+        "free_round_29_bullet",
+        "free_round_30_case",
+        "free_round_30_bullet",
+        "free_round_31_case",
+        "free_round_31_bullet",
+        "free_round_32_case",
+        "free_round_32_bullet"
+      ]
+    },
+    {
+      "node": "ckm_ammo_box",
+      "parent": "ckm_wz30",
+      "pivot_scene": [
+        -0.33,
+        0,
+        0.08
+      ],
+      "translation_local": [
+        -0.33,
+        0,
+        0.08
+      ],
+      "rest_rotation": null,
+      "moving": null,
+      "contents": "caixa da fita de 330 (aço caqui) com pegas nos topos e dobradiça",
+      "pieces": [
+        "box_body",
+        "box_handle_l",
+        "box_handle_r",
+        "box_hinge"
+      ]
+    },
+    {
+      "node": "ckm_ammo_box_lid",
+      "parent": "ckm_ammo_box",
+      "pivot_scene": [
+        -0.33,
+        0.175,
+        0.1225
+      ],
+      "translation_local": [
+        0,
+        0.175,
+        0.042499999999999996
+      ],
+      "rest_rotation": {
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "deg": 110
+      },
+      "moving": "rotação em X na dobradiça de trás; repouso aberta a 110° (modelada fechada)",
+      "contents": "tampa da caixa com pega e fecho",
+      "pieces": [
+        "box_lid",
+        "box_handle_top",
+        "box_latch"
+      ]
+    }
+  ],
+  "sockets": {
+    "gun": {
+      "muzzle": [
+        0,
+        0.04,
+        -0.68
+      ],
+      "muzzle_flash": [
+        0,
+        0.04,
+        -0.83
+      ],
+      "trunnion": [
+        0,
+        0,
+        0
+      ],
+      "grip_r": [
+        0,
+        -0.1,
+        0.342
+      ],
+      "grip_l": [
+        -0.036,
+        0.05,
+        0.33
+      ],
+      "eye": [
+        0,
+        0.132,
+        0.56
+      ],
+      "trigger": [
+        0,
+        -0.07,
+        0.29
+      ],
+      "charging_handle": [
+        0.061,
+        0,
+        0.13
+      ],
+      "charging_handle_back": [
+        0.061,
+        0,
+        0.23
+      ],
+      "feed_entry": [
+        -0.03,
+        0.055,
+        0.08
+      ],
+      "feed_exit": [
+        0.03,
+        0.055,
+        0.08
+      ],
+      "rear_sight": [
+        0,
+        0.132,
+        0.3
+      ],
+      "front_sight": [
+        0,
+        0.135,
+        -0.615
+      ],
+      "water_fill": [
+        0,
+        0.096,
+        -0.09
+      ],
+      "steam_outlet": [
+        0,
+        -0.028,
+        -0.07
+      ],
+      "ejection": [
+        0,
+        -0.045,
+        0.1
+      ]
+    },
+    "scene": {
+      "pintle": [
+        0,
+        0.55,
+        0
+      ],
+      "trunnion": [
+        0,
+        0.6,
+        0
+      ],
+      "tripod_feet": [
+        [
+          0,
+          0,
+          -0.75
+        ],
+        [
+          -0.42,
+          0,
+          0.52
+        ],
+        [
+          0.42,
+          0,
+          0.52
+        ]
+      ],
+      "box_mouth": [
+        -0.18750000000000003,
+        0.175,
+        0.08
+      ],
+      "box_handle": [
+        -0.33,
+        0.205,
+        0.08
+      ],
+      "elevating_handwheel": [
+        0.05,
+        0.33999999999999997,
+        0.27
+      ],
+      "gun_muzzle": [
+        0,
+        0.64,
+        -0.68
+      ],
+      "gun_muzzle_flash": [
+        0,
+        0.64,
+        -0.83
+      ],
+      "gun_trunnion": [
+        0,
+        0.6,
+        0
+      ],
+      "gun_grip_r": [
+        0,
+        0.5,
+        0.342
+      ],
+      "gun_grip_l": [
+        -0.036,
+        0.65,
+        0.33
+      ],
+      "gun_eye": [
+        0,
+        0.732,
+        0.56
+      ],
+      "gun_trigger": [
+        0,
+        0.53,
+        0.29
+      ],
+      "gun_charging_handle": [
+        0.061,
+        0.6,
+        0.13
+      ],
+      "gun_charging_handle_back": [
+        0.061,
+        0.6,
+        0.23
+      ],
+      "gun_feed_entry": [
+        -0.03,
+        0.655,
+        0.08
+      ],
+      "gun_feed_exit": [
+        0.03,
+        0.655,
+        0.08
+      ],
+      "gun_rear_sight": [
+        0,
+        0.732,
+        0.3
+      ],
+      "gun_front_sight": [
+        0,
+        0.735,
+        -0.615
+      ],
+      "gun_water_fill": [
+        0,
+        0.696,
+        -0.09
+      ],
+      "gun_steam_outlet": [
+        0,
+        0.572,
+        -0.07
+      ],
+      "gun_ejection": [
+        0,
+        0.5549999999999999,
+        0.1
+      ]
+    },
+    "note": "gun: referencial do nó ckm_elevate (origem nos munhões); scene: raiz ckm_wz30 na pose de repouso. muzzle = boca do cano (dentro do cone); muzzle_flash = boca do tapa-chamas"
+  },
+  "hands": {
+    "gunner": {
+      "right": {
+        "pos": [
+          0.034,
+          -0.054,
+          0.395
+        ],
+        "fdir": [
+          -0.3010858672138876,
+          -0.6222441255753677,
+          -0.7226060813133302
+        ],
+        "palm": [
+          -0.9877295966495897,
+          0.04938647983247949,
+          0.14815943949743846
+        ]
+      },
+      "left": {
+        "pos": [
+          -0.06935754325985177,
+          0.045279903098736106,
+          0.38181324300858305
+        ],
+        "fdir": [
+          0.12028299795944199,
+          -0.20047166326573665,
+          -0.9722875668388228
+        ],
+        "palm": [
+          0.9975093361076329,
+          -0.04987546680538165,
+          0.04987546680538165
+        ]
+      }
+    },
+    "note": "pulso, direcção dos dedos e normal da palma no referencial da arma: direita no punho, esquerda encostada ao lado esquerdo da caixa; o municiador segura a fita (ver clips)"
+  },
+  "crew": {
+    "gunner": {
+      "pos": [
+        -0.029,
+        0,
+        0.794
+      ],
+      "yaw": 0,
+      "lean": 15.48
+    },
+    "loader": {
+      "pos": [
+        -0.52,
+        0,
+        -0.08
+      ],
+      "yaw": -112
+    }
+  },
+  "crew_note": "pos no chão e yaw (graus, 0 = virado para −Z) de cada soldado no referencial da cena; pôr a raiz do GLB m01_soldier_pl_* aí e tocar o clip com o mesmo sufixo do clip da arma",
+  "materials": [
+    {
+      "name": "ckm_wz30",
+      "painters": [
+        "steel",
+        "jacket",
+        "tripod",
+        "box",
+        "wood",
+        "fabric",
+        "bare_metal",
+        "brass",
+        "bullet",
+        "bore"
+      ],
+      "note": "um material com atlas; aço oxidado escuro, tripé verde-caqui, caixa caqui [T34], madeira, tecido caqui, latão e balas de tombak"
+    }
+  ],
+  "textures": {
+    "atlas_px": 1024,
+    "density_px_per_m": 689
+  },
+  "files": {
+    "m01_ckm_wz30_lod0.glb": {
+      "lod": "lod0",
+      "use": "perto (< 15 m) e capturas",
+      "bytes": 405024,
+      "triangles": 5004,
+      "draw_calls": 9,
+      "meshes": [
+        {
+          "name": "ckm_tripod",
+          "triangles": 608
+        },
+        {
+          "name": "ckm_traverse",
+          "triangles": 304
+        },
+        {
+          "name": "ckm_elevate",
+          "triangles": 1268
+        },
+        {
+          "name": "ckm_cocking_handle",
+          "triangles": 64
+        },
+        {
+          "name": "ckm_feed_belt",
+          "triangles": 568
+        },
+        {
+          "name": "ckm_belt_spent",
+          "triangles": 56
+        },
+        {
+          "name": "ckm_belt_free",
+          "triangles": 1832
+        },
+        {
+          "name": "ckm_ammo_box",
+          "triangles": 168
+        },
+        {
+          "name": "ckm_ammo_box_lid",
+          "triangles": 136
+        }
+      ],
+      "gun_length_m": 1.2106,
+      "bbox_m": {
+        "min": [
+          -0.5295,
+          -0.03,
+          -0.83
+        ],
+        "max": [
+          0.435,
+          0.74,
+          0.55
+        ]
+      },
+      "textures": {
+        "baseColor": "image/jpeg 1024²",
+        "metallicRoughness": "image/png 512²",
+        "normal": "image/png 512²"
+      },
+      "animations": [
+        "ckm_wz30_gun_idle",
+        "ckm_wz30_gun_aim",
+        "ckm_wz30_gun_fire_burst",
+        "ckm_wz30_gun_feed",
+        "ckm_wz30_gun_abandon"
+      ]
+    },
+    "m01_ckm_wz30_lod1.glb": {
+      "lod": "lod1",
+      "use": "médio (15–40 m)",
+      "bytes": 194356,
+      "triangles": 2298,
+      "draw_calls": 9,
+      "meshes": [
+        {
+          "name": "ckm_tripod",
+          "triangles": 272
+        },
+        {
+          "name": "ckm_traverse",
+          "triangles": 136
+        },
+        {
+          "name": "ckm_elevate",
+          "triangles": 570
+        },
+        {
+          "name": "ckm_cocking_handle",
+          "triangles": 56
+        },
+        {
+          "name": "ckm_feed_belt",
+          "triangles": 254
+        },
+        {
+          "name": "ckm_belt_spent",
+          "triangles": 52
+        },
+        {
+          "name": "ckm_belt_free",
+          "triangles": 824
+        },
+        {
+          "name": "ckm_ammo_box",
+          "triangles": 74
+        },
+        {
+          "name": "ckm_ammo_box_lid",
+          "triangles": 60
+        }
+      ],
+      "gun_length_m": 1.2106,
+      "bbox_m": {
+        "min": [
+          -0.5295,
+          -0.03,
+          -0.83
+        ],
+        "max": [
+          0.4335,
+          0.7389,
+          0.55
+        ]
+      },
+      "textures": {
+        "baseColor": "image/jpeg 512²",
+        "metallicRoughness": "image/png 256²"
+      },
+      "animations": [
+        "ckm_wz30_gun_idle",
+        "ckm_wz30_gun_aim",
+        "ckm_wz30_gun_fire_burst",
+        "ckm_wz30_gun_feed",
+        "ckm_wz30_gun_abandon"
+      ]
+    },
+    "m01_ckm_wz30_lod2.glb": {
+      "lod": "lod2",
+      "use": "longe (outra margem) / Chromebook",
+      "bytes": 84208,
+      "triangles": 754,
+      "draw_calls": 9,
+      "meshes": [
+        {
+          "name": "ckm_tripod",
+          "triangles": 90
+        },
+        {
+          "name": "ckm_traverse",
+          "triangles": 44
+        },
+        {
+          "name": "ckm_elevate",
+          "triangles": 188
+        },
+        {
+          "name": "ckm_cocking_handle",
+          "triangles": 18
+        },
+        {
+          "name": "ckm_feed_belt",
+          "triangles": 84
+        },
+        {
+          "name": "ckm_belt_spent",
+          "triangles": 12
+        },
+        {
+          "name": "ckm_belt_free",
+          "triangles": 274
+        },
+        {
+          "name": "ckm_ammo_box",
+          "triangles": 24
+        },
+        {
+          "name": "ckm_ammo_box_lid",
+          "triangles": 20
+        }
+      ],
+      "gun_length_m": 1.2106,
+      "bbox_m": {
+        "min": [
+          -0.5075,
+          0.0015,
+          -0.83
+        ],
+        "max": [
+          0.4335,
+          0.7076,
+          0.55
+        ]
+      },
+      "textures": {
+        "baseColor": "image/jpeg 256²"
+      },
+      "animations": [
+        "ckm_wz30_gun_idle",
+        "ckm_wz30_gun_aim",
+        "ckm_wz30_gun_fire_burst",
+        "ckm_wz30_gun_feed",
+        "ckm_wz30_gun_abandon"
+      ]
+    },
+    "m01_ckm_wz30_animations.glb": {
+      "bytes": 891712,
+      "clips": [
+        {
+          "name": "ckm_wz30_gunner_idle",
+          "role": "gunner",
+          "duration": 4,
+          "loop": true,
+          "events": null,
+          "sync": "ckm_wz30_gun_idle"
+        },
+        {
+          "name": "ckm_wz30_loader_idle",
+          "role": "loader",
+          "duration": 4,
+          "loop": true,
+          "events": null,
+          "sync": "ckm_wz30_gun_idle"
+        },
+        {
+          "name": "ckm_wz30_gunner_aim",
+          "role": "gunner",
+          "duration": 3,
+          "loop": true,
+          "events": null,
+          "sync": "ckm_wz30_gun_aim"
+        },
+        {
+          "name": "ckm_wz30_loader_aim",
+          "role": "loader",
+          "duration": 3,
+          "loop": true,
+          "events": null,
+          "sync": "ckm_wz30_gun_aim"
+        },
+        {
+          "name": "ckm_wz30_gunner_fire_burst",
+          "role": "gunner",
+          "duration": 1.3,
+          "loop": false,
+          "events": {
+            "fire": [
+              0,
+              0.1,
+              0.2,
+              0.3,
+              0.4,
+              0.5,
+              0.6,
+              0.7
+            ]
+          },
+          "sync": "ckm_wz30_gun_fire_burst"
+        },
+        {
+          "name": "ckm_wz30_loader_fire_burst",
+          "role": "loader",
+          "duration": 1.3,
+          "loop": false,
+          "events": {
+            "fire": [
+              0,
+              0.1,
+              0.2,
+              0.3,
+              0.4,
+              0.5,
+              0.6,
+              0.7
+            ]
+          },
+          "sync": "ckm_wz30_gun_fire_burst"
+        },
+        {
+          "name": "ckm_wz30_gunner_feed",
+          "role": "gunner",
+          "duration": 3.2,
+          "loop": false,
+          "events": {
+            "belt_in": 0.8,
+            "belt_pulled": 1.3,
+            "handle_back": [
+              1.7,
+              2.25
+            ],
+            "ready": 3
+          },
+          "sync": "ckm_wz30_gun_feed"
+        },
+        {
+          "name": "ckm_wz30_loader_feed",
+          "role": "loader",
+          "duration": 3.2,
+          "loop": false,
+          "events": {
+            "belt_in": 0.8,
+            "belt_pulled": 1.3,
+            "handle_back": [
+              1.7,
+              2.25
+            ],
+            "ready": 3
+          },
+          "sync": "ckm_wz30_gun_feed"
+        },
+        {
+          "name": "ckm_wz30_gunner_abandon",
+          "role": "gunner",
+          "duration": 3,
+          "loop": false,
+          "events": {
+            "released": 0.4,
+            "standing": 1.6,
+            "leave": 2.2
+          },
+          "sync": "ckm_wz30_gun_abandon"
+        },
+        {
+          "name": "ckm_wz30_loader_abandon",
+          "role": "loader",
+          "duration": 3,
+          "loop": false,
+          "events": {
+            "released": 0.4,
+            "standing": 1.6,
+            "leave": 2.2
+          },
+          "sync": "ckm_wz30_gun_abandon"
+        }
+      ]
+    }
+  },
+  "gun_clips": [
+    {
+      "name": "ckm_wz30_gun_idle",
+      "duration": 4,
+      "loop": true,
+      "events": null
+    },
+    {
+      "name": "ckm_wz30_gun_aim",
+      "duration": 3,
+      "loop": true,
+      "events": null
+    },
+    {
+      "name": "ckm_wz30_gun_fire_burst",
+      "duration": 1.3,
+      "loop": false,
+      "events": {
+        "fire": [
+          0,
+          0.1,
+          0.2,
+          0.3,
+          0.4,
+          0.5,
+          0.6,
+          0.7
+        ]
+      }
+    },
+    {
+      "name": "ckm_wz30_gun_feed",
+      "duration": 3.2,
+      "loop": false,
+      "events": {
+        "belt_in": 0.8,
+        "belt_pulled": 1.3,
+        "handle_back": [
+          1.7,
+          2.25
+        ],
+        "ready": 3
+      }
+    },
+    {
+      "name": "ckm_wz30_gun_abandon",
+      "duration": 3,
+      "loop": false,
+      "events": {
+        "released": 0.4,
+        "standing": 1.6,
+        "leave": 2.2
+      }
+    }
+  ]
+}

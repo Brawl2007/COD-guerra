@@ -19,6 +19,7 @@ const tube = (r0, r1, z0, z1, y, { segments = 12, x = 0 } = {}) => {
   const p = lathe((t, phi) => { const r = r0 + (r1 - r0) * t; return [x + Math.cos(phi) * r, y + Math.sin(phi) * r, z0 + (z1 - z0) * t]; }, { rings: 1, segments, caps: 'both' });
   return orientOutward(p, q => [x, y, q[2]]);
 };
+export { section, tube, blk, rod, sweep };   // reutilizados por ../m01-mg34
 const tag = (part, name, paint, group = 'rkm_body') => Object.assign(part, { name, paint, group });
 /** Bloco de 8 lados (cantos boleados) [w, h, d] centrado em c. */
 function blk([w, h, d], c, e = 0.2) {
