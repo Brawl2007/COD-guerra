@@ -333,6 +333,48 @@ test('German fire on the repair is drawn from the Lisewo gates and the HUD statu
   await page.screenshot({path:info.outputPath('m01-repair-under-fire.png')});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
+test('the genuine train 963 and both MG34 fire sources use optional GLBs, light instances and reproducible pause/restart',async({page},info)=>{
+  test.setTimeout(process.env.CI?180000:120000);
+  const d=toRepair(driver());d.until(()=>d.sim.battleClock>=seconds('04:45:10'),120);
+  const gun=d.sim.actor('de_east_0'),p=d.sim.player,angle=Math.atan2(gun.z-p.z,gun.x-p.x);
+  d.step({lookX:Math.atan2(Math.sin(angle-p.angle),Math.cos(angle-p.angle))/.0022});
+  const snapshot=d.sim.snapshot();
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>{
+    const g=window.gameDiagnostics();
+    if(!g.paused&&g.m01.wagons.loaded.length===2&&g.m01.characters.actors.some(a=>a.weapon==='mg34'&&a.clip==='mg34_fire_burst')){
+      document.exitPointerLock();return true;
+    }return false;
+  },null,{timeout:90000});
+  await expect(page.locator('#pause')).toBeVisible();
+  const frozen=await page.evaluate(()=>window.gameDiagnostics()),w=frozen.m01.wagons,mg=frozen.m01.characters.actors.filter(a=>a.weapon==='mg34');
+  expect(w).toMatchObject({wagons:65,step:9.1,lod:2,proxies:0,visible:true,first:[1090,0,-2.5],last:[1672.4,0,-2.5]});
+  expect(w.batches).toBeLessThanOrEqual(10);expect(mg.map(a=>a.id).sort()).toEqual(['de_east_0','de_east_1']);
+  expect(frozen.m01.characters.active).toBeLessThanOrEqual(18);
+  for(const a of mg){expect(a.weaponLOD).toBe(2);expect(a.weaponMeshes).toContain('mg34_body');expect(a.weaponMeshes).not.toContain('rifle');expect(a.weaponMeshes).not.toContain('clip');expect(a.muzzle.every(Number.isFinite)).toBe(true);}
+  await page.waitForTimeout(300);const still=await page.evaluate(()=>window.gameDiagnostics());
+  expect(still.clock).toBe(frozen.clock);expect(still.m01.characters).toEqual(frozen.m01.characters);expect(still.m01.wagons).toEqual(w);
+  await page.screenshot({path:info.outputPath('m01-train-mg34.jpg'),type:'jpeg',quality:85,style:'#pause { visibility:hidden !important; }',timeout:120000});
+  await page.locator('#restart-checkpoint').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused);
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  const restored=await page.evaluate(()=>window.gameDiagnostics());
+  expect(restored.m01.wagons).toEqual(w);expect(restored.geometries).toBeLessThanOrEqual(frozen.geometries+2);expect(restored.textures).toBeLessThanOrEqual(frozen.textures+2);
+  await info.attach('train-mg34-samples',{body:JSON.stringify({kind:'production continuation of a genuine simulation-control snapshot; view from west bank',frozen,restored,errors,failed}),contentType:'application/json'});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('missing optional wagon models and MG34 clips preserve 65 proxies, both procedural supports and playable M01',async({page},info)=>{
+  const d=toRepair(driver());d.until(()=>d.sim.battleClock>=seconds('04:45:10'),120);const snapshot=d.sim.snapshot();
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  await page.route('**/m01-wagons/*.glb',r=>r.fulfill({status:404,body:'optional wagon missing'}));
+  await page.route('**/mg34/m01_mg34_animations.glb',r=>r.fulfill({status:404,body:'optional MG34 clips missing'}));
+  await open(page);await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.failures.some(f=>f.path.includes('m01_mg34_animations'))&&window.gameDiagnostics().m01.assetFailures.filter(f=>f.path.includes('m01-wagons')).length===2);
+  await start(page,'#continue');const g=await page.evaluate(()=>window.gameDiagnostics());
+  expect(g.m01.requiredAssetFailures).toEqual([]);expect(g.m01.wagons).toMatchObject({wagons:65,proxies:65,loaded:[],visible:true});
+  expect(g.m01.characters.actors.every(a=>a.weapon!=='mg34')).toBe(true);expect(g.m01.actorAnimations.aiming).toBeGreaterThan(0);
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.screenshot({path:info.outputPath('m01-train-mg34-fallback.jpg'),type:'jpeg',quality:85,style:'#pause { visibility:hidden !important; }',timeout:120000});
+});
 test('the real roll-call snapshot renders seated actors and keeps their pose after page reload',async({page},info)=>{
   // Visual verification by continuation of a snapshot reached with simulation controls.
   const snapshot=flow().outro,seated=snapshot.actors.filter(a=>a.active&&a.alive&&a.pose==='seated').length;
