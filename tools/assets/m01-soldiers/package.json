@@ -1,0 +1,20 @@
+{
+  "name": "m01-soldiers-generator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Gera os soldados polacos e alemães de 1939 (GLB riggados, LOD0–2, clips) a partir da malha base CC0 do MakeHuman e de geometria/texturas procedurais originais.",
+  "scripts": {
+    "fetch": "node fetch-makehuman.mjs",
+    "build": "node build.mjs",
+    "render": "node render/capture.mjs"
+  },
+  "engines": { "node": ">=22.12.0" },
+  "dependencies": {
+    "@gltf-transform/core": "4.5.1",
+    "jpeg-js": "0.4.4",
+    "meshoptimizer": "1.3.0",
+    "pngjs": "7.0.0",
+    "three": "0.186.1"
+  }
+}

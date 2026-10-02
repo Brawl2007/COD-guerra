@@ -63,6 +63,8 @@ Data de consulta de todas as entradas: **30/09/2026**.
 | T28 | *8 Batalion Saperów (1939)* — Wikipédia (pl) | https://pl.wikipedia.org/wiki/8_Batalion_Saper%C3%B3w_(1939) | ppor. Norbert Juchtman listado como comandante de pelotão do 8.º Batalhão de Sapadores; o 8.º mobilizou o 15.º Batalhão de Sapadores para a 15.ª DI. | RESUMO | MÉDIA |
 | T29 | flugzeuginfo.net; airpages.ru — Ju 87 B-1 | https://www.flugzeuginfo.net/acdata_php/acdata_ju87_en.php | Ju 87 B-1: comprimento 11,10 m, envergadura 13,80 m, altura 4,24 m, vazio ~2760 kg. | RESUMO | MÉDIA |
 | T30 | polskaniezwykla.pl — *Tczew, koszary wojskowe* | http://www.polskaniezwykla.pl/web/place/2298,tczew-koszary-wojskowe.html | Quartel construído em 1928–1930; o 2.º Batalhão chegou em 6/6/1930. Depois de setembro de 1939: campo de trânsito alemão (~1500 pessoas, ~100 mortos) e "Lützow-Kaserne". **Contexto pós-M01; não usar em M01.** | RESUMO | MÉDIA |
+| T31 | *Rkm wz. 28* e *Karabin maszynowy Browning wz. 28* — Wikipédia (en/pl); opisybroni.pl; 1939.pl; ioh.pl; quartermastersection.com | https://en.wikipedia.org/wiki/Rkm_wz._28 | rkm wz.28: 1110 mm, cano 611 mm, 9,0 kg vazia, carregador de 20, ~600 tiros/min teóricos, tiro a tiro e contínuo. Alterações polacas ao BAR: bípode no tubo de gases atrás do regulador, patins em vez de espigões, punho de pistola e miras invertidas (alça em quadro, 300–1600 m). | RESUMO | MÉDIA |
+| T32 | *Karabin wz. 98a* — Wikipédia (en/pl); dws-xip.com; muzeumwp.pl | https://en.wikipedia.org/wiki/Karabin_wz._98a | wz.98a: cópia da Gew 98 com alça tangente de 100–2000 m; 1250 mm, cano 740 mm, 4,4 kg; 5 cartuchos com clipe; alavanca recta; Radom, 1936–1939 (~44 500 ou ~70 000 unidades, divergente). | RESUMO | MÉDIA |
 
 ### Dados geográficos abertos (medição)
 
