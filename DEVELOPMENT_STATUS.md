@@ -125,6 +125,15 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
   - a cinta de 250, o municiador e a mira antiaérea;
   - confirmar T33 em leitura integral.
 
+**ckm wz.30 da casamata (`grp_ckm_crew`; kit isolado, não ligado ao jogo):**
+- Kit em `assets/models/provisional/m01/weapons/ckm_wz30/`, gerado por `tools/assets/m01-ckm-wz30/`: arma de 1,211 m no tripé baixo (cano a 0,64 m), fita de tecido pela esquerda e caixa de aço caqui de 355 × 175 × 85 mm. LOD0/1/2 com 5004/2298/754 triângulos. Direcção, elevação, alavanca, fita e tampa estão em nós com pivô; o manifesto traz sockets, pontos de pega e medidas estimadas identificadas.
+- `m01_ckm_wz30_animations.glb` traz `ckm_wz30_{gunner,loader}_{idle,aim,fire_burst,feed,abandon}` para o rig polaco actual, sincronizados com os clips `ckm_wz30_gun_*` da arma. A espingarda fica escondida, para mostrar uma só arma.
+- Verificado por `tests/m01-ckm-wz30-glb.test.js` e por capturas inspeccionadas em `docs/assets/m01-ckm-wz30/` (galeria isolada; sem playtest nem FPS).
+- Falta:
+  - ligar à casamata em `src/render/` (Codex), com as sugestões do README;
+  - confirmar T34 em leitura integral, a geometria do tripé e a altura da seteira;
+  - decidir o orçamento do LOD0 (acima de 4000).
+
 ## Parcial ou pendente
 
 - Soldados próximos, mãos, recarga e transporte já têm rig e clips reais. Arte, encaixe das mãos, uniformes e mixagem continuam a exigir revisão; Civis e alguns actores distantes conservam proxies. Vozes gravadas continuam ausentes.

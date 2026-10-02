@@ -1,0 +1,187 @@
+{
+  "viewer": "three.js 0.186.1 GLTFLoader (Chromium/SwiftShader)",
+  "note": "galeria isolada; não é playtest nem medição de FPS",
+  "files": {
+    "m01_ckm_wz30_lod0.glb": {
+      "meshes": [
+        "ckm_tripod",
+        "ckm_traverse",
+        "ckm_elevate",
+        "ckm_cocking_handle",
+        "ckm_feed_belt",
+        "ckm_belt_spent",
+        "ckm_belt_free",
+        "ckm_ammo_box",
+        "ckm_ammo_box_lid"
+      ],
+      "triangles": 5004,
+      "drawCalls": 9,
+      "bones": 0,
+      "clips": [
+        {
+          "name": "ckm_wz30_gun_idle",
+          "duration": 4,
+          "tracks": 7
+        },
+        {
+          "name": "ckm_wz30_gun_aim",
+          "duration": 3,
+          "tracks": 7
+        },
+        {
+          "name": "ckm_wz30_gun_fire_burst",
+          "duration": 1.2999999523162842,
+          "tracks": 7
+        },
+        {
+          "name": "ckm_wz30_gun_feed",
+          "duration": 3.200000047683716,
+          "tracks": 7
+        },
+        {
+          "name": "ckm_wz30_gun_abandon",
+          "duration": 3,
+          "tracks": 7
+        }
+      ]
+    },
+    "m01_ckm_wz30_lod1.glb": {
+      "meshes": [
+        "ckm_tripod",
+        "ckm_traverse",
+        "ckm_elevate",
+        "ckm_cocking_handle",
+        "ckm_feed_belt",
+        "ckm_belt_spent",
+        "ckm_belt_free",
+        "ckm_ammo_box",
+        "ckm_ammo_box_lid"
+      ],
+      "triangles": 2298,
+      "drawCalls": 9,
+      "bones": 0,
+      "clips": [
+        {
+          "name": "ckm_wz30_gun_idle",
+          "duration": 4,
+          "tracks": 7
+        },
+        {
+          "name": "ckm_wz30_gun_aim",
+          "duration": 3,
+          "tracks": 7
+        },
+        {
+          "name": "ckm_wz30_gun_fire_burst",
+          "duration": 1.2999999523162842,
+          "tracks": 7
+        },
+        {
+          "name": "ckm_wz30_gun_feed",
+          "duration": 3.200000047683716,
+          "tracks": 7
+        },
+        {
+          "name": "ckm_wz30_gun_abandon",
+          "duration": 3,
+          "tracks": 7
+        }
+      ]
+    },
+    "m01_ckm_wz30_lod2.glb": {
+      "meshes": [
+        "ckm_tripod",
+        "ckm_traverse",
+        "ckm_elevate",
+        "ckm_cocking_handle",
+        "ckm_feed_belt",
+        "ckm_belt_spent",
+        "ckm_belt_free",
+        "ckm_ammo_box",
+        "ckm_ammo_box_lid"
+      ],
+      "triangles": 754,
+      "drawCalls": 9,
+      "bones": 0,
+      "clips": [
+        {
+          "name": "ckm_wz30_gun_idle",
+          "duration": 4,
+          "tracks": 7
+        },
+        {
+          "name": "ckm_wz30_gun_aim",
+          "duration": 3,
+          "tracks": 7
+        },
+        {
+          "name": "ckm_wz30_gun_fire_burst",
+          "duration": 1.2999999523162842,
+          "tracks": 7
+        },
+        {
+          "name": "ckm_wz30_gun_feed",
+          "duration": 3.200000047683716,
+          "tracks": 7
+        },
+        {
+          "name": "ckm_wz30_gun_abandon",
+          "duration": 3,
+          "tracks": 7
+        }
+      ]
+    },
+    "m01_ckm_wz30_animations.glb": [
+      {
+        "name": "ckm_wz30_gunner_idle",
+        "duration": 4,
+        "tracks": 57
+      },
+      {
+        "name": "ckm_wz30_loader_idle",
+        "duration": 4,
+        "tracks": 58
+      },
+      {
+        "name": "ckm_wz30_gunner_aim",
+        "duration": 3,
+        "tracks": 57
+      },
+      {
+        "name": "ckm_wz30_loader_aim",
+        "duration": 3,
+        "tracks": 58
+      },
+      {
+        "name": "ckm_wz30_gunner_fire_burst",
+        "duration": 1.2999999523162842,
+        "tracks": 57
+      },
+      {
+        "name": "ckm_wz30_loader_fire_burst",
+        "duration": 1.2999999523162842,
+        "tracks": 58
+      },
+      {
+        "name": "ckm_wz30_gunner_feed",
+        "duration": 3.200000047683716,
+        "tracks": 57
+      },
+      {
+        "name": "ckm_wz30_loader_feed",
+        "duration": 3.200000047683716,
+        "tracks": 58
+      },
+      {
+        "name": "ckm_wz30_gunner_abandon",
+        "duration": 3,
+        "tracks": 57
+      },
+      {
+        "name": "ckm_wz30_loader_abandon",
+        "duration": 3,
+        "tracks": 58
+      }
+    ]
+  }
+}

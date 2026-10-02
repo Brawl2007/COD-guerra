@@ -152,7 +152,14 @@
       "provisional": { "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod0.glb", "clips": "assets/models/provisional/m01/weapons/mg34/m01_mg34_animations.glb (mg34_aim, mg34_fire_burst, mg34_reload)", "license": "ORIGINAL", "status": "PROVISÓRIO VERIFICADO — 1,219 m, 3 LODs, tampa/alavanca/tambor/cinta animáveis; não ligada ao runtime", "review": "docs/assets/m01-mg34/README.md" }
     },
     {
-      "id": "pl_support_weapons", "name": "ckm wz.30 (com tripé e fita), Vis wz.35, granada wz.33", "category": "weapon", "priority": "P1",
+      "id": "ckm_wz30", "name": "ckm wz.30 (grp_ckm_crew), com tripé, fita de 330 e caixa", "category": "weapon", "priority": "P1",
+      "realDimensions": { "lengthM": 1.2, "barrelM": 0.72, "massKg": 13.6, "belt": 330, "tripodKg": 29.3, "ammoBoxM": [0.355, 0.175, 0.085], "sources": ["T34"] },
+      "strategy": "ORIGINAL", "spec": "research/weapons/ckm_wz30.md", "budget": { "worldLod0Tris": 4000 }, "candidates": [],
+      "status": "A PRODUZIR (final)",
+      "provisional": { "path": "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_lod0.glb", "clips": "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_animations.glb (ckm_wz30_*)", "license": "ORIGINAL", "status": "PROVISÓRIO VERIFICADO — 1,211 m, LOD0/1/2 5004/2298/754 triângulos (LOD0 acima do orçamento por causa dos 40 cartuchos da fita livre; decisão pendente), 9 nós com pivô, clips de atirador e municiador; não ligado ao runtime", "review": "docs/assets/m01-ckm-wz30/README.md" }
+    },
+    {
+      "id": "pl_support_weapons", "name": "Vis wz.35, granada wz.33", "category": "weapon", "priority": "P1",
       "realDimensions": { "note": "Dimensões a levantar (H30 e literatura)", "sources": ["H30"] },
       "strategy": "ORIGINAL", "budget": { "worldLod0Tris": 4000 }, "candidates": [], "status": "A PRODUZIR"
     },

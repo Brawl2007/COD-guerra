@@ -63,11 +63,11 @@
       "category": "heavy_machine_gun",
       "caliber": "7,92×57 mm",
       "availableFrom": "1932-01-01",
-      "specs": { "feed": "fita de tecido", "cooling": "água", "crew": 3 },
+      "specs": { "feed": "fita de tecido de 330, pela esquerda", "cooling": "água (~3 l)", "crew": 3, "lengthM": 1.2, "barrelM": 0.72, "massKg": 13.6, "rateRpm": 600, "mount": "tripé wz.30 (29,3 kg) ou wz.34 (26,3 kg)" },
       "roles": ["machine_gunner", "assistant_gunner"],
       "certainty": "MEDIA",
-      "sources": ["T03"],
-      "notes": "Batalhão tinha pelotões de metralhadoras (T03). Em M01, uma arma fixa na seteira da casamata oeste, operada por NPCs; confirmar alocação real na cabeça de ponte."
+      "sources": ["T03", "T34"],
+      "notes": "Batalhão tinha pelotões de metralhadoras (T03). Em M01, uma arma fixa na seteira da casamata oeste, operada por NPCs; confirmar alocação real na cabeça de ponte. Ficha: research/weapons/ckm_wz30.md."
     },
     {
       "id": "vis_wz35",
