@@ -1,0 +1,91 @@
+{
+  "note": "Importação real no Chromium (GLTFLoader + AnimationMixer + SkeletonUtils do three.js) sobre m01_soldier_pl_lod0.glb. Galeria isolada; não é playtest nem medição de FPS.",
+  "three": "ver package.json (three 0.186.1)",
+  "clips": [
+    {
+      "name": "station_drag_medic_grab",
+      "duration": 1.600000023841858,
+      "tracks": 70
+    },
+    {
+      "name": "station_drag_patient_grab",
+      "duration": 1.600000023841858,
+      "tracks": 70
+    },
+    {
+      "name": "station_drag_medic_release",
+      "duration": 1.600000023841858,
+      "tracks": 70
+    },
+    {
+      "name": "station_drag_patient_release",
+      "duration": 1.600000023841858,
+      "tracks": 70
+    }
+  ],
+  "rendered_contacts": {
+    "hands_contact": {
+      "hand_to_shoulder_m": {
+        "l": 0.1619,
+        "r": 0.1619
+      },
+      "medic_root": [
+        0,
+        0,
+        0.06179799884557724
+      ],
+      "patient_root": [
+        0,
+        0,
+        -0.8582
+      ]
+    },
+    "grip_ready": {
+      "hand_to_shoulder_m": {
+        "l": 0.1623,
+        "r": 0.1623
+      },
+      "medic_root": [
+        0,
+        0,
+        0.06179799884557724
+      ],
+      "patient_root": [
+        0,
+        0,
+        -0.8582
+      ]
+    },
+    "drag_pose": {
+      "hand_to_shoulder_m": {
+        "l": 0.1226,
+        "r": 0.1226
+      },
+      "medic_root": [
+        0,
+        0,
+        0.06179799884557724
+      ],
+      "patient_root": [
+        0,
+        0,
+        -0.8582
+      ]
+    }
+  },
+  "pause_restore": [
+    {
+      "clip_pair": "grab",
+      "time": 1.1,
+      "via": 0.2,
+      "differing_pixels": 0
+    },
+    {
+      "clip_pair": "release",
+      "time": 1.1,
+      "via": 0.2,
+      "differing_pixels": 0
+    }
+  ],
+  "errors": []
+}
