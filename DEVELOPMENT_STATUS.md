@@ -4,7 +4,7 @@
 
 M01 passou a **PROTÓTIPO JOGÁVEL** nesta branch. O fluxo usa a fundação Three.js e as pontes do Claude, preservando os históricos dos PRs #9 e #11. A bancada francesa continua seleccionável. O marco 2 ainda não está aprovado como missão validada; faltam o playtest humano, a medição no Chromebook e o trabalho descrito abaixo.
 
-Os PRs #8 e #10 de pesquisa/preparação já estão em `main`. A integração actual está no PR #26 para `codex/m01-runtime`; #9/#11 já foram substituídos e fechados. O merge em `main` e a publicação pertencem ao utilizador. O mapa francês conserva as suas coordenadas e arma.
+Os PRs #8 e #10 de pesquisa/preparação já estão em `main`. Os PRs #26/#27 estão integrados em `codex/m01-runtime`; #9/#11 já foram substituídos e fechados. Esta revisão preserva o kit e a ligação do Ju 87 do PR #28, com LOD pela distância e provas do raid real. O merge em `main` e a publicação pertencem ao utilizador. O mapa francês conserva as suas coordenadas e arma.
 
 ## Implementado e observado
 
@@ -13,7 +13,7 @@ Os PRs #8 e #10 de pesquisa/preparação já estão em `main`. A integração ac
 
 - O trabalho de soldados do Claude (PRs #23/#25, `055da03`) foi preservado e ligado à missão com GLTFLoader, SkeletonUtils e AnimationMixer oficiais. Actores próximos usam rosto, mãos, uniformes, equipamento e 25 clips; actores distantes conservam os proxies e os mesmos IDs. A wz.29 e Bąk ao ombro também usam o rig em primeira pessoa. LODs, limites por qualidade, pausa/restauro, fallback e licença CC0 estão verificados em `docs/verification/m01-runtime/characters/`. Sem serviços pagos ou modelos extraídos de jogos. O ferrolho do NPC termina depois do clarão; as mãos dos sapadores param quando o reparo é suprimido.
 
-- Soldados levantam a arma ao ombro nos disparos, com mãos ligadas à coronha/guarda-mão e recuo procedural. Sob fogo, o tronco curva-se com as botas no chão; o passo levanta um pé. A animação deriva do relógio e dos dados do actor, reproduzindo o mesmo frame após pausa/reload. Galeria e provas em `docs/verification/m01-runtime/combat-animation/`; continuam geometrias provisórias. O kit Ju 87 foi separado como tarefa para um terceiro agente em `docs/THIRD_AGENT_TASK.md`, independente dos soldados atribuídos ao Claude.
+- Soldados levantam a arma ao ombro nos disparos, com mãos ligadas à coronha/guarda-mão e recuo procedural. Sob fogo, o tronco curva-se com as botas no chão; o passo levanta um pé. A animação deriva do relógio e dos dados do actor, reproduzindo o mesmo frame após pausa/reload. Galeria e provas em `docs/verification/m01-runtime/combat-animation/`; continuam geometrias provisórias. A tarefa independente do Ju 87 em `docs/THIRD_AGENT_TASK.md` foi entregue no PR #28; a próxima tarefa do Claude está em `docs/CLAUDE_NEXT_TASK.md`.
 
 - A ordem de mudar de cobertura só aparece quando uma salva real é emitida. O HUD distingue portões de Lisewo e dique norte/sul, com distância e direcção relativa ao olhar por oito segundos activos. A origem restaura como dado opcional do schema 2; cobertura obstruída não gera aviso falso. Fumo da boca e poeira de impactos usam partículas suaves em vez de esferas sólidas. Provas por trechos em `docs/verification/m01-runtime/cover-origin/`.
 
@@ -109,7 +109,9 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 
 **rkm wz.28 de Kowal (arma isolada, provisória; o runtime usa a rkm embutida nos GLB dos soldados e os clips `rkm_*` deles, com os mesmos nomes `rkm_aim`/`rkm_fire_burst`):**
 - Kit em `assets/models/provisional/m01/weapons/rkm_wz28/`, gerado por `tools/assets/m01-rkm-wz28/`: LOD0/1/2 com 1476/744/234 triângulos, carregador, alavanca de armar e bípode dobrado/aberto em nós separados, sockets e manifesto com medidas estimadas identificadas.
-- Prende-se ao osso `weapon` do rig existente; `m01_rkm_wz28_animations.glb` traz `rkm_carry`, `rkm_aim` e `rkm_fire_burst` (3 tiros, como a simulação). Verificado por `tests/m01-rkm-wz28-glb.test.js` e capturas inspeccionadas em `docs/assets/m01-rkm-wz28/`. Falta ligá-lo a Kowal em `src/render/` (Codex), clips de troca de carregador/deitado e confirmar T31 em leitura integral.
+- Prende-se ao osso `weapon` do rig existente; `m01_rkm_wz28_animations.glb` traz `rkm_carry`, `rkm_aim` e `rkm_fire_burst` (3 tiros, como a simulação). Verificado por `tests/m01-rkm-wz28-glb.test.js` e capturas inspeccionadas em `docs/assets/m01-rkm-wz28/`. A rkm embutida já funciona em Kowal com os dez clips dos soldados; este kit isolado fica disponível para usos futuros, sem duplicar a arma nem substituir os clips. Faltam clips específicos de troca/deitado neste kit e confirmar T31 em leitura integral.
+
+**Ju 87 B-1 do raid (asset provisório ligado aos três aviões):** kit original em `assets/models/provisional/m01-aircraft/` (`tools/assets/m01-aircraft/`), LOD0/1/2 com 13 102/4 730/1 636 triângulos, nós `fuselage`, `propeller`, `dive_brake_l/r` e `bomb_sc250`, clips `propeller_spin` e `dive_brakes_extend`. Verificado por `tests/m01-ju87-glb.test.js`, relatório de importação three.js e galeria isolada em `docs/assets/m01-aircraft/` (não é playtest). Três clones partilham geometria/materiais, com LOD nativo por distância (mínimo LOD1 em médio e LOD2 em baixo), hélice amostrada do relógio e fallback por silhueta. Não muda trajectórias ou eventos; a carga SC 250 não documentada fica oculta. O segundo raid conserva o modelo anterior. Provas de produção em `docs/verification/m01-runtime/aircraft/`; falta confirmar T29/T12, freios/lançamento ligados a dados reais e arte final.
 
 ## Parcial ou pendente
 

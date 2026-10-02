@@ -1,0 +1,38 @@
+{
+  "node": {
+    "passed": 132,
+    "failed": 0,
+    "duration_ms": 32981.53718
+  },
+  "build": {
+    "passed": true,
+    "javascript": "index-CBBAK650.js",
+    "bytes": 1030370,
+    "gzip_bytes": 267160,
+    "size_rounding": "Vite decimal kB, rounded",
+    "warning": "chunk > 500 kB remains"
+  },
+  "focused_browser": {
+    "passed": 2,
+    "failed": 1,
+    "reason": "required-bridge failure test waited for 9 total failures; now aircraft adds 3. Corrected test to wait for 9 requiredAssetFailures. Corrected guard case has not completed after correction."
+  },
+  "full_browser": {
+    "total": 24,
+    "status": "interrupted by new user turn/handoff before completion; no final JSON report; do not claim 24/24"
+  },
+  "baseline_staging_browser": {
+    "tree": "8a77c66b6fd848e22b10b3ff192bf0775bf6d1a5",
+    "passed": 22,
+    "failed": 0,
+    "duration_ms": 502827.879,
+    "scope": "before aircraft runtime changes"
+  },
+  "source_sha256": {
+    "src/main.js": "4ee77c025ab75cae5e6c88e0e1ab8d6380d5e03679bed123bce1db5d17d7867f",
+    "src/render/m01-view.js": "ef4b10c8db74ad3a8f4edef6da2c22c6a500c0e89c656eaf33e2f9698fbe8547",
+    "tests/browser/m01.spec.js": "88651fbb87f839f69e93ca7cc6a65626639e99d6f3804eeb24f5fa4ba3fb5cd1",
+    "tests/m01-aircraft-runtime.test.js": "186fd2236d4eca51293f9bee2eb18926940f861c1d56c318ed0575b3b325275a"
+  },
+  "scope": "Automated production-browser checkpoint continuation and unit/GLB tests, not human playtest or Chromebook FPS"
+}

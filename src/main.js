@@ -40,7 +40,7 @@ function missionMenu(){
     $('#start').disabled=true;$('#continue').disabled=true;
     game.renderer.m01.ready.then(()=>{
       if(!game.isM01)return;
-      const failed=game.renderer.m01.diagnostics.assetFailures.length;
+      const failed=game.renderer.m01.diagnostics.requiredAssetFailures.length;
       $('#start').disabled=Boolean(failed);$('#continue').disabled=Boolean(failed);
       if(failed)showError('Não foi possível carregar as pontes de Tczew. Recarregue a página para tentar novamente. A bancada francesa continua disponível no selector de missão.');
     });

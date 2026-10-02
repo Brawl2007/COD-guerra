@@ -54,6 +54,39 @@ test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, a
   expect((await page.evaluate(()=>window.gameDiagnostics())).m01.checkpoints).toEqual(['cp_m01_a_orientacao']);
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
+test('the genuine first raid displays three Ju 87 GLBs with light LODs and freezes the propellers on pause',async({page},info)=>{
+  test.setTimeout(180000);
+  const d=driver();d.step({skip:true});d.until(()=>d.sim.renderState.stukas,200);
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.aircraft.loaded.length===3);
+  const before=await page.evaluate(()=>window.gameDiagnostics()),planes=before.m01.aircraft.planes;
+  expect(planes).toHaveLength(3);expect(planes.every(p=>p.visible&&p.lod===2&&p.propeller.every(Number.isFinite))).toBe(true);
+  const target=planes[0].position,dx=target[0]-before.player.x,dz=target[2]-before.player.z;
+  const angle=Math.atan2(dz,dx),pitch=Math.atan2(target[1]-before.player.y-1.6,Math.hypot(dx,dz));
+  await page.evaluate(({x,y})=>{
+    document.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0,bubbles:true}));
+    document.dispatchEvent(new MouseEvent('mousemove',{movementX:x,movementY:y,bubbles:true}));
+  },{x:Math.atan2(Math.sin(angle-before.player.angle),Math.cos(angle-before.player.angle))/.0022,y:(before.player.pitch-pitch)/.0022});
+  await page.waitForFunction(()=>window.gameDiagnostics().player.pitch>.2);
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(300);
+  expect((await page.evaluate(()=>window.gameDiagnostics())).m01.aircraft).toEqual(frozen.m01.aircraft);
+  await page.screenshot({path:info.outputPath('m01-ju87-real-raid.png'),style:'#pause { visibility:hidden !important; }'});
+  await page.locator('#resume').click();await page.waitForFunction(clock=>window.gameDiagnostics().clock>clock+.05,frozen.clock);
+  expect((await page.evaluate(()=>window.gameDiagnostics())).m01.aircraft.planes[0].position).not.toEqual(frozen.m01.aircraft.planes[0].position);
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('unavailable optional Ju 87 models retain all three raid silhouettes and the playable mission',async({page})=>{
+  await page.route('**/m01_ju87_b1_lod*.glb',route=>route.abort());
+  const d=driver();d.step({skip:true});d.until(()=>d.sim.renderState.stukas,200);
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
+  const {errors}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.assetFailures.filter(f=>f.path.includes('m01-aircraft')).length===3);
+  const diag=await page.evaluate(()=>window.gameDiagnostics());
+  expect(diag.m01.aircraft.loaded).toEqual([]);expect(diag.m01.aircraft.planes.every(p=>p.visible&&p.lod==='proxy')).toBe(true);
+  await expect(page.locator('#error')).toBeHidden();expect(errors).toEqual([]);
+});
 test('licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset',async({page},info)=>{
   test.setTimeout(180000);
   const {errors,failed}=await open(page);await start(page);
@@ -335,7 +368,7 @@ test('a real withdrawal continuation loses men only to rounds from the spans, ke
 });
 test('a failed M01 bridge load prevents an invisible bridge; the French sandbox remains selectable',async({page})=>{
   await page.route('**/*.glb',r=>r.fulfill({status:404,body:'missing M01 test asset'}));
-  await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.assetFailures.length===9);
+  await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.requiredAssetFailures.length===9);
   await expect(page.locator('#error')).toBeVisible();await expect(page.locator('#start')).toBeDisabled();
   await page.locator('#close-error').click();await page.locator('#mission-select').selectOption('sandbox-1944');
   await expect(page.locator('#start')).toBeEnabled();await page.locator('#start').click();
