@@ -49,7 +49,8 @@ Prioridades:
 | Soldado alemão 1939 (rig) | P1 | 1,65–1,85 m; M35, M36; Grenzwacht pendente (P7) | Corpo original + capacete CC0/CC-BY | *WW2 headwear* (britdawgmasterfunk, **CC0**) · *Stahlhelm M35* (PL_historyfan_K, CC-BY) · *M35 Stahlhelm* (Cyril Demetrius, CC-BY) | [provisório original verificado](../../docs/assets/m01-soldiers/README.md) (M35 próprio, sem decalques); Grenzwacht pendente (P7) |
 | Kar98k (inimigos) | P1 | ~1,11 m, alavanca **dobrada** | CC-BY ou original | Dima_Biliakkk (CC-BY) · The Unknown... (CC-BY) | [provisório original](../../docs/assets/m01-soldiers/README.md): modelo de mundo de 1,11 m com ferrolho animável |
 | **kb wz.29 (jogador)** | P0 | 1,10 m; cano 0,60 m; 4,0 kg; alavanca **reta** | **Original** (ViewModel ≤ 12 k triângulos) | TomPL (mod de BF1942, sem licença) — só referência | ViewModel A PRODUZIR · [modelo de mundo provisório](../../docs/assets/m01-soldiers/README.md) (1,10 m, alavanca recta, clipe de 5) |
-| rkm wz.28, ckm wz.30, Vis wz.35, granada wz.33 | P1 | A levantar (H30) | **Original** | — | A PRODUZIR |
+| rkm wz.28 (Kowal) | P1 | 1,11 m; cano 0,611 m; 9 kg; carregador de 20; bípode com patins (T31, resumos) | **Original** | — | [provisório verificado](../../docs/assets/m01-rkm-wz28/README.md): 3 LODs, carregador/alavanca/bípode separados, clips de transporte, pontaria e rajada para o rig |
+| ckm wz.30, Vis wz.35, granada wz.33 | P1 | A levantar (H30) | **Original** | — | A PRODUZIR |
 | Materiais PBR | P0 | Aço rebitado, tijolo, cantaria, lastro, terra/lama, grama seca, sacos de areia, madeira velha, água | **CC0** (ambientCG, Poly Haven) | Bibliotecas inteiras CC0 (licença declarada pelas plataformas) | A ESCOLHER |
 | Céu / HDRI | P1 | Crepúsculo civil (Sol a −3°, faixa clara a ENE) e manhã | CC0 ou procedural | Poly Haven (CC0) | A ESCOLHER |
 

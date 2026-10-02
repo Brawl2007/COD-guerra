@@ -102,6 +102,10 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 - LOD0/1/2: 14,9k/6,0k/1,9k triângulos visíveis (PL), um atlas por nação. O GLB de animações tem 15 clips: ferrolho, recarga por clipe, sapadores normal/sob fogo, transporte de Bąk no `carry_socket`, locomoção, ferido, queda, sentado.
 - Verificados por `tests/m01-soldiers-glb.test.js` e capturas inspeccionadas em `docs/assets/m01-soldiers/`. Falta integrá-los em `src/render/` (trabalho do utilizador) e medir no Chromebook.
 
+**rkm wz.28 de Kowal (asset provisório, ainda não ligado ao jogo):**
+- Kit em `assets/models/provisional/m01/weapons/rkm_wz28/`, gerado por `tools/assets/m01-rkm-wz28/`: LOD0/1/2 com 1476/744/234 triângulos, carregador, alavanca de armar e bípode dobrado/aberto em nós separados, sockets e manifesto com medidas estimadas identificadas.
+- Prende-se ao osso `weapon` do rig existente; `m01_rkm_wz28_animations.glb` traz `rkm_carry`, `rkm_aim` e `rkm_fire_burst` (3 tiros, como a simulação). Verificado por `tests/m01-rkm-wz28-glb.test.js` e capturas inspeccionadas em `docs/assets/m01-rkm-wz28/`. Falta ligá-lo a Kowal em `src/render/` (Codex), clips de troca de carregador/deitado e confirmar T31 em leitura integral.
+
 ## Parcial ou pendente
 
 - No jogo, humanos, ViewModel, mãos, recarga, sons e texturas continuam placeholders. Os soldados riggados provisórios de `docs/assets/m01-soldiers/` aguardam integração; ViewModel, vozes e uniformes finais estão pendentes.
