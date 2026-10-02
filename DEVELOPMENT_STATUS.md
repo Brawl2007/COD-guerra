@@ -114,6 +114,15 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 **Ju 87 B-1 do raid (asset provisório ligado aos três aviões):** kit original em `assets/models/provisional/m01-aircraft/` (`tools/assets/m01-aircraft/`), LOD0/1/2 com 13 102/4 730/1 636 triângulos, nós `fuselage`, `propeller`, `dive_brake_l/r` e `bomb_sc250`, clips `propeller_spin` e `dive_brakes_extend`. Verificado por `tests/m01-ju87-glb.test.js`, relatório de importação three.js e galeria isolada em `docs/assets/m01-aircraft/` (não é playtest). Três clones partilham geometria/materiais, com LOD nativo por distância (mínimo LOD1 em médio e LOD2 em baixo), hélice amostrada do relógio e fallback por silhueta. Não muda trajectórias ou eventos; a carga SC 250 não documentada fica oculta. O segundo raid conserva o modelo anterior. Provas de produção em `docs/verification/m01-runtime/aircraft/`; falta confirmar T29/T12, freios/lançamento ligados a dados reais e arte final.
 **Vagões do trem 963 e do pátio (assets provisórios, ainda não ligados ao jogo):** kit original em `assets/models/provisional/m01-wagons/` (`tools/assets/m01-wagons/`), coberto (tipo G, portas de correr) e aberto (tipo O), genéricos da época porque P16 continua aberta. LOD0/1/2 com 2 332/1 128/516 e 1 948/846/364 triângulos, nós `body`, `wheelset_1/2` e `door_l/r`, clips `wheels_roll` e `doors_open`. Verificado por `tests/m01-wagons-glb.test.js`, relatório de importação three.js e galeria isolada em `docs/assets/m01-wagons/` (não é playtest). Falta ligá-los ao trem 963 e ao pátio (Codex) e identificar os tipos reais (P16).
 
+**MG 34 de 1939 (arma isolada, provisória; ainda não ligada ao runtime):**
+- Kit em `assets/models/provisional/m01/weapons/mg34/`, gerado por `tools/assets/m01-mg34/`: 1,219 m, LOD0/1/2 com 2432/1262/368 triângulos. Tem manga perfurada, coronha, alça e massa, bípode dobrado/aberto e tambor de cinta de 50. A tampa, a alavanca de armar, o tambor e a cinta são nós com pivô. O manifesto traz sockets, mãos, materiais, bytes, fontes (T33, por resumo) e as medidas estimadas marcadas.
+- Prende-se ao osso `weapon` do soldado alemão actual, com a Kar98k e o clipe escondidos. `m01_mg34_animations.glb` traz `mg34_aim`, `mg34_fire_burst` (7 tiros a 800/min, como o intervalo da simulação) e `mg34_reload` (troca do tambor), que animam também os nós da arma pelo nome. Verificado por `tests/m01-mg34-glb.test.js` e pelas capturas inspeccionadas em `docs/assets/m01-mg34/`.
+- Falta:
+  - ligá-la às posições `grp_de_east` em `src/render/` (Codex);
+  - o tiro deitado com bípode, porque não há pose `prone`;
+  - a cinta de 250, o municiador e a mira antiaérea;
+  - confirmar T33 em leitura integral.
+
 ## Parcial ou pendente
 
 - Soldados próximos, mãos, recarga e transporte já têm rig e clips reais. Arte, encaixe das mãos, uniformes e mixagem continuam a exigir revisão; Civis e alguns actores distantes conservam proxies. Vozes gravadas continuam ausentes.

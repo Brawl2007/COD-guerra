@@ -22,6 +22,7 @@ function foot(x, z, { yaw = 0, y = 0.072 } = {}) {
   const rot = q.axis([0, 1, 0], yaw), fwd = q.rot(rot, [0, 0, -1]);
   return { pos: [x, y, z], rot, pole: N(v3.add(fwd, [Math.sign(x) * 0.25, 0, 0])) };
 }
+export { foot, compose, frame };   // reutilizados por ../m01-mg34
 /** Corpo primeiro (para conhecer olho e tronco), depois arma e mãos. */
 const compose = (R, body, extra) => solve(R, { ...body, ...extra(solve(R, body).W) });
 

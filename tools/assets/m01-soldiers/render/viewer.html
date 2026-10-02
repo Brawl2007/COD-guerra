@@ -77,7 +77,15 @@ window.stage = {
     return actors.length - 1;
   },
   /** Prende a raiz do actor i ao osso `bone` do actor j (p. ex. ferido ao carry_socket do transportador). */
-  attach(i, j, bone) { const b = actors[j].root.getObjectByName(bone); const r = actors[i].root; r.position.set(0, 0, 0); r.rotation.set(0, 0, 0); b.add(r); actors[j].root.updateMatrixWorld(true); },
+  attach(i, j, bone) {
+    const A = actors[j], b = A.root.getObjectByName(bone), r = actors[i].root; r.position.set(0, 0, 0); r.rotation.set(0, 0, 0); b.add(r);
+    // Religa o clip de j: faixas que animam nós da cena presa por nome (p. ex. mg34_feed_cover) só se ligam depois de a prender.
+    if (A.action) {
+      const c = A.action.getClip(), t = A.mixer.time; A.mixer.stopAllAction(); A.mixer.uncacheClip(c);
+      A.action = A.mixer.clipAction(c); A.action.setLoop(THREE.LoopOnce); A.action.clampWhenFinished = true; A.action.play(); A.mixer.setTime(t);
+    }
+    A.root.updateMatrixWorld(true);
+  },
   setTime(i, t) { actors[i].mixer.setTime(t); actors[i].root.updateMatrixWorld(true); },
   clear() { for (const a of actors) scene.remove(a.root); actors.length = 0; },
   info(i) { return actors[i].info; },
