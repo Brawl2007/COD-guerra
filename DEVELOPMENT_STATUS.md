@@ -128,13 +128,12 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
   - confirmar T33 em leitura integral.
 
 **ckm wz.30 da casamata (`grp_ckm_crew`; kit isolado, não ligado ao jogo):**
-- Kit em `assets/models/provisional/m01/weapons/ckm_wz30/`, gerado por `tools/assets/m01-ckm-wz30/`: arma de 1,211 m no tripé baixo (cano a 0,64 m), fita de tecido pela esquerda e caixa de aço caqui de 355 × 175 × 85 mm. LOD0/1/2 com 5004/2298/754 triângulos. Direcção, elevação, alavanca, fita e tampa estão em nós com pivô; o manifesto traz sockets, pontos de pega e medidas estimadas identificadas.
+- Kit em `assets/models/provisional/m01/weapons/ckm_wz30/`, gerado por `tools/assets/m01-ckm-wz30/`: arma de 1,211 m no tripé baixo (cano a 0,64 m), fita de tecido pela esquerda e caixa de aço caqui de 355 × 175 × 85 mm. LOD0/1/2 com 3904/2298/754 triângulos. O LOD0 foi reduzido de 5004 para o orçamento de 4000 com uma variante leve dos cartuchos, aros e tecido; LOD1, LOD2 e clips ficaram byte a byte (antes/depois em `docs/assets/m01-ckm-wz30/ckm_lod0_budget.png`). Direcção, elevação, alavanca, fita e tampa estão em nós com pivô; o manifesto traz sockets, pontos de pega e medidas estimadas identificadas.
 - `m01_ckm_wz30_animations.glb` traz `ckm_wz30_{gunner,loader}_{idle,aim,fire_burst,feed,abandon}` para o rig polaco actual, sincronizados com os clips `ckm_wz30_gun_*` da arma. A espingarda fica escondida, para mostrar uma só arma.
 - Verificado por `tests/m01-ckm-wz30-glb.test.js` e por capturas inspeccionadas em `docs/assets/m01-ckm-wz30/` (galeria isolada; sem playtest nem FPS).
 - Falta:
   - representar a guarnição na simulação antes de ligar à casamata: `grp_ckm_crew` ainda não cria actores no runtime; não inventar tiros/saída da casamata no renderer;
-  - confirmar T34 em leitura integral, a geometria do tripé e a altura da seteira;
-  - decidir o orçamento do LOD0 (acima de 4000).
+  - confirmar T34 em leitura integral, a geometria do tripé e a altura da seteira.
 
 **MG 34 deitada com atirador e municiador (#33 revisto/integrado; ligação à simulação pendente):**
 - `assets/models/provisional/m01/weapons/mg34-prone/m01_mg34_prone_animations.glb`, gerado por `tools/assets/m01-mg34-prone/`, traz 9 clips com nomes novos: `mg34_prone_enter/idle/aim/fire_burst/reload/exit` do atirador e `mg34_loader_prone_idle/feed/leave` do municiador. Uma só MG 34 no osso `weapon`, com o bípode aberto e as patas no chão; os clips de pé e o kit da arma ficam intactos (SHA-256 no manifesto).

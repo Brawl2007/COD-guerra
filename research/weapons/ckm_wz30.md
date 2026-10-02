@@ -43,7 +43,7 @@ Esta ficha não acrescenta regras. A missão já declara o grupo, o posto e a co
 | Escala | 1 unidade = 1 m, +Y para cima, cano para −Z. Comprimento da arma 1,211 m (teste: 1,2 m ± 2 %). Eixo do cano a 0,64 m do chão (tripé baixo) |
 | Peças | tripé; direcção (`ckm_traverse`, pião); elevação (`ckm_elevate`, munhões; contém a arma); alavanca de armar; fita na alimentação; fita vazia; fita livre até à caixa; caixa; tampa (aberta 110°) |
 | Medidas estimadas | Diâmetro e comprimento da manga, cone, caixa da culatra, punho, alturas das miras, pernas e sapatas do tripé, passo da fita (16 mm) e curso da alavanca. Todas marcadas `estimated` no manifesto |
-| Triângulos | LOD0 5004 · LOD1 2298 · LOD2 754 (9 malhas, um material) |
+| Triângulos | LOD0 3904 (era 5004; reduzido para o orçamento de 4000) · LOD1 2298 · LOD2 754 (9 malhas, um material) |
 
 ## 5. Pendências
 

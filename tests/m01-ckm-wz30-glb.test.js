@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { createHash } from 'node:crypto';
 
 // ckm wz.30 da casamata de M01 gerada por tools/assets/m01-ckm-wz30 (node build.mjs): escala, peças com pivô, LODs,
 // clips da arma e ligação dos clips ckm_wz30_* da guarnição ao rig polaco actual.
@@ -17,7 +18,7 @@ function glb(path) {
 }
 const PARTS = ['ckm_tripod', 'ckm_traverse', 'ckm_elevate', 'ckm_cocking_handle', 'ckm_feed_belt', 'ckm_belt_spent', 'ckm_belt_free', 'ckm_ammo_box', 'ckm_ammo_box_lid'];
 const MOVING = ['ckm_traverse', 'ckm_elevate', 'ckm_cocking_handle', 'ckm_feed_belt', 'ckm_belt_spent', 'ckm_belt_free'];
-const LODS = { lod0: 6000, lod1: 2800, lod2: 1000 };
+const LODS = { lod0: 4000, lod1: 2800, lod2: 1000 };
 const KINDS = { idle: 4, aim: 3, fire_burst: 1.3, feed: 3.2, abandon: 3 };
 const finite = xs => xs.every(Number.isFinite);
 const near = (a, b, eps = 1e-4) => a.every((x, k) => Math.abs(x - b[k]) < eps);
@@ -129,4 +130,50 @@ test('M01 ckm wz.30: clips ckm_wz30_* do atirador e do municiador ligam-se ao ri
   // O atirador fica atrás da arma (+Z) com o olho à altura da linha de mira; o municiador à esquerda, do lado da cinta.
   assert.ok(manifest.crew.gunner.pos[2] > 0.5 && Math.abs(manifest.crew.gunner.pos[0]) < 0.1);
   assert.ok(manifest.crew.loader.pos[0] < -0.3);
+});
+
+test('M01 ckm wz.30: LOD0 dentro dos 4000 triângulos sem mudar silhueta, pivôs, sockets, fita nem clips; LOD1, LOD2 e clips intactos', () => {
+  const b = manifest.lod0_budget, lod0 = manifest.files['m01_ckm_wz30_lod0.glb'];
+  assert.equal(b.max_triangles, 4000);
+  assert.equal(b.before, 5004);
+  assert.equal(b.after, lod0.triangles);
+  assert.ok(lod0.triangles <= 4000, `LOD0 com ${lod0.triangles} triângulos`);
+  // Escala e silhueta: caixa da cena e comprimento da arma iguais aos do LOD0 de 5004 triângulos.
+  assert.ok(near(lod0.bbox_m.min, [-0.5295, -0.03, -0.83], 5e-4) && near(lod0.bbox_m.max, [0.435, 0.74, 0.55], 5e-4), JSON.stringify(lod0.bbox_m));
+  assert.equal(lod0.gun_length_m, 1.2106);
+  // Cada nó do LOD0 cobre o mesmo volume que o LOD1 (que sai da geometria completa), com os mesmos pivôs e sockets.
+  const g0 = glb(DIR + 'm01_ckm_wz30_lod0.glb'), g1 = glb(DIR + 'm01_ckm_wz30_lod1.glb');
+  for (const name of PARTS) {
+    const box = g => g.json.accessors[g.json.meshes[g.node(name).mesh].primitives[0].attributes.POSITION], a = box(g0), c = box(g1);
+    assert.ok(near(a.min, c.min, 0.004) && near(a.max, c.max, 0.004), `${name}: volume do LOD0 ≈ LOD1`);
+    assert.deepEqual(g0.node(name).translation, g1.node(name).translation, `${name}: pivô`);
+  }
+  const { lod: _a, ...x0 } = g0.node('ckm_wz30').extras, { lod: _b, ...x1 } = g1.node('ckm_wz30').extras;
+  assert.deepEqual(x0, x1, 'sockets, pivôs e guarnição iguais nos LODs');
+  // Fita e alimentação: as mesmas peças (7 cartuchos na entrada, 33 no troço livre) em todos os LODs.
+  const pieces = name => manifest.parts.find(p => p.node === name).pieces;
+  assert.equal(pieces('ckm_feed_belt').filter(n => /^feed_round_\d+_case$/.test(n)).length, 7);
+  assert.equal(pieces('ckm_belt_free').filter(n => /^free_round_\d+_case$/.test(n)).length, 33);
+  // Clips da arma no LOD0 iguais aos do LOD1 (mesmos tempos e valores).
+  assert.deepEqual(g0.json.animations.map(a => a.name), g1.json.animations.map(a => a.name));
+  g0.json.animations.forEach((a, i) => a.samplers.forEach((s, k) => {
+    const t = g1.json.animations[i].samplers[k];
+    assert.deepEqual([g0.floats(s.input), g0.floats(s.output)], [g1.floats(t.input), g1.floats(t.output)], `${a.name}: amostra ${k}`);
+  }));
+  // Só o LOD0 mudou: LOD1, LOD2 e o GLB dos clips da guarnição continuam byte a byte os da entrega da ckm.
+  const sha = file => createHash('sha256').update(read(DIR + file)).digest('hex');
+  const kept = {
+    'm01_ckm_wz30_lod1.glb': '30fa7424df859c7c4c5be6b347955cf636284041c9eccfc1e30f1063f1fd0168',
+    'm01_ckm_wz30_lod2.glb': 'a00f9a301b11523d3398c360a3c7bf8a15c5c0481abec56ec48efe80f9c5f875',
+    'm01_ckm_wz30_animations.glb': 'dda588e9163da7aa0bfe9b3f7189d96c84a9e4788b9707ffbee7b70dfe936865',
+  };
+  for (const [file, hash] of Object.entries(kept)) assert.equal(sha(file), hash, `${file} mudou`);
+  assert.deepEqual(b.preserved_sha256, kept);
+  // Importação real (three.js): todos os triângulos do LOD0 são desenhados, sem malhas escondidas (o palco desenha cada
+  // imagem em duas passagens, sombra e cor).
+  const report = JSON.parse(read('docs/assets/m01-ckm-wz30/import-report.json')).files['m01_ckm_wz30_lod0.glb'];
+  assert.equal(report.triangles, lod0.triangles);
+  assert.equal(report.rendered.passes, 2);
+  assert.equal(report.rendered.triangles, lod0.triangles * report.rendered.passes, 'triângulos desenhados = triângulos do LOD0');
+  assert.equal(report.rendered.calls, lod0.draw_calls * report.rendered.passes);
 });

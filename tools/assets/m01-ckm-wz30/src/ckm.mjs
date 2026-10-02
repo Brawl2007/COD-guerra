@@ -101,6 +101,32 @@ function round(c, name, group, segments = 6) {
   return out;
 }
 
+/** Tubo de faces planas ao longo de Z em (x, y): perfil [[z, r], …]; tampos poligonais (n − 2 triângulos, sem vértice central). */
+function prismZ(x, y, profile, segments, { capStart = false, capEnd = false } = {}) {
+  const rings = profile.map(([z, r]) => Array.from({ length: segments }, (_, i) => { const a = i / segments * Math.PI * 2; return [x + Math.cos(a) * r, y + Math.sin(a) * r, z]; }));
+  const part = loft(rings);
+  const cap = (ring, atEnd) => {
+    const s = part.positions.length / 3;
+    ring.forEach((p, i) => { part.positions.push(...p); part.uvs.push(0.5 + 0.02 * Math.cos(i / segments * 6.283), atEnd ? 1 : 0); });
+    for (let i = 1; i + 1 < segments; i++) part.indices.push(s, s + i, s + i + 1);
+  };
+  if (capStart) cap(rings[0], false);
+  if (capEnd) cap(rings.at(-1), true);
+  return part;
+}
+/**
+ * Cartucho do LOD0 leve: só o que fica fora do tecido (|z − zc| > 13/21 mm). Fundo do estojo (aro) com tampo, e a frente
+ * — fim do estojo e ombro num só cone até ao gargalo, e a bala — numa só peça com a ponta fechada; a junção estojo/bala
+ * é pintada (round_tip).
+ */
+function leanRound(c, name, group, segments) {
+  const [x, y, z] = c;
+  return [
+    tag(prismZ(x, y, [[z + 0.019, 0.0059], [z + 0.032, 0.0059]], segments, { capEnd: true }), `${name}_case`, 'brass', group),
+    tag(prismZ(x, y, [[z - 0.011, 0.0057], [z - 0.025, 0.0046], [z - 0.048, 0.0012]], segments, { capEnd: true }), `${name}_bullet`, 'round_tip', group),
+  ];
+}
+
 /** Troço livre da fita (cena, repouso): da boca da caixa até à entrada, arco no plano XY à cota z da alimentação. */
 export function freeBeltPath() {
   const m0 = boxMouth(), top = G([-0.13, F.y, F.z]);
@@ -111,8 +137,23 @@ export function freeBeltPath() {
   return path.map((p, i) => i === 0 || i === path.length - 1 ? p : v3.mul(v3.add(v3.add(path[i - 1], p), path[i + 1]), 1 / 3));
 }
 
-/** Peças por grupo (ver PIVOTS e PARENTS). Tudo na cena, na posição de repouso, com a tampa da caixa fechada. */
-export function buildCkm() {
+/** Douglas–Peucker: tira os pontos a menos de `eps` da corda (o troço livre é quase recto entre os pontos de controlo). */
+function simplifyPath(pts, eps) {
+  if (pts.length < 3) return pts;
+  const ds = (p, a, b) => { const ab = v3.sub(b, a), t = clamp(v3.dot(v3.sub(p, a), ab) / v3.dot(ab, ab)); return v3.dist(p, v3.add(a, v3.mul(ab, t))); };
+  let k = 0, d = 0;
+  for (let i = 1; i < pts.length - 1; i++) { const e = ds(pts[i], pts[0], pts.at(-1)); if (e > d) { d = e; k = i; } }
+  return d <= eps ? [pts[0], pts.at(-1)] : [...simplifyPath(pts.slice(0, k + 1), eps).slice(0, -1), ...simplifyPath(pts.slice(k), eps)];
+}
+
+/**
+ * Peças por grupo (ver PIVOTS e PARENTS). Tudo na cena, na posição de repouso, com a tampa da caixa fechada.
+ * `lean`: variante do LOD0 (orçamento de 4000 triângulos) — cartuchos sem as partes escondidas no tecido e com tampos
+ * poligonais, aros da manga abertos (a manga tapa o interior) e o tecido do troço livre só com as secções que mudam a forma
+ * (Douglas–Peucker a 0,2 mm). Mesmos
+ * nomes de peças, grupos, pivôs e silhueta; LOD1 e LOD2 continuam a sair da variante completa.
+ */
+export function buildCkm({ lean = false } = {}) {
   const parts = [], J = CKM.jacket, add = (p, name, paint, group) => parts.push(tag(p, name, paint, group));
   const gun = 'ckm_elevate';
   // ——— Arma (referencial da arma convertido para a cena com G) ———
@@ -137,7 +178,8 @@ export function buildCkm() {
   add(strap(tg, tg.map(() => [1, 0, 0]), { width: 0.007, thickness: 0.006 }), 'trigger_guard', 'steel', gun);
   // Manga de água (~3 l): tubo com aros, bujão de enchimento em cima, tubo de vapor e bujão de esgoto em baixo.
   add(tube(J.r, J.r, J.z1, J.z0, CKM.trunnion[1] + B, { segments: 18 }), 'jacket', 'jacket', gun);
-  for (const z of [-0.035, -0.33, -0.63]) add(tube(J.r + 0.003, J.r + 0.003, z - 0.006, z + 0.006, CKM.trunnion[1] + B, { segments: 18 }), `jacket_band_${Math.round(-z * 100)}`, 'steel', gun);
+  for (const z of [-0.035, -0.33, -0.63]) if (lean) add(prismZ(0, CKM.trunnion[1] + B, [[z - 0.006, J.r + 0.003], [z + 0.006, J.r + 0.003]], 18), `jacket_band_${Math.round(-z * 100)}`, 'steel', gun);
+  else add(tube(J.r + 0.003, J.r + 0.003, z - 0.006, z + 0.006, CKM.trunnion[1] + B, { segments: 18 }), `jacket_band_${Math.round(-z * 100)}`, 'steel', gun);
   add(rod(G([0, B + J.r - 0.004, -0.09]), G([0, B + J.r + 0.014, -0.09]), 0.011, 0.011, 10), 'water_fill', 'bare_metal', gun);
   add(rod(G([0, B - J.r + 0.004, -0.06]), G([0, B - J.r - 0.026, -0.07]), 0.007, 0.007, 8), 'steam_tube', 'bare_metal', gun);
   add(rod(G([0, B - J.r + 0.004, -0.6]), G([0, B - J.r - 0.012, -0.6]), 0.008, 0.008, 8), 'water_drain', 'bare_metal', gun);
@@ -189,17 +231,19 @@ export function buildCkm() {
   const fabricRun = (x0, x1, name, group) => add(blk([x1 - x0, 0.013, 0.034], [(x0 + x1) / 2, fy[1], fy[2] + 0.004], 0.15), name, 'fabric', group);
   fabricRun(G([-0.13, 0, 0])[0], G([0.0, 0, 0])[0], 'belt_feed_fabric', 'ckm_feed_belt');
   add(blk([0.028, 0.006, 0.026], [G([0.014, 0, 0])[0], fy[1], fy[2] + 0.004], 0.2), 'belt_tab', 'bare_metal', 'ckm_feed_belt');
-  for (let k = 0; k < 7; k++) parts.push(...round([G([F.entry - k * CKM.pitch, 0, 0])[0], fy[1], fy[2]], `feed_round_${k}`, 'ckm_feed_belt'));
+  const rnd = lean ? (c, name, group, segments = 6) => leanRound(c, name, group, segments) : round;
+  for (let k = 0; k < 7; k++) parts.push(...rnd([G([F.entry - k * CKM.pitch, 0, 0])[0], fy[1], fy[2]], `feed_round_${k}`, 'ckm_feed_belt'));
   // Troço livre: da boca da caixa (tampa aberta) até à entrada, num arco no plano XY (cartuchos sempre em Z).
   const smooth = freeBeltPath();
   // Tecido: 13 mm de espessura no plano XY (envolve os estojos), 34 mm de largura em Z.
-  const fab = place(strap(smooth, smooth.map(() => [0, 0, 1]), { width: 0.013, thickness: 0.034 }), [0, 0, -0.013]);
+  const fabPath = lean ? simplifyPath(smooth, 0.0002) : smooth;
+  const fab = place(strap(fabPath, fabPath.map(() => [0, 0, 1]), { width: 0.013, thickness: 0.034 }), [0, 0, -0.013]);
   add(fab, 'belt_free_fabric', 'fabric', 'ckm_belt_free');
   let acc = 0;
   for (let i = 1, k = 0; i < smooth.length; i++) {
     const seg = v3.dist(smooth[i - 1], smooth[i]);
     acc += seg;
-    while (acc >= CKM.pitch && i < smooth.length - 1) { acc -= CKM.pitch; const p = v3.lerp(smooth[i], smooth[i - 1], acc / seg); parts.push(...round(p, `free_round_${k++}`, 'ckm_belt_free', 4)); }
+    while (acc >= CKM.pitch && i < smooth.length - 1) { acc -= CKM.pitch; const p = v3.lerp(smooth[i], smooth[i - 1], acc / seg); parts.push(...rnd(p, `free_round_${k++}`, 'ckm_belt_free', 4)); }
   }
   // Fita vazia: sai pela direita, dobra e cai ao lado da arma.
   const ex = G([F.exit, F.y, F.z]);
@@ -281,5 +325,7 @@ export const PAINTERS = {
   brass: ({ p }) => ({ c: mul([0.7, 0.52, 0.24], 0.9 + fbm(p, 200, 2) * 0.2), r: 0.35, m: 0.4, h: 0 }),
   // Bala de jaqueta de tombak (cor de cobre).
   bullet: ({ p }) => ({ c: mul([0.6, 0.36, 0.22], 0.9 + fbm(p, 200, 2) * 0.2), r: 0.38, m: 0.4, h: 0 }),
+  // LOD0 leve: frente do cartucho numa peça; latão até ao gargalo, tombak na bala.
+  round_tip: (ctx) => (ctx.p[2] > CKM.feed.z - 0.025 ? PAINTERS.brass : PAINTERS.bullet)(ctx),
   bore: () => ({ c: [0.03, 0.03, 0.035], r: 0.8, m: 0, h: 0 }),
 };

@@ -3,7 +3,8 @@
 // manifest.json. Uso: node build.mjs [--out dir]. Precisa de `npm ci` aqui e em ../m01-soldiers e de `npm run fetch` lá
 // (malha base do MakeHuman, para os clips); sem ela a geração pára. `--geometry-only --out dir` gera só a geometria
 // noutra pasta, sem nunca tocar nos entregáveis completos.
-import { mkdirSync, writeFileSync, statSync } from 'node:fs';
+import { mkdirSync, writeFileSync, statSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join, resolve } from 'node:path';
 import { Document, NodeIO } from '@gltf-transform/core';
 import { computeNormals, v3 } from '../m01-soldiers/src/meshops.mjs';
@@ -34,6 +35,12 @@ mkdirSync(OUT, { recursive: true });
 const parts = buildCkm();
 for (const p of parts) { computeNormals(p); p.skin = Array(p.positions.length / 3).fill(null); }
 const atlas = bakeAtlas(parts, PAINTERS, { size: 1024, ormSize: 512, normalSize: 512, extraSizes: [512, 256], ormExtra: [256] });
+// LOD0 leve (orçamento de 4000 triângulos): as mesmas peças com cartuchos, aros e tecido mais baratos, num atlas próprio
+// cozido depois do original, para o LOD1, o LOD2 e os clips continuarem iguais byte a byte.
+const leanParts = buildCkm({ lean: true });
+for (const p of leanParts) { computeNormals(p); p.skin = Array(p.positions.length / 3).fill(null); }
+const atlas0 = bakeAtlas(leanParts, PAINTERS, { size: 1024, ormSize: 512, normalSize: 512 });
+const LOD0_BUDGET = 4000;
 const GROUPS = [
   { name: 'ckm_tripod', moving: null, label: 'tripé de três pernas (posição baixa): cabeça com prato de direcção, pernas com sapatas e espigões, barra de pontaria' },
   { name: 'ckm_traverse', moving: 'rotação em Y (direcção) no pião', label: 'pião, berço com o garfo dos munhões, fuso e volante de elevação, corrediça na barra' },
@@ -46,15 +53,18 @@ const GROUPS = [
   { name: 'ckm_ammo_box_lid', moving: `rotação em X na dobradiça de trás; repouso aberta a ${CKM.box.lidOpen}° (modelada fechada)`, label: 'tampa da caixa com pega e fecho' },
 ];
 const LODS = [
-  { id: 'lod0', ratio: 1, error: 0, color: 'color', orm: 'orm', normal: 'normal', use: 'perto (< 15 m) e capturas' },
+  { id: 'lod0', lean: true, ratio: 1, error: 0, color: 'color', orm: 'orm', normal: 'normal', use: 'perto (< 15 m) e capturas' },
   { id: 'lod1', ratio: 0.45, error: 0.03, flags: ['Permissive'], color: 'color_512', orm: 'orm_256', normal: null, use: 'médio (15–40 m)' },
   { id: 'lod2', ratio: 0.15, error: 0.2, flags: ['Permissive'], color: 'color_256', orm: null, normal: null, use: 'longe (outra margem) / Chromebook' },
 ];
-const merged = GROUPS.map(g => {
-  const m = mergeGroup({ ...g, parts: parts.filter(p => p.group === g.name) }), [px, py, pz] = PIVOTS[g.name];
+const mergeAll = set => GROUPS.map(g => {
+  const m = mergeGroup({ ...g, parts: set.filter(p => p.group === g.name) }), [px, py, pz] = PIVOTS[g.name];
   for (let i = 0; i < m.positions.length; i += 3) { m.positions[i] -= px; m.positions[i + 1] -= py; m.positions[i + 2] -= pz; }
   return m;
 });
+const merged = mergeAll(parts), merged0 = mergeAll(leanParts);
+const names = set => set.map(p => p.name).join();
+if (names(parts) !== names(leanParts)) throw new Error('o LOD0 leve tem de ter as mesmas peças que o completo');
 const localT = n => v3.sub(PIVOTS[n], PARENTS[n] ? PIVOTS[PARENTS[n]] : [0, 0, 0]);
 const restQ = n => REST_ROT[n] ? q.axis(REST_ROT[n].axis, REST_ROT[n].deg) : q.id();
 /** Ponto local de um nó → cena, na pose de repouso. */
@@ -91,13 +101,16 @@ const manifest = {
   crew: people ? people.crew : { loader: LOADER },
   crew_note: 'pos no chão e yaw (graus, 0 = virado para −Z) de cada soldado no referencial da cena; pôr a raiz do GLB m01_soldier_pl_* aí e tocar o clip com o mesmo sufixo do clip da arma',
   materials: [{ name: 'ckm_wz30', painters: Object.keys(PAINTERS), note: 'um material com atlas; aço oxidado escuro, tripé verde-caqui, caixa caqui [T34], madeira, tecido caqui, latão e balas de tombak' }],
-  textures: { atlas_px: atlas.size, density_px_per_m: Math.round(atlas.density) },
+  textures: { atlas_px: atlas.size, density_px_per_m: Math.round(atlas.density), lod0: { atlas_px: atlas0.size, density_px_per_m: Math.round(atlas0.density), note: 'o LOD0 leve tem atlas próprio (mesmos pintores); LOD1 e LOD2 usam o atlas da variante completa' } },
+  lod0_budget: { max_triangles: LOD0_BUDGET, before: null, after: null,
+    method: 'só o LOD0: cartuchos sem as partes escondidas no tecido (aro com tampo; frente do estojo, gargalo e bala numa peça de 3 anéis com a ponta fechada) e tampos poligonais em vez de leque; aros da manga sem tampos (a manga tapa o interior); tecido do troço livre por Douglas–Peucker a 0,2 mm. Mesmas peças, grupos, pivôs, sockets e comprimento; LOD1, LOD2 e os clips não mudam' },
   files: {},
 };
 
 for (const L of LODS) {
+  const A = L.lean ? atlas0 : atlas;
   const doc = new Document(), buf = doc.createBuffer(), acc = (type, a) => doc.createAccessor().setType(type).setArray(a).setBuffer(buf);
-  const img = k => k && doc.createTexture(k).setImage(atlas.images[k].data).setMimeType(atlas.images[k].mime);
+  const img = k => k && doc.createTexture(k).setImage(A.images[k].data).setMimeType(A.images[k].mime);
   const mat = doc.createMaterial('ckm_wz30').setBaseColorTexture(img(L.color)).setRoughnessFactor(L.orm ? 1 : 0.6).setMetallicFactor(L.orm ? 1 : 0.15);
   if (L.orm) mat.setMetallicRoughnessTexture(img(L.orm));
   if (L.normal) mat.setNormalTexture(img(L.normal));
@@ -105,7 +118,7 @@ for (const L of LODS) {
     attach: 'pôr no chão da casamata, com −Z para a seteira; os clips ckm_wz30_gun_* animam os nós por nome' });
   const nodes = {}, meshes = [], min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
   let gunMin = Infinity, gunMax = -Infinity;
-  for (const m0 of merged) {
+  for (const m0 of L.lean ? merged0 : merged) {
     const n = m0.name, m = await simplify(m0, L.ratio, { error: L.error, flags: L.flags ?? [] });
     const prim = doc.createPrimitive().setMaterial(mat).setIndices(acc('SCALAR', Uint16Array.from(m.indices)))
       .setAttribute('POSITION', acc('VEC3', Float32Array.from(m.positions))).setAttribute('NORMAL', acc('VEC3', Float32Array.from(m.normals)))
@@ -136,9 +149,14 @@ for (const L of LODS) {
   const bytes = statSync(path).size, tris = meshes.reduce((s, m) => s + m.triangles, 0);
   manifest.files[file] = { lod: L.id, use: L.use, bytes, triangles: tris, draw_calls: meshes.length, meshes, gun_length_m: +(gunMax - gunMin).toFixed(4),
     bbox_m: { min: min.map(x => +x.toFixed(4)), max: max.map(x => +x.toFixed(4)) },
-    textures: Object.fromEntries([['baseColor', L.color], ['metallicRoughness', L.orm], ['normal', L.normal]].filter(([, k]) => k).map(([n, k]) => [n, `${atlas.images[k].mime} ${k === 'color' ? 1024 : +(k.split('_')[1] ?? 512)}²`])),
+    textures: Object.fromEntries([['baseColor', L.color], ['metallicRoughness', L.orm], ['normal', L.normal]].filter(([, k]) => k).map(([n, k]) => [n, `${A.images[k].mime} ${k === 'color' ? 1024 : +(k.split('_')[1] ?? 512)}²`])),
     animations: (people?.gun ?? []).map(c => c.name) };
   console.log(file, (bytes / 1e3).toFixed(0), 'kB;', tris, 'triângulos; arma', (gunMax - gunMin).toFixed(3), 'm');
+  if (L.lean) {
+    if (tris > LOD0_BUDGET) throw new Error(`LOD0 com ${tris} triângulos, acima do orçamento de ${LOD0_BUDGET}`);
+    manifest.lod0_budget.before = merged.reduce((s, m) => s + m.indices.length / 3, 0);
+    manifest.lod0_budget.after = tris;
+  }
 }
 
 if (people) {
@@ -150,4 +168,7 @@ if (people) {
   manifest.gun_clips = people.gun.map(c => ({ name: c.name, duration: sec(c), loop: c.extras.loop, events: c.extras.events }));
   console.log(file, (r.bytes / 1e3).toFixed(0), 'kB;', people.people.map(c => c.name).join(', '));
 }
+// SHA-256 dos ficheiros que a redução do LOD0 não pode mudar (iguais aos da entrega #31; o teste confirma-os).
+manifest.lod0_budget.preserved_sha256 = Object.fromEntries(['m01_ckm_wz30_lod1.glb', 'm01_ckm_wz30_lod2.glb', ...(people ? ['m01_ckm_wz30_animations.glb'] : [])]
+  .map(f => [f, createHash('sha256').update(readFileSync(join(OUT, f))).digest('hex')]));
 writeFileSync(join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
