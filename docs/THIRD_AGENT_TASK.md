@@ -12,7 +12,7 @@ Produzir **um Ju 87 B-1 verificável**, em GLB, para substituir a silhueta de ca
 - Referência do manifesto actual: comprimento 11,1 m, envergadura 13,8 m, altura 4,24 m; confirmar as fontes antes de dar a escala como validada.
 - Convenções: 1 unidade = 1 metro, +Y para cima, frente em −Z, escala aplicada; documentar a origem/pivô para voo. O modelo não deve conter coordenadas globais de Tczew.
 - Separar nós estáveis para fuselagem, hélice e freios de mergulho. Documentar e verificar animação da hélice e eventual clip dos freios, sem avançar eventos de missão.
-- Entregar pelo menos dois LODs; LOD0 até 15.000 triângulos, conforme o orçamento proposto em `assets-m01.json`. Documentar triângulos reais, materiais, texturas e bytes por LOD.
+- Entregar três LODs; LOD0 até 15.000 triângulos, conforme o orçamento proposto em `assets-m01.json`. Documentar triângulos reais, materiais, texturas e bytes por LOD.
 - Materiais/texturas próprios, CC0 ou CC-BY com licença e crédito por ficheiro. Aplicar a política do repositório público; não extrair conteúdo de jogos.
 
 ## Ficheiros e verificação
