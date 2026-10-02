@@ -121,9 +121,15 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 - Prende-se ao osso `weapon` do soldado alemão actual, com a Kar98k e o clipe escondidos. `m01_mg34_animations.glb` traz `mg34_aim`, `mg34_fire_burst` (7 tiros a 800/min, como o intervalo da simulação) e `mg34_reload` (troca do tambor), que animam também os nós da arma pelo nome. Verificado por `tests/m01-mg34-glb.test.js` e pelas capturas inspeccionadas em `docs/assets/m01-mg34/`.
 - Falta:
   - ligá-la às posições `grp_de_east` em `src/render/` (Codex);
-  - o tiro deitado com bípode, porque não há pose `prone`;
-  - a cinta de 250, o municiador e a mira antiaérea;
+  - ligar os clips deitados (abaixo), porque o motor não tem pose `prone`;
+  - a cinta de 250 e a mira antiaérea;
   - confirmar T33 em leitura integral.
+
+**MG 34 deitada com atirador e municiador (clips provisórios; ainda não ligados ao runtime):**
+- `assets/models/provisional/m01/weapons/mg34-prone/m01_mg34_prone_animations.glb`, gerado por `tools/assets/m01-mg34-prone/`, traz 9 clips com nomes novos: `mg34_prone_enter/idle/aim/fire_burst/reload/exit` do atirador e `mg34_loader_prone_idle/feed/leave` do municiador. Uma só MG 34 no osso `weapon`, com o bípode aberto e as patas no chão; os clips de pé e o kit da arma ficam intactos (SHA-256 no manifesto).
+- Rajada de 7 tiros com eventos a 0,075 s; o manifesto documenta a janela de tiro e o corte depois de 4 ou 6 tiros. Na recarga deitada, o municiador passa o tambor ao atirador (`drum_from_assistant` 1,7 s, `drum_handoff` 2,15 s).
+- Cotovelos, joelhos e botas medidos na pele (LBS) a poucos milímetros do chão; mão no punho e face na coronha. Verificado por `tests/m01-mg34-prone-glb.test.js` (incluindo o mixer do three.js) e pelas capturas inspeccionadas em `docs/assets/m01-mg34-prone/` (não é playtest).
+- Falta: implementar `pose: prone` e ligar a dupla a `grp_de_east` (Codex); rever arte e posturas em jogo.
 
 ## Parcial ou pendente
 
