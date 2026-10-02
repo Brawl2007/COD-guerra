@@ -1,9 +1,10 @@
 // Gera o kit da ckm wz.30 da casamata de M01: GLB em metros com três LODs (arma, tripé, fita e caixa em nós com pivô,
 // mais os clips ckm_wz30_gun_* desses nós), os clips ckm_wz30_{gunner,loader}_* para o rig dos soldados e
-// manifest.json. Uso: node build.mjs [--out dir]. Precisa de `npm ci` aqui e em ../m01-soldiers (e `npm run fetch` lá
-// para os clips da guarnição).
+// manifest.json. Uso: node build.mjs [--out dir]. Precisa de `npm ci` aqui e em ../m01-soldiers e de `npm run fetch` lá
+// (malha base do MakeHuman, para os clips); sem ela a geração pára. `--geometry-only --out dir` gera só a geometria
+// noutra pasta, sem nunca tocar nos entregáveis completos.
 import { mkdirSync, writeFileSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { Document, NodeIO } from '@gltf-transform/core';
 import { computeNormals, v3 } from '../m01-soldiers/src/meshops.mjs';
 import { bakeAtlas } from '../m01-soldiers/src/textures.mjs';
@@ -17,7 +18,16 @@ import { buildCkmClips, CKM_GRIP, LOADER } from './src/clips.mjs';
 
 const args = process.argv.slice(2), opt = (k, d) => { const i = args.indexOf(`--${k}`); return i >= 0 ? args[i + 1] : d; };
 const ROOT = new URL('../../../', import.meta.url).pathname;
-const OUT = opt('out', join(ROOT, 'assets/models/provisional/m01/weapons/ckm_wz30'));
+const DEFAULT_OUT = join(ROOT, 'assets/models/provisional/m01/weapons/ckm_wz30');
+const OUT = opt('out', DEFAULT_OUT), GEOMETRY_ONLY = args.includes('--geometry-only');
+if (GEOMETRY_ONLY && resolve(OUT) === resolve(DEFAULT_OUT)) {
+  console.error('--geometry-only precisa de --out <outra pasta>: não pode substituir os entregáveis completos.');
+  process.exit(1);
+}
+if (!GEOMETRY_ONLY && !hasMakeHuman()) {
+  console.error('Sem malha base do MakeHuman: correr `npm run fetch` em ../m01-soldiers (os LOD sem clips não são gerados), ou usar --geometry-only --out <pasta>.');
+  process.exit(1);
+}
 mkdirSync(OUT, { recursive: true });
 
 // Peças → atlas único (cor sRGB JPEG; ORM: G rugosidade, B metal; normal) → malhas por grupo, relativas ao pivô.
@@ -50,8 +60,7 @@ const restQ = n => REST_ROT[n] ? q.axis(REST_ROT[n].axis, REST_ROT[n].deg) : q.i
 /** Ponto local de um nó → cena, na pose de repouso. */
 const toScene = (n, p) => { let x = p; for (let k = n; k; k = PARENTS[k]) x = v3.add(localT(k), q.rot(restQ(k), x)); return x; };
 
-const people = hasMakeHuman() ? buildCkmClips(rigInfo({ ...buildNation('pl', { heads: [] }).J })) : null;
-if (!people) console.warn('Sem malha base do MakeHuman: correr `npm run fetch` em ../m01-soldiers para gerar os clips.');
+const people = GEOMETRY_ONLY ? null : buildCkmClips(rigInfo({ ...buildNation('pl', { heads: [] }).J }));
 const sec = c => +Math.max(...c.tracks.map(t => t.times.at(-1))).toFixed(3);
 
 const manifest = {

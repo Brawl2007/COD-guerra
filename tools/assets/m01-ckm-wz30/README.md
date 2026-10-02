@@ -7,7 +7,7 @@ Gera `assets/models/provisional/m01/weapons/ckm_wz30/`: a arma no tripé, com fi
 - `build.mjs`: atlas, LODs (meshoptimizer), GLB (gltf-transform), clips e manifesto.
 - `render/capture.mjs`: capturas de verificação em `docs/assets/m01-ckm-wz30/`, no palco de `../m01-soldiers/render/`. Precisa de `CHROME_EXECUTABLE` se o Playwright não encontrar o Chromium.
 
-Reutiliza primitivas de `../m01-rkm-wz28/src/rkm.mjs` e geometria, texturas e montagem de `../m01-soldiers/src/`. Corre `npm ci` também nesses directórios.
+Reutiliza primitivas de `../m01-rkm-wz28/src/rkm.mjs` e geometria, texturas e montagem de `../m01-soldiers/src/`. Corre `npm ci` também nesses directórios e `npm run fetch` em `../m01-soldiers` (malha base CC0 do MakeHuman, para os clips). Sem essa malha, `npm run build` pára com erro antes de escrever; `node build.mjs --geometry-only --out <pasta>` gera só a geometria, sem clips, e recusa a pasta dos entregáveis.
 
 ```
 npm ci && npm run build      # GLB + manifesto
