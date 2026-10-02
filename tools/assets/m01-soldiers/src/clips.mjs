@@ -5,7 +5,7 @@
 import { GAME_BONES } from './human.mjs';
 import { q, solve, rigInfo, weaponPoint, weaponDir } from './pose.mjs';
 import { v3, smoothstep, clamp } from './meshops.mjs';
-import { RIFLES } from './weapon.mjs';
+import { RIFLES, RKM } from './weapon.mjs';
 
 const FPS = 30;
 const seg = (t, a, b) => smoothstep(a, b, t);
@@ -18,6 +18,16 @@ const deg = Math.PI / 180;
 const GRIP_R = { pos: [0.044, 0.02, 0.088], fdir: N([-0.3, -0.55, -0.78]), palm: N([-1, 0, 0.12]) };
 const GRIP_L = { pos: [-0.03, -0.034, -0.29], fdir: N([0.55, 0.12, -0.83]), palm: N([-0.25, 1, 0.05]) };
 const FORE_Z = -0.33;
+// Perfis de pega: mãos e ponto do olho na linha de mira (referencial da arma). Espingardas e rkm wz.28 (punho de
+// pistola, fuste à volta do tubo de gases, alça em quadro sobre a caixa).
+const RIFLE_P = { r: GRIP_R, l: GRIP_L, eye: [0, 0.064, 0.19] };
+const RKM_P = {
+  r: { pos: [0.034, -0.032, 0.1], fdir: N([-0.3, -0.62, -0.72]), palm: N([-1, 0.05, 0.15]) },
+  l: { pos: [-0.03, -0.05, -0.37], fdir: GRIP_L.fdir, palm: GRIP_L.palm },
+  eye: [0, 0.088, 0.205],
+};
+// Deitado com bípode: mão esquerda por baixo da coronha, a puxá-la ao ombro.
+const RKM_BUTT_L = { pos: [-0.045, -0.1, 0.235], fdir: N([0.85, 0.35, 0.1]), palm: N([0.25, 1, 0]) };
 
 /** Referencial da arma a partir do ponto do punho, de um ponto do guarda-mão (direcção) e de um "cima". */
 function rifleFrame(grip, fore, up = [0, 1, 0]) {
@@ -63,10 +73,10 @@ const portArms = (R, W) => {
   return rifleFrame(grip, fore, q.rot(W.spine_02.r, N([0.3, 0.3, -1])));
 };
 const fingersRifle = { l: { curl: 0.62, thumb: 0.55 }, r: { curl: 0.72, index: 0.35, thumb: 0.6 } };
-const holdRifle = w => ({ weapon: w, hands: { r: { ...handOn(w, GRIP_R), pole: [0.7, -0.6, 0.35] }, l: { ...handOn(w, GRIP_L), pole: [-0.35, -1, 0.1] } }, fingers: fingersRifle });
+const holdRifle = (w, P = RIFLE_P) => ({ weapon: w, hands: { r: { ...handOn(w, P.r), pole: [0.7, -0.6, 0.35] }, l: { ...handOn(w, P.l), pole: [-0.35, -1, 0.1] } }, fingers: fingersRifle });
 
 /** Pose de pontaria de pé (tronco de lado, face encostada à coronha). sway: oscilação [x, y] em graus. */
-function aimPose(R, { sway = [0, 0], kick = 0, crouch = 0 } = {}) {
+function aimPose(R, { sway = [0, 0], kick = 0, crouch = 0, P = RIFLE_P } = {}) {
   const body = {
     hips: { pos: [0.01, 0.89 - crouch, 0.07], rot: { yaw: -32, pitch: 3 } },
     spine: [{ pitch: 3, yaw: -4 }, { pitch: 3, yaw: -4, roll: -2 }, { pitch: 2, yaw: -3, roll: -3 }],
@@ -78,9 +88,9 @@ function aimPose(R, { sway = [0, 0], kick = 0, crouch = 0 } = {}) {
     const eye = W.eye_r.p;
     const F = N([Math.sin(sway[0] * deg), Math.sin((sway[1] + kick * 5) * deg), -1]);
     const w0 = rifleAt([0, 0, 0], F, N([0.06, 1, 0]));
-    // O olho fica sobre a linha de mira, 0,48 m atrás da alça; recuo empurra a arma para trás.
-    const w = { pos: v3.sub(v3.add(eye, [0, 0, kick * 0.03]), q.rot(w0.rot, [0, 0.064, 0.19])), rot: w0.rot };
-    return holdRifle(w);
+    // O olho fica sobre a linha de mira (wz.29: 0,48 m atrás da alça); recuo empurra a arma para trás.
+    const w = { pos: v3.sub(v3.add(eye, [0, 0, kick * 0.03]), q.rot(w0.rot, P.eye)), rot: w0.rot };
+    return holdRifle(w, P);
   });
 }
 
@@ -89,7 +99,7 @@ function sample(R, name, duration, fn, extras = {}) {
   const frames = Math.max(2, Math.round(duration * FPS) + 1), times = [], poses = [];
   for (let i = 0; i < frames; i++) { const t = Math.min(duration, i / FPS); times.push(t); poses.push(fn(t, t / duration)); }
   const tracks = [];
-  const anim = new Set(['root', 'hips', 'weapon', 'weapon_bolt', 'weapon_clip']);
+  const anim = new Set(['root', 'hips', 'weapon', 'weapon_bolt', 'weapon_clip', 'weapon_mag']);
   for (const b of GAME_BONES) {
     const rots = poses.map(p => p.local[b.name] ?? q.id());
     // Continuidade do sinal dos quaterniões (evita voltas na interpolação).
@@ -100,10 +110,16 @@ function sample(R, name, duration, fn, extras = {}) {
       if (ts.every(Boolean)) tracks.push({ bone: b.name, path: 'translation', times, values: ts.flat() });
     }
   }
-  // Escalas em degrau: clipe (só visível na recarga) e arma (escondida no ferido transportado).
-  for (const b of ['weapon_clip', 'weapon']) {
-    const sc = poses.map(p => p.scale[b] ?? (b === 'weapon' ? 1 : 0));
+  // Escalas em degrau: clipe/pano (só visível na recarga ou na limpeza), arma (escondida no ferido transportado) e
+  // carregador da rkm (escondido entre a queda do vazio e a saída do novo da bolsa).
+  for (const b of ['weapon_clip', 'weapon', 'weapon_mag']) {
+    const sc = poses.map(p => p.scale[b] ?? (b === 'weapon_clip' ? 0 : 1));
     tracks.push({ bone: b, path: 'scale', times, values: sc.flatMap(s => [s, s, s]), interpolation: 'STEP' });
+  }
+  // Faixas constantes ficam com duas chaves (início e fim).
+  for (const tr of tracks) {
+    const n = tr.path === 'rotation' ? 4 : 3, v = tr.values;
+    if (v.every((x, i) => Math.abs(x - v[i % n]) < 1e-6)) { tr.times = [0, duration]; tr.values = [...v.slice(0, n), ...v.slice(0, n)]; }
   }
   return { name, tracks, extras: { fps: FPS, ...extras } };
 }
@@ -235,6 +251,7 @@ export function buildClips(Nat) {
     });
   }, { loop: true, pose: 'seated' }));
 
+  clips.push(...rkmClips(R, J, { kneel }));
   // Clipe escondido (escala 0) em todos os clips excepto na recarga — garantido pela faixa de escala.
   return clips;
 
@@ -262,7 +279,7 @@ function blendPoses(R, A, B, t) {
     const ta = A.trans[b], tb = B.trans[b];
     if (ta || tb) trans[b] = mix(ta ?? v3.sub(R.J[b], R.J[GAME_BONES.find(x => x.name === b).parent] ?? [0, 0, 0]), tb ?? v3.sub(R.J[b], R.J[GAME_BONES.find(x => x.name === b).parent] ?? [0, 0, 0]), t);
   }
-  return { local, trans, scale: { weapon_clip: 0, weapon: 1 } };
+  return { local, trans, scale: { weapon_clip: 0, weapon: 1, weapon_mag: 1 } };
 }
 
 /** Deitado de costas (cabeça para +Z). blend: 0 = de pé (não usado aqui), 1 = deitado. */
@@ -404,6 +421,208 @@ function locomotion(R, name, o) {
         };
       });
     }
-    return compose(R, body, W => holdRifle(portArms(R, W)));
-  }, { loop: true, pose: o.carry ? 'standing' : 'standing', speed_mps: +o.speed.toFixed(3), ...(o.carry ? { note: 'transportador: prender a raiz do ferido (clip carried) ao osso carry_socket' } : {}) });
+    return compose(R, body, W => holdRifle(portArms(R, W), o.P));
+  }, { loop: true, pose: 'standing', speed_mps: +o.speed.toFixed(3), ...(o.carry ? { note: 'transportador: prender a raiz do ferido (clip carried) ao osso carry_socket' } : {}), ...(o.extras ?? {}) });
+}
+
+// ——— rkm wz.28 (Kowal) ———
+// Browning polaca: carregador de 20 (osso weapon_mag), ferrolho aberto (alavanca de armar à esquerda, osso
+// weapon_bolt: na pose de ligação está atrás/armada; vai à frente em cada disparo), 600 tiros/min teóricos.
+// Valores de GAMEPLAY a afinar (research/weapons/rkm_wz28.md §5). `extras.weapon` e `extras.bipod` dizem que malhas
+// mostrar: rkm_bipod_open no chão, rkm_bipod_folded nas restantes.
+const RPM = 600, SHOT = 60 / RPM;
+const TRAVEL = RKM.handleTravel;
+
+/** Rajada: n disparos a partir de t0. Devolve recuo (0..1), subida acumulada (graus) e avanço da alavanca (0..1). */
+function burst(t, n, { t0 = 0, climb = 0.7 } = {}) {
+  const k = Math.floor((t - t0) / SHOT), ph = (t - t0) / SHOT - k;
+  const firing = t >= t0 && k < n;
+  const kick = firing ? Math.sin(Math.min(1, ph * 1.6) * Math.PI) : 0;
+  const rise = climb * Math.min(n, Math.max(0, (t - t0) / SHOT)) * (1 - seg(t, t0 + n * SHOT + 0.05, t0 + n * SHOT + 0.45));
+  // Ferrolho aberto: a alavanca vai à frente e volta em cada tiro (amostrada a 30 fps fica a vibrar).
+  const fwd = firing ? Math.sin(ph * Math.PI) : 0;
+  return { kick, rise, fwd };
+}
+
+function rkmClips(R, J, { kneel }) {
+  const P = RKM_P, out = [];
+  const extras = (bipod, more = {}) => ({ weapon: 'rkm_wz28', bipod, ...more });
+
+  // rkm_standing_idle: rkm em baixo pronta (9 kg), respiração.
+  out.push(sample(R, 'rkm_standing_idle', 4, (t, u) => {
+    const b = Math.sin(u * Math.PI * 2), sh = Math.sin(u * Math.PI);
+    const body = { ...STAND, hips: { pos: [0.01 * sh, 0.9 + 0.004 * b, 0.062], rot: { roll: -1.5 * sh, yaw: 2 * sh, pitch: -1 } },
+      spine: [{ pitch: 0.5 + b, roll: 1 }, { pitch: 1.5 * b }, { pitch: 1 + b }], neck: { pitch: 2, yaw: -3 * sh }, head: { pitch: 2, yaw: 4 * sh } };
+    return compose(R, body, W => holdRifle(lowReady(R, W, b), P));
+  }, { loop: true, pose: 'standing', ...extras('folded') }));
+
+  // rkm_walk / rkm_run: arma atravessada no peito.
+  out.push(locomotion(R, 'rkm_walk', { T: 1.05, stance: 0.6, stride: 0.64, lift: 0.1, hipY: 0.88, lean: 5, bob: 0.018, speed: 0.64 / 0.63, P, extras: extras('folded') }));
+  out.push(locomotion(R, 'rkm_run', { T: 0.72, stance: 0.4, stride: 0.8, lift: 0.2, hipY: 0.85, lean: 14, bob: 0.03, speed: 0.8 / (0.4 * 0.72), P, extras: extras('folded') }));
+
+  // rkm_aim / rkm_fire_burst: de pé, ao ombro. Rajada curta de 3, como na simulação (src/game/m01-simulation.js:
+  // Kowal gasta 3 cartuchos por rajada; dlg_m01_026 "rajadas curtas").
+  out.push(sample(R, 'rkm_aim', 2, (t, u) => aimPose(R, { sway: [0.6 * Math.sin(u * Math.PI * 2), 0.45 * Math.sin(u * Math.PI * 4)], P }), { loop: true, pose: 'standing', ...extras('folded') }));
+  const N5 = 3, dur = +(N5 * SHOT + 0.5).toFixed(2);
+  out.push(sample(R, 'rkm_fire_burst', dur, t => {
+    const f = burst(t, N5, { climb: 0.9 });
+    const Pz = aimPose(R, { kick: 0.55 * f.kick, sway: [0.25 * f.kick, f.rise], P });
+    return solve(R, { ...rePose(R, Pz), bolt: { back: -TRAVEL * f.fwd } });
+  }, { loop: false, pose: 'standing', ...extras('folded', { rounds: N5, rate_rpm: RPM, events: { fire: Array.from({ length: N5 }, (_, i) => +(i * SHOT).toFixed(3)) } }) }));
+
+  // rkm_crouched_idle: de joelho, rkm pronta.
+  out.push(sample(R, 'rkm_crouched_idle', 3, (t, u) => {
+    const b = Math.sin(u * Math.PI * 2);
+    return compose(R, kneel(b), W => holdRifle(lowReady(R, W, b), P));
+  }, { loop: true, pose: 'crouched', ...extras('folded') }));
+
+  // rkm_prone / rkm_prone_fire: deitado sobre o bípode aberto, mão esquerda por baixo da coronha.
+  out.push(sample(R, 'rkm_prone', 3, (t, u) => pronePose(R, { b: Math.sin(u * Math.PI * 2) }), { loop: true, pose: 'prone', ...extras('open') }));
+  out.push(sample(R, 'rkm_prone_fire', dur, t => {
+    const f = burst(t, N5, { climb: 0.25 });
+    return pronePose(R, { kick: f.kick, rise: f.rise, fwd: f.fwd });
+  }, { loop: false, pose: 'prone', ...extras('open', { rounds: N5, rate_rpm: RPM, events: { fire: Array.from({ length: N5 }, (_, i) => +(i * SHOT).toFixed(3)) } }) }));
+
+  // rkm_reload: troca de carregador de joelho, atrás de abrigo (dlg_m01_029 "Trocando carregador!").
+  out.push(sample(R, 'rkm_reload', 3.4, t => rkmReload(R, J, t, kneel), { loop: false, pose: 'crouched',
+    ...extras('folded', { events: { mag_release: 0.45, mag_drop: 1.05, mag_from_pouch: 1.15, mag_in: 1.9, handle_back: 2.45 },
+      note: 'carregador vazio cai (o jogo pode deixar um adereço no chão em mag_drop); com o carregador vazio o ferrolho está à frente e é armado no fim' }) }));
+
+  // rkm_clean: sentado, rkm de pé entre os joelhos; pano no cano e na caixa, depois puxa a alavanca e acompanha-a
+  // devagar à frente (abertura, 04:30: "testa o ferrolho sem som metálico exagerado"). Pano no osso weapon_clip.
+  out.push(sample(R, 'rkm_clean', 6, t => rkmClean(R, t), { loop: true, pose: 'seated',
+    ...extras('folded', { events: { handle_back: 4.7, handle_forward: 5.25 }, note: 'mostrar a malha rag (pano) neste clip' }) }));
+  return out;
+}
+
+/** Converte uma pose resolvida em pedido de pose (para lhe juntar ferrolho/carregador). */
+function rePose(R, Pz) {
+  const local = { ...Pz.local };
+  const hips = { pos: v3.add(Pz.trans.hips, R.J.root), q: Pz.local.hips };
+  delete local.weapon; delete local.weapon_bolt; delete local.weapon_clip; delete local.weapon_mag;
+  return { hips, local, weapon: { pos: Pz.W.weapon.p, rot: Pz.W.weapon.r } };
+}
+
+/** Deitado de bruços sobre o bípode; b: respiração, kick: recuo (0..1), rise: subida (graus), fwd: alavanca à frente. */
+function pronePose(R, { b = 0, kick = 0, rise = 0, fwd = 0 } = {}) {
+  const body = {
+    hips: { pos: [0.02, 0.125 + 0.004 * b, 0.36 + 0.012 * kick], rot: { pitch: 86, yaw: -8, roll: 2 } },
+    spine: [{ pitch: -10 + b * 0.6, yaw: 2 }, { pitch: -14, yaw: 3 }, { pitch: -12 + b * 0.6, yaw: 2 }],
+    neck: { pitch: -24, yaw: 4 }, head: { pitch: -22, yaw: 2, roll: -10 },
+    clav: { r: { yaw: 8, roll: -10 }, l: { yaw: -10, roll: 6 } },
+    feet: { l: foot(-0.3, 1.2, { y: 0.06, yaw: 25 }), r: foot(0.16, 1.25, { y: 0.06, yaw: -15 }) },
+  };
+  for (const s of ['l', 'r']) {
+    // Pés esticados para trás: dedos no chão, calcanhar para cima, joelhos para baixo.
+    const f = body.feet[s];
+    f.rot = q.mul(q.axis([0, 1, 0], s === 'l' ? 25 : -15), q.axis([1, 0, 0], -115));
+    f.pole = [s === 'l' ? -0.3 : 0.3, -1, 0];
+    f.toe = 0;
+  }
+  return compose(R, body, W => {
+    // Coronha no ombro direito; o olho sobre a linha de mira; a arma roda à volta do olho até os patins tocarem no chão.
+    const eye = W.eye_r.p;
+    let pitch = 0;
+    for (let i = 0; i < 4; i++) {
+      const w0 = rifleAt([0, 0, 0], [0, Math.sin(pitch), -Math.cos(pitch)]);
+      const w = { pos: v3.sub(eye, q.rot(w0.rot, RKM_P.eye)), rot: w0.rot };
+      const footY = weaponPoint(w, RKM_SOCK_FEET)[1];
+      pitch += Math.asin(clamp((0.004 - footY) / 0.85, -0.5, 0.5));
+    }
+    const F = [0, Math.sin(pitch + (rise + 2.5 * kick) * deg), -Math.cos(pitch + (rise + 2.5 * kick) * deg)];
+    const w0 = rifleAt([0, 0, 0], F);
+    const w = { pos: v3.sub(v3.add(eye, [0, 0, 0.015 * kick]), q.rot(w0.rot, RKM_P.eye)), rot: w0.rot };
+    return {
+      weapon: w, bolt: { back: -TRAVEL * fwd },
+      hands: { r: { ...handOn(w, RKM_P.r), pole: [0.6, -1, 0.2] }, l: { ...handOn(w, RKM_BUTT_L), pole: [-0.5, -1, -0.2] } },
+      fingers: { r: { curl: 0.75, index: 0.4, thumb: 0.6 }, l: { curl: 0.7, thumb: 0.5 } },
+    };
+  });
+}
+const RKM_SOCK_FEET = [-RKM.bipod.open[0], RKM.bipod.open[1] - 0.006, RKM.bipod.open[2]];
+
+/** Troca de carregador de joelho (3,4 s): a mão direita fica no punho; a esquerda faz tudo. */
+function rkmReload(R, J, t, kneel) {
+  const body = kneel(0);
+  body.neck = { pitch: 10 + 14 * (seg(t, 0.1, 0.4) - seg(t, 2.8, 3.2)), yaw: -6 }; body.head = { pitch: 6 + 10 * (seg(t, 0.1, 0.4) - seg(t, 2.8, 3.2)), yaw: -8 };
+  const pre = solve(R, body).W;
+  // Arma: da posição pronta à posição de recarga (canada para a direita, poço virado à mão esquerda) e volta.
+  const ready = lowReady(R, pre, 0);
+  const grip = v3.add(pre.spine_01.p, q.rot(pre.spine_01.r, [0.13, 0.06, -0.2]));
+  const reloadW = rifleFrame(grip, v3.add(grip, q.rot(pre.spine_01.r, N([-0.2, 0.42, -0.88]))), q.rot(pre.spine_01.r, N([0.75, 1, 0.25])));
+  const k = seg(t, 0.0, 0.3) - seg(t, 2.85, 3.35);
+  const w = { pos: mix(ready.pos, reloadW.pos, k), rot: q.slerp(ready.rot, reloadW.rot, k) };
+  // Carregador: no poço → puxado para baixo (0,45–0,65) → cai (0,7–1,05) → novo da bolsa (1,15) → poço (1,9).
+  const magLocal = RKM.mag, wellPt = weaponPoint(w, magLocal);
+  const pouch = v3.add(pre.hips.p, q.rot(pre.hips.r, [-0.1, 0.07, -0.175]));
+  const pouchRot = q.mul(pre.hips.r, q.axis([0, 1, 0], 25));
+  let mag = null, hand;
+  const handOnMag = (pos, rot) => ({ pos: v3.add(pos, q.rot(rot, [-0.045, -0.075, 0.045])), fdir: q.rot(rot, N([0.45, 0.45, -0.77])), palm: q.rot(rot, N([1, 0.1, 0.1])) });
+  const atL = handOn(w, RKM_P.l);
+  if (t < 0.45) {
+    const m = handOnMag(wellPt, w.rot), a = seg(t, 0.15, 0.42);
+    hand = { pos: mix(atL.pos, m.pos, a), fdir: N(mix(atL.fdir, m.fdir, a)), palm: N(mix(atL.palm, m.palm, a)) };
+  } else if (t < 0.7) {
+    const d = seg(t, 0.45, 0.65) * 0.14, pos = weaponPoint(w, v3.add(magLocal, [0, -d, 0.004]));
+    mag = { pos, rot: w.rot, scale: 1 }; hand = handOnMag(pos, w.rot);
+  } else if (t < 1.15) {
+    // Largado: cai com gravidade e roda; desaparece em 1,05 (mag_drop) — o jogo pode deixar um adereço no chão.
+    const p0 = weaponPoint(w, v3.add(magLocal, [0, -0.14, 0.004])), dt = t - 0.7;
+    mag = t < 1.05 ? { pos: v3.add(p0, [0.05 * dt, -4.9 * dt * dt, 0.1 * dt]), rot: q.mul(w.rot, q.axis([1, 0, 0], -220 * dt)), scale: 1 } : { pos: pouch, rot: pouchRot, scale: 0 };
+    const from = handOnMag(p0, w.rot), to = handOnMag(v3.add(pouch, [0, 0.03, 0]), pouchRot), a = seg(t, 0.72, 1.12);
+    hand = { pos: v3.add(mix(from.pos, to.pos, a), [0, 0.06 * Math.sin(Math.PI * a), 0]), fdir: N(mix(from.fdir, to.fdir, a)), palm: N(mix(from.palm, to.palm, a)) };
+  } else if (t < 1.9) {
+    // Novo carregador: sai da bolsa, vai para baixo do poço já alinhado e sobe.
+    const a = seg(t, 1.2, 1.7), up = seg(t, 1.7, 1.88);
+    const below = weaponPoint(w, v3.add(magLocal, [0, -0.07 * (1 - up), 0]));
+    const lift = v3.add(pouch, [0, 0.03 + 0.05 * seg(t, 1.15, 1.25), 0]);
+    const pos = t < 1.2 ? v3.add(pouch, [0, 0.03 * seg(t, 1.15, 1.2), 0]) : mix(lift, below, a);
+    const rot = q.slerp(pouchRot, w.rot, a);
+    mag = { pos, rot, scale: 1 }; hand = handOnMag(pos, rot);
+  } else {
+    // Palmada, mão à alavanca (esquerda), puxa-a atrás (2,2–2,45), volta ao fuste.
+    const m = handOnMag(wellPt, w.rot);
+    const knob = h => weaponPoint(w, [-0.046, -0.004, -0.07 - TRAVEL * (1 - h)]);
+    const pull = seg(t, 2.2, 2.45);
+    const onKnob = { pos: v3.add(knob(pull), weaponDir(w, [-0.03, -0.015, -0.07])), fdir: weaponDir(w, N([0.25, 0.1, 0.96])), palm: weaponDir(w, N([0.7, -0.1, 0.1])) };
+    if (t < 2.2) {
+      const a = seg(t, 1.95, 2.18), bump = Math.sin(Math.PI * clamp((t - 1.9) / 0.08)) * 0.012;
+      hand = { pos: v3.add(mix(m.pos, onKnob.pos, a), weaponDir(w, [0, bump, 0])), fdir: N(mix(m.fdir, onKnob.fdir, a)), palm: N(mix(m.palm, onKnob.palm, a)) };
+    } else if (t < 2.5) hand = onKnob;
+    else { const a = seg(t, 2.5, 2.85); hand = { pos: mix(onKnob.pos, atL.pos, a), fdir: N(mix(onKnob.fdir, atL.fdir, a)), palm: N(mix(onKnob.palm, atL.palm, a)) }; }
+  }
+  // Com o carregador vazio a alavanca está à frente; é puxada atrás (armada) em 2,2–2,45.
+  const back = -TRAVEL * (1 - seg(t, 2.2, 2.45));
+  return solve(R, { ...body, weapon: w, bolt: { back }, mag,
+    hands: { r: { ...handOn(w, RKM_P.r), pole: [0.7, -0.6, 0.35] }, l: { ...hand, pole: [-0.6, -0.8, 0.1] } },
+    fingers: { r: { curl: 0.75, index: 0.35, thumb: 0.6 }, l: { curl: t > 2.15 && t < 2.5 ? 0.85 : 0.6, thumb: 0.6 } } });
+}
+
+/** Limpeza sentado (6 s, ciclo): rkm deitada de lado sobre os joelhos, cano para a direita, alavanca para cima. */
+function rkmClean(R, t) {
+  const b = Math.sin(t / 6 * Math.PI * 2);
+  const body = { hips: { pos: [0, 0.13, 0.2], rot: { pitch: -8 } }, spine: [{ pitch: 8 + b }, { pitch: 7 }, { pitch: 5 + b * 0.5 }],
+    neck: { pitch: 24, yaw: -6 }, head: { pitch: 18, yaw: -8 },
+    feet: { l: foot(-0.16, -0.32, { yaw: 14 }), r: foot(0.17, -0.3, { yaw: -14 }) } };
+  const W0 = solve(R, body).W, knee = v3.mul(v3.add(W0.calf_l.p, W0.calf_r.p), 0.5);
+  // Topo da arma (miras) virado ao corpo, lado esquerdo (alavanca) para cima; apoiada nos joelhos.
+  const w0 = rifleAt([0, 0, 0], [1, 0, 0], [0, 0, 1]);
+  const w = { pos: v3.add([0.03, knee[1] + 0.055, knee[2] + 0.02], q.rot(w0.rot, [0, 0, 0])), rot: w0.rot };
+  // Mão esquerda na coronha; vai à alavanca (3,9–4,3), puxa-a atrás (4,3–4,7) e acompanha-a à frente (4,75–5,25).
+  const holdL = { pos: weaponPoint(w, [-0.06, 0.0, 0.17]), fdir: weaponDir(w, N([0.6, -0.2, -0.6])), palm: weaponDir(w, N([1, 0, 0.2])) };
+  const pull = seg(t, 4.3, 4.7) - seg(t, 4.75, 5.25), toK = seg(t, 3.9, 4.3) - seg(t, 5.3, 5.7);
+  const knob = weaponPoint(w, [-0.046, -0.004, -0.07 - TRAVEL * (1 - pull)]);
+  const onKnob = { pos: v3.add(knob, weaponDir(w, [-0.05, -0.01, -0.06])), fdir: weaponDir(w, N([0.6, -0.1, 0.8])), palm: weaponDir(w, N([0.8, 0, -0.3])) };
+  const hl = { pos: mix(holdL.pos, onKnob.pos, toK), fdir: N(mix(holdL.fdir, onKnob.fdir, toK)), palm: N(mix(holdL.palm, onKnob.palm, toK)) };
+  // Mão direita com o pano: esfrega o fuste e o cano (0–3,8), depois descansa no joelho direito.
+  const wipe = t < 3.8 ? 0.5 - 0.5 * Math.cos(t / 3.8 * Math.PI * 2 * 3) : 0;
+  const rest = seg(t, 3.6, 4.0) - seg(t, 5.6, 6.0);
+  const onGun = { pos: weaponPoint(w, [-0.1, 0.02, -0.26 - 0.3 * wipe]), fdir: weaponDir(w, N([0.6, 0.3, -0.5])), palm: weaponDir(w, N([1, 0, 0])) };
+  const onKnee = { pos: v3.add(W0.calf_r.p, [0.04, 0.09, 0.08]), fdir: N([-0.4, -0.3, -0.85]), palm: N([-0.2, -1, 0.1]) };
+  const hr = { pos: mix(onGun.pos, onKnee.pos, rest), fdir: N(mix(onGun.fdir, onKnee.fdir, rest)), palm: N(mix(onGun.palm, onKnee.palm, rest)) };
+  const hands = { r: { ...hr, pole: [0.6, -0.6, 0.5] }, l: { ...hl, pole: [-0.7, -0.6, 0.4] } };
+  const hw = solve(R, { ...body, weapon: w, hands }).W.hand_r;
+  const rag = { pos: v3.add(hw.p, q.rot(hw.r, R.hand.r.fdir.map((x, i) => x * 0.055 + R.hand.r.palm[i] * 0.022))), rot: hw.r, scale: 1 };
+  return solve(R, { ...body, weapon: w, bolt: { back: -TRAVEL * (1 - pull) }, clip: rag, hands,
+    fingers: { r: { curl: 0.8, thumb: 0.7 }, l: { curl: 0.75, thumb: 0.6 } } });
 }

@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-import {route,driver,toRepair,toCoverAdjustment} from '../helpers/m01-route.js';
+import {route,driver,toRepair,toCoverAdjustment,toStationEvacuation} from '../helpers/m01-route.js';
 import {seconds} from '../../src/game/m01-simulation.js';
 
 let result;
@@ -62,6 +62,9 @@ test('licensed character rigs and first-person hands follow real weapon state, p
   expect(initial.m01.characters.loaded).toEqual(expect.arrayContaining(['pl:0','pl:1','pl:2','de:2']));
   expect(initial.m01.characters.active).toBeLessThanOrEqual(18);expect(initial.m01.viewModel.lod).toBe(0);
   expect(initial.m01.viewModel.armTriangles).toBeGreaterThan(200);
+  const kowal=initial.m01.characters.actors.find(a=>a.id==='szymon_kowal'),bak=initial.m01.characters.actors.find(a=>a.id==='jozef_bak');
+  expect(kowal.weaponMeshes).toEqual(expect.arrayContaining(['rkm_wz28','rkm_bipod_folded','rkm_pouch']));
+  expect(kowal.weaponMeshes).not.toContain('rifle');expect(bak.weaponMeshes).toContain('rifle_wz98a');expect(bak.weaponMeshes).not.toContain('rifle');
   async function horizontal(){
     // Native headless clicks can move the locked cursor; restore the view with the same relative look controls.
     const view=await page.evaluate(()=>window.gameDiagnostics().player);
@@ -83,15 +86,16 @@ test('licensed character rigs and first-person hands follow real weapon state, p
     await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
     await page.mouse.click(640,360);await expect(page.locator('#mag')).toHaveText(String(4-i));
   }
-  await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');await horizontal();await page.keyboard.press('KeyR');
-  await page.waitForFunction(()=>{const g=window.gameDiagnostics().m01;if(g.weapon.state==='RELOAD_CLIP'&&g.viewModel.clip==='reload_clip'&&g.viewModel.clipTime>1.1){document.exitPointerLock();return true;}return false;});
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');await horizontal();
+  const clipVisible=page.waitForFunction(()=>{const g=window.gameDiagnostics().m01;if(g.weapon.state==='RELOAD_CLIP'&&g.viewModel.clip==='reload_clip'&&g.viewModel.clipTime>1.1){document.exitPointerLock();return true;}return false;});
+  await page.keyboard.press('KeyR');await clipVisible;
   await capture('m01-rig-clip.png');
   await page.locator('#resume').click();await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
   await page.mouse.click(640,360);await expect(page.locator('#mag')).toHaveText('4');
   await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
   await horizontal();
-  await page.keyboard.press('KeyR');
-  await page.waitForFunction(()=>{if(window.gameDiagnostics().m01.viewModel.singleRound){document.exitPointerLock();return true;}return false;});
+  const singleVisible=page.waitForFunction(()=>{if(window.gameDiagnostics().m01.viewModel.singleRound){document.exitPointerLock();return true;}return false;});
+  await page.keyboard.press('KeyR');await singleVisible;
   await capture('m01-rig-single-round.png');
   const single=await page.evaluate(()=>window.gameDiagnostics());expect(single.m01.weapon.state).toBe('RELOAD_SINGLE');
   await page.locator('#back-menu').click();await page.locator('#quality').selectOption('high');await start(page,'#continue');
@@ -114,6 +118,41 @@ test('missing close-up LOD0 falls back to intact LOD1 hands while the light worl
   const data=await page.evaluate(()=>window.gameDiagnostics());
   expect(data.m01.viewModel.lod).toBe(1);expect(data.m01.viewModel.armTriangles).toBeGreaterThan(200);
   expect(data.m01.characters.active).toBeGreaterThan(0);expect(data.m01.assetFailures).toEqual([]);
+});
+test('the station clip alone cannot enable a viewmodel when the required weapon animations fail to download',async({page})=>{
+  await page.route('**/m01_soldier_animations.glb',r=>r.abort());
+  const {errors}=await open(page);await start(page);
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.failures.length>0);
+  const data=await page.evaluate(()=>window.gameDiagnostics());
+  expect(data.m01.viewModel.active).toBe(false);expect(data.m01.characters.active).toBe(0);
+  expect(data.m01.assetFailures).toEqual([]);expect(data.m01.actorPoses.standing).toBeGreaterThan(0);expect(errors).toEqual([]);
+});
+test('the station evacuation restores its grounded drag, pauses with the mission and delivers the casualty',async({page},info)=>{
+  test.setTimeout(process.env.CI?240000:180000);
+  // Staged continuation of real simulation controls; not an uninterrupted browser playthrough.
+  const snapshot=toStationEvacuation(driver(),{observe:true}).sim.snapshot();
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.actors?.some(a=>a.id==='leon_dudek'&&a.clip==='drag_wounded'));
+  const current=await page.evaluate(()=>window.gameDiagnostics()),pair=current.m01.stationEvacuation;
+  expect(pair.patient.carriedBy).toBe('leon_dudek');expect(pair.patient.y).toBeLessThanOrEqual(pair.medic.y+.1);
+  expect(current.m01.characters.actors).toContainEqual(expect.objectContaining({id:'generic_rifleman',clip:'wounded'}));
+  const angle=Math.atan2(pair.patient.z-current.player.z,pair.patient.x-current.player.x);
+  await page.evaluate(({delta,pitch})=>{
+    window.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0}));
+    window.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:(pitch+.18)/.0022}));
+  },{delta:Math.atan2(Math.sin(angle-current.player.angle),Math.cos(angle-current.player.angle))/.0022,pitch:current.player.pitch});
+  await page.waitForFunction(angle=>Math.abs(Math.atan2(Math.sin(window.gameDiagnostics().player.angle-angle),Math.cos(window.gameDiagnostics().player.angle-angle)))<.02,angle);
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(300);
+  expect((await page.evaluate(()=>window.gameDiagnostics())).m01.stationEvacuation).toEqual(frozen.m01.stationEvacuation);
+  await page.screenshot({path:info.outputPath('m01-station-ground-drag.png'),style:'#pause { visibility:hidden !important; }',timeout:120000});
+  await page.locator('#resume').click();
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.stationEvacuation.delivered,null,{timeout:120000});
+  const delivered=await page.evaluate(()=>window.gameDiagnostics());
+  expect(delivered.m01.stationEvacuation.patient.carriedBy).toBeNull();expect(delivered.m01.stationEvacuation.patient.x).toBe(-334);
+  expect(delivered.m01.stationEvacuation.patient.state).toBe('WOUNDED');expect(delivered.m01.flags['m01.bak_status']).toBe('unhurt');
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 test('real keyboard movement traverses the approaches and E delivers the message at the rail bridge',async({page},info)=>{
   // Slow software rendering needs room for input and the final, paused evidence capture.

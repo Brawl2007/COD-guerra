@@ -141,8 +141,8 @@ export class M01View {
     this.contactShadows=new THREE.InstancedMesh(geometry,this.contactMaterial,90);
     this.contactShadows.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.contactShadows.count=0;this.contactShadows.frustumCulled=false;this.scene.add(this.contactShadows);
   }
-  updateActors(actors,time,player={x:0,z:0}){
-    const skinned=this.characters?.update(actors,time,player,this.owner.quality)??new Set();
+  updateActors(actors,time,player={x:0,z:0},battleClock){
+    const skinned=this.characters?.update(actors,time,player,this.owner.quality,battleClock)??new Set();
     const counts={},dummy=new THREE.Object3D(),root=new THREE.Object3D(),matrix=new THREE.Matrix4();
     const up=new THREE.Vector3(0,1,0),direction=new THREE.Vector3(),tint=new THREE.Color();
     this.actorPoses={standing:0,crouched:0,pinned:0,seated:0,wounded:0,carried:0,fallen:0};
@@ -354,7 +354,7 @@ export class M01View {
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
     this.syncSolids(sim.world);const state=sim.renderState,time=sim.clock,dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
-    this.updateActors(sim.actors,time,sim.player);this.syncDamage(sim,state);this.lighting(sim);
+    this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.lighting(sim);
     this.train.visible=state.train963;this.panzerzug.visible=state.panzerzug;
     const planes=state.stukas;
     this.planes.forEach((p,i)=>{p.visible=planes;p.position.set(80+Math.sin(time*.02+i)*250,160+i*20,240-time%90*4+i*30);p.rotation.y=.1;});

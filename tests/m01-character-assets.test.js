@@ -28,7 +28,7 @@ test('all six GLBs have finite skin weights, valid joint indices, embedded textu
       const file=`m01_soldier_${nation}_lod${lod}.glb`,{json,data,bytes}=glb(file),m=manifest.files[file];
       assert.equal(bytes,m.bytes);assert.ok(m.triangles_visible<previous);previous=m.triangles_visible;
       assert.ok(m.triangles_visible<[16500,6500,2100][lod]);
-      assert.equal(json.skins[0].joints.length,lod===2?27:60);
+      assert.equal(json.skins[0].joints.length,lod===2?28:61);
       assert.ok(json.images.every(i=>i.bufferView!=null&&!i.uri),'no external texture dependency');
       let min=Infinity,max=-Infinity;
       for(const node of json.nodes.filter(n=>n.mesh!=null))for(const p of json.meshes[node.mesh].primitives){
@@ -42,9 +42,9 @@ test('all six GLBs have finite skin weights, valid joint indices, embedded textu
     }
   }
 });
-test('all fifteen animation clips bind to real named bones, have monotonic times and finite transforms',()=>{
+test('all twenty-five animation clips bind to real named bones, have monotonic times and finite transforms',()=>{
   const {json,data}=glb('m01_soldier_animations.glb');
-  assert.equal(json.animations.length,15);
+  assert.equal(json.animations.length,25);
   for(const clip of json.animations){
     assert.ok(manifest.files['m01_soldier_animations.glb'].clips.some(c=>c.name===clip.name));
     for(const c of clip.channels){
@@ -52,6 +52,21 @@ test('all fifteen animation clips bind to real named bones, have monotonic times
       assert.ok(times.every((t,i)=>Number.isFinite(t)&&(!i||t>times[i-1])));assert.ok(values.every(Number.isFinite));
       if(c.target.path==='rotation')for(let i=0;i<values.length;i+=4)assert.ok(Math.abs(Math.hypot(...values.slice(i,i+4))-1)<1e-4);
     }
+  }
+});
+test('the original station drag loops on the existing rig with a locked source and finite transforms',()=>{
+  const info=JSON.parse(readFileSync(new URL('station-animations.manifest.json',dir))),file=readFileSync(new URL(info.file,dir));
+  assert.equal(file.length,info.bytes);assert.equal(createHash('sha256').update(file).digest('hex'),info.sha256);
+  assert.equal(createHash('sha256').update(readFileSync(new URL(info.sourceRig,dir))).digest('hex'),info.sourceRigSHA256);
+  const {json,data}=glb(info.file),names=new Set(glb(info.sourceRig).json.nodes.map(n=>n.name));
+  assert.deepEqual(json.animations.map(c=>c.name),['drag_wounded']);
+  for(const c of json.animations[0].channels){
+    assert.ok(names.has(json.nodes[c.target.node].name));
+    const s=json.animations[0].samplers[c.sampler],times=data(s.input),values=data(s.output),width={rotation:4,translation:3,scale:3}[c.target.path];
+    assert.ok(times.every((t,i)=>Number.isFinite(t)&&(!i||t>times[i-1])));assert.ok(values.every(Number.isFinite));
+    assert.ok(Math.abs(times.at(-1)-1.4)<1e-6);
+    for(let k=0;k<width;k++)assert.ok(Math.abs(values[k]-values[values.length-width+k])<1e-4,'loop returns to its initial pose');
+    if(c.target.path==='rotation')for(let i=0;i<values.length;i+=4)assert.ok(Math.abs(Math.hypot(...values.slice(i,i+4))-1)<1e-4);
   }
 });
 test('first-person geometry keeps actual GLB arm/hand surfaces and leaves the world uniform unchanged',()=>{
@@ -85,10 +100,17 @@ test('first-person geometry keeps actual GLB arm/hand surfaces and leaves the wo
 });
 function fixture(){
   const root=new THREE.Group(),bone=new THREE.Bone();bone.name='root';root.add(bone);
+  const model=glb('m01_soldier_pl_lod1.glb').json;
+  root.name='m01_soldier_pl';root.userData=model.nodes.find(n=>n.name===root.name).extras;
+  const geometry=new THREE.BufferGeometry(),material=new THREE.MeshBasicMaterial();
+  for(const n of model.nodes.filter(n=>n.mesh!=null)){
+    const m=new THREE.Mesh(geometry,material);m.name=n.name;m.userData=n.extras??{};root.add(m);
+  }
   for(const name of ['weapon','carry_socket']){const b=new THREE.Bone();b.name=name;bone.add(b);}
   const c=new M01Characters(new THREE.Scene());
   for(const lod of [1,2])c.sources.set(`pl:${lod}`,{scene:root});
-  for(const name of ['standing_idle','seated','wounded','carried','carry_wounded','sapper_work_pinned'])c.clips.set(name,new THREE.AnimationClip(name,4,[new THREE.VectorKeyframeTrack('root.position',[0,2,4],[0,0,0,0,.1,0,0,0,0])]));
+  for(const name of ['standing_idle','seated','wounded','carried','carry_wounded','sapper_work_pinned','pinned','rkm_aim','rkm_standing_idle','rkm_clean'])c.clips.set(name,new THREE.AnimationClip(name,4,[new THREE.VectorKeyframeTrack('root.position',[0,2,4],[0,0,0,0,.1,0,0,0,0])]));
+  const dispose=c.dispose.bind(c);c.dispose=()=>{dispose();geometry.dispose();material.dispose();};
   return c;
 }
 
@@ -158,6 +180,36 @@ test('MakeHuman data licence is shipped exactly as locked at its source revision
   const lock=JSON.parse(readFileSync(new URL('../tools/assets/m01-soldiers/makehuman.lock.json',import.meta.url)));
   const license=readFileSync(new URL('../assets/licenses/MakeHuman-CC0.md',import.meta.url));
   assert.equal(createHash('sha256').update(license).digest('hex'),lock.sha256['LICENSE.ASSETS.md']);
+});
+test('the station casualty remains grounded while the medic samples the backward drag and its fallback',()=>{
+  const c=fixture(),medic={id:'leon_dudek',active:true,alive:true,team:'ally',role:'MEDIC',state:'GUARD',crouched:true,x:4,y:-3,z:0,facing:0},
+    patient={...medic,id:'generic_rifleman',role:'RIFLEMAN',state:'WOUNDED',task:'station_wounded',x:4.92,carriedBy:medic.id};
+  c.clips.set('drag_wounded',new THREE.AnimationClip('drag_wounded',1.4,[]));const saved=structuredClone([medic,patient]);
+  try{
+    c.update([medic,patient],12,{x:0,z:0});const v=c.instances.get(patient.id);
+    assert.equal(v.root.parent,c.scene);assert.equal(v.root.position.y,-3);assert.equal(v.clip,'wounded');assert.equal(c.instances.get(medic.id).clip,'drag_wounded');
+    assert.deepEqual([medic,patient],saved);const initial=c.instances.get(medic.id).root.matrixWorld.toArray();c.update([medic,patient],12,{x:0,z:0});
+    assert.deepEqual(c.instances.get(medic.id).root.matrixWorld.toArray(),initial);
+    c.clips.delete('drag_wounded');c.update([medic,patient],13,{x:0,z:0});assert.equal(c.instances.get(medic.id).clip,'pinned');
+  }finally{c.dispose();}
+});
+test('Kowal and healthy Bąk use their own meshes and muzzle sockets, preserve data and hide the casualty weapon',()=>{
+  const c=fixture(),kowal={id:'szymon_kowal',active:true,alive:true,team:'ally',role:'SUPPORT',state:'GUARD',x:4,y:-3,z:0,facing:0,shot:.25,firedAt:10,rounds:17,cooldown:4},
+    bak={...kowal,id:'jozef_bak',role:'RIFLEMAN',shot:0,firedAt:-100,rounds:5},saved=structuredClone([kowal,bak]);
+  c.clips.set('rkm_fire_burst',new THREE.AnimationClip('rkm_fire_burst',.8,[]));c.clips.set('rkm_reload',new THREE.AnimationClip('rkm_reload',3.4,[]));
+  try{
+    c.update([kowal,bak],10.1,{x:0,z:0});let stats=c.diagnostics;
+    const k=stats.actors.find(a=>a.id===kowal.id),b=stats.actors.find(a=>a.id===bak.id);
+    assert.equal(k.clip,'rkm_fire_burst');assert.ok(k.weaponMeshes.includes('rkm_wz28'));assert.ok(!k.weaponMeshes.includes('rifle')&&!k.weaponMeshes.includes('clip'));
+    assert.ok(b.weaponMeshes.includes('rifle_wz98a'));assert.ok(!b.weaponMeshes.includes('rifle'));
+    for(const a of [kowal,bak]){
+      const v=c.instances.get(a.id),expected=new THREE.Vector3().fromArray(v.root.userData.weapons[v.weapon].muzzle).applyMatrix4(v.root.getObjectByName('weapon').matrixWorld);
+      assert.ok(c.muzzle(a.id).distanceTo(expected)<1e-10);
+    }
+    assert.deepEqual([kowal,bak],saved);
+    c.update([{...kowal,rounds:20},bak],11.3,{x:0,z:0});assert.equal(c.instances.get(kowal.id).clip,'rkm_reload');
+    c.update([kowal,{...bak,state:'WOUNDED'}],12,{x:0,z:0});assert.deepEqual(c.diagnostics.actors.find(a=>a.id===bak.id).weaponMeshes,[]);
+  }finally{c.dispose();}
 });
 test('riflemen finish the bolt after the flash; pinned engineers stop their working hands until the repair resumes',()=>{
   const c=fixture();

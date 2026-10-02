@@ -7,7 +7,7 @@ Os critérios completos estão na secção 77 de `docs/PROMPT_MESTRE.txt`.
 | 0 — diagnóstico | Concluído | Checkout real inspeccionado; 11 testes originais passaram; falhas de tiro/IA/checkpoint documentadas. |
 | 1 — fundação | Implementado; local e CI validados | Área actual jogável no build; Three.js/Vite, input/áudio, tiros 3D, fallback e snapshot; ver QUALITY_REPORT. CI da fundação passou; merge da engine separado. |
 | 2 — M01/Tczew | Protótipo jogável; aprovação pendente | Fluxo integral na simulação e partida contínua no navegador por piloto automático (menu→debrief, 12/12, sem bloqueios), com cinco correcções de navegação, orientação, ritmo, resgate e retardatários. Ameaça legível nas tarefas de cobertura: fogo alemão com origem visível, supressão real do reparo e baixas da retirada que dependem do fogo do jogador. Playtest humano, encenação e Chromebook pendentes. |
-| 3 — M01 polida | Parcial | Soldados/primeira pessoa com rig, quinze clips e LODs integrados; falta revisão artística/histórica, vozes, equipamento dos proxies, encenação, playtest e orçamento. |
+| 3 — M01 polida | Parcial | Soldados/primeira pessoa com rig, 25 clips e LODs integrados, armas de Kowal/Bąk e arrasto de S3; falta revisão artística/histórica, vozes, equipamento dos proxies, encenação, playtest e orçamento. |
 | 4 — sistemas especiais | Pendente | Tanque M13, jeep M14, avião M05; sistema jogável e snapshot de cada um. |
 | 5 — M02–M07 | Pendente | Cada missão integrada com pesquisa, mapa, roteiro, equipamento, transições e validação. |
 | 6 — M08–M30 | Pendente | Lotes pequenos; continuidade de personagens, datas e save; não contar documentos como missões prontas. |

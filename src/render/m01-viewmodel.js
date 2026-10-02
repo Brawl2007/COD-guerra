@@ -55,7 +55,7 @@ export class M01ViewModel {
   update(sim,quality,flashUntil){
     const characters=this.characters;
     const lod=characters.sources.has('pl:0')?0:1;
-    if(!characters.sources.has(`pl:${lod}`)||!characters.clips.size)return false;
+    if(!characters.sources.has(`pl:${lod}`)||!['aim','reload_clip','fire_bolt','carry_wounded','carried'].every(name=>characters.clips.has(name)))return false;
     if(this.lod!==lod)this.build(lod);
     const p=sim.player,w=sim.weapon,t=sim.clock,carry=p.carrying==='jozef_bak';
     this.root.visible=sim.renderState.weaponVisible||carry;

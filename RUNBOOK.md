@@ -104,6 +104,8 @@ O piloto move-se, aponta com deltas de input e usa disparo/ferrolho/recarga. Nã
 
 ## Diagnóstico
 
+O clip opcional `m01_station_animations.glb` é gerado com `node tools/assets/m01-station/build.mjs`, sobre o rig fixado no seu manifesto. `gameDiagnostics().m01.stationEvacuation` resume dados reais do ferido e de Dudek. A primeira pessoa exige os clips de arma/transporte: o clip da estação, sozinho, não a activa. Kowal/Bąk e os sockets das suas armas aparecem em `m01.characters.actors`; isso é apresentação, não autoridade de combate.
+
 Os soldados e as mãos de M01 carregam GLB com texturas incorporadas sob o mesmo prefixo de produção. Todas as qualidades carregam LOD0/1/2 polacos, LOD2 alemão e o ficheiro de clips. O LOD0 fornece a arma e os braços em primeira pessoa; a qualidade baixa usa LOD1/2 no cenário e limita os soldados com skinning a 18. Se o LOD0 faltar, as mãos usam o LOD1; falhar todos os modelos conserva a apresentação procedural. Não muda o estado do actor nem bloqueia a missão; uma ponte em falta continua a bloquear o início.
 
 Galeria dos seis LODs e quinze clips, em Chromium, com relatório e capturas:
