@@ -2,9 +2,11 @@
 
 Pedido do utilizador em 2026-10-02, depois da entrega dos vagões danificados #34. Continuar sem reiniciar nem repetir entregas. A ckm #31 (head 4170eea) e a MG34 deitada #33 (c6e5ed4) já foram revistas/integradas na branch do Codex. Os vagões danificados #34 (11554d9) foram revistos e integrados como kit; a escolha de vagão/estado continua pendente na simulação. Especificações anteriores preservadas em `docs/CLAUDE_CKM_TASK_REFERENCE.md` e `docs/CLAUDE_MG34_WAGON_TASK_REFERENCE.md`.
 
+O #35 (e65ce73) já entregou a tarefa 1: LOD0 3904/4000, restantes LODs e clips preservados; revisto e integrado. Não repetir. A próxima tarefa do Claude é a secção 2.
+
 Codex reserva o renderer, engine, combate, saves, relógios, mapa e integração. Claude trabalha apenas nos assets e nas suas ferramentas/testes/documentação. M01 continua **PROTÓTIPO JOGÁVEL**.
 
-## 1. Prioridade: ckm wz.30 dentro do orçamento
+## 1. Entregue no #35 — referência: ckm wz.30 dentro do orçamento
 
 Branch nova `claude/m01-ckm-budget`. Usar `codex/m01-runtime` actualizado; se #31 ainda não estiver na staging, partir do head `4170eea6ca5ed5f882727f9678bd2a763927e5b1` numa branch nova. Não refazer o kit.
 
@@ -15,7 +17,7 @@ Branch nova `claude/m01-ckm-budget`. Usar `codex/m01-runtime` actualizado; se #3
 - Editar apenas `tools/assets/m01-ckm-wz30/`, LOD0/manifesto em `assets/models/provisional/m01/weapons/ckm_wz30/`, teste do kit e documentação/créditos afectados. Não tocar soldados, outras armas ou `src/`.
 - Fontes T34 e detalhes estimados continuam explícitos. Não declarar historicidade final nem ligação à casamata. A simulação ainda não representa `grp_ckm_crew` por actores.
 
-## 2. Depois: agarrar e soltar o ferido no arrasto da estação
+## 2. Próxima tarefa: agarrar e soltar o ferido no arrasto da estação
 
 Branch nova independente `claude/m01-station-drag-transitions`, a partir da staging; não derivar da tarefa 1. Ler `tools/assets/m01-station/build.mjs`, o manifesto de `m01_station_animations.glb`, os clips `drag_wounded`/`wounded`/`crouched_idle` do rig actual e a secção `stationEvacuation` da simulação só para compreender o contrato.
 
