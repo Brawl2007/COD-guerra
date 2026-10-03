@@ -84,10 +84,10 @@ async function browserEnvironment(page,browser){
     const canvas=document.createElement('canvas'),gl=canvas.getContext('webgl2')||canvas.getContext('webgl');let renderer=null,vendor=null;
     if(gl){const ext=gl.getExtension('WEBGL_debug_renderer_info');renderer=ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER);vendor=ext?gl.getParameter(ext.UNMASKED_VENDOR_WEBGL):gl.getParameter(gl.VENDOR);}
     return {userAgent:navigator.userAgent,platform:navigator.userAgentData?.platform??navigator.platform??null,brands:navigator.userAgentData?.brands??null,
-      viewport:{width:innerWidth,height:innerHeight},screen:{width:screen.width,height:screen.height,availWidth:screen.availWidth,availHeight:screen.availHeight},devicePixelRatio,
+      viewport:{width:innerWidth,height:innerHeight},resolution:{width:screen.width,height:screen.height},screen:{width:screen.width,height:screen.height,availWidth:screen.availWidth,availHeight:screen.availHeight},devicePixelRatio,
       webgl:{renderer,vendor},performanceMemory:performance.memory?{usedJSHeapSize:performance.memory.usedJSHeapSize,totalJSHeapSize:performance.memory.totalJSHeapSize,jsHeapSizeLimit:performance.memory.jsHeapSizeLimit}:null};
   });
-  data.browserVersion=browser.version();data.performanceMemory=normalisePerformanceMemory(data.performanceMemory);
+  data.browserVersion=browser.version();data.browser={name:data.brands?.[0]?.brand??'Chromium/Chrome',version:data.browserVersion};data.performanceMemory=normalisePerformanceMemory(data.performanceMemory);
   data.softwareRenderer=detectSoftwareRenderer(data.webgl.renderer);data.rendererClass=rendererClass(data.webgl.renderer);return data;
 }
 async function orientHorizontal(page){
