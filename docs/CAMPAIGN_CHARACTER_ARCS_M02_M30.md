@@ -514,6 +514,99 @@ Mostrar epílogos separados por lugar/data.
 
 ---
 
+
+
+# Perdas irreversíveis e mortes de personagens marcantes
+
+A campanha pode e deve perder personagens importantes. Algumas mortes podem acontecer no clímax ou nos minutos finais de uma missão, quando isso fecha um arco e altera a missão seguinte.
+
+## Regras
+
+1. Não matar um personagem apenas para criar choque.
+2. O personagem precisa ter sido reconhecível antes: voz, comportamento, relação, função e presença.
+3. Não repetir “companheiro morre no último minuto” em todas as missões.
+4. Variar consequências: morte confirmada, desaparecido, capturado, ferido permanente, evacuado, incapaz de continuar.
+5. Uma morte confirmada persiste no save e em todas as aparições posteriores.
+6. A missão seguinte precisa sentir a ausência: nova liderança, posição vazia, equipamento herdado, mudança de comportamento ou fala.
+7. Se a morte for inevitável, não oferecer falsa escolha de salvamento.
+8. Se o jogador puder influenciar o destino, os dois resultados precisam ser suportados até o fim da campanha e não podem contradizer fato histórico.
+9. Pessoas históricas reais não recebem mortes ficcionais ou destinos alterados.
+10. A câmera não precisa congelar nem usar slow motion; muitas perdas funcionam melhor acontecendo dentro do gameplay real.
+
+## Distribuição proposta de grandes perdas
+
+### M01 — Nowicki
+Já existente como `missing`, sem corpo confirmado. A ausência na chamada é a consequência.
+
+### M03 — arco polonês
+Evitar outra morte automática imediatamente após M01/M02. O peso vem da queda da cidade, civis, feridos e destino persistente de Lis.
+
+### M05 — RAF
+A cadeira vazia representa uma perda do esquadrão, mas não precisa ser um personagem histórico nem necessariamente o ala principal. Se um piloto ficcional conhecido morrer, apresentar sua presença no início e confirmar apenas o que o roteiro pode sustentar.
+
+### M10 — Vasili Rybin
+**Morte fixa já prevista no Prompt Mestre.**
+Rybin é apresentado antes da ruptura; morre durante bombardeio sinalizado. Não existe falsa opção de salvamento. Seu ID permanece morto após checkpoint/skip.
+
+### M15 — Tarawa
+Um companheiro apresentado na embarcação pode terminar como `missing` após a travessia. O jogador encontra seu equipamento, não um cadáver obrigatório. O destino pode permanecer incerto.
+
+### M18 — Omaha
+Candidato forte para uma perda confirmada de personagem recorrente do arco de Lane, MAS somente depois de M14 ter criado vínculo suficiente.
+Opção preferida para revisão futura: **Bell** pode sofrer uma morte confirmada perto do final da subida/objetivo acima da praia, se o roteiro detalhado provar que isso fortalece M19.
+Se adotado:
+- não morrer na rampa nem como figurante;
+- participar ativamente de M14 e grande parte de M18;
+- sua ausência precisa alterar a formação e falas de M19;
+- Morgan/Price/Lane não podem simplesmente continuar como se nada tivesse acontecido.
+
+Este ponto permanece PROPOSTA até o roteiro detalhado de M18.
+
+### M20 — Arnhem/Oosterbeek
+Evitar uma morte de choque no barco final. A derrota já tem peso suficiente.
+Um personagem conhecido pode permanecer com feridos, tornar-se `missing/captured` ou ficar impossibilitado de atravessar. Isso cria perda sem repetir morte explosiva.
+
+### M23 — Bastogne/Foy
+O dono original das luvas pode terminar `dead`, `missing` ou `evacuated` conforme roteiro final. O importante é que Bennett entregue as luvas a outra pessoa porque o destinatário original não está ali.
+Não revelar destino cedo demais.
+
+### M27/M28 — arco final soviético
+Candidato forte para a perda tardia de um veterano recorrente.
+**Makarov** pode morrer em M27 Seelow ou nos combates iniciais de M28 Berlim, se a pesquisa/roteiro detalhado suportar uma cena plausível.
+A opção dramaticamente mais forte é uma morte antes do cessar-fogo final, deixando Orlov e Saveliev presentes quando a guerra europeia termina.
+Não usar discurso de vingança nem morte heroica artificial.
+Este ponto permanece PROPOSTA até o roteiro detalhado do arco.
+
+### M29 — Shuri
+**Cole não deve morrer apenas porque é líder marcante.**
+O plano preferido continua sendo ferimento grave e evacuação. A ausência da voz dele durante o restante da missão é a consequência.
+Isso varia a campanha: nem toda perda importante é morte.
+
+### M30 — Silêncio
+Nenhuma nova morte dramática.
+M30 mostra as consequências acumuladas:
+- mortos confirmados;
+- desaparecidos;
+- capturados;
+- feridos;
+- sobreviventes;
+- lugares vazios e objetos herdados.
+
+## Ritmo de perdas
+
+Meta narrativa aproximada para 30 missões:
+- poucas mortes realmente grandes e reconhecíveis;
+- várias perdas não fatais;
+- algumas incertezas/desaparecimentos;
+- sobreviventes suficientes para que o jogador também sinta continuidade e reencontro.
+
+A campanha deve evitar tanto:
+- “ninguém importante morre”;
+quanto:
+- “todo personagem querido morre no final da missão”.
+
+O jogador nunca deve saber, apenas pela estrutura, quem vai sobreviver.
+
 # Regras de implementação
 
 1. Vozes precisam ser distinguíveis por escrita, ritmo e atuação.
