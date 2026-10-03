@@ -40,27 +40,35 @@ function characters(){
     c.sources.set(`de:${lod}`,asset(`m01/characters/m01_soldier_de_lod${lod}.glb`,material));
     c.sources.set(`mg34:${lod}`,asset(`m01/weapons/mg34/m01_mg34_lod${lod}.glb`,material));
   }
-  for(const p of ['m01/characters/m01_soldier_animations.glb','m01/weapons/mg34/m01_mg34_animations.glb'])
+  for(const p of ['m01/characters/m01_soldier_animations.glb','m01/weapons/mg34/m01_mg34_animations.glb','m01/weapons/mg34-prone/m01_mg34_prone_animations.glb'])
     for(const clip of asset(p,material).animations)c.clips.set(clip.name,clip);
   const close=()=>{c.dispose();for(const g of c.sources.values())g.scene.traverse(n=>{n.geometry?.dispose();n.skeleton?.dispose();});material.dispose();};
   return {c,close};
 }
 test('actual MG34 rig cuts 4/5/6/7-round bursts at their saved duration, keeps one weapon and samples pause/restore without mutation',()=>{
-  const {c,close}=characters(),sim=new M01Simulation(),a=sim.actor('de_east_0');a.active=true;
+  const {c,close}=characters();
   try{
     for(const rounds of [4,5,6,7]){
-      sim.burst(a,sim.player,'cover',{rounds});const saved=sim.snapshot(),start=a.firedAt;
-      const at=age=>{const actors=structuredClone(saved.actors);actors.find(x=>x.id===a.id).shot=Math.max(0,rounds*.075+.06-age);return actors;};
+      const sim=new M01Simulation(),a=sim.actor('de_east_0');a.active=true;a.cooldown=99;
+      sim.updateMG34Posture(a);sim.clock=1.9;sim.updateActors(1.9);
+      assert.equal(a.mg34Prone.phase,'idle');assert.equal(sim.burst(a,sim.player,'cover',{rounds}),true);
+      const saved=sim.snapshot(),start=a.firedAt;
+      const at=age=>{
+        const sample=new M01Simulation();sample.restoreSnapshot(saved);sample.clock=start+age;
+        sample.updateActors(age);sample.emitMG34Rounds(sample.actor(a.id));
+        return sample.snapshot().actors;
+      };
       const actors=at((rounds-1)*.075+.01),before=structuredClone(actors);
       c.update(actors,start+(rounds-1)*.075+.01,sim.player);
-      let v=c.instances.get(a.id);assert.equal(v.clip,'mg34_fire_burst');
+      let v=c.instances.get(a.id);assert.equal(v.clip,'mg34_prone_fire_burst');
+      assert.equal(actors.find(x=>x.id===a.id).mg34Prone.burst.emitted,rounds,'all requested real shots emitted');
       assert.equal(v.weaponRoot.parent.name,'weapon');assert.equal(v.weapon,'mg34');
       assert.equal(v.root.getObjectByName('rifle').visible,false);assert.equal(v.root.getObjectByName('clip').visible,false);
       assert.equal(c.diagnostics.actors.find(x=>x.id===a.id).weaponMeshes.filter(n=>n==='mg34_body').length,1);
       const muzzle=c.muzzle(a.id).toArray();assert.ok(muzzle.every(Number.isFinite));
       const pose=v.root.getObjectByName('weapon').matrixWorld.toArray();c.update(actors,start+(rounds-1)*.075+.01,sim.player);
       assert.deepEqual(v.root.getObjectByName('weapon').matrixWorld.toArray(),pose,'paused frame');assert.deepEqual(actors,before);
-      c.update(at(rounds*.075+.001),start+rounds*.075+.001,sim.player);assert.equal(v.clip,'mg34_aim','no unrequested next shot or reload');
+      c.update(at(rounds*.075+.001),start+rounds*.075+.001,sim.player);assert.equal(v.clip,'mg34_prone_aim','no unrequested next shot or reload');
       c.update(actors,start+(rounds-1)*.075+.01,sim.player);assert.deepEqual(v.root.getObjectByName('weapon').matrixWorld.toArray(),pose,'restored clock');
       assert.deepEqual(sim.snapshot(),saved);
     }
