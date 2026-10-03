@@ -1,3 +1,30 @@
+# Estado atual — MG34 prone runtime V2 (2026-10-03)
+
+Esta secção prevalece sobre o histórico abaixo para a tarefa MG34. Não recomeçar código, investigação ou extrações. M01 continua **PROTÓTIPO JOGÁVEL**.
+
+- TASK_ID `M01-MG34-PRONE-RUNTIME-V2`; esforço HIGH; modelo solicitado GPT-6.1 Sol, agente de simulação/revisão configurado explicitamente.
+- Base exata `codex/m01-ckm-placement-migration` @ `2cfa9520a09c68629e3d98d6e7f4dc0d8f9e6732`.
+- Branch independente publicada: `codex/m01-mg34-prone-runtime`.
+- HEAD implementação/testes: `8d55ae554b54f2fc0758189395936bb8c41a7c40`. Os commits seguintes só documentam; confirmar HEAD final remoto ao rever.
+- Checkpoints remotos: 1 `435d962`; 2 `151ef325`; 3 `7cf2dec`; 4 browser `152df763` + prova FX `8d55ae5`. Publicados imediatamente em cada etapa por ligação GitHub; checkout reconciliado com remote, sem force-push.
+- Implementados apenas os dois gunners `de_east_0/1`: postura, rajada real, spatial, renderer e fallback. Enter/exit 1,9 s; 4–7 tiros a 0,075 s. Schema 2, campos opcionais `mg34Prone`; planos/IDs/RNG pertencem à simulação.
+- Hitboxes orientadas pelo eixo corporal em 0/PI/2/PI/-PI/2, também nas transições. Socket real `[0,0.03,-0.769]`: 2.496 comparações GLB, erro máximo 0,038402 mm, tolerância 2 mm. Nenhum asset recriado.
+- Save após 1/4/6 tiros: plano, frame, shot/firedAt, IDs e RNG iguais; sem tiros perdidos/duplicados ou eventos extra. Morte enter/idle/burst/exit limpa futuros tiros e postura; método real dos efeitos comprova ausência de clarão extra/na morte. Pausa estável. Kit prone ausente preserva gameplay.
+- Loader/reload/feed não ligados: não há associação/evento real na simulação. Nenhum ator/loader fictício.
+- Corrigidos bugs reproduzidos: hitbox do tick anterior no tiro do jogador; save com record emitido em voo ausente/alterado; OUTRO durante burst; target alcançado reescrevendo SUPPRESS.
+- Validação final: **46/46 focados novos**, **224/224 Node**, build PASS, **4/4 browser focados**, **35/35 browser integral**, 0 retries/skips, saída reportou 12,3 min. Sem aumentar timeouts. O teste de evacuação da estação passou com espera interna de 120 s intacta.
+- O workspace foi substituído após os testes verdes e antes dos docs. Checkpoints recuperados do GitHub sem reimplementar. Node/focados/build repetidos para recuperar logs brutos; browser não repetido. Logs JSON/capturas brutos browser desapareceram; resumo explicitamente reconstruído da saída confirmada de ferramenta na conversa, não fabricado como log bruto.
+- Browser validou `152df763`; `8d55ae5` só acrescentou quatro testes Node. Árvores src/browser iguais: `0761b6675e9f71d1a2b5440907c571541068497b` / `51fe1a560f62e17c302988c816c2f8b4cec303eb`.
+- `moveActor` e `evacuateStation` byte a byte; schema 2, CP-A..D, baixas por ID, RNG, clocks/gates/timers/demolições e bancada francesa preservados. Renderer só amostra simulação.
+- Refs protegidos intactos: main `72bbcdd156603c9399801c95d43d9365ba50fc82`; runtime/assets-review `beec7cd9333cfac38fdc361da481ad4a942e1e37`; base CKM `2cfa9520a09c68629e3d98d6e7f4dc0d8f9e6732`.
+- Sem integração/deploy/workflow_dispatch/M02/Graphify. Outras branches de ponte/pátio/CKM não integradas. Asserção CKM browser atualizada para a posição que já existia na base; nenhum runtime CKM alterado.
+- HANDOFF e lista de ficheiros/provas: `docs/verification/m01-runtime/mg34-prone-runtime-v2-2026-10-03/HANDOFF.md`.
+- Estado: pronta para revisão e decisão de integração do capitão, com a limitação documental browser explícita. Humano/Chromebook e loader/reload/feed pendentes. **PARAR após este handoff; não integrar nem iniciar outra tarefa sem nova ordem concreta.**
+
+---
+
+## Histórico anterior (não substitui o estado atual acima)
+
 # Contexto para continuar COD-guerra
 
 Continuar sem reiniciar. Ler primeiro este ficheiro, `AGENTS.md` e `docs/WORKING_CONTEXT.md`; consultar apenas o sistema afectado. Repo Brawl2007/COD-guerra. Branch actual `codex/m01-support-runtime`; candidato do PR #32 em `codex/m01-assets-review`, entregue em staging `codex/m01-runtime`. Âncora do runtime validado `a83bd8c960e853278ffb0a2293776099e05d3d86`, tree `6885264ee93579bcabb9602813ee875d58421d66`; o commit seguinte actualiza apenas estas âncoras de contexto. Confirmar refs antes de escrever.
