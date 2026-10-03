@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import map from '../missions/m01-tczew/map-layout.json' with {type:'json'};
 import {M01Simulation} from '../src/game/m01-simulation.js';
 import {TczewWorld} from '../src/world/tczew-world.js';
-import {M01_YARD_WAGON_PLAN,yardWagonLod,yardWagonState,yardWagonPosition} from '../src/render/m01-yard-wagons.js';
+import {M01_YARD_WAGON_PLAN,yardWagonLod,yardWagonState,yardWagonPosition,yardWagonFireDamage} from '../src/render/m01-yard-wagons.js';
 
 const E=name=>`evt_m01_${name}`;
 
@@ -58,4 +58,15 @@ test('yard wagon visual roots use runtime terrain height instead of floating at 
   assert.equal(positions[2][1],-3);
   assert.notEqual(positions[1][1],M01_YARD_WAGON_PLAN[1].position[1],
     'metadata y=0 is not treated as a floating runtime ground plane');
+});
+
+
+test('station wagon fire presentation comes from persisted state, runtime terrain and authored asset sockets',()=>{
+  const world=new TczewWorld(),wagon=M01_YARD_WAGON_PLAN[2];
+  assert.equal(yardWagonFireDamage([],world,12),null);
+  const damage=yardWagonFireDamage(['station_wagon_fire'],world,12),root=yardWagonPosition(wagon,world);
+  assert.equal(damage.id,'station_wagon_fire');
+  assert.equal(damage.x,root[0]);assert.equal(damage.z,root[2]);assert.equal(damage.started,12);assert.equal(damage.smokeVisible,true);
+  assert.ok(Math.abs(damage.fireY-(root[1]+1.29))<1e-12);
+  assert.ok(Math.abs((damage.y+3)-(root[1]+3.85))<1e-12);
 });
