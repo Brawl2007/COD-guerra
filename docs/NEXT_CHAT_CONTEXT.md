@@ -1,3 +1,26 @@
+# Estado actual — auditoria de determinismo schema 2 (2026-10-03)
+
+Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a MG34 aprovada nem Graphify.
+
+- TASK_ID: `M01-SCHEMA2-CROSS-SYSTEM-DETERMINISM-AUDIT-V1`; modelo/esforço solicitado GPT-6.1 Sol HIGH; sem delegação.
+- Base remota confirmada: `codex/m01-mg34-prone-runtime` @ `fbaac1e4bce0ce62dc61415c338dd33ccd86a71b`.
+- Branch independente: `codex/m01-schema2-determinism-audit`.
+- Último HEAD funcional/testes: `44419b1adc7aa1e7c2740e62ffbba69c725860ab`. Os commits seguintes só documentam evidência; confirmar HEAD remoto antes de continuar.
+- Encontrado/provado/corrigido: restore de continuação perdia o checkpoint anterior. `snapshot()` guarda `resumeCheckpoint` opcional plano; CP-A..D/reset/debrief usam `snapshot(false)`. Legacy sem campo mantém o estado carregado como CP. Schema permanece 2. Backups inválidos/futuros/recursivos rejeitados atomicamente.
+- Encontrado/provado/corrigido: payload extra da arma podia sobrescrever métodos/perfil via Object.assign. Whitelist dos campos reais da wz.29, RNG uint32 e fases conhecidas no validador. Nenhuma alteração ao algoritmo de RNG ou arma.
+- Auditoria A/B por tick, com diagnóstico do primeiro campo/tick de divergência: **61.055 comparações**, 37 casos registados e 34 janelas. Duas rotas completas sem re-restaurar B: seeds 19390901 sem apoio (20.976 ticks) e 7 com apoio (20.107 ticks). MG após 1/4/6 tiros, rounds/casualties, granadas/arma, estação, Bąk, gates/demolições, OUTRO, legacy 86/89/MG e 17 mutações corrompidas. Death/recovery entre cada CP-A..D, double load, dt variável e pausa. Nos casos testados, nenhuma divergência.
+- Validação final Node: **242/242**, incluindo 18/18 novos; build PASS; diff check PASS. Provas verdes em `427358ab74a7dd7aadd20293dc301c46ac29f879`. Produção é a árvore de `d241e2069f984a47a9d41190f0b53c26833cc28a`; Node final é `1f15b58436c11d70c44195ebf181d710f876a3a4`.
+- Browser focado final: **4/4**, sem retries/skips. Fixtures visuais que pretendem um CP próprio usam snapshot plano; asserções de raízes/baixas/migração intactas, nenhum timeout aumentado. Novo teste UI confirma continuação seguida de Restart exacto ao CP-A anterior. Grab/release inspecionam o frame pausado enquanto clips opcionais carregam, fechando uma corrida da fixture.
+- **Browser integral de 36 testes ainda em execução neste checkpoint documental. Não declarar 36/36 a partir dos focados. Próximo passo: fechar esta execução, preservar JSON/logs e completar handoff.** Node não precisa ser repetido se src/testes Node forem idênticos.
+- Execuções falhadas iniciais preservadas e identificadas, não apresentadas como verdes: primeiro Node 238/240 por duas fixtures de checkpoint; browser inicial interrompido depois de duas fixtures de Restart; revisão focada 3/4 antes do freeze. ZIP completo/capturas da falha inicial não publicados; traces textuais/JSON/contexto com omissões explícitas em manifesto.
+- Handoff/provas: `docs/verification/m01-runtime/schema2-determinism-audit-2026-10-03/HANDOFF.md` e ficheiros dessa pasta. Relatórios JSON browser são brutos comprimidos.
+- Produção alterada só em `src/game/m01-simulation.js` (persistência/validação). `tick`, movimento, evacuação, renderer/world/core/assets/missão/francês/RNG/gates/demolições/IDs e Graphify preservados. Main `72bbcdd156603c9399801c95d43d9365ba50fc82` e base aprovada intactos. Sem integração/deploy/workflow_dispatch/M02.
+- Chromebook físico, loader/reload/feed MG34, vagões de outra branch e arco real CKM continuam pendentes. Não iniciar outra frente nem integrar sem ordem concreta.
+
+---
+
+## Histórico anterior — não substitui a auditoria acima
+
 # Estado atual — MG34 prone runtime V2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa MG34. Não recomeçar código, investigação ou extrações. M01 continua **PROTÓTIPO JOGÁVEL**.

@@ -1,5 +1,14 @@
 # Estado de desenvolvimento
 
+## Auditoria schema 2 — 2026-10-03
+
+Candidato isolado em `codex/m01-schema2-determinism-audit`, base MG34 prone aprovada `fbaac1e4`. Comparação de futuros A/B por tick: 61.055 comparações em duas rotas completas e fixtures definidas, sem divergência depois das correções. Corrigido o destino de recuperação ao restaurar uma continuação; schema 2 recebe backup opcional plano, mantendo CP-A..D planos e legacy compatível. Saves corrompidos não podem sobrescrever métodos/perfil da arma; RNG uint32 e fases conhecidas validados.
+
+242/242 Node (18 novos), build e 4/4 browser focados. A suíte integral final de 36 browser ainda está em execução neste checkpoint documental. Provas e limites em `docs/verification/m01-runtime/schema2-determinism-audit-2026-10-03/HANDOFF.md`. Produção alterada apenas na persistência/validação; simulação de combate/relógios/gates, renderer/assets e bancada francesa conservados. M01 permanece **PROTÓTIPO JOGÁVEL**; nenhum marco, playtest humano ou FPS de Chromebook é aprovado por estes testes.
+
+O texto abaixo documenta etapas anteriores, incluindo pendências posteriormente entregues na base MG34. O contexto actual está em `docs/NEXT_CHAT_CONTEXT.md`.
+
+
 ## Resultado desta alteração
 
 M01 passou a **PROTÓTIPO JOGÁVEL** nesta branch. O fluxo usa a fundação Three.js e as pontes do Claude, preservando os históricos dos PRs #9 e #11. A bancada francesa continua seleccionável. O marco 2 ainda não está aprovado como missão validada; faltam o playtest humano, a medição no Chromebook e o trabalho descrito abaixo.
