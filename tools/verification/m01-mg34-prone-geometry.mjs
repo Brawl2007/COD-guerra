@@ -19,7 +19,7 @@ export async function realMG34Rig(){
     const legs=point('calf_l').add(point('calf_r')).add(point('foot_l')).add(point('foot_r')).multiplyScalar(.25);
     return [...point('weapon',[0,.03,-.769]).toArray(),...point('eye_r').toArray(),...point('head').toArray(),...torso.toArray(),...legs.toArray()];
   };
-  return {scene:soldier.scene,mixer,sample,animations:animations.animations};
+  return {scene:soldier.scene,weaponScene:weapon.scene,mixer,sample,animations:animations.animations};
 }
 export async function geometryContract(){
   const rig=await realMG34Rig(),curves={};
