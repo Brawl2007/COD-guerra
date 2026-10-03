@@ -561,3 +561,110 @@ confidence decays
 ```
 
 Câmera, quality e posição real invisível não podem alterar o resultado.
+
+
+## 22. Squad model
+
+Um squad é coordenação leve, não um “hive mind”.
+
+```js
+SquadState {
+  id,
+  leaderId,
+  memberIds,
+  order,
+  contactSector,
+  suppressorIds,
+  moverIds,
+  rallyPoint,
+  cohesion: 0..1,
+  morale: 0..1,
+  grenadeBudget,
+  lastCoordinationAt
+}
+```
+
+Cada soldado continua a decidir sobrevivência local. O coordinator só distribui permissões e papéis temporários.
+
+## 23. Fire and maneuver
+
+Fluxo mínimo:
+
+```text
+contact confirmed
+-> choose 1..N suppressors with LOS / useful arc
+-> choose movers with valid covered route
+-> suppressors fire bounded bursts
+-> movers receive BOUND_MOVE slot
+-> movers reach cover and report READY
+-> roles may swap
+-> reassess
+```
+
+Regras: não mover todos ao mesmo tempo; não deixar todos presos em suppress; abortar bound se suppressors ficarem pinned; respeitar raio da ordem HOLD; support/MG é candidato forte a suppressor, mas não fica preso ao papel eternamente.
+
+## 24. Flanking
+
+`FLANK` só é candidato quando ordem permite, ThreatMemory tem confiança suficiente, rota é válida, parte da equipa mantém pressão/observação, cover final é útil, exposição da rota é aceitável e o movimento não invade setor histórico/proibido. Falhou qualquer gate: usar cover/hold/bound normal.
+
+Nenhum comportamento `role=flanker => sempre flank`.
+
+## 25. Retreat / regroup
+
+Retirada local escolhe destino por score:
+
+```text
+awayFromThreat
++ routeSafety
++ friendlyProximity
++ rallyAdherence
++ coverAtDestination
+- exposure
+- isolation
+```
+
+`SHORT_WITHDRAW` preserva a ordem macro. `WITHDRAW` macro vem de mission/leader ou de política de morale explicitamente autorizada. `REGROUP` serve ao ator isolado sem perigo imediato dominante.
+
+## 26. Roles
+
+- **Rifleman:** cover/bound/suppress curto/flank quando autorizado.
+- **Machine gunner:** prefere posição estável e firing arc; forte candidato a suppressor.
+- **Assistant gunner:** mantém proximidade funcional sem ocupar o mesmo slot.
+- **Medic:** prioriza feridos apenas quando risco e ordem permitem.
+- **Engineer:** forte aderência ao objetivo técnico; pode baixar/procurar cover local e retomar.
+- **Officer/NCO:** distribui order/rally/contact reports; não recebe visão sobrenatural.
+
+## 27. Wounded state model
+
+```text
+LIGHT_WOUND
+SERIOUS_WOUND
+INCAPACITATED
+DEAD
+```
+
+LIGHT pode continuar com penalidade; SERIOUS reduz mobilidade/combate; INCAPACITATED não combate e pode receber ajuda; DEAD não decide. O sistema real de dano continua fora desta tarefa.
+
+## 28. Help wounded
+
+`HELP_WOUNDED` exige ferido alcançável, helper/recurso compatível, rota aceitável, squad sem perder toda capacidade de fogo, ordem permissiva e destino seguro. Ações futuras: drag, first aid, cover rescuer, call medic.
+
+Os fluxos específicos de Bąk e do ferido da estação continuam sob o script M01 até migração consciente.
+
+## 29. Morale e cohesion
+
+Não é RPG. Dois escalares simples modulam gates.
+
+Cohesion cai com isolamento, leader loss, spacing excessivo e comunicação quebrada. Morale cai com casualties, supressão pesada, explosão catastrófica próxima e isolamento; sobe com líder, reforço, rally seguro e beats de missão.
+
+Efeito: willingness para advance/hold/withdraw. Nunca altera HP, verdade percebida ou cria informação escondida. Historical constraints podem impor piso/teto para preservar a missão.
+
+## 30. Artillery / explosion reaction
+
+Evento de blast inclui posição, classe de raio, intensidade, instante e se a origem é conhecida. Respostas: drop/crouch, seek cover, interromper fogo exposto, short withdraw, desorientação temporária e check de casualties depois do perigo.
+
+Não requer física nova nesta tarefa.
+
+## 31. Vehicle reaction
+
+Evento `VEHICLE_DISABLED/VEHICLE_FIRE` pode gerar crew evacuation, safety radius, uso do wreck como cover quando seguro, afastamento de incêndio e eventual rescue. VehicleController continua fora desta tarefa.
