@@ -4,7 +4,7 @@
 
 Candidato isolado em `codex/m01-schema2-determinism-audit`, base MG34 prone aprovada `fbaac1e4`. Comparação de futuros A/B por tick: 61.055 comparações em duas rotas completas e fixtures definidas, sem divergência depois das correções. Corrigido o destino de recuperação ao restaurar uma continuação; schema 2 recebe backup opcional plano, mantendo CP-A..D planos e legacy compatível. Saves corrompidos não podem sobrescrever métodos/perfil da arma; RNG uint32 e fases conhecidas validados.
 
-242/242 Node (18 novos), build e 4/4 browser focados. A suíte integral final de 36 browser ainda está em execução neste checkpoint documental. Provas e limites em `docs/verification/m01-runtime/schema2-determinism-audit-2026-10-03/HANDOFF.md`. Produção alterada apenas na persistência/validação; simulação de combate/relógios/gates, renderer/assets e bancada francesa conservados. M01 permanece **PROTÓTIPO JOGÁVEL**; nenhum marco, playtest humano ou FPS de Chromebook é aprovado por estes testes.
+242/242 Node (18 novos), build PASS, 4/4 browser focados e **36/36 browser integrais**, zero retries/skips/falhas, 1.182,745 s. Auditoria concluída para revisão do capitão. Provas e limites em `docs/verification/m01-runtime/schema2-determinism-audit-2026-10-03/HANDOFF.md`. Produção alterada apenas na persistência/validação; simulação de combate/relógios/gates, renderer/assets e bancada francesa conservados. M01 permanece **PROTÓTIPO JOGÁVEL**; nenhum marco, playtest humano ou FPS de Chromebook é aprovado por estes testes.
 
 O texto abaixo documenta etapas anteriores, incluindo pendências posteriormente entregues na base MG34. O contexto actual está em `docs/NEXT_CHAT_CONTEXT.md`.
 

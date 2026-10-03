@@ -70,13 +70,14 @@ As fixtures visuais de grab/release e trem/MG instalam CPs planos. Um novo caso 
 
 A revisão focada seguinte foi 3/4: o grab podia terminar antes de os clips opcionais carregarem. A fixture agora usa a mesma captura nativa de pointer lock já usada pela MG34 para manter o primeiro frame restaurado em pausa enquanto carrega os clips. As asserções de sincronização, pose, pausa e raízes foram conservadas. Não houve aumento de timeout. A execução focada final passou **4/4**, sem retries/skips; relatórios JSON brutos comprimidos e logs preservados.
 
-**Suíte integral final de navegador: ainda em execução neste rascunho. Não afirmar resultado integral a partir dos 4/4.**
+**Suíte integral final de navegador: 36/36 PASS**, 0 retries/skips/falhas/flaky, em 1.182,745 s (19,7 min). `browser-summary.json` resume os resultados individuais; `browser.json.gz` conserva o relatório JSON bruto completo e `browser.log` a saída integral. Exit code 0. Esta execução inclui os casos anteriores de MG34 prone e o novo caso de recuperação pelo botão real.
 
 ## Validação e reprodução
 
 - Node 24.19.0, Three 0.186.1, Vite 8.3.1, Playwright 1.58.2.
 - Chromium 153.0.8010.0, software WebGL/SwiftShader, viewport de produção 1280×720, um worker, retries 0.
 - `npm ci` concluído; **242/242 npm test**, 18/18 testes novos incluídos; build PASS (aviso habitual de chunk grande).
+- Browser integral **36/36 PASS**; focados **4/4 PASS**, zero retries/skips em ambas as execuções.
 - `git diff --check` PASS. `preserved.json` comprova corpos de movimento/evacuação/tick e diretórios de produção intactos.
 
 ```sh
