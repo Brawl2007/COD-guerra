@@ -58,7 +58,7 @@ jobs:
       group: pages
       cancel-in-progress: true
     environment:
-      name: github-pages
+      name: github-pages-latest-playable
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
