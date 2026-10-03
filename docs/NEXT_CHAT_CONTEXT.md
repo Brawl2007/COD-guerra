@@ -1,6 +1,6 @@
 # Contexto para continuar COD-guerra
 
-Continuar sem reiniciar. Ler primeiro este ficheiro, `AGENTS.md` e `docs/WORKING_CONTEXT.md`; consultar apenas o sistema afectado. Repo Brawl2007/COD-guerra. Branch actual `codex/m01-support-runtime`; candidato do PR #32 em `codex/m01-assets-review`, entregue em staging `codex/m01-runtime`. Âncora de código/merges `83e2129c15f3a4c8805e954e7b3b5bf22450a987`, tree `84462c0d08cd53533bd8332a9426d1a54c604eae`; commits seguintes apenas registam provas/contexto/tarefas. Confirmar refs antes de escrever.
+Continuar sem reiniciar. Ler primeiro este ficheiro, `AGENTS.md` e `docs/WORKING_CONTEXT.md`; consultar apenas o sistema afectado. Repo Brawl2007/COD-guerra. Branch actual `codex/m01-support-runtime`; candidato do PR #32 em `codex/m01-assets-review`, entregue em staging `codex/m01-runtime`. Âncora do runtime validado `a83bd8c960e853278ffb0a2293776099e05d3d86`, tree `6885264ee93579bcabb9602813ee875d58421d66`; o commit seguinte actualiza apenas estas âncoras de contexto. Confirmar refs antes de escrever.
 
 ## Intenção e limites
 
