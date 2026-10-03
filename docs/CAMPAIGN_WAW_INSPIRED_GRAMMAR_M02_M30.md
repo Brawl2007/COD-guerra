@@ -211,6 +211,51 @@ Cada missão define:
 
 A paleta pode degradar durante a missão conforme fumaça, chuva, noite ou destruição aumentam.
 
+
+## Regra 13 — NENHUM MINUTO VAZIO
+
+Duração padrão da missão: aproximadamente **20–25 minutos**.
+
+Isso NÃO significa combate contínuo. Significa que nenhum trecho deve parecer preenchimento.
+
+A cada aproximadamente 30–60 segundos, o jogador deve receber pelo menos um elemento significativo:
+
+- nova informação;
+- mudança de posição;
+- diálogo curto;
+- ameaça percebida;
+- movimento de tropas;
+- veículo ou formação atravessando o cenário;
+- mudança de objetivo;
+- alteração de terreno;
+- som distante com origem real;
+- personagem reagindo;
+- ferido sendo removido;
+- rádio atualizando outro setor;
+- descoberta ambiental;
+- decisão de rota;
+- preparação para um ataque;
+- silêncio com tensão perceptível;
+- consequência de evento anterior.
+
+Trechos silenciosos continuam ativos. Durante silêncio:
+- soldados trabalham, observam, limpam arma, repartem água, carregam feridos ou procuram desaparecidos;
+- setores distantes continuam mudando;
+- fumaça, veículos, aeronaves e artilharia continuam evoluindo;
+- diálogos e linguagem corporal carregam informação;
+- o jogador percebe que algo está prestes a mudar.
+
+PROIBIDO:
+- caminhada longa sem contexto;
+- corredor vazio entre dois combates;
+- esperar timer sem atividade significativa;
+- repetir ondas apenas para preencher duração;
+- NPCs parados aguardando trigger;
+- silêncio sem tensão, informação ou consequência.
+
+Teste de ritmo:
+se for possível remover 60 segundos de uma missão sem perder informação, emoção, decisão, espaço, personagem ou mudança de estado, esse minuto provavelmente precisa ser reescrito.
+
 ---
 
 # Aplicação M02–M30
