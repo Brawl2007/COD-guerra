@@ -22,11 +22,22 @@ const STATION_YARD={x:-300,y:-3,z:30},STATION_PATIENT='generic_rifleman';
 // Estimated presentation timing, owned by simulation and saved with the pair (schema 2).
 const STATION_TRANSITION_SEC=1.6,STATION_DRAG_OFFSET=.92;
 const STATION_DELIVERY={x:EVACUATION.x-2,z:EVACUATION.z+2.2};
-// West embrasure cv_casemate_emb_s; ground placement is provisional, with no invented firing/platform.
-export const CKM_POSITION={x:22,y:-3,z:43};
-const CKM_IDS=['ckm_gunner','ckm_loader','ckm_reserve'],CKM_ABANDON_SEC=3;
+// West embrasure cv_casemate_emb_s; muzzle_flash is 0.83 m along local -Z, so yaw -PI/2 puts it at mapped x=25.
+export const CKM_POSITION={x:24.17,y:-3,z:43};
+const CKM_IDS=['ckm_gunner','ckm_loader','ckm_reserve'],CKM_ABANDON_SEC=3,CKM_PLACEMENT_DX=2.17;
+const CKM_LEGACY_POST=[[21.206,42.971],[22.08,42.48],[20.4,41.6]];
+const CKM_POST=CKM_LEGACY_POST.map(([x,z])=>[x+CKM_PLACEMENT_DX,z]);
+const migrateCKMPlacement=(actors,consumed)=>{
+  // Old 89-actor schema-2 saves have no placement-version marker. The only unambiguous signature is an
+  // idle/abandon crew member still at its exact old authored post. Retreat actors are never moved.
+  if(Object.hasOwn(consumed,E('west_demolition')))return;
+  CKM_IDS.forEach((id,i)=>{
+    const a=actors.find(actor=>actor.id===id),[x,z]=CKM_LEGACY_POST[i];
+    if(a?.ckm&&a.ckm.phase!=='retreat'&&a.x===x&&a.y===-3&&a.z===z)a.x+=CKM_PLACEMENT_DX;
+  });
+};
 const makeCKMCrew=(world,clock=0,withdrawn=false)=>CKM_IDS.map((id,i)=>{
-  const [x,z]=[[21.206,42.971],[22.08,42.48],[20.4,41.6]][i];
+  const [x,z]=CKM_POST[i];
   const point=withdrawn?{x:-170-i*1.6,z:22+i*1.2}:{x,z};
   return entity(id,{...point,y:withdrawn?world.heightAt(point.x,point.z):CKM_POSITION.y},'ally',{
     group:'grp_ckm_crew',role:i<2?'SUPPORT':'RIFLEMAN',facing:i===1?112*Math.PI/180:0,
@@ -822,7 +833,7 @@ export class M01Simulation {
     if(!s.actors.some(a=>CKM_IDS.includes(a.id))){
       const at=s.consumed[E('east_demolition')],crew=makeCKMCrew(candidate.world,at??0,at!==undefined);
       crew.forEach(a=>a.ckm.visible=!Object.hasOwn(s.consumed,E('west_demolition')));candidate.actors.push(...crew);
-    }
+    }else migrateCKMPlacement(candidate.actors,s.consumed);
     candidate.enemyFire=s.enemyFire??{rounds:[],nextId:0};   // saves anteriores ao fogo em voo começam sem tiros no ar
     candidate.timers={...s.timers,kowalRounds:s.timers.kowalRounds??30,lowAmmoHint:s.timers.lowAmmoHint??false,nextCombatCall:s.timers.nextCombatCall??0};
     // Saves anteriores activavam as 24 instâncias: só os 18 primeiros podem estar no pelotão; as reservas ficam fora de cena.
