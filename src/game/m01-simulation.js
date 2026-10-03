@@ -1,5 +1,6 @@
 import definition from '../../missions/m01-tczew/mission.json' with { type: 'json' };
 import manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with { type: 'json' };
+import ckmManifest from '../../assets/models/provisional/m01/weapons/ckm_wz30/manifest.json' with { type: 'json' };
 import { TczewWorld } from '../world/tczew-world.js';
 import { Wz29 } from './wz29.js';
 import { Random } from '../core/random.js';
@@ -36,6 +37,22 @@ const eastPosition=i=>{
   const k=i-14;return k<14?{x:1076+(k%4)*7,y:-1,z:-80+k*5}:{x:1076+(k%4)*6,y:-1,z:52+(k-14)*4};   // dique, atrás das treliças
 };
 const gateShooter=a=>Number(a.id.split('_').at(-1))<14;
+const CKM_GROUP=definition.groups.find(g=>g.id==='grp_ckm_crew'),CKM_CREW_IDS=Array.from({length:CKM_GROUP.size},(_,i)=>`pl_ckm_${i}`);
+const CKM_ROLES=['gunner','loader','assistant'],CKM_ABANDON_SEC=3;
+const BASE_ACTOR_IDS=[...definition.cast.filter(c=>c.id!=='jan_wrona').map(c=>c.id),...Array.from({length:40},(_,i)=>`de_east_${i}`),
+  ...Array.from({length:10},(_,i)=>`de_spans_${i}`),...Array.from({length:24},(_,i)=>`pl_east_${i}`)];
+const ckmCrew=world=>{
+  const post=world.coverNodes.find(c=>c.id===CKM_GROUP.post);if(!post)throw new Error(`Posto M01 desconhecido: ${CKM_GROUP.post}`);
+  const [x,y,z]=post.position,rootYaw=Math.atan2(-post.normal[0],-post.normal[2]),
+    slots=[ckmManifest.crew.gunner,ckmManifest.crew.loader,{pos:[0,0,0],yaw:0}];
+  return CKM_CREW_IDS.map((id,i)=>{
+    const slot=slots[i],[lx,ly,lz]=slot.pos,cos=Math.cos(rootYaw),sin=Math.sin(rootYaw),localYaw=(slot.yaw??0)*Math.PI/180;
+    return entity(id,{x:x+cos*lx+sin*lz,y:y+ly,z:z-sin*lx+cos*lz},'ally',
+      {group:CKM_GROUP.id,role:i<2?'SUPPORT':'RIFLEMAN',weapon:i===0?'ckm_wz30':'kb_wz29',
+        ckmRole:CKM_ROLES[i],ckmPhase:'manned',ckmStartedAt:0,facing:-rootYaw-localYaw-Math.PI/2});
+  });
+};
+
 
 export class M01Simulation {
   constructor(seed=19390901){this.reset(seed);}
@@ -61,6 +78,7 @@ export class M01Simulation {
       {group:'grp_de_spans',weapon:'kar98k',active:false,firedAt:-1e9}));
     for(let i=0;i<24;i++)this.actors.push(entity(`pl_east_${i}`,{x:1040+i%4*2,y:0,z:38+i%4*.65},'ally',
       {group:'grp_east_platoon',active:false,role:'RIFLEMAN'}));
+    this.actors.push(...ckmCrew(this.world));
     this.timers={boundary:0,water:0,cover:0,repairStall:0,repairSuppressedUntil:0,withdrawalCasualty:seconds('06:00:00'),
       ambient:0,nextCoverCall:40,guide:0,guideKey:null,guideAt:0,guideDist:0,guideShown:false,kowalRounds:30,lowAmmoHint:false,escort:false,escortSpoke:false,boundaryWarning:false,boundaryCountdown:0,holdAccessVisited:false,
       occupiedCover:null,coverExposure:0,coverCallIndex:0,repairPins:0,fireEase:false,calloutAt:-1e9,nextCombatCall:0};
@@ -212,6 +230,7 @@ export class M01Simulation {
       case E('east_demolition'):
         this.finish('cover_withdrawal');this.activate('leave_bridge');this.destruction.push('east_ends_destroyed');this.mission.phase='CLIMAX';
         this.enemies.filter(a=>a.group==='grp_de_spans').forEach((a,i)=>{if(i<4){a.health=0;a.alive=false;a.state='DOWN';}else{a.state='RETREAT';}});
+        this.actors.filter(a=>a.group===CKM_GROUP.id).forEach(a=>Object.assign(a,{ckmPhase:'abandon',ckmStartedAt:this.clock,target:null,state:'GUARD'}));
         this.startScene('cs_m01_east_blast');this.impact('east_demolition',{x:800,y:0,z:20},false);
         if(this.flags['m01.bak_status']==='rescued_by_player'&&this.actor('jozef_bak').active)this.actor('leon_dudek').task='evacuate_bak';break;
       case E('dudek_retrieves_bak'):this.flags['m01.bak_status']='rescued_by_dudek';this.flags['m01.dudek_status']='wounded_arm';
@@ -318,10 +337,13 @@ export class M01Simulation {
   }
   updateActors(dt){
     this.interruptStationEvacuation();
-    const retreat=this.consumedEvent(E('east_demolition'));
+    const retreat=this.consumedEvent(E('east_demolition')),ckm=this.actors.filter(a=>a.group===CKM_GROUP.id);
+    if(retreat&&ckm.length===CKM_CREW_IDS.length&&ckm.every(a=>a.ckmPhase==='abandon')&&this.clock-ckm[0].ckmStartedAt>=CKM_ABANDON_SEC)
+      ckm.forEach(a=>Object.assign(a,{ckmPhase:'moving',ckmStartedAt:this.clock}));
     for(const a of this.actors){
       a.shot=Math.max(0,a.shot-dt);if(!a.alive||!a.active)continue;
       if(a.team==='enemy')a.crouched=this.clock<a.suppressedUntil;
+      if(a.group===CKM_GROUP.id&&a.ckmPhase==='abandon')continue;
       if(a.group==='grp_east_platoon'){
         // Etapas do recuo: portal rodoviário, sul do barracão e passagem pelo posto de disparo até junto da estação.
         // Os limiares ficam aquém dos pontos (moveActor pára a 0,8 m), para nenhum soldado ficar preso numa etapa.
@@ -788,9 +810,15 @@ export class M01Simulation {
     scene:this.scene,sceneDone:this.sceneDone,checkpointsReached:this.checkpointsReached,pendingCheckpoint:this.pendingCheckpoint,
     gate:this.gate,recoveries:this.recoveries,timers:this.timers,sectors:this.sectors,grenades:this.grenades,mission:this.mission,enemyFire:this.enemyFire});}
   restoreSnapshot(raw){
-    const s=clone(raw);validateM01Snapshot(s);const candidate=new M01Simulation(s.rng);
+    const s=clone(raw);validateM01Snapshot(s);const candidate=new M01Simulation(s.rng),legacyCkm=!s.actors.some(a=>CKM_CREW_IDS.includes(a.id)),
+      ckmDefaults=candidate.actors.filter(a=>a.group===CKM_GROUP.id);
     for(const key of ['clock','battleClock','player','actors','consumed','objectives','flags','destruction','dialogueConsumed','dialogueQueue','subtitle',
       'scene','sceneDone','checkpointsReached','pendingCheckpoint','gate','recoveries','timers','sectors','grenades','mission'])candidate[key]=s[key];
+    if(legacyCkm){
+      if(Object.hasOwn(s.consumed,E('east_demolition')))for(const a of ckmDefaults)
+        Object.assign(a,{x:-170,y:candidate.world.heightAt(-170,22),z:22,state:'GUARD',target:null,ckmPhase:'moving',ckmStartedAt:s.clock});
+      candidate.actors.push(...ckmDefaults);
+    }
     candidate.enemyFire=s.enemyFire??{rounds:[],nextId:0};   // saves anteriores ao fogo em voo começam sem tiros no ar
     candidate.timers={...s.timers,kowalRounds:s.timers.kowalRounds??30,lowAmmoHint:s.timers.lowAmmoHint??false,nextCombatCall:s.timers.nextCombatCall??0};
     // Saves anteriores activavam as 24 instâncias: só os 18 primeiros podem estar no pelotão; as reservas ficam fora de cena.
@@ -812,8 +840,18 @@ export function validateM01Snapshot(s){
   const finite=(v,min=0,max=Infinity)=>Number.isFinite(v)&&v>=min&&v<=max;
   const point=p=>p&&p.space==='metres'&&[p.x,p.y,p.z].every(Number.isFinite)&&finite(p.health,0,100)&&typeof p.alive==='boolean';
   if(!point(s.player)||s.player.health<=0||s.player.health>100||!s.player.alive||![s.player.angle,s.player.pitch].every(Number.isFinite))reject('jogador');
-  const actorIds=[...definition.cast.filter(c=>c.id!=='jan_wrona').map(c=>c.id),...Array.from({length:40},(_,i)=>`de_east_${i}`),...Array.from({length:10},(_,i)=>`de_spans_${i}`),...Array.from({length:24},(_,i)=>`pl_east_${i}`)];
-  if(!Array.isArray(s.actors)||s.actors.length!==actorIds.length||new Set(s.actors.map(a=>a.id)).size!==s.actors.length||!s.actors.every(a=>point(a)&&actorIds.includes(a.id)&&Number.isFinite(a.radius)&&a.radius>0))reject('actores');
+  const actorIds=[...BASE_ACTOR_IDS,...CKM_CREW_IDS],ids=Array.isArray(s.actors)?s.actors.map(a=>a.id):[],
+    expected=ids.length===BASE_ACTOR_IDS.length?BASE_ACTOR_IDS:ids.length===actorIds.length?actorIds:null;
+  if(!Array.isArray(s.actors)||!expected||new Set(ids).size!==s.actors.length||!expected.every(id=>ids.includes(id))||
+    !s.actors.every(a=>point(a)&&expected.includes(a.id)&&Number.isFinite(a.radius)&&a.radius>0))reject('actores');
+  if(ids.some(id=>CKM_CREW_IDS.includes(id))){
+    const crew=CKM_CREW_IDS.map(id=>s.actors.find(a=>a.id===id)),phase=crew[0]?.ckmPhase,started=crew[0]?.ckmStartedAt,eventAt=s.consumed?.[E('east_demolition')];
+    if(crew.some(a=>!a)||!['manned','abandon','moving'].includes(phase)||!finite(started,0,s.clock)||
+      crew.some((a,i)=>a.group!==CKM_GROUP.id||a.ckmRole!==CKM_ROLES[i]||a.ckmPhase!==phase||a.ckmStartedAt!==started||
+        a.role!==(i<2?'SUPPORT':'RIFLEMAN')||a.weapon!==(i===0?'ckm_wz30':'kb_wz29'))||
+      (eventAt===undefined?(phase!=='manned'||started!==0):(phase==='manned'||started<eventAt))||
+      (phase==='abandon'&&started!==eventAt))reject('guarnição ckm');
+  }
   if(s.actors.some(a=>a.team==='enemy'&&a.x<690)||s.actors.some(a=>definition.historicalPersonsOffscreen.some(h=>h.id===a.id)))reject('elenco');
   if(s.actors.some(a=>a.team!==(a.id.startsWith('de_')?'enemy':'ally')||
     !['GUARD','ADVANCE','SUPPRESS','RETREAT','HIT_REACTION','DOWN','WOUNDED','reached_safety'].includes(a.state)||
