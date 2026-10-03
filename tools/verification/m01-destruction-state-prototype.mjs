@@ -14,7 +14,7 @@ const check=(condition,message)=>{if(!condition)fail(message);};
 const plain=v=>v!==null&&typeof v==='object'&&!Array.isArray(v)&&[Object.prototype,null].includes(Object.getPrototypeOf(v));
 const member=(v,choices,name)=>check(choices.includes(v),`invalid ${name}`);
 const number=(v,min=0,max=1e9)=>check(Number.isFinite(v)&&v>=min&&v<=max,'invalid number');
-const identifier=v=>check(typeof v==='string'&&v.length<=120&&/^[a-z][a-z0-9_]*(?:[.:][a-z0-9_]+)*$/.test(v),'invalid stable ID');
+const identifier=v=>check(typeof v==='string'&&v.length<=120&&!['constructor','prototype','__proto__'].includes(v)&&/^[a-z][a-z0-9_]*(?:[.:][a-z0-9_]+)*$/.test(v),'invalid stable ID');
 const vector=v=>{check(Array.isArray(v)&&v.length===3,'invalid position');v.forEach(n=>number(n,-1e6,1e6));};
 const keys=(v,required,optional=[])=>{
   check(plain(v),'expected plain record');
@@ -63,7 +63,9 @@ export function createWorld({missionId,seed,catalogVersion,catalog}){
     }
     objects[d.id]={id:d.id,parts,fire:null,...(d.category==='vehicle'?{vehicle:{mobility:'operational',crew:'present',changedAt:null,causeEventId:null}}:{})};
   }
-  return seal({format:FORMAT,missionId,seed,catalogVersion,catalog:data,clock:0,objects,craters:{},debris:{},events:[]});
+  const world={format:FORMAT,missionId,seed,catalogVersion,catalog:data,clock:0,objects,craters:{},debris:{},events:[]};
+  check(Buffer.byteLength(canonicalJSON(world))<=LIMITS.bytes,'snapshot byte capacity');
+  return seal(world);
 }
 
 // Event-local FNV-1a + xorshift32. Does not share production RNG state.
@@ -85,7 +87,7 @@ function applyOperation(draft,event,op,writes){
   const stamp={changedAt:event.at,causeEventId:event.id};
   if(op.type==='part'){
     keys(op,['type','targetId','partId','structuralState','collisionState','coverState','traversalState']);identifier(op.partId);
-    const part=object.parts[op.partId];check(part,'unknown part');claim(`${op.targetId}:part:${op.partId}`);
+    check(Object.hasOwn(object.parts,op.partId),'unknown part');const part=object.parts[op.partId];claim(`${op.targetId}:part:${op.partId}`);
     member(op.structuralState,STRUCTURE,'structure');policies(op);
     check(STRUCTURE.indexOf(op.structuralState)>=STRUCTURE.indexOf(part.structuralState),'structural regression');
     Object.assign(part,{structuralState:op.structuralState,collisionState:op.collisionState,
