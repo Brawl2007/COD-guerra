@@ -1350,6 +1350,8 @@ Não depender apenas de grande explosão.
 Para M02–M30, aplicar também `docs/CAMPAIGN_CINEMATIC_DIRECTION_M02_M30.md`.
 Esse documento define a assinatura cinematográfica, escala da batalha, pausa humana e paleta visual própria de cada capítulo sem substituir os fatos, datas, unidades, resultados e restrições históricas da seção 79. Em conflito factual, prevalece a pesquisa histórica da missão. M01 permanece regida por seu roteiro e implementação já desenvolvidos.
 
+A ligação segura de M01 com a campanha, sem alterar o protótipo enquanto está em desenvolvimento, está em `docs/M01_CAMPAIGN_CONNECTION_CONTRACT.md`. M01 continua com seu runtime/roteiro próprios; a conexão com M02 acontece por transição pós-debrief, tema e futura adaptação de flags globais.
+
 Pacote de produção M02–M30 também obrigatório:
 - `docs/CAMPAIGN_10_PILLARS_PRODUCTION_M02_M30.md`
 - `docs/production/M02_M10_PRODUCTION_SHEETS.md`
