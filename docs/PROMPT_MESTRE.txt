@@ -1347,6 +1347,9 @@ Cada missão precisa ter pelo menos um momento memorável criado pela combinaç�
 
 Não depender apenas de grande explosão.
 
+Para M02–M30, aplicar também `docs/CAMPAIGN_CINEMATIC_DIRECTION_M02_M30.md`.
+Esse documento define a assinatura cinematográfica, escala da batalha, pausa humana e paleta visual própria de cada capítulo sem substituir os fatos, datas, unidades, resultados e restrições históricas da seção 79. Em conflito factual, prevalece a pesquisa histórica da missão. M01 permanece regida por seu roteiro e implementação já desenvolvidos.
+
 ============================================================
 56. AMBIENT STORYTELLING
 ============================================================
