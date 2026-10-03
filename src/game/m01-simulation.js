@@ -61,8 +61,6 @@ const MG34_IDS=['de_east_0','de_east_1'],MG34_TRANSITION_SEC=1.9,MG34_INTERVAL=.
 const proneGunner=a=>MG34_IDS.includes(a.id);
 const fixedMG34=a=>a.alive&&a.active&&!['ADVANCE','RETREAT','WOUNDED','DOWN','reached_safety'].includes(a.state)&&
   !(a.target&&dist(a,a.target)>=.8);
-// The spatial checkpoint adds NPC/socket sampling; until then retain the existing valid eye origin.
-const mg34Muzzle=(a,clock)=>{const p=muzzlePosition(a,clock);return [p.x,p.y,p.z].every(Number.isFinite)?p:eyePosition(a);};
 const canMG34Fire=a=>!proneGunner(a)||(fixedMG34(a)&&['idle','aim'].includes(a.mg34Prone?.phase));
 
 export class M01Simulation {
@@ -360,7 +358,7 @@ export class M01Simulation {
     if(p.phase==='standing'&&fixedMG34(a)){phase('enter');p=a.mg34Prone;}
     if(p.phase==='enter'&&this.clock-p.startedAt>=p.duration){phase('idle',p.startedAt+p.duration);p=a.mg34Prone;}
     // Suppression keeps a fixed gunner low and cancels only shots which have not left the muzzle.
-    if(this.clock<a.suppressedUntil&&['aim','fire_burst'].includes(p.phase)){phase('idle');a.shot=0;}
+    if((this.clock<a.suppressedUntil||a.state==='HIT_REACTION')&&['aim','fire_burst'].includes(p.phase)){phase('idle');a.shot=0;}
     p=a.mg34Prone;p.progress=['enter','exit'].includes(p.phase)?Math.min(1,Math.max(0,(this.clock-p.startedAt)/p.duration)):
       p.phase==='standing'?0:1;
   }
@@ -530,7 +528,7 @@ export class M01Simulation {
       const shared=[bias[0]*this.gauss(),bias[1]*this.gauss()],b=a.mg34Prone.burst;
       // Plan dispersion in the existing RNG order, but do not emit future rounds or presentation events.
       for(let k=0;k<rounds;k++)b.plan.push(makeRound({id:`m01_round_${this.enemyFire.nextId++}`,by:a.id,weapon:a.weapon,kind,
-        origin:mg34Muzzle(a,this.clock+k*interval),aim,firedAt:this.clock+k*interval,bias:shared,cone,
+        origin:muzzlePosition(a,this.clock+k*interval),aim,firedAt:this.clock+k*interval,bias:shared,cone,
         gauss:()=>this.gauss(),tracer:tracer&&k===Math.min(1,rounds-1),victim}));
       a.firedAt=this.clock;a.state='SUPPRESS';this.emitMG34Rounds(a);return true;
     }
@@ -647,6 +645,8 @@ export class M01Simulation {
     if(!Number.isFinite(dt)||dt<=0||this.mission.complete)return;dt=Math.min(.05,dt);
     if(!this.player.alive){const reason=this.failure;this.restoreCheckpoint();this.emit({type:'restored'});if(reason)this.message(reason);return;}
     this.clock+=dt;const p=this.player;
+    // Player rays use this tick's transition frame, matching the frame later sampled by presentation.
+    for(const a of this.enemies)if(proneGunner(a))this.updateMG34Posture(a);
     p.angle+=(controls.lookX??0)*.0022;p.pitch=Math.max(-1.25,Math.min(1.25,p.pitch-(controls.lookY??0)*.0022));p.aiming=Boolean(controls.aim);
     if(controls.crouch)p.crouched=!p.crouched;
     this.updateScene(dt,controls.skip);
