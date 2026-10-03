@@ -485,7 +485,8 @@ Do **not** save every mixer action/time. Separate reconstructible cosmetic state
 
 ### Reconstructible — no save field needed
 
-- idle/walk/run loop phase derived from mission clock + actor ID;
+- idle/breath loop phase derived from mission clock + actor ID;
+- locomotion phase only when it is reconstructible from authoritative movement history/distance; otherwise exact stride continuity needs the compact phase state described below;
 - idle variant derived from actor ID;
 - LOD/fidelity choice;
 - cosmetic breath/additive phase.
@@ -510,6 +511,7 @@ Possible future presentation state:
 ```js
 AnimationRestoreState {
   bodyYaw,
+  locomotionPhaseCycles,
   postureTransition:{from,to,startedAt,duration}|null,
   clipTransition:{from,to,startedAt,duration}|null
 }
