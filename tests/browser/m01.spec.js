@@ -26,6 +26,15 @@ async function start(page,button='#start'){
     await page.waitForFunction(()=>window.gameDiagnostics().m01.checkpoints.includes('cp_m01_a_orientacao'));
   }
 }
+async function freezeClick(page,button){
+  // Native pointer-lock handoff preserves the restored frame while optional clips finish loading.
+  await page.evaluate(()=>{
+    const hold=e=>{if(document.pointerLockElement?.id==='game'){
+      document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();document.exitPointerLock();
+    }};document.addEventListener('pointerlockchange',hold,true);
+  });
+  await page.locator(button).click();await expect(page.locator('#pause')).toBeVisible();
+}
 test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A',async({page},info)=>{
   test.setTimeout(process.env.CI?180000:90000);
   const {errors,failed}=await open(page);await page.screenshot({path:info.outputPath('m01-menu.png')});await start(page);
@@ -220,12 +229,13 @@ test('the station evacuation restores its grounded drag, pauses with the mission
 for(const phase of ['grab','release'])test(`the real station ${phase} restores synchronized clips, pauses and keeps both roots fixed`,async({page},info)=>{
   test.setTimeout(process.env.CI?180000:120000);
   const d=toStationEvacuation(driver(),{observe:true,phase});for(let i=0;i<7;i++)d.step();
-  const snapshot=d.sim.snapshot(),pair=d.sim.stationEvacuation,p=snapshot.player;
+  const snapshot=d.sim.snapshot(false),pair=d.sim.stationEvacuation,p=snapshot.player;
   // Look controls applied to the genuine route, before saving. No hand-written actor states.
   const angle=Math.atan2(pair.patient.z-p.z,pair.patient.x-p.x);
   d.step({lookX:Math.atan2(Math.sin(angle-p.angle),Math.cos(angle-p.angle))/.0022,lookY:(p.pitch+.18)/.0022});
-  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
-  const {errors,failed}=await open(page);await start(page,'#continue');
+  // This staged visual test installs the observed phase as a CP, so Restart must return to that phase.
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot(false)});
+  const {errors,failed}=await open(page);await freezeClick(page,'#continue');
   await page.waitForFunction(phase=>{
     const g=window.gameDiagnostics(),actors=g.m01.characters.actors;
     if(g.m01.stationEvacuation.patient.stationDrag?.phase===phase&&
@@ -242,9 +252,9 @@ for(const phase of ['grab','release'])test(`the real station ${phase} restores s
   await page.waitForTimeout(300);const still=await page.evaluate(()=>window.gameDiagnostics());
   expect(still.m01.stationEvacuation).toEqual(frozen.m01.stationEvacuation);expect(still.m01.characters).toEqual(frozen.m01.characters);
   await page.screenshot({path:info.outputPath(`m01-station-${phase}.png`),style:'#pause { visibility:hidden !important; }',timeout:90000});
-  await page.locator('#restart-checkpoint').click();
+  await freezeClick(page,'#restart-checkpoint');
   await page.waitForFunction(phase=>{
-    const g=window.gameDiagnostics();if(!g.paused&&g.m01.characters.actors?.some(a=>a.clip===`station_drag_patient_${phase}`)){
+    const g=window.gameDiagnostics();if(g.paused&&g.m01.characters.actors?.some(a=>a.clip===`station_drag_patient_${phase}`)){
       document.exitPointerLock();return true;
     }return false;
   },phase);
@@ -390,7 +400,7 @@ test('the genuine train 963 and both MG34 fire sources use optional GLBs, light 
   const d=toRepair(driver());d.until(()=>d.sim.battleClock>=seconds('04:45:10'),120);
   const gun=d.sim.actor('de_east_0'),p=d.sim.player,angle=Math.atan2(gun.z-p.z,gun.x-p.x);
   d.step({lookX:Math.atan2(Math.sin(angle-p.angle),Math.cos(angle-p.angle))/.0022});
-  const snapshot=d.sim.snapshot();
+  const snapshot=d.sim.snapshot(false);   // staged CP for the train/MG visual restart, not a continuation save
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
   const {errors,failed}=await open(page);await start(page,'#continue');
   await page.waitForFunction(()=>{
@@ -413,6 +423,25 @@ test('the genuine train 963 and both MG34 fire sources use optional GLBs, light 
   const restored=await page.evaluate(()=>window.gameDiagnostics());
   expect(restored.m01.wagons).toEqual(w);expect(restored.geometries).toBeLessThanOrEqual(frozen.geometries+2);expect(restored.textures).toBeLessThanOrEqual(frozen.textures+2);
   await info.attach('train-mg34-samples',{body:JSON.stringify({kind:'production continuation of a genuine simulation-control snapshot; view from west bank',frozen,restored,errors,failed}),contentType:'application/json'});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+
+test('schema-2 continuation keeps the older CP-A on the real Restart checkpoint button',async({page},info)=>{
+  test.setTimeout(120000);
+  const d=driver();d.step({skip:true});d.walk(-66,26);
+  const snapshot=d.sim.snapshot(),cp=d.sim.checkpoint;
+  expect(snapshot.resumeCheckpoint).toEqual(cp);expect(snapshot.clock).toBeGreaterThan(cp.clock);
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors,failed}=await open(page);
+  await freezeClick(page,'#continue');
+  const current=await page.evaluate(()=>window.gameDiagnostics());expect(current.clock).toBe(snapshot.clock);
+  for(const axis of ['x','y','z','angle','pitch'])expect(current.player[axis]).toBe(snapshot.player[axis]);
+  await freezeClick(page,'#restart-checkpoint');
+  const recovered=await page.evaluate(()=>window.gameDiagnostics());expect(recovered.clock).toBe(cp.clock);
+  expect(recovered.m01.battleClock).toBe(cp.battleClock);expect(recovered.m01.checkpoints).toEqual(cp.checkpointsReached);
+  for(const axis of ['x','y','z','angle','pitch'])expect(recovered.player[axis]).toBe(cp.player[axis]);
+  expect(recovered.player.z).not.toBe(current.player.z);
+  await info.attach('continuation-checkpoint-proof',{body:JSON.stringify({kind:'actual UI continuation, then recovery to earlier genuine CP-A before first tick',current,recovered,savedClock:snapshot.clock,checkpointClock:cp.clock}),contentType:'application/json'});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 test('missing optional wagon models and MG34 clips preserve 65 proxies, both procedural supports and playable M01',async({page},info)=>{
