@@ -121,12 +121,12 @@ Future inventory capacity is a separate design decision. A failed safe-drop plac
 Separate **cartridge compatibility** from **feed-device compatibility**.
 
 ```js
-weapon = {id:'kar98k', caliber:'7.92x57', feed:{kind:'internal-magazine', chargeFamilies:['mauser-stripper-5','single-round']}}
+weapon = {id:'kar98k', caliber:'7.92x57', feed:{kind:'internal-magazine', chargeFamilies:['weapon-approved-charger-family']}}
 ammo   = {kind:'cartridges', caliber:'7.92x57', rounds:12}
 mag    = {kind:'magazine', caliber:'7.92x57', family:'rkm28-mag', rounds:11}
 ```
 
-Same caliber can make loose cartridges compatible. It does not make a detachable magazine, belt or drum compatible. `.30-06` never converts to `7.92x57`. Clips are chargers/feed aids, not magical magazines. No generic “ammo points”.
+Same caliber can make loose cartridges compatible. It does not prove charger interchangeability and does not make a detachable magazine, belt or drum compatible. `.30-06` never converts to `7.92x57`. Clips are chargers/feed aids, not magical magazines. No generic “ammo points”.
 
 ## Context interaction resolver
 

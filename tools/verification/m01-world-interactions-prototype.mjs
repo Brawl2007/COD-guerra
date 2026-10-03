@@ -11,35 +11,25 @@ const direction=(a,b)=>normalized({x:b.x-a.x,y:b.y-a.y,z:b.z-a.z});
 const angleDeg=(forward,to)=>Math.acos(clamp(dot(normalized(forward),normalized(to)),-1,1))*180/Math.PI;
 
 export const WEAPON_TYPES=Object.freeze({
-  kb_wz29:Object.freeze({id:'kb_wz29',caliber:'7.92x57',feedKind:'internal-magazine',capacity:5,chargeFamilies:['mauser-stripper-5','single-round']}),
-  kar98k:Object.freeze({id:'kar98k',caliber:'7.92x57',feedKind:'internal-magazine',capacity:5,chargeFamilies:['mauser-stripper-5','single-round']}),
+  kb_wz29:Object.freeze({id:'kb_wz29',caliber:'7.92x57',feedKind:'internal-magazine',capacity:5,chargeFamilies:['kb-wz29-charger-5']}),
+  kar98k:Object.freeze({id:'kar98k',caliber:'7.92x57',feedKind:'internal-magazine',capacity:5,chargeFamilies:['kar98k-charger-5']}),
   rkm_wz28:Object.freeze({id:'rkm_wz28',caliber:'7.92x57',feedKind:'detachable-magazine',capacity:20,feedFamily:'rkm28-mag'}),
   mg34:Object.freeze({id:'mg34',caliber:'7.92x57',feedKind:'belt',capacity:50,feedFamily:'mg34-belt'}),
   ckm_wz30:Object.freeze({id:'ckm_wz30',caliber:'7.92x57',feedKind:'belt',capacity:330,feedFamily:'ckm30-cloth-belt'}),
+});
+
+export const MOUNTED_TYPES=Object.freeze({
+  artillery_prototype:Object.freeze({id:'artillery_prototype',feedKind:'single-shell'}),
+  mortar_prototype:Object.freeze({id:'mortar_prototype',feedKind:'single-shell'}),
 });
 
 export function makeWorldWeapon({id,weaponType,position,orientation={yaw:0,pitch:0,roll:0},feed,holder=null,
   condition='serviceable',protected:protectedItem=false,persistent=false,droppedAt=null,sourceActorId=null,presentationId=null}){
   const profile=WEAPON_TYPES[weaponType];if(!profile)throw new Error(`unknown weaponType ${weaponType}`);
   if(!id)throw new Error('world weapon requires stable id');
-  if(!feed||feed.kind!==profile.feedKind)throw new Error(`feed kind ${feed?.kind} does not match ${weaponType}`);
-  if(Number.isInteger(feed.rounds)&&Number.isInteger(feed.capacity)&&(feed.rounds<0||feed.rounds>feed.capacity))throw new Error('in
-…[2423 chars truncated — re-run with head/grep/tail for full output]…
-gleDeg-b.angleDeg||a.distance-b.distance||a.id.localeCompare(b.id));
-  return valid[0]??null;
-}
-
-export function weaponPickupCandidate(state,weaponId){
-  const w=state.worldWeapons[weaponId];if(!w)return null;
-  const holderActor=w.holder?.kind==='actor'?state.actors[w.holder.id]:null;
-  const available=!w.protected&&w.position!==null&&(!w.holder||holderActor?.alive===false);
-  return {id:`pickup:${w.id}`,kind:'pickup-weapon',entityId:w.id,anchor:w.position,priority:40,maxDistance:2.4,maxAngleDeg:65,
-    prompt:`E — Pick up ${w.weaponType}`,available,protected:w.protected};
-}
-
-export function dropActorWeapon(state,actorId,{clock=state.clock,lateral=.35}={}){
-  const actor=state.actors[actorId];if(!actor||actor.alive!==false)throw new Error('actor must be dead before weapon drop');
-  const w=Object.values(state.worldWeapons).find(item=>item.holder?.kind==='actor'&&item.holder.id===actorId);if(!w)return null;
+  if(!feed||feed.kind!==profile.feedKind)throw new Error
+…[3513 chars truncated — re-run with head/grep/tail for full output]…
+;if(!w)return null;
   const facing=actor.facing??0;w.holder=null;w.position={x:actor.position.x-Math.sin(facing)*lateral,y:actor.position.y,z:actor.position.z+Math.cos(facing)*lateral};
   w.orientation={yaw:facing,pitch:0,roll:0};w.droppedAt=clock;return w;
 }
@@ -72,7 +62,8 @@ export function cleanupWorldWeapons(state,{now=state.clock,playerPosition=state.
 export function makeMountedWeapon({id,weaponType,mountTransform={position:{x:0,y:0,z:0},yaw:0},pivot,muzzle,operatorStation,exitAnchors=[],
   traverse={min:-Math.PI/6,max:Math.PI/6,current:0},elevation={min:-Math.PI/18,max:Math.PI/9,current:0},feed,
   status='operational',occupantId=null,crewStations=[],requirements={},singleUserCapable=false,protected:protectedItem=false,presentationId=null}){
-  if(!id||!WEAPON_TYPES[weaponType])throw new Error('mounted weapon requires valid id/type');
+  const profile=WEAPON_TYPES[weaponType]||MOUNTED_TYPES[weaponType];if(!id||!profile)throw new Error('mounted weapon requires valid id/type');
+  if(!feed||feed.kind!==profile.feedKind||!Number.isInteger(feed.rounds)||!Number.isInteger(feed.capacity)||feed.rounds<0||feed.rounds>feed.capacity)throw new Error('mounted weapon feed mismatch');
   if(traverse.min>traverse.max||elevation.min>elevation.max)throw new Error('invalid physical arc');
   return {id,weaponType,mountTransform:clone(mountTransform),pivot:clone(pivot),muzzle:clone(muzzle),operatorStation:clone(operatorStation),exitAnchors:clone(exitAnchors),
     traverse:clone(traverse),elevation:clone(elevation),feed:clone(feed),status,occupantId,crewStations:clone(crewStations),requirements:clone(requirements),
@@ -106,8 +97,8 @@ export function crewRoleOccupied(mounted,role){return mounted.crewStations.some(
 
 export function crewActionAvailable(mounted,action){
   if(mounted.status!=='operational')return false;
-  const required=mounted.requirements?.[action]??[];
-  if(mounted.singleUserCapable&&mounted.occupantId)return true;
+  const required=mounted.requirements?.[action]??(['aim','fire'].includes(action)?['operator']:[]);
+  if(mounted.singleUserCapable&&mounted.occupantId&&required.every(role=>role==='operator'))return true;
   return required.every(role=>role==='operator'?Boolean(mounted.occupantId):crewRoleOccupied(mounted,role));
 }
 
@@ -185,9 +176,13 @@ export function prototypeSnapshot(state){return clone(state);}
 export function validatePrototypeSnapshot(s){
   const fail=m=>{throw new Error(`invalid interaction prototype snapshot: ${m}`);};
   if(!s||s.prototypeSchema!==1||!Number.isFinite(s.clock)||s.clock<0||!s.player)fail('header');
-  const ids=new Set();for(const [id,w] of Object.entries(s.worldWeapons??{})){if(id!==w.id||ids.has(id)||!WEAPON_TYPES[w.weaponType])fail('world weapon');ids.add(id);if(w.position&&![w.position.x,w.position.y,w.position.z].every(Number.isFinite))fail('weapon position');if(!Number.isInteger(w.feed?.rounds)||w.feed.rounds<0||w.feed.rounds>w.feed.capacity)fail('weapon feed');}
-  for(const [id,m] of Object.entries(s.mountedWeapons??{})){if(id!==m.id||ids.has(id))fail('mounted id');ids.add(id);if(m.traverse.current<m.traverse.min||m.traverse.current>m.traverse.max||m.elevation.current<m.elevation.min||m.elevation.current>m.elevation.max)fail('mounted arc');}
-  for(const [id,v] of Object.entries(s.vehicles??{})){if(id!==v.id||ids.has(id))fail('vehicle id');ids.add(id);const occupied=v.seats.filter(x=>x.occupantId).map(x=>x.occupantId);if(new Set(occupied).size!==occupied.length)fail('duplicate vehicle occupant');}
+  const ids=new Set();for(const [id,w] of Object.entries(s.worldWeapons??{})){if(id!==w.id||ids.has(id)||!WEAPON_TYPES[w.weaponType])fail('world weapon');ids.add(id);if(w.position&&![w.position.x,w.position.y,w.position.z].every(Number.isFinite))fail('weapon position');if(!Number.isInteger(w.feed?.rounds)||!Number.isInteger(w.feed?.capacity)||w.feed.rounds<0||w.feed.rounds>w.feed.capacity)fail('weapon feed');}
+  for(const [id,m] of Object.entries(s.mountedWeapons??{})){if(id!==m.id||ids.has(id))fail('mounted id');ids.add(id);if(!Number.isInteger(m.feed?.rounds)||!Number.isInteger(m.feed?.capacity)||m.feed.rounds<0||m.feed.rounds>m.feed.capacity)fail('mounted feed');if(m.traverse.current<m.traverse.min||m.traverse.current>m.traverse.max||m.elevation.current<m.elevation.min||m.elevation.current>m.elevation.max)fail('mounted arc');}
+  const exclusiveOccupants=[];
+  for(const m of Object.values(s.mountedWeapons??{}))if(m.occupantId)exclusiveOccupants.push(m.occupantId);
+  for(const [id,v] of Object.entries(s.vehicles??{})){if(id!==v.id||ids.has(id))fail('vehicle id');ids.add(id);for(const seat of v.seats)if(seat.occupantId)exclusiveOccupants.push(seat.occupantId);}
+  if(new Set(exclusiveOccupants).size!==exclusiveOccupants.length)fail('duplicate exclusive-station occupant');
+  const playerHeld=Object.values(s.worldWeapons??{}).filter(w=>w.holder?.kind==='player'&&w.holder.id===s.player.id);if(playerHeld.length>(s.player.equippedWeaponId?1:0))fail('multiple player-held weapons');
   if(s.player.equippedWeaponId){const w=s.worldWeapons[s.player.equippedWeaponId];if(!w||w.holder?.kind!=='player'||w.holder.id!==s.player.id)fail('equipped backlink');}
   if(s.player.mountedWeaponId){const m=s.mountedWeapons[s.player.mountedWeaponId];if(!m||m.occupantId!==s.player.id)fail('mounted backlink');}
   if(s.player.vehicleSeat){const v=s.vehicles[s.player.vehicleSeat.vehicleId],seat=v?.seats.find(x=>x.id===s.player.vehicleSeat.seatId);if(!seat||seat.occupantId!==s.player.id)fail('seat backlink');}
@@ -211,7 +206,7 @@ export function scenarioFixtures(){
   s.worldWeapons.player_wz29=makeWorldWeapon({id:'player_wz29',weaponType:'kb_wz29',position:null,holder:{kind:'player',id:'player'},feed:{kind:'internal-magazine',rounds:2,capacity:5,chamber:'unmodelled'},presentationId:'wz29_glb'});
   s.player.equippedWeaponId='player_wz29';
   s.mountedWeapons.fixed_mg=makeMountedWeapon({id:'fixed_mg',weaponType:'mg34',pivot:{x:4,y:1,z:0},muzzle:{x:4.8,y:1,z:0},operatorStation:{x:3.4,y:0,z:0},exitAnchors:[{x:3,y:0,z:-1},{x:3,y:0,z:1}],traverse:{min:-.35,max:.35,current:0},elevation:{min:-.15,max:.25,current:0},feed:{kind:'belt',family:'mg34-belt',rounds:32,capacity:50,chamber:'loaded'},singleUserCapable:true});
-  s.mountedWeapons.artillery=makeMountedWeapon({id:'artillery',weaponType:'ckm_wz30',pivot:{x:8,y:0,z:0},muzzle:{x:9,y:1,z:0},operatorStation:{x:7.5,y:0,z:0},exitAnchors:[{x:7,y:0,z:-1}],feed:{kind:'belt',family:'prototype-shell-state',rounds:1,capacity:1,chamber:'loaded'},crewStations:[makeCrewStation('gunner','gunner',null),makeCrewStation('loader','loader','npc_loader')],requirements:{fire:['operator','loader'],load:['loader']}});
+  s.mountedWeapons.artillery=makeMountedWeapon({id:'artillery',weaponType:'artillery_prototype',pivot:{x:8,y:0,z:0},muzzle:{x:9,y:1,z:0},operatorStation:{x:7.5,y:0,z:0},exitAnchors:[{x:7,y:0,z:-1}],feed:{kind:'single-shell',rounds:1,capacity:1,chamber:'loaded'},crewStations:[makeCrewStation('gunner','gunner',null),makeCrewStation('loader','loader','npc_loader')],requirements:{fire:['operator','loader'],load:['loader']}});
   s.vehicles.jeep=makeVehicle({id:'jeep',type:'jeep',position:{x:12,y:0,z:0},status:'operational',seats:[
     makeSeat({id:'driver',role:'driver',entryPoint:{x:11.3,y:0,z:-.8},exitPoints:[{x:10.8,y:0,z:-1.5},{x:12,y:0,z:-1.8}],access:'door-left',controls:['drive']}),
     makeSeat({id:'passenger',role:'passenger',entryPoint:{x:11.3,y:0,z:.8},exitPoints:[{x:10.8,y:0,z:1.5},{x:12,y:0,z:1.8}],access:'door-right'}),

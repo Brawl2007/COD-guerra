@@ -1,0 +1,64 @@
+{
+  "A": {
+    "picked": "kar98k_dead",
+    "rounds": 4,
+    "oldWeaponPosition": {
+      "x": 0.4,
+      "y": 0,
+      "z": -0.4
+    },
+    "oldRounds": 2
+  },
+  "B": {
+    "id": "kar98k_dead",
+    "rounds": 4,
+    "worldPosition": {
+      "x": 1,
+      "y": 0,
+      "z": 0
+    },
+    "equipped": null
+  },
+  "C": {
+    "aimed": {
+      "traverse": 0.35,
+      "elevation": -0.15
+    },
+    "exit": {
+      "x": 3,
+      "y": 0,
+      "z": -1
+    },
+    "occupant": null
+  },
+  "D": {
+    "canDrive": true,
+    "exit": {
+      "x": 10.8,
+      "y": 0,
+      "z": -1.5
+    },
+    "seats": [
+      {
+        "id": "driver",
+        "role": "driver",
+        "occupantId": null
+      },
+      {
+        "id": "passenger",
+        "role": "passenger",
+        "occupantId": null
+      },
+      {
+        "id": "gunner",
+        "role": "gunner",
+        "occupantId": null
+      }
+    ]
+  },
+  "E": {
+    "playerStation": "artillery",
+    "withLoader": true,
+    "withoutLoader": false
+  }
+}

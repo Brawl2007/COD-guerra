@@ -67,7 +67,8 @@ test('cartridge compatibility is caliber-based but feed devices require the corr
 });
 
 test('internal-magazine charger compatibility is not inferred from caliber alone',()=>{
-  assert.equal(isFeedDeviceCompatible('kar98k',{kind:'charger',caliber:'7.92x57',family:'mauser-stripper-5'}),true);
+  assert.equal(isFeedDeviceCompatible('kar98k',{kind:'charger',caliber:'7.92x57',family:'kar98k-charger-5'}),true);
+  assert.equal(isFeedDeviceCompatible('kar98k',{kind:'charger',caliber:'7.92x57',family:'kb-wz29-charger-5'}),false,'same cartridge does not prove charger interchangeability');
   assert.equal(isFeedDeviceCompatible('kar98k',{kind:'magazine',caliber:'7.92x57',family:'rkm28-mag'}),false);
 });
 
@@ -91,8 +92,8 @@ test('mounted traverse/elevation clamp to physical arc and do not rotate through
   assert.deepEqual(aimMountedWeapon(s,'fixed_mg',{traverseDelta:-100,elevationDelta:100}),{traverse:-.35,elevation:.25});
 });
 
-test('mounted fire still rejects an obstruction in front of a legal physical arc',()=>{
-  const s=scenarioFixtures(),m=s.mountedWeapons.fixed_mg;m.occupantId='player';m.requirements={fire:['operator']};
+test('mounted fire still requires an operator and rejects an obstruction in front of a legal physical arc',()=>{
+  const s=scenarioFixtures(),m=s.mountedWeapons.fixed_mg;assert.deepEqual(canMountedWeaponFire(m),{ok:false,reason:'crew-or-status'});m.occupantId='player';m.requirements={fire:['operator']};
   assert.equal(canMountedWeaponFire(m,{traceShot:()=>null}).ok,true);
   const blocked=canMountedWeaponFire(m,{traceShot:()=>({id:'wall',distance:2})});assert.equal(blocked.ok,false);assert.equal(blocked.reason,'obstructed');
 });
@@ -139,6 +140,10 @@ test('prototype save round trip preserves dropped weapon, mounted arc, vehicle s
 test('prototype restore validates atomically before mutating target',()=>{
   const s=scenarioFixtures(),before=prototypeSnapshot(s),bad=prototypeSnapshot(s);bad.worldWeapons.kar98k_dead.feed.rounds=99;
   assert.throws(()=>restorePrototypeSnapshot(s,bad),/weapon feed/);assert.deepEqual(s,before);
+});
+
+test('prototype snapshot rejects one actor occupying two exclusive stations',()=>{
+  const s=scenarioFixtures();s.mountedWeapons.fixed_mg.occupantId='npc_x';s.vehicles.jeep.seats[0].occupantId='npc_x';assert.throws(()=>validatePrototypeSnapshot(s),/duplicate exclusive-station occupant/);
 });
 
 test('missing presentation assets do not alter gameplay fingerprint or interaction results',()=>{
