@@ -1350,6 +1350,15 @@ Não depender apenas de grande explosão.
 Para M02–M30, aplicar também `docs/CAMPAIGN_CINEMATIC_DIRECTION_M02_M30.md`.
 Esse documento define a assinatura cinematográfica, escala da batalha, pausa humana e paleta visual própria de cada capítulo sem substituir os fatos, datas, unidades, resultados e restrições históricas da seção 79. Em conflito factual, prevalece a pesquisa histórica da missão. M01 permanece regida por seu roteiro e implementação já desenvolvidos.
 
+Pacote de produção M02–M30 também obrigatório:
+- `docs/CAMPAIGN_10_PILLARS_PRODUCTION_M02_M30.md`
+- `docs/production/M02_M10_PRODUCTION_SHEETS.md`
+- `docs/production/M11_M20_PRODUCTION_SHEETS.md`
+- `docs/production/M21_M30_PRODUCTION_SHEETS.md`
+- `docs/CAMPAIGN_HISTORICAL_RESEARCH_MATRIX_M02_M30.md`
+- `docs/CAMPAIGN_REPETITION_AUDIT_M02_M30.md`
+Esses arquivos ligam roteiro, pesquisa, mapa, elenco, eventos, briefing, áudio/cinematografia, consequências, checkpoints e teste anti-repetição. Nenhum deles autoriza tratar detalhe pendente como fato histórico confirmado.
+
 ============================================================
 56. AMBIENT STORYTELLING
 ============================================================
