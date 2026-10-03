@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import map from '../missions/m01-tczew/map-layout.json' with {type:'json'};
 import {M01Simulation} from '../src/game/m01-simulation.js';
-import {TczewWorld} from '../src/world/tczew-world.js';\nimport {driver} from './helpers/m01-route.js';
+import {TczewWorld} from '../src/world/tczew-world.js';
+import {driver} from './helpers/m01-route.js';
 import {M01_YARD_WAGON_PLAN,yardWagonLod,yardWagonState,yardWagonPosition,yardWagonFireDamage} from '../src/render/m01-yard-wagons.js';
 
 const E=name=>`evt_m01_${name}`;
