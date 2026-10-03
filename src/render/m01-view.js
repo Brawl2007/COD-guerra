@@ -12,7 +12,7 @@ import { M01Environment } from './m01-environment.js';
 import { M01Characters } from './m01-characters.js';
 import { M01ViewModel } from './m01-viewmodel.js';
 import { M01TrainWagons } from './m01-train-wagons.js';
-import { M01YardWagons } from './m01-yard-wagons.js';
+import { M01YardWagons, yardWagonFireDamage } from './m01-yard-wagons.js';
 
 // Presentation only: all actors, visible pieces, damage and clocks come from M01Simulation.
 // Original procedural art: textured environment and articulated humans; final scanned/rigged art remains pending.
@@ -52,7 +52,9 @@ export class M01View {
     this.scene.add(this.solidGroup,this.effects);this.smokes=new Map();this.grenadeViews=new Map();this.world=null;this.revision=-1;
     this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0};
     this.atmosphere=new M01Atmosphere(this.scene);
-    this.createWeapon();this.createActors();this.createContactShadows();this.createFireEffects();this.createAircraft();this.createTrains();
+    this.createWeapon();this.createActors();this.createContactShadows();this.createFireEffects();
+    this.yardFire=this.mesh('sphere','glow',[0,0,0],[.32,.75,.32],this.effects);this.yardFire.visible=false;
+    this.createAircraft();this.createTrains();
     this.characters=new M01Characters(this.scene);this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture);
     this.ready=Promise.all([this.loadKit(),this.characters.load(this.owner.quality),this.loadAircraft(),this.wagons.load(),this.yardWagons.load(this.owner.quality)]);
   }
@@ -363,7 +365,12 @@ export class M01View {
     for(const x of [1120,1197])this.mesh('cylinder','metal',[x,4,2.5],[1,1,1],this.panzerzug);
   }
   syncDamage(sim,state){
-    this.atmosphere.update(state,sim.clock,this.owner.quality);
+    const yardDamage=yardWagonFireDamage(sim.destruction,sim.world,sim.consumed.evt_m01_wounded_dragged??sim.clock);
+    const damage=yardDamage&&!state.damage.some(d=>d.id===yardDamage.id)?[...state.damage,yardDamage]:state.damage;
+    this.atmosphere.update(damage===state.damage?state:{...state,damage},sim.clock,this.owner.quality);
+    this.yardFire.visible=Boolean(yardDamage);
+    if(yardDamage){const flicker=.85+.10*Math.sin(sim.clock*17)+.05*Math.sin(sim.clock*31);
+      this.yardFire.position.set(yardDamage.x,yardDamage.fireY,yardDamage.z);this.yardFire.scale.set(.45*flicker,1.0*flicker,.45*flicker);}
     const live=new Set(sim.grenades.active.map(g=>g.id));
     for(const g of sim.grenades.active){let m=this.grenadeViews.get(g.id);if(!m){m=this.mesh('sphere','metal',[0,0,0],[.07,.07,.07],this.effects);this.grenadeViews.set(g.id,m);}m.position.set(g.x,g.y,g.z);}
     for(const [id,m]of this.grenadeViews)if(!live.has(id)){this.effects.remove(m);this.grenadeViews.delete(id);}
