@@ -11,6 +11,7 @@ export const M01_YARD_WAGON_PLAN=Object.freeze([
 
 export const yardWagonLod=quality=>quality==='low'?1:0;
 export const yardWagonState=(wagon,destruction=[])=>wagon.damageKey&&destruction.includes(wagon.damageKey)?'burned':'intact';
+export const yardWagonPosition=(wagon,world)=>[wagon.position[0],world?.heightAt?world.heightAt(wagon.position[0],wagon.position[2]):wagon.position[1],wagon.position[2]];
 
 const sourceKey=(type,state,lod)=>`${type}:${state}:${lod}`;
 const sourcePath=(type,state,lod)=>state==='burned'
@@ -51,10 +52,11 @@ export class M01YardWagons{
     ]);
     if(!this.disposed)this.rebuild();
   }
-  update(destruction,quality){
+  update(destruction,quality,world){
     const lod=yardWagonLod(quality);if(lod!==this.lod){this.lod=lod;void this.load(quality);}
     let changed=false;
     for(const slot of this.slots){
+      slot.root.position.fromArray(yardWagonPosition(slot.wagon,world));
       const state=yardWagonState(slot.wagon,destruction);
       if(slot.state!==state){slot.state=state;changed=true;}
     }
@@ -80,7 +82,7 @@ export class M01YardWagons{
   }
   get diagnostics(){
     return {lod:this.lod,loaded:[...this.sources.keys()].sort(),wagons:this.slots.map(slot=>({
-      id:slot.wagon.id,type:slot.wagon.type,state:slot.state,position:slot.wagon.position,key:slot.key,cover:slot.wagon.cover??null,
+      id:slot.wagon.id,type:slot.wagon.type,state:slot.state,position:slot.root.position.toArray(),key:slot.key,cover:slot.wagon.cover??null,
     }))};
   }
   dispose(){
