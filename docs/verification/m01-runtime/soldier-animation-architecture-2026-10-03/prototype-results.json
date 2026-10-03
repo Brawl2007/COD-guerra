@@ -1,0 +1,26 @@
+{
+  "idle": "idle",
+  "walk": {
+    "semantic": "walk",
+    "rate": 1
+  },
+  "run": {
+    "semantic": "run",
+    "rate": 1
+  },
+  "crouch": {
+    "semantic": "crouch_walk",
+    "transition": {
+      "from": "STAND",
+      "to": "CROUCH",
+      "startedAt": 0.1,
+      "duration": 0.35,
+      "progress": 0.5714285714285714
+    }
+  },
+  "turn": {
+    "semantic": "turn_right",
+    "aimOffsetYaw": -0.9599310885968813,
+    "needsBodyFollow": false
+  }
+}

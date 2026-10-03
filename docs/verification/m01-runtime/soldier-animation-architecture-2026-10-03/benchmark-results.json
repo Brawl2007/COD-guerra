@@ -1,0 +1,29 @@
+{
+  "runs": [
+    {
+      "iterations": 50000,
+      "elapsedMs": 1708.226305,
+      "usPerDecision": 34.164526099999996,
+      "checksum": 962845611
+    },
+    {
+      "iterations": 50000,
+      "elapsedMs": 1631.325849,
+      "usPerDecision": 32.626516980000005,
+      "checksum": 962845611
+    },
+    {
+      "iterations": 50000,
+      "elapsedMs": 1829.2136710000002,
+      "usPerDecision": 36.58427342,
+      "checksum": 962845611
+    }
+  ],
+  "medianElapsedMs": 1708.226305,
+  "medianUsPerDecision": 34.164526099999996,
+  "checksums": [
+    962845611,
+    962845611,
+    962845611
+  ]
+}
