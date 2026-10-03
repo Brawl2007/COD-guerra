@@ -1,3 +1,29 @@
+# Tarefa independente concluída — battle sectors V1 (2026-10-03)
+
+TASK_ID `M01-DISTANT-BATTLE-SECTORS-ARCHITECTURE-V1`; modelo/esforço pedidos GPT-6.1 Sol / HIGH.
+Base fixa `codex/m01-mg34-prone-runtime @ fbaac1e4bce0ce62dc61415c338dd33ccd86a71b`.
+Branch `codex/m01-distant-battle-sectors`, sem integração. HEAD remoto implementação/testes
+`a8ac605096fd9dac4eab5fabe9aa2d6b3b328075`, tree `e97458ee9a59d87a6ec2805c8db700e9442d16aa`.
+O commit seguinte contém este contexto/handoff; confirmar ref final remoto ao rever.
+
+- Audit/contratos: `docs/architecture/BATTLE_SECTOR_SYSTEM.md`.
+- Protótipo isolado: `tools/verification/battle-sector-model.mjs` + CLI `m01-battle-sectors-prototype.mjs`.
+- **33/33 focados, 257/257 Node**, build PASS; 630 ficheiros tracked protegidos byte a byte.
+- Eventos determinísticos, streams RNG por setor, contagens/ordinais compactos, baixas/posições persistentes,
+  retorno atómico, proteção de tempo/revisão, reserva/clip, intervenção e macro histórico limitado.
+- Câmera/qualidade e FAR→MID→NEAR conservam snapshot byte a byte. Fixture ficcional: não é S4 real.
+- Medição Node: 32/100 setores, 6.400/20.000 membros agregados, 600 s, mediana 188,0/1.122,4 ms.
+  Não é FPS/Chromebook nem IA completa; scheduler de prova usa arrays e precisa de orçamento futuro.
+- NEAR aqui significa descritores. Lease real entre IA individual/agregado, spawn/oclusão e save runtime
+  continuam NÃO implementados. Não alegar integração apenas porque os testes do protótipo passam.
+- Base preserva demolição oeste 06:45; 06:40 alternativa. S5 tem metadata 40 km, não mapa criado.
+- Não executado browser nesta tarefa; não atribuir 35/35 da base a esta branch. Nenhum CI/deploy manual.
+- Main observado `72bbcdd156603c9399801c95d43d9365ba50fc82`, base MG34 intacta; sem M02/Graphify.
+- Handoff completo e logs/CSV/JSON/bench/hashes: `docs/verification/m01-runtime/distant-battle-sectors-2026-10-03/HANDOFF.md`.
+- **PARAR. Recomendar revisão ao capitão; não iniciar a lease/integração ou outra tarefa sem nova ordem.**
+
+---
+
 # Estado atual — MG34 prone runtime V2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa MG34. Não recomeçar código, investigação ou extrações. M01 continua **PROTÓTIPO JOGÁVEL**.
