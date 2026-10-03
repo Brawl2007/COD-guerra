@@ -2,7 +2,7 @@ name: Publicar preview do jogo
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, deploy/m01-latest-playable]
   pull_request:
     branches: [main]
   workflow_dispatch:
