@@ -57,6 +57,13 @@ const eastPosition=i=>{
   const k=i-14;return k<14?{x:1076+(k%4)*7,y:-1,z:-80+k*5}:{x:1076+(k%4)*6,y:-1,z:52+(k-14)*4};   // dique, atrás das treliças
 };
 const gateShooter=a=>Number(a.id.split('_').at(-1))<14;
+const MG34_IDS=['de_east_0','de_east_1'],MG34_TRANSITION_SEC=1.9,MG34_INTERVAL=.075;
+const proneGunner=a=>MG34_IDS.includes(a.id);
+const fixedMG34=a=>a.alive&&a.active&&!['ADVANCE','RETREAT','WOUNDED','DOWN','reached_safety'].includes(a.state)&&
+  !(a.target&&dist(a,a.target)>=.8);
+// The spatial checkpoint adds NPC/socket sampling; until then retain the existing valid eye origin.
+const mg34Muzzle=(a,clock)=>{const p=muzzlePosition(a,clock);return [p.x,p.y,p.z].every(Number.isFinite)?p:eyePosition(a);};
+const canMG34Fire=a=>!proneGunner(a)||(fixedMG34(a)&&['idle','aim'].includes(a.mg34Prone?.phase));
 
 export class M01Simulation {
   constructor(seed=19390901){this.reset(seed);}
@@ -338,12 +345,44 @@ export class M01Simulation {
     // A blocked follower walks around nearby solid cover instead of clipping through it.
     if(dist(a,target)>d-.01)this.world.move(a,0,dt*speed);
   }
+  // Only the existing two gunners own this state. Missing legacy data means standing, with no pending shots.
+  updateMG34Posture(a){
+    if(!proneGunner(a))return;
+    if(!a.alive||!a.active){delete a.mg34Prone;a.shot=0;return;}
+    const phase=(name,at=this.clock)=>{a.mg34Prone={phase:name,startedAt:at,duration:MG34_TRANSITION_SEC,progress:['idle','aim','fire_burst'].includes(name)?1:0};};
+    if(!a.mg34Prone){phase('standing');a.shot=0;}
+    let p=a.mg34Prone;
+    if(!fixedMG34(a)&&!['standing','exit'].includes(p.phase)){
+      const fromProgress=p.phase==='enter'?Math.min(1,(this.clock-p.startedAt)/p.duration):1;
+      phase('exit');a.mg34Prone.fromProgress=fromProgress;a.shot=0;p=a.mg34Prone;
+    }
+    if(p.phase==='exit'&&this.clock-p.startedAt>=p.duration){phase('standing',p.startedAt+p.duration);p=a.mg34Prone;}
+    if(p.phase==='standing'&&fixedMG34(a)){phase('enter');p=a.mg34Prone;}
+    if(p.phase==='enter'&&this.clock-p.startedAt>=p.duration){phase('idle',p.startedAt+p.duration);p=a.mg34Prone;}
+    // Suppression keeps a fixed gunner low and cancels only shots which have not left the muzzle.
+    if(this.clock<a.suppressedUntil&&['aim','fire_burst'].includes(p.phase)){phase('idle');a.shot=0;}
+    p=a.mg34Prone;p.progress=['enter','exit'].includes(p.phase)?Math.min(1,Math.max(0,(this.clock-p.startedAt)/p.duration)):
+      p.phase==='standing'?0:1;
+  }
+  emitMG34Rounds(a){
+    const p=a.mg34Prone,b=p?.burst;if(p?.phase!=='fire_burst'||!b)return;
+    while(b.emitted<b.rounds&&b.plan[b.emitted].firedAt<=this.clock+1e-9){
+      const r=b.plan[b.emitted++];this.enemyFire.rounds.push({...r});
+      a.shot=Math.max(0,r.firedAt+.06-this.clock);
+      if(r.kind==='cover'&&b.emitted===1)this.timers.coverFire={by:a.id,at:r.firedAt,x:r.ox,y:r.oy,z:r.oz};
+      this.emit({type:'enemy-fire',origin:{x:r.ox,y:r.oy,z:r.oz},rounds:1,interval:MG34_INTERVAL,weapon:a.weapon,at:r.firedAt});
+    }
+    // The asset's 4/6-shot cut points are exactly count * 0.075, before the next event.
+    if(b.emitted===b.rounds&&this.clock>=p.startedAt+b.rounds*MG34_INTERVAL)
+      a.mg34Prone={phase:'aim',startedAt:p.startedAt+b.rounds*MG34_INTERVAL,duration:MG34_TRANSITION_SEC,progress:1};
+  }
   updateActors(dt){
     this.interruptStationEvacuation();
     const retreat=this.consumedEvent(E('east_demolition'));
     for(const a of this.actors){
       if(a.ckm)a.ckm.visible=!this.consumedEvent(E('west_demolition'));
-      a.shot=Math.max(0,a.shot-dt);if(!a.alive||!a.active)continue;
+      a.shot=Math.max(0,a.shot-dt);this.updateMG34Posture(a);if(!a.alive||!a.active)continue;
+      if(proneGunner(a)&&a.mg34Prone.phase==='exit')continue;
       if(a.team==='enemy')a.crouched=this.clock<a.suppressedUntil;
       if(a.group==='grp_ckm_crew'){
         if(retreat&&a.ckm.phase==='idle')a.ckm={phase:'abandon',startedAt:this.clock,visible:a.ckm.visible};
@@ -413,8 +452,9 @@ export class M01Simulation {
     if(this.mission.phase==='OUTRO')return;
     const retreat=this.consumedEvent(E('east_demolition')),withdrawal=this.consumedEvent(E('east_platoon_withdraws'))&&!retreat;
     for(const a of this.enemies){
-      if(!a.alive||!a.active)continue;
+      this.updateMG34Posture(a);if(!a.alive||!a.active)continue;
       a.cooldown-=dt;
+      if(proneGunner(a)){this.emitMG34Rounds(a);if(!canMG34Fire(a))continue;}
       // Deitados: só voltam a disparar depois de a supressão acabar e de se recomporem (a guarnição da MG volta à arma).
       if(this.clock<a.suppressedUntil){a.cooldown=Math.max(a.cooldown,a.suppressedUntil-this.clock+(a.weapon==='mg34'?2.5:1.2));continue;}
       if(a.cooldown>0)continue;
@@ -479,14 +519,27 @@ export class M01Simulation {
   gauss(){let u=0;while(u<=1e-12)u=this.rng.next();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*this.rng.next());}
   /** Uma rajada (ou um tiro) com dispersão em milésimos; os tiros ficam em voo até à hora de chegada (enemyFire.rounds). */
   burst(a,target,kind,{rounds=1,interval=.075,bias=[0,0],cone=[0,0],tracer=false,victim=null}={}){
-    const origin=eyePosition(a),aim=target.id?{x:target.x,y:target.y+(target.crouched?.75:1.1),z:target.z}:
+    if(proneGunner(a)&&(!canMG34Fire(a)||this.clock<a.suppressedUntil))return false;
+    const aim=target.id?{x:target.x,y:target.y+(target.crouched?.75:1.1),z:target.z}:
       {x:target.x,y:(target.y??this.world.heightAt(target.x,target.z))+1,z:target.z};
-    const shared=[bias[0]*this.gauss(),bias[1]*this.gauss()];
+    if(proneGunner(a)){
+      if(!Number.isInteger(rounds)||rounds<4||rounds>7||interval!==MG34_INTERVAL)return false;
+      a.facing=Math.atan2(aim.z-a.z,aim.x-a.x);
+      a.mg34Prone={phase:'fire_burst',startedAt:this.clock,duration:MG34_TRANSITION_SEC,progress:1,
+        burst:{rounds,emitted:0,interval:MG34_INTERVAL,plan:[]}};
+      const shared=[bias[0]*this.gauss(),bias[1]*this.gauss()],b=a.mg34Prone.burst;
+      // Plan dispersion in the existing RNG order, but do not emit future rounds or presentation events.
+      for(let k=0;k<rounds;k++)b.plan.push(makeRound({id:`m01_round_${this.enemyFire.nextId++}`,by:a.id,weapon:a.weapon,kind,
+        origin:mg34Muzzle(a,this.clock+k*interval),aim,firedAt:this.clock+k*interval,bias:shared,cone,
+        gauss:()=>this.gauss(),tracer:tracer&&k===Math.min(1,rounds-1),victim}));
+      a.firedAt=this.clock;a.state='SUPPRESS';this.emitMG34Rounds(a);return true;
+    }
+    const origin=eyePosition(a),shared=[bias[0]*this.gauss(),bias[1]*this.gauss()];
     for(let k=0;k<rounds;k++)this.enemyFire.rounds.push(makeRound({id:`m01_round_${this.enemyFire.nextId++}`,by:a.id,weapon:a.weapon,kind,origin,aim,
       firedAt:this.clock+k*interval,bias:shared,cone,gauss:()=>this.gauss(),tracer:tracer&&k===Math.min(1,rounds-1),victim}));
     a.shot=rounds*interval+.06;a.firedAt=this.clock;a.state='SUPPRESS';a.facing=Math.atan2(aim.z-a.z,aim.x-a.x);
     if(kind==='cover')this.timers.coverFire={by:a.id,at:this.clock,...origin};
-    this.emit({type:'enemy-fire',origin,rounds,interval,weapon:a.weapon,at:this.clock});
+    this.emit({type:'enemy-fire',origin,rounds,interval,weapon:a.weapon,at:this.clock});return true;
   }
   /** Kowal (rkm wz.28) responde aos clarões: rajadas curtas na posição do dique que disparou há menos tempo e que ele vê. */
   kowalFire(dt){
@@ -498,7 +551,7 @@ export class M01Simulation {
       dike.find(a=>a.weapon==='mg34'&&this.world.lineOfSight(kowal,a));
     if(!target)return;
     kowal.shot=.25;kowal.firedAt=this.clock;kowal.facing=Math.atan2(target.z-kowal.z,target.x-kowal.x);kowal.rounds-=3;
-    target.suppressedUntil=Math.max(target.suppressedUntil,this.clock+2);this.emit({type:'npc-shot',point:eyePosition(kowal),rounds:3});
+    target.suppressedUntil=Math.max(target.suppressedUntil,this.clock+2);this.updateMG34Posture(target);this.emit({type:'npc-shot',point:eyePosition(kowal),rounds:3});
     if(kowal.rounds<=0){kowal.rounds=20;kowal.cooldown=5;if(dist(kowal,this.player)<120)this.line('dlg_m01_029',`dlg_m01_029:${Math.floor(this.clock/90)}`);}
   }
   landRounds(){
@@ -557,6 +610,7 @@ export class M01Simulation {
     if(silenced&&this.clock-this.timers.calloutAt>25&&kowal.alive&&kowal.active&&dist(kowal,p)<150){
       this.timers.calloutAt=this.clock;this.line('co_m01_enemy_group_suppressed',`co_m01_enemy_group_suppressed:${Math.round(this.clock)}`);
     }
+    for(const a of this.enemies)if(proneGunner(a))this.updateMG34Posture(a);
     this.emit({type:'player-shot',point:targetPoint,material:hit?.material,hit:hit?.actor?.team==='enemy',weapon:'kb_wz29'});
   }
   updateGrenades(dt,request){
@@ -574,6 +628,7 @@ export class M01Simulation {
           a.health=Math.max(0,a.health-(1-distance/8)*100);a.alive=a.health>0;}
       }}
     }this.grenades.active=this.grenades.active.filter(g=>g.fuse>0);
+    for(const a of this.enemies)if(proneGunner(a))this.updateMG34Posture(a);
   }
   boundaries(dt){
     const p=this.player,b=this.world.layout.bounds;
@@ -627,7 +682,7 @@ export class M01Simulation {
         const rotation=['cv_sandbag_mid_2','cv_portal_road_n','cv_road_truss_1','cv_road_truss_3','cv_tower_p1_n'];
         // "Ajusta sobre a cobertura": rajada real de uma MG que vê o jogador (impactos na cobertura, não dano garantido).
         // Uma MG que o veja dispara uma rajada; sem MG, uma salva de até quatro atiradores (um tiro cada).
-        const shooters=this.enemies.filter(a=>a.group==='grp_de_east'&&a.alive&&a.active&&this.clock>=a.suppressedUntil).sort((a,b)=>(b.weapon==='mg34')-(a.weapon==='mg34'))
+        const shooters=this.enemies.filter(a=>a.group==='grp_de_east'&&a.alive&&a.active&&this.clock>=a.suppressedUntil&&canMG34Fire(a)).sort((a,b)=>(b.weapon==='mg34')-(a.weapon==='mg34'))
           .filter(a=>this.world.lineOfSight(a,p)).slice(0,4);
         // No warning or cover reservation until a real salvo is emitted. Retry at a bounded cadence.
         this.timers.nextCoverCall=this.clock+(shooters.length?42:4);
@@ -835,6 +890,11 @@ export class M01Simulation {
       crew.forEach(a=>a.ckm.visible=!Object.hasOwn(s.consumed,E('west_demolition')));candidate.actors.push(...crew);
     }else migrateCKMPlacement(candidate.actors,s.consumed);
     candidate.enemyFire=s.enemyFire??{rounds:[],nextId:0};   // saves anteriores ao fogo em voo começam sem tiros no ar
+    // Legacy MG bursts pre-created future rounds. Keep shots already in flight, cancel unissued ones, and
+    // resume from standing on the next update, without a migration marker or an RNG draw.
+    for(const a of candidate.actors)if(proneGunner(a)&&a.mg34Prone===undefined){
+      a.shot=0;candidate.enemyFire.rounds=candidate.enemyFire.rounds.filter(r=>r.by!==a.id||r.firedAt<=s.clock);
+    }
     candidate.timers={...s.timers,kowalRounds:s.timers.kowalRounds??30,lowAmmoHint:s.timers.lowAmmoHint??false,nextCombatCall:s.timers.nextCombatCall??0};
     // Saves anteriores activavam as 24 instâncias: só os 18 primeiros podem estar no pelotão; as reservas ficam fora de cena.
     if(!('enemyFire' in s)&&!('withdrawalPressure' in s.timers))for(const a of candidate.actors.filter(a=>a.group==='grp_east_platoon'&&Number(a.id.split('_').at(-1))>=18))
@@ -879,6 +939,34 @@ export function validateM01Snapshot(s){
     if(a.id!==STATION_PATIENT||!t||Object.keys(t).some(k=>!['phase','startedAt','duration'].includes(k))||
       !['grab','drag','release'].includes(t.phase)||!finite(eventAt,0,s.clock)||!finite(t.startedAt,eventAt,s.clock)||t.duration!==STATION_TRANSITION_SEC||
       !a.alive||!a.active||a.task!=='station_wounded'||a.carriedBy!==m.id||!m.alive||!m.active||m.state==='WOUNDED'||m.task!=='evacuate_station_wounded')reject('transição da evacuação da estação');
+  }
+  const pendingMG34Ids=new Set();
+  for(const a of s.actors)if(a.mg34Prone!==undefined){
+    const p=a.mg34Prone,phases=['standing','enter','idle','aim','fire_burst','exit'];
+    if(!proneGunner(a)||a.weapon!=='mg34'||a.group!=='grp_de_east'||!a.alive||!a.active||!p||
+      Object.keys(p).some(k=>!['phase','startedAt','duration','progress','fromProgress','burst'].includes(k))||!phases.includes(p.phase)||
+      !finite(p.startedAt,0,s.clock)||p.duration!==MG34_TRANSITION_SEC||!finite(p.progress,0,1))reject('postura MG34');
+    const progress=['enter','exit'].includes(p.phase)?Math.min(1,(s.clock-p.startedAt)/p.duration):p.phase==='standing'?0:1;
+    if(Math.abs(p.progress-progress)>1e-8||(['enter','exit'].includes(p.phase)&&s.clock-p.startedAt>=p.duration)||
+      (!['standing','exit'].includes(p.phase)&&!fixedMG34(a))||
+      (p.phase==='exit'?!finite(p.fromProgress,0,1):p.fromProgress!==undefined))reject('transição MG34');
+    if(p.phase!=='fire_burst'){if(p.burst!==undefined)reject('rajada MG34');continue;}
+    const b=p.burst;
+    if(!b||Object.keys(b).some(k=>!['rounds','emitted','interval','plan'].includes(k))||
+      !Number.isInteger(b.rounds)||!finite(b.rounds,4,7)||!Number.isInteger(b.emitted)||!finite(b.emitted,1,b.rounds)||
+      b.interval!==MG34_INTERVAL||!Array.isArray(b.plan)||b.plan.length!==b.rounds||a.firedAt!==p.startedAt||
+      a.state!=='SUPPRESS'||s.clock<a.suppressedUntil||!s.enemyFire||
+      b.emitted!==Math.min(b.rounds,Math.floor((s.clock-p.startedAt+1e-9)/MG34_INTERVAL)+1)||
+      s.clock>=p.startedAt+b.rounds*MG34_INTERVAL)reject('rajada MG34');
+    for(let k=0;k<b.rounds;k++){
+      const r=b.plan[k],id=Number(r?.id?.replace('m01_round_',''));
+      if(!validRound(r,s.clock)||r.by!==a.id||r.weapon!=='mg34'||r.firedAt!==p.startedAt+k*MG34_INTERVAL||
+        !/^m01_round_\d+$/.test(r.id)||!Number.isInteger(id)||id<0||id>=s.enemyFire.nextId||pendingMG34Ids.has(r.id)||
+        (k>=b.emitted&&s.enemyFire.rounds.some(emitted=>emitted.id===r.id)))reject('plan de rajada MG34');
+      pendingMG34Ids.add(r.id);
+    }
+    const last=b.plan[b.emitted-1];
+    if(Math.abs(a.shot-Math.max(0,last.firedAt+.06-s.clock))>1e-8)reject('tiro MG34');
   }
   if(s.actors.some(a=>(a.firedAt!==undefined&&!Number.isFinite(a.firedAt))||(a.rounds!==undefined&&(!Number.isInteger(a.rounds)||a.rounds<-2||a.rounds>20))))reject('fogo dos actores');
   if(s.enemyFire!==undefined&&(!s.enemyFire||!Array.isArray(s.enemyFire.rounds)||s.enemyFire.rounds.length>200||!Number.isInteger(s.enemyFire.nextId)||s.enemyFire.nextId<0||
