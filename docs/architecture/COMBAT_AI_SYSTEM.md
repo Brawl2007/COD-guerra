@@ -245,3 +245,319 @@ Valores finais precisam ser medidos no runtime; são budgets arquiteturais, não
 - Preservar `lethalShot`, horários, gates e eventos históricos como regras da missão.
 - Não chamar `Soldier.update()` legado a partir da M01 nesta tarefa.
 - Não alterar `src/game/m01-simulation.js`, `src/world/spatial.js` ou `src/world/tczew-world.js`.
+
+
+## 12. Perception: observações, não conhecimento mágico
+
+O cérebro não recebe diretamente “player current position” como verdade universal.
+Recebe observações.
+
+```js
+Observation {
+  kind: 'VISION' | 'HEARING' | 'IMPACT' | 'ALLY_REPORT' | 'RADIO' | 'MUZZLE_FLASH',
+  sourceId: string | null,
+  perceivedPosition: {x, z} | null,
+  direction: {x, z} | null,
+  confidence: 0..1,
+  uncertaintyRadius: number,
+  observedAt: number
+}
+```
+
+### 12.1 Fontes
+
+**VISION**
+- exige LOS e limites de percepção definidos pelo adapter;
+- pode atualizar posição com confiança alta;
+- a posição deixa de ser atualizada no instante em que LOS é perdido.
+
+**HEARING**
+- informa posição aproximada ou direção;
+- nunca fornece coordenada exata do emissor silenciosamente;
+- confiança depende do tipo/distância/oclusão.
+
+**IMPACT**
+- near miss pode informar direção aproximada do fogo;
+- aumenta supressão;
+- não identifica automaticamente o atirador.
+
+**ALLY_REPORT**
+- compartilha a última observação do aliado;
+- confidence é limitada pelo reportante e sofre atraso;
+- nunca fica mais precisa que a observação original.
+
+**RADIO/ORDER**
+- pode indicar setor ou objetivo;
+- não equivale a visão em tempo real.
+
+**MUZZLE_FLASH**
+- só existe se o flash/disparo foi percebido;
+- pode reforçar direção/posição aproximada;
+- a regra específica de Kowal por `firedAt` é referência de intenção, não implementação genérica.
+
+## 13. ThreatMemory
+
+```js
+ThreatMemory {
+  sourceId,
+  lastKnownPosition,
+  confidence,
+  uncertaintyRadius,
+  seenAt,
+  heardAt,
+  reportedAt,
+  lastObservationAt,
+  lastDirection,
+  classification
+}
+```
+
+Regras:
+
+1. `lastKnownPosition` só muda por nova observação autorizada.
+2. Perder LOS **não** copia a posição atual do alvo.
+3. Confidence decai com tempo; uncertainty cresce.
+4. Ao cair abaixo do limiar de confiança, a memória deixa de autorizar mira precisa.
+5. Memória fraca ainda pode autorizar “watch/suppress provável saída”, nunca tracking exato.
+6. Um alvo invisível que percorra 20 m atrás de parede não desloca `lastKnownPosition`.
+
+Curva inicial proposta para o protótipo:
+
+```text
+vision exact:       confidence 1.00
+muzzle flash:       <= 0.85
+ally report:        <= 0.75
+hearing:            <= 0.60
+impact direction:   <= 0.50
+
+decay: fonte específica
+confidence < 0.20 -> memória tática expira
+```
+
+Os números são parâmetros de protótipo, não balance final.
+
+## 14. Cover data contract
+
+O futuro adapter deve converter cover nodes do mapa para:
+
+```js
+CoverNode {
+  id,
+  position: {x, z},
+  type,
+  height,
+  protectionDirections: [{x, z}],
+  firingArcs: [{minYaw, maxYaw}],
+  capacity,
+  occupancyRadius,
+  active
+}
+```
+
+`protectionDirections` aponta para os setores dos quais o node oferece proteção.
+Uma parede que protege contra ameaça a norte não recebe score de proteção contra sul.
+
+## 15. Cover candidate gates
+
+Antes de pontuar, rejeitar cover se:
+
+- inativo/destruído;
+- fora dos limites impostos pela ordem;
+- rota inexistente;
+- reservado por outro ator e sem capacidade;
+- posição final bloqueada;
+- proteção direcional insuficiente quando a urgência é alta;
+- exige atravessar exposição absurda para ganho mínimo.
+
+Somente depois calcular score.
+
+## 16. Cover quality score
+
+Score conceitual normalizado:
+
+```text
+score =
+  + 4.0 * protectionFromThreat
+  + 1.4 * routeSafety
+  + 1.2 * firingArcUtility
+  + 0.8 * squadSpacing
+  + 1.0 * objectiveAdherence
+  + 0.8 * roleWeaponFit
+  - 1.4 * normalizedTravelDistance
+  - 1.2 * crowdingRisk
+```
+
+Não escolher simplesmente o node mais próximo.
+
+### 16.1 Protection from threat
+
+```text
+threatDirection = normalize(threatPos - coverPos)
+protection = max(dot(threatDirection, each protectionDirection))
+```
+
+Ameaça oposta à face protegida deve produzir proteção baixa/zero.
+
+### 16.2 Route safety
+
+Pode começar simples:
+
+- rota existe;
+- porcentagem do segmento exposta à ameaça;
+- cruza doorway congestionado;
+- passa por área de explosão/granada;
+- cruza linha de fogo amiga.
+
+Não é necessário pathfinding militar perfeito.
+
+### 16.3 Role / weapon fit
+
+- machine gunner: valoriza arco estável e campo de fogo;
+- rifleman: balanceado;
+- medic: valoriza proteção/acesso ao ferido;
+- engineer: forte penalidade por abandonar objetivo técnico;
+- leader/NCO: valoriza posição que mantém coesão/visibilidade da equipa.
+
+## 17. Cover reservation
+
+Contrato mínimo:
+
+```js
+CoverReservation {
+  coverNodeId,
+  reservedBy,
+  reservedUntil,
+  purpose
+}
+```
+
+Política:
+
+- reserva tem lease curto;
+- ator renova enquanto realmente avança/ocupa;
+- morte, incapacidade, troca de destino ou timeout libera;
+- nunca manter lock permanente;
+- disputa simultânea usa desempate determinístico por actor ID/decision serial;
+- cover com capacidade >1 usa slots distintos, não a mesma coordenada.
+
+Isso substitui a heurística frágil “lista de pontos ocupados” do legado.
+
+## 18. Suppression model
+
+Supressão é estado comportamental, não dano.
+
+```js
+SuppressionState {
+  intensity: 0..1,
+  sourceDirection: {x, z} | null,
+  lastEventAt,
+  lastUpdatedAt
+}
+```
+
+Eventos possíveis:
+
+```text
+round impact muito perto    + alto
+near miss                   + médio
+burst sustentada            + acumulativo
+explosão próxima            + alto
+hit sem incapacitação       + alto
+tempo sem pressão           -> decay
+```
+
+### 18.1 Direção
+
+Eventos carregam direção estimada da origem. Ao acumular:
+
+```text
+sourceDirection = normalized weighted average of recent suppression sources
+```
+
+Isso permite preferir cover que proteja do lado correto.
+
+### 18.2 Decay e hysteresis
+
+Parâmetros iniciais do protótipo:
+
+```text
+SUPPRESSED threshold = 0.35
+PINNED enter         = 0.72
+PINNED recover       = 0.48
+decay                = contínuo quando não há eventos
+```
+
+Usar limiar de saída menor evita alternância PINNED/unpinned a cada tick.
+
+### 18.3 Efeitos
+
+**SUPPRESSED**
+- menor willingness de expor;
+- precisão reduzida dentro de limites;
+- interrompe avanço arriscado;
+- aumenta preferência por cover;
+- pode solicitar suppressive support.
+
+**PINNED**
+- bloqueia flank/bound agressivo temporariamente;
+- mantém cover/postura baixa;
+- permite short withdraw seguro se ordem/política autorizarem;
+- nunca congela para sempre: decay/recovery continua.
+
+## 19. Reload preference
+
+Reload não é só timer:
+
+```text
+ammo empty
++ under direct threat
++ valid cover nearby
+=> seek/duck behind cover
+=> reload
+
+ammo empty
++ no route / immediate close threat
+=> emergency exposed reload or weapon switch policy
+```
+
+O core retorna intenção; o adapter de arma continua responsável pela animação/tempo real.
+
+## 20. Grenade perception/reaction contract
+
+Ao perceber granada:
+
+1. estimar blast-risk;
+2. procurar ponto alcançável antes da detonação;
+3. preferir cover que interponha sólido;
+4. evitar correr para junto de aliados/parede sem saída;
+5. retornar `EVADE_GRENADE`;
+6. após risco, reavaliar a ordem original.
+
+Para lançar granada:
+
+- range/arc plausível;
+- rota balística básica sem obstáculo imediato;
+- nenhum aliado na zona de risco;
+- ameaça conhecida com confiança suficiente;
+- cooldown/budget por squad;
+- ordem permite.
+
+Nada de spam.
+
+## 21. No-magic-tracking acceptance rule
+
+Teste obrigatório do core:
+
+```text
+t0: player visible at (10, 0)
+t1: vision observation stored
+t2: player moves behind wall to (30, 0)
+t3: no new observation
+
+expected:
+ThreatMemory.lastKnownPosition == (10, 0)
+not (30, 0)
+confidence decays
+```
+
+Câmera, quality e posição real invisível não podem alterar o resultado.
