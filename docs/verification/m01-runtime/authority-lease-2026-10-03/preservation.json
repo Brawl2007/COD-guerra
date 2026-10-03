@@ -1,0 +1,169 @@
+{
+  "base": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+  "implementationHead": "dac627ce7a99befced226e51513daf21a4637ea1",
+  "protected": [
+    {
+      "path": "src",
+      "gitTreeOrBlob": "040000 tree 0761b6675e9f71d1a2b5440907c571541068497b\tsrc",
+      "unchanged": true
+    },
+    {
+      "path": "assets",
+      "gitTreeOrBlob": "040000 tree 5f0ae172a4e15d26ffaf6711bb9a551c17b6dd69\tassets",
+      "unchanged": true
+    },
+    {
+      "path": "missions",
+      "gitTreeOrBlob": "040000 tree 5bfe152c7a38f14ff096a01454bb4eaf157cf005\tmissions",
+      "unchanged": true
+    },
+    {
+      "path": "tests/browser",
+      "gitTreeOrBlob": "040000 tree 51fe1a560f62e17c302988c816c2f8b4cec303eb\ttests/browser",
+      "unchanged": true
+    },
+    {
+      "path": "package.json",
+      "gitTreeOrBlob": "100644 blob 6514add632b41a8c9c861fbb2a6a3e8e397729c2\tpackage.json",
+      "unchanged": true
+    },
+    {
+      "path": "package-lock.json",
+      "gitTreeOrBlob": "100644 blob 42e770e6689d20ea2c6490f0242c4a26d2c8d05b\tpackage-lock.json",
+      "unchanged": true
+    },
+    {
+      "path": "vite.config.js",
+      "gitTreeOrBlob": "100644 blob ab32eee738af147fb5d0b62809d4b9ba6db95f5b\tvite.config.js",
+      "unchanged": true
+    },
+    {
+      "path": "playwright.config.js",
+      "gitTreeOrBlob": "100644 blob eb0a64a0522804eaa4c280a9c929d9d68da0f695\tplaywright.config.js",
+      "unchanged": true
+    },
+    {
+      "path": ".github",
+      "gitTreeOrBlob": "040000 tree f82bc72eae5fadcc2b62abececc1139c6c33b89a\t.github",
+      "unchanged": true
+    },
+    {
+      "path": "AGENTS.md",
+      "gitTreeOrBlob": "100644 blob 337e542f590f9b28cdf5b3c2f67263caf2016d6d\tAGENTS.md",
+      "unchanged": true
+    },
+    {
+      "path": "DEVELOPMENT_STATUS.md",
+      "gitTreeOrBlob": "100644 blob 31eaebf58b87aeee56a698945e68b077515c02f8\tDEVELOPMENT_STATUS.md",
+      "unchanged": true
+    },
+    {
+      "path": "RUNBOOK.md",
+      "gitTreeOrBlob": "100644 blob e5eba458352c129cc399eee81b7b88e06f1873f9\tRUNBOOK.md",
+      "unchanged": true
+    },
+    {
+      "path": "IMPLEMENTATION_PLAN.md",
+      "gitTreeOrBlob": "100644 blob 3565c1d59edf8f45bfe1a7681bfad3a517c4c577\tIMPLEMENTATION_PLAN.md",
+      "unchanged": true
+    }
+  ],
+  "contractSources": {
+    "fe2d99f9f343aeb526a95eca048bb010b155ad75": {
+      "docs/architecture/BATTLE_SECTOR_SYSTEM.md": "8bbbcca515a50bb6ffc50c5b6fb4a6b38d292456ddbc675bd671d60262b52141",
+      "tools/verification/battle-sector-model.mjs": "5ab48e8936bb670afc80bbfe207fbef9e1a7cbbb4c4c7802d768a34178063cb4"
+    },
+    "3da1f1637167a3d90953d4f698ebcf5c4b16cf26": {
+      "docs/architecture/COMBAT_AI_SYSTEM.md": "cdc260adbabad45092ff2a1aabe75804c491230a1588f8b592e5eb37bd7f2c53",
+      "tools/verification/m01-combat-ai-prototype.mjs": "f940fdbe5d26d9753990bb3c8e00c9f80189f1699469446fe33dd16b8054f381"
+    },
+    "e02b53a0abbce57c3bce175ca87d1084f62ec752": {
+      "docs/architecture/DESTRUCTION_STATE_SYSTEM.md": "b6a2e91f2b547aa7d9fc72a4029904c845f8bbe7d5560bfd7a36be0b29780af4"
+    },
+    "5d11e91567fe7ff188a95ad1885c47da61da6f7c": {
+      "docs/architecture/WORLD_INTERACTION_SYSTEM.md": "7dcbbe8c9dfbfe500f477a033a0faef43bdaf3207b145ee6a9fbad1287f1a4a5"
+    }
+  },
+  "distFiles": 77,
+  "productionBuildByteIdentical": true,
+  "distSha256": {
+    "assets/index-B2xtJFEf.css": "29c0d6baf482364d7a6bc897076bc19234f2bf1ad9b5a23e2cebe36398bb4aa0",
+    "assets/index-BiKwOp0x.js": "1a7cc368bcb47db33fd564cccce00c5d0c7eff637eaa40fc5685e710199d1a71",
+    "assets/licenses/MakeHuman-CC0.md": "f6089cba01cb570a24712b41ab8a586ccd3cc5ef53dc266ca50b95c288956d2c",
+    "assets/models/allied-rifleman.mtl": "bfb1903f8102062e68e89a8273d8ed679788b58dcbcd0bbc406ed933aa992f09",
+    "assets/models/allied-rifleman.obj": "198b8a0327317d29c3e272947e6831174c45da68075bc057b4dc68b204eabce5",
+    "assets/models/axis-rifleman.mtl": "5b37b2fcd90436ec942a6476320965f2e0e5066bf40990a8f90d8d812f518979",
+    "assets/models/axis-rifleman.obj": "e8261973f9547897c798d0fbcb0b01cc524039aa4fb7694b8d777a97fc5772cc",
+    "assets/models/m1-carbine.mtl": "d0c7992df4ad20373b2500dab016b7193ae654b8d6d3b716da64b925407d8ea1",
+    "assets/models/m1-carbine.obj": "393b6539bb3c0b4492530962c7dc3fa7726fc766cfb3a4c4435c687b86243042",
+    "assets/models/provisional/m01/bridge-colliders.json": "4abe3556c34f80d046dcd78f6d2c4697b66fafab948f9d812ff45c13456e326d",
+    "assets/models/provisional/m01/bridge_rail_1891_1912.colliders.glb": "d842571caf72e69567552838167fdd1dc757fdfaf09e607675c9522b8014714f",
+    "assets/models/provisional/m01/bridge_rail_1891_1912.glb": "6bc61f88caba3a5efb8a5435081413d629ce0547b1b22d13b3f497538fd270dd",
+    "assets/models/provisional/m01/bridge_rail_1891_1912.lod1.glb": "b57496e46c8f72244c64477aa576ef102a9436406a02112325c23f7898e4547b",
+    "assets/models/provisional/m01/bridge_rail_1891_1912.lod2.glb": "73a40ed8dc0bcb1926175b52e3a12f5356a868eec71cc6529dcee1fe391c3af3",
+    "assets/models/provisional/m01/bridge_road_lentze_1857_1912.colliders.glb": "2a4b0d7715d36c21a71cd54fc3e742e763605d032f31a3ef04fb625244d65ffc",
+    "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb": "e022cdd1454bca6dc908d31c542ab05f864096bef0ea40c39d5ae27ef3913404",
+    "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod1.glb": "51aab198331165fe968b9b5e2883dda7583c2590b26233a634f4e0c02c8e60a4",
+    "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod2.glb": "80251700525fe134c4c3771a58635951461f7d2e5223e09e6bccc3ed60ee379c",
+    "assets/models/provisional/m01/bridges.manifest.json": "176fcbb31a3329443086dff88a05772996a3be6cb59ccd310147887c15454313",
+    "assets/models/provisional/m01/characters/m01_soldier_animations.glb": "481d6114f4481ae0f99e162a4bbfdbe8e1d74cffc2460836a2b525bf93b0202d",
+    "assets/models/provisional/m01/characters/m01_soldier_de_lod0.glb": "15082783b5a18ed93934e6eb47b9b07632d91e13478d9d7a450a7af2a9eb5b54",
+    "assets/models/provisional/m01/characters/m01_soldier_de_lod1.glb": "5c7294586cd75d0cd96eb757452854a5d8d19a93349fdf9d00d80d52d640a29f",
+    "assets/models/provisional/m01/characters/m01_soldier_de_lod2.glb": "6e04d5a34ee64ad8f142ada447e565314b45f4da8b2f123fa3ffeff6fd6c66d4",
+    "assets/models/provisional/m01/characters/m01_soldier_pl_lod0.glb": "9c98adb2eace9e4ac0558146b7cdc85a37374809a090208c0b51f42b4c87ae4d",
+    "assets/models/provisional/m01/characters/m01_soldier_pl_lod1.glb": "d4e7565b92c6e266487a43af3c5a739b9f0a98328656662940ed0fe9fa361d8f",
+    "assets/models/provisional/m01/characters/m01_soldier_pl_lod2.glb": "d1a59032549e07973684942aeac993d72c7427811db5061bba57c0bcf3fa15de",
+    "assets/models/provisional/m01/characters/m01_station_animations.glb": "504d4d84859149e3557da345e9572279a360d471e6c55c8550625ea5415ca9e5",
+    "assets/models/provisional/m01/characters/manifest.json": "2f8e29ccf8894d40b7746abb4540105323650f4dbd9feab3d41908099c96eda6",
+    "assets/models/provisional/m01/characters/station-animations.manifest.json": "05e132bfa87f1626359fe3577e5cbc6eb4da67bc0756ac65ff8dab76af360a87",
+    "assets/models/provisional/m01/characters/station-drag-transitions/m01_station_drag_transitions.glb": "5b59af9c0410f7747bed478a3c009ae54e916d7c38053530769f38a1d2c9eb6c",
+    "assets/models/provisional/m01/characters/station-drag-transitions/manifest.json": "9dbbed8028b9828de0b6e487622c385774be863e5ac7157f74ccf57721a57017",
+    "assets/models/provisional/m01/portal_lisewo_1912.colliders.glb": "14fd8776cde3822b7b42a230854af543a611c8f95e89e0eec68166ef3ef90ac9",
+    "assets/models/provisional/m01/portal_lisewo_1912.glb": "9db340f3127076b41c4d9261eedef64b2816f204c87f267faaa406d68b98a933",
+    "assets/models/provisional/m01/portal_lisewo_1912.lod1.glb": "3283065ab78ca79231338cf780591944c548fc963ed0dab42216cd7432f95094",
+    "assets/models/provisional/m01/portal_lisewo_1912.lod2.glb": "84ee83e8b096b3c9dc6bfe4320c1e617a7780af36e9ad408f8243fce08831f9f",
+    "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_animations.glb": "dda588e9163da7aa0bfe9b3f7189d96c84a9e4788b9707ffbee7b70dfe936865",
+    "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_lod0.glb": "64ee37e3f4ad5882c97bcebfa47195b6ae84abbc33eb1faff99cd37c931165b9",
+    "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_lod1.glb": "30fa7424df859c7c4c5be6b347955cf636284041c9eccfc1e30f1063f1fd0168",
+    "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_lod2.glb": "a00f9a301b11523d3398c360a3c7bf8a15c5c0481abec56ec48efe80f9c5f875",
+    "assets/models/provisional/m01/weapons/ckm_wz30/manifest.json": "81acc3147bbfaf965c2985deab3dd0d47330a7b4b4f080379088f060f8a4a3da",
+    "assets/models/provisional/m01/weapons/mg34/m01_mg34_animations.glb": "2245c4ac88f59b2a17a73436e14b62fa2f0abff2303fa19bb2b16913f82ad74b",
+    "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod0.glb": "a65ac6a4eb8a350646a209383a5e2d7c76667774f9af2453279af99f8a071298",
+    "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod1.glb": "6aa44e8c9c6152301a9ac2d31d1c88e174705f778922459a2c2f2d2d6fa0fc7a",
+    "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod2.glb": "657e2ab1784f6755d7a429081210db6b7252496ede55e8c068ded112d8edcc65",
+    "assets/models/provisional/m01/weapons/mg34/manifest.json": "61040eebb6e09abf93a567efbcde5b2009f2805b997d83952abca169f4961b8b",
+    "assets/models/provisional/m01/weapons/mg34-prone/m01_mg34_prone_animations.glb": "79a405dd9c3c2d4bdc113b367d96de631ff62fa88be62e93e79952d353ca4d3c",
+    "assets/models/provisional/m01/weapons/mg34-prone/manifest.json": "61cf1f31717a5071e96911c84a44824fc010690fee94240a656d86718ebcf352",
+    "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_animations.glb": "23ecb6fb0429d5b38ee70492e3bb63d7853c1d86d85402693a5d67e23535c804",
+    "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_lod0.glb": "ade802f370828734bec7b8e9d810a4d76974b38be285ec30ab4be2f9ee0b323b",
+    "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_lod1.glb": "ac9381fdcd3989fb50739f2b8a9d7cdf2e05e1a2d5f77faaeb16f33e78f135d9",
+    "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_lod2.glb": "2816fe42517469a5577575c04c45ed679b80b6a04b974a586ea912a280839744",
+    "assets/models/provisional/m01/weapons/rkm_wz28/manifest.json": "cd26ea6deeb568479bb6f9bb3992ad86db3f29d1ae7d76de876d6e72c324d451",
+    "assets/models/provisional/m01-aircraft/m01_ju87_b1_lod0.glb": "04ab39240c3433f176e95508fb4ef7e11167c53f898bdc0f6da607135cf2794b",
+    "assets/models/provisional/m01-aircraft/m01_ju87_b1_lod1.glb": "71393ee3ef304b68c445a597895b52d89761f45dac8f1a9ca0f94ce279c54d3c",
+    "assets/models/provisional/m01-aircraft/m01_ju87_b1_lod2.glb": "454c5afeafcd1516058b1db47df052353b1a28e60cbed994c2904dad042868c8",
+    "assets/models/provisional/m01-aircraft/manifest.json": "d0e0e054d7eb840c0c292453cb113f617b68acd16c11b3766531ff023ccac724",
+    "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_burned_lod0.glb": "9ddc22ef1635cd4f708c46127950d76695081e251fbfaaadcd1bcd760bda848b",
+    "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_burned_lod1.glb": "baab5b6b63d6f3c550585d6abf924cde6c366ca3109904f65909c5b7249b0b44",
+    "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_burned_lod2.glb": "5be4191578f3c28f0eebbfac35d67cc1f5ef9b167403683227b7929965b641a5",
+    "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_damaged_lod0.glb": "232517ead15255ac57c10440c43e56a51bf0f06cdab20592c68ebb27dc0dba29",
+    "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_damaged_lod1.glb": "42a17730056103e8fbc8cb7b7c95951dfddd1c03b552a8cff4c7f5db823f37cc",
+    "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_damaged_lod2.glb": "6b7e03ddc01017b225776737d6248aa978a9b2ddc4e130af29560e7e8f8cfb3c",
+    "assets/models/provisional/m01-wagon-damage/m01_wagon_open_burned_lod0.glb": "7abe2b0ea4a2c0a72400c14e931424312bd7eecbd537ea7dc772c81eed22e103",
+    "assets/models/provisional/m01-wagon-damage/m01_wagon_open_burned_lod1.glb": "878fb80bbc5575c5232269b49a54428b320390d5df5edbedabd65d91b3e30e11",
+    "assets/models/provisional/m01-wagon-damage/m01_wagon_open_burned_lod2.glb": "fcb97bd311981ce10b2ec6ebf89e348b71ccddf8789193b81914ff3eba137381",
+    "assets/models/provisional/m01-wagon-damage/m01_wagon_open_damaged_lod0.glb": "6f8ddbd089ed0a1cc98533e63ceb916e182bf23424ffa96cef4148ece862b1b3",
+    "assets/models/provisional/m01-wagon-damage/m01_wagon_open_damaged_lod1.glb": "9e3bbdac0d56ce9be1e0e7be20f7f2e44d27105ac76783415763b01a16afe3fd",
+    "assets/models/provisional/m01-wagon-damage/m01_wagon_open_damaged_lod2.glb": "9abb14d756208ca0e9bdc3cafce2395ca885161818e9b4f14495066413d0bd58",
+    "assets/models/provisional/m01-wagon-damage/manifest.json": "1361f0e91187d8b0a285bcc767786d4191c9e04e8594a9878d641a8285599673",
+    "assets/models/provisional/m01-wagons/m01_wagon_covered_lod0.glb": "081157e1bccd9b184e14bce03cffd4821738818a354811fa6ba2f53e2bed974f",
+    "assets/models/provisional/m01-wagons/m01_wagon_covered_lod1.glb": "452b005d6efa9d510cb421a5eeeeb533e32dae4c30b9b1a247e8800f42a44e87",
+    "assets/models/provisional/m01-wagons/m01_wagon_covered_lod2.glb": "0eb03cada40c0e0279d81f83c95963d2de39523735e33fb9fd3810dd2a502413",
+    "assets/models/provisional/m01-wagons/m01_wagon_open_lod0.glb": "7806337ee9413b6dc2c2505980032868b14cd8969bc99362273ca80534d46b50",
+    "assets/models/provisional/m01-wagons/m01_wagon_open_lod1.glb": "4994884b89a2c0e51317e0056ea5cafdb9c447b33641459481a329ec3097b6b3",
+    "assets/models/provisional/m01-wagons/m01_wagon_open_lod2.glb": "78c7c6afcbb9ff3b9e1942d7729d79e82acbafe95302aeda08ee35f2ac19adb1",
+    "assets/models/provisional/m01-wagons/manifest.json": "cbea08196bc4d11105d61d42cef3098eeabc1fb8d225d0c515b630bcc3d6a09b",
+    "index.html": "a3ebdae979d094671355a32082074975e644b7ffdf9ee631bf5fe87664228c47"
+  },
+  "browserRunThisTask": false
+}

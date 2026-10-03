@@ -1,0 +1,30 @@
+{
+  "taskId": "M01-AGGREGATE-INDIVIDUAL-AUTHORITY-LEASE-V1",
+  "base": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+  "implementationHead": "dac627ce7a99befced226e51513daf21a4637ea1",
+  "focused": {
+    "pass": 47,
+    "fail": 0,
+    "skipped": 0
+  },
+  "node": {
+    "pass": 271,
+    "fail": 0,
+    "skipped": 0,
+    "durationMs": 35810.597096
+  },
+  "build": "PASS",
+  "cameraQualityScenarios": 6,
+  "browser": "NOT_RUN",
+  "ci": "NOT_RUN",
+  "fps": "NOT_MEASURED",
+  "files": {
+    "scenario.json": "ce39710346610eec8509abec627a952cbf7d144d9b37cbf6edb168664b7203de",
+    "node-tests.log": "10c235fd0cc406a5b7ca7cb938e484d35516166028593f2dc8c2a56b31ab6142",
+    "HANDOFF.md": "e3918bf0b4f727e56a4353018443403504af1d277f08da8289767a7457a0399e",
+    "scenario.csv": "d643e78393974dc0362b8985c8c10ac276bccdf3c465a47ca2f069c8e4cc351b",
+    "build.log": "179074bc3e37fe1066cfc2d993f5647c579469cf008c2fddfe7669b98a3b3274",
+    "preservation.json": "1bb1257f5a6804ca0aa92ea1d15f59efa168ebe746bc4f644968a92ddcd0e63d",
+    "focused-tests.log": "81187ae392a62dac2e5336075ca81ce72b9b5041dc83f7edbf8574a4ff86a264"
+  }
+}

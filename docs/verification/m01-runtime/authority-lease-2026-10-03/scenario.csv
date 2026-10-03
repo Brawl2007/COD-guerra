@@ -1,0 +1,7 @@
+quality,visible,dead,reserve,aggregate_rng_draws,acquires
+LOW,false,7,73,0,1
+LOW,true,7,73,0,1
+MEDIUM,false,7,73,0,1
+MEDIUM,true,7,73,0,1
+HIGH,false,7,73,0,1
+HIGH,true,7,73,0,1

@@ -1,3 +1,28 @@
+# Estado atual — authority lease isolado V1 (2026-10-03)
+
+Esta secção refere-se apenas a `codex/m01-authority-lease`.
+M01 permanece **PROTÓTIPO JOGÁVEL**. Tarefa concluída; não integrar nem iniciar outra.
+
+- TASK_ID `M01-AGGREGATE-INDIVIDUAL-AUTHORITY-LEASE-V1`; modelo solicitado GPT-6.1 Sol, esforço HIGH.
+- Base `codex/m01-mg34-prone-runtime` @ `fbaac1e4bce0ce62dc61415c338dd33ccd86a71b`.
+- HEAD implementação/testes: `dac627ce7a99befced226e51513daf21a4637ea1`; commit seguinte só documentação/evidências/contexto. Confirmar ref final.
+- Contratos lidos nos heads aprovados: BattleSector `fe2d99f9`, Combat AI `3da1f163`, destruction `e02b53a0`, interactions `5d11e915`. Nenhum merge.
+- Architecture: `docs/architecture/AUTHORITY_LEASE_SYSTEM.md`; tool data-only `tools/verification/m01-authority-lease-prototype.mjs`.
+- Ownership AGGREGATED/INDIVIDUAL exclusivo; staging e return síncronos e atómicos, sem save em MATERIALIZING/DEMATERIALIZING. Fencing token + serial + source revision + fingerprint; retorno valida ledger individual atual completo.
+- Ponto crítico: BattleSector aprovado tem RNG/revision por setor. V1 exige bloquear o resolver agregado do setor durante este lease. Não afirmar que múltiplas formações do mesmo setor podem continuar independentes sem migração futura de streams/escopos.
+- RNG agregado congelado; streams individuais por ID persistem entre aproximações, sem reseed/mistura. Relógios local/histórico separados; pausa e return sem catch-up.
+- **47/47 focados**, **271/271 npm test**, build PASS; **77 dist files idênticos à base**. Source/assets/missions/browser/package/config/workflows/status intactos.
+- Provas: 5→7 mortos, reserva100→73 em clipes de5, mortos imóveis, feridos por helper/evacuação, intervenção do jogador/IDs/recursos/cover/refs preservados, save agregado/lease ativo/pausado/restauro duplo, rejeição de payload antigo/ator desconhecido/duplicado/token errado e falha ordinal17 sem estado parcial.
+- Hysteresis 150/800 ±20 m reutilizada; 149/151/148/152 adquire uma vez. Câmara e LOW/MEDIUM/HIGH não mudam autoridade; seis cenários e processos separados iguais.
+- Browser/CI/FPS NÃO executados/medidos nesta tarefa. Protótipo não importa src, não simula Combat AI real nem dispara projéteis reais.
+- Handoff/evidências: `docs/verification/m01-runtime/authority-lease-2026-10-03/HANDOFF.md`.
+- Recomendação: revisão do gateway/lock de setor pelo capitão; futura tarefa explícita para adapter sintético, clocks/exposures/in-flight/resources e migração do save. Não iniciar automaticamente.
+- Main intacta; sem integração/deploy. Graphify continua em pausa.
+
+---
+
+## Contexto da base anterior (preservado)
+
 # Estado atual — MG34 prone runtime V2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa MG34. Não recomeçar código, investigação ou extrações. M01 continua **PROTÓTIPO JOGÁVEL**.
