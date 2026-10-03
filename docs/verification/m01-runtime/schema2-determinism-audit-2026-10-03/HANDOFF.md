@@ -7,6 +7,7 @@ M01 — Tczew permanece **PROTÓTIPO JOGÁVEL**. Auditoria isolada para revisão
 - Modelo/esforço solicitado: GPT-6.1 Sol / HIGH; sem delegação nesta tarefa.
 - Base remota confirmada: `codex/m01-mg34-prone-runtime` @ `fbaac1e4bce0ce62dc61415c338dd33ccd86a71b`.
 - Branch: `codex/m01-schema2-determinism-audit`.
+- Revisão: [PR draft #37](https://github.com/Brawl2007/COD-guerra/pull/37), destinado à base aprovada MG34; sem merge.
 - Produção final: `d241e2069f984a47a9d41190f0b53c26833cc28a`.
 - Testes Node finais: `1f15b58436c11d70c44195ebf181d710f876a3a4`; evidência verde publicada em `427358ab74a7dd7aadd20293dc301c46ac29f879`.
 - Fixtures/UI de navegador finais e 4/4 focados: `44419b1adc7aa1e7c2740e62ffbba69c725860ab`.
@@ -94,6 +95,6 @@ O download padrão de CFT falhou neste ambiente; Chromium foi obtido do pacote n
 
 Produção alterada apenas em `src/game/m01-simulation.js`: persistência e validação. Renderer, spatial/world/core, algoritmo de RNG, `tick`, `moveActor`, `evacuateStation`, armas, assets, missão/mapa francês, horários/gates, demolições e IDs preservados. Source trees foram comparadas antes de publicar.
 
-Não houve main, integração, deploy, workflow_dispatch, M02, Graphify ou trabalho em benchmark/vagões/arco CKM. Cada bloco foi commitado/publicado na branch própria; árvores locais/remotas verificadas idênticas, sem force-push. Main e base aprovada continuam nos refs registados em `protected-refs.json`.
+Não houve main, integração, deploy, workflow_dispatch, M02, Graphify ou trabalho em benchmark/vagões/arco CKM. O PR #37 foi aberto após os timeouts da primeira tentativa. Workflows existentes aceitam PRs para main, pelo que não se atribui CI a esta revisão contra a base MG34; as execuções verdes são locais. Cada bloco foi commitado/publicado na branch própria; árvores locais/remotas verificadas idênticas, sem force-push. Main e base aprovada continuam nos refs registados em `protected-refs.json`.
 
 A evidência cobre dois percursos e fixtures definidas; não é prova universal de todas as combinações de inputs ou de todos os ficheiros corrompidos possíveis. M01 continua protótipo; playtest humano/Chromebook, loader/reload/feed MG34 e arco real da CKM permanecem pendentes. Esta tarefa não inicia outra frente sem ordem concreta.

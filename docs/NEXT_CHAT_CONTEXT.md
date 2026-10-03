@@ -5,6 +5,7 @@ Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 cont
 - TASK_ID: `M01-SCHEMA2-CROSS-SYSTEM-DETERMINISM-AUDIT-V1`; modelo/esforço solicitado GPT-6.1 Sol HIGH; sem delegação.
 - Base remota confirmada: `codex/m01-mg34-prone-runtime` @ `fbaac1e4bce0ce62dc61415c338dd33ccd86a71b`.
 - Branch independente: `codex/m01-schema2-determinism-audit`.
+- Revisão aberta: [PR draft #37](https://github.com/Brawl2007/COD-guerra/pull/37), base `codex/m01-mg34-prone-runtime`; nenhuma integração.
 - Último HEAD funcional/testes: `44419b1adc7aa1e7c2740e62ffbba69c725860ab`. Os commits seguintes só documentam evidência; confirmar HEAD remoto antes de continuar.
 - Encontrado/provado/corrigido: restore de continuação perdia o checkpoint anterior. `snapshot()` guarda `resumeCheckpoint` opcional plano; CP-A..D/reset/debrief usam `snapshot(false)`. Legacy sem campo mantém o estado carregado como CP. Schema permanece 2. Backups inválidos/futuros/recursivos rejeitados atomicamente.
 - Encontrado/provado/corrigido: payload extra da arma podia sobrescrever métodos/perfil via Object.assign. Whitelist dos campos reais da wz.29, RNG uint32 e fases conhecidas no validador. Nenhuma alteração ao algoritmo de RNG ou arma.
