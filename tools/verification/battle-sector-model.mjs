@@ -18,6 +18,17 @@ export function counts(f) {
   return result;
 }
 function statusAt(f, ordinal) { return f.runs.find(r => ordinal >= r.from && ordinal < r.to)?.status; }
+function memberPosition(f, ordinal) {
+  const status = statusAt(f, ordinal), individual = f.individuals[ordinal];
+  if (individual) {
+    const delta = status === 'combatReady' ? { x: f.position.x - individual.anchor.x,
+      y: f.position.y - individual.anchor.y, z: f.position.z - individual.anchor.z } : { x: 0, y: 0, z: 0 };
+    return { x: individual.position.x + delta.x, y: individual.position.y + delta.y, z: individual.position.z + delta.z };
+  }
+  const anchor = status === 'combatReady' ? f.position : f.initialPosition;
+  // Fixture layout only: renderer integration must use validated world placement.
+  return { x: anchor.x + ordinal % 4 * 2, y: anchor.y, z: anchor.z + Math.floor(ordinal / 4) * 2 };
+}
 function setStatus(f, ordinal, status) {
   const next = [];
   for (const r of f.runs) {
@@ -60,7 +71,7 @@ function makeFormation(data) {
   requireThat(integer(data.ammunition ?? 100) && Number.isFinite(data.speedMps ?? 0) && (data.speedMps ?? 0) >= 0, 'ammunition/speed');
   return { id: data.id, faction: data.faction, unit: data.unit ?? null, role: data.role,
     nominalStrength: cursor, runs, namedIds: copy(namedIds), individuals: {},
-    position: copy(data.position), motion: { origin: copy(data.position), at: 0 }, direction: data.direction,
+    position: copy(data.position), initialPosition: copy(data.position), motion: { origin: copy(data.position), at: 0 }, direction: data.direction,
     speedMps: data.speedMps ?? 0, objective: data.objective ?? 'hold', state: data.state,
     morale: data.morale ?? 1, cohesion: data.cohesion ?? 1, ammunition: data.ammunition ?? 100, supply: data.supply ?? 1 };
 }
@@ -90,7 +101,9 @@ function loss(sector, f, ordinal, to) {
   requireThat(to !== 'wounded' || previous === 'combatReady', 'invalid wound');
   if (to === 'dead' && c.dead >= (bounds.maxDead ?? f.nominalStrength)) return { applied: false, reason: 'maxDead' };
   if (previous === 'combatReady' && c.combatReady <= (bounds.minCombatReady ?? 0)) return { applied: false, reason: 'minCombatReady' };
+  const position = memberPosition(f, ordinal), rounds = f.individuals[ordinal]?.rounds ?? 5;
   setStatus(f, ordinal, to);
+  f.individuals[ordinal] = { position, rounds, anchor: copy(f.position) };
   return { applied: true, memberId: memberId(f, ordinal), ordinal, from: previous, to };
 }
 const ASSET_FIELDS = ['fixedWeapons', 'vehicles', 'destruction', 'fires', 'smoke'];
@@ -148,7 +161,7 @@ export class BattleWorld {
     if (e.type === 'rescue') requireThat(integer(e.amount) && e.amount > 0, 'rescue amount');
     if (e.type === 'resupply') requireThat(integer(e.amount), 'resupply amount');
     if (e.type === 'asset') requireThat(ASSET_FIELDS.includes(e.category) && s.assets[e.category].some(a => a.id === e.assetId) && ASSET_STATES.includes(e.state), 'asset payload');
-    if (e.type === 'handoff') requireThat(integer(e.expectedRevision) && Array.isArray(e.members) && e.members.every(m => typeof m.id === 'string' && STATUSES.includes(m.status) && point(m.position) && integer(m.rounds)) && new Set(e.members.map(m => m.id)).size === e.members.length &&
+    if (e.type === 'handoff') requireThat(integer(e.expectedRevision) && integer(e.expectedTime) && Array.isArray(e.members) && e.members.every(m => typeof m.id === 'string' && STATUSES.includes(m.status) && point(m.position) && integer(m.rounds)) && new Set(e.members.map(m => m.id)).size === e.members.length &&
       (e.formationPosition === undefined || point(e.formationPosition)) && (e.reserveAmmunition === undefined || integer(e.reserveAmmunition)), 'handoff payload');
   }
   apply(s, e) {
@@ -187,11 +200,21 @@ export class BattleWorld {
     if (e.type === 'loss') return loss(s, f, e.memberId === undefined ? e.ordinal : ordinalFor(f, e.memberId), e.to);
     if (e.type === 'handoff') {
       requireThat(e.expectedRevision === s.revision, 'stale handoff');
+      requireThat(e.expectedTime === s.updatedAt, 'stale handoff time');
+      const reserveBefore = f.ammunition;
       if (e.reserveAmmunition !== undefined) {
         requireThat(e.reserveAmmunition <= f.ammunition, 'unrecorded resupply'); f.ammunition = e.reserveAmmunition;
       }
+      const extraLoadedRounds = e.members.reduce((n, m) => {
+        const ordinal = ordinalFor(f, m.id); requireThat(ordinal >= 0, 'unknown member');
+        return n + Math.max(0, m.rounds - (f.individuals[ordinal]?.rounds ?? 5));
+      }, 0);
+      requireThat(extraLoadedRounds <= reserveBefore - f.ammunition, 'loaded ammunition requires reserve transfer');
       // Called on a cloned sector: any invalid member rejects the entire return.
       const result = [];
+      if (e.formationPosition) {
+        f.position = copy(e.formationPosition); f.motion = { origin: copy(f.position), at: e.at };
+      }
       for (const m of e.members) {
         const n = ordinalFor(f, m.id); requireThat(n >= 0, 'unknown member');
         const old = statusAt(f, n);
@@ -199,11 +222,8 @@ export class BattleWorld {
           requireThat(!['combatReady', 'wounded'].includes(m.status) || (old === 'combatReady' && m.status === 'wounded'), 'member resurrection/invalid transition');
           const transition = loss(s, f, n, m.status); requireThat(transition.applied, 'bounded handoff conflict');
         }
-        f.individuals[n] = { position: copy(m.position), rounds: m.rounds };
+        f.individuals[n] = { position: copy(m.position), rounds: m.rounds, anchor: copy(f.position) };
         result.push({ id: m.id, status: statusAt(f, n) });
-      }
-      if (e.formationPosition) {
-        f.position = copy(e.formationPosition); f.motion = { origin: copy(f.position), at: e.at };
       }
       return { members: result };
     }
@@ -271,8 +291,7 @@ export function materialize(world, sectorId, { budget = 16 } = {}) {
     for (const f of sector.formations) for (const r of f.runs.filter(r => r.status === status)) {
       for (let ordinal = r.from; ordinal < r.to && actors.length < budget; ordinal++) {
         const override = f.individuals[ordinal];
-        // Grid offset is fixture layout only, not a validated collision/path spawn point.
-        const position = override?.position ?? { x: f.position.x + ordinal % 4 * 2, y: f.position.y, z: f.position.z + Math.floor(ordinal / 4) * 2 };
+        const position = memberPosition(f, ordinal);
         actors.push({ id: memberId(f, ordinal), formationId: f.id, ordinal, status,
           position: copy(position), direction: f.direction, rounds: override?.rounds ?? 5 });
       }
@@ -285,7 +304,7 @@ export function materialize(world, sectorId, { budget = 16 } = {}) {
 /** Atomic return of observed member deltas. Never replaces the whole aggregate. */
 export function dematerialize(world, descriptor, { id, formationId, members, formationPosition, reserveAmmunition }) {
   const input = { id, at: world.time, sectorId: descriptor.sectorId, type: 'handoff',
-    expectedRevision: descriptor.revision, formationId, members: copy(members),
+    expectedRevision: descriptor.revision, expectedTime: descriptor.at, formationId, members: copy(members),
     ...(formationPosition ? { formationPosition: copy(formationPosition) } : {}),
     ...(reserveAmmunition !== undefined ? { reserveAmmunition } : {}) };
   world.validateAction(input);

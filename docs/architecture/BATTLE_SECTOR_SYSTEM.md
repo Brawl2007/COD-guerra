@@ -123,6 +123,11 @@ Formation ammunition is reserve stock; individual rounds are separate loaded
 clips. Return may reduce reserve and update the formation anchor; increases
 require an explicit resupply input. These are logical bookkeeping units,
 not the existing M01 weapon schema. Sparse member positions survive return.
+Loaded clip increases require an equal or greater reserve transfer in that
+return. Known combatants follow the formation using saved relative anchors;
+dead, wounded and evacuated positions stay fixed until an explicit return
+updates them. New casualty events capture their actual prototype positions.
+An old descriptor's timestamp is rejected even if only motion has advanced.
 
 To avoid pop-in, prefetch assets and descriptors in an outer hysteresis band,
 stage them at actual positions behind verified terrain/building occlusion,
@@ -161,7 +166,12 @@ on active clock. Never blindly apply an accelerated historical delta to
 locomotion. Save migration, mesh activation, proxy hits, map paths, historical
 rosters and multiplayer/network replay are not implemented here.
 
-Prototype complexity: event count plus affected status runs/visible budget;
-counts independent of NPC objects. Event retention currently grows with
+Prototype processing visits affected status runs/visible budget; counts are
+independent of NPC objects. The proof implementation intentionally uses arrays:
+enqueue sorts the agenda and checks lifetime IDs, sector lookup is linear,
+and consuming shifts the agenda. Large event backlogs therefore have superlinear
+scheduler overhead, reflected in the timings. A shipping scheduler should use
+a heap/cursor, ID set and sector map before choosing a dispatch budget.
+Event retention currently grows with
 operation duration and needs future checkpoint/archival design. Performance
 measurements are Node timings of this tool only, never FPS or Chromebook.

@@ -1,5 +1,5 @@
 {
-  "environment": "Shared Linux execution container, not a Chromebook",
+  "environment": "Shared Linux execution container, not a Chromebook; benchmark after full tests",
   "results": [
     {
       "environment": {
@@ -16,13 +16,13 @@
         "repeats": 5
       },
       "milliseconds": [
-        387.75383800000003,
-        445.11372199999994,
-        529.794247,
-        367.08504500000026,
-        383.63901799999985
+        187.999663,
+        191.62836200000004,
+        191.23137200000008,
+        186.51421199999993,
+        184.5967720000001
       ],
-      "medianMs": 387.75383800000003,
+      "medianMs": 187.999663,
       "scope": "Node prototype aggregate processing only; no browser, rendering, full AI, FPS or Chromebook measurement."
     },
     {
@@ -40,13 +40,13 @@
         "repeats": 5
       },
       "milliseconds": [
-        1742.0517909999999,
-        2178.325172,
-        2148.301674999999,
-        2165.352917,
-        1901.436447
+        1063.222823,
+        1176.7580750000002,
+        1135.4720659999994,
+        1104.4731630000006,
+        1122.3835209999997
       ],
-      "medianMs": 2148.301674999999,
+      "medianMs": 1122.3835209999997,
       "scope": "Node prototype aggregate processing only; no browser, rendering, full AI, FPS or Chromebook measurement."
     }
   ]

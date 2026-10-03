@@ -88,11 +88,11 @@ test('known named and generated IDs never resurrect on rematerialization', () =>
   const dead = second.actors.find(a => a.id === first.actors[0].id); assert.equal(dead.status, 'dead');
   assert.equal(new Set(second.actors.map(a => a.id)).size, 30); assert.equal(counts(form(w)).dead, 6);
 });
-test('large reserve remains compressed with zero individual records; budgets preserve all logical counts', () => {
+test('large reserve remains compressed with sparse casualty records; budgets preserve all logical counts', () => {
   const w = new BattleWorld(fixture(5, { sectorCount: 10, nominalStrength: 2000, duration: 600 }));
   w.advanceTo(600000); const d = materialize(w, sectorId, { budget: 4 });
   assert.equal(d.actors.length, 4); assert.equal(d.formations[0].nominalStrength, 2000);
-  assert.equal(Object.keys(form(w).individuals).length, 0); assert(form(w).runs.length < 50);
+  assert(Object.keys(form(w).individuals).length <= 6); assert(form(w).runs.length < 50);
 });
 test('return preserves deaths, wounded, individual rounds/position, formation position/reserve and assets', () => {
   const w = noExposures(), d = materialize(w, sectorId, { budget: 30 });
@@ -234,4 +234,30 @@ test('fixed loss without RNG is an authored casualty event; exhausted bounds rej
   const before = serialized(w);
   assert.throws(() => dematerialize(w, d, { id: 'bounded_conflict', formationId, members }), /bounded handoff conflict/);
   assert.equal(serialized(w), before);
+});
+
+test('casualty position remains at impact while formation withdraws; known combatant follows its formation', () => {
+  const w = noExposures(); input(w, 'kill_before_withdraw', 'loss', { ordinal: 0, to: 'dead' }, 210000);
+  w.advanceTo(230000); const d = materialize(w, sectorId, { budget: 30 });
+  const dead = d.actors.find(a => a.id === 'fixture_named_0'), ready = d.actors.find(a => a.status === 'combatReady');
+  const originalDead = d.actors.find(a => a.ordinal === 25);
+  dematerialize(w, d, { id: 'return_known', formationId, members: [ready] });
+  w.advanceTo(240000); const later = materialize(w, sectorId, { budget: 30 });
+  assert.deepEqual(later.actors.find(a => a.id === dead.id).position, dead.position);
+  assert.deepEqual(later.actors.find(a => a.id === originalDead.id).position, originalDead.position);
+  assert.equal(later.actors.find(a => a.id === ready.id).position.x, ready.position.x - 5);
+});
+test('time-only motion makes old descriptors stale even without a sector event', () => {
+  const w = noExposures(); w.advanceTo(230000); const d = materialize(w, sectorId);
+  w.advanceTo(230001); const before = serialized(w);
+  assert.throws(() => dematerialize(w, d, { id: 'old_motion', formationId, members: [d.actors[0]] }), /stale handoff time/);
+  assert.equal(serialized(w), before);
+});
+
+test('handoff cannot invent loaded rounds; clip reload requires reserve transfer', () => {
+  const w = noExposures(), d = materialize(w, sectorId), member = { ...d.actors[0], rounds: 10 }, before = serialized(w);
+  assert.throws(() => dematerialize(w, d, { id: 'free_ammo', formationId, members: [member] }), /requires reserve transfer/);
+  assert.equal(serialized(w), before);
+  dematerialize(w, d, { id: 'reload_from_stock', formationId, members: [member], reserveAmmunition: 95 });
+  assert.equal(form(w).ammunition, 95); assert.equal(materialize(w, sectorId).actors[0].rounds, 10);
 });
