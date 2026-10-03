@@ -111,3 +111,65 @@ export function cleanupWorldWeapons(state,{now=state.clock,playerPosition=state.
   const removeCount=Math.min(eligible.length,loose.length-maxLooseWeapons),removed=eligible.slice(0,removeCount).map(w=>w.id);
   for(const id of removed)delete state.worldWeapons[id];return removed;
 }
+
+export function makeMountedWeapon({id,weaponType,mountTransform={position:{x:0,y:0,z:0},yaw:0},pivot,muzzle,operatorStation,exitAnchors=[],
+  traverse={min:-Math.PI/6,max:Math.PI/6,current:0},elevation={min:-Math.PI/18,max:Math.PI/9,current:0},feed,
+  status='operational',occupantId=null,crewStations=[],requirements={},singleUserCapable=false,protected:protectedItem=false,presentationId=null}){
+  if(!id||!WEAPON_TYPES[weaponType])throw new Error('mounted weapon requires valid id/type');
+  if(traverse.min>traverse.max||elevation.min>elevation.max)throw new Error('invalid physical arc');
+  return {id,weaponType,mountTransform:clone(mountTransform),pivot:clone(pivot),muzzle:clone(muzzle),operatorStation:clone(operatorStation),exitAnchors:clone(exitAnchors),
+    traverse:clone(traverse),elevation:clone(elevation),feed:clone(feed),status,occupantId,crewStations:clone(crewStations),requirements:clone(requirements),
+    singleUserCapable:Boolean(singleUserCapable),protected:Boolean(protectedItem),presentationId};
+}
+
+export function mountedInteractionCandidate(state,mountedId){
+  const m=state.mountedWeapons[mountedId];if(!m)return null;
+  const available=m.status==='operational'&&!m.occupantId&&!m.protected;
+  return {id:`mount:${m.id}`,kind:'mounted-weapon',entityId:m.id,anchor:m.operatorStation,priority:55,maxDistance:2.2,maxAngleDeg:75,
+    prompt:`E — Operate ${m.weaponType}`,available,protected:m.protected};
+}
+
+export function enterMountedWeapon(state,mountedId,{trace=()=>null}={}){
+  const m=state.mountedWeapons[mountedId];if(!m||m.status!=='operational'||m.protected)throw new Error('mounted weapon unavailable');
+  if(m.occupantId)throw new Error('operator station occupied');
+  const c=mountedInteractionCandidate(state,mountedId),picked=resolveInteraction(state.player,[c],{trace});if(!picked)throw new Error('operator station not physically reachable');
+  if(state.player.mountedWeaponId||state.player.vehicleSeat)throw new Error('player already occupies an interaction station');
+  m.occupantId=state.player.id;state.player.mountedWeaponId=m.id;state.player.position=clone(m.operatorStation);return m;
+}
+
+export function aimMountedWeapon(state,mountedId,{traverseDelta=0,elevationDelta=0}={}){
+  const m=state.mountedWeapons[mountedId];if(!m||m.occupantId!==state.player.id)throw new Error('player is not mounted operator');
+  if(m.status!=='operational')throw new Error('mounted weapon disabled');
+  m.traverse.current=clamp(m.traverse.current+traverseDelta,m.traverse.min,m.traverse.max);
+  m.elevation.current=clamp(m.elevation.current+elevationDelta,m.elevation.min,m.elevation.max);
+  return {traverse:m.traverse.current,elevation:m.elevation.current};
+}
+
+export function crewRoleOccupied(mounted,role){return mounted.crewStations.some(s=>s.role===role&&Boolean(s.occupantId));}
+
+export function crewActionAvailable(mounted,action){
+  if(mounted.status!=='operational')return false;
+  const required=mounted.requirements?.[action]??[];
+  if(mounted.singleUserCapable&&mounted.occupantId)return true;
+  return required.every(role=>role==='operator'?Boolean(mounted.occupantId):crewRoleOccupied(mounted,role));
+}
+
+export function leaveMountedWeapon(state,mountedId,{isSafePoint=()=>true,trace=()=>null}={}){
+  const m=state.mountedWeapons[mountedId];if(!m||m.occupantId!==state.player.id||state.player.mountedWeaponId!==mountedId)throw new Error('player is not operator');
+  const from=m.operatorStation;const exit=m.exitAnchors.find(p=>isSafePoint(p)&&!trace(from,p));if(!exit)throw new Error('no safe mounted-weapon exit');
+  m.occupantId=null;state.player.mountedWeaponId=null;state.player.position=clone(exit);return clone(exit);
+}
+
+export function mountedMuzzleDirection(mounted){
+  const yaw=(mounted.mountTransform.yaw??0)+mounted.traverse.current,pitch=mounted.elevation.current,cp=Math.cos(pitch);
+  return {x:Math.cos(yaw)*cp,y:Math.sin(pitch),z:Math.sin(yaw)*cp};
+}
+
+export function canMountedWeaponFire(mounted,{traceShot=()=>null,range=1000}={}){
+  if(!crewActionAvailable(mounted,'fire'))return {ok:false,reason:'crew-or-status'};
+  if(!mounted.feed||!Number.isInteger(mounted.feed.rounds)||mounted.feed.rounds<=0)return {ok:false,reason:'empty'};
+  const origin=mounted.muzzle,d=mountedMuzzleDirection(mounted),end={x:origin.x+d.x*range,y:origin.y+d.y*range,z:origin.z+d.z*range};
+  const hit=traceShot(origin,end);return hit?{ok:false,reason:'obstructed',hit}:{ok:true,reason:null};
+}
+
+export function makeCrewStation(id,role,occupantId=null){return {id,role,occupantId};}
