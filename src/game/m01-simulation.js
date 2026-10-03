@@ -19,6 +19,9 @@ const phaseText={INTRO:'04:30 · Tczew, Polónia',OUTRO:'07:05 · Chamada no abr
 const EVACUATION={x:-332,y:-3,z:24};
 // The scripted station casualty is fictional and already in the yard before the raid, avoiding a visible relocation.
 const STATION_YARD={x:-300,y:-3,z:30},STATION_PATIENT='generic_rifleman';
+// Estimated presentation timing, owned by simulation and saved with the pair (schema 2).
+const STATION_TRANSITION_SEC=1.6,STATION_DRAG_OFFSET=.92;
+const STATION_DELIVERY={x:EVACUATION.x-2,z:EVACUATION.z+2.2};
 // Lugares no abrigo de campanha (interior x −264…−256, z 66…75) para a chamada das 07:05.
 const ROLL_CALL_SEATS=[[-262.8,73.6],[-261.2,73.9],[-259.6,73.9],[-258,73.6],[-263.2,71.6],[-256.9,71.6],[-262.9,69.6],[-257.1,69.6]];
 // Trabalho dos sapadores sem supressão, em segundos de jogo. Com 75 s, a caixa entregue por volta das 04:42 deixava
@@ -314,6 +317,7 @@ export class M01Simulation {
     if(dist(a,target)>d-.01)this.world.move(a,0,dt*speed);
   }
   updateActors(dt){
+    this.interruptStationEvacuation();
     const retreat=this.consumedEvent(E('east_demolition'));
     for(const a of this.actors){
       a.shot=Math.max(0,a.shot-dt);if(!a.alive||!a.active)continue;
@@ -345,7 +349,7 @@ export class M01Simulation {
       if(!c?.alive||!c.active){a.carriedBy=null;a.y=this.world.heightAt(a.x,a.z);continue;}
       if(a.task==='station_wounded'){
         // The casualty trails a backward-walking medic, at ground height rather than at the shoulder socket.
-        a.facing=c.facing;a.x=c.x+Math.cos(c.facing)*.92;a.z=c.z+Math.sin(c.facing)*.92;
+        a.facing=c.facing;a.x=c.x+Math.cos(c.facing)*STATION_DRAG_OFFSET;a.z=c.z+Math.sin(c.facing)*STATION_DRAG_OFFSET;
         a.y=this.world.heightAt(a.x,a.z);continue;
       }
       // Ferido ao ombro (presentação deriva só destes dados): atravessado sobre o carregador, um pouco atrás.
@@ -601,28 +605,55 @@ export class M01Simulation {
     if(!this.subtitle&&this.dialogueQueue.length){this.subtitle=this.dialogueQueue.shift();this.subtitle.until=this.clock+this.subtitle.duration;}
   }
   /** 04:35:30: Dudek reaches the station casualty, drags him to the aid point, then returns to his bridge post. */
+  interruptStationEvacuation(){
+    const patient=this.actor(STATION_PATIENT),medic=this.actor('leon_dudek');
+    if(!patient.stationDrag&&!(patient.task==='station_wounded'&&patient.carriedBy===medic.id)&&medic.task!=='evacuate_station_wounded')return;
+    if(patient.alive&&patient.active&&patient.task==='station_wounded'&&medic.alive&&medic.active&&medic.state!=='WOUNDED'&&medic.task==='evacuate_station_wounded')return;
+    if(patient.carriedBy===medic.id)patient.carriedBy=null;
+    delete patient.stationDrag;patient.y=this.world.heightAt(patient.x,patient.z);
+    if(medic.task==='evacuate_station_wounded')Object.assign(medic,{task:null,crouched:false,target:this.world.point('aid_position')});
+  }
   evacuateStation(medic,dt){
     const patient=this.actor(STATION_PATIENT);
-    if(!patient.alive||!patient.active){
-      if(patient.carriedBy===medic.id){patient.carriedBy=null;patient.y=this.world.heightAt(patient.x,patient.z);}
-      medic.task=null;medic.crouched=false;medic.target=this.world.point('aid_position');return;
-    }
+    const phase=name=>patient.stationDrag={phase:name,startedAt:this.clock,duration:STATION_TRANSITION_SEC};
+    // Only this pair needs an exact endpoint. Leave the common follower arrival logic intact.
+    const reach=(target,speed)=>{
+      const d=dist(medic,target);
+      if(d>.9)this.moveActor(medic,target,dt,speed);
+      else if(d>=.001){
+        const step=Math.min(d,speed*dt);
+        this.world.move(medic,(target.x-medic.x)*step/d,(target.z-medic.z)*step/d);medic.state='ADVANCE';
+      }
+    };
     if(patient.carriedBy!==medic.id){
       // Reach the head from the side instead of walking through the casualty's body.
-      const head={x:patient.x-.92,z:patient.z};
-      this.moveActor(medic,medic.x>patient.x-.7?{x:patient.x-1.4,z:patient.z+2.3}:head,dt,4.5);
-      if(dist(medic,head)<.9){
-        patient.carriedBy=medic.id;medic.crouched=true;medic.facing=0;
+      const facing=Math.atan2(patient.z-STATION_DELIVERY.z,patient.x-STATION_DELIVERY.x);
+      const head={x:patient.x-Math.cos(facing)*STATION_DRAG_OFFSET,z:patient.z-Math.sin(facing)*STATION_DRAG_OFFSET};
+      reach(medic.x>patient.x-.7?{x:patient.x-1.4,z:patient.z+2.3}:head,4.5);
+      if(dist(medic,head)<.001){
+        patient.carriedBy=medic.id;Object.assign(medic,{crouched:true,facing,state:'GUARD'});phase('grab');
         this.line('dlg_m01_017',`${E('wounded_dragged')}:17`);
       }
       return;
     }
-    this.moveActor(medic,EVACUATION,dt,.65);medic.facing+=Math.PI;
-    if(dist(medic,EVACUATION)<1.2){
-      Object.assign(patient,{carriedBy:null,task:'station_aid_post',x:EVACUATION.x-2,z:EVACUATION.z+2.2,facing:medic.facing});
+    // Legacy schema 2 saves already in transit resume their drag without replaying the grab.
+    if(!patient.stationDrag)phase('drag');
+    const transport=patient.stationDrag,elapsed=this.clock-transport.startedAt;
+    if(transport.phase==='grab'){
+      if(elapsed+1e-9<transport.duration)return;
+      phase('drag');return;
+    }
+    if(transport.phase==='release'){
+      if(elapsed+1e-9<transport.duration)return;
+      // The roots have already arrived here; this only removes numerical movement residue.
+      Object.assign(patient,{carriedBy:null,task:'station_aid_post',...STATION_DELIVERY});delete patient.stationDrag;
       patient.y=this.world.heightAt(patient.x,patient.z);
       Object.assign(medic,{task:null,crouched:false,state:'GUARD',target:this.world.point('aid_position')});
+      return;
     }
+    const destination={x:STATION_DELIVERY.x-Math.cos(medic.facing)*STATION_DRAG_OFFSET,z:STATION_DELIVERY.z-Math.sin(medic.facing)*STATION_DRAG_OFFSET};
+    if(dist(medic,destination)>=.001){const facing=medic.facing;reach(destination,.65);medic.facing=facing;}
+    if(dist(medic,destination)<.001){medic.state='GUARD';phase('release');}
   }
   /** Dudek vai até Bąk, carrega-o e deixa-o junto à estação; Bąk nunca fica na zona de demolição oeste. */
   evacuate(medic,dt){
@@ -714,7 +745,8 @@ export class M01Simulation {
   /** Diagnóstico só de leitura: o que um jogador vê (clarões recentes) e o estado real por trás do HUD. */
   get stationEvacuation(){
     const patient=this.actor(STATION_PATIENT),medic=this.actor('leon_dudek');
-    const data=a=>({id:a.id,x:a.x,y:a.y,z:a.z,alive:a.alive,active:a.active,state:a.state,task:a.task??null,carriedBy:a.carriedBy??null});
+    const data=a=>({id:a.id,x:a.x,y:a.y,z:a.z,facing:a.facing,alive:a.alive,active:a.active,state:a.state,task:a.task??null,carriedBy:a.carriedBy??null,
+      ...(a.stationDrag?{stationDrag:{...a.stationDrag}}:{})});
     return {patient:data(patient),medic:data(medic),delivered:patient.task==='station_aid_post'};
   }
   get threat(){
@@ -790,6 +822,12 @@ export function validateM01Snapshot(s){
     (a.task!=null&&!['evacuate_bak','stay_with_bak','evacuate_station_wounded','station_wounded','station_aid_post'].includes(a.task))))reject('transporte');
   if(s.actors.some(a=>['station_wounded','station_aid_post'].includes(a.task)&&(a.id!==STATION_PATIENT||!['WOUNDED','DOWN'].includes(a.state)||
     (a.carriedBy!=null&&(a.carriedBy!=='leon_dudek'||a.task==='station_aid_post')))||a.task==='evacuate_station_wounded'&&a.id!=='leon_dudek'))reject('evacuação da estação');
+  for(const a of s.actors)if(a.stationDrag!==undefined){
+    const t=a.stationDrag,m=s.actors.find(c=>c.id==='leon_dudek'),eventAt=s.consumed?.[E('wounded_dragged')];
+    if(a.id!==STATION_PATIENT||!t||Object.keys(t).some(k=>!['phase','startedAt','duration'].includes(k))||
+      !['grab','drag','release'].includes(t.phase)||!finite(eventAt,0,s.clock)||!finite(t.startedAt,eventAt,s.clock)||t.duration!==STATION_TRANSITION_SEC||
+      !a.alive||!a.active||a.task!=='station_wounded'||a.carriedBy!==m.id||!m.alive||!m.active||m.state==='WOUNDED'||m.task!=='evacuate_station_wounded')reject('transição da evacuação da estação');
+  }
   if(s.actors.some(a=>(a.firedAt!==undefined&&!Number.isFinite(a.firedAt))||(a.rounds!==undefined&&(!Number.isInteger(a.rounds)||a.rounds<-2||a.rounds>20))))reject('fogo dos actores');
   if(s.enemyFire!==undefined&&(!s.enemyFire||!Array.isArray(s.enemyFire.rounds)||s.enemyFire.rounds.length>200||!Number.isInteger(s.enemyFire.nextId)||s.enemyFire.nextId<0||
     new Set(s.enemyFire.rounds.map(r=>r?.id)).size!==s.enemyFire.rounds.length||s.enemyFire.rounds.some(r=>!validRound(r,s.clock))))reject('fogo em voo');

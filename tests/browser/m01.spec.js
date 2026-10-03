@@ -198,7 +198,7 @@ test('the station evacuation restores its grounded drag, pauses with the mission
   await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.actors?.some(a=>a.id==='leon_dudek'&&a.clip==='drag_wounded'));
   const current=await page.evaluate(()=>window.gameDiagnostics()),pair=current.m01.stationEvacuation;
   expect(pair.patient.carriedBy).toBe('leon_dudek');expect(pair.patient.y).toBeLessThanOrEqual(pair.medic.y+.1);
-  expect(current.m01.characters.actors).toContainEqual(expect.objectContaining({id:'generic_rifleman',clip:'wounded'}));
+  expect(current.m01.characters.actors).toContainEqual(expect.objectContaining({id:'generic_rifleman',clip:'station_drag_patient_grab',loop:false,clipTime:expect.closeTo(1.6,5)}));
   const angle=Math.atan2(pair.patient.z-current.player.z,pair.patient.x-current.player.x);
   await page.evaluate(({delta,pitch})=>{
     window.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0}));
@@ -216,6 +216,58 @@ test('the station evacuation restores its grounded drag, pauses with the mission
   expect(delivered.m01.stationEvacuation.patient.state).toBe('WOUNDED');expect(delivered.m01.flags['m01.bak_status']).toBe('unhurt');
   await info.attach('station-evacuation',{body:JSON.stringify({kind:'production browser continuation of a genuine simulation-control snapshot',drag:frozen.m01.stationEvacuation,delivered:delivered.m01.stationEvacuation,errors,failed}),contentType:'application/json'});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+for(const phase of ['grab','release'])test(`the real station ${phase} restores synchronized clips, pauses and keeps both roots fixed`,async({page},info)=>{
+  test.setTimeout(process.env.CI?180000:120000);
+  const d=toStationEvacuation(driver(),{observe:true,phase});for(let i=0;i<7;i++)d.step();
+  const snapshot=d.sim.snapshot(),pair=d.sim.stationEvacuation,p=snapshot.player;
+  // Look controls applied to the genuine route, before saving. No hand-written actor states.
+  const angle=Math.atan2(pair.patient.z-p.z,pair.patient.x-p.x);
+  d.step({lookX:Math.atan2(Math.sin(angle-p.angle),Math.cos(angle-p.angle))/.0022,lookY:(p.pitch+.18)/.0022});
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(phase=>{
+    const g=window.gameDiagnostics(),actors=g.m01.characters.actors;
+    if(g.m01.stationEvacuation.patient.stationDrag?.phase===phase&&
+      actors?.some(a=>a.id==='generic_rifleman'&&a.clip===`station_drag_patient_${phase}`)&&
+      actors.some(a=>a.id==='leon_dudek'&&a.clip===`station_drag_medic_${phase}`)){
+      document.exitPointerLock();return true;
+    }return false;
+  },phase);
+  await expect(page.locator('#pause')).toBeVisible();const frozen=await page.evaluate(()=>window.gameDiagnostics());
+  const roles=frozen.m01.characters.actors.filter(a=>['generic_rifleman','leon_dudek'].includes(a.id));
+  expect(roles).toHaveLength(2);expect(roles[0].clipTime).toBeCloseTo(roles[1].clipTime,6);
+  for(const a of roles){expect(a.loop).toBe(false);expect(a.weaponMeshes).toEqual([]);}
+  expect(frozen.m01.stationEvacuation.delivered).toBe(false);
+  await page.waitForTimeout(300);const still=await page.evaluate(()=>window.gameDiagnostics());
+  expect(still.m01.stationEvacuation).toEqual(frozen.m01.stationEvacuation);expect(still.m01.characters).toEqual(frozen.m01.characters);
+  await page.screenshot({path:info.outputPath(`m01-station-${phase}.png`),style:'#pause { visibility:hidden !important; }',timeout:90000});
+  await page.locator('#restart-checkpoint').click();
+  await page.waitForFunction(phase=>{
+    const g=window.gameDiagnostics();if(!g.paused&&g.m01.characters.actors?.some(a=>a.clip===`station_drag_patient_${phase}`)){
+      document.exitPointerLock();return true;
+    }return false;
+  },phase);
+  await expect(page.locator('#pause')).toBeVisible();const restored=await page.evaluate(()=>window.gameDiagnostics());
+  expect(restored.m01.stationEvacuation.patient.stationDrag.startedAt).toBe(snapshot.actors.find(a=>a.id==='generic_rifleman').stationDrag.startedAt);
+  for(const role of ['patient','medic'])for(const axis of ['x','y','z','facing'])
+    expect(restored.m01.stationEvacuation[role][axis]).toBe(frozen.m01.stationEvacuation[role][axis]);
+  await info.attach(`station-${phase}`,{body:JSON.stringify({kind:'production browser continuation of genuine simulation controls',frozen,restored,errors,failed}),contentType:'application/json'});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('a missing optional station transition GLB keeps the grounded fallback and completes evacuation',async({page},info)=>{
+  test.setTimeout(process.env.CI?240000:180000);
+  const d=toStationEvacuation(driver(),{observe:true,phase:'release'}),snapshot=d.sim.snapshot();
+  await page.route('**/m01_station_drag_transitions.glb',r=>r.abort());
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.failures.some(f=>f.path.endsWith('m01_station_drag_transitions.glb')));
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.stationEvacuation.delivered);
+  const data=await page.evaluate(()=>window.gameDiagnostics());
+  expect(data.m01.characters.actors).toContainEqual(expect.objectContaining({id:'generic_rifleman',clip:'wounded'}));
+  expect(data.m01.stationEvacuation.patient.carriedBy).toBeNull();expect(data.m01.stationEvacuation.patient.y).toBe(-3);
+  expect(data.m01.assetFailures).toEqual([]);expect(data.m01.flags['m01.bak_status']).toBe('unhurt');expect(errors).toEqual([]);
+  await info.attach('station-transition-fallback',{body:JSON.stringify({kind:'production continuation; intentional optional asset failure',data,errors}),contentType:'application/json'});
 });
 test('real keyboard movement traverses the approaches and E delivers the message at the rail bridge',async({page},info)=>{
   // Slow software rendering needs room for input and the final, paused evidence capture.

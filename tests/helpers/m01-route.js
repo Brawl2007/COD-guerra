@@ -66,13 +66,16 @@ export function toRepair(d){
   return d;
 }
 /** A real route to the scripted station evacuation, optionally observing it from the yard. */
-export function toStationEvacuation(d=driver(),{observe=false}={}){
+export function toStationEvacuation(d=driver(),{observe=false,phase='drag'}={}){
   const {sim,step,walk,until}=d;step({skip:true});
   walk(-66,26);walk(-15,26);walk(-15,2);walk(16,2);step({interact:true});
-  until(()=>sim.consumedEvent('evt_m01_wounded_dragged'),120);
   if(observe){walk(-15,2);walk(-15,32);walk(-110,32);walk(-290,35);walk(-308,35);}
-  until(()=>sim.actor('generic_rifleman').carriedBy==='leon_dudek',180);
-  until(()=>sim.actor('leon_dudek').x<-310,80);
+  until(()=>sim.consumedEvent('evt_m01_wounded_dragged'),120);
+  if(observe&&phase==='release'){
+    until(()=>sim.actor('generic_rifleman').stationDrag?.phase==='drag',180);walk(-331,32);
+  }
+  until(()=>sim.actor('generic_rifleman').stationDrag?.phase===phase,180);
+  if(phase==='drag')until(()=>sim.actor('leon_dudek').x<-310,80);
   return d;
 }
 /** Stay in the real sandbag cover until an actual adjustment salvo is emitted. */

@@ -49,7 +49,7 @@ test('death or removal of a participant detaches the casualty instead of leaving
 });
 test('legacy schema 2 saves with an already consumed station event do not replay an injury',()=>{
   const d=toStationEvacuation(),s=d.sim,legacy=s.snapshot();
-  for(const a of legacy.actors)if(['generic_rifleman','leon_dudek'].includes(a.id)){delete a.task;delete a.carriedBy;a.crouched=false;}
+  for(const a of legacy.actors)if(['generic_rifleman','leon_dudek'].includes(a.id)){delete a.task;delete a.carriedBy;delete a.stationDrag;a.crouched=false;}
   const old=legacy.actors.find(a=>a.id==='generic_rifleman');Object.assign(old,{health:100,state:'GUARD',x:-95,z:24});
   const copy=new M01Simulation();copy.restoreSnapshot(legacy);for(let i=0;i<100;i++)copy.tick(.05);
   assert.equal(patient(copy).health,100);assert.equal(patient(copy).task,undefined);assert.equal(medic(copy).task,undefined);
@@ -63,4 +63,64 @@ test('station care coexists with Bąk, all objectives, checkpoints and both hist
     for(const o of sim.definition.objectives.filter(o=>o.required))assert.equal(sim.objectives[o.id].state,'done');
     validateM01Snapshot(sim.snapshot());
   }
+});
+
+test('grab and release last 1.6 mission seconds, hold both roots and deliver only after settling',()=>{
+  const d=toStationEvacuation(driver(),{phase:'grab'}),s=d.sim,p=patient(s),m=medic(s);
+  for(const phase of ['grab','release']){
+    d.until(()=>p.stationDrag?.phase===phase,100);
+    const initial=s.stationEvacuation,startedAt=p.stationDrag.startedAt;
+    assert.equal(p.stationDrag.duration,1.6);assert.equal(initial.delivered,false);
+    for(let i=0;i<31;i++){
+      d.step();assert.equal(p.stationDrag.phase,phase);
+      for(const a of [p,m])for(const axis of ['x','y','z','facing'])assert.equal(a[axis],initial[a===p?'patient':'medic'][axis]);
+      assert.ok(Math.abs(p.x-m.x-Math.cos(m.facing)*.92)<1e-9);
+      assert.ok(Math.abs(p.z-m.z-Math.sin(m.facing)*.92)<1e-9);
+      assert.equal(s.stationEvacuation.delivered,false);
+    }
+    const paused=s.snapshot();s.tick(0,{skip:true,fire:true});assert.deepEqual(s.snapshot(),paused);
+    d.step();assert.ok(Math.abs(s.clock-startedAt-1.6)<1e-7);
+    if(phase==='grab')assert.equal(p.stationDrag.phase,'drag');
+    else{
+      assert.equal(s.stationEvacuation.delivered,true);assert.equal(p.carriedBy,null);assert.equal(p.stationDrag,undefined);
+      assert.ok(distance(p,initial.patient)<.001,'delivery keeps the roots at the reached aid point');
+    }
+  }
+});
+test('schema 2 restores every station phase and its future clocks, actors and RNG exactly',()=>{
+  for(const phase of ['grab','drag','release']){
+    const d=toStationEvacuation(driver(),{phase}),s=d.sim;for(let i=0;i<11;i++)d.step();
+    const saved=s.snapshot(),copy=new M01Simulation();copy.restoreSnapshot(saved);assert.deepEqual(copy.snapshot(),saved);
+    for(let i=0;i<40;i++){s.tick(.05);copy.tick(.05);assert.deepEqual(copy.stationEvacuation,s.stationEvacuation);}
+    assert.equal(copy.rng.state,s.rng.state);validateM01Snapshot(copy.snapshot());
+    const data=s.stationEvacuation;if(data.patient.stationDrag)data.patient.stationDrag.startedAt=-99;
+    assert.deepEqual(s.snapshot().actors,copy.snapshot().actors,'diagnostics do not expose live phase data');
+  }
+});
+test('all station phases interrupt on casualty/medic death, removal or reassignment without delivery',()=>{
+  for(const phase of ['grab','drag','release'])for(const interruption of ['medic_dead','patient_dead','medic_removed','patient_removed','reassigned']){
+    const d=toStationEvacuation(driver(),{phase}),s=d.sim,p=patient(s),m=medic(s),a=interruption.startsWith('medic')?m:p;
+    const position={x:p.x,z:p.z};
+    if(interruption==='reassigned')m.task='evacuate_bak';
+    else Object.assign(a,interruption.endsWith('removed')?{active:false}:{alive:false,health:0,state:'DOWN'});
+    d.step();assert.equal(p.carriedBy,null);assert.equal(p.stationDrag,undefined);assert.equal(s.stationEvacuation.delivered,false);
+    for(let i=0;i<20;i++)d.step();assert.equal(p.x,position.x);assert.equal(p.z,position.z);validateM01Snapshot(s.snapshot());
+    if(interruption==='reassigned')assert.equal(m.task,'evacuate_bak','an unrelated simulation task is preserved');
+  }
+});
+test('old schema 2 transit saves resume without a new grab and corrupt station phases are rejected atomically',()=>{
+  const d=toStationEvacuation(),s=d.sim,legacy=s.snapshot();delete legacy.actors.find(a=>a.id==='generic_rifleman').stationDrag;
+  const copy=new M01Simulation();copy.restoreSnapshot(legacy);assert.deepEqual(copy.snapshot(),legacy);copy.tick(.05);
+  assert.equal(patient(copy).stationDrag.phase,'drag');assert.equal(patient(copy).carriedBy,'leon_dudek');
+  const before=copy.snapshot();
+  for(const corrupt of [
+    a=>a.stationDrag.phase='unknown',a=>a.stationDrag.startedAt=before.clock+1,
+    a=>a.stationDrag.startedAt=-1,a=>a.stationDrag.duration=.7,a=>a.stationDrag=null,
+    a=>a.carriedBy=null,a=>a.stationDrag.localTimer=1
+  ]){
+    const bad=structuredClone(before);corrupt(bad.actors.find(a=>a.id==='generic_rifleman'));
+    assert.throws(()=>copy.restoreSnapshot(bad),/evacuação da estação/);assert.deepEqual(copy.snapshot(),before);
+  }
+  const bad=structuredClone(before);bad.actors.find(a=>a.id==='leon_dudek').stationDrag={...patient(copy).stationDrag};
+  assert.throws(()=>copy.restoreSnapshot(bad),/evacuação da estação/);assert.deepEqual(copy.snapshot(),before);
 });
