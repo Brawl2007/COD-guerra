@@ -40,6 +40,17 @@ test('old 89-actor idle placement migrates once and snapshot restore is stable',
   assert.deepEqual(again.snapshot(),migrated);
 });
 
+test('old 89-actor save immediately after east demolition keeps idle phase/start time while aligning the old post',()=>{
+  const s=new M01Simulation();s.scene=null;s.clock=8;s.consume(E('east_demolition'));
+  const legacy=oldPost(s.snapshot()),started=crew(legacy).map(a=>a.ckm.startedAt),rng=legacy.rng;
+  assert.ok(crew(legacy).every(a=>a.ckm.phase==='idle'),'event can be saved before the next actor update');
+  const restored=new M01Simulation();restored.restoreSnapshot(legacy);
+  assert.deepEqual(positions(restored),OLD.map(([x,z])=>[x+DX,-3,z]));
+  assert.deepEqual(crew(restored).map(a=>a.ckm.phase),['idle','idle','idle']);
+  assert.deepEqual(crew(restored).map(a=>a.ckm.startedAt),started);
+  assert.equal(restored.rng.state,rng);
+});
+
 test('old 89-actor abandon placement shifts rigidly but preserves phase and startedAt exactly',()=>{
   const live=new M01Simulation();live.scene=null;live.clock=8;live.consume(E('east_demolition'));live.updateActors(.05);
   const legacy=oldPost(live.snapshot()),started=crew(legacy).map(a=>a.ckm.startedAt),rng=legacy.rng;
@@ -75,10 +86,11 @@ test('casualties stay casualties and post-west saves preserve their saved positi
   assert.equal(dead.x,deadBefore.x+DX);
 
   const afterWest=oldPost(s.snapshot());afterWest.clock=20;afterWest.consumed[E('east_demolition')]=8;afterWest.consumed[E('west_demolition')]=18;
-  crew(afterWest).forEach(a=>{a.ckm.visible=false;});
+  crew(afterWest).forEach((a,i)=>{Object.assign(a,{x:-120-i*2,z:25+i,state:'RETREAT'});a.ckm={phase:'retreat',startedAt:11,visible:false};});
   const westPositions=positions(afterWest),west=new M01Simulation();west.restoreSnapshot(afterWest);
-  assert.deepEqual(positions(west),westPositions,'after west demolition the hidden emplacement is not rewritten');
+  assert.deepEqual(positions(west),westPositions,'after west demolition the withdrawn crew is not rewritten');
   assert.equal(west.actor('ckm_loader').alive,false);
+  assert.equal(west.actor('ckm_loader').ckm.startedAt,11);
 });
 
 test('86-actor saves after east or west demolition remain safe and do not restart abandon',()=>{
@@ -116,6 +128,7 @@ test('new ckm root puts gun_muzzle_flash on the mapped south embrasure x/z',()=>
   const [x,y,z]=manifest.sockets.scene.gun_muzzle_flash,yaw=-Math.PI/2,c=Math.cos(yaw),q=Math.sin(yaw);
   const world=[CKM_POSITION.x+x*c+z*q,CKM_POSITION.y+y,CKM_POSITION.z-x*q+z*c];
   assert.ok(Math.abs(world[0]-25)<1e-12,`muzzle x=${world[0]}`);
+  assert.ok(Math.abs(world[1]-(-2.36))<1e-12,`muzzle y=${world[1]}`);
   assert.ok(Math.abs(world[2]-43)<1e-12,`muzzle z=${world[2]}`);
   assert.equal(CKM_POSITION.y,-3);
 });
