@@ -64,7 +64,8 @@ export class M01Atmosphere {
       // Demolition is one rising cloud, not a chimney with particles looping back to the base.
       const growth=demolition?.15+.85*(1-Math.exp(-age/5)):1;
       const disperse=demolition?1+Math.min(age,120)/100:1;
-      const endFade=d.id==='station_bomb'?1:Math.max(0,Math.min(1,(240-age)/30));
+      const persistent=d.id==='station_bomb'||d.id==='station_wagon_fire';
+      const endFade=persistent?1:Math.max(0,Math.min(1,(240-age)/30));
       for(let i=0;i<number&&count<max;i++){
         const phase=((demolition?0:age*.032)+(i+.5)*.618)%1,height=(demolition?105:42)*phase*growth;
         const width=((demolition?20:7)+(demolition?25:12)*phase)*disperse;
