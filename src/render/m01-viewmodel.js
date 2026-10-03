@@ -4,7 +4,7 @@ import {clone} from 'three/addons/utils/SkeletonUtils.js';
 // World uniforms include torso/legs. A first-person camera inside that body must only draw its arms.
 export function viewModelArmsGeometry(source,jointNames){
   const joints=source.getAttribute('skinIndex'),weights=source.getAttribute('skinWeight');
-  const armBones=new Set(jointNames.map((name,i)=>/^(upperarm|lowerarm|hand|thumb|index|middle|ring|pinky)_/.test(name)?i:-1));
+  const armBones=new Set(jointNames.map((name,i)=>/^(clavicle|upperarm|lowerarm|hand|thumb|index|middle|ring|pinky)_/.test(name)?i:-1));
   const armVertex=i=>{
     // GLTFLoader can expose interleaved/normalized attributes; their backing arrays are not packed VEC4s.
     const j=[joints.getX(i),joints.getY(i),joints.getZ(i),joints.getW(i)];
@@ -74,7 +74,7 @@ export class M01ViewModel {
     if(!carry)this.root.rotation.x=reloadDown*Math.PI*.25;
     this.root.position.copy(eye.applyQuaternion(this.root.quaternion)).multiplyScalar(-1);
     if(!carry){
-      this.root.position.z-=.16;
+      this.root.position.z-=p.aiming?.24:.16;
       if(!p.aiming)this.root.position.addScaledVector(new THREE.Vector3(.16,-.23,.02),1-reloadDown);
       // Keep forearms clear of the near plane while showing the world rig's reload.
       this.root.position.addScaledVector(new THREE.Vector3(.06,.07,-.38),reloadDown);
