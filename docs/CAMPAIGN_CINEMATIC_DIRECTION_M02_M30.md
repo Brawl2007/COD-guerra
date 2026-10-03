@@ -4,6 +4,8 @@ Branch de trabalho: `codex/campaign-cinematic-m02-m30`
 
 Este documento complementa, sem substituir, os roteiros históricos de `docs/PROMPT_MESTRE.txt` §79.
 
+A gramática de ritmo e cinematografia inspirada de forma abstrata em padrões públicos de *World at War*, sem copiar conteúdo, está em `docs/CAMPAIGN_WAW_INSPIRED_GRAMMAR_M02_M30.md`. Aplicar os dois documentos em conjunto.
+
 ## Contrato
 
 - M01 permanece intacta. Esta revisão cobre M02–M30.
