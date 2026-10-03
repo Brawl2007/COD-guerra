@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import map from '../missions/m01-tczew/map-layout.json' with {type:'json'};
 import {M01Simulation} from '../src/game/m01-simulation.js';
-import {M01_YARD_WAGON_PLAN,yardWagonLod,yardWagonState} from '../src/render/m01-yard-wagons.js';
+import {TczewWorld} from '../src/world/tczew-world.js';
+import {M01_YARD_WAGON_PLAN,yardWagonLod,yardWagonState,yardWagonPosition} from '../src/render/m01-yard-wagons.js';
 
 const E=name=>`evt_m01_${name}`;
 
@@ -42,4 +43,19 @@ test('yard wagon LOD policy keeps low quality on LOD1 and does not alter the dis
   assert.equal(yardWagonLod('low'),1);
   assert.equal(yardWagonLod('medium'),0);
   assert.equal(yardWagonLod('high'),0);
+});
+
+
+test('yard wagon visual roots use runtime terrain height instead of floating at the authored metadata y',()=>{
+  const world=new TczewWorld();
+  const positions=M01_YARD_WAGON_PLAN.map(w=>yardWagonPosition(w,world));
+  positions.forEach((p,i)=>{
+    assert.equal(p[0],M01_YARD_WAGON_PLAN[i].position[0]);
+    assert.equal(p[2],M01_YARD_WAGON_PLAN[i].position[2]);
+    assert.equal(p[1],world.heightAt(p[0],p[2]));
+  });
+  assert.equal(positions[1][1],-3);
+  assert.equal(positions[2][1],-3);
+  assert.notEqual(positions[1][1],M01_YARD_WAGON_PLAN[1].position[1],
+    'metadata y=0 is not treated as a floating runtime ground plane');
 });
