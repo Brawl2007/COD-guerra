@@ -690,6 +690,33 @@ Sempre que a missão permitir, preferir mostrar transformação legível:
 
 Crateras e danos estruturais que afetam navegação, linha de visão ou cobertura entram no estado persistente da missão.
 
+# Guerra persistente além do jogador
+
+Cada mapa deve desenhar também a batalha que existe fora do espaço imediato do jogador.
+
+Planejar, quando historicamente plausível:
+- setores aliados ativos a centenas de metros;
+- setores inimigos correspondentes;
+- linhas de fogo entre eles;
+- rotas de reforço e retirada;
+- artilharia/veículos/evacuação em profundidade;
+- incêndios, crateras, destruição e fumaça visíveis ao longe;
+- acontecimentos a 800 m–5 km quando o relevo e a batalha comportarem essa leitura.
+
+Esses setores não são decoração em loop. Devem possuir estado resumido próprio e evolução coerente com horário, unidades, terreno e resultado histórico.
+
+Se um prédio distante for atingido, um tanque destruído ou uma posição abandonada enquanto o jogador está em outro local, esse resultado deve continuar existindo quando o setor voltar a ser visível ou for materializado em maior detalhe.
+
+A escala visual nunca autoriza inventar forças inexistentes. Toda batalha distante precisa ser compatível com:
+- ordem de batalha;
+- eixo da unidade;
+- linhas amigas/inimigas;
+- cronologia;
+- topografia;
+- armamento/veículos realmente plausíveis para o setor.
+
+Quando a posição exata não for conhecida, usar RECONSTRUCTED/COMPRESSED_FOR_GAMEPLAY e documentar a incerteza.
+
 # Regras de dinamismo do mapa
 
 Um mapa dinâmico NÃO significa destruir tudo.
