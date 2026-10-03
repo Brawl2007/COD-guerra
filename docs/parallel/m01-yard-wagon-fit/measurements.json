@@ -1,0 +1,289 @@
+{
+  "branch": "codex/m01-yard-wagon-fit",
+  "base": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+  "provenance": {
+    "mapLayoutBlob": "188c2857294d0aee368a5c94eea67bd6bd2b468a",
+    "tczewWorldBlob": "82d7e6aacf453e69384c8acd647db74b868cdaa5",
+    "m01ViewBlob": "06f4fafe32e135b033c9adfea7f1d83db86ee2c8",
+    "intactManifestBlob": "d724cdf572fc8fa1bf6f7766d27e81c85575ce22",
+    "damageManifestBlob": "4cbcc86cf6698a8454ac9dc68668aebf646366bc"
+  },
+  "contract": {
+    "units": "metros; +Y para cima; frente em −Z (vagões simétricos)",
+    "pivot": "origem no topo do carril, ao centro da via e a meio do vagão",
+    "gaugeM": 1.435,
+    "wheelbaseM": 4,
+    "wheelsetTranslations": [
+      [
+        0,
+        0.5,
+        -2
+      ],
+      [
+        0,
+        0.5,
+        2
+      ]
+    ],
+    "scale": [
+      1,
+      1,
+      1
+    ]
+  },
+  "lod0": {
+    "intactCovered": {
+      "bounds": {
+        "min": [
+          -1.59,
+          -0.035,
+          -4.55
+        ],
+        "max": [
+          1.59,
+          3.85,
+          4.55
+        ]
+      },
+      "size": [
+        3.18,
+        3.885,
+        9.1
+      ]
+    },
+    "intactOpen": {
+      "bounds": {
+        "min": [
+          -1.5,
+          -0.035,
+          -4.55
+        ],
+        "max": [
+          1.5,
+          2.84,
+          4.55
+        ]
+      },
+      "size": [
+        3,
+        2.875,
+        9.1
+      ]
+    },
+    "burnedCovered": {
+      "bounds": {
+        "min": [
+          -1.59,
+          -0.035,
+          -4.55
+        ],
+        "max": [
+          1.601972,
+          3.711058,
+          4.55
+        ]
+      },
+      "size": [
+        3.191972,
+        3.746058,
+        9.1
+      ]
+    },
+    "damagedCovered": {
+      "bounds": {
+        "min": [
+          -1.59,
+          -0.035,
+          -4.55
+        ],
+        "max": [
+          1.956476,
+          3.85,
+          4.55
+        ]
+      },
+      "size": [
+        3.546476,
+        3.885,
+        9.1
+      ]
+    },
+    "burnedOpen": {
+      "bounds": {
+        "min": [
+          -1.569987,
+          -0.035,
+          -4.55
+        ],
+        "max": [
+          1.603654,
+          2.84,
+          4.55
+        ]
+      },
+      "size": [
+        3.173642,
+        2.875,
+        9.1
+      ]
+    },
+    "damagedOpen": {
+      "bounds": {
+        "min": [
+          -1.5,
+          -0.035,
+          -4.55
+        ],
+        "max": [
+          1.974492,
+          2.841397,
+          4.55
+        ]
+      },
+      "size": [
+        3.474492,
+        2.876397,
+        9.1
+      ]
+    }
+  },
+  "lodSupportNote": "LOD0 wheel geometry reaches y=-0.035..1.035 around centers y=0.5. LOD1/2 simplification bottoms are about y=+0.005724, but roots/pivots remain unchanged at rail-top y=0.",
+  "yard": [
+    {
+      "id": "yard_wagon_1",
+      "sourcePoint": [
+        -320,
+        0,
+        -6
+      ],
+      "transform": {
+        "position": [
+          -320,
+          0,
+          -6
+        ],
+        "rotationY": 0,
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "cover": {
+        "id": "cv_wagon_1",
+        "deltaFromRoot": [
+          2,
+          0,
+          3
+        ],
+        "normal": [
+          1,
+          0,
+          0
+        ]
+      },
+      "centerTerrainY": -0.1309,
+      "wheelTerrainY": [
+        0,
+        0,
+        -1.1528,
+        -1.1045
+      ],
+      "terrainSpreadM": 1.1528,
+      "maxSupportGapM": 1.1528
+    },
+    {
+      "id": "yard_wagon_2",
+      "sourcePoint": [
+        -340,
+        0,
+        8
+      ],
+      "transform": {
+        "position": [
+          -340,
+          0,
+          8
+        ],
+        "rotationY": 0,
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "cover": {
+        "id": "cv_wagon_2",
+        "deltaFromRoot": [
+          2,
+          0,
+          3
+        ],
+        "normal": [
+          1,
+          0,
+          0
+        ]
+      },
+      "centerTerrainY": -3,
+      "wheelTerrainY": [
+        -3,
+        -3,
+        -3,
+        -3
+      ],
+      "terrainSpreadM": 0,
+      "maxSupportGapM": 3
+    },
+    {
+      "id": "yard_wagon_3",
+      "sourcePoint": [
+        -352,
+        0,
+        8
+      ],
+      "transform": {
+        "position": [
+          -352,
+          0,
+          8
+        ],
+        "rotationY": 0,
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "cover": null,
+      "centerTerrainY": -3,
+      "wheelTerrainY": [
+        -3,
+        -3,
+        -3,
+        -3
+      ],
+      "terrainSpreadM": 0,
+      "maxSupportGapM": 3
+    }
+  ],
+  "collision": {
+    "cvWagonNodesRemainCoverNodes": true,
+    "solidVehicleCoverBoxes": false,
+    "vehicleObstacleBoxes": false,
+    "rule": "não inferir colisão de bbox visual intacta/danificada"
+  },
+  "selection": {
+    "perPositionType": null,
+    "stationWagonFireTarget": null,
+    "damageStatePerPosition": null
+  },
+  "conclusion": {
+    "horizontalPlacementReady": true,
+    "yawReady": true,
+    "originalScaleReady": true,
+    "verticalSupportReady": false,
+    "integrationReady": false,
+    "blocker": "A cota autorada y=0 é um rail-top válido para o pivot dos GLB, mas não tem suporte físico compatível com o terreno actual: o primeiro ponto cruza uma encosta com 1.1528 m de variação nos contactos; os pontos 2/3 ficam 3.0 m acima do terreno. Não baixar, inclinar ou escolher um vagão queimado por inferência."
+  }
+}
