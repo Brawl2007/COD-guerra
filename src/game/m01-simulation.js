@@ -358,7 +358,7 @@ export class M01Simulation {
     if(p.phase==='standing'&&fixedMG34(a)){phase('enter');p=a.mg34Prone;}
     if(p.phase==='enter'&&this.clock-p.startedAt>=p.duration){phase('idle',p.startedAt+p.duration);p=a.mg34Prone;}
     // Suppression keeps a fixed gunner low and cancels only shots which have not left the muzzle.
-    if((this.clock<a.suppressedUntil||a.state==='HIT_REACTION')&&['aim','fire_burst'].includes(p.phase)){phase('idle');a.shot=0;}
+    if((this.clock<a.suppressedUntil||a.state==='HIT_REACTION'||this.mission.phase==='OUTRO'||this.mission.complete)&&['aim','fire_burst'].includes(p.phase)){phase('idle');a.shot=0;}
     p=a.mg34Prone;p.progress=['enter','exit'].includes(p.phase)?Math.min(1,Math.max(0,(this.clock-p.startedAt)/p.duration)):
       p.phase==='standing'?0:1;
   }
@@ -416,7 +416,7 @@ export class M01Simulation {
       if(retreat&&a.team==='ally'&&!a.civilian&&a.state!=='WOUNDED')a.target={x:-170,z:22};
       if(this.timers.escort&&a.id==='marek_zielinski')a.target=this.player;
       if(a.role==='ENGINEER'){a.crouched=this.active('cover_repair')&&dist(a,this.world.point('repair_site_2'))<6;if(this.clock<a.suppressedUntil)continue;}
-      if(a.target)this.moveActor(a,a.target,dt);
+      if(a.target&&(!proneGunner(a)||a.mg34Prone.phase==='standing'))this.moveActor(a,a.target,dt);
     }
     for(const a of this.actors)if(a.carriedBy){
       const c=this.actor(a.carriedBy);
@@ -517,7 +517,7 @@ export class M01Simulation {
   gauss(){let u=0;while(u<=1e-12)u=this.rng.next();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*this.rng.next());}
   /** Uma rajada (ou um tiro) com dispersão em milésimos; os tiros ficam em voo até à hora de chegada (enemyFire.rounds). */
   burst(a,target,kind,{rounds=1,interval=.075,bias=[0,0],cone=[0,0],tracer=false,victim=null}={}){
-    if(proneGunner(a)&&(!canMG34Fire(a)||this.clock<a.suppressedUntil))return false;
+    if(proneGunner(a)&&(!canMG34Fire(a)||this.clock<a.suppressedUntil||this.mission.phase==='OUTRO'||this.mission.complete))return false;
     const aim=target.id?{x:target.x,y:target.y+(target.crouched?.75:1.1),z:target.z}:
       {x:target.x,y:(target.y??this.world.heightAt(target.x,target.z))+1,z:target.z};
     if(proneGunner(a)){
@@ -963,6 +963,8 @@ export function validateM01Snapshot(s){
       if(!validRound(r,s.clock)||r.by!==a.id||r.weapon!=='mg34'||r.firedAt!==p.startedAt+k*MG34_INTERVAL||
         !/^m01_round_\d+$/.test(r.id)||!Number.isInteger(id)||id<0||id>=s.enemyFire.nextId||pendingMG34Ids.has(r.id)||
         (k>=b.emitted&&s.enemyFire.rounds.some(emitted=>emitted.id===r.id)))reject('plan de rajada MG34');
+      const flight=s.enemyFire.rounds.find(emitted=>emitted.id===r.id);
+      if(k<b.emitted&&((r.arriveAt>s.clock&&!flight)||(flight&&(Object.keys(flight).length!==Object.keys(r).length||Object.keys(r).some(key=>flight[key]!==r[key])))))reject('tiro emitido MG34');
       pendingMG34Ids.add(r.id);
     }
     const last=b.plan[b.emitted-1];
