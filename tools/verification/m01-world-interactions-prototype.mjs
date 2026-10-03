@@ -23,52 +23,9 @@ export function makeWorldWeapon({id,weaponType,position,orientation={yaw:0,pitch
   const profile=WEAPON_TYPES[weaponType];if(!profile)throw new Error(`unknown weaponType ${weaponType}`);
   if(!id)throw new Error('world weapon requires stable id');
   if(!feed||feed.kind!==profile.feedKind)throw new Error(`feed kind ${feed?.kind} does not match ${weaponType}`);
-  if(Number.isInteger(feed.rounds)&&Number.isInteger(feed.capacity)&&(feed.rounds<0||feed.rounds>feed.capacity))throw new Error('invalid feed rounds');
-  return {id,weaponType,position:position?clone(position):null,orientation:clone(orientation),holder:holder?clone(holder):null,
-    feed:clone(feed),condition,protected:Boolean(protectedItem),persistent:Boolean(persistent),droppedAt,sourceActorId,presentationId};
-}
-
-export function makePrototypeState({playerPosition={x:0,y:0,z:0},playerForward={x:1,y:0,z:0}}={}){
-  return {prototypeSchema:1,clock:0,player:{id:'player',position:clone(playerPosition),forward:clone(playerForward),equippedWeaponId:null,mountedWeaponId:null,vehicleSeat:null},
-    actors:{},worldWeapons:{},mountedWeapons:{},vehicles:{}};
-}
-
-export function isCartridgeCompatible(weaponType,ammo){
-  const w=WEAPON_TYPES[weaponType];return Boolean(w&&ammo?.kind==='cartridges'&&ammo.caliber===w.caliber&&Number.isInteger(ammo.rounds)&&ammo.rounds>=0);
-}
-
-export function isFeedDeviceCompatible(weaponType,device){
-  const w=WEAPON_TYPES[weaponType];if(!w||!device||device.caliber!==w.caliber)return false;
-  if(w.feedKind==='internal-magazine')return device.kind==='charger'&&w.chargeFamilies.includes(device.family);
-  return device.kind===w.feedKind&&device.family===w.feedFamily;
-}
-
-export function rayBoxSegment(from,to,box){
-  const d={x:to.x-from.x,y:to.y-from.y,z:to.z-from.z};let near=0,far=1;
-  for(const axis of ['x','y','z']){
-    if(Math.abs(d[axis])<1e-9){if(from[axis]<box.min[axis]||from[axis]>box.max[axis])return null;continue;}
-    const a=(box.min[axis]-from[axis])/d[axis],b=(box.max[axis]-from[axis])/d[axis];near=Math.max(near,Math.min(a,b));far=Math.min(far,Math.max(a,b));if(near>far)return null;
-  }
-  return near>=0&&near<=1?near:null;
-}
-
-export function makeTrace(obstacles=[]){
-  return (from,to)=>{
-    let first=null;for(const box of obstacles){const t=rayBoxSegment(from,to,box);if(t!==null&&(!first||t<first.t))first={...box,t};}
-    return first;
-  };
-}
-
-export function resolveInteraction(player,candidates,{trace=()=>null}={}){
-  const valid=[];
-  for(const c of candidates){
-    if(!c||c.available===false||c.protected||!c.anchor)continue;
-    const d=distance(player.position,c.anchor);if(d>(c.maxDistance??2.5))continue;
-    const angle=angleDeg(player.forward,direction(player.position,c.anchor));if(angle>(c.maxAngleDeg??60))continue;
-    if(trace(player.position,c.anchor))continue;
-    valid.push({...c,distance:d,angleDeg:angle});
-  }
-  valid.sort((a,b)=>(b.priority??0)-(a.priority??0)||a.angleDeg-b.angleDeg||a.distance-b.distance||a.id.localeCompare(b.id));
+  if(Number.isInteger(feed.rounds)&&Number.isInteger(feed.capacity)&&(feed.rounds<0||feed.rounds>feed.capacity))throw new Error('in
+…[2423 chars truncated — re-run with head/grep/tail for full output]…
+gleDeg-b.angleDeg||a.distance-b.distance||a.id.localeCompare(b.id));
   return valid[0]??null;
 }
 
@@ -173,3 +130,111 @@ export function canMountedWeaponFire(mounted,{traceShot=()=>null,range=1000}={})
 }
 
 export function makeCrewStation(id,role,occupantId=null){return {id,role,occupantId};}
+
+export function makeVehicle({id,type,position={x:0,y:0,z:0},yaw=0,status='operational',mobility={canMove:true,steeringFactor:1,speedFactor:1},
+  faction='ally',playerOperable=true,capturable=false,seats=[],mountedWeapons=[],damageState={},protected:protectedItem=false,presentationId=null}){
+  if(!id||!type)throw new Error('vehicle requires id/type');
+  const allowed=new Set(['operational','damaged','disabled','abandoned','burning','destroyed']);if(!allowed.has(status))throw new Error('invalid vehicle status');
+  return {id,type,position:clone(position),yaw,status,mobility:clone(mobility),faction,playerOperable:Boolean(playerOperable),capturable:Boolean(capturable),
+    seats:clone(seats),mountedWeapons:[...mountedWeapons],damageState:clone(damageState),protected:Boolean(protectedItem),presentationId};
+}
+
+export function makeSeat({id,role,entryPoint,exitPoints,access='open',occupantId=null,controls=[],enabled=true}){
+  if(!id||!role||!entryPoint||!Array.isArray(exitPoints)||!exitPoints.length)throw new Error('seat contract incomplete');
+  return {id,role,entryPoint:clone(entryPoint),exitPoints:clone(exitPoints),access,occupantId,controls:[...controls],enabled:Boolean(enabled)};
+}
+
+export function vehicleAllowsEntry(vehicle,seat){
+  if(!seat?.enabled||seat.occupantId)return false;
+  if(['burning','destroyed'].includes(vehicle.status))return false;
+  if(vehicle.faction==='enemy'&&!vehicle.capturable)return false;
+  if(!vehicle.playerOperable&&vehicle.faction!=='enemy')return false;
+  if(seat.role==='driver'&&(!vehicle.mobility?.canMove||['disabled'].includes(vehicle.status)))return false;
+  return true;
+}
+
+export function vehicleSeatCandidate(state,vehicleId,seatId){
+  const v=state.vehicles[vehicleId],seat=v?.seats.find(s=>s.id===seatId);if(!v||!seat)return null;
+  return {id:`seat:${vehicleId}:${seatId}`,kind:'vehicle-seat',vehicleId,seatId,anchor:seat.entryPoint,priority:50,maxDistance:2.4,maxAngleDeg:80,
+    prompt:`E — Enter ${seat.role} seat`,available:vehicleAllowsEntry(v,seat),protected:v.protected};
+}
+
+export function enterVehicleSeat(state,vehicleId,seatId,{trace=()=>null}={}){
+  const v=state.vehicles[vehicleId],seat=v?.seats.find(s=>s.id===seatId);if(!v||!seat)throw new Error('unknown vehicle seat');
+  if(v.protected||!vehicleAllowsEntry(v,seat))throw new Error('vehicle seat unavailable');
+  if(state.player.vehicleSeat||state.player.mountedWeaponId)throw new Error('player already occupies an interaction station');
+  const c=vehicleSeatCandidate(state,vehicleId,seatId);if(!resolveInteraction(state.player,[c],{trace}))throw new Error('seat entry point not physically reachable');
+  seat.occupantId=state.player.id;state.player.vehicleSeat={vehicleId,seatId};state.player.position=clone(seat.entryPoint);return seat;
+}
+
+export function exitVehicleSeat(state,{isSafePoint=()=>true,trace=()=>null}={}){
+  const ref=state.player.vehicleSeat;if(!ref)throw new Error('player is not in a vehicle seat');
+  const v=state.vehicles[ref.vehicleId],seat=v?.seats.find(s=>s.id===ref.seatId);if(!seat||seat.occupantId!==state.player.id)throw new Error('seat occupancy mismatch');
+  const exit=seat.exitPoints.find(p=>isSafePoint(p)&&!trace(seat.entryPoint,p));if(!exit)throw new Error('no safe vehicle exit');
+  seat.occupantId=null;state.player.vehicleSeat=null;state.player.position=clone(exit);return clone(exit);
+}
+
+export function vehicleControlAvailable(state,control){
+  const ref=state.player.vehicleSeat;if(!ref)return false;const v=state.vehicles[ref.vehicleId],seat=v?.seats.find(s=>s.id===ref.seatId);if(!v||!seat)return false;
+  if(control==='drive')return seat.role==='driver'&&seat.controls.includes('drive')&&vehicleAllowsEntry({...v,status:v.status}, {...seat,occupantId:null});
+  return seat.controls.includes(control);
+}
+
+export function prototypeSnapshot(state){return clone(state);}
+
+export function validatePrototypeSnapshot(s){
+  const fail=m=>{throw new Error(`invalid interaction prototype snapshot: ${m}`);};
+  if(!s||s.prototypeSchema!==1||!Number.isFinite(s.clock)||s.clock<0||!s.player)fail('header');
+  const ids=new Set();for(const [id,w] of Object.entries(s.worldWeapons??{})){if(id!==w.id||ids.has(id)||!WEAPON_TYPES[w.weaponType])fail('world weapon');ids.add(id);if(w.position&&![w.position.x,w.position.y,w.position.z].every(Number.isFinite))fail('weapon position');if(!Number.isInteger(w.feed?.rounds)||w.feed.rounds<0||w.feed.rounds>w.feed.capacity)fail('weapon feed');}
+  for(const [id,m] of Object.entries(s.mountedWeapons??{})){if(id!==m.id||ids.has(id))fail('mounted id');ids.add(id);if(m.traverse.current<m.traverse.min||m.traverse.current>m.traverse.max||m.elevation.current<m.elevation.min||m.elevation.current>m.elevation.max)fail('mounted arc');}
+  for(const [id,v] of Object.entries(s.vehicles??{})){if(id!==v.id||ids.has(id))fail('vehicle id');ids.add(id);const occupied=v.seats.filter(x=>x.occupantId).map(x=>x.occupantId);if(new Set(occupied).size!==occupied.length)fail('duplicate vehicle occupant');}
+  if(s.player.equippedWeaponId){const w=s.worldWeapons[s.player.equippedWeaponId];if(!w||w.holder?.kind!=='player'||w.holder.id!==s.player.id)fail('equipped backlink');}
+  if(s.player.mountedWeaponId){const m=s.mountedWeapons[s.player.mountedWeaponId];if(!m||m.occupantId!==s.player.id)fail('mounted backlink');}
+  if(s.player.vehicleSeat){const v=s.vehicles[s.player.vehicleSeat.vehicleId],seat=v?.seats.find(x=>x.id===s.player.vehicleSeat.seatId);if(!seat||seat.occupantId!==s.player.id)fail('seat backlink');}
+  return true;
+}
+
+export function restorePrototypeSnapshot(target,raw){const candidate=clone(raw);validatePrototypeSnapshot(candidate);for(const k of Object.keys(target))delete target[k];Object.assign(target,candidate);return target;}
+
+export function interactionGameplayFingerprint(state){
+  const copy=prototypeSnapshot(state);
+  for(const w of Object.values(copy.worldWeapons))delete w.presentationId;
+  for(const m of Object.values(copy.mountedWeapons))delete m.presentationId;
+  for(const v of Object.values(copy.vehicles))delete v.presentationId;
+  return JSON.stringify(copy);
+}
+
+export function scenarioFixtures(){
+  const s=makePrototypeState({playerPosition:{x:0,y:0,z:0},playerForward:{x:1,y:0,z:0}});
+  s.actors.de_dead={id:'de_dead',alive:false,position:{x:1.5,y:0,z:0},facing:0};
+  s.worldWeapons.kar98k_dead=makeWorldWeapon({id:'kar98k_dead',weaponType:'kar98k',position:{x:1.5,y:0,z:.35},feed:{kind:'internal-magazine',rounds:4,capacity:5,chamber:'unmodelled'},sourceActorId:'de_dead',droppedAt:10,presentationId:'kar98k_glb'});
+  s.worldWeapons.player_wz29=makeWorldWeapon({id:'player_wz29',weaponType:'kb_wz29',position:null,holder:{kind:'player',id:'player'},feed:{kind:'internal-magazine',rounds:2,capacity:5,chamber:'unmodelled'},presentationId:'wz29_glb'});
+  s.player.equippedWeaponId='player_wz29';
+  s.mountedWeapons.fixed_mg=makeMountedWeapon({id:'fixed_mg',weaponType:'mg34',pivot:{x:4,y:1,z:0},muzzle:{x:4.8,y:1,z:0},operatorStation:{x:3.4,y:0,z:0},exitAnchors:[{x:3,y:0,z:-1},{x:3,y:0,z:1}],traverse:{min:-.35,max:.35,current:0},elevation:{min:-.15,max:.25,current:0},feed:{kind:'belt',family:'mg34-belt',rounds:32,capacity:50,chamber:'loaded'},singleUserCapable:true});
+  s.mountedWeapons.artillery=makeMountedWeapon({id:'artillery',weaponType:'ckm_wz30',pivot:{x:8,y:0,z:0},muzzle:{x:9,y:1,z:0},operatorStation:{x:7.5,y:0,z:0},exitAnchors:[{x:7,y:0,z:-1}],feed:{kind:'belt',family:'prototype-shell-state',rounds:1,capacity:1,chamber:'loaded'},crewStations:[makeCrewStation('gunner','gunner',null),makeCrewStation('loader','loader','npc_loader')],requirements:{fire:['operator','loader'],load:['loader']}});
+  s.vehicles.jeep=makeVehicle({id:'jeep',type:'jeep',position:{x:12,y:0,z:0},status:'operational',seats:[
+    makeSeat({id:'driver',role:'driver',entryPoint:{x:11.3,y:0,z:-.8},exitPoints:[{x:10.8,y:0,z:-1.5},{x:12,y:0,z:-1.8}],access:'door-left',controls:['drive']}),
+    makeSeat({id:'passenger',role:'passenger',entryPoint:{x:11.3,y:0,z:.8},exitPoints:[{x:10.8,y:0,z:1.5},{x:12,y:0,z:1.8}],access:'door-right'}),
+    makeSeat({id:'gunner',role:'gunner',entryPoint:{x:12.2,y:0,z:1},exitPoints:[{x:12.8,y:0,z:1.5}],access:'open',controls:['mounted-weapon:jeep_mg']})
+  ],mountedWeapons:['jeep_mg'],presentationId:'jeep_glb'});
+  return s;
+}
+
+export function runPrototypeScenarios(){
+  const A=scenarioFixtures();const pickup=pickupWeapon(A,'kar98k_dead',{dropPoint:{x:.4,y:0,z:-.4},clock:12});
+  const resultA={picked:pickup.id,rounds:pickup.feed.rounds,oldWeaponPosition:A.worldWeapons.player_wz29.position,oldRounds:A.worldWeapons.player_wz29.feed.rounds};
+
+  const B=prototypeSnapshot(A);const dropped=dropEquippedWeapon(B,{position:{x:1,y:0,z:0},clock:14});
+  const resultB={id:dropped.id,rounds:dropped.feed.rounds,worldPosition:dropped.position,equipped:B.player.equippedWeaponId};
+
+  const C=scenarioFixtures();C.player.position={x:3.2,y:0,z:0};C.player.forward={x:1,y:0,z:0};enterMountedWeapon(C,'fixed_mg');const aimed=aimMountedWeapon(C,'fixed_mg',{traverseDelta:99,elevationDelta:-99});const exit=leaveMountedWeapon(C,'fixed_mg');
+  const resultC={aimed,exit,occupant:C.mountedWeapons.fixed_mg.occupantId};
+
+  const D=scenarioFixtures();D.player.position={x:11,y:0,z:-.7};D.player.forward={x:1,y:0,z:0};enterVehicleSeat(D,'jeep','driver');const canDrive=vehicleControlAvailable(D,'drive');const jeepExit=exitVehicleSeat(D);const resultD={canDrive,exit:jeepExit,seats:D.vehicles.jeep.seats.map(s=>({id:s.id,role:s.role,occupantId:s.occupantId}))};
+
+  const E=scenarioFixtures();E.player.position={x:7.2,y:0,z:0};E.player.forward={x:1,y:0,z:0};enterMountedWeapon(E,'artillery');const withLoader=crewActionAvailable(E.mountedWeapons.artillery,'fire');E.mountedWeapons.artillery.crewStations.find(s=>s.role==='loader').occupantId=null;const withoutLoader=crewActionAvailable(E.mountedWeapons.artillery,'fire');
+  const resultE={playerStation:E.player.mountedWeaponId,withLoader,withoutLoader};
+  return {A:resultA,B:resultB,C:resultC,D:resultD,E:resultE};
+}
+
+if(process.argv[1]&&import.meta.url===new URL(`file://${process.argv[1]}`).href)process.stdout.write(JSON.stringify(runPrototypeScenarios(),null,2)+'\n');
