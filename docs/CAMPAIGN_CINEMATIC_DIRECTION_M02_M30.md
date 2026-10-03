@@ -15,6 +15,7 @@ A gramática de ritmo e cinematografia inspirada de forma abstrata em padrões p
 - Guerra em três escalas: próxima, média e longa. Centenas de soldados podem aparecer visualmente por formação/LOD/instancing e setores simulados; isso não significa centenas de IAs completas ao mesmo tempo.
 - A batalha continua fora da câmera. Unidades avançam, recuam, evacuam, perdem veículos e recebem ordens sem esperar o jogador.
 - Ritmo não é tiroteio constante. Alternar preparação, terror, avanço, caos, silêncio, socorro e consequência.
+- Duração padrão: **20–25 minutos**. Nenhum minuto pode ser mero preenchimento. Mesmo a calma precisa entregar tensão, informação, personagem, deslocamento significativo, atividade de outros setores ou consequência observável.
 - Não copiar cenas, enquadramentos, personagens, diálogos ou assets de Call of Duty/World at War. Usar apenas a filosofia de escala, ritmo e impacto.
 - O mundo não pode ser permanentemente cinza. Cada missão recebe paleta, luz, clima e materiais próprios; cinza/desaturação só quando fizer sentido ao local, hora e estado da batalha.
 
