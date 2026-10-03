@@ -123,3 +123,10 @@ Os nomes são `ckm_wz30_gunner_<sufixo>` e `ckm_wz30_loader_<sufixo>`. Nenhum cl
 4. Ligar `fire_burst` ao disparo que a simulação já decidir para o grupo. O som do emissor `ae_s2_ckm_east` e o clarão em `sockets_gun.muzzle_flash` ficam como hoje. Os eventos `fire` dos clips servem só para sincronizar a animação; o renderer não decide tiros.
 5. Tocar `abandon` quando a missão já mandar a guarnição sair, antes de `evt_m01_west_demolition` (prontidão "grp_ckm_crew saiu da casamata"). Depois de `leave`, entregar os soldados à locomoção existente.
 6. Escolha de LOD por distância: LOD0 dentro da casamata, LOD2 da outra margem.
+
+
+## 10. Runtime — 2026-10-03 UTC
+
+Guarnição de três actores persistidos em schema 2: `ckm_gunner`, `ckm_loader`, `ckm_reserve`. Arma e dois operadores amostram `idle`/`abandon` pelo mesmo tempo da simulação; o terceiro usa clips existentes. `abandon` dura 3 s antes da locomoção para fora da zona de demolição oeste. Saves anteriores sem a guarnição são normalizados atomicamente; depois da demolição leste, o grupo ausente começa na posição segura. Fallback do kit opcional preserva os actores e o jogo.
+
+A raiz provisória é `[22,-3,43]`, atrás de `cv_casemate_emb_s`, rotação Y `−π/2`. Os homens ficam no piso da casamata, sob o tabuleiro. A passagem e subida ao terreno são provisórias. Não foi criada plataforma para elevar o cano. `aim`/`fire_burst`/`feed` continuam sem decisão de disparo/munição na simulação; o emissor `ae_s2_ckm_east` permanece no seu lugar. Provas e limitações em [`ckm-crew-runtime-2026-10-03/REPORT.md`](../../verification/m01-runtime/ckm-crew-runtime-2026-10-03/REPORT.md).

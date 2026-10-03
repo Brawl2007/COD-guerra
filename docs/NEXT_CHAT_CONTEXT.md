@@ -46,3 +46,18 @@ Continuação de `44ee7822a295ac840bce70c4ca9897c064becce9`, sem reconstruir sis
 Validação: 165/165 Node e build; 5/5 casos focados de navegador (110,492 s), sem skips/retries/instáveis. A suíte integral passou 29/29 casos em 583.108 s, sem falhas, retries, skips, instáveis ou erros globais. Provas, capturas originais do navegador de produção e substituições literais: `docs/verification/m01-runtime/station-drag-runtime-2026-10-03/`. São continuações de snapshots alcançados por controlos reais, não playtest humano.
 
 CI da base `44ee782`: run 37077052752, 158/158 Node, build e 26/26 browser em 21,3 min, deploy skipped. CI de `2ccd451`: run 37076161531 cancelled durante browser; não aprovado. Estas execuções pertencem aos commits anteriores. A CI do próximo head será acompanhada separadamente. Main continua `72bbcdd156603c9399801c95d43d9365ba50fc82`; PR #32 permanece draft; sem publicação/workflow_dispatch/M02. Graphify continua pausado, checkpoint SHA-256 54647d13cc9b860c18b777cbd3d4cdc693d4a2af0cb015082171c2667dd32e32 preservado. Claude continua em pausa; guarnição ckm, prone/loader MG34 e estado dos vagões exigem dados reais da simulação.
+
+
+## Ponto de continuação — guarnição ckm, 2026-10-03
+
+Código guardado em `f4703350e950e5f70bd87d3190b4dc2a1cf0ef04`, tree `c5323de90866e5d7980664847390e3e67a3f1c46`, parent `b734cb0703013c36416f4cda269d558ae0602394`. O commit seguinte guarda este contexto/evidências. Confirmar refs; candidato PR #32 e staging não foram avançados nesta pausa.
+
+Alterados apenas dois ficheiros de produção: `src/game/m01-simulation.js` e `src/render/m01-characters.js`. Três IDs novos: ckm_gunner, ckm_loader, ckm_reserve. Estado persistido `ckm={phase,startedAt,visible}`, fases idle/abandon/retreat. Abandono 3 s depois do evento existente east_demolition; locomoção até fora da zona oeste; gate original conserva a segurança. Arma/operadores sincronizados, terceiro homem usa clips existentes; corpo abatido/restauro/kit opcional conservados. HasCKM exige standing_idle e clips completos: sem animações base o fallback continua procedural.
+
+Schema 2 aceita exactos 86 actores legados ou 89 novos; rejeita grupos parciais/campos ilegais atomicamente. Normaliza só o grupo ausente, em posição segura se a demolição leste já aconteceu; não modifica os actores anteriores ou RNG. MoveActor e assets intactos. Posicionamento [22,-3,43] sob o tabuleiro e caminho/subida provisórios; altura da seteira/plataforma ainda por confirmar.
+
+Não foi implementado disparo/munição da ckm: aim/fire_burst/feed pendentes. ae_s2_ckm_east [1045,0,30] é outro emissor, não foi deslocado. MG34 prone/loader e estados de vagões continuam pendentes. Sem M02, main, publicação, workflow_dispatch ou Graphify.
+
+Validação final confirmada desta etapa: 168/168 Node + build; 3/3 navegador focado após corrigir a regressão do kit base, 80,748 s. Suíte integral final iniciada mas relatório /tmp/ckm-browser-final.json desapareceu entre turnos; NÃO declarar 31/31. Próximo passo concreto: npm run test:browser com Chromium local, rever resultado e só então avançar candidato/staging/PR #32. CI b734cb run 37081592590 passou, deploy skipped; não é CI da nova entrega.
+
+Evidência em `docs/verification/m01-runtime/ckm-crew-runtime-2026-10-03/`: REPORT.md, fallback-regression.json, 12 blocos reais // SUBSTITUIR ISTO: / // POR ISTO: em substituicoes.txt/json, hashes de 111 ficheiros conservados e captura original. Os blocos reproduzem os dois fontes byte a byte sobre b734cb. Logs /tmp não estão disponíveis; captura mostra a ponte, não a guarnição em grande plano. Não repetir extrações nem reconstruir código. Claude continua indisponível.

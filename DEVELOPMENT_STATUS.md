@@ -4,7 +4,7 @@
 
 M01 passou a **PROTÓTIPO JOGÁVEL** nesta branch. O fluxo usa a fundação Three.js e as pontes do Claude, preservando os históricos dos PRs #9 e #11. A bancada francesa continua seleccionável. O marco 2 ainda não está aprovado como missão validada; faltam o playtest humano, a medição no Chromebook e o trabalho descrito abaixo.
 
-Os PRs #8 e #10 de pesquisa/preparação já estão em `main`. Os PRs #26/#27 estão integrados em `codex/m01-runtime`; #9/#11 já foram substituídos e fechados. Esta revisão preserva o kit e a ligação do Ju 87 do PR #28, com LOD pela distância e provas do raid real, e integra os kits provisórios revistos de vagões #29 e MG34 #30. Os vagões #29 e a MG34 #30 estão agora ligados ao renderer: 65 vagões LOD2 instanciados e os dois atiradores de `grp_de_east`, sem alterar a simulação. Os kits ckm #31, MG34 deitada #33 e vagões danificados #34 foram revistos e integrados na branch própria; a sua ligação à guarnição/deitado continua pendente. Revisão inicial em `docs/verification/m01-runtime/asset-review-2026-10-02/`; nova prova em `docs/verification/m01-runtime/support-runtime-2026-10-02/`. O merge em `main` e a publicação pertencem ao utilizador. O mapa francês conserva as suas coordenadas e arma.
+Os PRs #8 e #10 de pesquisa/preparação já estão em `main`. Os PRs #26/#27 estão integrados em `codex/m01-runtime`; #9/#11 já foram substituídos e fechados. Esta revisão preserva o kit e a ligação do Ju 87 do PR #28, com LOD pela distância e provas do raid real, e integra os kits provisórios revistos de vagões #29 e MG34 #30. Os vagões #29 e a MG34 #30 estão agora ligados ao renderer: 65 vagões LOD2 instanciados e os dois atiradores de `grp_de_east`, sem alterar a simulação. Os kits ckm #31, MG34 deitada #33 e vagões danificados #34 foram revistos e integrados na branch própria; a ckm tem agora guarnição, idle/abandon e retirada na simulação; disparo da ckm e deitado MG34 continuam pendentes. Revisão inicial em `docs/verification/m01-runtime/asset-review-2026-10-02/`; nova prova em `docs/verification/m01-runtime/support-runtime-2026-10-02/`. O merge em `main` e a publicação pertencem ao utilizador. O mapa francês conserva as suas coordenadas e arma.
 
 ## Implementado e observado
 
@@ -129,12 +129,12 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
   - a cinta de 250 e a mira antiaérea;
   - confirmar T33 em leitura integral.
 
-**ckm wz.30 da casamata (`grp_ckm_crew`; kit isolado, não ligado ao jogo):**
+**ckm wz.30 da casamata (`grp_ckm_crew`; idle/abandon e retirada ligados, disparo pendente):**
 - Kit em `assets/models/provisional/m01/weapons/ckm_wz30/`, gerado por `tools/assets/m01-ckm-wz30/`: arma de 1,211 m no tripé baixo (cano a 0,64 m), fita de tecido pela esquerda e caixa de aço caqui de 355 × 175 × 85 mm. LOD0/1/2 com 3904/2298/754 triângulos. O LOD0 foi reduzido de 5004 para o orçamento de 4000 com uma variante leve dos cartuchos, aros e tecido; LOD1, LOD2 e clips ficaram byte a byte (antes/depois em `docs/assets/m01-ckm-wz30/ckm_lod0_budget.png`). Direcção, elevação, alavanca, fita e tampa estão em nós com pivô; o manifesto traz sockets, pontos de pega e medidas estimadas identificadas.
 - `m01_ckm_wz30_animations.glb` traz `ckm_wz30_{gunner,loader}_{idle,aim,fire_burst,feed,abandon}` para o rig polaco actual, sincronizados com os clips `ckm_wz30_gun_*` da arma. A espingarda fica escondida, para mostrar uma só arma.
 - Verificado por `tests/m01-ckm-wz30-glb.test.js` e por capturas inspeccionadas em `docs/assets/m01-ckm-wz30/` (galeria isolada; sem playtest nem FPS).
 - Falta:
-  - representar a guarnição na simulação antes de ligar à casamata: `grp_ckm_crew` ainda não cria actores no runtime; não inventar tiros/saída da casamata no renderer;
+  - ligar aim/fire_burst/feed a decisões reais de disparo/munição; não deslocar o emissor ae_s2_ckm_east nem inventar tiros no renderer;
   - confirmar T34 em leitura integral, a geometria do tripé e a altura da seteira.
 
 **MG 34 deitada com atirador e municiador (#33 revisto/integrado; ligação à simulação pendente):**
@@ -169,8 +169,12 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 
 ## Próximo passo
 
-Representar guarnição ckm, deitado/municiador MG34 e identificação/estado dos vagões com dados reais na simulação, e realizar o playtest humano completo de M01, com atenção ao fogo de cobertura a ~1,2 km (clarões de ~8 px e raio de supressão de 3 m). Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02. Graphify permanece em pausa no checkpoint existente.
+Completar disparo/munição da ckm, deitado/municiador MG34 e identificação/estado dos vagões com dados reais na simulação, e realizar o playtest humano completo de M01, com atenção ao fogo de cobertura a ~1,2 km (clarões de ~8 px e raio de supressão de 3 m). Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02. Graphify permanece em pausa no checkpoint existente.
 
 O trabalho das pontes de Claude foi preservado e completado, incluindo dano persistente em LOD0/1/2. Mapas históricos e inventários específicos continuam úteis para as pendências de P4/P13 e de arte. Não recomeçar essa entrega.
 
 Continuação sem Claude em 2026-10-02: kit de quatro transições do arrasto em 27353ef revisto pelo Codex, 158/158 Node e build. Regeneração preserva GLB/manifesto; galeria isolada inspeccionada. Runtime ainda não toca os novos clips. Codex assume a integração e as próximas tarefas durante a pausa semanal do Claude.
+
+## Continuação ckm — 2026-10-03 UTC
+
+Três actores por ID, fases idle/abandon/retreat persistidas em schema 2, sincronização da arma e dois operadores, terceiro homem com clips existentes e fallback do kit opcional. Elencos legados de 86 actores são normalizados sem alterar os actores anteriores/RNG; grupos novos parciais são rejeitados atomicamente. Saída da casamata e subida são provisórias; disparo/munição/plataforma não foram inventados. 168/168 Node e build; 2/2 navegador focado (48,603 s). Resultado da regressão integral em `docs/verification/m01-runtime/ckm-crew-runtime-2026-10-03/REPORT.md`. M01 permanece protótipo jogável, sem playtest humano/Chromebook ou publicação.
