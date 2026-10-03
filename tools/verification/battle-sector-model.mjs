@@ -99,7 +99,7 @@ const ASSET_STATES = ['intact', 'active', 'damaged', 'destroyed', 'burning', 'ex
 export class BattleWorld {
   constructor(config) {
     requireThat(integer(config.seed) && config.seed <= 0xffffffff && Array.isArray(config.sectors) && config.sectors.length, 'world config');
-    this.config = copy(config); this.time = 0; this.journal = []; this.consumed = [];
+    this.config = { ...copy(config), events: [] }; this.time = 0; this.journal = []; this.consumed = [];
     this.sectors = config.sectors.map(s => {
       requireThat(typeof s.id === 'string' && s.id && typeof s.missionId === 'string', 'sector identity');
       requireThat(CLASSIFICATIONS.includes(s.provenance?.classification) && typeof s.provenance.date === 'string' && typeof s.provenance.startTime === 'string' && Array.isArray(s.provenance.claims), 'provenance');
@@ -132,6 +132,7 @@ export class BattleWorld {
     requireThat(!this.agenda.some(e => e.id === event.id) && !this.consumed.includes(event.id), 'duplicate event');
     this.sector(event.sectorId); this.validateAction(event);
     this.agenda.push(copy(event)); this.agenda.sort(order);
+    this.config.events.push(copy(event));
   }
   validateAction(e) {
     requireThat(['order', 'exposure', 'loss', 'rescue', 'resupply', 'asset', 'intervention', 'handoff'].includes(e.type), 'event type');
@@ -225,12 +226,57 @@ export class BattleWorld {
   snapshot() { return copy({ config: this.config, time: this.time, sectors: this.sectors, agenda: this.agenda, journal: this.journal, consumed: this.consumed }); }
   static restore(snapshot) {
     // Replay is the validation mechanism for prototype checkpoints. Not a production loader.
-    const world = new BattleWorld({ ...snapshot.config, events: [...snapshot.journal.map(j => {
-      const original = snapshot.config.events?.find(e => e.id === j.id);
-      requireThat(original, 'restore requires full recorded inputs in config'); return original;
-    }), ...snapshot.agenda] });
+    const world = new BattleWorld(snapshot.config);
     world.advanceTo(snapshot.time);
     requireThat(JSON.stringify(world.snapshot()) === JSON.stringify(snapshot), 'snapshot differs from deterministic replay');
     return world;
   }
+}
+
+/** Pure presentation selector. No camera/quality parameter enters BattleWorld. */
+export function representation({ distanceM, visible, quality = 'HIGH', previousBand, nearM = 150, midM = 800, hysteresisM = 20 }) {
+  requireThat(Number.isFinite(distanceM) && distanceM >= 0 && typeof visible === 'boolean' &&
+    ['LOW', 'MEDIUM', 'HIGH'].includes(quality) && Number.isFinite(nearM) && Number.isFinite(midM) &&
+    nearM >= 0 && midM > nearM && Number.isFinite(hysteresisM) && hysteresisM >= 0 &&
+    hysteresisM < (midM - nearM) / 2 && (previousBand === undefined || ['NEAR', 'MID', 'FAR'].includes(previousBand)), 'representation arguments');
+  let band = distanceM <= nearM ? 'NEAR' : distanceM <= midM ? 'MID' : 'FAR';
+  if (previousBand === 'NEAR' && distanceM <= nearM + hysteresisM) band = 'NEAR';
+  if (previousBand === 'MID' && distanceM > nearM - hysteresisM && distanceM <= midM + hysteresisM) band = 'MID';
+  if (previousBand === 'FAR' && distanceM > midM - hysteresisM) band = 'FAR';
+  return { band, mode: !visible ? 'STATE_ONLY' : band === 'NEAR' ? 'FULL' : band === 'MID' ? 'GROUP' : 'PROXY',
+    // Descriptor budgets only, not production mesh budgets or measured shipping limits.
+    descriptorBudget: !visible ? 0 : ({ LOW: 4, MEDIUM: 8, HIGH: 16 })[quality] };
+}
+
+/** Pure logical descriptors; requesting fewer visuals never changes casualty/RNG state. */
+export function materialize(world, sectorId, { budget = 16 } = {}) {
+  requireThat(integer(budget), 'materialization budget');
+  const sector = world.sector(sectorId), actors = [];
+  const formations = sector.formations.map(f => ({ id: f.id, nominalStrength: f.nominalStrength,
+    counts: counts(f), position: copy(f.position), direction: f.direction, objective: f.objective,
+    state: f.state, ammunition: f.ammunition, casualtyRuns: copy(f.runs.filter(r => r.status === 'dead')) }));
+  for (const status of ['combatReady', 'wounded', 'dead', 'evacuated']) {
+    for (const f of sector.formations) for (const r of f.runs.filter(r => r.status === status)) {
+      for (let ordinal = r.from; ordinal < r.to && actors.length < budget; ordinal++) {
+        const override = f.individuals[ordinal];
+        // Grid offset is fixture layout only, not a validated collision/path spawn point.
+        const position = override?.position ?? { x: f.position.x + ordinal % 4 * 2, y: f.position.y, z: f.position.z + Math.floor(ordinal / 4) * 2 };
+        actors.push({ id: memberId(f, ordinal), formationId: f.id, ordinal, status,
+          position: copy(position), direction: f.direction, rounds: override?.rounds ?? 5 });
+      }
+    }
+  }
+  return { sectorId, revision: sector.revision, at: world.time, state: sector.state, objective: sector.objective,
+    formations, actors, assets: copy(sector.assets) };
+}
+
+/** Atomic return of observed member deltas. Never replaces the whole aggregate. */
+export function dematerialize(world, descriptor, { id, formationId, members }) {
+  const input = { id, at: world.time, sectorId: descriptor.sectorId, type: 'handoff',
+    expectedRevision: descriptor.revision, formationId, members: copy(members) };
+  world.validateAction(input);
+  // Preflight prevents malformed returns from blocking the timeline or entering input log.
+  world.apply(copy(world.sector(input.sectorId)), input);
+  world.enqueue(input); world.advanceTo(world.time);
+  return copy(world.journal.at(-1));
 }
