@@ -49,7 +49,8 @@ const ckmCrew=world=>{
     const slot=slots[i],[lx,ly,lz]=slot.pos,cos=Math.cos(rootYaw),sin=Math.sin(rootYaw),localYaw=(slot.yaw??0)*Math.PI/180;
     return entity(id,{x:x+cos*lx+sin*lz,y:y+ly,z:z-sin*lx+cos*lz},'ally',
       {group:CKM_GROUP.id,role:i<2?'SUPPORT':'RIFLEMAN',weapon:i===0?'ckm_wz30':'kb_wz29',
-        ckmRole:CKM_ROLES[i],ckmPhase:'manned',ckmStartedAt:0,facing:-rootYaw-localYaw-Math.PI/2});
+        ckmRole:CKM_ROLES[i],ckmPhase:'manned',ckmStartedAt:0,facing:-rootYaw-localYaw-Math.PI/2,
+        ...(i===0?{ckmPost:{x,y,z,yaw:rootYaw},ckmGunVisible:true}:{})});
   });
 };
 
@@ -236,6 +237,7 @@ export class M01Simulation {
       case E('dudek_retrieves_bak'):this.flags['m01.bak_status']='rescued_by_dudek';this.flags['m01.dudek_status']='wounded_arm';
         this.objectives[O('rescue_bak')].state='expired';this.player.carrying=null;this.actor('leon_dudek').task='evacuate_bak';break;
       case E('west_demolition'):if(this.done('leave_bridge'))this.finish('hold_corridor');this.activate('reach_shelter');this.destruction.push('west_end_destroyed');this.mission.phase='AFTERMATH';
+        this.actor(CKM_CREW_IDS[0]).ckmGunVisible=false;
         this.startScene('cs_m01_west_blast');this.impact('west_demolition',{x:70,y:0,z:20},false);break;
       case E('kozliny_attack_distant'):this.emit({type:'distant-shot',point:{x:-500,y:0,z:-1300}});break;
       case E('roll_call'):this.battleClock=Math.max(this.battleClock,seconds('07:05:00'));this.mission.phase='OUTRO';this.startScene('cs_m01_roll_call');this.stageRollCall();break;
@@ -817,6 +819,7 @@ export class M01Simulation {
     if(legacyCkm){
       if(Object.hasOwn(s.consumed,E('east_demolition')))for(const a of ckmDefaults)
         Object.assign(a,{x:-170,y:candidate.world.heightAt(-170,22),z:22,state:'GUARD',target:null,ckmPhase:'moving',ckmStartedAt:s.clock});
+      if(Object.hasOwn(s.consumed,E('west_demolition')))ckmDefaults[0].ckmGunVisible=false;
       candidate.actors.push(...ckmDefaults);
     }
     candidate.enemyFire=s.enemyFire??{rounds:[],nextId:0};   // saves anteriores ao fogo em voo começam sem tiros no ar
@@ -825,7 +828,7 @@ export class M01Simulation {
     if(!('enemyFire' in s)&&!('withdrawalPressure' in s.timers))for(const a of candidate.actors.filter(a=>a.group==='grp_east_platoon'&&Number(a.id.split('_').at(-1))>=18))
       Object.assign(a,{active:false,alive:false,health:0,state:'DOWN'});
     candidate.weapon.restore(s.weapon);candidate.rng.state=s.rng;candidate.events=[];candidate.world.refresh(Object.keys(s.consumed),s.flags);
-    candidate.checkpoint=clone(s);Object.assign(this,candidate);return true;
+    candidate.checkpoint=legacyCkm?candidate.snapshot():clone(s);Object.assign(this,candidate);return true;
   }
   restoreCheckpoint(){return this.restoreSnapshot(this.checkpoint);}
   loadCheckpoint(text){try{if(typeof text!=='string'||text.length>1000000)throw new Error('Ficheiro ausente ou demasiado grande.');this.restoreSnapshot(JSON.parse(text));return {ok:true};}catch(error){return {ok:false,error:error.message};}}
@@ -846,11 +849,13 @@ export function validateM01Snapshot(s){
     !s.actors.every(a=>point(a)&&expected.includes(a.id)&&Number.isFinite(a.radius)&&a.radius>0))reject('actores');
   if(ids.some(id=>CKM_CREW_IDS.includes(id))){
     const crew=CKM_CREW_IDS.map(id=>s.actors.find(a=>a.id===id)),phase=crew[0]?.ckmPhase,started=crew[0]?.ckmStartedAt,eventAt=s.consumed?.[E('east_demolition')];
+    const gun=crew[0],post=gun?.ckmPost,west=s.consumed?.[E('west_demolition')];
     if(crew.some(a=>!a)||!['manned','abandon','moving'].includes(phase)||!finite(started,0,s.clock)||
       crew.some((a,i)=>a.group!==CKM_GROUP.id||a.ckmRole!==CKM_ROLES[i]||a.ckmPhase!==phase||a.ckmStartedAt!==started||
         a.role!==(i<2?'SUPPORT':'RIFLEMAN')||a.weapon!==(i===0?'ckm_wz30':'kb_wz29'))||
+      !post||![post.x,post.y,post.z,post.yaw].every(Number.isFinite)||typeof gun.ckmGunVisible!=='boolean'||
       (eventAt===undefined?(phase!=='manned'||started!==0):(phase==='manned'||started<eventAt))||
-      (phase==='abandon'&&started!==eventAt))reject('guarnição ckm');
+      (phase==='abandon'&&started!==eventAt)||(west===undefined?!gun.ckmGunVisible:gun.ckmGunVisible))reject('guarnição ckm');
   }
   if(s.actors.some(a=>a.team==='enemy'&&a.x<690)||s.actors.some(a=>definition.historicalPersonsOffscreen.some(h=>h.id===a.id)))reject('elenco');
   if(s.actors.some(a=>a.team!==(a.id.startsWith('de_')?'enemy':'ally')||
