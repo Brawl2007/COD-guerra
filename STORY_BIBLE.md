@@ -2,6 +2,7 @@
 
 Elenco, unidades, relações, ferimentos, perdas e passagens de tempo da campanha.
 Nesta versão, só **M01 — Tczew** está detalhada. As demais missões seguem o índice abaixo e serão escritas junto com suas pesquisas.
+A direção provisória dos elencos recorrentes de M02–M30 está em `docs/CAMPAIGN_CHARACTER_ARCS_M02_M30.md`; ela não substitui a pesquisa histórica nem torna esses arcos finais antes da ficha de cada missão.
 
 ## Regras gerais
 
