@@ -166,3 +166,15 @@ test('movement and S3 station evacuation bodies remain byte-for-byte identical t
     const body=now.slice(0,old.length);assert.equal(body,old);
   }
 });
+
+ test('a nonlethal hit interrupts the remaining burst and stays low with a valid snapshot',()=>{
+   const s=firing(),a=s.actor(GUNNER),issued=s.enemyFire.rounds.length;
+   a.state='HIT_REACTION';a.health=80;s.updateMG34Posture(a);
+   assert.equal(phase(s),'idle');assert.equal(a.shot,0);assert.equal(a.mg34Prone.burst,undefined);
+   validateM01Snapshot(s.snapshot());at(s,2.5);assert.equal(s.enemyFire.rounds.length,issued);
+ });
+ test('player fire observes the current transition progress within a real simulation tick',()=>{
+   const s=live();at(s,.8);let observed;
+   s.fire=()=>{observed=s.actor(GUNNER).mg34Prone.progress;};
+   s.tick(.05,{fire:true});assert.equal(observed,s.clock/1.9);assert.ok(observed>.8/1.9);
+ });
