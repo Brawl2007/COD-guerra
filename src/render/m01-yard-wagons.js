@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import wagonManifest from '../../assets/models/provisional/m01-wagons/manifest.json' with {type:'json'};
 
 const INTACT_BASE='assets/models/provisional/m01-wagons/';
 const DAMAGE_BASE='assets/models/provisional/m01-wagon-damage/';
@@ -12,6 +13,12 @@ export const M01_YARD_WAGON_PLAN=Object.freeze([
 export const yardWagonLod=quality=>quality==='low'?1:0;
 export const yardWagonState=(wagon,destruction=[])=>wagon.damageKey&&destruction.includes(wagon.damageKey)?'burned':'intact';
 export const yardWagonPosition=(wagon,world)=>[wagon.position[0],world?.heightAt?world.heightAt(wagon.position[0],wagon.position[2]):wagon.position[1],wagon.position[2]];
+export const yardWagonFireDamage=(destruction,world,started=0)=>{
+  const wagon=M01_YARD_WAGON_PLAN.find(w=>w.damageKey==='station_wagon_fire');
+  if(!wagon||yardWagonState(wagon,destruction)!=='burned')return null;
+  const [x,y,z]=yardWagonPosition(wagon,world),sockets=wagonManifest.types[wagon.type].sockets;
+  return {id:'station_wagon_fire',x,y:y+sockets.smoke_top[1]-3,z,fireY:y+sockets.fire[1],started,smokeVisible:true};
+};
 
 const sourceKey=(type,state,lod)=>`${type}:${state}:${lod}`;
 const sourcePath=(type,state,lod)=>state==='burned'
