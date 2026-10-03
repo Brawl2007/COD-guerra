@@ -29,7 +29,7 @@ test('ckm crew is grounded below the deck, leaves after the real event and reach
 });
 test('schema 2 accepts exact legacy rosters and migrates atomically without changing old actors or RNG',()=>{
   for(const s of [new M01Simulation(),route().sim]){
-    const legacy=s.snapshot();legacy.actors=legacy.actors.filter(a=>!a.ckm);validateM01Snapshot(legacy);
+    const legacy=s.snapshot(false);legacy.actors=legacy.actors.filter(a=>!a.ckm);validateM01Snapshot(legacy);
     const before=structuredClone(legacy),restored=new M01Simulation();restored.restoreSnapshot(legacy);
     assert.deepEqual(legacy,before);assert.equal(restored.rng.state,legacy.rng);
     assert.deepEqual(restored.actors.filter(a=>!a.ckm),legacy.actors);assert.equal(crew(restored).length,3);

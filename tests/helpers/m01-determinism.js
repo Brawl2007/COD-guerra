@@ -24,10 +24,11 @@ export function equalFuture(a,b,eventsA,eventsB,{label,tick,dt,controls}){
 export function restore(s){const raw=s.snapshot(),before=JSON.stringify(raw),b=new M01Simulation(1);b.restoreSnapshot(raw);
   assert.equal(JSON.stringify(raw),before,'restore cannot edit supplied save');
   assert.deepEqual(b.drainEvents(),[],'restore cannot replay transient events');return b;}
-export function compareContinuation(a,{label,ticks=200,input=()=>({}),dt=()=>.05,doubleAt=[]}={}){
+export function compareContinuation(a,{label,ticks=200,input=()=>({}),dt=()=>.05,doubleAt=[],fault=()=>{}}={}){
   a.drainEvents();let b=restore(a);let compared=0;
   equalFuture(a,b,[],[],{label,tick:0,dt:0,controls:{}});
   for(let tick=1;tick<=ticks;tick++){
+    for(const s of [a,b])fault(tick,s);
     const controls=json(input(tick,a)),step=dt(tick);
     a.tick(step,controls);b.tick(step,json(controls));
     equalFuture(a,b,a.drainEvents(),b.drainEvents(),{label,tick,dt:step,controls});compared++;

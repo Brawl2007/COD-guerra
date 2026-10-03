@@ -120,6 +120,32 @@ test('legacy 86/89 actors, missing optional fields and old CKM placement migrate
   }
 });
 
+test('legacy MG34 pre-created future rounds migrate without replay, then continue identically',()=>{
+  const source=new M01Simulation(45);source.scene=null;
+  const gun=source.actor('de_east_0');gun.active=true;gun.cooldown=99;
+  for(let i=0;i<40;i++)source.tick(STEP);
+  source.burst(gun,{x:100,y:0,z:22},'area',{rounds:7});source.tick(.05);
+  const legacy=source.snapshot(false),old=legacy.actors.find(a=>a.id===gun.id);
+  legacy.enemyFire.rounds=json(old.mg34Prone.burst.plan);delete old.mg34Prone;
+  const before=json(legacy),a=new M01Simulation();a.restoreSnapshot(legacy);
+  assert.deepEqual(legacy,before);assert.equal(a.rng.state,legacy.rng);assert.equal(a.enemyFire.nextId,7);
+  assert.equal(a.enemyFire.rounds.length,1);assert.equal(a.actor(gun.id).shot,0);
+  record(a,{label:'legacy-mg34-future-rounds',ticks:240,doubleAt:[1,40,100],dt:()=>.025});
+  assert.equal(a.actor(gun.id).mg34Prone.phase,'idle');assert.equal(a.enemyFire.nextId,7);
+});
+
+test('death between each real CP-A..D and the next CP preserves exact recovery and subsequent future',()=>{
+  for(const [id,cp] of Object.entries(completedRoute.checkpoints)){
+    const a=new M01Simulation();a.restoreSnapshot(cp);
+    for(let i=0;i<40;i++)a.tick(STEP);a.drainEvents();
+    assert.ok(a.clock>cp.clock);const expected=json(a.checkpoint);
+    record(a,{label:'death-after-'+id,ticks:200,doubleAt:[10,23,150],fault:(tick,s)=>{
+      if(tick===21){s.player.alive=false;s.player.health=0;}
+    }});
+    assert.deepEqual(a.checkpoint,expected,'the old CP itself stays intact after recovery');
+  }
+});
+
 test('corrupt cross-system states reject atomically and leave the destination future unchanged',()=>{
   const d=toStationEvacuation(driver(21),{phase:'grab'}),valid=d.sim.snapshot();
   const changes=[s=>s.rng=1.25,s=>s.actors.pop(),s=>s.grenades.active=[{id:'bad',fuse:1}],
