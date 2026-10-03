@@ -1852,6 +1852,18 @@ A guerra ocorre em vários lados e distâncias. Ela não começa, para nem reini
 
 O jogador é membro de uma unidade dentro de uma operação. Outros pelotões atacam, defendem, falham, recuam, evacuam feridos e recebem ordens independentemente dele. Uma frente histórica não precisa ter inimigos em 360 graus o tempo todo: distribua posições conforme terreno, linhas amigas/inimigas, céu e mar.
 
+A presença do jogador NÃO é o gatilho universal da guerra. Em setores a centenas de metros ou mais de 1 km podem existir tropas aliadas combatendo tropas inimigas, artilharia, veículos, colunas, evacuações, incêndios, impactos e destruição coerentes com o sector histórico. Esses acontecimentos podem começar antes de o jogador chegar, continuar quando ele olha para outro lado e terminar sem sua intervenção.
+
+A destruição também existe fora da câmera. Um edifício, veículo, posição ou terreno distante que tenha sido atingido por um evento real do sector deve continuar danificado quando o jogador voltar a vê-lo ou se aproximar. Não criar “mundo intacto até o jogador chegar”.
+
+ESCALA HISTÓRICA, NÃO GUERRA GENÉRICA:
+- a quantidade, nacionalidade, direção e tipo de tropas distantes precisam ser compatíveis com as unidades realmente presentes naquela data/setor ou com uma dramatização claramente plausível;
+- não colocar aliados ou inimigos onde a linha de frente histórica não permitir;
+- não inventar tanques, artilharia, aviação, navios ou formações só para preencher o horizonte;
+- batalhas distantes devem seguir eixos, horários, objetivos e resultados compatíveis com a pesquisa da missão;
+- quando a fonte não permitir saber a subunidade/posição exata, usar representação RECONSTRUCTED ou COMPRESSED_FOR_GAMEPLAY, nunca declarar precisão inexistente;
+- eventos fora da câmera podem ter variação de apresentação, mas o resultado tático importante permanece controlado pela simulação/história da missão.
+
 TRÊS CAMADAS COERENTES, COM DISTÂNCIAS AJUSTADAS A CADA MAPA:
 1. Próxima: aproximadamente 0–150 m. Soldados com animação completa, percepção, cobertura, combate, colisão e reações. Interior e cidade exigem limites menores conforme a visibilidade.
 2. Média: aproximadamente 150–800 m. Pelotões em outras ruas, encostas, margens e campos; metralhadoras, veículos, ataques e recuos observáveis. Modelos e decisões simplificados conservam posições, IDs, baixas e objetivo do setor.
@@ -1863,6 +1875,8 @@ WORLD BATTLE STATE:
 - Mantenha battleClock, setores, facções, posições, força disponível, moral/cohesão, suprimento, ordem atual, eventos agendados, baixas e estado de destruição.
 - Cada evento possui ID, setor, posição de origem/destino, início, duração, condição, resultado e vínculos de áudio/VFX/radio.
 - Um fogo de artilharia distante tem origem e impacto coerentes. A explosão produz fumaça e dano visual que permanecem; o relatório de rádio descreve esse mesmo acontecimento.
+- Destruição distante usa o mesmo contrato autoritativo da seção 29: crateras, incêndios, fachadas danificadas, veículos destruídos e posições abandonadas persistem mesmo que o jogador nunca tenha visto o impacto acontecer.
+- Setores médios/longos podem resolver baixas, recuos, avanços e destruição com simulação simplificada; ao materializar o setor perto do jogador, os atores e o ambiente devem refletir esse resultado em vez de reiniciar a batalha.
 - NPCs de outro setor não ficam imóveis aguardando a presença do jogador. Sua evolução pode usar simulação reduzida e encontros roteirizados com alternativas controladas.
 - Use agenda temporal, condição tática e mensagens entre setores, além de gatilhos por área. Proximidade não pode ser a única condição de toda a batalha.
 - Eventos fundamentais da missão usam tolerância e condições de prontidão. Não fazer o jogador perder silenciosamente um objetivo obrigatório fora de alcance enquanto aprende os controles.
