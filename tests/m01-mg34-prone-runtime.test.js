@@ -178,3 +178,20 @@ test('movement and S3 station evacuation bodies remain byte-for-byte identical t
    s.fire=()=>{observed=s.actor(GUNNER).mg34Prone.progress;};
    s.tick(.05,{fire:true});assert.equal(observed,s.clock/1.9);assert.ok(observed>.8/1.9);
  });
+
+ test('save cannot remove or alter an emitted round still in flight',()=>{
+   for(const alter of [s=>s.enemyFire.rounds=[],s=>s.enemyFire.rounds[0].ax+=1]){
+     const target=new M01Simulation(),before=target.snapshot(),bad=firing().snapshot();alter(bad);
+     assert.throws(()=>target.restoreSnapshot(bad),/MG34/);assert.deepEqual(target.snapshot(),before);
+   }
+ });
+ test('OUTRO cancels pending rounds and blocks new MG bursts while preserving existing flight',()=>{
+   const s=firing(),a=s.actor(GUNNER),flight=structuredClone(s.enemyFire.rounds);
+   s.mission.phase='OUTRO';s.updateMG34Posture(a);
+   assert.equal(phase(s),'idle');assert.equal(a.shot,0);assert.deepEqual(s.enemyFire.rounds,flight);
+   assert.equal(s.burst(a,TARGET,'area',{rounds:7}),false);
+ });
+ test('a target already reached never rewrites the state of a fixed prone burst',()=>{
+   const s=firing(),a=s.actor(GUNNER);a.target={x:a.x,z:a.z};at(s,2);
+   assert.equal(a.state,'SUPPRESS');assert.equal(phase(s),'fire_burst');validateM01Snapshot(s.snapshot());
+ });
