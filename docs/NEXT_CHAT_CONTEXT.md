@@ -1,3 +1,28 @@
+# Estado atual — Battlefield Audio Architecture (2026-10-03)
+
+Esta secção prevalece para a tarefa de áudio. M01 continua **PROTÓTIPO JOGÁVEL**. Não integrar automaticamente.
+
+- TASK_ID `M01-BATTLEFIELD-AUDIO-ARCHITECTURE-V1`; modelo GPT-5.6 Sol; esforço HIGH.
+- Base exata `codex/m01-mg34-prone-runtime@fbaac1e4bce0ce62dc61415c338dd33ccd86a71b`.
+- Branch independente: `codex/m01-battlefield-audio-architecture`.
+- Escopo respeitado: auditoria + arquitetura + protótipo isolado + testes. Nenhum ficheiro de produção em `src/`, save schema, RNG, battle sectors, destruction, combat AI, world interactions, CKM ou MG34 foi editado.
+- Auditoria: `docs/verification/m01-runtime/battlefield-audio-architecture-2026-10-03/CURRENT_AUDIO_AUDIT.md`.
+- Arquitetura: `docs/architecture/BATTLEFIELD_AUDIO_SYSTEM.md`.
+- Protótipo: `tools/verification/m01-battlefield-audio-prototype.mjs`.
+- Testes: `tests/m01-battlefield-audio-prototype.test.js`.
+- Evidência: `docs/verification/m01-runtime/battlefield-audio-architecture-2026-10-03/REPORT.md`.
+- Resultado isolado: **16/16 testes** em Node v22.16.0. Caso 1 km: atraso 2,915456 s por função genérica `distance/343`, banda VERY_DISTANT, não virtualizado. 50 tiros distantes em qualidade MEDIUM: 18 vozes ativas + 32 virtualizadas.
+- Microbenchmark isolado (mediana de 5 processos): 100=2,562 ms; 500=4,595 ms; 1000=14,974 ms; 5000=41,562 ms. Não é FPS, Web Audio nem Chromebook.
+- O sandbox não conseguiu clonar github.com por falha de resolução DNS; portanto não declarar `npm test`, build ou browser desta branch. GitHub foi lido/escrito pela ligação autenticada.
+- Decisão arquitetural: simulação emite fatos; AudioEvent normaliza metros/IDs/tipo/tempo/categoria; scheduler aplica propagação; acoustics aplica distância/occlusion/room; voice manager aplica prioridade/budgets/virtualização; backend Web Audio só apresenta.
+- Distância protótipo: CLOSE <45 m, MID <220 m, DISTANT <950 m, VERY_DISTANT <5 km, BEYOND >=5 km, com curvas contínuas.
+- Anti-repetição usa hash de evento/apresentação, nunca gameplay RNG.
+- BattleSector futuro deve emitir eventos semânticos reais; proibido loop infinito de batalha como fonte de gameplay.
+- Próxima etapa, somente após revisão do capitão: integrar primeiro adapters para eventos M01 existentes e provar equivalência de snapshots/RNG/tempos com áudio on/off. Não combinar com workers paralelos.
+- **PARAR neste handoff. Não integrar, não tocar em main, não iniciar outra tarefa.**
+
+---
+
 # Estado atual — MG34 prone runtime V2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa MG34. Não recomeçar código, investigação ou extrações. M01 continua **PROTÓTIPO JOGÁVEL**.
