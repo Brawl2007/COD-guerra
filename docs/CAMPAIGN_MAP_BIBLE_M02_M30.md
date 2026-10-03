@@ -657,6 +657,39 @@ Longo:
 
 ---
 
+# Contrato de destruição e interiores
+
+Cada mapa deve definir, antes da arte final, não apenas o estado inicial, mas também os principais estados de transformação durante a missão.
+
+Para cada edifício/área jogável relevante, registrar quando aplicável:
+- função original do espaço;
+- nível de decoração interior;
+- estado inicial: intacto, usado, abandonado, danificado;
+- paredes/janelas/portas que podem mudar;
+- teto/piso que pode sofrer dano;
+- móveis/objetos deslocáveis;
+- pontos de fogo/fumaça;
+- crateras possíveis;
+- debris persistente;
+- cobertura criada ou removida;
+- rotas abertas/fechadas;
+- estado pós-impacto.
+
+A destruição segue o contrato global do `PROMPT_MESTRE`:
+- mudanças que afetam gameplay/história são planejadas e autoritativas;
+- variação secundária pode ser aleatória, mas determinística;
+- RNG do renderer nunca decide consequência de gameplay;
+- zonas de exclusão protegem objetivos, atores essenciais, geometria histórica e checkpoints;
+- save/load restaura os mesmos estados;
+- não simular cada tijolo: usar destruição autoritativa + variantes de geometria + debris físico local + partículas/LOD.
+
+Interiores jogáveis devem ser decorados de acordo com uso, local, data e contexto humano. Evitar salas vazias genéricas. Residência, oficina, estação, fábrica, hospital improvisado, celeiro e abrigo devem ter identidade visual própria e sinais coerentes de ocupação.
+
+Sempre que a missão permitir, preferir mostrar transformação legível:
+`INTACTO/USADO → IMPACTO → DANIFICADO → QUEIMADO/ABANDONADO`.
+
+Crateras e danos estruturais que afetam navegação, linha de visão ou cobertura entram no estado persistente da missão.
+
 # Regras de dinamismo do mapa
 
 Um mapa dinâmico NÃO significa destruir tudo.
