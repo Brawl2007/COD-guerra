@@ -3,9 +3,12 @@ import { clone } from 'three/addons/utils/SkeletonUtils.js';
 import { AssetManager } from '../assets/asset-manager.js';
 import { actorPose } from './m01-actor-pose.js';
 import { CKM_POSITION } from '../game/m01-simulation.js';
+import {mg34ProneSample,MG34_MUZZLE_SOCKET} from '../world/spatial.js';
 
 const BASE='assets/models/provisional/m01/characters/';
 const MG='assets/models/provisional/m01/weapons/mg34/';
+const MG_PRONE='assets/models/provisional/m01/weapons/mg34-prone/';
+const PRONE_CLIPS=['enter','idle','aim','fire_burst','exit'].map(n=>`mg34_prone_${n}`);
 const CKM='assets/models/provisional/m01/weapons/ckm_wz30/';
 const ckmRole=a=>a.group==='grp_ckm_crew'&&['ckm_gunner','ckm_loader'].includes(a.id);
 const ckmAtPost=a=>ckmRole(a)&&a.ckm?.phase!=='retreat';
@@ -34,6 +37,9 @@ export class M01Characters {
         if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
       }),
       this.assets.load('mg34-clips',MG+'m01_mg34_animations.glb').then(g=>{
+        if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
+      }),
+      this.assets.load('mg34-prone-clips',MG_PRONE+'m01_mg34_prone_animations.glb').then(g=>{
         if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
       }),
       this.assets.load('ckm-clips',CKM+'m01_ckm_wz30_animations.glb').then(g=>{
@@ -69,6 +75,7 @@ export class M01Characters {
       if(!this.disposed){this.sources.set(key,g);this.revision++;}
     }catch{/* The existing procedural actors remain available without the optional kit. */}
   }
+  hasProne(){return PRONE_CLIPS.every(n=>this.clips.has(n));}
   hasCKM(){
     return this.clips.has('standing_idle')&&[0,1,2].some(l=>this.sources.has(`ckm:${l}`))&&['idle','abandon'].every(phase=>
       this.sources.get('ckm:2')?.animations.some(c=>c.name===`ckm_wz30_gun_${phase}`)&&
@@ -77,6 +84,8 @@ export class M01Characters {
   sample(actor,time,actors,pose,battleClock){
     const offset=(hash(actor.id)%1000)/250;
     if(pose.name==='fallen')return {clip:'fallen',time:1.4,loop:false};
+    const prone=mg34ProneSample(actor,time);
+    if(prone&&actor.mg34Prone.phase!=='standing'&&this.hasProne())return {clip:prone.clip,time:prone.time,loop:false};
     if(ckmAtPost(actor)&&this.hasCKM()&&!['wounded','carried'].includes(pose.name)){
       const phase=actor.ckm.phase,role=actor.id==='ckm_gunner'?'gunner':'loader';
       return {clip:`ckm_wz30_${role}_${phase}`,time:Math.max(0,time-actor.ckm.startedAt),loop:phase==='idle'};
@@ -155,7 +164,7 @@ export class M01Characters {
     this.scene.add(root);
     const weapon=weaponRoot?'mg34':actor.id==='szymon_kowal'?'rkm_wz28':actor.id==='jozef_bak'?'wz98a':nation==='pl'?'wz29':'kar98k';
     const profile=root.getObjectByName(`m01_soldier_${nation}`)?.userData;
-    const v={root,key,meshes,weapon,weaponRoot,weaponLOD,muzzle:weaponRoot?.getObjectByName('mg34')?.userData.sockets?.muzzle??profile?.weapons?.[weapon]?.muzzle??profile?.sockets?.muzzle??[0,.032,-.765],
+    const v={root,key,meshes,weapon,weaponRoot,weaponLOD,muzzle:weaponRoot?MG34_MUZZLE_SOCKET:profile?.weapons?.[weapon]?.muzzle??profile?.sockets?.muzzle??[0,.032,-.765],
       mixer:new THREE.AnimationMixer(root),action:null,clip:null};
     this.instances.set(actor.id,v);return v;
   }
@@ -185,6 +194,8 @@ export class M01Characters {
       const key=`${nation}:${lod}`,pose=actorPose(a,time),sample=this.sample(a,time,actors,pose,battleClock),clip=this.clips.get(sample.clip);
       if(!clip)continue;
       if(a.id==='szymon_kowal'&&!this.sources.get(key).scene.getObjectByName('rkm_wz28'))continue;
+      // Missing or partial optional clips use the existing procedural batches, sampled from the same posture.
+      if(mgGunner(a)&&a.alive&&a.mg34Prone&&a.mg34Prone.phase!=='standing'&&!this.hasProne())continue;
       let v=this.instances.get(a.id);
       if(v&&(v.key!==key||mgGunner(a)&&v.weaponLOD!==weaponLOD)){this.release(v);this.instances.delete(a.id);v=null;}
       v??=this.create(a,key,weaponLOD);selected.add(a.id);
@@ -197,6 +208,7 @@ export class M01Characters {
       v.action.reset().play();v.mixer.setTime(sample.loop?sample.time%clip.duration:Math.min(sample.time,clip.duration));
       v.meshes.forEach(n=>{
         n.castShadow=quality!=='low'&&d<35;
+        if(n.name==='mg34_bipod_open')n.visible=Boolean(a.alive&&a.mg34Prone&&a.mg34Prone.phase!=='standing'&&this.hasProne());
         if(!weaponParts.has(n.name))return;
         const armed=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy&&a.role!=='MEDIC'&&!mgGunner(a)&&!(ckmAtPost(a)&&this.hasCKM()),kowal=a.id==='szymon_kowal',bak=a.id==='jozef_bak';
         const bipod=clip.userData?.bipod??'folded';
