@@ -1,0 +1,35 @@
+{
+  "taskId": "M01-DESTRUCTION-PERSISTENCE-ARCHITECTURE-V1",
+  "base": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+  "implementationHead": "54aed8ed9337f73507b5ad4b96950b3247a5b07b",
+  "focusedTests": {
+    "passed": 29,
+    "failed": 0,
+    "skipped": 0
+  },
+  "nodeTests": {
+    "passed": 253,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 32082.972555
+  },
+  "build": "PASS",
+  "parityScenarios": 6,
+  "browserThisTask": "NOT_RUN",
+  "humanPlaytest": "NOT_RUN",
+  "chromebookFPS": "NOT_MEASURED",
+  "files": {
+    "scenario.json": "14f7be43bffdbac857f2ad5495b5301077b4abdcb59855e27e529f0b36fae043",
+    "node-tests.log": "7220d26232e57cef787b7630594204da0a7228966e2b5a76a70ce9d3598e27e8",
+    "HANDOFF.md": "090e330b67d8048a75824e9b5f5fb8ccc3d34f3c8bb62503fb5354b91f9b1a1b",
+    "performance.json": "72a80c3b4c54351373beab6fc6710433660deb344afeaad30acdffc09942e933",
+    "scenario.csv": "f10e2fc6f7cb3b041af524b1437fd067ea3c8e385dd400279be5fbe36a39acc3",
+    "build.log": "2cea7451edf9a871891fb681bb7f30139fa5d76900cd11aaf993c87e284e1590",
+    "preservation.json": "eeac108985bd3e7f9b610cc24ff4362802d6421b6bdef8bf01bc39bcb87b26cd",
+    "focused-tests.log": "92ad7d8b6d641716e606e5d4251be9a0a03b93acd26ec10a13931ad9f4b0e05c"
+  },
+  "protectedRefs": {
+    "main": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+    "codex/m01-mg34-prone-runtime": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b"
+  }
+}

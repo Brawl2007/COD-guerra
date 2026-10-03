@@ -1,0 +1,37 @@
+✔ destroy/save/restore preserves canonical bytes and composed results (9.024321ms)
+✔ double restore is byte identical and duplicate historical event emits nothing (6.331296ms)
+✔ same consumed ID with altered result is rejected after restore (2.599194ms)
+✔ restore rejects altered state, missing crater, changed event and duplicate receipt (5.84745ms)
+✔ restore rejects unknown format, foreign mission, non-finite and unsafe object data (5.602046ms)
+✔ restore accepts JSON key order changes and reconstructs an immutable store (2.742695ms)
+✔ a bad last operation rolls back all prior operations and event receipt (0.938224ms)
+✔ reserved part names cannot resolve inherited JavaScript properties (1.937457ms)
+✔ visible hit and unloaded/off-camera hit reach the same logical world (2.494662ms)
+✔ LOW/MEDIUM/HIGH vary only presentation while gameplay and save stay identical (4.003276ms)
+✔ approaching ten minutes later loads damage directly without creating an event (2.603537ms)
+✔ unload/reload cycles cannot resurrect wall, crater, rubble or fire (2.051237ms)
+✔ materialization returns detached data and cannot change simulation through a view (1.02446ms)
+✔ composed building parts retain intact door independently of walls and roof (0.639862ms)
+✔ wall collapse removes old cover and creates persistent rubble cover atomically (2.022796ms)
+✔ wreck blocks a road and retains cover/fire after restore without VehicleController (0.950394ms)
+✔ extinguishing changes fire and smoke but preserves structural destruction and ignition source (1.612071ms)
+✔ burn marks persist independently of structural damage and inactive fire (1.897916ms)
+✔ stable authored IDs survive catalog/part order changes and foreign IDs reject (1.675921ms)
+✔ seeded persistent geometry is reproducible, bounded and independent of Math.random (2.221788ms)
+✔ persistent crater identity and gameplay policy survive independent restore (1.512442ms)
+✔ planned bridge-like structural event is idempotent and preserves traversal result (1.001041ms)
+✔ transaction rejects duplicate part/effect writes and visual debris in persistence (0.865577ms)
+✔ out-of-order and attempted structural/vehicle resurrection reject atomically (2.507058ms)
+✔ unknown targets, invalid policies and camera/quality fields cannot enter authority (2.555332ms)
+✔ local persistent effect budget rejects overflow without dropping earlier craters (40.834301ms)
+✔ object, part, operation and event bounds reject oversized input (7.723413ms)
+✔ data contract can represent another mission without changing M02 production runtime (1.505368ms)
+✔ fresh Node processes generate byte identical JSON/CSV evidence (298.535275ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 535.312397

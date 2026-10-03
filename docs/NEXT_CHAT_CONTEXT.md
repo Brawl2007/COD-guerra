@@ -1,3 +1,27 @@
+# Estado atual — destruição persistente isolada V1 (2026-10-03)
+
+Esta secção refere-se apenas à branch `codex/m01-destruction-persistence`.
+M01 permanece **PROTÓTIPO JOGÁVEL**. Tarefa terminada; não integrar nem iniciar outra.
+
+- TASK_ID `M01-DESTRUCTION-PERSISTENCE-ARCHITECTURE-V1`; modelo solicitado GPT-6.1 Sol, esforço solicitado HIGH.
+- Base exata `codex/m01-mg34-prone-runtime` @ `fbaac1e4bce0ce62dc61415c338dd33ccd86a71b`.
+- HEAD implementação/testes publicado: `54aed8ed9337f73507b5ad4b96950b3247a5b07b`; commit seguinte contém apenas evidências/handoff/contexto. Confirmar ref final.
+- Auditoria `docs/architecture/CURRENT_DESTRUCTION_AUDIT.md`; contrato `docs/architecture/DESTRUCTION_STATE_SYSTEM.md`.
+- Protótipo data-only `tools/verification/m01-destruction-state-prototype.mjs`, sem import de produção. Catálogo sintético: casa, camião e peça estrutural; sem alegação histórica.
+- Estado composto por partes (estrutura/superfície/colisão/cover/travessia), veículo/fogo independentes, crateras/restos com IDs estáveis, envelope consumido, PRNG local determinístico.
+- **29/29 focados**, **253/253 npm test**, build PASS. Seis cenários visible/unloaded × LOW/MEDIUM/HIGH com igualdade lógica, save/load/duplo restauro, duplicados sem efeitos; JSON/CSV iguais em processos novos.
+- Build independente da base e candidato: **77 ficheiros dist byte idênticos**; src/assets/missions/browser/package/lock/config/workflow intactos. Schema 2 e RNG de produção não alterados.
+- Browser/playtest/Chromebook **não executados nesta tarefa**; materialização comprovada como descriptor puro, não imagem/física real. Nenhum resultado browser anterior foi contado como nova execução.
+- Limites/replay/eventos fora de ordem/compaction e adaptação assíncrona estão documentados. Incêndio sem propagação/execução de dano; sem VehicleController, ragdoll ou terrain mesh deformável.
+- `station_wagon_fire` existe no save mas a identidade do vagão/ligação aos GLB continua pendente; demolições atuais já persistem por consumed events. Preservar ambos.
+- Evidências e handoff: `docs/verification/m01-runtime/destruction-persistence-2026-10-03/HANDOFF.md`.
+- Recomenda-se revisão do contrato pelo capitão e coordenação de IDs/ordem com o worker BattleSector. Integração requer tarefa futura autorizada.
+- Nenhum merge, deploy, modificação de main ou ficheiro do worker BattleSector. Graphify continua em pausa.
+
+---
+
+## Contexto da base anterior (preservado)
+
 # Estado atual — MG34 prone runtime V2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa MG34. Não recomeçar código, investigação ou extrações. M01 continua **PROTÓTIPO JOGÁVEL**.

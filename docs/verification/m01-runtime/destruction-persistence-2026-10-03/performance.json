@@ -1,0 +1,30 @@
+{
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "linux",
+    "arch": "x64"
+  },
+  "objects": 3,
+  "localRecords": 2,
+  "snapshotBytes": 5510,
+  "updateTwoEvents": {
+    "samples": 20,
+    "minMs": 0.33642799999999795,
+    "meanMs": 0.5015851500000004,
+    "maxMs": 0.9021839999999912
+  },
+  "serialize": {
+    "samples": 20,
+    "minMs": 0.051891999999995164,
+    "meanMs": 0.07450745000000084,
+    "maxMs": 0.19427800000001128
+  },
+  "restoreReplay": {
+    "samples": 20,
+    "minMs": 0.5856670000000008,
+    "meanMs": 0.8621983999999998,
+    "maxMs": 1.546808999999996
+  },
+  "fps": "NOT_MEASURED",
+  "scope": "3 synthetic objects / 2 events; host CPU only; not a scale or Chromebook benchmark"
+}

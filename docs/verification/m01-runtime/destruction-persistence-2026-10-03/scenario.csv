@@ -1,0 +1,7 @@
+visible,quality,save_restore_equal,double_restore_equal,duplicate_applied,wall_state,craters,gameplay_debris
+true,LOW,true,true,false,destroyed,1,1
+true,MEDIUM,true,true,false,destroyed,1,1
+true,HIGH,true,true,false,destroyed,1,1
+false,LOW,true,true,false,destroyed,1,1
+false,MEDIUM,true,true,false,destroyed,1,1
+false,HIGH,true,true,false,destroyed,1,1
