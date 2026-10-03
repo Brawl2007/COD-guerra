@@ -417,3 +417,331 @@ water
 ```
 
 The material is not randomized. Variation occurs *within* the correct material family using presentation-only hash/RNG.
+
+
+## 20. Distant battlefield from real sector events
+
+Battle sectors should emit semantic events such as:
+
+```text
+sector_artillery_event
+sector_mg_exchange
+sector_vehicle_fire
+sector_explosion
+```
+
+The audio adapter converts each real sector event into an AudioEvent with a real sector/impact/source position.
+
+Do **not** use `infinite-battle-loop.mp3` as the source of battle truth. A low-level ambience bed may exist for wind/room tone, but combat density and timing must follow BattleSector state.
+
+A sector event can generate a compact sound scene:
+- one primary report;
+- optional secondary tail/reflection;
+- a small deterministic cluster only when the logical event represents an exchange rather than a single shot.
+
+The cluster must remain bounded and tied to the same event ID. It cannot create gameplay rounds, casualties or suppression.
+
+## 21. Anti-repetition
+
+Final licensed asset families should carry multiple variants. Selection uses presentation-only deterministic variation:
+
+```text
+sample index = hash(event ID + layer)
+pitch        = tiny bounded hash variation
+gain         = tiny bounded hash variation
+tail family  = hash(event ID + environment)
+```
+
+Recommended pitch variation is deliberately small (prototype ±1.5%). Do not make rifles sound detuned for the sake of variety.
+
+Additional anti-repetition tools:
+- alternate layer combinations;
+- timing micro-variation only inside a logical aggregate event;
+- sample-family round robin/hash;
+- environment-specific tail selection.
+
+Never consume simulation RNG.
+
+## 22. Priority model
+
+Prototype classes:
+
+### CRITICAL
+- player's own weapon/mechanism;
+- dangerous near explosion;
+- mission-critical dialogue.
+
+### HIGH
+- nearby enemy weapon;
+- nearby vehicle/aircraft when tactically relevant;
+- squad callout.
+
+### MEDIUM
+- ordinary battlefield combat in useful range;
+- artillery/explosion that is distant but still perceptually important;
+- combat bark.
+
+### LOW
+- very distant minor combat;
+- ambient bark;
+- minor debris/low-value ambience.
+
+Priority is for **presentation contention only**. It does not make an event more important to gameplay.
+
+## 23. Voice budgets
+
+Prototype budgets are intentionally conservative and can be tuned after browser/hardware measurements:
+
+| Quality | Global | Weapons | Explosions | Dialogue | Vehicles | Aircraft | Ambience | Debris |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| LOW | 32 | 12 | 6 | 4 | 4 | 3 | 5 | 2 |
+| MEDIUM | 48 | 18 | 9 | 5 | 6 | 4 | 7 | 4 |
+| HIGH | 72 | 28 | 12 | 6 | 8 | 6 | 10 | 6 |
+
+The sum of category limits can exceed the global limit because the global allocator is the final ceiling.
+
+Allocation order:
+1. higher priority;
+2. nearer source;
+3. stable event ID tie-break.
+
+When a budget is exceeded, virtualize/steal the lowest-value presentation voice. Never delete the simulation event.
+
+## 24. Virtualization
+
+A virtual voice keeps the logical scheduling decision without keeping a live AudioBufferSource.
+
+Use virtualization when:
+- the event is beyond the practical acoustic range;
+- computed gain is below the audibility floor;
+- category/global voice budget is exhausted;
+- audio is disabled.
+
+For persistent loops (vehicle/fire/engine), a virtual logical voice may become active later using the correct phase/time offset.
+
+For one-shots:
+- if the audible window has expired, mark it expired;
+- do not restart it from the beginning when it becomes eligible later.
+
+This distinction prevents a delayed wall of old gunshots after a restore or budget spike.
+
+## 25. Dialogue priority and concurrency
+
+Future voiced dialogue classes:
+1. mission-critical dialogue;
+2. squad callout;
+3. combat bark;
+4. ambient bark.
+
+Rules:
+- mission-critical speech can steal lower-priority bark voices;
+- avoid four soldiers talking over a required line;
+- do not reorder simulation dialogue;
+- positional squad/ambient speech may use actor position;
+- subtitles remain simulation/UI truth.
+
+## 26. Ducking
+
+Ducking should be moderate and contextual.
+
+Prototype mission-critical voice duck:
+- weapons: about -3 dB;
+- vehicles: about -3 dB;
+- ambience: about -5 dB;
+- explosions: only about -1 dB.
+
+Thus a dangerous nearby blast can still dominate perception. Do not silence the war to make every line perfectly clean.
+
+## 27. Vehicles
+
+Future vehicle presentation reads authoritative vehicle state:
+
+```js
+VehicleAudioState {
+  vehicleId,
+  position,
+  velocity,
+  rpm,
+  load,
+  gear?,
+  damage,
+  interior
+}
+```
+
+Layer families:
+- engine idle;
+- RPM/load loop;
+- track/wheel;
+- gear/transient;
+- damage/rattle;
+- weapon;
+- interior/exterior processing.
+
+Audio does not implement VehicleController.
+
+## 28. Aircraft
+
+Aircraft audio reads:
+- 3D position;
+- velocity;
+- altitude;
+- approaching/receding radial velocity;
+- engine/propeller state if available.
+
+A simplified Doppler ratio is acceptable, clamped to avoid exaggerated cinema effects. Altitude and distance attenuate the engine. Aircraft visibility/camera direction does not control whether the sound exists.
+
+The current M01 Ju 87 renderer already has real presentation positions; future integration should consume the same authoritative trajectory/state, not an independent audio orbit.
+
+## 29. Fire / burning
+
+Persistent fire voices are tied to destruction/fire state:
+
+```text
+fire exists in destruction state
+  -> audio persistent voice exists logically
+  -> distance/occlusion/voice budget decide whether backend voice is active
+```
+
+Parameters:
+- position;
+- intensity;
+- age/state;
+- local loop phase;
+- occlusion.
+
+Audio never creates the fire.
+
+## 30. Ambience
+
+Environmental ambience may contain:
+- wind;
+- river;
+- structure creaks/rattle where justified;
+- persistent fires;
+- distant battle generated from sector events;
+- aircraft generated from aircraft state;
+- fauna only when historical/situational state allows it.
+
+Fauna suppression should be driven by battle/environment state, not a random “combat mood” timer invented by the audio layer.
+
+## 31. Audio snapshots
+
+Presentation-only snapshots:
+
+### NORMAL
+Neutral mix.
+
+### SUPPRESSED
+Small master reduction/high-frequency damping; short recovery.
+
+### NEAR_EXPLOSION
+Temporary muffling, restrained high tone and recovery envelope.
+
+### INDOOR
+Environment filtering/send state, not a gameplay state.
+
+### VEHICLE_INTERIOR
+Interior filter + vehicle mix emphasis.
+
+### OUTRO
+Optional restrained mix state for authored conclusion.
+
+A near-explosion snapshot must be used sparingly. Not every hit deserves tinnitus.
+
+## 32. Accessibility / user mix
+
+Future buses:
+- master;
+- effects;
+- dialogue;
+- music;
+- ambience.
+
+Vehicle/weapon/explosion sub-buses can exist internally without exposing every engineering control to the player.
+
+Changing sliders cannot alter simulation, detection, AI or damage.
+
+## 33. Sample library and licences
+
+Never copy or extract sounds from Call of Duty, Medal of Honor, films or unlicensed libraries.
+
+Allowed future sources:
+- original recordings/design;
+- CC0;
+- public domain where applicable;
+- CC-BY or other compatible licences with required attribution;
+- properly purchased/licensed libraries whose redistribution terms permit the project.
+
+Every production sample family should record:
+- source/author;
+- licence;
+- original URL/reference;
+- local asset path;
+- modifications;
+- attribution requirement.
+
+## 34. Quality scaling
+
+LOW/MEDIUM/HIGH may vary:
+- reflection taps;
+- secondary tails;
+- distant voice budget;
+- convolution/reverb complexity;
+- maximum active persistent ambience voices.
+
+They may not vary:
+- which gameplay event occurred;
+- event timestamp;
+- source/impact coordinates;
+- hit/casualty result;
+- mission state;
+- simulation RNG sequence.
+
+## 35. Off-camera rule
+
+Audibility is a function of physical source/listener relation and mix budgets, not whether the camera sees the source.
+
+Rotating 180 degrees may change:
+- stereo/HRTF direction;
+- front/back spectral cue if implemented.
+
+It must not change:
+- logical event existence;
+- propagation delay;
+- distance gain;
+- expiry;
+- gameplay.
+
+## 36. Future integration sequence
+
+1. Add the new audio modules without deleting `AudioManager`.
+2. Adapt M01 player-shot/enemy-fire/round-impact/m01-blast into AudioEvents.
+3. Run equivalence tests for event counts/times and gameplay snapshots with audio on/off.
+4. Add priority + voice manager using procedural backend first.
+5. Add world acoustic query using existing authoritative geometry.
+6. Add environment/room metadata incrementally.
+7. Add licensed sample families weapon by weapon.
+8. Add dialogue buses/ducking only when voice assets exist.
+9. Add vehicles/aircraft persistent voices only when authoritative runtime state exists.
+10. Remove old direct calls only after regression/browser validation.
+
+Do not combine this migration with battle-sector, destruction, combat-AI, CKM, MG34 or world-interaction changes.
+
+## 37. Acceptance gates before production integration
+
+Required before calling the system integrated:
+- audio enabled/disabled produces identical gameplay state;
+- no gameplay RNG consumption;
+- 1 km propagation test;
+- off-camera audibility test;
+- restore/expired one-shot test;
+- room/occlusion test against authoritative geometry;
+- voice-budget stress test;
+- dialogue-over-battle priority test;
+- quality equivalence of logical event times;
+- browser test for pause/resume and user gesture;
+- hardware/browser profiling before claiming Chromebook performance;
+- licence manifest for every non-procedural production sound.
+
+This task intentionally stops before those production changes.
