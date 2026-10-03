@@ -22,6 +22,16 @@ const STATION_YARD={x:-300,y:-3,z:30},STATION_PATIENT='generic_rifleman';
 // Estimated presentation timing, owned by simulation and saved with the pair (schema 2).
 const STATION_TRANSITION_SEC=1.6,STATION_DRAG_OFFSET=.92;
 const STATION_DELIVERY={x:EVACUATION.x-2,z:EVACUATION.z+2.2};
+// West embrasure cv_casemate_emb_s; ground placement is provisional, with no invented firing/platform.
+export const CKM_POSITION={x:22,y:-3,z:43};
+const CKM_IDS=['ckm_gunner','ckm_loader','ckm_reserve'],CKM_ABANDON_SEC=3;
+const makeCKMCrew=(world,clock=0,withdrawn=false)=>CKM_IDS.map((id,i)=>{
+  const [x,z]=[[21.206,42.971],[22.08,42.48],[20.4,41.6]][i];
+  const point=withdrawn?{x:-170-i*1.6,z:22+i*1.2}:{x,z};
+  return entity(id,{...point,y:withdrawn?world.heightAt(point.x,point.z):CKM_POSITION.y},'ally',{
+    group:'grp_ckm_crew',role:i<2?'SUPPORT':'RIFLEMAN',facing:i===1?112*Math.PI/180:0,
+    ckm:{phase:withdrawn?'retreat':'idle',startedAt:clock,visible:true}});
+});
 // Lugares no abrigo de campanha (interior x −264…−256, z 66…75) para a chamada das 07:05.
 const ROLL_CALL_SEATS=[[-262.8,73.6],[-261.2,73.9],[-259.6,73.9],[-258,73.6],[-263.2,71.6],[-256.9,71.6],[-262.9,69.6],[-257.1,69.6]];
 // Trabalho dos sapadores sem supressão, em segundos de jogo. Com 75 s, a caixa entregue por volta das 04:42 deixava
@@ -61,6 +71,7 @@ export class M01Simulation {
       {group:'grp_de_spans',weapon:'kar98k',active:false,firedAt:-1e9}));
     for(let i=0;i<24;i++)this.actors.push(entity(`pl_east_${i}`,{x:1040+i%4*2,y:0,z:38+i%4*.65},'ally',
       {group:'grp_east_platoon',active:false,role:'RIFLEMAN'}));
+    this.actors.push(...makeCKMCrew(this.world));
     this.timers={boundary:0,water:0,cover:0,repairStall:0,repairSuppressedUntil:0,withdrawalCasualty:seconds('06:00:00'),
       ambient:0,nextCoverCall:40,guide:0,guideKey:null,guideAt:0,guideDist:0,guideShown:false,kowalRounds:30,lowAmmoHint:false,escort:false,escortSpoke:false,boundaryWarning:false,boundaryCountdown:0,holdAccessVisited:false,
       occupiedCover:null,coverExposure:0,coverCallIndex:0,repairPins:0,fireEase:false,calloutAt:-1e9,nextCombatCall:0};
@@ -320,8 +331,23 @@ export class M01Simulation {
     this.interruptStationEvacuation();
     const retreat=this.consumedEvent(E('east_demolition'));
     for(const a of this.actors){
+      if(a.ckm)a.ckm.visible=!this.consumedEvent(E('west_demolition'));
       a.shot=Math.max(0,a.shot-dt);if(!a.alive||!a.active)continue;
       if(a.team==='enemy')a.crouched=this.clock<a.suppressedUntil;
+      if(a.group==='grp_ckm_crew'){
+        if(retreat&&a.ckm.phase==='idle')a.ckm={phase:'abandon',startedAt:this.clock,visible:a.ckm.visible};
+        if(a.ckm.phase==='abandon'&&this.clock-a.ckm.startedAt>=CKM_ABANDON_SEC)
+          a.ckm={phase:'retreat',startedAt:this.clock,visible:a.ckm.visible};
+        if(a.ckm.phase==='retreat'){
+          const i=CKM_IDS.indexOf(a.id),target=a.x>12?{x:10,z:40}:a.x>-12?{x:-14,z:40}:{x:-170-i*1.6,z:22+i*1.2};
+          const floor=a.y;this.moveActor(a,target,dt);
+          // The casemate is below the bridge deck; climb back to terrain only outside its west end.
+          const height=a.x>0?CKM_POSITION.y:this.world.heightAt(a.x,a.z);
+          a.y=floor+Math.sign(height-floor)*Math.min(Math.abs(height-floor),dt*1.2);
+          if(a.state==='ADVANCE')a.state='RETREAT';
+        }
+        continue;
+      }
       if(a.group==='grp_east_platoon'){
         // Etapas do recuo: portal rodoviário, sul do barracão e passagem pelo posto de disparo até junto da estação.
         // Os limiares ficam aquém dos pontos (moveActor pára a 0,8 m), para nenhum soldado ficar preso numa etapa.
@@ -791,13 +817,19 @@ export class M01Simulation {
     const s=clone(raw);validateM01Snapshot(s);const candidate=new M01Simulation(s.rng);
     for(const key of ['clock','battleClock','player','actors','consumed','objectives','flags','destruction','dialogueConsumed','dialogueQueue','subtitle',
       'scene','sceneDone','checkpointsReached','pendingCheckpoint','gate','recoveries','timers','sectors','grenades','mission'])candidate[key]=s[key];
+    // Schema 2 legacy saves contain the exact old roster. Add only the absent complete group,
+    // outside the blast zone after the existing retreat event, without touching old actors or RNG.
+    if(!s.actors.some(a=>CKM_IDS.includes(a.id))){
+      const at=s.consumed[E('east_demolition')],crew=makeCKMCrew(candidate.world,at??0,at!==undefined);
+      crew.forEach(a=>a.ckm.visible=!Object.hasOwn(s.consumed,E('west_demolition')));candidate.actors.push(...crew);
+    }
     candidate.enemyFire=s.enemyFire??{rounds:[],nextId:0};   // saves anteriores ao fogo em voo começam sem tiros no ar
     candidate.timers={...s.timers,kowalRounds:s.timers.kowalRounds??30,lowAmmoHint:s.timers.lowAmmoHint??false,nextCombatCall:s.timers.nextCombatCall??0};
     // Saves anteriores activavam as 24 instâncias: só os 18 primeiros podem estar no pelotão; as reservas ficam fora de cena.
     if(!('enemyFire' in s)&&!('withdrawalPressure' in s.timers))for(const a of candidate.actors.filter(a=>a.group==='grp_east_platoon'&&Number(a.id.split('_').at(-1))>=18))
       Object.assign(a,{active:false,alive:false,health:0,state:'DOWN'});
     candidate.weapon.restore(s.weapon);candidate.rng.state=s.rng;candidate.events=[];candidate.world.refresh(Object.keys(s.consumed),s.flags);
-    candidate.checkpoint=clone(s);Object.assign(this,candidate);return true;
+    candidate.checkpoint=candidate.snapshot();Object.assign(this,candidate);return true;
   }
   restoreCheckpoint(){return this.restoreSnapshot(this.checkpoint);}
   loadCheckpoint(text){try{if(typeof text!=='string'||text.length>1000000)throw new Error('Ficheiro ausente ou demasiado grande.');this.restoreSnapshot(JSON.parse(text));return {ok:true};}catch(error){return {ok:false,error:error.message};}}
@@ -813,7 +845,16 @@ export function validateM01Snapshot(s){
   const point=p=>p&&p.space==='metres'&&[p.x,p.y,p.z].every(Number.isFinite)&&finite(p.health,0,100)&&typeof p.alive==='boolean';
   if(!point(s.player)||s.player.health<=0||s.player.health>100||!s.player.alive||![s.player.angle,s.player.pitch].every(Number.isFinite))reject('jogador');
   const actorIds=[...definition.cast.filter(c=>c.id!=='jan_wrona').map(c=>c.id),...Array.from({length:40},(_,i)=>`de_east_${i}`),...Array.from({length:10},(_,i)=>`de_spans_${i}`),...Array.from({length:24},(_,i)=>`pl_east_${i}`)];
+  const hasCKM=Array.isArray(s.actors)&&s.actors.some(a=>CKM_IDS.includes(a?.id));
+  if(hasCKM)actorIds.push(...CKM_IDS);
   if(!Array.isArray(s.actors)||s.actors.length!==actorIds.length||new Set(s.actors.map(a=>a.id)).size!==s.actors.length||!s.actors.every(a=>point(a)&&actorIds.includes(a.id)&&Number.isFinite(a.radius)&&a.radius>0))reject('actores');
+  for(const a of s.actors)if(CKM_IDS.includes(a.id)||a.ckm!==undefined||a.group==='grp_ckm_crew'){
+    const t=a.ckm,i=CKM_IDS.indexOf(a.id);
+    if(i<0||a.group!=='grp_ckm_crew'||a.role!==(i<2?'SUPPORT':'RIFLEMAN')||!t||
+      Object.keys(t).some(k=>!['phase','startedAt','visible'].includes(k))||!['idle','abandon','retreat'].includes(t.phase)||
+      !finite(t.startedAt,0,s.clock)||typeof t.visible!=='boolean'||
+      t.phase!=='idle'&&!finite(s.consumed?.[E('east_demolition')],0,t.startedAt))reject('guarnição ckm');
+  }
   if(s.actors.some(a=>a.team==='enemy'&&a.x<690)||s.actors.some(a=>definition.historicalPersonsOffscreen.some(h=>h.id===a.id)))reject('elenco');
   if(s.actors.some(a=>a.team!==(a.id.startsWith('de_')?'enemy':'ally')||
     !['GUARD','ADVANCE','SUPPRESS','RETREAT','HIT_REACTION','DOWN','WOUNDED','reached_safety'].includes(a.state)||

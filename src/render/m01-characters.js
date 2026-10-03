@@ -2,9 +2,13 @@ import * as THREE from 'three';
 import { clone } from 'three/addons/utils/SkeletonUtils.js';
 import { AssetManager } from '../assets/asset-manager.js';
 import { actorPose } from './m01-actor-pose.js';
+import { CKM_POSITION } from '../game/m01-simulation.js';
 
 const BASE='assets/models/provisional/m01/characters/';
 const MG='assets/models/provisional/m01/weapons/mg34/';
+const CKM='assets/models/provisional/m01/weapons/ckm_wz30/';
+const ckmRole=a=>a.group==='grp_ckm_crew'&&['ckm_gunner','ckm_loader'].includes(a.id);
+const ckmAtPost=a=>ckmRole(a)&&a.ckm?.phase!=='retreat';
 const LIMITS={low:{count:18,near:0,middle:15,far:100},medium:{count:24,near:0,middle:40,far:130},high:{count:28,near:14,middle:45,far:160}};
 const named={marek_zielinski:'zielinski',pawel_krawiec:'krawiec',tadeusz_nowicki:'nowicki',jozef_bak:'bak',szymon_kowal:'kowal',leon_dudek:'dudek'};
 const hash=id=>[...id].reduce((n,c)=>(n*31+c.charCodeAt(0))>>>0,0);
@@ -32,6 +36,10 @@ export class M01Characters {
       this.assets.load('mg34-clips',MG+'m01_mg34_animations.glb').then(g=>{
         if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
       }),
+      this.assets.load('ckm-clips',CKM+'m01_ckm_wz30_animations.glb').then(g=>{
+        if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
+      }),
+      this.loadCKM(2),...(quality==='high'?[this.loadCKM(0),this.loadCKM(1)]:[]),
       this.loadMG(2),...(quality==='high'?[this.loadMG(0),this.loadMG(1)]:[]),
       // The hands and rifle are centimetres from the camera: their LOD0 is shared with the viewmodel on every preset.
       ...['pl:0','pl:1','pl:2','de:2',...(quality==='high'?['de:0','de:1']:[])].map(k=>this.loadSource(k))
@@ -53,9 +61,26 @@ export class M01Characters {
       if(!this.disposed){this.sources.set(key,g);this.revision++;}
     }catch{/* Keep the existing procedural support if its weapon or clips fail. */}
   }
+  async loadCKM(lod){
+    const key=`ckm:${lod}`;if(this.pending.has(key)||this.sources.has(key)||this.disposed)return;
+    this.pending.add(key);
+    try{
+      const g=await this.assets.load(key,`${CKM}m01_ckm_wz30_lod${lod}.glb`);
+      if(!this.disposed){this.sources.set(key,g);this.revision++;}
+    }catch{/* The existing procedural actors remain available without the optional kit. */}
+  }
+  hasCKM(){
+    return this.clips.has('standing_idle')&&[0,1,2].some(l=>this.sources.has(`ckm:${l}`))&&['idle','abandon'].every(phase=>
+      this.sources.get('ckm:2')?.animations.some(c=>c.name===`ckm_wz30_gun_${phase}`)&&
+      ['gunner','loader'].every(role=>this.clips.has(`ckm_wz30_${role}_${phase}`)));
+  }
   sample(actor,time,actors,pose,battleClock){
     const offset=(hash(actor.id)%1000)/250;
     if(pose.name==='fallen')return {clip:'fallen',time:1.4,loop:false};
+    if(ckmAtPost(actor)&&this.hasCKM()&&!['wounded','carried'].includes(pose.name)){
+      const phase=actor.ckm.phase,role=actor.id==='ckm_gunner'?'gunner':'loader';
+      return {clip:`ckm_wz30_${role}_${phase}`,time:Math.max(0,time-actor.ckm.startedAt),loop:phase==='idle'};
+    }
     const stationPatient=actor.id==='generic_rifleman'?actor:actors.find(a=>a.id==='generic_rifleman'&&a.carriedBy===actor.id);
     const stationMedic=stationPatient&&actors.find(a=>a.id===stationPatient.carriedBy);
     if(stationPatient?.alive&&stationPatient.active&&stationPatient.task==='station_wounded'&&stationMedic?.alive&&stationMedic.active){
@@ -143,10 +168,11 @@ export class M01Characters {
   update(actors,time,player,quality='low',battleClock){
     const limits=LIMITS[quality]??LIMITS.low;
     if(quality==='high')for(const k of ['pl:0','de:0','de:1'])void this.loadSource(k);
-    if(quality==='high')for(const lod of [0,1])void this.loadMG(lod);
+    if(quality==='high')for(const lod of [0,1]){void this.loadMG(lod);void this.loadCKM(lod);}
+    this.updateCKM(actors,time,player,quality);
     const selected=new Set(),visible=[],clips={};
     const availableMG=[0,1,2].some(l=>this.sources.has(`mg34:${l}`))&&this.clips.has('mg34_aim')&&this.clips.has('mg34_fire_burst');
-    const candidates=actors.filter(a=>a.active&&!a.civilian&&(a.role!=='SUPPORT'||a.id==='szymon_kowal'||mgGunner(a)&&availableMG))
+    const candidates=actors.filter(a=>a.active&&!a.civilian&&(a.role!=='SUPPORT'||a.id==='szymon_kowal'||mgGunner(a)&&availableMG||ckmRole(a)))
       .map(a=>({a,d:Math.hypot(a.x-player.x,a.z-player.z)})).filter(p=>p.d<(mgGunner(p.a)?1800:limits.far))
       // Reserve two existing fire sources within the same 18/24/28 actor budget, including from the west bank.
       .sort((a,b)=>Number(mgGunner(b.a))-Number(mgGunner(a.a))||a.d-b.d||a.a.id.localeCompare(b.a.id)).slice(0,limits.count);
@@ -172,7 +198,7 @@ export class M01Characters {
       v.meshes.forEach(n=>{
         n.castShadow=quality!=='low'&&d<35;
         if(!weaponParts.has(n.name))return;
-        const armed=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy&&a.role!=='MEDIC'&&!mgGunner(a),kowal=a.id==='szymon_kowal',bak=a.id==='jozef_bak';
+        const armed=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy&&a.role!=='MEDIC'&&!mgGunner(a)&&!(ckmAtPost(a)&&this.hasCKM()),kowal=a.id==='szymon_kowal',bak=a.id==='jozef_bak';
         const bipod=clip.userData?.bipod??'folded';
         n.visible=n.name==='rifle'?armed&&!kowal&&!bak:n.name==='clip'?armed&&!kowal:
           n.name==='rifle_wz98a'?armed&&bak:n.name==='rkm_wz28'?armed&&kowal:
@@ -192,10 +218,30 @@ export class M01Characters {
     this.stats={active:selected.size,limit:limits.count,instances:this.instances.size,clips,actors:visible};
     return selected;
   }
+  updateCKM(actors,time,player,quality){
+    const gunner=actors.find(a=>a.id==='ckm_gunner'),d=Math.hypot(player.x-CKM_POSITION.x,player.z-CKM_POSITION.z);
+    if(!gunner?.ckm?.visible||!this.hasCKM()||d>(LIMITS[quality]??LIMITS.low).far){
+      if(this.ckm)this.ckm.root.visible=false;return;
+    }
+    let lod=quality==='high'&&d<14?0:quality==='high'&&d<45?1:2;
+    while(lod<3&&!this.sources.has(`ckm:${lod}`))lod++;
+    if(lod===3)return;
+    if(this.ckm?.lod!==lod){
+      if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}
+      const source=this.sources.get(`ckm:${lod}`),root=source.scene.clone(true);
+      this.scene.add(root);this.ckm={root,lod,mixer:new THREE.AnimationMixer(root),clips:source.animations};
+    }
+    const v=this.ckm,phase=gunner.ckm.phase==='idle'?'idle':'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`);
+    if(!clip){v.root.visible=false;return;}
+    v.root.visible=true;v.root.position.set(CKM_POSITION.x,CKM_POSITION.y,CKM_POSITION.z);v.root.rotation.y=-Math.PI/2;
+    v.mixer.stopAllAction();const action=v.mixer.clipAction(clip).setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.reset().play();
+    const age=gunner.ckm.phase==='retreat'?clip.duration:Math.max(0,time-gunner.ckm.startedAt);
+    v.mixer.setTime(phase==='idle'?age%clip.duration:Math.min(age,clip.duration));v.clip=clip.name;v.time=action.time;v.root.updateMatrixWorld(true);
+  }
   muzzle(id){
     const v=this.instances.get(id),bone=v?.root.getObjectByName('weapon');if(!bone)return null;
     v.root.updateMatrixWorld(true);return new THREE.Vector3().fromArray(v.muzzle).applyMatrix4(bone.matrixWorld);
   }
-  get diagnostics(){return {...this.stats,loaded:[...this.sources.keys()],failures:this.assets.failures};}
-  dispose(){this.disposed=true;this.instances.forEach(v=>this.release(v));this.instances.clear();this.assets.dispose();}
+  get diagnostics(){return {...this.stats,ckm:this.ckm?{visible:this.ckm.root.visible,lod:this.ckm.lod,clip:this.ckm.clip,time:this.ckm.time,position:this.ckm.root.position.toArray()}:null,loaded:[...this.sources.keys()],failures:this.assets.failures};}
+  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.assets.dispose();}
 }

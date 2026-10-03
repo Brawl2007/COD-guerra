@@ -493,3 +493,36 @@ test('textured atmosphere survives checkpoint restart without duplicating resour
   await page.screenshot({path:info.outputPath('m01-visual-low.png')});
   expect(errors).toEqual([]);expect(shaderErrors).toEqual([]);expect(failed).toEqual([]);
 });
+
+
+test('ckm west crew and weapon use actual saved abandon time, pause and fresh reload',async({page},info)=>{
+  test.setTimeout(180000);
+  const flow=route(),snapshot=structuredClone(flow.combatSnapshots.eastDemolition);
+  // This snapshot was reached by the route's real controls at the demolition event.
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters?.actors.some(a=>a.clip==='ckm_wz30_gunner_abandon'));
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  const before=await page.evaluate(()=>window.gameDiagnostics()),c=before.m01.characters;
+  const gunner=c.actors.find(a=>a.id==='ckm_gunner'),loader=c.actors.find(a=>a.id==='ckm_loader');
+  expect(loader.clip).toBe('ckm_wz30_loader_abandon');expect(loader.clipTime).toBeCloseTo(gunner.clipTime,5);
+  expect(c.ckm.clip).toBe('ckm_wz30_gun_abandon');expect(c.ckm.time).toBeCloseTo(gunner.clipTime,5);
+  expect(c.ckm.position).toEqual([22,-3,43]);expect(c.ckm.lod).toBe(2);
+  await page.waitForTimeout(250);expect((await page.evaluate(()=>window.gameDiagnostics())).m01.characters).toEqual(c);
+  await page.screenshot({path:info.outputPath('m01-ckm-abandon.png'),style:'#pause {visibility:hidden !important;}'});
+  await page.reload();await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters?.loaded.includes('ckm:2'));
+  await expect(page.locator('#error')).toBeHidden();expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('optional ckm kit failure retains the crew fallback and checkpoint restoration',async({page})=>{
+  test.setTimeout(120000);await page.route('**/m01_ckm_wz30_*.glb',r=>r.abort());
+  const d=driver();d.step({skip:true});
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
+  const {errors}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters?.failures.some(f=>f.path.includes('ckm_wz30')));
+  const c=(await page.evaluate(()=>window.gameDiagnostics())).m01.characters;
+  expect(c.actors.filter(a=>a.id.startsWith('ckm_'))).toHaveLength(3);expect(c.ckm).toBeNull();
+  expect(c.actors.filter(a=>a.id.startsWith('ckm_')).every(a=>!a.clip.startsWith('ckm_wz30_'))).toBe(true);
+  await page.evaluate(()=>document.exitPointerLock());await page.locator('#restart-checkpoint').click();
+  await expect(page.locator('#error')).toBeHidden();expect(errors).toEqual([]);
+});
