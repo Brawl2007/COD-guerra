@@ -5,6 +5,7 @@ Branch de trabalho: `codex/campaign-cinematic-m02-m30`
 Este documento complementa, sem substituir, os roteiros históricos de `docs/PROMPT_MESTRE.txt` §79.
 
 A gramática de ritmo e cinematografia inspirada de forma abstrata em padrões públicos de *World at War*, sem copiar conteúdo, está em `docs/CAMPAIGN_WAW_INSPIRED_GRAMMAR_M02_M30.md`. Aplicar os dois documentos em conjunto.
+A estrutura histórica preliminar de terreno, construções, vegetação, marcos e transformação espacial está em `docs/CAMPAIGN_MAP_BIBLE_M02_M30.md`. Nenhum detalhe espacial deve ser tratado como exato sem a classificação `EXACT`/`RECONSTRUCTED`/`COMPRESSED_FOR_GAMEPLAY` da pesquisa da missão.
 
 ## Contrato
 
