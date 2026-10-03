@@ -730,6 +730,42 @@ Usar:
 Não esconder gráfico ruim com escuridão.
 
 ============================================================
+26-A. ARMAS NO MUNDO, TROCA E RECUPERAÇÃO
+============================================================
+
+Armas usadas por aliados/inimigos são objetos do mundo quando a situação permite.
+
+O jogador pode:
+- recolher uma arma largada por aliado ou inimigo abatido;
+- trocar a arma carregada por outra compatível;
+- recuperar munição compatível apenas quando realmente existe no corpo/equipamento/caixa;
+- devolver ou abandonar arma no mundo quando o sistema de inventário permitir.
+
+Regras:
+- a arma recolhida conserva modelo, calibre, carregador, munição atual, estado do ferrolho/culatra, baioneta/acessórios e dano funcional quando aplicável;
+- não converter munição de calibres diferentes;
+- não dar automaticamente carregadores completos ao recolher uma arma;
+- arma inimiga não muda de funcionamento para combinar com a arma anterior;
+- animações, som, recarga, cadência e mira continuam próprios daquele modelo;
+- armas historicamente indisponíveis naquela missão não podem aparecer por loot aleatório;
+- armas essenciais de personagens/objetivos não desaparecem por culling;
+- armas no chão usam persistência limitada e política de distância/orçamento, sem desaparecer diante do jogador;
+- se uma arma caída for removida por otimização, seu estado relevante deve ser resolvido deterministicamente;
+- pickup/drop não pode consumir RNG de combate sem necessidade.
+
+Interação contextual:
+- mostrar nome/modelo da arma;
+- munição no carregador e reserva disponível quando o personagem teria como saber;
+- exigir proximidade e linha de interação;
+- não recolher através de parede/chão;
+- corpos podem manter a arma presa/ao lado conforme a queda e depois disponibilizá-la.
+
+Aliados vivos:
+- não arrancar arma da mão de aliado ativo;
+- troca voluntária/entrega só ocorre quando roteiro, IA ou sistema específico permitir.
+
+============================================================
+============================================================
 27. VFX
 ============================================================
 
@@ -762,18 +798,42 @@ Artilharia:
 - impact;
 - explosion;
 - dust;
-- camera shake.
+- camera shake;
+- peças reais apenas quando coerentes com unidade/data/setor;
+- tripulação própria;
+- orientação/elevacão compatíveis com o modelo da peça;
+- munição limitada e tipo de granada correto;
+- recuo, culatra, carregamento e ejeção/extração quando aplicável;
+- posição e arco de tiro fisicamente válidos;
+- efeitos e crateras obedecem à seção 29.
+
+Interação do jogador com artilharia:
+- somente quando a missão, a peça e a situação histórica permitirem;
+- o jogador pode assumir uma função disponível da guarnição, não magicamente substituir toda a tripulação;
+- operar mira/elevação/travessa/disparo quando esse posto realmente controla essas funções;
+- carregar munição ou auxiliar a guarnição quando apropriado;
+- se a peça exigir vários homens, os outros postos continuam necessários ou a cadência/funcionalidade diminui de forma plausível;
+- não permitir girar uma peça através de paredes, disparar através de cobertura ou mirar fora dos limites físicos da montagem;
+- estado, munição, dano, tripulação e orientação entram no save quando a peça é jogável.
 
 Morteiros:
 - eventos roteirizados;
 - aviso;
-- reação da IA.
+- reação da IA;
+- peças jogáveis somente quando historicamente e mecanicamente justificadas;
+- tubo/base/bipé, elevação e direção coerentes;
+- munição finita;
+- trajetória balística e distância mínima/máxima coerentes;
+- spotter/observação quando necessário;
+- não permitir fogo mágico através de teto ou sem solução de tiro.
 
 MG:
 - posições fixas;
 - operadores;
 - supressão;
-- reload plausível.
+- reload plausível;
+- arma fixa/montada pode ser utilizada pelo jogador quando a posição, montagem e situação permitirem;
+- arco, altura, tripé/bipé, munição, aquecimento/reload e obstáculos continuam fisicamente válidos.
 
 ============================================================
 29. DESTRUIÇÃO, FÍSICA E AMBIENTE DANIFICÁVEL
@@ -1238,10 +1298,32 @@ Usar apenas tanques corretos para batalha/data.
 
 Criar veículos leves.
 
-Jogador pode:
+Jogador pode, quando a missão/situação permitir:
 - dirigir;
 - ser passageiro;
-- operar arma montada.
+- trocar de assento quando fisicamente possível;
+- operar arma montada;
+- entrar e sair por portas/aberturas válidas;
+- interagir com veículo aliado abandonado ou disponível;
+- usar veículo inimigo capturado SOMENTE quando historicamente plausível, funcional e alcançável; não transformar qualquer veículo inimigo em veículo grátis.
+
+O veículo mantém:
+- combustível quando relevante;
+- dano;
+- rodas/lagartas/componentes aplicáveis;
+- ocupantes;
+- carga;
+- arma montada e munição;
+- posição/orientação;
+- estado ligado/desligado;
+- persistência em checkpoint/save quando jogável.
+
+Não permitir:
+- dirigir veículo destruído;
+- atravessar parede/cobertura;
+- entrar em veículo fechado sem ponto físico de entrada;
+- teletransportar para assento;
+- veículo inimigo instantaneamente identificado/operável sem limitação quando o modelo exigiria familiaridade ou tripulação.
 
 Comboios:
 - formação;
