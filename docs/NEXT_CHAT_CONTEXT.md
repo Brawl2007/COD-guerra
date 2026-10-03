@@ -66,3 +66,12 @@ Evidência em `docs/verification/m01-runtime/ckm-crew-runtime-2026-10-03/`: REPO
 ## Revisão da posição da ckm — 2026-10-03
 
 A geometria existente confirma `casemates_west` em x 0…26 / y -7…-1 / z 34…46, seteira sul [25,-3,43] e `cv_casemate_emb_s` [24,-3,43]. O socket `gun_muzzle_flash` do kit fica 0,83 m à frente da raiz; com yaw -π/2, a raiz x=24,17 alinharia o clarão em x=25. Foi testado um deslocamento rígido +2,17 m da arma/guarnição, mas **revertido antes de promoção**: saves schema 2 de 89 actores já existentes guardam as coordenadas antigas dos homens e não têm marcador de versão de posicionamento, portanto mover apenas a raiz actual criaria dessincronização após reload. Commits experimentais `4e8ad3b` e revert `cbc8cee`; comparação líquida `beec7cd...cbc8cee` tem zero ficheiros alterados. Não usar force-push. Posição continua [22,-3,43] até existir migração segura ou novo dado de plataforma/altura. Não ligar aim/fire_burst/feed antes de resolver isso.
+
+
+## Estado de validação oficial e pendências visuais — 2026-10-03
+
+O head de produção promovido continua `beec7cd9333cfac38fdc361da481ad4a942e1e37` em `codex/m01-runtime` e `codex/m01-assets-review`; `main` não foi alterado. A validação integral temporária run **37114162482** no mesmo SHA terminou verde: **168/168 Node**, build e **31/31 navegador**; deploy skipped. O PR temporário #36 foi fechado sem merge.
+
+A CI oficial do PR #32, run **37114179084**, tentativa 1 passou Node/build mas teve **30/31 navegador**: timeout único em `tests/browser/m01.spec.js:213`, esperando `stationEvacuation.delivered` por 120 s. O mesmo HEAD já passou esse caso na suíte integral acima. Tentativa 2 foi lançada sem mudança de código; no último ponto observado, 168/168 Node e build já tinham passado e `npm run test:browser` ainda estava em execução. Não alterar S3 antes de saber se a falha reproduz.
+
+Investigação paralela sem patch: MG34 prone possui clips completos de atirador/municiador e a simulação já expõe sinais reais de tiro/supressão (`weapon==='mg34'`, `shot`, `firedAt`, `suppressedUntil`), mas ainda não existe estado explícito de gameplay para entrada/saída prone, reload/feed ou associação de municiador; o renderer não deve inventá-los. Vagões queimados/danificados têm GLBs e manifest, mas `M01TrainWagons` usa um plano fixo de 65 vagões e a simulação só expõe eventos globais como `station_wagon_fire`, sem ID/estado individual de vagão. Portanto ambos continuam bloqueados por dados de simulação; não ligar automaticamente no renderer.
