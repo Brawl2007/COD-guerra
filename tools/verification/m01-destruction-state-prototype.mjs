@@ -7,6 +7,7 @@ import { performance } from 'node:perf_hooks';
 export const FORMAT='destruction-prototype/v1';
 export const LIMITS=Object.freeze({objects:512,parts:32,events:2048,operations:64,local:256,bytes:2_000_000});
 const STRUCTURE=['intact','damaged','heavily_damaged','partial_collapse','destroyed'];
+const SURFACE=['clean','scorched','burned'];
 const MOBILITY=['operational','disabled','destroyed','wreck'];
 const COLLISION=['solid','none','rubble'],COVER=['full','low','none'],TRAVERSAL=['blocked','open','restricted'];
 const fail=message=>{throw new Error(`Destruction prototype: ${message}`);};
@@ -58,7 +59,7 @@ export function createWorld({missionId,seed,catalogVersion,catalog}){
     for(const p of d.parts){
       keys(p,['id','collisionState','coverState','traversalState']);identifier(p.id);policies(p);
       check(!Object.hasOwn(parts,p.id),'duplicate part ID');
-      parts[p.id]={structuralState:'intact',collisionState:p.collisionState,coverState:p.coverState,
+      parts[p.id]={structuralState:'intact',surfaceState:'clean',collisionState:p.collisionState,coverState:p.coverState,
         traversalState:p.traversalState,changedAt:null,causeEventId:null};
     }
     objects[d.id]={id:d.id,parts,fire:null,...(d.category==='vehicle'?{vehicle:{mobility:'operational',crew:'present',changedAt:null,causeEventId:null}}:{})};
@@ -86,11 +87,13 @@ function applyOperation(draft,event,op,writes){
   const claim=key=>{check(!writes.has(key),'duplicate transaction write');writes.add(key);};
   const stamp={changedAt:event.at,causeEventId:event.id};
   if(op.type==='part'){
-    keys(op,['type','targetId','partId','structuralState','collisionState','coverState','traversalState']);identifier(op.partId);
+    keys(op,['type','targetId','partId','structuralState','collisionState','coverState','traversalState'],['surfaceState']);identifier(op.partId);
     check(Object.hasOwn(object.parts,op.partId),'unknown part');const part=object.parts[op.partId];claim(`${op.targetId}:part:${op.partId}`);
     member(op.structuralState,STRUCTURE,'structure');policies(op);
     check(STRUCTURE.indexOf(op.structuralState)>=STRUCTURE.indexOf(part.structuralState),'structural regression');
-    Object.assign(part,{structuralState:op.structuralState,collisionState:op.collisionState,
+    const surface=op.surfaceState??part.surfaceState;member(surface,SURFACE,'surface');
+    check(SURFACE.indexOf(surface)>=SURFACE.indexOf(part.surfaceState),'surface regression');
+    Object.assign(part,{structuralState:op.structuralState,surfaceState:surface,collisionState:op.collisionState,
       coverState:op.coverState,traversalState:op.traversalState,...stamp});
   }else if(op.type==='vehicle'){
     keys(op,['type','targetId','mobility','crew']);check(object.vehicle,'not a vehicle');claim(`${op.targetId}:vehicle`);
@@ -168,6 +171,7 @@ export function materialize(world,id,quality='LOW'){
     vehicle:o.vehicle??null,fire:o.fire,craters:Object.values(world.craters).filter(c=>c.targetId===id),
     debris:Object.values(world.debris).filter(c=>c.targetId===id)},presentation:{
     variants:Object.fromEntries(Object.entries(o.parts).map(([k,p])=>[k,p.structuralState])),
+    surfaces:Object.fromEntries(Object.entries(o.parts).map(([k,p])=>[k,p.surfaceState])),
     fireEmitter:active,smokeDensity:active?{LOW:1,MEDIUM:2,HIGH:3}[quality]:0,
     temporaryFragmentBudget:{LOW:4,MEDIUM:12,HIGH:24}[quality]}});
 }
@@ -180,8 +184,8 @@ export function demoWorld(seed=19390901){return createWorld({missionId:'m01',see
   {id:'m01_bridge_pier_06',category:'structure',position:[800,0,20],parts:[part('deck')]}
 ]});}
 export function houseHit(){return {id:'m01_house_04_artillery_hit',missionId:'m01',at:10,operations:[
-  {type:'part',targetId:'m01_house_04',partId:'wall_east',structuralState:'destroyed',collisionState:'none',coverState:'none',traversalState:'open'},
-  {type:'part',targetId:'m01_house_04',partId:'roof',structuralState:'partial_collapse',collisionState:'rubble',coverState:'none',traversalState:'restricted'},
+  {type:'part',targetId:'m01_house_04',partId:'wall_east',structuralState:'destroyed',surfaceState:'scorched',collisionState:'none',coverState:'none',traversalState:'open'},
+  {type:'part',targetId:'m01_house_04',partId:'roof',structuralState:'partial_collapse',surfaceState:'burned',collisionState:'rubble',coverState:'none',traversalState:'restricted'},
   ...['window_01','window_02'].map(partId=>({type:'part',targetId:'m01_house_04',partId,structuralState:'destroyed',collisionState:'none',coverState:'none',traversalState:'open'})),
   {type:'ignite',targetId:'m01_house_04',intensity:'medium',damageClass:'heat',spreadAllowed:false},
   {type:'crater',targetId:'m01_house_04',effectId:'crater_north_03',center:[904,0,39],jitter:1.5,
@@ -191,7 +195,7 @@ export function houseHit(){return {id:'m01_house_04_artillery_hit',missionId:'m0
 ]};}
 export function wreckEvent(){return {id:'m01_truck_02_wreck',missionId:'m01',at:11,operations:[
   {type:'vehicle',targetId:'m01_vehicle_truck_02',mobility:'wreck',crew:'abandoned'},
-  {type:'part',targetId:'m01_vehicle_truck_02',partId:'hull',structuralState:'destroyed',collisionState:'solid',coverState:'full',traversalState:'blocked'},
+  {type:'part',targetId:'m01_vehicle_truck_02',partId:'hull',structuralState:'destroyed',surfaceState:'burned',collisionState:'solid',coverState:'full',traversalState:'blocked'},
   {type:'ignite',targetId:'m01_vehicle_truck_02',intensity:'low',damageClass:'none',spreadAllowed:false}
 ]};}
 export function demoScenario({visible=false,quality='LOW',seed=19390901}={}){

@@ -1,5 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { mkdtempSync,readFileSync,rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { spawnSync } from 'node:child_process';
 import { createWorld,demoWorld,houseHit,wreckEvent,applyEvent,saveWorld,restoreWorld,
   materialize,canonicalJSON,LIMITS } from '../tools/verification/m01-destruction-state-prototype.mjs';
 
@@ -149,4 +153,119 @@ test('extinguishing changes fire and smoke but preserves structural destruction 
   assert.equal(view.authoritative.fire.extinguishedAt,620);assert.equal(view.authoritative.fire.sourceEventId,houseHit().id);
   assert.equal(view.presentation.fireEmitter,false);assert.equal(view.presentation.smokeDensity,0);
   assert.equal(view.presentation.variants.wall_east,'destroyed');
+  assert.equal(view.presentation.surfaces.wall_east,'scorched');assert.equal(view.presentation.surfaces.roof,'burned');
+});
+
+test('burn marks persist independently of structural damage and inactive fire',()=>{
+  const e=event('door_burned',1,[{type:'part',targetId:'m01_house_04',partId:'door_front',structuralState:'intact',
+    surfaceState:'burned',collisionState:'solid',coverState:'full',traversalState:'blocked'}]);
+  const w=applyEvent(demoWorld(),e).world,r=restoreWorld(saveWorld(w)),view=materialize(r,'m01_house_04');
+  assert.equal(view.presentation.variants.door_front,'intact');assert.equal(view.presentation.surfaces.door_front,'burned');
+  assert.equal(view.presentation.fireEmitter,false);assert.equal(view.authoritative.parts.door_front.collisionState,'solid');
+  const clean=clone(e);clean.id='m01_door_clean_attempt';clean.at=2;clean.operations[0].surfaceState='clean';
+  assert.throws(()=>applyEvent(r,clean),/surface regression/);
+});
+
+test('stable authored IDs survive catalog/part order changes and foreign IDs reject',()=>{
+  const base=demoWorld(),catalog=clone(base.catalog).reverse();catalog.forEach(o=>o.parts.reverse());
+  const reordered=createWorld({missionId:'m01',seed:base.seed,catalogVersion:base.catalogVersion,catalog});
+  assert.equal(saveWorld(reordered),saveWorld(base));
+  assert.equal(saveWorld(applyEvent(reordered,houseHit()).world),saveWorld(hit()));
+  const duplicate=clone(base.catalog);duplicate.push(clone(duplicate[0]));
+  assert.throws(()=>createWorld({missionId:'m01',seed:1,catalogVersion:'v1',catalog:duplicate}),/duplicate object/);
+  const foreign=houseHit();foreign.operations[0].targetId='m02_house_04';assert.throws(()=>applyEvent(base,foreign),/foreign/);
+});
+
+test('seeded persistent geometry is reproducible, bounded and independent of Math.random',()=>{
+  const old=Math.random;Math.random=()=>{throw Error('unseeded RNG forbidden');};
+  try{
+    const one=hit(),two=hit();assert.equal(saveWorld(one),saveWorld(two));
+    const alternate=applyEvent(demoWorld(77),houseHit()).world;
+    const c=Object.values(one.craters)[0],other=Object.values(alternate.craters)[0];
+    assert.notDeepEqual(c.center,other.center);
+    assert.ok(Math.abs(c.center[0]-904)<=1.5&&Math.abs(c.center[2]-39)<=1.5);
+    assert.equal(c.center[1],0);assert.equal(c.radius,2);assert.equal(c.depthClass,'medium');
+    assert.deepEqual(one.objects,alternate.objects,'seed variation does not rewrite authored building state');
+  }finally{Math.random=old;}
+});
+
+test('persistent crater identity and gameplay policy survive independent restore',()=>{
+  const w=hit(),c=Object.values(w.craters)[0],r=restoreWorld(saveWorld(w));
+  assert.equal(c.id,'m01_house_04_artillery_hit.crater_north_03');
+  assert.equal(c.causeEventId,houseHit().id);assert.equal(c.createdAt,10);
+  assert.equal(c.affectsCover,true);assert.equal(c.affectsMovement,true);
+  assert.deepEqual(r.craters,w.craters);
+});
+
+test('planned bridge-like structural event is idempotent and preserves traversal result',()=>{
+  const e=event('bridge_east_demolition',20,[{type:'part',targetId:'m01_bridge_pier_06',partId:'deck',
+    structuralState:'destroyed',collisionState:'none',coverState:'none',traversalState:'blocked'}]);
+  const w=applyEvent(demoWorld(),e).world,again=applyEvent(restoreWorld(saveWorld(w)),e);
+  assert.equal(again.applied,false);assert.equal(saveWorld(again.world),saveWorld(w));
+  assert.equal(again.world.objects.m01_bridge_pier_06.parts.deck.traversalState,'blocked','destroyed deck does not imply a safe open route');
+});
+
+test('transaction rejects duplicate part/effect writes and visual debris in persistence',()=>{
+  const initial=demoWorld(),before=saveWorld(initial);
+  const partDuplicate=houseHit();partDuplicate.operations.push(clone(partDuplicate.operations[0]));
+  assert.throws(()=>applyEvent(initial,partDuplicate),/duplicate transaction/);
+  const effectDuplicate=houseHit();effectDuplicate.operations.push(clone(effectDuplicate.operations[5]));
+  assert.throws(()=>applyEvent(initial,effectDuplicate),/duplicate transaction/);
+  const visual=houseHit();visual.operations[6].budgetClass='VISUAL_TEMPORARY';assert.throws(()=>applyEvent(initial,visual),/budget/);
+  assert.equal(saveWorld(initial),before);
+});
+
+test('out-of-order and attempted structural/vehicle resurrection reject atomically',()=>{
+  const w=applyEvent(hit(),wreckEvent()).world,before=saveWorld(w),old=houseHit();old.id='m01_late_old_event';
+  assert.throws(()=>applyEvent(w,old),/out-of-order/);
+  const heal=houseHit();heal.id='m01_repair_attempt';heal.at=30;heal.operations=[clone(heal.operations[0])];heal.operations[0].structuralState='intact';
+  assert.throws(()=>applyEvent(w,heal),/regression/);
+  assert.throws(()=>applyEvent(w,event('vehicle_resurrection',30,[{type:'vehicle',targetId:'m01_vehicle_truck_02',mobility:'operational',crew:'present'}])),/regression/);
+  assert.equal(saveWorld(w),before);
+});
+
+test('unknown targets, invalid policies and camera/quality fields cannot enter authority',()=>{
+  for(const change of [e=>e.operations[0].targetId='m01_missing',e=>e.operations[0].collisionState='dynamic_mesh',
+    e=>e.operations[5].center=[NaN,0,0],e=>e.quality='HIGH',e=>e.visible=false]){
+    const w=demoWorld(),before=saveWorld(w),e=houseHit();change(e);assert.throws(()=>applyEvent(w,e));assert.equal(saveWorld(w),before);
+  }
+});
+
+test('local persistent effect budget rejects overflow without dropping earlier craters',()=>{
+  let w=demoWorld();
+  const op=i=>({type:'crater',targetId:'m01_house_04',effectId:`crater_${i}`,center:[900,0,40],jitter:0,
+    radius:1,depthClass:'shallow',affectsCover:false,affectsMovement:false,budgetClass:'PERSISTENT_LOCAL'});
+  for(let group=0;group<4;group++)w=applyEvent(w,event(`crater_batch_${group}`,group,Array.from({length:64},(_,i)=>op(i)))).world;
+  assert.equal(Object.keys(w.craters).length,LIMITS.local);const before=saveWorld(w);
+  assert.throws(()=>applyEvent(w,event('crater_overflow',4,[op(0)])),/local capacity/);
+  assert.equal(saveWorld(w),before);assert.equal(Object.keys(restoreWorld(before).craters).length,LIMITS.local);
+});
+
+test('object, part, operation and event bounds reject oversized input',()=>{
+  const w=demoWorld(),config={missionId:'m01',seed:1,catalogVersion:'v1',catalog:Array.from({length:LIMITS.objects+1},(_,i)=>({...clone(w.catalog[0]),id:`m01_object_${i}`}))};
+  assert.throws(()=>createWorld(config),/catalog capacity/);
+  config.catalog=[clone(w.catalog[0])];config.catalog[0].parts=Array.from({length:33},(_,i)=>({...clone(w.catalog[0].parts[0]),id:`part_${i}`}));
+  assert.throws(()=>createWorld(config),/parts capacity/);
+  const e=houseHit();e.operations=Array.from({length:65},()=>clone(e.operations[0]));assert.throws(()=>applyEvent(w,e),/operations capacity/);
+  const raw=JSON.parse(saveWorld(w));raw.events=Array.from({length:LIMITS.events+1},()=>event('small_receipt',1,[{type:'vehicle',targetId:'m01_vehicle_truck_02',mobility:'disabled',crew:'present'}]));
+  assert.throws(()=>restoreWorld(JSON.stringify(raw)),/events capacity/);
+});
+
+test('data contract can represent another mission without changing M02 production runtime',()=>{
+  const catalog=clone(demoWorld().catalog);catalog.forEach(d=>d.id=d.id.replace('m01_','m02_'));
+  let w=createWorld({missionId:'m02',seed:22,catalogVersion:'synthetic_v1',catalog});
+  const e=houseHit();e.missionId='m02';e.id=e.id.replace('m01_','m02_');e.operations.forEach(o=>o.targetId=o.targetId.replace('m01_','m02_'));
+  w=applyEvent(w,e).world;assert.equal(saveWorld(restoreWorld(saveWorld(w))),saveWorld(w));
+  assert.equal(materialize(w,'m02_house_04').presentation.variants.wall_east,'destroyed');
+});
+
+test('fresh Node processes generate byte identical JSON/CSV evidence',()=>{
+  const dir=mkdtempSync(join(tmpdir(),'m01-destruction-'));
+  try{
+    for(const run of ['a','b']){
+      const result=spawnSync(process.execPath,['tools/verification/m01-destruction-state-prototype.mjs','--out',join(dir,run)],{encoding:'utf8'});
+      assert.equal(result.status,0,result.stderr);
+    }
+    for(const file of ['scenario.json','scenario.csv'])assert.equal(readFileSync(join(dir,'a',file),'utf8'),readFileSync(join(dir,'b',file),'utf8'));
+  }finally{rmSync(dir,{recursive:true,force:true});}
 });

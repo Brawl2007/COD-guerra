@@ -28,7 +28,7 @@ Changing IDs or proxy policies requires a catalog-version migration, not guessed
 | Record | Authoritative fields |
 | --- | --- |
 | World | prototype format, missionId, uint32 seed, catalogVersion, catalog, clock, objects, craters, debris, consumed event envelopes |
-| Part | structuralState, collisionState, coverState, traversalState, changedAt, causeEventId |
+| Part | structuralState, surfaceState, collisionState, coverState, traversalState, changedAt, causeEventId |
 | Vehicle component | mobility, crew, changedAt, causeEventId; fire is independent |
 | Fire | active/extinguished, ignitedAt/extinguishedAt, intensity, damageClass, spreadAllowed, sourceEventId, causeEventId |
 | Crater | stable id, targetId, center, radius, depthClass, affectsMovement, affectsCover, createdAt, causeEventId, persistent budget class |
@@ -38,6 +38,8 @@ Changing IDs or proxy policies requires a catalog-version migration, not guessed
 Structural states `intact → damaged → heavily_damaged → partial_collapse → destroyed`
 are monotonic in this prototype. Burning/burned is not a mutually exclusive
 structural enum: a broken wall, damaged roof, intact door and active fire coexist.
+`surfaceState` separately records `clean/scorched/burned`, monotonically, so
+extinguishing an emitter cannot remove burn marks or restore the intact material.
 No repairs/resurrection are supported here. Future repairs need explicit authorized
 operations and tests. Physical/cover/traversal policies are **resolved authored
 results**, not inferred from a mesh or from a single structural enum.
