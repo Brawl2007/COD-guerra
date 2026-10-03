@@ -212,6 +212,53 @@ Cada missão define:
 A paleta pode degradar durante a missão conforme fumaça, chuva, noite ou destruição aumentam.
 
 
+## Regra 14 — O ROTEIRO TEM DE EXISTIR DENTRO DO GAMEPLAY
+
+Nenhuma batida importante pode existir apenas em documento, cutscene isolada ou texto de debrief.
+
+Ao implementar uma missão, cada parte do roteiro deve estar ligada a dados e estados reais do jogo:
+
+- abertura → estado inicial do mundo, posições, falas, clima, veículos e setores;
+- aproximação → rotas, ordens, movimento de unidades e atividade distante;
+- primeiro contato → eventos reais de combate/percepção;
+- escalada → reforços, mudança de setor, destruição e pressão tática;
+- set-piece → evento jogável com participação do jogador, não vídeo desconectado;
+- pausa → atores continuam vivos, trabalhando, falando, evacuando e reagindo;
+- reviravolta → mudança real de objetivo/ordem/rota/estado de batalha;
+- clímax → consequência direta do estado acumulado da missão;
+- final → sobreviventes, feridos, mortos, destruição e recursos refletem o que aconteceu;
+- debrief → lê o estado real persistido, não inventa um resultado diferente.
+
+Cada evento importante precisa de ID estável, condição de ativação, condição de conclusão, estado persistível e comportamento idempotente.
+
+O roteiro deve ser dirigido por:
+- mission data;
+- battleClock;
+- setores;
+- objetivos;
+- eventos;
+- personagens;
+- diálogos;
+- estados de veículos;
+- destruição;
+- save/checkpoint;
+- RNG determinístico quando aplicável.
+
+O renderer nunca decide que "a cena aconteceu". A simulação/mission state decide; o renderer apenas apresenta.
+
+PROIBIDO:
+- cutscene que mata/teleporta personagens sem atualizar a simulação;
+- diálogo dizendo que uma ponte caiu enquanto ela continua intacta no estado do jogo;
+- rádio relatando retirada que não aconteceu nos setores;
+- ferido que reaparece saudável após checkpoint;
+- veículo destruído apenas visualmente;
+- clímax disparado só porque a câmera olhou para um ponto;
+- evento importante ativado apenas por proximidade quando deveria depender da operação/relógio/estado;
+- debrief que contradiz o save.
+
+Critério de aceitação:
+se o jogador pausar, salvar, carregar ou olhar para outro lado durante uma batida do roteiro, o mundo deve continuar/restaurar de forma coerente e o mesmo estado deve produzir a mesma consequência.
+
 ## Regra 13 — NENHUM MINUTO VAZIO
 
 Duração padrão da missão: aproximadamente **20–25 minutos**.
