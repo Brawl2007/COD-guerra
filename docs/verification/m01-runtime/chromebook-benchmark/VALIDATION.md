@@ -76,3 +76,18 @@ Resultado:
 Os valores de FPS desta execução **não são desempenho de Chromebook** e não devem orientar optimização. O smoke serve apenas para provar que o instrumento abre o build, mede deltas rAF e serializa o resultado.
 
 O JSON temporário do ambiente cloud não foi adicionado ao Git.
+
+
+## Revisão do capitão após o handoff
+
+O handoff original foi entregue no commit `32877fc3196133e8cf12ac8fc92a23add4948638`.
+
+A revisão encontrou um bug isolado no modo `--url`: com servidor local ausente, `server?.exitCode !== null` tratava `null/undefined` como processo encerrado e abortava antes de testar a URL externa.
+
+Correção:
+- `4fd16cf6cc94681331dc1ba2759195565f1eee3b` — corrige a detecção de processo local;
+- `5bd851939756e1502f82872dff5d19114520f40c` — adiciona teste de regressão.
+
+Os resultados 7/7, 185/185, build e smoke documentados acima pertencem ao handoff anterior à correção. O ambiente do capitão não conseguiu reexecutar a suíte porque não possui acesso de rede ao GitHub nem a dependência `@playwright/test` instalada. Portanto, não atribuir esses números ao novo HEAD até nova execução.
+
+A correção é tooling-only e não altera `src/**`, missão, mapa, assets, saves ou workflows.
