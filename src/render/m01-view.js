@@ -146,7 +146,7 @@ export class M01View {
     const skinned=this.characters?.update(actors,time,player,this.owner.quality,battleClock)??new Set();
     const counts={},dummy=new THREE.Object3D(),root=new THREE.Object3D(),matrix=new THREE.Matrix4();
     const up=new THREE.Vector3(0,1,0),direction=new THREE.Vector3(),tint=new THREE.Color();
-    this.actorPoses={standing:0,crouched:0,pinned:0,seated:0,wounded:0,carried:0,fallen:0};
+    this.actorPoses={standing:0,crouched:0,pinned:0,seated:0,wounded:0,carried:0,fallen:0,prone:0};
     this.actorAnimations={aiming:0,firing:0,moving:0,underFire:0};
     let pivot=0,shadowCount=0;
     const put=(name,p,size,color,bone=null)=>{
@@ -171,7 +171,7 @@ export class M01View {
       const cloth=a.civilian?'#404c56':a.team==='enemy'?'#b4c0b7':'#c9bea0',helmet=a.team==='enemy'?'#465252':'#635f47';
       const [hx,hy,hz]=pose.head,[tx,ty,tz]=pose.torso.position;
       const near=Math.hypot(a.x-player.x,a.z-player.z)<45;
-      put('torso',pose.torso.position,[.30,pose.torso.size[1],.46],cloth,{roll:pose.torso.roll});put(near?'head':'farHead',pose.head,[.125,.18,.137]);
+      put('torso',pose.torso.position,pose.prone?pose.torso.size:[.30,pose.torso.size[1],.46],cloth,{roll:pose.torso.roll});put(near?'head':'farHead',pose.head,[.125,.18,.137]);
       put('helmet',[hx,hy+.105,hz],[.175,.14,.188],helmet);
       put('brim',[hx+.01,hy+.12,hz],[.186,.022,.2],helmet);
       if(near){put('nose',[hx+.126,hy+.005,hz],[.020,.039,.022]);
@@ -237,7 +237,7 @@ export class M01View {
       muzzle.fromArray(pose.rifle.muzzle);muzzle.y-=pose.root.pivotY;muzzle.applyMatrix4(root.matrix);
       const skinnedMuzzle=this.characters?.muzzle(a.id);if(skinnedMuzzle)muzzle.copy(skinnedMuzzle);
       const p={x:muzzle.x,y:muzzle.y,z:muzzle.z},d=far(p);
-      if(pose.firing||pose.aiming&&age>=0&&age<.25)put('muzzle',p,Math.max(.12,d*.008)*(.8+.2*Math.sin(time*90)));
+      if(a.mg34Prone?pose.firing:(pose.firing||pose.aiming&&age>=0&&age<.25))put('muzzle',p,Math.max(.12,d*.008)*(.8+.2*Math.sin(time*90)));
       if(age>=0&&age<2.2){const k=age/2.2;put('smoke',{x:p.x,y:p.y+.4+k*1.6,z:p.z},Math.max(.25,d*.007)*(.6+k*.8)*(1-k*k),null,.65*(1-k));}
     }
     for(const r of sim.enemyFire.rounds){
