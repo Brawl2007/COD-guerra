@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {percentile,frameDeltasFromTimestamps,summariseFrameDeltas,detectSoftwareRenderer,rendererClass,normalisePerformanceMemory,serialiseBenchmark} from '../tools/m01-chromebook-benchmark.mjs';
+import {percentile,frameDeltasFromTimestamps,summariseFrameDeltas,detectSoftwareRenderer,rendererClass,normalisePerformanceMemory,serialiseBenchmark,previewProcessExited} from '../tools/m01-chromebook-benchmark.mjs';
 
 test('FPS and frame-time percentiles use deterministic requestAnimationFrame deltas',()=>{
   const m=summariseFrameDeltas([10,20,30,40]);
@@ -40,4 +40,13 @@ test('JSON serialization rejects NaN/Infinity and produces valid structured outp
 
 test('empty or invalid frame samples fail with clear errors',()=>{
   assert.throws(()=>summariseFrameDeltas([]),/empty/i);assert.throws(()=>summariseFrameDeltas([16,0]),/non-finite or non-positive/i);assert.throws(()=>summariseFrameDeltas([16,NaN]),/non-finite/i);
+});
+
+
+test('external --url mode does not look like an exited local preview process',()=>{
+  assert.equal(previewProcessExited(null),false);
+  assert.equal(previewProcessExited(undefined),false);
+  assert.equal(previewProcessExited({exitCode:null}),false);
+  assert.equal(previewProcessExited({exitCode:0}),true);
+  assert.equal(previewProcessExited({exitCode:1}),true);
 });
