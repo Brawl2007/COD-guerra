@@ -237,7 +237,8 @@ export class M01Characters {
     return selected;
   }
   muzzle(id){
-    const v=this.instances.get(id),bone=v?.root.getObjectByName('weapon');if(!bone)return null;
+    const v=this.instances.get(id);if(v?.weapon==='ckm_wz30')return null;
+    const bone=v?.root.getObjectByName('weapon');if(!bone)return null;
     v.root.updateMatrixWorld(true);return new THREE.Vector3().fromArray(v.muzzle).applyMatrix4(bone.matrixWorld);
   }
   get diagnostics(){return {...this.stats,loaded:[...this.sources.keys()],failures:this.assets.failures};}
