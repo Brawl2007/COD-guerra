@@ -17,11 +17,12 @@ export function coverControls(sim){
 
 // A bounded route through the real simulation; no event, clock or objective injection.
 // This is an automated state/control test, not a browser playthrough.
-export function driver(seed=19390901,{support=false}={}){
+export function driver(seed=19390901,{support=false,onStep}={}){
   const sim=new M01Simulation(seed),checkpoints={},events=[],combatSnapshots={};
   function step(controls={}){
     sim.tick(.05,controls);
-    for(const e of sim.drainEvents()){
+    const emitted=sim.drainEvents();
+    for(const e of emitted){
       events.push(e);if(e.type==='checkpoint')checkpoints[e.id]=structuredClone(sim.checkpoint);
       if(e.type==='restored')throw new Error(`Route died at ${sim.battleClock}: ${sim.failure??'combat/bounds'}`);
       if(e.type==='round-impact'&&e.pinned?.includes('pawel_krawiec')&&!combatSnapshots.repairThreat)combatSnapshots.repairThreat=sim.snapshot();
@@ -31,6 +32,7 @@ export function driver(seed=19390901,{support=false}={}){
     if(sim.active('cover_repair')&&!combatSnapshots.repair)combatSnapshots.repair=sim.snapshot();
     if(sim.consumedEvent('evt_m01_germans_on_east_spans')&&!combatSnapshots.withdrawal)combatSnapshots.withdrawal=sim.snapshot();
     if(sim.consumedEvent('evt_m01_east_demolition')&&sim.player.x<-100&&!combatSnapshots.eastDemolitionOutside)combatSnapshots.eastDemolitionOutside=sim.snapshot();
+    onStep?.({sim,controls,events:emitted,dt:.05});
   }
   function until(predicate,limit=240,controls={}){
     for(let i=0;i<limit*20;i++){
@@ -89,8 +91,8 @@ export function toCoverAdjustment({truss=false}={}){
   return d;
 }
 // support: on the embankment slope beside the sappers (where the Lisewo gates are in sight) and on the south side of the deck.
-export function route(seed=19390901,{support=false}={}){
-  const {sim,checkpoints,events,combatSnapshots,step,until,walk}=toRepair(driver(seed,{support}));
+export function route(seed=19390901,{support=false,onStep}={}){
+  const {sim,checkpoints,events,combatSnapshots,step,until,walk}=toRepair(driver(seed,{support,onStep}));
   if(support)walk(-120,16.5);else{walk(-115,27);walk(-28,28);step({crouch:true});}
   until(()=>sim.active('hold_access'),500);
   if(!support)step({crouch:true});

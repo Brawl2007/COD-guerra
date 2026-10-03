@@ -94,7 +94,7 @@ export class M01Simulation {
     this.enemyFire={rounds:[],nextId:0};
     this.sectors={sectors:definition.sectors.map(s=>({id:s.id,state:s.schedule[0].state,strength:100,morale:1,supply:1})),damage:[]};
     this.mission={phase:'INTRO',complete:false,text:phaseText.INTRO,status:''};
-    this.consume(E('intro_card'));this.startScene('cs_m01_intro');this.checkpoint=this.snapshot();
+    this.consume(E('intro_card'));this.startScene('cs_m01_intro');this.checkpoint=this.snapshot(false);
   }
   actor(id){return this.actors.find(a=>a.id===id);}
   get enemies(){return this.actors.filter(a=>a.team==='enemy');}
@@ -247,7 +247,7 @@ export class M01Simulation {
         this.startScene('cs_m01_west_blast');this.impact('west_demolition',{x:70,y:0,z:20},false);break;
       case E('kozliny_attack_distant'):this.emit({type:'distant-shot',point:{x:-500,y:0,z:-1300}});break;
       case E('roll_call'):this.battleClock=Math.max(this.battleClock,seconds('07:05:00'));this.mission.phase='OUTRO';this.startScene('cs_m01_roll_call');this.stageRollCall();break;
-      case E('debrief'):this.flags['m01.completed']=true;this.mission.complete=true;this.checkpoint=this.snapshot();this.emit({type:'complete'});break;
+      case E('debrief'):this.flags['m01.completed']=true;this.mission.complete=true;this.checkpoint=this.snapshot(false);this.emit({type:'complete'});break;
       default:throw new Error(`Evento M01 sem resultado implementado: ${id}`);
     }
     this.world.refresh(Object.keys(this.consumed),this.flags);return true;
@@ -271,7 +271,7 @@ export class M01Simulation {
   }
   saveCheckpoint(id){
     if(this.checkpointsReached.includes(id))return;
-    this.checkpointsReached.push(id);this.pendingCheckpoint=null;this.checkpoint=this.snapshot();this.emit({type:'checkpoint',id});
+    this.checkpointsReached.push(id);this.pendingCheckpoint=null;this.checkpoint=this.snapshot(false);this.emit({type:'checkpoint',id});
   }
   updateObjectives(dt,interact){
     const p=this.player;
@@ -874,11 +874,15 @@ export class M01Simulation {
       secondRaid:this.flags['m01.second_raid_state']==='active',weaponVisible:!this.player.carrying&&this.scene?.id!=='cs_m01_roll_call',
       damage:this.sectors.damage.map(d=>({...d,smokeVisible:this.clock-d.started<240||d.id==='station_bomb'}))};
   }
-  snapshot(){return clone({schema:2,missionId:this.missionId,clock:this.clock,battleClock:this.battleClock,rng:this.rng.state,
+  snapshot(includeCheckpoint=true){const s=clone({schema:2,missionId:this.missionId,clock:this.clock,battleClock:this.battleClock,rng:this.rng.state,
     player:this.player,weapon:this.weapon.snapshot(),actors:this.actors,consumed:this.consumed,objectives:this.objectives,flags:this.flags,
     destruction:this.destruction,dialogueConsumed:this.dialogueConsumed,dialogueQueue:this.dialogueQueue,subtitle:this.subtitle,
     scene:this.scene,sceneDone:this.sceneDone,checkpointsReached:this.checkpointsReached,pendingCheckpoint:this.pendingCheckpoint,
-    gate:this.gate,recoveries:this.recoveries,timers:this.timers,sectors:this.sectors,grenades:this.grenades,mission:this.mission,enemyFire:this.enemyFire});}
+    gate:this.gate,recoveries:this.recoveries,timers:this.timers,sectors:this.sectors,grenades:this.grenades,mission:this.mission,enemyFire:this.enemyFire});
+    // A continuation save must preserve the previous respawn point, not promote the current tick to a CP.
+    // Actual CP-A..D remain flat schema-2 saves; omit the backup when it already equals this state.
+    if(includeCheckpoint&&this.checkpoint&&JSON.stringify(s)!==JSON.stringify(this.checkpoint))s.resumeCheckpoint=clone(this.checkpoint);
+    return s;}
   restoreSnapshot(raw){
     const s=clone(raw);validateM01Snapshot(s);const candidate=new M01Simulation(s.rng);
     for(const key of ['clock','battleClock','player','actors','consumed','objectives','flags','destruction','dialogueConsumed','dialogueQueue','subtitle',
@@ -900,7 +904,10 @@ export class M01Simulation {
     if(!('enemyFire' in s)&&!('withdrawalPressure' in s.timers))for(const a of candidate.actors.filter(a=>a.group==='grp_east_platoon'&&Number(a.id.split('_').at(-1))>=18))
       Object.assign(a,{active:false,alive:false,health:0,state:'DOWN'});
     candidate.weapon.restore(s.weapon);candidate.rng.state=s.rng;candidate.events=[];candidate.world.refresh(Object.keys(s.consumed),s.flags);
-    candidate.checkpoint=candidate.snapshot();Object.assign(this,candidate);return true;
+    if(s.resumeCheckpoint!==undefined){
+      const backup=new M01Simulation();backup.restoreSnapshot(s.resumeCheckpoint);candidate.checkpoint=backup.snapshot(false);
+    }else candidate.checkpoint=candidate.snapshot(false);   // legacy schema 2 used the loaded state itself as CP
+    Object.assign(this,candidate);return true;
   }
   restoreCheckpoint(){return this.restoreSnapshot(this.checkpoint);}
   loadCheckpoint(text){try{if(typeof text!=='string'||text.length>1000000)throw new Error('Ficheiro ausente ou demasiado grande.');this.restoreSnapshot(JSON.parse(text));return {ok:true};}catch(error){return {ok:false,error:error.message};}}
@@ -911,7 +918,7 @@ export function validateM01Snapshot(s){
   if(!s||s.schema!==2||s.missionId!==definition.id)reject('versão ou missão');
   const scan=(v,depth=0)=>{if(depth>14)reject('estrutura');if(typeof v==='number'&&!Number.isFinite(v))reject('número');
     if(v&&typeof v==='object')for(const [k,item]of Object.entries(v)){if(['__proto__','constructor','prototype','isObject3D','matrixWorld'].includes(k))reject('campo');scan(item,depth+1);}};scan(s);
-  if(!Number.isFinite(s.clock)||s.clock<0||!Number.isFinite(s.battleClock)||s.battleClock<seconds('04:30:00')||s.battleClock>seconds('07:05:00')||!Number.isInteger(s.rng))reject('relógios');
+  if(!Number.isFinite(s.clock)||s.clock<0||!Number.isFinite(s.battleClock)||s.battleClock<seconds('04:30:00')||s.battleClock>seconds('07:05:00')||!Number.isInteger(s.rng)||s.rng<0||s.rng>0xffffffff)reject('relógios');
   const finite=(v,min=0,max=Infinity)=>Number.isFinite(v)&&v>=min&&v<=max;
   const point=p=>p&&p.space==='metres'&&[p.x,p.y,p.z].every(Number.isFinite)&&finite(p.health,0,100)&&typeof p.alive==='boolean';
   if(!point(s.player)||s.player.health<=0||s.player.health>100||!s.player.alive||![s.player.angle,s.player.pitch].every(Number.isFinite))reject('jogador');
@@ -975,7 +982,8 @@ export function validateM01Snapshot(s){
     new Set(s.enemyFire.rounds.map(r=>r?.id)).size!==s.enemyFire.rounds.length||s.enemyFire.rounds.some(r=>!validRound(r,s.clock))))reject('fogo em voo');
   if(s.actors.some(a=>a.pose!=null&&a.pose!=='seated'))reject('pose');
   const w=s.weapon;
-  if(w?.id!=='kb_wz29'||!Number.isInteger(w.mag)||w.mag<0||w.mag>5||!Number.isInteger(w.reserve)||w.reserve<0||w.reserve>40||
+  if(w?.id!=='kb_wz29'||Object.keys(w).some(k=>!['id','mag','reserve','state','until','started','lastShot','shotCount','received','sight','reloadMode'].includes(k))||
+    !Number.isInteger(w.mag)||w.mag<0||w.mag>5||!Number.isInteger(w.reserve)||w.reserve<0||w.reserve>40||
     !['READY','BOLT_CYCLE','RELOAD_CLIP','RELOAD_SINGLE'].includes(w.state)||![300,500,800,1000].includes(w.sight)||![w.until,w.started,w.lastShot,w.shotCount].every(Number.isFinite)||
     !Number.isInteger(w.shotCount)||w.shotCount<0||!Number.isInteger(w.received??0)||(w.received??0)<0||(w.received??0)>30||
     w.mag+w.reserve+w.shotCount!==45+(w.received??0))reject('arma');
@@ -1022,5 +1030,12 @@ export function validateM01Snapshot(s){
   const dialogue=d=>d&&[...definition.dialogue,...definition.callouts.lines].some(line=>line.id&&line.id===d.id)&&typeof d.speaker==='string'&&typeof d.text==='string'&&d.text.length<600&&finite(d.duration,1,15);
   if(s.dialogueQueue.some(d=>!dialogue(d))||(s.subtitle&&(!dialogue(s.subtitle)||!finite(s.subtitle.until))))reject('legendas');
   if(s.mission.complete!==s.flags['m01.completed']||s.mission.complete!==Object.hasOwn(s.consumed,E('debrief')))reject('estado final');
+  if(!['INTRO','SETUP','BUILDUP','FIRST_CONTACT','MAIN_COMBAT','SET_PIECE','CLIMAX','AFTERMATH','OUTRO'].includes(s.mission.phase))reject('fase');
+  if(s.resumeCheckpoint!==undefined){
+    const cp=s.resumeCheckpoint;
+    if(!cp||Object.hasOwn(cp,'resumeCheckpoint')||cp.clock>s.clock||cp.battleClock>s.battleClock)reject('checkpoint de retoma');
+    validateM01Snapshot(cp);
+    if(cp.checkpointsReached.some((id,i)=>id!==s.checkpointsReached[i]))reject('checkpoint de retoma');
+  }
   return s;
 }

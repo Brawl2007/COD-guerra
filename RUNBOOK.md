@@ -149,3 +149,16 @@ CHROME_EXECUTABLE=/caminho/chromium node tools/capture-m01-visual.mjs docs/verif
 ```
 
 O script gere o seu preview, importa a rota do directório corrente e continua snapshots genuínos no browser; não é playtest contínuo/humano. Captura reparo, estação, retirada e chamada, com diagnóstico e erros. Antes de comparar, usar a mesma qualidade/viewport. Não executar com outro servidor na porta 4173. Guardar capturas fora de `test-results/` se precisarem sobreviver ao próximo Playwright, que limpa essa pasta.
+
+## Auditoria de continuação schema 2
+
+```sh
+mkdir -p test-results
+M01_DETERMINISM_REPORT=test-results/m01-schema2-audit.json node --test tests/m01-schema2-determinism.test.js
+```
+
+Compara duas continuações com os mesmos inputs/dt a cada tick e indica o primeiro caminho/tick divergente. Inclui rotas completas, CP-A..D, morte/recuperação, MG34 mid-burst, granadas, estação/Bąk, demolições, casualties, OUTRO e migrações legacy. É teste Node, não playtest humano nem benchmark de FPS.
+
+`M01Simulation.snapshot()` cria um save de continuação com `resumeCheckpoint` opcional plano para preservar o CP anterior. `snapshot(false)` cria um snapshot plano para instalar explicitamente um novo checkpoint ou fabricar uma fixture legacy. Os CP-A..D e a persistência normal do jogo continuam planos em schema 2. Saves antigos sem o novo campo conservam o contrato anterior. Não guardar cadeias de backups; o validador rejeita aninhamento, backups futuros e campos de arma que não pertencem ao snapshot real.
+
+Evidências/reprodução/limites: `docs/verification/m01-runtime/schema2-determinism-audit-2026-10-03/HANDOFF.md`.

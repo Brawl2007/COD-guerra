@@ -49,7 +49,9 @@ test('inactive or suppressed Germans on the spans cause no withdrawal losses; lo
 });
 
 test('casualty IDs and rounds in flight survive reload and checkpoint restore; invalid optional timers are rejected atomically',()=>{
-  const s=load(scenarios().ignored.combatSnapshots.withdrawal);run(s,15);const saved=s.snapshot(),restored=load(saved);
+  const s=load(scenarios().ignored.combatSnapshots.withdrawal);run(s,15);
+  // This fixture deliberately saves a new CP containing these casualties, rather than a continuation of the older CP.
+  s.checkpoint=s.snapshot(false);const saved=s.snapshot(),restored=load(saved);
   const dead=s.allies.filter(a=>a.group==='grp_east_platoon'&&a.active&&!a.alive).map(a=>a.id);assert.ok(dead.length>0);
   assert.deepEqual(restored.snapshot(),saved);run(s,10);run(restored,10);assert.deepEqual(restored.snapshot(),s.snapshot());
   restored.restoreCheckpoint();assert.deepEqual(restored.allies.filter(a=>a.group==='grp_east_platoon'&&a.active&&!a.alive).map(a=>a.id),dead);

@@ -1,0 +1,2968 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> operation-ashen-road@0.2.0 test
+> node --test tests/*.test.js
+
+✔ planar y becomes scene z; height is independent (4.228923ms)
+✔ horizontal head shot hits, aiming above the head misses (19.13657ms)
+✔ nearest wall shields an enemy; lowering the aim hits terrain (0.657739ms)
+✔ wall around muzzle blocks a clear camera sightline (0.338903ms)
+✔ enemy in cover cannot cause damage through a wall (16.003301ms)
+✔ unreachable destination reports failure and does not move through walls (0.560353ms)
+✔ wall shields blast damage but visible nearby actor takes damage (1.373215ms)
+✔ JSON checkpoint restores actors, reload, grenade, phase, clock and RNG exactly (45.635786ms)
+✔ corrupt and incompatible saves are rejected atomically (5.82423ms)
+✔ death restores the last living checkpoint without reviving defeated enemies (10.826437ms)
+✔ restored simulation reproduces future seeded decisions and events (643.266931ms)
+✔ two independent sectors evolve for 90 seconds with stable losses and unique events (1.966105ms)
+✔ partial fourth reinforcement group activates and visible candidates remain hidden (0.87909ms)
+✔ zero time never advances reload or the battle (1.978602ms)
+✔ weapon enforces cadence, ammo, and reload transfer (2.517992ms)
+✔ world blocks walls and permits open cells (1.352818ms)
+✔ navigation chooses a walkable next tile around cover (0.71261ms)
+✔ mission advances through checkpoint, combat, and radio (0.395891ms)
+✔ shot geometry detects targets on aim line (7.449428ms)
+✔ 3D matrix composition preserves translation and scale (0.990903ms)
+✔ weapon exposes a stable reload animation timeline (0.405022ms)
+✔ enemy selects cover instead of charging directly at player (2.329197ms)
+✔ grenade bounces on walls, warns AI, and applies radial damage (8.622879ms)
+✔ battle director activates reinforcement groups without replacing individual AI (1.075904ms)
+✔ text-only OBJ assets load with meshes, normals, and MTL colors (74.252613ms)
+✔ pointer lock entry and resume ignore cursor warps while later mouse movement works (2.289828ms)
+✔ Ju 87 clones use native LODs, share art, sample the saved clock and preserve the existing raid path (18.163178ms)
+✔ missing optional Ju 87 art keeps the silhouettes; partial failure uses available detail and disposal prevents attachment (14.408107ms)
+✔ M01 GLBs keep nine spans, measured supports and map placement in every LOD (56.143183ms)
+✔ M01 all LODs ship event-linked damage replacements with stable logical IDs (16.522941ms)
+✔ M01 demolition IDs survive LOD changes and JSON restoration; colliders stay removed (184.701053ms)
+✔ M01 road towers remain separate, measured and damage-linked in all LODs (5.536737ms)
+✔ M01 binary exports contain finite positions and unit normals (234.546544ms)
+✔ M01 manifest matches binary counts, current map hash and decreasing LOD budgets (14.00904ms)
+✔ M01 historical uncertainty and modern geometry conflicts remain explicit (6.17655ms)
+✔ all six GLBs have finite skin weights, valid joint indices, embedded textures and decreasing LOD budgets (189.255981ms)
+✔ all twenty-five animation clips bind to real named bones, have monotonic times and finite transforms (59.017229ms)
+✔ the original station drag loops on the existing rig with a locked source and finite transforms (7.267035ms)
+✔ first-person geometry keeps actual GLB arm/hand surfaces and leaves the world uniform unchanged (57.771812ms)
+✔ the actual reload rig keeps the open action, clip and hand in the first-person frustum on both usable LODs (138.821699ms)
+✔ sampling real clock, changing LOD and restoring a copy preserves bone transforms and immutable data (16.902119ms)
+✔ wounded attachment follows its carrier socket and detaches after delivery without changing simulation coordinates (17.398665ms)
+✔ MakeHuman data licence is shipped exactly as locked at its source revision (1.235233ms)
+✔ the station casualty remains grounded while the medic samples the backward drag and its fallback (6.803428ms)
+✔ Kowal and healthy Bąk use their own meshes and muzzle sockets, preserve data and hide the casualty weapon (16.489905ms)
+✔ riflemen finish the bolt after the flash; pinned engineers stop their working hands until the repair resumes (1.682978ms)
+✔ schema 2 legacy 86 roster becomes 89 at the aligned post without changing old actors or RNG (39.011602ms)
+✔ old 89-actor idle placement migrates once and snapshot restore is stable (45.635018ms)
+✔ old 89-actor save immediately after east demolition keeps idle phase/start time while aligning the old post (30.41521ms)
+✔ old 89-actor abandon placement shifts rigidly but preserves phase and startedAt exactly (33.921579ms)
+✔ retreat saves are never translated, including an actor still on an old authored coordinate (23.76415ms)
+✔ casualties stay casualties and post-west saves preserve their saved positions (43.864319ms)
+✔ 86-actor saves after east or west demolition remain safe and do not restart abandon (104.983182ms)
+✔ restore stays atomic when a legacy-position ckm save is invalid (11.834551ms)
+✔ placement migration changes no non-ckm actor or unrelated saved state (13.451938ms)
+✔ new ckm root puts gun_muzzle_flash on the mapped south embrasure x/z (3.833452ms)
+✔ ckm crew is grounded below the deck, leaves after the real event and reaches safety before demolition (9100.49927ms)
+✖ schema 2 accepts exact legacy rosters and migrates atomically without changing old actors or RNG (8160.973379ms)
+✔ real ckm clips and weapon share saved time across pause, reload, casualties and optional fallback (116.880744ms)
+✔ M01 ckm wz.30: metros, +Y, cano para −Z, 1,2 m ±2 %, hierarquia de pivôs e três LODs no orçamento (57.440914ms)
+✔ M01 ckm wz.30: clips da arma animam os nós móveis; rajada de 8 a 600/min; alimentação puxa a ponta e arma duas vezes (40.408103ms)
+✔ M01 ckm wz.30: clips ckm_wz30_* do atirador e do municiador ligam-se ao rig polaco, não repetem nomes e mostram uma só arma (42.840551ms)
+✔ M01 ckm wz.30: LOD0 dentro dos 4000 triângulos sem mudar silhueta, pivôs, sockets, fita nem clips; LOD1, LOD2 e clips intactos (6.356929ms)
+✔ the sappers walk to the second cut where the crate is delivered, so "leve a caixa aos sapadores" is true (9240.953932ms)
+✔ Bąk takes the deck position with the 05:30 order and falls at bak_wound_point, in front of the player (856.70605ms)
+✔ a direction hint names the destination, distance and side when the player does not approach it (79.676476ms)
+✔ once the repair gate is ready the rest of seg_repair runs at readyScale; before that it keeps scale (1.752344ms)
+✔ the full control route still reaches the debrief with every required objective after the fixes (0.253076ms)
+✔ the withdrawing east platoon runs past the firing point during the corridor phase and does not stall at x = -109 (2448.558621ms)
+✔ a Bąk delivered by the player stays visible beside Dudek, who carries him west before the west demolition (1140.298858ms)
+✔ when Dudek retrieves Bąk he walks to him on the deck and carries him to the station, visible all the way (1193.587439ms)
+✔ the roll call positions the present section in the shelter facing Jan; the absent stay away (1662.820342ms)
+✔ Kowal hands over at most six clips of section ammunition; saves keep the ammunition invariant (25.389305ms)
+✔ legacy schema 2 saves receive the unused section supply and can resupply after loading (10.993648ms)
+✔ the bridge trusses contain movement: no falling off a span sideways or into a blown gap; the river bank still can (4.858657ms)
+✔ a Bąk delivered after the east demolition is still evacuated, so the west demolition is not held forever (1244.199331ms)
+✔ real control routes compare covering and ignoring: faster repair, fewer near misses and more survivors with support (14699.460979ms)
+✔ repair suppression requires a round that really arrives within 3 m; a solid wall shields the sappers (376.067443ms)
+✔ inactive or suppressed Germans on the spans cause no withdrawal losses; looking away does not stop combat (1564.313523ms)
+✖ casualty IDs and rounds in flight survive reload and checkpoint restore; invalid optional timers are rejected atomically (455.808235ms)
+✔ legacy schema 2 saves migrate and the six reserve slots stay outside the eighteen-man platoon (87.034257ms)
+✔ the air-raid cover instruction remains visible briefly even if the player was already in cover (9.522942ms)
+✔ adjustment warning and HUD identify a real salvo; view direction changes the bearing without changing combat (2506.059722ms)
+✔ a salvo from the dike behind the trusses identifies its actual origin, rather than the visible gate MG (1968.48162ms)
+✔ an occluding wall prevents an adjustment warning and cover reservation, with a bounded retry (302.451661ms)
+✔ saved origin restores as data, expires after eight active seconds, and invalid or legacy saves remain safe (144.216206ms)
+✔ German fire starts on the east bank; only shooters in sight of the west bank (the Lisewo gates) aim at it (2195.652717ms)
+✔ rounds that pass within 3 m pin the sappers and stop the repair; the HUD line is exactly the simulation state (1548.528134ms)
+✔ keeping the gate MG down shortens the repair; ignoring it lets the sappers be pinned again and again (16699.617434ms)
+✔ covering fire on the Germans on the spans saves men; without it the platoon falls to the predicted minimum (0.750107ms)
+✔ historical times, checkpoints and demolition safety are unchanged in both routes (0.544227ms)
+✔ rounds in flight survive save and restore and play out identically; corrupt rounds are rejected (1225.350675ms)
+✔ after 120 s of continuous suppression the fire on the repair eases without warning until work resumes (2255.668849ms)
+✔ the withdrawal HUD line reports the real count by ID and whether the Germans on the spans are suppressed (4861.739871ms)
+✔ allies under fire are drawn hunched (pinned pose) only while suppressedUntil lasts, without touching the actor (1.290278ms)
+✔ a designated withdrawal casualty needs an actual actor hit; a wall, a miss or an already dead target cannot lower the count (1.616588ms)
+✔ demolition bearing follows the actual impact and player view without changing the event or camera (9571.397685ms)
+✔ demolition cue restores from data, expires on active time, and distinguishes the west blast (282.7848ms)
+✔ foreground trunks obstruct walking and shots; restoring destruction reconstructs the same static obstacles (12.452126ms)
+✔ M01 Ju 87 B-1: metres, nose to −Z, 11.10 × 13.80 m, stable nodes and three LODs within budget (3.523682ms)
+✔ M01 Ju 87 B-1: propeller turns a full revolution about Z; dive brakes open 90° about their hinge (2.816513ms)
+✔ M01 MG 34: metros, cano para −Z, 1,219 m ±2 %, peças móveis com pivô e três LODs no orçamento (5.258798ms)
+✔ M01 MG 34: clips mg34_* ligam-se ao rig do soldado alemão e aos nós da arma; rajada de 7 a 800/min; recarga do tambor (13.526286ms)
+✔ M01 MG 34 deitada: nomes novos, kit da MG 34 e soldados reutilizados sem alterações (hashes do manifesto) (17.057632ms)
+✔ M01 MG 34 deitada: alvos do rig e da arma, valores finitos, quaternões unitários e durações (104.444144ms)
+✔ M01 MG 34 deitada: rajada de 7 a 0,075 s, janela e cortes; bípode aberto/dobrado; recarga coordenada (3.570243ms)
+✔ M01 MG 34 deitada: continuidade com mg34_aim do kit e entre clips deitados (107.569261ms)
+✔ M01 MG 34 deitada: AnimationMixer do three.js — contactos, passagem do tambor e pausa/retoma no mesmo frame (88.180289ms)
+✔ actual renderer samples enter, idle, burst and exit from simulation and matches its muzzle within 2 mm (209.413681ms)
+✔ renderer save after 1 shots restores same frame and flash without replay or RNG draws (117.135638ms)
+✔ renderer save after 4 shots restores same frame and flash without replay or RNG draws (104.851597ms)
+✔ renderer save after 6 shots restores same frame and flash without replay or RNG draws (90.136043ms)
+✔ missing prone GLB uses existing procedural batches without changing gameplay, hitboxes, save, RNG or real shots (236.091704ms)
+✔ rendered death during enter has no residual prone frame, weapon, flash or loader (75.53508ms)
+✔ rendered death during idle has no residual prone frame, weapon, flash or loader (82.577246ms)
+✔ rendered death during fire_burst has no residual prone frame, weapon, flash or loader (70.867081ms)
+✔ rendered death during exit has no residual prone frame, weapon, flash or loader (60.354354ms)
+✔ actual muzzle effect after shot 1 has no extra flash in the .06/.075 gap or restore (29.552602ms)
+✔ actual muzzle effect after shot 4 has no extra flash in the .06/.075 gap or restore (60.956899ms)
+✔ actual muzzle effect after shot 6 has no extra flash in the .06/.075 gap or restore (19.077207ms)
+✔ actual muzzle batches have no post-death flash during all four prone phases (8.981225ms)
+✔ existing MG34 gunners enter for exactly 1.9 seconds; other actors have no new posture (16.281265ms)
+✔ save and atomic restore preserve enter, idle, aim and exit and consume no RNG (116.764683ms)
+✔ save after shot 1: resume without duplicate/lost rounds, events, frames or RNG (46.1066ms)
+✔ save after shot 4: resume without duplicate/lost rounds, events, frames or RNG (40.630997ms)
+✔ save after shot 6: resume without duplicate/lost rounds, events, frames or RNG (24.543034ms)
+✔ 4, 5, 6 and 7 shots preserve the requested count and real .075 cadence (12.004702ms)
+✔ pause leaves posture, progress, shot, pending burst, RNG and complete snapshot exactly stable (90.539957ms)
+✔ ADVANCE exits prone, blocks firing, then remains standing (1.769679ms)
+✔ RETREAT exits prone, blocks firing, then remains standing (1.876245ms)
+✔ movement waits for exit; interrupted entry reverses its saved fractional progress (5.015472ms)
+✔ suppression keeps the gunner low and cancels pending shots without cancelling those in flight (16.844647ms)
+✔ death during enter immediately clears posture and future shots (13.660919ms)
+✔ death during idle immediately clears posture and future shots (14.432136ms)
+✔ death during fire_burst immediately clears posture and future shots (14.257411ms)
+✔ death during exit immediately clears posture and future shots (22.902326ms)
+✔ inactivity discards pending combat and never creates a loader association (3.347067ms)
+✔ legacy missing prone data resumes safely with no marker; 86 roster/CKM migration stays unchanged (25.343066ms)
+✔ invalid partial/impossible prone fields reject atomically without changing source or target (66.470902ms)
+✔ movement and S3 station evacuation bodies remain byte-for-byte identical to the fixed base (10.967297ms)
+✔ a nonlethal hit interrupts the remaining burst and stays low with a valid snapshot (4.042836ms)
+✔ player fire observes the current transition progress within a real simulation tick (3.269071ms)
+✔ save cannot remove or alter an emitted round still in flight (9.095376ms)
+✔ OUTRO cancels pending rounds and blocks new MG bursts while preserving existing flight (1.33572ms)
+✔ a target already reached never rewrites the state of a fixed prone burst (3.175297ms)
+MG34 muzzle proof: 2496 comparisons, max=0.000038402 m, tolerance=0.002 m
+✔ numeric muzzle proof against real attached soldier/weapon GLBs for all phases and four facings (398.654301ms)
+✔ geometry table is derived reproducibly from the exact real GLBs, without a graphics or asset dependency in simulation (231.800148ms)
+✔ head/torso/legs move along body axis facing=0 during prone and transitions (1.567561ms)
+✔ head/torso/legs move along body axis facing=1.5707963267948966 during prone and transitions (0.479619ms)
+✔ head/torso/legs move along body axis facing=3.141592653589793 during prone and transitions (0.544038ms)
+✔ head/torso/legs move along body axis facing=-1.5707963267948966 during prone and transitions (0.47904ms)
+✔ partial entry interruption reverses the actual enter clip continuously instead of jumping to an unrelated exit frame (1.334501ms)
+✔ real rounds start at the rendered prone socket at each of seven scheduled shot instants (73.937517ms)
+✔ pause keeps eye, hitboxes, muzzle and canonical clip frame exactly stable across all saved phases (10.567245ms)
+✔ the real roll call seats only the present actors and keeps their positions and pose through save/reload (8526.965166ms)
+✔ actual instance matrices lower seated/crouched heads, keep seated feet on the floor and render horizontal wounded/carried bodies without mutating data (50.529823ms)
+✔ legacy actors without pose remain accepted and an unknown saved pose is rejected atomically (26.043046ms)
+✔ distance removes face accessories while retaining the same head position, pose and immutable actor (8.646761ms)
+✔ a shot shoulders the rifle, keeps both hands on it and attaches the flash to the barrel through yaw and recoil (9.1951ms)
+✔ suppression lowers the upper body with feet planted and takes priority over a recent shot; seated, wounded and unarmed actors do not aim (4.876671ms)
+✔ a real combat save reproduces the same animation matrices at the same clock after reload and walking lifts a foot without sinking either boot (1106.03608ms)
+✔ M01 rkm wz.28: metres, barrel to −Z, 1.11 m ±2 %, movable parts and three LODs within budget (2.961954ms)
+✔ M01 rkm wz.28: clips bind to the soldier skeleton; burst fires 3 rounds; rifle clip hidden (7.011923ms)
+✔ the pure collision JSON remains reproducible from the checked GLB translations (156.687581ms)
+✔ debug diagnostics return copies; editing a returned gate or failure cannot change live state (11.585145ms)
+✔ wz.29 requires a bolt cycle; an empty magazine uses a clip of five, preserving ammunition (0.405726ms)
+✔ wz.29 partial loading commits one round at a time and can be interrupted; in-progress saves resume it (0.410449ms)
+✔ M01 complete control route reaches debrief, all required objectives, unique events and all four actual checkpoints (7287.848903ms)
+✔ every M01 checkpoint restores exact actors, ammunition, RNG, dialogue, destruction and real clocks after death (56.251758ms)
+✔ damaged bridge pieces and German casualties survive LOD changes and checkpoint restoration (12.068657ms)
+✔ overdue events use >=; delayed events wait active seconds; pause freezes both clocks and weapon work (44.486914ms)
+✔ a late message never rewinds battle time and every aerial impact stays at least thirty metres away (3.181988ms)
+✔ west demolition waits inside the safety zone, then releases once the player and allies have left (87.771718ms)
+✔ boundary warning precedes failure and its eight second timer resets when the player returns (1.868097ms)
+✔ metre-space hitboxes, actual cover and bridge joints support shots and continuous travel (2.502054ms)
+✔ corrupt M01 state is rejected atomically before an active scene, grenade or missing timer can crash the game (48.285647ms)
+✔ outro calls Nowicki twice as distinct beats and consumes completion once, including skip after partial playback (122.669706ms)
+✔ optional Bąk rescue cannot be taken away mid-carry; delivery chooses the player continuity branch (9.773065ms)
+✔ all five sectors keep their schedule and stable casualties for ninety seconds while the player looks away (973.168057ms)
+✔ west hold timeout sends the sergeant to escort the player without demolition damage (1555.741067ms)
+✔ grenade blast starts at its real height; solid cover shields a nearby actor and inactive actors stay unharmed (2.034082ms)
+✔ first divergence diagnostic detects exact tick, field, missing key and event changes (40.226409ms)
+✔ full route A/B with CP-A..D, events, RNG and long continuation: seed 19390901, support false (87364.616687ms)
+✔ full route A/B with CP-A..D, events, RNG and long continuation: seed 7, support true (84188.820367ms)
+✔ MG34 seven-shot burst after 1, actual tick pipeline plus grenade, rifle RNG and double load (676.168161ms)
+✔ MG34 seven-shot burst after 4, actual tick pipeline plus grenade, rifle RNG and double load (610.569544ms)
+✔ MG34 seven-shot burst after 6, actual tick pipeline plus grenade, rifle RNG and double load (599.329442ms)
+✔ station grab: variable timestep, zero-dt pause, double save/load (1212.691366ms)
+✔ station drag: variable timestep, zero-dt pause, double save/load (1251.80681ms)
+✔ station release: variable timestep, zero-dt pause, double save/load (1484.747157ms)
+✔ grenade bounce/fuse, rifle bolt and partial reload continue with exact RNG and events (790.86815ms)
+✔ Bąk player carry/late delivery followed by Dudek evacuation and both demolitions (33666.494318ms)
+✔ legacy 86/89 actors, missing optional fields and old CKM placement migrate once then have identical futures (618.695838ms)
+✔ corrupt cross-system states reject atomically and leave the destination future unchanged (840.682453ms)
+✔ corrupt weapon method/profile, unsigned RNG and unknown phase reject before changing future gameplay (828.877293ms)
+✔ OUTRO playback, skip, double load and completed no-op use the same dialogue/event future (5112.103896ms)
+✔ save between checkpoints preserves the future respawn destination (25.602053ms)
+✔ M01 soldiers: metres, −Z facing, 1.65–1.85 m and the full game skeleton in every LOD (11.39018ms)
+✔ M01 soldiers: visible triangle budget, textures per LOD and togglable variants (11.773347ms)
+✔ M01 soldiers: weapons keep documented length (wz.29 1.10, Kar98k ~1.11, wz.98a 1.25, rkm wz.28 1.11 m) with bolt and magazine bones (14.963684ms)
+✔ M01 soldier animations bind by bone name and keep kb_wz29 timings (6.355777ms)
+✔ the real station clips sample both roles from saved phase time, with pause, fresh renderer and LOD restore (1927.21593ms)
+✔ the patient holds the actual final grab pose throughout the moving backward drag (292.808768ms)
+✔ a missing or incomplete optional transition pair falls back together and leaves evacuation success to simulation (8960.496653ms)
+✔ M01 arrasto da estação: ficheiros novos, rig e clips reutilizados sem alterações (SHA-256 do manifesto) (7.392956ms)
+✔ M01 arrasto da estação: alvos dos 61 ossos, valores finitos, quaternões unitários, relógio e eventos dos pares (46.801025ms)
+✔ M01 arrasto da estação: extremos iguais às poses reais, percurso inverso e raiz sem deslocação (381.903639ms)
+✔ M01 arrasto da estação: AnimationMixer do three.js — contactos, paciente de costas, corpos e pausa/retoma (226.739404ms)
+✔ the fictional station casualty starts in the yard and the clock triggers his injury only once (848.715923ms)
+✔ the backward drag stays on the ground, completes outside the camera and returns Dudek to his post (1343.740696ms)
+✔ changing the player look never changes the station evacuation or its delivery (914.671844ms)
+✔ a save during the drag restores the same actors, task and future positions with no scene objects (593.206108ms)
+✔ death or removal of a participant detaches the casualty instead of leaving an invalid or moving carrier reference (1566.318738ms)
+✔ legacy schema 2 saves with an already consumed station event do not replay an injury (331.563506ms)
+✔ station care coexists with Bąk, all objectives, checkpoints and both historical demolitions on supported and ignored routes (8079.690427ms)
+✔ grab and release last 1.6 mission seconds, hold both roots and deliver only after settling (395.346069ms)
+✔ schema 2 restores every station phase and its future clocks, actors and RNG exactly (1066.656666ms)
+✔ all station phases interrupt on casualty/medic death, removal or reassignment without delivery (4853.793553ms)
+✔ old schema 2 transit saves resume without a new grab and corrupt station phases are rejected atomically (347.813469ms)
+✔ actual MG34 rig cuts 4/5/6/7-round bursts at their saved duration, keeps one weapon and samples pause/restore without mutation (360.88511ms)
+✔ two existing MG sources share art and retain independent rigs within the light budget; LOD, suppression, casualties and missing kit fall back (212.952416ms)
+✔ 65 actual wagon models use LOD2 instances at 9.10 m with source pivots and shared art; partial/full failures preserve the whole consist (14.560666ms)
+✔ disposing while optional wagon downloads are pending never attaches models to the old scene (1.151783ms)
+✔ M01 declares the mission contract fields of Prompt §74 (1.293291ms)
+✔ M01 IDs are unique across the mission and every reference resolves (4.351026ms)
+✔ M01 keeps the documented chronology on the battle clock (2.233257ms)
+✔ M01 equips only gear available on 1 September 1939 and never the forbidden weapons (0.484994ms)
+✔ M01 keeps the mandatory lines of the master script verbatim (0.396043ms)
+✔ M01 labels history and space only with the agreed vocabularies (0.897066ms)
+✔ M01 checkpoints accumulate state and never save inside a demolition zone (0.828316ms)
+✔ M01 runs at least two independent battle sectors on the clock (0.551487ms)
+✔ M01 map geometry matches the documented bridges of 1939 and the measured piers (0.640235ms)
+✔ M01 debrief keeps unconfirmed paragraphs disabled until their checks pass (1.766338ms)
+✔ M01 vagões danificados: o kit intacto não foi alterado (sha256 registados no manifesto) (7.004381ms)
+✔ M01 vagões danificados: metros, 9,10 m no LOD0, rodas no carril, pivôs do intacto e três LODs no orçamento (50.183615ms)
+✔ M01 vagões danificados: sockets iguais aos do intacto, mais impact só no danificado (3.362148ms)
+✔ M01 vagões danificados: wheels_roll igual ao intacto; doors_open só na porta esquerda do coberto danificado (3.088592ms)
+✔ M01 vagões danificados: restos só visuais no nó debris, alterações registadas e sem efeitos próprios (2.102809ms)
+✔ M01 vagões: metros, 9,10 m entre tampões no LOD0, rodas no carril, nós estáveis e três LODs no orçamento (4.039825ms)
+✔ M01 vagões: rodados dão uma volta por segundo em X; portas do coberto correm 1,95 m em Z (2.811199ms)
+ℹ tests 240
+ℹ suites 0
+ℹ pass 238
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 230570.620454
+
+✖ failing tests:
+
+test at tests/m01-ckm-runtime.test.js:30:1
+✖ schema 2 accepts exact legacy rosters and migrates atomically without changing old actors or RNG (8160.973379ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    {
+      actors: [
+        {
+          active: true,
+          alive: true,
+  ...
+            phase: 'retreat',
+  +         startedAt: 789.7499999998295,
+  -         startedAt: 786.6499999998323,
+            visible: false
+          },
+          cooldown: 0,
+          crouched: false,
+  +       facing: -3.0278498078474008,
+  -       facing: 0,
+          group: 'grp_ckm_crew',
+          health: 100,
+          id: 'ckm_gunner',
+          radius: 0.3,
+          role: 'SUPPORT',
+  ...
+          state: 'GUARD',
+  +       suppressedUntil: 784.1999999998359,
+  -       suppressedUntil: 0,
+          team: 'ally',
+  +       x: -169.359899390675,
+  -       x: -170,
+          y: -3,
+  +       z: 22.07312247627379
+  -       z: 22
+        },
+        {
+          active: true,
+          alive: true,
+          ckm: {
+            phase: 'retreat',
+  +         startedAt: 789.7499999998295,
+  -         startedAt: 786.6499999998323,
+            visible: false
+          },
+          cooldown: 0,
+          crouched: false,
+  +       facing: -3.036503780591175,
+  -       facing: 1.9547687622336491,
+          group: 'grp_ckm_crew',
+          health: 100,
+          id: 'ckm_loader',
+          radius: 0.3,
+          role: 'SUPPORT',
+  ...
+          state: 'GUARD',
+  +       suppressedUntil: 784.1999999998359,
+  -       suppressedUntil: 0,
+          team: 'ally',
+  +       x: -170.88077529674848,
+  -       x: -171.6,
+          y: -3,
+  +       z: 23.275861984258928
+  -       z: 23.2
+        },
+        {
+          active: true,
+          alive: true,
+          ckm: {
+            phase: 'retreat',
+  +         startedAt: 789.7499999998295,
+  -         startedAt: 786.6499999998323,
+            visible: false
+          },
+          cooldown: 0,
+          crouched: false,
+  +       facing: -3.0449619999199387,
+  -       facing: 0,
+          group: 'grp_ckm_crew',
+          health: 100,
+          id: 'ckm_reserve',
+          radius: 0.3,
+          role: 'RIFLEMAN',
+  ...
+          state: 'GUARD',
+  +       suppressedUntil: 784.1999999998359,
+  -       suppressedUntil: 0,
+          team: 'ally',
+  +       x: -172.4310091528953,
+  -       x: -173.2,
+          y: -3,
+  +       z: 24.474540238850643
+  -       z: 24.4
+        }
+      ],
+      battleClock: 25500,
+      checkpointsReached: [
+        'cp_m01_a_orientacao',
+  ...
+        phase: 'OUTRO',
+  +     status: 'Demolição oeste · 337 m, em frente · siga para o abrigo',
+  -     status: '',
+        text: 'Mantenha contacto com a secção'
+      },
+      missionId: 'm01_tczew',
+      objectives: {
+        obj_m01_cover_repair: {
+  ...
+      recoveries: [],
+  -   resumeCheckpoint: {
+  -     actors: [
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         civilian: false,
+  -         cooldown: 0,
+  -         crouched: true,
+  -         essential: true,
+  -         facing: -1.1681416732430214,
+  -         health: 100,
+  -         id: 'marek_zielinski',
+  -         pose: 'seated',
+  -         radius: 0.3,
+  -         role: 'SQUAD_LEADER',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 817.9999999998051,
+  -         target: null,
+  -         task: null,
+  -         team: 'ally',
+  -         x: -262.8,
+  -         y: -4,
+  -         z: 73.6
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         civilian: false,
+  -         cooldown: 0,
+  -         crouched: true,
+  -         essential: true,
+  -         facing: -1.727398203776908,
+  -         health: 100,
+  -         id: 'pawel_krawiec',
+  -         pose: 'seated',
+  -         radius: 0.3,
+  -         role: 'ENGINEER',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 817.9999999998051,
+  -         target: null,
+  -         task: null,
+  -         team: 'ally',
+  -         x: -259.6,
+  -         y: -4,
+  -         z: 73.9
+  -       },
+  -       {
+  -         active: false,
+  -         alive: true,
+  -         civilian: false,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         essential: false,
+  -         facing: -3.1142650799590323,
+  -         health: 100,
+  -         id: 'tadeusz_nowicki',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 0,
+  -         target: {
+  -           x: -40,
+  -           y: -2,
+  -           z: 10
+  -         },
+  -         team: 'ally',
+  -         x: -39.370124823142255,
+  -         y: -2.149084859330057,
+  -         z: 10.01721724641236
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         civilian: false,
+  -         cooldown: -260.00000000002484,
+  -         crouched: true,
+  -         essential: false,
+  -         facing: -1.4486011561035437,
+  -         firedAt: 784.749999999834,
+  -         health: 100,
+  -         id: 'szymon_kowal',
+  -         pose: 'seated',
+  -         radius: 0.3,
+  -         role: 'SUPPORT',
+  -         rounds: 17,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 817.9999999998051,
+  -         target: null,
+  -         task: null,
+  -         team: 'ally',
+  -         x: -261.2,
+  -         y: -4,
+  -         z: 73.9
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         carriedBy: null,
+  -         civilian: false,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         essential: false,
+  -         facing: -3.097768923768731,
+  -         health: 100,
+  -         id: 'jozef_bak',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'WOUNDED',
+  -         suppressedUntil: 788.5499999998319,
+  -         target: null,
+  -         team: 'ally',
+  -         x: -329.9343356686451,
+  -         y: -3,
+  -         z: 24.751116486309268
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         civilian: false,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         essential: false,
+  -         facing: -3.097768923768731,
+  -         health: 100,
+  -         id: 'leon_dudek',
+  -         radius: 0.3,
+  -         role: 'MEDIC',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 0,
+  -         target: null,
+  -         task: 'stay_with_bak',
+  -         team: 'ally',
+  -         x: -330.83433566864505,
+  -         y: -3,
+  -         z: 24.05111648630927
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         civilian: false,
+  -         cooldown: 0,
+  -         crouched: true,
+  -         essential: false,
+  -         facing: -2.004377810746659,
+  -         health: 100,
+  -         id: 'staszek_pawlak',
+  -         pose: 'seated',
+  -         radius: 0.3,
+  -         role: 'RADIO_OPERATOR',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 817.9999999998051,
+  -         target: null,
+  -         task: null,
+  -         team: 'ally',
+  -         x: -258,
+  -         y: -4,
+  -         z: 73.6
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         civilian: true,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         essential: false,
+  -         facing: 0,
+  -         health: 100,
+  -         id: 'franciszek_lipski',
+  -         radius: 0.3,
+  -         role: 'CIVILIAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 818.6499999998045,
+  -         team: 'ally',
+  -         x: -87.2,
+  -         y: -3,
+  -         z: 26
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         civilian: false,
+  -         cooldown: 0,
+  -         crouched: true,
+  -         essential: false,
+  -         facing: -0.8996524913588886,
+  -         health: 100,
+  -         id: 'sapper_2',
+  -         pose: 'seated',
+  -         radius: 0.3,
+  -         role: 'ENGINEER',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 817.9999999998051,
+  -         target: null,
+  -         task: null,
+  -         team: 'ally',
+  -         x: -263.2,
+  -         y: -4,
+  -         z: 71.6
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         civilian: false,
+  -         cooldown: 0,
+  -         crouched: true,
+  -         essential: false,
+  -         facing: -2.3847581480311093,
+  -         health: 100,
+  -         id: 'sapper_3',
+  -         pose: 'seated',
+  -         radius: 0.3,
+  -         role: 'ENGINEER',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 817.9999999998051,
+  -         target: null,
+  -         task: null,
+  -         team: 'ally',
+  -         x: -256.9,
+  -         y: -4,
+  -         z: 71.6
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         civilian: false,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         essential: false,
+  -         facing: -3.0903554861863745,
+  -         health: 100,
+  -         id: 'east_platoon_voice',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 817.9999999998051,
+  -         target: {
+  -           x: -170,
+  -           z: 22
+  -         },
+  -         team: 'ally',
+  -         x: -169.2984251530903,
+  -         y: -3,
+  -         z: 22.03597819727742
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         carriedBy: null,
+  -         civilian: false,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         essential: false,
+  -         facing: 0.11130279887633367,
+  -         health: 45,
+  -         id: 'generic_rifleman',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'WOUNDED',
+  -         suppressedUntil: 0,
+  -         target: null,
+  -         task: 'station_aid_post',
+  -         team: 'ally',
+  -         x: -334,
+  -         y: -3,
+  -         z: 26.2
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 6.805142987519222,
+  -         crouched: false,
+  -         facing: -3.1374953576337066,
+  -         firedAt: 814.8499999998066,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_0',
+  -         mg34Prone: {
+  -           duration: 1.9,
+  -           phase: 'idle',
+  -           progress: 1,
+  -           startedAt: 1048.7999999995939
+  -         },
+  -         radius: 0.3,
+  -         role: 'SUPPORT',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 748.299999999869,
+  -         team: 'enemy',
+  -         weapon: 'mg34',
+  -         x: 1055,
+  -         y: 0,
+  -         z: 32
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 4.2283532349391315,
+  -         crouched: false,
+  -         facing: 3.1297529282769054,
+  -         firedAt: 814.3499999998071,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_1',
+  -         mg34Prone: {
+  -           duration: 1.9,
+  -           phase: 'idle',
+  -           progress: 1,
+  -           startedAt: 1048.7999999995939
+  -         },
+  -         radius: 0.3,
+  -         role: 'SUPPORT',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 740.1999999998764,
+  -         team: 'enemy',
+  -         weapon: 'mg34',
+  -         x: 1055,
+  -         y: 0,
+  -         z: 13
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 22.20915146693575,
+  -         crouched: false,
+  -         facing: 3.0276519265289816,
+  -         firedAt: 751.8499999998639,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_2',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 728.0499999998874,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1053,
+  -         y: -1,
+  -         z: 9.5
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 43.833708112873495,
+  -         crouched: false,
+  -         facing: 3.069805453384744,
+  -         firedAt: 773.749999999844,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_3',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1055,
+  -         y: -1,
+  -         z: 11.5
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 30.96835018266047,
+  -         crouched: false,
+  -         facing: 3.075900974823172,
+  -         firedAt: 774.6499999998432,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_4',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 777.6499999998423,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1057,
+  -         y: -1,
+  -         z: 13.5
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 27.92342100124842,
+  -         crouched: false,
+  -         facing: 3.0852714720612804,
+  -         firedAt: 778.7999999998394,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_5',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 786.749999999834,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1053,
+  -         y: -1,
+  -         z: 15.5
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 2.356052846275685,
+  -         crouched: false,
+  -         facing: 3.0892845374424756,
+  -         firedAt: 777.7499999998404,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_6',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 644.0499999999638,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1055,
+  -         y: -1,
+  -         z: 17.5
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 37.26686089094784,
+  -         crouched: false,
+  -         facing: 3.0926972890628543,
+  -         firedAt: 776.5499999998415,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_7',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 736.14999999988,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1057,
+  -         y: -1,
+  -         z: 19.5
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 0.16525752861122117,
+  -         crouched: false,
+  -         facing: 3.094546653644393,
+  -         firedAt: 771.549999999846,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_8',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 765.4999999998533,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1053,
+  -         y: -1,
+  -         z: 21.5
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 25.902660357021368,
+  -         crouched: false,
+  -         facing: 3.1016613436036824,
+  -         firedAt: 771.599999999846,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_9',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 773.599999999846,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1055,
+  -         y: -1,
+  -         z: 23.5
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 48.20129456892619,
+  -         crouched: false,
+  -         facing: 2.981083392910686,
+  -         firedAt: 720.8999999998921,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_10',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 722.999999999892,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1057,
+  -         y: -1,
+  -         z: 25.5
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 14.131813171878527,
+  -         crouched: false,
+  -         facing: 3.1093845284262307,
+  -         firedAt: 767.3499999998498,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_11',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 769.5499999998497,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1053,
+  -         y: -1,
+  -         z: 27.5
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 9.200256122090181,
+  -         crouched: false,
+  -         facing: 3.1159266379459476,
+  -         firedAt: 768.1499999998491,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_12',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 761.449999999857,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1055,
+  -         y: -1,
+  -         z: 29.5
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 1.0092054480689745,
+  -         crouched: false,
+  -         facing: 3.1230271172420596,
+  -         firedAt: 767.8499999998494,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_13',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 718.9499999998957,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1057,
+  -         y: -1,
+  -         z: 31.5
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 8.329466927424654,
+  -         crouched: false,
+  -         facing: 2.4430929822967715,
+  -         firedAt: 728.9499999998848,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_14',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1076,
+  -         y: -1,
+  -         z: -80
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 32.25943285357238,
+  -         crouched: false,
+  -         facing: 2.8780745718554783,
+  -         firedAt: 777.4499999998407,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_15',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1083,
+  -         y: -1,
+  -         z: -75
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 6.866063937544506,
+  -         crouched: false,
+  -         facing: 2.889451463981718,
+  -         firedAt: 776.8499999998412,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_16',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1090,
+  -         y: -1,
+  -         z: -70
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 21.940182271041756,
+  -         crouched: false,
+  -         facing: 2.899250675802335,
+  -         firedAt: 775.8499999998421,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_17',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1097,
+  -         y: -1,
+  -         z: -65
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 0.2098460270093513,
+  -         crouched: false,
+  -         facing: 2.9024656166511216,
+  -         firedAt: 776.9999999998411,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_18',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1076,
+  -         y: -1,
+  -         z: -60
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 12.333747933432967,
+  -         crouched: false,
+  -         facing: 2.9231749594920533,
+  -         firedAt: 778.0999999998401,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_19',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1083,
+  -         y: -1,
+  -         z: -55
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 5.492428071982991,
+  -         crouched: false,
+  -         facing: 2.9272540958322875,
+  -         firedAt: 774.1499999998437,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_20',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1090,
+  -         y: -1,
+  -         z: -50
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 40.40471791047628,
+  -         crouched: false,
+  -         facing: 2.9446834863902125,
+  -         firedAt: 774.3499999998435,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_21',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1097,
+  -         y: -1,
+  -         z: -45
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 7.327357846125755,
+  -         crouched: false,
+  -         facing: 2.9398014508272534,
+  -         firedAt: 771.8499999998457,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_22',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1076,
+  -         y: -1,
+  -         z: -40
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 41.217939615249975,
+  -         crouched: false,
+  -         facing: 2.934303717719876,
+  -         firedAt: 765.0999999998519,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_23',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1083,
+  -         y: -1,
+  -         z: -35
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 5.207536027393992,
+  -         crouched: false,
+  -         facing: 2.9120617607140336,
+  -         firedAt: 753.6499999998623,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_24',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1090,
+  -         y: -1,
+  -         z: -30
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 6.1587300123650275,
+  -         crouched: false,
+  -         facing: 2.9455082866011346,
+  -         firedAt: 757.0999999998592,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_25',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1097,
+  -         y: -1,
+  -         z: -25
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 11.892981185019426,
+  -         crouched: false,
+  -         facing: 2.989352120903429,
+  -         firedAt: 771.1999999998463,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_26',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1076,
+  -         y: -1,
+  -         z: -20
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 19.591280445643218,
+  -         crouched: false,
+  -         facing: 3.0046588258241105,
+  -         firedAt: 771.0999999998464,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_27',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1083,
+  -         y: -1,
+  -         z: -15
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 12.857877223938988,
+  -         crouched: false,
+  -         facing: -3.107646567909735,
+  -         firedAt: 776.5499999998415,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_28',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1088,
+  -         y: -1,
+  -         z: 52
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 0.3451907850800724,
+  -         crouched: false,
+  -         facing: -3.0985317680119224,
+  -         firedAt: 775.8499999998421,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_29',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1094,
+  -         y: -1,
+  -         z: 56
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 38.271124092676416,
+  -         crouched: false,
+  -         facing: -3.0776764740407225,
+  -         firedAt: 766.4999999998506,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_30',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1076,
+  -         y: -1,
+  -         z: 60
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 20.952129496261488,
+  -         crouched: false,
+  -         facing: -3.0728591867401587,
+  -         firedAt: 770.2499999998472,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_31',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1082,
+  -         y: -1,
+  -         z: 64
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 14.697001252882348,
+  -         crouched: false,
+  -         facing: -3.072898005432675,
+  -         firedAt: 780.4999999998379,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_32',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1088,
+  -         y: -1,
+  -         z: 68
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 33.69586348198409,
+  -         crouched: false,
+  -         facing: -3.064141062290723,
+  -         firedAt: 779.0999999998392,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_33',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1094,
+  -         y: -1,
+  -         z: 72
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 8.285305800662162,
+  -         crouched: false,
+  -         facing: -3.0095127234047827,
+  -         firedAt: 755.5999999998605,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_34',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1076,
+  -         y: -1,
+  -         z: 76
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 22.75172055214645,
+  -         crouched: false,
+  -         facing: -3.039014494929805,
+  -         firedAt: 776.1499999998418,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_35',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1082,
+  -         y: -1,
+  -         z: 80
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 39.09195150770276,
+  -         crouched: false,
+  -         facing: -3.034275760356165,
+  -         firedAt: 778.9999999998392,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_36',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1088,
+  -         y: -1,
+  -         z: 84
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 0.46289506759481763,
+  -         crouched: false,
+  -         facing: -3.0125045846906264,
+  -         firedAt: 770.3499999998471,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_37',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1094,
+  -         y: -1,
+  -         z: 88
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 20.939746757225144,
+  -         crouched: false,
+  -         facing: -3.0096940841545132,
+  -         firedAt: 777.5999999998405,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_38',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1076,
+  -         y: -1,
+  -         z: 92
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 29.2134618867193,
+  -         crouched: false,
+  -         facing: -2.990299367240469,
+  -         firedAt: 771.6999999998459,
+  -         group: 'grp_de_east',
+  -         health: 100,
+  -         id: 'de_east_39',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'SUPPRESS',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1082,
+  -         y: -1,
+  -         z: 96
+  -       },
+  -       {
+  -         active: true,
+  -         alive: false,
+  -         cooldown: 4.165038551855837,
+  -         crouched: false,
+  -         facing: 3.1412114865132597,
+  -         firedAt: 785.4499999998334,
+  -         group: 'grp_de_spans',
+  -         health: 0,
+  -         id: 'de_spans_0',
+  -         radius: 0.3,
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'DOWN',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 990.1499999999637,
+  -         y: 0,
+  -         z: 39.6
+  -       },
+  -       {
+  -         active: true,
+  -         alive: false,
+  -         cooldown: 4.172208148241047,
+  -         crouched: false,
+  -         facing: -3.1408340394246665,
+  -         firedAt: 785.4499999998334,
+  -         group: 'grp_de_spans',
+  -         health: 0,
+  -         id: 'de_spans_1',
+  -         radius: 0.3,
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'DOWN',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 993.1499999999637,
+  -         y: 0,
+  -         z: 40.7
+  -       },
+  -       {
+  -         active: true,
+  -         alive: false,
+  -         cooldown: 1.8941415725275956,
+  -         crouched: false,
+  -         facing: -3.139705114915154,
+  -         firedAt: 784.1499999998346,
+  -         group: 'grp_de_spans',
+  -         health: 0,
+  -         id: 'de_spans_2',
+  -         radius: 0.3,
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'DOWN',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 996.1499999999637,
+  -         y: 0,
+  -         z: 41.800000000000004
+  -       },
+  -       {
+  -         active: true,
+  -         alive: false,
+  -         cooldown: 1.6615281110163826,
+  -         crouched: false,
+  -         facing: -3.1376908728553943,
+  -         firedAt: 784.8499999998339,
+  -         group: 'grp_de_spans',
+  -         health: 0,
+  -         id: 'de_spans_3',
+  -         radius: 0.3,
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'DOWN',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 999.1499999999637,
+  -         y: 0,
+  -         z: 39.6
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 40.05000000000335,
+  -         crouched: false,
+  -         facing: -3.134850703076685,
+  -         firedAt: 785.7499999998331,
+  -         group: 'grp_de_spans',
+  -         health: 100,
+  -         id: 'de_spans_4',
+  -         radius: 0.3,
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'RETREAT',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1080,
+  -         y: 0,
+  -         z: 40.7
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 37.4000000000035,
+  -         crouched: false,
+  -         facing: -3.132023518259844,
+  -         firedAt: 785.7999999998331,
+  -         group: 'grp_de_spans',
+  -         health: 100,
+  -         id: 'de_spans_5',
+  -         radius: 0.3,
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'RETREAT',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1080,
+  -         y: 0,
+  -         z: 41.800000000000004
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 36.800000000003536,
+  -         crouched: false,
+  -         facing: 3.141219819244547,
+  -         firedAt: 783.0999999998355,
+  -         group: 'grp_de_spans',
+  -         health: 100,
+  -         id: 'de_spans_6',
+  -         radius: 0.3,
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'RETREAT',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1080,
+  -         y: 0,
+  -         z: 39.6
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 36.650000000003544,
+  -         crouched: false,
+  -         facing: -3.134973209801561,
+  -         firedAt: 785.2499999998336,
+  -         group: 'grp_de_spans',
+  -         health: 100,
+  -         id: 'de_spans_7',
+  -         radius: 0.3,
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'RETREAT',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1080,
+  -         y: 0,
+  -         z: 40.7
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 36.40000000000356,
+  -         crouched: false,
+  -         facing: -3.1319221119683203,
+  -         firedAt: 782.549999999836,
+  -         group: 'grp_de_spans',
+  -         health: 100,
+  -         id: 'de_spans_8',
+  -         radius: 0.3,
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'RETREAT',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1080,
+  -         y: 0,
+  -         z: 41.800000000000004
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 39.650000000003374,
+  -         crouched: false,
+  -         facing: -3.137938649675848,
+  -         firedAt: 786.6499999998323,
+  -         group: 'grp_de_spans',
+  -         health: 100,
+  -         id: 'de_spans_9',
+  -         radius: 0.3,
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'RETREAT',
+  -         suppressedUntil: 0,
+  -         team: 'enemy',
+  -         weapon: 'kar98k',
+  -         x: 1080,
+  -         y: 0,
+  -         z: 39.6
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: -3.137538746194517,
+  -         group: 'grp_east_platoon',
+  -         health: 100,
+  -         id: 'pl_east_0',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 788.2999999998317,
+  -         team: 'ally',
+  -         x: -321.416538634807,
+  -         y: -3,
+  -         z: 30.002365311300537
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: -3.137549577135031,
+  -         group: 'grp_east_platoon',
+  -         health: 100,
+  -         id: 'pl_east_1',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 788.2999999998317,
+  -         team: 'ally',
+  -         x: -322.99481142960514,
+  -         y: -3,
+  -         z: 30.002446836992046
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: -3.1377518296840248,
+  -         group: 'grp_east_platoon',
+  -         health: 100,
+  -         id: 'pl_east_2',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 788.2999999998317,
+  -         team: 'ally',
+  -         x: -324.54736220932807,
+  -         y: -3,
+  -         z: 30.002506679154347
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: -3.137754192926639,
+  -         group: 'grp_east_platoon',
+  -         health: 100,
+  -         id: 'pl_east_3',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 788.2999999998317,
+  -         team: 'ally',
+  -         x: -326.11915858523776,
+  -         y: -3,
+  -         z: 30.002613395823488
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: 3.131498453678376,
+  -         group: 'grp_east_platoon',
+  -         health: 100,
+  -         id: 'pl_east_4',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 788.2999999998317,
+  -         team: 'ally',
+  -         x: -321.41263748330823,
+  -         y: -3,
+  -         z: 31.294070843955097
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: 3.131740416580641,
+  -         group: 'grp_east_platoon',
+  -         health: 100,
+  -         id: 'pl_east_5',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 788.2999999998317,
+  -         team: 'ally',
+  -         x: -322.9910599980945,
+  -         y: -3,
+  -         z: 31.294000384654918
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: 3.1317462819009565,
+  -         group: 'grp_east_platoon',
+  -         health: 100,
+  -         id: 'pl_east_6',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 788.2999999998317,
+  -         team: 'ally',
+  -         x: -324.5434855300218,
+  -         y: -3,
+  -         z: 31.293535505595006
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: 3.1319815486257343,
+  -         group: 'grp_east_platoon',
+  -         health: 100,
+  -         id: 'pl_east_7',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 788.2999999998317,
+  -         team: 'ally',
+  -         x: -326.11543289018186,
+  -         y: -3,
+  -         z: 31.29342035105664
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: 3.117354386176147,
+  -         group: 'grp_east_platoon',
+  -         health: 100,
+  -         id: 'pl_east_8',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 788.2999999998317,
+  -         team: 'ally',
+  -         x: -321.3904710832355,
+  -         y: -3,
+  -         z: 32.58522318124359
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: 3.1178489064883386,
+  -         group: 'grp_east_platoon',
+  -         health: 100,
+  -         id: 'pl_east_9',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 788.2999999998317,
+  -         team: 'ally',
+  -         x: -322.9693713587217,
+  -         y: -3,
+  -         z: 32.58502369854661
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: 3.1180627744264187,
+  -         group: 'grp_east_platoon',
+  -         health: 100,
+  -         id: 'pl_east_10',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 788.2999999998317,
+  -         team: 'ally',
+  -         x: -324.5219473869921,
+  -         y: -3,
+  -         z: 32.584042558867324
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: 3.118535459118548,
+  -         group: 'grp_east_platoon',
+  -         health: 100,
+  -         id: 'pl_east_11',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 788.2999999998317,
+  -         team: 'ally',
+  -         x: -326.09435495490817,
+  -         y: -3,
+  -         z: 32.58372692109025
+  -       },
+  -       {
+  -         active: true,
+  -         alive: false,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: -3.1415922622468533,
+  -         group: 'grp_east_platoon',
+  -         health: 0,
+  -         id: 'pl_east_12',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'DOWN',
+  -         suppressedUntil: 762.9999999998547,
+  -         team: 'ally',
+  -         x: 748.7753348662529,
+  -         y: 0,
+  -         z: 37.800011632668884
+  -       },
+  -       {
+  -         active: true,
+  -         alive: false,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: -3.1415911030148314,
+  -         group: 'grp_east_platoon',
+  -         health: 0,
+  -         id: 'pl_east_13',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'DOWN',
+  -         suppressedUntil: 760.6499999998568,
+  -         team: 'ally',
+  -         x: 764.5270928518812,
+  -         y: 0,
+  -         z: 38.15004609084074
+  -       },
+  -       {
+  -         active: true,
+  -         alive: false,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: -3.1415852774670725,
+  -         group: 'grp_east_platoon',
+  -         health: 0,
+  -         id: 'pl_east_14',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'DOWN',
+  -         suppressedUntil: 758.0999999998592,
+  -         team: 'ally',
+  -         x: 780.2938303426549,
+  -         y: 0,
+  -         z: 37.80021925524787
+  -       },
+  -       {
+  -         active: true,
+  -         alive: false,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: -3.1415784924131955,
+  -         group: 'grp_east_platoon',
+  -         health: 0,
+  -         id: 'pl_east_15',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'DOWN',
+  -         suppressedUntil: 755.2999999998617,
+  -         team: 'ally',
+  -         x: 796.3271119018393,
+  -         y: 0,
+  -         z: 38.150420940974385
+  -       },
+  -       {
+  -         active: true,
+  -         alive: false,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: -3.1415901622372977,
+  -         group: 'grp_east_platoon',
+  -         health: 0,
+  -         id: 'pl_east_16',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'DOWN',
+  -         suppressedUntil: 752.9999999998638,
+  -         team: 'ally',
+  -         x: 804.0503348662023,
+  -         y: 0,
+  -         z: 37.800074055452924
+  -       },
+  -       {
+  -         active: true,
+  -         alive: false,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: -3.1415827823785945,
+  -         group: 'grp_east_platoon',
+  -         health: 0,
+  -         id: 'pl_east_17',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'DOWN',
+  -         suppressedUntil: 750.1499999998664,
+  -         team: 'ally',
+  -         x: 819.8020928511789,
+  -         y: 0,
+  -         z: 38.1502934217529
+  -       },
+  -       {
+  -         active: false,
+  -         alive: false,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: 0,
+  -         group: 'grp_east_platoon',
+  -         health: 0,
+  -         id: 'pl_east_18',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'DOWN',
+  -         suppressedUntil: 0,
+  -         team: 'ally',
+  -         x: 1044,
+  -         y: 0,
+  -         z: 39.3
+  -       },
+  -       {
+  -         active: false,
+  -         alive: false,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: 0,
+  -         group: 'grp_east_platoon',
+  -         health: 0,
+  -         id: 'pl_east_19',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'DOWN',
+  -         suppressedUntil: 0,
+  -         team: 'ally',
+  -         x: 1046,
+  -         y: 0,
+  -         z: 39.95
+  -       },
+  -       {
+  -         active: false,
+  -         alive: false,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: 0,
+  -         group: 'grp_east_platoon',
+  -         health: 0,
+  -         id: 'pl_east_20',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'DOWN',
+  -         suppressedUntil: 0,
+  -         team: 'ally',
+  -         x: 1040,
+  -         y: 0,
+  -         z: 38
+  -       },
+  -       {
+  -         active: false,
+  -         alive: false,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: 0,
+  -         group: 'grp_east_platoon',
+  -         health: 0,
+  -         id: 'pl_east_21',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'DOWN',
+  -         suppressedUntil: 0,
+  -         team: 'ally',
+  -         x: 1042,
+  -         y: 0,
+  -         z: 38.65
+  -       },
+  -       {
+  -         active: false,
+  -         alive: false,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: 0,
+  -         group: 'grp_east_platoon',
+  -         health: 0,
+  -         id: 'pl_east_22',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'DOWN',
+  -         suppressedUntil: 0,
+  -         team: 'ally',
+  -         x: 1044,
+  -         y: 0,
+  -         z: 39.3
+  -       },
+  -       {
+  -         active: false,
+  -         alive: false,
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: 0,
+  -         group: 'grp_east_platoon',
+  -         health: 0,
+  -         id: 'pl_east_23',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'DOWN',
+  -         suppressedUntil: 0,
+  -         team: 'ally',
+  -         x: 1046,
+  -         y: 0,
+  -         z: 39.95
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         ckm: {
+  -           phase: 'retreat',
+  -           startedAt: 789.7499999998295,
+  -           visible: false
+  -         },
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: -3.0278498078474008,
+  -         group: 'grp_ckm_crew',
+  -         health: 100,
+  -         id: 'ckm_gunner',
+  -         radius: 0.3,
+  -         role: 'SUPPORT',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 784.1999999998359,
+  -         team: 'ally',
+  -         x: -169.359899390675,
+  -         y: -3,
+  -         z: 22.07312247627379
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         ckm: {
+  -           phase: 'retreat',
+  -           startedAt: 789.7499999998295,
+  -           visible: false
+  -         },
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: -3.036503780591175,
+  -         group: 'grp_ckm_crew',
+  -         health: 100,
+  -         id: 'ckm_loader',
+  -         radius: 0.3,
+  -         role: 'SUPPORT',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 784.1999999998359,
+  -         team: 'ally',
+  -         x: -170.88077529674848,
+  -         y: -3,
+  -         z: 23.275861984258928
+  -       },
+  -       {
+  -         active: true,
+  -         alive: true,
+  -         ckm: {
+  -           phase: 'retreat',
+  -           startedAt: 789.7499999998295,
+  -           visible: false
+  -         },
+  -         cooldown: 0,
+  -         crouched: false,
+  -         facing: -3.0449619999199387,
+  -         group: 'grp_ckm_crew',
+  -         health: 100,
+  -         id: 'ckm_reserve',
+  -         radius: 0.3,
+  -         role: 'RIFLEMAN',
+  -         rounds: 5,
+  -         shot: 0,
+  -         space: 'metres',
+  -         state: 'GUARD',
+  -         suppressedUntil: 784.1999999998359,
+  -         team: 'ally',
+  -         x: -172.4310091528953,
+  -         y: -3,
+  -         z: 24.474540238850643
+  -       }
+  -     ],
+  -     battleClock: 25500,
+  -     checkpointsReached: [
+  -       'cp_m01_a_orientacao',
+  -       'cp_m01_b_reorganizacao',
+  -       'cp_m01_c_engenheiros',
+  -       'cp_m01_d_retirada'
+  -     ],
+  -     clock: 1048.7999999995939,
+  -     consumed: {
+  -       evt_m01_bak_wounded: 739.2499999998754,
+  -       evt_m01_bombing_0434: 67.7499999999983,
+  -       evt_m01_bombing_0530: 484.25000000007583,
+  -       evt_m01_cable_cut: 67.7499999999983,
+  -       evt_m01_debrief: 1048.7999999995939,
+  -       evt_m01_dudek_retrieves_bak: 814.8999999998066,
+  -       evt_m01_east_demolition: 786.6499999998323,
+  -       evt_m01_east_platoon_withdraws: 709.2499999999027,
+  -       evt_m01_forward_post_bombed: 69.89999999999817,
+  -       evt_m01_germans_on_east_spans: 746.7499999998686,
+  -       evt_m01_intro_card: 0,
+  -       evt_m01_kozliny_attack_distant: 1048.749999999594,
+  -       evt_m01_north_contact_distant: 634.2499999999709,
+  -       evt_m01_nowicki_lost: 72.79999999999801,
+  -       evt_m01_order_demolish: 484.25000000007583,
+  -       evt_m01_panzerzug_arrives: 303.10000000003464,
+  -       evt_m01_planes_heard: 17.750000000000117,
+  -       evt_m01_prelude_start: 0.05,
+  -       evt_m01_railway_worker_report: 16.000000000000092,
+  -       evt_m01_repair_complete: 448.1500000000676,
+  -       evt_m01_roll_call: 1048.749999999594,
+  -       evt_m01_runner_pressure_report: 559.2500000000391,
+  -       evt_m01_second_air_pass: 170.70000000000456,
+  -       evt_m01_train963_arrives: 256.400000000024,
+  -       evt_m01_west_demolition: 1033.7499999996076,
+  -       evt_m01_wounded_dragged: 93.54999999999683
+  -     },
+  -     destruction: [
+  -       'ignition_line_damaged',
+  -       'station_wagon_fire',
+  -       'ignition_line_repaired',
+  -       'east_ends_destroyed',
+  -       'west_end_destroyed'
+  -     ],
+  -     dialogueConsumed: [
+  -       'cs_m01_intro:4:dlg_m01_005',
+  -       'cs_m01_intro:5:dlg_m01_001',
+  -       'cs_m01_intro:6:dlg_m01_002',
+  -       'cs_m01_intro:7:dlg_m01_006',
+  -       'cs_m01_intro:8:dlg_m01_007',
+  -       'cs_m01_intro:9:dlg_m01_003',
+  -       'cs_m01_intro:10:dlg_m01_004',
+  -       'evt_m01_railway_worker_report:19',
+  -       'dlg_m01_009',
+  -       'dlg_m01_010',
+  -       'dlg_m01_011',
+  -       'evt_m01_planes_heard:12',
+  -       'evt_m01_planes_heard:13',
+  -       'evt_m01_planes_heard:66',
+  -       'cs_m01_bombing:1:dlg_m01_014',
+  -       'cs_m01_bombing:5:dlg_m01_016',
+  -       'cs_m01_bombing:6:dlg_m01_015',
+  -       'dlg_m01_020',
+  -       'dlg_m01_021',
+  -       'dlg_m01_023',
+  -       'evt_m01_wounded_dragged:17',
+  -       'dlg_m01_024',
+  -       'evt_m01_train963_arrives:25',
+  -       'evt_m01_train963_arrives:28',
+  -       'co_m01_enemy_mg_fire_on_squad',
+  -       'dlg_m01_026',
+  -       'dlg_m01_022',
+  -       'dlg_m01_027',
+  -       'dlg_m01_029:3',
+  -       'evt_m01_panzerzug_arrives:38',
+  -       'dlg_m01_029:4',
+  -       'evt_m01_repair_complete:31',
+  -       'evt_m01_repair_complete:32',
+  -       'dlg_m01_029:5',
+  -       'cs_m01_order:1:dlg_m01_033',
+  -       'cs_m01_order:2:dlg_m01_034',
+  -       'dlg_m01_029:6',
+  -       'evt_m01_runner_pressure_report:37',
+  -       'dlg_m01_029:7',
+  -       'evt_m01_east_platoon_withdraws:39',
+  -       'dlg_m01_029:8',
+  -       'evt_m01_bak_wounded:41',
+  -       'evt_m01_bak_wounded:43',
+  -       'cs_m01_east_blast:1:dlg_m01_044',
+  -       'cs_m01_east_blast:6:dlg_m01_045',
+  -       'cs_m01_east_blast:7:dlg_m01_046',
+  -       'dlg_m01_048',
+  -       'dlg_m01_049',
+  -       'dlg_m01_040',
+  -       'dlg_m01_050',
+  -       'dlg_m01_051',
+  -       'cs_m01_west_blast:0:dlg_m01_051',
+  -       'cs_m01_west_blast:6:dlg_m01_052',
+  -       'cs_m01_roll_call:2:dlg_m01_053',
+  -       'cs_m01_roll_call:3:dlg_m01_054',
+  -       'cs_m01_roll_call:4:dlg_m01_055',
+  -       'cs_m01_roll_call:5:dlg_m01_063',
+  -       'cs_m01_roll_call:7:dlg_m01_064',
+  -       'cs_m01_roll_call:9:dlg_m01_065',
+  -       'cs_m01_roll_call:10:dlg_m01_058',
+  -       'cs_m01_roll_call:11:dlg_m01_059',
+  -       'cs_m01_roll_call:13:dlg_m01_059',
+  -       'cs_m01_roll_call:15:dlg_m01_060',
+  -       'cs_m01_roll_call:17:dlg_m01_061',
+  -       'cs_m01_roll_call:18:dlg_m01_062'
+  -     ],
+  -     dialogueQueue: [],
+  -     enemyFire: {
+  -       nextId: 1925,
+  -       rounds: []
+  -     },
+  -     flags: {
+  -       'm01.bak_status': 'rescued_by_dudek',
+  -       'm01.completed': true,
+  -       'm01.dudek_status': 'wounded_arm',
+  -       'm01.east_platoon_survivors': 12,
+  -       'm01.forward_post_state': 'intact_near_miss',
+  -       'm01.nowicki_status': 'missing',
+  -       'm01.second_raid_state': 'ended'
+  -     },
+  -     gate: null,
+  -     grenades: {
+  -       active: [],
+  -       ammo: 2,
+  -       nextId: 0
+  -     },
+  -     mission: {
+  -       complete: true,
+  -       phase: 'OUTRO',
+  -       status: 'Demolição oeste · 337 m, em frente · siga para o abrigo',
+  -       text: 'Mantenha contacto com a secção'
+  -     },
+  -     missionId: 'm01_tczew',
+  -     objectives: {
+  -       obj_m01_cover_repair: {
+  -         progress: 100,
+  -         state: 'done'
+  -       },
+  -       obj_m01_cover_withdrawal: {
+  -         progress: 100,
+  -         state: 'done'
+  -       },
+  -       obj_m01_deliver_message: {
+  -         progress: 100,
+  -         state: 'done'
+  -       },
+  -       obj_m01_fetch_material: {
+  -         progress: 100,
+  -         state: 'done'
+  -       },
+  -       obj_m01_find_sappers: {
+  -         progress: 100,
+  -         state: 'done'
+  -       },
+  -       obj_m01_follow_sergeant: {
+  -         progress: 100,
+  -         state: 'done'
+  -       },
+  -       obj_m01_hold_access: {
+  -         progress: 100,
+  -         state: 'done'
+  -       },
+  -       obj_m01_hold_corridor: {
+  -         progress: 100,
+  -         state: 'done'
+  -       },
+  -       obj_m01_leave_bridge: {
+  -         progress: 100,
+  -         state: 'done'
+  -       },
+  -       obj_m01_reach_shelter: {
+  -         progress: 100,
+  -         state: 'done'
+  -       },
+  -       obj_m01_rescue_bak: {
+  -         progress: 0,
+  -         state: 'expired'
+  -       },
+  -       obj_m01_take_cover: {
+  -         progress: 100,
+  -         state: 'done'
+  -       }
+  -     },
+  -     pendingCheckpoint: null,
+  -     player: {
+  -       active: true,
+  -       aiming: false,
+  -       alive: true,
+  -       angle: 1.4576453452044118,
+  -       carrying: null,
+  -       cooldown: 0,
+  -       crouched: true,
+  -       facing: 0,
+  -       headgear: 'pl_helmet_wz31',
+  -       health: 92,
+  -       id: 'jan_wrona',
+  -       moveBlend: 0,
+  -       pitch: -0.06,
+  -       radius: 0.36,
+  -       rounds: 5,
+  -       shot: 0,
+  -       space: 'metres',
+  -       sprinting: false,
+  -       state: 'GUARD',
+  -       suppressedUntil: 0,
+  -       team: 'player',
+  -       weaponShotAt: -1000000000,
+  -       x: -260.5,
+  -       y: -4,
+  -       z: 68.2
+  -     },
+  -     recoveries: [],
+  -     rng: 3822798900,
+  -     scene: null,
+  -     sceneDone: [
+  -       'cs_m01_intro',
+  -       'cs_m01_bombing',
+  -       'cs_m01_order',
+  -       'cs_m01_east_blast',
+  -       'cs_m01_west_blast',
+  -       'cs_m01_roll_call'
+  -     ],
+  -     schema: 2,
+  -     sectors: {
+  -       damage: [
+  -         {
+  -           id: 'station_bomb',
+  -           soundAt: 68.96412404924834,
+  -           started: 67.7499999999983,
+  -           x: -400,
+  -           y: -3,
+  -           z: 37.5
+  -         },
+  -         {
+  -           id: 'forward_post',
+  -           soundAt: 70.03007083051124,
+  -           started: 69.89999999999817,
+  -           x: 0,
+  -           y: -10,
+  -           z: -40
+  -         },
+  -         {
+  -           id: 'repair_crater',
+  -           soundAt: 72.91872204736852,
+  -           started: 72.79999999999801,
+  -           x: -40,
+  -           y: -2,
+  -           z: 10
+  -         },
+  -         {
+  -           id: 'raid_0530',
+  -           soundAt: 485.9278216843213,
+  -           started: 484.25000000007583,
+  -           x: -600,
+  -           y: 0,
+  -           z: 100
+  -         },
+  -         {
+  -           id: 'east_demolition',
+  -           soundAt: 788.8990060002325,
+  -           started: 786.6499999998323,
+  -           x: 800,
+  -           y: 0,
+  -           z: 20
+  -         },
+  -         {
+  -           id: 'west_demolition',
+  -           soundAt: 1034.8026230292921,
+  -           started: 1033.7499999996076,
+  -           x: 70,
+  -           y: 0,
+  -           z: 20
+  -         }
+  -       ],
+  -       sectors: [
+  -         {
+  -           id: 's1_west_bridgehead',
+  -           morale: 1,
+  -           state: 'west_blown',
+  -           strength: 100,
+  -           supply: 1
+  -         },
+  -         {
+  -           id: 's2_east_bridgehead',
+  -           morale: 1,
+  -           state: 'smoke_and_sporadic_fire',
+  -           strength: 92,
+  -           supply: 1
+  -         },
+  -         {
+  -           id: 's3_station_yard',
+  -           morale: 1,
+  -           state: 'dust_fall',
+  -           strength: 100,
+  -           supply: 1
+  -         },
+  -         {
+  -           id: 's4_north_perimeter',
+  -           morale: 1,
+  -           state: 'kozliny_attack',
+  -           strength: 100,
+  -           supply: 1
+  -         },
+  -         {
+  -           id: 's5_sky_east',
+  -           morale: 1,
+  -           state: 'train_smoke_east',
+  -           strength: 100,
+  -           supply: 1
+  -         }
+  -       ]
+  -     },
+  -     subtitle: null,
+  -     timers: {
+  -       ambient: 0,
+  -       boundary: 0,
+  -       boundaryCountdown: 0,
+  -       boundaryWarning: false,
+  -       calloutAt: -1000000000,
+  -       cover: 0,
+  -       coverCallIndex: 0,
+  -       coverExposure: 0,
+  -       escort: false,
+  -       escortSpoke: false,
+  -       fireEase: false,
+  -       firstMgAt: 258.35000000002447,
+  -       guide: 98.44999999999695,
+  -       guideAt: 1052.7999999996039,
+  -       guideDist: 37.19403365232919,
+  -       guideKey: null,
+  -       guideShown: true,
+  -       holdAccessVisited: true,
+  -       kowalRounds: 30,
+  -       lowAmmoHint: false,
+  -       nextCombatCall: 763.6999999998568,
+  -       nextCoverCall: 40,
+  -       occupiedCover: null,
+  -       repairPins: 81,
+  -       repairStall: 0,
+  -       repairSuppressedUntil: 438.3000000000646,
+  -       water: 0,
+  -       withdrawalCasualty: 22180.30000000861
+  -     },
+  -     weapon: {
+  -       id: 'kb_wz29',
+  -       lastShot: -1000000000,
+  -       mag: 5,
+  -       received: 0,
+  -       reloadMode: null,
+  -       reserve: 40,
+  -       shotCount: 0,
+  -       sight: 300,
+  -       started: 0,
+  -       state: 'READY',
+  -       until: 0
+  -     }
+  -   },
+      rng: 3822798900,
+      scene: null,
+      sceneDone: [
+        'cs_m01_intro',
+        'cs_m01_bombing',
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/179e239c7f9f/COD-guerra/tests/m01-ckm-runtime.test.js:37:73)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: {
+      schema: 2,
+      missionId: 'm01_tczew',
+      clock: 1048.7999999995939,
+      battleClock: 25500,
+      rng: 3822798900,
+      player: { id: 'jan_wrona', space: 'metres', x: -260.5, y: -4, z: 68.2, team: 'player', health: 92, alive: true, active: true, state: 'GUARD', facing: 0, shot: 0, radius: 0.36, crouched: true, suppressedUntil: 0, cooldown: 0, rounds: 5, angle: 1.4576453452044118, pitch: -0.06, aiming: false, moveBlend: 0, sprinting: false, weaponShotAt: -1000000000, carrying: null, headgear: 'pl_helmet_wz31' },
+      weapon: { id: 'kb_wz29', mag: 5, reserve: 40, state: 'READY', until: 0, started: 0, lastShot: -1000000000, shotCount: 0, received: 0, sight: 300, reloadMode: null },
+      actors: [
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object]
+      ],
+      consumed: { evt_m01_intro_card: 0, evt_m01_prelude_start: 0.05, evt_m01_railway_worker_report: 16.000000000000092, evt_m01_planes_heard: 17.750000000000117, evt_m01_bombing_0434: 67.7499999999983, evt_m01_cable_cut: 67.7499999999983, evt_m01_forward_post_bombed: 69.89999999999817, evt_m01_nowicki_lost: 72.79999999999801, evt_m01_wounded_dragged: 93.54999999999683, evt_m01_second_air_pass: 170.70000000000456, evt_m01_train963_arrives: 256.400000000024, evt_m01_panzerzug_arrives: 303.10000000003464, evt_m01_repair_complete: 448.1500000000676, evt_m01_order_demolish: 484.25000000007583, evt_m01_bombing_0530: 484.25000000007583, evt_m01_runner_pressure_report: 559.2500000000391, evt_m01_north_contact_distant: 634.2499999999709, evt_m01_east_platoon_withdraws: 709.2499999999027, evt_m01_bak_wounded: 739.2499999998754, evt_m01_germans_on_east_spans: 746.7499999998686, evt_m01_east_demolition: 786.6499999998323, evt_m01_dudek_retrieves_bak: 814.8999999998066, evt_m01_west_demolition: 1033.7499999996076, evt_m01_roll_call: 1048.749999999594, evt_m01_kozliny_attack_distant: 1048.749999999594, evt_m01_debrief: 1048.7999999995939 },
+      objectives: { obj_m01_deliver_message: [Object], obj_m01_take_cover: [Object], obj_m01_follow_sergeant: [Object], obj_m01_find_sappers: [Object], obj_m01_fetch_material: [Object], obj_m01_cover_repair: [Object], obj_m01_hold_access: [Object], obj_m01_cover_withdrawal: [Object], obj_m01_rescue_bak: [Object], obj_m01_leave_bridge: [Object], obj_m01_hold_corridor: [Object], obj_m01_reach_shelter: [Object] },
+      flags: { 'm01.completed': true, 'm01.nowicki_status': 'missing', 'm01.bak_status': 'rescued_by_dudek', 'm01.dudek_status': 'wounded_arm', 'm01.east_platoon_survivors': 12, 'm01.second_raid_state': 'ended', 'm01.forward_post_state': 'intact_near_miss' },
+      destruction: [ 'ignition_line_damaged', 'station_wagon_fire', 'ignition_line_repaired', 'east_ends_destroyed', 'west_end_destroyed' ],
+      dialogueConsumed: [
+        'cs_m01_intro:4:dlg_m01_005',      'cs_m01_intro:5:dlg_m01_001',
+        'cs_m01_intro:6:dlg_m01_002',      'cs_m01_intro:7:dlg_m01_006',
+        'cs_m01_intro:8:dlg_m01_007',      'cs_m01_intro:9:dlg_m01_003',
+        'cs_m01_intro:10:dlg_m01_004',     'evt_m01_railway_worker_report:19',
+        'dlg_m01_009',                     'dlg_m01_010',
+        'dlg_m01_011',                     'evt_m01_planes_heard:12',
+        'evt_m01_planes_heard:13',         'evt_m01_planes_heard:66',
+        'cs_m01_bombing:1:dlg_m01_014',    'cs_m01_bombing:5:dlg_m01_016',
+        'cs_m01_bombing:6:dlg_m01_015',    'dlg_m01_020',
+        'dlg_m01_021',                     'dlg_m01_023',
+        'evt_m01_wounded_dragged:17',      'dlg_m01_024',
+        'evt_m01_train963_arrives:25',     'evt_m01_train963_arrives:28',
+        'co_m01_enemy_mg_fire_on_squad',   'dlg_m01_026',
+        'dlg_m01_022',                     'dlg_m01_027',
+        'dlg_m01_029:3',                   'evt_m01_panzerzug_arrives:38',
+        'dlg_m01_029:4',                   'evt_m01_repair_complete:31',
+        'evt_m01_repair_complete:32',      'dlg_m01_029:5',
+        'cs_m01_order:1:dlg_m01_033',      'cs_m01_order:2:dlg_m01_034',
+        'dlg_m01_029:6',                   'evt_m01_runner_pressure_report:37',
+        'dlg_m01_029:7',                   'evt_m01_east_platoon_withdraws:39',
+        'dlg_m01_029:8',                   'evt_m01_bak_wounded:41',
+        'evt_m01_bak_wounded:43',          'cs_m01_east_blast:1:dlg_m01_044',
+        'cs_m01_east_blast:6:dlg_m01_045', 'cs_m01_east_blast:7:dlg_m01_046',
+        'dlg_m01_048',                     'dlg_m01_049',
+        'dlg_m01_040',                     'dlg_m01_050',
+        'dlg_m01_051',                     'cs_m01_west_blast:0:dlg_m01_051',
+        'cs_m01_west_blast:6:dlg_m01_052', 'cs_m01_roll_call:2:dlg_m01_053',
+        'cs_m01_roll_call:3:dlg_m01_054',  'cs_m01_roll_call:4:dlg_m01_055',
+        'cs_m01_roll_call:5:dlg_m01_063',  'cs_m01_roll_call:7:dlg_m01_064',
+        'cs_m01_roll_call:9:dlg_m01_065',  'cs_m01_roll_call:10:dlg_m01_058',
+        'cs_m01_roll_call:11:dlg_m01_059', 'cs_m01_roll_call:13:dlg_m01_059',
+        'cs_m01_roll_call:15:dlg_m01_060', 'cs_m01_roll_call:17:dlg_m01_061',
+        'cs_m01_roll_call:18:dlg_m01_062'
+      ],
+      dialogueQueue: [],
+      subtitle: null,
+      scene: null,
+      sceneDone: [ 'cs_m01_intro', 'cs_m01_bombing', 'cs_m01_order', 'cs_m01_east_blast', 'cs_m01_west_blast', 'cs_m01_roll_call' ],
+      checkpointsReached: [ 'cp_m01_a_orientacao', 'cp_m01_b_reorganizacao', 'cp_m01_c_engenheiros', 'cp_m01_d_retirada' ],
+      pendingCheckpoint: null,
+      gate: null,
+      recoveries: [],
+      timers: { boundary: 0, water: 0, cover: 0, repairStall: 0, repairSuppressedUntil: 438.3000000000646, withdrawalCasualty: 22180.30000000861, ambient: 0, nextCoverCall: 40, guide: 98.44999999999695, guideKey: null, guideAt: 1052.7999999996039, guideDist: 37.19403365232919, guideShown: true, kowalRounds: 30, lowAmmoHint: false, escort: false, escortSpoke: false, boundaryWarning: false, boundaryCountdown: 0, holdAccessVisited: true, occupiedCover: null, coverExposure: 0, coverCallIndex: 0, repairPins: 81, fireEase: false, calloutAt: -1000000000, nextCombatCall: 763.6999999998568, firstMgAt: 258.35000000002447 },
+      sectors: { sectors: [Array], damage: [Array] },
+      grenades: { ammo: 2, active: [], nextId: 0 },
+      mission: { phase: 'OUTRO', complete: true, text: 'Mantenha contacto com a secção', status: 'Demolição oeste · 337 m, em frente · siga para o abrigo' },
+      enemyFire: { rounds: [], nextId: 1925 }
+    },
+    expected: {
+      schema: 2,
+      missionId: 'm01_tczew',
+      clock: 1048.7999999995939,
+      battleClock: 25500,
+      rng: 3822798900,
+      player: { id: 'jan_wrona', space: 'metres', x: -260.5, y: -4, z: 68.2, team: 'player', health: 92, alive: true, active: true, state: 'GUARD', facing: 0, shot: 0, radius: 0.36, crouched: true, suppressedUntil: 0, cooldown: 0, rounds: 5, angle: 1.4576453452044118, pitch: -0.06, aiming: false, moveBlend: 0, sprinting: false, weaponShotAt: -1000000000, carrying: null, headgear: 'pl_helmet_wz31' },
+      weapon: { id: 'kb_wz29', mag: 5, reserve: 40, state: 'READY', until: 0, started: 0, lastShot: -1000000000, shotCount: 0, received: 0, sight: 300, reloadMode: null },
+      actors: [
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object]
+      ],
+      consumed: { evt_m01_intro_card: 0, evt_m01_prelude_start: 0.05, evt_m01_railway_worker_report: 16.000000000000092, evt_m01_planes_heard: 17.750000000000117, evt_m01_bombing_0434: 67.7499999999983, evt_m01_cable_cut: 67.7499999999983, evt_m01_forward_post_bombed: 69.89999999999817, evt_m01_nowicki_lost: 72.79999999999801, evt_m01_wounded_dragged: 93.54999999999683, evt_m01_second_air_pass: 170.70000000000456, evt_m01_train963_arrives: 256.400000000024, evt_m01_panzerzug_arrives: 303.10000000003464, evt_m01_repair_complete: 448.1500000000676, evt_m01_order_demolish: 484.25000000007583, evt_m01_bombing_0530: 484.25000000007583, evt_m01_runner_pressure_report: 559.2500000000391, evt_m01_north_contact_distant: 634.2499999999709, evt_m01_east_platoon_withdraws: 709.2499999999027, evt_m01_bak_wounded: 739.2499999998754, evt_m01_germans_on_east_spans: 746.7499999998686, evt_m01_east_demolition: 786.6499999998323, evt_m01_dudek_retrieves_bak: 814.8999999998066, evt_m01_west_demolition: 1033.7499999996076, evt_m01_roll_call: 1048.749999999594, evt_m01_kozliny_attack_distant: 1048.749999999594, evt_m01_debrief: 1048.7999999995939 },
+      objectives: { obj_m01_deliver_message: [Object], obj_m01_take_cover: [Object], obj_m01_follow_sergeant: [Object], obj_m01_find_sappers: [Object], obj_m01_fetch_material: [Object], obj_m01_cover_repair: [Object], obj_m01_hold_access: [Object], obj_m01_cover_withdrawal: [Object], obj_m01_rescue_bak: [Object], obj_m01_leave_bridge: [Object], obj_m01_hold_corridor: [Object], obj_m01_reach_shelter: [Object] },
+      flags: { 'm01.completed': true, 'm01.nowicki_status': 'missing', 'm01.bak_status': 'rescued_by_dudek', 'm01.dudek_status': 'wounded_arm', 'm01.east_platoon_survivors': 12, 'm01.second_raid_state': 'ended', 'm01.forward_post_state': 'intact_near_miss' },
+      destruction: [ 'ignition_line_damaged', 'station_wagon_fire', 'ignition_line_repaired', 'east_ends_destroyed', 'west_end_destroyed' ],
+      dialogueConsumed: [
+        'cs_m01_intro:4:dlg_m01_005',      'cs_m01_intro:5:dlg_m01_001',
+        'cs_m01_intro:6:dlg_m01_002',      'cs_m01_intro:7:dlg_m01_006',
+        'cs_m01_intro:8:dlg_m01_007',      'cs_m01_intro:9:dlg_m01_003',
+        'cs_m01_intro:10:dlg_m01_004',     'evt_m01_railway_worker_report:19',
+        'dlg_m01_009',                     'dlg_m01_010',
+        'dlg_m01_011',                     'evt_m01_planes_heard:12',
+        'evt_m01_planes_heard:13',         'evt_m01_planes_heard:66',
+        'cs_m01_bombing:1:dlg_m01_014',    'cs_m01_bombing:5:dlg_m01_016',
+        'cs_m01_bombing:6:dlg_m01_015',    'dlg_m01_020',
+        'dlg_m01_021',                     'dlg_m01_023',
+        'evt_m01_wounded_dragged:17',      'dlg_m01_024',
+        'evt_m01_train963_arrives:25',     'evt_m01_train963_arrives:28',
+        'co_m01_enemy_mg_fire_on_squad',   'dlg_m01_026',
+        'dlg_m01_022',                     'dlg_m01_027',
+        'dlg_m01_029:3',                   'evt_m01_panzerzug_arrives:38',
+        'dlg_m01_029:4',                   'evt_m01_repair_complete:31',
+        'evt_m01_repair_complete:32',      'dlg_m01_029:5',
+        'cs_m01_order:1:dlg_m01_033',      'cs_m01_order:2:dlg_m01_034',
+        'dlg_m01_029:6',                   'evt_m01_runner_pressure_report:37',
+        'dlg_m01_029:7',                   'evt_m01_east_platoon_withdraws:39',
+        'dlg_m01_029:8',                   'evt_m01_bak_wounded:41',
+        'evt_m01_bak_wounded:43',          'cs_m01_east_blast:1:dlg_m01_044',
+        'cs_m01_east_blast:6:dlg_m01_045', 'cs_m01_east_blast:7:dlg_m01_046',
+        'dlg_m01_048',                     'dlg_m01_049',
+        'dlg_m01_040',                     'dlg_m01_050',
+        'dlg_m01_051',                     'cs_m01_west_blast:0:dlg_m01_051',
+        'cs_m01_west_blast:6:dlg_m01_052', 'cs_m01_roll_call:2:dlg_m01_053',
+        'cs_m01_roll_call:3:dlg_m01_054',  'cs_m01_roll_call:4:dlg_m01_055',
+        'cs_m01_roll_call:5:dlg_m01_063',  'cs_m01_roll_call:7:dlg_m01_064',
+        'cs_m01_roll_call:9:dlg_m01_065',  'cs_m01_roll_call:10:dlg_m01_058',
+        'cs_m01_roll_call:11:dlg_m01_059', 'cs_m01_roll_call:13:dlg_m01_059',
+        'cs_m01_roll_call:15:dlg_m01_060', 'cs_m01_roll_call:17:dlg_m01_061',
+        'cs_m01_roll_call:18:dlg_m01_062'
+      ],
+      dialogueQueue: [],
+      subtitle: null,
+      scene: null,
+      sceneDone: [ 'cs_m01_intro', 'cs_m01_bombing', 'cs_m01_order', 'cs_m01_east_blast', 'cs_m01_west_blast', 'cs_m01_roll_call' ],
+      checkpointsReached: [ 'cp_m01_a_orientacao', 'cp_m01_b_reorganizacao', 'cp_m01_c_engenheiros', 'cp_m01_d_retirada' ],
+      pendingCheckpoint: null,
+      gate: null,
+      recoveries: [],
+      timers: { boundary: 0, water: 0, cover: 0, repairStall: 0, repairSuppressedUntil: 438.3000000000646, withdrawalCasualty: 22180.30000000861, ambient: 0, nextCoverCall: 40, guide: 98.44999999999695, guideKey: null, guideAt: 1052.7999999996039, guideDist: 37.19403365232919, guideShown: true, kowalRounds: 30, lowAmmoHint: false, escort: false, escortSpoke: false, boundaryWarning: false, boundaryCountdown: 0, holdAccessVisited: true, occupiedCover: null, coverExposure: 0, coverCallIndex: 0, repairPins: 81, fireEase: false, calloutAt: -1000000000, nextCombatCall: 763.6999999998568, firstMgAt: 258.35000000002447 },
+      sectors: { sectors: [Array], damage: [Array] },
+      grenades: { ammo: 2, active: [], nextId: 0 },
+      mission: { phase: 'OUTRO', complete: true, text: 'Mantenha contacto com a secção', status: '' },
+      enemyFire: { rounds: [], nextId: 1925 },
+      resumeCheckpoint: { schema: 2, missionId: 'm01_tczew', clock: 1048.7999999995939, battleClock: 25500, rng: 3822798900, player: [Object], weapon: [Object], actors: [Array], consumed: [Object], objectives: [Object], flags: [Object], destruction: [Array], dialogueConsumed: [Array], dialogueQueue: [], subtitle: null, scene: null, sceneDone: [Array], checkpointsReached: [Array], pendingCheckpoint: null, gate: null, recoveries: [], timers: [Object], sectors: [Object], grenades: [Object], mission: [Object], enemyFire: [Object] }
+    },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/m01-cover-combat.test.js:51:1
+✖ casualty IDs and rounds in flight survive reload and checkpoint restore; invalid optional timers are rejected atomically (455.808235ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + []
+  - [
+  -   'pl_east_13',
+  -   'pl_east_14',
+  -   'pl_east_15',
+  -   'pl_east_16',
+  -   'pl_east_17'
+  - ]
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/179e239c7f9f/COD-guerra/tests/m01-cover-combat.test.js:55:39)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'pl_east_13', 'pl_east_14', 'pl_east_15', 'pl_east_16', 'pl_east_17' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
