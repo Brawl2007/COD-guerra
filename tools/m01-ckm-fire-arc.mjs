@@ -22,9 +22,13 @@ export function directionFor(azimuthDeg,elevationDeg){
 }
 export function traceRay(world,origin,azimuthDeg,elevationDeg,range=1200){
   const direction=directionFor(azimuthDeg,elevationDeg),hit=traceObstruction(world,origin,direction,range),distance=hit?.distance??range;
-  return {azimuthDeg:round(azimuthDeg,3),elevationDeg:round(elevationDeg,3),firstBlocker:hit?.id??(hit?.material==='earth'?'terrain':null),
-    blockerKind:hit?.kind??null,blockerMaterial:hit?.material??null,blockerDistanceM:hit?round(hit.distance,3):null,clearDistanceM:round(distance,3),
-    worldEnd:{x:round(origin.x+direction.x*distance,3),y:round(origin.y+direction.y*distance,3),z:round(origin.z+direction.z*distance,3)}};
+  const point={x:origin.x+direction.x*distance,y:origin.y+direction.y*distance,z:origin.z+direction.z*distance};
+  // Production traceTerrain returns material=earth for both terrain and the walkable bridge surfaces used by heightAt().
+  // Keep the production result, but annotate which authored walk-surface contains that first contact when one exists.
+  const surface=hit&&!hit.id&&hit.material==='earth'?world.walkSurfaces?.find(c=>point.x>=c.min.x&&point.x<=c.max.x&&point.z>=c.min.z&&point.z<=c.max.z&&point.y<c.max.y-.04):null;
+  return {azimuthDeg:round(azimuthDeg,3),elevationDeg:round(elevationDeg,3),firstBlocker:hit?.id??surface?.id??(hit?.material==='earth'?'terrain':null),
+    blockerKind:hit?.kind??null,blockerMaterial:hit?.material??null,blockerSurface:surface?.id??null,blockerDistanceM:hit?round(hit.distance,3):null,clearDistanceM:round(distance,3),
+    worldEnd:{x:round(point.x,3),y:round(point.y,3),z:round(point.z,3)}};
 }
 export function scanArc({azMin=-30,azMax=30,azStep=.5,elMin=-5,elMax=10,elStep=.5,range=1200,world=new TczewWorld(),origin=muzzleFlashWorld()}={}){
   const rows=[];

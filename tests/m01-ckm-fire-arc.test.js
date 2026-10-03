@@ -1,6 +1,6 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import {TczewWorld} from '../src/world/tczew-world.js';
-import {muzzleFlashWorld,muzzleWorld,embrasureContract,traceRay,scanArc,summariseRows,directionFor} from '../tools/m01-ckm-fire-arc.mjs';
+import {muzzleFlashWorld,muzzleWorld,embrasureContract,traceRay,scanArc,summariseRows,directionFor,buildReport} from '../tools/m01-ckm-fire-arc.mjs';
 
 test('CKM authored sockets transform numerically onto the reconstructed south embrasure',()=>{
   const flash=muzzleFlashWorld(),muzzle=muzzleWorld(),e=embrasureContract();
@@ -23,4 +23,17 @@ test('angular scan is deterministic and reports both blocked and geometrically c
 
 test('azimuth convention is east at zero and positive toward map +Z/south',()=>{
   assert.deepEqual(directionFor(0,0),{x:1,y:0,z:0});const south=directionFor(90,0);assert.ok(Math.abs(south.x)<1e-12&&Math.abs(south.z-1)<1e-12);
+});
+
+test('the authored aim-clip excursion is fully blocked in production geometry',()=>{
+  const rows=scanArc({azMin:-1.2,azMax:1.2,azStep:.1,elMin:-.35,elMax:.35,elStep:.05,range:1200});
+  const s=summariseRows(rows);assert.equal(s.samples,375);assert.equal(s.clear,0);
+  assert.equal(s.byBlocker.road_collider_pier_01+s.byBlocker.road_collider_deck_span_01,375);
+});
+
+test('real repair and withdrawal snapshots expose no unobstructed German target from the CKM muzzle',async()=>{
+  const report=await buildReport({azMin:-2,azMax:2,azStep:1,elMin:0,elMax:1,elStep:.5,range:1200});
+  assert.equal(report.targets.repair.targets.length,40);assert.deepEqual(report.targets.repair.clearTargets,[]);
+  assert.equal(report.targets.withdrawal.targets.length,50);assert.deepEqual(report.targets.withdrawal.clearTargets,[]);
+  assert.ok(report.targets.repair.targets.every(t=>t.firstBlocker));assert.ok(report.targets.withdrawal.targets.every(t=>t.firstBlocker));
 });
