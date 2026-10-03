@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import map from '../missions/m01-tczew/map-layout.json' with {type:'json'};
 import {M01Simulation} from '../src/game/m01-simulation.js';
-import {TczewWorld} from '../src/world/tczew-world.js';
+import {TczewWorld} from '../src/world/tczew-world.js';\nimport {driver} from './helpers/m01-route.js';
 import {M01_YARD_WAGON_PLAN,yardWagonLod,yardWagonState,yardWagonPosition,yardWagonFireDamage} from '../src/render/m01-yard-wagons.js';
 
 const E=name=>`evt_m01_${name}`;
@@ -69,4 +69,20 @@ test('station wagon fire presentation comes from persisted state, runtime terrai
   assert.equal(damage.x,root[0]);assert.equal(damage.z,root[2]);assert.equal(damage.started,12);assert.equal(damage.smokeVisible,true);
   assert.ok(Math.abs(damage.fireY-(root[1]+1.29))<1e-12);
   assert.ok(Math.abs((damage.y+3)-(root[1]+3.85))<1e-12);
+});
+
+
+test('the third-bomb beat, not the later station casualty event, owns the wagon hit',()=>{
+  const {sim,step,until,walk}=driver();
+  step({skip:true});
+  walk(-66,26);walk(-15,26);walk(-15,2);walk(16,2);step({interact:true});
+  until(()=>sim.consumedEvent(E('bombing_0434')),120);
+  const bombingAt=sim.consumed[E('bombing_0434')];
+  until(()=>sim.scene?.id==='cs_m01_bombing'&&sim.scene.elapsed>=8.55,20);
+  assert.equal(sim.consumedEvent(E('wounded_dragged')),false,'the casualty event is later and cannot own the third bomb');
+  assert.ok(sim.destruction.includes('station_wagon_fire'),'the t=8.5 third bomb must persist the wagon-fire state');
+  const hit=sim.sectors.damage.filter(d=>d.id==='station_bomb');
+  assert.equal(hit.length,1,'the third bomb creates one persisted station impact');
+  assert.ok(hit[0].started-bombingAt>=8.45&&hit[0].started-bombingAt<8.7,
+    `station impact must occur at the t=8.5 beat, got ${hit[0].started-bombingAt}`);
 });
