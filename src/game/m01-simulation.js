@@ -22,11 +22,11 @@ const STATION_YARD={x:-300,y:-3,z:30},STATION_PATIENT='generic_rifleman';
 // Estimated presentation timing, owned by simulation and saved with the pair (schema 2).
 const STATION_TRANSITION_SEC=1.6,STATION_DRAG_OFFSET=.92;
 const STATION_DELIVERY={x:EVACUATION.x-2,z:EVACUATION.z+2.2};
-// West embrasure cv_casemate_emb_s; ground placement is provisional, with no invented firing/platform.
-export const CKM_POSITION={x:22,y:-3,z:43};
+// West embrasure cv_casemate_emb_s; muzzle_flash is 0.83 m along local -Z, so yaw -PI/2 puts it at the mapped embrasure x=25.
+export const CKM_POSITION={x:24.17,y:-3,z:43};
 const CKM_IDS=['ckm_gunner','ckm_loader','ckm_reserve'],CKM_ABANDON_SEC=3;
 const makeCKMCrew=(world,clock=0,withdrawn=false)=>CKM_IDS.map((id,i)=>{
-  const [x,z]=[[21.206,42.971],[22.08,42.48],[20.4,41.6]][i];
+  const [x,z]=[[23.376,42.971],[24.25,42.48],[22.57,41.6]][i];
   const point=withdrawn?{x:-170-i*1.6,z:22+i*1.2}:{x,z};
   return entity(id,{...point,y:withdrawn?world.heightAt(point.x,point.z):CKM_POSITION.y},'ally',{
     group:'grp_ckm_crew',role:i<2?'SUPPORT':'RIFLEMAN',facing:i===1?112*Math.PI/180:0,
