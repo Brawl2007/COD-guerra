@@ -1,0 +1,174 @@
+// src/game/m01-simulation.js — linha 21 no commit 44ee782
+// SUBSTITUIR ISTO:
+const STATION_YARD={x:-300,y:-3,z:30},STATION_PATIENT='generic_rifleman';
+
+// POR ISTO:
+const STATION_YARD={x:-300,y:-3,z:30},STATION_PATIENT='generic_rifleman';
+// Estimated presentation timing, owned by simulation and saved with the pair (schema 2).
+const STATION_TRANSITION_SEC=1.6,STATION_DRAG_OFFSET=.92;
+const STATION_DELIVERY={x:EVACUATION.x-2,z:EVACUATION.z+2.2};
+
+// src/game/m01-simulation.js — linha 316 no commit 44ee782
+// SUBSTITUIR ISTO:
+  updateActors(dt){
+
+// POR ISTO:
+  updateActors(dt){
+    this.interruptStationEvacuation();
+
+// src/game/m01-simulation.js — linha 348 no commit 44ee782
+// SUBSTITUIR ISTO:
+        a.facing=c.facing;a.x=c.x+Math.cos(c.facing)*.92;a.z=c.z+Math.sin(c.facing)*.92;
+
+// POR ISTO:
+        a.facing=c.facing;a.x=c.x+Math.cos(c.facing)*STATION_DRAG_OFFSET;a.z=c.z+Math.sin(c.facing)*STATION_DRAG_OFFSET;
+
+// src/game/m01-simulation.js — linha 604 no commit 44ee782
+// SUBSTITUIR ISTO:
+  evacuateStation(medic,dt){
+    const patient=this.actor(STATION_PATIENT);
+    if(!patient.alive||!patient.active){
+      if(patient.carriedBy===medic.id){patient.carriedBy=null;patient.y=this.world.heightAt(patient.x,patient.z);}
+      medic.task=null;medic.crouched=false;medic.target=this.world.point('aid_position');return;
+    }
+    if(patient.carriedBy!==medic.id){
+      // Reach the head from the side instead of walking through the casualty's body.
+      const head={x:patient.x-.92,z:patient.z};
+      this.moveActor(medic,medic.x>patient.x-.7?{x:patient.x-1.4,z:patient.z+2.3}:head,dt,4.5);
+      if(dist(medic,head)<.9){
+        patient.carriedBy=medic.id;medic.crouched=true;medic.facing=0;
+        this.line('dlg_m01_017',`${E('wounded_dragged')}:17`);
+      }
+      return;
+    }
+    this.moveActor(medic,EVACUATION,dt,.65);medic.facing+=Math.PI;
+    if(dist(medic,EVACUATION)<1.2){
+      Object.assign(patient,{carriedBy:null,task:'station_aid_post',x:EVACUATION.x-2,z:EVACUATION.z+2.2,facing:medic.facing});
+      patient.y=this.world.heightAt(patient.x,patient.z);
+      Object.assign(medic,{task:null,crouched:false,state:'GUARD',target:this.world.point('aid_position')});
+    }
+  }
+
+// POR ISTO:
+  interruptStationEvacuation(){
+    const patient=this.actor(STATION_PATIENT),medic=this.actor('leon_dudek');
+    if(!patient.stationDrag&&!(patient.task==='station_wounded'&&patient.carriedBy===medic.id)&&medic.task!=='evacuate_station_wounded')return;
+    if(patient.alive&&patient.active&&patient.task==='station_wounded'&&medic.alive&&medic.active&&medic.state!=='WOUNDED'&&medic.task==='evacuate_station_wounded')return;
+    if(patient.carriedBy===medic.id)patient.carriedBy=null;
+    delete patient.stationDrag;patient.y=this.world.heightAt(patient.x,patient.z);
+    if(medic.task==='evacuate_station_wounded')Object.assign(medic,{task:null,crouched:false,target:this.world.point('aid_position')});
+  }
+  evacuateStation(medic,dt){
+    const patient=this.actor(STATION_PATIENT);
+    const phase=name=>patient.stationDrag={phase:name,startedAt:this.clock,duration:STATION_TRANSITION_SEC};
+    // Only this pair needs an exact endpoint. Leave the common follower arrival logic intact.
+    const reach=(target,speed)=>{
+      const d=dist(medic,target);
+      if(d>.9)this.moveActor(medic,target,dt,speed);
+      else if(d>=.001){
+        const step=Math.min(d,speed*dt);
+        this.world.move(medic,(target.x-medic.x)*step/d,(target.z-medic.z)*step/d);medic.state='ADVANCE';
+      }
+    };
+    if(patient.carriedBy!==medic.id){
+      // Reach the head from the side instead of walking through the casualty's body.
+      const facing=Math.atan2(patient.z-STATION_DELIVERY.z,patient.x-STATION_DELIVERY.x);
+      const head={x:patient.x-Math.cos(facing)*STATION_DRAG_OFFSET,z:patient.z-Math.sin(facing)*STATION_DRAG_OFFSET};
+      reach(medic.x>patient.x-.7?{x:patient.x-1.4,z:patient.z+2.3}:head,4.5);
+      if(dist(medic,head)<.001){
+        patient.carriedBy=medic.id;Object.assign(medic,{crouched:true,facing,state:'GUARD'});phase('grab');
+        this.line('dlg_m01_017',`${E('wounded_dragged')}:17`);
+      }
+      return;
+    }
+    // Legacy schema 2 saves already in transit resume their drag without replaying the grab.
+    if(!patient.stationDrag)phase('drag');
+    const transport=patient.stationDrag,elapsed=this.clock-transport.startedAt;
+    if(transport.phase==='grab'){
+      if(elapsed+1e-9<transport.duration)return;
+      phase('drag');return;
+    }
+    if(transport.phase==='release'){
+      if(elapsed+1e-9<transport.duration)return;
+      // The roots have already arrived here; this only removes numerical movement residue.
+      Object.assign(patient,{carriedBy:null,task:'station_aid_post',...STATION_DELIVERY});delete patient.stationDrag;
+      patient.y=this.world.heightAt(patient.x,patient.z);
+      Object.assign(medic,{task:null,crouched:false,state:'GUARD',target:this.world.point('aid_position')});
+      return;
+    }
+    const destination={x:STATION_DELIVERY.x-Math.cos(medic.facing)*STATION_DRAG_OFFSET,z:STATION_DELIVERY.z-Math.sin(medic.facing)*STATION_DRAG_OFFSET};
+    if(dist(medic,destination)>=.001){const facing=medic.facing;reach(destination,.65);medic.facing=facing;}
+    if(dist(medic,destination)<.001){medic.state='GUARD';phase('release');}
+  }
+
+// src/game/m01-simulation.js — linha 717 no commit 44ee782
+// SUBSTITUIR ISTO:
+    const data=a=>({id:a.id,x:a.x,y:a.y,z:a.z,alive:a.alive,active:a.active,state:a.state,task:a.task??null,carriedBy:a.carriedBy??null});
+
+// POR ISTO:
+    const data=a=>({id:a.id,x:a.x,y:a.y,z:a.z,facing:a.facing,alive:a.alive,active:a.active,state:a.state,task:a.task??null,carriedBy:a.carriedBy??null,
+      ...(a.stationDrag?{stationDrag:{...a.stationDrag}}:{})});
+
+// src/game/m01-simulation.js — linha 791 no commit 44ee782
+// SUBSTITUIR ISTO:
+  if(s.actors.some(a=>['station_wounded','station_aid_post'].includes(a.task)&&(a.id!==STATION_PATIENT||!['WOUNDED','DOWN'].includes(a.state)||
+    (a.carriedBy!=null&&(a.carriedBy!=='leon_dudek'||a.task==='station_aid_post')))||a.task==='evacuate_station_wounded'&&a.id!=='leon_dudek'))reject('evacuação da estação');
+
+// POR ISTO:
+  if(s.actors.some(a=>['station_wounded','station_aid_post'].includes(a.task)&&(a.id!==STATION_PATIENT||!['WOUNDED','DOWN'].includes(a.state)||
+    (a.carriedBy!=null&&(a.carriedBy!=='leon_dudek'||a.task==='station_aid_post')))||a.task==='evacuate_station_wounded'&&a.id!=='leon_dudek'))reject('evacuação da estação');
+  for(const a of s.actors)if(a.stationDrag!==undefined){
+    const t=a.stationDrag,m=s.actors.find(c=>c.id==='leon_dudek'),eventAt=s.consumed?.[E('wounded_dragged')];
+    if(a.id!==STATION_PATIENT||!t||Object.keys(t).some(k=>!['phase','startedAt','duration'].includes(k))||
+      !['grab','drag','release'].includes(t.phase)||!finite(eventAt,0,s.clock)||!finite(t.startedAt,eventAt,s.clock)||t.duration!==STATION_TRANSITION_SEC||
+      !a.alive||!a.active||a.task!=='station_wounded'||a.carriedBy!==m.id||!m.alive||!m.active||m.state==='WOUNDED'||m.task!=='evacuate_station_wounded')reject('transição da evacuação da estação');
+  }
+
+// src/render/m01-characters.js — linha 12 no commit 44ee782
+// SUBSTITUIR ISTO:
+const mgGunner=a=>a.team==='enemy'&&a.weapon==='mg34'&&['de_east_0','de_east_1'].includes(a.id);
+// POR ISTO:
+const mgGunner=a=>a.team==='enemy'&&a.weapon==='mg34'&&['de_east_0','de_east_1'].includes(a.id);
+const stationClips=['station_drag_medic_grab','station_drag_patient_grab','station_drag_medic_release','station_drag_patient_release','drag_wounded','crouched_idle','wounded'];
+// src/render/m01-characters.js — linha 28 no commit 44ee782
+// SUBSTITUIR ISTO:
+      this.assets.load('mg34-clips',MG+'m01_mg34_animations.glb').then(g=>{
+        if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
+      }),
+
+// POR ISTO:
+      this.assets.load('m01-station-transitions',BASE+'station-drag-transitions/m01_station_drag_transitions.glb').then(g=>{
+        if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
+      }),
+      this.assets.load('mg34-clips',MG+'m01_mg34_animations.glb').then(g=>{
+        if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
+      }),
+
+// src/render/m01-characters.js — linha 54 no commit 44ee782
+// SUBSTITUIR ISTO:
+    if(pose.name==='fallen')return {clip:'fallen',time:1.4,loop:false};
+
+// POR ISTO:
+    if(pose.name==='fallen')return {clip:'fallen',time:1.4,loop:false};
+    const stationPatient=actor.id==='generic_rifleman'?actor:actors.find(a=>a.id==='generic_rifleman'&&a.carriedBy===actor.id);
+    const stationMedic=stationPatient&&actors.find(a=>a.id===stationPatient.carriedBy);
+    if(stationPatient?.alive&&stationPatient.active&&stationPatient.task==='station_wounded'&&stationMedic?.alive&&stationMedic.active){
+      const transport=stationPatient.stationDrag,phase=transport?.phase??'drag',isPatient=actor===stationPatient;
+      if(stationClips.every(n=>this.clips.has(n))){
+        if(phase==='drag')return isPatient?{clip:'station_drag_patient_grab',time:this.clips.get('station_drag_patient_grab').duration,loop:false}:
+          {clip:'drag_wounded',time:transport?Math.max(0,time-transport.startedAt):time+offset,loop:true};
+        const name=`station_drag_${isPatient?'patient':'medic'}_${phase}`;
+        return {clip:name,time:Math.max(0,Math.min(1,(time-transport.startedAt)/transport.duration))*this.clips.get(name).duration,loop:false};
+      }
+      // A missing/partial optional kit falls back for both roles; never play half of a pair.
+      if(isPatient)return {clip:'wounded',time:0,loop:false};
+      return phase==='drag'?{clip:this.clips.has('drag_wounded')?'drag_wounded':'pinned',time:time+offset,loop:true}:
+        {clip:this.clips.has('crouched_idle')?'crouched_idle':'pinned',time:0,loop:false};
+    }
+
+// src/render/m01-characters.js — linha 165 no commit 44ee782
+// SUBSTITUIR ISTO:
+      visible.push({id:a.id,lod,clip:sample.clip,weapon:v.weapon,weaponLOD:v.weaponLOD,muzzle:this.muzzle(a.id)?.toArray(),
+
+// POR ISTO:
+      visible.push({id:a.id,lod,clip:sample.clip,clipTime:v.action.time,loop:sample.loop,weapon:v.weapon,weaponLOD:v.weaponLOD,muzzle:this.muzzle(a.id)?.toArray(),

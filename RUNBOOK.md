@@ -38,7 +38,7 @@ Ao capturar o rato, o input espera a confirmação de pointer lock e descarta a 
 
 Na bancada, checkpoint automático ao atingir C e chave `cod-guerra:checkpoint:v1`. Em M01, CP-A..D usam `cod-guerra:checkpoint:m01:v2`, com os dois relógios, estado real da arma, actores, eventos, flags, diálogos, sectores e destruição. CP-C é adiado até 05:34; CP-D usa posição/hora actuais. Reiniciar Checkpoint restaura o snapshot vivo; Continuar restaura após reload da página. Saves inválidos mostram erro e deixam iniciar de novo. Versões desconhecidas são rejeitadas.
 
-As pontes usam nove GLB de apresentação e colisores em JSON. Se um GLB de M01 falhar, o menu mostra erro e bloqueia início/continuação para não criar uma ponte invisível; a bancada francesa mantém o fallback próprio. Para verificar a exportação e repetir o percurso de simulação:
+As pontes usam nove GLB de apresentação e colisores em JSON. Se um dos nove GLB obrigatórios das pontes falhar, o menu mostra erro e bloqueia início/continuação para não criar uma ponte invisível; a bancada francesa mantém o fallback próprio. Os GLB opcionais de soldados e aviões mantêm os proxies quando faltam. `gameDiagnostics().m01.requiredAssetFailures` distingue as pontes de `assetFailures`, que também regista o Ju 87. `m01.aircraft` mostra LODs carregados, nível seleccionado e transforms dos três aviões; a hélice usa o relógio da missão e conserva a pausa/restauro. `m01.wagons` mostra 65 vagões, passo 9,10 m, LOD2, tipos carregados e contagem de proxies. `m01.characters.actors` identifica `de_east_0/1` com MG34, `weaponLOD`, boca real e clip; `characters.failures` regista as falhas opcionais da arma/clips. As duas fontes ficam dentro do limite 18/24/28. A postura deitada e a dupla aguardam dados de simulação. Para verificar a exportação e repetir o percurso de simulação:
 
 ```sh
 npm run assets:m01:colliders -- --check
@@ -103,6 +103,18 @@ node tools/verify-m01-cover.mjs
 O piloto move-se, aponta com deltas de input e usa disparo/ferrolho/recarga. Não altera actores, RNG, eventos ou relógios; não é uma partida no navegador. Gera `docs/verification/m01-runtime/cover-combat/report.json`, com tiros a menos de 3 m (`round-impact.pinned`) e baixas por tiro real (`victim`). O navegador verifica por continuação o HUD, os efeitos e a pose dos sapadores no reparo, e as perdas na retirada. A flecha do tiro alemão é aproximação de jogo; a balística continua pendente.
 
 ## Diagnóstico
+
+O clip opcional `m01_station_animations.glb` é gerado com `node tools/assets/m01-station/build.mjs`, sobre o rig fixado no seu manifesto. `gameDiagnostics().m01.stationEvacuation` resume dados reais do ferido e de Dudek. A primeira pessoa exige os clips de arma/transporte: o clip da estação, sozinho, não a activa. Kowal/Bąk e os sockets das suas armas aparecem em `m01.characters.actors`; isso é apresentação, não autoridade de combate.
+
+Os soldados e as mãos de M01 carregam GLB com texturas incorporadas sob o mesmo prefixo de produção. Todas as qualidades carregam LOD0/1/2 polacos, LOD2 alemão e o ficheiro de clips. O LOD0 fornece a arma e os braços em primeira pessoa; a qualidade baixa usa LOD1/2 no cenário e limita os soldados com skinning a 18. Se o LOD0 faltar, as mãos usam o LOD1; falhar todos os modelos conserva a apresentação procedural. Não muda o estado do actor nem bloqueia a missão; uma ponte em falta continua a bloquear o início.
+
+Galeria dos seis LODs e quinze clips, em Chromium, com relatório e capturas:
+
+```sh
+CHROME_EXECUTABLE=/caminho/para/chromium node tools/verify-m01-characters.mjs test-results/m01-characters
+```
+
+É revisão isolada de assets. As capturas de produção por trechos e as verificações de ferrolho/clipe/cartucho usam o jogo construído. `gameDiagnostics().m01.characters` e `.viewModel` expõem apenas dados de apresentação; não são guardados no save. Créditos, limitações e provas em `docs/verification/m01-runtime/characters/README.md`.
 
 `?debug=1` habilita somente `window.gameDiagnostics()`: renderer, preset, chamadas/triângulos, assets, relógio, posição, fase e sectores. Não expõe a instância nem permite mutações. Não deixar informação de engenharia no HUD normal.
 

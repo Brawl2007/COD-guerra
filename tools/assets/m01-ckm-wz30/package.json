@@ -1,0 +1,15 @@
+{
+  "name": "m01-ckm-wz30-generator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Gera a ckm wz.30 polaca no tripé de 1939, com fita e caixa (GLB LOD0–2 com nós móveis e clips da arma), e os clips ckm_wz30_* do atirador e do municiador para o rig dos soldados; geometria e texturas procedurais originais.",
+  "scripts": {
+    "build": "node build.mjs",
+    "render": "node render/capture.mjs"
+  },
+  "engines": { "node": ">=22.12.0" },
+  "dependencies": {
+    "@gltf-transform/core": "4.5.1"
+  }
+}

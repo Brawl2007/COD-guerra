@@ -24,14 +24,14 @@ Em ambientes sem o Chromium do Playwright, definir `CHROME_EXECUTABLE`, por exem
 
 | Módulo | Função |
 | --- | --- |
-| `mh.mjs`, `human.mjs` | leitura do MakeHuman; corpo em metros com frente −Z; esqueleto de jogo de 60 ossos; pesos top-4; `LIGHT_DROP` para o esqueleto leve |
+| `mh.mjs`, `human.mjs` | leitura do MakeHuman; corpo em metros com frente −Z; esqueleto de jogo de 61 ossos (inclui `weapon_mag`, carregador da rkm); pesos top-4; `LIGHT_DROP` para o esqueleto leve |
 | `garments.mjs`, `outfit.mjs` | túnica/calças em casca alisada (Taubin, casco convexo, cintura), aba, cinto, gola, botas, perneiras; estilos `pl`/`de` |
 | `head.mjs`, `variants.mjs` | cabeças variantes (alvos CC0 só na cabeça), máscaras de lábios/sobrancelhas/barba/cabelo, casca de cabelo, olhos; personagens do `STORY_BIBLE.md` |
 | `gear.mjs` | wz.31 (+capa), M35, rogatywka wz.37, correame, bolsas, cantil, pá, máscara, coldre, divisas |
 | `weapon.mjs` | kb wz.29, Kar98k e clipe de 5; sockets da arma |
 | `paint.mjs`, `noise.mjs`, `atlas.mjs`, `textures.mjs` | atlas único por nação: ilhas, empacotamento, pintura procedural, relevo → normal (Y glTF), ORM, JPEG/PNG |
 | `assemble.mjs` | malhas fundidas por grupo alternável, LODs com meshoptimizer e cúpula interior do capacete largada nos LOD1/2 |
-| `pose.mjs`, `clips.mjs` | quaterniões, FK, IK de 2 ossos com torção do antebraço, mãos orientadas, dedos; 15 clips a 30 fps |
+| `pose.mjs`, `clips.mjs` | quaterniões, FK, IK de 2 ossos com torção do antebraço, mãos orientadas, dedos; 25 clips a 30 fps (15 gerais e 10 `rkm_*`); faixas constantes com 2 chaves |
 | `glb.mjs`, `geom.mjs`, `meshops.mjs` | escrita glTF (gltf-transform), primitivas, utilidades |
 
 `render/viewer.html` + `render/stage.mjs` abrem os GLB no Chromium com o GLTFLoader oficial. `render/capture.mjs` gera as capturas versionadas. Ferramentas de desenvolvimento em `dev/`:

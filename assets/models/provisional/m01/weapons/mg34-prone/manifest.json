@@ -1,0 +1,637 @@
+{
+  "asset": "MG 34 deitada — atirador e municiador alemães de M01 Tczew (grp_de_east, Panzerzug 7)",
+  "status": "PROPOSTA VISUAL PROVISÓRIA (M01 continua PROTÓTIPO JOGÁVEL; o motor não tem `pose: prone`; sem playtest nem medição de FPS)",
+  "generator": "tools/assets/m01-mg34-prone (node build.mjs)",
+  "author": "Claude Code (clips gerados por código original neste repositório)",
+  "license": "Original do projecto; a licença global do repositório continua por decidir pelo proprietário (ASSET_CREDITS.md). Sem conteúdo de terceiros nem de jogos.",
+  "tools": [
+    "Node.js",
+    "@gltf-transform/core 4.5.1 (MIT)",
+    "three.js 0.186.1 (MIT, capturas e teste do mixer)",
+    "Playwright/Chromium (capturas)"
+  ],
+  "units": "metros; +Y para cima; frente/cano para −Z; raiz do atirador na origem; tempo em segundos",
+  "scale": {
+    "unit_m": 1,
+    "rig": "m01_soldier_de_* (mesmos 60 ossos + 6 nós móveis da MG 34 filhos de weapon)",
+    "weapon": "m01_mg34_lod* tal como está (1,219 m)"
+  },
+  "reuse": {
+    "weapon": "kit MG 34 (PR #30): malhas, LODs, pivôs e sockets sem alterações; os clips animam os nós pelo nome",
+    "rig": "soldado alemão actual (m01_soldier_de_*): só se lêem as articulações para o esqueleto",
+    "standing_clips": "mg34_aim, mg34_fire_burst e mg34_reload continuam em m01_mg34_animations.glb, sem alterações; os clips novos têm nomes mg34_prone_* e mg34_loader_prone_*",
+    "reused_files": {
+      "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod0.glb": {
+        "sha256": "a65ac6a4eb8a350646a209383a5e2d7c76667774f9af2453279af99f8a071298",
+        "bytes": 331304
+      },
+      "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod1.glb": {
+        "sha256": "6aa44e8c9c6152301a9ac2d31d1c88e174705f778922459a2c2f2d2d6fa0fc7a",
+        "bytes": 124380
+      },
+      "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod2.glb": {
+        "sha256": "657e2ab1784f6755d7a429081210db6b7252496ede55e8c068ded112d8edcc65",
+        "bytes": 37144
+      },
+      "assets/models/provisional/m01/weapons/mg34/m01_mg34_animations.glb": {
+        "sha256": "2245c4ac88f59b2a17a73436e14b62fa2f0abff2303fa19bb2b16913f82ad74b",
+        "bytes": 256984
+      },
+      "assets/models/provisional/m01/characters/m01_soldier_de_lod0.glb": {
+        "sha256": "15082783b5a18ed93934e6eb47b9b07632d91e13478d9d7a450a7af2a9eb5b54",
+        "bytes": 1718132
+      },
+      "assets/models/provisional/m01/characters/m01_soldier_de_lod1.glb": {
+        "sha256": "5c7294586cd75d0cd96eb757452854a5d8d19a93349fdf9d00d80d52d640a29f",
+        "bytes": 604600
+      },
+      "assets/models/provisional/m01/characters/m01_soldier_de_lod2.glb": {
+        "sha256": "6e04d5a34ee64ad8f142ada447e565314b45f4da8b2f123fa3ffeff6fd6c66d4",
+        "bytes": 187880
+      },
+      "assets/models/provisional/m01/characters/m01_soldier_animations.glb": {
+        "sha256": "481d6114f4481ae0f99e162a4bbfdbe8e1d74cffc2460836a2b525bf93b0202d",
+        "bytes": 876612
+      }
+    }
+  },
+  "pair": {
+    "gunner": {
+      "root": [
+        0,
+        0,
+        0
+      ],
+      "weapon": "MG 34 presa ao osso weapon (transformação nula), presa ANTES de criar as acções do mixer",
+      "hide": [
+        "rifle (Kar98k)",
+        "clip (weapon_clip escala 0)",
+        "mg34_bipod_folded (escala 0 nos clips deitados)"
+      ]
+    },
+    "loader": {
+      "root_offset_m": [
+        -0.72,
+        0,
+        0.35
+      ],
+      "rotation": "a mesma da raiz do atirador",
+      "weapon": "nenhuma: osso weapon e weapon_clip com escala 0 (Kar98k escondida)",
+      "hide": [
+        "rifle",
+        "clip"
+      ]
+    },
+    "sync": "mg34_prone_reload e mg34_loader_prone_feed começam no mesmo instante e duram o mesmo; o tambor novo é o nó mg34_drum da arma do atirador e acompanha a mão do municiador entre drum_from_assistant e drum_handoff"
+  },
+  "posture": {
+    "pose": "deitado de bruços sobre o bípode (prone); corpo apoiado na anca, peito e antebraços; cotovelos e joelhos no chão; pés estendidos com os dedos no chão",
+    "hands": {
+      "right": {
+        "pos": [
+          0.034,
+          -0.03,
+          0.155
+        ],
+        "fdir": [
+          -0.3010858672138876,
+          -0.6222441255753677,
+          -0.7226060813133302
+        ],
+        "palm": [
+          -0.9877295966495897,
+          0.04938647983247949,
+          0.14815943949743846
+        ]
+      },
+      "left": {
+        "pos": [
+          -0.05,
+          -0.09,
+          0.33
+        ],
+        "fdir": [
+          0.9035398058696474,
+          0.4251952027621871,
+          0.053149400345273386
+        ],
+        "palm": [
+          0.2873478855663454,
+          0.9578262852211513,
+          0
+        ]
+      },
+      "note": "direita no punho (perfil do kit); esquerda por baixo da coronha, a puxá-la ao ombro"
+    },
+    "face": "face na coronha (socket cheek) com o olho direito na linha de mira; o cano fica livre à frente do bípode",
+    "body_params": {
+      "hy": 0.269,
+      "hz": 0.42,
+      "hp": 89.2,
+      "hyaw": -5.6,
+      "s": [
+        -17.4,
+        -15,
+        4.6
+      ],
+      "n": -1.9,
+      "h": 9.9,
+      "hr": -10,
+      "fy": 0.067,
+      "fz": -0.072,
+      "fp": -152.4,
+      "ft": 3.2,
+      "cr": [
+        49.5,
+        -28.8
+      ],
+      "cl": [
+        -28.2,
+        17.8
+      ]
+    },
+    "feet": {
+      "l": [
+        -0.32,
+        1.28,
+        25
+      ],
+      "r": [
+        0.2,
+        1.33,
+        -15
+      ]
+    },
+    "contacts": {
+      "note": "gunner/loader: centros das articulações do rig (m); skin_lowest_y_m: vértice mais baixo da malha em cada zona de apoio (LBS, como no GLB). Pele medida por clip em docs/assets/m01-mg34-prone/import-report.json",
+      "skin_lowest_y_m": {
+        "gunner_aim": {
+          "kneecap_l": 0.003,
+          "kneecap_r": 0.003,
+          "elbow_l": 0.015,
+          "elbow_r": 0.012,
+          "thigh_l": 0.005,
+          "thigh_r": 0.005,
+          "pelvis": 0.082,
+          "chest": 0.135,
+          "boot_l": -0.004,
+          "boot_r": -0.004
+        },
+        "loader_idle": {
+          "kneecap_l": 0.008,
+          "kneecap_r": -0.003,
+          "elbow_l": -0.009,
+          "elbow_r": -0.008,
+          "thigh_l": 0.003,
+          "thigh_r": 0.007,
+          "pelvis": 0.095,
+          "chest": 0.098,
+          "boot_l": -0.004,
+          "boot_r": -0.004
+        }
+      },
+      "gunner": {
+        "bipod_feet": [
+          0.098,
+          0,
+          -1.222
+        ],
+        "weapon_pitch_deg": 3.47,
+        "butt": [
+          0.098,
+          0.24,
+          -0.053
+        ],
+        "shoulder_r": [
+          0.17,
+          0.222,
+          -0.011
+        ],
+        "cheek_socket": [
+          0.098,
+          0.363,
+          -0.278
+        ],
+        "eye_r": [
+          0.098,
+          0.363,
+          -0.278
+        ],
+        "elbow_l": [
+          -0.143,
+          0.049,
+          -0.068
+        ],
+        "elbow_r": [
+          0.177,
+          0.051,
+          -0.196
+        ],
+        "knee_l": [
+          -0.204,
+          0.068,
+          0.784
+        ],
+        "knee_r": [
+          0.202,
+          0.068,
+          0.818
+        ],
+        "toes_l": [
+          -0.269,
+          0.041,
+          1.343
+        ],
+        "toes_r": [
+          0.173,
+          0.041,
+          1.399
+        ],
+        "hips": [
+          0.05,
+          0.269,
+          0.42
+        ],
+        "chest": [
+          0.072,
+          0.368,
+          0.094
+        ],
+        "hand_r_on": "punho (MG34_GRIP.r do kit)",
+        "hand_l_on": "por baixo da coronha (BUTT_L)"
+      },
+      "loader": {
+        "root_offset_m": [
+          -0.72,
+          0,
+          0.35
+        ],
+        "elbow_l": [
+          -0.985,
+          0.035,
+          0.386
+        ],
+        "elbow_r": [
+          -0.481,
+          0.037,
+          0.373
+        ],
+        "knee_l": [
+          -0.936,
+          0.073,
+          1.193
+        ],
+        "knee_r": [
+          -0.51,
+          0.061,
+          1.174
+        ],
+        "hips": [
+          -0.72,
+          0.28,
+          0.8
+        ]
+      }
+    }
+  },
+  "bipod": {
+    "nodes": {
+      "folded": "mg34_bipod_folded",
+      "open": "mg34_bipod_open"
+    },
+    "runtime": "o GLB da arma marca mg34_bipod_open com visible=false; ao entrar em prone o runtime põe mg34_bipod_open.visible = true e deixa os clips decidirem pela escala (STEP 0/1); depois de mg34_prone_exit volta a false",
+    "enter": "o bípode dobrado roda 99° em X à volta do suporte (0.45–0.8 s, a mão esquerda acompanha as pernas) e troca-se pelo aberto em 0.8 s; as patas tocam no chão em 1.2 s",
+    "feet_on_ground": "nos clips deitados as patas (socket bipod_feet) ficam em y≈0; o balanço de pontaria roda a arma à volta delas"
+  },
+  "sockets": {
+    "grip_r": [
+      0,
+      -0.07,
+      0.1
+    ],
+    "grip_l": [
+      0,
+      -0.03,
+      -0.42
+    ],
+    "cheek": [
+      0,
+      0.084,
+      0.22
+    ],
+    "muzzle": [
+      0,
+      0.03,
+      -0.769
+    ],
+    "ejection_port": [
+      0,
+      -0.014,
+      -0.03
+    ],
+    "charging_handle": [
+      0.061,
+      0.012,
+      -0.035
+    ],
+    "charging_handle_back": [
+      0.061,
+      0.012,
+      0.08499999999999999
+    ],
+    "feed_cover_hinge": [
+      0,
+      0.072,
+      -0.106
+    ],
+    "feed_cover_latch": [
+      0,
+      0.104,
+      0.05
+    ],
+    "feed_tray": [
+      -0.03,
+      0.064,
+      -0.04
+    ],
+    "drum_center": [
+      -0.105,
+      -0.008,
+      -0.035
+    ],
+    "rear_sight": [
+      0,
+      0.085,
+      -0.12
+    ],
+    "front_sight": [
+      0,
+      0.087,
+      -0.704
+    ],
+    "butt": [
+      0,
+      -0.026,
+      0.453
+    ],
+    "bipod_mount": [
+      0,
+      0.004,
+      -0.645
+    ],
+    "bipod_feet": [
+      0,
+      -0.336,
+      -0.7
+    ]
+  },
+  "nodes": [
+    {
+      "node": "mg34_feed_cover",
+      "parent": "weapon",
+      "pivot": [
+        0,
+        0.072,
+        -0.106
+      ]
+    },
+    {
+      "node": "mg34_cocking_handle",
+      "parent": "weapon",
+      "pivot": [
+        0.031,
+        0.012,
+        -0.035
+      ]
+    },
+    {
+      "node": "mg34_drum",
+      "parent": "weapon",
+      "pivot": [
+        -0.105,
+        -0.008,
+        -0.035
+      ]
+    },
+    {
+      "node": "mg34_belt",
+      "parent": "weapon",
+      "pivot": [
+        -0.03,
+        0.061,
+        -0.035
+      ]
+    },
+    {
+      "node": "mg34_bipod_folded",
+      "parent": "weapon",
+      "pivot": [
+        0,
+        0.004,
+        -0.645
+      ]
+    },
+    {
+      "node": "mg34_bipod_open",
+      "parent": "weapon",
+      "pivot": [
+        0,
+        0.004,
+        -0.645
+      ]
+    }
+  ],
+  "fire": {
+    "rate_rpm": 800,
+    "shot_interval_s": 0.075,
+    "rounds": 7,
+    "note": "eventos de tiro só para apresentação (som, clarão, cápsulas); a simulação decide tiros, dano e munição"
+  },
+  "reload": {
+    "events": {
+      "cover_open": 0.8,
+      "drum_off": 1.3,
+      "drum_down": 1.6,
+      "drum_from_assistant": 1.7,
+      "drum_handoff": 2.15,
+      "drum_on": 2.75,
+      "belt_in": 3.05,
+      "cover_closed": 3.35,
+      "handle_back": 3.85,
+      "handle_forward": 4.15
+    },
+    "duration_s": 4.8
+  },
+  "sources": {
+    "note": "Sem fontes novas: medidas e mecanismo da MG 34 vêm do kit (T33, docs/assets/m01-mg34/README.md). A postura deitada, os tempos, as distâncias da dupla e a passagem do tambor são ESTIMATIVAS de apresentação a afinar em playtest.",
+    "estimates": [
+      "posição do municiador (LOADER_OFFSET)",
+      "tempos da entrada, saída e recarga",
+      "subida da boca e salto do bípode na rajada",
+      "balanço de pontaria",
+      "porta-tambores do municiador (não modelado)"
+    ]
+  },
+  "files": {
+    "m01_mg34_prone_animations.glb": {
+      "bytes": 858508,
+      "clips": [
+        {
+          "name": "mg34_prone_enter",
+          "role": "gunner",
+          "duration": 1.9,
+          "loop": false,
+          "events": {
+            "bipod_swing": 0.45,
+            "bipod_open": 0.8,
+            "bipod_on_ground": 1.2,
+            "settled": 1.6
+          },
+          "contacts": {
+            "lowest_joint": "thumb_03_l",
+            "lowest_joint_y": 0.013,
+            "weapon_lowest_y": 0
+          }
+        },
+        {
+          "name": "mg34_prone_idle",
+          "role": "gunner",
+          "duration": 4,
+          "loop": true,
+          "events": null,
+          "contacts": {
+            "lowest_joint": "ball_l",
+            "lowest_joint_y": 0.041,
+            "weapon_lowest_y": 0
+          }
+        },
+        {
+          "name": "mg34_prone_aim",
+          "role": "gunner",
+          "duration": 2,
+          "loop": true,
+          "events": null,
+          "contacts": {
+            "lowest_joint": "ball_r",
+            "lowest_joint_y": 0.041,
+            "weapon_lowest_y": 0
+          }
+        },
+        {
+          "name": "mg34_prone_fire_burst",
+          "role": "gunner",
+          "duration": 1.02,
+          "loop": false,
+          "events": {
+            "fire": [
+              0,
+              0.075,
+              0.15,
+              0.225,
+              0.3,
+              0.375,
+              0.45
+            ]
+          },
+          "fire_window_s": [
+            0,
+            0.525
+          ],
+          "interrupt": {
+            "after_shots": {
+              "4": 0.3,
+              "6": 0.45
+            },
+            "fade_s": 0.2,
+            "to": "mg34_prone_aim",
+            "note": "para cortar a rajada depois de 4 ou 6 tiros: cruzar para mg34_prone_aim no instante indicado (antes do 5.º/7.º evento); os eventos seguintes não são emitidos"
+          },
+          "contacts": {
+            "lowest_joint": "ball_r",
+            "lowest_joint_y": 0.041,
+            "weapon_lowest_y": 0
+          }
+        },
+        {
+          "name": "mg34_prone_reload",
+          "role": "gunner",
+          "duration": 4.8,
+          "loop": false,
+          "events": {
+            "cover_open": 0.8,
+            "drum_off": 1.3,
+            "drum_down": 1.6,
+            "drum_from_assistant": 1.7,
+            "drum_handoff": 2.15,
+            "drum_on": 2.75,
+            "belt_in": 3.05,
+            "cover_closed": 3.35,
+            "handle_back": 3.85,
+            "handle_forward": 4.15
+          },
+          "contacts": {
+            "lowest_joint": "ball_r",
+            "lowest_joint_y": 0.041,
+            "weapon_lowest_y": 0
+          }
+        },
+        {
+          "name": "mg34_prone_exit",
+          "role": "gunner",
+          "duration": 1.9,
+          "loop": false,
+          "events": {
+            "bipod_lift": 0.7,
+            "bipod_folded": 1.1,
+            "standing": 1.9
+          },
+          "contacts": {
+            "lowest_joint": "thumb_03_l",
+            "lowest_joint_y": 0.013,
+            "weapon_lowest_y": 0
+          }
+        },
+        {
+          "name": "mg34_loader_prone_idle",
+          "role": "loader",
+          "duration": 4,
+          "loop": true,
+          "events": null,
+          "contacts": {
+            "lowest_joint": "thumb_03_l",
+            "lowest_joint_y": 0.017,
+            "weapon_lowest_y": null
+          }
+        },
+        {
+          "name": "mg34_loader_prone_feed",
+          "role": "loader",
+          "duration": 4.8,
+          "loop": false,
+          "events": {
+            "reach_carrier": 0.95,
+            "drum_from_assistant": 1.7,
+            "drum_handoff": 2.15
+          },
+          "contacts": {
+            "lowest_joint": "thumb_03_r",
+            "lowest_joint_y": 0.017,
+            "weapon_lowest_y": null
+          }
+        },
+        {
+          "name": "mg34_loader_prone_leave",
+          "role": "loader",
+          "duration": 1.8,
+          "loop": false,
+          "events": null,
+          "contacts": {
+            "lowest_joint": "thumb_03_l",
+            "lowest_joint_y": 0.017,
+            "weapon_lowest_y": null
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+ "file": "m01_station_drag_transitions.glb",
+ "bytes": 408488,
+ "sha256": "5b59af9c0410f7747bed478a3c009ae54e916d7c38053530769f38a1d2c9eb6c",
+ "clips": [
+  "station_drag_medic_grab",
+  "station_drag_patient_grab",
+  "station_drag_medic_release",
+  "station_drag_patient_release"
+ ],
+ "frames": 49,
+ "checks": {
+  "method": "cápsulas entre ossos (src/body.mjs; raios estimados com fardamento) medidas em todos os frames; FK própria e AnimationMixer nos testes",
+  "contact_slack_m": 0.015,
+  "hands_contact": {
+   "hand_to_shoulder_m": 0.1619
+  },
+  "grip_ready": {
+   "hand_to_shoulder_m": 0.1626
+  },
+  "drag_pose": {
+   "hand_to_shoulder_m": 0.1226
+  },
+  "max_hand_to_shoulder_after_contact_m": 0.1856,
+  "max_ik_error_m": 0,
+  "worst_contact_overlap": {
+   "pair": "forearm_r/upper_chest",
+   "t": 1.3333,
+   "gap_m": -0.0298,
+   "note": "mão/antebraço do médico contra o corpo do ferido; inclui o aperto da pega"
+  },
+  "worst_other_overlap": {
+   "pair": "foot_l/upperarm_l",
+   "t": 0,
+   "gap_m": -0.0352,
+   "note": "o pé esquerdo do médico junto ao ombro esquerdo do ferido já existe nas poses reais dos extremos (ver endpoints_existing)"
+  },
+  "endpoints_existing": [
+   {
+    "pair": "crouched_idle t0 + wounded t0",
+    "closest": "foot_l/upperarm_l",
+    "gap_m": -0.0352
+   },
+   {
+    "pair": "drag_wounded t0 + pose de arrasto",
+    "closest": "hand_l/upperarm_l",
+    "gap_m": -0.0105
+   }
+  ],
+  "patient_ground_min_m": -0.0522,
+  "drag_loop_with_patient_hold": {
+   "frames": 43,
+   "max_hand_to_grip_m": 0.0058,
+   "worst_gap_m": -0.0141
+  }
+ }
+}

@@ -1,6 +1,7 @@
 // Procedural presentation in metres. This never writes to an actor or advances gameplay.
 export function actorPoseName(actor,time=0){
   if(!actor.alive)return 'fallen';
+  if(actor.task==='station_wounded')return 'wounded';
   if(actor.carriedBy)return 'carried';
   if(actor.state==='WOUNDED')return 'wounded';
   if(actor.pose==='seated')return 'seated';

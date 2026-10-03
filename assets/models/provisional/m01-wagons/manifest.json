@@ -1,0 +1,752 @@
+{
+  "asset": "Vagões de mercadorias de dois eixos — trem 963 (65 vagões) e pátio da estação de Tczew, M01",
+  "status": "PROVISÓRIO VERIFICADO (galeria isolada; M01 continua PROTÓTIPO JOGÁVEL)",
+  "generator": "tools/assets/m01-wagons (node build.mjs)",
+  "author": "Claude Code (geometria, pintura e animações geradas por código original neste repositório)",
+  "license": "Original do projecto; a licença global do repositório continua por decidir pelo proprietário (ASSET_CREDITS.md). Sem modelos, texturas ou fotografias de terceiros nem conteúdo de jogos.",
+  "tools": [
+    "Node.js",
+    "@gltf-transform/core 4.5.1 (MIT)",
+    "meshoptimizer 1.3.0 (MIT)",
+    "jpeg-js 0.4.4 (BSD-3)",
+    "pngjs 7.0.0 (MIT)",
+    "three.js 0.186.1 (MIT, verificação)",
+    "Playwright/Chromium (capturas)"
+  ],
+  "units": "metros; +Y para cima; frente em −Z (vagões simétricos)",
+  "pivot": "origem no topo do carril, ao centro da via e a meio do vagão (entre os rodados); sem coordenadas globais de Tczew",
+  "identification": {
+    "status": "P16 ABERTA: só se sabe o número do trem (963) e os 65 vagões (T07, T08); a classe da locomotiva e os tipos de vagão continuam por identificar",
+    "choice": "dois tipos genéricos da época com proporções da construção normalizada alemã (Verbandsbauart): coberto tipo G (G 10) e aberto tipo O. Não afirmam classe, dono nem país; servem também os vagões comuns do pátio oeste (freight_wagons_west, cv_wagon_1/2).",
+    "not_modelled": [
+      "inscrições de dono, número, classe e datas (sem fonte)",
+      "garita do guarda-freio e plataforma de freio de mão",
+      "carga dentro do vagão aberto",
+      "locomotiva (depois de P16)"
+    ]
+  },
+  "sources": {
+    "T07": [
+      "https://de.wikipedia.org/wiki/Angriff_auf_die_Weichselbr%C3%BCcke_bei_Dirschau"
+    ],
+    "T08": [
+      "https://www.konflikty.pl/historia/druga-wojna-swiatowa/walka-o-tczewskie-mosty-1-wrzesnia-1939-roku/"
+    ],
+    "note": "Só resumos (research/SOURCES.md). As medidas dos vagões vêm de conhecimento geral da Verbandsbauart e estão marcadas como estimadas; nenhuma ficha técnica foi lida neste ambiente."
+  },
+  "measures": [
+    {
+      "id": "gauge",
+      "value_m": 1.435,
+      "estimated": false,
+      "source": "bitola normal europeia (PKP, DRG e Cidade Livre de Danzig)"
+    },
+    {
+      "id": "length_over_buffers",
+      "value_m": 9.1,
+      "estimated": true,
+      "source": "proporções da Verbandsbauart (G 10 / O); assets-m01.json: ~9–10 m a confirmar (P16)"
+    },
+    {
+      "id": "frame_length",
+      "value_m": 7.86,
+      "estimated": true,
+      "source": "comprimento entre tampões menos 2 × 0,62 m de tampão"
+    },
+    {
+      "id": "body_width",
+      "value_m": 2.9,
+      "estimated": true,
+      "source": "proporções gerais; com as portas de correr e os puxadores, o coberto mede 3,18 m"
+    },
+    {
+      "id": "wheelbase",
+      "value_m": 4,
+      "estimated": true,
+      "source": "proporções da Verbandsbauart"
+    },
+    {
+      "id": "wheel_diameter",
+      "value_m": 1,
+      "estimated": true,
+      "source": "valor corrente de vagões de mercadorias da época"
+    },
+    {
+      "id": "buffer_height",
+      "value_m": 1.04,
+      "estimated": true,
+      "source": "valor corrente (≈1,04 m sobre o carril)"
+    },
+    {
+      "id": "buffer_spacing",
+      "value_m": 1.75,
+      "estimated": true,
+      "source": "valor corrente (1,75 m entre centros)"
+    },
+    {
+      "id": "floor_height",
+      "value_m": 1.24,
+      "estimated": true,
+      "source": "proporções gerais"
+    },
+    {
+      "id": "covered_height",
+      "value_m": 3.85,
+      "estimated": true,
+      "source": "tejadilho em arco; proporções gerais do G 10"
+    },
+    {
+      "id": "covered_door",
+      "value_m": [
+        1.8,
+        2
+      ],
+      "estimated": true,
+      "source": "uma porta de correr por lado, abertura estimada"
+    },
+    {
+      "id": "open_wall_height",
+      "value_m": 1.55,
+      "estimated": true,
+      "source": "altura dos taipais acima do soalho, estimada"
+    },
+    {
+      "id": "count_train_963",
+      "value": 65,
+      "estimated": false,
+      "source": "T07, T08 (65 vagões; tipos desconhecidos, P16)"
+    }
+  ],
+  "dimensions_m": {
+    "lop": 9.1,
+    "frame": 7.86,
+    "width": 2.9,
+    "wheelbase": 4,
+    "wheelR": 0.5,
+    "gauge": 1.435,
+    "tread": 0.75,
+    "journal": 1,
+    "buffer": {
+      "x": 0.875,
+      "y": 1.04,
+      "length": 0.62
+    },
+    "floor": 1.24,
+    "covered": {
+      "eave": 3.3,
+      "height": 3.85,
+      "door": {
+        "width": 1.8,
+        "height": 2,
+        "leaf": 1.95,
+        "travel": 1.95
+      }
+    },
+    "open": {
+      "wall": 1.55,
+      "height": 2.84,
+      "door": 1.5
+    }
+  },
+  "types": {
+    "covered": {
+      "label": "vagão coberto (tipo G), portas de correr",
+      "nodes": [
+        {
+          "node": "body",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "contents": "caixa, estrado, tampões, engates, caixas de eixo, molas, freios e degraus",
+          "pieces": [
+            "headstock_f",
+            "headstock_r",
+            "solebar_l",
+            "solebar_r",
+            "crossmember_f",
+            "crossmember_r",
+            "floor",
+            "axlebox_1l",
+            "axleguard_1lf",
+            "axleguard_1lr",
+            "spring_1l",
+            "brake_shoe_1l",
+            "axlebox_1r",
+            "axleguard_1rf",
+            "axleguard_1rr",
+            "spring_1r",
+            "brake_shoe_1r",
+            "brake_beam_1",
+            "axlebox_2l",
+            "axleguard_2lf",
+            "axleguard_2lr",
+            "spring_2l",
+            "brake_shoe_2l",
+            "axlebox_2r",
+            "axleguard_2rf",
+            "axleguard_2rr",
+            "spring_2r",
+            "brake_shoe_2r",
+            "brake_beam_2",
+            "buffer_fl",
+            "shunter_step_fl",
+            "buffer_fr",
+            "shunter_step_fr",
+            "hook_f",
+            "coupling_link_fl",
+            "coupling_link_fr",
+            "buffer_rl",
+            "shunter_step_rl",
+            "buffer_rr",
+            "shunter_step_rr",
+            "hook_r",
+            "coupling_link_rl",
+            "coupling_link_rr",
+            "side_l_f",
+            "side_l_r",
+            "lintel_l",
+            "post_l_-0.95",
+            "post_l_0.95",
+            "post_l_-2.45",
+            "post_l_2.45",
+            "brace_l_fi",
+            "brace_l_fo",
+            "brace_l_ri",
+            "brace_l_ro",
+            "vent_l_f",
+            "vent_l_r",
+            "door_rail_l_top",
+            "door_rail_l_bottom",
+            "side_r_f",
+            "side_r_r",
+            "lintel_r",
+            "post_r_-0.95",
+            "post_r_0.95",
+            "post_r_-2.45",
+            "post_r_2.45",
+            "brace_r_fi",
+            "brace_r_fo",
+            "brace_r_ri",
+            "brace_r_ro",
+            "vent_r_f",
+            "vent_r_r",
+            "door_rail_r_top",
+            "door_rail_r_bottom",
+            "end_f",
+            "end_post_fl",
+            "end_post_fr",
+            "corner_fl",
+            "corner_fr",
+            "grab_fl",
+            "grab_fr",
+            "end_r",
+            "end_post_rl",
+            "end_post_rr",
+            "corner_rl",
+            "corner_rr",
+            "grab_rl",
+            "grab_rr",
+            "roof"
+          ]
+        },
+        {
+          "node": "wheelset_1",
+          "translation": [
+            0,
+            0.5,
+            -2
+          ],
+          "contents": "rodado dianteiro (−Z): duas rodas de raios e eixo; roda em torno do X local",
+          "pieces": [
+            "wheel_1l",
+            "wheel_1r",
+            "axle_1"
+          ]
+        },
+        {
+          "node": "wheelset_2",
+          "translation": [
+            0,
+            0.5,
+            2
+          ],
+          "contents": "rodado traseiro (+Z)",
+          "pieces": [
+            "wheel_2l",
+            "wheel_2r",
+            "axle_2"
+          ]
+        },
+        {
+          "node": "door_l",
+          "translation": [
+            -1.54,
+            2.24,
+            0
+          ],
+          "contents": "porta de correr esquerda (−X)",
+          "pieces": [
+            "door_l_leaf",
+            "door_l_handle"
+          ]
+        },
+        {
+          "node": "door_r",
+          "translation": [
+            1.54,
+            2.24,
+            0
+          ],
+          "contents": "porta de correr direita (+X); desliza +1,95 m em Z por fora dos montantes",
+          "pieces": [
+            "door_r_leaf",
+            "door_r_handle"
+          ]
+        }
+      ],
+      "sockets": {
+        "coupler_front": [
+          0,
+          1.04,
+          -4.55
+        ],
+        "coupler_rear": [
+          0,
+          1.04,
+          4.55
+        ],
+        "wheelset_1": [
+          0,
+          0.5,
+          -2
+        ],
+        "wheelset_2": [
+          0,
+          0.5,
+          2
+        ],
+        "fire": [
+          0,
+          1.29,
+          0
+        ],
+        "smoke_top": [
+          0,
+          3.85,
+          0
+        ],
+        "door_r": [
+          1.45,
+          1.24,
+          0
+        ],
+        "door_l": [
+          -1.45,
+          1.24,
+          0
+        ],
+        "disembark_r": [
+          2.35,
+          0,
+          0
+        ],
+        "disembark_l": [
+          -2.35,
+          0,
+          0
+        ]
+      },
+      "animations": [
+        "wheels_roll",
+        "doors_open"
+      ],
+      "textures": {
+        "atlas_px": 1024,
+        "density_px_per_m": 44,
+        "painters": [
+          "black",
+          "wood",
+          "wheel",
+          "buffer",
+          "brown",
+          "door",
+          "roof"
+        ]
+      }
+    },
+    "open": {
+      "label": "vagão aberto (tipo O)",
+      "nodes": [
+        {
+          "node": "body",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "contents": "caixa, estrado, tampões, engates, caixas de eixo, molas, freios e degraus",
+          "pieces": [
+            "headstock_f",
+            "headstock_r",
+            "solebar_l",
+            "solebar_r",
+            "crossmember_f",
+            "crossmember_r",
+            "floor",
+            "axlebox_1l",
+            "axleguard_1lf",
+            "axleguard_1lr",
+            "spring_1l",
+            "brake_shoe_1l",
+            "axlebox_1r",
+            "axleguard_1rf",
+            "axleguard_1rr",
+            "spring_1r",
+            "brake_shoe_1r",
+            "brake_beam_1",
+            "axlebox_2l",
+            "axleguard_2lf",
+            "axleguard_2lr",
+            "spring_2l",
+            "brake_shoe_2l",
+            "axlebox_2r",
+            "axleguard_2rf",
+            "axleguard_2rr",
+            "spring_2r",
+            "brake_shoe_2r",
+            "brake_beam_2",
+            "buffer_fl",
+            "shunter_step_fl",
+            "buffer_fr",
+            "shunter_step_fr",
+            "hook_f",
+            "coupling_link_fl",
+            "coupling_link_fr",
+            "buffer_rl",
+            "shunter_step_rl",
+            "buffer_rr",
+            "shunter_step_rr",
+            "hook_r",
+            "coupling_link_rl",
+            "coupling_link_rr",
+            "side_l",
+            "top_rail_l",
+            "post_l_-0.79",
+            "post_l_0.79",
+            "post_l_-2.35",
+            "post_l_2.35",
+            "side_r",
+            "top_rail_r",
+            "post_r_-0.79",
+            "post_r_0.79",
+            "post_r_-2.35",
+            "post_r_2.35",
+            "end_f",
+            "top_rail_f",
+            "end_post_fl",
+            "end_post_fr",
+            "corner_fl",
+            "corner_fr",
+            "end_r",
+            "top_rail_r",
+            "end_post_rl",
+            "end_post_rr",
+            "corner_rl",
+            "corner_rr"
+          ]
+        },
+        {
+          "node": "wheelset_1",
+          "translation": [
+            0,
+            0.5,
+            -2
+          ],
+          "contents": "rodado dianteiro (−Z): duas rodas de raios e eixo; roda em torno do X local",
+          "pieces": [
+            "wheel_1l",
+            "wheel_1r",
+            "axle_1"
+          ]
+        },
+        {
+          "node": "wheelset_2",
+          "translation": [
+            0,
+            0.5,
+            2
+          ],
+          "contents": "rodado traseiro (+Z)",
+          "pieces": [
+            "wheel_2l",
+            "wheel_2r",
+            "axle_2"
+          ]
+        }
+      ],
+      "sockets": {
+        "coupler_front": [
+          0,
+          1.04,
+          -4.55
+        ],
+        "coupler_rear": [
+          0,
+          1.04,
+          4.55
+        ],
+        "wheelset_1": [
+          0,
+          0.5,
+          -2
+        ],
+        "wheelset_2": [
+          0,
+          0.5,
+          2
+        ],
+        "fire": [
+          0,
+          1.29,
+          0
+        ],
+        "smoke_top": [
+          0,
+          2.84,
+          0
+        ],
+        "load": [
+          0,
+          1.24,
+          0
+        ]
+      },
+      "animations": [
+        "wheels_roll"
+      ],
+      "textures": {
+        "atlas_px": 1024,
+        "density_px_per_m": 55,
+        "painters": [
+          "black",
+          "wood",
+          "wheel",
+          "buffer",
+          "brown"
+        ]
+      }
+    }
+  },
+  "animations": {
+    "wheels_roll": {
+      "duration": 1,
+      "loop": true,
+      "note": "uma volta por segundo, a rolar para −Z; no jogo timeScale = v / (π × 1,0 m) (v em m/s; negativo para recuar)"
+    },
+    "doors_open": {
+      "duration": 1.5,
+      "loop": false,
+      "note": "as duas portas correm +1,95 m em Z; fechar = tocar ao contrário (timeScale −1). Só o coberto."
+    }
+  },
+  "files": {
+    "m01_wagon_covered_lod0.glb": {
+      "type": "covered",
+      "lod": "lod0",
+      "use": "perto (< 60 m): pátio da estação, cobertura cv_wagon_*, desembarque dos pioneiros",
+      "bytes": 301200,
+      "triangles": 2332,
+      "draw_calls": 5,
+      "materials": [
+        "wagon_covered"
+      ],
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 1580
+        },
+        {
+          "name": "wheelset_1",
+          "triangles": 352
+        },
+        {
+          "name": "wheelset_2",
+          "triangles": 352
+        },
+        {
+          "name": "door_l",
+          "triangles": 24
+        },
+        {
+          "name": "door_r",
+          "triangles": 24
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 1024²",
+        "metallicRoughness": "image/png 512²"
+      }
+    },
+    "m01_wagon_covered_lod1.glb": {
+      "type": "covered",
+      "lod": "lod1",
+      "use": "médio (60–300 m)",
+      "bytes": 121320,
+      "triangles": 1128,
+      "draw_calls": 5,
+      "materials": [
+        "wagon_covered"
+      ],
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 724
+        },
+        {
+          "name": "wheelset_1",
+          "triangles": 178
+        },
+        {
+          "name": "wheelset_2",
+          "triangles": 178
+        },
+        {
+          "name": "door_l",
+          "triangles": 24
+        },
+        {
+          "name": "door_r",
+          "triangles": 24
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 512²",
+        "metallicRoughness": "image/png 256²"
+      }
+    },
+    "m01_wagon_covered_lod2.glb": {
+      "type": "covered",
+      "lod": "lod2",
+      "use": "longe: trem 963 a ~1,05–1,2 km; InstancedMesh; Chromebook",
+      "bytes": 50980,
+      "triangles": 516,
+      "draw_calls": 5,
+      "materials": [
+        "wagon_covered"
+      ],
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 272
+        },
+        {
+          "name": "wheelset_1",
+          "triangles": 105
+        },
+        {
+          "name": "wheelset_2",
+          "triangles": 107
+        },
+        {
+          "name": "door_l",
+          "triangles": 16
+        },
+        {
+          "name": "door_r",
+          "triangles": 16
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 256²"
+      }
+    },
+    "m01_wagon_open_lod0.glb": {
+      "type": "open",
+      "lod": "lod0",
+      "use": "perto (< 60 m): pátio da estação, cobertura cv_wagon_*, desembarque dos pioneiros",
+      "bytes": 266496,
+      "triangles": 1948,
+      "draw_calls": 3,
+      "materials": [
+        "wagon_open"
+      ],
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 1244
+        },
+        {
+          "name": "wheelset_1",
+          "triangles": 352
+        },
+        {
+          "name": "wheelset_2",
+          "triangles": 352
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 1024²",
+        "metallicRoughness": "image/png 512²"
+      }
+    },
+    "m01_wagon_open_lod1.glb": {
+      "type": "open",
+      "lod": "lod1",
+      "use": "médio (60–300 m)",
+      "bytes": 97088,
+      "triangles": 846,
+      "draw_calls": 3,
+      "materials": [
+        "wagon_open"
+      ],
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 486
+        },
+        {
+          "name": "wheelset_1",
+          "triangles": 180
+        },
+        {
+          "name": "wheelset_2",
+          "triangles": 180
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 512²",
+        "metallicRoughness": "image/png 256²"
+      }
+    },
+    "m01_wagon_open_lod2.glb": {
+      "type": "open",
+      "lod": "lod2",
+      "use": "longe: trem 963 a ~1,05–1,2 km; InstancedMesh; Chromebook",
+      "bytes": 37748,
+      "triangles": 364,
+      "draw_calls": 3,
+      "materials": [
+        "wagon_open"
+      ],
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 156
+        },
+        {
+          "name": "wheelset_1",
+          "triangles": 104
+        },
+        {
+          "name": "wheelset_2",
+          "triangles": 104
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 256²"
+      }
+    }
+  }
+}

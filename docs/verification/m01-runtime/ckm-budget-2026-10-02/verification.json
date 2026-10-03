@@ -1,0 +1,50 @@
+{
+  "status": "PROTÓTIPO JOGÁVEL",
+  "pr": 35,
+  "head": "e65ce73f2def4e3e8433912280a978b078c9fdd6",
+  "local_merge": "ab0b8410a2d52ae9664db1ee8f1991755388082f",
+  "remote_equivalent_merge": "83e2129c15f3a4c8805e954e7b3b5bf22450a987",
+  "tree": "84462c0d08cd53533bd8332a9426d1a54c604eae",
+  "node": {
+    "passed": 154,
+    "failed": 0,
+    "skipped": 0
+  },
+  "build": "passed; existing chunk warning",
+  "lod0": {
+    "before": 5004,
+    "after": 3904,
+    "budget": 4000,
+    "bytes": 364660,
+    "draw_calls": 9,
+    "preserved_sha256": {
+      "m01_ckm_wz30_lod1.glb": "30fa7424df859c7c4c5be6b347955cf636284041c9eccfc1e30f1063f1fd0168",
+      "m01_ckm_wz30_lod2.glb": "a00f9a301b11523d3398c360a3c7bf8a15c5c0481abec56ec48efe80f9c5f875",
+      "m01_ckm_wz30_animations.glb": "dda588e9163da7aa0bfe9b3f7189d96c84a9e4788b9707ffbee7b70dfe936865"
+    },
+    "outward_cap_triangles_verified": 94,
+    "source_and_GLBS_unchanged_from_reviewed_PR": true
+  },
+  "renderer_unchanged": true,
+  "production_JS_sha256": "6e8d87a1653f4495add54fa4176c9da41cb1416c3362f2615b17cc16116c56fa",
+  "prior_ci": {
+    "head": "23c403b9e12c5350df0e33a05663605c34706590",
+    "run": 37071814929,
+    "job": 111052769731,
+    "result": "success",
+    "node_passed": 153,
+    "browser_passed": 26,
+    "browser_duration": "14.9m",
+    "deploy": "skipped"
+  },
+  "browser_this_revision": "not rerun locally: src/tests-browser/workflows/production-JS unchanged; new CI after staging update is separate",
+  "gallery": "Original PR35 before/after inspected in docs/assets/m01-ckm-wz30/ckm_lod0_budget.png; no new capture/extraction",
+  "pending": [
+    "ckm crew in simulation and placement behind embrasure",
+    "station drag transitions with Claude",
+    "human playtest",
+    "Chromebook FPS",
+    "historical/art review"
+  ],
+  "graphify": "paused; checkpoint unchanged"
+}

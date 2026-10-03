@@ -1,0 +1,271 @@
+// src/game/m01-simulation.js — linhas originais 23–26 (base b734cb0703013c36416f4cda269d558ae0602394)
+// SUBSTITUIR ISTO:
+const STATION_TRANSITION_SEC=1.6,STATION_DRAG_OFFSET=.92;
+const STATION_DELIVERY={x:EVACUATION.x-2,z:EVACUATION.z+2.2};
+// Lugares no abrigo de campanha (interior x −264…−256, z 66…75) para a chamada das 07:05.
+const ROLL_CALL_SEATS=[[-262.8,73.6],[-261.2,73.9],[-259.6,73.9],[-258,73.6],[-263.2,71.6],[-256.9,71.6],[-262.9,69.6],[-257.1,69.6]];
+// POR ISTO:
+const STATION_TRANSITION_SEC=1.6,STATION_DRAG_OFFSET=.92;
+const STATION_DELIVERY={x:EVACUATION.x-2,z:EVACUATION.z+2.2};
+// West embrasure cv_casemate_emb_s; ground placement is provisional, with no invented firing/platform.
+export const CKM_POSITION={x:22,y:-3,z:43};
+const CKM_IDS=['ckm_gunner','ckm_loader','ckm_reserve'],CKM_ABANDON_SEC=3;
+const makeCKMCrew=(world,clock=0,withdrawn=false)=>CKM_IDS.map((id,i)=>{
+  const [x,z]=[[21.206,42.971],[22.08,42.48],[20.4,41.6]][i];
+  const point=withdrawn?{x:-170-i*1.6,z:22+i*1.2}:{x,z};
+  return entity(id,{...point,y:withdrawn?world.heightAt(point.x,point.z):CKM_POSITION.y},'ally',{
+    group:'grp_ckm_crew',role:i<2?'SUPPORT':'RIFLEMAN',facing:i===1?112*Math.PI/180:0,
+    ckm:{phase:withdrawn?'retreat':'idle',startedAt:clock,visible:true}});
+});
+// Lugares no abrigo de campanha (interior x −264…−256, z 66…75) para a chamada das 07:05.
+const ROLL_CALL_SEATS=[[-262.8,73.6],[-261.2,73.9],[-259.6,73.9],[-258,73.6],[-263.2,71.6],[-256.9,71.6],[-262.9,69.6],[-257.1,69.6]];
+
+// src/game/m01-simulation.js — linhas originais 62–65 (base b734cb0703013c36416f4cda269d558ae0602394)
+// SUBSTITUIR ISTO:
+    for(let i=0;i<24;i++)this.actors.push(entity(`pl_east_${i}`,{x:1040+i%4*2,y:0,z:38+i%4*.65},'ally',
+      {group:'grp_east_platoon',active:false,role:'RIFLEMAN'}));
+    this.timers={boundary:0,water:0,cover:0,repairStall:0,repairSuppressedUntil:0,withdrawalCasualty:seconds('06:00:00'),
+      ambient:0,nextCoverCall:40,guide:0,guideKey:null,guideAt:0,guideDist:0,guideShown:false,kowalRounds:30,lowAmmoHint:false,escort:false,escortSpoke:false,boundaryWarning:false,boundaryCountdown:0,holdAccessVisited:false,
+// POR ISTO:
+    for(let i=0;i<24;i++)this.actors.push(entity(`pl_east_${i}`,{x:1040+i%4*2,y:0,z:38+i%4*.65},'ally',
+      {group:'grp_east_platoon',active:false,role:'RIFLEMAN'}));
+    this.actors.push(...makeCKMCrew(this.world));
+    this.timers={boundary:0,water:0,cover:0,repairStall:0,repairSuppressedUntil:0,withdrawalCasualty:seconds('06:00:00'),
+      ambient:0,nextCoverCall:40,guide:0,guideKey:null,guideAt:0,guideDist:0,guideShown:false,kowalRounds:30,lowAmmoHint:false,escort:false,escortSpoke:false,boundaryWarning:false,boundaryCountdown:0,holdAccessVisited:false,
+
+// src/game/m01-simulation.js — linhas originais 321–326 (base b734cb0703013c36416f4cda269d558ae0602394)
+// SUBSTITUIR ISTO:
+    const retreat=this.consumedEvent(E('east_demolition'));
+    for(const a of this.actors){
+      a.shot=Math.max(0,a.shot-dt);if(!a.alive||!a.active)continue;
+      if(a.team==='enemy')a.crouched=this.clock<a.suppressedUntil;
+      if(a.group==='grp_east_platoon'){
+        // Etapas do recuo: portal rodoviário, sul do barracão e passagem pelo posto de disparo até junto da estação.
+// POR ISTO:
+    const retreat=this.consumedEvent(E('east_demolition'));
+    for(const a of this.actors){
+      if(a.ckm)a.ckm.visible=!this.consumedEvent(E('west_demolition'));
+      a.shot=Math.max(0,a.shot-dt);if(!a.alive||!a.active)continue;
+      if(a.team==='enemy')a.crouched=this.clock<a.suppressedUntil;
+      if(a.group==='grp_ckm_crew'){
+        if(retreat&&a.ckm.phase==='idle')a.ckm={phase:'abandon',startedAt:this.clock,visible:a.ckm.visible};
+        if(a.ckm.phase==='abandon'&&this.clock-a.ckm.startedAt>=CKM_ABANDON_SEC)
+          a.ckm={phase:'retreat',startedAt:this.clock,visible:a.ckm.visible};
+        if(a.ckm.phase==='retreat'){
+          const i=CKM_IDS.indexOf(a.id),target=a.x>12?{x:10,z:40}:a.x>-12?{x:-14,z:40}:{x:-170-i*1.6,z:22+i*1.2};
+          const floor=a.y;this.moveActor(a,target,dt);
+          // The casemate is below the bridge deck; climb back to terrain only outside its west end.
+          const height=a.x>0?CKM_POSITION.y:this.world.heightAt(a.x,a.z);
+          a.y=floor+Math.sign(height-floor)*Math.min(Math.abs(height-floor),dt*1.2);
+          if(a.state==='ADVANCE')a.state='RETREAT';
+        }
+        continue;
+      }
+      if(a.group==='grp_east_platoon'){
+        // Etapas do recuo: portal rodoviário, sul do barracão e passagem pelo posto de disparo até junto da estação.
+
+// src/game/m01-simulation.js — linhas originais 792–795 (base b734cb0703013c36416f4cda269d558ae0602394)
+// SUBSTITUIR ISTO:
+    for(const key of ['clock','battleClock','player','actors','consumed','objectives','flags','destruction','dialogueConsumed','dialogueQueue','subtitle',
+      'scene','sceneDone','checkpointsReached','pendingCheckpoint','gate','recoveries','timers','sectors','grenades','mission'])candidate[key]=s[key];
+    candidate.enemyFire=s.enemyFire??{rounds:[],nextId:0};   // saves anteriores ao fogo em voo começam sem tiros no ar
+    candidate.timers={...s.timers,kowalRounds:s.timers.kowalRounds??30,lowAmmoHint:s.timers.lowAmmoHint??false,nextCombatCall:s.timers.nextCombatCall??0};
+// POR ISTO:
+    for(const key of ['clock','battleClock','player','actors','consumed','objectives','flags','destruction','dialogueConsumed','dialogueQueue','subtitle',
+      'scene','sceneDone','checkpointsReached','pendingCheckpoint','gate','recoveries','timers','sectors','grenades','mission'])candidate[key]=s[key];
+    // Schema 2 legacy saves contain the exact old roster. Add only the absent complete group,
+    // outside the blast zone after the existing retreat event, without touching old actors or RNG.
+    if(!s.actors.some(a=>CKM_IDS.includes(a.id))){
+      const at=s.consumed[E('east_demolition')],crew=makeCKMCrew(candidate.world,at??0,at!==undefined);
+      crew.forEach(a=>a.ckm.visible=!Object.hasOwn(s.consumed,E('west_demolition')));candidate.actors.push(...crew);
+    }
+    candidate.enemyFire=s.enemyFire??{rounds:[],nextId:0};   // saves anteriores ao fogo em voo começam sem tiros no ar
+    candidate.timers={...s.timers,kowalRounds:s.timers.kowalRounds??30,lowAmmoHint:s.timers.lowAmmoHint??false,nextCombatCall:s.timers.nextCombatCall??0};
+
+// src/game/m01-simulation.js — linhas originais 798–802 (base b734cb0703013c36416f4cda269d558ae0602394)
+// SUBSTITUIR ISTO:
+      Object.assign(a,{active:false,alive:false,health:0,state:'DOWN'});
+    candidate.weapon.restore(s.weapon);candidate.rng.state=s.rng;candidate.events=[];candidate.world.refresh(Object.keys(s.consumed),s.flags);
+    candidate.checkpoint=clone(s);Object.assign(this,candidate);return true;
+  }
+  restoreCheckpoint(){return this.restoreSnapshot(this.checkpoint);}
+// POR ISTO:
+      Object.assign(a,{active:false,alive:false,health:0,state:'DOWN'});
+    candidate.weapon.restore(s.weapon);candidate.rng.state=s.rng;candidate.events=[];candidate.world.refresh(Object.keys(s.consumed),s.flags);
+    candidate.checkpoint=candidate.snapshot();Object.assign(this,candidate);return true;
+  }
+  restoreCheckpoint(){return this.restoreSnapshot(this.checkpoint);}
+
+// src/game/m01-simulation.js — linhas originais 814–818 (base b734cb0703013c36416f4cda269d558ae0602394)
+// SUBSTITUIR ISTO:
+  if(!point(s.player)||s.player.health<=0||s.player.health>100||!s.player.alive||![s.player.angle,s.player.pitch].every(Number.isFinite))reject('jogador');
+  const actorIds=[...definition.cast.filter(c=>c.id!=='jan_wrona').map(c=>c.id),...Array.from({length:40},(_,i)=>`de_east_${i}`),...Array.from({length:10},(_,i)=>`de_spans_${i}`),...Array.from({length:24},(_,i)=>`pl_east_${i}`)];
+  if(!Array.isArray(s.actors)||s.actors.length!==actorIds.length||new Set(s.actors.map(a=>a.id)).size!==s.actors.length||!s.actors.every(a=>point(a)&&actorIds.includes(a.id)&&Number.isFinite(a.radius)&&a.radius>0))reject('actores');
+  if(s.actors.some(a=>a.team==='enemy'&&a.x<690)||s.actors.some(a=>definition.historicalPersonsOffscreen.some(h=>h.id===a.id)))reject('elenco');
+  if(s.actors.some(a=>a.team!==(a.id.startsWith('de_')?'enemy':'ally')||
+// POR ISTO:
+  if(!point(s.player)||s.player.health<=0||s.player.health>100||!s.player.alive||![s.player.angle,s.player.pitch].every(Number.isFinite))reject('jogador');
+  const actorIds=[...definition.cast.filter(c=>c.id!=='jan_wrona').map(c=>c.id),...Array.from({length:40},(_,i)=>`de_east_${i}`),...Array.from({length:10},(_,i)=>`de_spans_${i}`),...Array.from({length:24},(_,i)=>`pl_east_${i}`)];
+  const hasCKM=Array.isArray(s.actors)&&s.actors.some(a=>CKM_IDS.includes(a?.id));
+  if(hasCKM)actorIds.push(...CKM_IDS);
+  if(!Array.isArray(s.actors)||s.actors.length!==actorIds.length||new Set(s.actors.map(a=>a.id)).size!==s.actors.length||!s.actors.every(a=>point(a)&&actorIds.includes(a.id)&&Number.isFinite(a.radius)&&a.radius>0))reject('actores');
+  for(const a of s.actors)if(CKM_IDS.includes(a.id)||a.ckm!==undefined||a.group==='grp_ckm_crew'){
+    const t=a.ckm,i=CKM_IDS.indexOf(a.id);
+    if(i<0||a.group!=='grp_ckm_crew'||a.role!==(i<2?'SUPPORT':'RIFLEMAN')||!t||
+      Object.keys(t).some(k=>!['phase','startedAt','visible'].includes(k))||!['idle','abandon','retreat'].includes(t.phase)||
+      !finite(t.startedAt,0,s.clock)||typeof t.visible!=='boolean'||
+      t.phase!=='idle'&&!finite(s.consumed?.[E('east_demolition')],0,t.startedAt))reject('guarnição ckm');
+  }
+  if(s.actors.some(a=>a.team==='enemy'&&a.x<690)||s.actors.some(a=>definition.historicalPersonsOffscreen.some(h=>h.id===a.id)))reject('elenco');
+  if(s.actors.some(a=>a.team!==(a.id.startsWith('de_')?'enemy':'ally')||
+
+// src/render/m01-characters.js — linhas originais 3–9 (base b734cb0703013c36416f4cda269d558ae0602394)
+// SUBSTITUIR ISTO:
+import { AssetManager } from '../assets/asset-manager.js';
+import { actorPose } from './m01-actor-pose.js';
+
+const BASE='assets/models/provisional/m01/characters/';
+const MG='assets/models/provisional/m01/weapons/mg34/';
+const LIMITS={low:{count:18,near:0,middle:15,far:100},medium:{count:24,near:0,middle:40,far:130},high:{count:28,near:14,middle:45,far:160}};
+const named={marek_zielinski:'zielinski',pawel_krawiec:'krawiec',tadeusz_nowicki:'nowicki',jozef_bak:'bak',szymon_kowal:'kowal',leon_dudek:'dudek'};
+// POR ISTO:
+import { AssetManager } from '../assets/asset-manager.js';
+import { actorPose } from './m01-actor-pose.js';
+import { CKM_POSITION } from '../game/m01-simulation.js';
+
+const BASE='assets/models/provisional/m01/characters/';
+const MG='assets/models/provisional/m01/weapons/mg34/';
+const CKM='assets/models/provisional/m01/weapons/ckm_wz30/';
+const ckmRole=a=>a.group==='grp_ckm_crew'&&['ckm_gunner','ckm_loader'].includes(a.id);
+const ckmAtPost=a=>ckmRole(a)&&a.ckm?.phase!=='retreat';
+const LIMITS={low:{count:18,near:0,middle:15,far:100},medium:{count:24,near:0,middle:40,far:130},high:{count:28,near:14,middle:45,far:160}};
+const named={marek_zielinski:'zielinski',pawel_krawiec:'krawiec',tadeusz_nowicki:'nowicki',jozef_bak:'bak',szymon_kowal:'kowal',leon_dudek:'dudek'};
+
+// src/render/m01-characters.js — linhas originais 33–36 (base b734cb0703013c36416f4cda269d558ae0602394)
+// SUBSTITUIR ISTO:
+        if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
+      }),
+      this.loadMG(2),...(quality==='high'?[this.loadMG(0),this.loadMG(1)]:[]),
+      // The hands and rifle are centimetres from the camera: their LOD0 is shared with the viewmodel on every preset.
+// POR ISTO:
+        if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
+      }),
+      this.assets.load('ckm-clips',CKM+'m01_ckm_wz30_animations.glb').then(g=>{
+        if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
+      }),
+      this.loadCKM(2),...(quality==='high'?[this.loadCKM(0),this.loadCKM(1)]:[]),
+      this.loadMG(2),...(quality==='high'?[this.loadMG(0),this.loadMG(1)]:[]),
+      // The hands and rifle are centimetres from the camera: their LOD0 is shared with the viewmodel on every preset.
+
+// src/render/m01-characters.js — linhas originais 54–60 (base b734cb0703013c36416f4cda269d558ae0602394)
+// SUBSTITUIR ISTO:
+    }catch{/* Keep the existing procedural support if its weapon or clips fail. */}
+  }
+  sample(actor,time,actors,pose,battleClock){
+    const offset=(hash(actor.id)%1000)/250;
+    if(pose.name==='fallen')return {clip:'fallen',time:1.4,loop:false};
+    const stationPatient=actor.id==='generic_rifleman'?actor:actors.find(a=>a.id==='generic_rifleman'&&a.carriedBy===actor.id);
+    const stationMedic=stationPatient&&actors.find(a=>a.id===stationPatient.carriedBy);
+// POR ISTO:
+    }catch{/* Keep the existing procedural support if its weapon or clips fail. */}
+  }
+  async loadCKM(lod){
+    const key=`ckm:${lod}`;if(this.pending.has(key)||this.sources.has(key)||this.disposed)return;
+    this.pending.add(key);
+    try{
+      const g=await this.assets.load(key,`${CKM}m01_ckm_wz30_lod${lod}.glb`);
+      if(!this.disposed){this.sources.set(key,g);this.revision++;}
+    }catch{/* The existing procedural actors remain available without the optional kit. */}
+  }
+  hasCKM(){
+    return this.clips.has('standing_idle')&&[0,1,2].some(l=>this.sources.has(`ckm:${l}`))&&['idle','abandon'].every(phase=>
+      this.sources.get('ckm:2')?.animations.some(c=>c.name===`ckm_wz30_gun_${phase}`)&&
+      ['gunner','loader'].every(role=>this.clips.has(`ckm_wz30_${role}_${phase}`)));
+  }
+  sample(actor,time,actors,pose,battleClock){
+    const offset=(hash(actor.id)%1000)/250;
+    if(pose.name==='fallen')return {clip:'fallen',time:1.4,loop:false};
+    if(ckmAtPost(actor)&&this.hasCKM()&&!['wounded','carried'].includes(pose.name)){
+      const phase=actor.ckm.phase,role=actor.id==='ckm_gunner'?'gunner':'loader';
+      return {clip:`ckm_wz30_${role}_${phase}`,time:Math.max(0,time-actor.ckm.startedAt),loop:phase==='idle'};
+    }
+    const stationPatient=actor.id==='generic_rifleman'?actor:actors.find(a=>a.id==='generic_rifleman'&&a.carriedBy===actor.id);
+    const stationMedic=stationPatient&&actors.find(a=>a.id===stationPatient.carriedBy);
+
+// src/render/m01-characters.js — linhas originais 144–151 (base b734cb0703013c36416f4cda269d558ae0602394)
+// SUBSTITUIR ISTO:
+    const limits=LIMITS[quality]??LIMITS.low;
+    if(quality==='high')for(const k of ['pl:0','de:0','de:1'])void this.loadSource(k);
+    if(quality==='high')for(const lod of [0,1])void this.loadMG(lod);
+    const selected=new Set(),visible=[],clips={};
+    const availableMG=[0,1,2].some(l=>this.sources.has(`mg34:${l}`))&&this.clips.has('mg34_aim')&&this.clips.has('mg34_fire_burst');
+    const candidates=actors.filter(a=>a.active&&!a.civilian&&(a.role!=='SUPPORT'||a.id==='szymon_kowal'||mgGunner(a)&&availableMG))
+      .map(a=>({a,d:Math.hypot(a.x-player.x,a.z-player.z)})).filter(p=>p.d<(mgGunner(p.a)?1800:limits.far))
+      // Reserve two existing fire sources within the same 18/24/28 actor budget, including from the west bank.
+// POR ISTO:
+    const limits=LIMITS[quality]??LIMITS.low;
+    if(quality==='high')for(const k of ['pl:0','de:0','de:1'])void this.loadSource(k);
+    if(quality==='high')for(const lod of [0,1]){void this.loadMG(lod);void this.loadCKM(lod);}
+    this.updateCKM(actors,time,player,quality);
+    const selected=new Set(),visible=[],clips={};
+    const availableMG=[0,1,2].some(l=>this.sources.has(`mg34:${l}`))&&this.clips.has('mg34_aim')&&this.clips.has('mg34_fire_burst');
+    const candidates=actors.filter(a=>a.active&&!a.civilian&&(a.role!=='SUPPORT'||a.id==='szymon_kowal'||mgGunner(a)&&availableMG||ckmRole(a)))
+      .map(a=>({a,d:Math.hypot(a.x-player.x,a.z-player.z)})).filter(p=>p.d<(mgGunner(p.a)?1800:limits.far))
+      // Reserve two existing fire sources within the same 18/24/28 actor budget, including from the west bank.
+
+// src/render/m01-characters.js — linhas originais 173–177 (base b734cb0703013c36416f4cda269d558ae0602394)
+// SUBSTITUIR ISTO:
+        n.castShadow=quality!=='low'&&d<35;
+        if(!weaponParts.has(n.name))return;
+        const armed=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy&&a.role!=='MEDIC'&&!mgGunner(a),kowal=a.id==='szymon_kowal',bak=a.id==='jozef_bak';
+        const bipod=clip.userData?.bipod??'folded';
+        n.visible=n.name==='rifle'?armed&&!kowal&&!bak:n.name==='clip'?armed&&!kowal:
+// POR ISTO:
+        n.castShadow=quality!=='low'&&d<35;
+        if(!weaponParts.has(n.name))return;
+        const armed=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy&&a.role!=='MEDIC'&&!mgGunner(a)&&!(ckmAtPost(a)&&this.hasCKM()),kowal=a.id==='szymon_kowal',bak=a.id==='jozef_bak';
+        const bipod=clip.userData?.bipod??'folded';
+        n.visible=n.name==='rifle'?armed&&!kowal&&!bak:n.name==='clip'?armed&&!kowal:
+
+// src/render/m01-characters.js — linhas originais 193–201 (base b734cb0703013c36416f4cda269d558ae0602394)
+// SUBSTITUIR ISTO:
+    return selected;
+  }
+  muzzle(id){
+    const v=this.instances.get(id),bone=v?.root.getObjectByName('weapon');if(!bone)return null;
+    v.root.updateMatrixWorld(true);return new THREE.Vector3().fromArray(v.muzzle).applyMatrix4(bone.matrixWorld);
+  }
+  get diagnostics(){return {...this.stats,loaded:[...this.sources.keys()],failures:this.assets.failures};}
+  dispose(){this.disposed=true;this.instances.forEach(v=>this.release(v));this.instances.clear();this.assets.dispose();}
+}
+// POR ISTO:
+    return selected;
+  }
+  updateCKM(actors,time,player,quality){
+    const gunner=actors.find(a=>a.id==='ckm_gunner'),d=Math.hypot(player.x-CKM_POSITION.x,player.z-CKM_POSITION.z);
+    if(!gunner?.ckm?.visible||!this.hasCKM()||d>(LIMITS[quality]??LIMITS.low).far){
+      if(this.ckm)this.ckm.root.visible=false;return;
+    }
+    let lod=quality==='high'&&d<14?0:quality==='high'&&d<45?1:2;
+    while(lod<3&&!this.sources.has(`ckm:${lod}`))lod++;
+    if(lod===3)return;
+    if(this.ckm?.lod!==lod){
+      if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}
+      const source=this.sources.get(`ckm:${lod}`),root=source.scene.clone(true);
+      this.scene.add(root);this.ckm={root,lod,mixer:new THREE.AnimationMixer(root),clips:source.animations};
+    }
+    const v=this.ckm,phase=gunner.ckm.phase==='idle'?'idle':'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`);
+    if(!clip){v.root.visible=false;return;}
+    v.root.visible=true;v.root.position.set(CKM_POSITION.x,CKM_POSITION.y,CKM_POSITION.z);v.root.rotation.y=-Math.PI/2;
+    v.mixer.stopAllAction();const action=v.mixer.clipAction(clip).setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.reset().play();
+    const age=gunner.ckm.phase==='retreat'?clip.duration:Math.max(0,time-gunner.ckm.startedAt);
+    v.mixer.setTime(phase==='idle'?age%clip.duration:Math.min(age,clip.duration));v.clip=clip.name;v.time=action.time;v.root.updateMatrixWorld(true);
+  }
+  muzzle(id){
+    const v=this.instances.get(id),bone=v?.root.getObjectByName('weapon');if(!bone)return null;
+    v.root.updateMatrixWorld(true);return new THREE.Vector3().fromArray(v.muzzle).applyMatrix4(bone.matrixWorld);
+  }
+  get diagnostics(){return {...this.stats,ckm:this.ckm?{visible:this.ckm.root.visible,lod:this.ckm.lod,clip:this.ckm.clip,time:this.ckm.time,position:this.ckm.root.position.toArray()}:null,loaded:[...this.sources.keys()],failures:this.assets.failures};}
+  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.assets.dispose();}
+}
+
