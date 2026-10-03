@@ -1,6 +1,7 @@
 import { EYE_HEIGHT, UNITS_PER_METRE } from '../config.js';
 import mg34Geometry from './m01-mg34-prone-geometry.json' with {type:'json'};
 
+export const MG34_MUZZLE_SOCKET=Object.freeze([...mg34Geometry.socket]);
 const mg34Gunner=a=>a.weapon==='mg34'&&['de_east_0','de_east_1'].includes(a.id);
 
 // Canonical clip/frame selection belongs to persisted simulation state, even without optional GLBs.
