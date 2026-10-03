@@ -62,9 +62,10 @@ function parseArgs(argv){
     environment:take('--environment',process.env.CI?'CI/cloud':'local/unspecified'),headless:argv.includes('--headless'),manual:argv.includes('--manual')};
 }
 function gitHead(){try{return execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8',stdio:['ignore','pipe','ignore']}).trim();}catch{return null;}}
+export function previewProcessExited(server){return server!=null&&server.exitCode!==null;}
 async function waitForPreview(url,server){
   for(let i=0;i<100;i++){
-    if(server?.exitCode!==null)throw new Error(`Preview exited before becoming ready (code ${server.exitCode})`);
+    if(previewProcessExited(server))throw new Error(`Preview exited before becoming ready (code ${server.exitCode})`);
     try{if((await fetch(url)).ok)return;}catch{}
     await new Promise(r=>setTimeout(r,100));
   }
