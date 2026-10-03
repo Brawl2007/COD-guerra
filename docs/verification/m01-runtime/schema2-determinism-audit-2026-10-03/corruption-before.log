@@ -1,0 +1,27 @@
+✖ corrupt weapon method/profile, unsigned RNG and unknown phase reject before changing future gameplay (14.565728ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 130.728648
+
+✖ failing tests:
+
+test at tests/m01-schema2-determinism.test.js:137:1
+✖ corrupt weapon method/profile, unsigned RNG and unknown phase reject before changing future gameplay (14.565728ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///workspace/scratch/179e239c7f9f/COD-guerra/tests/m01-schema2-determinism.test.js:142:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }

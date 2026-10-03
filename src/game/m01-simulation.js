@@ -918,7 +918,7 @@ export function validateM01Snapshot(s){
   if(!s||s.schema!==2||s.missionId!==definition.id)reject('versão ou missão');
   const scan=(v,depth=0)=>{if(depth>14)reject('estrutura');if(typeof v==='number'&&!Number.isFinite(v))reject('número');
     if(v&&typeof v==='object')for(const [k,item]of Object.entries(v)){if(['__proto__','constructor','prototype','isObject3D','matrixWorld'].includes(k))reject('campo');scan(item,depth+1);}};scan(s);
-  if(!Number.isFinite(s.clock)||s.clock<0||!Number.isFinite(s.battleClock)||s.battleClock<seconds('04:30:00')||s.battleClock>seconds('07:05:00')||!Number.isInteger(s.rng))reject('relógios');
+  if(!Number.isFinite(s.clock)||s.clock<0||!Number.isFinite(s.battleClock)||s.battleClock<seconds('04:30:00')||s.battleClock>seconds('07:05:00')||!Number.isInteger(s.rng)||s.rng<0||s.rng>0xffffffff)reject('relógios');
   const finite=(v,min=0,max=Infinity)=>Number.isFinite(v)&&v>=min&&v<=max;
   const point=p=>p&&p.space==='metres'&&[p.x,p.y,p.z].every(Number.isFinite)&&finite(p.health,0,100)&&typeof p.alive==='boolean';
   if(!point(s.player)||s.player.health<=0||s.player.health>100||!s.player.alive||![s.player.angle,s.player.pitch].every(Number.isFinite))reject('jogador');
@@ -982,7 +982,8 @@ export function validateM01Snapshot(s){
     new Set(s.enemyFire.rounds.map(r=>r?.id)).size!==s.enemyFire.rounds.length||s.enemyFire.rounds.some(r=>!validRound(r,s.clock))))reject('fogo em voo');
   if(s.actors.some(a=>a.pose!=null&&a.pose!=='seated'))reject('pose');
   const w=s.weapon;
-  if(w?.id!=='kb_wz29'||!Number.isInteger(w.mag)||w.mag<0||w.mag>5||!Number.isInteger(w.reserve)||w.reserve<0||w.reserve>40||
+  if(w?.id!=='kb_wz29'||Object.keys(w).some(k=>!['id','mag','reserve','state','until','started','lastShot','shotCount','received','sight','reloadMode'].includes(k))||
+    !Number.isInteger(w.mag)||w.mag<0||w.mag>5||!Number.isInteger(w.reserve)||w.reserve<0||w.reserve>40||
     !['READY','BOLT_CYCLE','RELOAD_CLIP','RELOAD_SINGLE'].includes(w.state)||![300,500,800,1000].includes(w.sight)||![w.until,w.started,w.lastShot,w.shotCount].every(Number.isFinite)||
     !Number.isInteger(w.shotCount)||w.shotCount<0||!Number.isInteger(w.received??0)||(w.received??0)<0||(w.received??0)>30||
     w.mag+w.reserve+w.shotCount!==45+(w.received??0))reject('arma');
@@ -1029,6 +1030,7 @@ export function validateM01Snapshot(s){
   const dialogue=d=>d&&[...definition.dialogue,...definition.callouts.lines].some(line=>line.id&&line.id===d.id)&&typeof d.speaker==='string'&&typeof d.text==='string'&&d.text.length<600&&finite(d.duration,1,15);
   if(s.dialogueQueue.some(d=>!dialogue(d))||(s.subtitle&&(!dialogue(s.subtitle)||!finite(s.subtitle.until))))reject('legendas');
   if(s.mission.complete!==s.flags['m01.completed']||s.mission.complete!==Object.hasOwn(s.consumed,E('debrief')))reject('estado final');
+  if(!['INTRO','SETUP','BUILDUP','FIRST_CONTACT','MAIN_COMBAT','SET_PIECE','CLIMAX','AFTERMATH','OUTRO'].includes(s.mission.phase))reject('fase');
   if(s.resumeCheckpoint!==undefined){
     const cp=s.resumeCheckpoint;
     if(!cp||Object.hasOwn(cp,'resumeCheckpoint')||cp.clock>s.clock||cp.battleClock>s.battleClock)reject('checkpoint de retoma');
