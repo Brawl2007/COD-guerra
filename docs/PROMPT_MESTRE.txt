@@ -776,18 +776,215 @@ MG:
 - reload plausível.
 
 ============================================================
-29. DESTRUIÇÃO
+29. DESTRUIÇÃO, FÍSICA E AMBIENTE DANIFICÁVEL
 ============================================================
 
-Destruição roteirizada:
-- janela;
-- porta;
-- seção de parede;
-- caixa;
-- barril;
-- fachada.
+A destruição da campanha deve ser HÍBRIDA.
 
-Não precisa física destrutiva total.
+A) DESTRUIÇÃO PLANEJADA / AUTORITATIVA
+Eventos que alteram história, gameplay, rota, cobertura, objetivo ou estado persistente devem ser definidos pela simulação e possuir IDs estáveis.
+
+Exemplos:
+- bomba que abre ou fecha uma rota;
+- seção de parede ou fachada que cai;
+- ponte/porta/portão destruído;
+- cratera que passa a servir de cobertura;
+- veículo destruído que bloqueia passagem;
+- incêndio relevante;
+- teto ou piso que se torna inacessível;
+- posição defensiva neutralizada;
+- árvore ou estrutura derrubada que muda navegação.
+
+Esses eventos:
+- não dependem da câmera;
+- não dependem apenas da proximidade do jogador;
+- são idempotentes;
+- entram no save/checkpoint;
+- restauram exatamente após load;
+- não podem acontecer duas vezes após restore/skip;
+- devem respeitar eventos históricos e o mapa pesquisado.
+
+B) VARIAÇÃO ALEATÓRIA DETERMINÍSTICA
+Dentro de zonas previamente autorizadas, o jogo pode variar detalhes secundários para evitar que todo bombardeio pareça coreografado de forma idêntica.
+
+Pode variar com RNG determinístico da simulação:
+- posição de impactos secundários;
+- pequenos fragmentos;
+- tijolos/tábuas/telhas soltos;
+- vidros quebrados;
+- poeira;
+- faíscas;
+- brasas;
+- pequenas crateras decorativas;
+- marcas de impacto;
+- galhos e folhas;
+- direção inicial de alguns debris;
+- forma/posição de partículas de fumaça.
+
+A mesma seed + mesmo save + mesmos inputs deve produzir o mesmo resultado.
+
+O renderer NÃO sorteia consequências de gameplay.
+
+C) ZONAS DE EXCLUSÃO
+Impactos aleatórios nunca podem:
+- matar personagem essencial por sorte;
+- destruir objetivo obrigatório;
+- bloquear permanentemente a única rota;
+- colocar o jogador em dano inevitável após checkpoint;
+- alterar demolições históricas;
+- destruir estruturas cuja permanência é exigida pelo roteiro/data;
+- criar geometria impossível;
+- gerar dano através de cobertura sem raycast físico.
+
+Para bombardeios extensos, definir:
+- zona permitida;
+- zonas proibidas;
+- raio mínimo do jogador/atores essenciais;
+- superfícies válidas;
+- intensidade;
+- número máximo de impactos;
+- persistência;
+- orçamento de debris/partículas.
+
+D) CRATERAS
+Bombas e artilharia capazes de deformar terreno devem poder deixar crateras quando coerente com arma, solo e missão.
+
+Crateras relevantes:
+- persistem;
+- entram no estado de destruição;
+- podem alterar cobertura, linha de visão ou navegação;
+- precisam de dimensões plausíveis;
+- não atravessam fundações/ponte/água de forma absurda;
+- devem restaurar corretamente no save.
+
+Em hardware limitado, usar crateras pré-modeladas/decal/heightfield local ou variantes discretas em vez de deformar toda a malha global.
+
+E) EDIFÍCIOS E INTERIORES
+Casas, estações, fábricas, oficinas, hospitais improvisados, celeiros e outros interiores jogáveis não devem parecer caixas vazias.
+
+Decorar conforme:
+- função do prédio;
+- país/região;
+- ano/data;
+- classe social/uso;
+- ocupação militar/civil;
+- estado anterior da batalha.
+
+Exemplos:
+- mesas;
+- cadeiras;
+- camas;
+- armários;
+- louça;
+- papéis;
+- ferramentas;
+- caixas;
+- luminárias;
+- cortinas;
+- fotografias/objetos pessoais somente quando historicamente e legalmente adequados;
+- equipamentos médicos;
+- maquinaria;
+- armazenamento;
+- material militar.
+
+A batalha pode alterar esses interiores:
+- vidro quebrado;
+- portas arrancadas;
+- móveis deslocados;
+- teto danificado;
+- reboco/tijolos caídos;
+- poeira;
+- fuligem;
+- incêndio;
+- buracos em paredes;
+- entulho;
+- sangue e consequências humanas quando coerentes com a classificação etária e a cena.
+
+Não destruir todos os edifícios desde o primeiro minuto. Quando possível, mostrar transformação:
+INTACTO / USADO → IMPACTO → DANIFICADO → QUEIMADO/ABANDONADO.
+
+F) FÍSICA DE OBJETOS E DEBRIS
+Usar física seletiva, não física destrutiva total.
+
+Objetos próximos ao jogador podem:
+- cair;
+- rolar;
+- deslizar;
+- tombar;
+- quebrar em variantes;
+- receber impulso de explosão;
+- colidir com chão/estrutura.
+
+Debris importante pode tornar-se obstáculo/cobertura somente quando a simulação autorizar.
+
+Fragmentos puramente visuais:
+- têm lifetime;
+- usam pooling;
+- não entram na simulação de gameplay;
+- não criam milhares de rigid bodies.
+
+G) CORPOS E IMPULSO DE EXPLOSÃO
+Soldados mortos/feridos podem reagir fisicamente de forma plausível:
+- queda conforme pose/movimento;
+- impacto contra chão/parede;
+- deslocamento por explosão próxima;
+- queda de escada/elevação quando fisicamente possível.
+
+Força depende de:
+- distância;
+- cobertura;
+- massa;
+- direção;
+- potência da explosão.
+
+Não usar ragdoll exagerado de arcade. Uma explosão comum não deve lançar soldados dezenas de metros sem justificativa.
+
+Estado final do corpo precisa permanecer coerente com save/persistência e orçamento.
+
+H) FUMAÇA, POEIRA, FOGO E PARTÍCULAS
+A batalha precisa continuar visualmente no ambiente:
+- fumaça de incêndios;
+- colunas de fumaça distantes;
+- poeira de impactos;
+- cinzas;
+- brasas;
+- faíscas;
+- detritos leves;
+- terra lançada;
+- fumaça entrando/saindo de interiores quando apropriado;
+- galhos/folhas afetados por explosões.
+
+Fumaça relevante pode reduzir visibilidade, mas gameplay deve ler um estado autoritativo; partículas não decidem sozinhas se um ator vê ou não.
+
+Usar LOD/pooling/instancing e limites por preset. Em low, reduzir partículas secundárias antes de remover os sinais visuais essenciais do combate.
+
+I) DESTRUIÇÃO AO REDOR DO JOGADOR
+A guerra não acontece apenas onde a câmera está.
+
+Setores médios/longos podem mostrar:
+- impactos;
+- incêndios;
+- prédios danificados;
+- veículos destruídos;
+- fumaça;
+- artilharia;
+- retirada/avanço de unidades.
+
+Quando esses acontecimentos têm consequência persistente, devem vir do estado da batalha e continuar existindo ao olhar novamente.
+
+J) REGRA DE IMPLEMENTAÇÃO
+Não precisa física destrutiva total nem simulação de cada tijolo.
+
+Prioridade:
+1. estado autoritativo;
+2. gameplay;
+3. persistência;
+4. colisão coerente;
+5. apresentação;
+6. partículas secundárias.
+
+Estratégia recomendada:
+**destruição autoritativa pré-planejada + variação aleatória determinística + fragmentos físicos locais + partículas/LOD no restante da cena.**
 
 ============================================================
 30. AUDIO MANAGER
