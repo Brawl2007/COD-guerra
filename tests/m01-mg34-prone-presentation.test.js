@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {M01Simulation} from '../src/game/m01-simulation.js';
+import {M01View} from '../src/render/m01-view.js';
 import {M01Characters} from '../src/render/m01-characters.js';
 import {actorPose} from '../src/render/m01-actor-pose.js';
 import {actorHitboxes,eyePosition,muzzlePosition,mg34ProneSample} from '../src/world/spatial.js';
@@ -71,4 +72,27 @@ for(const phase of ['enter','idle','fire_burst','exit'])test(`rendered death dur
    assert.equal(v.clip,'fallen');assert.equal(v.weaponRoot.visible,false);assert.equal(actorPose(a,s.clock).firing,false);assert.equal(a.mg34Prone,undefined);
    s.drainEvents();at(s,s.clock+2);assert.deepEqual(s.drainEvents(),[]);assert.ok(s.actors.every(x=>!x.loaderFor&&!x.mg34Loader));
  }finally{c.dispose();}
+});
+
+function realFireEffects(s){
+ const geometry=new THREE.BoxGeometry(),material=new THREE.MeshBasicMaterial();
+ const view=Object.create(M01View.prototype);Object.assign(view,{camera:{position:new THREE.Vector3()},fireDummy:new THREE.Object3D(),characters:null,impacts:[],fireBatches:{}});
+ for(const name of ['muzzle','tracer','puff','spark','smoke'])view.fireBatches[name]=new THREE.InstancedMesh(geometry,material,64);
+ view.updateFire(s);const result={counts:structuredClone(view.fx),matrices:Array.from(view.fireBatches.muzzle.instanceMatrix.array)};
+ geometry.dispose();material.dispose();return result;
+}
+for(const emitted of [1,4,6])test(`actual muzzle effect after shot ${emitted} has no extra flash in the .06/.075 gap or restore`,()=>{
+ const s=firing();at(s,s.clock+(emitted-1)*.075+.02);const save=s.snapshot(),before=realFireEffects(s);
+ assert.equal(before.counts.muzzle,1);assert.deepEqual(realFireEffects(s),before,'paused effect frame');assert.deepEqual(s.snapshot(),save);
+ const r=new M01Simulation();r.restoreSnapshot(save);assert.deepEqual(realFireEffects(r),before,'restored effect frame');
+ at(s,s.clock+.041);at(r,r.clock+.041);assert.equal(s.actor('de_east_0').shot,0);
+ assert.equal(realFireEffects(s).counts.muzzle,0);assert.equal(realFireEffects(r).counts.muzzle,0);assert.deepEqual(r.snapshot(),s.snapshot());
+});
+test('actual muzzle batches have no post-death flash during all four prone phases',()=>{
+ for(const phase of ['enter','idle','fire_burst','exit']){
+   const s=phase==='fire_burst'||phase==='exit'?firing():live(),a=s.actor('de_east_0');
+   if(phase==='idle')at(s,1.9);if(phase==='exit'){a.state='RETREAT';s.updateMG34Posture(a);}
+   a.alive=false;a.health=0;a.state='DOWN';s.updateMG34Posture(a);
+   assert.equal(realFireEffects(s).counts.muzzle,0);at(s,s.clock+.05);assert.equal(realFireEffects(s).counts.muzzle,0);
+ }
 });
