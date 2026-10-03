@@ -132,6 +132,8 @@ export class AuthorityLeaseWorld {
   #boundary(){requireThat(this.#phase===null,'unsafe transition boundary');}
   #live(){this.#boundary();requireThat(!this.#state.clocks.paused,'paused');}
   #commit(candidate,command){
+    validateCombat(candidate.aggregate,candidate.identity);
+    if(candidate.mode==='INDIVIDUAL')validateCombat(candidate.individual,candidate.identity);
     requireThat(candidate.history.length<MAX_COMMANDS,'command capacity');candidate.history.push(copy(command));
     requireThat(Buffer.byteLength(canonical({format:FORMAT,config:this.#config,state:candidate}))<=MAX_BYTES,'snapshot byte capacity');
     this.#state=candidate;
@@ -172,7 +174,8 @@ export class AuthorityLeaseWorld {
     this.#live();const input=copy(raw);this.#phase='DEMATERIALIZING';
     try{
       validateReturnCandidate(this.#state,input);const c=copy(this.#state);
-      preflight(copy(input.combat)); // May reject; cannot publish a half-transition snapshot.
+      const result=preflight(copy(input.combat)); // Synchronous, data-only validation.
+      requireThat(!result||typeof result.then!=='function','async preflight unsupported');
       c.aggregate=copy(input.combat);c.aggregate.revision++;c.aggregate.updatedAt=c.clocks.localMs;
       c.individual=null;c.lease=null;c.mode='AGGREGATED';
       this.#commit(c,{kind:'release',input});return copy(c.aggregate);
@@ -241,11 +244,11 @@ function applyOperation(state,c,op,owner,samples){
   const m=member(c,op.memberId);
   if(op.type==='casualty'||op.type==='exposure'){
     keys(op,['type','memberId','to'],op.type==='exposure'?['probability']:[]);
+    requireThat(['wounded','dead'].includes(op.to),'casualty status');
     if(op.type==='exposure'){
       requireThat(owner==='AGGREGATED'&&Number.isFinite(op.probability)&&op.probability>=0&&op.probability<=1,'aggregate exposure only');
       requireThat(m.status==='combatReady'||m.status==='wounded','terminal member exposure');const roll=sectorDraw(state.sectorRng);samples.push(roll);if(roll>=op.probability)return;
     }
-    requireThat(['wounded','dead'].includes(op.to),'casualty status');
     if(m.status===op.to)return;
     requireThat(m.status==='combatReady'||m.status==='wounded'&&op.to==='dead','member resurrection/terminal state');m.status=op.to;m.coverId=null;
     for(const r of c.resources)if(r.operatorId===m.id)r.operatorId=null;return;
