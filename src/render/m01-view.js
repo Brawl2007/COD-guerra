@@ -394,7 +394,7 @@ export class M01View {
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
     this.syncSolids(sim.world);const state=sim.renderState,time=sim.clock,dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
-    this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.yardWagons.update(sim.destruction,this.owner.quality);this.lighting(sim);
+    this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.yardWagons.update(sim.destruction,this.owner.quality,sim.world);this.lighting(sim);
     this.train.visible=state.train963;this.panzerzug.visible=state.panzerzug;
     this.updateAircraft(state,time,sim.player);
     const player=sim.player,eye=eyePosition(player),dir=aimDirection(player.angle,player.pitch);
