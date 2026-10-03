@@ -130,6 +130,8 @@ export class BattleWorld {
   enqueue(event) {
     requireThat(typeof event.id === 'string' && event.id && integer(event.at) && event.at >= this.time, 'event identity/time');
     requireThat(!this.agenda.some(e => e.id === event.id) && !this.consumed.includes(event.id), 'duplicate event');
+    const last = this.journal.at(-1);
+    requireThat(!last || order(event, last) > 0, 'input would reorder consumed history');
     this.sector(event.sectorId); this.validateAction(event);
     this.agenda.push(copy(event)); this.agenda.sort(order);
     this.config.events.push(copy(event));
@@ -140,17 +142,20 @@ export class BattleWorld {
     if (['order', 'exposure', 'loss', 'rescue', 'resupply', 'handoff'].includes(e.type)) findFormation(s, e.formationId);
     if (e.type === 'order' || e.type === 'intervention') requireThat(STATES.includes(e.state) && (e.direction === undefined || Number.isFinite(e.direction)), 'order state');
     if (e.type === 'order') requireThat(typeof e.objective === 'string', 'order objective');
-    if (e.type === 'exposure') requireThat(Number.isFinite(e.ratePerSecond) && e.ratePerSecond >= 0 && integer(e.durationMs) && fraction(e.cover) && fraction(e.suppression) && fraction(e.firepower) && fraction(e.fatalFraction), 'exposure context');
+    if (e.type === 'exposure') requireThat(Number.isFinite(e.ratePerSecond) && e.ratePerSecond >= 0 && integer(e.durationMs) && fraction(e.cover) && fraction(e.suppression) && fraction(e.firepower) && fraction(e.fatalFraction) &&
+      (e.weaponId === undefined || s.assets.fixedWeapons.some(a => a.id === e.weaponId)), 'exposure context');
     if (e.type === 'loss') requireThat(['wounded', 'dead'].includes(e.to) && (e.memberId !== undefined || integer(e.ordinal)), 'loss payload');
     if (e.type === 'rescue') requireThat(integer(e.amount) && e.amount > 0, 'rescue amount');
     if (e.type === 'resupply') requireThat(integer(e.amount), 'resupply amount');
     if (e.type === 'asset') requireThat(ASSET_FIELDS.includes(e.category) && s.assets[e.category].some(a => a.id === e.assetId) && ASSET_STATES.includes(e.state), 'asset payload');
-    if (e.type === 'handoff') requireThat(integer(e.expectedRevision) && Array.isArray(e.members) && e.members.every(m => typeof m.id === 'string' && STATUSES.includes(m.status) && point(m.position) && integer(m.rounds)) && new Set(e.members.map(m => m.id)).size === e.members.length, 'handoff payload');
+    if (e.type === 'handoff') requireThat(integer(e.expectedRevision) && Array.isArray(e.members) && e.members.every(m => typeof m.id === 'string' && STATUSES.includes(m.status) && point(m.position) && integer(m.rounds)) && new Set(e.members.map(m => m.id)).size === e.members.length &&
+      (e.formationPosition === undefined || point(e.formationPosition)) && (e.reserveAmmunition === undefined || integer(e.reserveAmmunition)), 'handoff payload');
   }
   apply(s, e) {
     if (e.type === 'order') {
       s.state = e.state; s.objective = e.objective;
-      changeOrder(findFormation(s, e.formationId), e.state, e.at, e.direction);
+      const f = findFormation(s, e.formationId); f.objective = e.objective;
+      changeOrder(f, e.state, e.at, e.direction);
       return { state: s.state, objective: s.objective };
     }
     if (e.type === 'intervention') {
@@ -182,6 +187,9 @@ export class BattleWorld {
     if (e.type === 'loss') return loss(s, f, e.memberId === undefined ? e.ordinal : ordinalFor(f, e.memberId), e.to);
     if (e.type === 'handoff') {
       requireThat(e.expectedRevision === s.revision, 'stale handoff');
+      if (e.reserveAmmunition !== undefined) {
+        requireThat(e.reserveAmmunition <= f.ammunition, 'unrecorded resupply'); f.ammunition = e.reserveAmmunition;
+      }
       // Called on a cloned sector: any invalid member rejects the entire return.
       const result = [];
       for (const m of e.members) {
@@ -194,14 +202,18 @@ export class BattleWorld {
         f.individuals[n] = { position: copy(m.position), rounds: m.rounds };
         result.push({ id: m.id, status: statusAt(f, n) });
       }
+      if (e.formationPosition) {
+        f.position = copy(e.formationPosition); f.motion = { origin: copy(f.position), at: e.at };
+      }
       return { members: result };
     }
     const ready = f.runs.find(r => r.status === 'combatReady');
-    if (!ready || f.ammunition === 0 || ['inactive', 'routed'].includes(f.state)) return { applied: false, reason: 'not-engaged' };
+    const weapon = e.weaponId && s.assets.fixedWeapons.find(a => a.id === e.weaponId);
+    if (!ready || weapon && ['destroyed', 'inactive'].includes(weapon.state)) return { applied: false, reason: 'not-engaged' };
     const rng = new Random(s.rng), roll = rng.next(); s.rng = rng.state;
-    const context = (1 - e.cover) * (1 - e.suppression) * e.firepower * f.morale * f.cohesion * f.supply;
+    const vulnerability = 2 - f.morale * f.cohesion * f.supply;
+    const context = (1 - e.cover) * (1 - e.suppression) * e.firepower * vulnerability * (weapon?.state === 'damaged' ? .5 : 1);
     const probability = -Math.expm1(-e.ratePerSecond * e.durationMs / 1000 * context);
-    f.ammunition = Math.max(0, f.ammunition - 1);
     if (roll >= probability) return { applied: false, reason: 'no-loss', probability };
     const fatalRoll = rng.next(); s.rng = rng.state;
     return { ...loss(s, f, ready.from, fatalRoll < e.fatalFraction ? 'dead' : 'wounded'), probability };
@@ -271,9 +283,11 @@ export function materialize(world, sectorId, { budget = 16 } = {}) {
 }
 
 /** Atomic return of observed member deltas. Never replaces the whole aggregate. */
-export function dematerialize(world, descriptor, { id, formationId, members }) {
+export function dematerialize(world, descriptor, { id, formationId, members, formationPosition, reserveAmmunition }) {
   const input = { id, at: world.time, sectorId: descriptor.sectorId, type: 'handoff',
-    expectedRevision: descriptor.revision, formationId, members: copy(members) };
+    expectedRevision: descriptor.revision, formationId, members: copy(members),
+    ...(formationPosition ? { formationPosition: copy(formationPosition) } : {}),
+    ...(reserveAmmunition !== undefined ? { reserveAmmunition } : {}) };
   world.validateAction(input);
   // Preflight prevents malformed returns from blocking the timeline or entering input log.
   world.apply(copy(world.sector(input.sectorId)), input);

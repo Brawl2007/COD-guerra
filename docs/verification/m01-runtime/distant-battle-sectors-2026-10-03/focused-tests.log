@@ -1,0 +1,38 @@
+✔ same seed/input/clock produces identical state, casualties, motion, events, destruction and RNG (23.438142ms)
+✔ different seeds affect emergent journal/RNG without changing authored macro outcome (15.434237ms)
+✔ frame/tick partitions do not change state or RNG (18.045651ms)
+✔ pause freezes time, movement, RNG and scheduled events (14.078435ms)
+✔ all LOW/MEDIUM/HIGH, visible/hidden, FULL/GROUP/PROXY/STATE_ONLY produce identical logical snapshots (44.157046ms)
+✔ 1000→600→300→120 m yields FAR→MID→MID→NEAR with no extra RNG/reset/duplicate formation or casualty (20.141131ms)
+✔ hysteresis prevents border thrashing without affecting simulation (0.451103ms)
+✔ hidden battles advance and materialize the latest casualties, fire and withdrawal (6.119024ms)
+✔ bounded outcomes conserve population over many seeds (279.581806ms)
+✔ bounded loss clamps before damage; no resurrection or correcting casualties (1.420722ms)
+✔ known named and generated IDs never resurrect on rematerialization (0.962963ms)
+✔ large reserve remains compressed with zero individual records; budgets preserve all logical counts (36.680156ms)
+✔ return preserves deaths, wounded, individual rounds/position, formation position/reserve and assets (1.590624ms)
+✔ dead resurrection rejects the entire handoff, including earlier valid member/resource edits (1.768998ms)
+✔ duplicate/unknown IDs and stale revision cannot replace a formation (1.248517ms)
+✔ duplicate event/return cannot add a second death (1.499252ms)
+✔ four rescued wounded persist as evacuated and cannot turn fixed retreat into victory (1.650544ms)
+✔ dynamic local player order can change state; resupply changes reserves (0.582001ms)
+✔ destroying MG suppresses associated future exposures without camera or new RNG (5.645594ms)
+✔ vehicle destruction/crater contract persists across repeated views and replay (2.993113ms)
+✔ replay checkpoint validates full state and resumes without duplicate events/RNG (22.683973ms)
+✔ input order at same timestamp is stable by ID; adjacent timestamp inputs deterministic (0.924637ms)
+✔ other sector events and input sector ordering do not change RNG or outcome of this sector (13.021531ms)
+✔ full cover/no incoming fire never makes casualties; ammo-zero target remains vulnerable (19.775631ms)
+✔ invalid config/time/payload rejected and snapshots are defensive copies (3.168103ms)
+✔ CLI repeat bytes and graphic/camera parameters are identical (JSON/text/CSV) (923.682659ms)
+✔ individual return and later dynamic inputs replay identically and continue motion (3.482713ms)
+✔ late same-time input cannot reorder already consumed history or break replay (1.641404ms)
+✔ no-change return repeated at later boundaries retains unique roster and casualty totals (19.371342ms)
+✔ fixed loss without RNG is an authored casualty event; exhausted bounds reject handoff atomically (1.197299ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1641.791705

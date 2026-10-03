@@ -78,11 +78,18 @@ discrete events, independent of frames and caller step partition. Sparse
 exposure windows and authored transitions are processed at their scheduled
 timestamps, ordered by `(time,id)`. Same-time movement precedes events;
 events follow lexical ID ordering, documented as part of the replay contract.
+Late inputs at the same time must sort after consumed events; retroactive
+insertion is rejected. Adapters should use monotonic input IDs or a later
+canonical timestamp. Full accepted inputs remain in the prototype replay config.
 Active clock freezes during pause; wall clock never drives outcomes.
 
 Candidate exposure cadence is fixture data, not a shipping balance value.
 Loss probability uses an exposure hazard `1-exp(-rate*duration*context)`
-with cover, suppression, firepower, morale/cohesion and supplies. It models
+with cover, incoming-source suppression/firepower and defender vulnerability
+from morale/cohesion/supplies. An exhausted or unarmed target is still exposed.
+Incoming exposure does not spend defender ammunition. Linked destroyed MGs
+disable their future exposures; damaged MGs halve the fixture firepower.
+It models
 one at-risk slot per exposure event, not every bullet, and is uncalibrated.
 Fixed historical outcomes use authored commands instead of random attrition.
 Events record the selected ordinal and actual result, including bounded/no-op.
@@ -112,6 +119,10 @@ On return, an idempotent typed input includes expected sector revision,
 member IDs and final state/position/ammunition; reject stale, duplicate IDs,
 unknown IDs and resurrection **atomically**. Events and destruction stay in
 the same sector journal. Repeated enter/leave requests keep the same IDs.
+Formation ammunition is reserve stock; individual rounds are separate loaded
+clips. Return may reduce reserve and update the formation anchor; increases
+require an explicit resupply input. These are logical bookkeeping units,
+not the existing M01 weapon schema. Sparse member positions survive return.
 
 To avoid pop-in, prefetch assets and descriptors in an outer hysteresis band,
 stage them at actual positions behind verified terrain/building occlusion,

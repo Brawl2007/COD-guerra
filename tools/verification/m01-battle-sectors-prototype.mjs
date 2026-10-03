@@ -31,7 +31,7 @@ export function fixture(seed = 19390901, { sectorCount = 2, nominalStrength = 30
         smoke: [{ id: `${id}_smoke`, state: 'inactive', position: { x: x - 10, y: 0, z: 20 } }] } });
     for (let second = 10; second <= duration; second += 10) events.push({ id: `${id}:exposure:${String(second).padStart(5, '0')}`,
       at: second * 1000, sectorId: id, formationId: fid, type: 'exposure', ratePerSecond: .08,
-      durationMs: 10000, cover: .4, suppression: .2, firepower: .9, fatalFraction: .3 });
+      durationMs: 10000, cover: .4, suppression: .2, firepower: .9, fatalFraction: .3, weaponId: `${id}_mg` });
     events.push({ id: `${id}:withdrawal`, at: 220000, sectorId: id, formationId: fid,
       type: 'order', state: 'withdrawing', direction: Math.PI, objective: 'withdraw' });
     for (const [category, suffix, state] of [['destruction', 'building', 'damaged'], ['fires', 'fire', 'burning'], ['smoke', 'smoke', 'active']]) {

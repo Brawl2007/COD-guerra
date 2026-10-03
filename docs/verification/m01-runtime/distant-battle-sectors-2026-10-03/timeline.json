@@ -1,0 +1,1785 @@
+{
+  "time": 600000,
+  "sectors": [
+    {
+      "id": "fixture_sector_000",
+      "state": "withdrawing",
+      "objective": "withdraw",
+      "rng": 680584057,
+      "revision": 64,
+      "assets": {
+        "fixedWeapons": [
+          {
+            "id": "fixture_sector_000_mg",
+            "state": "active",
+            "position": {
+              "x": 5,
+              "y": 0,
+              "z": 10
+            }
+          }
+        ],
+        "vehicles": [
+          {
+            "id": "fixture_sector_000_vehicle",
+            "state": "intact",
+            "position": {
+              "x": 15,
+              "y": 0,
+              "z": 15
+            }
+          }
+        ],
+        "destruction": [
+          {
+            "id": "fixture_sector_000_building",
+            "state": "damaged",
+            "position": {
+              "x": -10,
+              "y": 0,
+              "z": 20
+            },
+            "origin": {
+              "x": 100,
+              "y": 0,
+              "z": 300
+            },
+            "changedAt": 252000
+          }
+        ],
+        "fires": [
+          {
+            "id": "fixture_sector_000_fire",
+            "state": "burning",
+            "position": {
+              "x": -10,
+              "y": 0,
+              "z": 20
+            },
+            "changedAt": 252000
+          }
+        ],
+        "smoke": [
+          {
+            "id": "fixture_sector_000_smoke",
+            "state": "active",
+            "position": {
+              "x": -10,
+              "y": 0,
+              "z": 20
+            },
+            "changedAt": 252000
+          }
+        ]
+      },
+      "formations": [
+        {
+          "id": "fixture_formation_0",
+          "state": "withdrawing",
+          "position": {
+            "x": -190,
+            "y": 0,
+            "z": 2.326828918379971e-14
+          },
+          "counts": {
+            "combatReady": 15,
+            "wounded": 9,
+            "dead": 6,
+            "evacuated": 0
+          },
+          "ammunition": 100
+        }
+      ]
+    },
+    {
+      "id": "fixture_sector_001",
+      "state": "withdrawing",
+      "objective": "withdraw",
+      "rng": 2795584549,
+      "revision": 64,
+      "assets": {
+        "fixedWeapons": [
+          {
+            "id": "fixture_sector_001_mg",
+            "state": "active",
+            "position": {
+              "x": 505,
+              "y": 0,
+              "z": 10
+            }
+          }
+        ],
+        "vehicles": [
+          {
+            "id": "fixture_sector_001_vehicle",
+            "state": "intact",
+            "position": {
+              "x": 515,
+              "y": 0,
+              "z": 15
+            }
+          }
+        ],
+        "destruction": [
+          {
+            "id": "fixture_sector_001_building",
+            "state": "damaged",
+            "position": {
+              "x": 490,
+              "y": 0,
+              "z": 20
+            },
+            "origin": {
+              "x": 600,
+              "y": 0,
+              "z": 300
+            },
+            "changedAt": 252000
+          }
+        ],
+        "fires": [
+          {
+            "id": "fixture_sector_001_fire",
+            "state": "burning",
+            "position": {
+              "x": 490,
+              "y": 0,
+              "z": 20
+            },
+            "changedAt": 252000
+          }
+        ],
+        "smoke": [
+          {
+            "id": "fixture_sector_001_smoke",
+            "state": "active",
+            "position": {
+              "x": 490,
+              "y": 0,
+              "z": 20
+            },
+            "changedAt": 252000
+          }
+        ]
+      },
+      "formations": [
+        {
+          "id": "fixture_formation_1",
+          "state": "withdrawing",
+          "position": {
+            "x": 310,
+            "y": 0,
+            "z": 2.326828918379971e-14
+          },
+          "counts": {
+            "combatReady": 15,
+            "wounded": 7,
+            "dead": 8,
+            "evacuated": 0
+          },
+          "ammunition": 100
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "fixture_sector_000:exposure:00010",
+      "at": 10000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00010",
+      "at": 10000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00020",
+      "at": 20000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": true,
+        "memberId": "fixture_named_0",
+        "ordinal": 0,
+        "from": "combatReady",
+        "to": "wounded",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00020",
+      "at": 20000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": true,
+        "memberId": "fixture_named_1",
+        "ordinal": 0,
+        "from": "combatReady",
+        "to": "dead",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00030",
+      "at": 30000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": true,
+        "memberId": "fixture_formation_0/soldier/1",
+        "ordinal": 1,
+        "from": "combatReady",
+        "to": "wounded",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00030",
+      "at": 30000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00040",
+      "at": 40000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00040",
+      "at": 40000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00050",
+      "at": 50000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00050",
+      "at": 50000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00060",
+      "at": 60000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00060",
+      "at": 60000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": true,
+        "memberId": "fixture_formation_1/soldier/1",
+        "ordinal": 1,
+        "from": "combatReady",
+        "to": "dead",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00070",
+      "at": 70000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00070",
+      "at": 70000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00080",
+      "at": 80000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00080",
+      "at": 80000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00090",
+      "at": 90000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": true,
+        "memberId": "fixture_formation_0/soldier/2",
+        "ordinal": 2,
+        "from": "combatReady",
+        "to": "wounded",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00090",
+      "at": 90000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00100",
+      "at": 100000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": true,
+        "memberId": "fixture_formation_0/soldier/3",
+        "ordinal": 3,
+        "from": "combatReady",
+        "to": "wounded",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00100",
+      "at": 100000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00110",
+      "at": 110000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00110",
+      "at": 110000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00120",
+      "at": 120000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00120",
+      "at": 120000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": true,
+        "memberId": "fixture_formation_1/soldier/2",
+        "ordinal": 2,
+        "from": "combatReady",
+        "to": "wounded",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00130",
+      "at": 130000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00130",
+      "at": 130000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00140",
+      "at": 140000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00140",
+      "at": 140000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00150",
+      "at": 150000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00150",
+      "at": 150000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00160",
+      "at": 160000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00160",
+      "at": 160000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00170",
+      "at": 170000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00170",
+      "at": 170000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00180",
+      "at": 180000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00180",
+      "at": 180000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": true,
+        "memberId": "fixture_formation_1/soldier/3",
+        "ordinal": 3,
+        "from": "combatReady",
+        "to": "dead",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00190",
+      "at": 190000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00190",
+      "at": 190000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00200",
+      "at": 200000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00200",
+      "at": 200000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "maxDead",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00210",
+      "at": 210000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00210",
+      "at": 210000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00220",
+      "at": 220000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:withdrawal",
+      "at": 220000,
+      "sectorId": "fixture_sector_000",
+      "type": "order",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "state": "withdrawing",
+        "objective": "withdraw"
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00220",
+      "at": 220000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": true,
+        "memberId": "fixture_formation_1/soldier/4",
+        "ordinal": 4,
+        "from": "combatReady",
+        "to": "wounded",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:withdrawal",
+      "at": 220000,
+      "sectorId": "fixture_sector_001",
+      "type": "order",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "state": "withdrawing",
+        "objective": "withdraw"
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00230",
+      "at": 230000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00230",
+      "at": 230000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "maxDead",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00240",
+      "at": 240000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00240",
+      "at": 240000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": true,
+        "memberId": "fixture_formation_1/soldier/5",
+        "ordinal": 5,
+        "from": "combatReady",
+        "to": "wounded",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00250",
+      "at": 250000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00250",
+      "at": 250000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:impact:destruction",
+      "at": 252000,
+      "sectorId": "fixture_sector_000",
+      "type": "asset",
+      "result": {
+        "assetId": "fixture_sector_000_building",
+        "state": "damaged",
+        "position": {
+          "x": -10,
+          "y": 0,
+          "z": 20
+        },
+        "origin": {
+          "x": 100,
+          "y": 0,
+          "z": 300
+        }
+      }
+    },
+    {
+      "id": "fixture_sector_000:impact:fires",
+      "at": 252000,
+      "sectorId": "fixture_sector_000",
+      "type": "asset",
+      "result": {
+        "assetId": "fixture_sector_000_fire",
+        "state": "burning",
+        "position": {
+          "x": -10,
+          "y": 0,
+          "z": 20
+        }
+      }
+    },
+    {
+      "id": "fixture_sector_000:impact:smoke",
+      "at": 252000,
+      "sectorId": "fixture_sector_000",
+      "type": "asset",
+      "result": {
+        "assetId": "fixture_sector_000_smoke",
+        "state": "active",
+        "position": {
+          "x": -10,
+          "y": 0,
+          "z": 20
+        }
+      }
+    },
+    {
+      "id": "fixture_sector_001:impact:destruction",
+      "at": 252000,
+      "sectorId": "fixture_sector_001",
+      "type": "asset",
+      "result": {
+        "assetId": "fixture_sector_001_building",
+        "state": "damaged",
+        "position": {
+          "x": 490,
+          "y": 0,
+          "z": 20
+        },
+        "origin": {
+          "x": 600,
+          "y": 0,
+          "z": 300
+        }
+      }
+    },
+    {
+      "id": "fixture_sector_001:impact:fires",
+      "at": 252000,
+      "sectorId": "fixture_sector_001",
+      "type": "asset",
+      "result": {
+        "assetId": "fixture_sector_001_fire",
+        "state": "burning",
+        "position": {
+          "x": 490,
+          "y": 0,
+          "z": 20
+        }
+      }
+    },
+    {
+      "id": "fixture_sector_001:impact:smoke",
+      "at": 252000,
+      "sectorId": "fixture_sector_001",
+      "type": "asset",
+      "result": {
+        "assetId": "fixture_sector_001_smoke",
+        "state": "active",
+        "position": {
+          "x": 490,
+          "y": 0,
+          "z": 20
+        }
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00260",
+      "at": 260000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": true,
+        "memberId": "fixture_formation_0/soldier/4",
+        "ordinal": 4,
+        "from": "combatReady",
+        "to": "wounded",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00260",
+      "at": 260000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00270",
+      "at": 270000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00270",
+      "at": 270000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00280",
+      "at": 280000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00280",
+      "at": 280000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "maxDead",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00290",
+      "at": 290000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00290",
+      "at": 290000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00300",
+      "at": 300000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00300",
+      "at": 300000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00310",
+      "at": 310000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00310",
+      "at": 310000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00320",
+      "at": 320000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": true,
+        "memberId": "fixture_formation_0/soldier/5",
+        "ordinal": 5,
+        "from": "combatReady",
+        "to": "dead",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00320",
+      "at": 320000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00330",
+      "at": 330000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00330",
+      "at": 330000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00340",
+      "at": 340000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00340",
+      "at": 340000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00350",
+      "at": 350000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00350",
+      "at": 350000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00360",
+      "at": 360000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00360",
+      "at": 360000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00370",
+      "at": 370000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00370",
+      "at": 370000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00380",
+      "at": 380000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00380",
+      "at": 380000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00390",
+      "at": 390000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00390",
+      "at": 390000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00400",
+      "at": 400000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00400",
+      "at": 400000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00410",
+      "at": 410000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00410",
+      "at": 410000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00420",
+      "at": 420000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00420",
+      "at": 420000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00430",
+      "at": 430000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00430",
+      "at": 430000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00440",
+      "at": 440000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00440",
+      "at": 440000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00450",
+      "at": 450000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00450",
+      "at": 450000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00460",
+      "at": 460000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00460",
+      "at": 460000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00470",
+      "at": 470000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00470",
+      "at": 470000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00480",
+      "at": 480000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00480",
+      "at": 480000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "maxDead",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00490",
+      "at": 490000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00490",
+      "at": 490000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00500",
+      "at": 500000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00500",
+      "at": 500000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00510",
+      "at": 510000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00510",
+      "at": 510000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00520",
+      "at": 520000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00520",
+      "at": 520000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00530",
+      "at": 530000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00530",
+      "at": 530000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00540",
+      "at": 540000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00540",
+      "at": 540000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "maxDead",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00550",
+      "at": 550000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00550",
+      "at": 550000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00560",
+      "at": 560000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00560",
+      "at": 560000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00570",
+      "at": 570000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00570",
+      "at": 570000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "maxDead",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00580",
+      "at": 580000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00580",
+      "at": 580000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00590",
+      "at": 590000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00590",
+      "at": 590000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "maxDead",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_000:exposure:00600",
+      "at": 600000,
+      "sectorId": "fixture_sector_000",
+      "type": "exposure",
+      "formationId": "fixture_formation_0",
+      "result": {
+        "applied": false,
+        "reason": "minCombatReady",
+        "probability": 0.38867980112381606
+      }
+    },
+    {
+      "id": "fixture_sector_001:exposure:00600",
+      "at": 600000,
+      "sectorId": "fixture_sector_001",
+      "type": "exposure",
+      "formationId": "fixture_formation_1",
+      "result": {
+        "applied": false,
+        "reason": "no-loss",
+        "probability": 0.38867980112381606
+      }
+    }
+  ]
+}

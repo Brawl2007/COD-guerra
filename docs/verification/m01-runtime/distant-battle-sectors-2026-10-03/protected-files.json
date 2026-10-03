@@ -1,0 +1,2527 @@
+{
+  "base": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+  "protectedCount": 630,
+  "allByteIdentical": true,
+  "files": [
+    {
+      "path": ".github/workflows/pages.yml",
+      "sha256": "19a277cc9eb110d1b388b6602ecb639d01109200b152e03ea9063bec1a13e2ee"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "39eb121c6e02de5106519906c98f0b3d2a6471dcf37a5931faa3ebc9283b3cc3"
+    },
+    {
+      "path": ".gitkeep",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "ff3f38b96f1d1a971e2384aba70385c40ab6f145bbd33be56e9dc6c9954e69d4"
+    },
+    {
+      "path": "ASSET_CREDITS.md",
+      "sha256": "8b3e6f8d6b7a7a35a84d0944198c01cfb2310d0568548d514dc3976fb5a3dda8"
+    },
+    {
+      "path": "ASSET_PIPELINE.md",
+      "sha256": "61dd3a1fb708b2b8a049400d2b6dae45fbe1132682ee1f70e977fecaece0a889"
+    },
+    {
+      "path": "DEVELOPMENT_STATUS.md",
+      "sha256": "476adb41e58efdbf9ca10bfa5a69cacc042cb957fdaa61e6709d1be59e69dabb"
+    },
+    {
+      "path": "IMPLEMENTATION_PLAN.md",
+      "sha256": "c5395086858a6b6424adeea0c2e4f8e10a6989456b19540f224ede72cdd8174c"
+    },
+    {
+      "path": "PROJECT_SPEC.md",
+      "sha256": "46d5bf6118f72d8fbf002322e42ec79a747891685c5a608eb969437dd55a72eb"
+    },
+    {
+      "path": "QUALITY_REPORT.md",
+      "sha256": "e8d048f3bdf334dc5d6ce1f1eddf49a1b565dd36314b23e3fccebb6dfdcbb740"
+    },
+    {
+      "path": "README.md",
+      "sha256": "dcbeabdb3ca87112357869a773301d79b2a711d3ba00095466dc04eca676d771"
+    },
+    {
+      "path": "RUNBOOK.md",
+      "sha256": "c714095f896b612cac8b55e451573dec033ca4062ae0e24da6d6719610c6eaf6"
+    },
+    {
+      "path": "STORY_BIBLE.md",
+      "sha256": "1eaaa20a398eb4a8ffe2a9b9e22a82a5782e72358e6350f3b32cf831c066753e"
+    },
+    {
+      "path": "assets-needed.md",
+      "sha256": "1a33fff36e76694df9e5a36477e0a2bcda0899f72ee356552e548607e1621065"
+    },
+    {
+      "path": "assets/licenses/MakeHuman-CC0.md",
+      "sha256": "f6089cba01cb570a24712b41ab8a586ccd3cc5ef53dc266ca50b95c288956d2c"
+    },
+    {
+      "path": "assets/models/allied-rifleman.mtl",
+      "sha256": "bfb1903f8102062e68e89a8273d8ed679788b58dcbcd0bbc406ed933aa992f09"
+    },
+    {
+      "path": "assets/models/allied-rifleman.obj",
+      "sha256": "198b8a0327317d29c3e272947e6831174c45da68075bc057b4dc68b204eabce5"
+    },
+    {
+      "path": "assets/models/axis-rifleman.mtl",
+      "sha256": "5b37b2fcd90436ec942a6476320965f2e0e5066bf40990a8f90d8d812f518979"
+    },
+    {
+      "path": "assets/models/axis-rifleman.obj",
+      "sha256": "e8261973f9547897c798d0fbcb0b01cc524039aa4fb7694b8d777a97fc5772cc"
+    },
+    {
+      "path": "assets/models/m1-carbine.mtl",
+      "sha256": "d0c7992df4ad20373b2500dab016b7193ae654b8d6d3b716da64b925407d8ea1"
+    },
+    {
+      "path": "assets/models/m1-carbine.obj",
+      "sha256": "393b6539bb3c0b4492530962c7dc3fa7726fc766cfb3a4c4435c687b86243042"
+    },
+    {
+      "path": "assets/models/provisional/m01-aircraft/m01_ju87_b1_lod0.glb",
+      "sha256": "04ab39240c3433f176e95508fb4ef7e11167c53f898bdc0f6da607135cf2794b"
+    },
+    {
+      "path": "assets/models/provisional/m01-aircraft/m01_ju87_b1_lod1.glb",
+      "sha256": "71393ee3ef304b68c445a597895b52d89761f45dac8f1a9ca0f94ce279c54d3c"
+    },
+    {
+      "path": "assets/models/provisional/m01-aircraft/m01_ju87_b1_lod2.glb",
+      "sha256": "454c5afeafcd1516058b1db47df052353b1a28e60cbed994c2904dad042868c8"
+    },
+    {
+      "path": "assets/models/provisional/m01-aircraft/manifest.json",
+      "sha256": "d0e0e054d7eb840c0c292453cb113f617b68acd16c11b3766531ff023ccac724"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_burned_lod0.glb",
+      "sha256": "9ddc22ef1635cd4f708c46127950d76695081e251fbfaaadcd1bcd760bda848b"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_burned_lod1.glb",
+      "sha256": "baab5b6b63d6f3c550585d6abf924cde6c366ca3109904f65909c5b7249b0b44"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_burned_lod2.glb",
+      "sha256": "5be4191578f3c28f0eebbfac35d67cc1f5ef9b167403683227b7929965b641a5"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_damaged_lod0.glb",
+      "sha256": "232517ead15255ac57c10440c43e56a51bf0f06cdab20592c68ebb27dc0dba29"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_damaged_lod1.glb",
+      "sha256": "42a17730056103e8fbc8cb7b7c95951dfddd1c03b552a8cff4c7f5db823f37cc"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_damaged_lod2.glb",
+      "sha256": "6b7e03ddc01017b225776737d6248aa978a9b2ddc4e130af29560e7e8f8cfb3c"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_burned_lod0.glb",
+      "sha256": "7abe2b0ea4a2c0a72400c14e931424312bd7eecbd537ea7dc772c81eed22e103"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_burned_lod1.glb",
+      "sha256": "878fb80bbc5575c5232269b49a54428b320390d5df5edbedabd65d91b3e30e11"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_burned_lod2.glb",
+      "sha256": "fcb97bd311981ce10b2ec6ebf89e348b71ccddf8789193b81914ff3eba137381"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_damaged_lod0.glb",
+      "sha256": "6f8ddbd089ed0a1cc98533e63ceb916e182bf23424ffa96cef4148ece862b1b3"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_damaged_lod1.glb",
+      "sha256": "9e3bbdac0d56ce9be1e0e7be20f7f2e44d27105ac76783415763b01a16afe3fd"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_damaged_lod2.glb",
+      "sha256": "9abb14d756208ca0e9bdc3cafce2395ca885161818e9b4f14495066413d0bd58"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/manifest.json",
+      "sha256": "1361f0e91187d8b0a285bcc767786d4191c9e04e8594a9878d641a8285599673"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_covered_lod0.glb",
+      "sha256": "081157e1bccd9b184e14bce03cffd4821738818a354811fa6ba2f53e2bed974f"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_covered_lod1.glb",
+      "sha256": "452b005d6efa9d510cb421a5eeeeb533e32dae4c30b9b1a247e8800f42a44e87"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_covered_lod2.glb",
+      "sha256": "0eb03cada40c0e0279d81f83c95963d2de39523735e33fb9fd3810dd2a502413"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_open_lod0.glb",
+      "sha256": "7806337ee9413b6dc2c2505980032868b14cd8969bc99362273ca80534d46b50"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_open_lod1.glb",
+      "sha256": "4994884b89a2c0e51317e0056ea5cafdb9c447b33641459481a329ec3097b6b3"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_open_lod2.glb",
+      "sha256": "78c7c6afcbb9ff3b9e1942d7729d79e82acbafe95302aeda08ee35f2ac19adb1"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/manifest.json",
+      "sha256": "cbea08196bc4d11105d61d42cef3098eeabc1fb8d225d0c515b630bcc3d6a09b"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge-colliders.json",
+      "sha256": "4abe3556c34f80d046dcd78f6d2c4697b66fafab948f9d812ff45c13456e326d"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_rail_1891_1912.colliders.glb",
+      "sha256": "d842571caf72e69567552838167fdd1dc757fdfaf09e607675c9522b8014714f"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+      "sha256": "6bc61f88caba3a5efb8a5435081413d629ce0547b1b22d13b3f497538fd270dd"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_rail_1891_1912.lod1.glb",
+      "sha256": "b57496e46c8f72244c64477aa576ef102a9436406a02112325c23f7898e4547b"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_rail_1891_1912.lod2.glb",
+      "sha256": "73a40ed8dc0bcb1926175b52e3a12f5356a868eec71cc6529dcee1fe391c3af3"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.colliders.glb",
+      "sha256": "2a4b0d7715d36c21a71cd54fc3e742e763605d032f31a3ef04fb625244d65ffc"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+      "sha256": "e022cdd1454bca6dc908d31c542ab05f864096bef0ea40c39d5ae27ef3913404"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod1.glb",
+      "sha256": "51aab198331165fe968b9b5e2883dda7583c2590b26233a634f4e0c02c8e60a4"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod2.glb",
+      "sha256": "80251700525fe134c4c3771a58635951461f7d2e5223e09e6bccc3ed60ee379c"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridges.manifest.json",
+      "sha256": "176fcbb31a3329443086dff88a05772996a3be6cb59ccd310147887c15454313"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_animations.glb",
+      "sha256": "481d6114f4481ae0f99e162a4bbfdbe8e1d74cffc2460836a2b525bf93b0202d"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_de_lod0.glb",
+      "sha256": "15082783b5a18ed93934e6eb47b9b07632d91e13478d9d7a450a7af2a9eb5b54"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_de_lod1.glb",
+      "sha256": "5c7294586cd75d0cd96eb757452854a5d8d19a93349fdf9d00d80d52d640a29f"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_de_lod2.glb",
+      "sha256": "6e04d5a34ee64ad8f142ada447e565314b45f4da8b2f123fa3ffeff6fd6c66d4"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_pl_lod0.glb",
+      "sha256": "9c98adb2eace9e4ac0558146b7cdc85a37374809a090208c0b51f42b4c87ae4d"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_pl_lod1.glb",
+      "sha256": "d4e7565b92c6e266487a43af3c5a739b9f0a98328656662940ed0fe9fa361d8f"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_pl_lod2.glb",
+      "sha256": "d1a59032549e07973684942aeac993d72c7427811db5061bba57c0bcf3fa15de"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_station_animations.glb",
+      "sha256": "504d4d84859149e3557da345e9572279a360d471e6c55c8550625ea5415ca9e5"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/manifest.json",
+      "sha256": "2f8e29ccf8894d40b7746abb4540105323650f4dbd9feab3d41908099c96eda6"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/station-animations.manifest.json",
+      "sha256": "05e132bfa87f1626359fe3577e5cbc6eb4da67bc0756ac65ff8dab76af360a87"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/station-drag-transitions/m01_station_drag_transitions.glb",
+      "sha256": "5b59af9c0410f7747bed478a3c009ae54e916d7c38053530769f38a1d2c9eb6c"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/station-drag-transitions/manifest.json",
+      "sha256": "9dbbed8028b9828de0b6e487622c385774be863e5ac7157f74ccf57721a57017"
+    },
+    {
+      "path": "assets/models/provisional/m01/portal_lisewo_1912.colliders.glb",
+      "sha256": "14fd8776cde3822b7b42a230854af543a611c8f95e89e0eec68166ef3ef90ac9"
+    },
+    {
+      "path": "assets/models/provisional/m01/portal_lisewo_1912.glb",
+      "sha256": "9db340f3127076b41c4d9261eedef64b2816f204c87f267faaa406d68b98a933"
+    },
+    {
+      "path": "assets/models/provisional/m01/portal_lisewo_1912.lod1.glb",
+      "sha256": "3283065ab78ca79231338cf780591944c548fc963ed0dab42216cd7432f95094"
+    },
+    {
+      "path": "assets/models/provisional/m01/portal_lisewo_1912.lod2.glb",
+      "sha256": "84ee83e8b096b3c9dc6bfe4320c1e617a7780af36e9ad408f8243fce08831f9f"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_animations.glb",
+      "sha256": "dda588e9163da7aa0bfe9b3f7189d96c84a9e4788b9707ffbee7b70dfe936865"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_lod0.glb",
+      "sha256": "64ee37e3f4ad5882c97bcebfa47195b6ae84abbc33eb1faff99cd37c931165b9"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_lod1.glb",
+      "sha256": "30fa7424df859c7c4c5be6b347955cf636284041c9eccfc1e30f1063f1fd0168"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_lod2.glb",
+      "sha256": "a00f9a301b11523d3398c360a3c7bf8a15c5c0481abec56ec48efe80f9c5f875"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/manifest.json",
+      "sha256": "81acc3147bbfaf965c2985deab3dd0d47330a7b4b4f080379088f060f8a4a3da"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34-prone/m01_mg34_prone_animations.glb",
+      "sha256": "79a405dd9c3c2d4bdc113b367d96de631ff62fa88be62e93e79952d353ca4d3c"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34-prone/manifest.json",
+      "sha256": "61cf1f31717a5071e96911c84a44824fc010690fee94240a656d86718ebcf352"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_animations.glb",
+      "sha256": "2245c4ac88f59b2a17a73436e14b62fa2f0abff2303fa19bb2b16913f82ad74b"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod0.glb",
+      "sha256": "a65ac6a4eb8a350646a209383a5e2d7c76667774f9af2453279af99f8a071298"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod1.glb",
+      "sha256": "6aa44e8c9c6152301a9ac2d31d1c88e174705f778922459a2c2f2d2d6fa0fc7a"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod2.glb",
+      "sha256": "657e2ab1784f6755d7a429081210db6b7252496ede55e8c068ded112d8edcc65"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/manifest.json",
+      "sha256": "61040eebb6e09abf93a567efbcde5b2009f2805b997d83952abca169f4961b8b"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_animations.glb",
+      "sha256": "23ecb6fb0429d5b38ee70492e3bb63d7853c1d86d85402693a5d67e23535c804"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_lod0.glb",
+      "sha256": "ade802f370828734bec7b8e9d810a4d76974b38be285ec30ab4be2f9ee0b323b"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_lod1.glb",
+      "sha256": "ac9381fdcd3989fb50739f2b8a9d7cdf2e05e1a2d5f77faaeb16f33e78f135d9"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_lod2.glb",
+      "sha256": "2816fe42517469a5577575c04c45ed679b80b6a04b974a586ea912a280839744"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/manifest.json",
+      "sha256": "cd26ea6deeb568479bb6f9bb3992ad86db3f29d1ae7d76de876d6e72c324d451"
+    },
+    {
+      "path": "docs/CLAUDE_CKM_TASK_REFERENCE.md",
+      "sha256": "518a4a3fb2cb3bc864b207d61fc5d4755e953559ff3617c25e84f73421a8b13d"
+    },
+    {
+      "path": "docs/CLAUDE_MG34_WAGON_TASK_REFERENCE.md",
+      "sha256": "bd0a9bc8ab8e3002a19c103d3ab75ea25b4e36d58f701b422d8cc0ba36081980"
+    },
+    {
+      "path": "docs/CLAUDE_NEXT_TASK.md",
+      "sha256": "873f0a03280bef57a005ea10cbe3351c28cf878e8c7aeb4e4615cd2e9df5f5a0"
+    },
+    {
+      "path": "docs/PROMPT_MESTRE.txt",
+      "sha256": "e1912d9c8e2ca4f34c10007fa6d1cdbe63da129b260caec847f784e83467425e"
+    },
+    {
+      "path": "docs/THIRD_AGENT_TASK.md",
+      "sha256": "6315cbf16aa3176a22713786beb00b70dcdedd05b94dbfc98560e399d920da75"
+    },
+    {
+      "path": "docs/WORKING_CONTEXT.md",
+      "sha256": "2533412077572609c67420fa01ae83f1e790c8a01df7e1d5cc94969257dea5ff"
+    },
+    {
+      "path": "docs/assets/m01-aircraft/README.md",
+      "sha256": "14bdd08cf1badbd682a0e1bfa35651154cd3877f38a096cbd384af367b0eb04a"
+    },
+    {
+      "path": "docs/assets/m01-aircraft/import-report.json",
+      "sha256": "be0f663f9b1daa885bfae595afbd6876c01d92e6c4acf55aba686acc4a746de6"
+    },
+    {
+      "path": "docs/assets/m01-aircraft/ju87_details.png",
+      "sha256": "7ee3d479f8168d040753ba3661abb9ccdd716e732a502aa76cc883ea908b40fd"
+    },
+    {
+      "path": "docs/assets/m01-aircraft/ju87_flight.png",
+      "sha256": "4077ca221417d940e0fe3320d815a0c22a355af8d3350ca67c72cf91046e7cca"
+    },
+    {
+      "path": "docs/assets/m01-aircraft/ju87_views.png",
+      "sha256": "843a6d6eadc730015ce95b407bcb4464474de806a239c40b4ff29e69974373ec"
+    },
+    {
+      "path": "docs/assets/m01-bridges/README.md",
+      "sha256": "0ced1ccb34beb0bb03cf3a197a81b6b07539d6e26a0e3adcbd05255d422f85a0"
+    },
+    {
+      "path": "docs/assets/m01-bridges/destroyed_east.png",
+      "sha256": "49214134d1bb70381659f0f0e66d72d8613bffa8d5cc38f9c03db1c87c349e02"
+    },
+    {
+      "path": "docs/assets/m01-bridges/destroyed_east_lod1.png",
+      "sha256": "aaa0aed20209d4bc373739efbe7196b93d8f64fd11bf753abae4a27d9446466f"
+    },
+    {
+      "path": "docs/assets/m01-bridges/destroyed_east_lod2.png",
+      "sha256": "23c067db6828bc90a4ebacb91724e011ae48851cbb045c369dd8b7aba3adc822"
+    },
+    {
+      "path": "docs/assets/m01-bridges/destroyed_west.png",
+      "sha256": "d087cd02c35200f9ffb6256710456ecb27c2d730281768dc782d645d905000df"
+    },
+    {
+      "path": "docs/assets/m01-bridges/destroyed_west_lod1.png",
+      "sha256": "d677fb5a079a8f803e5648bd52599aa66044c24b9d9e02ecf477f216cf39c4e1"
+    },
+    {
+      "path": "docs/assets/m01-bridges/destroyed_west_lod2.png",
+      "sha256": "e7a25b7bfd5c684681059ca6f53182f78c5fff7ce92a77073b518ad0670700df"
+    },
+    {
+      "path": "docs/assets/m01-bridges/extension_elevation.png",
+      "sha256": "9ee9dfd81311429808e7706d0940ae9cba0350dd203c3aafbad8454b7bb72f6e"
+    },
+    {
+      "path": "docs/assets/m01-bridges/lisewo.png",
+      "sha256": "79308cf75270f27e0605d865774b4c28dad31c3b6ab36cc0398993d2b81ba355"
+    },
+    {
+      "path": "docs/assets/m01-bridges/lod1.png",
+      "sha256": "2da8a54d338bdf2a9bdec242d1c2483fc200f023a510a23dcc30db4a0036befb"
+    },
+    {
+      "path": "docs/assets/m01-bridges/lod2.png",
+      "sha256": "705a19f6d1f7d38d2745b89c29edd75d24260dea106c8679a189fe2df8eac8be"
+    },
+    {
+      "path": "docs/assets/m01-bridges/overview.png",
+      "sha256": "2b51c38a3418dddb5bb8ddcbd3776103d3e54ac0038dfeb970fb760608b9ea48"
+    },
+    {
+      "path": "docs/assets/m01-bridges/pier_detail.png",
+      "sha256": "1a417439d88430f9d5fc28643addc4e81d2165b76e87ed0acf3e4b590729b8fc"
+    },
+    {
+      "path": "docs/assets/m01-bridges/plan_measured.png",
+      "sha256": "3be3d08ca26d6d986783f1803a55572d5756a751b6c7d61583983911938b50ae"
+    },
+    {
+      "path": "docs/assets/m01-bridges/rail_elevation.png",
+      "sha256": "0cc148ef40dde82993576a031e6d65f980646f3222fb3e50d4beadfeda8e586b"
+    },
+    {
+      "path": "docs/assets/m01-bridges/review-results.json",
+      "sha256": "2e51ab8735248aed506450afe6d25a5b417ff1e352562fdcf912a8ead76f4b38"
+    },
+    {
+      "path": "docs/assets/m01-bridges/road_elevation.png",
+      "sha256": "5b089d598fc4baea4fdca212658e0b8e7715f03710d7b1dc329d1d4a49e7569c"
+    },
+    {
+      "path": "docs/assets/m01-bridges/towers.png",
+      "sha256": "8561a0c132271c596c009dd4d48d3678e002fea7ca8871d28b1d723c258a05c3"
+    },
+    {
+      "path": "docs/assets/m01-bridges/west.png",
+      "sha256": "dba8fa548e2856308293e939ae313b243a2fd3ecf1c1a312d0fecb2bd9e7dc9e"
+    },
+    {
+      "path": "docs/assets/m01-ckm-wz30/README.md",
+      "sha256": "37f7bc1c3fff935342899d388614551a82b3f61a937b16e3c3b294d60821cea1"
+    },
+    {
+      "path": "docs/assets/m01-ckm-wz30/ckm_clips.png",
+      "sha256": "448ca201dd989c22f81cd2a0bf10cbaec0432dc9f38e2598a3c55eae48325c3d"
+    },
+    {
+      "path": "docs/assets/m01-ckm-wz30/ckm_crew.png",
+      "sha256": "c2c2d40fa172bf3e1f3c306f06a197326ee48cbe549993108b7260ef3746977c"
+    },
+    {
+      "path": "docs/assets/m01-ckm-wz30/ckm_hands.png",
+      "sha256": "37a50fb77d85760b58dd98de20cd5f00d2b7eaa142097e0fd51518b2a8bf1be8"
+    },
+    {
+      "path": "docs/assets/m01-ckm-wz30/ckm_lod0_budget.png",
+      "sha256": "e71b6cbb36a5cf2005c7de1956d91836b559d4b22e305cf1a79a5255998ed375"
+    },
+    {
+      "path": "docs/assets/m01-ckm-wz30/ckm_lods.png",
+      "sha256": "6b508ea924628722e8126f27b9e16b1ce765e90e7ee04a0cfcb8e57e559a5fa9"
+    },
+    {
+      "path": "docs/assets/m01-ckm-wz30/ckm_views.png",
+      "sha256": "1fc7007e02160ed15d32fd049658d3923e3a38be8e11ef61f3d246828efaef3a"
+    },
+    {
+      "path": "docs/assets/m01-ckm-wz30/import-report.json",
+      "sha256": "79b6de88450694baea6603c8e8d1d8d4757ddccf3163f0cadec9823666a2a126"
+    },
+    {
+      "path": "docs/assets/m01-mg34-prone/README.md",
+      "sha256": "076659ede26252c65ab04929ae085d76ed5ea1a4fbdd63b6cd37be64e748f15b"
+    },
+    {
+      "path": "docs/assets/m01-mg34-prone/import-report.json",
+      "sha256": "5467c0caf74d9076d3e47e9cf3c9f222fa7d423c0c332d32045b3a86fbfeb287"
+    },
+    {
+      "path": "docs/assets/m01-mg34-prone/mg34_prone_burst.png",
+      "sha256": "8517cfd5e068c8d070aab4695b7cce1a3de12af88976d2cfd7599fa9cd740617"
+    },
+    {
+      "path": "docs/assets/m01-mg34-prone/mg34_prone_details.png",
+      "sha256": "441fb87fbce4bf32fbedd45a9b09dfb65722b7c2b3e86717eed8a005c79e51be"
+    },
+    {
+      "path": "docs/assets/m01-mg34-prone/mg34_prone_enter_exit.png",
+      "sha256": "fb68be4f69c120a4dce0abd4ebecf8fd2e53b7a68e0957b5f47740c92e7722eb"
+    },
+    {
+      "path": "docs/assets/m01-mg34-prone/mg34_prone_pair.png",
+      "sha256": "bd22961e5739a267269a34d66f05ecf5fe708677ef5080f9c30424af2232ee78"
+    },
+    {
+      "path": "docs/assets/m01-mg34-prone/mg34_prone_reload.png",
+      "sha256": "db9f1fc61a0d880cbc82ac7e3fa9726a42b5606b6d62ce4f9c856cc0dcf06c20"
+    },
+    {
+      "path": "docs/assets/m01-mg34/README.md",
+      "sha256": "ecd789454f99b9ba25bf50efda5b3667e34f0bb6340f1eca69b0af028f762a08"
+    },
+    {
+      "path": "docs/assets/m01-mg34/import-report.json",
+      "sha256": "30367df04747220cbb22cd0f1c8a21302f8ed6b409897fc99f6884376ca59f0f"
+    },
+    {
+      "path": "docs/assets/m01-mg34/mg34_in_hands.png",
+      "sha256": "c8e6bcb33fef7dad93dde3aaa3c25d6103d5beb84caa292668d3cef5154fef11"
+    },
+    {
+      "path": "docs/assets/m01-mg34/mg34_reload.png",
+      "sha256": "8f0330249a95b249af42c639a63d50143b193a931563c0496cc8997c9f299544"
+    },
+    {
+      "path": "docs/assets/m01-mg34/mg34_views.png",
+      "sha256": "35760973dd321124595fdcd52f0f5df6a1f06ce684b762944105651f7254c533"
+    },
+    {
+      "path": "docs/assets/m01-rkm-wz28/README.md",
+      "sha256": "aceaeaa0710d1e5f6b5279bc90647fbe099d7f5e355266b5d64c7e41feafe6fd"
+    },
+    {
+      "path": "docs/assets/m01-rkm-wz28/rkm_in_hands.png",
+      "sha256": "7418c01f245a5ccad90bf4a028662cf92f3e7f6d0b04e04397bbb0ae119bdb49"
+    },
+    {
+      "path": "docs/assets/m01-rkm-wz28/rkm_views.png",
+      "sha256": "5a4fec6a34bf0a198e11a7e52c0b45b40830654789cb03b82b84fd09b7f55a9b"
+    },
+    {
+      "path": "docs/assets/m01-soldiers/README.md",
+      "sha256": "1027ca1dc5295514d893e15447533df4d0252ddcae48e90bade61eb7ddbcfbcd"
+    },
+    {
+      "path": "docs/assets/m01-soldiers/clip_carry.png",
+      "sha256": "9c847db6e86aa62b1fecb3440de783598fda1913d68c472bcc866b2ade1936cb"
+    },
+    {
+      "path": "docs/assets/m01-soldiers/clip_fire_bolt.png",
+      "sha256": "562dc315c995f613c4f16bdc9d0db55b18a3882608aba698c3d470f789dcb16e"
+    },
+    {
+      "path": "docs/assets/m01-soldiers/clip_locomotion.png",
+      "sha256": "df30169aa23d5d1dd838be5001582781a2f3d3aeddf21d5b809a9f18f354e7af"
+    },
+    {
+      "path": "docs/assets/m01-soldiers/clip_poses.png",
+      "sha256": "39eecd3f4d5be5a3ea588a769f2a05f762f859eead179dcf18b41d501d57ab29"
+    },
+    {
+      "path": "docs/assets/m01-soldiers/clip_reload.png",
+      "sha256": "6b3804906eaf05ca5fcc64ca4aabcc7643bb600f313bf2ed677e09b472faefd6"
+    },
+    {
+      "path": "docs/assets/m01-soldiers/clip_rkm.png",
+      "sha256": "bb8c1ae38e49967353d33a53f6a5f478a92151f5665d57e9d6fbced9930cb56d"
+    },
+    {
+      "path": "docs/assets/m01-soldiers/clip_rkm_reload.png",
+      "sha256": "278c4fb5f4ecb3341df6192faad1eec931b73756c732a5bd3f18264b1a6e1acd"
+    },
+    {
+      "path": "docs/assets/m01-soldiers/clip_sappers.png",
+      "sha256": "8b651536dc04762b042eea05d1c5fa2b570f0a38103105c250a02985aa21c062"
+    },
+    {
+      "path": "docs/assets/m01-soldiers/heads.png",
+      "sha256": "f1dc47ed46ce2f61a9d489401ef7abe436c05553232e4fc87d3bf5e9fec86605"
+    },
+    {
+      "path": "docs/assets/m01-soldiers/lineup_de.png",
+      "sha256": "80adf9633249a1fe7d99256e942f5d7c15f87dff3e7a43d407ece1dfc9505d37"
+    },
+    {
+      "path": "docs/assets/m01-soldiers/lineup_kowal_bak.png",
+      "sha256": "6318c48995412e05c56a3d7808874bc72768d001214407cf2109db84c678b1a6"
+    },
+    {
+      "path": "docs/assets/m01-soldiers/lineup_pl.png",
+      "sha256": "3f20179b4706fd6294469834fcb9b655530feadb2e3e5174ae30c01993e795fb"
+    },
+    {
+      "path": "docs/assets/m01-soldiers/lods.png",
+      "sha256": "9b06cb78155081e7f74b394298f36d8e33974618c9df7f7074d2522706235b35"
+    },
+    {
+      "path": "docs/assets/m01-soldiers/weapons.png",
+      "sha256": "295d70e0f1698d24ae5c20b3adac0ec24ce2040c9558f8e93897adbabaa83ef4"
+    },
+    {
+      "path": "docs/assets/m01-station-drag-transitions/README.md",
+      "sha256": "cc691fdeba62c7990b5faeaa568532c57506f2eb9105818cb748ed2b2fc8e744"
+    },
+    {
+      "path": "docs/assets/m01-station-drag-transitions/drag_contacts.png",
+      "sha256": "5d95bd4550b504238ad7b99470ec4bb556fd727428274086b68f8ae03192b70c"
+    },
+    {
+      "path": "docs/assets/m01-station-drag-transitions/drag_grab_sequence.png",
+      "sha256": "03c726ddd0ee33e19fb92c22c436e73ab378bd7b24077e2b9d63eb8c6930861c"
+    },
+    {
+      "path": "docs/assets/m01-station-drag-transitions/drag_pause_restore.png",
+      "sha256": "5cd9495891275ef78f81bb2c53254e1c9550836ea105055600016ff51c227119"
+    },
+    {
+      "path": "docs/assets/m01-station-drag-transitions/drag_release_sequence.png",
+      "sha256": "e4fb7f35b5e8d82c59c0f55c08c5cb0815eb4e1368bb6bd075354416db562c64"
+    },
+    {
+      "path": "docs/assets/m01-station-drag-transitions/import-report.json",
+      "sha256": "87cf06dfdd23f00b5cb6b0092a69f9823ed6aa5d7551dd09e0dd4c10b7633ac0"
+    },
+    {
+      "path": "docs/assets/m01-wagon-damage/README.md",
+      "sha256": "98c48c433e34932465144e7d44c83231dd7238beab57c0a46e5f45e88ed2e62d"
+    },
+    {
+      "path": "docs/assets/m01-wagon-damage/damage_compare.png",
+      "sha256": "223bdd6265644e130760cbc2e425db6bcb44607d822019faf61e01ec0551a72d"
+    },
+    {
+      "path": "docs/assets/m01-wagon-damage/damage_details.png",
+      "sha256": "aae48c97d2da5419377f75da2d8cef9441fbe14f4aeb0d998e639aa11c106616"
+    },
+    {
+      "path": "docs/assets/m01-wagon-damage/damage_interiors.png",
+      "sha256": "258c0ebb94e5ffda19fd7ba516b95ebdf1d9bdd263e84d188226e7190e2b4d11"
+    },
+    {
+      "path": "docs/assets/m01-wagon-damage/damage_lods.png",
+      "sha256": "befc8bd2474ab7d0f45a2b07e128bba0304ba15331327481a6884666370b7e0f"
+    },
+    {
+      "path": "docs/assets/m01-wagon-damage/damage_side_by_side.png",
+      "sha256": "eb734369e1c574e542e4825a1dfab2c816095b06287342355336a80157ac33a1"
+    },
+    {
+      "path": "docs/assets/m01-wagon-damage/damage_sockets.png",
+      "sha256": "1bb6fc570d3e37cc96c0f11588bf80549da59b7745ef15cc95c40f1fc0ea81a1"
+    },
+    {
+      "path": "docs/assets/m01-wagon-damage/damage_train.png",
+      "sha256": "64e2c9600195f54df30aedd41371b3d1bba9f1604785aae00f79c40da1c19fd9"
+    },
+    {
+      "path": "docs/assets/m01-wagon-damage/import-report.json",
+      "sha256": "89ef1a2252a164e79e49290f9c97639f2065e6b1990e8b48534211bccd14c9fb"
+    },
+    {
+      "path": "docs/assets/m01-wagons/README.md",
+      "sha256": "0b649a06481985bf613249ce4b58acad7cfe08c50326d9eae0519609596793c7"
+    },
+    {
+      "path": "docs/assets/m01-wagons/import-report.json",
+      "sha256": "a535a56d6cfe99951ceb27df1f380fe7eeca6460d16f0e9b0bc8cf038a47f74e"
+    },
+    {
+      "path": "docs/assets/m01-wagons/wagons_details.png",
+      "sha256": "5b559d34cbc2f525e5432069addf27e74897a619d75ce6f5d893cc645b4baa66"
+    },
+    {
+      "path": "docs/assets/m01-wagons/wagons_train.png",
+      "sha256": "feeff727e5f5b314f37895c2ef54465d29b85ef1c86ab2943dbb6b51b9dbaa5a"
+    },
+    {
+      "path": "docs/assets/m01-wagons/wagons_views.png",
+      "sha256": "9bb3ee232e0d622b02cd47092f2154673bb95b33f3a6b39c9eccd8e81becee70"
+    },
+    {
+      "path": "docs/context/compression-report.json",
+      "sha256": "4c48db5205ee640a28ff66c57cf5b04fbb4b969b3d74b173e09373d9a49c9aa5"
+    },
+    {
+      "path": "docs/context/memory/decisions.md",
+      "sha256": "0d92899bc621d33a05129c3eac09293cf05d16d03d6a2a80f20896f7cec8d45b"
+    },
+    {
+      "path": "docs/context/memory/gotchas.json",
+      "sha256": "14dcb76958f42f034b9e59b0916ea3ade8d77fd2032e732c03838bb71d757845"
+    },
+    {
+      "path": "docs/context/memory/issues.md",
+      "sha256": "9942847601a1a2d8fff260930244c89c4a048c8806306ff23b1752185cf66e3c"
+    },
+    {
+      "path": "docs/context/memory/patterns.json",
+      "sha256": "beafb854543a39106ece4fc37386819bd0c30f00926bfd99a85701c5823506e6"
+    },
+    {
+      "path": "docs/verification/m01-runtime/README.md",
+      "sha256": "836065a1e6c6748fbced1502e1ac73093c0495c37cbeb9b2065039602bb13cff"
+    },
+    {
+      "path": "docs/verification/m01-runtime/aircraft/README.md",
+      "sha256": "98e43c3877cd95fe55629a0ff940a9e1dbf723bed158436a54074044aeef5450"
+    },
+    {
+      "path": "docs/verification/m01-runtime/aircraft/capture.json",
+      "sha256": "326c62f6a4905e22bf13813ade30bbe555f3e336bc4c7e6f0a5c3338dea50bb5"
+    },
+    {
+      "path": "docs/verification/m01-runtime/aircraft/first-raid.jpg",
+      "sha256": "7e91155d7a1c47451d76ab4be5396a678605e077888d1376a5268f1f85aac87d"
+    },
+    {
+      "path": "docs/verification/m01-runtime/aircraft/verification.json",
+      "sha256": "f5d4e3192ac28e37fdd6039318cc96599ffff95d8bbe1167b0cebe74a536d5bd"
+    },
+    {
+      "path": "docs/verification/m01-runtime/asset-review-2026-10-02/README.md",
+      "sha256": "97b29627b5afbbb2e4be4618695a9c951412760831a43e7300f73f98bdf5a677"
+    },
+    {
+      "path": "docs/verification/m01-runtime/asset-review-2026-10-02/aircraft-browser.raw.json.gz",
+      "sha256": "9599b871f5f617f6e7e7e8ca26627d52d4702ceaef30f42b6036a9004ac89d69"
+    },
+    {
+      "path": "docs/verification/m01-runtime/asset-review-2026-10-02/aircraft-build.log",
+      "sha256": "48cce64605d7f28fa2c6ccbcbb87f227ae23a564c0923679fdad6357854f3ac9"
+    },
+    {
+      "path": "docs/verification/m01-runtime/asset-review-2026-10-02/aircraft-node.log",
+      "sha256": "43c8c7499079d79ca2537205956cb3d53e75c88a3b533796a7af9a4951c67ce1"
+    },
+    {
+      "path": "docs/verification/m01-runtime/asset-review-2026-10-02/ju87-real-raid.png",
+      "sha256": "170bcff2d4ca684b698a7883b1f19504dd95fa1660863bc9dd80fa6badea3d86"
+    },
+    {
+      "path": "docs/verification/m01-runtime/asset-review-2026-10-02/staging-build.log",
+      "sha256": "886746e37fe60b0b8092d1494eeceb712570c4216c244334a0d03a3c8a89a289"
+    },
+    {
+      "path": "docs/verification/m01-runtime/asset-review-2026-10-02/staging-node.log",
+      "sha256": "bc9b96527329adad1136c2c88516c64c76a696cb87b5a71400fbffce11197ea5"
+    },
+    {
+      "path": "docs/verification/m01-runtime/asset-review-2026-10-02/station-ground-drag.png",
+      "sha256": "3e15c5e552de0c401fb845aef8f9133dc4c8a165758576fc3570bd442cabf028"
+    },
+    {
+      "path": "docs/verification/m01-runtime/asset-review-2026-10-02/verification.json",
+      "sha256": "4925acd35a8221012c3290498c6b1b6b4f41c8de32baa56e016390565630bd88"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/README.md",
+      "sha256": "27311aafa573ec7d7bdaa22ccab054e812a1e22be79d21219aad590018b18c2f"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/capture-encoding.json",
+      "sha256": "520765f21fcac8de1a0e88696065008c6bf69c3effecbbb4cd549cfea23ef373"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/controls/m01-rig-clip.jpg",
+      "sha256": "5fa41e7e83df0deb2a41c0160a25e658d2b34a3f6c4b15e8f9724e404a0f684b"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/controls/m01-rig-iron-sights.jpg",
+      "sha256": "318f1999564041be17b104a59ab51b6c148847c3575d17eae9ef8f43bf478f03"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/controls/m01-rig-single-round.jpg",
+      "sha256": "69b2333becef8972e827f7b4d04663e31daa1901398516ef2dee2012cd76d0e9"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/equipment/m01-kowal-rkm-burst.jpg",
+      "sha256": "a31062921afa99c01f2240c2454e07c2df4cb8fd59bb5426f74c72f4680b8223"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/equipment/m01-kowal-rkm-reload.jpg",
+      "sha256": "10156d0fd1a4f11bd870f2964b91336841748a953f72827f95417004ffad8851"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/gallery/aim.png",
+      "sha256": "a8e5bf51a4a7f0dcc15673479e2c8920b8bbaf4ac9c4f757cc5ca05878673d50"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/gallery/carried.png",
+      "sha256": "c7893e61f9b64768c97dea21d803aa9ac538b0e8c56f9f5ad35b0ac3772eea6c"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/gallery/carry_wounded.png",
+      "sha256": "7791fa24c1beacb4a9bdebcec5fb97571be03723ca7a618cb5e9652cb37d1ec8"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/gallery/crouched_idle.png",
+      "sha256": "a22e466e4ef0ae1def02d8dcbc762e074905fd715f953aba00f6d687eb262945"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/gallery/de-lods.png",
+      "sha256": "ce7a6e8db087b3d0ec0b868c42bafdab6161625b66a5403ff9e7b874426c304b"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/gallery/fallen.png",
+      "sha256": "9727f2bedea6b4d9e56e8b08b8cea6aef58ce102ed062d427811ef0dc485c2a9"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/gallery/fire_bolt.png",
+      "sha256": "207807ec051f40bb131926e47919a85d1079e652929e730a15179b2544ca2f38"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/gallery/pinned.png",
+      "sha256": "8f83c45196f2300e735d4381bbaa8cfaa5c4bceb747b1f7bfa6b4066bea1fa3e"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/gallery/pl-lods.png",
+      "sha256": "75bb03d441e3675f5f5e1a2aa37a5b671e53973c29648a474a3ba3debbb4f8b3"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/gallery/reload_clip.png",
+      "sha256": "77a39e73585f1bc15efc32a0f954d05ae3ba21f0bec4c327b3e3ed8d2ac13641"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/gallery/report.json",
+      "sha256": "6d768efe76b290662cce5874319d1166b6602f643dc483e376682e7acb8063cc"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/gallery/run.png",
+      "sha256": "a37cfde58199973da22d1fca2fb92664dea289dec167a47254b2dadbf170881e"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/gallery/sapper_work.png",
+      "sha256": "5465d2dd11589bc12ccc9c4ce534de70a3973022f3638ee103449b8f3ef48f73"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/gallery/sapper_work_pinned.png",
+      "sha256": "b0df1e928348c1cd8afba1cf68ba47bf265f40cf895ebb3a091e63f9c620a864"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/gallery/seated.png",
+      "sha256": "bd0a91451f17ac0d858cf995dbac6a7034ccc7d8c22f22526ca56a2eb4d06167"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/gallery/standing_idle.png",
+      "sha256": "91a9b07a3a8ce0ad755339df0bf2a50991122035f6d1bf241919c6ba28c16932"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/gallery/walk.png",
+      "sha256": "14fcfcd4fff789dc678c12a7aeae6ad3785610365198b8eaae5d74147c4def6c"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/gallery/wounded.png",
+      "sha256": "49dc5d12b88f09c124866ddcd6c9d6b9f6b86ccf346ff2ccf9b8d0ed17e79d1f"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/production-browser-report.json",
+      "sha256": "fb749a354728ce205511baabed986f752a192e665b599fc6c84f7241b9d8fb6d"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/production/repair.jpg",
+      "sha256": "ee7fde22f2eb3ddfb851eeb0693283b1ebfbf0f64ff1b5964748b6a82d5ac30b"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/production/report.json",
+      "sha256": "480ff947a9974fe59973cf17e9062fbe8f90a23ba7fcca41fa48e806f05318e2"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/production/roll-call.jpg",
+      "sha256": "20fc07eb40f015537d9fb92346c906d680e0dae377da44821138248834239692"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/production/station-damage.jpg",
+      "sha256": "f738700af56da6c9d10ef17648c7ff014ba4af42b8c47211a89863f17772d823"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/production/withdrawal.jpg",
+      "sha256": "b773a5ca830e280a5c3e59bae846a5c49870de88779cb152359ea4b0a3e877e4"
+    },
+    {
+      "path": "docs/verification/m01-runtime/characters/verification.json",
+      "sha256": "c02ebdcb561bcc32ba55c22f697b6de29e26393c5a7259188606366b57da9f93"
+    },
+    {
+      "path": "docs/verification/m01-runtime/ckm-budget-2026-10-02/README.md",
+      "sha256": "e8a8d9e6c6aa0f3e7f4f38821845404f57f084d7871ac73b215aeae1782d3f48"
+    },
+    {
+      "path": "docs/verification/m01-runtime/ckm-budget-2026-10-02/build.log",
+      "sha256": "e2bc471017aa6eb25f17ce12f6a13a18f7de66ad356b4e34bf7988094ab512ff"
+    },
+    {
+      "path": "docs/verification/m01-runtime/ckm-budget-2026-10-02/node.log",
+      "sha256": "ece34716e2f2a17fa92662549efcbd999b478caf473e6325c5a1d378b39afc15"
+    },
+    {
+      "path": "docs/verification/m01-runtime/ckm-budget-2026-10-02/verification.json",
+      "sha256": "425bc4149ce7ad5f918ffebe0b6e966dadc7e5936d774b1c3e5ba9a454df6771"
+    },
+    {
+      "path": "docs/verification/m01-runtime/ckm-crew-runtime-2026-10-03/REPORT.md",
+      "sha256": "2f42c26bdc92aebe0d8012838c6e758a5621336270a5b92c5e130983c2e60103"
+    },
+    {
+      "path": "docs/verification/m01-runtime/ckm-crew-runtime-2026-10-03/fallback-regression.json",
+      "sha256": "f898cd5a269d08208367a526c18e2c9429b240639c44e1cca2e89c1b783c1169"
+    },
+    {
+      "path": "docs/verification/m01-runtime/ckm-crew-runtime-2026-10-03/m01-ckm-abandon.png",
+      "sha256": "fac1984095eeb993f60f919b9aff71899119e6b2f218156f13a2d061a96258ab"
+    },
+    {
+      "path": "docs/verification/m01-runtime/ckm-crew-runtime-2026-10-03/preserved-files.json",
+      "sha256": "0070608a724ebf6a0f761f6ff5e89b7e8be65642388bc8f54a7f49d78337c5bc"
+    },
+    {
+      "path": "docs/verification/m01-runtime/ckm-crew-runtime-2026-10-03/substituicoes.json",
+      "sha256": "75d5b3af322f268f735b5ac044fed0a2e4f7ec196fa1efba29b83affa5289d70"
+    },
+    {
+      "path": "docs/verification/m01-runtime/ckm-crew-runtime-2026-10-03/substituicoes.txt",
+      "sha256": "3bb29cdfd012643dce7d9eedec59ed72e13205dd546b005623d19a60d11c6ae9"
+    },
+    {
+      "path": "docs/verification/m01-runtime/ckm-placement-migration-2026-10-03/REPORT.md",
+      "sha256": "844e8b4c25a134f1a2ca6b3037d191454de6d05260afd526cee1a4ec2832bd88"
+    },
+    {
+      "path": "docs/verification/m01-runtime/ckm-placement-migration-2026-10-03/substituicoes.txt",
+      "sha256": "8567b2d9c4960359515233327cc4f739fb2670d643b465af059911211a37689f"
+    },
+    {
+      "path": "docs/verification/m01-runtime/ckm-placement-migration-2026-10-03/validation-local.txt",
+      "sha256": "eb5e1b1cf08cf391bb966bce3dab27334665f7e7277406281f8993d1331cf361"
+    },
+    {
+      "path": "docs/verification/m01-runtime/combat-animation/README.md",
+      "sha256": "e907795908cd1dd1508b00dbbd217febd8c0db120a54ffaf612d80b4aec10240"
+    },
+    {
+      "path": "docs/verification/m01-runtime/combat-animation/gallery/combat-recoil.png",
+      "sha256": "03f903f513404cdb503fb33deadc2cd3ee491813602966362521ab18423db019"
+    },
+    {
+      "path": "docs/verification/m01-runtime/combat-animation/gallery/combat-recovery.png",
+      "sha256": "c97f93dd3f2433dd60bcbb31f3d8c7a3a7586aaed0b01a1270c87a4e52727b7b"
+    },
+    {
+      "path": "docs/verification/m01-runtime/combat-animation/gallery/gallery-report.json",
+      "sha256": "4d0c6ac9eadceabc293aa9a203d89252c75a2fdceaead852164feb905e1447ae"
+    },
+    {
+      "path": "docs/verification/m01-runtime/combat-animation/production-report.json",
+      "sha256": "2c78601da997a5eb2d923eb9af5807e62eb2422cc0f24ead6b8246f2773695b0"
+    },
+    {
+      "path": "docs/verification/m01-runtime/combat-animation/production/repair-under-fire.png",
+      "sha256": "889cf2ca9c4ad6d06283c1b0d20d8435d2a1093e814d7b0b4fd1313636fa4e04"
+    },
+    {
+      "path": "docs/verification/m01-runtime/combat-animation/production/roll-call-seated.png",
+      "sha256": "8a57f2a1f46c1d9cfaf4447beff7803263615b5e61fa7965a1afd0a9f710bab3"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/06-delivered.png",
+      "sha256": "142efc29ae327feb767fd75a41a8e60559faa44a3c7220c24163f002ba3932a4"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/11-sappers-site2.png",
+      "sha256": "ed0c640f0cb4674b180555d326da4e15832063884b0ede551faa5e9b82a838cc"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/16-hold-access.png",
+      "sha256": "6c115602c14572e8f5ed996d149a2430ccda07d38cffa2a194b2e247e04dda03"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/19-withdrawal-1.png",
+      "sha256": "94f9b8b44bcf7252ec975affb27a8248e09d51e6b1591edd92d7b644046f2fa0"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/22-bak-wounded.png",
+      "sha256": "2ed7ef396bc7c7590bcc4f7bc1737e2f8c4aefddbe51673d82893e44892bde22"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/23-bak-found.png",
+      "sha256": "304aff5827c34f4006223c671e8c88774e31abe70f7e6cb79c838f6d5f552b6a"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/24-bak-carry.png",
+      "sha256": "4771a37478ef875475837c73f432fb4e46d11747a9f25fcf5cb82eac92ef9e11"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/26-bak-delivered.png",
+      "sha256": "356dcc66d6f04090b35870242545d6d7f89c152c46821454e4e2c48b09a8e9c6"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/30-firing-point.png",
+      "sha256": "764dd3ee1235c9d97d07e5a9b4e90a6cd4930101e75581c5727cfde11d02546f"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/35-corridor-5-zoom.png",
+      "sha256": "72609f77ebb5a56e5ff73db341b84332bd92fe73421a4da7a018a0384aa1d4f3"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/35-corridor-5.png",
+      "sha256": "0fc12b8962d9e6148a5ef1e6cfde303367a41334590db76bf593be95481b0012"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/41-west-demolition.png",
+      "sha256": "537c6e7f21648283af4739c935dd595c4efc1adb8db4e584487816fe4a8dc8e7"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/44-roll-call.png",
+      "sha256": "5d64b6df67b625cf64a3edb6914aa9104f80969dc2904529b55ca868d5f58695"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/46-debrief.png",
+      "sha256": "2a24853f8c6f4747b87ff392387555771574707fdf7114628cafdf1cfd2ca50f"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/README.md",
+      "sha256": "147fda3aadbfba40c8c2cfcdb7fd9a2afef3d8ff6a0e4deda11c4d36833be80a"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/before-bak-wounded.png",
+      "sha256": "8015ba5384615563754544a6aa1c02b82c4a6ffabf61ec9c2c5a5dbeaf59afee"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/before-empty-corridor.png",
+      "sha256": "f0e73fb59d68f7c1ef3e02acec0b7dec17941e94893d450f7f4ac2a44ee4cca7"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/before-find-sappers.png",
+      "sha256": "975c4732f3128cfeade8dbe0f155a323d6809f13396984b90134203748541b71"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/log.jsonl",
+      "sha256": "fe9f943d524b92786bbc9b095d902855d1410c688d32efc3caca237f68870035"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/report.json",
+      "sha256": "c8ea1c029f0b20906ceb4202bbe6bf5350e3ef9a1d4125fca98fd1ec4e2d49d4"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round2/08-adverse-1.png",
+      "sha256": "b111f1486bbb1562a43ec361fdde41e81acf76f869e3c721c01792cfa18a0133"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round2/10-adverse-2.png",
+      "sha256": "5dad00dff65141f86b5c504ea7152ceca148483364fe356ed2b505c225a45b4c"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round2/20-kowal-ammo.png",
+      "sha256": "396254c856726261eb4c42b1f6cd91878f8e9fb4475b18c6b2770e5b30986fa9"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round2/31-bak-carry-deck.png",
+      "sha256": "52051690cfe0f05d38b9ff86a5d4b6aefde1f7160f0ba7a2270cf66e6ea2d7b0"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round2/34-bak-delivered.png",
+      "sha256": "5781db46e6d72f052f92e66050326ddc7b742e14a3984796bff8cd436d0dc29b"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round2/51-west-demolition-6s.png",
+      "sha256": "b5fe27ec4e5957155ead35a7e85413912ed0df6f954343c295a16c15e826fef8"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round2/54-roll-call-10s.png",
+      "sha256": "59672923e88b520880c8af98451f1b83471200ab808f1b1e95e8f8bc4a5a764f"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round2/56-debrief.png",
+      "sha256": "0b4cfcd10510cfe783d8c18d596545e080570a01663e94dfb5139fc4e1c29e2b"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round2/east-blast-dust-9s.png",
+      "sha256": "adc49fc7d6cf58b0a55d07fe887bb82f6aa540028fd4ec47e93699b0aa48657b"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round2/east-blast-flash.png",
+      "sha256": "d7f597458dd179eeb53d3ac08a291a98d7f76dff3a46104856cd1ababbf7c620"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round2/report.json",
+      "sha256": "b6d8e332469833503921d80b6fde3b76f9adb96860a474d6b186c0b12578d183"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/cover-comparison.json",
+      "sha256": "5cb43d0cc182fd2b7473bc7b737f4ed36323412958d5b5cdd3b90aed6b5689d2"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/help/15-repair-help-2.png",
+      "sha256": "71e9dc27a61cee96c96abe93a212acb7d17dd22f9605311c9f6837b30ea55d58"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/help/16-repair-help-flash-1.png",
+      "sha256": "c5bb82da758259131de2966a4761c17da5c0af44a9bbf3e61271471f1086effe"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/help/19-repair-help-3.png",
+      "sha256": "4ed0909b54f053c33b051b4117ab7b879efa8b443498dbece633cef51f233db3"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/help/22-repair-help-6.png",
+      "sha256": "cac81b4439cbb12675c9c60ad23955acf6d5bbcb680f2b0b7525a8fa14dd39b5"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/help/33-withdrawal-help-flash-1.png",
+      "sha256": "75a5e73f93a33c8df0ef5d5e6863046f5cbad3d6b10c6ac750cd7877e8be9f1d"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/help/36-withdrawal-help-1.png",
+      "sha256": "dc68a81d514c0322206f49868521d0edf5f8d35f0c38f6336a22c75d25e6e58c"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/help/41-withdrawal-help-6.png",
+      "sha256": "72491628e061f7196c67b8472f027a1b5b96589e086cc7ae46b425929c7c5f6a"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/help/45-bak-carry-deck.png",
+      "sha256": "4f1dcdc3dca9f7033c3bf17547bc504e0246df04844d45acc7009af493bb594b"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/help/48-bak-delivered.png",
+      "sha256": "50eaf1a4d050042342df5a9f9b679ad7e15b44420b5dff132b7f11de48a0f3e9"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/help/63-west-demolition-6s.png",
+      "sha256": "afe168ee06894b1e2ff78357cbd8ab4afabb873cc07fdd9206bef081355543b1"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/help/69-debrief.png",
+      "sha256": "32bed5d968287360040b585b5a89a6f158bf45eb5fde844936657b3ede3accf4"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/help/log.jsonl",
+      "sha256": "bcc3bfae4c83a475a6ab8ca67ea138f06e7637fd43dc17c75dacdc9e4d9cb9fb"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/help/report.json",
+      "sha256": "ecad3d9efe7370284df0b0eb4050981cbb8c5f09bfa9795377d482dc8803f4b1"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/ignore/19-repair-ignore-6.png",
+      "sha256": "61c8e29020d3ef19134777e031ee19ae48a17706439f7cbbf3ad1fff714b92ee"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/ignore/23-repair-ignore-10.png",
+      "sha256": "82dec1bb67a5f561bda0952a2f0239f865b6302e9a8c1dbac8928efabd1f1d37"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/ignore/37-bak-carry-deck.png",
+      "sha256": "811e59d253866366674dcb8dbcdfe4f34dd782430c0ca05e43c7963cab8e88e6"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/ignore/40-bak-delivered.png",
+      "sha256": "cf92d72c20cf4258e27630f00541f9442c792206798cf1a8c48c525178ee21cf"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/ignore/62-debrief.png",
+      "sha256": "32bed5d968287360040b585b5a89a6f158bf45eb5fde844936657b3ede3accf4"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/ignore/log.jsonl",
+      "sha256": "e21089ce68726a725c3c56f453afde9dd24e503b217edb22c99f4b7cec3946fb"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/ignore/report.json",
+      "sha256": "939e76c0f4e7be6b74cdfff2610bb61ba2bbb484632f262046ed738b93cdd334"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-help/17-repair-help-flash-1.png",
+      "sha256": "3c1a0ed91c8de3d191e7f07e5211f69c99cd3cad61e2fd3f8b696e98ef8e8b06"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-help/20-repair-help-3.png",
+      "sha256": "120d497f6acb82a3f2db797c1ec6361e5b24c07b898c7b1ce4d6af302b7110b8"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-help/21-repair-help-4.png",
+      "sha256": "7023eedf222942b9af07ac805904fe40174cb080382dd682dd5832f876eff458"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-help/33-withdrawal-help-flash-1.png",
+      "sha256": "0e99b9fc99b7551ddc76971c6e4f0cfb29a23aab72925386e17d7e05a220c8fc"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-help/36-withdrawal-help-1.png",
+      "sha256": "4c13cd0b4ad04261a17602b5b293e52576b1e143dfbcf23e6a0ddaa6f10700c0"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-help/45-bak-carry-deck.png",
+      "sha256": "163c8e3930ba2696cd7c3f93ec5d0a290291765155fdd44293423ffbcd5513e0"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-help/61-west-demolition-6s.png",
+      "sha256": "2d0838c0a6a5c0a8bb2c60041042561b8113c1e8e6ce600c84922ce2ce2a2d0e"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-help/65-roll-call-10s.png",
+      "sha256": "ef36df9e83b90fad4989878fac72e7cab63e001447e65ec2dcda36d65b0c8c01"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-help/67-debrief.png",
+      "sha256": "e992e3693c48fb4d486f994990171741a7f55d7f808c6d408553c6f6790a7aac"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-help/log.jsonl",
+      "sha256": "d01de7893da854552c400faeae6ee44c08f86318ee24987a5d611a3a5a912ede"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-help/report.json",
+      "sha256": "50ad04237cd3190868ee5723861510094cc14f660262dd19ead3fbd7d72a32c0"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-ignore/20-repair-ignore-6.png",
+      "sha256": "398e88b9092132cd22235872f3a3a509ee7a730fc2e358d88cd63c55b1bb26d6"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-ignore/24-repair-ignore-10.png",
+      "sha256": "84bed8e9ddc3f174ffddceeafe96f7679b65406f0fca3953af7b79d5a8e9ab9d"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-ignore/30-withdrawal.png",
+      "sha256": "9707cd777f2ba869ebff0146338f69956e1a1e9a87de9a1904a511dcc626e648"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-ignore/39-bak-carry-deck.png",
+      "sha256": "27445d44b21a6bb0af6aa3a5eecde1d65c6d71c8d39f62f8b1e2c42c27de5ff6"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-ignore/42-bak-delivered.png",
+      "sha256": "5e3215a9e92dc516929054fd91f988b9043fc2ec73f18e7876a1d46546e4a619"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-ignore/64-debrief.png",
+      "sha256": "e992e3693c48fb4d486f994990171741a7f55d7f808c6d408553c6f6790a7aac"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-ignore/log.jsonl",
+      "sha256": "a4514ce019f47e90b91f84c33ab50b160358bd1ecefd0739684b4604256d2be4"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/merged-ignore/report.json",
+      "sha256": "c5f649bcf03ecc78f9b3c32745f6774b363a974e348b9fec84b41f6c90bf2ded"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/staged/gate-mg-flash-zoom4x.png",
+      "sha256": "abf00c89a4d54ff220d7a843db69940bcbb9db6bb1832ffdf359344a0a044576"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/staged/gate-mg-flash.png",
+      "sha256": "83103ad748200da2fca5673558c5b272751e7f2d7de2d9decaf93a7f36f31b7b"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/staged/sappers-pinned.png",
+      "sha256": "d80ea4c47148cc76079957b264da669010466c019d97ba8c4c3225d2c4a64093"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/staged/sappers-working.png",
+      "sha256": "5489cbbc252b50de8aaf44be7064e34daaae58f03e1bde0ddefaa2c4c97dc3a3"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/round3/staged/withdrawal-deck.png",
+      "sha256": "90c196fa543a8059929ca7fe1cdb0eb5e1f49be2db4fb91f4b953909cb2524f5"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/run1-before-fixes.report.json",
+      "sha256": "c98ee0753bd2704d2137313678b43329a2fb69ec303d345061a726f6fa5ab8eb"
+    },
+    {
+      "path": "docs/verification/m01-runtime/continuous/run2-before-corridor-fix.report.json",
+      "sha256": "d1658e24d52f5def480e52e783242e1e27922b1cec1c6704c500a7bb3f53d8f1"
+    },
+    {
+      "path": "docs/verification/m01-runtime/cover-combat/README.md",
+      "sha256": "d25b9c094ebceed2cfe2b28c98f70302efa079c3e21b21d67b6358646e4d4855"
+    },
+    {
+      "path": "docs/verification/m01-runtime/cover-combat/repair-under-fire.png",
+      "sha256": "b80d31c69d5dbd0536b0ce52447df45c90f965851d92dd4a64d7dc204c99c82a"
+    },
+    {
+      "path": "docs/verification/m01-runtime/cover-combat/report.json",
+      "sha256": "68f979aed747ae6a5e8cb362ff047f9b03c426e410225d1dcbcc56e6e9df3fd6"
+    },
+    {
+      "path": "docs/verification/m01-runtime/cover-combat/withdrawal-under-fire.png",
+      "sha256": "5239a93a22aba623489cc712756aeedbf76572e3f085371ca658db214b9ed780"
+    },
+    {
+      "path": "docs/verification/m01-runtime/cover-origin/README.md",
+      "sha256": "e0e20df7eaa67b76989e67a725c61fe0d11a7a575dc638e9753b3e92b93de62e"
+    },
+    {
+      "path": "docs/verification/m01-runtime/cover-origin/cover-gate-origin.png",
+      "sha256": "5509be93bfeb5159912252731cd7b8af4a2f5f5c1bed40d93d4120e907744936"
+    },
+    {
+      "path": "docs/verification/m01-runtime/cover-origin/cover-truss-origin.png",
+      "sha256": "b508214885313e7b98f1440894a0fddf9d843db9c9dca5cbbf16f75ca2868023"
+    },
+    {
+      "path": "docs/verification/m01-runtime/cover-origin/report.json",
+      "sha256": "257e056b9ad887f47554acba7e6ec69b0b02621c5d88f605a2b45cf5a24f2c05"
+    },
+    {
+      "path": "docs/verification/m01-runtime/cp-d.png",
+      "sha256": "916769a019f49ebf732dee64ec497120a15c6b338a1f7e5bcc60cca06e1c94e8"
+    },
+    {
+      "path": "docs/verification/m01-runtime/debrief.png",
+      "sha256": "b8d3bcd025510d1f17a543ea00b31d48a278d1a0c373898db6f42022f9ff37ff"
+    },
+    {
+      "path": "docs/verification/m01-runtime/demolition-cue/README.md",
+      "sha256": "2d01cd41558f3175a6afd7bfbe3dd163e66e0b55af267b65cc6989ec91dbc498"
+    },
+    {
+      "path": "docs/verification/m01-runtime/demolition-cue/inside-truss-paused.png",
+      "sha256": "b461c0850b5d2f4ba6a012aeb1ce5c98f38e88f0ef409d273699d2024a5e6814"
+    },
+    {
+      "path": "docs/verification/m01-runtime/demolition-dust/README.md",
+      "sha256": "8d0d8d9bfd55f86a7c11f28ea2a191f6c522a019820de662764e868fe6b5bc7d"
+    },
+    {
+      "path": "docs/verification/m01-runtime/demolition-dust/demolition-inside.png",
+      "sha256": "f599508c4a95874f35c3b9706cfec22d5df10022db3fadcb3a1b2fbc5cbcf211"
+    },
+    {
+      "path": "docs/verification/m01-runtime/demolition-dust/demolition-outside.png",
+      "sha256": "008c01a64861fecf1cd62e3a9b7d463f8e7d9d56011a73d593a2a15944414a35"
+    },
+    {
+      "path": "docs/verification/m01-runtime/demolition-dust/report.json",
+      "sha256": "60f95d4bdbcfe15e7fc61f0cbad1f03df4faae9b0aab0b90792c54f830dcbae7"
+    },
+    {
+      "path": "docs/verification/m01-runtime/menu.png",
+      "sha256": "187e5cad654dc47dde80f83f63b9ca8baefb56e3354b21e2dd152d43218ca165"
+    },
+    {
+      "path": "docs/verification/m01-runtime/message-delivered.png",
+      "sha256": "e1dec22257760720d5df718f1c2050ee9d93192110b06bf4dc40fb9bc6fa224c"
+    },
+    {
+      "path": "docs/verification/m01-runtime/mg34-prone-runtime-v2-2026-10-03/HANDOFF.md",
+      "sha256": "dae7b87fde2dd4b86c2c6cc1a35023dbc51fe93e0cf9d32f036607e42e8a1398"
+    },
+    {
+      "path": "docs/verification/m01-runtime/mg34-prone-runtime-v2-2026-10-03/browser-confirmed-summary.json",
+      "sha256": "de742a1f296da28432966b607db1470b1cfd521c3188bbe0db490f94f125161d"
+    },
+    {
+      "path": "docs/verification/m01-runtime/mg34-prone-runtime-v2-2026-10-03/build.log",
+      "sha256": "03013d76de84a7e2d34d09f45130e6bd4acc6d4d65293f530a0c25aba867d316"
+    },
+    {
+      "path": "docs/verification/m01-runtime/mg34-prone-runtime-v2-2026-10-03/focused.log",
+      "sha256": "fc3c498369e02e95b437b1db91c1c8a327427e66c3def48d97d30521f554fd59"
+    },
+    {
+      "path": "docs/verification/m01-runtime/mg34-prone-runtime-v2-2026-10-03/node.log",
+      "sha256": "781e275dcc6337e170822c5b37f42c2d892a161e420e4e896d8ae23db49d559b"
+    },
+    {
+      "path": "docs/verification/m01-runtime/mg34-prone-runtime-v2-2026-10-03/protected-refs.json",
+      "sha256": "e5010ee381c8b7c42d5c9bdc70f10116efb4cb91bec8133d103ba30f016fac4a"
+    },
+    {
+      "path": "docs/verification/m01-runtime/playing.png",
+      "sha256": "c8a5606baf9c6ad9171085a283dbc1aa827b67c668968c4be222aba8f75d0934"
+    },
+    {
+      "path": "docs/verification/m01-runtime/poses/README.md",
+      "sha256": "bc66338365aeda33cd104ea9788f1f237d50636626f5b3c6b6509d59ca5853fe"
+    },
+    {
+      "path": "docs/verification/m01-runtime/poses/gallery-report.json",
+      "sha256": "294340016f25fe777e18c06e8dc844b9b745bc1e44ddf33849981f4bd3f0cba3"
+    },
+    {
+      "path": "docs/verification/m01-runtime/poses/pose-gallery.png",
+      "sha256": "b4dafa56d689f63a99a03bda6943f932e9068cf05ddbe289b7f0c6e42be09647"
+    },
+    {
+      "path": "docs/verification/m01-runtime/poses/roll-call-seated.png",
+      "sha256": "25ba312c280b9c0814e6bff01674e49efcddb8f8d7ba802763a995aee01546dd"
+    },
+    {
+      "path": "docs/verification/m01-runtime/simulation-report.json",
+      "sha256": "32f9140155350f42f0d8ba95d0ac6156a90eb8dfea2107e23bd33b397f4e532d"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-drag-review-2026-10-02/README.md",
+      "sha256": "cdb200af237b90183996a1b74bc2dd60c3755f1248e970983d9f2d514798f547"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-drag-review-2026-10-02/build.log",
+      "sha256": "8f324695b6db64801fbddcf09054afbfe985b1674a7dcfe31c562dc8d613662d"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-drag-review-2026-10-02/generation.log",
+      "sha256": "4e5ed3aa83e9324782a2a31405dc54c7ec5f9751f6774303d303be90b1185197"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-drag-review-2026-10-02/node.log",
+      "sha256": "99ff672295c88449560ac1b09595fc90324147499546eb1b661661c18d584123"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-drag-runtime-2026-10-03/REPORT.md",
+      "sha256": "26a9be14853acdeafdce3c3dff0d15ab27e495e1ae47eefbeceb04c12c4f41ed"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-drag-runtime-2026-10-03/browser-cases.json",
+      "sha256": "6bba515999bb037d2d13b137414de17f8e7053c741874cd4fa00075eb5addda5"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-drag-runtime-2026-10-03/browser.json.gz",
+      "sha256": "8feb68e4ba22521fca6c855cd6ac082d7e58c658bc5eb81632eb60fbbd6848f6"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-drag-runtime-2026-10-03/build.log.gz",
+      "sha256": "9ff099d9feb18759073d0ddbf93ec1a7451b1e63d1f809cdb0ed4c86380f1fd4"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-drag-runtime-2026-10-03/focused-browser.json",
+      "sha256": "f3abaaddadc7f891bb576b06a4afec35c117559bc4b8e6565ff3a134a313e07e"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-drag-runtime-2026-10-03/focused-browser.json.gz",
+      "sha256": "85a308e4638f2d249eabac6c5ee2bd27ac1a2d490cc45bb328eb975c9bac2a6e"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-drag-runtime-2026-10-03/m01-station-grab.png",
+      "sha256": "00dc4468408e6df979ebc1a2336decfa7e65123110596fca2f7a63603011231d"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-drag-runtime-2026-10-03/m01-station-ground-drag.png",
+      "sha256": "1d8c74090d7f3e1bdad5f780bddded9386af5c4dfe0a186f8eef64f8160d7b2c"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-drag-runtime-2026-10-03/m01-station-release.png",
+      "sha256": "ce216e4facf44ab03403eaeaf4b48a1cfea005764af8ed09575bdcfc297ca181"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-drag-runtime-2026-10-03/node.log",
+      "sha256": "720fe113e82dd9100cacd06115b39fd5487b4248dca55a8ba4bdeefdd890e777"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-drag-runtime-2026-10-03/preserved-files.json",
+      "sha256": "a55a3c37ecd2b46fd1f1d25a3274795f294d9de071e0ca31fecf49250ed38ba5"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-drag-runtime-2026-10-03/runtime.patch.gz",
+      "sha256": "f4bdcf9084795fd43c26dfd67661207c24aa26a6189fa16d25f46f610eb07fc4"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-drag-runtime-2026-10-03/substituicoes.json",
+      "sha256": "45c4f8f07ed87a9e52ce316368a86d9dd64777980502102846aec5589ec35269"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-drag-runtime-2026-10-03/substituicoes.txt",
+      "sha256": "fd1a430721399d1114bb06acf9e087bc7bce56b4d4bd2e6e9d1582b3b7dd28f6"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-evacuation/README.md",
+      "sha256": "6f801a2629006a09ed43cfdb729e592efbe7752e40c474cdb36c6a045be4e30b"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-evacuation/capture-encoding.json",
+      "sha256": "24ad524adf18cdde021464905f41459b0e93933cb6dd0d66db0f8b29f30c9e81"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-evacuation/m01-station-ground-drag.jpg",
+      "sha256": "9b8f51031a75351046286c8c764f039941508c099c126ad94be5e770852b7929"
+    },
+    {
+      "path": "docs/verification/m01-runtime/station-evacuation/state-report.json",
+      "sha256": "f80c73f9a00c525cac8d2956a33953201fad2cd5c5689f8ad0fbd8d7335577bb"
+    },
+    {
+      "path": "docs/verification/m01-runtime/support-runtime-2026-10-02/README.md",
+      "sha256": "76d65d35680114044cbddfe51532e6624f4ce102df98e39a0c192dee0eec1ee3"
+    },
+    {
+      "path": "docs/verification/m01-runtime/support-runtime-2026-10-02/browser-samples.json",
+      "sha256": "1f6e65e5c68d6576e844752e95e50cb6209db9c4d92d205f068ba34df19f9436"
+    },
+    {
+      "path": "docs/verification/m01-runtime/support-runtime-2026-10-02/browser.raw.json.gz",
+      "sha256": "1551b5da20f060a15115b7e88493626fb43de6e9c85cb6cfc891ae70b91e0e90"
+    },
+    {
+      "path": "docs/verification/m01-runtime/support-runtime-2026-10-02/runtime-build.log",
+      "sha256": "e2bc471017aa6eb25f17ce12f6a13a18f7de66ad356b4e34bf7988094ab512ff"
+    },
+    {
+      "path": "docs/verification/m01-runtime/support-runtime-2026-10-02/runtime-node.log",
+      "sha256": "08566d3507026b6316e076e65f1ea9bb8e2ab448b3d2a9dd3f72eda456966c53"
+    },
+    {
+      "path": "docs/verification/m01-runtime/support-runtime-2026-10-02/staging-build.log",
+      "sha256": "41965aaa5f87ab9685c690b8c9a28a103455dd79c4064e43c06280f7f4406bb5"
+    },
+    {
+      "path": "docs/verification/m01-runtime/support-runtime-2026-10-02/staging-node.log",
+      "sha256": "c4a03025bb98d694057ea9e7b75464d5d3fcac5c3af20879b10695639313de7f"
+    },
+    {
+      "path": "docs/verification/m01-runtime/support-runtime-2026-10-02/train-mg34-fallback.jpg",
+      "sha256": "bea64510a60026582fbcf808dcd92e283fb86839c4b691419e5ad5e3d17cf9c3"
+    },
+    {
+      "path": "docs/verification/m01-runtime/support-runtime-2026-10-02/train-mg34.jpg",
+      "sha256": "2452ee63aaf961c5a82c3c2c18b10deac6a415e1e30b87c7c5ac76610d34ac65"
+    },
+    {
+      "path": "docs/verification/m01-runtime/support-runtime-2026-10-02/verification.json",
+      "sha256": "07db32c20ba5e412d0c098fc483416bc640f5deace3427382178f9857bfda1b7"
+    },
+    {
+      "path": "docs/verification/m01-runtime/visual-sprint/README.md",
+      "sha256": "29927bf66ca32120221d997c685bfb3582d67e4920a11049d919cbdcb0db0d43"
+    },
+    {
+      "path": "docs/verification/m01-runtime/visual-sprint/after/repair.png",
+      "sha256": "2338998b1bb1ec71c2bc4562302d224270308bedcd75f1cf67acda0affe7bcd9"
+    },
+    {
+      "path": "docs/verification/m01-runtime/visual-sprint/after/report.json",
+      "sha256": "6913af3b9cefcdbb6aba83e6630d7bf8030dd51ef3cbade6005c88cc60b9813a"
+    },
+    {
+      "path": "docs/verification/m01-runtime/visual-sprint/after/roll-call.png",
+      "sha256": "bf7025e042dba780447809193012b6deeaacf242641d6cee73dc74180ca5b689"
+    },
+    {
+      "path": "docs/verification/m01-runtime/visual-sprint/after/station-damage.png",
+      "sha256": "0c1b8c2306054563f8cdbd439d183d06519ba04d58fc16755497d60c80343199"
+    },
+    {
+      "path": "docs/verification/m01-runtime/visual-sprint/after/withdrawal.png",
+      "sha256": "3d3a9cdc4833561465bb1b6bae190cc2ab4f1f9ff6c99e917ca3f8a6115907a6"
+    },
+    {
+      "path": "docs/verification/m01-runtime/visual-sprint/before/repair.png",
+      "sha256": "14e1b1d12ec2c22fefea437e981d8c6cd3d4caedad9d2f021ed5dd742f5e6771"
+    },
+    {
+      "path": "docs/verification/m01-runtime/visual-sprint/before/report.json",
+      "sha256": "544ea2b3f40c4291538d7a74a2cbe655ae167b4753439b25db23c534594afa49"
+    },
+    {
+      "path": "docs/verification/m01-runtime/visual-sprint/before/roll-call.png",
+      "sha256": "37705d1b0d1748f8d2df47338da4add0a48a0cd82273f3e7da6cf7dba310b4f8"
+    },
+    {
+      "path": "docs/verification/m01-runtime/visual-sprint/before/station-damage.png",
+      "sha256": "f231b5c301f35ebce2aae9edbd0645ba6e18c0ebb156c7a5b303a90cdf7f6fee"
+    },
+    {
+      "path": "docs/verification/m01-runtime/visual-sprint/before/withdrawal.png",
+      "sha256": "f70d4ee696256a95c6c5f2073b39d98d91b760622fbe40c17312b8044ee6a519"
+    },
+    {
+      "path": "docs/verification/m01-runtime/visual-sprint/integration-cover-comparison.json",
+      "sha256": "5cb43d0cc182fd2b7473bc7b737f4ed36323412958d5b5cdd3b90aed6b5689d2"
+    },
+    {
+      "path": "docs/verification/m01-runtime/visual-sprint/integration-repair-under-fire.png",
+      "sha256": "504835d74686b2a34d21034fa97d752dd1348a6e015ca29a6b8077f07504c8ca"
+    },
+    {
+      "path": "graphify-out/README.md",
+      "sha256": "3d5e9b4e0cab2ba2a5abd2543e9d4d0e77b2e580d6ee8a1414adb81f9e85adb1"
+    },
+    {
+      "path": "graphify-out/checkpoint.json",
+      "sha256": "d5b76966501534feb99e00839a899bd3134b6254d6de112a344988e6f27b8d0c"
+    },
+    {
+      "path": "graphify-out/extraction-checkpoint.json.gz",
+      "sha256": "54647d13cc9b860c18b777cbd3d4cdc693d4a2af0cb015082171c2667dd32e32"
+    },
+    {
+      "path": "index.html",
+      "sha256": "0bbbb63d9b962c462eba460461b35cae293f146e4878012740534355e84d5bfe"
+    },
+    {
+      "path": "missions/campaign-plan.json",
+      "sha256": "9c9109fa1005a183676f32fb5001765113cdc63948f14816780549c3387a7fa0"
+    },
+    {
+      "path": "missions/m01-tczew/ASSETS.md",
+      "sha256": "86838ed2ac201eb14aa80cdf773ffa224c742da8228dd7002270b6b720061321"
+    },
+    {
+      "path": "missions/m01-tczew/BRIDGE_ASSET_REPORT.md",
+      "sha256": "49235d8902415124c58a858709bc4f9bf2b54c6449ab9d3f270d5870dfa8136b"
+    },
+    {
+      "path": "missions/m01-tczew/CLAUDE_BRIDGE_TASK.md",
+      "sha256": "8099f12362ff63e1ae62316e91ae0b5ef6e55482233d3bda64775fe04b62bda2"
+    },
+    {
+      "path": "missions/m01-tczew/ENGINE_CONTRACT.md",
+      "sha256": "a39af43778eadd7b5e677c928631916d3a1a492bd212da9fb687f8f3be33b1b0"
+    },
+    {
+      "path": "missions/m01-tczew/HISTORICAL_RESEARCH.md",
+      "sha256": "16e7431104f180c74c8607399c618147d6083a447fb5f4141770374b4bd031fc"
+    },
+    {
+      "path": "missions/m01-tczew/MAP.md",
+      "sha256": "a05d24fbd0cb96b989a9415ea5c55097fd142418cc51cdaeb82be79f6d64cd4d"
+    },
+    {
+      "path": "missions/m01-tczew/MEASUREMENTS.md",
+      "sha256": "297ad7daa0761fcf5bb23126186c74ebd050aa76f643f87d8f4f134f83effd20"
+    },
+    {
+      "path": "missions/m01-tczew/README.md",
+      "sha256": "5cf8ee8c551315c33a92ad1ad9994878c8c138e9cb3eed6c8ff7db56494a46d7"
+    },
+    {
+      "path": "missions/m01-tczew/SCRIPT.md",
+      "sha256": "1586fe28ef65796e62d070fcf111fce66b7e4e123322e321517dadc6b3d279e2"
+    },
+    {
+      "path": "missions/m01-tczew/SOURCE_CHECK.md",
+      "sha256": "e9aefe26533e720a1123399d6b05fc0118ffd8915f7b39881c46eda824943112"
+    },
+    {
+      "path": "missions/m01-tczew/assets-m01.json",
+      "sha256": "f2595de67c19d8519edd18736d3bb49330e4e868afe1795bbe2604fd434de4ac"
+    },
+    {
+      "path": "missions/m01-tczew/map-layout.json",
+      "sha256": "50b8e90a69804bffa94a84acfd6680247e0c6abd356efab75d00b835c6a075d7"
+    },
+    {
+      "path": "missions/m01-tczew/map-layout.svg",
+      "sha256": "e334b7c50862082f5da4659aab9e8569713e3e8c5d9bf3e091026dcf998c5b38"
+    },
+    {
+      "path": "missions/m01-tczew/measurements.json",
+      "sha256": "48c90ab38b957a2b973f84a2dd302a2c49d165a3b81dc548c6b708aea5504a76"
+    },
+    {
+      "path": "missions/m01-tczew/mission.json",
+      "sha256": "1af2b926493b5df8c75fdd34702f9f869c642bb005b423fcbb6c9b49f493a69e"
+    },
+    {
+      "path": "missions/m01-tczew/tools/.gitignore",
+      "sha256": "046032151fe6113c18a8d7d9971c557e81129ca1ba244e5263d54b7e0e6f9643"
+    },
+    {
+      "path": "missions/m01-tczew/tools/measure_osm_overture.py",
+      "sha256": "8f2787518d391bc388bdc36d9218dea805ac5b0c0be710a3094ecd2da3f18df6"
+    },
+    {
+      "path": "missions/m01-tczew/tools/render-map-svg.mjs",
+      "sha256": "f7c7f272a05cb9ec89f3e315674e9bee7438c681908eb00a992beeebd8d097ec"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "7dc6046b961e916f3e8d8de4513a582cdd1138a943305bfd975b5ce61b3d8ac3"
+    },
+    {
+      "path": "package.json",
+      "sha256": "c366a42b77930e9d717d6fa9178ac004465e1e0e768a391df9495f846b8ec1e3"
+    },
+    {
+      "path": "playwright.config.js",
+      "sha256": "73963bc356cd785f09065534d3a520afc9a740fe946434293d78bea8887c45f1"
+    },
+    {
+      "path": "research/SOURCES.md",
+      "sha256": "7f5156199d695e287d78867d98c1c35f1d6ced6bda60975daa7073ca2c1fa167"
+    },
+    {
+      "path": "research/equipment-timeline.json",
+      "sha256": "d0d4cfc6ff8c2f8bad353838471e99974601d9b7ef520d7490cbdd125d4ac3d6"
+    },
+    {
+      "path": "research/weapons/ckm_wz30.md",
+      "sha256": "41d40822ba1ace397b6ad5a75908764073bbea326a8a06085bb223e6e443b0ce"
+    },
+    {
+      "path": "research/weapons/kb_wz29.md",
+      "sha256": "874d99e0d296da5087fcdda0ac9bc0de1d5f1a82e330ff4ad236f6a313f421a3"
+    },
+    {
+      "path": "research/weapons/kb_wz29.profile.json",
+      "sha256": "73a3cf9a9300d1e34cbedd8f103988854147377956c031f5645616f4ca8e589e"
+    },
+    {
+      "path": "research/weapons/kb_wz98a.md",
+      "sha256": "57a7822d1c8b6a88db4bf22a7a8bf7d6d81884121b96a74f325b394bed789997"
+    },
+    {
+      "path": "research/weapons/mg34.md",
+      "sha256": "5fd203d905b2ec08f11d126671aa96c8113abee623128ca9f3b49d1c1d72dc11"
+    },
+    {
+      "path": "research/weapons/rkm_wz28.md",
+      "sha256": "da7a4ed32135744931929f40af7784091a3744de531371114582143d69f14372"
+    },
+    {
+      "path": "src/assets/asset-manager.js",
+      "sha256": "f0366f743ac499f66c3f312bd6c78da70e7ffa869f1b5286107bf40397e4db39"
+    },
+    {
+      "path": "src/assets/gltf-loader.js",
+      "sha256": "f29cda15e0eb6c5e1b2f44cba612aa67d9a8aa158ac065864dcb0fc09f61beef"
+    },
+    {
+      "path": "src/assets/mesh-repair.js",
+      "sha256": "b9d1917ea1a050d4afbf3bd33a4e353e2f2c393e349edece8d6e5eac97def2a8"
+    },
+    {
+      "path": "src/assets/obj-loader.js",
+      "sha256": "69da9101eba7fab0ab17500190acfb5c6f7f857c37a04767cb27b1605d8ba04a"
+    },
+    {
+      "path": "src/config.js",
+      "sha256": "020a19feaab671f5e7777a81e76e8d4b2a9b1bd3eb360c8d81903f0adb55bf80"
+    },
+    {
+      "path": "src/core/audio.js",
+      "sha256": "2d335193c60888a89b8831e0351e8c26a80a13da1954dfccd3ddf55c9b3ebf49"
+    },
+    {
+      "path": "src/core/input.js",
+      "sha256": "71b9f99f864ae52f78a8b53f45c6beff582771760c7062df149979e4c4b83f15"
+    },
+    {
+      "path": "src/core/math.js",
+      "sha256": "e765d656e54a34c18d82dae0d1a4997e0e787617dbfd1c46e4bfe87af61fb9fc"
+    },
+    {
+      "path": "src/core/random.js",
+      "sha256": "c7fe17d39b70b37adeab22bfdb488029476b489a8e940d43db06558251b273e1"
+    },
+    {
+      "path": "src/game/actors.js",
+      "sha256": "dda82e4f83120e1c832c7c73c617c012efdb2426cf227773d04e55593d8bd408"
+    },
+    {
+      "path": "src/game/battle-director.js",
+      "sha256": "c3d2d7ad26cc8b4b19ee2014aadfaaadbdc0142c5c480462e724d9c07f7a67aa"
+    },
+    {
+      "path": "src/game/game.js",
+      "sha256": "6d3d45745f2e5fbbf26a8f3050b48844f7b4fc6948930c1162f542887fed3bd4"
+    },
+    {
+      "path": "src/game/grenade.js",
+      "sha256": "8b588b862e5ffe0b7144412807ae89df14553bd55b6bc1187b0d9bd3813c846d"
+    },
+    {
+      "path": "src/game/m01-fire.js",
+      "sha256": "f5962ee028e5a6d101793ba3fe6896ccba9350c2e22de7bab60666ef9f53aa1e"
+    },
+    {
+      "path": "src/game/m01-simulation.js",
+      "sha256": "4d6b45a528ce61c756b137a9d6137cbd1c86e0bb2cd2c502888c37ee9cf690bd"
+    },
+    {
+      "path": "src/game/mission.js",
+      "sha256": "877957aed04fb27b8aafdbbdaa989e9e275d3d1248a340402be9e404f5bc70c2"
+    },
+    {
+      "path": "src/game/sector-battle.js",
+      "sha256": "abeabe90329f80103a5838e6d80b44c860a7d4ffa146a1e119c885357907cb3c"
+    },
+    {
+      "path": "src/game/simulation.js",
+      "sha256": "59b206413ab76abf9c93d6d76e48831f13c7358cb1caade409e2a759238c34f3"
+    },
+    {
+      "path": "src/game/weapon.js",
+      "sha256": "4b4e7bf93653509189f4d2d28ade314b7488d15ede69e217f1d98b6eae9a9fda"
+    },
+    {
+      "path": "src/game/wz29.js",
+      "sha256": "3bd376bf1d1d6d4978871a4a35e4067779a1c9afda0adde155aba27b10636be5"
+    },
+    {
+      "path": "src/main.js",
+      "sha256": "4ee77c025ab75cae5e6c88e0e1ab8d6380d5e03679bed123bce1db5d17d7867f"
+    },
+    {
+      "path": "src/render/m01-actor-pose.js",
+      "sha256": "94f412d84e0b78159c4c766044880b1642bb310d3a21ab5cc26b2cdbcb4fab8d"
+    },
+    {
+      "path": "src/render/m01-atmosphere.js",
+      "sha256": "b1e828d9fe1179eed51c858ae819b6bf019483a7f26bc302333bd442fb8430e5"
+    },
+    {
+      "path": "src/render/m01-characters.js",
+      "sha256": "e07c9aa75e571e8c9f930f147dd662f092c142f4db200ce665e46a1034c68007"
+    },
+    {
+      "path": "src/render/m01-environment.js",
+      "sha256": "f56288796cdac9e8f0fd83461b90524d31c21f9fc29daee5cda29f6937ce8fb2"
+    },
+    {
+      "path": "src/render/m01-surfaces.js",
+      "sha256": "08c8af41685ad4ca9bf8e803f3b3af3b164631965edc2a6ff8b36511de4507cf"
+    },
+    {
+      "path": "src/render/m01-train-wagons.js",
+      "sha256": "c38f8d853afdc118382af0bc78a2db9a8b21ec6591d6b2bca87d2a4ed706d866"
+    },
+    {
+      "path": "src/render/m01-view.js",
+      "sha256": "9960c00e4181a41a6500e621aa7fffa813f2e1d6c0277c135bffa8e6b4f4abcc"
+    },
+    {
+      "path": "src/render/m01-viewmodel.js",
+      "sha256": "6fd9cc2fc5831c7d22d2f3b774b17b1194152e2a7a73b6a41f7bf37679dd062a"
+    },
+    {
+      "path": "src/render/materials.js",
+      "sha256": "fa51effdcd9367e5418be6b19e4fb615970d8fe03c7e08808bf800ea5278ab9c"
+    },
+    {
+      "path": "src/render/math3d.js",
+      "sha256": "392c01dcb8b799d408403c54c205c1b69931bd4591809076e7230026b3d1d5ec"
+    },
+    {
+      "path": "src/render/renderer.js",
+      "sha256": "a7905fa72ffa0754ce4c1509e9acb408d48f55be08f10ef9f7bf94503005fa8b"
+    },
+    {
+      "path": "src/render/three-renderer.js",
+      "sha256": "f72bbf5600f7faf8cab02c7451240ca3b0d5ae908383c99dd53fa36a5b617ddf"
+    },
+    {
+      "path": "src/styles.css",
+      "sha256": "4ac8ef7df0684d398869bffdf6024ab595f1d75258cd2cf3f4262416a9b7c26f"
+    },
+    {
+      "path": "src/world/m01-decoration-layout.js",
+      "sha256": "d1000fd485fb6bcbd1de08edc7593b26f199fe139170358564ce9885339e2b96"
+    },
+    {
+      "path": "src/world/m01-mg34-prone-geometry.json",
+      "sha256": "05bbe5806ed017ddc215352634519524d70d749c08d4c68f3f0d459094f02fbb"
+    },
+    {
+      "path": "src/world/spatial.js",
+      "sha256": "49409541cf8b9c8542aba5cdaf79a46227e973932fa795743969a0f893551dcb"
+    },
+    {
+      "path": "src/world/tczew-world.js",
+      "sha256": "716c9b3fb3bca8c8d07a690caf1ef67288a416a043a94b47e98d8e58c4f95a22"
+    },
+    {
+      "path": "src/world/world.js",
+      "sha256": "bdbe2212e50a04b2a20ac2db1cb3062827ac3f0ffb8c779a76b56d1832fccc7e"
+    },
+    {
+      "path": "tests/browser/game.spec.js",
+      "sha256": "b62a0f0b67f61ef531e2181d8be13a2f35705398764197ddbb02ce9ac5ca9f85"
+    },
+    {
+      "path": "tests/browser/m01-mg34-prone.spec.js",
+      "sha256": "975d3f8402e8d546a7ed714569d5cfc3f9805b8aabd07b552395f1775f8dae37"
+    },
+    {
+      "path": "tests/browser/m01.spec.js",
+      "sha256": "60ec7184ac01fba7b3e580a96b1653b374839559f7860305627955cba6b5682a"
+    },
+    {
+      "path": "tests/foundation.test.js",
+      "sha256": "522f8b1cc72594379a9ec774a5d6f58886e75cf079eebb289e6ba1b702cd7dd2"
+    },
+    {
+      "path": "tests/game.test.js",
+      "sha256": "205d94d80e07aea81758a9ee6eac6904f50048367257e46879874630279eaf92"
+    },
+    {
+      "path": "tests/helpers/m01-cover.js",
+      "sha256": "5c9530c044fccbfc6505a2ef07890d577593c21c58a68898c147741e764f01fd"
+    },
+    {
+      "path": "tests/helpers/m01-route.js",
+      "sha256": "adee66bea1fc072b742c0632298a69bf90e6f700bac9a67864c900367797ea9e"
+    },
+    {
+      "path": "tests/input.test.js",
+      "sha256": "b853b9b6abb5f2bfac88ecc15659fc3811d3392cd634185eea011d39f683d396"
+    },
+    {
+      "path": "tests/m01-aircraft-runtime.test.js",
+      "sha256": "186fd2236d4eca51293f9bee2eb18926940f861c1d56c318ed0575b3b325275a"
+    },
+    {
+      "path": "tests/m01-bridges-glb.test.js",
+      "sha256": "c01b17c2e673e2b31c4fd03a1bbde41e79cde6196c3602f387b918ca0970a1c9"
+    },
+    {
+      "path": "tests/m01-character-assets.test.js",
+      "sha256": "ce292c25f20014fca47d876960f5a1ba12ccfeb6013e7d2d6b84aa34cb137f95"
+    },
+    {
+      "path": "tests/m01-ckm-placement-migration.test.js",
+      "sha256": "5f903fff63b91242de4f9dc2102182d91a723e962c75ce2a7ac1fd8c0515fe6f"
+    },
+    {
+      "path": "tests/m01-ckm-runtime.test.js",
+      "sha256": "e5997539969e9100187cf51d3d6542e3939c06aa1c5d9c840ce521b79e099509"
+    },
+    {
+      "path": "tests/m01-ckm-wz30-glb.test.js",
+      "sha256": "72f2c1dcaa87def6a8061a1e08803602a0f6c28e5034876d3e153925cbfc6f65"
+    },
+    {
+      "path": "tests/m01-continuous-fixes.test.js",
+      "sha256": "5adcb599646116e2597937282a1d16fbf24cdf8affa7d5841d9a193958ab1e9b"
+    },
+    {
+      "path": "tests/m01-cover-combat.test.js",
+      "sha256": "131ef1c708f0c005217564e2ede3a88d8a8fd2782766a8043b448a1ee74e6177"
+    },
+    {
+      "path": "tests/m01-cover-origin.test.js",
+      "sha256": "0efe8850343d6a2f5873b3b55be2ff0e7bf337270ca698fd6419a696da22890f"
+    },
+    {
+      "path": "tests/m01-cover-threat.test.js",
+      "sha256": "bc33b6dc352f01dbe2f6b3dd8f9ef39bd5084bc948b41b3bf71db7914c42297b"
+    },
+    {
+      "path": "tests/m01-demolition-cue.test.js",
+      "sha256": "b9e2637c6a9ebe83e2024ef01395fc95f1fc6cd0d8727db59d1313d745d8797a"
+    },
+    {
+      "path": "tests/m01-environment.test.js",
+      "sha256": "b43aae4ae36243e85014325c0db9b579790705536f1ce2b99a5c000bfc4909a5"
+    },
+    {
+      "path": "tests/m01-ju87-glb.test.js",
+      "sha256": "d96cb3f8b04f751eedfaac1682cb8de93a74ce17e2cd0f998a4a9955f10afd4e"
+    },
+    {
+      "path": "tests/m01-mg34-glb.test.js",
+      "sha256": "f5ce5d41e0ee7dfb2ae6603b579d53d354020e272274bc227d2b599834987112"
+    },
+    {
+      "path": "tests/m01-mg34-prone-glb.test.js",
+      "sha256": "ead5fea75100ad10f9b63c1b54c69b018e2cd922f62a40e3da8a325055642b3f"
+    },
+    {
+      "path": "tests/m01-mg34-prone-presentation.test.js",
+      "sha256": "b9962c86d051b1474428ec12b1aa968925355ec29d95db0d6c96031eac7a6ad4"
+    },
+    {
+      "path": "tests/m01-mg34-prone-runtime.test.js",
+      "sha256": "74595c468a20641e34c1e60cc96d23a834044bb3395c0fdcce4ece4ca66e6e2e"
+    },
+    {
+      "path": "tests/m01-mg34-prone-spatial.test.js",
+      "sha256": "f5709476db6eb2e7e404fbfc74d9de5f2c94fe98b6dbdf257a1c03345b66adcb"
+    },
+    {
+      "path": "tests/m01-poses.test.js",
+      "sha256": "5240b00f363dcc9c374d82275a98768b5621ff3a97a3d80e92f9dec59f54e27d"
+    },
+    {
+      "path": "tests/m01-rkm-wz28-glb.test.js",
+      "sha256": "564bec00265e396106e33be9948f0e27e80e37e34f034ab44ad96fb1e04a10cc"
+    },
+    {
+      "path": "tests/m01-runtime.test.js",
+      "sha256": "5029c55889a53f84dd2752de03a6836b828e8c3091682ef2eca4a85402b4b5a4"
+    },
+    {
+      "path": "tests/m01-soldiers-glb.test.js",
+      "sha256": "b198fa166cbc78c627c8fccb569f3320ac83ed2459e90cb98b73d50659681188"
+    },
+    {
+      "path": "tests/m01-station-drag-runtime.test.js",
+      "sha256": "cebdd18d71a60f752be2ef272553d420faf3f5139a2480f23a41875bd6d3c64a"
+    },
+    {
+      "path": "tests/m01-station-drag-transitions-glb.test.js",
+      "sha256": "c3573ca95a94e0a92e9328fb111a5a266da45825182109201d6a75514d29b698"
+    },
+    {
+      "path": "tests/m01-station-evacuation.test.js",
+      "sha256": "421386b33a2f941e128d7026f92b7f58b6de171d8cbee39b17be7fcee756e437"
+    },
+    {
+      "path": "tests/m01-support-runtime.test.js",
+      "sha256": "c130cff622ec2ce18501d20d979369dabcfdbc57cbfbecbbe7f723e71df6b138"
+    },
+    {
+      "path": "tests/m01-tczew-data.test.js",
+      "sha256": "e12c6457065ea336ff6e078d502bd3ee47256a3353e10e21054e7402022864ca"
+    },
+    {
+      "path": "tests/m01-wagon-damage-glb.test.js",
+      "sha256": "8a96ce962b5bc5618dde680a37d082976856a5eeee30437466efcc90186655d6"
+    },
+    {
+      "path": "tests/m01-wagons-glb.test.js",
+      "sha256": "871a8cbe7fc0d1cc2cec732cf2651584be25b7b58351945aea577a105dfb6f7d"
+    },
+    {
+      "path": "tools/assets/m01-aircraft/README.md",
+      "sha256": "4c99173e517fa20b9cfedce10eeb189d5c8a3d0423a02c0c98f1568e06d8d1c4"
+    },
+    {
+      "path": "tools/assets/m01-aircraft/build.mjs",
+      "sha256": "f97ca1f73095aa8d5ef698c892e8964b9c6751ac4742d4ff2499ad0783046dc8"
+    },
+    {
+      "path": "tools/assets/m01-aircraft/package-lock.json",
+      "sha256": "c3d2ad7436a9282a591d9270e4b410dcbb08ff77fe5351f6b2e1708704143268"
+    },
+    {
+      "path": "tools/assets/m01-aircraft/package.json",
+      "sha256": "ea5a849923bad0ab75ba96c0b74ae9f4dd136d0e684461a98390eb027cca5a34"
+    },
+    {
+      "path": "tools/assets/m01-aircraft/render/capture.mjs",
+      "sha256": "c7a05340741cf4d2ce34a7c6432e360acecbd83ac28adbfb8da3bbec57cb7818"
+    },
+    {
+      "path": "tools/assets/m01-aircraft/render/stage.mjs",
+      "sha256": "0d82c4af417db8a6ff06667eb8e419ea692aa3934c59b1ab6172da9b85f40557"
+    },
+    {
+      "path": "tools/assets/m01-aircraft/render/viewer.html",
+      "sha256": "f22dbe4a2e89f5991d4cdef26f87381910105c6f217caed306ee3db4938e3a82"
+    },
+    {
+      "path": "tools/assets/m01-aircraft/src/ju87.mjs",
+      "sha256": "b0c552633791bebae154f3f6b2692045a6f123612d8a7a8c4f419017a0421b69"
+    },
+    {
+      "path": "tools/assets/m01-bridges/.gitignore",
+      "sha256": "4d56952b0fb13bf8f9b6c13a6d4c34a075bac3af447636a1df4335d7576e2f97"
+    },
+    {
+      "path": "tools/assets/m01-bridges/build.mjs",
+      "sha256": "5c8fcae1159536ef318fbce1a92132aa17257acf0944956445b6e3f527d1552a"
+    },
+    {
+      "path": "tools/assets/m01-bridges/export-colliders.mjs",
+      "sha256": "67ee9a5c1872d26bcfcc4fb6be4f5428aa0213ccc5412ce67099f913512ed3e4"
+    },
+    {
+      "path": "tools/assets/m01-bridges/package-lock.json",
+      "sha256": "de415262f402d2754fe4642a5e8d4a0f5c4b3f302621b46ac377788c734dd0d1"
+    },
+    {
+      "path": "tools/assets/m01-bridges/package.json",
+      "sha256": "931c4fc8924d19dc10f8a21794a15786b9afc7fddc52f156a86875b036005512"
+    },
+    {
+      "path": "tools/assets/m01-bridges/render/render.mjs",
+      "sha256": "29e425789292d3717e493acd2dbcf45802af2b4349b7c1540549c37fd2e3462d"
+    },
+    {
+      "path": "tools/assets/m01-bridges/render/viewer.html",
+      "sha256": "e477c7419f7e6d6741762330352ddeca6a52185483ba0d7e09aafc49fb073205"
+    },
+    {
+      "path": "tools/assets/m01-bridges/render/viewer.mjs",
+      "sha256": "3e5d66ed70da94a84263f7d007027f67e2a2b092812915b021d57e2c16c2467d"
+    },
+    {
+      "path": "tools/assets/m01-bridges/src/bridges.mjs",
+      "sha256": "0c316875befcfbc007c74a0d0434c66dd365416771ab08d41e5816db057538e9"
+    },
+    {
+      "path": "tools/assets/m01-bridges/src/geom.mjs",
+      "sha256": "41f3d8cd3cf621f9bd7b91a9be7ef3847d2411bc90018f215af383e9d62f1088"
+    },
+    {
+      "path": "tools/assets/m01-bridges/src/state.mjs",
+      "sha256": "a887e60d28ed8c539f9171fe5d83d3583800cbc60b4f0101c200b12dfb1ba1c3"
+    },
+    {
+      "path": "tools/assets/m01-bridges/src/write-glb.mjs",
+      "sha256": "1e1318820e38cef19a4c1c45c6ba4bd41b7c38f3a99b450202708f8a6c65a2d4"
+    },
+    {
+      "path": "tools/assets/m01-ckm-wz30/README.md",
+      "sha256": "dfbfffe64324237ed4ade42240d5a34e8eaef4aa4aea842817bbfd6ddda1450e"
+    },
+    {
+      "path": "tools/assets/m01-ckm-wz30/build.mjs",
+      "sha256": "e172101e425120640d0c6a454d1e5564c61ff7db7d85905ec0efa8de706c8b4d"
+    },
+    {
+      "path": "tools/assets/m01-ckm-wz30/package-lock.json",
+      "sha256": "4d5efabf55752ab38cc0609f933a662f0aeb31c66afdc4b71d914382c0d5ac40"
+    },
+    {
+      "path": "tools/assets/m01-ckm-wz30/package.json",
+      "sha256": "580c6fc6cfcb39a25666972397bf50d7309e5c8ab1fc42e2a21a12022fc26e1f"
+    },
+    {
+      "path": "tools/assets/m01-ckm-wz30/render/capture.mjs",
+      "sha256": "5c71910e4532f1c638307dc7fad33772c711be57547a8d0b14038db3d5e83e5d"
+    },
+    {
+      "path": "tools/assets/m01-ckm-wz30/src/ckm.mjs",
+      "sha256": "1c468adb5b4ad0b872a5cff9cac36c7de9ae33398d52566130ba3bfebd2b6d98"
+    },
+    {
+      "path": "tools/assets/m01-ckm-wz30/src/clips.mjs",
+      "sha256": "3a73126d9551d9714b6177d4b14e7ff47003785a271416dd4785096aaaf2ea9d"
+    },
+    {
+      "path": "tools/assets/m01-mg34-prone/README.md",
+      "sha256": "7777dda46ba07aa7a15cad2e0dcf67aa16a18349768b7b5a37efe343b5377418"
+    },
+    {
+      "path": "tools/assets/m01-mg34-prone/build.mjs",
+      "sha256": "eba452425b756d931e8d40c563c7996c0bc11b0b006df62fa89ae232b4ecb9c9"
+    },
+    {
+      "path": "tools/assets/m01-mg34-prone/package-lock.json",
+      "sha256": "8be5cfb1f731e0e13060665a568d8ca615f6be8cd8550e199d1983911035a871"
+    },
+    {
+      "path": "tools/assets/m01-mg34-prone/package.json",
+      "sha256": "3500824bef5e853c62de2a9cf6838fdb2b37d4d5e8fd902b39be1f8e5e43e454"
+    },
+    {
+      "path": "tools/assets/m01-mg34-prone/render/capture.mjs",
+      "sha256": "5f858abbffef6866697096084097705fb425ef087f17d4f8d2a7670c57db9336"
+    },
+    {
+      "path": "tools/assets/m01-mg34-prone/src/clips.mjs",
+      "sha256": "6b6b23a4b5118ef95a54f72947f04c17c3eaa7b8755165d4996cfd29610f0edc"
+    },
+    {
+      "path": "tools/assets/m01-mg34-prone/src/prone.mjs",
+      "sha256": "297248fed896b9ae503b2ef51e8fc05631302e04ecb1c26e39ab9e44d573b084"
+    },
+    {
+      "path": "tools/assets/m01-mg34-prone/src/skin.mjs",
+      "sha256": "ec25db1745b06091042218eec00f03b15ff31096a45705dace077fcf74bcb115"
+    },
+    {
+      "path": "tools/assets/m01-mg34/README.md",
+      "sha256": "1f92cc36d956b9d85f6e97a0f8fddf94eb25f7c9246d5efe92f7f6f1f80ee144"
+    },
+    {
+      "path": "tools/assets/m01-mg34/build.mjs",
+      "sha256": "f2f2395fe37956660dace1aba63513e16b1f4073e09a79cd8e8bd1f21ae8009a"
+    },
+    {
+      "path": "tools/assets/m01-mg34/package-lock.json",
+      "sha256": "e0777df4c033f7e3b72eee5869986bdbe5cb3aa73a64b1d2e9716efa86e4ccbf"
+    },
+    {
+      "path": "tools/assets/m01-mg34/package.json",
+      "sha256": "ae2aa68774ba401edad570cc487519ce1cbf08dbb193be4da11d9319fd4f7466"
+    },
+    {
+      "path": "tools/assets/m01-mg34/render/capture.mjs",
+      "sha256": "b448fc6076bd8c721750f3f3df2e00364f41f27efa027c9f028db5a5fbcb4fb8"
+    },
+    {
+      "path": "tools/assets/m01-mg34/src/clips.mjs",
+      "sha256": "553790fff24f88a5deeecf5675b36b3a66f8a1ed6095b8bde4a244fd13431f9b"
+    },
+    {
+      "path": "tools/assets/m01-mg34/src/mg34.mjs",
+      "sha256": "afd49da678cfe83d4f99e3fb39167f93ba25339e2c0efb8234e89138f4353f63"
+    },
+    {
+      "path": "tools/assets/m01-rkm-wz28/README.md",
+      "sha256": "145fda30e128b29bea6a9af187ecc43513308efcae7a2e4eb57cd0abef2f6685"
+    },
+    {
+      "path": "tools/assets/m01-rkm-wz28/build.mjs",
+      "sha256": "34ca0685fdb593bdf93d5143d42a9db50370eb1cb1c30c4c89361d9fb21d1675"
+    },
+    {
+      "path": "tools/assets/m01-rkm-wz28/package-lock.json",
+      "sha256": "7b90b97c44c41cc1a405c33ccaf0c2182175883bfe40654b33d3ba310969f4a0"
+    },
+    {
+      "path": "tools/assets/m01-rkm-wz28/package.json",
+      "sha256": "8aa87b427a26eb85ccf312e63e821018b1f896be53565f0a838752e0e7a905d1"
+    },
+    {
+      "path": "tools/assets/m01-rkm-wz28/render/capture.mjs",
+      "sha256": "2aa2c117afc1e8d3901b60fd4c8dc6a33b449ead8c00ef863facdeb9f8109722"
+    },
+    {
+      "path": "tools/assets/m01-rkm-wz28/src/clips.mjs",
+      "sha256": "cc3dfcf57e270944be8172b96ff7f6f2dc677cd542ab95f15c0243db68cbc2ef"
+    },
+    {
+      "path": "tools/assets/m01-rkm-wz28/src/rkm.mjs",
+      "sha256": "f53026dab272f144eccd690e59a8f3df9bb8ad8c350fa15bf03a00cfcb942176"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/.gitignore",
+      "sha256": "af4ab05e427b8408f81adcadfbc042fc81f69e62cc750bece8b8bde1152886ee"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/README.md",
+      "sha256": "0b11a669b9bd88e57343f74c8f1f0e40067694c90f5043c64b572b1c97e6439c"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/build.mjs",
+      "sha256": "345bd1b51c09c974704cf85e55dbe43bc78c911477f3d086d26dee58b644a902"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/dev/anim.mjs",
+      "sha256": "ea13c51dc43ded201ea4662c71dac2ecf40eb3974acd520e41b77d49c9ddad6c"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/dev/carry.mjs",
+      "sha256": "f3d8da377c96395ffcc60110b54f9d9b87b0474811d78b11694758ad40023b46"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/dev/close.mjs",
+      "sha256": "5aab3a497c7d5f7bb24aab197ff875087021d2082f1571da31e0492b73ee1034"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/dev/preview.mjs",
+      "sha256": "92f4c1b00270641db7a5b708fefa4943b68502aff069dfb2727af76b9eb01648"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/dev/sheet.mjs",
+      "sha256": "0356d86929782af13e3bf6efdc7b955cd8c8d91a4b4aa0b0da68022697414833"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/dev/shot.mjs",
+      "sha256": "76fe20490b6c671eb94e0cdf0e40cd2874cd5093781765c0892d070d8aa8b498"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/dev/textured.mjs",
+      "sha256": "5ab7ae58f7fec899d7d9668db97f51c3ac0166789401c71c611845f2fd53228c"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/fetch-makehuman.mjs",
+      "sha256": "f47bda567d992657263c7ec3a40d46eb7b9a0e72f82d16198d680996337006bc"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/makehuman.lock.json",
+      "sha256": "8f521bdc140bd1c70a5501ab6d91a4d7b7e381e25c80d655eb7e68068b2389ab"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/package-lock.json",
+      "sha256": "a6561cb2990ba3132e44249ab111c7c97d40d393394a4839d097a8477e9fe244"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/package.json",
+      "sha256": "077421f58b75727def700cc3274643b93d8d7d91a0e91be98777fddaae862aee"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/render/capture.mjs",
+      "sha256": "aba0c46b5fc7495fd3d01cf7fd8d0a19e4a0bf5095ba7c039318b22c6e31f1d1"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/render/stage.mjs",
+      "sha256": "b51af22cefab6aecf23cc30c1e267c83578d92474d0dfbd1a416838fd0729ee1"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/render/viewer.html",
+      "sha256": "a383880dc570fc3b016579b957d7fcba62bacad6be213ea1d8e457c9d5d76f0a"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/assemble.mjs",
+      "sha256": "cfa594814e32bb8aa78e67e9b2bb29f07ac82de50fc9bc46fbf553b9321b3b1f"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/atlas.mjs",
+      "sha256": "b76367e568a0cf616d4b496faf59f846e27655f7ae3da443a0481810625a4544"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/clips.mjs",
+      "sha256": "4ff9491bf05ed13f3e444bd555d7ecbc072da17cd0d0aca8040d85df5c13046a"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/garments.mjs",
+      "sha256": "6e276933cb1747a821f92f2ae2735fe8bc818b64f72f244a18168c9ed797cdd5"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/gear.mjs",
+      "sha256": "779bbc75f606c796aa83e630f62a0535b7a36522c6a0c25f331c47074da01c50"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/geom.mjs",
+      "sha256": "54cd50b87f17566377bef41bd767832f454b6efe2f7c9e9963600e1213267479"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/glb.mjs",
+      "sha256": "4b51955214c0132944234ca87e1622f2c0a6b4779a00c5c252bc59136a951da3"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/head.mjs",
+      "sha256": "1848d987ff04bfd067045a1a124e4e9f8d9d220b8a5b4887748f2f335801f99e"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/human.mjs",
+      "sha256": "a517a98514119c01221f3fca9a067d65dd6515d4efc91ba0fa077e4cab996616"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/meshops.mjs",
+      "sha256": "b7dd3b144fc58de4baaf36a6fe9210fe056e3af6ff4b9bd89c7e3487bf4d4624"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/mh.mjs",
+      "sha256": "618d122cc206a021da3740e11b78368df6c99765d5c432b25ce9c0e49c12a7de"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/noise.mjs",
+      "sha256": "3d742e6762c585f06b18360081616f587655822977c969c6707556d9d158772c"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/outfit.mjs",
+      "sha256": "c2b1d0bf1b75b1adf0b8b490d7e9e15ae1a4b7380919af8c4c0daf11c111ba20"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/paint.mjs",
+      "sha256": "3bbabbd6d114c79b5b7b838f2c56c01f3a2947cc2334a2dd90839ba4a3999951"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/pose.mjs",
+      "sha256": "1a06b2a34599569db84a57667feabc301ab57dcbd9cb02640e00a15bf727a152"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/textures.mjs",
+      "sha256": "b27245f9f2e3ec796f289f6c6051740268bb39022ee095d1eb6c1d6537122a53"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/variants.mjs",
+      "sha256": "4b79e9c43993a0dace2e760e381fe670de5ccaed0b1be2ed7875ce446fd4e25a"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/weapon.mjs",
+      "sha256": "0a6b49c4e30a52ffa1d07f3f5142b68b5c823d7b7eff30144550e89706372e0b"
+    },
+    {
+      "path": "tools/assets/m01-station-drag-transitions/README.md",
+      "sha256": "f2239df1e909c7a129ed2fc9351c01080eb2a42d32f78c2065b34c4bd1392b7f"
+    },
+    {
+      "path": "tools/assets/m01-station-drag-transitions/build.mjs",
+      "sha256": "4970433e7405b249a3bea95652d935f2ae373a37bd5b76b8d55821737565a91c"
+    },
+    {
+      "path": "tools/assets/m01-station-drag-transitions/package.json",
+      "sha256": "5390684b66bf27b76fd1a285aea51fbbde3701f7d9ee5a07195e19258d3adbb4"
+    },
+    {
+      "path": "tools/assets/m01-station-drag-transitions/render/capture.mjs",
+      "sha256": "a5ec30231247f44be4f825b07035b2a6ca1ce61255138739830fe3b260892e2c"
+    },
+    {
+      "path": "tools/assets/m01-station-drag-transitions/src/body.mjs",
+      "sha256": "b04bab4124b42a3efd4470a5d9c42cede5ae5b3b5a9f84ede2346918d968ac3f"
+    },
+    {
+      "path": "tools/assets/m01-station-drag-transitions/src/clips.mjs",
+      "sha256": "37736e147b152ee1abd93373f6c7a26ac466d45b68a72e6309a0cfb3d609e357"
+    },
+    {
+      "path": "tools/assets/m01-station-drag-transitions/src/fk.mjs",
+      "sha256": "2ae47893b0d8e3541b81334d161d3be55bf29a0c2df0ceda76d132c232cf1cbe"
+    },
+    {
+      "path": "tools/assets/m01-station-drag-transitions/src/rig.mjs",
+      "sha256": "afd302b99bde6d57ee1a73ea5749b8c0370844890450f11f8eebf7a362d034b3"
+    },
+    {
+      "path": "tools/assets/m01-station/build.mjs",
+      "sha256": "5eac14043bc4ef1731c1732c9f87ce76e3584f7cc583cf39bfb8b250ac01761b"
+    },
+    {
+      "path": "tools/assets/m01-wagon-damage/README.md",
+      "sha256": "f65f9ce5e99894ef1a3fa6b417d8ffc934b3eb0229cc331dfe2b184b87816c7d"
+    },
+    {
+      "path": "tools/assets/m01-wagon-damage/build.mjs",
+      "sha256": "e4cc6a9fa11c1c5737a61fe037b10a72520ed1453a66636459cb26f9b7bc2026"
+    },
+    {
+      "path": "tools/assets/m01-wagon-damage/package-lock.json",
+      "sha256": "06ac620073be8b0d4414923423851d4e046a0c1e263405ccaca3b22afc2b7833"
+    },
+    {
+      "path": "tools/assets/m01-wagon-damage/package.json",
+      "sha256": "9fb087c6e477e262ced0ae6b636ecaf97ba148a9517b4862f203614c7716743c"
+    },
+    {
+      "path": "tools/assets/m01-wagon-damage/render/capture.mjs",
+      "sha256": "85d7f0b37ba1f60ae7e568e554a44a317ffc39e8d8d127228229a0663915880c"
+    },
+    {
+      "path": "tools/assets/m01-wagon-damage/render/stage.mjs",
+      "sha256": "68404c92d894ecc100d64e47a1be768b7935bca65813ae070cdb8ca7c8722474"
+    },
+    {
+      "path": "tools/assets/m01-wagon-damage/render/viewer.html",
+      "sha256": "cf59fc43b3cf3a6d3ed7a88dd01f0dbfa4a0633513106856f3ba07a7c5ba8726"
+    },
+    {
+      "path": "tools/assets/m01-wagon-damage/src/damage.mjs",
+      "sha256": "254bc2d021717940b80730e3559c19c472b2854a178c8402d7166d53a2a44fb7"
+    },
+    {
+      "path": "tools/assets/m01-wagon-damage/src/shapes.mjs",
+      "sha256": "f1c63240d63977f3786e6b92e54dc8448b786af9d6d47d9cbd42d597ab7a8da3"
+    },
+    {
+      "path": "tools/assets/m01-wagons/README.md",
+      "sha256": "8b2aa034800eb2ee68975619e15165e45b9512ce71a36155794e8956c79309fb"
+    },
+    {
+      "path": "tools/assets/m01-wagons/build.mjs",
+      "sha256": "03f8b1b04a58d20050b6ec484e0ef6b043aeb506f3948ca3f821add0023130cf"
+    },
+    {
+      "path": "tools/assets/m01-wagons/package-lock.json",
+      "sha256": "6ca73490017df6343430600e5a3be10b37a7e9c56091f5e09de8094f8582946c"
+    },
+    {
+      "path": "tools/assets/m01-wagons/package.json",
+      "sha256": "f4e94fc82014b7ca526ab9699963862917de5d1f422e9f6b47ec8d8f8b1a5952"
+    },
+    {
+      "path": "tools/assets/m01-wagons/render/capture.mjs",
+      "sha256": "b343d003c2d5c61f52f1a1eee50950208b3263b2e80d7c3df2f365bd2a81bb75"
+    },
+    {
+      "path": "tools/assets/m01-wagons/render/stage.mjs",
+      "sha256": "8f8f040e610bc71bb0f9ef6616e8f94bdde7a66a6db842da134360d7812044f8"
+    },
+    {
+      "path": "tools/assets/m01-wagons/render/viewer.html",
+      "sha256": "554b1748a0e8b1ba9c071587ff458cb01aafa0c2d767547493f5ec7ad414a376"
+    },
+    {
+      "path": "tools/assets/m01-wagons/src/wagons.mjs",
+      "sha256": "99f149506f4ac7202b494997eadb2e7f2c260a77a284bfe47b985955f1ac63be"
+    },
+    {
+      "path": "tools/capture-m01-visual.mjs",
+      "sha256": "b4394a4de481ab048846aeb0efef304673f0450dafa7c3830be54f1117244024"
+    },
+    {
+      "path": "tools/m01-browser-playthrough.mjs",
+      "sha256": "b91e577a960b19f2e995ac5f970639f6aa3f4d4e4060c9619a03a8e28dc8be12"
+    },
+    {
+      "path": "tools/m01-cover-comparison.mjs",
+      "sha256": "c0815dadd243ab212ef48c0724d780e4ba0bcba764198e104b6656ca4672b2df"
+    },
+    {
+      "path": "tools/m01-pose-gallery.js",
+      "sha256": "926a8d013dfe1eeab9e9bd4048445d012636c23b9f7e6239db56652862620695"
+    },
+    {
+      "path": "tools/verification/m01-mg34-prone-geometry.mjs",
+      "sha256": "34104699e1f274bb759c4608fca1f822f9b9927b44eba7bc3996c1988459480b"
+    },
+    {
+      "path": "tools/verify-m01-characters.mjs",
+      "sha256": "e2e068154fb4b5fedbe8624a13e5db07ed1f472ea40841c42923fd5e591b843a"
+    },
+    {
+      "path": "tools/verify-m01-cover.mjs",
+      "sha256": "17700b49e21b9c5c1bcd56069b8b0ddbd101505248dffb710afef0c2a7e82032"
+    },
+    {
+      "path": "tools/verify-m01-poses.mjs",
+      "sha256": "17d0b99334955dec33cb94da68e9c36aaa2fd5c3ff9fe05786f578b230f44ede"
+    },
+    {
+      "path": "tools/verify-m01-route.mjs",
+      "sha256": "7cf6461f8ebae160e97ecc7950418bcf2509eb88b31f0a1bb25babfec07f8373"
+    },
+    {
+      "path": "vite.config.js",
+      "sha256": "9325cced82ead0e79028879afe2b7855295d9389f00970296b7570d6074122d0"
+    }
+  ]
+}
