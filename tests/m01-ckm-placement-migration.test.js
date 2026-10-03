@@ -22,7 +22,7 @@ test('schema 2 legacy 86 roster becomes 89 at the aligned post without changing 
   const before=structuredClone(legacy),restored=new M01Simulation();
   restored.restoreSnapshot(legacy);
   assert.deepEqual(legacy,before,'restore must not mutate the supplied save');
-  assert.equal(restored.schema,undefined);
+  assert.equal(restored.snapshot().schema,2);
   assert.equal(restored.rng.state,rng);
   assert.equal(restored.actors.length,89);
   assert.deepEqual(restored.actors.filter(a=>!a.ckm),legacy.actors);
