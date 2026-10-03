@@ -61,3 +61,12 @@ Não foi implementado disparo/munição da ckm: aim/fire_burst/feed pendentes. a
 Validação final confirmada desta etapa: 168/168 Node + build; 3/3 navegador focado após corrigir a regressão do kit base, 80,748 s. Suíte integral final iniciada mas relatório /tmp/ckm-browser-final.json desapareceu entre turnos; NÃO declarar 31/31. Próximo passo concreto: npm run test:browser com Chromium local, rever resultado e só então avançar candidato/staging/PR #32. CI b734cb run 37081592590 passou, deploy skipped; não é CI da nova entrega.
 
 Evidência em `docs/verification/m01-runtime/ckm-crew-runtime-2026-10-03/`: REPORT.md, fallback-regression.json, 12 blocos reais // SUBSTITUIR ISTO: / // POR ISTO: em substituicoes.txt/json, hashes de 111 ficheiros conservados e captura original. Os blocos reproduzem os dois fontes byte a byte sobre b734cb. Logs /tmp não estão disponíveis; captura mostra a ponte, não a guarnição em grande plano. Não repetir extrações nem reconstruir código. Claude continua indisponível.
+
+
+## Branch independente — migração da posição ckm, 2026-10-03
+
+Base fixa `beec7cd9333cfac38fdc361da481ad4a942e1e37`; branch de revisão `codex/m01-ckm-placement-migration`. Não integrada. A raiz ckm passa para `[24.17,-3,43]`, mantendo os três offsets da guarnição com deslocamento rígido `+2.17 m` em X. O socket real `gun_muzzle_flash [0,.64,-.83]` com yaw `-π/2` fica em `[25,-2.36,43]`, alinhado em X/Z à seteira sul.
+
+Migração schema 2 sem marcador novo: actores ckm em `idle`/`abandon` só são deslocados se ainda coincidirem exactamente com o seu posto antigo; `retreat` nunca é movido; depois de `west_demolition` nenhuma posição guardada é reescrita. Saves de 86 actores continuam a usar a migração do grupo ausente, agora com os novos postos antes da demolição leste e retirada segura depois dela. `startedAt`, fase, mortos, RNG, actores não-ckm, gates/relógios e schema 2 não são alterados. `moveActor` foi comparado com a base e permanece byte a byte igual; renderer não foi editado.
+
+Produção alterada apenas em `src/game/m01-simulation.js`; novo teste `tests/m01-ckm-placement-migration.test.js`. Evidência e blocos literais em `docs/verification/m01-runtime/ckm-placement-migration-2026-10-03/`. Validação local disponível nesta sessão: `node --check` do novo teste e harness Node da regra exacta 10/10. O checkout completo não pôde executar `npm test` porque o shell não resolve github.com; não foi disparado CI/workflow_dispatch. Executar o teste de repositório num checkout com dependências antes de integrar.
