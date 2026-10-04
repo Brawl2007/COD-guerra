@@ -1,0 +1,41 @@
+name: M01 wagon focused validation
+
+on:
+  push:
+    branches:
+      - codex/m01-wagon-lod-damage-runtime-integration
+  workflow_dispatch:
+
+concurrency:
+  group: m01-wagon-focused-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Focused wagon tests
+        run: node --test tests/m01-wagons-glb.test.js tests/m01-wagon-damage-glb.test.js tests/m01-wagon-runtime-integration.test.js
+      - name: Production build
+        run: npm run build
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Focused browser proof
+        run: npx playwright test tests/browser/m01-wagon-runtime-integration.spec.js
+      - name: Upload focused evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-wagon-focused-evidence
+          path: test-results/
+          if-no-files-found: ignore
