@@ -20,7 +20,7 @@ export const PATTERNS=[
   ['sphere_geometry',/new\s+THREE\.SphereGeometry\b|mesh\(\s*['"]sphere['"]/],
   ['cylinder_geometry',/new\s+THREE\.CylinderGeometry\b|mesh\(\s*['"]cylinder['"]/],
   ['plane_geometry',/new\s+THREE\.PlaneGeometry\b/],
-  ['capsule_geometry',/new\s+THREEE\.CapsuleGeometry\b/],
+  ['capsule_geometry',/new\s+THREE\.CapsuleGeometry\b/],
   ['instanced_mesh',/new\s+THREE\.InstancedMesh\b/],
   ['asset_load',/assets\.load\s*\(|\.glb['"`]/],
   ['fallback_word',/\bfallback\b/i],
