@@ -315,10 +315,20 @@ for(const truss of [false,true])test(`adjustment salvo ${truss?'behind the truss
   expect(before.m01.threat.coverFire.by).toBe(source.by);expect(before.m01.threat.coverFire.x).toBe(source.x);
   expect(before.m01.threat.status).toBe(await page.locator('#objective-status').textContent());
   const aim=Math.atan2(source.z-before.player.z,source.x-before.player.x);
-  await page.evaluate(delta=>{
+  const expectedAngle=await page.evaluate(delta=>{
+    const angle=window.gameDiagnostics().player.angle;
     document.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0,bubbles:true}));
-    document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
+    const look=new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true});
+    document.dispatchEvent(look);
+    return angle+look.movementX*.0022;
   },Math.atan2(Math.sin(aim+Math.PI-before.player.angle),Math.cos(aim+Math.PI-before.player.angle))/.0022);
+  // Relative input is queued until the next gameplay frame. On software WebGL,
+  // first verify that frame consumed the exact delivered sample (MouseEvent may
+  // truncate movementX), then retain the normal five-second HUD assertion.
+  await page.waitForFunction(angle=>{
+    const actual=window.gameDiagnostics().player.angle;
+    return Math.abs(Math.atan2(Math.sin(actual-angle),Math.cos(actual-angle)))<1e-7;
+  },expectedAngle,{timeout:30000});
   await expect(page.locator('#objective-status')).toContainText('atrás de si');
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
