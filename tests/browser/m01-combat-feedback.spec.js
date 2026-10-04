@@ -105,10 +105,12 @@ test('real crack and nearby impact register danger, accumulation caps and Low ti
   expect(accumulated.peaks.overlayAlpha).toBeLessThanOrEqual(.42);
   expect(accumulated.peaks.shakeStrength).toBeLessThanOrEqual(.02);
 
+  await page.screenshot({path:info.outputPath('m01-real-near-miss.png')});
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.locator('#back-menu').click();await expect(page.locator('#menu')).toBeVisible();
   await page.selectOption('#quality','low');
   const low=feedback(await page.evaluate(()=>window.gameDiagnostics()));
   expect(low.quality).toBe('low');expect(low.exposureFlash).toBe(0);
-  await page.screenshot({path:info.outputPath('m01-real-near-miss.png')});
   await info.attach('near-miss-diagnostics.json',{body:JSON.stringify({near:n,accumulated,low},null,2),contentType:'application/json'});
 });
 
