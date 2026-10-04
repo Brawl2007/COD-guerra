@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import * as THREE from 'three';
 import map from '../missions/m01-tczew/map-layout.json' with {type:'json'};
 import {M01Simulation} from '../src/game/m01-simulation.js';
 import {TczewWorld} from '../src/world/tczew-world.js';
-import {driver} from './helpers/m01-route.js';
-import {M01_YARD_WAGON_PLAN,yardWagonLod,yardWagonState,yardWagonPosition,yardWagonFireDamage} from '../src/render/m01-yard-wagons.js';
+import {driver,toRepair} from './helpers/m01-route.js';
+import {M01YardWagons,M01_YARD_WAGON_PLAN,yardWagonLod,yardWagonState,yardWagonPosition,yardWagonFireDamage} from '../src/render/m01-yard-wagons.js';
 
 const E=name=>`evt_m01_${name}`;
 
@@ -89,4 +90,103 @@ test('the third-bomb beat, not the later station casualty event, owns the wagon 
   assert.equal(hit.length,1,'the third bomb creates one persisted station impact');
   assert.ok(hit[0].started-bombingAt>=8.45&&hit[0].started-bombingAt<8.7,
     `station impact must occur at the t=8.5 beat, got ${hit[0].started-bombingAt}`);
+});
+
+
+function reachThirdBomb(){
+  const d=driver(),{sim,step,until,walk}=d;
+  step({skip:true});walk(-66,26);walk(-15,26);walk(-15,2);walk(16,2);step({interact:true});
+  until(()=>sim.consumedEvent(E('station_wagon_hit')),120);
+  return d;
+}
+
+test('station wagon hit is idempotent: one state marker, one blast record and no second event/audio source',()=>{
+  const {sim}=reachThirdBomb();sim.drainEvents();
+  const before={marker:sim.destruction.filter(x=>x==='station_wagon_fire').length,
+    damage:sim.sectors.damage.filter(d=>d.id==='station_bomb').length,
+    consumed:sim.consumed[E('station_wagon_hit')]};
+  assert.equal(sim.consume(E('station_wagon_hit')),false);
+  assert.deepEqual({
+    marker:sim.destruction.filter(x=>x==='station_wagon_fire').length,
+    damage:sim.sectors.damage.filter(d=>d.id==='station_bomb').length,
+    consumed:sim.consumed[E('station_wagon_hit')],
+  },before);
+  assert.deepEqual(sim.drainEvents(),[],'a repeated event emits no second m01-blast for Game audio/effects');
+  assert.deepEqual(before,{marker:1,damage:1,consumed:before.consumed});
+});
+
+test('checkpoint before the third bomb restores intact; the real CP-B after it restores burned',()=>{
+  const before=driver(),{sim,step,until,walk}=before;
+  step({skip:true});
+  assert.equal(sim.checkpoint.destruction.includes('station_wagon_fire'),false);
+  walk(-66,26);walk(-15,26);walk(-15,2);walk(16,2);step({interact:true});
+  until(()=>sim.consumedEvent(E('station_wagon_hit')),120);
+  assert.ok(sim.destruction.includes('station_wagon_fire'));
+  sim.restoreCheckpoint();
+  assert.equal(sim.destruction.includes('station_wagon_fire'),false,'CP-A predates the hit');
+
+  const after=toRepair(driver()).sim;
+  assert.ok(after.checkpointsReached.includes('cp_m01_b_reorganizacao'));
+  assert.ok(after.checkpoint.destruction.includes('station_wagon_fire'),'CP-B persists the third-bomb result');
+  for(let i=0;i<20;i++)after.tick(.05);
+  after.restoreCheckpoint();
+  assert.ok(after.destruction.includes('station_wagon_fire'));
+  assert.equal(yardWagonState(M01_YARD_WAGON_PLAN[2],after.destruction),'burned');
+});
+
+test('continuation snapshot and double restore keep one burned wagon without replaying its blast',()=>{
+  const {sim}=reachThirdBomb(),saved=sim.snapshot();
+  assert.ok(saved.destruction.includes('station_wagon_fire'));
+  assert.equal(saved.sectors.damage.filter(d=>d.id==='station_bomb').length,1);
+  const restored=new M01Simulation();
+  assert.equal(restored.loadCheckpoint(JSON.stringify(saved)).ok,true);
+  assert.equal(restored.loadCheckpoint(JSON.stringify(saved)).ok,true);
+  assert.equal(restored.destruction.filter(x=>x==='station_wagon_fire').length,1);
+  assert.equal(restored.sectors.damage.filter(d=>d.id==='station_bomb').length,1);
+  restored.drainEvents();restored.processEvents();
+  assert.equal(restored.consume(E('station_wagon_hit')),false);
+  assert.deepEqual(restored.drainEvents(),[]);
+});
+
+test('the wagon visual state does not alter world colliders or the two authored wagon cover nodes',()=>{
+  const sim=new M01Simulation();sim.scene=null;sim.clock=12;
+  const beforeObstacles=structuredClone(sim.world.obstacles),beforeCovers=structuredClone(
+    sim.world.coverNodes.filter(c=>['cv_wagon_1','cv_wagon_2'].includes(c.id)));
+  sim.consume(E('station_wagon_hit'));
+  assert.deepEqual(sim.world.obstacles,beforeObstacles);
+  assert.deepEqual(sim.world.coverNodes.filter(c=>['cv_wagon_1','cv_wagon_2'].includes(c.id)),beforeCovers);
+  assert.equal(M01_YARD_WAGON_PLAN[2].cover,undefined);
+});
+
+test('runtime has no separate damaged/burning selector: damaged GLBs are assets only and burned is the persistent visual state',()=>{
+  const wagon=M01_YARD_WAGON_PLAN[2];
+  assert.deepEqual(new Set([yardWagonState(wagon,[]),yardWagonState(wagon,['station_wagon_fire'])]),new Set(['intact','burned']));
+});
+
+test('blocking every yard GLB keeps all three wagons visible as procedural fallbacks and preserves burned state',async()=>{
+  const paths=[],assets={load:async(_name,path)=>{paths.push(path);throw new Error('blocked by validation');}};
+  const parent=new THREE.Group(),box=new THREE.BoxGeometry(1,1,1),cylinder=new THREE.CylinderGeometry(1,1,1,8);
+  const wood=new THREE.MeshBasicMaterial(),metal=new THREE.MeshBasicMaterial();
+  const view=new M01YardWagons(parent,assets,box,cylinder,wood,metal);
+  await view.load('high');view.update(['station_wagon_fire'],'high',new TczewWorld());
+  const diag=view.diagnostics;
+  assert.equal(diag.wagons.length,3);
+  assert.ok(diag.wagons.every(w=>w.key==='fallback'&&w.fallbackVisible&&!w.modelVisible));
+  assert.equal(diag.wagons.find(w=>w.id==='yard_wagon_3').state,'burned');
+  assert.ok(paths.some(p=>p.includes('m01_wagon_covered_burned_lod0.glb')));
+  assert.equal(paths.some(p=>p.includes('_damaged_')),false,'damaged kits are not selected by this runtime');
+  view.dispose();box.dispose();cylinder.dispose();wood.dispose();metal.dispose();
+});
+
+test('missing burned GLB falls back to the intact covered GLB without changing the semantic burned state',async()=>{
+  const paths=[],assets={load:async(_name,path)=>{paths.push(path);if(path.includes('_burned_'))throw new Error('burned blocked');return{scene:new THREE.Group(),animations:[]};}};
+  const parent=new THREE.Group(),box=new THREE.BoxGeometry(1,1,1),cylinder=new THREE.CylinderGeometry(1,1,1,8);
+  const wood=new THREE.MeshBasicMaterial(),metal=new THREE.MeshBasicMaterial();
+  const view=new M01YardWagons(parent,assets,box,cylinder,wood,metal);
+  await view.load('high');view.update(['station_wagon_fire'],'high',new TczewWorld());
+  const third=view.diagnostics.wagons.find(w=>w.id==='yard_wagon_3');
+  assert.equal(third.state,'burned');
+  assert.equal(third.key,'covered:intact:0');
+  assert.equal(third.fallbackVisible,false);assert.equal(third.modelVisible,true);
+  view.dispose();box.dispose();cylinder.dispose();wood.dispose();metal.dispose();
 });

@@ -90,6 +90,7 @@ export class M01YardWagons{
   get diagnostics(){
     return {lod:this.lod,loaded:[...this.sources.keys()].sort(),wagons:this.slots.map(slot=>({
       id:slot.wagon.id,type:slot.wagon.type,state:slot.state,position:slot.root.position.toArray(),key:slot.key,cover:slot.wagon.cover??null,
+      fallbackVisible:slot.fallback.visible,modelVisible:Boolean(slot.model?.visible),
     }))};
   }
   dispose(){
