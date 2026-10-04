@@ -1,0 +1,117 @@
+{
+  "pass": true,
+  "pairs": 18,
+  "pauseHeld": true,
+  "assetSetsEqual": true,
+  "cameraFixturesSha256": "b92f7e482d4ecbb0eb211b581182d6b2764741696c066440733d0b7162561d96",
+  "stateHashes": [
+    {
+      "name": "A-station",
+      "quality": "medium",
+      "base": "4178f2635528d7c74b72766581edb94c18d0aa19432851ca8f8fc0eb8177cf0a",
+      "candidate": "4178f2635528d7c74b72766581edb94c18d0aa19432851ca8f8fc0eb8177cf0a"
+    },
+    {
+      "name": "B-rail-sappers",
+      "quality": "medium",
+      "base": "1533c52901a1fac1b1e192825c2ea112b44495806865217c042ff378d92ca194",
+      "candidate": "1533c52901a1fac1b1e192825c2ea112b44495806865217c042ff378d92ca194"
+    },
+    {
+      "name": "C-bridge-approach",
+      "quality": "medium",
+      "base": "ded027a3358e023657fe5fc5ed0e73781dee4437b847c240782290923366e590",
+      "candidate": "ded027a3358e023657fe5fc5ed0e73781dee4437b847c240782290923366e590"
+    },
+    {
+      "name": "D-long-bridge",
+      "quality": "medium",
+      "base": "9ff6f427b786afe3003c5510d79e181b21c3cc4e0fea5c82039e17eef7945673",
+      "candidate": "9ff6f427b786afe3003c5510d79e181b21c3cc4e0fea5c82039e17eef7945673"
+    },
+    {
+      "name": "E-bombing",
+      "quality": "medium",
+      "base": "3dc24a2424ae899641442b2c13f409ccfbbf44eb031317239c3434da034a1338",
+      "candidate": "3dc24a2424ae899641442b2c13f409ccfbbf44eb031317239c3434da034a1338"
+    },
+    {
+      "name": "F-impact-dust",
+      "quality": "medium",
+      "base": "bead5e1c60a17df79496821b7611af3fc10e1ed67de6d9c4587c3471cfc6d45a",
+      "candidate": "bead5e1c60a17df79496821b7611af3fc10e1ed67de6d9c4587c3471cfc6d45a"
+    },
+    {
+      "name": "A-station",
+      "quality": "high",
+      "base": "4178f2635528d7c74b72766581edb94c18d0aa19432851ca8f8fc0eb8177cf0a",
+      "candidate": "4178f2635528d7c74b72766581edb94c18d0aa19432851ca8f8fc0eb8177cf0a"
+    },
+    {
+      "name": "B-rail-sappers",
+      "quality": "high",
+      "base": "1533c52901a1fac1b1e192825c2ea112b44495806865217c042ff378d92ca194",
+      "candidate": "1533c52901a1fac1b1e192825c2ea112b44495806865217c042ff378d92ca194"
+    },
+    {
+      "name": "C-bridge-approach",
+      "quality": "high",
+      "base": "ded027a3358e023657fe5fc5ed0e73781dee4437b847c240782290923366e590",
+      "candidate": "ded027a3358e023657fe5fc5ed0e73781dee4437b847c240782290923366e590"
+    },
+    {
+      "name": "D-long-bridge",
+      "quality": "high",
+      "base": "9ff6f427b786afe3003c5510d79e181b21c3cc4e0fea5c82039e17eef7945673",
+      "candidate": "9ff6f427b786afe3003c5510d79e181b21c3cc4e0fea5c82039e17eef7945673"
+    },
+    {
+      "name": "E-bombing",
+      "quality": "high",
+      "base": "3dc24a2424ae899641442b2c13f409ccfbbf44eb031317239c3434da034a1338",
+      "candidate": "3dc24a2424ae899641442b2c13f409ccfbbf44eb031317239c3434da034a1338"
+    },
+    {
+      "name": "F-impact-dust",
+      "quality": "high",
+      "base": "bead5e1c60a17df79496821b7611af3fc10e1ed67de6d9c4587c3471cfc6d45a",
+      "candidate": "bead5e1c60a17df79496821b7611af3fc10e1ed67de6d9c4587c3471cfc6d45a"
+    },
+    {
+      "name": "A-station",
+      "quality": "low",
+      "base": "4178f2635528d7c74b72766581edb94c18d0aa19432851ca8f8fc0eb8177cf0a",
+      "candidate": "4178f2635528d7c74b72766581edb94c18d0aa19432851ca8f8fc0eb8177cf0a"
+    },
+    {
+      "name": "B-rail-sappers",
+      "quality": "low",
+      "base": "1533c52901a1fac1b1e192825c2ea112b44495806865217c042ff378d92ca194",
+      "candidate": "1533c52901a1fac1b1e192825c2ea112b44495806865217c042ff378d92ca194"
+    },
+    {
+      "name": "C-bridge-approach",
+      "quality": "low",
+      "base": "ded027a3358e023657fe5fc5ed0e73781dee4437b847c240782290923366e590",
+      "candidate": "ded027a3358e023657fe5fc5ed0e73781dee4437b847c240782290923366e590"
+    },
+    {
+      "name": "D-long-bridge",
+      "quality": "low",
+      "base": "9ff6f427b786afe3003c5510d79e181b21c3cc4e0fea5c82039e17eef7945673",
+      "candidate": "9ff6f427b786afe3003c5510d79e181b21c3cc4e0fea5c82039e17eef7945673"
+    },
+    {
+      "name": "E-bombing",
+      "quality": "low",
+      "base": "3dc24a2424ae899641442b2c13f409ccfbbf44eb031317239c3434da034a1338",
+      "candidate": "3dc24a2424ae899641442b2c13f409ccfbbf44eb031317239c3434da034a1338"
+    },
+    {
+      "name": "F-impact-dust",
+      "quality": "low",
+      "base": "bead5e1c60a17df79496821b7611af3fc10e1ed67de6d9c4587c3471cfc6d45a",
+      "candidate": "bead5e1c60a17df79496821b7611af3fc10e1ed67de6d9c4587c3471cfc6d45a"
+    }
+  ]
+}

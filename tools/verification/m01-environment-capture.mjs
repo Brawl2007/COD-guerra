@@ -14,7 +14,7 @@ try{fixtures=JSON.parse(await readFile(fixtureFile,'utf8'));}catch{
  const probe=(name,snapshot,p,target)=>{const s=structuredClone(snapshot);p={...p,y:new M01Simulation().world.heightAt(p.x,p.z)};Object.assign(s.player,{...p,moveBlend:0,sprinting:false});const dx=target.x-p.x,dz=target.z-p.z;s.player.angle=Math.atan2(dz,dx);s.player.pitch=Math.atan2(target.y-p.y-1.6,Math.hypot(dx,dz));return {name,snapshot:s};};
  fixtures=[probe('A-station',station,{x:-327,y:-3,z:12},{x:-398,y:5,z:32}),probe('B-rail-sappers',repair,{x:-135,y:-3,z:4},{x:-250,y:-1,z:19}),
  probe('C-bridge-approach',repair,{x:-50,y:-3,z:42},{x:50,y:7,z:28}),probe('D-long-bridge',flow.combatSnapshots.withdrawal,{x:-145,y:-3,z:76},{x:500,y:8,z:30}),
- probe('E-bombing',flow.combatSnapshots.eastDemolitionOutside,{x:-110,y:-3,z:42},{x:800,y:15,z:30})];
+ probe('E-bombing',flow.combatSnapshots.eastDemolitionOutside,{x:660,y:0,z:40},{x:800,y:26,z:20})];
  await writeFile(fixtureFile,JSON.stringify(fixtures,null,2)+'\n');
 }
 const server=spawn(process.execPath,[`${root}/node_modules/vite/bin/vite.js`,'preview','--host','127.0.0.1','--port',port,'--strictPort'],{cwd:root,stdio:'pipe'});
