@@ -24,8 +24,15 @@ async function freezeButton(page,selector){
   await page.locator(selector).click();await expect(page.locator('#pause')).toBeVisible({timeout:30000});
   await page.waitForFunction(()=>window.gameDiagnostics().paused&&window.gameDiagnostics().m01?.yardWagons?.wagons?.length===3);
 }
+async function installSnapshotOverride(page){
+  await page.addInitScript(({key})=>{
+    const forced=sessionStorage.getItem('__m01_wagon_forced_snapshot');
+    if(forced){localStorage.setItem(key,forced);sessionStorage.removeItem('__m01_wagon_forced_snapshot');}
+  },{key});
+  await page.goto('?debug=1');
+}
 async function loadSnapshot(page,snapshot,quality='high'){
-  await page.evaluate(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  await page.evaluate(snapshot=>sessionStorage.setItem('__m01_wagon_forced_snapshot',JSON.stringify(snapshot)),snapshot);
   await page.reload();await waitMenu(page);await page.locator('#quality').selectOption(quality);await freezeButton(page,'#continue');
   return page.evaluate(()=>window.gameDiagnostics());
 }
@@ -33,9 +40,8 @@ const yard3=d=>d.m01.yardWagons.wagons.find(w=>w.id==='yard_wagon_3');
 
 test('yard wagon uses real LOD0/1/2 and authoritative burned state survives reload then obeys prior checkpoint',async({page},info)=>{
   test.setTimeout(180000);
-  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:nearIntact});
-  await page.goto('?debug=1');await waitMenu(page);await page.locator('#quality').selectOption('high');await freezeButton(page,'#continue');
-  const intact=await page.evaluate(()=>window.gameDiagnostics()),i3=yard3(intact);
+  await installSnapshotOverride(page);
+  const intact=await loadSnapshot(page,nearIntact,'high'),i3=yard3(intact);
   expect(i3).toMatchObject({state:'intact',lod:0,key:'covered:intact:0',fire:false});
   await page.screenshot({path:info.outputPath('BEFORE-yard-wagon-intact-lod0.png'),style:'#pause,#hud,#menu {visibility:hidden!important}',timeout:120000});
 
@@ -61,9 +67,8 @@ test('total wagon GLB failure keeps train and yard procedural fallbacks visible 
   test.setTimeout(120000);
   await page.route('**/assets/models/provisional/m01-wagons/*.glb',r=>r.abort());
   await page.route('**/assets/models/provisional/m01-wagon-damage/*.glb',r=>r.abort());
-  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:nearBurnedWithIntactCheckpoint});
-  await page.goto('?debug=1');await waitMenu(page);await page.locator('#quality').selectOption('high');await freezeButton(page,'#continue');
-  const d=await page.evaluate(()=>window.gameDiagnostics()),w=yard3(d);
+  await installSnapshotOverride(page);
+  const d=await loadSnapshot(page,nearBurnedWithIntactCheckpoint,'high'),w=yard3(d);
   expect(w.state).toBe('burned');expect(w.key).toBe('fallback');expect(w.fire).toBe(true);
   expect(d.m01.yardWagons.wagons.every(x=>x.key==='fallback')).toBe(true);expect(d.m01.wagons.proxies).toBe(65);
   await expect(page.locator('#error')).toBeHidden();
