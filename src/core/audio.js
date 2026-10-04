@@ -12,6 +12,10 @@ export function audioHash(value){
   return h>>>0;
 }
 export const audioVariation=(key,min=0,max=1)=>min+(audioHash(key)/0xffffffff)*(max-min);
+export const audioDistanceShape=distance=>{
+  const d=Math.max(0,Number(distance)||0);
+  return {gain:1/(1+d/70),filter:clamp(18000/(1+d/95),700,18000)};
+};
 
 export class AudioManager {
   constructor({contextFactory=null,maxVoices=AUDIO_LIMITS.maxVoices}={}){
@@ -53,10 +57,7 @@ export class AudioManager {
     const entry={kind,pan:Number(pan.toFixed?.(3)??pan),distance:Number(distance.toFixed?.(2)??distance),priority,key,detail,serial:this.serial++};
     this.history.push(entry);if(this.history.length>AUDIO_LIMITS.eventHistory)this.history.shift();return entry;
   }
-  _distance(distance){
-    const d=Math.max(0,Number(distance)||0);
-    return {gain:1/(1+d/70),filter:clamp(18000/(1+d/95),700,18000)};
-  }
+  _distance(distance){return audioDistanceShape(distance);}
   _evict(priority){
     if(this.voices.size<this.maxVoices)return true;
     let victim=null;
