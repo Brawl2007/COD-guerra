@@ -1,0 +1,968 @@
+{
+  "renderer": "Three.js",
+  "quality": "low",
+  "drawCalls": 131,
+  "triangles": 381233,
+  "geometries": 224,
+  "textures": 60,
+  "assetFailures": [],
+  "models": [
+    "weapon",
+    "ally",
+    "enemy"
+  ],
+  "missionId": "m01_tczew",
+  "clock": 569.4167000000302,
+  "paused": false,
+  "missionPhase": "MAIN_COMBAT",
+  "complete": false,
+  "player": {
+    "x": 37.45180947720361,
+    "y": 0,
+    "z": 37.3222613382272,
+    "angle": -9.520658655367392,
+    "pitch": 0,
+    "health": 92,
+    "crouched": true
+  },
+  "sectors": [
+    {
+      "id": "s1_west_bridgehead",
+      "state": "holding",
+      "strength": 100,
+      "morale": 1,
+      "supply": 1
+    },
+    {
+      "id": "s2_east_bridgehead",
+      "state": "pressure",
+      "strength": 100,
+      "morale": 1,
+      "supply": 1
+    },
+    {
+      "id": "s3_station_yard",
+      "state": "carts_evacuating",
+      "strength": 100,
+      "morale": 1,
+      "supply": 1
+    },
+    {
+      "id": "s4_north_perimeter",
+      "state": "sporadic_fire",
+      "strength": 100,
+      "morale": 1,
+      "supply": 1
+    },
+    {
+      "id": "s5_sky_east",
+      "state": "train_smoke_east",
+      "strength": 100,
+      "morale": 1,
+      "supply": 1
+    }
+  ],
+  "eventIds": [
+    "evt_m01_intro_card",
+    "evt_m01_prelude_start",
+    "evt_m01_railway_worker_report",
+    "evt_m01_planes_heard",
+    "evt_m01_bombing_0434",
+    "evt_m01_cable_cut",
+    "evt_m01_forward_post_bombed",
+    "evt_m01_nowicki_lost",
+    "evt_m01_wounded_dragged",
+    "evt_m01_second_air_pass",
+    "evt_m01_train963_arrives",
+    "evt_m01_panzerzug_arrives",
+    "evt_m01_repair_complete",
+    "evt_m01_order_demolish",
+    "evt_m01_bombing_0530",
+    "evt_m01_runner_pressure_report"
+  ],
+  "m01": {
+    "models": [
+      "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+      "assets/models/provisional/m01/bridge_rail_1891_1912.lod1.glb",
+      "assets/models/provisional/m01/bridge_rail_1891_1912.lod2.glb",
+      "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod1.glb",
+      "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod2.glb",
+      "assets/models/provisional/m01/portal_lisewo_1912.glb",
+      "assets/models/provisional/m01/portal_lisewo_1912.lod1.glb",
+      "assets/models/provisional/m01/portal_lisewo_1912.lod2.glb",
+      "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb"
+    ],
+    "assetFailures": [],
+    "requiredAssetFailures": [],
+    "characters": {
+      "active": 7,
+      "limit": 18,
+      "instances": 7,
+      "clips": {
+        "mg34_prone_aim": 1,
+        "mg34_prone_idle": 1,
+        "ckm_wz30_loader_idle": 1,
+        "ckm_wz30_gunner_idle": 1,
+        "pinned": 1,
+        "standing_idle": 2
+      },
+      "actors": [
+        {
+          "prone": {
+            "phase": "aim",
+            "startedAt": 561.0750000000378,
+            "progress": 1,
+            "rounds": 0,
+            "emitted": 0,
+            "shot": 0,
+            "firedAt": 560.7000000000378,
+            "eye": {
+              "x": 1054.7222602064471,
+              "y": 0.36347299,
+              "z": 31.90010027211257
+            },
+            "hitboxes": [
+              {
+                "part": "head",
+                "multiplier": 2,
+                "min": {
+                  "x": 1054.563065504982,
+                  "y": 0.3554835799999999,
+                  "z": 31.7361861862682
+                },
+                "max": {
+                  "x": 1055.005590185802,
+                  "y": 0.67548358,
+                  "z": 32.0992763169557
+                }
+              },
+              {
+                "part": "torso",
+                "multiplier": 1,
+                "min": {
+                  "x": 1054.8758573883213,
+                  "y": 0.1386925,
+                  "z": 31.688019279652917
+                },
+                "max": {
+                  "x": 1055.6393601963493,
+                  "y": 0.4986925,
+                  "z": 32.19335979974955
+                }
+              },
+              {
+                "part": "legs",
+                "multiplier": 0.7,
+                "min": {
+                  "x": 1055.534963342581,
+                  "y": -0.05253842,
+                  "z": 31.764433362798087
+                },
+                "max": {
+                  "x": 1056.4987429224682,
+                  "y": 0.18746158,
+                  "z": 32.31118155448813
+                }
+              }
+            ],
+            "muzzle": {
+              "x": 1053.7318300341599,
+              "y": 0.3695089,
+              "z": 31.893124183559745
+            }
+          },
+          "id": "de_east_0",
+          "lod": 2,
+          "clip": "mg34_prone_aim",
+          "clipTime": 0,
+          "loop": false,
+          "weapon": "mg34",
+          "weaponLOD": 2,
+          "muzzle": [
+            1053.7318300345275,
+            0.3695089021608274,
+            31.893124182569576
+          ],
+          "weaponMeshes": [
+            "mg34_body",
+            "mg34_feed_cover",
+            "mg34_cocking_handle",
+            "mg34_drum",
+            "mg34_belt",
+            "mg34_bipod_folded",
+            "mg34_bipod_open"
+          ]
+        },
+        {
+          "prone": {
+            "phase": "idle",
+            "startedAt": 562.1000000000365,
+            "progress": 1,
+            "rounds": 0,
+            "emitted": 0,
+            "shot": 0,
+            "firedAt": 561.0000000000375,
+            "eye": {
+              "x": 1054.7307249113203,
+              "y": 0.37025185,
+              "z": 12.906262038283655
+            },
+            "hitboxes": [
+              {
+                "part": "head",
+                "multiplier": 2,
+                "min": {
+                  "x": 1054.5658009146985,
+                  "y": 0.36712798999999996,
+                  "z": 12.738685607552247
+                },
+                "max": {
+                  "x": 1055.009266646977,
+                  "y": 0.68712799,
+                  "z": 13.102929839343625
+                }
+              },
+              {
+                "part": "torso",
+                "multiplier": 1,
+                "min": {
+                  "x": 1054.8753299952873,
+                  "y": 0.13993257000000003,
+                  "z": 12.682637824913346
+                },
+                "max": {
+                  "x": 1055.6401365302836,
+                  "y": 0.49993257,
+                  "z": 13.189974483326843
+                }
+              },
+              {
+                "part": "legs",
+                "multiplier": 0.7,
+                "min": {
+                  "x": 1055.5347510109664,
+                  "y": -0.05253842,
+                  "z": 12.746157340969082
+                },
+                "max": {
+                  "x": 1056.4999355410605,
+                  "y": 0.18746158,
+                  "z": 13.29542899350598
+                }
+              }
+            ],
+            "muzzle": {
+              "x": 1053.7302197386484,
+              "y": 0.3695089,
+              "z": 12.914351939422968
+            }
+          },
+          "id": "de_east_1",
+          "lod": 2,
+          "clip": "mg34_prone_idle",
+          "clipTime": 0,
+          "loop": false,
+          "weapon": "mg34",
+          "weaponLOD": 2,
+          "muzzle": [
+            1053.730219739074,
+            0.36950890323229807,
+            12.914351938426064
+          ],
+          "weaponMeshes": [
+            "mg34_body",
+            "mg34_feed_cover",
+            "mg34_cocking_handle",
+            "mg34_drum",
+            "mg34_belt",
+            "mg34_bipod_folded",
+            "mg34_bipod_open"
+          ]
+        },
+        {
+          "id": "ckm_loader",
+          "lod": 1,
+          "clip": "ckm_wz30_loader_idle",
+          "clipTime": 1.4167000000302323,
+          "loop": true,
+          "weapon": "wz29",
+          "weaponLOD": 1,
+          "muzzle": [
+            23.72378655595746,
+            -1.9167425,
+            42.48802270815583
+          ],
+          "weaponMeshes": []
+        },
+        {
+          "id": "ckm_gunner",
+          "lod": 2,
+          "clip": "ckm_wz30_gunner_idle",
+          "clipTime": 1.4167000000302323,
+          "loop": true,
+          "weapon": "wz29",
+          "weaponLOD": 2,
+          "muzzle": [
+            23.58056155115442,
+            -1.9167425,
+            43.45589124999999
+          ],
+          "weaponMeshes": []
+        },
+        {
+          "id": "ckm_reserve",
+          "lod": 2,
+          "clip": "pinned",
+          "clipTime": 0.8806773025814891,
+          "loop": true,
+          "weapon": "wz29",
+          "weaponLOD": 2,
+          "muzzle": [
+            23.286076586531095,
+            -2.422572118629384,
+            41.43865057136143
+          ],
+          "weaponMeshes": [
+            "rifle",
+            "clip"
+          ]
+        },
+        {
+          "id": "jozef_bak",
+          "lod": 2,
+          "clip": "standing_idle",
+          "clipTime": 2.7087000000302623,
+          "loop": true,
+          "weapon": "wz98a",
+          "weaponLOD": 2,
+          "muzzle": [
+            54.911916872671924,
+            0.9368402518787142,
+            40.65413537736025
+          ],
+          "weaponMeshes": [
+            "clip",
+            "rifle_wz98a"
+          ]
+        },
+        {
+          "id": "leon_dudek",
+          "lod": 2,
+          "clip": "standing_idle",
+          "clipTime": 2.224700000030225,
+          "loop": true,
+          "weapon": "wz29",
+          "weaponLOD": 2,
+          "muzzle": [
+            -8.06038484989174,
+            0.5887819612860474,
+            47.65332945719051
+          ],
+          "weaponMeshes": []
+        }
+      ],
+      "proneAvailable": true,
+      "ckm": {
+        "visible": true,
+        "lod": 2,
+        "clip": "ckm_wz30_gun_idle",
+        "time": 1.4167000000302323,
+        "position": [
+          24.17,
+          -3,
+          43
+        ]
+      },
+      "loaded": [
+        "ckm:2",
+        "mg34:2",
+        "de:2",
+        "pl:2",
+        "pl:1",
+        "pl:0"
+      ],
+      "failures": []
+    },
+    "viewModel": {
+      "active": true,
+      "visible": true,
+      "lod": 0,
+      "clip": "aim",
+      "clipTime": 0,
+      "carrying": false,
+      "singleRound": false,
+      "armTriangles": 1603
+    },
+    "wagons": {
+      "wagons": 65,
+      "step": 9.1,
+      "lod": 2,
+      "loaded": [
+        "covered",
+        "open"
+      ],
+      "proxies": 0,
+      "batches": 8,
+      "visible": true,
+      "first": [
+        1090,
+        0,
+        -2.5
+      ],
+      "last": [
+        1672.4,
+        0,
+        -2.5
+      ]
+    },
+    "aircraft": {
+      "loaded": [
+        0,
+        1,
+        2
+      ],
+      "planes": [
+        {
+          "visible": false,
+          "lod": 2,
+          "position": [
+            -150.96408210859937,
+            160,
+            122.33319999987907
+          ],
+          "propeller": [
+            0,
+            0,
+            -0.9666001011783697,
+            0.2562893675231451
+          ]
+        },
+        {
+          "visible": false,
+          "lod": 2,
+          "position": [
+            35.725608745471696,
+            180,
+            152.33319999987907
+          ],
+          "propeller": [
+            0,
+            0,
+            -0.9666001011783697,
+            0.2562893675231451
+          ]
+        },
+        {
+          "visible": false,
+          "lod": 2,
+          "position": [
+            263.1209707371397,
+            200,
+            182.33319999987907
+          ],
+          "propeller": [
+            0,
+            0,
+            -0.9666001011783697,
+            0.2562893675231451
+          ]
+        }
+      ]
+    },
+    "renderedFrames": 25,
+    "smokePuffs": 34,
+    "environmentInstances": 8177,
+    "actorPoses": {
+      "standing": 50,
+      "crouched": 0,
+      "pinned": 1,
+      "seated": 0,
+      "wounded": 1,
+      "carried": 0,
+      "fallen": 0,
+      "prone": 2
+    },
+    "actorAnimations": {
+      "aiming": 8,
+      "firing": 1,
+      "moving": 0,
+      "underFire": 1
+    },
+    "visiblePieces": 57,
+    "fireEffects": {
+      "muzzle": 1,
+      "tracer": 0,
+      "puff": 4,
+      "spark": 0,
+      "smoke": 4
+    },
+    "battleClock": 20481.333600002476,
+    "weapon": {
+      "id": "kb_wz29",
+      "mag": 5,
+      "reserve": 40,
+      "state": "READY",
+      "until": 0,
+      "started": 0,
+      "lastShot": -1000000000,
+      "shotCount": 0,
+      "received": 0,
+      "sight": 300,
+      "reloadMode": null
+    },
+    "checkpoints": [
+      "cp_m01_a_orientacao",
+      "cp_m01_b_reorganizacao",
+      "cp_m01_c_engenheiros"
+    ],
+    "flags": {
+      "m01.completed": false,
+      "m01.nowicki_status": "missing",
+      "m01.bak_status": "unhurt",
+      "m01.dudek_status": "unhurt",
+      "m01.east_platoon_survivors": 18,
+      "m01.second_raid_state": "ended",
+      "m01.forward_post_state": "intact_near_miss",
+      "m01.suggested_cover": "cv_sandbag_mid_2"
+    },
+    "scene": null,
+    "gate": null,
+    "objectives": {
+      "obj_m01_deliver_message": {
+        "state": "done",
+        "progress": 100
+      },
+      "obj_m01_take_cover": {
+        "state": "done",
+        "progress": 100
+      },
+      "obj_m01_follow_sergeant": {
+        "state": "done",
+        "progress": 100
+      },
+      "obj_m01_find_sappers": {
+        "state": "done",
+        "progress": 100
+      },
+      "obj_m01_fetch_material": {
+        "state": "done",
+        "progress": 100
+      },
+      "obj_m01_cover_repair": {
+        "state": "done",
+        "progress": 100
+      },
+      "obj_m01_hold_access": {
+        "state": "active",
+        "progress": 0
+      },
+      "obj_m01_cover_withdrawal": {
+        "state": "locked",
+        "progress": 0
+      },
+      "obj_m01_rescue_bak": {
+        "state": "locked",
+        "progress": 0
+      },
+      "obj_m01_leave_bridge": {
+        "state": "locked",
+        "progress": 0
+      },
+      "obj_m01_hold_corridor": {
+        "state": "locked",
+        "progress": 0
+      },
+      "obj_m01_reach_shelter": {
+        "state": "locked",
+        "progress": 0
+      }
+    },
+    "parts": {
+      "rail_support_00": {
+        "lod": 0,
+        "visible": true
+      },
+      "rail_portal_west": {
+        "lod": 0,
+        "visible": true
+      },
+      "rail_support_01": {
+        "lod": 0,
+        "visible": true
+      },
+      "rail_support_02": {
+        "lod": 0,
+        "visible": true
+      },
+      "rail_support_03": {
+        "lod": 0,
+        "visible": true
+      },
+      "rail_support_04": {
+        "lod": 1,
+        "visible": true
+      },
+      "rail_support_05": {
+        "lod": 1,
+        "visible": true
+      },
+      "rail_support_06": {
+        "lod": 1,
+        "visible": true
+      },
+      "rail_support_07": {
+        "lod": 2,
+        "visible": true
+      },
+      "rail_support_08": {
+        "lod": 2,
+        "visible": true
+      },
+      "rail_portal_old_east": {
+        "lod": 1,
+        "visible": true
+      },
+      "rail_support_09": {
+        "lod": 2,
+        "visible": true
+      },
+      "rail_span_01": {
+        "lod": 0,
+        "visible": true
+      },
+      "rail_span_02": {
+        "lod": 0,
+        "visible": true
+      },
+      "rail_span_03": {
+        "lod": 0,
+        "visible": true
+      },
+      "rail_span_04": {
+        "lod": 0,
+        "visible": true
+      },
+      "rail_span_05": {
+        "lod": 1,
+        "visible": true
+      },
+      "rail_span_06": {
+        "lod": 1,
+        "visible": true
+      },
+      "rail_span_07": {
+        "lod": 1,
+        "visible": true
+      },
+      "rail_span_08": {
+        "lod": 2,
+        "visible": true
+      },
+      "rail_span_09": {
+        "lod": 2,
+        "visible": true
+      },
+      "rail_support_00_damaged": {
+        "lod": 0,
+        "visible": false
+      },
+      "rail_support_01_rubble": {
+        "lod": 0,
+        "visible": false
+      },
+      "rail_support_06_rubble": {
+        "lod": 1,
+        "visible": false
+      },
+      "rail_portal_old_east_rubble": {
+        "lod": 1,
+        "visible": false
+      },
+      "rail_span_01_collapsed": {
+        "lod": 0,
+        "visible": false
+      },
+      "rail_span_02_collapsed": {
+        "lod": 0,
+        "visible": false
+      },
+      "rail_span_06_collapsed": {
+        "lod": 1,
+        "visible": false
+      },
+      "rail_span_07_collapsed": {
+        "lod": 1,
+        "visible": false
+      },
+      "road_support_00": {
+        "lod": 0,
+        "visible": true
+      },
+      "road_portal_west": {
+        "lod": 0,
+        "visible": true
+      },
+      "road_tower_01_n": {
+        "lod": 0,
+        "visible": true
+      },
+      "road_tower_01_s": {
+        "lod": 0,
+        "visible": true
+      },
+      "road_support_01": {
+        "lod": 0,
+        "visible": true
+      },
+      "road_tower_02_n": {
+        "lod": 0,
+        "visible": true
+      },
+      "road_tower_02_s": {
+        "lod": 0,
+        "visible": true
+      },
+      "road_support_02": {
+        "lod": 0,
+        "visible": true
+      },
+      "road_tower_03_n": {
+        "lod": 0,
+        "visible": true
+      },
+      "road_tower_03_s": {
+        "lod": 0,
+        "visible": true
+      },
+      "road_support_03": {
+        "lod": 0,
+        "visible": true
+      },
+      "road_tower_04_n": {
+        "lod": 1,
+        "visible": true
+      },
+      "road_tower_04_s": {
+        "lod": 1,
+        "visible": true
+      },
+      "road_support_04": {
+        "lod": 1,
+        "visible": true
+      },
+      "road_tower_05_n": {
+        "lod": 1,
+        "visible": true
+      },
+      "road_tower_05_s": {
+        "lod": 1,
+        "visible": true
+      },
+      "road_support_05": {
+        "lod": 1,
+        "visible": true
+      },
+      "road_support_06": {
+        "lod": 1,
+        "visible": true
+      },
+      "road_support_07": {
+        "lod": 2,
+        "visible": true
+      },
+      "road_support_08": {
+        "lod": 2,
+        "visible": true
+      },
+      "road_portal_old_east": {
+        "lod": 1,
+        "visible": true
+      },
+      "road_support_09": {
+        "lod": 2,
+        "visible": true
+      },
+      "road_span_01": {
+        "lod": 0,
+        "visible": true
+      },
+      "road_span_02": {
+        "lod": 0,
+        "visible": true
+      },
+      "road_span_03": {
+        "lod": 0,
+        "visible": true
+      },
+      "road_span_04": {
+        "lod": 0,
+        "visible": true
+      },
+      "road_span_05": {
+        "lod": 1,
+        "visible": true
+      },
+      "road_span_06": {
+        "lod": 1,
+        "visible": true
+      },
+      "road_span_07": {
+        "lod": 1,
+        "visible": true
+      },
+      "road_span_08": {
+        "lod": 2,
+        "visible": true
+      },
+      "road_span_09": {
+        "lod": 2,
+        "visible": true
+      },
+      "road_support_00_damaged": {
+        "lod": 0,
+        "visible": false
+      },
+      "road_tower_01_n_rubble": {
+        "lod": 0,
+        "visible": false
+      },
+      "road_tower_01_s_rubble": {
+        "lod": 0,
+        "visible": false
+      },
+      "road_support_01_rubble": {
+        "lod": 0,
+        "visible": false
+      },
+      "road_support_06_rubble": {
+        "lod": 1,
+        "visible": false
+      },
+      "road_portal_old_east_rubble": {
+        "lod": 1,
+        "visible": false
+      },
+      "road_span_01_collapsed": {
+        "lod": 0,
+        "visible": false
+      },
+      "road_span_02_collapsed": {
+        "lod": 0,
+        "visible": false
+      },
+      "road_span_06_collapsed": {
+        "lod": 1,
+        "visible": false
+      },
+      "road_span_07_collapsed": {
+        "lod": 1,
+        "visible": false
+      },
+      "portal_lisewo_1912": {
+        "lod": 0,
+        "visible": true
+      },
+      "gate_rail_left": {
+        "lod": 0,
+        "visible": true
+      },
+      "gate_rail_right": {
+        "lod": 0,
+        "visible": true
+      },
+      "gate_road_left": {
+        "lod": 0,
+        "visible": true
+      },
+      "gate_road_right": {
+        "lod": 0,
+        "visible": true
+      }
+    },
+    "enemyAlive": 50,
+    "threat": {
+      "inFlight": 1,
+      "status": "Salva do dique norte \u00b7 1064 m, atr\u00e1s de si \u00b7 mude de cobertura",
+      "coverFire": {
+        "by": "de_east_17",
+        "at": 566.9000000000322,
+        "x": 1097,
+        "y": 0.6399999999999999,
+        "z": -65,
+        "age": 2.5166999999980817
+      },
+      "recentFire": [
+        {
+          "id": "de_east_26",
+          "weapon": "kar98k",
+          "x": 1076,
+          "y": 0.6399999999999999,
+          "z": -20,
+          "age": 0.4499999999995907
+        },
+        {
+          "id": "de_east_32",
+          "weapon": "kar98k",
+          "x": 1088,
+          "y": 0.6399999999999999,
+          "z": 68,
+          "age": 0.09999999999990905
+        },
+        {
+          "id": "de_east_33",
+          "weapon": "kar98k",
+          "x": 1094,
+          "y": 0.6399999999999999,
+          "z": 72,
+          "age": 1.0500999999991336
+        },
+        {
+          "id": "de_east_38",
+          "weapon": "kar98k",
+          "x": 1076,
+          "y": 0.6399999999999999,
+          "z": 92,
+          "age": 1.6666999999988548
+        }
+      ],
+      "repair": {
+        "progress": 100,
+        "state": "done",
+        "pinned": false,
+        "pins": 81,
+        "fireEase": false
+      },
+      "survivors": 18,
+      "spansSuppressed": false,
+      "mgSuppressed": []
+    },
+    "stationEvacuation": {
+      "patient": {
+        "id": "generic_rifleman",
+        "x": -334,
+        "y": -3,
+        "z": 26.2,
+        "facing": 0.11130279887633367,
+        "alive": true,
+        "active": true,
+        "state": "WOUNDED",
+        "task": "station_aid_post",
+        "carriedBy": null
+      },
+      "medic": {
+        "id": "leon_dudek",
+        "x": -8.765457208773114,
+        "y": -0.35000020265579224,
+        "z": 47.94871687543042,
+        "facing": 0.06689675245344955,
+        "alive": true,
+        "active": true,
+        "state": "GUARD",
+        "task": null,
+        "carriedBy": null
+      },
+      "delivered": true
+    },
+    "hudStatus": "Salva do dique norte \u00b7 1064 m, atr\u00e1s de si \u00b7 mude de cobertura"
+  }
+}

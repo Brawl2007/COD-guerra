@@ -1,3 +1,11 @@
+## Rifleman locomotion pilot — 2026-10-03
+
+Candidato isolado em `codex/m01-rifleman-locomotion-runtime`, base de produção schema2 `5f3cc34`. Quatro IDs comuns (`de_spans_6/7`, `pl_east_0/1`), velocidade visual medida dos GLBs (walk1.099945/run3.251546 m/s), playback observado e crossfade idle/walk/run de .22 s. Nenhuma alteração a movimento, facing, hitboxes, muzzle gameplay, RNG, missão, armas, save2, MG34/arrasto/CKM ou assets. Arquitetura Soldier Animation lida sem merge.
+
+**253/253 Node**, incluindo11 específicos, e build PASS. Galeria real baseline/candidato mostrou redução de drift médio95.66% no walk1.5 e97.62% no run5.5, sem declarar zero sliding. LOD0/2, pausa e UI save/reload verificados. Browser inicial36/36; final37: **36 passaram,1 falhou** no teste existente de direção da salva/HUD (atualização tardia capturada). Reexecução focada candidata2/2; controle da base2/2 (52.1s); detalhes em HANDOFF/verification.json. Não declarar regressão integral final verde. Nenhum timeout/assert foi alterado.
+
+Handoff: `docs/verification/m01-runtime/rifleman-locomotion-2026-10-03/HANDOFF.md`. M01 permanece **PROTÓTIPO JOGÁVEL**; revisão do capitão e investigação do harness pendentes; sem integração, CI, playtest humano ou FPS/Chromebook. Não expandir crouch/IK/upper-body. Graphify continua em pausa.
+
 # Estado de desenvolvimento
 
 ## Auditoria schema 2 — 2026-10-03

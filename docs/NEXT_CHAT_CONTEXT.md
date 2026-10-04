@@ -1,3 +1,21 @@
+# Estado atual — rifleman locomotion runtime pilot (2026-10-03)
+
+Esta secção prevalece para esta tarefa. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a produção, MG34, schema2 ou Graphify.
+
+- TASK_ID: `M01-RIFLEMAN-LOCOMOTION-RUNTIME-PILOT-V1`; GPT-6.1 Sol HIGH solicitado, sem delegação.
+- Base exata: `codex/m01-schema2-determinism-audit` @ `5f3cc34f53c61beec52255d67f8babd7194c9f7f`.
+- Branch: `codex/m01-rifleman-locomotion-runtime`. Código/tooling validado: `489f71af14619aefbcc3e76f44f332e4010eb0af`; commit final seguinte só evidências/docs. Confirmar HEAD remoto antes de continuar.
+- Soldier Animation `cd91d65f0c022678ed24785eb44233bab137eb3c` lida sem merge. Nenhuma integração Combat AI/Authority Lease/BattleSector.
+- Piloto restrito a `de_spans_6/7`, `pl_east_0/1`. Somente `src/render/m01-characters.js` e novo `src/render/m01-rifleman-locomotion.js` alteram produção. Todos os outros38 ficheiros src, assets/missões/arma/hitboxes/save e métodos especializados estão preservados.
+- GLBs medidos: walk1s/1.099945m/s/120steps-min, run.68s/3.251546m/s/176.47steps-min, idle4s. Contatos aproximados do tornozelo a240Hz, tolerância15mm; fonte in-place, sem root motion. Playback real observado limitado.5–1.8; gait hysteresis1.9249/1.6499m/s; fade.22s pelo relógio da missão; phase-ID visual sem RNG. Rebind/LOD/culling conservam fase; restore reconstrói visual sem schema.
+- Resultado:11/11 específicos,253/253 Node, build PASS. Métrica real browser: drift médio walk1.5 .4071→.01768m/s; run5.5 2.2548→.05365, idêntico LOD0/2. Não zero sliding; fixture reta/plana não aprova sole/IK/slopes/transições especializadas.
+- Browser inicial36/36 PASS; novo caso UI save/reload1/1 PASS; final37: **36 passed /1 failed** (17.6min), teste legado `adjustment salvo behind the truss ... follows mouse look`, timeout5s esperando HUD atrás. Diagnóstico pós-falha já atrás e nenhum piloto renderizado; hipótese de timing, causa ainda não provada. Não alterado teste/input/HUD/timeout. Reexecução candidata focada2/2 PASS; controle da base2/2 PASS (52.1s); resumo no HANDOFF/verification.json. **Não reportar37/37 verde.**
+- Provas: `docs/verification/m01-runtime/rifleman-locomotion-2026-10-03/`; HANDOFF completo, JSON/CSV métricas, PNGs, diagnóstico UI, logs e extrações de trace da falha. `main`72bbcdd inalterada; sem publicação/CI/humano/FPS.
+- Recomendação: revisão do piloto pelo capitão e investigação independente do harness antes de aprovação browser integral. Não adicionar crouch-walk/prone-crawl/IK/upper-body nem integrar.
+- **PARAR após handoff. Nova tarefa exige nova ordem.**
+
+---
+
 # Estado actual — auditoria de determinismo schema 2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a MG34 aprovada nem Graphify.

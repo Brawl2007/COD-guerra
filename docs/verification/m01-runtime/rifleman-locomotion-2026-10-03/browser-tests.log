@@ -1,0 +1,60 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> operation-ashen-road@0.2.0 test:browser
+> playwright test
+
+[WebServer] (node:84) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+[WebServer] (node:97) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 37 tests using 1 worker
+(node:131) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:131) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+·······················F(node:660) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:660) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+·············
+
+  1) tests/browser/m01.spec.js:308:33 › adjustment salvo behind the truss restores its actual origin and follows mouse look 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('#objective-status')
+    Expected substring: [32m"atrás de si"[39m
+    Received string:    [31m"Salva do dique norte · 1064 m, em frente · mude de cobertura"[39m
+    Timeout: 5000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 5000ms[22m
+    [2m  - waiting for locator('#objective-status')[22m
+    [2m    5 × locator resolved to <span id="objective-status">Salva do dique norte · 1064 m, em frente · mude d…</span>[22m
+    [2m      - unexpected value "Salva do dique norte · 1064 m, em frente · mude de cobertura"[22m
+
+
+      320 |     document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
+      321 |   },Math.atan2(Math.sin(aim+Math.PI-before.player.angle),Math.cos(aim+Math.PI-before.player.angle))/.0022);
+    > 322 |   await expect(page.locator('#objective-status')).toContainText('atrás de si');
+          |                                                   ^
+      323 |   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+      324 |   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
+      325 |   expect(errors).toEqual([]);expect(failed).toEqual([]);
+        at /workspace/scratch/df3eb3cee6ee/COD-guerra-locomotion/tests/browser/m01.spec.js:322:51
+
+    Error Context: test-results/m01-adjustment-salvo-behin-454be-igin-and-follows-mouse-look/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-adjustment-salvo-behin-454be-igin-and-follows-mouse-look/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-adjustment-salvo-behin-454be-igin-and-follows-mouse-look/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/m01.spec.js:308:33 › adjustment salvo behind the truss restores its actual origin and follows mouse look 
+  36 passed (17.6m)

@@ -1,0 +1,19 @@
+✔ real measured GLB metadata, feet contacts and checked runtime calibration agree (231.984688ms)
+✔ playback follows measured speed; bounded rates, gait hysteresis and idle threshold (0.364829ms)
+✔ mission-time crossfades retain continuous weights when interrupted and same phase on walk/run (1.07578ms)
+✔ real mixer freezes both feet and fade on repeated mission time; no actor mutation (35.268156ms)
+✔ LOD0/LOD2 and camera culling keep phase/gait; identical mission inputs give identical bones (34.974497ms)
+✔ only selected ordinary riflemen opt in; firing/crouch/wounded/drag/CKM/MG paths keep existing priority (3.955475ms)
+✔ missing complete/partial animation GLB returns control to procedural fallback without changing actor (0.509834ms)
+✔ baseline vs candidate on real complete mission samples: snapshots, transforms, facing, HP, shots, RNG, hitboxes and gameplay muzzle identical (9469.07163ms)
+✔ schema 2 mid-locomotion restore keeps gameplay exactly equal with fresh visual history (106.149224ms)
+✔ two independent schema 2 continuations with same inputs and ON/OFF renderers have exact gameplay and RNG equality per tick (2945.858022ms)
+✔ all three quality presets observe identical semantic movement without gameplay RNG (6.386602ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13216.580821

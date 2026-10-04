@@ -1,0 +1,54 @@
+[
+  {
+    "file": "test.trace",
+    "type": "after",
+    "callId": "expect@44",
+    "endTime": 654756.786,
+    "annotations": [],
+    "error": {
+      "name": "",
+      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#objective-status')\nExpected substring: \u001b[32m\"atr\u00e1s de si\"\u001b[39m\nReceived string:    \u001b[31m\"Salva do dique norte \u00b7 1064 m, em frente \u00b7 mude de cobertura\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#objective-status')\u001b[22m\n\u001b[2m    5 \u00d7 locator resolved to <span id=\"objective-status\">Salva do dique norte \u00b7 1064 m, em frente \u00b7 mude d\u2026</span>\u001b[22m\n\u001b[2m      - unexpected value \"Salva do dique norte \u00b7 1064 m, em frente \u00b7 mude de cobertura\"\u001b[22m\n",
+      "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#objective-status')\nExpected substring: \u001b[32m\"atr\u00e1s de si\"\u001b[39m\nReceived string:    \u001b[31m\"Salva do dique norte \u00b7 1064 m, em frente \u00b7 mude de cobertura\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#objective-status')\u001b[22m\n\u001b[2m    5 \u00d7 locator resolved to <span id=\"objective-status\">Salva do dique norte \u00b7 1064 m, em frente \u00b7 mude d\u2026</span>\u001b[22m\n\u001b[2m      - unexpected value \"Salva do dique norte \u00b7 1064 m, em frente \u00b7 mude de cobertura\"\u001b[22m\n\n    at /workspace/scratch/df3eb3cee6ee/COD-guerra-locomotion/tests/browser/m01.spec.js:322:51"
+    }
+  },
+  {
+    "file": "0-trace.trace",
+    "type": "before",
+    "callId": "call@1361",
+    "startTime": 637229.98,
+    "class": "Frame",
+    "method": "click",
+    "params": {
+      "selector": "#continue",
+      "strict": true,
+      "timeout": 0
+    },
+    "stepId": "pw:api@35",
+    "pageId": "page@5acbe952416aa1efa531aefd4be1e7ad",
+    "beforeSnapshot": "before@call@1361"
+  },
+  {
+    "file": "0-trace.trace",
+    "type": "after",
+    "callId": "call@1373",
+    "endTime": 653856.962,
+    "error": {
+      "name": "Expect",
+      "message": "Expect failed"
+    },
+    "result": {
+      "matches": false,
+      "log": [
+        "  - Expect \"toContainText\" with timeout 5000ms",
+        "  - waiting for locator('#objective-status')",
+        "    5 \u00d7 locator resolved to <span id=\"objective-status\">Salva do dique norte \u00b7 1064 m, em frente \u00b7 mude d\u2026</span>",
+        "      - unexpected value \"Salva do dique norte \u00b7 1064 m, em frente \u00b7 mude de cobertura\""
+      ],
+      "received": {
+        "s": "Salva do dique norte \u00b7 1064 m, em frente \u00b7 mude de cobertura"
+      },
+      "timedOut": true
+    },
+    "afterSnapshot": "after@call@1373"
+  }
+]

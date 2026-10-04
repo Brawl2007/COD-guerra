@@ -1,0 +1,3979 @@
+{
+  "base": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+  "baselineSourceSha256": "e07c9aa75e571e8c9f930f147dd662f092c142f4db200ce665e46a1034c68007",
+  "kind": "isolated real GLB/production renderer fixture, not mission playtest",
+  "frames": [
+    {
+      "file": "00-idle.png",
+      "time": 0,
+      "baseline": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "standing_idle": 4
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "clip": "standing_idle",
+            "clipTime": 0.456,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              0.6902948061574892,
+              0.9347665642345503,
+              -0.3334274831963329
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "clip": "standing_idle",
+            "clipTime": 0.46,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              0.6902551941315843,
+              0.9347987832887004,
+              1.1665325306571646
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "clip": "standing_idle",
+            "clipTime": 0.836,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              0.6868931716712665,
+              0.9374464068138488,
+              2.6630664845659835
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "clip": "standing_idle",
+            "clipTime": 0.84,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              0.686862118555629,
+              0.9374697076800743,
+              4.163033410400115
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:0",
+          "mg34:1",
+          "de:2",
+          "pl:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      },
+      "candidate": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "standing_idle": 4
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "locomotion": {
+              "gait": "standing_idle",
+              "speed": 0,
+              "playbackRate": 1,
+              "clamped": false,
+              "phase": 0.114,
+              "weights": {
+                "standing_idle": 1,
+                "walk": 0,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 0.456,
+                "walk": 0.114,
+                "run": 0.07752
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "standing_idle",
+            "clipTime": 0.456,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              4.690294806157489,
+              0.9347665642345503,
+              -0.3334274831963329
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "locomotion": {
+              "gait": "standing_idle",
+              "speed": 0,
+              "playbackRate": 1,
+              "clamped": false,
+              "phase": 0.115,
+              "weights": {
+                "standing_idle": 1,
+                "walk": 0,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 0.46,
+                "walk": 0.115,
+                "run": 0.0782
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "standing_idle",
+            "clipTime": 0.46,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              4.690255194131584,
+              0.9347987832887004,
+              1.1665325306571646
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "locomotion": {
+              "gait": "standing_idle",
+              "speed": 0,
+              "playbackRate": 1,
+              "clamped": false,
+              "phase": 0.209,
+              "weights": {
+                "standing_idle": 1,
+                "walk": 0,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 0.836,
+                "walk": 0.209,
+                "run": 0.14212
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "standing_idle",
+            "clipTime": 0.836,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              4.686893171671266,
+              0.9374464068138488,
+              2.6630664845659835
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "locomotion": {
+              "gait": "standing_idle",
+              "speed": 0,
+              "playbackRate": 1,
+              "clamped": false,
+              "phase": 0.21,
+              "weights": {
+                "standing_idle": 1,
+                "walk": 0,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 0.84,
+                "walk": 0.21,
+                "run": 0.1428
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "standing_idle",
+            "clipTime": 0.84,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              4.686862118555629,
+              0.9374697076800743,
+              4.163033410400115
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:1",
+          "mg34:0",
+          "pl:2",
+          "de:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      }
+    },
+    {
+      "file": "01-start-walk.png",
+      "time": 0.05,
+      "baseline": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "walk": 2,
+          "run": 2
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "clip": "walk",
+            "clipTime": 0.506,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              0.5770367828325533,
+              1.5397308980149707,
+              -0.3348253381905496
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "clip": "walk",
+            "clipTime": 0.51,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              0.5768932065751772,
+              1.539275383160641,
+              1.1641310717357456
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "clip": "run",
+            "clipTime": 0.20599999284744264,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              0.6535166875890911,
+              1.3951332537147318,
+              2.701478147835211
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "clip": "run",
+            "clipTime": 0.20999999284744264,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              0.6533810699358745,
+              1.3967355476167778,
+              4.200908834186537
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:0",
+          "mg34:1",
+          "de:2",
+          "pl:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      },
+      "candidate": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "walk": 4
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.5000000000000036,
+              "playbackRate": 1.3637045488638102,
+              "clamped": false,
+              "phase": 0.18218522744319052,
+              "weights": {
+                "standing_idle": 1,
+                "walk": 0,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 0.506,
+                "walk": 0.18218522744319052,
+                "run": 0.12388595466136956
+              },
+              "transition": {
+                "from": "standing_idle",
+                "to": "walk",
+                "startedAt": 0.05,
+                "duration": 0.22,
+                "oldWeight": 1,
+                "newWeight": 0
+              },
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.18218522744319052,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              4.764805949809767,
+              0.9351624318157667,
+              -0.33392239066662865
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.5000000000000036,
+              "playbackRate": 1.3637045488638102,
+              "clamped": false,
+              "phase": 0.18318522744319052,
+              "weights": {
+                "standing_idle": 1,
+                "walk": 0,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 0.51,
+                "walk": 0.18318522744319052,
+                "run": 0.12456595466136956
+              },
+              "transition": {
+                "from": "standing_idle",
+                "to": "walk",
+                "startedAt": 0.05,
+                "duration": 0.22,
+                "oldWeight": 1,
+                "newWeight": 0
+              },
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.18318522744319052,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              4.764767479620169,
+              0.9351934375268545,
+              1.1660385127093766
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.5000000000000036,
+              "playbackRate": 1.3637045488638102,
+              "clamped": false,
+              "phase": 0.2771852274431905,
+              "weights": {
+                "standing_idle": 1,
+                "walk": 0,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 0.886,
+                "walk": 0.2771852274431905,
+                "run": 0.18848595466136955
+              },
+              "transition": {
+                "from": "standing_idle",
+                "to": "walk",
+                "startedAt": 0.05,
+                "duration": 0.22,
+                "oldWeight": 1,
+                "newWeight": 0
+              },
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.2771852274431905,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              4.761509193702404,
+              0.9377333745336642,
+              2.6626567564266783
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.5000000000000036,
+              "playbackRate": 1.3637045488638102,
+              "clamped": false,
+              "phase": 0.2781852274431905,
+              "weights": {
+                "standing_idle": 1,
+                "walk": 0,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 0.89,
+                "walk": 0.2781852274431905,
+                "run": 0.18916595466136957
+              },
+              "transition": {
+                "from": "standing_idle",
+                "to": "walk",
+                "startedAt": 0.05,
+                "duration": 0.22,
+                "oldWeight": 1,
+                "newWeight": 0
+              },
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.2781852274431905,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              4.761479018792231,
+              0.9377557736712853,
+              4.162624435659544
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:1",
+          "mg34:0",
+          "pl:2",
+          "de:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      }
+    },
+    {
+      "file": "02-walk.png",
+      "time": 1.0500000000000003,
+      "baseline": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "walk": 2,
+          "run": 2
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "clip": "walk",
+            "clipTime": 0.5060000000000002,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              2.077036782832539,
+              1.5397308980149707,
+              -0.33482533819054966
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "clip": "walk",
+            "clipTime": 0.5100000000000002,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              2.076893206575163,
+              1.539275383160641,
+              1.1641310717357456
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "clip": "run",
+            "clipTime": 0.5259999856948854,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              2.1409141853017912,
+              1.3760682847727819,
+              2.63072398581601
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "clip": "run",
+            "clipTime": 0.5299999856948854,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              2.14092372165427,
+              1.3763621569463862,
+              4.1308064633327035
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:0",
+          "mg34:1",
+          "de:2",
+          "pl:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      },
+      "candidate": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "walk": 4
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.4999999999999911,
+              "playbackRate": 1.3637045488637989,
+              "clamped": false,
+              "phase": 0.5458897763069847,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 1,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 1.5060000000000002,
+                "walk": 0.5458897763069847,
+                "run": 0.3712050478887496
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.5458897763069847,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              6.075669313111651,
+              1.534079442367929,
+              -0.3450737727260455
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.4999999999999911,
+              "playbackRate": 1.3637045488637989,
+              "clamped": false,
+              "phase": 0.5468897763069848,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 1,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 1.5100000000000002,
+                "walk": 0.5468897763069848,
+                "run": 0.37188504788874965
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.5468897763069848,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              6.075638851576164,
+              1.5338777702741389,
+              1.1546775367602764
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.4999999999999911,
+              "playbackRate": 1.3637045488637989,
+              "clamped": false,
+              "phase": 0.640889776306985,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 1,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 1.8860000000000001,
+                "walk": 0.640889776306985,
+                "run": 0.4358050478887498
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.640889776306985,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              6.073504341396792,
+              1.5096417775661044,
+              2.63465744537047
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.4999999999999911,
+              "playbackRate": 1.3637045488637989,
+              "clamped": false,
+              "phase": 0.6418897763069851,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 1,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 1.8900000000000001,
+                "walk": 0.6418897763069851,
+                "run": 0.43648504788874987
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.6418897763069851,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              6.073491412445579,
+              1.509377433330945,
+              4.1345051952763106
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:1",
+          "mg34:0",
+          "pl:2",
+          "de:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      }
+    },
+    {
+      "file": "03-walk-run-start.png",
+      "time": 1.1000000000000003,
+      "baseline": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "walk": 2,
+          "run": 2
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "clip": "walk",
+            "clipTime": 0.5560000000000003,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              2.255360625915095,
+              1.5320393887617714,
+              -0.3475871239692332
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "clip": "walk",
+            "clipTime": 0.5600000000000003,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              2.2552380598744635,
+              1.5312315882226715,
+              1.151419088717446
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "clip": "run",
+            "clipTime": 0.5759999856948856,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              2.3216715132406955,
+              1.3956303339642075,
+              2.6368809146075853
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "clip": "run",
+            "clipTime": 0.5799999856948856,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              2.3217809429865026,
+              1.3980051097731443,
+              4.137724326663321
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:0",
+          "mg34:1",
+          "de:2",
+          "pl:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      },
+      "candidate": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "run": 4
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "locomotion": {
+              "gait": "run",
+              "speed": 3.599999999999991,
+              "playbackRate": 1.107165637515198,
+              "clamped": false,
+              "phase": 0.6272990143595728,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 1,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 1.5560000000000003,
+                "walk": 0.6272990143595728,
+                "run": 0.42656332976450956
+              },
+              "transition": {
+                "from": "walk",
+                "to": "run",
+                "startedAt": 1.1000000000000003,
+                "duration": 0.22,
+                "oldWeight": 1,
+                "newWeight": 0
+              },
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "run",
+            "clipTime": 0.42656332976450956,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              6.25371417784829,
+              1.513359557011961,
+              -0.36302827756434075
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "locomotion": {
+              "gait": "run",
+              "speed": 3.599999999999991,
+              "playbackRate": 1.107165637515198,
+              "clamped": false,
+              "phase": 0.6282990143595729,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 1,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 1.5600000000000003,
+                "walk": 0.6282990143595729,
+                "run": 0.4272433297645096
+              },
+              "transition": {
+                "from": "walk",
+                "to": "run",
+                "startedAt": 1.1000000000000003,
+                "duration": 0.22,
+                "oldWeight": 1,
+                "newWeight": 0
+              },
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "run",
+            "clipTime": 0.4272433297645096,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              6.253695584689792,
+              1.5130744634772395,
+              1.1367788684030002
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "locomotion": {
+              "gait": "run",
+              "speed": 3.599999999999991,
+              "playbackRate": 1.107165637515198,
+              "clamped": false,
+              "phase": 0.7222990143595731,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 1,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 1.9360000000000004,
+                "walk": 0.7222990143595731,
+                "run": 0.49116332976450977
+              },
+              "transition": {
+                "from": "walk",
+                "to": "run",
+                "startedAt": 1.1000000000000003,
+                "duration": 0.22,
+                "oldWeight": 1,
+                "newWeight": 0
+              },
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "run",
+            "clipTime": 0.49116332976450977,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              6.2528103366906524,
+              1.4935957384969654,
+              2.6260386677903687
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "locomotion": {
+              "gait": "run",
+              "speed": 3.599999999999991,
+              "playbackRate": 1.107165637515198,
+              "clamped": false,
+              "phase": 0.7232990143595732,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 1,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 1.9400000000000004,
+                "walk": 0.7232990143595732,
+                "run": 0.49184332976450984
+              },
+              "transition": {
+                "from": "walk",
+                "to": "run",
+                "startedAt": 1.1000000000000003,
+                "duration": 0.22,
+                "oldWeight": 1,
+                "newWeight": 0
+              },
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "run",
+            "clipTime": 0.49184332976450984,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              6.252806428667282,
+              1.493485517403346,
+              4.125985068218915
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:1",
+          "mg34:0",
+          "pl:2",
+          "de:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      }
+    },
+    {
+      "file": "04-walk-run-mid.png",
+      "time": 1.2,
+      "baseline": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "walk": 2,
+          "run": 2
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "clip": "walk",
+            "clipTime": 0.6559999999999999,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              2.613308284756466,
+              1.5056465510665484,
+              -0.3676422136970673
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "clip": "walk",
+            "clipTime": 0.6599999999999999,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              2.613256134498513,
+              1.5045885973796356,
+              1.1317493310838074
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "clip": "run",
+            "clipTime": 0.6759999856948853,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              2.685426859796685,
+              1.441185206993201,
+              2.6622026822223708
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "clip": "run",
+            "clipTime": 0.6799999856948853,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              2.685426859796685,
+              1.441185206993201,
+              4.162202682222371
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:0",
+          "mg34:1",
+          "de:2",
+          "pl:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      },
+      "candidate": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "run": 4
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "locomotion": {
+              "gait": "run",
+              "speed": 3.600000000000007,
+              "playbackRate": 1.1071656375152028,
+              "clamped": false,
+              "phase": 0.7901174904647491,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 0.5679939894815951,
+                "run": 0.43200601051840487
+              },
+              "times": {
+                "standing_idle": 1.656,
+                "walk": 0.7901174904647491,
+                "run": 0.5372798935160294
+              },
+              "transition": {
+                "from": "walk",
+                "to": "run",
+                "startedAt": 1.1000000000000003,
+                "duration": 0.22,
+                "oldWeight": 0.5679939894815951,
+                "newWeight": 0.43200601051840487
+              },
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "run",
+            "clipTime": 0.5372798935160294,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              6.643116971904741,
+              1.4455445916381913,
+              -0.371265982646033
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "locomotion": {
+              "gait": "run",
+              "speed": 3.600000000000007,
+              "playbackRate": 1.1071656375152028,
+              "clamped": false,
+              "phase": 0.7911174904647492,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 0.5679939894815951,
+                "run": 0.43200601051840487
+              },
+              "times": {
+                "standing_idle": 1.66,
+                "walk": 0.7911174904647492,
+                "run": 0.5379598935160295
+              },
+              "transition": {
+                "from": "walk",
+                "to": "run",
+                "startedAt": 1.1000000000000003,
+                "duration": 0.22,
+                "oldWeight": 0.5679939894815951,
+                "newWeight": 0.43200601051840487
+              },
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "run",
+            "clipTime": 0.5379598935160295,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              6.643123342900057,
+              1.4457261334576905,
+              1.1288000135507654
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "locomotion": {
+              "gait": "run",
+              "speed": 3.600000000000007,
+              "playbackRate": 1.1071656375152028,
+              "clamped": false,
+              "phase": 0.8851174904647494,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 0.5679939894815951,
+                "run": 0.43200601051840487
+              },
+              "times": {
+                "standing_idle": 2.036,
+                "walk": 0.8851174904647494,
+                "run": 0.6018798935160297
+              },
+              "transition": {
+                "from": "walk",
+                "to": "run",
+                "startedAt": 1.1000000000000003,
+                "duration": 0.22,
+                "oldWeight": 0.5679939894815951,
+                "newWeight": 0.43200601051840487
+              },
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "run",
+            "clipTime": 0.6018798935160297,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              6.644364441031587,
+              1.4721591820336926,
+              2.64072429650587
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "locomotion": {
+              "gait": "run",
+              "speed": 3.600000000000007,
+              "playbackRate": 1.1071656375152028,
+              "clamped": false,
+              "phase": 0.8861174904647495,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 0.5679939894815951,
+                "run": 0.43200601051840487
+              },
+              "times": {
+                "standing_idle": 2.04,
+                "walk": 0.8861174904647495,
+                "run": 0.6025598935160297
+              },
+              "transition": {
+                "from": "walk",
+                "to": "run",
+                "startedAt": 1.1000000000000003,
+                "duration": 0.22,
+                "oldWeight": 0.5679939894815951,
+                "newWeight": 0.43200601051840487
+              },
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "run",
+            "clipTime": 0.6025598935160297,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              6.644387142750178,
+              1.4724906245852374,
+              4.140916456533349
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:1",
+          "mg34:0",
+          "pl:2",
+          "de:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      }
+    },
+    {
+      "file": "05-run.png",
+      "time": 1.6999999999999982,
+      "baseline": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "walk": 2,
+          "run": 2
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "clip": "walk",
+            "clipTime": 0.15599999999999836,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              4.423436570007845,
+              1.522685618545927,
+              -0.2985820377379986
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "clip": "walk",
+            "clipTime": 0.15999999999999837,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              4.423565614777939,
+              1.5219291638608186,
+              1.2020370998621654
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "clip": "run",
+            "clipTime": 0.49599997854232614,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              4.480890668755948,
+              1.3752914998984815,
+              2.630514777857481
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "clip": "run",
+            "clipTime": 0.49999997854232614,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              4.480852145761849,
+              1.3741580780365177,
+              4.130187934972266
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:0",
+          "mg34:1",
+          "de:2",
+          "pl:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      },
+      "candidate": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "run": 4
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "locomotion": {
+              "gait": "run",
+              "speed": 3.600000000000007,
+              "playbackRate": 1.1071656375152028,
+              "clamped": false,
+              "phase": 0.6042098709906307,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 0,
+                "run": 1
+              },
+              "times": {
+                "standing_idle": 2.1559999999999984,
+                "walk": 0.6042098709906307,
+                "run": 0.4108627122736289
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "run",
+            "clipTime": 0.4108627122736289,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              8.48270173136943,
+              1.415314877560042,
+              -0.3554395364772672
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "locomotion": {
+              "gait": "run",
+              "speed": 3.600000000000007,
+              "playbackRate": 1.1071656375152028,
+              "clamped": false,
+              "phase": 0.6052098709906306,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 0,
+                "run": 1
+              },
+              "times": {
+                "standing_idle": 2.1599999999999984,
+                "walk": 0.6052098709906306,
+                "run": 0.4115427122736289
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "run",
+            "clipTime": 0.4115427122736289,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              8.482677872092683,
+              1.4149006967410407,
+              1.1443862426022315
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "locomotion": {
+              "gait": "run",
+              "speed": 3.600000000000007,
+              "playbackRate": 1.1071656375152028,
+              "clamped": false,
+              "phase": 0.6992098709906309,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 0,
+                "run": 1
+              },
+              "times": {
+                "standing_idle": 2.5359999999999983,
+                "walk": 0.6992098709906309,
+                "run": 0.4754627122736291
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "run",
+            "clipTime": 0.4754627122736291,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              8.481087918088306,
+              1.3811103911057165,
+              2.6321934100414026
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "locomotion": {
+              "gait": "run",
+              "speed": 3.600000000000007,
+              "playbackRate": 1.1071656375152028,
+              "clamped": false,
+              "phase": 0.700209870990631,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 0,
+                "run": 1
+              },
+              "times": {
+                "standing_idle": 2.5399999999999983,
+                "walk": 0.700209870990631,
+                "run": 0.47614271227362914
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "run",
+            "clipTime": 0.47614271227362914,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              8.48108140152891,
+              1.3809177366827772,
+              4.132137815773823
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:1",
+          "mg34:0",
+          "pl:2",
+          "de:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      }
+    },
+    {
+      "file": "06-run-walk-mid.png",
+      "time": 1.7999999999999978,
+      "baseline": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "walk": 2,
+          "run": 2
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "clip": "walk",
+            "clipTime": 0.255999999999998,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              4.574959643340786,
+              1.5128395228703755,
+              -0.29154019365760653
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "clip": "walk",
+            "clipTime": 0.259999999999998,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              4.574959643340786,
+              1.5128395228703755,
+              1.2084598063423935
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "clip": "run",
+            "clipTime": 0.5959999785423258,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              4.632216461428525,
+              1.4075022375508897,
+              2.641100137053431
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "clip": "run",
+            "clipTime": 0.5999999785423258,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              4.632324790412368,
+              1.409876026759625,
+              4.141944629438415
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:0",
+          "mg34:1",
+          "de:2",
+          "pl:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      },
+      "candidate": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "walk": 4
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.4999999999999911,
+              "playbackRate": 1.3637045488637989,
+              "clamped": false,
+              "phase": 0.7405803258770111,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 0.26941679188579853,
+                "run": 0.7305832081142014
+              },
+              "times": {
+                "standing_idle": 2.255999999999998,
+                "walk": 0.7405803258770111,
+                "run": 0.5035946215963676
+              },
+              "transition": {
+                "from": "run",
+                "to": "walk",
+                "startedAt": 1.724999999999998,
+                "duration": 0.22,
+                "oldWeight": 0.7305832081142014,
+                "newWeight": 0.26941679188579853
+              },
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.7405803258770111,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              8.613186305618498,
+              1.4070121366499722,
+              -0.3710168383398269
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.4999999999999911,
+              "playbackRate": 1.3637045488637989,
+              "clamped": false,
+              "phase": 0.741580325877011,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 0.26941679188579853,
+                "run": 0.7305832081142014
+              },
+              "times": {
+                "standing_idle": 2.259999999999998,
+                "walk": 0.741580325877011,
+                "run": 0.5042746215963675
+              },
+              "transition": {
+                "from": "run",
+                "to": "walk",
+                "startedAt": 1.724999999999998,
+                "duration": 0.22,
+                "oldWeight": 0.7305832081142014,
+                "newWeight": 0.26941679188579853
+              },
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.741580325877011,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              8.613187421401905,
+              1.407048665215632,
+              1.1289934026131438
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.4999999999999911,
+              "playbackRate": 1.3637045488637989,
+              "clamped": false,
+              "phase": 0.8355803258770113,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 0.26941679188579853,
+                "run": 0.7305832081142014
+              },
+              "times": {
+                "standing_idle": 2.635999999999998,
+                "walk": 0.8355803258770113,
+                "run": 0.5681946215963677
+              },
+              "transition": {
+                "from": "run",
+                "to": "walk",
+                "startedAt": 1.724999999999998,
+                "duration": 0.22,
+                "oldWeight": 0.7305832081142014,
+                "newWeight": 0.26941679188579853
+              },
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.8355803258770113,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              8.613745839378717,
+              1.4220968402808012,
+              2.6341314111256238
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.4999999999999911,
+              "playbackRate": 1.3637045488637989,
+              "clamped": false,
+              "phase": 0.8365803258770114,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 0.26941679188579853,
+                "run": 0.7305832081142014
+              },
+              "times": {
+                "standing_idle": 2.639999999999998,
+                "walk": 0.8365803258770114,
+                "run": 0.5688746215963678
+              },
+              "transition": {
+                "from": "run",
+                "to": "walk",
+                "startedAt": 1.724999999999998,
+                "duration": 0.22,
+                "oldWeight": 0.7305832081142014,
+                "newWeight": 0.26941679188579853
+              },
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.8365803258770114,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              8.613763183368974,
+              1.4224631921644986,
+              4.1342770058131375
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:1",
+          "mg34:0",
+          "pl:2",
+          "de:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      }
+    },
+    {
+      "file": "07-walk-return.png",
+      "time": 2.099999999999997,
+      "baseline": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "walk": 2,
+          "run": 2
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "clip": "walk",
+            "clipTime": 0.5559999999999969,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              5.015360625915086,
+              1.5320393887617718,
+              -0.34758712396923214
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "clip": "walk",
+            "clipTime": 0.559999999999997,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              5.015238059874455,
+              1.531231588222672,
+              1.1514190887174471
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "clip": "run",
+            "clipTime": 0.21599997138976734,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              5.093177495258705,
+              1.3991387716860204,
+              2.7000550300883703
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "clip": "run",
+            "clipTime": 0.21999997138976735,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              5.093041679115604,
+              1.4007407880531972,
+              4.199485934336613
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:0",
+          "mg34:1",
+          "de:2",
+          "pl:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      },
+      "candidate": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "walk": 4
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.4999999999999911,
+              "playbackRate": 1.3637045488637989,
+              "clamped": false,
+              "phase": 0.14969169053614947,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 1,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 2.555999999999997,
+                "walk": 0.14969169053614947,
+                "run": 0.10179034956458165
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.14969169053614947,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              9.023232898110603,
+              1.5238782740182608,
+              -0.29955823077323085
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.4999999999999911,
+              "playbackRate": 1.3637045488637989,
+              "clamped": false,
+              "phase": 0.15069169053614936,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 1,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 2.559999999999997,
+                "walk": 0.15069169053614936,
+                "run": 0.10247034956458158
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.15069169053614936,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              9.023265197313473,
+              1.5236892400901318,
+              1.2005964972061942
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.4999999999999911,
+              "playbackRate": 1.3637045488637989,
+              "clamped": false,
+              "phase": 0.24469169053614956,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 1,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 2.935999999999997,
+                "walk": 0.24469169053614956,
+                "run": 0.1663903495645817
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.24469169053614956,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              9.024959643340782,
+              1.5128395228703755,
+              2.7084598063423933
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.4999999999999911,
+              "playbackRate": 1.3637045488637989,
+              "clamped": false,
+              "phase": 0.24569169053614967,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 1,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 2.939999999999997,
+                "walk": 0.24569169053614967,
+                "run": 0.16707034956458178
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.24569169053614967,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              9.024959643340782,
+              1.5128395228703755,
+              4.208459806342393
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:1",
+          "mg34:0",
+          "pl:2",
+          "de:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      }
+    },
+    {
+      "file": "08-pause.png",
+      "time": 2.099999999999997,
+      "baseline": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "walk": 2,
+          "run": 2
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "clip": "walk",
+            "clipTime": 0.5559999999999969,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              5.015360625915086,
+              1.5320393887617718,
+              -0.34758712396923214
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "clip": "walk",
+            "clipTime": 0.559999999999997,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              5.015238059874455,
+              1.531231588222672,
+              1.1514190887174471
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "clip": "run",
+            "clipTime": 0.21599997138976734,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              5.093177495258705,
+              1.3991387716860204,
+              2.7000550300883703
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "clip": "run",
+            "clipTime": 0.21999997138976735,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              5.093041679115604,
+              1.4007407880531972,
+              4.199485934336613
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:0",
+          "mg34:1",
+          "de:2",
+          "pl:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      },
+      "candidate": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "walk": 4
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.4999999999999911,
+              "playbackRate": 1.3637045488637989,
+              "clamped": false,
+              "phase": 0.14969169053614947,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 1,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 2.555999999999997,
+                "walk": 0.14969169053614947,
+                "run": 0.10179034956458165
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.14969169053614947,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              9.023232898110603,
+              1.5238782740182608,
+              -0.29955823077323085
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.4999999999999911,
+              "playbackRate": 1.3637045488637989,
+              "clamped": false,
+              "phase": 0.15069169053614936,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 1,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 2.559999999999997,
+                "walk": 0.15069169053614936,
+                "run": 0.10247034956458158
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.15069169053614936,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              9.023265197313473,
+              1.5236892400901318,
+              1.2005964972061942
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.4999999999999911,
+              "playbackRate": 1.3637045488637989,
+              "clamped": false,
+              "phase": 0.24469169053614956,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 1,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 2.935999999999997,
+                "walk": 0.24469169053614956,
+                "run": 0.1663903495645817
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.24469169053614956,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              9.024959643340782,
+              1.5128395228703755,
+              2.7084598063423933
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "locomotion": {
+              "gait": "walk",
+              "speed": 1.4999999999999911,
+              "playbackRate": 1.3637045488637989,
+              "clamped": false,
+              "phase": 0.24569169053614967,
+              "weights": {
+                "standing_idle": 0,
+                "walk": 1,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 2.939999999999997,
+                "walk": 0.24569169053614967,
+                "run": 0.16707034956458178
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "walk",
+            "clipTime": 0.24569169053614967,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              9.024959643340782,
+              1.5128395228703755,
+              4.208459806342393
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:1",
+          "mg34:0",
+          "pl:2",
+          "de:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      }
+    },
+    {
+      "file": "09-restore.png",
+      "time": 2.099999999999997,
+      "baseline": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "walk": 2,
+          "run": 2
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "clip": "walk",
+            "clipTime": 0.5559999999999969,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              5.015360625915086,
+              1.5320393887617718,
+              -0.34758712396923214
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "clip": "walk",
+            "clipTime": 0.559999999999997,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              5.015238059874455,
+              1.531231588222672,
+              1.1514190887174471
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "clip": "run",
+            "clipTime": 0.21599997138976734,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              5.093177495258705,
+              1.3991387716860204,
+              2.7000550300883703
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "clip": "run",
+            "clipTime": 0.21999997138976735,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              5.093041679115604,
+              1.4007407880531972,
+              4.199485934336613
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:0",
+          "mg34:1",
+          "de:2",
+          "pl:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      },
+      "candidate": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "standing_idle": 4
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "locomotion": {
+              "gait": "standing_idle",
+              "speed": 0,
+              "playbackRate": 1,
+              "clamped": false,
+              "phase": 0.21399999999999686,
+              "weights": {
+                "standing_idle": 1,
+                "walk": 0,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 2.555999999999997,
+                "walk": 0.21399999999999686,
+                "run": 0.14551999999999787
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "standing_idle",
+            "clipTime": 2.555999999999997,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              9.200208431278597,
+              0.9375146127166003,
+              -0.3408197116621553
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "locomotion": {
+              "gait": "standing_idle",
+              "speed": 0,
+              "playbackRate": 1,
+              "clamped": false,
+              "phase": 0.2149999999999972,
+              "weights": {
+                "standing_idle": 1,
+                "walk": 0,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 2.559999999999997,
+                "walk": 0.2149999999999972,
+                "run": 0.1461999999999981
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "standing_idle",
+            "clipTime": 2.559999999999997,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              9.20022946582358,
+              0.9374975662176535,
+              1.1591976830695092
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "locomotion": {
+              "gait": "standing_idle",
+              "speed": 0,
+              "playbackRate": 1,
+              "clamped": false,
+              "phase": 0.30899999999999705,
+              "weights": {
+                "standing_idle": 1,
+                "walk": 0,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 2.935999999999997,
+                "walk": 0.30899999999999705,
+                "run": 0.210119999999998
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "standing_idle",
+            "clipTime": 2.935999999999997,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              9.202489690686019,
+              0.9357813393110765,
+              2.661355009542648
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "locomotion": {
+              "gait": "standing_idle",
+              "speed": 0,
+              "playbackRate": 1,
+              "clamped": false,
+              "phase": 0.30999999999999694,
+              "weights": {
+                "standing_idle": 1,
+                "walk": 0,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 2.939999999999997,
+                "walk": 0.30999999999999694,
+                "run": 0.21079999999999793
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "standing_idle",
+            "clipTime": 2.939999999999997,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              9.2025161162124,
+              0.9357623184164028,
+              4.161383276378964
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:1",
+          "mg34:0",
+          "pl:2",
+          "de:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      }
+    },
+    {
+      "file": "10-stop-idle.png",
+      "time": 2.4999999999999956,
+      "baseline": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "standing_idle": 4
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "clip": "standing_idle",
+            "clipTime": 2.9559999999999955,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              5.20262178183763,
+              0.9356862672877644,
+              -0.3385036171006643
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "clip": "standing_idle",
+            "clipTime": 2.9599999999999955,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              5.202648189121427,
+              0.9356672626194774,
+              1.1615246693198111
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "clip": "standing_idle",
+            "clipTime": 3.3359999999999954,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              5.205252458970018,
+              0.9338735192840102,
+              2.6646001145694367
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "clip": "standing_idle",
+            "clipTime": 3.3399999999999954,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              5.205281086799896,
+              0.9338545808944201,
+              4.164636828493798
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:0",
+          "mg34:1",
+          "de:2",
+          "pl:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      },
+      "candidate": {
+        "active": 4,
+        "limit": 28,
+        "instances": 4,
+        "clips": {
+          "standing_idle": 4
+        },
+        "actors": [
+          {
+            "id": "de_spans_6",
+            "lod": 0,
+            "locomotion": {
+              "gait": "standing_idle",
+              "speed": 0,
+              "playbackRate": 1,
+              "clamped": false,
+              "phase": 0.21399999999999686,
+              "weights": {
+                "standing_idle": 1,
+                "walk": 0,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 2.9559999999999955,
+                "walk": 0.21399999999999686,
+                "run": 0.14551999999999787
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "standing_idle",
+            "clipTime": 2.9559999999999955,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              9.20262178183763,
+              0.9356862672877644,
+              -0.3385036171006643
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "de_spans_7",
+            "lod": 0,
+            "locomotion": {
+              "gait": "standing_idle",
+              "speed": 0,
+              "playbackRate": 1,
+              "clamped": false,
+              "phase": 0.2149999999999972,
+              "weights": {
+                "standing_idle": 1,
+                "walk": 0,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 2.9599999999999955,
+                "walk": 0.2149999999999972,
+                "run": 0.1461999999999981
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "standing_idle",
+            "clipTime": 2.9599999999999955,
+            "loop": true,
+            "weapon": "kar98k",
+            "weaponLOD": 0,
+            "muzzle": [
+              9.202648189121426,
+              0.9356672626194774,
+              1.1615246693198111
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_0",
+            "lod": 0,
+            "locomotion": {
+              "gait": "standing_idle",
+              "speed": 0,
+              "playbackRate": 1,
+              "clamped": false,
+              "phase": 0.30899999999999705,
+              "weights": {
+                "standing_idle": 1,
+                "walk": 0,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 3.3359999999999954,
+                "walk": 0.30899999999999705,
+                "run": 0.210119999999998
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "standing_idle",
+            "clipTime": 3.3359999999999954,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              9.205252458970017,
+              0.9338735192840102,
+              2.6646001145694367
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_east_1",
+            "lod": 0,
+            "locomotion": {
+              "gait": "standing_idle",
+              "speed": 0,
+              "playbackRate": 1,
+              "clamped": false,
+              "phase": 0.30999999999999694,
+              "weights": {
+                "standing_idle": 1,
+                "walk": 0,
+                "run": 0
+              },
+              "times": {
+                "standing_idle": 3.3399999999999954,
+                "walk": 0.30999999999999694,
+                "run": 0.21079999999999793
+              },
+              "transition": null,
+              "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+            },
+            "clip": "standing_idle",
+            "clipTime": 3.3399999999999954,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 0,
+            "muzzle": [
+              9.205281086799898,
+              0.9338545808944201,
+              4.164636828493798
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "proneAvailable": true,
+        "ckm": null,
+        "loaded": [
+          "ckm:2",
+          "ckm:1",
+          "ckm:0",
+          "mg34:2",
+          "mg34:1",
+          "mg34:0",
+          "pl:2",
+          "de:2",
+          "pl:1",
+          "de:1",
+          "de:0",
+          "pl:0"
+        ],
+        "failures": []
+      }
+    }
+  ],
+  "metrics": [
+    {
+      "id": "de_spans_6",
+      "speed": 1.5,
+      "lod": 0,
+      "quality": "high",
+      "dt": 0.008333333333333333,
+      "duration": 6,
+      "identityChecks": 721,
+      "baseline": {
+        "supportIntervals": 575,
+        "meanDriftMps": 0.4071070867100048,
+        "p95DriftMps": 0.5225926614068442,
+        "maxDriftMps": 0.5317116174319348,
+        "meanDriftPerFrameM": 0.003392559055916701
+      },
+      "candidate": {
+        "supportIntervals": 565,
+        "meanDriftMps": 0.01768302757204954,
+        "p95DriftMps": 0.06222451840823669,
+        "maxDriftMps": 0.17339796044340425,
+        "meanDriftPerFrameM": 0.0001473585631004128
+      }
+    },
+    {
+      "id": "de_spans_6",
+      "speed": 1.5,
+      "lod": 2,
+      "quality": "low",
+      "dt": 0.008333333333333333,
+      "duration": 6,
+      "identityChecks": 721,
+      "baseline": {
+        "supportIntervals": 575,
+        "meanDriftMps": 0.4071070867100048,
+        "p95DriftMps": 0.5225926614068442,
+        "maxDriftMps": 0.5317116174319348,
+        "meanDriftPerFrameM": 0.003392559055916701
+      },
+      "candidate": {
+        "supportIntervals": 565,
+        "meanDriftMps": 0.01768302757204954,
+        "p95DriftMps": 0.06222451840823669,
+        "maxDriftMps": 0.17339796044340425,
+        "meanDriftPerFrameM": 0.0001473585631004128
+      }
+    },
+    {
+      "id": "pl_east_0",
+      "speed": 3.6,
+      "lod": 0,
+      "quality": "high",
+      "dt": 0.008333333333333333,
+      "duration": 6,
+      "identityChecks": 721,
+      "baseline": {
+        "supportIntervals": 321,
+        "meanDriftMps": 0.35515433201669716,
+        "p95DriftMps": 0.4367366785836029,
+        "maxDriftMps": 0.7227978774938234,
+        "meanDriftPerFrameM": 0.0029596194334724785
+      },
+      "candidate": {
+        "supportIntervals": 318,
+        "meanDriftMps": 0.04014434455308592,
+        "p95DriftMps": 0.14546075792083846,
+        "maxDriftMps": 0.4621776352232278,
+        "meanDriftPerFrameM": 0.00033453620460904924
+      }
+    },
+    {
+      "id": "pl_east_0",
+      "speed": 3.6,
+      "lod": 2,
+      "quality": "low",
+      "dt": 0.008333333333333333,
+      "duration": 6,
+      "identityChecks": 721,
+      "baseline": {
+        "supportIntervals": 321,
+        "meanDriftMps": 0.35515433201669716,
+        "p95DriftMps": 0.4367366785836029,
+        "maxDriftMps": 0.7227978774938234,
+        "meanDriftPerFrameM": 0.0029596194334724785
+      },
+      "candidate": {
+        "supportIntervals": 318,
+        "meanDriftMps": 0.04014434455308592,
+        "p95DriftMps": 0.14546075792083846,
+        "maxDriftMps": 0.4621776352232278,
+        "meanDriftPerFrameM": 0.00033453620460904924
+      }
+    },
+    {
+      "id": "pl_east_0",
+      "speed": 5.5,
+      "lod": 0,
+      "quality": "high",
+      "dt": 0.008333333333333333,
+      "duration": 6,
+      "identityChecks": 721,
+      "baseline": {
+        "supportIntervals": 321,
+        "meanDriftMps": 2.2548047003131275,
+        "p95DriftMps": 2.336594436968575,
+        "maxDriftMps": 2.6202311774511373,
+        "meanDriftPerFrameM": 0.018790039169276105
+      },
+      "candidate": {
+        "supportIntervals": 315,
+        "meanDriftMps": 0.05364639571956464,
+        "p95DriftMps": 0.18618318402965517,
+        "maxDriftMps": 0.5628770885518442,
+        "meanDriftPerFrameM": 0.00044705329766303874
+      }
+    },
+    {
+      "id": "pl_east_0",
+      "speed": 5.5,
+      "lod": 2,
+      "quality": "low",
+      "dt": 0.008333333333333333,
+      "duration": 6,
+      "identityChecks": 721,
+      "baseline": {
+        "supportIntervals": 321,
+        "meanDriftMps": 2.2548047003131275,
+        "p95DriftMps": 2.336594436968575,
+        "maxDriftMps": 2.6202311774511373,
+        "meanDriftPerFrameM": 0.018790039169276105
+      },
+      "candidate": {
+        "supportIntervals": 315,
+        "meanDriftMps": 0.05364639571956464,
+        "p95DriftMps": 0.18618318402965517,
+        "maxDriftMps": 0.5628770885518442,
+        "meanDriftPerFrameM": 0.00044705329766303874
+      }
+    }
+  ],
+  "errors": [],
+  "browser": "153.0.8010.0",
+  "pause": {
+    "identical": true
+  },
+  "restore": {
+    "time": 2.099999999999997,
+    "baseline": {
+      "active": 4,
+      "limit": 28,
+      "instances": 4,
+      "clips": {
+        "walk": 2,
+        "run": 2
+      },
+      "actors": [
+        {
+          "id": "de_spans_6",
+          "lod": 0,
+          "clip": "walk",
+          "clipTime": 0.5559999999999969,
+          "loop": true,
+          "weapon": "kar98k",
+          "weaponLOD": 0,
+          "muzzle": [
+            5.015360625915086,
+            1.5320393887617718,
+            -0.34758712396923214
+          ],
+          "weaponMeshes": [
+            "rifle",
+            "clip"
+          ]
+        },
+        {
+          "id": "de_spans_7",
+          "lod": 0,
+          "clip": "walk",
+          "clipTime": 0.559999999999997,
+          "loop": true,
+          "weapon": "kar98k",
+          "weaponLOD": 0,
+          "muzzle": [
+            5.015238059874455,
+            1.531231588222672,
+            1.1514190887174471
+          ],
+          "weaponMeshes": [
+            "rifle",
+            "clip"
+          ]
+        },
+        {
+          "id": "pl_east_0",
+          "lod": 0,
+          "clip": "run",
+          "clipTime": 0.21599997138976734,
+          "loop": true,
+          "weapon": "wz29",
+          "weaponLOD": 0,
+          "muzzle": [
+            5.093177495258705,
+            1.3991387716860204,
+            2.7000550300883703
+          ],
+          "weaponMeshes": [
+            "rifle",
+            "clip"
+          ]
+        },
+        {
+          "id": "pl_east_1",
+          "lod": 0,
+          "clip": "run",
+          "clipTime": 0.21999997138976735,
+          "loop": true,
+          "weapon": "wz29",
+          "weaponLOD": 0,
+          "muzzle": [
+            5.093041679115604,
+            1.4007407880531972,
+            4.199485934336613
+          ],
+          "weaponMeshes": [
+            "rifle",
+            "clip"
+          ]
+        }
+      ],
+      "proneAvailable": true,
+      "ckm": null,
+      "loaded": [
+        "ckm:2",
+        "ckm:1",
+        "ckm:0",
+        "mg34:2",
+        "mg34:0",
+        "mg34:1",
+        "de:2",
+        "pl:2",
+        "pl:1",
+        "de:1",
+        "de:0",
+        "pl:0"
+      ],
+      "failures": []
+    },
+    "candidate": {
+      "active": 4,
+      "limit": 28,
+      "instances": 4,
+      "clips": {
+        "standing_idle": 4
+      },
+      "actors": [
+        {
+          "id": "de_spans_6",
+          "lod": 0,
+          "locomotion": {
+            "gait": "standing_idle",
+            "speed": 0,
+            "playbackRate": 1,
+            "clamped": false,
+            "phase": 0.21399999999999686,
+            "weights": {
+              "standing_idle": 1,
+              "walk": 0,
+              "run": 0
+            },
+            "times": {
+              "standing_idle": 2.555999999999997,
+              "walk": 0.21399999999999686,
+              "run": 0.14551999999999787
+            },
+            "transition": null,
+            "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+          },
+          "clip": "standing_idle",
+          "clipTime": 2.555999999999997,
+          "loop": true,
+          "weapon": "kar98k",
+          "weaponLOD": 0,
+          "muzzle": [
+            9.200208431278597,
+            0.9375146127166003,
+            -0.3408197116621553
+          ],
+          "weaponMeshes": [
+            "rifle",
+            "clip"
+          ]
+        },
+        {
+          "id": "de_spans_7",
+          "lod": 0,
+          "locomotion": {
+            "gait": "standing_idle",
+            "speed": 0,
+            "playbackRate": 1,
+            "clamped": false,
+            "phase": 0.2149999999999972,
+            "weights": {
+              "standing_idle": 1,
+              "walk": 0,
+              "run": 0
+            },
+            "times": {
+              "standing_idle": 2.559999999999997,
+              "walk": 0.2149999999999972,
+              "run": 0.1461999999999981
+            },
+            "transition": null,
+            "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+          },
+          "clip": "standing_idle",
+          "clipTime": 2.559999999999997,
+          "loop": true,
+          "weapon": "kar98k",
+          "weaponLOD": 0,
+          "muzzle": [
+            9.20022946582358,
+            0.9374975662176535,
+            1.1591976830695092
+          ],
+          "weaponMeshes": [
+            "rifle",
+            "clip"
+          ]
+        },
+        {
+          "id": "pl_east_0",
+          "lod": 0,
+          "locomotion": {
+            "gait": "standing_idle",
+            "speed": 0,
+            "playbackRate": 1,
+            "clamped": false,
+            "phase": 0.30899999999999705,
+            "weights": {
+              "standing_idle": 1,
+              "walk": 0,
+              "run": 0
+            },
+            "times": {
+              "standing_idle": 2.935999999999997,
+              "walk": 0.30899999999999705,
+              "run": 0.210119999999998
+            },
+            "transition": null,
+            "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+          },
+          "clip": "standing_idle",
+          "clipTime": 2.935999999999997,
+          "loop": true,
+          "weapon": "wz29",
+          "weaponLOD": 0,
+          "muzzle": [
+            9.202489690686019,
+            0.9357813393110765,
+            2.661355009542648
+          ],
+          "weaponMeshes": [
+            "rifle",
+            "clip"
+          ]
+        },
+        {
+          "id": "pl_east_1",
+          "lod": 0,
+          "locomotion": {
+            "gait": "standing_idle",
+            "speed": 0,
+            "playbackRate": 1,
+            "clamped": false,
+            "phase": 0.30999999999999694,
+            "weights": {
+              "standing_idle": 1,
+              "walk": 0,
+              "run": 0
+            },
+            "times": {
+              "standing_idle": 2.939999999999997,
+              "walk": 0.30999999999999694,
+              "run": 0.21079999999999793
+            },
+            "transition": null,
+            "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+          },
+          "clip": "standing_idle",
+          "clipTime": 2.939999999999997,
+          "loop": true,
+          "weapon": "wz29",
+          "weaponLOD": 0,
+          "muzzle": [
+            9.2025161162124,
+            0.9357623184164028,
+            4.161383276378964
+          ],
+          "weaponMeshes": [
+            "rifle",
+            "clip"
+          ]
+        }
+      ],
+      "proneAvailable": true,
+      "ckm": null,
+      "loaded": [
+        "ckm:2",
+        "ckm:1",
+        "ckm:0",
+        "mg34:2",
+        "mg34:1",
+        "mg34:0",
+        "pl:2",
+        "de:2",
+        "pl:1",
+        "de:1",
+        "de:0",
+        "pl:0"
+      ],
+      "failures": []
+    }
+  },
+  "lods": {
+    "near": {
+      "active": 4,
+      "limit": 28,
+      "instances": 4,
+      "clips": {
+        "standing_idle": 4
+      },
+      "actors": [
+        {
+          "id": "de_spans_6",
+          "lod": 0,
+          "locomotion": {
+            "gait": "standing_idle",
+            "speed": 0,
+            "playbackRate": 1,
+            "clamped": false,
+            "phase": 0.21399999999999686,
+            "weights": {
+              "standing_idle": 1,
+              "walk": 0,
+              "run": 0
+            },
+            "times": {
+              "standing_idle": 2.555999999999997,
+              "walk": 0.21399999999999686,
+              "run": 0.14551999999999787
+            },
+            "transition": null,
+            "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+          },
+          "clip": "standing_idle",
+          "clipTime": 2.555999999999997,
+          "loop": true,
+          "weapon": "kar98k",
+          "weaponLOD": 0,
+          "muzzle": [
+            9.200208431278597,
+            0.9375146127166003,
+            -0.3408197116621553
+          ],
+          "weaponMeshes": [
+            "rifle",
+            "clip"
+          ]
+        },
+        {
+          "id": "de_spans_7",
+          "lod": 0,
+          "locomotion": {
+            "gait": "standing_idle",
+            "speed": 0,
+            "playbackRate": 1,
+            "clamped": false,
+            "phase": 0.2149999999999972,
+            "weights": {
+              "standing_idle": 1,
+              "walk": 0,
+              "run": 0
+            },
+            "times": {
+              "standing_idle": 2.559999999999997,
+              "walk": 0.2149999999999972,
+              "run": 0.1461999999999981
+            },
+            "transition": null,
+            "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+          },
+          "clip": "standing_idle",
+          "clipTime": 2.559999999999997,
+          "loop": true,
+          "weapon": "kar98k",
+          "weaponLOD": 0,
+          "muzzle": [
+            9.20022946582358,
+            0.9374975662176535,
+            1.1591976830695092
+          ],
+          "weaponMeshes": [
+            "rifle",
+            "clip"
+          ]
+        },
+        {
+          "id": "pl_east_0",
+          "lod": 0,
+          "locomotion": {
+            "gait": "standing_idle",
+            "speed": 0,
+            "playbackRate": 1,
+            "clamped": false,
+            "phase": 0.30899999999999705,
+            "weights": {
+              "standing_idle": 1,
+              "walk": 0,
+              "run": 0
+            },
+            "times": {
+              "standing_idle": 2.935999999999997,
+              "walk": 0.30899999999999705,
+              "run": 0.210119999999998
+            },
+            "transition": null,
+            "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+          },
+          "clip": "standing_idle",
+          "clipTime": 2.935999999999997,
+          "loop": true,
+          "weapon": "wz29",
+          "weaponLOD": 0,
+          "muzzle": [
+            9.202489690686019,
+            0.9357813393110765,
+            2.661355009542648
+          ],
+          "weaponMeshes": [
+            "rifle",
+            "clip"
+          ]
+        },
+        {
+          "id": "pl_east_1",
+          "lod": 0,
+          "locomotion": {
+            "gait": "standing_idle",
+            "speed": 0,
+            "playbackRate": 1,
+            "clamped": false,
+            "phase": 0.30999999999999694,
+            "weights": {
+              "standing_idle": 1,
+              "walk": 0,
+              "run": 0
+            },
+            "times": {
+              "standing_idle": 2.939999999999997,
+              "walk": 0.30999999999999694,
+              "run": 0.21079999999999793
+            },
+            "transition": null,
+            "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+          },
+          "clip": "standing_idle",
+          "clipTime": 2.939999999999997,
+          "loop": true,
+          "weapon": "wz29",
+          "weaponLOD": 0,
+          "muzzle": [
+            9.2025161162124,
+            0.9357623184164028,
+            4.161383276378964
+          ],
+          "weaponMeshes": [
+            "rifle",
+            "clip"
+          ]
+        }
+      ],
+      "proneAvailable": true,
+      "ckm": null,
+      "loaded": [
+        "ckm:2",
+        "ckm:1",
+        "ckm:0",
+        "mg34:2",
+        "mg34:1",
+        "mg34:0",
+        "pl:2",
+        "de:2",
+        "pl:1",
+        "de:1",
+        "de:0",
+        "pl:0"
+      ],
+      "failures": []
+    },
+    "far": {
+      "active": 4,
+      "limit": 18,
+      "instances": 4,
+      "clips": {
+        "standing_idle": 4
+      },
+      "actors": [
+        {
+          "id": "de_spans_6",
+          "lod": 2,
+          "locomotion": {
+            "gait": "standing_idle",
+            "speed": 0,
+            "playbackRate": 1,
+            "clamped": false,
+            "phase": 0.21399999999999686,
+            "weights": {
+              "standing_idle": 1,
+              "walk": 0,
+              "run": 0
+            },
+            "times": {
+              "standing_idle": 2.555999999999997,
+              "walk": 0.21399999999999686,
+              "run": 0.14551999999999787
+            },
+            "transition": null,
+            "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+          },
+          "clip": "standing_idle",
+          "clipTime": 2.555999999999997,
+          "loop": true,
+          "weapon": "kar98k",
+          "weaponLOD": 2,
+          "muzzle": [
+            9.200208431278597,
+            0.9375146127166003,
+            -0.3408197116621553
+          ],
+          "weaponMeshes": [
+            "rifle",
+            "clip"
+          ]
+        },
+        {
+          "id": "de_spans_7",
+          "lod": 2,
+          "locomotion": {
+            "gait": "standing_idle",
+            "speed": 0,
+            "playbackRate": 1,
+            "clamped": false,
+            "phase": 0.2149999999999972,
+            "weights": {
+              "standing_idle": 1,
+              "walk": 0,
+              "run": 0
+            },
+            "times": {
+              "standing_idle": 2.559999999999997,
+              "walk": 0.2149999999999972,
+              "run": 0.1461999999999981
+            },
+            "transition": null,
+            "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+          },
+          "clip": "standing_idle",
+          "clipTime": 2.559999999999997,
+          "loop": true,
+          "weapon": "kar98k",
+          "weaponLOD": 2,
+          "muzzle": [
+            9.20022946582358,
+            0.9374975662176535,
+            1.1591976830695092
+          ],
+          "weaponMeshes": [
+            "rifle",
+            "clip"
+          ]
+        },
+        {
+          "id": "pl_east_0",
+          "lod": 2,
+          "locomotion": {
+            "gait": "standing_idle",
+            "speed": 0,
+            "playbackRate": 1,
+            "clamped": false,
+            "phase": 0.30899999999999705,
+            "weights": {
+              "standing_idle": 1,
+              "walk": 0,
+              "run": 0
+            },
+            "times": {
+              "standing_idle": 2.935999999999997,
+              "walk": 0.30899999999999705,
+              "run": 0.210119999999998
+            },
+            "transition": null,
+            "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+          },
+          "clip": "standing_idle",
+          "clipTime": 2.935999999999997,
+          "loop": true,
+          "weapon": "wz29",
+          "weaponLOD": 2,
+          "muzzle": [
+            9.202489690686019,
+            0.9357813393110765,
+            2.661355009542648
+          ],
+          "weaponMeshes": [
+            "rifle",
+            "clip"
+          ]
+        },
+        {
+          "id": "pl_east_1",
+          "lod": 2,
+          "locomotion": {
+            "gait": "standing_idle",
+            "speed": 0,
+            "playbackRate": 1,
+            "clamped": false,
+            "phase": 0.30999999999999694,
+            "weights": {
+              "standing_idle": 1,
+              "walk": 0,
+              "run": 0
+            },
+            "times": {
+              "standing_idle": 2.939999999999997,
+              "walk": 0.30999999999999694,
+              "run": 0.21079999999999793
+            },
+            "transition": null,
+            "phasePolicy": "normalized phase shared by walk/run; retained across LOD and culling; cosmetic rebuild on restore"
+          },
+          "clip": "standing_idle",
+          "clipTime": 2.939999999999997,
+          "loop": true,
+          "weapon": "wz29",
+          "weaponLOD": 2,
+          "muzzle": [
+            9.2025161162124,
+            0.9357623184164028,
+            4.161383276378964
+          ],
+          "weaponMeshes": [
+            "rifle",
+            "clip"
+          ]
+        }
+      ],
+      "proneAvailable": true,
+      "ckm": null,
+      "loaded": [
+        "ckm:2",
+        "ckm:1",
+        "ckm:0",
+        "mg34:2",
+        "mg34:1",
+        "mg34:0",
+        "pl:2",
+        "de:2",
+        "pl:1",
+        "de:1",
+        "de:0",
+        "pl:0"
+      ],
+      "failures": []
+    }
+  },
+  "fallback": {
+    "selected": 0,
+    "proceduralActors": {
+      "standing": 4,
+      "crouched": 0,
+      "pinned": 0,
+      "seated": 0,
+      "wounded": 0,
+      "carried": 0,
+      "fallen": 0,
+      "prone": 0
+    },
+    "aiming": 0,
+    "firing": 0,
+    "moving": 0,
+    "underFire": 0
+  },
+  "pass": true
+}
