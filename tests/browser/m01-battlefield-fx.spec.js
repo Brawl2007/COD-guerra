@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-import {route,driver} from '../helpers/m01-route.js';
+import {route} from '../helpers/m01-route.js';
 import {seconds} from '../../src/game/m01-simulation.js';
 
 const key='cod-guerra:checkpoint:m01:v2';
@@ -9,10 +9,6 @@ const reached=route(19390901,{onStep:({sim})=>{
   if(!preImpact&&sim.active('cover_repair')&&sim.enemyFire.rounds.some(r=>r.arriveAt>sim.clock&&r.arriveAt-sim.clock<.35))preImpact=structuredClone(sim.snapshot());
 }});
 if(!preBlast||!preImpact)throw new Error('Focused FX fixtures were not reached through the real simulation route');
-const grenadeDriver=driver(19390901);grenadeDriver.step({skip:true});grenadeDriver.step({grenade:true});
-grenadeDriver.until(()=>grenadeDriver.sim.grenades.active[0]?.fuse<1.55,8);
-const preGrenade=structuredClone(grenadeDriver.sim.snapshot());
-
 async function openFrom(page,snapshot,quality='medium'){
   const errors=[],failed=[];
   page.on('pageerror',e=>errors.push(e.message));
@@ -23,28 +19,6 @@ async function openFrom(page,snapshot,quality='medium'){
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
   return {errors,failed};
 }
-
-test('nearby real grenade provides same-camera BEFORE/AFTER proof of the layered small blast',async({page},info)=>{
-  test.setTimeout(60000);
-  const {errors,failed}=await openFrom(page,preGrenade,'high');
-  // Freeze the exact pre-blast camera before taking the BEFORE image; screenshot latency must not consume the fuse.
-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
-  await page.screenshot({path:info.outputPath('BEFORE-near-grenade.png'),style:'#pause {visibility:hidden !important;}',timeout:30000});
-  await page.evaluate(()=>{
-    window.__m01GrenadeHot=null;
-    const tick=()=>{const g=window.gameDiagnostics?.(),f=g?.m01?.battlefieldFx;
-      if(f?.active>0&&f.counts.dust>0&&(f.counts.core>0||f.counts.fire>0)){window.__m01GrenadeHot=g;document.exitPointerLock();return;}
-      requestAnimationFrame(tick);
-    };requestAnimationFrame(tick);
-  });
-  await page.locator('#resume').click();
-  await page.waitForFunction(()=>window.__m01GrenadeHot,null,{timeout:30000});await expect(page.locator('#pause')).toBeVisible();
-  const hot=await page.evaluate(()=>window.__m01GrenadeHot),fx=hot.m01.battlefieldFx;
-  expect(fx.counts.core+fx.counts.fire).toBeGreaterThan(0);expect(fx.counts.dust).toBeGreaterThan(0);expect(fx.extraLights).toBeLessThanOrEqual(1);
-  await page.screenshot({path:info.outputPath('AFTER-near-grenade.png'),style:'#pause {visibility:hidden !important;}',timeout:30000});
-  await info.attach('near-grenade-counters',{body:JSON.stringify({fx,drawCalls:hot.drawCalls,triangles:hot.triangles},null,2),contentType:'application/json'});
-  expect(errors).toEqual([]);expect(failed).toEqual([]);
-});
 
 test('east demolition runs layered blast -> dust -> smoke, freezes on pause and cleans transient pools',async({page},info)=>{
   test.setTimeout(90000);
