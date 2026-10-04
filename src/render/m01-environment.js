@@ -42,7 +42,7 @@ export class M01Environment {
       treeWoodNear:new THREE.CylinderGeometry(.58,1,1,10),treeWoodMid:new THREE.CylinderGeometry(.62,1,1,7),treeWoodFar:new THREE.CylinderGeometry(.68,1,1,5),
       treeCanopyNear:new THREE.IcosahedronGeometry(1,1),treeCanopyMid:new THREE.DodecahedronGeometry(1,0),treeCanopyFar:new THREE.IcosahedronGeometry(1,0)};
     this.leafMap=leafTexture();this.foliage=new THREE.MeshStandardMaterial({map:this.leafMap,alphaTest:.52,side:THREE.DoubleSide,roughness:1,color:'#a7aa74',emissive:'#27311f',emissiveIntensity:.10});
-    this.canopyMaterial=new THREE.MeshStandardMaterial({color:'#73784d',roughness:1,metalness:0,emissive:'#1d2418',emissiveIntensity:.045});
+    this.canopyMaterial=new THREE.MeshStandardMaterial({color:'#d6d7c2',roughness:1,metalness:0,emissive:'#26301f',emissiveIntensity:.075});
     this.bark=texturedSurface('wood',{worldScale:1,bump:.12,color:'#80786b'});
     this.grassMaterial=new THREE.MeshStandardMaterial({color:'#76734f',roughness:1,side:THREE.DoubleSide});
     this.grassGeometry=new THREE.BufferGeometry();this.grassGeometry.setAttribute('position',new THREE.Float32BufferAttribute([-.1,0,0, .1,0,0, .035,.48,0, 0,0,-.1, 0,0,.1, 0,.38,.04],3));// Add two bent blades inside each same-sized tuft; keep short vegetation off objectives.
@@ -143,7 +143,7 @@ export class M01Environment {
     make('woodMid',this.geometry.treeWoodMid,this.bark,n*3,{cast:false});
     make('canopyMid',this.geometry.treeCanopyMid,this.canopyMaterial,n*4,{cast:false});
     make('woodFar',this.geometry.treeWoodFar,this.bark,n,{cast:false,receive:false});
-    make('canopyFar',this.geometry.treeCanopyFar,this.canopyMaterial,n,{cast:false,receive:false});
+    make('canopyFar',this.geometry.treeCanopyFar,this.canopyMaterial,n*2,{cast:false,receive:false});
   }
   treeMatrix(batch,index,position,scale,rotation=null,color=null){
     const d=this.treeDummy;d.position.set(position.x,position.y,position.z);d.quaternion.identity();
@@ -184,7 +184,7 @@ export class M01Environment {
         for(const l of t.lobes.slice(0,q.midLobes))count.canopyMid=this.appendCanopy(this.treeBatches.canopyMid,count.canopyMid,t,l);
       }else{
         count.woodFar=this.appendTrunk(this.treeBatches.woodFar,count.woodFar,t);
-        const l=t.lobes[0];count.canopyFar=this.appendCanopy(this.treeBatches.canopyFar,count.canopyFar,t,{...l,sx:l.sx*1.12,sy:l.sy*1.08,sz:l.sz*1.12});
+        for(const l of t.lobes.slice(0,2))count.canopyFar=this.appendCanopy(this.treeBatches.canopyFar,count.canopyFar,t,{...l,sx:l.sx*1.06,sy:l.sy*1.04,sz:l.sz*1.06});
       }
     }
     for(const [name,batch]of Object.entries(this.treeBatches)){
