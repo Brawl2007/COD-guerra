@@ -1,0 +1,820 @@
+{
+  "samples": 78,
+  "candidateSourceCommit": "97298f8ae372b71cffaa854cba13a1b979530293",
+  "errors": [],
+  "failed": [],
+  "snapshotEqual": true,
+  "pauseEqual": true,
+  "ads": {
+    "low-base": {
+      "horizontalPixels": 0.5215179672380255,
+      "verticalPixels": 8.691911371325775,
+      "centerHorizontalPixels": 0.03529399382128086,
+      "centerVerticalPixels": 0.5883087698041791,
+      "muzzleFlashDistance": 0
+    },
+    "low-candidate": {
+      "horizontalPixels": 4.566771446890566e-15,
+      "verticalPixels": 9.324778906989716e-14,
+      "centerHorizontalPixels": 7.806161131202721e-15,
+      "centerVerticalPixels": 7.49781354900009e-14,
+      "muzzleFlashDistance": 0
+    },
+    "medium-base": {
+      "horizontalPixels": 0.5215179672380255,
+      "verticalPixels": 8.691911371325775,
+      "centerHorizontalPixels": 0.03529399382128086,
+      "centerVerticalPixels": 0.5883087698041791,
+      "muzzleFlashDistance": 0
+    },
+    "medium-candidate": {
+      "horizontalPixels": 4.566771446890566e-15,
+      "verticalPixels": 9.324778906989716e-14,
+      "centerHorizontalPixels": 7.806161131202721e-15,
+      "centerVerticalPixels": 7.49781354900009e-14,
+      "muzzleFlashDistance": 0
+    },
+    "high-base": {
+      "horizontalPixels": 0.5215179672380255,
+      "verticalPixels": 8.691911371325775,
+      "centerHorizontalPixels": 0.03529399382128086,
+      "centerVerticalPixels": 0.5883087698041791,
+      "muzzleFlashDistance": 0
+    },
+    "high-candidate": {
+      "horizontalPixels": 4.566771446890566e-15,
+      "verticalPixels": 9.324778906989716e-14,
+      "centerHorizontalPixels": 7.806161131202721e-15,
+      "centerVerticalPixels": 7.49781354900009e-14,
+      "muzzleFlashDistance": 0
+    }
+  },
+  "performance": [
+    {
+      "quality": "low",
+      "name": "A-hip-idle",
+      "variant": "base",
+      "triangles": 3017,
+      "drawCalls": 2,
+      "materials": 1,
+      "textures": 3
+    },
+    {
+      "quality": "low",
+      "name": "A-hip-idle",
+      "variant": "candidate",
+      "triangles": 3017,
+      "drawCalls": 2,
+      "materials": 2,
+      "textures": 3
+    },
+    {
+      "quality": "low",
+      "name": "H-muzzle-flash",
+      "variant": "base",
+      "triangles": 3019,
+      "drawCalls": 3,
+      "materials": 2,
+      "textures": 4
+    },
+    {
+      "quality": "low",
+      "name": "H-muzzle-flash",
+      "variant": "candidate",
+      "triangles": 3019,
+      "drawCalls": 3,
+      "materials": 3,
+      "textures": 4
+    },
+    {
+      "quality": "low",
+      "name": "E-reload",
+      "variant": "base",
+      "triangles": 3635,
+      "drawCalls": 3,
+      "materials": 1,
+      "textures": 3
+    },
+    {
+      "quality": "low",
+      "name": "E-reload",
+      "variant": "candidate",
+      "triangles": 3635,
+      "drawCalls": 3,
+      "materials": 2,
+      "textures": 3
+    },
+    {
+      "quality": "low",
+      "name": "I-single-round",
+      "variant": "base",
+      "triangles": 3049,
+      "drawCalls": 3,
+      "materials": 2,
+      "textures": 3
+    },
+    {
+      "quality": "low",
+      "name": "I-single-round",
+      "variant": "candidate",
+      "triangles": 3049,
+      "drawCalls": 3,
+      "materials": 3,
+      "textures": 3
+    },
+    {
+      "quality": "medium",
+      "name": "A-hip-idle",
+      "variant": "base",
+      "triangles": 3017,
+      "drawCalls": 2,
+      "materials": 1,
+      "textures": 3
+    },
+    {
+      "quality": "medium",
+      "name": "A-hip-idle",
+      "variant": "candidate",
+      "triangles": 3017,
+      "drawCalls": 2,
+      "materials": 2,
+      "textures": 3
+    },
+    {
+      "quality": "medium",
+      "name": "H-muzzle-flash",
+      "variant": "base",
+      "triangles": 3019,
+      "drawCalls": 3,
+      "materials": 2,
+      "textures": 4
+    },
+    {
+      "quality": "medium",
+      "name": "H-muzzle-flash",
+      "variant": "candidate",
+      "triangles": 3019,
+      "drawCalls": 3,
+      "materials": 3,
+      "textures": 4
+    },
+    {
+      "quality": "medium",
+      "name": "E-reload",
+      "variant": "base",
+      "triangles": 3635,
+      "drawCalls": 3,
+      "materials": 1,
+      "textures": 3
+    },
+    {
+      "quality": "medium",
+      "name": "E-reload",
+      "variant": "candidate",
+      "triangles": 3635,
+      "drawCalls": 3,
+      "materials": 2,
+      "textures": 3
+    },
+    {
+      "quality": "medium",
+      "name": "I-single-round",
+      "variant": "base",
+      "triangles": 3049,
+      "drawCalls": 3,
+      "materials": 2,
+      "textures": 3
+    },
+    {
+      "quality": "medium",
+      "name": "I-single-round",
+      "variant": "candidate",
+      "triangles": 3049,
+      "drawCalls": 3,
+      "materials": 3,
+      "textures": 3
+    },
+    {
+      "quality": "high",
+      "name": "A-hip-idle",
+      "variant": "base",
+      "triangles": 3017,
+      "drawCalls": 2,
+      "materials": 1,
+      "textures": 3
+    },
+    {
+      "quality": "high",
+      "name": "A-hip-idle",
+      "variant": "candidate",
+      "triangles": 3017,
+      "drawCalls": 2,
+      "materials": 2,
+      "textures": 3
+    },
+    {
+      "quality": "high",
+      "name": "H-muzzle-flash",
+      "variant": "base",
+      "triangles": 3019,
+      "drawCalls": 3,
+      "materials": 2,
+      "textures": 4
+    },
+    {
+      "quality": "high",
+      "name": "H-muzzle-flash",
+      "variant": "candidate",
+      "triangles": 3019,
+      "drawCalls": 3,
+      "materials": 3,
+      "textures": 4
+    },
+    {
+      "quality": "high",
+      "name": "E-reload",
+      "variant": "base",
+      "triangles": 3635,
+      "drawCalls": 3,
+      "materials": 1,
+      "textures": 3
+    },
+    {
+      "quality": "high",
+      "name": "E-reload",
+      "variant": "candidate",
+      "triangles": 3635,
+      "drawCalls": 3,
+      "materials": 2,
+      "textures": 3
+    },
+    {
+      "quality": "high",
+      "name": "I-single-round",
+      "variant": "base",
+      "triangles": 3049,
+      "drawCalls": 3,
+      "materials": 2,
+      "textures": 3
+    },
+    {
+      "quality": "high",
+      "name": "I-single-round",
+      "variant": "candidate",
+      "triangles": 3049,
+      "drawCalls": 3,
+      "materials": 3,
+      "textures": 3
+    }
+  ],
+  "clipping": [
+    {
+      "quality": "low",
+      "name": "A-hip-idle",
+      "variant": "base",
+      "verticesBehindNear": 186,
+      "maximumZ": 0.1534913799279392
+    },
+    {
+      "quality": "low",
+      "name": "A-hip-idle",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10585544896090049
+    },
+    {
+      "quality": "low",
+      "name": "B-ADS",
+      "variant": "base",
+      "verticesBehindNear": 179,
+      "maximumZ": 0.13349137962991597
+    },
+    {
+      "quality": "low",
+      "name": "B-ADS",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10722773569184713
+    },
+    {
+      "quality": "low",
+      "name": "H-muzzle-flash",
+      "variant": "base",
+      "verticesBehindNear": 186,
+      "maximumZ": 0.1534913799279392
+    },
+    {
+      "quality": "low",
+      "name": "H-muzzle-flash",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10585544896090049
+    },
+    {
+      "quality": "low",
+      "name": "C-recoil",
+      "variant": "base",
+      "verticesBehindNear": 186,
+      "maximumZ": 0.15502986308054378
+    },
+    {
+      "quality": "low",
+      "name": "C-recoil",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.09523454745543064
+    },
+    {
+      "quality": "low",
+      "name": "D-bolt",
+      "variant": "base",
+      "verticesBehindNear": 184,
+      "maximumZ": 0.1568025459151377
+    },
+    {
+      "quality": "low",
+      "name": "D-bolt",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10585544896048543
+    },
+    {
+      "quality": "low",
+      "name": "E-reload",
+      "variant": "base",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.34941004183135527
+    },
+    {
+      "quality": "low",
+      "name": "E-reload",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.27472862846523294
+    },
+    {
+      "quality": "low",
+      "name": "I-single-round",
+      "variant": "base",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.34968334702316173
+    },
+    {
+      "quality": "low",
+      "name": "I-single-round",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.27472862846523294
+    },
+    {
+      "quality": "low",
+      "name": "F-walk",
+      "variant": "base",
+      "verticesBehindNear": 186,
+      "maximumZ": 0.1534913799279392
+    },
+    {
+      "quality": "low",
+      "name": "F-walk",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10585544896090049
+    },
+    {
+      "quality": "low",
+      "name": "G-run",
+      "variant": "base",
+      "verticesBehindNear": 186,
+      "maximumZ": 0.1534913799279392
+    },
+    {
+      "quality": "low",
+      "name": "G-run",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10585544896090046
+    },
+    {
+      "quality": "low",
+      "name": "J-ADS-walk",
+      "variant": "base",
+      "verticesBehindNear": 179,
+      "maximumZ": 0.13349137962991597
+    },
+    {
+      "quality": "low",
+      "name": "J-ADS-walk",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10722773569184713
+    },
+    {
+      "quality": "low",
+      "name": "K-ADS-fire",
+      "variant": "base",
+      "verticesBehindNear": 179,
+      "maximumZ": 0.13502986278252038
+    },
+    {
+      "quality": "low",
+      "name": "K-ADS-fire",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10111142085462321
+    },
+    {
+      "quality": "low",
+      "name": "L-save-restore",
+      "variant": "base",
+      "verticesBehindNear": 179,
+      "maximumZ": 0.13502986278252038
+    },
+    {
+      "quality": "low",
+      "name": "L-save-restore",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10111142085462321
+    },
+    {
+      "quality": "low",
+      "name": "M-checkpoint-restore",
+      "variant": "base",
+      "verticesBehindNear": 186,
+      "maximumZ": 0.1534913799279392
+    },
+    {
+      "quality": "low",
+      "name": "M-checkpoint-restore",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10585544896090046
+    },
+    {
+      "quality": "medium",
+      "name": "A-hip-idle",
+      "variant": "base",
+      "verticesBehindNear": 186,
+      "maximumZ": 0.1534913799279392
+    },
+    {
+      "quality": "medium",
+      "name": "A-hip-idle",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10585544896090049
+    },
+    {
+      "quality": "medium",
+      "name": "B-ADS",
+      "variant": "base",
+      "verticesBehindNear": 179,
+      "maximumZ": 0.13349137962991597
+    },
+    {
+      "quality": "medium",
+      "name": "B-ADS",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10722773569184713
+    },
+    {
+      "quality": "medium",
+      "name": "H-muzzle-flash",
+      "variant": "base",
+      "verticesBehindNear": 186,
+      "maximumZ": 0.1534913799279392
+    },
+    {
+      "quality": "medium",
+      "name": "H-muzzle-flash",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10585544896090049
+    },
+    {
+      "quality": "medium",
+      "name": "C-recoil",
+      "variant": "base",
+      "verticesBehindNear": 186,
+      "maximumZ": 0.15502986308054378
+    },
+    {
+      "quality": "medium",
+      "name": "C-recoil",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.09523454745543064
+    },
+    {
+      "quality": "medium",
+      "name": "D-bolt",
+      "variant": "base",
+      "verticesBehindNear": 184,
+      "maximumZ": 0.1568025459151377
+    },
+    {
+      "quality": "medium",
+      "name": "D-bolt",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10585544896048543
+    },
+    {
+      "quality": "medium",
+      "name": "E-reload",
+      "variant": "base",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.34941004183135527
+    },
+    {
+      "quality": "medium",
+      "name": "E-reload",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.27472862846523294
+    },
+    {
+      "quality": "medium",
+      "name": "I-single-round",
+      "variant": "base",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.34968334702316173
+    },
+    {
+      "quality": "medium",
+      "name": "I-single-round",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.27472862846523294
+    },
+    {
+      "quality": "medium",
+      "name": "F-walk",
+      "variant": "base",
+      "verticesBehindNear": 186,
+      "maximumZ": 0.1534913799279392
+    },
+    {
+      "quality": "medium",
+      "name": "F-walk",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10585544896090049
+    },
+    {
+      "quality": "medium",
+      "name": "G-run",
+      "variant": "base",
+      "verticesBehindNear": 186,
+      "maximumZ": 0.1534913799279392
+    },
+    {
+      "quality": "medium",
+      "name": "G-run",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10585544896090046
+    },
+    {
+      "quality": "medium",
+      "name": "J-ADS-walk",
+      "variant": "base",
+      "verticesBehindNear": 179,
+      "maximumZ": 0.13349137962991597
+    },
+    {
+      "quality": "medium",
+      "name": "J-ADS-walk",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10722773569184713
+    },
+    {
+      "quality": "medium",
+      "name": "K-ADS-fire",
+      "variant": "base",
+      "verticesBehindNear": 179,
+      "maximumZ": 0.13502986278252038
+    },
+    {
+      "quality": "medium",
+      "name": "K-ADS-fire",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10111142085462321
+    },
+    {
+      "quality": "medium",
+      "name": "L-save-restore",
+      "variant": "base",
+      "verticesBehindNear": 179,
+      "maximumZ": 0.13502986278252038
+    },
+    {
+      "quality": "medium",
+      "name": "L-save-restore",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10111142085462321
+    },
+    {
+      "quality": "medium",
+      "name": "M-checkpoint-restore",
+      "variant": "base",
+      "verticesBehindNear": 186,
+      "maximumZ": 0.1534913799279392
+    },
+    {
+      "quality": "medium",
+      "name": "M-checkpoint-restore",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10585544896090046
+    },
+    {
+      "quality": "high",
+      "name": "A-hip-idle",
+      "variant": "base",
+      "verticesBehindNear": 186,
+      "maximumZ": 0.1534913799279392
+    },
+    {
+      "quality": "high",
+      "name": "A-hip-idle",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10585544896090049
+    },
+    {
+      "quality": "high",
+      "name": "B-ADS",
+      "variant": "base",
+      "verticesBehindNear": 179,
+      "maximumZ": 0.13349137962991597
+    },
+    {
+      "quality": "high",
+      "name": "B-ADS",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10722773569184713
+    },
+    {
+      "quality": "high",
+      "name": "H-muzzle-flash",
+      "variant": "base",
+      "verticesBehindNear": 186,
+      "maximumZ": 0.1534913799279392
+    },
+    {
+      "quality": "high",
+      "name": "H-muzzle-flash",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10585544896090049
+    },
+    {
+      "quality": "high",
+      "name": "C-recoil",
+      "variant": "base",
+      "verticesBehindNear": 186,
+      "maximumZ": 0.15502986308054378
+    },
+    {
+      "quality": "high",
+      "name": "C-recoil",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.09523454745543064
+    },
+    {
+      "quality": "high",
+      "name": "D-bolt",
+      "variant": "base",
+      "verticesBehindNear": 184,
+      "maximumZ": 0.1568025459151377
+    },
+    {
+      "quality": "high",
+      "name": "D-bolt",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10585544896048543
+    },
+    {
+      "quality": "high",
+      "name": "E-reload",
+      "variant": "base",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.34941004183135527
+    },
+    {
+      "quality": "high",
+      "name": "E-reload",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.27472862846523294
+    },
+    {
+      "quality": "high",
+      "name": "I-single-round",
+      "variant": "base",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.34968334702316173
+    },
+    {
+      "quality": "high",
+      "name": "I-single-round",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.27472862846523294
+    },
+    {
+      "quality": "high",
+      "name": "F-walk",
+      "variant": "base",
+      "verticesBehindNear": 186,
+      "maximumZ": 0.1534913799279392
+    },
+    {
+      "quality": "high",
+      "name": "F-walk",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10585544896090049
+    },
+    {
+      "quality": "high",
+      "name": "G-run",
+      "variant": "base",
+      "verticesBehindNear": 186,
+      "maximumZ": 0.1534913799279392
+    },
+    {
+      "quality": "high",
+      "name": "G-run",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10585544896090046
+    },
+    {
+      "quality": "high",
+      "name": "J-ADS-walk",
+      "variant": "base",
+      "verticesBehindNear": 179,
+      "maximumZ": 0.13349137962991597
+    },
+    {
+      "quality": "high",
+      "name": "J-ADS-walk",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10722773569184713
+    },
+    {
+      "quality": "high",
+      "name": "K-ADS-fire",
+      "variant": "base",
+      "verticesBehindNear": 179,
+      "maximumZ": 0.13502986278252038
+    },
+    {
+      "quality": "high",
+      "name": "K-ADS-fire",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10111142085462321
+    },
+    {
+      "quality": "high",
+      "name": "L-save-restore",
+      "variant": "base",
+      "verticesBehindNear": 179,
+      "maximumZ": 0.13502986278252038
+    },
+    {
+      "quality": "high",
+      "name": "L-save-restore",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10111142085462321
+    },
+    {
+      "quality": "high",
+      "name": "M-checkpoint-restore",
+      "variant": "base",
+      "verticesBehindNear": 186,
+      "maximumZ": 0.1534913799279392
+    },
+    {
+      "quality": "high",
+      "name": "M-checkpoint-restore",
+      "variant": "candidate",
+      "verticesBehindNear": 0,
+      "maximumZ": -0.10585544896090046
+    }
+  ],
+  "maximumCandidateZ": -0.09523454745543064,
+  "maximumMuzzleFlashDistance": 0
+}

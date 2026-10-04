@@ -1,3 +1,22 @@
+# Estado actual — Wz.29 first-person visual runtime (2026-10-04)
+
+Esta secção prevalece sobre o histórico. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar nem integrar.
+
+- TASK_ID: `M01-FIRST-PERSON-WZ29-VIEWMODEL-VISUAL-RUNTIME-PASS-V1`; solicitado GPT-6.1 Sol HIGH; sem delegação.
+- Base exacta `codex/m01-schema2-determinism-audit` @ `5f3cc34f53c61beec52255d67f8babd7194c9f7f`.
+- Branch `codex/m01-wz29-viewmodel-visual-runtime`; produção congelada em `97298f8ae372b71cffaa854cba13a1b979530293`. HEAD final é o commit de documentação que contém esta secção; confirmar remoto.
+- Produção apenas `src/render/m01-viewmodel.js` e novo `src/render/m01-wz29-presentation.js`. GLB/rig/clips reais, ADS numérico, braços locais, recoil limitado, bob/sprint/breath e material clonado. Gameplay/schema 2/world/MG34/CKM/station intactos; environment PR #41 lido sem merge/edição; main intacto.
+- Erro real encontrado no browser: menu deixava ADS restaurado em 0.670807. Corrigido no boundary de substituição do world, só apresentação, commit `9d91e3be9b0bef1556aa3ffa1d47ed6a11edd386`.
+- Evidência final fonte 97298f8: 78 capturas reais, 13 pares a 1280×720, LOW/MEDIUM/HIGH, zero erros; ADS 0.521518/8.691911 px → <0.000001 px; flash/socket 0 m; zero near violations nos 39 samples candidatos e 560 samples Node. 600 ticks gameplay exactos; 132 ficheiros protegidos byte-identical.
+- Histórico de validação corrigida em 9d91e3: Node 257/257, browser 39/39, retries/skips/falhas/flaky=0. Logs desta execução são explicitamente anteriores ao último ajuste das mangas. Fonte 97298f8 passou 15 testes focados e captura final. Os quatro comandos obrigatórios serão repetidos no HEAD publicado deste handoff; resultados exactos no encerramento da tarefa, não inferir a partir dos logs anteriores.
+- Handoff: `docs/verification/m01-runtime/wz29-viewmodel-2026-10-04/HANDOFF.md`; audit, métricas, pares e falha inicial preservados na mesma pasta.
+- LOCAL Chromium/SwiftShader. FPS EM CHROMEBOOK NÃO MEDIDO. Mãos facetadas/alça simplificada e revisão artística/device continuam limites. Não afirmar perfeição histórica, qualidade comercial ou zero auto-intersecções universais.
+- Recomendação depende dos checks finais: READY_FOR_CAPTAIN_REVIEW se verdes. Depois parar. Não integrar, modificar PR #41, tocar main ou ampliar escopo.
+
+---
+
+## Histórico anterior
+
 # Estado actual — auditoria de determinismo schema 2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a MG34 aprovada nem Graphify.

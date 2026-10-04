@@ -1,0 +1,1768 @@
+{
+  "landmarks": {
+    "rear": [
+      0,
+      0.056,
+      -0.29
+    ],
+    "front": [
+      0,
+      0.065,
+      -0.752
+    ],
+    "muzzle": [
+      0,
+      0.032,
+      -0.765
+    ]
+  },
+  "source": "real GLB / official GLTFLoader, textures omitted only in Node",
+  "lods": [
+    {
+      "lod": 0,
+      "clips": [
+        {
+          "name": "aim",
+          "duration": 2,
+          "metadata": {
+            "fps": 30,
+            "loop": true,
+            "pose": "standing"
+          }
+        },
+        {
+          "name": "fire_bolt",
+          "duration": 1.1699999570846558,
+          "metadata": {
+            "fps": 30,
+            "loop": false,
+            "pose": "standing",
+            "events": {
+              "fire": 0,
+              "eject": 0.6,
+              "chambered": 1
+            }
+          }
+        },
+        {
+          "name": "reload_clip",
+          "duration": 3.4000000953674316,
+          "metadata": {
+            "fps": 30,
+            "loop": false,
+            "pose": "standing",
+            "events": {
+              "bolt_open": 0.45,
+              "clip_in_guide": 1,
+              "rounds_stripped": 2.1,
+              "bolt_closed": 2.7,
+              "clip_ejected": 2.45
+            }
+          }
+        }
+      ],
+      "samples": [
+        {
+          "name": "hip_idle",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                0.15952085627504603,
+                -0.23798560035770136,
+                -0.6199999899990517
+              ],
+              "front": [
+                0.1600598869045155,
+                -0.22900175674928444,
+                -1.0819999899990518
+              ],
+              "muzzle": [
+                0.15808344126312746,
+                -0.2619425166468132,
+                -1.0949999899990517
+              ]
+            },
+            "projected": {
+              "rear": [
+                0.26109367196740924,
+                -0.6924796694156236,
+                0.9127897536588853
+              ],
+              "front": [
+                0.15011559271791677,
+                -0.3818208031749809,
+                0.9543187280630684
+              ],
+              "muzzle": [
+                0.14650175340464883,
+                -0.4315587337742717,
+                0.9549803808558802
+              ]
+            },
+            "horizontalPixels": 71.02597071967517,
+            "verticalPixels": 111.83719184663136,
+            "centerHorizontalPixels": 96.07397933946673,
+            "centerVerticalPixels": 137.45548914299312,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 1148,
+              "maxZ": 0.1534913799279392,
+              "nearViolations": 72,
+              "triangles": 1603
+            },
+            "rifle": {
+              "vertices": 1258,
+              "maxZ": 0.010924794542078342,
+              "nearViolations": 114,
+              "triangles": 1414
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "aim",
+            "clipTime": 0,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603
+          }
+        },
+        {
+          "name": "ADS_idle",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                -0.00047914372495397057,
+                -0.007985600357701385,
+                -0.6399999899990517
+              ],
+              "front": [
+                0.000059886904515492334,
+                0.0009982432507155414,
+                -1.1019999899990518
+              ],
+              "muzzle": [
+                -0.0019165587368725385,
+                -0.031942516646813204,
+                -1.1149999899990517
+              ]
+            },
+            "projected": {
+              "rear": [
+                -0.0007597249584636634,
+                -0.022510007226448876,
+                0.9158291442562988
+              ],
+              "front": [
+                0.000055146865345751344,
+                0.0016341910272338308,
+                0.9553301894732134
+              ],
+              "muzzle": [
+                -0.00174428652819613,
+                -0.051682355131189246,
+                0.9559681812306665
+              ]
+            },
+            "horizontalPixels": 0.5215179672380255,
+            "verticalPixels": 8.691911371325775,
+            "centerHorizontalPixels": 0.03529399382128086,
+            "centerVerticalPixels": 0.5883087698041791,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 1148,
+              "maxZ": 0.13349137962991597,
+              "nearViolations": 69,
+              "triangles": 1603
+            },
+            "rifle": {
+              "vertices": 1258,
+              "maxZ": -0.009075205457921676,
+              "nearViolations": 110,
+              "triangles": 1414
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "aim",
+            "clipTime": 0,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603
+          }
+        },
+        {
+          "name": "hip_walk",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                0.15952085627504603,
+                -0.22546964706729358,
+                -0.6199999899990517
+              ],
+              "front": [
+                0.1600598869045155,
+                -0.21648580345887666,
+                -1.0819999899990518
+              ],
+              "muzzle": [
+                0.15808344126312746,
+                -0.2494265633564054,
+                -1.0949999899990517
+              ]
+            },
+            "projected": {
+              "rear": [
+                0.26109367196740924,
+                -0.6560613181206878,
+                0.9127897536588853
+              ],
+              "front": [
+                0.15011559271791677,
+                -0.36095261680959845,
+                0.9543187280630684
+              ],
+              "muzzle": [
+                0.14650175340464883,
+                -0.41093829756891453,
+                0.9549803808558802
+              ]
+            },
+            "horizontalPixels": 71.02597071967517,
+            "verticalPixels": 106.23913247199216,
+            "centerHorizontalPixels": 96.07397933946673,
+            "centerVerticalPixels": 129.94294205145545,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 1148,
+              "maxZ": 0.1534913799279392,
+              "nearViolations": 72,
+              "triangles": 1603
+            },
+            "rifle": {
+              "vertices": 1258,
+              "maxZ": 0.010924794542078342,
+              "nearViolations": 114,
+              "triangles": 1414
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "aim",
+            "clipTime": 0,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603
+          }
+        },
+        {
+          "name": "hip_run",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                0.008225696207150477,
+                -0.21110890974685287,
+                -0.6199999899990517
+              ],
+              "front": [
+                0.007865146126635997,
+                -0.20211613466685444,
+                -1.0819999899990518
+              ],
+              "muzzle": [
+                0.009187163088522422,
+                -0.2350896432935154,
+                -1.0949999899990517
+              ]
+            },
+            "projected": {
+              "rear": [
+                0.013463300519841,
+                -0.6142750982095823,
+                0.9127897536588853
+              ],
+              "front": [
+                0.0073764957319839355,
+                -0.33699368061010343,
+                0.9543187280630684
+              ],
+              "muzzle": [
+                0.00851408275609787,
+                -0.38731775994956263,
+                0.9549803808558802
+              ]
+            },
+            "horizontalPixels": 3.895555064228521,
+            "verticalPixels": 99.82131033581238,
+            "centerHorizontalPixels": 4.720957268469719,
+            "centerVerticalPixels": 121.31772501963724,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 1148,
+              "maxZ": 0.1534913799279392,
+              "nearViolations": 72,
+              "triangles": 1603
+            },
+            "rifle": {
+              "vertices": 1258,
+              "maxZ": 0.010924794542078342,
+              "nearViolations": 114,
+              "triangles": 1414
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "aim",
+            "clipTime": 0,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603
+          }
+        },
+        {
+          "name": "hip_fire",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                0.15951981808623322,
+                -0.20685196138782813,
+                -0.5971548940214577
+              ],
+              "front": [
+                0.16005995630955652,
+                -0.16793823083807788,
+                -1.0576007972776396
+              ],
+              "muzzle": [
+                0.1580793163934473,
+                -0.1999667381754624,
+                -1.0727088012246149
+              ]
+            },
+            "projected": {
+              "rear": [
+                0.2710804551704916,
+                -0.6249146081716502,
+                0.9090689009543584
+              ],
+              "front": [
+                0.15357887462662137,
+                -0.2864678138930655,
+                0.9530329837836111
+              ],
+              "muzzle": [
+                0.14954219869128585,
+                -0.3362977396312552,
+                0.953836013553703
+              ]
+            },
+            "horizontalPixels": 75.20101154807696,
+            "verticalPixels": 121.84084594029049,
+            "centerHorizontalPixels": 98.29047976103767,
+            "centerVerticalPixels": 103.12841300150359,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 1148,
+              "maxZ": 0.15505976403082156,
+              "nearViolations": 72,
+              "triangles": 1603
+            },
+            "rifle": {
+              "vertices": 1258,
+              "maxZ": 0.027579321000190338,
+              "nearViolations": 114,
+              "triangles": 1414
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "fire_bolt",
+            "clipTime": 0.058499997854232794,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603
+          }
+        },
+        {
+          "name": "ADS_fire",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                -0.00048018191376678065,
+                0.02314803861217185,
+                -0.6171548940214577
+              ],
+              "front": [
+                0.00005995630955651877,
+                0.0620617691619221,
+                -1.0776007972776396
+              ],
+              "muzzle": [
+                -0.0019206836065526907,
+                0.030033261824537583,
+                -1.092708801224615
+              ]
+            },
+            "projected": {
+              "rear": [
+                -0.0007895546167180076,
+                0.06766561766222164,
+                0.9123413808870353
+              ],
+              "front": [
+                0.000056460867366623395,
+                0.10389969609116034,
+                0.9540912099396556
+              ],
+              "muzzle": [
+                -0.0017837005445745532,
+                0.04958451740968319,
+                0.9548649105048317
+              ]
+            },
+            "horizontalPixels": 0.5414499098141639,
+            "verticalPixels": 13.044268234417935,
+            "centerHorizontalPixels": 0.036134955114638975,
+            "centerVerticalPixels": 37.403890592817724,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 1148,
+              "maxZ": 0.13505976373279832,
+              "nearViolations": 69,
+              "triangles": 1603
+            },
+            "rifle": {
+              "vertices": 1258,
+              "maxZ": 0.00757932100019032,
+              "nearViolations": 110,
+              "triangles": 1414
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "fire_bolt",
+            "clipTime": 0.058499997854232794,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603
+          }
+        },
+        {
+          "name": "bolt",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                0.15952085632085586,
+                -0.23798560035907443,
+                -0.6199999899990517
+              ],
+              "front": [
+                0.1600598869576876,
+                -0.22900175675087817,
+                -1.0819999899990518
+              ],
+              "muzzle": [
+                0.15808344128930452,
+                -0.26194251664759777,
+                -1.0949999899990517
+              ]
+            },
+            "projected": {
+              "rear": [
+                0.26109367204238787,
+                -0.692479669419619,
+                0.9127897536588853
+              ],
+              "front": [
+                0.15011559276778536,
+                -0.38182080317763817,
+                0.9543187280630684
+              ],
+              "muzzle": [
+                0.1465017534289081,
+                -0.4315587337755643,
+                0.9549803808558802
+              ]
+            },
+            "horizontalPixels": 71.0259707357456,
+            "verticalPixels": 111.8371918471131,
+            "centerHorizontalPixels": 96.07397937138262,
+            "centerVerticalPixels": 137.45548914394973,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 1148,
+              "maxZ": 0.15848526369985963,
+              "nearViolations": 76,
+              "triangles": 1603
+            },
+            "rifle": {
+              "vertices": 1258,
+              "maxZ": 0.010924794542078342,
+              "nearViolations": 114,
+              "triangles": 1414
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "fire_bolt",
+            "clipTime": 0.6434999763965608,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603
+          }
+        },
+        {
+          "name": "reload_0.1",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                0.049830628615533556,
+                0.014874799708205266,
+                -0.7852424131285605
+              ],
+              "front": [
+                -0.04813387078666981,
+                0.4397340792420552,
+                -0.9382866777683092
+              ],
+              "muzzle": [
+                -0.06835772272570984,
+                0.43803017240300757,
+                -0.9673743466816214
+              ]
+            },
+            "projected": {
+              "rear": [
+                0.06439663486010767,
+                0.034173967904744744,
+                0.9332567585341609
+              ],
+              "front": [
+                -0.05205779803392409,
+                0.8454785700035973,
+                0.9457825717011225
+              ],
+              "muzzle": [
+                -0.0717073340039124,
+                0.8168785454932859,
+                0.9477150159416999
+              ]
+            },
+            "horizontalPixels": 74.53083705218033,
+            "verticalPixels": 292.06965675558695,
+            "centerHorizontalPixels": 33.316990741711415,
+            "centerVerticalPixels": 304.372285201295,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 1148,
+              "maxZ": -0.30459737104959084,
+              "nearViolations": 0,
+              "triangles": 1603
+            },
+            "rifle": {
+              "vertices": 1258,
+              "maxZ": -0.5909266469754102,
+              "nearViolations": 0,
+              "triangles": 1414
+            },
+            "clip": {
+              "vertices": 470,
+              "maxZ": -0.7024335004762232,
+              "nearViolations": 0,
+              "triangles": 618
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "reload_clip",
+            "clipTime": 0.3400000095367432,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603
+          }
+        },
+        {
+          "name": "reload_0.4",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                0.049830628615533584,
+                0.014874799708205266,
+                -0.7852424131285605
+              ],
+              "front": [
+                -0.04813387078666978,
+                0.4397340792420552,
+                -0.9382866777683092
+              ],
+              "muzzle": [
+                -0.06835772272570981,
+                0.43803017240300757,
+                -0.9673743466816214
+              ]
+            },
+            "projected": {
+              "rear": [
+                0.0643966348601077,
+                0.034173967904744744,
+                0.9332567585341609
+              ],
+              "front": [
+                -0.05205779803392406,
+                0.8454785700035973,
+                0.9457825717011225
+              ],
+              "muzzle": [
+                -0.07170733400391237,
+                0.8168785454932859,
+                0.9477150159416999
+              ]
+            },
+            "horizontalPixels": 74.53083705218033,
+            "verticalPixels": 292.06965675558695,
+            "centerHorizontalPixels": 33.3169907417114,
+            "centerVerticalPixels": 304.372285201295,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 1148,
+              "maxZ": -0.3494259238119739,
+              "nearViolations": 0,
+              "triangles": 1603
+            },
+            "rifle": {
+              "vertices": 1258,
+              "maxZ": -0.5909266469754102,
+              "nearViolations": 0,
+              "triangles": 1414
+            },
+            "clip": {
+              "vertices": 470,
+              "maxZ": -0.6837877446344595,
+              "nearViolations": 0,
+              "triangles": 618
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "reload_clip",
+            "clipTime": 1.3600000381469728,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603
+          }
+        },
+        {
+          "name": "reload_0.7",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                0.049830628615533584,
+                0.014874799708205266,
+                -0.7852424131285605
+              ],
+              "front": [
+                -0.04813387078666978,
+                0.4397340792420552,
+                -0.9382866777683092
+              ],
+              "muzzle": [
+                -0.06835772272570981,
+                0.43803017240300757,
+                -0.9673743466816214
+              ]
+            },
+            "projected": {
+              "rear": [
+                0.0643966348601077,
+                0.034173967904744744,
+                0.9332567585341609
+              ],
+              "front": [
+                -0.05205779803392406,
+                0.8454785700035973,
+                0.9457825717011225
+              ],
+              "muzzle": [
+                -0.07170733400391237,
+                0.8168785454932859,
+                0.9477150159416999
+              ]
+            },
+            "horizontalPixels": 74.53083705218033,
+            "verticalPixels": 292.06965675558695,
+            "centerHorizontalPixels": 33.3169907417114,
+            "centerVerticalPixels": 304.372285201295,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 1148,
+              "maxZ": -0.3071535928642972,
+              "nearViolations": 0,
+              "triangles": 1603
+            },
+            "rifle": {
+              "vertices": 1258,
+              "maxZ": -0.5909266469754102,
+              "nearViolations": 0,
+              "triangles": 1414
+            },
+            "clip": {
+              "vertices": 470,
+              "maxZ": -0.7081945157621811,
+              "nearViolations": 0,
+              "triangles": 618
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "reload_clip",
+            "clipTime": 2.380000066757202,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603
+          }
+        },
+        {
+          "name": "single_round",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                0.049830628615533584,
+                0.014874799708205266,
+                -0.7852424131285605
+              ],
+              "front": [
+                -0.04813387078666978,
+                0.4397340792420552,
+                -0.9382866777683092
+              ],
+              "muzzle": [
+                -0.06835772272570981,
+                0.43803017240300757,
+                -0.9673743466816214
+              ]
+            },
+            "projected": {
+              "rear": [
+                0.0643966348601077,
+                0.034173967904744744,
+                0.9332567585341609
+              ],
+              "front": [
+                -0.05205779803392406,
+                0.8454785700035973,
+                0.9457825717011225
+              ],
+              "muzzle": [
+                -0.07170733400391237,
+                0.8168785454932859,
+                0.9477150159416999
+              ]
+            },
+            "horizontalPixels": 74.53083705218033,
+            "verticalPixels": 292.06965675558695,
+            "centerHorizontalPixels": 33.3169907417114,
+            "centerVerticalPixels": 304.372285201295,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "singleRound": {
+              "vertices": 52,
+              "maxZ": -0.7056617303457265,
+              "nearViolations": 0,
+              "triangles": 32
+            },
+            "body": {
+              "vertices": 1148,
+              "maxZ": -0.3494259238119739,
+              "nearViolations": 0,
+              "triangles": 1603
+            },
+            "rifle": {
+              "vertices": 1258,
+              "maxZ": -0.5909266469754102,
+              "nearViolations": 0,
+              "triangles": 1414
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "reload_clip",
+            "clipTime": 1.3600000381469728,
+            "carrying": false,
+            "singleRound": true,
+            "armTriangles": 1603
+          }
+        }
+      ]
+    },
+    {
+      "lod": 1,
+      "clips": [
+        {
+          "name": "aim",
+          "duration": 2,
+          "metadata": {
+            "fps": 30,
+            "loop": true,
+            "pose": "standing"
+          }
+        },
+        {
+          "name": "fire_bolt",
+          "duration": 1.1699999570846558,
+          "metadata": {
+            "fps": 30,
+            "loop": false,
+            "pose": "standing",
+            "events": {
+              "fire": 0,
+              "eject": 0.6,
+              "chambered": 1
+            }
+          }
+        },
+        {
+          "name": "reload_clip",
+          "duration": 3.4000000953674316,
+          "metadata": {
+            "fps": 30,
+            "loop": false,
+            "pose": "standing",
+            "events": {
+              "bolt_open": 0.45,
+              "clip_in_guide": 1,
+              "rounds_stripped": 2.1,
+              "bolt_closed": 2.7,
+              "clip_ejected": 2.45
+            }
+          }
+        }
+      ],
+      "samples": [
+        {
+          "name": "hip_idle",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                0.15952085627504603,
+                -0.23798560035770136,
+                -0.6199999899990517
+              ],
+              "front": [
+                0.1600598869045155,
+                -0.22900175674928444,
+                -1.0819999899990518
+              ],
+              "muzzle": [
+                0.15808344126312746,
+                -0.2619425166468132,
+                -1.0949999899990517
+              ]
+            },
+            "projected": {
+              "rear": [
+                0.26109367196740924,
+                -0.6924796694156236,
+                0.9127897536588853
+              ],
+              "front": [
+                0.15011559271791677,
+                -0.3818208031749809,
+                0.9543187280630684
+              ],
+              "muzzle": [
+                0.14650175340464883,
+                -0.4315587337742717,
+                0.9549803808558802
+              ]
+            },
+            "horizontalPixels": 71.02597071967517,
+            "verticalPixels": 111.83719184663136,
+            "centerHorizontalPixels": 96.07397933946673,
+            "centerVerticalPixels": 137.45548914299312,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 473,
+              "maxZ": 0.14995398307382157,
+              "nearViolations": 17,
+              "triangles": 476
+            },
+            "rifle": {
+              "vertices": 943,
+              "maxZ": 0.00843872951198038,
+              "nearViolations": 98,
+              "triangles": 846
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 1,
+            "clip": "aim",
+            "clipTime": 0,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 476
+          }
+        },
+        {
+          "name": "ADS_idle",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                -0.00047914372495397057,
+                -0.007985600357701385,
+                -0.6399999899990517
+              ],
+              "front": [
+                0.000059886904515492334,
+                0.0009982432507155414,
+                -1.1019999899990518
+              ],
+              "muzzle": [
+                -0.0019165587368725385,
+                -0.031942516646813204,
+                -1.1149999899990517
+              ]
+            },
+            "projected": {
+              "rear": [
+                -0.0007597249584636634,
+                -0.022510007226448876,
+                0.9158291442562988
+              ],
+              "front": [
+                0.000055146865345751344,
+                0.0016341910272338308,
+                0.9553301894732134
+              ],
+              "muzzle": [
+                -0.00174428652819613,
+                -0.051682355131189246,
+                0.9559681812306665
+              ]
+            },
+            "horizontalPixels": 0.5215179672380255,
+            "verticalPixels": 8.691911371325775,
+            "centerHorizontalPixels": 0.03529399382128086,
+            "centerVerticalPixels": 0.5883087698041791,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 473,
+              "maxZ": 0.12995398277579834,
+              "nearViolations": 16,
+              "triangles": 476
+            },
+            "rifle": {
+              "vertices": 943,
+              "maxZ": -0.011561270488019637,
+              "nearViolations": 98,
+              "triangles": 846
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 1,
+            "clip": "aim",
+            "clipTime": 0,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 476
+          }
+        },
+        {
+          "name": "hip_walk",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                0.15952085627504603,
+                -0.22546964706729358,
+                -0.6199999899990517
+              ],
+              "front": [
+                0.1600598869045155,
+                -0.21648580345887666,
+                -1.0819999899990518
+              ],
+              "muzzle": [
+                0.15808344126312746,
+                -0.2494265633564054,
+                -1.0949999899990517
+              ]
+            },
+            "projected": {
+              "rear": [
+                0.26109367196740924,
+                -0.6560613181206878,
+                0.9127897536588853
+              ],
+              "front": [
+                0.15011559271791677,
+                -0.36095261680959845,
+                0.9543187280630684
+              ],
+              "muzzle": [
+                0.14650175340464883,
+                -0.41093829756891453,
+                0.9549803808558802
+              ]
+            },
+            "horizontalPixels": 71.02597071967517,
+            "verticalPixels": 106.23913247199216,
+            "centerHorizontalPixels": 96.07397933946673,
+            "centerVerticalPixels": 129.94294205145545,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 473,
+              "maxZ": 0.14995398307382157,
+              "nearViolations": 17,
+              "triangles": 476
+            },
+            "rifle": {
+              "vertices": 943,
+              "maxZ": 0.00843872951198038,
+              "nearViolations": 98,
+              "triangles": 846
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 1,
+            "clip": "aim",
+            "clipTime": 0,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 476
+          }
+        },
+        {
+          "name": "hip_run",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                0.008225696207150477,
+                -0.21110890974685287,
+                -0.6199999899990517
+              ],
+              "front": [
+                0.007865146126635997,
+                -0.20211613466685444,
+                -1.0819999899990518
+              ],
+              "muzzle": [
+                0.009187163088522422,
+                -0.2350896432935154,
+                -1.0949999899990517
+              ]
+            },
+            "projected": {
+              "rear": [
+                0.013463300519841,
+                -0.6142750982095823,
+                0.9127897536588853
+              ],
+              "front": [
+                0.0073764957319839355,
+                -0.33699368061010343,
+                0.9543187280630684
+              ],
+              "muzzle": [
+                0.00851408275609787,
+                -0.38731775994956263,
+                0.9549803808558802
+              ]
+            },
+            "horizontalPixels": 3.895555064228521,
+            "verticalPixels": 99.82131033581238,
+            "centerHorizontalPixels": 4.720957268469719,
+            "centerVerticalPixels": 121.31772501963724,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 473,
+              "maxZ": 0.14995398307382157,
+              "nearViolations": 17,
+              "triangles": 476
+            },
+            "rifle": {
+              "vertices": 943,
+              "maxZ": 0.00843872951198038,
+              "nearViolations": 98,
+              "triangles": 846
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 1,
+            "clip": "aim",
+            "clipTime": 0,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 476
+          }
+        },
+        {
+          "name": "hip_fire",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                0.15951981808623322,
+                -0.20685196138782813,
+                -0.5971548940214577
+              ],
+              "front": [
+                0.16005995630955652,
+                -0.16793823083807788,
+                -1.0576007972776396
+              ],
+              "muzzle": [
+                0.1580793163934473,
+                -0.1999667381754624,
+                -1.0727088012246149
+              ]
+            },
+            "projected": {
+              "rear": [
+                0.2710804551704916,
+                -0.6249146081716502,
+                0.9090689009543584
+              ],
+              "front": [
+                0.15357887462662137,
+                -0.2864678138930655,
+                0.9530329837836111
+              ],
+              "muzzle": [
+                0.14954219869128585,
+                -0.3362977396312552,
+                0.953836013553703
+              ]
+            },
+            "horizontalPixels": 75.20101154807696,
+            "verticalPixels": 121.84084594029049,
+            "centerHorizontalPixels": 98.29047976103767,
+            "centerVerticalPixels": 103.12841300150359,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 473,
+              "maxZ": 0.15108480232647398,
+              "nearViolations": 17,
+              "triangles": 476
+            },
+            "rifle": {
+              "vertices": 943,
+              "maxZ": 0.027579321000190338,
+              "nearViolations": 98,
+              "triangles": 846
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 1,
+            "clip": "fire_bolt",
+            "clipTime": 0.058499997854232794,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 476
+          }
+        },
+        {
+          "name": "ADS_fire",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                -0.00048018191376678065,
+                0.02314803861217185,
+                -0.6171548940214577
+              ],
+              "front": [
+                0.00005995630955651877,
+                0.0620617691619221,
+                -1.0776007972776396
+              ],
+              "muzzle": [
+                -0.0019206836065526907,
+                0.030033261824537583,
+                -1.092708801224615
+              ]
+            },
+            "projected": {
+              "rear": [
+                -0.0007895546167180076,
+                0.06766561766222164,
+                0.9123413808870353
+              ],
+              "front": [
+                0.000056460867366623395,
+                0.10389969609116034,
+                0.9540912099396556
+              ],
+              "muzzle": [
+                -0.0017837005445745532,
+                0.04958451740968319,
+                0.9548649105048317
+              ]
+            },
+            "horizontalPixels": 0.5414499098141639,
+            "verticalPixels": 13.044268234417935,
+            "centerHorizontalPixels": 0.036134955114638975,
+            "centerVerticalPixels": 37.403890592817724,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 473,
+              "maxZ": 0.13108480202845074,
+              "nearViolations": 16,
+              "triangles": 476
+            },
+            "rifle": {
+              "vertices": 943,
+              "maxZ": 0.00757932100019032,
+              "nearViolations": 98,
+              "triangles": 846
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 1,
+            "clip": "fire_bolt",
+            "clipTime": 0.058499997854232794,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 476
+          }
+        },
+        {
+          "name": "bolt",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                0.15952085632085586,
+                -0.23798560035907443,
+                -0.6199999899990517
+              ],
+              "front": [
+                0.1600598869576876,
+                -0.22900175675087817,
+                -1.0819999899990518
+              ],
+              "muzzle": [
+                0.15808344128930452,
+                -0.26194251664759777,
+                -1.0949999899990517
+              ]
+            },
+            "projected": {
+              "rear": [
+                0.26109367204238787,
+                -0.692479669419619,
+                0.9127897536588853
+              ],
+              "front": [
+                0.15011559276778536,
+                -0.38182080317763817,
+                0.9543187280630684
+              ],
+              "muzzle": [
+                0.1465017534289081,
+                -0.4315587337755643,
+                0.9549803808558802
+              ]
+            },
+            "horizontalPixels": 71.0259707357456,
+            "verticalPixels": 111.8371918471131,
+            "centerHorizontalPixels": 96.07397937138262,
+            "centerVerticalPixels": 137.45548914394973,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 473,
+              "maxZ": 0.15848526369985963,
+              "nearViolations": 18,
+              "triangles": 476
+            },
+            "rifle": {
+              "vertices": 943,
+              "maxZ": 0.00843872951198038,
+              "nearViolations": 98,
+              "triangles": 846
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 1,
+            "clip": "fire_bolt",
+            "clipTime": 0.6434999763965608,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 476
+          }
+        },
+        {
+          "name": "reload_0.1",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                0.049830628615533556,
+                0.014874799708205266,
+                -0.7852424131285605
+              ],
+              "front": [
+                -0.04813387078666981,
+                0.4397340792420552,
+                -0.9382866777683092
+              ],
+              "muzzle": [
+                -0.06835772272570984,
+                0.43803017240300757,
+                -0.9673743466816214
+              ]
+            },
+            "projected": {
+              "rear": [
+                0.06439663486010767,
+                0.034173967904744744,
+                0.9332567585341609
+              ],
+              "front": [
+                -0.05205779803392409,
+                0.8454785700035973,
+                0.9457825717011225
+              ],
+              "muzzle": [
+                -0.0717073340039124,
+                0.8168785454932859,
+                0.9477150159416999
+              ]
+            },
+            "horizontalPixels": 74.53083705218033,
+            "verticalPixels": 292.06965675558695,
+            "centerHorizontalPixels": 33.316990741711415,
+            "centerVerticalPixels": 304.372285201295,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 473,
+              "maxZ": -0.3095858508778251,
+              "nearViolations": 0,
+              "triangles": 476
+            },
+            "rifle": {
+              "vertices": 943,
+              "maxZ": -0.5909266469754102,
+              "nearViolations": 0,
+              "triangles": 846
+            },
+            "clip": {
+              "vertices": 298,
+              "maxZ": -0.7024335004762232,
+              "nearViolations": 0,
+              "triangles": 294
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 1,
+            "clip": "reload_clip",
+            "clipTime": 0.3400000095367432,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 476
+          }
+        },
+        {
+          "name": "reload_0.4",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                0.049830628615533584,
+                0.014874799708205266,
+                -0.7852424131285605
+              ],
+              "front": [
+                -0.04813387078666978,
+                0.4397340792420552,
+                -0.9382866777683092
+              ],
+              "muzzle": [
+                -0.06835772272570981,
+                0.43803017240300757,
+                -0.9673743466816214
+              ]
+            },
+            "projected": {
+              "rear": [
+                0.0643966348601077,
+                0.034173967904744744,
+                0.9332567585341609
+              ],
+              "front": [
+                -0.05205779803392406,
+                0.8454785700035973,
+                0.9457825717011225
+              ],
+              "muzzle": [
+                -0.07170733400391237,
+                0.8168785454932859,
+                0.9477150159416999
+              ]
+            },
+            "horizontalPixels": 74.53083705218033,
+            "verticalPixels": 292.06965675558695,
+            "centerHorizontalPixels": 33.3169907417114,
+            "centerVerticalPixels": 304.372285201295,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 473,
+              "maxZ": -0.3494259238119739,
+              "nearViolations": 0,
+              "triangles": 476
+            },
+            "rifle": {
+              "vertices": 943,
+              "maxZ": -0.5909266469754102,
+              "nearViolations": 0,
+              "triangles": 846
+            },
+            "clip": {
+              "vertices": 298,
+              "maxZ": -0.6837877446344595,
+              "nearViolations": 0,
+              "triangles": 294
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 1,
+            "clip": "reload_clip",
+            "clipTime": 1.3600000381469728,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 476
+          }
+        },
+        {
+          "name": "reload_0.7",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                0.049830628615533584,
+                0.014874799708205266,
+                -0.7852424131285605
+              ],
+              "front": [
+                -0.04813387078666978,
+                0.4397340792420552,
+                -0.9382866777683092
+              ],
+              "muzzle": [
+                -0.06835772272570981,
+                0.43803017240300757,
+                -0.9673743466816214
+              ]
+            },
+            "projected": {
+              "rear": [
+                0.0643966348601077,
+                0.034173967904744744,
+                0.9332567585341609
+              ],
+              "front": [
+                -0.05205779803392406,
+                0.8454785700035973,
+                0.9457825717011225
+              ],
+              "muzzle": [
+                -0.07170733400391237,
+                0.8168785454932859,
+                0.9477150159416999
+              ]
+            },
+            "horizontalPixels": 74.53083705218033,
+            "verticalPixels": 292.06965675558695,
+            "centerHorizontalPixels": 33.3169907417114,
+            "centerVerticalPixels": 304.372285201295,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "body": {
+              "vertices": 473,
+              "maxZ": -0.3131553035411643,
+              "nearViolations": 0,
+              "triangles": 476
+            },
+            "rifle": {
+              "vertices": 943,
+              "maxZ": -0.5909266469754102,
+              "nearViolations": 0,
+              "triangles": 846
+            },
+            "clip": {
+              "vertices": 298,
+              "maxZ": -0.7081945157621811,
+              "nearViolations": 0,
+              "triangles": 294
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 1,
+            "clip": "reload_clip",
+            "clipTime": 2.380000066757202,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 476
+          }
+        },
+        {
+          "name": "single_round",
+          "alignment": {
+            "cameraForward": [
+              0,
+              0,
+              -1
+            ],
+            "points": {
+              "rear": [
+                0.049830628615533584,
+                0.014874799708205266,
+                -0.7852424131285605
+              ],
+              "front": [
+                -0.04813387078666978,
+                0.4397340792420552,
+                -0.9382866777683092
+              ],
+              "muzzle": [
+                -0.06835772272570981,
+                0.43803017240300757,
+                -0.9673743466816214
+              ]
+            },
+            "projected": {
+              "rear": [
+                0.0643966348601077,
+                0.034173967904744744,
+                0.9332567585341609
+              ],
+              "front": [
+                -0.05205779803392406,
+                0.8454785700035973,
+                0.9457825717011225
+              ],
+              "muzzle": [
+                -0.07170733400391237,
+                0.8168785454932859,
+                0.9477150159416999
+              ]
+            },
+            "horizontalPixels": 74.53083705218033,
+            "verticalPixels": 292.06965675558695,
+            "centerHorizontalPixels": 33.3169907417114,
+            "centerVerticalPixels": 304.372285201295,
+            "muzzleFlashDistance": 0
+          },
+          "geometry": {
+            "singleRound": {
+              "vertices": 52,
+              "maxZ": -0.7056617303457265,
+              "nearViolations": 0,
+              "triangles": 32
+            },
+            "body": {
+              "vertices": 473,
+              "maxZ": -0.3494259238119739,
+              "nearViolations": 0,
+              "triangles": 476
+            },
+            "rifle": {
+              "vertices": 943,
+              "maxZ": -0.5909266469754102,
+              "nearViolations": 0,
+              "triangles": 846
+            }
+          },
+          "stats": {
+            "active": true,
+            "visible": true,
+            "lod": 1,
+            "clip": "reload_clip",
+            "clipTime": 1.3600000381469728,
+            "carrying": false,
+            "singleRound": true,
+            "armTriangles": 476
+          }
+        }
+      ]
+    }
+  ]
+}

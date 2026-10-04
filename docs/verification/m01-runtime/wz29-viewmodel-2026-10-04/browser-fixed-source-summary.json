@@ -1,0 +1,16 @@
+{
+  "kind": "LOCAL full corrected browser suite, before final sleeve-anchor adjustment",
+  "testedProductionSource": "9d91e3be9b0bef1556aa3ffa1d47ed6a11edd386",
+  "sourceBuild": "index-h3hueGyU.js",
+  "exitCode": 0,
+  "stats": {
+    "startTime": "2026-10-04T13:18:03.449Z",
+    "duration": 813188.23,
+    "expected": 39,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "retries": 0,
+  "finalPublishedHeadWillBeRevalidated": true
+}
