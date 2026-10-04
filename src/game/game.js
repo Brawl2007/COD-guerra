@@ -210,6 +210,7 @@ export class Game {
     sectors:this.sim.sectors.sectors.map(s=>({...s})),eventIds:this.isM01?Object.keys(this.sim.consumed):[...this.sim.sectors.consumed],
     ...(this.isM01?{m01:{...this.renderer.m01.diagnostics,battleClock:this.sim.battleClock,weapon:this.sim.weapon.snapshot(),
       checkpoints:[...this.sim.checkpointsReached],flags:{...this.sim.flags},scene:this.sim.scene?.id??null,gate:this.sim.gate,
+      destruction:[...this.sim.destruction],pendingSoundCount:this.pendingSounds.length,
       objectives:structuredClone(this.sim.objectives),parts:this.sim.renderState.parts,enemyAlive:this.sim.enemies.filter(a=>a.alive).length,
       threat:this.sim.threat,stationEvacuation:this.sim.stationEvacuation,hudStatus:this.hud?.objectiveStatus?.textContent??''}}:{})});}
   dispose(){
