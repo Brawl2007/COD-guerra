@@ -64,10 +64,12 @@ try{
   $('#back-menu').addEventListener('click',()=>game.menu());
   $('#replay').addEventListener('click',()=>{complete.classList.add('hidden');hudRoot.classList.remove('hidden');game.restartMission();});
   $('#complete-menu').addEventListener('click',()=>game.menu());
-  $('#quality').addEventListener('change',e=>game.renderer.setQuality(e.target.value));
+  $('#quality').value=game.renderer.quality;
+  $('#quality').addEventListener('change',e=>{game.renderer.setQuality(e.target.value);try{localStorage.setItem('cod-guerra:visual-quality',e.target.value);}catch{}});
   $('#volume').addEventListener('input',e=>game.audio.setVolume(e.target.value));
   $('#close-error').addEventListener('click',()=>errorPanel.classList.add('hidden'));
   window.addEventListener('pagehide',()=>game.dispose(),{once:true});
   // Read-only debug information, opt-in. No state mutation or exposed gameplay instance.
   if(new URLSearchParams(location.search).has('debug'))window.gameDiagnostics=()=>game.diagnostics;
+  if(params.has('debug')&&params.has('visual-verify'))window.gameVerificationState=()=>structuredClone({snapshot:game.sim.snapshot(),checkpoint:game.sim.checkpoint,events:game.sim.events});
 }catch(error){showError(error.message);$('#start').disabled=true;$('#continue').disabled=true;}

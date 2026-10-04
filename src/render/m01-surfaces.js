@@ -10,7 +10,7 @@ function noise(x,y,period){
 export function artTexture(kind,size=512){
   const canvas=document.createElement('canvas');canvas.width=canvas.height=size;
   const ctx=canvas.getContext('2d'),image=ctx.createImageData(size,size);
-  const colors={soil:[112,103,82],brick:[125,79,58],stone:[142,133,113],wood:[106,73,43],cloth:[151,148,123],metal:[111,119,115],water:[111,140,145],leather:[93,59,37],skin:[190,148,110]};
+  const colors={soil:[105,95,72],brick:[139,94,69],stone:[156,149,127],wood:[114,88,58],cloth:[151,148,123],metal:[111,119,115],water:[49,75,76],leather:[93,59,37],skin:[190,148,110]};
   const base=colors[kind]??colors.soil;
   for(let y=0;y<size;y++)for(let x=0;x<size;x++){
     let n=0;
@@ -28,15 +28,16 @@ export function artTexture(kind,size=512){
       const rows=kind==='brick'?8:4,row=Math.floor(y/size*rows),cols=kind==='brick'?4:3;
       const u=(x/size*cols+(row%2)*.5)%1,v=(y/size*rows)%1;
       const mortar=u<.025||v<.045;
-      if(mortar)c=[70+n,67+n,57+n];
-      else{const variation=(hash(Math.floor(x/size*cols+(row%2)*.5),row)-.5)*38;c=c.map(v=>v+variation);if(u<.05||v<.075)c=c.map(v=>v+12);}
+      if(mortar)c=[112+n,106+n,91+n];
+      else{const variation=(hash(Math.floor(x/size*cols+(row%2)*.5),row)-.5)*24;c=c.map(v=>v+variation);if(u<.05||v<.075)c=c.map(v=>v+12);}
     }
     if(kind==='wood'||kind==='leather'){
       const grain=Math.sin(x*.27+noise(x/32,y/128,16)*7)*7+Math.sin(x*1.7+y*.002)*3;
       c=c.map(v=>v+grain);if(kind==='wood'&&x%(size/8)<3)c=c.map(v=>v-22);
     }
     if(kind==='cloth'){const weave=((x%4<2) !== (y%4<2))?7:-5;c=c.map(v=>v+weave);}
-    if(kind==='metal'){const scratch=hash(x,y,45)>.996?35:0;c=c.map(v=>v+scratch);}
+    if(kind==='metal'){const scratch=hash(x,y,45)>.998?23:0;c=c.map(v=>v+scratch);}
+    if(['soil','brick','stone','wood'].includes(kind)){const stain=noise(x/size*3,y/size*3,3);c=c.map(v=>v*(.84+.28*stain));}
     if(kind==='water'){const ripple=Math.sin(y*.25+Math.sin(x*.017)*2)*9;c=c.map(v=>v+ripple);}
     const at=(y*size+x)*4;for(let k=0;k<3;k++)image.data[at+k]=Math.max(0,Math.min(255,c[k]));image.data[at+3]=255;
   }
@@ -47,13 +48,13 @@ export function artTexture(kind,size=512){
 
 export function texturedSurface(kind,{worldScale=0,bump=.045,...options}={}){
   const map=artTexture(kind),material=new THREE.MeshStandardMaterial({map,bumpMap:map,bumpScale:bump,
-    roughness:kind==='metal'?.63:kind==='water'?.35:.96,metalness:kind==='metal'?.55:kind==='water'?.1:0,...options});
-  material.userData.m01LowDetail={value:0};
+    roughness:kind==='metal'?.48:kind==='water'?.74:.94,metalness:kind==='metal'?.68:0,...options});
+  material.userData.m01LowDetail={value:0};material.userData.m01Time={value:0};
   if(worldScale){
     // glTF parts and very long terrain boxes do not share a UV scale. Project in metres.
     material.onBeforeCompile=shader=>{
       shader.uniforms.m01Scale={value:worldScale};
-      shader.uniforms.m01LowDetail=material.userData.m01LowDetail;
+      shader.uniforms.m01LowDetail=material.userData.m01LowDetail;shader.uniforms.m01Time=material.userData.m01Time;
       shader.vertexShader='varying vec3 vM01Position;\n'+shader.vertexShader;
       shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
         vec4 artPosition=vec4(transformed,1.0);
@@ -61,10 +62,11 @@ export function texturedSurface(kind,{worldScale=0,bump=.045,...options}={}){
           artPosition=instanceMatrix*artPosition;
         #endif
         vM01Position=(modelMatrix*artPosition).xyz;`);
-      shader.fragmentShader='varying vec3 vM01Position; uniform float m01Scale; uniform float m01LowDetail;\n'+shader.fragmentShader;
+      shader.fragmentShader='varying vec3 vM01Position; uniform float m01Scale; uniform float m01LowDetail; uniform float m01Time;\nfloat artHash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }\nfloat artNoise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(artHash(i),artHash(i+vec2(1,0)),f.x),mix(artHash(i+vec2(0,1)),artHash(i+vec2(1,1)),f.x),f.y); }\n'+shader.fragmentShader;
       shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`
         vec3 artNormal=abs(cross(dFdx(vM01Position),dFdy(vM01Position)));
         vec3 artUV=vM01Position*m01Scale;
+        ${kind==='water'?'artUV.xz+=vec2(sin(m01Time*.14)*.028,m01Time*.007);':''}
         vec4 artColor;
         if(m01LowDetail>.5){
           // Dominant-axis mapping: same metre scale, one sample and no blending powers.
@@ -74,13 +76,22 @@ export function texturedSurface(kind,{worldScale=0,bump=.045,...options}={}){
           vec3 artWeights=pow(normalize(artNormal),vec3(6.0));artWeights/=max(.001,artWeights.x+artWeights.y+artWeights.z);
           artColor=texture2D(map,artUV.zy)*artWeights.x+texture2D(map,artUV.xz)*artWeights.y+texture2D(map,artUV.xy)*artWeights.z;
         }
-        diffuseColor*=artColor;`);
+        diffuseColor*=artColor;
+        float macro=artNoise(vM01Position.xz*.035)*.65+artNoise(vM01Position.xz*.13)*.35;
+        diffuseColor.rgb*=.84+macro*.32;
+        ${kind==='soil'?`float soilPatch=artNoise(vM01Position.xz*.075+23.0);
+        diffuseColor.rgb*=mix(vec3(1.08,1.15,.85),vec3(1.55,1.28,1.02),smoothstep(.28,.72,soilPatch));
+        float grassMask=smoothstep(.38,.72,macro)*smoothstep(16.0,40.0,abs(vM01Position.z-20.0));
+        diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(.72,1.05,.55),grassMask*.95);
+        float damp=smoothstep(.63,.88,artNoise(vM01Position.xz*.09+7.0));diffuseColor.rgb*=1.0-damp*.24;`:''}
+        ${kind==='brick'||kind==='stone'?`float grime=(1.0-smoothstep(-3.0,.5,vM01Position.y))*(.12+.2*artNoise(vM01Position.xz*.22));diffuseColor.rgb*=1.0-grime;`:''}
+        ${kind==='water'?`float fresnel=pow(1.0-clamp(abs(normalize(vViewPosition).y),0.0,1.0),3.0);diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.22,.29,.31),fresnel*.45);`:''}`);
       // Original UV bump would stretch across a kilometre; metre-space grain supplies detail.
       shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>',`
         float artHeight=dot(artColor.rgb,vec3(.299,.587,.114));
-        normal=normalize(normal-vec3(dFdx(artHeight),dFdy(artHeight),0.0)*.32);`);
+        normal=normalize(normal-vec3(dFdx(artHeight),dFdy(artHeight),0.0)*.18);`);
     };
-    material.customProgramCacheKey=()=>`m01-surface-${worldScale}`;
+    material.customProgramCacheKey=()=>`m01-surface-${kind}-${worldScale}`;
   }
   return material;
 }
@@ -99,10 +110,14 @@ export function puffTexture(){
 
 export function leafTexture(){
   const canvas=document.createElement('canvas');canvas.width=canvas.height=128;const ctx=canvas.getContext('2d');
-  for(let i=0;i<80;i++){
-    const x=hash(i,3)*112+8,y=hash(i,7)*112+8;
-    ctx.save();ctx.translate(x,y);ctx.rotate(hash(i,9)*Math.PI);ctx.fillStyle=`rgb(${75+hash(i,1)*55},${83+hash(i,2)*45},${39+hash(i,4)*34})`;
-    ctx.beginPath();ctx.ellipse(0,0,3+hash(i,6)*3,1.6+hash(i,8)*2,0,0,Math.PI*2);ctx.fill();ctx.restore();
+  // Dense irregular branch clusters, with negative space between lobes, not a square of isolated dots.
+  for(let i=0;i<460;i++){
+    const angle=hash(i,3)*Math.PI*2,r=Math.sqrt(hash(i,7))*53;
+    const x=64+Math.cos(angle)*r,y=64+Math.sin(angle)*r*(.72+.22*hash(i,11));
+    if(hash(i,15)>.9&&r>30)continue;
+    ctx.save();ctx.translate(x,y);ctx.rotate(hash(i,9)*Math.PI);
+    ctx.fillStyle=`rgb(${54+hash(i,1)*42},${70+hash(i,2)*50},${29+hash(i,4)*27})`;
+    ctx.beginPath();ctx.ellipse(0,0,3+hash(i,6)*5,2+hash(i,8)*3,0,0,Math.PI*2);ctx.fill();ctx.restore();
   }
   const map=new THREE.CanvasTexture(canvas);map.colorSpace=THREE.SRGBColorSpace;return map;
 }
