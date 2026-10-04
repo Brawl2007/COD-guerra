@@ -20,10 +20,12 @@ export function installBrowserHarness(page){
   if(states.has(page))return states.get(page);
   const state={
     pageErrors:[],consoleErrors:[],requestFailures:[],httpFailures:[],expectedFailures:[],crashed:false,
-    createdAt:Date.now()
+    inFlight:new Map(),createdAt:Date.now()
   };
   states.set(page,state);
   page.on('pageerror',error=>state.pageErrors.push({message:error.message,stack:error.stack??null}));
+  page.on('request',request=>state.inFlight.set(request,{url:request.url(),method:request.method(),resourceType:request.resourceType(),startedAt:Date.now()}));
+  page.on('requestfinished',request=>state.inFlight.delete(request));
   page.on('console',message=>{
     if(message.type()!=='error')return;
     const location=message.location(),expected=location?.url?state.expectedFailures.find(x=>x.regex.test(location.url)):null;
@@ -31,6 +33,7 @@ export function installBrowserHarness(page){
   });
   page.on('requestfailed',request=>{
     const url=request.url(),expected=state.expectedFailures.find(x=>x.regex.test(url));
+    state.inFlight.delete(request);
     const item={url,method:request.method(),errorText:request.failure()?.errorText??null,expected:Boolean(expected),label:expected?.label??null};
     state.requestFailures.push(item);
   });
@@ -57,22 +60,23 @@ export async function forceAssetFailure(page,pattern,{status=404,body='forced br
 
 function visibleState(){
   const visible=id=>{const el=document.querySelector(id);return el?{visible:!el.classList.contains('hidden')&&getComputedStyle(el).display!=='none'&&getComputedStyle(el).visibility!=='hidden',disabled:Boolean(el.disabled),text:(el.textContent??'').trim().slice(0,240)}:null;};
-  let checkpoint=null;
-  try{
-    const raw=localStorage.getItem('cod-guerra:checkpoint:m01:v2');
-    if(raw){
+  const checkpointSummary=key=>{
+    try{
+      const raw=localStorage.getItem(key);
+      if(!raw)return {present:false};
       const s=JSON.parse(raw);
-      checkpoint={present:true,schema:s.schema??null,clock:s.clock??null,battleClock:s.battleClock??null,scene:s.scene?.id??s.scene??null,
+      return {present:true,schema:s.schema??null,missionId:s.missionId??null,clock:s.clock??null,battleClock:s.battleClock??null,scene:s.scene?.id??s.scene??null,
         checkpointsReached:Array.isArray(s.checkpointsReached)?s.checkpointsReached.slice(-6):null,actors:Array.isArray(s.actors)?s.actors.length:null};
-    }else checkpoint={present:false};
-  }catch(error){checkpoint={present:true,parseError:error.message};}
+    }catch(error){return {present:true,parseError:error.message};}
+  };
+  const checkpoint=checkpointSummary('cod-guerra:checkpoint:m01:v2'),legacyCheckpoint=checkpointSummary('cod-guerra:checkpoint:v1');
   const g=window.gameDiagnostics?.()??null;
   const m=g?.m01??null;
   const compact=g?{
-    missionId:g.missionId,clock:g.clock,paused:g.paused,complete:g.complete,missionPhase:g.missionPhase,player:g.player,
+    missionId:g.missionId,clock:g.clock,paused:g.paused,complete:g.complete,missionPhase:g.missionPhase,player:g.player,eventIds:(g.eventIds??[]).slice(-24),
     quality:g.quality,drawCalls:g.drawCalls,triangles:g.triangles,
     m01:m?{
-      battleClock:m.battleClock,scene:m.scene,gate:m.gate,checkpoints:m.checkpoints,enemyAlive:m.enemyAlive,weapon:m.weapon,
+      battleClock:m.battleClock,scene:m.scene,gate:m.gate,checkpoints:m.checkpoints,enemyAlive:m.enemyAlive,weapon:m.weapon,flags:m.flags,
       requiredAssetFailures:m.requiredAssetFailures,assetFailures:(m.assetFailures??[]).slice(-12),
       actorPoses:m.actorPoses,actorAnimations:m.actorAnimations,fireEffects:m.fireEffects,viewModel:m.viewModel,wagons:m.wagons,
       aircraft:m.aircraft,stationEvacuation:m.stationEvacuation,hudStatus:m.hudStatus,
@@ -83,7 +87,7 @@ function visibleState(){
   }:null;
   return {
     href:location.href,readyState:document.readyState,visibilityState:document.visibilityState,pointerLockId:document.pointerLockElement?.id??null,
-    checkpoint,
+    checkpoint,legacyCheckpoint,
     ui:{start:visible('#start'),continue:visible('#continue'),pause:visible('#pause'),resume:visible('#resume'),restart:visible('#restart-checkpoint'),complete:visible('#complete'),error:visible('#error')},
     diagnostics:compact
   };
@@ -91,8 +95,14 @@ function visibleState(){
 
 export async function captureHarnessSnapshot(page){
   const state=installBrowserHarness(page);
-  if(page.isClosed())return {pageClosed:true,crashed:state.crashed};
-  try{return await page.evaluate(visibleState);}catch(error){return {captureError:error.message,pageClosed:page.isClosed(),crashed:state.crashed};}
+  const inFlight=()=>[...state.inFlight.values()].map(x=>({...x,ageMs:Date.now()-x.startedAt})).sort((a,b)=>b.ageMs-a.ageMs).slice(0,20);
+  if(page.isClosed())return {pageClosed:true,crashed:state.crashed,inFlight:inFlight()};
+  try{
+    const snapshot=await page.evaluate(visibleState);
+    snapshot.crashed=state.crashed;snapshot.inFlight=inFlight();
+    snapshot.pendingAssets=snapshot.inFlight.filter(x=>/\.(?:glb|gltf|png|jpe?g|webp|ogg|mp3|wav)(?:[?#]|$)/i.test(x.url));
+    return snapshot;
+  }catch(error){return {captureError:error.message,pageClosed:page.isClosed(),crashed:state.crashed,inFlight:inFlight()};}
 }
 
 export function classifyHarnessState(snapshot){
@@ -102,6 +112,7 @@ export function classifyHarnessState(snapshot){
   if(snapshot?.readyState!=='complete')return 'PAGE_NOT_READY';
   const g=snapshot?.diagnostics,m=g?.m01;
   if(m?.requiredAssetFailures?.length)return 'REQUIRED_ASSET_FAILURE';
+  if(snapshot?.pendingAssets?.length)return 'ASSET_REQUEST_PENDING';
   if(g?.paused===true)return 'SIMULATION_PAUSED';
   if(g&&!g.paused&&snapshot.pointerLockId!=='game')return 'POINTER_LOCK_MISSING';
   if(m&&Array.isArray(m.assetFailures)&&m.assetFailures.length)return 'OPTIONAL_ASSET_FAILURE_PRESENT';

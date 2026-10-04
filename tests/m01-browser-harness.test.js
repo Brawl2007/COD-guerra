@@ -13,7 +13,8 @@ test('hang classification distinguishes crash, paused, pointer lock, required as
   assert.equal(classifyHarnessState({crashed:true}),'BROWSER_CRASHED');
   assert.equal(classifyHarnessState({pageClosed:true}),'PAGE_CLOSED');
   assert.equal(classifyHarnessState({readyState:'loading'}),'PAGE_NOT_READY');
-  assert.equal(classifyHarnessState({readyState:'complete',pointerLockId:null,diagnostics:{paused:true,m01:{requiredAssetFailures:[],assetFailures:[]}}}),'SIMULATION_PAUSED');
+  assert.equal(classifyHarnessState({readyState:'complete',pointerLockId:null,pendingAssets:[{url:'http://test/optional.glb'}],diagnostics:{paused:true,m01:{requiredAssetFailures:[],assetFailures:[]}}}),'ASSET_REQUEST_PENDING');
+  assert.equal(classifyHarnessState({readyState:'complete',pointerLockId:null,pendingAssets:[],diagnostics:{paused:true,m01:{requiredAssetFailures:[],assetFailures:[]}}}),'SIMULATION_PAUSED');
   assert.equal(classifyHarnessState({readyState:'complete',pointerLockId:null,diagnostics:{paused:false,m01:{requiredAssetFailures:[],assetFailures:[]}}}),'POINTER_LOCK_MISSING');
   assert.equal(classifyHarnessState({readyState:'complete',pointerLockId:'game',diagnostics:{paused:false,m01:{requiredAssetFailures:[{path:'bridge.glb'}],assetFailures:[]}}}),'REQUIRED_ASSET_FAILURE');
   assert.equal(classifyHarnessState({readyState:'complete',pointerLockId:'game',diagnostics:{paused:false,m01:{requiredAssetFailures:[],assetFailures:[{path:'optional.glb'}]}}}),'OPTIONAL_ASSET_FAILURE_PRESENT');
