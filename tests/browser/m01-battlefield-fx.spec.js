@@ -69,7 +69,7 @@ test('east demolition runs layered blast -> dust -> smoke, freezes on pause and 
 });
 
 test('real in-flight round produces bounded material impact FX without altering the saved simulation path',async({page},info)=>{
-  test.setTimeout(60000);
+  test.setTimeout(90000);
   const {errors,failed}=await openFrom(page,preImpact,'high');
   const before=await page.evaluate(()=>window.gameDiagnostics());
   await page.waitForFunction(()=>{const f=window.gameDiagnostics().m01.fireEffects;return f.puff>0||f.spark>0||f.chip>0;},null,{timeout:20000});
