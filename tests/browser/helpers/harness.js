@@ -44,7 +44,7 @@ export function installBrowserHarness(page){
     state.inFlight.delete(request);
     const errorText=request.failure()?.errorText??null;
     const expectedNavigationAbort=state.expectedNavigationAborts.has(request)&&errorText==='net::ERR_ABORTED';
-    const benignNavigationAbort=expectedNavigationAbort||isBenignNavigationAbort(errorText,{navigating:state.navigating});
+    const benignNavigationAbort=expectedNavigationAbort;
     const item={url,method:request.method(),errorText,expected:Boolean(expected),expectedNavigationAbort,benignNavigationAbort,label:expected?.label??null};
     state.requestFailures.push(item);
   });
