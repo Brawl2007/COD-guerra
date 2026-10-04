@@ -1,0 +1,284 @@
+{
+  "kind": "LOCAL real M01View/GLBs and control-route snapshot; staged visual cameras; BASE uses byte-equivalent original proxy geometry",
+  "samples": [
+    {
+      "name": "lateral",
+      "variant": "before",
+      "file": "lateral-before.jpg",
+      "camera": {
+        "position": [
+          1157,
+          10,
+          100
+        ],
+        "target": [
+          1157,
+          1,
+          2.5
+        ],
+        "fov": 45
+      },
+      "panzerzug": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "lod": 0,
+        "requestedLOD": 0,
+        "fallback": true,
+        "position": [
+          1119,
+          0,
+          2.5
+        ],
+        "rotationY": 1.5707963267948966,
+        "visible": true,
+        "motion": "stationary; no synthetic wheel rotation"
+      },
+      "sceneCounters": {
+        "frame": 3,
+        "calls": 124,
+        "triangles": 373585,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "name": "lateral",
+      "variant": "after",
+      "file": "lateral-after.jpg",
+      "camera": {
+        "position": [
+          1157,
+          10,
+          100
+        ],
+        "target": [
+          1157,
+          1,
+          2.5
+        ],
+        "fov": 45
+      },
+      "panzerzug": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "lod": 0,
+        "requestedLOD": 0,
+        "fallback": false,
+        "position": [
+          1119,
+          0,
+          2.5
+        ],
+        "rotationY": 1.5707963267948966,
+        "visible": true,
+        "motion": "stationary; no synthetic wheel rotation"
+      },
+      "sceneCounters": {
+        "frame": 4,
+        "calls": 120,
+        "triangles": 391381,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "name": "front-quarter",
+      "variant": "before",
+      "file": "front-quarter-before.jpg",
+      "camera": {
+        "position": [
+          1093,
+          9,
+          35
+        ],
+        "target": [
+          1138,
+          1,
+          2.5
+        ],
+        "fov": 45
+      },
+      "panzerzug": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "lod": 0,
+        "requestedLOD": 0,
+        "fallback": true,
+        "position": [
+          1119,
+          0,
+          2.5
+        ],
+        "rotationY": 1.5707963267948966,
+        "visible": true,
+        "motion": "stationary; no synthetic wheel rotation"
+      },
+      "sceneCounters": {
+        "frame": 5,
+        "calls": 120,
+        "triangles": 373165,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "name": "front-quarter",
+      "variant": "after",
+      "file": "front-quarter-after.jpg",
+      "camera": {
+        "position": [
+          1093,
+          9,
+          35
+        ],
+        "target": [
+          1138,
+          1,
+          2.5
+        ],
+        "fov": 45
+      },
+      "panzerzug": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "lod": 0,
+        "requestedLOD": 0,
+        "fallback": false,
+        "position": [
+          1119,
+          0,
+          2.5
+        ],
+        "rotationY": 1.5707963267948966,
+        "visible": true,
+        "motion": "stationary; no synthetic wheel rotation"
+      },
+      "sceneCounters": {
+        "frame": 6,
+        "calls": 116,
+        "triangles": 390961,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "name": "medium",
+      "variant": "before",
+      "file": "medium-before.jpg",
+      "camera": {
+        "position": [
+          1157,
+          14,
+          165
+        ],
+        "target": [
+          1157,
+          1,
+          2.5
+        ],
+        "fov": 45
+      },
+      "panzerzug": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "lod": 1,
+        "requestedLOD": 1,
+        "fallback": true,
+        "position": [
+          1119,
+          0,
+          2.5
+        ],
+        "rotationY": 1.5707963267948966,
+        "visible": true,
+        "motion": "stationary; no synthetic wheel rotation"
+      },
+      "sceneCounters": {
+        "frame": 7,
+        "calls": 133,
+        "triangles": 374185,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "name": "medium",
+      "variant": "after",
+      "file": "medium-after.jpg",
+      "camera": {
+        "position": [
+          1157,
+          14,
+          165
+        ],
+        "target": [
+          1157,
+          1,
+          2.5
+        ],
+        "fov": 45
+      },
+      "panzerzug": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "lod": 1,
+        "requestedLOD": 1,
+        "fallback": false,
+        "position": [
+          1119,
+          0,
+          2.5
+        ],
+        "rotationY": 1.5707963267948966,
+        "visible": true,
+        "motion": "stationary; no synthetic wheel rotation"
+      },
+      "sceneCounters": {
+        "frame": 8,
+        "calls": 129,
+        "triangles": 386653,
+        "points": 0,
+        "lines": 0
+      }
+    }
+  ],
+  "errors": [],
+  "models": {
+    "0": {
+      "triangles": 17952,
+      "drawCalls": 3,
+      "materials": 3,
+      "textures": 1
+    },
+    "1": {
+      "triangles": 12624,
+      "drawCalls": 3,
+      "materials": 3,
+      "textures": 1
+    },
+    "2": {
+      "triangles": 4764,
+      "drawCalls": 3,
+      "materials": 3,
+      "textures": 1
+    }
+  }
+}

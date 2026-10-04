@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## Panzerzug — produção rápida 2026-10-04
+
+Candidato isolado em `codex/m01-panzerzug-production-asset-runtime`, base schema 2 exacta `5f3cc34`. Cinco unidades GLB originais com blindagem facetada/chassis/bogies/acoplamentos, LODs 17.952/12.624/4.764 tris, três draw calls por conjunto e fallback original. Gameplay/mission/save/armamento e locomotiva intactos; P6 continua parcial. 11/11 testes focados, build PASS, 2/2 browser focados (zero retries); seis BEFORE/AFTER no cenário real. Sem certificação integral repetida. Handoff: `docs/verification/m01-runtime/panzerzug-2026-10-04/HANDOFF.md`. **READY_FOR_CAPTAIN_REVIEW**; M01 **PROTÓTIPO JOGÁVEL**, sem merge em main.
+
 ## Auditoria schema 2 — 2026-10-03
 
 Candidato isolado em `codex/m01-schema2-determinism-audit`, base MG34 prone aprovada `fbaac1e4`. Comparação de futuros A/B por tick: 61.055 comparações em duas rotas completas e fixtures definidas, sem divergência depois das correções. Corrigido o destino de recuperação ao restaurar uma continuação; schema 2 recebe backup opcional plano, mantendo CP-A..D planos e legacy compatível. Saves corrompidos não podem sobrescrever métodos/perfil da arma; RNG uint32 e fases conhecidas validados.

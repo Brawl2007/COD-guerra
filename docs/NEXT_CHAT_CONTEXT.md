@@ -1,3 +1,11 @@
+# Estado actual — Panzerzug asset runtime (2026-10-04)
+
+M01 permanece **PROTÓTIPO JOGÁVEL**. Tarefa `M01-PANZERZUG-PRODUCTION-ASSET-RUNTIME-V1` concluída isoladamente na branch `codex/m01-panzerzug-production-asset-runtime`, base exacta `5f3cc34f53c61beec52255d67f8babd7194c9f7f`. Não recomeçar nem integrar automaticamente.
+
+Cinco unidades blindadas originais em GLB, LOD0/1/2, proxy original e ligação exclusivamente visual. Gameplay/mission/save/RNG/assets antigos e locomotiva/MG34/CKM/station intactos. P6 continua parcial; sem inventar artilharia/AA/classes. Validação rápida: 11/11 Node focados, build PASS, 2/2 browser focados (retries 0); seis captures BEFORE/AFTER em M01View real. Handoff/limites em `docs/verification/m01-runtime/panzerzug-2026-10-04/HANDOFF.md`. **READY_FOR_CAPTAIN_REVIEW**, sem merge/main/deploy. O HEAD final é o commit que contém esta secção; confirmar ref remoto.
+
+---
+
 # Estado actual — auditoria de determinismo schema 2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a MG34 aprovada nem Graphify.
