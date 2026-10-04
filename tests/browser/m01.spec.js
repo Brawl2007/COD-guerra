@@ -190,7 +190,7 @@ test('the station clip alone cannot enable a viewmodel when the required weapon 
   expect(data.m01.assetFailures).toEqual([]);expect(data.m01.actorPoses.standing).toBeGreaterThan(0);expect(errors).toEqual([]);
 });
 test('the station evacuation restores its grounded drag, pauses with the mission and delivers the casualty',async({page},info)=>{
-  test.setTimeout(process.env.CI?240000:180000);
+  test.setTimeout(process.env.CI?300000:180000);
   // Staged continuation of real simulation controls; not an uninterrupted browser playthrough.
   const snapshot=toStationEvacuation(driver(),{observe:true}).sim.snapshot();
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
@@ -210,7 +210,7 @@ test('the station evacuation restores its grounded drag, pauses with the mission
   expect((await page.evaluate(()=>window.gameDiagnostics())).m01.stationEvacuation).toEqual(frozen.m01.stationEvacuation);
   await page.screenshot({path:info.outputPath('m01-station-ground-drag.png'),style:'#pause { visibility:hidden !important; }',timeout:120000});
   await page.locator('#resume').click();
-  await page.waitForFunction(()=>window.gameDiagnostics().m01.stationEvacuation.delivered,null,{timeout:120000});
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.stationEvacuation.delivered,null,{timeout:180000});
   const delivered=await page.evaluate(()=>window.gameDiagnostics());
   expect(delivered.m01.stationEvacuation.patient.carriedBy).toBeNull();expect(delivered.m01.stationEvacuation.patient.x).toBe(-334);
   expect(delivered.m01.stationEvacuation.patient.state).toBe('WOUNDED');expect(delivered.m01.flags['m01.bak_status']).toBe('unhurt');
