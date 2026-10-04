@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {patternMatchesUrl,classifyHarnessState,waitForState} from './browser/helpers/harness.js';
+import {patternMatchesUrl,classifyHarnessState,waitForState,isBenignNavigationAbort} from './browser/helpers/harness.js';
 
 test('forced asset glob matching is deterministic and path-specific',()=>{
   assert.equal(patternMatchesUrl('**/m01_mg34_prone_animations.glb','http://127.0.0.1:4173/COD-guerra/assets/models/provisional/m01/weapons/mg34-prone/m01_mg34_prone_animations.glb'),true);
@@ -30,4 +30,12 @@ test('waitForState accepts a condition reached exactly at the timeout boundary w
   };
   assert.equal(await waitForState(page,'boundary-state',()=>true,null,{timeout:120000}),true);
   assert.equal(evaluations,1);
+});
+
+
+test('only ERR_ABORTED owned by an active main-frame navigation is benign',()=>{
+  assert.equal(isBenignNavigationAbort('net::ERR_ABORTED',{navigating:true}),true);
+  assert.equal(isBenignNavigationAbort('net::ERR_ABORTED',{navigating:false}),false);
+  assert.equal(isBenignNavigationAbort('net::ERR_FAILED',{navigating:true}),false);
+  assert.equal(isBenignNavigationAbort(null,{navigating:true}),false);
 });
