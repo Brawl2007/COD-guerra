@@ -319,7 +319,7 @@ for(const truss of [false,true])test(`adjustment salvo ${truss?'behind the truss
     document.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0,bubbles:true}));
     document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
   },Math.atan2(Math.sin(aim+Math.PI-before.player.angle),Math.cos(aim+Math.PI-before.player.angle))/.0022);
-  await expect(page.locator('#objective-status')).toContainText('atrás de si');
+  await waitForState(page,'cover-fire-bearing-behind',()=>document.querySelector('#objective-status')?.textContent?.includes('atrás de si'),null,{timeout:15000});
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
