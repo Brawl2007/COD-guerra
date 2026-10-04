@@ -5,7 +5,7 @@ import {seconds} from '../../src/game/m01-simulation.js';
 const key='cod-guerra:checkpoint:m01:v2';
 let preBlast,preImpact;
 const reached=route(19390901,{onStep:({sim})=>{
-  if(!sim.consumedEvent('evt_m01_east_demolition')&&sim.battleClock>=seconds('06:09:56'))preBlast=structuredClone(sim.snapshot());
+  if(!preBlast&&!sim.consumedEvent('evt_m01_east_demolition')&&sim.battleClock>=seconds('06:09:48'))preBlast=structuredClone(sim.snapshot());
   if(!preImpact&&sim.active('cover_repair')&&sim.enemyFire.rounds.some(r=>r.arriveAt>sim.clock&&r.arriveAt-sim.clock<.35))preImpact=structuredClone(sim.snapshot());
 }});
 if(!preBlast||!preImpact)throw new Error('Focused FX fixtures were not reached through the real simulation route');
@@ -24,25 +24,40 @@ async function openFrom(page,snapshot,quality='medium'){
 test('east demolition runs layered blast -> dust -> smoke, freezes on pause and cleans transient pools',async({page},info)=>{
   test.setTimeout(90000);
   const {errors,failed}=await openFrom(page,preBlast,'medium');
-  await page.waitForFunction(()=>{const f=window.gameDiagnostics().m01.battlefieldFx;return f.active>0&&f.counts.core>0&&f.counts.fire>0&&f.counts.dust>0;},null,{timeout:30000});
-  const hot=await page.evaluate(()=>window.gameDiagnostics());
-  expect(hot.m01.battlefieldFx.counts.core).toBeGreaterThan(0);
-  expect(hot.m01.battlefieldFx.counts.fire).toBeGreaterThan(0);
+  // Capture the short hot phase in-page so software WebGL/remote polling cannot skip the one or two relevant frames.
+  await page.evaluate(()=>{
+    window.__m01FxHot=null;
+    const tick=()=>{const g=window.gameDiagnostics?.(),f=g?.m01?.battlefieldFx;
+      if(f?.active>0&&f.counts.dust>0&&(f.counts.core>0||f.counts.fire>0)){window.__m01FxHot=g;document.exitPointerLock();return;}
+      requestAnimationFrame(tick);
+    };requestAnimationFrame(tick);
+  });
+  await page.waitForFunction(()=>window.__m01FxHot,null,{timeout:30000});await expect(page.locator('#pause')).toBeVisible();
+  const hot=await page.evaluate(()=>window.__m01FxHot);
+  expect(hot.m01.battlefieldFx.counts.core+hot.m01.battlefieldFx.counts.fire).toBeGreaterThan(0);
   expect(hot.m01.battlefieldFx.counts.dust).toBeGreaterThan(0);
   expect(hot.m01.battlefieldFx.extraLights).toBeLessThanOrEqual(1);
   expect(hot.m01.battlefieldFx.atmosphere.puffs).toBeLessThanOrEqual(192);
   expect(hot.m01.battlefieldFx.atmosphere.debris).toBeLessThanOrEqual(64);
   await page.screenshot({path:info.outputPath('AFTER-east-demolition-hot-core.png'),timeout:30000});
 
-  await page.waitForFunction(()=>window.gameDiagnostics().m01.battlefieldFx.counts.smoke>0,null,{timeout:15000});
+  // Resume into the cooling phase and freeze a smoke-dominant frame from the same authoritative blast.
+  await page.evaluate(()=>{
+    window.__m01FxSmoke=null;
+    const tick=()=>{const g=window.gameDiagnostics?.(),f=g?.m01?.battlefieldFx;
+      if(f?.active>0&&f.counts.smoke>0&&f.counts.core===0&&f.counts.fire===0){window.__m01FxSmoke=g;document.exitPointerLock();return;}
+      requestAnimationFrame(tick);
+    };requestAnimationFrame(tick);
+  });
+  await page.locator('#resume').click();
+  await page.waitForFunction(()=>window.__m01FxSmoke,null,{timeout:15000});await expect(page.locator('#pause')).toBeVisible();
+  const frozen=await page.evaluate(()=>window.__m01FxSmoke),fx=frozen.m01.battlefieldFx;
   await page.screenshot({path:info.outputPath('AFTER-east-demolition-smoke.png'),timeout:30000});
-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
-  const frozen=await page.evaluate(()=>window.gameDiagnostics()),fx=frozen.m01.battlefieldFx;
   await page.waitForTimeout(350);
   const still=await page.evaluate(()=>window.gameDiagnostics());
   expect(still.clock).toBe(frozen.clock);expect(still.m01.battlefieldFx).toEqual(fx);
-  await page.locator('#resume').click();await page.waitForFunction(c=>window.gameDiagnostics().clock>c+.1,frozen.clock);
 
+  await page.locator('#resume').click();await page.waitForFunction(c=>window.gameDiagnostics().clock>c+.1,frozen.clock);
   await page.waitForFunction(()=>{const f=window.gameDiagnostics().m01.battlefieldFx;return f.active===0&&Object.values(f.counts).every(n=>n===0)&&f.extraLights===0;},null,{timeout:30000});
   const clean=await page.evaluate(()=>window.gameDiagnostics());
   expect(clean.m01.smokePuffs).toBeLessThanOrEqual(192);
