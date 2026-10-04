@@ -144,5 +144,6 @@ export class M01AuthorityCoordinator {
   diagnostics(){const c=activeCombat(this.#state);return {sectorId:PILOT_SECTOR,formationId:PILOT_FORMATION,authorityOwner:this.owner,
     leaseId:this.token,generation:this.#state.serial,revision:c.revision,memberIds:[...PILOT_IDS],aggregateRng:copy(this.#state.sectorRng),
     individualMemberCount:this.owner==='INDIVIDUAL'?4:0,counts:pilotCounts(c),reserve:c.reserve,loaded:c.members.reduce((n,m)=>n+m.ammo.loaded,0),spent:c.spent,
-    localClock:this.#state.localClock,battleClock:this.#state.battleClock,band:this.#state.band};}
+    localClock:this.#state.localClock,battleClock:this.#state.battleClock,band:this.#state.band,
+    members:c.members.map(m=>({id:m.id,status:m.status,health:m.health,position:copy(m.position),weaponId:m.weaponId,loaded:m.ammo.loaded,cycle:m.ammo.cycle,rng:copy(m.rng)}))};}
 }

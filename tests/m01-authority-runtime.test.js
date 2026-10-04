@@ -5,6 +5,15 @@ import {PILOT_IDS,PILOT_FORMATION,M01AuthorityCoordinator,activeCombat,pilotActo
 import {createPilot,resolvePilotSector,pilotOperation,updatePilotWeapon} from '../src/game/m01-sector-runtime-adapter.js';
 import {compareContinuation} from './helpers/m01-determinism.js';
 import {eyePosition} from '../src/world/spatial.js';
+import {draw} from '../src/game/m01-authority-coordinator.js';
+import {after} from 'node:test';
+import {writeFileSync,mkdirSync} from 'node:fs';
+import {dirname} from 'node:path';
+import {route} from './helpers/m01-route.js';
+const futureReports=[],proofs=[];
+after(()=>{if(process.env.M01_PILOT_REPORT){mkdirSync(dirname(process.env.M01_PILOT_REPORT),{recursive:true});
+  writeFileSync(process.env.M01_PILOT_REPORT,JSON.stringify({taskId:'M01-NEAR-FAR-AUTHORITY-RUNTIME-PILOT-V1',actorIds:PILOT_IDS,
+    pairedTicks:futureReports.reduce((n,r)=>n+r.ticks,0),futures:futureReports,proofs},null,2)+'\n');}});
 
 function fixture({dead=0,empty=false}={}){
   const s=new M01Simulation(19390901);s.tick(.05,{skip:true});s.consume('evt_m01_train963_arrives');
@@ -66,6 +75,7 @@ test('player rifle produces two actual deaths, 5→7 dead on exact return, with 
   far(s);assert.equal(s.authorityPilot.diagnostics().counts.dead,7);
   for(let i=0;i<100;i++)s.tick(.05);near(s);assert.equal(s.authorityPilot.diagnostics().counts.dead,7);
   bodies.forEach(a=>{const b=s.actor(a.id);assert.equal(b.alive,false);assert.deepEqual([b.x,b.y,b.z],[a.x,a.y,a.z]);});
+  proofs.push({case:'casualty',fixtureRetainedDead:5,playerKilledIds:PILOT_IDS.slice(0,2),returnedDead:7,bodies:bodies.map(a=>({id:a.id,position:{x:a.x,y:a.y,z:a.z}}))});
 });
 test('reserve 100→73 through individual reload/fire; loaded is not double-counted and return never refills',()=>{
   const s=fixture({empty:true});s.authorityPilot.acquire();
@@ -81,6 +91,7 @@ test('reserve 100→73 through individual reload/fire; loaded is not double-coun
   }
   assert.equal(s.authorityPilot.diagnostics().reserve,73);assert.equal(s.actor(id).rounds,0);assert.equal(s.authorityPilot.diagnostics().spent,27);
   s.authorityPilot.release();assert.equal(s.authorityPilot.diagnostics().reserve,73);s.authorityPilot.acquire();assert.equal(s.actor(id).rounds,0);
+  proofs.push({case:'ammo',fixtureEmptyMagazine:true,initialReserve:100,returnedReserve:73,loaded:s.authorityPilot.diagnostics().loaded,spent:27,initialAmmunition:115});
 });
 test('whole sector resolver and shared aggregate RNG are frozen under individual ownership',()=>{
   const s=near(fixture()),before=state(s).aggregate,rng=state(s).sectorRng;
@@ -92,7 +103,7 @@ test('whole sector resolver and shared aggregate RNG are frozen under individual
 test('failed command after a staged RNG draw rolls back; duplicate event consumes no RNG',()=>{
   const s=near(fixture());const cmd={eventId:'one',owner:'INDIVIDUAL',token:s.authorityPilot.token,operations:[{type:'damage',memberId:PILOT_IDS[0],amount:5}]};
   pilotOperation(s,cmd.eventId,cmd.operations);const before=state(s);const result=pilotOperation(s,cmd.eventId,cmd.operations);assert.equal(result.applied,false);assert.deepEqual(state(s),before);
-  unchanged(s,()=>s.authorityPilot.operate({...cmd,eventId:'bad'},c=>{c.individual.members[0].rng.draws++;throw Error('failed after draw');}),/failed after draw/);
+  unchanged(s,()=>s.authorityPilot.operate({...cmd,eventId:'bad'},c=>{draw(c.individual.members[0].rng,true);throw Error('failed after draw');}),/failed after draw/);
   unchanged(s,()=>pilotOperation(s,'wrong',cmd.operations,{owner:'AGGREGATED',token:null}),/wrong\/stale owner/);
 });
 test('return resets local motion/cadence boundary and never catches up a long lease',()=>{
@@ -137,10 +148,44 @@ test('corrupt pilot state rejects atomically and destination future remains unch
     p=>p.individual.members[0].health=101,p=>p.individual.members[0].weaponId='other',p=>p.individual.extra=true]){
     const raw=source.snapshot();edit(raw.authorityPilot);const before=dest.snapshot();assert.throws(()=>dest.restoreSnapshot(raw),/authority pilot/);assert.deepEqual(dest.snapshot(),before);
   }
-  compareContinuation(dest,{label:'corrupt restore destination future',ticks:100});
+  futureReports.push(compareContinuation(dest,{label:'corrupt restore destination future',ticks:100}));
 });
 test('PR37 methodology compares future ticks after active lease, reload/fire, release and reacquire',()=>{
   const s=near(fixture());const report=compareContinuation(s,{label:'pilot active lease future',ticks:1200,doubleAt:[100,700],input:i=>({lookX:i%13===0?3:0,fire:i%61===0,reload:i%271===0}),
     fault:(i,a)=>{if(i===400)Object.assign(a.player,{x:-150,y:-3,z:-50});if(i===800)Object.assign(a.player,{x:-66,y:-3,z:80});}});
   assert.equal(report.firstDivergence,null);assert.equal(report.ticks,1200);
+  futureReports.push(report);
+});
+test('nonwritable actor 3 is rejected before publishing actors 1/2',()=>{
+  const s=fixture();Object.defineProperty(s.actor(PILOT_IDS[2]),'health',{writable:false});
+  unchanged(s,()=>s.authorityPilot.acquire(),/publication preflight/);
+});
+test('a second mutating resolver cannot spend the pilot sector RNG, while the legacy combat stream continues',()=>{
+  const s=near(fixture()),frozen=state(s).sectorRng,global=s.rng.state;
+  const mg=s.actor('de_east_0');mg.active=true;mg.cooldown=0;
+  for(let i=0;i<100;i++)s.tick(.05);
+  assert.notEqual(s.rng.state,global);assert.deepEqual(state(s).sectorRng,frozen);
+  unchanged(s,()=>s.authorityPilot.operate({eventId:'second-sector-resolver',owner:'INDIVIDUAL',token:s.authorityPilot.token,operations:[{type:'invalid'}]},c=>{draw(c.sectorRng);return [];}),/aggregate command under lease/);
+});
+test('real individual tick reloads its NPC clip and continues identically after a mid-reload save',()=>{
+  const s=near(fixture());let reloading=false;
+  for(let i=0;i<300;i++){s.tick(.05);if(state(s).individual?.members.some(m=>m.ammo.cycle==='RELOAD_CLIP')){reloading=true;break;}}
+  assert.equal(reloading,true);futureReports.push(compareContinuation(s,{label:'real NPC mid-reload future',ticks:800,doubleAt:[37,300]}));
+  const d=s.authorityPilot.diagnostics();assert.ok(d.reserve<100);assert.equal(d.reserve+d.loaded+d.spent,120);
+});
+test('OUTRO freezes pilot combat/RNG/ammo while active mission playback continues',()=>{
+  const s=new M01Simulation();s.restoreSnapshot(route().outro);
+  // Genuine OUTRO, with an explicit active-lease boundary fixture.
+  if(s.authorityPilot.owner==='AGGREGATED')s.authorityPilot.acquire();
+  const before=state(s),rounds=copy(s.enemyFire);
+  for(let i=0;i<50;i++)s.tick(.05);const after=state(s);
+  assert.deepEqual(after.sectorRng,before.sectorRng);assert.deepEqual(after.individual.members,before.individual.members);
+  assert.equal(after.individual.reserve,before.individual.reserve);assert.deepEqual(s.enemyFire,rounds);assert.ok(s.clock>before.localClock);
+});
+test('long future includes 8,000 paired ticks, variable dt/zero pause and two release/reentry windows',()=>{
+  const s=near(fixture()),owners=new Set();
+  const report=compareContinuation(s,{label:'pilot 8000-tick continuation',ticks:8000,doubleAt:[1111,4444],
+    dt:i=>i%17===0?0:i%19===0?.013:.05,input:i=>{owners.add(s.authorityPilot.owner);return {lookX:i%71===0?7:0};},
+    fault:(i,a)=>{if([500,4500].includes(i))Object.assign(a.player,{x:-150,y:-3,z:-50});if([1500,5500].includes(i))Object.assign(a.player,{x:-66,y:-3,z:80});}});
+  assert.deepEqual(owners,new Set(['INDIVIDUAL','AGGREGATED']));futureReports.push(report);
 });

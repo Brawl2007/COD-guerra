@@ -75,7 +75,7 @@ export function resolvePilotIndividuals(s,world,player){
     if(now<m.decisionAt)continue;
     const action=decide(m,c,world,player,now);m.action=action;m.decisionAt=now+DECISION+draw(m.rng,true)*.08;
     if(action==='RELOAD'&&m.ammo.cycle==='READY'&&c.reserve)reload(c,m,now);
-    else if(action==='FIRE'&&world.lineOfSight({space:'metres',...m.position},{space:'metres',...m.lastSeen.position,eyeHeight:0}))
+    else if(action==='FIRE'&&Math.hypot(m.lastSeen.position.x-m.position.x,m.lastSeen.position.z-m.position.z)<=1200&&world.lineOfSight({space:'metres',...m.position},{space:'metres',...m.lastSeen.position,eyeHeight:0}))
       fire(c,m,now,m.lastSeen.position,world,true,events);
   }
   c.updatedAt=now;c.revision++;return events;
@@ -86,12 +86,14 @@ export function advancePilot(sim,dt){
   if(dt<=0||sim.mission.complete)return;
   const a=sim.authorityPilot.snapshot(),c=activeCombat(a),living=c.members.filter(eligible),targets=living.length?living:c.members;
   const distance=Math.min(...targets.map(m=>Math.hypot(sim.player.x-m.position.x,sim.player.z-m.position.z)));
-  const interactionRelevant=!sim.scene&&living.some(m=>Math.hypot(sim.player.x-m.position.x,sim.player.z-m.position.z)<=sim.weapon.profile.range&&
-    sim.world.lineOfSight(sim.player,{space:'metres',...m.position}))||sim.enemyFire.rounds.some(r=>pilotActor(r.by));
+  const locked=sim.scene?.id==='cs_m01_intro'||sim.scene?.id==='cs_m01_roll_call'||sim.mission.phase==='OUTRO';
+  const interactionRelevant=locked?a.owner==='INDIVIDUAL':(!sim.scene&&living.some(m=>Math.hypot(sim.player.x-m.position.x,sim.player.z-m.position.z)<=sim.weapon.profile.range&&
+    sim.world.lineOfSight(sim.player,{space:'metres',...m.position}))||sim.enemyFire.rounds.some(r=>pilotActor(r.by)));
   const events=sim.authorityPilot.advance(sim.clock,sim.battleClock,{distance,interactionRelevant,step:s=>s.owner==='AGGREGATED'?
-    resolvePilotSector(s,sim.world,sim.player):resolvePilotIndividuals(s,sim.world,sim.player)});
+    (locked?freezeBoundary(s):resolvePilotSector(s,sim.world,sim.player)):(locked?freezeBoundary(s):resolvePilotIndividuals(s,sim.world,sim.player))});
   publishPilotEvents(sim,events);
 }
+function freezeBoundary(s){activeCombat(s).updatedAt=s.localClock;return [];}
 export function publishPilotEvents(sim,events){for(const e of events){if(e.type==='pilot-round'){
     e.round.id=`m01_round_${sim.enemyFire.nextId++}`;sim.enemyFire.rounds.push(e.round);
     sim.emit({type:'enemy-fire',origin:e.origin,rounds:1,interval:0,weapon:e.weapon,at:e.firedAt});

@@ -1,0 +1,48 @@
+✔ real tick uses the fixed four anonymous actors and one active owner (29.808391ms)
+✔ duplicate acquire and stale revision reject without state or actor publication (10.313724ms)
+✔ member 3 preparation failure rolls back actors 1/2, RNG, clocks, generation and owner (7.688464ms)
+✔ staging snapshot is unsafe; asynchronous materialization is rejected atomically (10.475812ms)
+✔ return is complete and exact; malformed member 3 or missing members publish nothing (25.432626ms)
+✔ stale fencing token and double release reject, including after reacquisition (16.307739ms)
+✔ player rifle produces two actual deaths, 5→7 dead on exact return, with persistent IDs (537.242365ms)
+✔ reserve 100→73 through individual reload/fire; loaded is not double-counted and return never refills (28.255331ms)
+✔ whole sector resolver and shared aggregate RNG are frozen under individual ownership (92.040228ms)
+✔ failed command after a staged RNG draw rolls back; duplicate event consumes no RNG (10.781383ms)
+✔ return resets local motion/cadence boundary and never catches up a long lease (160.574464ms)
+✔ hysteresis 149/151/148/152 acquires exactly once and only leaves above 170 (3.685854ms)
+✔ pause advances no clock/RNG/band and performs no hidden transfer (9.723814ms)
+✔ camera and render quality inputs do not change the authority future (245.102358ms)
+✔ active-lease save/new simulation/restore/double restore keeps one owner and exact streams (21.09685ms)
+✔ continuation retains old checkpoint; restart removes current lease and reacquires once (18.131277ms)
+✔ legacy schema 2 without pilot field loads additively and preserves existing deaths/RNG (4.602575ms)
+✔ corrupt pilot state rejects atomically and destination future remains unchanged (275.969459ms)
+✔ PR37 methodology compares future ticks after active lease, reload/fire, release and reacquire (3534.880071ms)
+✔ nonwritable actor 3 is rejected before publishing actors 1/2 (4.469618ms)
+✔ a second mutating resolver cannot spend the pilot sector RNG, while the legacy combat stream continues (97.037118ms)
+✔ real individual tick reloads its NPC clip and continues identically after a mid-reload save (2593.393807ms)
+✖ OUTRO freezes pilot combat/RNG/ammo while active mission playback continues (28.603663ms)
+✔ long future includes 8,000 paired ticks, variable dt/zero pause and two release/reentry windows (22166.407811ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 23
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 30061.456238
+
+✖ failing tests:
+
+test at tests/m01-authority-runtime.test.js:175:1
+✖ OUTRO freezes pilot combat/RNG/ammo while active mission playback continues (28.603663ms)
+  Error: M01 authority pilot: blocked/out-of-range fire
+      at requirePilot (file:///workspace/scratch/179e239c7f9f/COD-guerra/src/game/m01-authority-coordinator.js:6:55)
+      at fire (file:///workspace/scratch/179e239c7f9f/COD-guerra/src/game/m01-sector-runtime-adapter.js:25:3)
+      at resolvePilotIndividuals (file:///workspace/scratch/179e239c7f9f/COD-guerra/src/game/m01-sector-runtime-adapter.js:79:7)
+      at step (file:///workspace/scratch/179e239c7f9f/COD-guerra/src/game/m01-sector-runtime-adapter.js:93:101)
+      at M01AuthorityCoordinator.advance (file:///workspace/scratch/179e239c7f9f/COD-guerra/src/game/m01-authority-coordinator.js:131:52)
+      at advancePilot (file:///workspace/scratch/179e239c7f9f/COD-guerra/src/game/m01-sector-runtime-adapter.js:92:35)
+      at M01Simulation.tick (file:///workspace/scratch/179e239c7f9f/COD-guerra/src/game/m01-simulation.js:679:5)
+      at TestContext.<anonymous> (file:///workspace/scratch/179e239c7f9f/COD-guerra/tests/m01-authority-runtime.test.js:177:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
