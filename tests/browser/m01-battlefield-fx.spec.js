@@ -10,7 +10,7 @@ const reached=route(19390901,{onStep:({sim})=>{
 }});
 if(!preBlast||!preImpact)throw new Error('Focused FX fixtures were not reached through the real simulation route');
 const grenadeDriver=driver(19390901);grenadeDriver.step({skip:true});grenadeDriver.step({grenade:true});
-grenadeDriver.until(()=>grenadeDriver.sim.grenades.active[0]?.fuse<.35,8);
+grenadeDriver.until(()=>grenadeDriver.sim.grenades.active[0]?.fuse<1.55,8);
 const preGrenade=structuredClone(grenadeDriver.sim.snapshot());
 
 async function openFrom(page,snapshot,quality='medium'){
@@ -27,7 +27,9 @@ async function openFrom(page,snapshot,quality='medium'){
 test('nearby real grenade provides same-camera BEFORE/AFTER proof of the layered small blast',async({page},info)=>{
   test.setTimeout(60000);
   const {errors,failed}=await openFrom(page,preGrenade,'high');
-  await page.screenshot({path:info.outputPath('BEFORE-near-grenade.png'),timeout:30000});
+  // Freeze the exact pre-blast camera before taking the BEFORE image; screenshot latency must not consume the fuse.
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.screenshot({path:info.outputPath('BEFORE-near-grenade.png'),style:'#pause {visibility:hidden !important;}',timeout:30000});
   await page.evaluate(()=>{
     window.__m01GrenadeHot=null;
     const tick=()=>{const g=window.gameDiagnostics?.(),f=g?.m01?.battlefieldFx;
@@ -35,7 +37,8 @@ test('nearby real grenade provides same-camera BEFORE/AFTER proof of the layered
       requestAnimationFrame(tick);
     };requestAnimationFrame(tick);
   });
-  await page.waitForFunction(()=>window.__m01GrenadeHot,null,{timeout:20000});await expect(page.locator('#pause')).toBeVisible();
+  await page.locator('#resume').click();
+  await page.waitForFunction(()=>window.__m01GrenadeHot,null,{timeout:30000});await expect(page.locator('#pause')).toBeVisible();
   const hot=await page.evaluate(()=>window.__m01GrenadeHot),fx=hot.m01.battlefieldFx;
   expect(fx.counts.core+fx.counts.fire).toBeGreaterThan(0);expect(fx.counts.dust).toBeGreaterThan(0);expect(fx.extraLights).toBeLessThanOrEqual(1);
   await page.screenshot({path:info.outputPath('AFTER-near-grenade.png'),style:'#pause {visibility:hidden !important;}',timeout:30000});
