@@ -1,0 +1,41 @@
+name: M01 battlefield audio focused validation
+
+on:
+  push:
+    branches:
+      - codex/m01-battlefield-audio-production-pass
+  workflow_dispatch:
+
+concurrency:
+  group: m01-audio-focused-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Focused audio and game tests
+        run: node --test tests/m01-audio-production.test.js tests/game.test.js tests/m01-runtime.test.js
+      - name: Production build
+        run: npm run build
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Focused browser audio proof
+        run: npx playwright test tests/browser/m01-audio-production.spec.js
+      - name: Upload focused evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-audio-focused-evidence
+          path: test-results/
+          if-no-files-found: ignore
