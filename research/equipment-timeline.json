@@ -37,11 +37,11 @@
       "category": "rifle",
       "caliber": "7,92×57 mm",
       "availableFrom": "1936-01-01",
-      "specs": { "magazine": 5, "feed": "clipe de 5 cartuchos", "action": "ferrolho manual" },
+      "specs": { "magazine": 5, "feed": "clipe de 5 cartuchos", "action": "ferrolho manual", "lengthM": 1.25, "barrelM": 0.74, "massKg": 4.4, "boltHandle": "reta" },
       "roles": ["rifleman"],
       "certainty": "MEDIA",
-      "sources": ["H30"],
-      "notes": "Variação ocasional no esquadrão; silhueta mais longa que o wz.29."
+      "sources": ["H30", "T32"],
+      "notes": "Variação ocasional no esquadrão (Bąk); silhueta mais longa que o wz.29. Ficha: research/weapons/kb_wz98a.md."
     },
     {
       "id": "rkm_wz28",
@@ -50,11 +50,11 @@
       "category": "light_machine_gun",
       "caliber": "7,92×57 mm",
       "availableFrom": "1930-01-01",
-      "specs": { "magazine": 20, "feed": "carregador destacável de 20", "action": "automática" },
+      "specs": { "magazine": 20, "feed": "carregador destacável de 20", "action": "automática (tiro a tiro e contínuo)", "lengthM": 1.11, "barrelM": 0.611, "massKg": 9.0, "rateRpm": 600 },
       "roles": ["machine_gunner"],
       "certainty": "MEDIA",
-      "sources": ["H30"],
-      "notes": "Arma do metralhador do esquadrão (Kowal)."
+      "sources": ["H30", "T31"],
+      "notes": "Arma do metralhador do esquadrão (Kowal). Ficha: research/weapons/rkm_wz28.md."
     },
     {
       "id": "ckm_wz30",
@@ -63,11 +63,11 @@
       "category": "heavy_machine_gun",
       "caliber": "7,92×57 mm",
       "availableFrom": "1932-01-01",
-      "specs": { "feed": "fita de tecido", "cooling": "água", "crew": 3 },
+      "specs": { "feed": "fita de tecido de 330, pela esquerda", "cooling": "água (~3 l)", "crew": 3, "lengthM": 1.2, "barrelM": 0.72, "massKg": 13.6, "rateRpm": 600, "mount": "tripé wz.30 (29,3 kg) ou wz.34 (26,3 kg)" },
       "roles": ["machine_gunner", "assistant_gunner"],
       "certainty": "MEDIA",
-      "sources": ["T03"],
-      "notes": "Batalhão tinha pelotões de metralhadoras (T03). Em M01, uma arma fixa na seteira da casamata oeste, operada por NPCs; confirmar alocação real na cabeça de ponte."
+      "sources": ["T03", "T34"],
+      "notes": "Batalhão tinha pelotões de metralhadoras (T03). Em M01, uma arma fixa na seteira da casamata oeste, operada por NPCs; confirmar alocação real na cabeça de ponte. Ficha: research/weapons/ckm_wz30.md."
     },
     {
       "id": "vis_wz35",
@@ -166,9 +166,10 @@
       "category": "machine_gun",
       "caliber": "7,92×57 mm",
       "availableFrom": "1936-01-01",
+      "specs": { "lengthM": 1.219, "barrelM": 0.627, "massKg": 12.1, "rateRpm": [800, 900], "feed": "cinta de 50/250 ou tambor de cinta de 50 (Gurttrommel 34)", "rearSightM": [200, 2000], "trigger": "E/D (tiro a tiro / contínuo)" },
       "roles": ["machine_gunner"],
       "certainty": "MEDIA",
-      "sources": [],
+      "sources": ["T33"],
       "notes": "Metralhadoras na cabeça de ponte leste e, provavelmente, no Panzerzug 7 (armamento do trem PENDENTE)."
     },
     {

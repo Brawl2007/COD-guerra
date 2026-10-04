@@ -1,0 +1,230 @@
+{
+  "date": "2026-10-02",
+  "counting": "bundled local token estimates, not ChatGPT billing",
+  "source_files": [
+    "docs/WORKING_CONTEXT.md",
+    "DEVELOPMENT_STATUS.md",
+    "QUALITY_REPORT.md",
+    "RUNBOOK.md",
+    "IMPLEMENTATION_PLAN.md",
+    "missions/m01-tczew/ENGINE_CONTRACT.md",
+    "docs/assets/m01-rkm-wz28/README.md"
+  ],
+  "profile": {
+    "file_id": "skill_profile_doc",
+    "mode": "baseline",
+    "original_tokens": 19804,
+    "compressed_tokens": 3476,
+    "compression_ratio": 5.697,
+    "token_savings_pct": 82.45,
+    "selected_segments": 211,
+    "total_segments": 1056
+  },
+  "attempts": [
+    {
+      "profile": {
+        "file_id": "skill_workflow_doc",
+        "original_tokens": 19804,
+        "compressed_tokens": 4495,
+        "compression_ratio": 4.406,
+        "token_savings_pct": 77.3
+      },
+      "validation": {
+        "query": "PR #27 rkm wz.28 clips dos soldados schema 2 staging main publicação playtest humano Chromebook",
+        "sufficient": false,
+        "best_score": 0.2,
+        "threshold": 0.35,
+        "top_matches": [
+          {
+            "segment_id": 774,
+            "similarity": 0.2,
+            "text": "Playtest humano, encenação e Chromebook pendentes."
+          },
+          {
+            "segment_id": 263,
+            "similarity": 0.1842,
+            "text": "**rkm wz.28 de Kowal (arma isolada, provisória; o runtime usa a rkm embutida nos GLB dos soldados e os clips `rkm_*` deles, com os mesmos nomes `rkm_aim`/`rkm_fire_burst`):**"
+          },
+          {
+            "segment_id": 90,
+            "similarity": 0.1739,
+            "text": "- Não há medição no Chromebook nem playtest humano completo."
+          },
+          {
+            "segment_id": 103,
+            "similarity": 0.1613,
+            "text": "Terminar a revisão do PR #27, confirmar a geometria/rig e integrar apenas em staging, preservando a rkm já funcional."
+          },
+          {
+            "segment_id": 8,
+            "similarity": 0.1562,
+            "text": "Não declarar aprovação do marco 2, playtest humano, FPS no Chromebook ou arte final a partir de testes automatizados."
+          }
+        ],
+        "used_expanded_search": false,
+        "message": "Evidence below threshold."
+      }
+    },
+    {
+      "profile": {
+        "file_id": "skill_workflow_doc",
+        "original_tokens": 19804,
+        "compressed_tokens": 10560,
+        "compression_ratio": 1.875,
+        "token_savings_pct": 46.68
+      },
+      "validation": {
+        "query": "arma isolada rkm embutida clips dos soldados",
+        "sufficient": false,
+        "best_score": 0.25,
+        "threshold": 0.35,
+        "top_matches": [
+          {
+            "segment_id": 263,
+            "similarity": 0.25,
+            "text": "**rkm wz.28 de Kowal (arma isolada, provisória; o runtime usa a rkm embutida nos GLB dos soldados e os clips `rkm_*` deles, com os mesmos nomes `rkm_aim`/`rkm_fire_burst`):**"
+          },
+          {
+            "segment_id": 993,
+            "similarity": 0.1818,
+            "text": "## Ligação ao rig dos soldados"
+          },
+          {
+            "segment_id": 994,
+            "similarity": 0.1515,
+            "text": "**Na base actual (`codex/m01-runtime`, ec02e91), o runtime já mostra a rkm embutida nos `m01_soldier_*` (nó `rkm_wz28`) e usa os 10 clips `rkm_*` do GLB dos soldados** (`src/render/m01-characters.js`)."
+          },
+          {
+            "segment_id": 1046,
+            "similarity": 0.15,
+            "text": "Os clips usam o esqueleto dos soldados, cujos dados base são CC0 do MakeHuman (`ASSET_CREDITS.md`)."
+          },
+          {
+            "segment_id": 49,
+            "similarity": 0.1429,
+            "text": "Os nomes `rkm_aim` e `rkm_fire_burst` sobrepõem os dos soldados."
+          },
+          {
+            "segment_id": 997,
+            "similarity": 0.1429,
+            "text": "O referencial da rkm é o do osso `weapon` dos `m01_soldier_*`."
+          },
+          {
+            "segment_id": 44,
+            "similarity": 0.1364,
+            "text": "| `src/render/m01-characters.js` — Kowal | Usa a rkm **embutida** e os dez clips `rkm_*` do PR #25."
+          },
+          {
+            "segment_id": 944,
+            "similarity": 0.1143,
+            "text": "**PROVISÓRIO VERIFICADO.** Kit da *ręczny karabin maszynowy* wz.28, a Browning polaca de Szymon Kowal: o modelo da arma em três LODs, os clips do rig dos soldados e o manifesto."
+          },
+          {
+            "segment_id": 30,
+            "similarity": 0.1111,
+            "text": "| PR #25 | Head `055da03e4461a13f844ff93c0dad8d54ffa0a1ac` | Claude: rkm/wz.98a embutidas, 61 ossos e 25 clips."
+          },
+          {
+            "segment_id": 269,
+            "similarity": 0.1111,
+            "text": "- Soldados próximos, mãos, recarga e transporte já têm rig e clips reais."
+          },
+          {
+            "segment_id": 318,
+            "similarity": 0.1111,
+            "text": "## Verificação anterior dos soldados (`b198a75`, antes de S3 e do PR #25)"
+          },
+          {
+            "segment_id": 718,
+            "similarity": 0.1111,
+            "text": "Galeria dos seis LODs e quinze clips, em Chromium, com relatório e capturas:"
+          },
+          {
+            "segment_id": 711,
+            "similarity": 0.0952,
+            "text": "A primeira pessoa exige os clips de arma/transporte: o clip da estação, sozinho, não a activa."
+          },
+          {
+            "segment_id": 1049,
+            "similarity": 0.0938,
+            "text": "- Este kit não tem clips de troca de carregador, de tiro deitado com bípode, de marcha ou de corrida; o GLB dos soldados na base já tem `rkm_reload`, `rkm_walk`, `rkm_run` e outros."
+          },
+          {
+            "segment_id": 722,
+            "similarity": 0.0909,
+            "text": "É revisão isolada de assets."
+          },
+          {
+            "segment_id": 858,
+            "similarity": 0.0909,
+            "text": "- atirador (`by`), arma e tipo;"
+          },
+          {
+            "segment_id": 1004,
+            "similarity": 0.0909,
+            "text": "const rkm = rkmGltf.scene.clone();"
+          },
+          {
+            "segment_id": 137,
+            "similarity": 0.087,
+            "text": "- Soldados levantam a arma ao ombro nos disparos, com mãos ligadas à coronha/guarda-mão e recuo procedural."
+          },
+          {
+            "segment_id": 319,
+            "similarity": 0.087,
+            "text": "O trabalho do Claude até `b198a75` está ligado ao runtime, com seis GLB de soldados e quinze clips."
+          },
+          {
+            "segment_id": 941,
+            "similarity": 0.087,
+            "text": "A wz.98a de Bąk usa os clips de espingarda; os clarões usam o socket da arma seleccionada."
+          },
+          {
+            "segment_id": 946,
+            "similarity": 0.087,
+            "text": "Os modelos existentes não foram alterados, e o kb wz.29 de Kowal continua no GLB dos soldados."
+          },
+          {
+            "segment_id": 892,
+            "similarity": 0.0833,
+            "text": "- estado da MG dos portões;"
+          },
+          {
+            "segment_id": 949,
+            "similarity": 0.0833,
+            "text": "- Gerador: `tools/assets/m01-rkm-wz28/`."
+          },
+          {
+            "segment_id": 996,
+            "similarity": 0.0833,
+            "text": "Os nomes `rkm_aim` e `rkm_fire_burst` repetem-se nos dois GLB; ao carregar ambos, preferir os dos soldados ou renomear ao importar."
+          }
+        ],
+        "used_expanded_search": false,
+        "message": "Evidence below threshold."
+      }
+    }
+  ],
+  "decision": "automatic summaries rejected as continuation context; preserve complete anchors in docs/WORKING_CONTEXT.md and original sources",
+  "headroom": {
+    "version": "0.39.1",
+    "payload": "m01-rkm-browser.json",
+    "tokens_before": 5242,
+    "tokens_after": 4859,
+    "tokens_saved": 383,
+    "saved_ratio": 0.07306371613887828,
+    "transforms": [
+      "router:protected:system_message",
+      "router:protected:user_message",
+      "router:smart_crusher:0.93"
+    ],
+    "beacon": "off",
+    "ml_compression": "disabled",
+    "model_calls": 0,
+    "measurement": "local tokenizer estimate, not ChatGPT billing"
+  },
+  "ccusage": "unavailable in this ChatGPT environment",
+  "memory_wrapper": "main.cjs depends on missing agent-studio lib/utils/project-root.cjs; Python compression workflow ran; MemoryRecord-shaped distilled records saved locally instead",
+  "source_snapshot_sha256": "0186b93dcb8bb26f2342c452707a0ae7a5aa1dd84fd3f3918eb5e4092c535fe1",
+  "source_snapshot_note": "Metrics were measured before later aircraft/Claude task document updates. Source hash identifies that exact combined input."
+}

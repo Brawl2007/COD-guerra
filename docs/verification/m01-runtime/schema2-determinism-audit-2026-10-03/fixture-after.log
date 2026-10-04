@@ -1,0 +1,17 @@
+✔ ckm crew is grounded below the deck, leaves after the real event and reaches safety before demolition (7040.53069ms)
+✔ schema 2 accepts exact legacy rosters and migrates atomically without changing old actors or RNG (6999.059932ms)
+✔ real ckm clips and weapon share saved time across pause, reload, casualties and optional fallback (73.31037ms)
+✔ real control routes compare covering and ignoring: faster repair, fewer near misses and more survivors with support (10370.388939ms)
+✔ repair suppression requires a round that really arrives within 3 m; a solid wall shields the sappers (200.072393ms)
+✔ inactive or suppressed Germans on the spans cause no withdrawal losses; looking away does not stop combat (933.53235ms)
+✔ casualty IDs and rounds in flight survive reload and checkpoint restore; invalid optional timers are rejected atomically (306.372525ms)
+✔ legacy schema 2 saves migrate and the six reserve slots stay outside the eighteen-man platoon (60.488373ms)
+✔ the air-raid cover instruction remains visible briefly even if the player was already in cover (8.811534ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14400.247276

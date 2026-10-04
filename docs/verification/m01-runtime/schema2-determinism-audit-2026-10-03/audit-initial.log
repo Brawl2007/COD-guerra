@@ -1,0 +1,43 @@
+✔ first divergence diagnostic detects exact tick, field, missing key and event changes (25.816098ms)
+✔ full route A/B with CP-A..D, events, RNG and long continuation: seed 19390901, support false (63844.797378ms)
+✖ full route A/B with CP-A..D, events, RNG and long continuation: seed 7, support true (59518.290405ms)
+✔ MG34 seven-shot burst after 1, actual tick pipeline plus grenade, rifle RNG and double load (394.711104ms)
+✔ MG34 seven-shot burst after 4, actual tick pipeline plus grenade, rifle RNG and double load (386.331276ms)
+✔ MG34 seven-shot burst after 6, actual tick pipeline plus grenade, rifle RNG and double load (379.478225ms)
+✔ station grab: variable timestep, zero-dt pause, double save/load (804.134587ms)
+✔ station drag: variable timestep, zero-dt pause, double save/load (814.697729ms)
+✔ station release: variable timestep, zero-dt pause, double save/load (972.267591ms)
+✔ grenade bounce/fuse, rifle bolt and partial reload continue with exact RNG and events (648.767278ms)
+✔ Bąk player carry/late delivery followed by Dudek evacuation and both demolitions (23322.793295ms)
+✔ legacy 86/89 actors, missing optional fields and old CKM placement migrate once then have identical futures (695.734886ms)
+✔ corrupt cross-system states reject atomically and leave the destination future unchanged (863.037643ms)
+✔ OUTRO playback, skip, double load and completed no-op use the same dialogue/event future (3842.222089ms)
+✔ save between checkpoints preserves the future respawn destination (14.642671ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 14
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 156675.327491
+
+✖ failing tests:
+
+test at tests/m01-schema2-determinism.test.js:24:57
+✖ full route A/B with CP-A..D, events, RNG and long continuation: seed 7, support true (59518.290405ms)
+  AssertionError [ERR_ASSERTION]: mg34-fire_burst
+      at TestContext.<anonymous> (file:///workspace/scratch/179e239c7f9f/COD-guerra/tests/m01-schema2-determinism.test.js:64:113)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

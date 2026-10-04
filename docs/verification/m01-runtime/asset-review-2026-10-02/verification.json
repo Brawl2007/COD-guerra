@@ -1,0 +1,258 @@
+{
+  "date": "2026-10-02",
+  "scope": "Handoff browser validation and asset-only staging review; not human playtest",
+  "handoff_commit": "f758daab8817adf5382a6623b8be43d42f2e4321",
+  "integration_code_commit": "ded5d4bd06e0790360698f05bfb4f6ee9e917627",
+  "integration_code_tree": "c43075bd03dc7049658b872dd1a6bcb43928686e",
+  "environment": {
+    "node": "24.19.0",
+    "chromium": "153.0.8010.0",
+    "renderer": "SwiftShader",
+    "viewport": [
+      1280,
+      720
+    ],
+    "CI": true,
+    "playwright": "1.58.2",
+    "three": "0.186.1"
+  },
+  "node": {
+    "handoff": {
+      "total": 132,
+      "passed": 132,
+      "failed": 0
+    },
+    "integration": {
+      "total": 136,
+      "passed": 136,
+      "failed": 0
+    }
+  },
+  "build": {
+    "success": true,
+    "js_kB": 1030.37,
+    "gzip_kB": 267.16,
+    "large_chunk_warning": true,
+    "js_sha256": "88346cd0b30c3febad692ce60489653989a800156210c0d80fc04a20a8416325",
+    "integration_js_identical_to_handoff": true,
+    "log_note": "Final staging build rerun with installed dependencies to replace an incomplete log; bundle remains byte-identical."
+  },
+  "browser": {
+    "tested_commit": "f758daab8817adf5382a6623b8be43d42f2e4321",
+    "stats": {
+      "startTime": "2026-10-02T20:16:18.018Z",
+      "duration": 538583.742,
+      "expected": 24,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "global_errors": [],
+    "cases": [
+      {
+        "file": "game.spec.js",
+        "title": "production prefix loads assets; real click captures mouse; shooting, reload and pause work",
+        "status": "expected",
+        "duration_ms": 9533,
+        "retry": 0
+      },
+      {
+        "file": "game.spec.js",
+        "title": "real keyboard movement reaches and stores checkpoint; restart and page reload restore it",
+        "status": "expected",
+        "duration_ms": 18519,
+        "retry": 0
+      },
+      {
+        "file": "game.spec.js",
+        "title": "corrupt checkpoint is explained and a new mission remains available",
+        "status": "expected",
+        "duration_ms": 5936,
+        "retry": 0
+      },
+      {
+        "file": "game.spec.js",
+        "title": "missing models are reported and procedural fallback keeps the area playable",
+        "status": "expected",
+        "duration_ms": 5393,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A",
+        "status": "expected",
+        "duration_ms": 32993,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "the genuine first raid displays three Ju 87 GLBs with light LODs and freezes the propellers on pause",
+        "status": "expected",
+        "duration_ms": 14349,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "unavailable optional Ju 87 models retain all three raid silhouettes and the playable mission",
+        "status": "expected",
+        "duration_ms": 9421,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset",
+        "status": "expected",
+        "duration_ms": 50515,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "an optional character download failure preserves playable procedural actors without blocking bridge validation",
+        "status": "expected",
+        "duration_ms": 12362,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "Kowal fires and changes the rkm magazine from actual combat state, preserving both poses in pause",
+        "status": "expected",
+        "duration_ms": 24668,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "missing close-up LOD0 falls back to intact LOD1 hands while the light world actors remain available",
+        "status": "expected",
+        "duration_ms": 7892,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "the station clip alone cannot enable a viewmodel when the required weapon animations fail to download",
+        "status": "expected",
+        "duration_ms": 11768,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "the station evacuation restores its grounded drag, pauses with the mission and delivers the casualty",
+        "status": "expected",
+        "duration_ms": 61734,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "real keyboard movement traverses the approaches and E delivers the message at the rail bridge",
+        "status": "expected",
+        "duration_ms": 76812,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "adjustment salvo at the gates restores its actual origin and follows mouse look",
+        "status": "expected",
+        "duration_ms": 12858,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "adjustment salvo behind the truss restores its actual origin and follows mouse look",
+        "status": "expected",
+        "duration_ms": 14382,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "demolition inside the road truss shows the actual bearing while mouse look remains free",
+        "status": "expected",
+        "duration_ms": 18760,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "a genuine CP-D reload keeps east destruction and casualties, including restart and page reload",
+        "status": "expected",
+        "duration_ms": 22232,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "the actual outro state can be skipped through the UI into the enabled historical debrief",
+        "status": "expected",
+        "duration_ms": 11903,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state",
+        "status": "expected",
+        "duration_ms": 15551,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "the real roll-call snapshot renders seated actors and keeps their pose after page reload",
+        "status": "expected",
+        "duration_ms": 23143,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "a real withdrawal continuation loses men only to rounds from the spans, keeps the twelve-survivor floor and shows the count in the HUD",
+        "status": "expected",
+        "duration_ms": 29691,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "a failed M01 bridge load prevents an invisible bridge; the French sandbox remains selectable",
+        "status": "expected",
+        "duration_ms": 11104,
+        "retry": 0
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "textured atmosphere survives checkpoint restart without duplicating resources; low quality reduces vegetation",
+        "status": "expected",
+        "duration_ms": 30203,
+        "retry": 0
+      }
+    ],
+    "raw_report": "aircraft-browser.raw.json.gz",
+    "raw_sha256": "27370ef124dc50ca19fa170bfbeb853dece187968fae75311f3f906be89e7cae",
+    "local_staging_rerun": false,
+    "staging_coverage": "src/, tests/browser/ and production JS identical to tested handoff; candidate PR CI is separate"
+  },
+  "reviews": {
+    "29": {
+      "head": "0667af008549f15947c10ab09b814338d701bf2c",
+      "merge": "b880cd4a9d815bf6aa3bc06bd869824f936c909c",
+      "decision": "accept provisional kit; runtime wiring pending"
+    },
+    "30": {
+      "head": "ad0253e9e370c80b96163d01b061047750dd93df",
+      "merge": "ded5d4bd06e0790360698f05bfb4f6ee9e917627",
+      "decision": "accept provisional kit; runtime wiring pending"
+    }
+  },
+  "protected_paths_unchanged_from_handoff": [
+    "src/",
+    "tests/browser/",
+    ".github/workflows/",
+    "graphify-out/"
+  ],
+  "graphify_checkpoint_sha256": "54647d13cc9b860c18b777cbd3d4cdc693d4a2af0cb015082171c2667dd32e32",
+  "pending": [
+    "Runtime wagon/MG34 wiring",
+    "Review PR #31 ckm wz.30",
+    "Human playtest",
+    "Chromebook performance measurement",
+    "Historical asset confirmation",
+    "Graphify paused"
+  ],
+  "main_merge": false,
+  "published": false,
+  "workflow_dispatch": false,
+  "local_integration_code_commit": "7aae8bb7aa67a296f062991e649d0a6a5511de41",
+  "remote_commit_provenance": "GitHub-created merge commits retain original PR parents and have exactly the reviewed local tree; commit IDs differ because GitHub creates author/timestamps."
+}

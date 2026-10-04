@@ -1,0 +1,374 @@
+{
+  "task": "M01-SCHEMA2-CROSS-SYSTEM-DETERMINISM-AUDIT-V1",
+  "schema": 2,
+  "cases": [
+    {
+      "label": "full-route",
+      "seed": 19390901,
+      "support": false,
+      "ticks": 20976,
+      "events": 2923,
+      "windows": [
+        {
+          "label": "cp_m01_a_orientacao",
+          "startTick": 1,
+          "clock": 0.05,
+          "battleClock": 16244.05,
+          "rng": 19390901,
+          "ticks": 200,
+          "doubleLoads": 1,
+          "firstDivergence": null
+        },
+        {
+          "label": "cp_m01_b_reorganizacao",
+          "startTick": 1955,
+          "clock": 97.74999999999659,
+          "battleClock": 16544.824999999564,
+          "rng": 19390901,
+          "ticks": 200,
+          "doubleLoads": 1,
+          "firstDivergence": null
+        },
+        {
+          "label": "station-grab",
+          "startTick": 3185,
+          "clock": 159.25000000000196,
+          "battleClock": 16760.07499999867,
+          "rng": 19390901,
+          "ticks": 200,
+          "doubleLoads": 1,
+          "firstDivergence": null
+        },
+        {
+          "label": "station-drag",
+          "startTick": 3217,
+          "clock": 160.85000000000232,
+          "battleClock": 16765.674999998646,
+          "rng": 19390901,
+          "ticks": 200,
+          "doubleLoads": 1,
+          "firstDivergence": null
+        },
+        {
+          "label": "station-release",
+          "startTick": 4270,
+          "clock": 213.5000000000143,
+          "battleClock": 16949.94999999788,
+          "rng": 19390901,
+          "ticks": 200,
+          "doubleLoads": 1,
+          "firstDivergence": null
+        },
+        {
+          "label": "mg34-enter",
+          "startTick": 5129,
+          "clock": 256.45000000002403,
+          "battleClock": 17100.45,
+          "rng": 19390901,
+          "ticks": 200,
+          "doubleLoads": 1,
+          "firstDivergence": null
+        },
+        {
+          "label": "rounds-in-flight",
+          "startTick": 5153,
+          "clock": 257.6500000000243,
+          "battleClock": 17111.25000000002,
+          "rng": 3113325697,
+          "ticks": 200,
+          "doubleLoads": 1,
+          "firstDivergence": null
+        },
+        {
+          "label": "mg34-idle",
+          "startTick": 5167,
+          "clock": 258.35000000002447,
+          "battleClock": 17117.55000000003,
+          "rng": 3291632258,
+          "ticks": 200,
+          "doubleLoads": 1,
+          "firstDivergence": null
+        },
+        {
+          "label": "mg34-fire_burst",
+          "startTick": 5219,
+          "clock": 260.95000000002506,
+          "battleClock": 17140.950000000066,
+          "rng": 4277427768,
+          "ticks": 200,
+          "doubleLoads": 1,
+          "firstDivergence": null
+        },
+        {
+          "label": "mg34-aim",
+          "startTick": 5228,
+          "clock": 261.40000000002516,
+          "battleClock": 17145.000000000073,
+          "rng": 490525051,
+          "ticks": 200,
+          "doubleLoads": 1,
+          "firstDivergence": null
+        },
+        {
+          "label": "cp_m01_c_engenheiros",
+          "startTick": 10286,
+          "clock": 514.30000000008,
+          "battleClock": 20040.400000000875,
+          "rng": 376920527,
+          "ticks": 200,
+          "doubleLoads": 1,
+          "firstDivergence": null
+        },
+        {
+          "label": "bak-wounded",
+          "startTick": 14785,
+          "clock": 739.2499999998754,
+          "battleClock": 21840.00000000742,
+          "rng": 1471752613,
+          "ticks": 200,
+          "doubleLoads": 1,
+          "firstDivergence": null
+        },
+        {
+          "label": "casualty-round-in-flight",
+          "startTick": 14985,
+          "clock": 749.2499999998663,
+          "battleClock": 21920.000000007713,
+          "rng": 1181708231,
+          "ticks": 200,
+          "doubleLoads": 1,
+          "firstDivergence": null
+        },
+        {
+          "label": "casualty-impact",
+          "startTick": 14993,
+          "clock": 749.6499999998659,
+          "battleClock": 21923.200000007724,
+          "rng": 1150667097,
+          "ticks": 200,
+          "doubleLoads": 1,
+          "firstDivergence": null
+        },
+        {
+          "label": "east-demolition",
+          "startTick": 15733,
+          "clock": 786.6499999998323,
+          "battleClock": 22200,
+          "rng": 2906777259,
+          "ticks": 200,
+          "doubleLoads": 1,
+          "firstDivergence": null
+        },
+        {
+          "label": "cp_m01_d_retirada",
+          "startTick": 15896,
+          "clock": 794.7999999998249,
+          "battleClock": 22269.27499999988,
+          "rng": 4287225774,
+          "ticks": 200,
+          "doubleLoads": 1,
+          "firstDivergence": null
+        },
+        {
+          "label": "bak-carried-by-dudek",
+          "startTick": 17019,
+          "clock": 850.9499999997738,
+          "battleClock": 22746.549999999064,
+          "rng": 3423104549,
+          "ticks": 200,
+          "doubleLoads": 1,
+          "firstDivergence": null
+        },
+        {
+          "label": "west-demolition",
+          "startTick": 20675,
+          "clock": 1033.7499999996076,
+          "battleClock": 24300,
+          "rng": 2491652339,
+          "ticks": 200,
+          "doubleLoads": 1,
+          "firstDivergence": null
+        },
+        {
+          "label": "outro",
+          "startTick": 20975,
+          "clock": 1048.749999999594,
+          "battleClock": 25500,
+          "rng": 3822798900,
+          "ticks": 1,
+          "doubleLoads": 0,
+          "firstDivergence": null
+        }
+      ],
+      "firstDivergence": null
+    },
+    {
+      "label": "mg34-after-1",
+      "ticks": 200,
+      "firstDivergence": null,
+      "clock": 7.000000000000036,
+      "rng": 1340166901
+    },
+    {
+      "label": "mg34-after-4",
+      "ticks": 200,
+      "firstDivergence": null,
+      "clock": 7.225000000000035,
+      "rng": 1340166901
+    },
+    {
+      "label": "mg34-after-6",
+      "ticks": 200,
+      "firstDivergence": null,
+      "clock": 7.375000000000035,
+      "rng": 1340166901
+    },
+    {
+      "label": "station-grab",
+      "ticks": 300,
+      "firstDivergence": null,
+      "clock": 170.21100000000467,
+      "rng": 29
+    },
+    {
+      "label": "station-drag",
+      "ticks": 300,
+      "firstDivergence": null,
+      "clock": 185.91100000000824,
+      "rng": 29
+    },
+    {
+      "label": "station-release",
+      "ticks": 300,
+      "firstDivergence": null,
+      "clock": 224.461000000017,
+      "rng": 29
+    },
+    {
+      "label": "grenade-and-reload",
+      "ticks": 240,
+      "firstDivergence": null,
+      "clock": 13.400000000000055,
+      "rng": 2771041297
+    },
+    {
+      "label": "bak-player-carry",
+      "ticks": 200,
+      "firstDivergence": null,
+      "clock": 804.8499999998157,
+      "rng": 3653295617
+    },
+    {
+      "label": "bak-late-delivery",
+      "ticks": 8000,
+      "firstDivergence": null,
+      "clock": 1204.899999999452,
+      "rng": 3303495650
+    },
+    {
+      "label": "legacy-86",
+      "ticks": 200,
+      "firstDivergence": null,
+      "clock": 10.000000000000007,
+      "rng": 1868869221
+    },
+    {
+      "label": "legacy-89",
+      "ticks": 200,
+      "firstDivergence": null,
+      "clock": 10.000000000000007,
+      "rng": 1868869221
+    },
+    {
+      "label": "corrupt-rejection-0",
+      "ticks": 30,
+      "firstDivergence": null,
+      "clock": 1.5000000000000007,
+      "rng": 1157633598
+    },
+    {
+      "label": "corrupt-rejection-1",
+      "ticks": 30,
+      "firstDivergence": null,
+      "clock": 1.5000000000000007,
+      "rng": 1157633598
+    },
+    {
+      "label": "corrupt-rejection-2",
+      "ticks": 30,
+      "firstDivergence": null,
+      "clock": 1.5000000000000007,
+      "rng": 1157633598
+    },
+    {
+      "label": "corrupt-rejection-3",
+      "ticks": 30,
+      "firstDivergence": null,
+      "clock": 1.5000000000000007,
+      "rng": 1157633598
+    },
+    {
+      "label": "corrupt-rejection-4",
+      "ticks": 30,
+      "firstDivergence": null,
+      "clock": 1.5000000000000007,
+      "rng": 1157633598
+    },
+    {
+      "label": "corrupt-rejection-5",
+      "ticks": 30,
+      "firstDivergence": null,
+      "clock": 1.5000000000000007,
+      "rng": 1157633598
+    },
+    {
+      "label": "corrupt-rejection-6",
+      "ticks": 30,
+      "firstDivergence": null,
+      "clock": 1.5000000000000007,
+      "rng": 1157633598
+    },
+    {
+      "label": "corrupt-rejection-7",
+      "ticks": 30,
+      "firstDivergence": null,
+      "clock": 1.5000000000000007,
+      "rng": 1157633598
+    },
+    {
+      "label": "corrupt-rejection-8",
+      "ticks": 30,
+      "firstDivergence": null,
+      "clock": 1.5000000000000007,
+      "rng": 1157633598
+    },
+    {
+      "label": "corrupt-rejection-9",
+      "ticks": 30,
+      "firstDivergence": null,
+      "clock": 1.5000000000000007,
+      "rng": 1157633598
+    },
+    {
+      "label": "corrupt-rejection-10",
+      "ticks": 30,
+      "firstDivergence": null,
+      "clock": 1.5000000000000007,
+      "rng": 1157633598
+    },
+    {
+      "label": "outro-playback",
+      "ticks": 1400,
+      "firstDivergence": null,
+      "clock": 1108.7999999995393,
+      "rng": 3822798900
+    },
+    {
+      "label": "outro-skip",
+      "ticks": 100,
+      "firstDivergence": null,
+      "clock": 1049.2999999995934,
+      "rng": 3822798900
+    }
+  ]
+}

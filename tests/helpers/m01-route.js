@@ -17,11 +17,12 @@ export function coverControls(sim){
 
 // A bounded route through the real simulation; no event, clock or objective injection.
 // This is an automated state/control test, not a browser playthrough.
-export function driver(seed=19390901,{support=false}={}){
+export function driver(seed=19390901,{support=false,onStep}={}){
   const sim=new M01Simulation(seed),checkpoints={},events=[],combatSnapshots={};
   function step(controls={}){
     sim.tick(.05,controls);
-    for(const e of sim.drainEvents()){
+    const emitted=sim.drainEvents();
+    for(const e of emitted){
       events.push(e);if(e.type==='checkpoint')checkpoints[e.id]=structuredClone(sim.checkpoint);
       if(e.type==='restored')throw new Error(`Route died at ${sim.battleClock}: ${sim.failure??'combat/bounds'}`);
       if(e.type==='round-impact'&&e.pinned?.includes('pawel_krawiec')&&!combatSnapshots.repairThreat)combatSnapshots.repairThreat=sim.snapshot();
@@ -31,6 +32,7 @@ export function driver(seed=19390901,{support=false}={}){
     if(sim.active('cover_repair')&&!combatSnapshots.repair)combatSnapshots.repair=sim.snapshot();
     if(sim.consumedEvent('evt_m01_germans_on_east_spans')&&!combatSnapshots.withdrawal)combatSnapshots.withdrawal=sim.snapshot();
     if(sim.consumedEvent('evt_m01_east_demolition')&&sim.player.x<-100&&!combatSnapshots.eastDemolitionOutside)combatSnapshots.eastDemolitionOutside=sim.snapshot();
+    onStep?.({sim,controls,events:emitted,dt:.05});
   }
   function until(predicate,limit=240,controls={}){
     for(let i=0;i<limit*20;i++){
@@ -65,6 +67,19 @@ export function toRepair(d){
   if(!sim.active('cover_repair'))throw new Error('Route did not deliver the crate');
   return d;
 }
+/** A real route to the scripted station evacuation, optionally observing it from the yard. */
+export function toStationEvacuation(d=driver(),{observe=false,phase='drag'}={}){
+  const {sim,step,walk,until}=d;step({skip:true});
+  walk(-66,26);walk(-15,26);walk(-15,2);walk(16,2);step({interact:true});
+  if(observe){walk(-15,2);walk(-15,32);walk(-110,32);walk(-290,35);walk(-308,35);}
+  until(()=>sim.consumedEvent('evt_m01_wounded_dragged'),120);
+  if(observe&&phase==='release'){
+    until(()=>sim.actor('generic_rifleman').stationDrag?.phase==='drag',180);walk(-331,32);
+  }
+  until(()=>sim.actor('generic_rifleman').stationDrag?.phase===phase,180);
+  if(phase==='drag')until(()=>sim.actor('leon_dudek').x<-310,80);
+  return d;
+}
 /** Stay in the real sandbag cover until an actual adjustment salvo is emitted. */
 export function toCoverAdjustment({truss=false}={}){
   const d=toRepair(driver()),{sim,walk,step,until}=d;
@@ -76,8 +91,8 @@ export function toCoverAdjustment({truss=false}={}){
   return d;
 }
 // support: on the embankment slope beside the sappers (where the Lisewo gates are in sight) and on the south side of the deck.
-export function route(seed=19390901,{support=false}={}){
-  const {sim,checkpoints,events,combatSnapshots,step,until,walk}=toRepair(driver(seed,{support}));
+export function route(seed=19390901,{support=false,onStep}={}){
+  const {sim,checkpoints,events,combatSnapshots,step,until,walk}=toRepair(driver(seed,{support,onStep}));
   if(support)walk(-120,16.5);else{walk(-115,27);walk(-28,28);step({crouch:true});}
   until(()=>sim.active('hold_access'),500);
   if(!support)step({crouch:true});

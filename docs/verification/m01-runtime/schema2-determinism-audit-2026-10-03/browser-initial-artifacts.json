@@ -1,0 +1,20 @@
+{
+  "kind": "original failing run textual traces, JSON diagnostic resources and error context",
+  "omitted": "zip containers, binary asset resources and PNG captures; this is not a complete Playwright trace ZIP",
+  "files": [
+    "m01-the-real-station-relea-87f46--and-keeps-both-roots-fixed/error-context.md",
+    "m01-the-real-station-relea-87f46--and-keeps-both-roots-fixed/trace/resources/26e6584d21745e245ce5bc9b0f5e29ddac908a14",
+    "m01-the-real-station-relea-87f46--and-keeps-both-roots-fixed/trace/test.trace",
+    "m01-the-real-station-relea-87f46--and-keeps-both-roots-fixed/trace/0-trace.trace",
+    "m01-the-real-station-relea-87f46--and-keeps-both-roots-fixed/trace/0-trace.network",
+    "m01-the-real-station-relea-87f46--and-keeps-both-roots-fixed/trace/0-trace.stacks",
+    "m01-the-real-station-grab--9eaaf--and-keeps-both-roots-fixed/error-context.md",
+    "m01-the-real-station-grab--9eaaf--and-keeps-both-roots-fixed/trace/resources/62363946a916f9198d102269f4737eeeee9ccf91",
+    "m01-the-real-station-grab--9eaaf--and-keeps-both-roots-fixed/trace/test.trace",
+    "m01-the-real-station-grab--9eaaf--and-keeps-both-roots-fixed/trace/0-trace.trace",
+    "m01-the-real-station-grab--9eaaf--and-keeps-both-roots-fixed/trace/0-trace.network",
+    "m01-the-real-station-grab--9eaaf--and-keeps-both-roots-fixed/trace/0-trace.stacks"
+  ],
+  "bytes": 86192,
+  "run": "interrupted after the staged Restart fixture failures; no 35/35 claim"
+}

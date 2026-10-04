@@ -1,0 +1,446 @@
+{
+  "kind": "production browser verification; genuine simulation saves in staged cases; no human playtest or hardware FPS measurement",
+  "environment": {
+    "Node": "24.19.0",
+    "Chromium": "153 / SwiftShader",
+    "viewport": [
+      1280,
+      720
+    ],
+    "Three": "0.186.1",
+    "Vite": "8.3.1",
+    "Playwright": "1.58.2"
+  },
+  "files": [
+    {
+      "file": "src/render/m01-viewmodel.js",
+      "sha256": "6fd9cc2fc5831c7d22d2f3b774b17b1194152e2a7a73b6a41f7bf37679dd062a"
+    },
+    {
+      "file": "src/render/m01-characters.js",
+      "sha256": "34f7a372318597ee113c474a59dc19bdec117012a6a27c6e6af21b0aab721b0d"
+    },
+    {
+      "file": "src/game/m01-simulation.js",
+      "sha256": "151486bed3cf9d6d31a21c31cdf5f27a45ee91cafdf59605e7db999ca591b5ad"
+    },
+    {
+      "file": "tests/browser/m01.spec.js",
+      "sha256": "871eb1d20ab6cd07a01e7dd3caa39cf1eafdfc34f0222b03102510705690facd"
+    },
+    {
+      "file": "tests/m01-character-assets.test.js",
+      "sha256": "ce292c25f20014fca47d876960f5a1ba12ccfeb6013e7d2d6b84aa34cb137f95"
+    },
+    {
+      "file": "tests/m01-station-evacuation.test.js",
+      "sha256": "523669433be8eb7bc8382bb0ebbb9d69bb5e4cdb847f544d5dfb69c71b600d4b"
+    }
+  ],
+  "node": {
+    "command": "npm test",
+    "pass": 126,
+    "fail": 0,
+    "duration_ms": 12602.927139,
+    "logSHA256": "1678006155dfe0bea1a527f22bd84474a59281226606c4ea054ca3eefe274784"
+  },
+  "build": {
+    "command": "npm run build",
+    "JS": "index-BTmk9hlR.js",
+    "bytes": 1026941,
+    "reported_kB": 1026.94,
+    "reported_gzip_kB": 266.11,
+    "warning": "chunk larger than 500 kB"
+  },
+  "browser": [
+    {
+      "source": "ef7d68a4d4b4193bcf8fabf6c0f1162aceb2f728, before reload framing change and Kowal browser case",
+      "reportFile": "m01-recovered-browser.json",
+      "reportSHA256": "daba72bad4d0534d14d4e7366dd46841ddf174d71ad1876f7a9403f842a75065",
+      "stats": {
+        "startTime": "2026-10-02T00:15:19.222Z",
+        "duration": 453835.915,
+        "expected": 21,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "errors": [],
+      "cases": [
+        {
+          "title": "production prefix loads assets; real click captures mouse; shooting, reload and pause work",
+          "file": "game.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 9257,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "real keyboard movement reaches and stores checkpoint; restart and page reload restore it",
+          "file": "game.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 16065,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "corrupt checkpoint is explained and a new mission remains available",
+          "file": "game.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 5030,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "missing models are reported and procedural fallback keeps the area playable",
+          "file": "game.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 4744,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 33192,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 42863,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "an optional character download failure preserves playable procedural actors without blocking bridge validation",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 11961,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "missing close-up LOD0 falls back to intact LOD1 hands while the light world actors remain available",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 12625,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "the station clip alone cannot enable a viewmodel when the required weapon animations fail to download",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 10757,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "the station evacuation restores its grounded drag, pauses with the mission and delivers the casualty",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 54680,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "real keyboard movement traverses the approaches and E delivers the message at the rail bridge",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 66352,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "adjustment salvo at the gates restores its actual origin and follows mouse look",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 12931,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "adjustment salvo behind the truss restores its actual origin and follows mouse look",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 12660,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "demolition inside the road truss shows the actual bearing while mouse look remains free",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 17908,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "a genuine CP-D reload keeps east destruction and casualties, including restart and page reload",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 22122,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "the actual outro state can be skipped through the UI into the enabled historical debrief",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 11392,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 14554,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "the real roll-call snapshot renders seated actors and keeps their pose after page reload",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 21605,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "a real withdrawal continuation loses men only to rounds from the spans, keeps the twelve-survivor floor and shows the count in the HUD",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 25651,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "a failed M01 bridge load prevents an invisible bridge; the French sandbox remains selectable",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 10767,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "textured atmosphere survives checkpoint restart without duplicating resources; low quality reduces vegetation",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 29662,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "current source hashes listed above, after reload framing change; selected equipment cases",
+      "reportFile": "m01-current-equipment-browser.json",
+      "reportSHA256": "f624d91b299b56fba831a01f718e11241a2ae862b4c4a3c4a96e8a9c1763d0d6",
+      "stats": {
+        "startTime": "2026-10-02T00:45:58.096Z",
+        "duration": 82794.135,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "errors": [],
+      "cases": [
+        {
+          "title": "licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 42862,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "Kowal fires and changes the rkm magazine from actual combat state, preserving both poses in pause",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 24375,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "missing close-up LOD0 falls back to intact LOD1 hands while the light world actors remain available",
+          "file": "m01.spec.js",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration_ms": 9294,
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "pending": [
+    "full 22-case CI on the final integration",
+    "human playtest",
+    "Chromebook measurement",
+    "final art and transitions; sleeve cut remains provisional"
+  ],
+  "kowalBrowserSamples": {
+    "kind": "production browser continuation of a genuine simulation-control snapshot",
+    "samples": [
+      {
+        "clip": "rkm_fire_burst",
+        "clock": 276.81680000002865,
+        "battleClock": 17283.751200000297,
+        "actor": {
+          "id": "szymon_kowal",
+          "lod": 1,
+          "clip": "rkm_fire_burst",
+          "weapon": "rkm_wz28",
+          "weaponMeshes": [
+            "rkm_pouch",
+            "rkm_wz28",
+            "rkm_bipod_folded"
+          ]
+        }
+      },
+      {
+        "clip": "rkm_reload",
+        "clock": 281.76660000002965,
+        "battleClock": 17328.299400000364,
+        "actor": {
+          "id": "szymon_kowal",
+          "lod": 1,
+          "clip": "rkm_reload",
+          "weapon": "rkm_wz28",
+          "weaponMeshes": [
+            "rkm_pouch",
+            "rkm_wz28",
+            "rkm_bipod_folded"
+          ]
+        }
+      }
+    ],
+    "errors": [],
+    "failed": []
+  }
+}
