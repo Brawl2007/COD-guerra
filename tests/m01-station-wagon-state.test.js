@@ -30,12 +30,15 @@ test('only the third yard wagon switches to burned from the persisted station_wa
   assert.equal(yardWagonState(c,['station_wagon_fire']),'burned');
 });
 
-test('wounded_dragged owns station_wagon_fire and snapshot restore preserves it without renderer state',()=>{
+test('station_wagon_hit owns station_wagon_fire; the later casualty event does not create it',()=>{
   const sim=new M01Simulation();sim.scene=null;sim.clock=12;
   sim.consume(E('wounded_dragged'));
-  assert.ok(sim.destruction.includes('station_wagon_fire'));
-  assert.equal(yardWagonState(M01_YARD_WAGON_PLAN[2],sim.destruction),'burned');
-  const saved=sim.snapshot(),restored=new M01Simulation();restored.restoreSnapshot(saved);
+  assert.equal(sim.destruction.includes('station_wagon_fire'),false);
+  const hit=new M01Simulation();hit.scene=null;hit.clock=12;
+  hit.consume(E('station_wagon_hit'));
+  assert.ok(hit.destruction.includes('station_wagon_fire'));
+  assert.equal(yardWagonState(M01_YARD_WAGON_PLAN[2],hit.destruction),'burned');
+  const saved=hit.snapshot(),restored=new M01Simulation();restored.restoreSnapshot(saved);
   assert.deepEqual(restored.destruction,saved.destruction);
   assert.equal(yardWagonState(M01_YARD_WAGON_PLAN[2],restored.destruction),'burned');
 });

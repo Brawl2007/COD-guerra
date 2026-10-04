@@ -365,7 +365,8 @@ export class M01View {
     for(const x of [1120,1197])this.mesh('cylinder','metal',[x,4,2.5],[1,1,1],this.panzerzug);
   }
   syncDamage(sim,state){
-    const yardDamage=yardWagonFireDamage(sim.destruction,sim.world,sim.consumed.evt_m01_wounded_dragged??sim.clock);
+    const wagonFireStarted=sim.consumed.evt_m01_station_wagon_hit??sim.consumed.evt_m01_wounded_dragged??sim.clock;
+    const yardDamage=yardWagonFireDamage(sim.destruction,sim.world,wagonFireStarted);
     const damage=yardDamage&&!state.damage.some(d=>d.id===yardDamage.id)?[...state.damage,yardDamage]:state.damage;
     this.atmosphere.update(damage===state.damage?state:{...state,damage},sim.clock,this.owner.quality);
     this.yardFire.visible=Boolean(yardDamage);

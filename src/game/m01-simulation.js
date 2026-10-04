@@ -198,16 +198,18 @@ export class M01Simulation {
       case E('bombing_0434'):
         this.finish('deliver_message');this.activate('take_cover');this.player.headgear='pl_helmet_wz31';
         this.message('Abrigue-se! Cabeça baixa, junto à cobertura!');
-        this.mission.phase='FIRST_CONTACT';this.startScene('cs_m01_bombing');
-        this.impact('station_bomb',this.world.point('tczew_station'),true);break;
+        this.mission.phase='FIRST_CONTACT';this.startScene('cs_m01_bombing');break;
       case E('forward_post_bombed'):{const p=this.world.point('forward_post');
         const near=dist(this.player,p)<=30;this.flags['m01.forward_post_state']=near?'intact_near_miss':'destroyed';
         this.impact('forward_post',near?{x:0,y:-10,z:-40}:p,true);break;}
       case E('nowicki_lost'):this.flags['m01.nowicki_status']='missing';this.actor('tadeusz_nowicki').active=false;
         this.impact('repair_crater',this.world.point('repair_site_1'),true);break;
       case E('cable_cut'):this.destruction.push('ignition_line_damaged');break;
+      case E('station_wagon_hit'):
+        if(!this.destruction.includes('station_wagon_fire'))this.destruction.push('station_wagon_fire');
+        if(!this.sectors.damage.some(d=>d.id==='station_bomb'))this.impact('station_bomb',this.world.point('tczew_station'),true);
+        break;
       case E('wounded_dragged'):{
-        this.destruction.push('station_wagon_fire');
         const patient=this.actor(STATION_PATIENT),medic=this.actor('leon_dudek');
         if(patient.alive&&patient.active){
           Object.assign(patient,{health:Math.min(patient.health,45),state:'WOUNDED',task:'station_wounded',target:null,crouched:false});

@@ -529,6 +529,20 @@
       "note": "Versão escolhida para o roteiro. H01-PDF, p. 132, nota 67, registra divergência sobre se os cabos foram realmente danificados; não apresentar o corte como fato consensual."
     },
     {
+      "id": "evt_m01_station_wagon_hit",
+      "sector": "s3_station_yard",
+      "trigger": { "type": "eventComplete", "event": "evt_m01_bombing_0434", "delaySec": 8.5 },
+      "results": [
+        "terceira bomba atinge o pátio da estação",
+        "station_wagon_fire persiste no terceiro vagão reconstruído do pátio"
+      ],
+      "idempotent": true,
+      "persist": true,
+      "certainty": "GAMEPLAY_DRAMATIZATION",
+      "sources": [],
+      "note": "Autoridade explícita do beat t=8,5 s de cs_m01_bombing; separada do posterior evt_m01_wounded_dragged."
+    },
+    {
       "id": "evt_m01_wounded_dragged",
       "sector": "s3_station_yard",
       "trigger": { "type": "battleClock", "at": "04:35:30" },
@@ -926,6 +940,7 @@
           "evt_m01_forward_post_bombed",
           "evt_m01_nowicki_lost",
           "evt_m01_cable_cut",
+          "evt_m01_station_wagon_hit",
           "evt_m01_wounded_dragged"
         ],
         "objectives": { "done": ["obj_m01_deliver_message", "obj_m01_take_cover", "obj_m01_follow_sergeant"], "active": ["obj_m01_find_sappers"] },
@@ -963,6 +978,7 @@
           "evt_m01_forward_post_bombed",
           "evt_m01_nowicki_lost",
           "evt_m01_cable_cut",
+          "evt_m01_station_wagon_hit",
           "evt_m01_wounded_dragged",
           "evt_m01_second_air_pass",
           "evt_m01_train963_arrives",
@@ -1024,6 +1040,7 @@
           "evt_m01_forward_post_bombed",
           "evt_m01_nowicki_lost",
           "evt_m01_cable_cut",
+          "evt_m01_station_wagon_hit",
           "evt_m01_wounded_dragged",
           "evt_m01_second_air_pass",
           "evt_m01_train963_arrives",
@@ -1108,7 +1125,7 @@
         { "t": 0.6, "line": "dlg_m01_014" },
         { "t": 2.1, "action": "primeira bomba (evt_m01_forward_post_bombed): posto avançado ou quase-acerto no rio; onda de choque; zumbido configurável" },
         { "t": 5.0, "action": "segunda bomba perto de repair_site_1 (evt_m01_nowicki_lost); terra cai sobre a trincheira" },
-        { "t": 8.5, "action": "terceira bomba: pátio da estação; vagão pega fogo" },
+        { "t": 8.5, "action": "terceira bomba (evt_m01_station_wagon_hit): pátio da estação; vagão pega fogo" },
         { "t": 10.0, "line": "dlg_m01_016" },
         { "t": 12.0, "line": "dlg_m01_015" },
         { "t": 14.0, "action": "fim do bloqueio parcial; obj_m01_take_cover ativo" }
