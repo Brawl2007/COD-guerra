@@ -5,6 +5,8 @@ import { Wz29 } from './wz29.js';
 import { Random } from '../core/random.js';
 import { eyePosition, aimDirection, muzzlePosition, traceShot, traceObstruction } from '../world/spatial.js';
 import { makeRound, traceRound, closestApproach, validRound, NEAR_MISS } from './m01-fire.js';
+import { M01AuthorityCoordinator, pilotActor, validatePilotState } from './m01-authority-coordinator.js';
+import { createPilot, advancePilot, pilotOperation } from './m01-sector-runtime-adapter.js';
 
 export const seconds=text=>{const values=text.split(':').map(Number);if(values.length===2)values.push(0);return values.reduce((n,v)=>n*60+v,0);};
 export const clockText=n=>new Date(Math.round(n)*1000).toISOString().slice(11,19);
@@ -94,6 +96,7 @@ export class M01Simulation {
     this.enemyFire={rounds:[],nextId:0};
     this.sectors={sectors:definition.sectors.map(s=>({id:s.id,state:s.schedule[0].state,strength:100,morale:1,supply:1})),damage:[]};
     this.mission={phase:'INTRO',complete:false,text:phaseText.INTRO,status:''};
+    this.authorityPilot=createPilot(this);
     this.consume(E('intro_card'));this.startScene('cs_m01_intro');this.checkpoint=this.snapshot(false);
   }
   actor(id){return this.actors.find(a=>a.id===id);}
@@ -250,6 +253,7 @@ export class M01Simulation {
       case E('debrief'):this.flags['m01.completed']=true;this.mission.complete=true;this.checkpoint=this.snapshot(false);this.emit({type:'complete'});break;
       default:throw new Error(`Evento M01 sem resultado implementado: ${id}`);
     }
+    this.authorityPilot?.setEnabled(this.consumedEvent(E('train963_arrives')));
     this.world.refresh(Object.keys(this.consumed),this.flags);return true;
   }
   safeImpact(point){
@@ -378,6 +382,7 @@ export class M01Simulation {
     this.interruptStationEvacuation();
     const retreat=this.consumedEvent(E('east_demolition'));
     for(const a of this.actors){
+      if(pilotActor(a))continue; // The coordinator projects this formation; legacy movement is never a second owner.
       if(a.ckm)a.ckm.visible=!this.consumedEvent(E('west_demolition'));
       a.shot=Math.max(0,a.shot-dt);this.updateMG34Posture(a);if(!a.alive||!a.active)continue;
       if(proneGunner(a)&&a.mg34Prone.phase==='exit')continue;
@@ -450,6 +455,7 @@ export class M01Simulation {
     if(this.mission.phase==='OUTRO')return;
     const retreat=this.consumedEvent(E('east_demolition')),withdrawal=this.consumedEvent(E('east_platoon_withdraws'))&&!retreat;
     for(const a of this.enemies){
+      if(pilotActor(a))continue; // Entire pilot sector is resolved through its active-owner adapter.
       this.updateMG34Posture(a);if(!a.alive||!a.active)continue;
       a.cooldown-=dt;
       if(proneGunner(a)){this.emitMG34Rounds(a);if(!canMG34Fire(a))continue;}
@@ -517,6 +523,7 @@ export class M01Simulation {
   gauss(){let u=0;while(u<=1e-12)u=this.rng.next();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*this.rng.next());}
   /** Uma rajada (ou um tiro) com dispersão em milésimos; os tiros ficam em voo até à hora de chegada (enemyFire.rounds). */
   burst(a,target,kind,{rounds=1,interval=.075,bias=[0,0],cone=[0,0],tracer=false,victim=null}={}){
+    if(pilotActor(a))return false; // No legacy firing path may bypass the pilot ammunition/lease gateway.
     if(proneGunner(a)&&(!canMG34Fire(a)||this.clock<a.suppressedUntil||this.mission.phase==='OUTRO'||this.mission.complete))return false;
     const aim=target.id?{x:target.x,y:target.y+(target.crouched?.75:1.1),z:target.z}:
       {x:target.x,y:(target.y??this.world.heightAt(target.x,target.z))+1,z:target.z};
@@ -544,7 +551,7 @@ export class M01Simulation {
     const kowal=this.actor('szymon_kowal');kowal.cooldown-=dt;
     if(!kowal.alive||!kowal.active||kowal.cooldown>0||!this.consumedEvent(E('train963_arrives'))||this.consumedEvent(E('east_demolition')))return;
     kowal.cooldown=4;
-    const dike=this.enemies.filter(a=>a.group==='grp_de_east'&&a.alive&&a.active);
+    const dike=this.enemies.filter(a=>a.group==='grp_de_east'&&a.alive&&a.active&&!pilotActor(a));
     const target=dike.filter(a=>this.clock-a.firedAt<10).sort((a,b)=>b.firedAt-a.firedAt).find(a=>this.world.lineOfSight(kowal,a))??
       dike.find(a=>a.weapon==='mg34'&&this.world.lineOfSight(kowal,a));
     if(!target)return;
@@ -594,13 +601,17 @@ export class M01Simulation {
     const aim=this.weapon.shotDirection(p.angle,p.pitch,p.aiming,p.moveBlend>.1,this.rng.next);
     const dir=aimDirection(aim.angle,aim.pitch),origin=eyePosition(p),hit=traceShot(this.world,origin,dir,this.actors,1200,muzzlePosition(p));
     p.weaponShotAt=now;p.pitch=Math.min(1.25,p.pitch+.024);
-    if(hit?.actor?.team==='enemy'){const a=hit.actor;a.health=Math.max(0,a.health-this.weapon.profile.damage*hit.multiplier);a.alive=a.health>0;a.state=a.alive?'HIT_REACTION':'DOWN';}
+    if(hit?.actor?.team==='enemy'){const a=hit.actor,damage=this.weapon.profile.damage*hit.multiplier;
+      if(pilotActor(a))pilotOperation(this,`player-hit:${this.weapon.shotCount}:${a.id}`,[{type:'damage',memberId:a.id,amount:damage}]);
+      else{a.health=Math.max(0,a.health-damage);a.alive=a.health>0;a.state=a.alive?'HIT_REACTION':'DOWN';}}
     const targetPoint=hit?.point??{x:origin.x+dir.x*1200,y:origin.y+dir.y*1200,z:origin.z+dir.z*1200};
     let silenced=false;
     for(const a of this.enemies.filter(a=>a.alive&&a.active)){
       const d=Math.max(0,(a.x-origin.x)*dir.x+(a.y+1-origin.y)*dir.y+(a.z-origin.z)*dir.z);
       if(d>0&&d<1200&&Math.hypot(a.x-origin.x-dir.x*d,a.y+1-origin.y-dir.y*d,a.z-origin.z-dir.z*d)<3&&(!hit||d<=hit.distance+3)){
-        silenced||=a.suppressedUntil<=this.clock&&(a.weapon==='mg34'||a.group==='grp_de_spans');a.suppressedUntil=this.clock+5;
+        silenced||=a.suppressedUntil<=this.clock&&(a.weapon==='mg34'||a.group==='grp_de_spans');
+        if(pilotActor(a))pilotOperation(this,`player-suppress:${this.weapon.shotCount}:${a.id}`,[{type:'suppress',memberId:a.id,until:this.clock+5}]);
+        else a.suppressedUntil=this.clock+5;
       }
     }
     // Callout real (enemy_group_suppressed): só quando o tiro do jogador acabou de calar uma MG ou os alemães do tabuleiro.
@@ -623,7 +634,9 @@ export class M01Simulation {
       if(g.fuse<=0){this.impact(g.id,g,false);for(const a of [this.player,...this.enemies]){
         const distance=Math.hypot(a.x-g.x,a.y+.9-g.y,a.z-g.z);
         if(a.alive&&a.active&&distance<8&&this.world.lineOfSight({...g,space:'metres',eyeHeight:.04},a)){
-          a.health=Math.max(0,a.health-(1-distance/8)*100);a.alive=a.health>0;}
+          const damage=(1-distance/8)*100;
+          if(pilotActor(a))pilotOperation(this,`grenade:${g.id}:${a.id}`,[{type:'damage',memberId:a.id,amount:damage}]);
+          else{a.health=Math.max(0,a.health-damage);a.alive=a.health>0;}}
       }}
     }this.grenades.active=this.grenades.active.filter(g=>g.fuse>0);
     for(const a of this.enemies)if(proneGunner(a))this.updateMG34Posture(a);
@@ -663,7 +676,7 @@ export class M01Simulation {
       if(controls.fire)this.fire();this.updateGrenades(dt,controls.grenade);
       this.advanceBattle(dt);this.boundaries(dt);
     }
-    this.updateActors(dt);this.updateCombat(dt);
+    advancePilot(this,dt);this.updateActors(dt);this.updateCombat(dt);
     if(!p.alive)return;
     this.updateObjectives(dt,controls.interact);this.processEvents();
     if(this.flags['m01.second_raid_state']==='active'&&this.battleClock>=seconds('05:34:00'))this.flags['m01.second_raid_state']='ended';
@@ -682,7 +695,7 @@ export class M01Simulation {
         const rotation=['cv_sandbag_mid_2','cv_portal_road_n','cv_road_truss_1','cv_road_truss_3','cv_tower_p1_n'];
         // "Ajusta sobre a cobertura": rajada real de uma MG que vê o jogador (impactos na cobertura, não dano garantido).
         // Uma MG que o veja dispara uma rajada; sem MG, uma salva de até quatro atiradores (um tiro cada).
-        const shooters=this.enemies.filter(a=>a.group==='grp_de_east'&&a.alive&&a.active&&this.clock>=a.suppressedUntil&&canMG34Fire(a)).sort((a,b)=>(b.weapon==='mg34')-(a.weapon==='mg34'))
+        const shooters=this.enemies.filter(a=>a.group==='grp_de_east'&&!pilotActor(a)&&a.alive&&a.active&&this.clock>=a.suppressedUntil&&canMG34Fire(a)).sort((a,b)=>(b.weapon==='mg34')-(a.weapon==='mg34'))
           .filter(a=>this.world.lineOfSight(a,p)).slice(0,4);
         // No warning or cover reservation until a real salvo is emitted. Retry at a bounded cadence.
         this.timers.nextCoverCall=this.clock+(shooters.length?42:4);
@@ -881,6 +894,7 @@ export class M01Simulation {
     gate:this.gate,recoveries:this.recoveries,timers:this.timers,sectors:this.sectors,grenades:this.grenades,mission:this.mission,enemyFire:this.enemyFire});
     // A continuation save must preserve the previous respawn point, not promote the current tick to a CP.
     // Actual CP-A..D remain flat schema-2 saves; omit the backup when it already equals this state.
+    s.authorityPilot=this.authorityPilot.snapshot();
     if(includeCheckpoint&&this.checkpoint&&JSON.stringify(s)!==JSON.stringify(this.checkpoint))s.resumeCheckpoint=clone(this.checkpoint);
     return s;}
   restoreSnapshot(raw){
@@ -904,6 +918,7 @@ export class M01Simulation {
     if(!('enemyFire' in s)&&!('withdrawalPressure' in s.timers))for(const a of candidate.actors.filter(a=>a.group==='grp_east_platoon'&&Number(a.id.split('_').at(-1))>=18))
       Object.assign(a,{active:false,alive:false,health:0,state:'DOWN'});
     candidate.weapon.restore(s.weapon);candidate.rng.state=s.rng;candidate.events=[];candidate.world.refresh(Object.keys(s.consumed),s.flags);
+    candidate.authorityPilot=s.authorityPilot!==undefined?M01AuthorityCoordinator.restore(s.authorityPilot,candidate.actors,s.clock,s.battleClock):createPilot(candidate);
     if(s.resumeCheckpoint!==undefined){
       const backup=new M01Simulation();backup.restoreSnapshot(s.resumeCheckpoint);candidate.checkpoint=backup.snapshot(false);
     }else candidate.checkpoint=candidate.snapshot(false);   // legacy schema 2 used the loaded state itself as CP
@@ -1031,6 +1046,10 @@ export function validateM01Snapshot(s){
   if(s.dialogueQueue.some(d=>!dialogue(d))||(s.subtitle&&(!dialogue(s.subtitle)||!finite(s.subtitle.until))))reject('legendas');
   if(s.mission.complete!==s.flags['m01.completed']||s.mission.complete!==Object.hasOwn(s.consumed,E('debrief')))reject('estado final');
   if(!['INTRO','SETUP','BUILDUP','FIRST_CONTACT','MAIN_COMBAT','SET_PIECE','CLIMAX','AFTERMATH','OUTRO'].includes(s.mission.phase))reject('fase');
+  if(s.authorityPilot!==undefined){
+    validatePilotState(s.authorityPilot,s.actors,s.clock,s.battleClock);
+    if(s.authorityPilot.enabled!==Object.hasOwn(s.consumed,E('train963_arrives')))reject('pilot activation');
+  }
   if(s.resumeCheckpoint!==undefined){
     const cp=s.resumeCheckpoint;
     if(!cp||Object.hasOwn(cp,'resumeCheckpoint')||cp.clock>s.clock||cp.battleClock>s.battleClock)reject('checkpoint de retoma');

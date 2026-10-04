@@ -96,7 +96,11 @@ test('rounds in flight survive save and restore and play out identically; corrup
     s=>{s.enemyFire.rounds=null;},s=>{s.enemyFire.rounds[0].arriveAt=Infinity;},s=>{s.timers.fireEase='yes';}]){
     const data=structuredClone(saved);corrupt(data);assert.equal(copy.loadCheckpoint(JSON.stringify(data)).ok,false);
   }
-  const old=structuredClone(saved);delete old.enemyFire;assert.equal(copy.loadCheckpoint(JSON.stringify(old)).ok,true);assert.deepEqual(copy.enemyFire,{rounds:[],nextId:0});
+  // Genuine legacy flight format predates persisted MG34 burst plans too. Keeping
+  // modern plans while deleting their flight ledger produces an invalid hybrid.
+  const old=structuredClone(saved);delete old.enemyFire;
+  for(const a of old.actors)delete a.mg34Prone;
+  assert.equal(copy.loadCheckpoint(JSON.stringify(old)).ok,true);assert.deepEqual(copy.enemyFire,{rounds:[],nextId:0});
 });
 
 test('after 120 s of continuous suppression the fire on the repair eases without warning until work resumes',()=>{

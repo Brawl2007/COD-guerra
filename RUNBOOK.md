@@ -162,3 +162,16 @@ Compara duas continuações com os mesmos inputs/dt a cada tick e indica o prime
 `M01Simulation.snapshot()` cria um save de continuação com `resumeCheckpoint` opcional plano para preservar o CP anterior. `snapshot(false)` cria um snapshot plano para instalar explicitamente um novo checkpoint ou fabricar uma fixture legacy. Os CP-A..D e a persistência normal do jogo continuam planos em schema 2. Saves antigos sem o novo campo conservam o contrato anterior. Não guardar cadeias de backups; o validador rejeita aninhamento, backups futuros e campos de arma que não pertencem ao snapshot real.
 
 Evidências/reprodução/limites: `docs/verification/m01-runtime/schema2-determinism-audit-2026-10-03/HANDOFF.md`.
+
+## Piloto de autoridade M01
+
+Branch isolada `codex/m01-near-far-authority-runtime-pilot`, base PR37. Não ampliar para outra formação. Auditoria de seleção/bounds: `docs/architecture/M01_NEAR_FAR_PILOT_AUDIT.md`; handoff/evidências em `docs/verification/m01-runtime/near-far-authority-pilot-2026-10-04/`.
+
+```sh
+M01_PILOT_REPORT=/tmp/pilot-audit.json node --test tests/m01-authority-runtime.test.js
+npm test
+npm run build
+npm run test:browser
+```
+
+Caso específico: `npm run test:browser -- tests/browser/m01-authority-pilot.spec.js`. São fixtures obtidas por rota/controles reais; não são playtest humano. `gameDiagnostics().m01.authorityPilot` é somente leitura e resume setor/formação, owner/token/generation/revision, IDs, RNG setorial, quatro membros/ammo e clocks. O teste de aproximação abre LOS em FAR físico; não relocaliza alemães nem estende bounds. Não reexecutar a suíte como retry para aceitar flakiness; diagnosticar e corrigir a causa antes de nova execução integral.
