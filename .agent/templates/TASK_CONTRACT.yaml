@@ -1,0 +1,65 @@
+schema_version: 1
+
+task:
+  id: ""
+  type: ""
+  objective: ""
+
+git:
+  base_branch: ""
+  base_head: ""
+  work_branch: ""
+  starting_head: ""
+
+scope:
+  allowed_files: []
+  forbidden_files: []
+  allowed_systems: []
+  forbidden_systems: []
+
+dependencies:
+  tasks: []
+  branches: []
+
+risk:
+  level: "medium"
+  complexity: "medium"
+
+acceptance:
+  criteria: []
+  evidence_required: []
+
+execution:
+  max_fix_attempts: 3
+  max_review_rejections: 2
+  production_mode: "focused"
+
+routing:
+  policy: "auto"
+  preferred_class: "standard"
+  escalation_class: "advanced"
+
+escalation:
+  conditions:
+    - "contradictory requirements"
+    - "significant gameplay change"
+    - "major architecture change outside scope"
+    - "destructive operation required"
+    - "main branch modification required"
+    - "unsafe integration conflict"
+    - "required file outside allowed scope"
+    - "retry budget exhausted"
+    - "required evidence cannot be obtained"
+
+state:
+  status: "PLANNED"
+  current_owner: ""
+  next_action: ""
+
+result:
+  final_head: ""
+  tests: []
+  build: ""
+  runtime: ""
+  review: ""
+  final_status: ""
