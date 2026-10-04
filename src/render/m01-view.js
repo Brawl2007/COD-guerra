@@ -7,11 +7,16 @@ import { roundPoint } from '../game/m01-fire.js';
 import { actorPose } from './m01-actor-pose.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { texturedSurface } from './m01-surfaces.js';
-import { M01Atmosphere } from './m01-atmosphere.js';
+import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';
 import { M01Environment } from './m01-environment.js';
 import { M01Characters } from './m01-characters.js';
 import { M01ViewModel } from './m01-viewmodel.js';
 import { M01TrainWagons } from './m01-train-wagons.js';
+
+export const M01_BATTLEFIELD_FX_LIMITS=Object.freeze({bursts:16,flash:16,core:48,fire:96,smoke:128,dust:128,shards:96,lights:1});
+const FX_DENSITY={low:.55,medium:.78,high:1};
+const fxSeed=(p,clock)=>((Math.floor((p.x+2048)*73)^Math.floor(((p.y??0)+128)*151)^Math.floor((p.z+2048)*197)^Math.floor(clock*1000))>>>0);
+const fxCount=(n,quality)=>Math.max(1,Math.round(n*(FX_DENSITY[quality]??FX_DENSITY.low)));
 
 // Presentation only: all actors, visible pieces, damage and clocks come from M01Simulation.
 // Original procedural art: textured environment and articulated humans; final scanned/rigged art remains pending.
@@ -49,7 +54,8 @@ export class M01View {
     this.cylinder=new THREE.CylinderGeometry(1,1,1,12);this.geometry=[this.box,this.sphere,this.cylinder,this.roundBox,this.accessoryBox,this.helmetGeometry,this.featureSphere];
     this.kit=[];this.batches=new Map();this.solidGroup=new THREE.Group();this.effects=new THREE.Group();
     this.scene.add(this.solidGroup,this.effects);this.smokes=new Map();this.grenadeViews=new Map();this.world=null;this.revision=-1;
-    this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0};
+    this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};
+    this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};
     this.atmosphere=new M01Atmosphere(this.scene);
     this.createWeapon();this.createActors();this.createContactShadows();this.createFireEffects();this.createAircraft();this.createTrains();
     this.characters=new M01Characters(this.scene);this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture);
@@ -205,30 +211,41 @@ export class M01View {
     if(this.contactShadows){this.contactShadows.count=shadowCount;this.contactShadows.instanceMatrix.needsUpdate=true;}
   }
   createFireEffects(){
-    // Clarões, fumo da boca, traçantes e impactos do fogo alemão. Tamanho mínimo no ecrã (clarão ~8 px): a 1,2 km a origem continua legível.
+    // Bounded presentation pools: muzzle/round impacts plus layered battlefield blasts. No gameplay RNG is consumed here.
     this.materials.flash=new THREE.MeshBasicMaterial({color:'#ffd98c',toneMapped:false,fog:false});
     this.materials.tracer=new THREE.MeshBasicMaterial({color:'#ffb35a',toneMapped:false,fog:false});
     this.materials.puff=new THREE.MeshBasicMaterial({color:'#8c7c66',transparent:true,opacity:.62,depthWrite:false});
     this.materials.gunSmoke=new THREE.MeshBasicMaterial({color:'#b9b8ae',transparent:true,opacity:.55,depthWrite:false,fog:false});
-    this.fireBatches={};this.fireDummy=new THREE.Object3D();
-    for(const [name,material,capacity]of [['muzzle','flash',96],['tracer','tracer',48],['puff','puff',96],['spark','flash',48],['smoke','gunSmoke',64]]){
-      const soft=name==='smoke'||name==='puff';
+    this.materials.chip=new THREE.MeshStandardMaterial({color:'#ffffff',roughness:.88,vertexColors:true});
+    this.materials.blastShard=new THREE.MeshStandardMaterial({color:'#5c5142',roughness:1,vertexColors:true});
+    this.fireBatches={};this.fireDummy=new THREE.Object3D();this.fireColor=new THREE.Color();
+    for(const [name,material,capacity]of [['muzzle','flash',96],['tracer','tracer',48],['puff','puff',144],['spark','flash',96],['smoke','gunSmoke',64],['chip','chip',128]]){
+      const soft=name==='smoke'||name==='puff',geometry=name==='chip'?this.atmosphere.debrisGeometry:this.sphere;
       const batch=soft?this.atmosphere.billboardBatch(capacity,this.materials[material].color,this.effects):
-        new THREE.InstancedMesh(this.sphere,this.materials[material],capacity);
+        new THREE.InstancedMesh(geometry,this.materials[material],capacity);
       batch.instanceMatrix.setUsage(THREE.DynamicDrawUsage);batch.count=0;batch.frustumCulled=false;this.effects.add(batch);this.fireBatches[name]=batch;
     }
+    this.battlefieldFxBatches={};this.battlefieldDummy=new THREE.Object3D();this.battlefieldColor=new THREE.Color();
+    for(const [name,capacity,color]of [
+      ['flash',M01_BATTLEFIELD_FX_LIMITS.flash,'#fff0c2'],['core',M01_BATTLEFIELD_FX_LIMITS.core,'#ffc45d'],
+      ['fire',M01_BATTLEFIELD_FX_LIMITS.fire,'#e97831'],['smoke',M01_BATTLEFIELD_FX_LIMITS.smoke,'#4e4b45'],['dust',M01_BATTLEFIELD_FX_LIMITS.dust,'#8d7c67']]){
+      const batch=this.atmosphere.billboardBatch(capacity,color,this.effects);batch.count=0;this.battlefieldFxBatches[name]=batch;
+    }
+    this.battlefieldShards=new THREE.InstancedMesh(this.atmosphere.debrisGeometry,this.materials.blastShard,M01_BATTLEFIELD_FX_LIMITS.shards);
+    this.battlefieldShards.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.battlefieldShards.count=0;this.battlefieldShards.frustumCulled=false;this.effects.add(this.battlefieldShards);
+    this.explosionLight=new THREE.PointLight('#ff9e45',0,80,2);this.explosionLight.visible=false;this.explosionLight.castShadow=false;this.effects.add(this.explosionLight);
   }
   updateFire(sim){
-    const time=sim.clock,cam=this.camera.position,dummy=this.fireDummy,counts={muzzle:0,tracer:0,puff:0,spark:0,smoke:0};
+    const time=sim.clock,cam=this.camera.position,dummy=this.fireDummy,counts={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};
     const far=p=>Math.hypot(p.x-cam.x,p.y-cam.y,p.z-cam.z);
-    const put=(name,p,scale,dir=null,opacity=1)=>{
-      const batch=this.fireBatches[name];if(counts[name]>=batch.instanceMatrix.count)return;
+    const put=(name,p,scale,dir=null,opacity=1,color=null)=>{
+      const batch=this.fireBatches[name],index=counts[name];if(index>=batch.instanceMatrix.count)return;
       dummy.position.set(p.x,p.y,p.z);dummy.rotation.set(0,0,0);
-      if(dir){dummy.lookAt(p.x+dir.x,p.y+dir.y,p.z+dir.z);dummy.scale.set(scale[0],scale[1],scale[2]);}else dummy.scale.setScalar(scale);
-      dummy.updateMatrix();batch.setMatrixAt(counts[name],dummy.matrix);
-      batch.geometry.attributes.puffOpacity?.setX(counts[name],opacity);counts[name]++;
+      if(dir){dummy.lookAt(p.x+dir.x,p.y+dir.y,p.z+dir.z);dummy.scale.set(scale[0],scale[1],scale[2]);}
+      else if(Array.isArray(scale))dummy.scale.set(...scale);else dummy.scale.setScalar(scale);
+      dummy.updateMatrix();batch.setMatrixAt(index,dummy.matrix);
+      batch.geometry.attributes.puffOpacity?.setX(index,opacity);if(color)batch.setColorAt(index,this.fireColor.set(color));counts[name]++;
     };
-    // Clarão enquanto o atirador dispara (actor.shot, visível pelo menos 0,25 s) e fumo da boca durante ~2 s, à frente dos olhos.
     const root=new THREE.Object3D(),muzzle=new THREE.Vector3();
     for(const a of sim.actors)if(a.team==='enemy'&&a.alive&&a.active){
       const age=time-(a.firedAt??-1e9);if(a.shot<=0&&age>2.2)continue;
@@ -245,18 +262,61 @@ export class M01View {
       const p=roundPoint(r,t),q=roundPoint(r,Math.min(1.02,t+.01)),len=Math.hypot(q.x-p.x,q.y-p.y,q.z-p.z)||1,d=far(p);
       put('tracer',p,[Math.max(.025,d*.0016),Math.max(.025,d*.0016),Math.max(.6,d*.012)],{x:(q.x-p.x)/len,y:(q.y-p.y)/len,z:(q.z-p.z)/len});
     }
-    this.impacts=this.impacts.filter(i=>time-i.start<.9&&time>=i.start);
+    this.impacts=this.impacts.filter(i=>time-i.start<1.05&&time>=i.start);
     for(const i of this.impacts){
-      const age=time-i.start,d=far(i);
-      if(i.material==='metal'||i.material==='stone'){if(age<.1)put('spark',i,Math.max(.06,d*.003));}
-      if(i.material!=='metal'){const k=age<.15?age/.15:Math.max(0,1-(age-.15)/.75);put('puff',{x:i.x,y:i.y+.55*k,z:i.z},Math.max(.45,d*.004)*Math.max(.08,k),null,.7*k);}
+      const age=time-i.start,d=far(i),seed=i.seed,quality=this.owner.quality,dustColor=i.material==='wood'?'#98744f':i.material==='stone'?'#b9b09c':'#8b7658';
+      if(i.material==='metal'&&age<.18){
+        const n=fxCount(5,quality);for(let j=0;j<n;j++){const a=visualNoise(seed,j*3)*Math.PI*2,r=(.12+age*3)*(1+visualNoise(seed,j*3+1));
+          put('spark',{x:i.x+Math.cos(a)*r,y:i.y+.04+age*(.8+visualNoise(seed,j*3+2)*1.8),z:i.z+Math.sin(a)*r},Math.max(.035,d*.0018)*(1-age/.18));}
+      }
+      if(i.material!=='metal'){
+        const life=i.material==='earth'?.95:.8,k=age<.12?age/.12:Math.max(0,1-(age-.12)/(life-.12)),n=fxCount(i.material==='earth'?4:3,quality);
+        for(let j=0;j<n&&k>0;j++){const a=visualNoise(seed,30+j*3)*Math.PI*2,r=age*(.3+visualNoise(seed,31+j*3)*1.7),s=Math.max(.28,d*.0032)*(.65+visualNoise(seed,32+j*3)*.65)*Math.max(.1,k);
+          put('puff',{x:i.x+Math.cos(a)*r,y:i.y+.15+age*(.35+visualNoise(seed,40+j)*.8),z:i.z+Math.sin(a)*r},s,null,.58*k,dustColor);}
+      }
+      if((i.material==='wood'||i.material==='stone')&&age<.72){
+        const n=fxCount(i.material==='wood'?6:4,quality);for(let j=0;j<n;j++){const a=visualNoise(seed,70+j*3)*Math.PI*2,v=.7+visualNoise(seed,71+j*3)*2.4,s=(.045+visualNoise(seed,72+j*3)*.075)*Math.max(.18,1-age/.72);
+          put('chip',{x:i.x+Math.cos(a)*v*age,y:i.y+.08+(1.1+visualNoise(seed,100+j)*1.8)*age-2.8*age*age,z:i.z+Math.sin(a)*v*age},[s,s*(.45+visualNoise(seed,120+j)*.5),s*.75],null,1,i.material==='wood'?'#9a6d3f':'#c6bfaf');}
+      }
     }
     for(const [name,batch]of Object.entries(this.fireBatches)){batch.count=counts[name];batch.instanceMatrix.needsUpdate=true;
-      if(batch.geometry.attributes.puffOpacity)batch.geometry.attributes.puffOpacity.needsUpdate=true;}
+      if(batch.instanceColor)batch.instanceColor.needsUpdate=true;if(batch.geometry.attributes.puffOpacity)batch.geometry.attributes.puffOpacity.needsUpdate=true;}
     this.fx=counts;
   }
-  /** Impacto de um tiro alemão (evento round-impact da simulação): poeira na terra, faísca no metal. */
-  impact(point,material,clock){this.impacts.push({x:point.x,y:point.y,z:point.z,material:material??'earth',start:clock});if(this.impacts.length>96)this.impacts.shift();}
+  updateBattlefieldFx(state,time){
+    this.bursts=this.bursts.filter(b=>time>=b.start&&time-b.start<6.5);
+    const counts={flash:0,core:0,fire:0,smoke:0,dust:0},dummy=this.battlefieldDummy,quality=this.owner.quality;let shardCount=0,strongest=null;
+    const put=(name,p,sx,sy,opacity,color)=>{const batch=this.battlefieldFxBatches[name],index=counts[name];if(index>=batch.instanceMatrix.count)return;
+      dummy.position.set(p.x,p.y,p.z);dummy.rotation.set(0,0,0);dummy.scale.set(sx,sy,1);dummy.updateMatrix();batch.setMatrixAt(index,dummy.matrix);
+      batch.geometry.attributes.puffOpacity.setX(index,opacity);batch.setColorAt(index,this.battlefieldColor.set(color));counts[name]++;};
+    for(const b of this.bursts){
+      const age=time-b.start,match=state.damage.find(d=>Math.abs(d.started-b.start)<.08&&Math.hypot(d.x-b.x,d.z-b.z)<2),id=match?.id??'';
+      const kind=id.endsWith('_demolition')?'demolition':b.aerial||/bomb|raid/.test(id)?'bombing':'small';
+      const profile=kind==='demolition'?{scale:28,duration:5.8,fire:.95,dust:1.55}:kind==='bombing'?{scale:18,duration:4.5,fire:.78,dust:1.25}:{scale:9,duration:3.1,fire:.62,dust:.95};
+      if(age>0&&age<.09){const k=1-age/.09;put('flash',{x:b.x,y:b.y+profile.scale*.18,z:b.z},profile.scale*(1+age*8),profile.scale*(.72+age*5),.92*k,'#fff3cf');}
+      if(age>=0&&age<.34){const n=fxCount(3,quality);for(let j=0;j<n;j++){const n0=visualNoise(b.seed,j*4),n1=visualNoise(b.seed,j*4+1),a=n0*Math.PI*2,r=profile.scale*(.04+age*.24)*n1,k=Math.max(0,1-age/.34),s=profile.scale*(.18+age*.72)*(.65+visualNoise(b.seed,j*4+2)*.55);
+        put('core',{x:b.x+Math.cos(a)*r,y:b.y+profile.scale*.12+Math.sin(a*1.7)*r*.18,z:b.z+Math.sin(a)*r},s,s*(.72+visualNoise(b.seed,j*4+3)*.5),.9*k,j%2?'#ffb43f':'#ffd36b');}}
+      if(age>=.06&&age<profile.fire){const n=fxCount(kind==='demolition'?10:kind==='bombing'?8:6,quality),t=(age-.06)/(profile.fire-.06);
+        for(let j=0;j<n;j++){const n0=visualNoise(b.seed,40+j*4),n1=visualNoise(b.seed,41+j*4),a=n0*Math.PI*2,r=profile.scale*(.10+.40*t)*(.35+n1*.8),rise=profile.scale*(.12+.32*t)*(1+visualNoise(b.seed,42+j*4)*.5),s=profile.scale*(.16+.42*Math.sin(Math.min(1,t)*Math.PI))*(.58+visualNoise(b.seed,43+j*4)*.7);
+          put('fire',{x:b.x+Math.cos(a)*r,y:b.y+rise,z:b.z+Math.sin(a)*r},s,s*(.78+n1*.5),.78*(1-t),j%3===0?'#ffd15a':j%2?'#ff9b3f':'#df622d');}}
+      if(age>=.08&&age<profile.dust){const n=fxCount(kind==='demolition'?10:kind==='bombing'?8:5,quality),t=(age-.08)/(profile.dust-.08);
+        for(let j=0;j<n;j++){const n0=visualNoise(b.seed,100+j*3),n1=visualNoise(b.seed,101+j*3),a=(j/n)*Math.PI*2+n0*.8,r=profile.scale*(.10+.62*t)*(.65+n1*.5),sx=profile.scale*(.12+.22*t)*(.65+visualNoise(b.seed,102+j*3)*.6);
+          put('dust',{x:b.x+Math.cos(a)*r,y:b.y+.18+profile.scale*.035*t,z:b.z+Math.sin(a)*r},sx,sx*(.38+n0*.28),.55*(1-t),kind==='demolition'?'#9a876d':'#a18e75');}}
+      if(age>=.22&&age<profile.duration){const n=fxCount(kind==='demolition'?12:kind==='bombing'?9:6,quality),t=(age-.22)/(profile.duration-.22);
+        for(let j=0;j<n;j++){const n0=visualNoise(b.seed,170+j*4),n1=visualNoise(b.seed,171+j*4),a=n0*Math.PI*2,r=profile.scale*(.08+.30*t)*(.5+n1*.8),rise=profile.scale*(.16+.72*t)*(1+visualNoise(b.seed,172+j*4)*.3),s=profile.scale*(.13+.42*t)*(.65+visualNoise(b.seed,173+j*4)*.65);
+          put('smoke',{x:b.x+Math.cos(a)*r+age*(.25+n1*.4),y:b.y+rise,z:b.z+Math.sin(a)*r},s,s*(.85+n0*.55),.58*(1-t)*(t<.12?t/.12:1),t<.35?'#514943':t<.7?'#5c5953':'#73716b');}}
+      if(age>=.03&&age<1.15){const n=fxCount(kind==='demolition'?14:kind==='bombing'?10:7,quality);for(let j=0;j<n&&shardCount<M01_BATTLEFIELD_FX_LIMITS.shards;j++){const n0=visualNoise(b.seed,260+j*4),n1=visualNoise(b.seed,261+j*4),n2=visualNoise(b.seed,262+j*4),a=n0*Math.PI*2,v=(kind==='demolition'?14:kind==='bombing'?10:6)*(.45+n1*.8);
+        dummy.position.set(b.x+Math.cos(a)*v*age,b.y+.2+(4+n2*8)*age-4.9*age*age,b.z+Math.sin(a)*v*age);dummy.rotation.set(age*(3+j),a,age*(5+n0*4));const s=(.06+n2*.16)*(kind==='demolition'?1.25:1)*Math.max(.15,1-age/1.15);
+        dummy.scale.set(s,s*(.45+n0*.55),s*(.7+n1*.5));dummy.updateMatrix();this.battlefieldShards.setMatrixAt(shardCount,dummy.matrix);this.battlefieldShards.setColorAt(shardCount,this.battlefieldColor.set(j%3?'#5b5042':'#81705b'));shardCount++;}}
+      if(age>=0&&age<.22){const power=profile.scale*(1-age/.22);if(!strongest||power>strongest.power)strongest={b,power,profile};}
+    }
+    for(const [name,batch]of Object.entries(this.battlefieldFxBatches)){batch.count=counts[name];batch.instanceMatrix.needsUpdate=true;batch.instanceColor.needsUpdate=true;batch.geometry.attributes.puffOpacity.needsUpdate=true;}
+    this.battlefieldShards.count=shardCount;this.battlefieldShards.instanceMatrix.needsUpdate=true;if(this.battlefieldShards.instanceColor)this.battlefieldShards.instanceColor.needsUpdate=true;
+    this.explosionLight.visible=Boolean(strongest);if(strongest){this.explosionLight.position.set(strongest.b.x,strongest.b.y+3,strongest.b.z);this.explosionLight.intensity=Math.min(5,strongest.power*.18);this.explosionLight.distance=Math.min(110,35+strongest.profile.scale*2.4);}
+    this.battlefieldFxCounts={...counts,shard:shardCount};
+  }
+  /** Impacto de um tiro alemão (evento round-impact da simulação): poeira/faísca/chips conforme a superfície. */
+  impact(point,material,clock){this.impacts.push({x:point.x,y:point.y,z:point.z,material:material??'earth',start:clock,seed:fxSeed(point,clock)});if(this.impacts.length>96)this.impacts.shift();}
   createWeapon(){
     const r=this.weaponRoot;
     const profile=new THREE.Shape();profile.moveTo(-.44,-.105);profile.lineTo(-.44,.032);
@@ -419,28 +479,27 @@ export class M01View {
     this.carryBody.visible=sim.player.carrying==='jozef_bak';this.carryCrate.visible=sim.player.carrying==='sapper_crate';
     this.carryBody.position.y=this.carryCrate.position.y=bob*1.5;
     if(this.viewModel.update(sim,this.owner.quality,this.flashUntil)){this.weaponRoot.visible=false;this.carryBody.visible=false;}
-    this.bursts=this.bursts.filter(b=>{const t=(time-b.start)/b.duration;
-      if(t>=1||t<0){this.effects.remove(b.mesh);b.mesh.material.dispose();return false;}
-      b.mesh.scale.setScalar(b.size*(.35+.65*Math.sqrt(t)));b.mesh.material.opacity=.95*(1-t);return true;});
+    this.updateBattlefieldFx(state,time);
     this.engine.info.autoReset=false;this.engine.info.reset();this.engine.clear();this.engine.render(this.scene,this.camera);
     this.engine.clearDepth();this.engine.render(this.weaponScene,this.weaponCamera);this.engine.toneMappingExposure=1.15;
   }
   muzzle(clock){this.flashUntil=clock+.06;this.shakeUntil=clock+.1;}
   blast(clock){this.shakeUntil=clock+.4;}
-  /** Clarão de uma explosão no ponto real; demolições são maiores e duram mais. */
-  explosion(point,clock,aerial){
-    const material=new THREE.SpriteMaterial({color:'#ffcf7a',transparent:true,opacity:.95,depthWrite:false,toneMapped:false,blending:THREE.AdditiveBlending});
-    material.map=this.atmosphere.texture;const mesh=new THREE.Sprite(material);mesh.position.set(point.x,(point.y??0)+(aerial?3:8),point.z);this.effects.add(mesh);
-    mesh.scale.setScalar(aerial?12:30);this.bursts.push({mesh,start:clock,duration:aerial?.7:1.4,size:aerial?12:30});
-    if(this.bursts.length>24){const old=this.bursts.shift();this.effects.remove(old.mesh);old.mesh.material.dispose();}
+  /** Layered visual-only blast. Scale is inferred later from the simulation-owned damage id. */
+  explosion(point,clock,aerial){this.bursts.push({x:point.x,y:point.y??0,z:point.z,start:clock,aerial:Boolean(aerial),seed:fxSeed(point,clock)});if(this.bursts.length>M01_BATTLEFIELD_FX_LIMITS.bursts)this.bursts.shift();}
+  resetEffects(){
+    this.lastFrame=null;this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.impacts=[];this.bursts=[];
+    for(const b of Object.values(this.fireBatches))b.count=0;for(const b of Object.values(this.battlefieldFxBatches))b.count=0;
+    this.battlefieldShards.count=0;this.explosionLight.visible=false;this.explosionLight.intensity=0;
+    this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};
   }
-  resetEffects(){this.lastFrame=null;this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.impacts=[];for(const b of this.bursts){this.effects.remove(b.mesh);b.mesh.material.dispose();}this.bursts=[];for(const b of Object.values(this.fireBatches))b.count=0;this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0};}
   get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,
     requiredAssetFailures:this.assets.failures.filter(f=>manifest.files.some(m=>typeof m.lod==='number'&&m.file===f.path)),
     characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,wagons:this.wagons.diagnostics,
     aircraft:{loaded:[...this.aircraftSources.keys()].sort(),planes:this.planes.map(p=>{const model=p.levels.find(l=>l.object.visible)?.object,prop=model?.getObjectByName('propeller');return {visible:p.visible,lod:model?.userData.lod,position:p.position.toArray(),propeller:prop?.quaternion.toArray()};})},
     renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+b.count,0)??0,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
-    visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx}};}
+    visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},
+    battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
     this.disposed=true;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}this.viewModel?.dispose();this.characters?.dispose();this.wagons.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
     const textures=new Set();for(const m of Object.values(this.materials)){if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());

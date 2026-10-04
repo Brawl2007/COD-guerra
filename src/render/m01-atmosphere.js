@@ -1,6 +1,13 @@
 import * as THREE from 'three';
 import {puffTexture,cloudFieldTexture} from './m01-surfaces.js';
 
+// Presentation-only deterministic noise. It never consumes the simulation RNG.
+export function visualNoise(seed,index=0){
+  let x=((seed>>>0)+Math.imul((index+1)>>>0,0x9e3779b1))>>>0;
+  x^=x>>>16;x=Math.imul(x,0x21f0aaad);x^=x>>>15;x=Math.imul(x,0x735a2d97);x^=x>>>15;
+  return (x>>>0)/4294967296;
+}
+
 // Bounded presentation pools. All emitters come from the simulation's damage/events.
 export class M01Atmosphere {
   constructor(scene){
@@ -58,41 +65,64 @@ export class M01Atmosphere {
     this.skyMaterial.uniforms.sunDirection.value.set(Math.sin(az)*Math.cos(alt),Math.sin(alt),-Math.cos(az)*Math.cos(alt));
   }
   update(state,clock,quality){
-    let count=0;const max=quality==='low'?112:quality==='medium'?192:256;
+    let count=0;const density=quality==='low'?.58:quality==='medium'?.80:1,max=quality==='low'?112:quality==='medium'?192:256;
     const damage=state.damage.filter(d=>d.smokeVisible).sort((a,b)=>Number(b.id.endsWith('_demolition'))-Number(a.id.endsWith('_demolition'))||b.started-a.started);
     for(const d of damage){
-      if(!d.smokeVisible)continue;
-      const demolition=d.id.endsWith('_demolition'),age=Math.max(0,clock-d.started),number=demolition?30:17;
-      // Demolition is one rising cloud, not a chimney with particles looping back to the base.
-      const growth=demolition?.15+.85*(1-Math.exp(-age/5)):1;
-      const disperse=demolition?1+Math.min(age,120)/100:1;
+      const demolition=d.id.endsWith('_demolition'),heavy=demolition||/bomb|raid/.test(d.id),age=Math.max(0,clock-d.started);
+      const base=demolition?30:heavy?22:17,number=Math.max(6,Math.round(base*density));
+      const seed=(Math.floor((d.x+2048)*17)^Math.floor((d.z+2048)*31)^Math.floor(d.started*1000))>>>0;
       const endFade=d.id==='station_bomb'?1:Math.max(0,Math.min(1,(240-age)/30));
       for(let i=0;i<number&&count<max;i++){
-        const phase=((demolition?0:age*.032)+(i+.5)*.618)%1,height=(demolition?105:42)*phase*growth;
-        const width=((demolition?20:7)+(demolition?25:12)*phase)*disperse;
-        const x=d.x+Math.sin(i*2.39)*width*.3+height*.25+Math.sin(age*.16+i*1.7)*width*.12+(demolition?Math.min(age,120)*.35:0),z=d.z+Math.cos(i*1.93)*width*.38+Math.sin(age*.11+i)*width*.09;
-        this.dummy.position.set(x,d.y+3+height,z);this.dummy.scale.set(width*(.8+i%3*.12)*growth,width*(1.1+i%2*.24)*growth,1);this.dummy.updateMatrix();
-        this.puffs.setMatrixAt(count,this.dummy.matrix);this.puffs.setColorAt(count,this.color.set(demolition?(i<8?'#726955':'#979080'):i<4?'#403e37':'#686b68'));
-        // Chimney smoke fades before each respawn; all finite emitters fade before removal at 240 s.
-        const cycleFade=demolition?1:Math.min(1,phase/.12,(1-phase)/.18);
-        this.fade.setX(count,(demolition?.65:.72)*(1-phase*.65)*Math.min(1,age/2+.3)*cycleFade*endFade);count++;
+        const n0=visualNoise(seed,i*5),n1=visualNoise(seed,i*5+1),n2=visualNoise(seed,i*5+2),n3=visualNoise(seed,i*5+3);
+        let phase,height,width,x,z,opacity;
+        if(demolition){
+          const localAge=Math.max(0,age-i/number*4.5);if(localAge<=0)continue;
+          phase=Math.min(1,localAge/(17+n0*11));height=(18+92*phase)*(.76+n1*.42);
+          width=(9+31*phase)*(.78+n2*.48)*(1+Math.min(age,150)/320);
+          x=d.x+(n0-.5)*width*.85+height*(.10+n1*.13)+Math.sin(age*(.10+n2*.08)+i*1.7)*width*.13;
+          z=d.z+(n1-.5)*width*.85+Math.cos(age*(.08+n0*.07)+i*1.3)*width*.12;
+          opacity=.68*(1-phase*.48)*Math.min(1,localAge/1.4)*endFade;
+        }else{
+          const speed=.020+n0*.018;phase=(age*speed+(i+.5)/number+n1*.09)%1;
+          height=(31+n2*20)*phase;width=(6+n3*7+(8+n1*8)*phase)*(heavy?1.25:1);
+          x=d.x+(n0-.5)*width+height*(.16+n1*.09)+Math.sin(age*(.12+n2*.11)+i*1.9)*width*.16;
+          z=d.z+(n1-.5)*width+Math.cos(age*(.10+n0*.09)+i*1.5)*width*.14;
+          const cycleFade=Math.min(1,phase/.13,(1-phase)/.20);
+          opacity=(heavy?.72:.64)*(1-phase*.55)*Math.min(1,age/1.8+.25)*cycleFade*endFade;
+        }
+        this.dummy.position.set(x,d.y+2.5+height,z);this.dummy.rotation.set(0,0,0);
+        this.dummy.scale.set(width*(.72+n2*.55),width*(.95+n3*.72),1);this.dummy.updateMatrix();
+        this.puffs.setMatrixAt(count,this.dummy.matrix);
+        const shade=demolition?(phase<.28?'#5a5145':phase<.68?'#777166':'#969188'):heavy?(i%3?'#68655e':'#4b4944'):(i%4===0?'#41413d':'#666965');
+        this.puffs.setColorAt(count,this.color.set(shade));this.fade.setX(count,opacity);count++;
       }
     }
     let chips=0;
-    for(const d of damage){const age=clock-d.started;if(age<0||age>3.2)continue;
-      const number=quality==='low'?8:quality==='medium'?16:24;
-      for(let i=0;i<number&&chips<64;i++){const a=i*2.399,r=(3+i%5)*age;
-        this.dummy.position.set(d.x+Math.cos(a)*r,d.y+.4+(7+i%7)*age-4.9*age*age,d.z+Math.sin(a)*r);
-        this.dummy.rotation.set(age*(i+1),a,age*3);this.dummy.scale.setScalar(.08+(i%4)*.07);this.dummy.updateMatrix();this.debris.setMatrixAt(chips++,this.dummy.matrix);
+    for(const d of damage){
+      const age=clock-d.started;if(age<0||age>3.2)continue;
+      const heavy=d.id.endsWith('_demolition')||/bomb|raid/.test(d.id),seed=(Math.floor(d.started*1000)^Math.floor(d.x*97)^Math.floor(d.z*193))>>>0;
+      const number=Math.max(4,Math.round((heavy?28:18)*density));
+      for(let i=0;i<number&&chips<64;i++){
+        const n0=visualNoise(seed,i*4),n1=visualNoise(seed,i*4+1),n2=visualNoise(seed,i*4+2),a=i*2.399+n0*1.7;
+        const speed=(heavy?7.5:4.2)*(.45+n1*.85),r=speed*age;
+        this.dummy.position.set(d.x+Math.cos(a)*r,d.y+.32+(heavy?8.5:5.8)*(.55+n2*.7)*age-4.9*age*age,d.z+Math.sin(a)*r);
+        this.dummy.rotation.set(age*(2+i*.7),a+n1,age*(3+n0*4));
+        const s=(.055+n2*.18)*(heavy?1.15:1)*Math.max(.2,1-age/3.2);this.dummy.scale.set(s,s*(.45+n0*.55),s*(.7+n1*.6));this.dummy.updateMatrix();
+        this.debris.setMatrixAt(chips++,this.dummy.matrix);
       }
-      for(let i=0;i<6&&count<max;i++){const a=i*2.399,r=age*9,fade=Math.max(0,1-age/3.2);
-        this.dummy.rotation.set(0,0,0);this.dummy.position.set(d.x+Math.cos(a)*r,d.y+1+age,d.z+Math.sin(a)*r);this.dummy.scale.set(4+age*8,2+age*3,1);this.dummy.updateMatrix();
-        this.puffs.setMatrixAt(count,this.dummy.matrix);this.puffs.setColorAt(count,this.color.set('#b0a085'));this.fade.setX(count++,.55*fade);
+      const dustN=Math.max(2,Math.round((heavy?8:6)*density));
+      for(let i=0;i<dustN&&count<max;i++){
+        const n0=visualNoise(seed,200+i*3),n1=visualNoise(seed,201+i*3),a=i*2.399+n0*1.8;
+        const r=age*(heavy?10:6.5)*(.55+n1*.65),fade=Math.max(0,1-age/(heavy?3.2:2.4)),w=(heavy?4.8:2.8)+age*(heavy?8:4.5);
+        this.dummy.rotation.set(0,0,0);this.dummy.position.set(d.x+Math.cos(a)*r,d.y+.45+age*(.45+n0*.65),d.z+Math.sin(a)*r);
+        this.dummy.scale.set(w*(.75+n0*.5),w*(.42+n1*.35),1);this.dummy.updateMatrix();
+        this.puffs.setMatrixAt(count,this.dummy.matrix);this.puffs.setColorAt(count,this.color.set(heavy?'#9e8d72':'#aa9a81'));this.fade.setX(count++,.48*fade);
       }
     }
     this.debris.count=chips;this.debris.instanceMatrix.needsUpdate=true;this.dummy.rotation.set(0,0,0);
     this.count=count;this.puffs.count=count;this.puffs.instanceMatrix.needsUpdate=true;this.puffs.instanceColor.needsUpdate=true;this.fade.needsUpdate=true;
   }
+  get diagnostics(){return {puffs:this.count,puffCapacity:this.capacity,debris:this.debris.count,debrisCapacity:this.debris.instanceMatrix.count,puffBatches:this.puffBatches.length};}
   dispose(){this.scene.remove(this.sky);this.debris.removeFromParent();this.debris.dispose();this.debrisGeometry.dispose();this.debrisMaterial.dispose();for(const batch of this.puffBatches){batch.removeFromParent();batch.dispose();batch.geometry.dispose();}this.puffBatches=[];
     this.quad.dispose();this.skyGeometry.dispose();this.skyMaterial.dispose();this.material.dispose();this.texture.dispose();this.cloudTexture.dispose();}
 }
