@@ -224,7 +224,7 @@ export class Game {
     this.hud.checkpoint.classList.toggle('show',now<this.checkpointUntil);
     this.hud.vignette.classList.toggle('hit',now<this.hitUntil);
   }
-  get diagnostics(){return structuredClone({...this.renderer.diagnostics,audio:this.audio.diagnostics,missionId:this.sim.missionId,clock:this.sim.clock,paused:this.paused,
+  get diagnostics(){return structuredClone({...this.renderer.diagnostics,audio:this.audio?.diagnostics??null,missionId:this.sim.missionId,clock:this.sim.clock,paused:this.paused,
     missionPhase:this.sim.mission.phase,complete:this.sim.mission.complete,
     player:{x:this.player.x,y:this.player.y,z:this.player.z,angle:this.player.angle,pitch:this.player.pitch,health:this.player.health,crouched:Boolean(this.player.crouched)},
     sectors:this.sim.sectors.sectors.map(s=>({...s})),eventIds:this.isM01?Object.keys(this.sim.consumed):[...this.sim.sectors.consumed],
