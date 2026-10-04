@@ -61,7 +61,7 @@ export function placeViewArms(root,weapon,gripWeight){
     if(side==='r'&&gripWeight>0){
       const grip=weapon.localToWorld(new THREE.Vector3(.055,-.025,.065));target.lerp(grip,gripWeight);
     }
-    const shoulder=weapon.localToWorld(new THREE.Vector3(side==='l'?-.30:.32,side==='l'?-.32:-.30,side==='l'?.01:.10));
+    const shoulder=weapon.localToWorld(new THREE.Vector3(side==='l'?-.30:.32,side==='l'?-.43:-.40,side==='l'?-.10:0));
     const direction=target.clone().sub(shoulder).normalize();
     let distance=shoulder.distanceTo(target);
     // Preserve exact hand contact even during the original pouch reach. Move only

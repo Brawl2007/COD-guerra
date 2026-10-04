@@ -1,5 +1,5 @@
 import {mkdirSync,writeFileSync} from 'node:fs';
-import {spawn} from 'node:child_process';
+import {execFileSync,spawn} from 'node:child_process';
 import {chromium} from '@playwright/test';
 import {driver} from '../../tests/helpers/m01-route.js';
 
@@ -30,7 +30,7 @@ try{
   for(let i=0;i<40;i++){try{await fetch('http://127.0.0.1:5183/COD-guerra/');break;}catch{await new Promise(r=>setTimeout(r,250));}}
   await page.goto('http://127.0.0.1:5183/COD-guerra/tools/verification/m01-wz29-viewmodel-fixture.html');
   await page.waitForFunction(()=>window.wz29Ready,{},{timeout:30000});
-  const samples=captureFixtures(),report={kind:'LOCAL Chromium/SwiftShader, real production M01View and GLBs, fixed genuine control snapshots, staged verification',viewport:[1280,720],base:'5f3cc34f53c61beec52255d67f8babd7194c9f7f',samples:[],errors,failed};
+  const samples=captureFixtures(),report={kind:'LOCAL Chromium/SwiftShader, real production M01View and GLBs, fixed genuine control snapshots, staged verification',viewport:[1280,720],base:'5f3cc34f53c61beec52255d67f8babd7194c9f7f',candidateSourceCommit:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),samples:[],errors,failed};
   writeFileSync(`${out}/fixtures.json`,JSON.stringify(samples,null,2));
   for(const quality of ['low','medium','high'])for(const {name,snapshot}of samples)for(const variant of ['base','candidate']){
     const result=await page.evaluate(arg=>window.sampleWz29(arg),{snapshot,variant,quality});
@@ -39,5 +39,10 @@ try{
   }
   writeFileSync(`${out}/browser-metrics.json`,JSON.stringify(report,null,2));
   if(errors.length||failed.length||report.samples.some(s=>!s.snapshotEqual||!s.pauseEqual))throw new Error('Browser evidence failed; inspect browser-metrics.json');
+  const rows=samples.map(({name})=>`<section id="${name}"><header>${name} — BASE 5f3cc34</header><header>${name} — CANDIDATE</header><img src="${name}-base.png"><img src="${name}-candidate.png"></section>`).join('\n');
+  writeFileSync(`${out}/pairs.html`,`<!doctype html><meta charset="utf-8"><title>Wz.29 BASE / CANDIDATE</title><style>body{margin:0;background:#1b211e;color:#fff;font:18px sans-serif}section{display:grid;grid-template-columns:1280px 1280px;width:2560px}header{height:32px;text-align:center;line-height:32px}img{display:block;width:1280px;height:720px}</style>${rows}`);
+  await page.setViewportSize({width:2560,height:752});await page.goto(`http://127.0.0.1:5183/COD-guerra/${out}/pairs.html`);
+  await page.waitForFunction(()=>[...document.images].every(i=>i.complete&&i.naturalWidth===1280));
+  for(const {name}of samples)await page.locator(`[id="${name}"]`).screenshot({path:`${out}/${name}-pair.png`});
   console.log(JSON.stringify({samples:report.samples.length,errors,failed}));
 }finally{await browser?.close();server.kill('SIGTERM');}

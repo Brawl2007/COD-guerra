@@ -9,7 +9,7 @@ import {M01ViewModel as BaseViewModel} from './fixtures/m01-wz29-base-viewmodel.
 import {M01Simulation} from '../../src/game/m01-simulation.js';
 import {muzzlePosition,actorHitboxes} from '../../src/world/spatial.js';
 const canvas=document.querySelector('canvas'),engine=new THREE.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true});
-engine.setSize(1280,720,false);engine.setPixelRatio(1);engine.outputColorSpace=THREE.SRGBColorSpace;engine.toneMapping=THREE.ACESFilmicToneMapping;engine.toneMappingExposure=1.15;engine.autoClear=false;
+engine.setSize(1280,720,false);engine.setPixelRatio(1);engine.outputColorSpace=THREE.SRGBColorSpace;engine.toneMapping=THREE.ACESFilmicToneMapping;engine.toneMappingExposure=1.15;engine.autoClear=false;engine.shadowMap.type=THREE.PCFSoftShadowMap;
 const owner={canvas,engine,quality:'low'},view=new M01View(owner);await view.ready;
 const original=view.viewModel;original.dispose();
 function geometryReport(model){
@@ -37,7 +37,7 @@ function measure(model){
     geometry:geometryReport(model),materials:materials.size,textures:textures.size,stats:model.stats};
 }
 window.sampleWz29=async({snapshot,variant,quality='low'})=>{
-  owner.quality=quality;view.viewModel?.dispose();
+  owner.quality=quality;engine.shadowMap.enabled=quality!=='low';await view.characters.load(quality);view.viewModel?.dispose();
   const sim=new M01Simulation();sim.restoreSnapshot(snapshot);sim.drainEvents();
   view.viewModel=new (variant==='base'?BaseViewModel:M01ViewModel)(view.weaponScene,view.characters,view.atmosphere.texture);
   const before=JSON.stringify(sim.snapshot());view.lastFrame=null;view.lastClock=sim.clock-.05;
