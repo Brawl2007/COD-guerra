@@ -2,7 +2,7 @@ name: Publicar preview do jogo
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, deploy/m01-latest-playable]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -26,12 +26,18 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
-      - run: npm test
+      - name: Testes Node
+        if: github.ref != 'refs/heads/deploy/m01-latest-playable'
+        run: npm test
       - run: npm run build
-      - run: npx playwright install --with-deps chromium
-      - run: npm run test:browser
+      - name: Instalar Chromium
+        if: github.ref != 'refs/heads/deploy/m01-latest-playable'
+        run: npx playwright install --with-deps chromium
+      - name: Testes de navegador
+        if: github.ref != 'refs/heads/deploy/m01-latest-playable'
+        run: npm run test:browser
       - name: Evidências do navegador
-        if: always()
+        if: always() && github.ref != 'refs/heads/deploy/m01-latest-playable'
         uses: actions/upload-artifact@v4
         with:
           name: browser-evidence
@@ -52,7 +58,7 @@ jobs:
       group: pages
       cancel-in-progress: true
     environment:
-      name: github-pages
+      name: github-pages-latest-playable
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
