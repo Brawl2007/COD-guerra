@@ -13,12 +13,13 @@ export const TARGETS=[
   {id:'ckm_wz30',manifest:'assets/models/provisional/m01/weapons/ckm_wz30/manifest.json',lodFamilies:[['m01_ckm_wz30_lod0.glb','m01_ckm_wz30_lod1.glb','m01_ckm_wz30_lod2.glb']],required:['m01_ckm_wz30_animations.glb']},
   {id:'mg34',manifest:'assets/models/provisional/m01/weapons/mg34/manifest.json',lodFamilies:[['m01_mg34_lod0.glb','m01_mg34_lod1.glb','m01_mg34_lod2.glb']],required:['m01_mg34_animations.glb']},
   {id:'mg34_prone',manifest:'assets/models/provisional/m01/weapons/mg34-prone/manifest.json',lodFamilies:[],required:['m01_mg34_prone_animations.glb']},
+  {id:'station_animation',manifest:'assets/models/provisional/m01/characters/station-animations.manifest.json',lodFamilies:[],required:['m01_station_animations.glb']},
   {id:'station_drag',manifest:'assets/models/provisional/m01/characters/station-drag-transitions/manifest.json',lodFamilies:[],required:['m01_station_drag_transitions.glb']},
 ];
 
 const json=p=>JSON.parse(fs.readFileSync(p,'utf8'));
 const exists=p=>fs.existsSync(p);
-const filesObject=m=>m.files&&typeof m.files==='object'&&!Array.isArray(m.files)?m.files:{};
+const filesObject=m=>{const out=m.files&&typeof m.files==='object'&&!Array.isArray(m.files)?{...m.files}:{};if(typeof m.file==='string')out[m.file]??={};return out;};
 
 export function audit(root=process.cwd()){
   const errors=[],warnings=[],assets=[],seen=new Map();
