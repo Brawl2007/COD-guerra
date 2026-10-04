@@ -121,3 +121,18 @@ Base fixa `beec7cd9333cfac38fdc361da481ad4a942e1e37`; branch de revisão `codex/
 Migração schema 2 sem marcador novo: actores ckm em `idle`/`abandon` só são deslocados se ainda coincidirem exactamente com o seu posto antigo; `retreat` nunca é movido; depois de `west_demolition` nenhuma posição guardada é reescrita. Saves de 86 actores continuam a usar a migração do grupo ausente, agora com os novos postos antes da demolição leste e retirada segura depois dela. `startedAt`, fase, mortos, RNG, actores não-ckm, gates/relógios e schema 2 não são alterados. `moveActor` foi comparado com a base e permanece byte a byte igual; renderer não foi editado.
 
 Produção alterada apenas em `src/game/m01-simulation.js`; novo teste `tests/m01-ckm-placement-migration.test.js`. Evidência e blocos literais em `docs/verification/m01-runtime/ckm-placement-migration-2026-10-03/`. Validação local disponível nesta sessão: `node --check` do novo teste e harness Node da regra exacta 10/10. O checkout completo não pôde executar `npm test` porque o shell não resolve github.com; não foi disparado CI/workflow_dispatch. Executar o teste de repositório num checkout com dependências antes de integrar.
+
+
+## M01 browser regression harness hardening — 2026-10-04
+
+TASK_ID `M01-BROWSER-REGRESSION-HARNESS-HARDENING-V1`. Base fixa `codex/m01-schema2-determinism-audit@5f3cc34f53c61beec52255d67f8babd7194c9f7f`; branch `codex/m01-browser-harness-hardening`. Não integrar em main automaticamente; M01 continua PROTÓTIPO JOGÁVEL.
+
+O hardening permanece restrito a harness/config/test tooling/documentação: helper comum de diagnóstico, waits rotulados/fail-fast, captura de console/page/request/HTTP, resumo de localStorage/checkpoint/pointer lock/estado M01, falha nominal em erro inesperado, injeção determinística HTTP 404 com prova de interceptação, preview Vite programático em 127.0.0.1:4173 strictPort e shutdown por sinais. Retries continuam zero; workers continuam um. Nenhum `src/**`, gameplay, RNG, hitbox, MG34, CKM, BattleSector, Combat AI, Authority Lease, missão ou asset foi alterado.
+
+Auditoria principal: `docs/verification/m01-runtime/browser-harness-hardening-2026-10-03/CURRENT_BROWSER_HARNESS_AUDIT.md`. A CI foi endurecida para preservar build/browser diagnostics após falha anterior independente usando `if: !cancelled()`; uma falha anterior continua deixando o job vermelho, portanto não cria false green.
+
+Validação do head de tooling `152a56d5a6ec8a3a3cc8b77c41e216027d93788e`, PR draft de validação #40 / workflow run #62: checkout PASS, npm ci PASS, npm test PASS, npm run build PASS, Chromium install PASS. `npm run test:browser` permaneceu em execução por período anormalmente longo e não produziu conclusão/log parcial disponível durante o handoff; portanto NÃO declarar 36/36 nem Browser Run 1 PASS. Run 2 não foi executado porque Run 1 não concluiu. Isso é limitação de validação, não justificativa para aumentar timeouts.
+
+Um run anterior (#60) no head anterior apresentou 243/244 Node por `tests/m01-mg34-prone-runtime.test.js` tentar `git show 2cfa9520...:src/game/m01-simulation.js`, caminho ausente naquele commit. O run #62 posterior passou npm test integralmente, portanto a falha não se reproduziu no head de tooling; conservar como ocorrência de infraestrutura/histórico, não como bug de gameplay corrigido por esta tarefa.
+
+A branch está baseada exatamente na base da tarefa e, antes deste contexto final, estava 13 commits à frente e 0 atrás; diff contém apenas `.github/workflows/pages.yml`, Playwright/browser tests/helpers, teste Node do harness e documentação de auditoria. PR #40 é somente veículo de CI contra main e NÃO é alvo de integração, pois main não é a base da tarefa.
