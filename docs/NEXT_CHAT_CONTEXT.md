@@ -1,3 +1,24 @@
+# Estado atual — Historical Soldier Equipment Asset Audit (2026-10-03)
+
+Esta secção prevalece para a tarefa de fidelidade histórica de soldados/equipamento. M01 continua **PROTÓTIPO JOGÁVEL**. Não integrar automaticamente.
+
+- TASK_ID `M01-HISTORICAL-SOLDIER-EQUIPMENT-ASSET-AUDIT-V1`; modelo GPT-5.6 Sol; esforço HIGH.
+- Base exata: `codex/m01-schema2-determinism-audit@5f3cc34f53c61beec52255d67f8babd7194c9f7f`.
+- Branch: `codex/m01-historical-soldier-equipment-audit`.
+- Escopo: pesquisa web institucional + auditoria dos GLBs/manifests existentes + standard histórico + gap/licence matrix + ferramenta de inventário. Nenhum asset, textura ou runtime foi alterado.
+- Standard principal: `docs/architecture/M01_HISTORICAL_SOLDIER_ASSET_STANDARD.md`.
+- Evidência: `docs/verification/m01-runtime/historical-soldier-equipment-audit-2026-10-03/`.
+- Fontes principais: MIIW, NAC/Szukaj w Archiwach, MWP, DHM e Bundesarchiv. Screenshots/assets de jogos não foram usados como autoridade.
+- Resultado principal: a base visual polaca tem boa cobertura de itens de época, mas super-uniformiza o wz.36 e precisa de source-lock para a unidade; a base alemã acerta M35/Kar98k/MG34/boot silhouette, mas só tem 3 cabeças e um único gear block sem diferenciação de MG/rank.
+- P0: role gear do MG34 gunner/assistant; source-lock dimensional de rkm/ckm/MG34; acessórios/ammo-carriage de crew-served weapons.
+- P1: German role gear/rank policy, Polish uniform mix, medic load, rank insignia validation, German face expansion, M35 marking policy, Y-strap verification, character-manifest provenance metadata.
+- Validador: `tools/verification/m01-historical-soldier-asset-inventory.mjs`; self-test final **3/3** em fixture + validação remota de 7 manifests/25 paths, zero missing/broken required references.
+- Não declarar FPS/Chromebook/browser: não houve alteração visual/runtime e não foram medidos.
+- Próxima ação somente após revisão do capitão: transformar P0 #1 numa tarefa de **pesquisa + role-selectable German MG crew gear**, sem tocar gameplay; ou fazer source-lock institucional das medidas dos três crew weapons.
+- **PARAR após o handoff desta tarefa. Não integrar, não tocar em main e não iniciar outra tarefa automaticamente.**
+
+---
+
 # Estado actual — auditoria de determinismo schema 2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a MG34 aprovada nem Graphify.
