@@ -32,6 +32,7 @@ export class M01CombatFeedback {
   constructor(){this.reset();}
   reset(){
     this.events=[];this.counts={playerHit:0,nearMiss:0,nearImpact:0,explosion:0,directional:0};
+    this.peaks={suppressionVisual:0,hitImpulse:0,nearMissImpulse:0,impactImpulse:0,explosionImpulse:0,overlayAlpha:0,shakeStrength:0};
     this.lastHitDirection=null;this.lastDirection=null;this.sequence=0;
   }
   add(kind,clock,intensity=1,direction=null,detail=null){
@@ -89,9 +90,11 @@ export class M01CombatFeedback {
       -M01_FEEDBACK_CAPS.cameraRoll,M01_FEEDBACK_CAPS.cameraRoll);
     const overlayAlpha=clamp((.28*hit+.13*near+.08*impact+.16*explosion+.075*suppression)*q.overlay,0,M01_FEEDBACK_CAPS.overlayAlpha);
     const exposureFlash=q.flash?clamp((.11*explosion+.035*hit)*q.flash,0,.13):0;
-    return {suppressionVisual:suppression,hitImpulse:hit,nearMissImpulse:near,impactImpulse:impact,explosionImpulse:explosion,
+    const sampled={suppressionVisual:suppression,hitImpulse:hit,nearMissImpulse:near,impactImpulse:impact,explosionImpulse:explosion,
       direction,cameraX,cameraY,roll,shakeStrength:shake,overlayAlpha,exposureFlash,activeOverlay:overlayAlpha>.005,activeEvents:active.length};
+    for(const key of Object.keys(this.peaks))this.peaks[key]=Math.max(this.peaks[key],sampled[key]??0);
+    return sampled;
   }
   diagnostics(clock,quality='medium'){return {...this.sample(clock,quality),lastHitDirection:this.lastHitDirection,lastDirection:this.lastDirection,
-    counts:{...this.counts},caps:{...M01_FEEDBACK_CAPS},quality};}
+    counts:{...this.counts},peaks:{...this.peaks},caps:{...M01_FEEDBACK_CAPS},quality};}
 }
