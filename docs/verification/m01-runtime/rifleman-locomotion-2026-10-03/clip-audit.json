@@ -1,0 +1,153 @@
+{
+  "asset": "assets/models/provisional/m01/characters/m01_soldier_animations.glb",
+  "sha256": "481d6114f4481ae0f99e162a4bbfdbe8e1d74cffc2460836a2b525bf93b0202d",
+  "method": "240 Hz Three.js AnimationMixer; ankle <= minY + 15 mm with positive local Z velocity > 0.2 m/s. Median support velocity calibrates in-place nominal speed. Foot origin proxy; excludes toe-off; not boot sole/IK.",
+  "clips": {
+    "standing_idle": {
+      "durationS": 4,
+      "sampleHz": 240,
+      "sourceKeyframes": 121,
+      "rootDisplacementM": 0,
+      "inPlace": true,
+      "cycleFrequencyHz": 0.25,
+      "cadenceStepsPerMinute": 0,
+      "contacts": {
+        "left": [
+          {
+            "startS": 0,
+            "endS": 4,
+            "sampleFrames": [
+              0,
+              960
+            ]
+          }
+        ],
+        "right": [
+          {
+            "startS": 0,
+            "endS": 4,
+            "sampleFrames": [
+              0,
+              960
+            ]
+          }
+        ]
+      },
+      "displacement": {
+        "left": {
+          "foreAftRangeM": 0,
+          "verticalRangeM": 0
+        },
+        "right": {
+          "foreAftRangeM": 0,
+          "verticalRangeM": 0
+        }
+      },
+      "nominalSpeedMps": 0,
+      "supportVelocityRangeMps": [
+        0,
+        0
+      ]
+    },
+    "walk": {
+      "durationS": 1,
+      "sampleHz": 240,
+      "sourceKeyframes": 31,
+      "rootDisplacementM": 0,
+      "inPlace": true,
+      "cycleFrequencyHz": 1,
+      "cadenceStepsPerMinute": 120,
+      "contacts": {
+        "left": [
+          {
+            "startS": 0.0375,
+            "endS": 0.529167,
+            "sampleFrames": [
+              9,
+              127
+            ]
+          }
+        ],
+        "right": [
+          {
+            "startS": 0,
+            "endS": 0.029167,
+            "sampleFrames": [
+              0,
+              7
+            ]
+          },
+          {
+            "startS": 0.5375,
+            "endS": 1,
+            "sampleFrames": [
+              129,
+              240
+            ]
+          }
+        ]
+      },
+      "displacement": {
+        "left": {
+          "foreAftRangeM": 0.640537,
+          "verticalRangeM": 0.102573
+        },
+        "right": {
+          "foreAftRangeM": 0.640537,
+          "verticalRangeM": 0.102573
+        }
+      },
+      "nominalSpeedMps": 1.099945,
+      "supportVelocityRangeMps": [
+        0.966042,
+        1.166903
+      ]
+    },
+    "run": {
+      "durationS": 0.68,
+      "sampleHz": 240,
+      "sourceKeyframes": 21,
+      "rootDisplacementM": 0,
+      "inPlace": true,
+      "cycleFrequencyHz": 1.470588,
+      "cadenceStepsPerMinute": 176.470586,
+      "contacts": {
+        "left": [
+          {
+            "startS": 0.029024,
+            "endS": 0.219756,
+            "sampleFrames": [
+              7,
+              53
+            ]
+          }
+        ],
+        "right": [
+          {
+            "startS": 0.364878,
+            "endS": 0.559756,
+            "sampleFrames": [
+              88,
+              135
+            ]
+          }
+        ]
+      },
+      "displacement": {
+        "left": {
+          "foreAftRangeM": 0.816428,
+          "verticalRangeM": 0.226447
+        },
+        "right": {
+          "foreAftRangeM": 0.81222,
+          "verticalRangeM": 0.227348
+        }
+      },
+      "nominalSpeedMps": 3.251546,
+      "supportVelocityRangeMps": [
+        2.601461,
+        3.399739
+      ]
+    }
+  }
+}
