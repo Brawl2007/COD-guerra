@@ -39,7 +39,7 @@ for(const count of [1,4,6])test(`real MG34 prone save after shot ${count}: produ
  await page.reload();await waitForM01Ready(page,'mg34-models-after-reload',{timeout:30000});await continueAndPause(page);
  const restored=await page.evaluate(()=>window.gameDiagnostics());expect(restored.m01.requiredAssetFailures).toEqual([]);
  expect(restored.m01.characters.actors.find(a=>a.id==='de_east_0')).toEqual(a);
- await page.locator('#resume').click();await waitForPointerLockRunning(page,'mg34-resume-pointer-lock',{timeout:15000});await waitForState(page,'mg34-resume-to-aim',start=>{const a=window.gameDiagnostics().m01.characters.actors.find(a=>a.id==='de_east_0');return a?.prone.phase==='aim'&&a.prone.firedAt===start;},saved.firedAt,{timeout:30000});expect(errors).toEqual([]);
+ await page.locator('#resume').click();await waitForPointerLockRunning(page,'mg34-resume-pointer-lock',{timeout:15000,afterClock:frozen.clock});await waitForState(page,'mg34-resume-to-aim',start=>{const a=window.gameDiagnostics().m01.characters.actors.find(a=>a.id==='de_east_0');return a?.prone.phase==='aim'&&a.prone.firedAt===start;},saved.firedAt,{timeout:30000});expect(errors).toEqual([]);
  await info.attach('mg34-prone-proof',{body:JSON.stringify({kind:'production continuation from genuine control-route burst save; numerical exact frame restore additionally proved in Node',count,frozen,restored}),contentType:'application/json'});
 });
 

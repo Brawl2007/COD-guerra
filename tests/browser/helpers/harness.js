@@ -73,7 +73,7 @@ function visibleState(){
   const g=window.gameDiagnostics?.()??null;
   const m=g?.m01??null;
   const compact=g?{
-    missionId:g.missionId,clock:g.clock,paused:g.paused,complete:g.complete,missionPhase:g.missionPhase,player:g.player,eventIds:(g.eventIds??[]).slice(-24),
+    missionId:g.missionId,clock:g.clock,paused:g.paused,complete:g.complete,missionPhase:g.missionPhase,player:g.player,weapon:g.weapon??null,eventIds:(g.eventIds??[]).slice(-24),
     quality:g.quality,drawCalls:g.drawCalls,triangles:g.triangles,
     m01:m?{
       battleClock:m.battleClock,scene:m.scene,gate:m.gate,checkpoints:m.checkpoints,enemyAlive:m.enemyAlive,weapon:m.weapon,flags:m.flags,
@@ -81,7 +81,7 @@ function visibleState(){
       actorPoses:m.actorPoses,actorAnimations:m.actorAnimations,fireEffects:m.fireEffects,viewModel:m.viewModel,wagons:m.wagons,
       aircraft:m.aircraft,stationEvacuation:m.stationEvacuation,hudStatus:m.hudStatus,
       characters:m.characters?{active:m.characters.active,loaded:m.characters.loaded,failures:(m.characters.failures??[]).slice(-12),proneAvailable:m.characters.proneAvailable,
-        ckm:m.characters.ckm,actors:(m.characters.actors??[]).filter(a=>a.prone||a.id?.startsWith('ckm_')||a.id==='leon_dudek'||a.id==='stanislaw_nowak').slice(0,16)}:null,
+        ckm:m.characters.ckm,actors:(m.characters.actors??[]).filter(a=>a.prone||a.id?.startsWith('ckm_')||['generic_rifleman','leon_dudek','szymon_kowal','jozef_bak','stanislaw_nowak'].includes(a.id)).slice(0,20)}:null,
       objectives:m.objectives?Object.fromEntries(Object.entries(m.objectives).map(([id,o])=>[id,{state:o.state,progress:o.progress??null}])):null
     }:null
   }:null;
@@ -144,10 +144,11 @@ export async function waitForState(page,label,predicate,arg=null,{timeout=30000,
   throw await waitFailure(page,label,timeout);
 }
 
-export async function waitForPointerLockRunning(page,label='pointer-lock-running',{timeout=15000}={}){
-  return waitForState(page,label,()=>{
-    const g=window.gameDiagnostics?.();return Boolean(g&&!g.paused&&g.clock>.05&&document.pointerLockElement?.id==='game');
-  },null,{timeout,polling:100,failFastOn:['BROWSER_CRASHED','PAGE_CLOSED','PAGE_UNREADABLE','REQUIRED_ASSET_FAILURE','ERROR_MODAL_VISIBLE']});
+export async function waitForPointerLockRunning(page,label='pointer-lock-running',{timeout=15000,afterClock=null}={}){
+  return waitForState(page,label,threshold=>{
+    const g=window.gameDiagnostics?.();const floor=Number.isFinite(threshold)?threshold+.01:.05;
+    return Boolean(g&&!g.paused&&g.clock>floor&&document.pointerLockElement?.id==='game');
+  },afterClock,{timeout,polling:100,failFastOn:['BROWSER_CRASHED','PAGE_CLOSED','PAGE_UNREADABLE','REQUIRED_ASSET_FAILURE','ERROR_MODAL_VISIBLE']});
 }
 
 export async function waitForM01Ready(page,label='m01-models-ready',{timeout=30000}={}){
@@ -157,6 +158,7 @@ export async function waitForM01Ready(page,label='m01-models-ready',{timeout=300
 export async function attachHarnessDiagnostics(page,info,{always=false}={}){
   const state=installBrowserHarness(page);
   const unexpected={
+    browserLifecycle:state.crashed||page.isClosed()?[{crashed:state.crashed,pageClosed:page.isClosed()}]:[],
     pageErrors:state.pageErrors,
     consoleErrors:state.consoleErrors.filter(x=>!x.expected),
     requestFailures:state.requestFailures.filter(x=>!x.expected),

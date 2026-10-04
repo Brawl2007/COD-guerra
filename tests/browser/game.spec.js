@@ -51,7 +51,14 @@ test('production prefix loads assets; real click captures mouse; shooting, reloa
   expect(await page.evaluate(()=>window.gameDiagnostics().clock)).toBe(paused);
   await page.locator('#resume').click();
   await waitForPointerLockRunning(page,'sandbox-resume-pointer-lock',{timeout:15000});
-  await expect(page.locator('#mag')).toHaveText('15',{timeout:12000});
+  // Reload duration advances on simulation time. Under software WebGL the page can render
+  // slower than wall time; wait for both clock progress and the authoritative HUD result
+  // instead of a bare 12 s locator timeout that has produced a false red just before READY.
+  await waitForState(page,'sandbox-reload-complete',pausedClock=>{
+    const g=window.gameDiagnostics?.();
+    return Boolean(g&&g.clock>pausedClock+.05&&document.querySelector('#mag')?.textContent==='15'&&document.querySelector('#reserve')?.textContent==='59');
+  },paused,{timeout:30000});
+  await expect(page.locator('#mag')).toHaveText('15');
   await expect(page.locator('#reserve')).toHaveText('59');
   const resumedPlayer=await page.evaluate(()=>window.gameDiagnostics().player);
   expect(resumedPlayer.angle).toBeCloseTo(pausedPlayer.angle,4);
