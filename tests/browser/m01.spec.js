@@ -34,9 +34,8 @@ async function freezeClick(page,button){
     }};document.addEventListener('pointerlockchange',hold,true);
   });
   await page.locator(button).click();await exp
-…[30427 chars truncated — re-run with head/grep/tail for full output]…
-wser playthrough.
-  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:flow().outro});
+…[30416 chars truncated — re-run with head/grep/tail for full output]…
+e.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:flow().outro});
   const {errors,failed}=await open(page);await start(page,'#continue');await expect(page.locator('#interaction')).toContainText('saltar cena');
   await page.keyboard.press('Space');await expect(page.locator('#complete')).toBeVisible();
   expect(await page.locator('#debrief p').count()).toBe(8);await expect(page.locator('#debrief')).toContainText('06:45');await expect(page.locator('#debrief')).toContainText('personagens fictícios');
@@ -88,7 +87,7 @@ test('the genuine train 963 and both MG34 fire sources use optional GLBs, light 
   await page.waitForTimeout(300);const still=await page.evaluate(()=>window.gameDiagnostics());
   expect(still.clock).toBe(frozen.clock);expect(still.m01.characters).toEqual(frozen.m01.characters);expect(still.m01.wagons).toEqual(w);
   await page.screenshot({path:info.outputPath('m01-train-mg34.jpg'),type:'jpeg',quality:85,style:'#pause { visibility:hidden !important; }',timeout:120000});
-  await page.locator('#restart-checkpoint').click();await waitForPointerLockRunning(page,'train-mg34-restart-running',{timeout:30000});
+  await page.locator('#restart-checkpoint').click();await waitForState(page,'train-mg34-restart-running',()=>!window.gameDiagnostics().paused,null,{timeout:30000});
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
   const restored=await page.evaluate(()=>window.gameDiagnostics());
   expect(restored.m01.wagons).toEqual(w);expect(restored.geometries).toBeLessThanOrEqual(frozen.geometries+2);expect(restored.textures).toBeLessThanOrEqual(frozen.textures+2);
