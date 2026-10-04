@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { clone } from 'three/addons/utils/SkeletonUtils.js';
 import { AssetManager } from '../assets/asset-manager.js';
 import { actorPose } from './m01-actor-pose.js';
+import {RiflemanLocomotion,MEASURED_GAITS,RIFLEMAN_PILOT_IDS} from './m01-rifleman-locomotion.js';
 import { CKM_POSITION } from '../game/m01-simulation.js';
 import {mg34ProneSample,MG34_MUZZLE_SOCKET,eyePosition,actorHitboxes,muzzlePosition} from '../world/spatial.js';
 
@@ -21,8 +22,9 @@ const stationClips=['station_drag_medic_grab','station_drag_patient_grab','stati
 
 // Presentation only. Playback is sampled from the saved mission clock; no renderer timers enter saves.
 export class M01Characters {
-  constructor(scene){
+  constructor(scene,{riflemanLocomotion=true}={}){
     this.scene=scene;this.assets=new AssetManager();this.sources=new Map();this.pending=new Set();
+    this.riflemanLocomotion=riflemanLocomotion?new RiflemanLocomotion():null;
     this.instances=new Map();this.clips=new Map();this.revision=0;this.disposed=false;this.stats={};
   }
   async load(quality='low'){
@@ -175,6 +177,13 @@ export class M01Characters {
     // Geometry, materials and atlases belong to the source cache, shared by all clones/LODs.
   }
   update(actors,time,player,quality='low',battleClock){
+    // Observe every pilot before camera/quality/asset selection. Only the mission clock advances phase/fades.
+    const locomotion=new Map();
+    if(this.riflemanLocomotion)for(const a of actors.filter(a=>RIFLEMAN_PILOT_IDS.includes(a.id))){
+      const p=actorPose(a,time),legacy=this.sample(a,time,actors,p,battleClock);
+      const plan=this.riflemanLocomotion.observe(a,time,a.active&&a.alive&&!a.crouched&&p.name==='standing'&&['standing_idle','walk','run'].includes(legacy.clip));
+      if(plan)locomotion.set(a.id,plan);
+    }
     const limits=LIMITS[quality]??LIMITS.low;
     if(quality==='high')for(const k of ['pl:0','de:0','de:1'])void this.loadSource(k);
     if(quality==='high')for(const lod of [0,1]){void this.loadMG(lod);void this.loadCKM(lod);}
@@ -191,7 +200,11 @@ export class M01Characters {
       if(lod===3)continue;
       let weaponLOD=lod;
       if(mgGunner(a)){while(weaponLOD<3&&!this.sources.has(`mg34:${weaponLOD}`))weaponLOD++;if(weaponLOD===3)continue;}
-      const key=`${nation}:${lod}`,pose=actorPose(a,time),sample=this.sample(a,time,actors,pose,battleClock),clip=this.clips.get(sample.clip);
+      const key=`${nation}:${lod}`,pose=actorPose(a,time),legacy=this.sample(a,time,actors,pose,battleClock);
+      const plan=locomotion.get(a.id),pilot=plan&&Object.keys(MEASURED_GAITS).every(n=>this.clips.has(n));
+      // A partial pilot kit uses the existing procedural actor rather than a frozen skinned idle.
+      if(plan&&!pilot)continue;
+      const sample=pilot?{clip:plan.gait,time:plan.times[plan.gait],loop:true}:legacy,clip=this.clips.get(sample.clip);
       if(!clip)continue;
       if(a.id==='szymon_kowal'&&!this.sources.get(key).scene.getObjectByName('rkm_wz28'))continue;
       // Missing or partial optional clips use the existing procedural batches, sampled from the same posture.
@@ -201,11 +214,27 @@ export class M01Characters {
       v??=this.create(a,key,weaponLOD);selected.add(a.id);
       // Always return a previously attached wounded actor to scene before sampling an updated carrier.
       this.scene.add(v.root);v.root.visible=true;v.root.position.set(a.x,a.y,a.z);v.root.rotation.set(0,-a.facing-Math.PI/2,0);
-      if(v.clip!==sample.clip){
-        v.mixer.stopAllAction();v.action=v.mixer.clipAction(clip);v.action.setLoop(THREE.LoopOnce,1);
-        v.action.clampWhenFinished=true;v.action.play();v.clip=sample.clip;
+      if(pilot){
+        if(!v.locomotionActions){
+          v.action?.stop();v.locomotionActions=new Map();
+          for(const name of Object.keys(MEASURED_GAITS)){
+            const action=v.mixer.clipAction(this.clips.get(name)).setLoop(THREE.LoopRepeat,Infinity);
+            action.reset().play();action.paused=true;v.locomotionActions.set(name,action);
+          }
+        }
+        for(const [name,action]of v.locomotionActions){
+          action.enabled=true;action.time=plan.times[name];action.setEffectiveWeight(plan.weights[name]);
+        }
+        // Explicit mission-time weights: no wall-clock fading or setTime resetting multiple action phases.
+        v.mixer.update(0);v.action=v.locomotionActions.get(plan.gait);v.clip=plan.gait;
+      }else{
+        if(v.locomotionActions){for(const action of v.locomotionActions.values())action.stop();v.locomotionActions=null;v.clip=null;}
+        if(v.clip!==sample.clip){
+          v.mixer.stopAllAction();v.action=v.mixer.clipAction(clip);v.action.setLoop(THREE.LoopOnce,1);
+          v.action.paused=false;v.action.clampWhenFinished=true;v.action.play();v.clip=sample.clip;
+        }
+        v.action.reset().play();v.mixer.setTime(sample.loop?sample.time%clip.duration:Math.min(sample.time,clip.duration));
       }
-      v.action.reset().play();v.mixer.setTime(sample.loop?sample.time%clip.duration:Math.min(sample.time,clip.duration));
       v.meshes.forEach(n=>{
         n.castShadow=quality!=='low'&&d<35;
         if(n.name==='mg34_bipod_open')n.visible=Boolean(a.alive&&a.mg34Prone&&a.mg34Prone.phase!=='standing'&&this.hasProne());
@@ -219,7 +248,7 @@ export class M01Characters {
       });
       if(v.weaponRoot)v.weaponRoot.visible=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy;
       v.root.updateMatrixWorld(true);clips[sample.clip]=(clips[sample.clip]??0)+1;
-      visible.push({...((mgGunner(a)&&a.mg34Prone)?{prone:{phase:a.mg34Prone.phase,startedAt:a.mg34Prone.startedAt,progress:a.mg34Prone.progress,rounds:a.mg34Prone.burst?.rounds??0,emitted:a.mg34Prone.burst?.emitted??0,shot:a.shot,firedAt:a.firedAt,eye:eyePosition(a),hitboxes:actorHitboxes(a),muzzle:muzzlePosition(a,time)}}:{}),id:a.id,lod,clip:sample.clip,clipTime:v.action.time,loop:sample.loop,weapon:v.weapon,weaponLOD:v.weaponLOD,muzzle:this.muzzle(a.id)?.toArray(),
+      visible.push({...((mgGunner(a)&&a.mg34Prone)?{prone:{phase:a.mg34Prone.phase,startedAt:a.mg34Prone.startedAt,progress:a.mg34Prone.progress,rounds:a.mg34Prone.burst?.rounds??0,emitted:a.mg34Prone.burst?.emitted??0,shot:a.shot,firedAt:a.firedAt,eye:eyePosition(a),hitboxes:actorHitboxes(a),muzzle:muzzlePosition(a,time)}}:{}),id:a.id,lod,...(pilot?{locomotion:plan}:{}),clip:sample.clip,clipTime:v.action.time,loop:sample.loop,weapon:v.weapon,weaponLOD:v.weaponLOD,muzzle:this.muzzle(a.id)?.toArray(),
         weaponMeshes:v.meshes.filter(n=>weaponParts.has(n.name)&&n.visible||n.name.startsWith('mg34_')&&n.visible&&v.weaponRoot?.visible).map(n=>n.name)});
     }
     for(const {a}of candidates)if(selected.has(a.id)&&a.carriedBy&&a.task!=='station_wounded'&&selected.has(a.carriedBy)){
@@ -255,5 +284,5 @@ export class M01Characters {
     v.root.updateMatrixWorld(true);return new THREE.Vector3().fromArray(v.muzzle).applyMatrix4(bone.matrixWorld);
   }
   get diagnostics(){return {...this.stats,proneAvailable:this.hasProne(),ckm:this.ckm?{visible:this.ckm.root.visible,lod:this.ckm.lod,clip:this.ckm.clip,time:this.ckm.time,position:this.ckm.root.position.toArray()}:null,loaded:[...this.sources.keys()],failures:this.assets.failures};}
-  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.assets.dispose();}
+  dispose(){this.riflemanLocomotion?.clear();this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.assets.dispose();}
 }
