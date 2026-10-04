@@ -1,3 +1,11 @@
+# Estado actual — Soldier visual variation (2026-10-04)
+
+M01 **PROTÓTIPO JOGÁVEL**. Tarefa `M01-SOLDIER-VISUAL-VARIATION-PASS-V1` concluída isoladamente em `codex/m01-soldier-visual-variation-pass`, base exacta `5f3cc34f53c61beec52255d67f8babd7194c9f7f`. Não recomeçar nem integrar automaticamente.
+
+16 pacotes visuais estáveis por ID/side/role, rostos PL existentes activados, tratamentos DE limitados e carga/desgaste com cache e atlas existentes. Named actors/armas/rigs/muzzle/clips e gameplay/save/RNG intactos. LOCAL: 28/28 Node focados, build PASS, 2/2 browser focados com retries 0; quatro BEFORE/AFTER e diagnostics. CI remoto não executado. Handoff: `docs/verification/m01-runtime/soldier-variation-2026-10-04/HANDOFF.md`. **READY_FOR_CAPTAIN_REVIEW**; sem integração das tarefas Wz.29/Locomotiva/Panzerzug/locomotion. HEAD final é o commit desta secção; confirmar ref remoto.
+
+---
+
 # Estado actual — auditoria de determinismo schema 2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a MG34 aprovada nem Graphify.

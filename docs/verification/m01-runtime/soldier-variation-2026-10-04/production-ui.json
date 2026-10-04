@@ -1,0 +1,153 @@
+{
+  "validation": "LOCAL",
+  "variants": [
+    {
+      "id": "sapper_3",
+      "visual": {
+        "version": "m01-soldier-visual/v1",
+        "id": "pl:3",
+        "nation": "pl",
+        "profile": 3,
+        "head": "bak",
+        "equipment": "sapper",
+        "faceStyle": 0,
+        "pack": 0.92,
+        "shovel": true,
+        "wear": 3,
+        "proxyCloth": "cbb992",
+        "proxyHelmet": "5f5b44",
+        "proxySkin": "f2f3f1"
+      }
+    },
+    {
+      "id": "sapper_2",
+      "visual": {
+        "version": "m01-soldier-visual/v1",
+        "id": "pl:6",
+        "nation": "pl",
+        "profile": 6,
+        "head": "kowal",
+        "equipment": "sapper",
+        "faceStyle": 0,
+        "pack": 1.1,
+        "shovel": true,
+        "wear": 2,
+        "proxyCloth": "c4b28e",
+        "proxyHelmet": "646048",
+        "proxySkin": "fffef7"
+      }
+    },
+    {
+      "id": "pawel_krawiec",
+      "visual": {
+        "version": "m01-soldier-visual/v1",
+        "id": "pl:6",
+        "nation": "pl",
+        "profile": 6,
+        "head": "krawiec",
+        "equipment": "sapper",
+        "faceStyle": 0,
+        "pack": 1.1,
+        "shovel": true,
+        "wear": 2,
+        "proxyCloth": "c4b28e",
+        "proxyHelmet": "646048",
+        "proxySkin": "fffef7"
+      }
+    },
+    {
+      "id": "marek_zielinski",
+      "visual": {
+        "version": "m01-soldier-visual/v1",
+        "id": "pl:1",
+        "nation": "pl",
+        "profile": 1,
+        "head": "zielinski",
+        "equipment": "nco",
+        "faceStyle": 0,
+        "pack": 1.16,
+        "shovel": true,
+        "wear": 1,
+        "proxyCloth": "ccbe99",
+        "proxyHelmet": "5c5842",
+        "proxySkin": "f8f9f8"
+      }
+    },
+    {
+      "id": "east_platoon_voice",
+      "visual": {
+        "version": "m01-soldier-visual/v1",
+        "id": "pl:2",
+        "nation": "pl",
+        "profile": 2,
+        "head": "nowicki",
+        "equipment": "field",
+        "faceStyle": 0,
+        "pack": 1.02,
+        "shovel": true,
+        "wear": 2,
+        "proxyCloth": "c1bb99",
+        "proxyHelmet": "5d5a43",
+        "proxySkin": "fffff9"
+      }
+    },
+    {
+      "id": "staszek_pawlak",
+      "visual": {
+        "version": "m01-soldier-visual/v1",
+        "id": "pl:6",
+        "nation": "pl",
+        "profile": 6,
+        "head": "kowal",
+        "equipment": "field",
+        "faceStyle": 0,
+        "pack": 1.1,
+        "shovel": false,
+        "wear": 2,
+        "proxyCloth": "c4b28e",
+        "proxyHelmet": "646048",
+        "proxySkin": "fffef7"
+      }
+    },
+    {
+      "id": "jozef_bak",
+      "visual": {
+        "version": "m01-soldier-visual/v1",
+        "id": "pl:3",
+        "nation": "pl",
+        "profile": 3,
+        "head": "bak",
+        "equipment": "field",
+        "faceStyle": 0,
+        "pack": 0.92,
+        "shovel": false,
+        "wear": 3,
+        "proxyCloth": "cbb992",
+        "proxyHelmet": "5f5b44",
+        "proxySkin": "f2f3f1"
+      }
+    },
+    {
+      "id": "szymon_kowal",
+      "visual": {
+        "version": "m01-soldier-visual/v1",
+        "id": "pl:0",
+        "nation": "pl",
+        "profile": 0,
+        "head": "kowal",
+        "equipment": "rkm",
+        "faceStyle": 0,
+        "pack": 0.82,
+        "shovel": false,
+        "wear": 0,
+        "proxyCloth": "b6af90",
+        "proxyHelmet": "5a5640",
+        "proxySkin": "fffdf5"
+      }
+    }
+  ],
+  "saveSchema": 2,
+  "pause": true,
+  "reload": true,
+  "errors": []
+}

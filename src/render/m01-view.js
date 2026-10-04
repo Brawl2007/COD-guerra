@@ -12,6 +12,7 @@ import { M01Environment } from './m01-environment.js';
 import { M01Characters } from './m01-characters.js';
 import { M01ViewModel } from './m01-viewmodel.js';
 import { M01TrainWagons } from './m01-train-wagons.js';
+import {soldierVisualVariant} from './m01-soldier-variation.js';
 
 // Presentation only: all actors, visible pieces, damage and clocks come from M01Simulation.
 // Original procedural art: textured environment and articulated humans; final scanned/rigged art remains pending.
@@ -168,22 +169,23 @@ export class M01View {
       if(skinned.has(a.id))continue;
       root.position.set(a.x,a.y+pose.root.offsetY,a.z);
       root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
-      const cloth=a.civilian?'#404c56':a.team==='enemy'?'#b4c0b7':'#c9bea0',helmet=a.team==='enemy'?'#465252':'#635f47';
+      const visual=!a.civilian&&this.characters?.visuals?soldierVisualVariant(a):null;
+      const cloth=a.civilian?'#404c56':visual?'#'+visual.proxyCloth:a.team==='enemy'?'#b4c0b7':'#c9bea0',helmet=visual?'#'+visual.proxyHelmet:a.team==='enemy'?'#465252':'#635f47',skin=visual?'#'+visual.proxySkin:'#ffffff';
       const [hx,hy,hz]=pose.head,[tx,ty,tz]=pose.torso.position;
       const near=Math.hypot(a.x-player.x,a.z-player.z)<45;
-      put('torso',pose.torso.position,pose.prone?pose.torso.size:[.30,pose.torso.size[1],.46],cloth,{roll:pose.torso.roll});put(near?'head':'farHead',pose.head,[.125,.18,.137]);
+      put('torso',pose.torso.position,pose.prone?pose.torso.size:[.30,pose.torso.size[1],.46],cloth,{roll:pose.torso.roll});put(near?'head':'farHead',pose.head,[.125,.18,.137],skin);
       put('helmet',[hx,hy+.105,hz],[.175,.14,.188],helmet);
       put('brim',[hx+.01,hy+.12,hz],[.186,.022,.2],helmet);
-      if(near){put('nose',[hx+.126,hy+.005,hz],[.020,.039,.022]);
+      if(near){put('nose',[hx+.126,hy+.005,hz],[.020,.039,.022],skin);
       put('eyes',[hx+.121,hy-.064,hz],[.004,.002,.021]);
       for(const side of [-1,1]){
         put('eyes',[hx+.112,hy+.055,hz+side*.066],[.008,.0045,.012]);
-        put('ears',[hx,hy,hz+side*.137],[.026,.044,.017]);
+        put('ears',[hx,hy,hz+side*.137],[.026,.044,.017],skin);
         put('eyes',[hx+.109,hy+.077,hz+side*.067],[.006,.002,.020]);
       }
       if(!a.civilian){
         put('belt',[tx+.002,ty-.19,tz],[.319,.073,.48]);
-        put('pack',[tx-.23,ty+.005,tz],[.18,.35,.32],cloth);
+        put('pack',[tx-.23,ty+.005,tz],[.18*(visual?.pack??1),.35,.32*(visual?.pack??1)],cloth);
         for(const side of [-1,1])for(let i=0;i<2;i++)put('pouches',[tx+.185,ty-.13,tz+side*(.09+i*.08)],[.082,.13,.072]);
         for(let i=0;i<5;i++)put('buttons',[tx+.156,ty+.20-i*.08,tz],[.009,.009,.009]);
       }}
@@ -192,8 +194,8 @@ export class M01View {
         put('limbs',midpoint,[bone.radius,length,bone.radius],cloth,bone);
       }
       for(const foot of pose.boots)put('boots',foot,[.25,.11,.16]);
-      if(near)put('hands',[hx-.005,hy-.17,hz],[.058,.072,.060]);
-      if(near)for(const i of [3,7])put('hands',pose.limbs[i].to,[.043,.066,.048]);
+      if(near)put('hands',[hx-.005,hy-.17,hz],[.058,.072,.060],skin);
+      if(near)for(const i of [3,7])put('hands',pose.limbs[i].to,[.043,.066,.048],skin);
       if(!a.civilian&&a.role!=='MEDIC'){
         put('rifle',pose.rifle.position,[.82,.095,.06],null,{roll:pose.rifle.pitch});
         const from=pose.rifle.barrelFrom,to=pose.rifle.muzzle;

@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## Soldier visual variation — 2026-10-04
+
+Branch isolada `codex/m01-soldier-visual-variation-pass`, base exacta schema2 `5f3cc34`. 16 pacotes visuais estáveis; rostos PL/DE/carga/desgaste usando rigs/atlas existentes, named faces preservadas. Sem novas texturas/draw calls, com buffers e materiais partilhados em cache. Gameplay/mission/save/RNG/armas/clips/colliders intactos. LOCAL: 28/28 testes focados, build PASS, 2/2 browser focados, retries 0; CI remoto não executado. Quatro BEFORE/AFTER e custos em `docs/verification/m01-runtime/soldier-variation-2026-10-04/HANDOFF.md`. **READY_FOR_CAPTAIN_REVIEW**, M01 **PROTÓTIPO JOGÁVEL**; sem merge/main ou integração das outras tarefas.
+
 ## Auditoria schema 2 — 2026-10-03
 
 Candidato isolado em `codex/m01-schema2-determinism-audit`, base MG34 prone aprovada `fbaac1e4`. Comparação de futuros A/B por tick: 61.055 comparações em duas rotas completas e fixtures definidas, sem divergência depois das correções. Corrigido o destino de recuperação ao restaurar uma continuação; schema 2 recebe backup opcional plano, mantendo CP-A..D planos e legacy compatível. Saves corrompidos não podem sobrescrever métodos/perfil da arma; RNG uint32 e fases conhecidas validados.

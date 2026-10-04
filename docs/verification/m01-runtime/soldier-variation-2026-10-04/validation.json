@@ -1,0 +1,97 @@
+{
+  "validation": "LOCAL",
+  "remoteCI": "NOT_RUN",
+  "node": {
+    "command": "node --test tests/m01-soldier-visual-variation.test.js tests/m01-character-assets.test.js tests/m01-soldiers-glb.test.js tests/m01-support-runtime.test.js",
+    "passed": 28,
+    "failed": 0,
+    "skipped": 0,
+    "exitCode": 0
+  },
+  "build": {
+    "command": "npm run build",
+    "result": "PASS",
+    "exitCode": 0,
+    "warning": "existing chunk >500 kB"
+  },
+  "browser": {
+    "command": "SOLDIER_EVIDENCE_DIR=docs/verification/m01-runtime/soldier-variation-2026-10-04 CHROME_EXECUTABLE=/tmp/chromium npm run test:browser -- tests/browser/m01-soldier-visual-variation.spec.js",
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "retries": 0,
+    "seconds": 22.2,
+    "exitCode": 0
+  },
+  "geometryComparisons": [
+    {
+      "case": "de-close",
+      "before": {
+        "triangles": 80271,
+        "drawCalls": 30,
+        "materials": 1,
+        "textures": 3
+      },
+      "after": {
+        "triangles": 80105,
+        "drawCalls": 30,
+        "materials": 2,
+        "textures": 3
+      },
+      "additionalDrawCalls": 0,
+      "additionalTextures": 0
+    },
+    {
+      "case": "pl-close",
+      "before": {
+        "triangles": 74270,
+        "drawCalls": 30,
+        "materials": 1,
+        "textures": 3
+      },
+      "after": {
+        "triangles": 73972,
+        "drawCalls": 30,
+        "materials": 2,
+        "textures": 3
+      },
+      "additionalDrawCalls": 0,
+      "additionalTextures": 0
+    },
+    {
+      "case": "medium",
+      "before": {
+        "triangles": 30100,
+        "drawCalls": 30,
+        "materials": 1,
+        "textures": 2
+      },
+      "after": {
+        "triangles": 29841,
+        "drawCalls": 30,
+        "materials": 2,
+        "textures": 2
+      },
+      "additionalDrawCalls": 0,
+      "additionalTextures": 0
+    },
+    {
+      "case": "roles",
+      "before": {
+        "triangles": 60768,
+        "drawCalls": 30,
+        "materials": 1,
+        "textures": 3
+      },
+      "after": {
+        "triangles": 60772,
+        "drawCalls": 30,
+        "materials": 2,
+        "textures": 3
+      },
+      "additionalDrawCalls": 0,
+      "additionalTextures": 0
+    }
+  ],
+  "notes": "Final observed stdout results, not a fabricated raw log. Gallery uses existing production renderer/rigs and deliberately staged copies/lighting; production UI separately tested."
+}

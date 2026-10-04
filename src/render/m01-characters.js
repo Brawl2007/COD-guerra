@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { clone } from 'three/addons/utils/SkeletonUtils.js';
 import { AssetManager } from '../assets/asset-manager.js';
 import { actorPose } from './m01-actor-pose.js';
+import {SoldierVisualVariations,soldierVisualVariant} from './m01-soldier-variation.js';
 import { CKM_POSITION } from '../game/m01-simulation.js';
 import {mg34ProneSample,MG34_MUZZLE_SOCKET,eyePosition,actorHitboxes,muzzlePosition} from '../world/spatial.js';
 
@@ -21,7 +22,8 @@ const stationClips=['station_drag_medic_grab','station_drag_patient_grab','stati
 
 // Presentation only. Playback is sampled from the saved mission clock; no renderer timers enter saves.
 export class M01Characters {
-  constructor(scene){
+  constructor(scene,{visualVariation=true}={}){
+    this.visuals=visualVariation?new SoldierVisualVariations():null;
     this.scene=scene;this.assets=new AssetManager();this.sources=new Map();this.pending=new Set();
     this.instances=new Map();this.clips=new Map();this.revision=0;this.disposed=false;this.stats={};
   }
@@ -148,7 +150,7 @@ export class M01Characters {
       weaponRoot=this.sources.get(`mg34:${weaponLOD}`).scene.clone(true);
       root.getObjectByName('weapon').add(weaponRoot);
     }
-    const nation=actor.team==='enemy'?'de':'pl',head=named[actor.id]??(nation==='de'?`de_${'abc'[hash(actor.id)%3]}`:'pl_a');
+    const nation=actor.team==='enemy'?'de':'pl',visual=this.visuals?soldierVisualVariant(actor):null,head=visual?.head??named[actor.id]??(nation==='de'?`de_${'abc'[hash(actor.id)%3]}`:'pl_a');
     root.traverse(n=>{
       if(!n.isMesh)return;
       n.visible=n.userData.visible!==false;
@@ -161,10 +163,11 @@ export class M01Characters {
       if(n.name==='rank_st_strzelec')n.visible=actor.id==='szymon_kowal';
       n.frustumCulled=false;n.receiveShadow=true;meshes.push(n);
     });
+    if(this.visuals)this.visuals.apply(root,actor,key,visual);
     this.scene.add(root);
     const weapon=weaponRoot?'mg34':actor.id==='szymon_kowal'?'rkm_wz28':actor.id==='jozef_bak'?'wz98a':nation==='pl'?'wz29':'kar98k';
     const profile=root.getObjectByName(`m01_soldier_${nation}`)?.userData;
-    const v={root,key,meshes,weapon,weaponRoot,weaponLOD,muzzle:weaponRoot?MG34_MUZZLE_SOCKET:profile?.weapons?.[weapon]?.muzzle??profile?.sockets?.muzzle??[0,.032,-.765],
+    const v={root,key,meshes,visual,weapon,weaponRoot,weaponLOD,muzzle:weaponRoot?MG34_MUZZLE_SOCKET:profile?.weapons?.[weapon]?.muzzle??profile?.sockets?.muzzle??[0,.032,-.765],
       mixer:new THREE.AnimationMixer(root),action:null,clip:null};
     this.instances.set(actor.id,v);return v;
   }
@@ -219,7 +222,7 @@ export class M01Characters {
       });
       if(v.weaponRoot)v.weaponRoot.visible=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy;
       v.root.updateMatrixWorld(true);clips[sample.clip]=(clips[sample.clip]??0)+1;
-      visible.push({...((mgGunner(a)&&a.mg34Prone)?{prone:{phase:a.mg34Prone.phase,startedAt:a.mg34Prone.startedAt,progress:a.mg34Prone.progress,rounds:a.mg34Prone.burst?.rounds??0,emitted:a.mg34Prone.burst?.emitted??0,shot:a.shot,firedAt:a.firedAt,eye:eyePosition(a),hitboxes:actorHitboxes(a),muzzle:muzzlePosition(a,time)}}:{}),id:a.id,lod,clip:sample.clip,clipTime:v.action.time,loop:sample.loop,weapon:v.weapon,weaponLOD:v.weaponLOD,muzzle:this.muzzle(a.id)?.toArray(),
+      visible.push({...((mgGunner(a)&&a.mg34Prone)?{prone:{phase:a.mg34Prone.phase,startedAt:a.mg34Prone.startedAt,progress:a.mg34Prone.progress,rounds:a.mg34Prone.burst?.rounds??0,emitted:a.mg34Prone.burst?.emitted??0,shot:a.shot,firedAt:a.firedAt,eye:eyePosition(a),hitboxes:actorHitboxes(a),muzzle:muzzlePosition(a,time)}}:{}),id:a.id,lod,visual:v.visual,clip:sample.clip,clipTime:v.action.time,loop:sample.loop,weapon:v.weapon,weaponLOD:v.weaponLOD,muzzle:this.muzzle(a.id)?.toArray(),
         weaponMeshes:v.meshes.filter(n=>weaponParts.has(n.name)&&n.visible||n.name.startsWith('mg34_')&&n.visible&&v.weaponRoot?.visible).map(n=>n.name)});
     }
     for(const {a}of candidates)if(selected.has(a.id)&&a.carriedBy&&a.task!=='station_wounded'&&selected.has(a.carriedBy)){
@@ -254,6 +257,6 @@ export class M01Characters {
     const v=this.instances.get(id),bone=v?.root.getObjectByName('weapon');if(!bone)return null;
     v.root.updateMatrixWorld(true);return new THREE.Vector3().fromArray(v.muzzle).applyMatrix4(bone.matrixWorld);
   }
-  get diagnostics(){return {...this.stats,proneAvailable:this.hasProne(),ckm:this.ckm?{visible:this.ckm.root.visible,lod:this.ckm.lod,clip:this.ckm.clip,time:this.ckm.time,position:this.ckm.root.position.toArray()}:null,loaded:[...this.sources.keys()],failures:this.assets.failures};}
-  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.assets.dispose();}
+  get diagnostics(){return {...this.stats,visuals:this.visuals?.diagnostics??null,proneAvailable:this.hasProne(),ckm:this.ckm?{visible:this.ckm.root.visible,lod:this.ckm.lod,clip:this.ckm.clip,time:this.ckm.time,position:this.ckm.root.position.toArray()}:null,loaded:[...this.sources.keys()],failures:this.assets.failures};}
+  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.visuals?.dispose();this.assets.dispose();}
 }
