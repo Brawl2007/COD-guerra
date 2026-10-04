@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {AudioManager,AUDIO_PRIORITY,audioHash,audioVariation} from '../src/core/audio.js';
+import {AudioManager,AUDIO_PRIORITY,audioHash,audioVariation,audioDistanceShape} from '../src/core/audio.js';
 import {M01Simulation} from '../src/game/m01-simulation.js';
 
 class Param{
@@ -59,14 +59,11 @@ test('rifle, MG34, RKM, CKM, impacts, near miss and layered explosion remain dis
 });
 
 test('near/mid/far routing lowers gain and bandwidth without changing event identity',()=>{
-  const {audio}=makeAudio(8);
-  audio.noise(.5,.2,0,0,{distance:5,priority:AUDIO_PRIORITY.rifle,kind:'near',key:'near'});
-  audio.noise(.5,.2,0,0,{distance:160,priority:AUDIO_PRIORITY.rifle,kind:'mid',key:'mid'});
-  audio.noise(.5,.2,0,0,{distance:900,priority:AUDIO_PRIORITY.rifle,kind:'far',key:'far'});
-  const voices=[...audio.voices],near=voices.find(v=>v.kind==='near'),mid=voices.find(v=>v.kind==='mid'),far=voices.find(v=>v.kind==='far');
-  assert.ok(near.gain.gain.value>mid.gain.gain.value&&mid.gain.gain.value>far.gain.gain.value);
-  assert.ok(near.filter.frequency.value>mid.filter.frequency.value&&mid.filter.frequency.value>far.filter.frequency.value);
-  audio.dispose();
+  const near=audioDistanceShape(5),mid=audioDistanceShape(160),far=audioDistanceShape(900);
+  assert.ok(near.gain>mid.gain&&mid.gain>far.gain);
+  assert.ok(near.filter>mid.filter&&mid.filter>far.filter);
+  const {audio}=makeAudio(8);audio.rifleShot(0,5,'kar98k','near-rifle');audio.rifleShot(0,160,'kar98k','mid-rifle');audio.rifleShot(0,900,'kar98k','far-rifle');
+  assert.equal(audio.diagnostics.eventCounts.rifle,3);audio.dispose();
 });
 
 test('voice budget evicts low-priority presentation and never exceeds the hard limit',()=>{
