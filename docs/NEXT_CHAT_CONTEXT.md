@@ -1,3 +1,25 @@
+# Estado actual — piloto near/far de autoridade M01 (2026-10-04)
+
+Esta secção prevalece sobre o histórico abaixo. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar, não tocar main/Graphify/M02 nem ampliar para outras formações.
+
+- TASK_ID: `M01-NEAR-FAR-AUTHORITY-RUNTIME-PILOT-V1`; solicitado GPT-6.1 Sol HIGH; sem delegação.
+- Base remota confirmada: `codex/m01-schema2-determinism-audit` @ `5f3cc34f53c61beec52255d67f8babd7194c9f7f` (PR37). Contratos BattleSector `fe2d99f`, Combat AI `3da1f16`, Lease `d12972f` lidos, sem merge cego.
+- Branch: `codex/m01-near-far-authority-runtime-pilot`. HEAD funcional/testes publicado: `51436a614216a540195d68f29d2c08904ce582cd`; commits posteriores documentam validação. Confirmar tip real no GitHub.
+- [PR draft #39](https://github.com/Brawl2007/COD-guerra/pull/39) aponta à base schema2, **não main**; sem merge/deploy. Auditoria: `docs/architecture/M01_NEAR_FAR_PILOT_AUDIT.md`; handoff: `docs/verification/m01-runtime/near-far-authority-pilot-2026-10-04/HANDOFF.md`.
+- Um setor lógico isolado `m01_pilot_lisewo_dike`, uma formação `m01_pilot_dike_riflemen`, quatro atores existentes não críticos: `de_east_36/37/38/39`. Roster89 preservado; nenhum cast/gate/MG34/CKM/estação/sapador transferido.
+- Coordinator privado + adapter pequeno: owner único, acquire/return atómicos, token/generation/revisão, descriptors completos, gateway de player damage/suppression/grenade, clips/reserva/spent disjuntos. Loops legados excluem quatro IDs. Projeções render/rays não têm AI próprio.
+- RNG setorial único LCG e agregado inteiro congelam em lease; xorshift por membro persistido, nenhum RNG de formação. Falhas/duplicate/stale não consomem streams. Sem catch-up após return. Main RNG continua para outros sistemas; ordem tática destes quatro NPCs mudou, não se promete equivalência com a antiga AI.
+- Schema2 com campo opcional validado; legacy mantém IDs/mortos e inicializa streams que antes não existiam. Active save/double restore, `resumeCheckpoint`, Restart e first-divergence future audit comprovados.
+- **24/24 focados**, **10.100 ticks A/B sem divergência** (`pilot-audit-confirmed.json`); **266/266 Node** (`node-confirmed.log`), build PASS; **2/2 browser focados**, zero retries/skips/flaky. **Browser integral38 ainda em execução** neste checkpoint documental; não declarar38/38 antes de ler `browser.json`/exit do processo.
+- Browser específico percorre margem oeste real: AGGREGATED→INDIVIDUAL→AGGREGATED, mesmos IDs, pausa/câmera, qualidade LOW/MEDIUM/HIGH, restore exato e Restart CP-B anterior. Aproximação usa **LOS/rifle1200m**, permanecendo banda física FAR: bounds impedem caminhar150m dos alemães. Histerese149/151/148/152 provada numericamente:1aquisição; mapas/bounds/atores não foram relocalizados.
+- Casualty5→7 é fixture explícita com5 já mortos +2 mortes por tiro real do jogador, não5NPCs vivos extra nem dado histórico. Reset começa0. Corpos36/37 não seguem anchor e não ressuscitam. Contabilidade de reserva100→73 preservada; WorldWeapon/feed não implementado.
+- Vermelhos iniciais preservados, sem retries aceitos: fixture legacy flight incoerente com planos modernos MG34; fixtures browser CP errado, sample de lock descartado/quantização/steering. Correções só nos testes; modo de input, MG34, estação/CKM, geometry/render/assets/áudio/animação/destruição continuam intactos (hashes em `protected-scope.json`). Metadata preliminar do relatório de continuidade é substituído pelo resumo confirmed, com cópia imutável e guarda de clock.
+- Limites: HOLD/reload/fire de quatro riflemen; sem exposição/casualty agregado aleatório, toda guerra distante, interactions completas ou formação extra. Receipts limitados256. Chromebook físico, MG34 loader/reload/feed e arco CKM continuam pendentes.
+
+---
+
+## Histórico anterior — não substitui o piloto acima
+
 # Estado actual — auditoria de determinismo schema 2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a MG34 aprovada nem Graphify.

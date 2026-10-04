@@ -1,5 +1,12 @@
 # Estado de desenvolvimento
 
+## Piloto near/far de autoridade — 2026-10-04
+
+Candidato isolado `codex/m01-near-far-authority-runtime-pilot`, [PR draft #39](https://github.com/Brawl2007/COD-guerra/pull/39) sobre a base schema2 `5f3cc34`. Um setor lógico/uma formação/quatro riflemen existentes (`de_east_36..39`); ownership exclusivo e transferências atómicas, RNG do setor congelado em lease, identities/bodies/ammo/save2 preservados. Não se integra toda guerra distante.
+
+24/24 focados, 10.100 ticks A/B sem divergência, 266/266 Node, build PASS, 2/2 browser focados zero retries/skips/flaky. **Browser integral de38 ainda em execução**; handoff/evidências em `docs/verification/m01-runtime/near-far-authority-pilot-2026-10-04/`. O mapa exige aquisição por LOS/alcance de rifle, não150m físicos; casualty5→7 usa fixture de5 já mortos declarada mais2 mortes do jogador. M01 permanece **PROTÓTIPO JOGÁVEL**, main intacta, sem merge/deploy/M02. Esta candidatura aguarda revisão do capitão e encerramento da validação integral.
+
+
 ## Auditoria schema 2 — 2026-10-03
 
 Candidato isolado em `codex/m01-schema2-determinism-audit`, base MG34 prone aprovada `fbaac1e4`. Comparação de futuros A/B por tick: 61.055 comparações em duas rotas completas e fixtures definidas, sem divergência depois das correções. Corrigido o destino de recuperação ao restaurar uma continuação; schema 2 recebe backup opcional plano, mantendo CP-A..D planos e legacy compatível. Saves corrompidos não podem sobrescrever métodos/perfil da arma; RNG uint32 e fases conhecidas validados.
