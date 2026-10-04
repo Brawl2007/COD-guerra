@@ -14,7 +14,7 @@ export class Game {
     this.sim=missionId==='m01_tczew'?new M01Simulation():new Simulation();this.started=false;this.paused=true;this.disposed=false;
     if(this.isM01)this.renderer.prepareM01();
     this.last=performance.now();this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;
-    this.pendingSounds=[];this.frame=null;this.listeners=[];
+    this.pendingSounds=[];this.pendingM01HitFeedback=null;this.frame=null;this.listeners=[];
     const listen=(target,type,callback)=>{target.addEventListener(type,callback);this.listeners.push(()=>target.removeEventListener(type,callback));};
     listen(window,'resize',()=>this.renderer.resize());
     listen(window,'blur',()=>this.pause());
@@ -36,7 +36,7 @@ export class Game {
   get saveKey(){return this.isM01?'cod-guerra:checkpoint:m01:v2':SAVE_KEY;}
   get hasSave(){try{return Boolean(localStorage.getItem(this.saveKey));}catch{return false;}}
   selectMission(id){
-    this.menu();this.sim=id==='m01_tczew'?new M01Simulation():new Simulation();this.pendingSounds=[];
+    this.menu();this.sim=id==='m01_tczew'?new M01Simulation():new Simulation();this.pendingSounds=[];this.pendingM01HitFeedback=null;
     this.messageUntil=0;this.hitUntil=0;this.checkpointUntil=0;this.renderer.resetEffects();
     if(this.isM01)this.renderer.prepareM01();this.onState('menu');
   }
@@ -62,12 +62,12 @@ export class Game {
     if(this.started&&!this.sim.mission.complete)this.onState('paused');
   }
   restartCheckpoint(){
-    this.sim.restoreCheckpoint();this.rebuildSounds();this.messageUntil=0;this.hitUntil=0;
+    this.sim.restoreCheckpoint();this.rebuildSounds();this.messageUntil=0;this.hitUntil=0;this.pendingM01HitFeedback=null;
     this.renderer.resetEffects();this.input.clear();
     if(this.sim.mission.complete)this.onState('complete');else this.resume();
   }
   restartMission(){
-    this.sim.reset();this.started=true;this.paused=true;this.pendingSounds=[];
+    this.sim.reset();this.started=true;this.paused=true;this.pendingSounds=[];this.pendingM01HitFeedback=null;
     this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;
     this.renderer.resetEffects();this.resume();
   }
@@ -163,21 +163,29 @@ export class Game {
     // Fogo alemão: o estampido chega com o atraso da distância (343 m/s); o impacto e o estalo de quem passa perto, à chegada do tiro.
     if(event.type==='enemy-fire'){const s=this.spatial(event.origin);this.pendingSounds.push({...s,at:event.at+s.distance/343,kind:'fire',rounds:event.rounds,interval:event.interval});}
     if(event.type==='round-impact'){
-      this.renderer.m01.impact(event.point,event.material,this.sim.clock);const s=this.spatial(event.point);
+      this.renderer.m01.impact(event.point,event.material,this.sim.clock);const s=this.spatial(event.point),shooter=this.sim.actor?.(event.by);
+      const direction=shooter?this.spatial(shooter).pan:s.pan,weapon=shooter?.weapon??null;
+      this.renderer.m01.roundFeedback(event,this.sim.clock,direction,weapon);
+      if(this.pendingM01HitFeedback&&Math.abs(this.pendingM01HitFeedback.clock-this.sim.clock)<1e-6){
+        this.renderer.m01.directionalHit(this.sim.clock,direction);this.pendingM01HitFeedback=null;
+      }
       if(event.crack)this.audio.crack(s.pan);if(event.distance<30)this.audio.impact(event.material,s.pan,event.distance);
     }
-    if(event.type==='player-hit'){this.audio.hit();this.hitUntil=now+170;}
+    if(event.type==='player-hit'){
+      this.audio.hit();this.hitUntil=now+170;this.pendingM01HitFeedback={clock:this.sim.clock};
+      this.renderer.m01.playerHit(this.sim.clock);
+    }
     if(event.type==='m01-blast'){
       // O estrondo e a vibração chegam juntos (atraso = distância/343 m/s); demolições abanam até 1 km (cs_m01_east_blast t=2,1).
       const s=this.spatial(event.point);this.pendingSounds.push({...s,at:event.soundAt,shake:s.distance<(event.aerial?500:1000)});
-      this.renderer.m01.explosion(event.point,this.sim.clock,event.aerial);
+      this.renderer.m01.explosionFeedback(this.sim.clock,s.distance,s.pan);this.renderer.m01.explosion(event.point,this.sim.clock,event.aerial);
     }
     if(event.type==='checkpoint'){
       this.checkpointUntil=now+2400;this.persistCheckpoint();
       const label=this.sim.definition.checkpoints.find(c=>c.id===event.id).label;this.say(`${label} · progresso guardado`,1800);
     }
     if(event.type==='restored'){
-      this.rebuildSounds();this.renderer.resetEffects();this.input.clear();this.say('A retomar o último checkpoint');
+      this.rebuildSounds();this.pendingM01HitFeedback=null;this.renderer.resetEffects();this.input.clear();this.say('A retomar o último checkpoint');
     }
     if(event.type==='complete'){
       this.persistCheckpoint();this.pause();if(document.pointerLockElement===this.canvas)document.exitPointerLock();this.onState('complete');
@@ -202,7 +210,17 @@ export class Game {
     this.hud.crosshair.classList.toggle('hidden',this.isM01&&(p.aiming||this.sim.scene?.id==='cs_m01_roll_call'));
     if(now>=this.messageUntil)this.hud.message.textContent='';
     this.hud.checkpoint.classList.toggle('show',now<this.checkpointUntil);
-    this.hud.vignette.classList.toggle('hit',now<this.hitUntil);
+    if(this.isM01){
+      const feedback=this.renderer.m01.feedbackState(this.sim.clock),v=this.hud.vignette;
+      v.classList.remove('hit');v.classList.add('combat-feedback');
+      v.style.setProperty('--combat-edge',feedback.overlayAlpha.toFixed(3));
+      v.style.setProperty('--combat-flash',feedback.exposureFlash.toFixed(3));
+      v.style.setProperty('--combat-suppression',(feedback.suppressionVisual*.13).toFixed(3));
+      v.style.setProperty('--combat-center',`${(50-feedback.direction*18).toFixed(1)}%`);
+    }else{
+      this.hud.vignette.classList.remove('combat-feedback');
+      this.hud.vignette.classList.toggle('hit',now<this.hitUntil);
+    }
   }
   get diagnostics(){return structuredClone({...this.renderer.diagnostics,missionId:this.sim.missionId,clock:this.sim.clock,paused:this.paused,
     missionPhase:this.sim.mission.phase,complete:this.sim.mission.complete,
