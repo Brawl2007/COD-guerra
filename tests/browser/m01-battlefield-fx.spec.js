@@ -57,11 +57,15 @@ test('east demolition runs layered blast -> dust -> smoke, freezes on pause and 
   const still=await page.evaluate(()=>window.gameDiagnostics());
   expect(still.clock).toBe(frozen.clock);expect(still.m01.battlefieldFx).toEqual(fx);
 
-  await page.locator('#resume').click();await page.waitForFunction(c=>window.gameDiagnostics().clock>c+.1,frozen.clock);
-  await page.waitForFunction(()=>{const f=window.gameDiagnostics().m01.battlefieldFx;return f.active===0&&Object.values(f.counts).every(n=>n===0)&&f.extraLights===0;},null,{timeout:30000});
-  const clean=await page.evaluate(()=>window.gameDiagnostics());
+  // Restore while the transient cloud is alive: resetEffects must clear all event-owned pools immediately,
+  // independent of software-WebGL frame rate, and the restored checkpoint must not inherit a phantom blast.
+  await page.locator('#restart-checkpoint').click();
+  await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
+  const clean=await page.evaluate(()=>window.gameDiagnostics()),cleanFx=clean.m01.battlefieldFx;
+  expect(cleanFx.active).toBe(0);expect(Object.values(cleanFx.counts).every(n=>n===0)).toBe(true);expect(cleanFx.extraLights).toBe(0);
   expect(clean.m01.smokePuffs).toBeLessThanOrEqual(192);
-  await info.attach('fx-counters',{body:JSON.stringify({hot:hot.m01.battlefieldFx,frozen:fx,clean:clean.m01.battlefieldFx,drawCalls:hot.drawCalls,triangles:hot.triangles,textures:hot.textures,geometries:hot.geometries},null,2),contentType:'application/json'});
+  await page.waitForTimeout(250);expect((await page.evaluate(()=>window.gameDiagnostics())).m01.battlefieldFx).toEqual(cleanFx);
+  await info.attach('fx-counters',{body:JSON.stringify({hot:hot.m01.battlefieldFx,frozen:fx,clean:cleanFx,drawCalls:hot.drawCalls,triangles:hot.triangles,textures:hot.textures,geometries:hot.geometries},null,2),contentType:'application/json'});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 
