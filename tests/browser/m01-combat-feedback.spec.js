@@ -53,7 +53,7 @@ test('real enemy hit and real near miss drive bounded directional M01 presentati
 
   await page.evaluate(()=>document.exitPointerLock());await page.reload();
   await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});
-  expect((await page.evaluate(()=>window.gameDiagnostics().m01.combatFeedback)).toMatchObject({activeEvents:0,suppressionVisual:0,overlayAlpha:0});
+  expect(await page.evaluate(()=>window.gameDiagnostics().m01.combatFeedback)).toMatchObject({activeEvents:0,suppressionVisual:0,overlayAlpha:0});
   expect(errors).toEqual([]);
 });
 
