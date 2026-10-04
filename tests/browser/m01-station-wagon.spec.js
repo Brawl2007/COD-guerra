@@ -30,21 +30,22 @@ async function restartContinuation(page){
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
 }
 
-test('station yard screenshots prove intact then persisted burned/fire state; pause, off-camera and double continuation restore do not reset it',async({page},info)=>{
-  test.setTimeout(180000);
-  const intact=intactSnapshot(),errors=await open(page,intact);
-  let diag=await page.evaluate(()=>window.gameDiagnostics());
+test('station yard intact visual is present before the scripted third bomb',async({page},info)=>{
+  test.setTimeout(120000);
+  const errors=await open(page,intactSnapshot());
+  const diag=await page.evaluate(()=>window.gameDiagnostics());
   expect(diag.m01.destruction).not.toContain('station_wagon_fire');
   expect(diag.m01.yardWagons.wagons.map(w=>w.state)).toEqual(['intact','intact','intact']);
   await page.screenshot({path:info.outputPath('station-wagon-intact.png')});
+  expect(errors).toEqual([]);
+});
 
-  await page.evaluate(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:burnedSnapshot()});
-  await page.reload();await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.yardWagons?.lod!==null);
-  await page.locator('#continue').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
+test('persisted burned/fire state survives off-camera, pause and double continuation restore',async({page},info)=>{
+  test.setTimeout(180000);
+  const errors=await open(page,burnedSnapshot());
   await page.waitForFunction(()=>window.gameDiagnostics().m01.yardFireVisible&&window.gameDiagnostics().m01.smokePuffs>0);
-  diag=await page.evaluate(()=>window.gameDiagnostics());
+  let diag=await page.evaluate(()=>window.gameDiagnostics());
   expect(diag.m01.destruction.filter(x=>x==='station_wagon_fire')).toHaveLength(1);
-  expect(diag.m01.eventIds??diag.eventIds).toBeDefined();
   expect(diag.eventIds).toContain('evt_m01_station_wagon_hit');
   expect(diag.m01.yardWagons.wagons.find(w=>w.id==='yard_wagon_3').state).toBe('burned');
   await page.screenshot({path:info.outputPath('station-wagon-burning.png')});
