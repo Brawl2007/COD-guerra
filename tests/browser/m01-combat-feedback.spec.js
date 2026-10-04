@@ -44,7 +44,7 @@ test('real enemy hit and real near miss drive bounded directional M01 presentati
 
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
   const frozen=await page.evaluate(()=>window.gameDiagnostics().m01.combatFeedback);await page.waitForTimeout(350);
-  expect((await page.evaluate(()=>window.gameDiagnostics().m01.combatFeedback)).toEqual(frozen);
+  expect(await page.evaluate(()=>window.gameDiagnostics().m01.combatFeedback)).toEqual(frozen);
   await page.locator('#restart-checkpoint').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
   await page.waitForFunction(()=>window.gameDiagnostics().m01.combatFeedback.activeEvents===0);
