@@ -1,0 +1,50 @@
+✔ real tick uses the fixed four anonymous actors and one active owner (27.167933ms)
+✔ duplicate acquire and stale revision reject without state or actor publication (8.995582ms)
+✔ member 3 preparation failure rolls back actors 1/2, RNG, clocks, generation and owner (7.283198ms)
+✔ staging snapshot is unsafe; asynchronous materialization is rejected atomically (7.299061ms)
+✔ return is complete and exact; malformed member 3 or missing members publish nothing (21.351238ms)
+✔ stale fencing token and double release reject, including after reacquisition (16.322525ms)
+✖ player rifle produces two actual deaths, 5→7 dead on exact return, with persistent IDs (560.968401ms)
+✔ reserve 100→73 through individual reload/fire; loaded is not double-counted and return never refills (24.535242ms)
+✔ whole sector resolver and shared aggregate RNG are frozen under individual ownership (94.560951ms)
+✔ failed command after a staged RNG draw rolls back; duplicate event consumes no RNG (10.414404ms)
+✔ return resets local motion/cadence boundary and never catches up a long lease (151.636155ms)
+✔ hysteresis 149/151/148/152 acquires exactly once and only leaves above 170 (3.785411ms)
+✔ pause advances no clock/RNG/band and performs no hidden transfer (8.535294ms)
+✔ camera and render quality inputs do not change the authority future (257.822486ms)
+✔ active-lease save/new simulation/restore/double restore keeps one owner and exact streams (28.799659ms)
+✔ continuation retains old checkpoint; restart removes current lease and reacquires once (24.64271ms)
+✔ legacy schema 2 without pilot field loads additively and preserves existing deaths/RNG (5.936508ms)
+✔ corrupt pilot state rejects atomically and destination future remains unchanged (458.888655ms)
+✔ PR37 methodology compares future ticks after active lease, reload/fire, release and reacquire (3863.768182ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 18
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5715.500389
+
+✖ failing tests:
+
+test at tests/m01-authority-runtime.test.js:52:1
+✖ player rifle produces two actual deaths, 5→7 dead on exact return, with persistent IDs (560.968401ms)
+  AssertionError [ERR_ASSERTION]: de_east_37: collision-checked player fire must kill
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/179e239c7f9f/COD-guerra/tests/m01-authority-runtime.test.js:62:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

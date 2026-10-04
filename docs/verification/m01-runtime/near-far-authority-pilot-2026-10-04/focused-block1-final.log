@@ -1,0 +1,27 @@
+✔ real tick uses the fixed four anonymous actors and one active owner (64.934302ms)
+✔ duplicate acquire and stale revision reject without state or actor publication (12.560919ms)
+✔ member 3 preparation failure rolls back actors 1/2, RNG, clocks, generation and owner (11.625139ms)
+✔ staging snapshot is unsafe; asynchronous materialization is rejected atomically (16.993214ms)
+✔ return is complete and exact; malformed member 3 or missing members publish nothing (33.405151ms)
+✔ stale fencing token and double release reject, including after reacquisition (24.543667ms)
+✔ player rifle produces two actual deaths, 5→7 dead on exact return, with persistent IDs (1025.719018ms)
+✔ reserve 100→73 through individual reload/fire; loaded is not double-counted and return never refills (80.107366ms)
+✔ whole sector resolver and shared aggregate RNG are frozen under individual ownership (261.833887ms)
+✔ failed command after a staged RNG draw rolls back; duplicate event consumes no RNG (18.869319ms)
+✔ return resets local motion/cadence boundary and never catches up a long lease (272.262362ms)
+✔ hysteresis 149/151/148/152 acquires exactly once and only leaves above 170 (6.336672ms)
+✔ pause advances no clock/RNG/band and performs no hidden transfer (32.065636ms)
+✔ camera and render quality inputs do not change the authority future (388.101941ms)
+✔ active-lease save/new simulation/restore/double restore keeps one owner and exact streams (21.061342ms)
+✔ continuation retains old checkpoint; restart removes current lease and reacquires once (16.01356ms)
+✔ legacy schema 2 without pilot field loads additively and preserves existing deaths/RNG (4.63924ms)
+✔ corrupt pilot state rejects atomically and destination future remains unchanged (293.541915ms)
+✔ PR37 methodology compares future ticks after active lease, reload/fire, release and reacquire (3849.435349ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6570.57034
