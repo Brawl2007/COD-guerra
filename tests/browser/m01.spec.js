@@ -338,10 +338,10 @@ test('demolition inside the road truss shows the actual bearing while mouse look
     document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
   },Math.atan2(Math.sin(angle),Math.cos(angle))/.0022);
   await turn(aim+Math.PI-initial.player.angle);
-  await expect(page.locator('#objective-status')).toContainText('atrás de si');
+  await waitForState(page,'demolition-bearing-behind',()=>document.querySelector('#objective-status')?.textContent?.includes('atrás de si'),null,{timeout:15000});
   const away=await page.evaluate(()=>window.gameDiagnostics());
   await turn(aim-away.player.angle);
-  await expect(page.locator('#objective-status')).toContainText('em frente');
+  await waitForState(page,'demolition-bearing-front',()=>document.querySelector('#objective-status')?.textContent?.includes('em frente'),null,{timeout:15000});
   const facing=await page.evaluate(()=>window.gameDiagnostics());
   expect(facing.m01.threat.status).toBe(await page.locator('#objective-status').textContent());
   expect(Math.abs(Math.atan2(Math.sin(facing.player.angle-aim),Math.cos(facing.player.angle-aim)))).toBeLessThan(.01);
