@@ -31,7 +31,7 @@ export class M01View {
       ground:texturedSurface('soil',{worldScale:.42}),
       earth:texturedSurface('soil',{worldScale:.65}),
       stone:texturedSurface('stone',{worldScale:.5}),
-      brick:texturedSurface('brick',{worldScale:.65}),
+      brick:texturedSurface('brick',{worldScale:1.4}),
       wood:texturedSurface('wood',{bump:.015}),
       metal:texturedSurface('metal',{bump:.012}),
       leather:texturedSurface('leather',{bump:.025}),
@@ -132,7 +132,7 @@ export class M01View {
       const capacity={limbs:720,boots:180,hands:270,eyes:450,ears:180,pouches:360,buttons:540}[name]??90;
       const batch=new THREE.InstancedMesh(this[shape],this.materials[material],capacity);
       batch.instanceMatrix.setUsage(THREE.DynamicDrawUsage);batch.count=0;batch.frustumCulled=false;
-      batch.castShadow=name!=='flash';this.scene.add(batch);this.batches.set(name,batch);
+      batch.castShadow=name!=='flash';batch.receiveShadow=true;this.scene.add(batch);this.batches.set(name,batch);
     }
   }
   createContactShadows(){
@@ -249,7 +249,7 @@ export class M01View {
     for(const i of this.impacts){
       const age=time-i.start,d=far(i);
       if(i.material==='metal'||i.material==='stone'){if(age<.1)put('spark',i,Math.max(.06,d*.003));}
-      if(i.material!=='metal'){const k=age<.15?age/.15:Math.max(0,1-(age-.15)/.75);put('puff',{x:i.x,y:i.y+.35*k,z:i.z},Math.max(.3,d*.004)*Math.max(.08,k),null,.7*k);}
+      if(i.material!=='metal'){const k=age<.15?age/.15:Math.max(0,1-(age-.15)/.75);put('puff',{x:i.x,y:i.y+.55*k,z:i.z},Math.max(.45,d*.004)*Math.max(.08,k),null,.7*k);}
     }
     for(const [name,batch]of Object.entries(this.fireBatches)){batch.count=counts[name];batch.instanceMatrix.needsUpdate=true;
       if(batch.geometry.attributes.puffOpacity)batch.geometry.attributes.puffOpacity.needsUpdate=true;}
@@ -374,9 +374,11 @@ export class M01View {
     const az=THREE.MathUtils.degToRad(THREE.MathUtils.lerp(a.azimuthDeg,b.azimuthDeg,t));
     const p=sim.player;this.sun.target.position.set(p.x,p.y,p.z);
     this.sun.position.set(p.x+Math.sin(az)*Math.cos(alt)*200,p.y+Math.sin(alt)*200,p.z-Math.cos(az)*Math.cos(alt)*200);
-    this.sun.intensity=Math.max(.12,Math.sin(alt)*3.5);this.sun.castShadow=alt>0;
-    const daylight=Math.max(0,Math.min(1,(alt+.08)/.4));this.skyLight.intensity=2.0+daylight*.55;
-    this.scene.background=new THREE.Color('#939fa9').lerp(new THREE.Color('#c1c6c5'),daylight);this.scene.fog.color.copy(this.scene.background);
+    this.sun.intensity=Math.max(.09,Math.sin(alt)*5.8);this.sun.castShadow=alt>0;
+    const daylight=Math.max(0,Math.min(1,(alt+.08)/.4));this.skyLight.intensity=1.6+daylight*.22;
+    this.scene.background=new THREE.Color('#727f8c').lerp(new THREE.Color('#a8b2b0'),daylight);this.scene.fog.color.copy(this.scene.background);
+    this.engine.toneMappingExposure=1.08;
+    this.sun.color.set('#ffe0b0');this.skyLight.color.set('#b4c8df');this.skyLight.groundColor.set('#4b4435');
     this.atmosphere.material.uniforms.fogColor.value.copy(this.scene.fog.color);
     this.atmosphere.lighting(p,daylight,alt,az,sim.clock);this.environment?.sync(sim.world,this.owner.quality);
   }
@@ -389,6 +391,7 @@ export class M01View {
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
+    for(const material of Object.values(this.materials))if(material.userData.m01Time)material.userData.m01Time.value=sim.clock;
     this.syncSolids(sim.world);const state=sim.renderState,time=sim.clock,dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
     this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.lighting(sim);
@@ -420,7 +423,7 @@ export class M01View {
       if(t>=1||t<0){this.effects.remove(b.mesh);b.mesh.material.dispose();return false;}
       b.mesh.scale.setScalar(b.size*(.35+.65*Math.sqrt(t)));b.mesh.material.opacity=.95*(1-t);return true;});
     this.engine.info.autoReset=false;this.engine.info.reset();this.engine.clear();this.engine.render(this.scene,this.camera);
-    this.engine.clearDepth();this.engine.render(this.weaponScene,this.weaponCamera);
+    this.engine.clearDepth();this.engine.render(this.weaponScene,this.weaponCamera);this.engine.toneMappingExposure=1.15;
   }
   muzzle(clock){this.flashUntil=clock+.06;this.shakeUntil=clock+.1;}
   blast(clock){this.shakeUntil=clock+.4;}

@@ -1,0 +1,17 @@
+import {pathToFileURL} from 'node:url';
+import {readFile,writeFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {resolve} from 'node:path';
+import assert from 'node:assert/strict';
+const base=resolve(process.argv[2]),out=resolve(process.argv[3]);
+const {route}=await import('../../tests/helpers/m01-route.js');
+const baseline=await import(pathToFileURL(`${base}/tests/helpers/m01-route.js`));
+const {actorHitboxes}=await import('../../src/world/spatial.js');
+const before=baseline.route(),after=route();
+const sample=d=>({snapshot:d.sim.snapshot(),checkpoints:d.checkpoints,events:d.events,hitboxes:d.sim.actors.map(a=>({id:a.id,boxes:actorHitboxes(a)})),combatSnapshots:d.combatSnapshots});
+const a=sample(before),b=sample(after);assert.deepEqual(b,a);
+const protectedFiles=['src/game/m01-simulation.js','src/world/spatial.js','src/world/tczew-world.js','src/core/random.js'];
+for(const file of protectedFiles)assert.equal(await readFile(file,'utf8'),await readFile(`${base}/${file}`,'utf8'));
+const hash=v=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
+await writeFile(`${out}/GAMEPLAY_EQUIVALENCE.json`,JSON.stringify({pass:true,route:'real controls through full M01',baselineHash:hash(a),candidateHash:hash(b),checks:['player/actors/hitboxes/HP/ammo/RNG/mission and battle clocks/objectives/checkpoints/all emitted gameplay events','full combat snapshots'],protectedFiles},null,2)+'\n');
+console.log('PASS full-route baseline/candidate state, checkpoints, events and hitboxes');

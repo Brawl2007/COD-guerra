@@ -7,6 +7,10 @@ import { surface } from './materials.js';
 import { M01View } from './m01-view.js';
 
 const QUALITY={low:{ratio:1,shadows:false,particles:70},medium:{ratio:1.25,shadows:true,particles:120},high:{ratio:1.5,shadows:true,particles:180}};
+export function initialQuality({saved,cores=0,memory=0,renderer='',maxTexture=0}={}){
+  if(Object.hasOwn(QUALITY,saved))return saved;
+  return cores>=4&&memory>=4&&maxTexture>=8192&&renderer&&!/swiftshader|llvmpipe|software/i.test(renderer)?'medium':'low';
+}
 const matrix=new THREE.Object3D();
 
 export class Renderer {
@@ -42,7 +46,10 @@ export class Renderer {
     this.effects=new THREE.Group();this.scene.add(this.effects);
     this.weaponRoot=new THREE.Group();this.weaponScene.add(this.weaponRoot);
     this.shake=0;this.muzzleUntil=0;this.lastTime=0;this.disposed=false;this.world=null;
-    this.particles=[];this.smokeViews=new Map();this.quality='low';this.setQuality('low');
+    this.particles=[];this.smokeViews=new Map();this.quality='low';
+    let saved;try{saved=localStorage.getItem('cod-guerra:visual-quality');}catch{}
+    const debug=context.getExtension('WEBGL_debug_renderer_info');
+    this.setQuality(initialQuality({saved,cores:navigator.hardwareConcurrency,memory:navigator.deviceMemory,renderer:debug?context.getParameter(debug.UNMASKED_RENDERER_WEBGL):'',maxTexture:context.getParameter(context.MAX_TEXTURE_SIZE)}));
     this.createWeapon();this.createHorizon();
     this.particleMesh=new THREE.InstancedMesh(this.geometries.sphere,this.materials.glow,180);
     this.particleMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.particleMesh.count=0;
