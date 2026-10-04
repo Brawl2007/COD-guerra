@@ -20,6 +20,10 @@ jobs:
     steps:
       - name: Baixar o projeto
         uses: actions/checkout@v4
+        with:
+          # Some invariant tests compare selected runtime functions to historical commits.
+          # A shallow PR checkout makes those checks fail before browser validation starts.
+          fetch-depth: 0
       - name: Configurar Node
         uses: actions/setup-node@v4
         with:
