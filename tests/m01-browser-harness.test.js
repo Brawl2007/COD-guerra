@@ -13,6 +13,7 @@ test('hang classification distinguishes crash, paused, pointer lock, required as
   assert.equal(classifyHarnessState({crashed:true}),'BROWSER_CRASHED');
   assert.equal(classifyHarnessState({pageClosed:true}),'PAGE_CLOSED');
   assert.equal(classifyHarnessState({readyState:'loading'}),'PAGE_NOT_READY');
+  assert.equal(classifyHarnessState({readyState:'complete',ui:{error:{visible:true}}}),'ERROR_MODAL_VISIBLE');
   assert.equal(classifyHarnessState({readyState:'complete',pointerLockId:null,pendingAssets:[{url:'http://test/optional.glb'}],diagnostics:{paused:true,m01:{requiredAssetFailures:[],assetFailures:[]}}}),'ASSET_REQUEST_PENDING');
   assert.equal(classifyHarnessState({readyState:'complete',pointerLockId:null,pendingAssets:[],diagnostics:{paused:true,m01:{requiredAssetFailures:[],assetFailures:[]}}}),'SIMULATION_PAUSED');
   assert.equal(classifyHarnessState({readyState:'complete',pointerLockId:null,diagnostics:{paused:false,m01:{requiredAssetFailures:[],assetFailures:[]}}}),'POINTER_LOCK_MISSING');

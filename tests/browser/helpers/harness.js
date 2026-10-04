@@ -110,6 +110,7 @@ export function classifyHarnessState(snapshot){
   if(snapshot?.pageClosed)return 'PAGE_CLOSED';
   if(snapshot?.captureError)return 'PAGE_UNREADABLE';
   if(snapshot?.readyState!=='complete')return 'PAGE_NOT_READY';
+  if(snapshot?.ui?.error?.visible)return 'ERROR_MODAL_VISIBLE';
   const g=snapshot?.diagnostics,m=g?.m01;
   if(m?.requiredAssetFailures?.length)return 'REQUIRED_ASSET_FAILURE';
   if(snapshot?.pendingAssets?.length)return 'ASSET_REQUEST_PENDING';
@@ -119,24 +120,38 @@ export function classifyHarnessState(snapshot){
   return 'WAIT_CONDITION_UNMET';
 }
 
-export async function waitForState(page,label,predicate,arg=null,{timeout=30000,polling='raf'}={}){
-  try{return await page.waitForFunction(predicate,arg,{timeout,polling});}
-  catch(error){
-    const snapshot=await captureHarnessSnapshot(page),state=installBrowserHarness(page),classification=classifyHarnessState(snapshot);
-    const recent={pageErrors:state.pageErrors.slice(-6),consoleErrors:state.consoleErrors.slice(-6),requestFailures:state.requestFailures.slice(-8),httpFailures:state.httpFailures.slice(-8)};
-    const diagnostic=JSON.stringify({label,classification,snapshot,recent},null,2);
-    throw new Error(`[browser-harness:${label}] ${classification} after ${timeout}ms\n${diagnostic}\nOriginal: ${error.message}`);
+async function waitFailure(page,label,timeout,error=null){
+  const snapshot=await captureHarnessSnapshot(page),state=installBrowserHarness(page),classification=classifyHarnessState(snapshot);
+  const recent={pageErrors:state.pageErrors.slice(-6),consoleErrors:state.consoleErrors.slice(-6),requestFailures:state.requestFailures.slice(-8),httpFailures:state.httpFailures.slice(-8)};
+  const diagnostic=JSON.stringify({label,classification,snapshot,recent},null,2);
+  return new Error(`[browser-harness:${label}] ${classification} after ${timeout}ms\n${diagnostic}${error?`\nOriginal: ${error.message}`:''}`);
+}
+
+export async function waitForState(page,label,predicate,arg=null,{timeout=30000,polling='raf',failFastOn=[]}={}){
+  if(!failFastOn.length){
+    try{return await page.waitForFunction(predicate,arg,{timeout,polling});}
+    catch(error){throw await waitFailure(page,label,timeout,error);}
   }
+  const started=Date.now(),interval=typeof polling==='number'?Math.max(16,polling):100;
+  while(Date.now()-started<timeout){
+    if(page.isClosed())throw await waitFailure(page,label,Date.now()-started);
+    try{if(await page.evaluate(predicate,arg))return true;}
+    catch(error){throw await waitFailure(page,label,Date.now()-started,error);}
+    const snapshot=await captureHarnessSnapshot(page),classification=classifyHarnessState(snapshot);
+    if(failFastOn.includes(classification))throw await waitFailure(page,label,Date.now()-started);
+    await new Promise(resolve=>setTimeout(resolve,interval));
+  }
+  throw await waitFailure(page,label,timeout);
 }
 
 export async function waitForPointerLockRunning(page,label='pointer-lock-running',{timeout=15000}={}){
   return waitForState(page,label,()=>{
     const g=window.gameDiagnostics?.();return Boolean(g&&!g.paused&&g.clock>.05&&document.pointerLockElement?.id==='game');
-  },null,{timeout});
+  },null,{timeout,polling:100,failFastOn:['BROWSER_CRASHED','PAGE_CLOSED','PAGE_UNREADABLE','REQUIRED_ASSET_FAILURE','ERROR_MODAL_VISIBLE']});
 }
 
 export async function waitForM01Ready(page,label='m01-models-ready',{timeout=30000}={}){
-  return waitForState(page,label,()=>window.gameDiagnostics?.().m01?.models?.length===9,null,{timeout});
+  return waitForState(page,label,()=>window.gameDiagnostics?.().m01?.models?.length===9,null,{timeout,polling:100,failFastOn:['BROWSER_CRASHED','PAGE_CLOSED','PAGE_UNREADABLE','REQUIRED_ASSET_FAILURE','ERROR_MODAL_VISIBLE']});
 }
 
 export async function attachHarnessDiagnostics(page,info,{always=false}={}){
