@@ -42,8 +42,10 @@ export function installBrowserHarness(page){
   page.on('requestfailed',request=>{
     const url=request.url(),expected=state.expectedFailures.find(x=>x.regex.test(url));
     state.inFlight.delete(request);
-    const errorText=request.failure()?.errorText??null,benignNavigationAbort=isBenignNavigationAbort(errorText,{navigating:state.navigating});
-    const item={url,method:request.method(),errorText,expected:Boolean(expected),benignNavigationAbort,label:expected?.label??null};
+    const errorText=request.failure()?.errorText??null;
+    const expectedNavigationAbort=state.expectedNavigationAborts.has(request)&&errorText==='net::ERR_ABORTED';
+    const benignNavigationAbort=expectedNavigationAbort||isBenignNavigationAbort(errorText,{navigating:state.navigating});
+    const item={url,method:request.method(),errorText,expected:Boolean(expected),expectedNavigationAbort,benignNavigationAbort,label:expected?.label??null};
     state.requestFailures.push(item);
   });
   page.on('response',response=>{
