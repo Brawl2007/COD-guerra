@@ -125,6 +125,14 @@ test('restore mid-bolt and both reloads reconstruct mechanical phase without sav
     assert.equal('mixer' in save,false);a.dispose();b.dispose();
   }}finally{c.dispose();}
 });
+test('an existing menu/checkpoint renderer reconstructs ADS at a replaced world boundary',async()=>{
+  const c=await viewModelFixture(),v=make(c),sim=new M01Simulation();
+  try{
+    sim.tick(.05,{skip:true});v.update(sim,'low',0);assert.equal(v.stats.aimBlend,0);
+    for(let i=0;i<12;i++)sim.tick(.05,{aim:true});const save=sim.snapshot();sim.restoreSnapshot(save);
+    v.update(sim,'low',0);assert.equal(v.stats.aimBlend,1);assert.ok(alignmentReport(v).verticalPixels<.5);assert.deepEqual(sim.snapshot(),save);
+  }finally{v.dispose();c.dispose();}
+});
 test('BASE/CANDIDATE whole save, HP/ammo/shots/hits/transforms/muzzle/RNG/clocks/CP remain exact for 600 input ticks',async()=>{
   const c=await viewModelFixture(),a=new M01Simulation(19390901),b=new M01Simulation(19390901);
   const old=new BaseViewModel(new THREE.Scene(),c,new THREE.Texture()),candidate=make(c);

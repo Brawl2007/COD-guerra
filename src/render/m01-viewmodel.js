@@ -75,6 +75,9 @@ export class M01ViewModel {
     const lod=characters.sources.has('pl:0')?0:1;
     if(!characters.sources.has(`pl:${lod}`)||!['aim','reload_clip','fire_bolt','carry_wounded','carried'].every(name=>characters.clips.has(name)))return false;
     if(this.lod!==lod)this.build(lod);
+    // Restore replaces the data world; reconstruct visual flags/phase at that safe
+    // boundary instead of blending from an old menu/checkpoint presentation.
+    if(this.sourceWorld!==sim.world){this.sourceWorld=sim.world;this.visual=null;this.sampleKey=null;}
     const p=sim.player,w=sim.weapon,t=sim.clock,carry=p.carrying==='jozef_bak';
     const key=JSON.stringify([t,p.aiming,p.moveBlend,p.sprinting,p.carrying,sim.renderState.weaponVisible,w.state,w.started,w.until,w.lastShot,flashUntil]);
     if(this.sampleKey===key)return true;
