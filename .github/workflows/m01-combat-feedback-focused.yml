@@ -1,0 +1,41 @@
+name: M01 combat feedback focused validation
+
+on:
+  push:
+    branches:
+      - codex/m01-player-hit-near-miss-feedback
+  workflow_dispatch:
+
+concurrency:
+  group: m01-combat-feedback-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Focused feedback and M01 tests
+        run: node --test tests/m01-combat-feedback.test.js tests/m01-runtime.test.js tests/game.test.js
+      - name: Production build
+        run: npm run build
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Focused browser combat feedback proof
+        run: npx playwright test tests/browser/m01-combat-feedback.spec.js
+      - name: Upload focused screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-combat-feedback-evidence
+          path: test-results/
+          if-no-files-found: ignore
