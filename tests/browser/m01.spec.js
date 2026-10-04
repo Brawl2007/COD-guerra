@@ -1,7 +1,7 @@
 import {test,expect} from '@playwright/test';
 import {route,driver,toRepair,toCoverAdjustment,toStationEvacuation} from '../helpers/m01-route.js';
 import {seconds} from '../../src/game/m01-simulation.js';
-import {installBrowserHarness,finalizeBrowserHarness,forceAssetFailure,waitForState,waitForPointerLockRunning,waitForM01Ready,assertCheckpointStorage} from './helpers/harness.js';
+import {installBrowserHarness,finalizeBrowserHarness,forceAssetFailure,waitForState,waitForPointerLockRunning,waitForM01Ready,assertCheckpointStorage,reloadWithExpectedAborts} from './helpers/harness.js';
 
 let result;
 const flow=()=>result??=route();
@@ -539,7 +539,7 @@ test('ckm west crew and weapon use actual saved abandon time, pause and fresh re
   expect(c.ckm.position).toEqual([24.17,-3,43]);expect(c.ckm.lod).toBe(2);
   await page.waitForTimeout(250);expect((await page.evaluate(()=>window.gameDiagnostics())).m01.characters).toEqual(c);
   await page.screenshot({path:info.outputPath('m01-ckm-abandon.png'),style:'#pause {visibility:hidden !important;}'});
-  await page.reload();await open(page);await start(page,'#continue');
+  await reloadWithExpectedAborts(page);await open(page);await start(page,'#continue');
   await waitForState(page,'ckm-lod2-loaded-after-reload',()=>window.gameDiagnostics().m01.characters?.loaded.includes('ckm:2'),null,{timeout:30000});
   await expect(page.locator('#error')).toBeHidden();expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
