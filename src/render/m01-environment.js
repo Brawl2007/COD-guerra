@@ -1,23 +1,60 @@
 import * as THREE from 'three';
 import {leafTexture,texturedSurface} from './m01-surfaces.js';
 
+export const M01_VEGETATION_LOD=Object.freeze({
+  low:Object.freeze({near:55,mid:170,hysteresis:10,nearBranches:2,midBranches:1,nearLobes:3,midLobes:2,nearCards:0}),
+  medium:Object.freeze({near:80,mid:230,hysteresis:12,nearBranches:4,midBranches:1,nearLobes:5,midLobes:3,nearCards:1}),
+  high:Object.freeze({near:110,mid:290,hysteresis:14,nearBranches:5,midBranches:2,nearLobes:6,midLobes:4,nearCards:2})
+});
+export const M01_LEGACY_LEAF_CARD_ESTIMATE=17*25+68*16;
+export function vegetationNoise(seed,index=0){
+  let x=((seed>>>0)+Math.imul((index+1)>>>0,0x9e3779b1))>>>0;
+  x^=x>>>16;x=Math.imul(x,0x21f0aaad);x^=x>>>15;x=Math.imul(x,0x735a2d97);x^=x>>>15;
+  return (x>>>0)/4294967296;
+}
+export function chooseVegetationLod(distance,quality='medium',previous=null){
+  const q=M01_VEGETATION_LOD[quality]??M01_VEGETATION_LOD.medium,h=q.hysteresis;
+  if(previous==='near'&&distance<=q.near+h)return 'near';
+  if(previous==='mid'){
+    if(distance<q.near-h)return 'near';
+    if(distance<=q.mid+h)return 'mid';
+    return 'far';
+  }
+  if(previous==='far'&&distance>=q.mid-h)return 'far';
+  return distance<q.near?'near':distance<q.mid?'mid':'far';
+}
+const TREE_PROFILES=Object.freeze([
+  Object.freeze({name:'narrow',radius:.72,height:1.08,base:.64,spread:.78}),
+  Object.freeze({name:'broad',radius:1.18,height:.86,base:.60,spread:1.10}),
+  Object.freeze({name:'irregular',radius:1.00,height:.98,base:.61,spread:1.00}),
+  Object.freeze({name:'small',radius:.86,height:.88,base:.62,spread:.88}),
+  Object.freeze({name:'tall',radius:.78,height:1.12,base:.66,spread:.84}),
+  Object.freeze({name:'damaged',radius:.88,height:.78,base:.67,spread:1.08,damaged:true})
+]);
+
 // Small decoration is non-solid. Trunks/buildings are outside the playable routes.
 // This is art direction around measured infrastructure, not a historical survey.
 export class M01Environment {
   constructor(scene,world,materials){
     this.group=new THREE.Group();scene.add(this.group);this.world=world;this.materials=materials;
     this.geometry={box:new THREE.BoxGeometry(1,1,1),rock:new THREE.DodecahedronGeometry(1,0),gravel:new THREE.TetrahedronGeometry(1),
-      trunk:new THREE.CylinderGeometry(.72,1,1,9),leaf:new THREE.PlaneGeometry(1,1),bag:new THREE.CapsuleGeometry(.5,.4,3,7)};
-    this.leafMap=leafTexture();this.foliage=new THREE.MeshStandardMaterial({map:this.leafMap,alphaTest:.35,side:THREE.DoubleSide,roughness:1,color:'#e1dbb0',emissive:'#33452b',emissiveIntensity:.18});
+      trunk:new THREE.CylinderGeometry(.72,1,1,9),leaf:new THREE.PlaneGeometry(1,1),bag:new THREE.CapsuleGeometry(.5,.4,3,7),
+      treeWoodNear:new THREE.CylinderGeometry(.58,1,1,10),treeWoodMid:new THREE.CylinderGeometry(.62,1,1,7),treeWoodFar:new THREE.CylinderGeometry(.68,1,1,5),
+      treeCanopyNear:new THREE.IcosahedronGeometry(1,1),treeCanopyMid:new THREE.DodecahedronGeometry(1,0),treeCanopyFar:new THREE.IcosahedronGeometry(1,0)};
+    this.leafMap=leafTexture();this.foliage=new THREE.MeshStandardMaterial({map:this.leafMap,alphaTest:.52,side:THREE.DoubleSide,roughness:1,color:'#a7aa74',emissive:'#27311f',emissiveIntensity:.10});
+    this.canopyMaterial=new THREE.MeshStandardMaterial({color:'#73784d',roughness:1,metalness:0,emissive:'#1d2418',emissiveIntensity:.045});
     this.bark=texturedSurface('wood',{worldScale:1,bump:.12,color:'#80786b'});
     this.grassMaterial=new THREE.MeshStandardMaterial({color:'#76734f',roughness:1,side:THREE.DoubleSide});
     this.grassGeometry=new THREE.BufferGeometry();this.grassGeometry.setAttribute('position',new THREE.Float32BufferAttribute([-.1,0,0, .1,0,0, .035,.48,0, 0,0,-.1, 0,0,.1, 0,.38,.04],3));// Add two bent blades inside each same-sized tuft; keep short vegetation off objectives.
     const old=Array.from(this.grassGeometry.attributes.position.array);
     this.grassGeometry.setAttribute('position',new THREE.Float32BufferAttribute([...old,-.12,0,.04,-.06,0,.06,-.17,.32,.08,.06,0,-.09,.14,0,-.09,.20,.26,-.04],3));
     this.grassGeometry.computeVertexNormals();
-    this.lists=new Map();this.resources=[];this.dynamic=[];
+    this.lists=new Map();this.resources=[];this.dynamic=[];this.grassBatches=[];this.treeDescriptors=[];this.treeBatches={};this.treeUpdateKey='';this.treeLodCounts={near:0,mid:0,far:0};
+    this.treeCardCount=0;this.treeTriangleCount=0;this.treeDrawCalls=0;this.treeDummy=new THREE.Object3D();this.treeColor=new THREE.Color();
+    this.treeUp=new THREE.Vector3(0,1,0);this.treeStart=new THREE.Vector3();this.treeEnd=new THREE.Vector3();this.treeDirection=new THREE.Vector3();
     let seed=19390901;this.random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
     this.buildVegetation();this.buildClutter();this.buildTracks();this.buildArchitecture();this.buildCovers();this.buildGroundClusters();this.flush();
+    this.buildTreeBatches();this.updateVegetationLod({x:0,z:0},'medium',true);
   }
   put(kind,material,p,size,rotation=[0,0,0],color=null,parentId=null){
     const key=`${kind}:${material}:${parentId??'static'}`;
@@ -32,35 +69,55 @@ export class M01Environment {
       const batch=new THREE.InstancedMesh(geometry,material,list.items.length);
       list.items.forEach((o,i)=>{dummy.position.set(...o.p);dummy.scale.set(...o.size);dummy.rotation.set(...o.rotation);dummy.updateMatrix();batch.setMatrixAt(i,dummy.matrix);if(o.color)batch.setColorAt(i,new THREE.Color(o.color));});
       batch.computeBoundingSphere();batch.castShadow=['box','trunk','bag','leaf'].includes(list.kind);batch.receiveShadow=true;
-      this.group.add(batch);this.resources.push(batch);if(list.parentId)this.dynamic.push({batch,id:list.parentId,height:this.world.covers.find(c=>c.id===list.parentId)?.max.y-this.world.covers.find(c=>c.id===list.parentId)?.min.y});
+      this.group.add(batch);this.resources.push(batch);if(geometry===this.grassGeometry)this.grassBatches.push(batch);
+      if(list.parentId)this.dynamic.push({batch,id:list.parentId,height:this.world.covers.find(c=>c.id===list.parentId)?.max.y-this.world.covers.find(c=>c.id===list.parentId)?.min.y});
     }
     this.lists.clear();
   }
-  buildVegetation(){
-    const r=this.random;
-    for(const t of this.world.trees){
-      this.put('trunk','bark',[t.x,t.y+t.height*.39,t.z],[t.radius,t.height*.78,t.radius]);
-      for(let b=0;b<6;b++){
-        const angle=b*2.4,reach=2.5+r()*2;
-        this.put('trunk','bark',[t.x+Math.sin(angle)*reach*.5,t.y+t.height*(.55+b*.04),t.z+Math.cos(angle)*reach*.5],[.085,reach*1.5,.085],[Math.cos(angle)*.85,angle,Math.sin(angle)*.85]);
-      }
-      for(let l=0;l<25;l++){
-        const angle=l*2.4+r()*.7,spread=1+r()*4;
-        this.put('leaf','leaf',[t.x+Math.sin(angle)*spread,t.y+t.height*.58+r()*t.height*.44,t.z+Math.cos(angle)*spread],[3+r()*3,2.5+r()*3,1],[r()*.9,r()*Math.PI,r()*.4]);
-      }
+  makeTreeDescriptor({id,x,y,z,height,radius,solid,serial}){
+    const seed=(Math.imul(Math.floor((x+2048)*17),73856093)^Math.imul(Math.floor((z+2048)*17),19349663)^Math.imul(serial+1,83492791))>>>0;
+    const n=i=>vegetationNoise(seed,i),profile=TREE_PROFILES[serial%TREE_PROFILES.length];
+    const trunkRadius=radius*(.88+n(0)*.30),yaw=n(1)*Math.PI*2,leanX=(n(2)-.5)*.075,leanZ=(n(3)-.5)*.075;
+    const crownRadius=Math.max(2.15,height*.235)*profile.radius*(.90+n(4)*.20);
+    const lobes=[],lobeTotal=profile.damaged?4:6;
+    for(let i=0;i<lobeTotal;i++){
+      const angle=yaw+i*2.399963+(n(10+i*7)-.5)*.72,ring=i===0?0:crownRadius*(.22+n(11+i*7)*.43);
+      const hue=profile.damaged?.105+n(12+i*7)*.035:.155+n(12+i*7)*.055;
+      lobes.push({
+        x:Math.cos(angle)*ring,y:height*(profile.base+.055+n(13+i*7)*.15),z:Math.sin(angle)*ring,
+        sx:crownRadius*(.52+n(14+i*7)*.34),sy:height*(.115+n(15+i*7)*.072)*profile.height,sz:crownRadius*(.50+n(16+i*7)*.36),
+        rx:(n(17+i*7)-.5)*.34,ry:angle*.55,rz:(n(18+i*7)-.5)*.30,
+        color:[hue,.28+n(19+i*7)*.17,.245+n(20+i*7)*.085]
+      });
     }
-    // Keep railway/road approaches, objectives and bridge lanes open.
+    const branches=[];
+    for(let i=0;i<5;i++){
+      const angle=yaw+i*1.256637+(n(80+i*5)-.5)*.72,startY=height*(.46+i*.038+n(81+i*5)*.025);
+      const reach=crownRadius*(.48+n(82+i*5)*.48)*profile.spread,endY=height*(.60+n(83+i*5)*.19);
+      branches.push({sx:leanX*startY*.34,sy:startY,sz:leanZ*startY*.34,ex:Math.cos(angle)*reach,ey:endY,ez:Math.sin(angle)*reach,r:trunkRadius*(.17+n(84+i*5)*.12)});
+    }
+    const cards=[];
+    for(let i=0;i<2;i++){
+      const l=lobes[Math.min(lobes.length-1,1+i*2)],angle=yaw+i*1.9+n(120+i)*.8;
+      cards.push({x:l.x*.72,y:l.y+height*.015,z:l.z*.72,sx:crownRadius*(.72+n(122+i)*.20),sy:height*(.20+n(124+i)*.08),rx:(n(126+i)-.5)*.26,ry:angle,rz:(n(128+i)-.5)*.18});
+    }
+    return {id,x,y,z,height,radius:trunkRadius,solid,seed,profile:profile.name,yaw,leanX,leanZ,lobes,branches,cards,lod:null};
+  }
+  buildVegetation(){
+    const r=this.random;let serial=0;
+    // Preserve the approved physical tree placements exactly. The legacy random calls are consumed
+    // so the existing visual-only grove/grass distribution remains deterministic at the same coordinates.
+    for(const t of this.world.trees){
+      this.treeDescriptors.push(this.makeTreeDescriptor({...t,solid:true,serial:serial++}));
+      for(let b=0;b<6;b++)r();
+      for(let l=0;l<25;l++)for(let k=0;k<8;k++)r();
+    }
     for(let i=0;i<68;i++){
       const x=-650+r()*570,z=(i%2?1:-1)*(90+r()*155),y=this.world.terrainHeightAt(x,z),height=9+r()*12;
-      this.put('trunk','bark',[x,y+height*.4,z],[.24+r()*.16,height*.8,.24+r()*.16]);
-      for(let b=0;b<5;b++){
-        const angle=b*2.4+i,reach=2+r()*2,h=height*(.55+r()*.3);
-        this.put('trunk','bark',[x+Math.sin(angle)*reach*.5,y+h,z+Math.cos(angle)*reach*.5],[.10,reach*1.4,.10],[Math.cos(angle)*.7,angle,Math.sin(angle)*.7]);
-      }
-      for(let l=0;l<16;l++){
-        const angle=l*2.4+r()*.6,spread=1+r()*3.6;
-        this.put('leaf','leaf',[x+Math.sin(angle)*spread,y+height*.6+r()*height*.45,z+Math.cos(angle)*spread],[2.5+r()*2.6,2.2+r()*2.2,1],[r()*.7,r()*Math.PI,r()*.4]);
-      }
+      const radiusA=.24+r()*.16,radiusB=.24+r()*.16;
+      this.treeDescriptors.push(this.makeTreeDescriptor({id:`m01_visual_tree_${i}`,x,y,z,height,radius:(radiusA+radiusB)*.5,solid:false,serial:serial++}));
+      for(let b=0;b<5;b++){r();r();}
+      for(let l=0;l<16;l++)for(let k=0;k<8;k++)r();
     }
     for(let i=0;i<2400;i++){
       const x=-620+r()*620,z=-95+r()*205;
@@ -73,6 +130,71 @@ export class M01Environment {
       const x=(i%2?23:267)+r()*3,z=-300+r()*650,y=this.world.terrainHeightAt(x,z);
       this.put('grass','grass',[x,y,z],[2+r(),2+r()*2,2],[0,r()*Math.PI,0]);
     }
+  }
+  buildTreeBatches(){
+    const n=this.treeDescriptors.length,make=(name,geometry,material,capacity,{cast=false,receive=true}={})=>{
+      const batch=new THREE.InstancedMesh(geometry,material,capacity);batch.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      batch.count=0;batch.frustumCulled=false;batch.castShadow=cast;batch.receiveShadow=receive;batch.userData.m01Vegetation=name;
+      this.group.add(batch);this.resources.push(batch);this.treeBatches[name]=batch;return batch;
+    };
+    make('woodNear',this.geometry.treeWoodNear,this.bark,n*6,{cast:true});
+    make('canopyNear',this.geometry.treeCanopyNear,this.canopyMaterial,n*6,{cast:true});
+    make('cardsNear',this.geometry.leaf,this.foliage,n*2,{cast:false});
+    make('woodMid',this.geometry.treeWoodMid,this.bark,n*3,{cast:false});
+    make('canopyMid',this.geometry.treeCanopyMid,this.canopyMaterial,n*4,{cast:false});
+    make('woodFar',this.geometry.treeWoodFar,this.bark,n,{cast:false,receive:false});
+    make('canopyFar',this.geometry.treeCanopyFar,this.canopyMaterial,n,{cast:false,receive:false});
+  }
+  treeMatrix(batch,index,position,scale,rotation=null,color=null){
+    const d=this.treeDummy;d.position.set(position.x,position.y,position.z);d.quaternion.identity();
+    if(rotation)d.rotation.set(rotation.x,rotation.y,rotation.z);else d.rotation.set(0,0,0);
+    d.scale.set(scale.x,scale.y,scale.z);d.updateMatrix();batch.setMatrixAt(index,d.matrix);
+    if(color)batch.setColorAt(index,this.treeColor.setHSL(color[0],color[1],color[2]));
+  }
+  appendTrunk(batch,index,t){
+    this.treeMatrix(batch,index,{x:t.x+t.leanX*t.height*.15,y:t.y+t.height*.34,z:t.z+t.leanZ*t.height*.15},
+      {x:t.radius,y:t.height*.68,z:t.radius},{x:t.leanZ,y:t.yaw,z:-t.leanX});return index+1;
+  }
+  appendBranch(batch,index,t,b){
+    this.treeStart.set(t.x+b.sx,t.y+b.sy,t.z+b.sz);this.treeEnd.set(t.x+b.ex,t.y+b.ey,t.z+b.ez);
+    this.treeDirection.copy(this.treeEnd).sub(this.treeStart);const length=this.treeDirection.length();
+    const d=this.treeDummy;d.position.copy(this.treeStart).add(this.treeEnd).multiplyScalar(.5);
+    d.quaternion.setFromUnitVectors(this.treeUp,this.treeDirection.normalize());d.scale.set(b.r,length,b.r);d.updateMatrix();batch.setMatrixAt(index,d.matrix);return index+1;
+  }
+  appendCanopy(batch,index,t,l){
+    this.treeMatrix(batch,index,{x:t.x+l.x,y:t.y+l.y,z:t.z+l.z},{x:l.sx,y:l.sy,z:l.sz},{x:l.rx,y:l.ry,z:l.rz},l.color);return index+1;
+  }
+  appendCard(batch,index,t,card){
+    this.treeMatrix(batch,index,{x:t.x+card.x,y:t.y+card.y,z:t.z+card.z},{x:card.sx,y:card.sy,z:1},{x:card.rx,y:card.ry,z:card.rz});return index+1;
+  }
+  updateVegetationLod(player,quality='medium',force=false){
+    const q=M01_VEGETATION_LOD[quality]??M01_VEGETATION_LOD.medium,key=`${quality}:${Math.floor((player?.x??0)/3)}:${Math.floor((player?.z??0)/3)}`;
+    if(!force&&key===this.treeUpdateKey)return;this.treeUpdateKey=key;
+    const count={woodNear:0,canopyNear:0,cardsNear:0,woodMid:0,canopyMid:0,woodFar:0,canopyFar:0},lod={near:0,mid:0,far:0};
+    for(const t of this.treeDescriptors){
+      const distance=Math.hypot(t.x-(player?.x??0),t.z-(player?.z??0)),level=chooseVegetationLod(distance,quality,t.lod);t.lod=level;lod[level]++;
+      if(level==='near'){
+        count.woodNear=this.appendTrunk(this.treeBatches.woodNear,count.woodNear,t);
+        for(const b of t.branches.slice(0,q.nearBranches))count.woodNear=this.appendBranch(this.treeBatches.woodNear,count.woodNear,t,b);
+        for(const l of t.lobes.slice(0,q.nearLobes))count.canopyNear=this.appendCanopy(this.treeBatches.canopyNear,count.canopyNear,t,l);
+        for(const card of t.cards.slice(0,q.nearCards))count.cardsNear=this.appendCard(this.treeBatches.cardsNear,count.cardsNear,t,card);
+      }else if(level==='mid'){
+        count.woodMid=this.appendTrunk(this.treeBatches.woodMid,count.woodMid,t);
+        for(const b of t.branches.slice(0,q.midBranches))count.woodMid=this.appendBranch(this.treeBatches.woodMid,count.woodMid,t,b);
+        for(const l of t.lobes.slice(0,q.midLobes))count.canopyMid=this.appendCanopy(this.treeBatches.canopyMid,count.canopyMid,t,l);
+      }else{
+        count.woodFar=this.appendTrunk(this.treeBatches.woodFar,count.woodFar,t);
+        const l=t.lobes[0];count.canopyFar=this.appendCanopy(this.treeBatches.canopyFar,count.canopyFar,t,{...l,sx:l.sx*1.12,sy:l.sy*1.08,sz:l.sz*1.12});
+      }
+    }
+    for(const [name,batch]of Object.entries(this.treeBatches)){
+      batch.count=count[name];batch.instanceMatrix.needsUpdate=true;if(batch.instanceColor)batch.instanceColor.needsUpdate=true;
+    }
+    this.treeBatches.canopyNear.castShadow=quality==='high';this.treeBatches.woodNear.castShadow=quality!=='low';
+    this.treeBatches.woodMid.castShadow=quality==='high';this.treeBatches.canopyMid.castShadow=false;
+    this.treeLodCounts=lod;this.treeCardCount=count.cardsNear;
+    this.treeTriangleCount=Object.values(this.treeBatches).reduce((sum,b)=>sum+b.count*((b.geometry.index?.count??b.geometry.attributes.position.count)/3),0);
+    this.treeDrawCalls=Object.values(this.treeBatches).filter(b=>b.count>0).length;
   }
   buildGroundClusters(){
     const r=this.random;
@@ -170,10 +292,18 @@ export class M01Environment {
       }
     }
   }
-  sync(world,quality){
+  sync(world,quality,player={x:0,z:0}){
     for(const {id,batch,height}of this.dynamic){const cover=world.covers.find(c=>c.id===id);batch.visible=Boolean(cover);if(cover)batch.scale.y=(cover.max.y-cover.min.y)/height;}
     // Density is reduced in the existing low preset; no quality changes affect the simulation.
-    for(const batch of this.resources){if(batch.geometry===this.grassGeometry)batch.count=Math.floor(batch.instanceMatrix.count*(quality==='low'?.5:1));}
+    for(const batch of this.grassBatches)batch.count=Math.floor(batch.instanceMatrix.count*(quality==='low'?.5:1));
+    this.updateVegetationLod(player,quality);
   }
-  dispose(){this.group.removeFromParent();this.resources.forEach(b=>b.dispose());Object.values(this.geometry).forEach(g=>g.dispose());this.grassGeometry.dispose();this.foliage.dispose();this.leafMap.dispose();this.bark.map.dispose();this.bark.dispose();this.grassMaterial.dispose();}
+  get diagnostics(){
+    const grassInstances=this.grassBatches.reduce((n,b)=>n+b.count,0),treeInstances=Object.values(this.treeBatches).reduce((n,b)=>n+b.count,0);
+    return {treeCount:this.treeDescriptors.length,solidTreeCount:this.treeDescriptors.filter(t=>t.solid).length,visualTreeCount:this.treeDescriptors.filter(t=>!t.solid).length,
+      lod:{...this.treeLodCounts},treeInstances,treeDrawCalls:this.treeDrawCalls,treeTriangles:Math.round(this.treeTriangleCount),leafCards:this.treeCardCount,
+      legacyLeafCardEstimate:M01_LEGACY_LEAF_CARD_ESTIMATE,alphaCardReductionApprox:1-this.treeCardCount/M01_LEGACY_LEAF_CARD_ESTIMATE,
+      grassInstances,materials:4,textures:2,tracked:Object.fromEntries(this.treeDescriptors.filter(t=>t.solid).map(t=>[t.id,t.lod]))};
+  }
+  dispose(){this.group.removeFromParent();this.resources.forEach(b=>b.dispose());Object.values(this.geometry).forEach(g=>g.dispose());this.grassGeometry.dispose();this.foliage.dispose();this.canopyMaterial.dispose();this.leafMap.dispose();this.bark.map.dispose();this.bark.dispose();this.grassMaterial.dispose();}
 }
