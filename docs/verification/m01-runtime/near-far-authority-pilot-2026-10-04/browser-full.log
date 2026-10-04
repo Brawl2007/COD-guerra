@@ -1,0 +1,59 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> operation-ashen-road@0.2.0 test:browser
+> playwright test --reporter=list,json
+
+[WebServer] (node:32) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+[WebServer] (node:45) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 38 tests using 1 worker
+
+(node:79) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:79) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work (11.1s)
+  ✓   2 tests/browser/game.spec.js:68:1 › real keyboard movement reaches and stores checkpoint; restart and page reload restore it (20.6s)
+  ✓   3 tests/browser/game.spec.js:98:1 › corrupt checkpoint is explained and a new mission remains available (5.5s)
+  ✓   4 tests/browser/game.spec.js:106:1 › missing models are reported and procedural fallback keeps the area playable (5.4s)
+  ✓   5 tests/browser/m01-authority-pilot.spec.js:50:1 › real west-bank approach opens LOS, atomically leases the same four riflemen, pauses and returns (28.1s)
+  ✓   6 tests/browser/m01-authority-pilot.spec.js:74:1 › active schema-2 lease restores exactly at LOW/MEDIUM/HIGH and Restart uses the previous checkpoint (10.7s)
+  ✓   7 tests/browser/m01-mg34-prone.spec.js:24:28 › real MG34 prone save after shot 1: production continuation, real muzzle, pause and reload (17.2s)
+  ✓   8 tests/browser/m01-mg34-prone.spec.js:24:28 › real MG34 prone save after shot 4: production continuation, real muzzle, pause and reload (22.2s)
+  ✓   9 tests/browser/m01-mg34-prone.spec.js:24:28 › real MG34 prone save after shot 6: production continuation, real muzzle, pause and reload (22.2s)
+  ✓  10 tests/browser/m01-mg34-prone.spec.js:42:1 › missing optional prone GLB keeps real MG34 gameplay and procedural low posture (14.2s)
+  ✓  11 tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A (33.7s)
+  ✓  12 tests/browser/m01.spec.js:66:1 › the genuine first raid displays three Ju 87 GLBs with light LODs and freezes the propellers on pause (15.2s)
+  ✓  13 tests/browser/m01.spec.js:89:1 › unavailable optional Ju 87 models retain all three raid silhouettes and the playable mission (10.4s)
+  ✓  14 tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset (44.5s)
+  ✓  15 tests/browser/m01.spec.js:148:1 › an optional character download failure preserves playable procedural actors without blocking bridge validation (12.6s)
+  ✓  16 tests/browser/m01.spec.js:156:1 › Kowal fires and changes the rkm magazine from actual combat state, preserving both poses in pause (26.2s)
+  ✓  17 tests/browser/m01.spec.js:185:1 › missing close-up LOD0 falls back to intact LOD1 hands while the light world actors remain available (8.2s)
+  ✓  18 tests/browser/m01.spec.js:193:1 › the station clip alone cannot enable a viewmodel when the required weapon animations fail to download (11.4s)
+  ✓  19 tests/browser/m01.spec.js:201:1 › the station evacuation restores its grounded drag, pauses with the mission and delivers the casualty (1.2m)
+  ✓  20 tests/browser/m01.spec.js:229:39 › the real station grab restores synchronized clips, pauses and keeps both roots fixed (11.5s)
+  ✓  21 tests/browser/m01.spec.js:229:39 › the real station release restores synchronized clips, pauses and keeps both roots fixed (8.0s)
+  ✓  22 tests/browser/m01.spec.js:268:1 › a missing optional station transition GLB keeps the grounded fallback and completes evacuation (11.0s)
+  ✓  23 tests/browser/m01.spec.js:282:1 › real keyboard movement traverses the approaches and E delivers the message at the rail bridge (1.1m)
+  ✓  24 tests/browser/m01.spec.js:308:33 › adjustment salvo at the gates restores its actual origin and follows mouse look (17.0s)
+  ✓  25 tests/browser/m01.spec.js:308:33 › adjustment salvo behind the truss restores its actual origin and follows mouse look (17.0s)
+  ✓  26 tests/browser/m01.spec.js:327:1 › demolition inside the road truss shows the actual bearing while mouse look remains free (26.5s)
+  ✓  27 tests/browser/m01.spec.js:353:1 › a genuine CP-D reload keeps east destruction and casualties, including restart and page reload (21.6s)
+  ✓  28 tests/browser/m01.spec.js:366:1 › the actual outro state can be skipped through the UI into the enabled historical debrief (13.6s)
+  ✓  29 tests/browser/m01.spec.js:376:1 › German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state (24.5s)
+  ✓  30 tests/browser/m01.spec.js:398:1 › the genuine train 963 and both MG34 fire sources use optional GLBs, light instances and reproducible pause/restart (18.3s)
+  ✓  31 tests/browser/m01.spec.js:429:1 › schema-2 continuation keeps the older CP-A on the real Restart checkpoint button (6.6s)
+  ✓  32 tests/browser/m01.spec.js:447:1 › missing optional wagon models and MG34 clips preserve 65 proxies, both procedural supports and playable M01 (10.3s)
+  ✓  33 tests/browser/m01.spec.js:459:1 › the real roll-call snapshot renders seated actors and keeps their pose after page reload (19.7s)
+  ✓  34 tests/browser/m01.spec.js:471:1 › a real withdrawal continuation loses men only to rounds from the spans, keeps the twelve-survivor floor and shows the count in the HUD (32.2s)
+  ✓  35 tests/browser/m01.spec.js:492:1 › a failed M01 bridge load prevents an invisible bridge; the French sandbox remains selectable (11.6s)
+  ✓  36 tests/browser/m01.spec.js:501:1 › textured atmosphere survives checkpoint restart without duplicating resources; low quality reduces vegetation (27.8s)
+  ✓  37 tests/browser/m01.spec.js:527:1 › ckm west crew and weapon use actual saved abandon time, pause and fresh reload (38.7s)
+  ✓  38 tests/browser/m01.spec.js:546:1 › optional ckm kit failure retains the crew fallback and checkpoint restoration (16.6s)
+
+  Slow test file: tests/browser/m01.spec.js (10.6m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  38 passed (13.3m)

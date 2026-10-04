@@ -4,7 +4,7 @@
 
 Candidato isolado `codex/m01-near-far-authority-runtime-pilot`, [PR draft #39](https://github.com/Brawl2007/COD-guerra/pull/39) sobre a base schema2 `5f3cc34`. Um setor lógico/uma formação/quatro riflemen existentes (`de_east_36..39`); ownership exclusivo e transferências atómicas, RNG do setor congelado em lease, identities/bodies/ammo/save2 preservados. Não se integra toda guerra distante.
 
-24/24 focados, 10.100 ticks A/B sem divergência, 266/266 Node, build PASS, 2/2 browser focados zero retries/skips/flaky. **Browser integral de38 ainda em execução**; handoff/evidências em `docs/verification/m01-runtime/near-far-authority-pilot-2026-10-04/`. O mapa exige aquisição por LOS/alcance de rifle, não150m físicos; casualty5→7 usa fixture de5 já mortos declarada mais2 mortes do jogador. M01 permanece **PROTÓTIPO JOGÁVEL**, main intacta, sem merge/deploy/M02. Esta candidatura aguarda revisão do capitão e encerramento da validação integral.
+24/24 focados, 10.100 ticks A/B sem divergência, 266/266 Node, build PASS, 2/2 browser focados zero retries/skips/flaky. **Browser integral final38/38 PASS**, 797,9 s, zero retries/skips/falhas/flaky; handoff/evidências em `docs/verification/m01-runtime/near-far-authority-pilot-2026-10-04/`. O mapa exige aquisição por LOS/alcance de rifle, não150m físicos; casualty5→7 usa fixture de5 já mortos declarada mais2 mortes do jogador. M01 permanece **PROTÓTIPO JOGÁVEL**, main intacta, sem merge/deploy/M02. Validação integral encerrada; candidatura aguarda somente revisão do capitão. Parar nesta formação.
 
 
 ## Auditoria schema 2 — 2026-10-03

@@ -1,0 +1,472 @@
+{
+  "taskId": "M01-NEAR-FAR-AUTHORITY-RUNTIME-PILOT-V1",
+  "stats": {
+    "startTime": "2026-10-04T01:40:45.836Z",
+    "duration": 797924.2239999999,
+    "expected": 38,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "title": "production prefix loads assets; real click captures mouse; shooting, reload and pause work",
+      "file": "game.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 11147
+        }
+      ]
+    },
+    {
+      "title": "real keyboard movement reaches and stores checkpoint; restart and page reload restore it",
+      "file": "game.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 20585
+        }
+      ]
+    },
+    {
+      "title": "corrupt checkpoint is explained and a new mission remains available",
+      "file": "game.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 5541
+        }
+      ]
+    },
+    {
+      "title": "missing models are reported and procedural fallback keeps the area playable",
+      "file": "game.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 5411
+        }
+      ]
+    },
+    {
+      "title": "real west-bank approach opens LOS, atomically leases the same four riflemen, pauses and returns",
+      "file": "m01-authority-pilot.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 28129
+        }
+      ]
+    },
+    {
+      "title": "active schema-2 lease restores exactly at LOW/MEDIUM/HIGH and Restart uses the previous checkpoint",
+      "file": "m01-authority-pilot.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 10698
+        }
+      ]
+    },
+    {
+      "title": "real MG34 prone save after shot 1: production continuation, real muzzle, pause and reload",
+      "file": "m01-mg34-prone.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 17218
+        }
+      ]
+    },
+    {
+      "title": "real MG34 prone save after shot 4: production continuation, real muzzle, pause and reload",
+      "file": "m01-mg34-prone.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 22222
+        }
+      ]
+    },
+    {
+      "title": "real MG34 prone save after shot 6: production continuation, real muzzle, pause and reload",
+      "file": "m01-mg34-prone.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 22208
+        }
+      ]
+    },
+    {
+      "title": "missing optional prone GLB keeps real MG34 gameplay and procedural low posture",
+      "file": "m01-mg34-prone.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 14179
+        }
+      ]
+    },
+    {
+      "title": "M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 33667
+        }
+      ]
+    },
+    {
+      "title": "the genuine first raid displays three Ju 87 GLBs with light LODs and freezes the propellers on pause",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 15183
+        }
+      ]
+    },
+    {
+      "title": "unavailable optional Ju 87 models retain all three raid silhouettes and the playable mission",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 10361
+        }
+      ]
+    },
+    {
+      "title": "licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 44550
+        }
+      ]
+    },
+    {
+      "title": "an optional character download failure preserves playable procedural actors without blocking bridge validation",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 12630
+        }
+      ]
+    },
+    {
+      "title": "Kowal fires and changes the rkm magazine from actual combat state, preserving both poses in pause",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 26157
+        }
+      ]
+    },
+    {
+      "title": "missing close-up LOD0 falls back to intact LOD1 hands while the light world actors remain available",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 8249
+        }
+      ]
+    },
+    {
+      "title": "the station clip alone cannot enable a viewmodel when the required weapon animations fail to download",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 11354
+        }
+      ]
+    },
+    {
+      "title": "the station evacuation restores its grounded drag, pauses with the mission and delivers the casualty",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 70238
+        }
+      ]
+    },
+    {
+      "title": "the real station grab restores synchronized clips, pauses and keeps both roots fixed",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 11479
+        }
+      ]
+    },
+    {
+      "title": "the real station release restores synchronized clips, pauses and keeps both roots fixed",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 7967
+        }
+      ]
+    },
+    {
+      "title": "a missing optional station transition GLB keeps the grounded fallback and completes evacuation",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 11031
+        }
+      ]
+    },
+    {
+      "title": "real keyboard movement traverses the approaches and E delivers the message at the rail bridge",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 68882
+        }
+      ]
+    },
+    {
+      "title": "adjustment salvo at the gates restores its actual origin and follows mouse look",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 16980
+        }
+      ]
+    },
+    {
+      "title": "adjustment salvo behind the truss restores its actual origin and follows mouse look",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 17002
+        }
+      ]
+    },
+    {
+      "title": "demolition inside the road truss shows the actual bearing while mouse look remains free",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 26458
+        }
+      ]
+    },
+    {
+      "title": "a genuine CP-D reload keeps east destruction and casualties, including restart and page reload",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 21633
+        }
+      ]
+    },
+    {
+      "title": "the actual outro state can be skipped through the UI into the enabled historical debrief",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 13554
+        }
+      ]
+    },
+    {
+      "title": "German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 24527
+        }
+      ]
+    },
+    {
+      "title": "the genuine train 963 and both MG34 fire sources use optional GLBs, light instances and reproducible pause/restart",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 18345
+        }
+      ]
+    },
+    {
+      "title": "schema-2 continuation keeps the older CP-A on the real Restart checkpoint button",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 6615
+        }
+      ]
+    },
+    {
+      "title": "missing optional wagon models and MG34 clips preserve 65 proxies, both procedural supports and playable M01",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 10261
+        }
+      ]
+    },
+    {
+      "title": "the real roll-call snapshot renders seated actors and keeps their pose after page reload",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 19730
+        }
+      ]
+    },
+    {
+      "title": "a real withdrawal continuation loses men only to rounds from the spans, keeps the twelve-survivor floor and shows the count in the HUD",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 32224
+        }
+      ]
+    },
+    {
+      "title": "a failed M01 bridge load prevents an invisible bridge; the French sandbox remains selectable",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 11588
+        }
+      ]
+    },
+    {
+      "title": "textured atmosphere survives checkpoint restart without duplicating resources; low quality reduces vegetation",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 27770
+        }
+      ]
+    },
+    {
+      "title": "ckm west crew and weapon use actual saved abandon time, pause and fresh reload",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 38727
+        }
+      ]
+    },
+    {
+      "title": "optional ckm kit failure retains the crew fallback and checkpoint restoration",
+      "file": "m01.spec.js",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 16568
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "retriesConfigured": 0,
+  "sourceTestHead": "51436a614216a540195d68f29d2c08904ce582cd"
+}

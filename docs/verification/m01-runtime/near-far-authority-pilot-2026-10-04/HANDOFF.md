@@ -4,7 +4,7 @@ TASK_ID: `M01-NEAR-FAR-AUTHORITY-RUNTIME-PILOT-V1`
 MODELO / ESFORÇO solicitados: GPT-6.1 Sol / HIGH; execução sem delegação.  
 BASE: `codex/m01-schema2-determinism-audit` @ `5f3cc34f53c61beec52255d67f8babd7194c9f7f`.  
 BRANCH: `codex/m01-near-far-authority-runtime-pilot`.  
-HEAD de runtime validado: `0b8a75ff2ada134c09a220179be2984d30a7a7e9`; commits seguintes acrescentam testes browser/documentação. HEAD FINAL remoto exacto acompanha a entrega/PR, confirmado novamente antes de parar.  
+HEAD de runtime: `0b8a75ff2ada134c09a220179be2984d30a7a7e9`. HEAD de código/testes finais: `51436a614216a540195d68f29d2c08904ce582cd`; commits seguintes só acrescentam documentação/evidências, com os hashes preservados. **HEAD FINAL** remoto exacto está fixado na entrega e no [PR draft #39](https://github.com/Brawl2007/COD-guerra/pull/39), campo head_sha; um commit não pode conter o seu próprio hash. Confirmar esse tip antes de continuar.  
 Estado: **PROTÓTIPO JOGÁVEL**, sem merge, deploy, main ou M02.
 
 ## Escopo e identidade
@@ -56,7 +56,7 @@ Decisão usa distância/LOS do mundo e observações; orientação de câmera, q
 FOCUSED TESTS: **24/24**, zero skips; `focused-confirmed.log`, 44.109,36 ms; `pilot-audit-confirmed.json` é o resumo definitivo. Inclui guarda de clock para os 800 ticks e cópia imutável do relatório dessa janela. 19 iniciais passaram antes da ampliação. Execuções iniciais vermelhas preservadas, com fixtures/correções identificadas.
 NODE: **266/266**, zero skips/falhas, `node-final.log`, 300.081,89 ms. Repetição final com a guarda adicional do relatório: **266/266**, zero skips/falhas, `node-confirmed.log`, 275.883,13 ms.  
 BUILD: PASS (`build-final.log`); aviso Vite de chunk grande já conhecido.  
-BROWSER focado final: **2/2**, 41,5 s, zero retries/skips/falhas/flaky; `browser-focused-final.json.gz` e log. BROWSER integral: em execução; exige zero retries/skips/flaky. Preencher somente após resultados reais.
+BROWSER focado final: **2/2**, 41,5 s, zero retries/skips/falhas/flaky; `browser-focused-final.json.gz` e log. BROWSER integral final: **38/38 PASS**, **797.924,22 ms** (13,3 min), exit 0, zero retries/skips/falhas/flaky. `browser.json.gz` é o relatório bruto; `browser-summary.json` lista todos os casos e cada retry/status. Todos os 38 casos possuem exatamente um resultado passed, retry0; errors globais vazios. Não há retry verde usado para esconder falha.
 
 Relatórios `pilot-audit.json` / `pilot-audit-final.json` são preliminares e substituídos por `pilot-audit-confirmed.json`: o metadata de clock da janela mid-reload diferia do resultado da execução isolada; o registo definitivo usa cópia imutável e uma asserção explícita da duração. A prova definitiva regista essa janela em 46,99999999999947 s; 800 ticks avançam no máximo 40 s ativos. As comparações de estados/eventos não usam esse resumo como entrada.
 
@@ -74,4 +74,10 @@ Riscos: quatro riflemen ganham lógica própria e podem alterar resultados táti
 
 Proteções byte a byte em `protected-scope.json`: core/world/render/assets/missões/workflows/manifestos/config browser/Graphify sem diffs; métodos MG34, estação/Bąk, relógio histórico, eventos, boundaries, rounds e chamada final preservados. Hooks no tick/consume/save e no routing de dano são explicitamente os diffs de integração.
 
-RECOMMENDATION TO CAPTAIN: revisar este candidato isolado, especialmente limites geométricos e contabilidade/owner; aprovação final depende de Node/browser integrais. Não integrar outra formação nem fazer merge automático.
+RECOMMENDATION TO CAPTAIN: revisar este candidato isolado, especialmente limites geométricos e contabilidade/owner; as provas Node/build/browser integrais estão fechadas. Recomenda-se revisão técnica deste piloto isolado, com aprovação explícita dos limites de ranged relevance e da fixture casualty. Não integrar outra formação nem fazer merge automático. Tarefa encerrada para revisão; parar aqui.
+
+## Proveniência e entrega
+
+Base/main/contratos foram confirmados no GitHub antes da seleção e novamente na entrega. Main permanece `72bbcdd156603c9399801c95d43d9365ba50fc82`, base permanece `5f3cc34f53c61beec52255d67f8babd7194c9f7f`. A suíte final executou o código/testes de `51436a6`; somente documentação mudou enquanto corria. Build usado pelo preview tem SHA-256 registado, idêntico no fim. Chromium153/SwiftShader neste ambiente, Node24; não é benchmark de hardware físico nem resultado CI/GitHub Actions.
+
+FILES CHANGED completo está em `MANIFEST.json`; entradas de evidência são artefactos git desta tarefa. Logs vermelhos e resumos preliminares continuam identificados; apenas os relatórios confirmed/final comprovam a entrega. Traces ZIP e screenshots de test-results transitórios não foram publicados; relatórios JSON brutos contêm diagnóstico/anexos textuais inline e referências originais, sem prometer disponibilizar ficheiros omitidos.
