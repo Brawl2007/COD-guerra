@@ -1,0 +1,9 @@
+{
+  "src/game/wz29.js": "3bd376bf1d1d6d4978871a4a35e4067779a1c9afda0adde155aba27b10636be5",
+  "src/game/m01-simulation.js": "5da7f3b357caa14d002e6999ddde0eb518fbfc942e08284f8ef0a92b2c47f364",
+  "src/world/spatial.js": "49409541cf8b9c8542aba5cdaf79a46227e973932fa795743969a0f893551dcb",
+  "src/render/m01-view.js": "9960c00e4181a41a6500e621aa7fffa813f2e1d6c0277c135bffa8e6b4f4abcc",
+  "src/render/m01-characters.js": "e07c9aa75e571e8c9f930f147dd662f092c142f4db200ce665e46a1034c68007",
+  "src/render/m01-environment.js": "f56288796cdac9e8f0fd83461b90524d31c21f9fc29daee5cda29f6937ce8fb2",
+  "src/core/random.js": "c7fe17d39b70b37adeab22bfdb488029476b489a8e940d43db06558251b273e1"
+}

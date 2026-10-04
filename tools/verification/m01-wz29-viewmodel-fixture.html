@@ -1,0 +1,58 @@
+<!doctype html><meta charset="utf-8"><title>Wz.29 production presentation verification</title>
+<style>html,body{margin:0;background:#151918}canvas{width:1280px;height:720px;display:block}</style>
+<canvas id="frame" width="1280" height="720"></canvas>
+<script type="module">
+import * as THREE from 'three';
+import {M01View} from '../../src/render/m01-view.js';
+import {M01ViewModel} from '../../src/render/m01-viewmodel.js';
+import {M01ViewModel as BaseViewModel} from './fixtures/m01-wz29-base-viewmodel.mjs';
+import {M01Simulation} from '../../src/game/m01-simulation.js';
+import {muzzlePosition,actorHitboxes} from '../../src/world/spatial.js';
+const canvas=document.querySelector('canvas'),engine=new THREE.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true});
+engine.setSize(1280,720,false);engine.setPixelRatio(1);engine.outputColorSpace=THREE.SRGBColorSpace;engine.toneMapping=THREE.ACESFilmicToneMapping;engine.toneMappingExposure=1.15;engine.autoClear=false;
+const owner={canvas,engine,quality:'low'},view=new M01View(owner);await view.ready;
+const original=view.viewModel;original.dispose();
+function geometryReport(model){
+  const meshes={},p=new THREE.Vector3();
+  model.root.traverseVisible(mesh=>{
+    if(!mesh.isMesh)return;const a=mesh.geometry.getAttribute('position');let maxZ=-Infinity,violations=0;
+    for(const i of new Set(mesh.geometry.index?.array??Array.from({length:a.count},(_,i)=>i))){
+      p.fromBufferAttribute(a,i);if(mesh.isSkinnedMesh)mesh.applyBoneTransform(i,p);p.applyMatrix4(mesh.matrixWorld);
+      maxZ=Math.max(maxZ,p.z);violations+=Number(p.z>=-.03);
+    }meshes[mesh.name||'singleRound']={maxZ,nearViolations:violations,triangles:(mesh.geometry.index?.count??a.count)/3};
+  });return meshes;
+}
+function measure(model){
+  const weapon=model.root.getObjectByName('weapon'),landmarks={rear:[0,.056,-.29],front:[0,.065,-.752],muzzle:[0,.032,-.765]},points={},projected={};
+  for(const [name,local]of Object.entries(landmarks)){
+    const p=weapon.localToWorld(new THREE.Vector3(...local));points[name]=p.toArray();projected[name]=p.clone().project(view.weaponCamera).toArray();
+  }
+  const materials=new Set(),textures=new Set();model.root.traverseVisible(n=>{
+    if(!n.material)return;materials.add(n.material);for(const value of Object.values(n.material))if(value?.isTexture)textures.add(value);
+  });
+  const flash=model.flash.getWorldPosition(new THREE.Vector3());
+  return {points,projected,cameraForward:[0,0,-1],horizontalPixels:Math.abs(projected.rear[0]-projected.front[0])*640,
+    verticalPixels:Math.abs(projected.rear[1]-projected.front[1])*360,centerHorizontalPixels:Math.abs(projected.front[0])*640,
+    centerVerticalPixels:Math.abs(projected.front[1])*360,flashOrigin:flash.toArray(),muzzleFlashDistance:flash.distanceTo(new THREE.Vector3(...points.muzzle)),
+    geometry:geometryReport(model),materials:materials.size,textures:textures.size,stats:model.stats};
+}
+window.sampleWz29=async({snapshot,variant,quality='low'})=>{
+  owner.quality=quality;view.viewModel?.dispose();
+  const sim=new M01Simulation();sim.restoreSnapshot(snapshot);sim.drainEvents();
+  view.viewModel=new (variant==='base'?BaseViewModel:M01ViewModel)(view.weaponScene,view.characters,view.atmosphere.texture);
+  const before=JSON.stringify(sim.snapshot());view.lastFrame=null;view.lastClock=sim.clock-.05;
+  view.camera.fov=sim.player.aiming?48:70;view.flashUntil=sim.weapon.lastShot/1000+.06;view.render(sim);
+  const fullFrame={...engine.info.render},metrics=measure(view.viewModel);
+  // Pause/repeated render check including the same fixed mission clock.
+  const bones=view.viewModel.root.getObjectByName('weapon').matrixWorld.toArray(),stats=JSON.stringify(view.viewModel.stats);
+  view.viewModel.update(sim,quality,view.flashUntil);
+  const pauseEqual=stats===JSON.stringify(view.viewModel.stats)&&JSON.stringify(bones)===JSON.stringify(view.viewModel.root.getObjectByName('weapon').matrixWorld.toArray());
+  engine.info.reset();engine.clear();engine.render(view.weaponScene,view.weaponCamera);const weaponFrame={...engine.info.render};
+  // Return to the actual production world/weapon render for the screenshot.
+  view.lastFrame=null;view.render(sim);
+  return {variant,quality,clock:sim.clock,battleClock:sim.battleClock,player:sim.player,weapon:sim.weapon.snapshot(),gameplayMuzzle:muzzlePosition(sim.player),
+    hitboxes:actorHitboxes(sim.player),snapshotEqual:before===JSON.stringify(sim.snapshot()),pauseEqual,metrics,fullFrame,weaponFrame,
+    camera:{worldFov:view.camera.fov,weaponFov:view.weaponCamera.fov,aspect:view.weaponCamera.aspect,near:view.weaponCamera.near}};
+};
+window.wz29Ready=true;
+</script>
