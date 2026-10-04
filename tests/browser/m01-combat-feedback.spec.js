@@ -3,20 +3,25 @@ import {toCoverAdjustment} from '../helpers/m01-route.js';
 
 const key='cod-guerra:checkpoint:m01:v2';
 
-function findFixture(predicate,{limit=3600,expose=false}={}){
-  const d=toCoverAdjustment({truss:expose}),seenStart=d.events.length;
-  let seen=seenStart;
-  for(let i=0;i<limit;i++){
-    const before=d.sim.snapshot(),health=d.sim.player.health,rng=d.sim.rng.state;
-    d.step({});
-    const fresh=d.events.slice(seen);seen=d.events.length;
-    const event=fresh.find(predicate);
-    if(event)return {snapshot:before,event,health,rng};
+function realRoundFixture({requireHit}){
+  const d=toCoverAdjustment({truss:true}),sim=d.sim;
+  const shooter=sim.enemies.find(a=>a.active&&a.alive&&a.weapon==='kar98k'&&sim.world.lineOfSight(a,sim.player));
+  if(!shooter)throw new Error('No real line-of-sight rifleman available for focused combat fixture');
+  for(let attempt=0;attempt<20;attempt++){
+    sim.burst(shooter,sim.player,'player',{rounds:1,bias:[0,0],cone:[0,0]});
+    sim.drainEvents(); // discard only the firing notification; the authoritative round remains in flight.
+    const before=sim.snapshot(),health=sim.player.health,rng=sim.rng.state;
+    let landed=[],hit=false,crack=false;
+    for(let step=0;step<80&&!landed.some(e=>e.type==='round-impact');step++){
+      sim.tick(.05,{});landed.push(...sim.drainEvents());
+    }
+    hit=landed.some(e=>e.type==='player-hit');crack=landed.some(e=>e.type==='round-impact'&&e.crack);
+    if(crack&&hit===requireHit)return {snapshot:before,health,rng,shooter:shooter.id};
   }
-  throw new Error('Focused combat feedback fixture not found in deterministic real route');
+  throw new Error(`No deterministic real round fixture found (requireHit=${requireHit})`);
 }
-const hitFixture=findFixture(e=>e.type==='player-hit',{limit:7200,expose:true});
-const nearFixture=findFixture(e=>e.type==='round-impact'&&e.crack,{limit:3600,expose:false});
+const hitFixture=realRoundFixture({requireHit:true});
+const nearFixture=realRoundFixture({requireHit:false});
 
 async function openSaved(page,snapshot,quality='medium'){
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
