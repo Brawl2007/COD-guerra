@@ -1,0 +1,30 @@
+{
+  "formations": 3,
+  "membersPerFormation": 12,
+  "ticks": 10000,
+  "comparisons": 10000,
+  "events": 472,
+  "zeroDtTicks": 1880,
+  "overlappingLeaseTicks": 2488,
+  "aggregateBTicksWhileALeased": 3360,
+  "elapsedMs": 45458.250817,
+  "clockMs": 433525,
+  "checksum": "bb230508a372b9672d1c3e680bc418e25bbedf082f356e085ba2d4691a8a6d02",
+  "saveChecksum": "300ce5ea2649dc1f3d5277e71174a7b67345899cf0fcb99ae5632e7ce0a6869e",
+  "generations": [
+    {
+      "id": "A",
+      "generation": 84
+    },
+    {
+      "id": "B",
+      "generation": 84
+    },
+    {
+      "id": "C",
+      "generation": 0
+    }
+  ],
+  "divergences": 0
+}
+

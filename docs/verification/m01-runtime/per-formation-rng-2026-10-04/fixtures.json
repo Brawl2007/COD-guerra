@@ -1,0 +1,246 @@
+{
+  "casualties": {
+    "before": [
+      {
+        "id": "A",
+        "dead": 5
+      },
+      {
+        "id": "B",
+        "dead": 3
+      },
+      {
+        "id": "C",
+        "dead": 0
+      }
+    ],
+    "after": [
+      {
+        "id": "A",
+        "dead": 7,
+        "bodies": [
+          {
+            "id": "A/soldier/0",
+            "position": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          {
+            "id": "A/soldier/1",
+            "position": {
+              "x": 1000,
+              "y": 0,
+              "z": 0
+            }
+          },
+          {
+            "id": "A/soldier/2",
+            "position": {
+              "x": 2000,
+              "y": 0,
+              "z": 0
+            }
+          },
+          {
+            "id": "A/soldier/3",
+            "position": {
+              "x": 3000,
+              "y": 0,
+              "z": 0
+            }
+          },
+          {
+            "id": "A/soldier/4",
+            "position": {
+              "x": 4000,
+              "y": 0,
+              "z": 0
+            }
+          },
+          {
+            "id": "A/soldier/5",
+            "position": {
+              "x": 5000,
+              "y": 0,
+              "z": 0
+            }
+          },
+          {
+            "id": "A/soldier/6",
+            "position": {
+              "x": 6000,
+              "y": 0,
+              "z": 0
+            }
+          }
+        ]
+      },
+      {
+        "id": "B",
+        "dead": 4,
+        "bodies": [
+          {
+            "id": "B/soldier/0",
+            "position": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          },
+          {
+            "id": "B/soldier/1",
+            "position": {
+              "x": 1000,
+              "y": 0,
+              "z": 0
+            }
+          },
+          {
+            "id": "B/soldier/2",
+            "position": {
+              "x": 2000,
+              "y": 0,
+              "z": 0
+            }
+          },
+          {
+            "id": "B/soldier/3",
+            "position": {
+              "x": 3000,
+              "y": 0,
+              "z": 0
+            }
+          }
+        ]
+      },
+      {
+        "id": "C",
+        "dead": 0,
+        "bodies": []
+      }
+    ],
+    "total": 11
+  },
+  "sharedResource": {
+    "outcomes": [
+      {
+        "id": "request/A",
+        "applied": true
+      },
+      {
+        "id": "request/B",
+        "applied": false,
+        "reason": "insufficient reserve"
+      }
+    ],
+    "shared": {
+      "revision": 2,
+      "initialReserve": 100,
+      "reserve": 30,
+      "delivered": {
+        "A": 70,
+        "B": 0,
+        "C": 0
+      },
+      "destructionRefs": [],
+      "control": "neutral",
+      "macroObjective": 0,
+      "artillery": 0
+    }
+  },
+  "twoLeases": [
+    {
+      "id": "A",
+      "owner": "INDIVIDUAL",
+      "generation": 1,
+      "lease": {
+        "id": "S/A/lease/1",
+        "sectorId": "S",
+        "formationId": "A",
+        "owner": "INDIVIDUAL",
+        "generation": 1,
+        "sourceRevision": 0,
+        "sourceFingerprint": "7057f330bed35df9da3922479ce13ccfc68e14d80163a408a01e0e08b57386f1",
+        "acquiredAt": 0,
+        "memberIds": [
+          "A/soldier/0",
+          "A/soldier/1",
+          "A/soldier/2",
+          "A/soldier/3",
+          "A/soldier/4",
+          "A/soldier/5",
+          "A/soldier/6",
+          "A/soldier/7",
+          "A/soldier/8",
+          "A/soldier/9",
+          "A/soldier/10",
+          "A/soldier/11"
+        ],
+        "sharedSectorRevision": null
+      },
+      "aggregateRng": {
+        "state": 1928607582,
+        "draws": 0
+      },
+      "activeRng": {
+        "state": 1928607582,
+        "draws": 0
+      }
+    },
+    {
+      "id": "B",
+      "owner": "INDIVIDUAL",
+      "generation": 1,
+      "lease": {
+        "id": "S/B/lease/1",
+        "sectorId": "S",
+        "formationId": "B",
+        "owner": "INDIVIDUAL",
+        "generation": 1,
+        "sourceRevision": 0,
+        "sourceFingerprint": "3f9f0cf7c93ce0f4b8472e13fd84bfc37277e43f90d4cb632dc064d4d67f763d",
+        "acquiredAt": 0,
+        "memberIds": [
+          "B/soldier/0",
+          "B/soldier/1",
+          "B/soldier/2",
+          "B/soldier/3",
+          "B/soldier/4",
+          "B/soldier/5",
+          "B/soldier/6",
+          "B/soldier/7",
+          "B/soldier/8",
+          "B/soldier/9",
+          "B/soldier/10",
+          "B/soldier/11"
+        ],
+        "sharedSectorRevision": null
+      },
+      "aggregateRng": {
+        "state": 2805128052,
+        "draws": 0
+      },
+      "activeRng": {
+        "state": 2805128052,
+        "draws": 0
+      }
+    },
+    {
+      "id": "C",
+      "owner": "AGGREGATED",
+      "generation": 0,
+      "lease": null,
+      "aggregateRng": {
+        "state": 2329471310,
+        "draws": 0
+      },
+      "activeRng": {
+        "state": 2329471310,
+        "draws": 0
+      }
+    }
+  ],
+  "saveChecksum": "cd95bad3fcaffc037d7db68bf5379da9d6c535cd9856f815945ac533136aeda2"
+}

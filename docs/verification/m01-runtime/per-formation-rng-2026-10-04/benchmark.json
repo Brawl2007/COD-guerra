@@ -1,0 +1,11 @@
+{
+  "environment": "Node mathematical model; full clone/validation/receipts included",
+  "formations": 3,
+  "membersPerFormation": 12,
+  "ticks": 1000,
+  "events": 46,
+  "elapsedMs": 512.173481,
+  "microsecondsPerTick": 512.173481,
+  "checksum": "18ccec28db8849f18b72cc206ebd78e568d37ef8e2d6aa6b5018e46b18850343"
+}
+

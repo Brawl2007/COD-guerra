@@ -1,3 +1,17 @@
+# Estado actual — per-formation RNG architecture (2026-10-04)
+
+- TASK_ID `M01-BATTLESECTOR-PER-FORMATION-RNG-MIGRATION-ARCHITECTURE-V1`; requested GPT-6.1 Sol HIGH, sem delegação. M01 **PROTÓTIPO JOGÁVEL**.
+- Base exacta piloto #39 `f2741e53a85c582b4e0739e3a946f534fbe25dde`; branch independente `codex/m01-per-formation-rng-architecture`. Código/modelo/testes/arquitetura validados em `27a30dabc4dc0a5fa017a8fd20669f3c5b0419d5`; commit seguinte só evidência/contexto. Confirmar HEAD final remoto.
+- Somente docs, tools/verification e testes novos específicos. Nenhuma produção, save2, asset, missão, renderer, MG34/CKM/station ou teste browser alterado; PR39/main preservados. BattleSectorfe2d99f/Leased12972f lidos sem merge.
+- Protótipo S/A/B/C: owner/revision/generation/LCG próprio por formação, member xorshift persistido; A/B leases simultâneas, C agregado; reservas locais distintas do shared gateway com fencing/canonical receipts. Event batch selado, ordenação estável, late inputs rejeitados.
+- **43/43 focados,309/309 Node,build PASS**.10.000 ticks pós-save A/B sem divergência,472 envelopes incluindo duplicados,1.880 zero-dt/pause calls,2.488 calls com duas leases. Checksum `bb230508a372b9672d1c3e680bc418e25bbedf082f356e085ba2d4691a8a6d02`. Benchmark matemático1.000calls/3formations/46events512.173481µs/call, não FPS.
+- Fixture casualties A5→7/B3→4,total11; local reserve100→73; shared100 pede70+70 dáA70/B0,reserve30. Return/save/restores inválidos atómicos; clock/gen/revision/receipt rollback em restoreInto bloqueado. Checkpoint antigo cria sessão/fork nova, precisa desligar controllers antigos.
+- **Migration changes deterministic lineage**: não prometer futuro bit-perfect ao dividir shared stream. Legacy converter é sintético v0, não schema2 real; guarda boundary/tag/derivation seed/old digest, preserva streams individuais existentes.
+- Arquitetura `docs/architecture/M01_PER_FORMATION_RNG_MIGRATION.md`; evidência/handoff `docs/verification/m01-runtime/per-formation-rng-2026-10-04/`. GO `READY_FOR_PRODUCTION_MIGRATION` somente revisão + nova ordemPHASE1. Sem segunda formação real/generalização. Async session fencing, clocks históricos e adapters reais são gates futuros explícitos.
+- O jogador não percebe mudança visual/gameplay nesta tarefa. main72bbcdd/#39f2741e5 intactos. Browser/CI/playtest/FPS não executados. **PARAR após handoff**, não integrar. Graphify continua em pausa.
+
+---
+
 # Estado actual — piloto near/far de autoridade M01 (2026-10-04)
 
 Esta secção prevalece sobre o histórico abaixo. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar, não tocar main/Graphify/M02 nem ampliar para outras formações.

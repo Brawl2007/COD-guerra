@@ -1,0 +1,53 @@
+LONG_FUTURE {"formations":3,"membersPerFormation":12,"ticks":10000,"comparisons":10000,"events":472,"zeroDtTicks":1880,"overlappingLeaseTicks":2488,"aggregateBTicksWhileALeased":3360,"elapsedMs":45458.250817,"clockMs":433525,"checksum":"bb230508a372b9672d1c3e680bc418e25bbedf082f356e085ba2d4691a8a6d02","saveChecksum":"300ce5ea2649dc1f3d5277e71174a7b67345899cf0fcb99ae5632e7ce0a6869e","generations":[{"id":"A","generation":84},{"id":"B","generation":84},{"id":"C","generation":0}],"divergences":0}
+✔ stable RNG derivation and domain separation, no indexes/global RNG (2.511604ms)
+✔ formation array and object insertion reorder cannot change state/future (62.902639ms)
+✔ same-time reversed input yields identical future (3.44925ms)
+✔ one owner, multiple simultaneous leases, independent return (6.291953ms)
+✔ lease A does not freeze B or consume B RNG; source A stays frozen (15.762317ms)
+✔ streams persist acquire/release, never reseeded/merged (6.791972ms)
+✔ failed atomic materialization ordinal7 leaves A B C RNG unchanged (11.016288ms)
+✔ failed atomic return leaves both leases intact (11.656595ms)
+✔ stale A and B returns independent; ABA/generation/source/token/identity fences (15.144938ms)
+✔ stale acquire revision rejected independently (6.972941ms)
+✔ B/shared revisions do not invalidate pure local return A (2.283416ms)
+✔ optional shared dependency fence rejects stale shared return atomically (2.090821ms)
+✔ explicit shared dependency reconciliation is fenced, atomic, cannot change B/shared state (2.811046ms)
+✔ critical casualties5+2=7,3+1=4,total11 no duplication or crossing (3.024682ms)
+✔ dead bodies stable per ID/formation and no resurrection on return (3.042929ms)
+✔ local ammo reserve100 to73 with27 reload transfers, no refill/magazine double-count (7.140268ms)
+✔ shared reserve100 same-time A/B70 canonical grant/deny idempotent retry (4.083578ms)
+✔ stale shared request/conflicting duplicate leaves reserve and formations intact (1.072656ms)
+✔ failed A event rolls entire batch back including B mutation/RNG (0.68339ms)
+✔ aggregate attacks/suppresses aggregated and individual B only via current owner (2.851266ms)
+✔ artillery/shared destruction envelopes affect A+B once independent of input order (3.302563ms)
+✔ save/restore 0 leases and double restore identical continuation (3.795813ms)
+✔ save/restore 1 leases and double restore identical continuation (6.480572ms)
+✔ save/restore 2 leases and double restore identical continuation (13.22189ms)
+✔ corrupt restore formation rejected atomically even with recomputed checksum (2.879408ms)
+✔ corrupt restore shared rejected atomically even with recomputed checksum (3.37513ms)
+✔ corrupt restore missingRng rejected atomically even with recomputed checksum (2.78674ms)
+✔ corrupt restore duplicateFormation rejected atomically even with recomputed checksum (3.510791ms)
+✔ corrupt restore staleGeneration rejected atomically even with recomputed checksum (3.128746ms)
+✔ corrupt restore doubleOwner rejected atomically even with recomputed checksum (2.43421ms)
+✔ corrupt restore movedDead rejected atomically even with recomputed checksum (3.173753ms)
+✔ corrupt restore duplicateMember rejected atomically even with recomputed checksum (3.036359ms)
+✔ checksum/monotonic generation floor reject stale in-place restore (3.29995ms)
+✔ same-generation older clock/combat/receipts cannot rewind a live lease (3.231589ms)
+✔ no half-transition save or reentrant mutation (1.933729ms)
+✔ pause/zero dt freeze clocks streams leases movement and events (1.90749ms)
+✔ camera/quality/budget absent from semantics (0.55515ms)
+✔ late same-time inputs require complete sealed batch (1.417426ms)
+✔ legacy migration preserves IDs bodies ammo at explicit changed lineage; reordered archive equal (6.337171ms)
+✔ legacy active lease/pending events/invalid RNG rejected without mutating input (3.045142ms)
+✔ already persisted legacy individual streams survive migration; derivation seed archived (1.979767ms)
+✔ 10,000 exact future ticks after save: variable dt, pause, overlapping leases and reordered events (45465.948899ms)
+✔ Node benchmark reports formations ticks events microseconds and checksum (114.609432ms)
+ℹ tests 43
+ℹ suites 0
+ℹ pass 43
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 45962.099037
+

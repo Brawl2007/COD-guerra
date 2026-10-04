@@ -1,0 +1,98 @@
+{
+  "taskId": "M01-BATTLESECTOR-PER-FORMATION-RNG-MIGRATION-ARCHITECTURE-V1",
+  "requestedModel": "GPT-6.1 Sol",
+  "requestedEffort": "HIGH",
+  "base": "f2741e53a85c582b4e0739e3a946f534fbe25dde",
+  "branch": "codex/m01-per-formation-rng-architecture",
+  "validatedCodeHead": "27a30dabc4dc0a5fa017a8fd20669f3c5b0419d5",
+  "nodeVersion": "v24.19.0",
+  "focusedTests": {
+    "tests": 43,
+    "pass": 43,
+    "fail": 0,
+    "skipped": 0,
+    "durationMs": 45962.099037,
+    "exitCode": 0
+  },
+  "node": {
+    "tests": 309,
+    "pass": 309,
+    "fail": 0,
+    "skipped": 0,
+    "durationMs": 221289.945186,
+    "exitCode": 0
+  },
+  "build": {
+    "exitCode": 0,
+    "pass": true,
+    "inheritedWarning": "chunk >500 kB"
+  },
+  "longFuture": {
+    "formations": 3,
+    "membersPerFormation": 12,
+    "ticks": 10000,
+    "comparisons": 10000,
+    "events": 472,
+    "zeroDtTicks": 1880,
+    "overlappingLeaseTicks": 2488,
+    "aggregateBTicksWhileALeased": 3360,
+    "elapsedMs": 45458.250817,
+    "clockMs": 433525,
+    "checksum": "bb230508a372b9672d1c3e680bc418e25bbedf082f356e085ba2d4691a8a6d02",
+    "saveChecksum": "300ce5ea2649dc1f3d5277e71174a7b67345899cf0fcb99ae5632e7ce0a6869e",
+    "generations": [
+      {
+        "id": "A",
+        "generation": 84
+      },
+      {
+        "id": "B",
+        "generation": 84
+      },
+      {
+        "id": "C",
+        "generation": 0
+      }
+    ],
+    "divergences": 0
+  },
+  "benchmark": {
+    "environment": "Node mathematical model; full clone/validation/receipts included",
+    "formations": 3,
+    "membersPerFormation": 12,
+    "ticks": 1000,
+    "events": 46,
+    "elapsedMs": 512.173481,
+    "microsecondsPerTick": 512.173481,
+    "checksum": "18ccec28db8849f18b72cc206ebd78e568d37ef8e2d6aa6b5018e46b18850343"
+  },
+  "productionChanged": false,
+  "protectedRoots": [
+    "src",
+    "assets",
+    "missions",
+    ".github",
+    "tests/browser"
+  ],
+  "goNoGo": "READY_FOR_PRODUCTION_MIGRATION",
+  "goScope": "Captain review then separately authorized PHASE1; no production implementation in this task",
+  "legacyPolicy": "Migration changes deterministic lineage; old replay remains legacy or explicitly forks at safe boundary",
+  "limitations": [
+    "one synthetic sector, three formations of twelve members",
+    "fixed100ms illustrative resolver, integer mm",
+    "no production schema2 importer or named actor binding implementation",
+    "no async controller session fencing implemented; required phase1 gate",
+    "battle clock1:1 fixture; real historical clock mapping required phase1",
+    "receipt cap50000; full graph clone and validation; not production performance"
+  ],
+  "notRun": [
+    "browser (production unchanged)",
+    "remote CI",
+    "human playtest",
+    "FPS or Chromebook"
+  ],
+  "protectedRemoteRefs": {
+    "main": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+    "pilot": "f2741e53a85c582b4e0739e3a946f534fbe25dde"
+  }
+}
