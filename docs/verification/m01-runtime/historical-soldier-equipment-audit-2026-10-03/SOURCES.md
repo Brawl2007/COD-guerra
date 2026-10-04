@@ -104,6 +104,17 @@ Use in audit: primary-period visual reference for helmet, uniform, boots, carrie
 Source warning: Bundesarchiv itself warns that captions from Propagandakompanien/ADN fonds may be ideologically influenced or later-added. This audit uses imagery for material appearance only, not propaganda captions as factual narrative.
 Rights note: archive access does not equal permission to redistribute an image as a game asset.
 
+
+
+### S-DE-06 — Deutsches Historisches Museum
+**Title:** *Marschstiefel*  
+URL: https://www.dhm.de/lemo/kapitel/zweiter-weltkrieg/kriegsverlauf/marschstiefel  
+Use in audit:
+- tall blackened leather marching boots were established Wehrmacht enlisted equipment at the start of the war;
+- the museum gives an enlisted shaft height range of 35–39 cm;
+- the shaft was shortened only a few months after the September 1939 war start, while ankle-high lace-up boots became increasingly important much later (from 1942).
+Use: supports the early-war tall-boot silhouette in the current German base asset.
+
 ## Project-internal provenance sources
 
 ### S-PROV-01 — MakeHuman CC0 data lock
