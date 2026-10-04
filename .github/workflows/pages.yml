@@ -31,9 +31,15 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      # Keep independent validation evidence even when an earlier test stage fails.
+      # The job still remains failed; this only prevents one unrelated failure from
+      # suppressing build/browser diagnostics.
       - run: npm run build
+        if: ${{ !cancelled() }}
       - run: npx playwright install --with-deps chromium
+        if: ${{ !cancelled() }}
       - run: npm run test:browser
+        if: ${{ !cancelled() }}
       - name: Evidências do navegador
         if: always()
         uses: actions/upload-artifact@v4
