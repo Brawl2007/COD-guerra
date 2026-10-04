@@ -1,0 +1,41 @@
+name: M01 FX focused validation
+
+on:
+  push:
+    branches:
+      - codex/m01-battlefield-fx-visual-runtime-v2
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-fx-focused-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Focused FX + quality/state tests
+        run: node --test tests/m01-battlefield-fx.test.js tests/m01-environment-quality.test.js
+      - name: Production build
+        run: npm run build
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Focused browser proof
+        run: npx playwright test tests/browser/m01-battlefield-fx.spec.js
+      - name: Upload focused evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-battlefield-fx-focused-evidence
+          path: test-results/
+          if-no-files-found: ignore

@@ -1,0 +1,65 @@
+import {test,expect} from '@playwright/test';
+import {route} from '../helpers/m01-route.js';
+import {seconds} from '../../src/game/m01-simulation.js';
+
+const key='cod-guerra:checkpoint:m01:v2';
+let preBlast,preImpact;
+const reached=route(19390901,{onStep:({sim})=>{
+  if(!sim.consumedEvent('evt_m01_east_demolition')&&sim.battleClock>=seconds('06:09:56'))preBlast=structuredClone(sim.snapshot());
+  if(!preImpact&&sim.active('cover_repair')&&sim.enemyFire.rounds.some(r=>r.arriveAt>sim.clock&&r.arriveAt-sim.clock<.35))preImpact=structuredClone(sim.snapshot());
+}});
+if(!preBlast||!preImpact)throw new Error('Focused FX fixtures were not reached through the real simulation route');
+
+async function openFrom(page,snapshot,quality='medium'){
+  const errors=[],failed=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  page.on('response',r=>{if(r.status()>=400)failed.push(`${r.status()} ${r.url()}`);});
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);
+  await page.locator('#quality').selectOption(quality);await page.locator('#continue').click();
+  await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
+  return {errors,failed};
+}
+
+test('east demolition runs layered blast -> dust -> smoke, freezes on pause and cleans transient pools',async({page},info)=>{
+  test.setTimeout(90000);
+  const {errors,failed}=await openFrom(page,preBlast,'medium');
+  await page.waitForFunction(()=>{const f=window.gameDiagnostics().m01.battlefieldFx;return f.active>0&&f.counts.core>0&&f.counts.fire>0&&f.counts.dust>0;},null,{timeout:30000});
+  const hot=await page.evaluate(()=>window.gameDiagnostics());
+  expect(hot.m01.battlefieldFx.counts.core).toBeGreaterThan(0);
+  expect(hot.m01.battlefieldFx.counts.fire).toBeGreaterThan(0);
+  expect(hot.m01.battlefieldFx.counts.dust).toBeGreaterThan(0);
+  expect(hot.m01.battlefieldFx.extraLights).toBeLessThanOrEqual(1);
+  expect(hot.m01.battlefieldFx.atmosphere.puffs).toBeLessThanOrEqual(192);
+  expect(hot.m01.battlefieldFx.atmosphere.debris).toBeLessThanOrEqual(64);
+  await page.screenshot({path:info.outputPath('AFTER-east-demolition-hot-core.png'),timeout:30000});
+
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.battlefieldFx.counts.smoke>0,null,{timeout:15000});
+  await page.screenshot({path:info.outputPath('AFTER-east-demolition-smoke.png'),timeout:30000});
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  const frozen=await page.evaluate(()=>window.gameDiagnostics()),fx=frozen.m01.battlefieldFx;
+  await page.waitForTimeout(350);
+  const still=await page.evaluate(()=>window.gameDiagnostics());
+  expect(still.clock).toBe(frozen.clock);expect(still.m01.battlefieldFx).toEqual(fx);
+  await page.locator('#resume').click();await page.waitForFunction(c=>window.gameDiagnostics().clock>c+.1,frozen.clock);
+
+  await page.waitForFunction(()=>{const f=window.gameDiagnostics().m01.battlefieldFx;return f.active===0&&Object.values(f.counts).every(n=>n===0)&&f.extraLights===0;},null,{timeout:30000});
+  const clean=await page.evaluate(()=>window.gameDiagnostics());
+  expect(clean.m01.smokePuffs).toBeLessThanOrEqual(192);
+  await info.attach('fx-counters',{body:JSON.stringify({hot:hot.m01.battlefieldFx,frozen:fx,clean:clean.m01.battlefieldFx,drawCalls:hot.drawCalls,triangles:hot.triangles,textures:hot.textures,geometries:hot.geometries},null,2),contentType:'application/json'});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+
+test('real in-flight round produces bounded material impact FX without altering the saved simulation path',async({page},info)=>{
+  test.setTimeout(60000);
+  const {errors,failed}=await openFrom(page,preImpact,'high');
+  const before=await page.evaluate(()=>window.gameDiagnostics());
+  await page.waitForFunction(()=>{const f=window.gameDiagnostics().m01.fireEffects;return f.puff>0||f.spark>0||f.chip>0;},null,{timeout:20000});
+  const impact=await page.evaluate(()=>window.gameDiagnostics());
+  expect(impact.m01.fireEffects.puff).toBeLessThanOrEqual(144);
+  expect(impact.m01.fireEffects.spark).toBeLessThanOrEqual(96);
+  expect(impact.m01.fireEffects.chip).toBeLessThanOrEqual(128);
+  await page.screenshot({path:info.outputPath('AFTER-real-round-impact.png'),timeout:30000});
+  await info.attach('impact-counters',{body:JSON.stringify({before:before.m01.fireEffects,impact:impact.m01.fireEffects,drawCalls:impact.drawCalls,triangles:impact.triangles},null,2),contentType:'application/json'});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
