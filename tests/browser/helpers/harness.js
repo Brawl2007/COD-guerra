@@ -130,7 +130,14 @@ async function waitFailure(page,label,timeout,error=null){
 export async function waitForState(page,label,predicate,arg=null,{timeout=30000,polling='raf',failFastOn=[]}={}){
   if(!failFastOn.length){
     try{return await page.waitForFunction(predicate,arg,{timeout,polling});}
-    catch(error){throw await waitFailure(page,label,timeout,error);}
+    catch(error){
+      // Playwright can reject exactly at the timeout boundary even when the
+      // observable state becomes true before diagnostics are captured. Recheck
+      // once without extending the wait budget to avoid a boundary false-negative.
+      try{if(await page.evaluate(predicate,arg))return true;}
+      catch(recheckError){throw await waitFailure(page,label,timeout,recheckError);}
+      throw await waitFailure(page,label,timeout,error);
+    }
   }
   const started=Date.now(),interval=typeof polling==='number'?Math.max(16,polling):100;
   while(Date.now()-started<timeout){
