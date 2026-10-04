@@ -9,5 +9,5 @@ export default defineConfig({
     screenshot:'only-on-failure',trace:'retain-on-failure',
     launchOptions:{...(process.env.CHROME_EXECUTABLE?{executablePath:process.env.CHROME_EXECUTABLE}:{}),
       args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']}},
-  webServer:{command:'npm run preview -- --port 4173 --strictPort',url:'http://127.0.0.1:4173/COD-guerra/',reuseExistingServer:false,timeout:30000},
+  webServer:{command:'node tests/browser/helpers/preview-server.mjs',url:'http://127.0.0.1:4173/COD-guerra/',reuseExistingServer:false,timeout:30000},
 });

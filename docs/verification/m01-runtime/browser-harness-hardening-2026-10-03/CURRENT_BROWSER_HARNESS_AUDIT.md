@@ -65,3 +65,11 @@ The base is already functionally strong: 36/36 browser passed in the reviewed de
 - No retries.
 - No pixel-identical determinism requirement.
 - No FPS claims.
+
+## Additional cleanup evidence found during hardening
+
+An interrupted older Playwright run from a separate checkout was observed still owning port 4173 through a Vite preview child. This was not a completed-suite leak; the surrounding execution environment had interrupted its test runner. The hardened `strictPort` setting correctly refused to start against that stale server rather than silently reusing it.
+
+The original webServer command still passed through `npm run preview`, adding shell/npm/Vite descendants. To reduce ordinary-signal orphan risk, this branch now starts a programmatic Vite preview helper (`tests/browser/helpers/preview-server.mjs`). It binds `127.0.0.1:4173` with `strictPort:true`, has no nested npm/Vite child process, and explicitly closes Vite on SIGTERM/SIGINT/SIGHUP. The helper was smoke-tested by starting it, loading `/COD-guerra/`, sending SIGTERM, and proving the port became free.
+
+This cannot make SIGKILL recoverable, but it removes the observed ordinary-signal child-process case while preserving fail-closed stale-port behavior.
