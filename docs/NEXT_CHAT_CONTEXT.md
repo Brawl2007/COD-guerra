@@ -1,3 +1,27 @@
+# Estado atual — Visual Placeholder Asset Audit (2026-10-04)
+
+Esta secção prevalece para a auditoria visual de placeholders da M01. M01 continua **PROTÓTIPO JOGÁVEL**.
+
+- TASK_ID: `M01-VISUAL-PLACEHOLDER-ASSET-AUDIT-V1`; modelo GPT-5.6 Sol; esforço HIGH.
+- Base exata: `codex/m01-schema2-determinism-audit@5f3cc34f53c61beec52255d67f8babd7194c9f7f`.
+- Branch: `codex/m01-visual-placeholder-asset-audit`.
+- Escopo respeitado: docs + ferramenta de scanner somente. Nenhum `src/**`, GLB, textura, simulation, renderer, save, RNG, hitbox, animation, MG34 prone, CKM, Authority Lease ou BattleSector foi alterado.
+- Matriz principal: `docs/verification/m01-runtime/visual-placeholder-audit-2026-10-04/PLACEHOLDER_MATRIX.md`.
+- Total auditado: **48 responsabilidades visuais**.
+- Classificação: REAL_ASSET 12; PROCEDURAL_ACCEPTABLE 10; PROCEDURAL_NEEDS_POLISH 8; VISIBLE_PLACEHOLDER 10; FALLBACK_ONLY 3; MISSING_ASSET 4; HISTORICAL_UNVERIFIED 1.
+- Prioridades: P0 8; P1 28; P2 12.
+- P0: station, sapper hut, approach rails, tree repetition, train 963 locomotive, Panzerzug, smoke/demolition cloud, explosion flash.
+- Falsos positivos importantes: generic `three-renderer.js` não é a cena principal M01; Wz.29 procedural antigo é fallback; wagon boxes são fallback quando GLB falha; first-raid Ju87 boxes são fallback, mas o second-raid `raidPlane` continua primitive.
+- Assets já existentes mas não ligados: intact wagon LOD0/1; 12 damaged/burned wagon GLBs; standalone rkm wz.28 LOD0/1/2 + animation kit. Alguns wagon/Ju87 animations também estão parcialmente unwired por falta de estado autoritativo.
+- Scanner: `tools/verification/m01-visual-placeholder-audit.mjs`; syntax PASS + self-test **3/3 PASS** em fixture. O scan semanticamente equivalente dos 8 ficheiros remotos contou 47 box candidates, 23 sphere, 20 cylinder, 4 plane, 1 capsule, 13 instanced, 14 asset-load refs; números não são veredictos.
+- Não foi possível executar o scanner contra checkout real, `npm test`, `npm run build` ou browser: o container não resolve `github.com`. Não inventar esses resultados.
+- Screenshot audit: nenhuma screenshot nova da branch; galerias existentes não foram tratadas como prova do runtime.
+- Existe trabalho paralelo GPT-6.1 em `M01-ENVIRONMENT-VISUAL-QUALITY-RUNTIME-PASS-V1`; antes de qualquer fix, comparar o que essa branch já resolve para station/hut/rail/vegetation/FX e evitar conflito de produção.
+- Próxima recomendação após revisão: manter este audit como checklist; priorizar fixes que não conflitam com GPT-6.1, especialmente locomotive/Panzerzug ou wiring de wagon LOD/damage assets, em tarefas separadas.
+- **PARAR após handoff. Não implementar fixes, não integrar e não tocar em main.**
+
+---
+
 # Estado actual — auditoria de determinismo schema 2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a MG34 aprovada nem Graphify.
