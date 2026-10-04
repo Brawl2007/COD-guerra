@@ -24,11 +24,11 @@ export function installBrowserHarness(page){
   if(states.has(page))return states.get(page);
   const state={
     pageErrors:[],consoleErrors:[],requestFailures:[],httpFailures:[],expectedFailures:[],crashed:false,
-    inFlight:new Map(),expectedNavigationAborts:new WeakSet(),createdAt:Date.now(),navigating:false,intentionalReload:false
+    inFlight:new Map(),expectedNavigationAborts:new WeakSet(),createdAt:Date.now(),navigating:false
   };
   states.set(page,state);
   page.on('pageerror',error=>state.pageErrors.push({message:error.message,stack:error.stack??null}));
-  page.on('framenavigated',frame=>{if(frame===page.mainFrame()){state.navigating=false;state.intentionalReload=false;}});
+  page.on('framenavigated',frame=>{if(frame===page.mainFrame())state.navigating=false;});
   page.on('request',request=>{
     if(request.isNavigationRequest()&&request.frame()===page.mainFrame())state.navigating=true;
     state.inFlight.set(request,{url:request.url(),method:request.method(),resourceType:request.resourceType(),startedAt:Date.now()});
@@ -44,9 +44,8 @@ export function installBrowserHarness(page){
     state.inFlight.delete(request);
     const errorText=request.failure()?.errorText??null;
     const expectedNavigationAbort=state.expectedNavigationAborts.has(request)&&errorText==='net::ERR_ABORTED';
-    const intentionalReloadAbort=state.intentionalReload&&errorText==='net::ERR_ABORTED';
-    const benignNavigationAbort=expectedNavigationAbort||intentionalReloadAbort;
-    const item={url,method:request.method(),errorText,expected:Boolean(expected),expectedNavigationAbort,intentionalReloadAbort,benignNavigationAbort,label:expected?.label??null};
+    const benignNavigationAbort=expectedNavigationAbort;
+    const item={url,method:request.method(),errorText,expected:Boolean(expected),expectedNavigationAbort,benignNavigationAbort,label:expected?.label??null};
     state.requestFailures.push(item);
   });
   page.on('response',response=>{
@@ -66,8 +65,7 @@ export async function reloadWithExpectedAborts(page,options){
   // replaced. Mark exactly that pre-navigation set; requests from the new page
   // remain fully observable and can still fail the test.
   for(const request of state.inFlight.keys())state.expectedNavigationAborts.add(request);
-  state.intentionalReload=true;
-  try{return await page.reload(options);}finally{state.intentionalReload=false;}
+  return page.reload(options);
 }
 
 export async function forceAssetFailure(page,pattern,{status=404,body='forced browser harness asset failure',label=pattern,minHits=1}={}){
