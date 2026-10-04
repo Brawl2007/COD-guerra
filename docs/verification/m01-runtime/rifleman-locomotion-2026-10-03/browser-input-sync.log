@@ -1,0 +1,14 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> operation-ashen-road@0.2.0 test:browser
+> playwright test --grep adjustment salvo --output test-results-rifleman-input-sync
+
+[WebServer] (node:31) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+[WebServer] (node:44) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+Running 2 tests using 1 worker
+(node:78) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(node:78) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+··
+  2 passed (31.3s)

@@ -135,8 +135,27 @@
     },
     "version": "153.0.8010.0",
     "renderBackend": "SwiftShader",
-    "completeFinalRegressionGreen": false,
-    "classification": "Late-update hypothesis; cause not proven. Explicit separate control reruns do not erase full failure."
+    "completeFinalRegressionGreen": true,
+    "classification": "Historical 36/1 failure retained. Follow-up input acknowledgement enforces asynchronous input contract; 37/37 fresh full suite passed. Original timing root cause not conclusively proven.",
+    "followupFocused": {
+      "pass": 2,
+      "fail": 0,
+      "reportedDuration": "31.3s",
+      "log": "browser-input-sync.log"
+    },
+    "followupFull": {
+      "validatedHead": "72100c733a6e93e31105d2ba7a881c2bd32433b3",
+      "tests": 37,
+      "pass": 37,
+      "fail": 0,
+      "automaticRetries": 0,
+      "skipped": 0,
+      "reportedDuration": "12.9m",
+      "exitCode": 0,
+      "log": "browser-followup-37.log",
+      "productionBundleUnchanged": true,
+      "change": "Await exact authoritative camera angle after queued mouse input; preserve 5000ms HUD assertion, 180000ms test budget, zero retries; 30000ms input acknowledgement bound."
+    }
   },
   "gallery": {
     "pass": true,
@@ -312,5 +331,5 @@
     "human playtest",
     "Chromebook/FPS"
   ],
-  "recommendation": "Captain review of bounded pilot. Do not declare final browser suite green; investigate unchanged direction harness before integration/expansion."
+  "recommendation": "Captain visual review of bounded four-rifleman pilot; full automated regression now passed. Retain prototype status; no integration or scope expansion."
 }

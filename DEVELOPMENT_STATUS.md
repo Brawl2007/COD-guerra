@@ -1,3 +1,9 @@
+## Rifleman browser follow-up — 2026-10-04
+
+Mesma branch `codex/m01-rifleman-locomotion-runtime`; produção/bundle inalterados. Commit `72100c733a6e93e31105d2ba7a881c2bd32433b3` sincroniza os dois testes de direção da salva com o ângulo autoritativo após consumo do input. Espera limitada30s, assert HUD5s e retries0 preservados. **Nova suíte browser37/37 PASS (12.9min)**; focados2/2 PASS (31.3s). Falha histórica36/1 e traces mantidos. Node253/253/build PASS anteriores aplicáveis ao mesmo código de produção, sem reexecução nesta continuação.
+
+Pendência browser encerrada; revisão visual pelo capitão continua necessária. M01 **PROTÓTIPO JOGÁVEL**, quatro riflemen, sem integração/expansão/main. Detalhes no HANDOFF e `browser-followup-37.log`. Esta atualização prevalece sobre o estado browser anterior abaixo.
+
 ## Rifleman locomotion pilot — 2026-10-03
 
 Candidato isolado em `codex/m01-rifleman-locomotion-runtime`, base de produção schema2 `5f3cc34`. Quatro IDs comuns (`de_spans_6/7`, `pl_east_0/1`), velocidade visual medida dos GLBs (walk1.099945/run3.251546 m/s), playback observado e crossfade idle/walk/run de .22 s. Nenhuma alteração a movimento, facing, hitboxes, muzzle gameplay, RNG, missão, armas, save2, MG34/arrasto/CKM ou assets. Arquitetura Soldier Animation lida sem merge.

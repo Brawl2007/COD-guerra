@@ -7,7 +7,8 @@
 | ESFORÇO | HIGH requested; no delegation |
 | BASE | `codex/m01-schema2-determinism-audit` @ `5f3cc34f53c61beec52255d67f8babd7194c9f7f` |
 | BRANCH | `codex/m01-rifleman-locomotion-runtime` |
-| HEAD FINAL | Exact final docs commit supplied in final delivery / remote branch ref; validated production and tooling at `489f71af14619aefbcc3e76f44f332e4010eb0af` |
+| HEAD FINAL | Exact final evidence commit supplied in final delivery / remote branch ref; production validated at `489f71af14619aefbcc3e76f44f332e4010eb0af`, follow-up harness/full browser at `72100c733a6e93e31105d2ba7a881c2bd32433b3` |
+| COMMITS | Six commits from production base; last two only test synchronization and evidence/docs |
 | ACTORS PILOT | `de_spans_6`, `de_spans_7`, `pl_east_0`, `pl_east_1`; four ordinary noncritical riflemen |
 | CLIPS MEASURED | Actual unchanged `m01_soldier_animations.glb`: standing_idle 4 s, walk 1 s, run .68 s; all in-place |
 | FOOT CONTACTS | Approximate left/right ankle support at 240 Hz, within 15 mm of minimum and backward velocity >.2 m/s; full windows below |
@@ -28,10 +29,10 @@
 | STATION PRESERVED | patient/medic IDs excluded; sampling byte-identical; existing station/drag tests preserved |
 | NODE | **253/253 PASS**, including focused **11/11 PASS** |
 | BUILD | PASS; inherited >500 kB chunk warning; no package/config/asset changes |
-| BROWSER | Initial36/36 PASS (13.7 min); focused real-save1/1 PASS; final build regression **36 passed /1 failed** (17.6 min), existing salvo-direction UI timeout; gallery PASS; controlled direction reruns recorded separately |
+| BROWSER | Latest fresh full regression **37/37 PASS** (12.9 min), zero retries/skips; focused input synchronization2/2 PASS (31.3 s). Historical36/1 failure and initial36/36 retained; real-save/gallery PASS |
 | LIMITATIONS | ankle proxy/support-window metric, flat/straight fixtures, residual spikes; no exact visual phase persistence; first observation/re-entry warmup; specialized/nonlocomotion transitions remain legacy |
-| NEXT STEP | investigate unchanged browser direction harness; captain visual review of four IDs; scope expansion only by separate order |
-| RECOMMENDATION | review bounded visual pilot; **full browser approval remains blocked by the recorded direction-test timeout**. Retain M01 as **PROTÓTIPO JOGÁVEL**; no integration or expansion |
+| NEXT STEP | Captain visual review of four IDs; scope expansion only by separate order |
+| RECOMMENDATION | Automated regression passed; submit bounded visual pilot for captain review. Retain M01 as **PROTÓTIPO JOGÁVEL**; no integration or expansion |
 
 ## Commits and anchors
 
@@ -83,8 +84,18 @@ The environment's standard Playwright browser download failed with a truncated a
 
 Only production files changed: `src/render/m01-characters.js`, new `src/render/m01-rifleman-locomotion.js`. Simulation, spatial, mission scripts, weapons, schema2, GLBs, MG34/station/CKM assets and French sandbox source are preserved. Specialized source equality and existing tests do not substitute for a human visual/art review. Stop after handoff; no integration.
 
-## Browser regression failure retained
+## Historical browser regression failure retained
 
-Final full suite: 36 passed / 1 failed, no automatic retry. Existing `adjustment salvo behind the truss ... follows mouse look` timed out after 5000 ms waiting for HUD “atrás de si”; it still read “em frente” during the assertion. The captured after-failure diagnostics/page snapshot already read “atrás de si”, and no pilot actors were rendered in this scene. This supports a late-update hypothesis; it does not prove the pilot could never affect scheduling. Simulation/input/HUD and this existing test are unchanged. `browser-failure-trace-extract.json`, `browser-failure-raw/*.trace`, `browser-failure-diagnostics.json` and `browser-failure-error-context.md` retain the failure. The original full zip was not republished; raw event records and decisive diagnostics are retained. Separate candidate/base controls are explicit reruns, not a replacement green full-suite claim. No timeout/assertion was weakened.
+Previous full suite at `0236b097`: 36 passed / 1 failed, no automatic retry. Existing `adjustment salvo behind the truss ... follows mouse look` timed out after 5000 ms waiting for HUD “atrás de si”; it still read “em frente” during the assertion. The captured after-failure diagnostics/page snapshot already read “atrás de si”, and no pilot actors were rendered in this scene. This supports a late-update hypothesis; it does not prove the pilot could never affect scheduling. Simulation/input/HUD and the existing test were unchanged at that revision. `browser-failure-trace-extract.json`, `browser-failure-raw/*.trace`, `browser-failure-diagnostics.json` and `browser-failure-error-context.md` retain the failure. The original full zip was not republished; raw event records and decisive diagnostics are retained. Separate candidate/base controls are explicit reruns, not a replacement green full-suite claim. No timeout/assertion was changed in that historical run.
 
 Controlled checks completed unchanged: candidate2/2 PASS (1.4min), clean exact-base2/2 PASS (52.1s). They do not establish a root cause or replace the final36-pass/1-fail result. Node253/253 and focused11/11 passed. Source code/tooling was unchanged during final validations and control checks.
+
+## Follow-up — 2026-10-04
+
+The captain requested continuation after handoff. Commit `72100c733a6e93e31105d2ba7a881c2bd32433b3` changes only the two existing salvo direction cases in `tests/browser/m01.spec.js`. Mouse input is queued by `Input` and consumed in the next gameplay frame, before rendering and HUD updates. The test now acknowledges that frame by waiting for the exact authoritative angle implied by the delivered `MouseEvent.movementX` (which can truncate fractional input), within1e-7 radians modulo2π. It does not resend input or write gameplay/camera state. The acknowledgement is bounded at30 s; existing HUD assertion remains5 s, total test180 s on CI, retries0. This is an explicit frame synchronization budget, not a claim that the original scheduling cause is conclusively proven.
+
+Focused two direction cases passed in31.3 s. A **new complete `npm run test:browser` execution passed37/37 in12.9 min**, exit0, no retries/skips. Raw full output: `browser-followup-37.log`; focused tool-output transcript: `browser-input-sync.log`. These results supersede the earlier final approval status without deleting its failure, trace or control results.
+
+Production source and built JS are unchanged from the validated pilot: bundle SHA-256 `f83bd6260ad57f1229597d73e2c9621fc72ae6b48ba1882032a1ba334c29fcac`. Existing253/253 Node and build PASS therefore remain applicable; they were not rerun during this test-only follow-up. MG34/station/CKM cases passed in the fresh browser suite. Protected remote heads reconfirmed: main `72bbcdd156603c9399801c95d43d9365ba50fc82`, production base `5f3cc34f53c61beec52255d67f8babd7194c9f7f`, animation reference `cd91d65f0c022678ed24785eb44233bab137eb3c`. No merge, deployment, CI, human playtest or FPS claim.
+
+Recommendation: captain visual review of this four-actor pilot. Automated regression is now green; limitations of the ankle metric, visual phase reconstruction and flat fixtures remain. Stop here; do not add crouch walk, crawl, IK or upper-body animation.

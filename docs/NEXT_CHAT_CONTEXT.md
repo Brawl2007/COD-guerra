@@ -1,3 +1,14 @@
+# Continuação rifleman — 2026-10-04
+
+- Mesma tarefa/branch/base; capitão pediu continuar após handoff. Produção permanece exatamente o piloto publicado em `0236b097`.
+- Novo harness validado: `72100c733a6e93e31105d2ba7a881c2bd32433b3`, somente `tests/browser/m01.spec.js`: esperar ângulo real consumir mouse input, tolerância1e-7, bound30s, depois assert HUD5s original. Não reenviar input ou alterar gameplay. Causa original de scheduling não definitivamente provada.
+- **Nova suíte integral37/37 PASS,12.9min,0retry/skip**, focados2/2 PASS31.3s. Histórico36/1 e traces não apagados; resultado novo prevalece. Evidência `browser-followup-37.log`, HANDOFF/verification.json atualizados.
+- Node253/253 e build PASS anteriores mantêm validade; nenhuma produção mudou ou teste Node/build foi reexecutado nesta continuação. Bundle SHA-256 f83bd6260ad57f1229597d73e2c9621fc72ae6b48ba1882032a1ba334c29fcac.
+- main72bbcdd/base5f3cc34/animaçãocd91d65 reconfirmadas inalteradas. Sem integração/CI/playtest humano/FPS; revisão visual pelo capitão, escopo não expandido. Confirmar HEAD remoto final antes de qualquer nova ordem.
+- **PARAR após handoff**, sem crouch/IK/upper-body, Graphify em pausa.
+
+---
+
 # Estado atual — rifleman locomotion runtime pilot (2026-10-03)
 
 Esta secção prevalece para esta tarefa. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a produção, MG34, schema2 ou Graphify.
