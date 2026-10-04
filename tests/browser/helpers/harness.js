@@ -16,15 +16,23 @@ function globToRegExp(glob){
 
 export function patternMatchesUrl(pattern,url){return globToRegExp(pattern).test(url);}
 
+export function isBenignNavigationAbort(errorText,{navigating=false}={}){
+  return navigating&&errorText==='net::ERR_ABORTED';
+}
+
 export function installBrowserHarness(page){
   if(states.has(page))return states.get(page);
   const state={
     pageErrors:[],consoleErrors:[],requestFailures:[],httpFailures:[],expectedFailures:[],crashed:false,
-    inFlight:new Map(),createdAt:Date.now()
+    inFlight:new Map(),createdAt:Date.now(),navigating:false
   };
   states.set(page,state);
   page.on('pageerror',error=>state.pageErrors.push({message:error.message,stack:error.stack??null}));
-  page.on('request',request=>state.inFlight.set(request,{url:request.url(),method:request.method(),resourceType:request.resourceType(),startedAt:Date.now()}));
+  page.on('framenavigated',frame=>{if(frame===page.mainFrame())state.navigating=false;});
+  page.on('request',request=>{
+    if(request.isNavigationRequest()&&request.frame()===page.mainFrame())state.navigating=true;
+    state.inFlight.set(request,{url:request.url(),method:request.method(),resourceType:request.resourceType(),startedAt:Date.now()});
+  });
   page.on('requestfinished',request=>state.inFlight.delete(request));
   page.on('console',message=>{
     if(message.type()!=='error')return;
@@ -34,7 +42,8 @@ export function installBrowserHarness(page){
   page.on('requestfailed',request=>{
     const url=request.url(),expected=state.expectedFailures.find(x=>x.regex.test(url));
     state.inFlight.delete(request);
-    const item={url,method:request.method(),errorText:request.failure()?.errorText??null,expected:Boolean(expected),label:expected?.label??null};
+    const errorText=request.failure()?.errorText??null,benignNavigationAbort=isBenignNavigationAbort(errorText,{navigating:state.navigating});
+    const item={url,method:request.method(),errorText,expected:Boolean(expected),benignNavigationAbort,label:expected?.label??null};
     state.requestFailures.push(item);
   });
   page.on('response',response=>{
@@ -172,7 +181,7 @@ export async function attachHarnessDiagnostics(page,info,{always=false}={}){
     browserLifecycle:state.crashed||page.isClosed()?[{crashed:state.crashed,pageClosed:page.isClosed()}]:[],
     pageErrors:state.pageErrors,
     consoleErrors:state.consoleErrors.filter(x=>!x.expected),
-    requestFailures:state.requestFailures.filter(x=>!x.expected),
+    requestFailures:state.requestFailures.filter(x=>!x.expected&&!x.benignNavigationAbort),
     httpFailures:state.httpFailures.filter(x=>!x.expected),
     forcedFailuresNotObserved:state.expectedFailures.filter(x=>x.hits<x.minHits).map(x=>({pattern:x.pattern,label:x.label,minHits:x.minHits,hits:x.hits,status:x.status}))
   };
