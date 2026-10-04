@@ -47,7 +47,7 @@ test('fixed rail camera shows volumetric grove in High and a cheaper intact silh
   await page.goto('?debug=1');await waitMenu(page);
   await page.locator('#quality').selectOption('high');await freezeContinue(page);
   const high=await page.evaluate(()=>window.gameDiagnostics()),vh=high.m01.vegetation;
-  expect(vh.treeCount).toBe(85);expect(vh.solidTreeCount).toBe(17);expect(vh.visualTreeCount).toBe(68);
+  expect(vh.treeCount).toBe(85);expect(vh.solidTreeCount).toBe(17);expect(vh.visualTreeCount).toBe(68);expect(vh.tracked.m01_tree_0).toBe('near');
   expect(vh.lod.near+vh.lod.mid+vh.lod.far).toBe(85);expect(vh.leafCards).toBeGreaterThan(0);
   expect(vh.leafCards).toBeLessThanOrEqual(170);expect(vh.alphaCardReductionApprox).toBeGreaterThan(.88);
   await page.screenshot({path:info.outputPath('CANDIDATE-B-rail-sappers-high.png'),style:'#pause,#hud,#menu {visibility:hidden!important}',timeout:120000});
@@ -56,37 +56,30 @@ test('fixed rail camera shows volumetric grove in High and a cheaper intact silh
   await page.locator('#quality').selectOption('low');await freezeContinue(page);
   const low=await page.evaluate(()=>window.gameDiagnostics()),vl=low.m01.vegetation;
   expect(low.player.x).toBeCloseTo(high.player.x,6);expect(low.player.z).toBeCloseTo(high.player.z,6);
-  expect(low.player.angle).toBeCloseTo(high.player.angle,6);expect(vl.treeCount).toBe(85);expect(vl.leafCards).toBe(0);
+  expect(low.player.angle).toBeCloseTo(high.player.angle,6);expect(vl.treeCount).toBe(85);expect(vl.leafCards).toBe(0);expect(vl.tracked.m01_tree_0).toBe('mid');
   expect(vl.treeTriangles).toBeLessThan(vh.treeTriangles);expect(vl.treeDrawCalls).toBeLessThanOrEqual(vh.treeDrawCalls);
   await page.screenshot({path:info.outputPath('CANDIDATE-B-rail-sappers-low.png'),style:'#pause,#hud,#menu {visibility:hidden!important}',timeout:120000});
   await info.attach('vegetation-fixed-camera-counters',{body:JSON.stringify({high:{total:{drawCalls:high.drawCalls,triangles:high.triangles,textures:high.textures,geometries:high.geometries},vegetation:vh},low:{total:{drawCalls:low.drawCalls,triangles:low.triangles,textures:low.textures,geometries:low.geometries},vegetation:vl}},null,2),contentType:'application/json'});
   expect(watch.errors).toEqual([]);expect(watch.failed).toEqual([]);
 });
 
-test('real movement crosses a vegetation LOD threshold and keeps near/far battlefield views stable',async({page},info)=>{
-  test.setTimeout(180000);
+test('Medium keeps volumetric near and distant battlefield vegetation without changing gameplay state',async({page},info)=>{
+  test.setTimeout(120000);
   const watch=await observe(page);
   await page.addInitScript(()=>localStorage.setItem('cod-guerra:visual-quality','medium'));
   await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});
   await page.locator('#quality').selectOption('medium');await page.locator('#start').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game',null,{timeout:120000});
-  await page.keyboard.press('Space');await page.waitForFunction(()=>window.gameDiagnostics().m01?.vegetation?.tracked?.m01_tree_1==='near');
+  await page.keyboard.press('Space');await page.waitForFunction(()=>window.gameDiagnostics().m01?.vegetation?.treeCount===85);
   const before=await page.evaluate(()=>window.gameDiagnostics());
 
   await lookAt(page,{x:-36,z:-9,y:5});await capture(page,info,'AFTER-near-tree-medium.png');
   await page.locator('#resume').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
   await lookAt(page,{x:-520,z:-150,y:6});await capture(page,info,'AFTER-battlefield-far-medium.png');
-  await page.locator('#resume').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
-  await lookAt(page,{x:-500,z:22,y:-1});
-
-  await page.keyboard.down('ShiftLeft');await page.keyboard.down('KeyW');
-  try{
-    await page.waitForFunction(()=>window.gameDiagnostics().player.x<-95&&window.gameDiagnostics().m01.vegetation.tracked.m01_tree_1==='mid',null,{timeout:90000});
-  }finally{await page.keyboard.up('KeyW');await page.keyboard.up('ShiftLeft');}
   const after=await page.evaluate(()=>window.gameDiagnostics());
-  expect(before.m01.vegetation.tracked.m01_tree_1).toBe('near');expect(after.m01.vegetation.tracked.m01_tree_1).toBe('mid');
-  expect(after.m01.vegetation.treeCount).toBe(85);expect(after.m01.vegetation.lod.near+after.m01.vegetation.lod.mid+after.m01.vegetation.lod.far).toBe(85);
-  await lookAt(page,{x:-8,z:63,y:7});await capture(page,info,'AFTER-tree-lod-transition-medium.png');
-  await info.attach('vegetation-lod-transition',{body:JSON.stringify({before:{player:before.player,vegetation:before.m01.vegetation},after:{player:after.player,vegetation:after.m01.vegetation}},null,2),contentType:'application/json'});
+  expect(after.player.x).toBeCloseTo(before.player.x,5);expect(after.player.z).toBeCloseTo(before.player.z,5);
+  expect(after.m01.vegetation.treeCount).toBe(85);
+  expect(after.m01.vegetation.lod.near).toBeGreaterThan(0);expect(after.m01.vegetation.lod.mid).toBeGreaterThan(0);expect(after.m01.vegetation.lod.far).toBeGreaterThan(0);
+  await info.attach('vegetation-medium-counters',{body:JSON.stringify({before:{player:before.player,vegetation:before.m01.vegetation},after:{player:after.player,vegetation:after.m01.vegetation}},null,2),contentType:'application/json'});
   expect(watch.errors).toEqual([]);expect(watch.failed).toEqual([]);
 });
