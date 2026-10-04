@@ -418,7 +418,8 @@ test('the genuine train 963 and both MG34 fire sources use optional GLBs, light 
 test('missing optional wagon models and MG34 clips preserve 65 proxies, both procedural supports and playable M01',async({page},info)=>{
   const d=toRepair(driver());d.until(()=>d.sim.battleClock>=seconds('04:45:10'),120);const snapshot=d.sim.snapshot();
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
-  await page.route('**/m01-wagons/*.glb',r=>r.fulfill({status:404,body:'optional wagon missing'}));
+  await page.route('**/m01-wagons/m01_wagon_covered_lod2.glb',r=>r.fulfill({status:404,body:'optional wagon missing'}));
+  await page.route('**/m01-wagons/m01_wagon_open_lod2.glb',r=>r.fulfill({status:404,body:'optional wagon missing'}));
   await page.route('**/mg34/m01_mg34_animations.glb',r=>r.fulfill({status:404,body:'optional MG34 clips missing'}));
   await open(page);await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.failures.some(f=>f.path.includes('m01_mg34_animations'))&&window.gameDiagnostics().m01.assetFailures.filter(f=>f.path.includes('m01-wagons')).length===2);
   await start(page,'#continue');const g=await page.evaluate(()=>window.gameDiagnostics());
