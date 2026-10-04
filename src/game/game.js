@@ -37,6 +37,7 @@ export class Game {
   get hasSave(){try{return Boolean(localStorage.getItem(this.saveKey));}catch{return false;}}
   selectMission(id){
     this.menu();this.sim=id==='m01_tczew'?new M01Simulation():new Simulation();this.pendingSounds=[];
+    this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
     this.messageUntil=0;this.hitUntil=0;this.checkpointUntil=0;this.renderer.resetEffects();
     if(this.isM01)this.renderer.prepareM01();this.onState('menu');
   }
@@ -68,6 +69,7 @@ export class Game {
   }
   restartMission(){
     this.sim.reset();this.started=true;this.paused=true;this.pendingSounds=[];
+    this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
     this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;
     this.renderer.resetEffects();this.resume();
   }
@@ -99,9 +101,16 @@ export class Game {
       const due=this.pendingSounds.filter(sound=>sound.at<=this.sim.clock);
       this.pendingSounds=this.pendingSounds.filter(sound=>sound.at>this.sim.clock);
       due.forEach(sound=>{
-        if(sound.kind==='fire'){this.audio.distantFire(sound.pan,sound.distance,sound.rounds,sound.interval);return;}
-        this.audio.explosion(sound.pan,sound.distance*UNITS_PER_METRE);if(sound.shake&&this.isM01)this.renderer.m01.blast(this.sim.clock);
+        if(sound.kind==='fire'){
+          if(sound.weapon==='mg34')this.audio.mg34Burst(sound.pan,sound.distance,sound.rounds,sound.interval,sound.key);
+          else this.audio.rifleShot(sound.pan,sound.distance,sound.weapon??'kar98k',sound.key);
+          return;
+        }
+        if(sound.kind==='blast')this.audio.explosion(sound.pan,sound.distance,{scale:sound.scale??'large',key:sound.key});
+        else this.audio.explosion(sound.pan,sound.distance*UNITS_PER_METRE);
+        if(sound.shake&&this.isM01)this.renderer.m01.blast(this.sim.clock);
       });
+      if(this.isM01)this.audio.updateM01Presentation({clock:this.sim.clock,state:this.sim.renderState,spatial:point=>this.spatial(point)});
     }
     if(this.isM01)this.renderer.renderMission(this.sim);
     else this.renderer.render(this.sim.world,this.sim.player,this.sim.combatants,this.sim.radio,
@@ -146,8 +155,11 @@ export class Game {
     }
   }
   rebuildSounds(){
-    this.pendingSounds=[];if(!this.isM01)return;
-    for(const damage of this.sim.sectors.damage)if(damage.soundAt>this.sim.clock)this.pendingSounds.push({...this.spatial(damage),at:damage.soundAt});
+    this.pendingSounds=[];this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);if(!this.isM01)return;
+    for(const damage of this.sim.sectors.damage)if(damage.soundAt>this.sim.clock){
+      const scale=damage.id?.startsWith('m01_grenade_')?'small':damage.id?.includes('demolition')?'demolition':'large';
+      this.pendingSounds.push({...this.spatial(damage),at:damage.soundAt,kind:'blast',scale,key:damage.id});
+    }
   }
   handleM01Event(event){
     const now=this.sim.clock*1000;
@@ -155,21 +167,29 @@ export class Game {
     if(event.type==='reload')this.audio.wz29Mechanism(this.sim.weapon.reloadMode);
     if(event.type==='player-shot'){
       this.audio.wz29Shot();this.audio.wz29Mechanism('bolt');this.renderer.m01.muzzle(this.sim.clock);
-      if(event.material&&event.material!=='character')this.audio.impact(event.material);
+      if(event.material&&event.material!=='character'){const s=this.spatial(event.point);this.audio.impact(event.material,s.pan,s.distance,`player:${this.sim.weapon.shotCount}`);}
     }
-    if(['npc-shot','distant-shot'].includes(event.type)){
-      const s=this.spatial(event.point);if(event.rounds>1)this.audio.distantFire(s.pan,s.distance,event.rounds,.11);else this.audio.wz29Shot(s.pan,Math.max(40,s.distance));
+    if(event.type==='npc-shot'){
+      const s=this.spatial(event.point);
+      if(event.rounds>1)this.audio.rkmBurst(s.pan,s.distance,event.rounds,.11,`kowal:${this.sim.clock.toFixed(3)}`);
+      else this.audio.rifleShot(s.pan,s.distance,'ally-rifle',`ally:${this.sim.clock.toFixed(3)}`);
+    }
+    if(event.type==='distant-shot'){
+      const s=this.spatial(event.point);this.audio.distantBattle('rifle',s.pan,Math.max(500,s.distance),`scripted:${this.sim.clock.toFixed(3)}`);
     }
     // Fogo alemão: o estampido chega com o atraso da distância (343 m/s); o impacto e o estalo de quem passa perto, à chegada do tiro.
-    if(event.type==='enemy-fire'){const s=this.spatial(event.origin);this.pendingSounds.push({...s,at:event.at+s.distance/343,kind:'fire',rounds:event.rounds,interval:event.interval});}
+    if(event.type==='enemy-fire'){const s=this.spatial(event.origin);this.pendingSounds.push({...s,at:event.at+s.distance/343,kind:'fire',rounds:event.rounds,interval:event.interval,weapon:event.weapon,key:`${event.weapon}:${event.at.toFixed(3)}`});}
     if(event.type==='round-impact'){
-      this.renderer.m01.impact(event.point,event.material,this.sim.clock);const s=this.spatial(event.point);
-      if(event.crack)this.audio.crack(s.pan);if(event.distance<30)this.audio.impact(event.material,s.pan,event.distance);
+      this.renderer.m01.impact(event.point,event.material,this.sim.clock);const s=this.spatial(event.point),key=`${event.by}:${this.sim.clock.toFixed(3)}`;
+      if(event.crack)this.audio.crack(s.pan,Math.min(12,event.distance),key);
+      if(event.distance<120)this.audio.impact(event.material,s.pan,event.distance,key);
     }
     if(event.type==='player-hit'){this.audio.hit();this.hitUntil=now+170;}
     if(event.type==='m01-blast'){
-      // O estrondo e a vibração chegam juntos (atraso = distância/343 m/s); demolições abanam até 1 km (cs_m01_east_blast t=2,1).
-      const s=this.spatial(event.point);this.pendingSounds.push({...s,at:event.soundAt,shake:s.distance<(event.aerial?500:1000)});
+      // O estrondo e a vibração chegam juntos (atraso = distância/343 m/s); o áudio só apresenta a autoridade já emitida.
+      const s=this.spatial(event.point),damage=[...this.sim.sectors.damage].reverse().find(d=>d.soundAt===event.soundAt&&d.x===event.point.x&&d.z===event.point.z);
+      const scale=damage?.id?.startsWith('m01_grenade_')?'small':damage?.id?.includes('demolition')?'demolition':'large';
+      this.pendingSounds.push({...s,at:event.soundAt,kind:'blast',scale,key:damage?.id??`blast:${event.soundAt.toFixed(3)}`,shake:s.distance<(event.aerial?500:1000)});
       this.renderer.m01.explosion(event.point,this.sim.clock,event.aerial);
     }
     if(event.type==='checkpoint'){
@@ -204,7 +224,7 @@ export class Game {
     this.hud.checkpoint.classList.toggle('show',now<this.checkpointUntil);
     this.hud.vignette.classList.toggle('hit',now<this.hitUntil);
   }
-  get diagnostics(){return structuredClone({...this.renderer.diagnostics,missionId:this.sim.missionId,clock:this.sim.clock,paused:this.paused,
+  get diagnostics(){return structuredClone({...this.renderer.diagnostics,audio:this.audio.diagnostics,missionId:this.sim.missionId,clock:this.sim.clock,paused:this.paused,
     missionPhase:this.sim.mission.phase,complete:this.sim.mission.complete,
     player:{x:this.player.x,y:this.player.y,z:this.player.z,angle:this.player.angle,pitch:this.player.pitch,health:this.player.health,crouched:Boolean(this.player.crouched)},
     sectors:this.sim.sectors.sectors.map(s=>({...s})),eventIds:this.isM01?Object.keys(this.sim.consumed):[...this.sim.sectors.consumed],
