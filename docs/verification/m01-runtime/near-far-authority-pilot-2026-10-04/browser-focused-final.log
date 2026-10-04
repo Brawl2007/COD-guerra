@@ -1,0 +1,21 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> operation-ashen-road@0.2.0 test:browser
+> playwright test tests/browser/m01-authority-pilot.spec.js --reporter=list,json
+
+[WebServer] (node:35) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+[WebServer] (node:48) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:82) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/m01-authority-pilot.spec.js:50:1 › real west-bank approach opens LOS, atomically leases the same four riflemen, pauses and returns (27.9s)
+  ✓  2 tests/browser/m01-authority-pilot.spec.js:74:1 › active schema-2 lease restores exactly at LOW/MEDIUM/HIGH and Restart uses the previous checkpoint (10.5s)
+
+  2 passed (41.5s)

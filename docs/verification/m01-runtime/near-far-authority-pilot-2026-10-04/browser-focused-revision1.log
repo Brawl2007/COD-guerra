@@ -1,0 +1,55 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> operation-ashen-road@0.2.0 test:browser
+> playwright test tests/browser/m01-authority-pilot.spec.js --reporter=list,json
+
+[WebServer] (node:32) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+[WebServer] (node:45) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:79) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:79) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/m01-authority-pilot.spec.js:33:1 › real west-bank approach opens LOS, atomically leases the same four riflemen, pauses and returns (2.0m)
+(node:175) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:175) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 tests/browser/m01-authority-pilot.spec.js:57:1 › active schema-2 lease restores exactly at LOW/MEDIUM/HIGH and Restart uses the previous checkpoint (16.9s)
+
+
+  1) tests/browser/m01-authority-pilot.spec.js:33:1 › real west-bank approach opens LOS, atomically leases the same four riflemen, pauses and returns 
+
+    TimeoutError: page.waitForFunction: Timeout 90000ms exceeded.
+
+      49 |   await page.evaluate(x=>document.dispatchEvent(new MouseEvent('mousemove',{movementX:x,movementY:0,bubbles:true})),Math.atan2(Math.sin(Math.PI-angle),Math.cos(Math.PI-angle))/.0022);
+      50 |   await page.keyboard.down('ShiftLeft');await page.keyboard.down('KeyW');
+    > 51 |   try{await page.waitForFunction(()=>window.gameDiagnostics().m01.authorityPilot.authorityOwner==='AGGREGATED',{},{timeout:90000});}
+         |                  ^
+      52 |   finally{await page.keyboard.up('KeyW');await page.keyboard.up('ShiftLeft');}
+      53 |   await pause(page);const returned=await diagnostic(page);expect(returned.memberIds).toEqual(PILOT_IDS);expect(returned.individualMemberCount).toBe(0);expect(returned.leaseId).toBeNull();expect(returned.generation).toBe(1);
+      54 |   expect(returned.reserve+returned.loaded+returned.spent).toBe(120);expect(errors).toEqual([]);
+        at /workspace/scratch/179e239c7f9f/COD-guerra/tests/browser/m01-authority-pilot.spec.js:51:18
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-authority-pilot-real-w-e000e-riflemen-pauses-and-returns/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-authority-pilot-real-w-e000e-riflemen-pauses-and-returns/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-authority-pilot-real-w-e000e-riflemen-pauses-and-returns/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-authority-pilot-real-w-e000e-riflemen-pauses-and-returns/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/m01-authority-pilot.spec.js:33:1 › real west-bank approach opens LOS, atomically leases the same four riflemen, pauses and returns 
+  1 passed (2.5m)

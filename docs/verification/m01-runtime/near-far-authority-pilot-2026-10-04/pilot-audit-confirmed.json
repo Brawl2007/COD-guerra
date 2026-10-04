@@ -1,0 +1,78 @@
+{
+  "taskId": "M01-NEAR-FAR-AUTHORITY-RUNTIME-PILOT-V1",
+  "actorIds": [
+    "de_east_36",
+    "de_east_37",
+    "de_east_38",
+    "de_east_39"
+  ],
+  "pairedTicks": 10100,
+  "futures": [
+    {
+      "label": "corrupt restore destination future",
+      "ticks": 100,
+      "firstDivergence": null,
+      "clock": 5.04999999999999,
+      "rng": 19390901
+    },
+    {
+      "label": "pilot active lease future",
+      "ticks": 1200,
+      "firstDivergence": null,
+      "clock": 60.09999999999872,
+      "rng": 1336191303
+    },
+    {
+      "label": "real NPC mid-reload future",
+      "ticks": 800,
+      "firstDivergence": null,
+      "clock": 46.99999999999947,
+      "rng": 19390901
+    },
+    {
+      "label": "pilot 8000-tick continuation",
+      "ticks": 8000,
+      "firstDivergence": null,
+      "clock": 361.9110000000457,
+      "rng": 19390901
+    }
+  ],
+  "proofs": [
+    {
+      "case": "casualty",
+      "fixtureRetainedDead": 5,
+      "playerKilledIds": [
+        "de_east_36",
+        "de_east_37"
+      ],
+      "returnedDead": 7,
+      "bodies": [
+        {
+          "id": "de_east_36",
+          "position": {
+            "x": 1088,
+            "y": -1,
+            "z": 84
+          }
+        },
+        {
+          "id": "de_east_37",
+          "position": {
+            "x": 1094,
+            "y": -1,
+            "z": 88
+          }
+        }
+      ]
+    },
+    {
+      "case": "ammo",
+      "fixtureEmptyMagazine": true,
+      "initialReserve": 100,
+      "returnedReserve": 73,
+      "loaded": 15,
+      "spent": 27,
+      "initialAmmunition": 115
+    }
+  ]
+}

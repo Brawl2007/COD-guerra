@@ -1,0 +1,8 @@
+{
+  "src/game/m01-authority-coordinator.js": "12d4777663715a5ae513575b1209cb3481034a13c6978e2b93dd30bc8ed956f8",
+  "src/game/m01-sector-runtime-adapter.js": "fb60f69fbb5c2eb24c37824e6d73d8d3cfe848392f9a724e56180de4c1cb5567",
+  "src/game/m01-simulation.js": "e1d932ed77120f0b95a5c187a2b62d9097414843495e340b7283e1a8b8709a75",
+  "src/game/game.js": "85bf260aeaf9b7bc8e20b6876cde16e400f5e65d15be247341ab8b06c52c4c81",
+  "dist/assets/index-JEOPqOt4.js": "a492bd73bffbf1464c723fe8c4f75e8d1c969ea69ee134d9e24f079678e96ace",
+  "dist/assets/index-BjsUPuys.js": "3afa0a91e9065f6ff1ca706e2e4454ba78da56e75a78c7b3d06e28c60cf0a172"
+}

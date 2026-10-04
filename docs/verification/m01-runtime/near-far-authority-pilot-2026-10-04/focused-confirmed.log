@@ -1,0 +1,32 @@
+✔ real tick uses the fixed four anonymous actors and one active owner (66.217317ms)
+✔ duplicate acquire and stale revision reject without state or actor publication (11.001433ms)
+✔ member 3 preparation failure rolls back actors 1/2, RNG, clocks, generation and owner (8.771695ms)
+✔ staging snapshot is unsafe; asynchronous materialization is rejected atomically (13.254075ms)
+✔ return is complete and exact; malformed member 3 or missing members publish nothing (69.395357ms)
+✔ stale fencing token and double release reject, including after reacquisition (34.104091ms)
+✔ player rifle produces two actual deaths, 5→7 dead on exact return, with persistent IDs (633.237649ms)
+✔ reserve 100→73 through individual reload/fire; loaded is not double-counted and return never refills (37.224492ms)
+✔ whole sector resolver and shared aggregate RNG are frozen under individual ownership (128.775051ms)
+✔ failed command after a staged RNG draw rolls back; duplicate event consumes no RNG (11.212124ms)
+✔ return resets local motion/cadence boundary and never catches up a long lease (197.460432ms)
+✔ hysteresis 149/151/148/152 acquires exactly once and only leaves above 170 (4.114507ms)
+✔ pause advances no clock/RNG/band and performs no hidden transfer (8.921947ms)
+✔ camera and render quality inputs do not change the authority future (319.098314ms)
+✔ active-lease save/new simulation/restore/double restore keeps one owner and exact streams (49.372977ms)
+✔ continuation retains old checkpoint; restart removes current lease and reacquires once (26.783406ms)
+✔ legacy schema 2 without pilot field loads additively and preserves existing deaths/RNG (8.197529ms)
+✔ corrupt pilot state rejects atomically and destination future remains unchanged (344.466862ms)
+✔ PR37 methodology compares future ticks after active lease, reload/fire, release and reacquire (4550.450372ms)
+✔ nonwritable actor 3 is rejected before publishing actors 1/2 (4.025096ms)
+✔ a second mutating resolver cannot spend the pilot sector RNG, while the legacy combat stream continues (145.549123ms)
+✔ real individual tick reloads its NPC clip and continues identically after a mid-reload save (3293.827484ms)
+✔ OUTRO freezes pilot combat/RNG/ammo while active mission playback continues (11914.82708ms)
+✔ long future includes 8,000 paired ticks, variable dt/zero pause and two release/reentry windows (22067.454758ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 44109.362356

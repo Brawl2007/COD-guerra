@@ -170,7 +170,10 @@ test('a second mutating resolver cannot spend the pilot sector RNG, while the le
 test('real individual tick reloads its NPC clip and continues identically after a mid-reload save',()=>{
   const s=near(fixture());let reloading=false;
   for(let i=0;i<300;i++){s.tick(.05);if(state(s).individual?.members.some(m=>m.ammo.cycle==='RELOAD_CLIP')){reloading=true;break;}}
-  assert.equal(reloading,true);futureReports.push(compareContinuation(s,{label:'real NPC mid-reload future',ticks:800,doubleAt:[37,300]}));
+  assert.equal(reloading,true);const before=s.clock;
+  const report=compareContinuation(s,{label:'real NPC mid-reload future',ticks:800,doubleAt:[37,300]});
+  assert.ok(report.clock<=before+40.000001,'800 ticks cannot advance more than 40 active seconds');
+  futureReports.push(Object.freeze({...report}));
   const d=s.authorityPilot.diagnostics();assert.ok(d.reserve<100);assert.equal(d.reserve+d.loaded+d.spent,120);
 });
 test('OUTRO freezes pilot combat/RNG/ammo while active mission playback continues',()=>{

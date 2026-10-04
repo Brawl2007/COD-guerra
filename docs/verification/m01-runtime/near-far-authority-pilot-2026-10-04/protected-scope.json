@@ -1,0 +1,67 @@
+{
+  "src/core": [],
+  "src/world": [],
+  "src/render": [],
+  "assets": [],
+  "missions": [],
+  ".github": [],
+  "package.json": [],
+  "package-lock.json": [],
+  "playwright.config.js": [],
+  "graphify-out": [],
+  "method:updateMG34Posture": {
+    "found": true,
+    "unchanged": true,
+    "sha256": "36ae0b53e26968717bedabeeb32a01fe3446b745a126b651a43e02947baca533"
+  },
+  "method:emitMG34Rounds": {
+    "found": true,
+    "unchanged": true,
+    "sha256": "aa9ccf64ec13437e292ab81faf1e3dfe14bc084f5e2cb8b5a285375992060dc0"
+  },
+  "method:interruptStationEvacuation": {
+    "found": true,
+    "unchanged": true,
+    "sha256": "18095fa9e715a20a20412456cbd20792fa9537c24113848ee4d3b071a95c25d5"
+  },
+  "method:stageRollCall": {
+    "found": true,
+    "unchanged": true,
+    "sha256": "5c3e9a193421d11479a086d05ce9c1ec82e3efe5354d2758c1e8ddcf7c42c930"
+  },
+  "method:advanceBattle": {
+    "found": true,
+    "unchanged": true,
+    "sha256": "9a106a1db3c7d3c5b8dc21e0ab40a7dd625d8e3b47ca53715ab7dd8666406177"
+  },
+  "method:boundaries": {
+    "found": true,
+    "unchanged": true,
+    "sha256": "82d838dad37c56c7367d40c2c5520d5734c63a8ad9ade2ed4d24d82157a4d191"
+  },
+  "method:landRound": {
+    "found": true,
+    "unchanged": true,
+    "sha256": "a3932a5b405010b766453226f0147b974d10a8866a5354e9df41ee00da3b21b9"
+  },
+  "method:evacuateStation": {
+    "found": true,
+    "unchanged": true,
+    "sha256": "8a48b34f6b9ebdb2e7e107f93cb127f8d584cab5df66fd23e87fbc152866715d"
+  },
+  "method:evacuate": {
+    "found": true,
+    "unchanged": true,
+    "sha256": "5abe8400924351df91a65feaed647e1b84f539de9cc723c834ae0721ddd7a871"
+  },
+  "method:updateScene": {
+    "found": true,
+    "unchanged": true,
+    "sha256": "aa1ec9254eab6dc8f7aade6e0409ab7b09d9e043eb6a4813758febe9a67cc3bc"
+  },
+  "method:processEvents": {
+    "found": true,
+    "unchanged": true,
+    "sha256": "40b47f1f867e647cb5d6ad3751e746e25be0f7150c4f51602a8ae4d6d08e863d"
+  }
+}
