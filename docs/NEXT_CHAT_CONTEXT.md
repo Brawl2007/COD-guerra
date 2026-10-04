@@ -136,3 +136,10 @@ Validação do head de tooling `152a56d5a6ec8a3a3cc8b77c41e216027d93788e`, PR dr
 Um run anterior (#60) no head anterior apresentou 243/244 Node por `tests/m01-mg34-prone-runtime.test.js` tentar `git show 2cfa9520...:src/game/m01-simulation.js`, caminho ausente naquele commit. O run #62 posterior passou npm test integralmente, portanto a falha não se reproduziu no head de tooling; conservar como ocorrência de infraestrutura/histórico, não como bug de gameplay corrigido por esta tarefa.
 
 A branch está baseada exatamente na base da tarefa e, antes deste contexto final, estava 13 commits à frente e 0 atrás; diff contém apenas `.github/workflows/pages.yml`, Playwright/browser tests/helpers, teste Node do harness e documentação de auditoria. PR #40 é somente veículo de CI contra main e NÃO é alvo de integração, pois main não é a base da tarefa.
+
+
+### Finalização autorizada — 2026-10-04
+
+O utilizador autorizou finalizar sem esperar a suíte browser integral. O último candidato observado antes desta finalização (workflow #69, head documental `82ef1d8d47b08472fa326e41d67cb049b4e086ff`) confirmou `npm test` PASS, `npm run build` PASS e instalação Chromium PASS; `npm run test:browser` permanecia em execução quando a espera foi encerrada por decisão explícita do utilizador. Portanto NÃO declarar 36/36, NÃO declarar Browser Run 1 PASS e NÃO declarar Browser Run 2. Retries permanecem zero.
+
+A tarefa fica encerrada como hardening de harness com validação browser integral INCONCLUSIVA. Nenhum `src/**` foi alterado; main não foi tocada; PR #40 continua apenas veículo draft de CI e não deve ser integrado contra main. As races observadas foram tratadas apenas no harness/testes: recheck de fronteira de timeout sem ampliar orçamento global e waits de bearing UI rotulados/state-aware. Qualquer integração futura deve rerodar a suíte browser integral duas vezes se se quiser elevar a evidência para 36/36 x2.
