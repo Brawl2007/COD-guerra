@@ -55,5 +55,5 @@ test('approved tree colliders and critical route remain unchanged by the visual 
     assert.equal(o.id,t.id);assert.equal(o.min.x,t.x-t.radius);assert.equal(o.max.x,t.x+t.radius);
     assert.equal(o.min.z,t.z-t.radius);assert.equal(o.max.z,t.z+t.radius);assert.equal(o.min.y,t.y);assert.equal(o.max.y,t.y+t.height*.78);
   }
-  const d=toRepair(driver());assert.equal(d.sim.mission.objective,'obj_m01_cover_repair');assert.equal(d.sim.world.treeObstacles.length,17);
+  const d=toRepair(driver());assert.equal(d.sim.active('cover_repair'),true);assert.equal(d.sim.world.treeObstacles.length,17);
 });
