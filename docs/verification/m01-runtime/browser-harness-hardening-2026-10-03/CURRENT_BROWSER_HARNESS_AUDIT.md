@@ -73,3 +73,37 @@ An interrupted older Playwright run from a separate checkout was observed still 
 The original webServer command still passed through `npm run preview`, adding shell/npm/Vite descendants. To reduce ordinary-signal orphan risk, this branch now starts a programmatic Vite preview helper (`tests/browser/helpers/preview-server.mjs`). It binds `127.0.0.1:4173` with `strictPort:true`, uses `exec node ...` so the command shell is replaced by the preview process (no nested npm/Vite child chain), and explicitly closes Vite on SIGTERM/SIGINT/SIGHUP. The helper was smoke-tested by starting it, loading `/COD-guerra/`, sending SIGTERM, and proving the port became free.
 
 This cannot make SIGKILL recoverable, but it removes the observed ordinary-signal child-process case while preserving fail-closed stale-port behavior.
+
+
+## Validation addendum — 2026-10-04
+
+Validation on GitHub Actions exposed one genuine harness race and one infrastructure limitation.
+
+### Timeout-boundary false negative — FIXED
+
+Run #62 reached the real station evacuation test. Playwright rejected the labelled `station-evacuation-delivered` wait at its 120000 ms boundary, but the compact diagnostic snapshot captured immediately afterwards already reported `stationEvacuation.delivered: true`, with no page, console, request or HTTP failures. This is a harness false negative at the timeout boundary, not evidence that gameplay failed.
+
+`waitForState()` now performs exactly one immediate predicate recheck after `page.waitForFunction()` rejects. It does **not** increase the timeout budget. A Node regression test proves the boundary condition is accepted with exactly one re-evaluation.
+
+Classification: **REAL RACE / POTENTIAL FALSE GREEN inverse (false negative)** — fixed in harness only.
+
+### CI evidence
+
+Candidate HEAD validation established:
+- `npm test`: PASS before browser execution on runs #62 and #65; run #65 includes the new timeout-boundary regression test.
+- `npm run build`: PASS on runs #62 and #65.
+- Chromium installation: PASS on runs #62 and #65.
+- Full `npm run test:browser`: started as **36 tests / 1 worker / retries 0**, but the GitHub Actions job was externally cancelled before completion.
+- Run #62 browser execution lasted about 18m26s before cancellation and uploaded 24 evidence files (~31 MB).
+- Run #65 was cancelled about 4m34s into browser execution and uploaded 8 evidence files (~2.4 MB).
+- A rerun of the exact same #65 job was cancelled externally during `npm test`, before browser execution. That variation rules out treating these cancellations as a deterministic browser assertion failure.
+
+Therefore this branch does **not** claim 36/36 browser on the final candidate HEAD and does **not** claim a second full browser pass. The last reviewed base already had 36/36, while this hardening branch has partial browser evidence plus Node/build PASS.
+
+### Cleanup evidence
+
+Both cancelled browser jobs reached GitHub post-job cleanup. The runner explicitly terminated the remaining npm/shell/preview/Chromium descendants after cancellation. This is cancellation cleanup evidence, not proof of normal completed-suite cleanup. The programmatic preview helper still provides strict-port binding and ordinary-signal Vite close handling.
+
+### Production bugs
+
+No production `src/**` change was made. An earlier validation attempt observed a historical-invariant test fail because it tried `git show 2cfa9520...:src/game/m01-simulation.js` where that path was absent in that historical commit. Later full-history runs passed `npm test`, so this was not modified as part of the browser harness task.
