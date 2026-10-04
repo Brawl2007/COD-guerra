@@ -17,11 +17,11 @@ async function waitMenu(page){
   await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#continue')).toBeVisible();
 }
 async function freezeButton(page,selector){
-  await page.evaluate(()=>{
-    const hold=e=>{if(document.pointerLockElement?.id==='game'){document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();document.exitPointerLock();}};
-    document.addEventListener('pointerlockchange',hold,true);
-  });
-  await page.locator(selector).click();await expect(page.locator('#pause')).toBeVisible({timeout:30000});
+  const before=await page.evaluate(()=>window.gameDiagnostics()?.m01?.renderedFrames??0);
+  await page.locator(selector).click();
+  await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game',null,{timeout:30000});
+  await page.waitForFunction(before=>window.gameDiagnostics().m01.renderedFrames>before,before,{timeout:30000});
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible({timeout:30000});
   await page.waitForFunction(()=>window.gameDiagnostics().paused&&window.gameDiagnostics().m01?.yardWagons?.wagons?.length===3);
 }
 async function installSnapshotOverride(page){
