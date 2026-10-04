@@ -24,7 +24,7 @@ export function installBrowserHarness(page){
   if(states.has(page))return states.get(page);
   const state={
     pageErrors:[],consoleErrors:[],requestFailures:[],httpFailures:[],expectedFailures:[],crashed:false,
-    inFlight:new Map(),createdAt:Date.now(),navigating:false
+    inFlight:new Map(),expectedNavigationAborts:new WeakSet(),createdAt:Date.now(),navigating:false
   };
   states.set(page,state);
   page.on('pageerror',error=>state.pageErrors.push({message:error.message,stack:error.stack??null}));
@@ -56,6 +56,15 @@ export function installBrowserHarness(page){
 }
 
 export function browserHarnessState(page){return installBrowserHarness(page);}
+
+export async function reloadWithExpectedAborts(page,options){
+  const state=installBrowserHarness(page);
+  // A deliberate navigation may abort only requests owned by the document being
+  // replaced. Mark exactly that pre-navigation set; requests from the new page
+  // remain fully observable and can still fail the test.
+  for(const request of state.inFlight.keys())state.expectedNavigationAborts.add(request);
+  return page.reload(options);
+}
 
 export async function forceAssetFailure(page,pattern,{status=404,body='forced browser harness asset failure',label=pattern,minHits=1}={}){
   const state=installBrowserHarness(page),record={pattern,regex:globToRegExp(pattern),label,minHits,hits:0,status};
