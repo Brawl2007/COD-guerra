@@ -1,0 +1,12 @@
+{
+  "task": "M01-LOCOMOTIVE-963-PRODUCTION-ASSET-RUNTIME-V1",
+  "scope": "LOCAL focused validation; no complete Node/browser certification",
+  "node": {"command": "node --test tests/m01-locomotive.test.js tests/m01-support-runtime.test.js", "passed": 11, "failed": 0, "skipped": 0, "durationMs": 838.263408, "exitCode": 0},
+  "build": {"command": "npm run build", "exitCode": 0, "milliseconds": 278, "jsChunk": "index-B9sCPQmO.js", "warning": "existing chunk exceeds 500 kB"},
+  "browser": {"command": "CHROME_EXECUTABLE=/tmp/chromium npm run test:browser -- tests/browser/m01-locomotive.spec.js --reporter=list", "passed": 2, "failed": 0, "skipped": 0, "retries": 0, "wallSecondsApprox": 32.4, "exitCode": 0},
+  "evidence": {"pairs": 4, "captures": 8, "pageErrors": 0, "snapshotEquality": "exact in every capture", "before": "preserved original proxy geometry/materials/transform", "after": "new GLB on existing rails"},
+  "initialFixtureFailures": ["git stdout maxBuffer too small for an old bridge GLB", "ambiguous textual slice matched an actor button loop instead of Panzerzug"],
+  "historicalIdentity": "P16 remains open; generic conservative pre-war freight representation",
+  "chromebookFPS": "NOT MEASURED",
+  "recommendation": "READY_FOR_CAPTAIN_REVIEW"
+}

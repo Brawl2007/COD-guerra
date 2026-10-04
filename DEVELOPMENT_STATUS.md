@@ -1,3 +1,7 @@
+## Locomotiva 963 — produção visual isolada (2026-10-04)
+
+Branch `codex/m01-locomotive-963-production-asset-runtime`, base exacta schema2 `5f3cc34f`. Novo GLB original genérico de carga, 3 LODs/3 draws, runtime opcional com fallback. Só apresentação: gameplay/assets anteriores conservados. 11/11 testes focados e build PASS; browser focado/pares/limites em `docs/verification/m01-runtime/locomotive-963-2026-10-04/HANDOFF.md`. M01 **PROTÓTIPO JOGÁVEL**; sem integração.
+
 # Estado de desenvolvimento
 
 ## Auditoria schema 2 — 2026-10-03

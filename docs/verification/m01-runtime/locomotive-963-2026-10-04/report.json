@@ -1,0 +1,370 @@
+{
+  "kind": "LOCAL real M01View/GLBs and control-route snapshot; staged visual cameras; BASE uses byte-equivalent original proxy geometry",
+  "samples": [
+    {
+      "name": "lateral",
+      "variant": "before",
+      "file": "lateral-before.jpg",
+      "camera": {
+        "position": [
+          1075,
+          5,
+          -26
+        ],
+        "target": [
+          1075,
+          2,
+          -2.5
+        ],
+        "fov": 45
+      },
+      "locomotive": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "lod": 0,
+        "requestedLOD": 0,
+        "fallback": true,
+        "position": [
+          1075,
+          0,
+          -2.5
+        ],
+        "rotationY": 1.5707963267948966,
+        "visible": true,
+        "motion": "stationary; no synthetic wheel rotation"
+      },
+      "sceneCounters": {
+        "frame": 3,
+        "calls": 129,
+        "triangles": 373639,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "name": "lateral",
+      "variant": "after",
+      "file": "lateral-after.jpg",
+      "camera": {
+        "position": [
+          1075,
+          5,
+          -26
+        ],
+        "target": [
+          1075,
+          2,
+          -2.5
+        ],
+        "fov": 45
+      },
+      "locomotive": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "lod": 0,
+        "requestedLOD": 0,
+        "fallback": false,
+        "position": [
+          1075,
+          0,
+          -2.5
+        ],
+        "rotationY": 1.5707963267948966,
+        "visible": true,
+        "motion": "stationary; no synthetic wheel rotation"
+      },
+      "sceneCounters": {
+        "frame": 4,
+        "calls": 129,
+        "triangles": 389675,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "name": "front-quarter",
+      "variant": "before",
+      "file": "front-quarter-before.jpg",
+      "camera": {
+        "position": [
+          1063.5,
+          7,
+          16
+        ],
+        "target": [
+          1071,
+          2,
+          -2.5
+        ],
+        "fov": 45
+      },
+      "locomotive": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "lod": 0,
+        "requestedLOD": 0,
+        "fallback": true,
+        "position": [
+          1075,
+          0,
+          -2.5
+        ],
+        "rotationY": 1.5707963267948966,
+        "visible": true,
+        "motion": "stationary; no synthetic wheel rotation"
+      },
+      "sceneCounters": {
+        "frame": 5,
+        "calls": 123,
+        "triangles": 373159,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "name": "front-quarter",
+      "variant": "after",
+      "file": "front-quarter-after.jpg",
+      "camera": {
+        "position": [
+          1063.5,
+          7,
+          16
+        ],
+        "target": [
+          1071,
+          2,
+          -2.5
+        ],
+        "fov": 45
+      },
+      "locomotive": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "lod": 0,
+        "requestedLOD": 0,
+        "fallback": false,
+        "position": [
+          1075,
+          0,
+          -2.5
+        ],
+        "rotationY": 1.5707963267948966,
+        "visible": true,
+        "motion": "stationary; no synthetic wheel rotation"
+      },
+      "sceneCounters": {
+        "frame": 6,
+        "calls": 123,
+        "triangles": 389195,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "name": "rear-quarter",
+      "variant": "before",
+      "file": "rear-quarter-before.jpg",
+      "camera": {
+        "position": [
+          1095,
+          7,
+          -20
+        ],
+        "target": [
+          1078,
+          2,
+          -2.5
+        ],
+        "fov": 45
+      },
+      "locomotive": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "lod": 0,
+        "requestedLOD": 0,
+        "fallback": true,
+        "position": [
+          1075,
+          0,
+          -2.5
+        ],
+        "rotationY": 1.5707963267948966,
+        "visible": true,
+        "motion": "stationary; no synthetic wheel rotation"
+      },
+      "sceneCounters": {
+        "frame": 7,
+        "calls": 161,
+        "triangles": 398775,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "name": "rear-quarter",
+      "variant": "after",
+      "file": "rear-quarter-after.jpg",
+      "camera": {
+        "position": [
+          1095,
+          7,
+          -20
+        ],
+        "target": [
+          1078,
+          2,
+          -2.5
+        ],
+        "fov": 45
+      },
+      "locomotive": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "lod": 0,
+        "requestedLOD": 0,
+        "fallback": false,
+        "position": [
+          1075,
+          0,
+          -2.5
+        ],
+        "rotationY": 1.5707963267948966,
+        "visible": true,
+        "motion": "stationary; no synthetic wheel rotation"
+      },
+      "sceneCounters": {
+        "frame": 8,
+        "calls": 161,
+        "triangles": 414811,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "name": "medium",
+      "variant": "before",
+      "file": "medium-before.jpg",
+      "camera": {
+        "position": [
+          1085,
+          10,
+          -88
+        ],
+        "target": [
+          1075,
+          2,
+          -2.5
+        ],
+        "fov": 45
+      },
+      "locomotive": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "lod": 1,
+        "requestedLOD": 1,
+        "fallback": true,
+        "position": [
+          1075,
+          0,
+          -2.5
+        ],
+        "rotationY": 1.5707963267948966,
+        "visible": true,
+        "motion": "stationary; no synthetic wheel rotation"
+      },
+      "sceneCounters": {
+        "frame": 9,
+        "calls": 135,
+        "triangles": 374243,
+        "points": 0,
+        "lines": 0
+      }
+    },
+    {
+      "name": "medium",
+      "variant": "after",
+      "file": "medium-after.jpg",
+      "camera": {
+        "position": [
+          1085,
+          10,
+          -88
+        ],
+        "target": [
+          1075,
+          2,
+          -2.5
+        ],
+        "fov": 45
+      },
+      "locomotive": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "lod": 1,
+        "requestedLOD": 1,
+        "fallback": false,
+        "position": [
+          1075,
+          0,
+          -2.5
+        ],
+        "rotationY": 1.5707963267948966,
+        "visible": true,
+        "motion": "stationary; no synthetic wheel rotation"
+      },
+      "sceneCounters": {
+        "frame": 10,
+        "calls": 135,
+        "triangles": 382903,
+        "points": 0,
+        "lines": 0
+      }
+    }
+  ],
+  "errors": [],
+  "models": {
+    "0": {
+      "triangles": 16144,
+      "drawCalls": 3,
+      "materials": 3,
+      "textures": 1
+    },
+    "1": {
+      "triangles": 8768,
+      "drawCalls": 3,
+      "materials": 3,
+      "textures": 1
+    },
+    "2": {
+      "triangles": 4088,
+      "drawCalls": 3,
+      "materials": 3,
+      "textures": 1
+    }
+  }
+}

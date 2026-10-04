@@ -1,3 +1,11 @@
+# Estado actual — Locomotiva 963 visual runtime (2026-10-04)
+
+TASK_ID `M01-LOCOMOTIVE-963-PRODUCTION-ASSET-RUNTIME-V1`, solicitado GPT-6.1 Sol HIGH. Branch `codex/m01-locomotive-963-production-asset-runtime` a partir de `5f3cc34f53c61beec52255d67f8babd7194c9f7f`. GLB genérico original CC0 com 3 LODs/3 draws, 16.144/8.768/4.088 tri. Anchor/evento/save intactos; offset GLB −0,82 m só para rodas/carris. Fallback preservado. P16 continua aberta; 963 não foi escrito na máquina. 11/11 focados, build PASS; browser final focado e quatro pares em `docs/verification/m01-runtime/locomotive-963-2026-10-04/`. HEAD exacto na entrega/remoto. M01 **PROTÓTIPO JOGÁVEL**. Produção rápida: sem suíte completa ou certificação pesada. Depois desta entrega parar; não integrar ou tocar main/outras branches.
+
+---
+
+Histórico anterior:
+
 # Estado actual — auditoria de determinismo schema 2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a MG34 aprovada nem Graphify.

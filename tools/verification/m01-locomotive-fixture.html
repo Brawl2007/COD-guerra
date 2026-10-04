@@ -1,0 +1,16 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;overflow:hidden;background:#798181}canvas{width:100vw;height:100vh;display:block}</style></head><body><canvas id="scene"></canvas><script type="module">
+import * as THREE from 'three';
+import {M01View} from '../../src/render/m01-view.js';
+import {M01Simulation} from '../../src/game/m01-simulation.js';
+const canvas=document.querySelector('canvas'),engine=new THREE.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true});engine.setSize(1280,720,false);engine.setPixelRatio(1);engine.outputColorSpace=THREE.SRGBColorSpace;engine.toneMapping=THREE.ACESFilmicToneMapping;engine.toneMappingExposure=1.15;engine.autoClear=false;
+const owner={engine,canvas,quality:'low'},sim=new M01Simulation(),view=new M01View(owner);window.ready=false;
+await view.ready;view.buildTerrain(sim.world);
+window.stage={view,sim,engine,async restore(snapshot){sim.restoreSnapshot(snapshot);view.lastFrame=null;view.render(sim);},
+ capture({position,target,lod,base=false}){
+  view.locomotive.update({x:1075+[20,100,250][lod],z:-2.5});
+  view.locomotive.proxy.visible=base;for(const [l,m]of view.locomotive.models)m.visible=!base&&l===view.locomotive.selectedLOD;
+  const camera=new THREE.PerspectiveCamera(45,1280/720,.05,7500);camera.position.fromArray(position);camera.lookAt(new THREE.Vector3(...target));
+  engine.info.autoReset=false;engine.info.reset();engine.clear();engine.render(view.scene,camera);
+  return {camera:{position,target,fov:45},locomotive:view.locomotive.diagnostics,sceneCounters:{...engine.info.render},snapshot:sim.snapshot(false)};
+ },modelCounts(){const out={};for(const [lod,m]of view.locomotive.models){let triangles=0,drawCalls=0;const materials=new Set(),textures=new Set();m.traverse(n=>{if(n.isMesh){triangles+=(n.geometry.index?.count??n.geometry.attributes.position.count)/3;drawCalls++;materials.add(n.material);for(const t of Object.values(n.material))if(t?.isTexture)textures.add(t);}});out[lod]={triangles,drawCalls,materials:materials.size,textures:textures.size};}return out;}};window.ready=true;
+</script></body></html>
