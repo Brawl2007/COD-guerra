@@ -1,0 +1,41 @@
+name: M01 vegetation focused validation
+
+on:
+  push:
+    branches:
+      - codex/m01-vegetation-mesh-lod-runtime-pass
+  workflow_dispatch:
+
+concurrency:
+  group: m01-vegetation-focused-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Focused vegetation tests
+        run: node --test tests/m01-vegetation-lod.test.js tests/m01-environment-quality.test.js
+      - name: Production build
+        run: npm run build
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Focused browser proof
+        run: npx playwright test tests/browser/m01-vegetation-lod.spec.js
+      - name: Upload focused evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-vegetation-focused-evidence
+          path: test-results/
+          if-no-files-found: ignore
