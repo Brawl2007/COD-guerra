@@ -43,11 +43,12 @@ test('vegetation LOD tiers use hysteresis and Low keeps a geometric canopy',()=>
 
 test('approved tree colliders and critical route remain unchanged by the visual pass',()=>{
   const expected=[
-    [-36,-9,12,.25],[-8,63,15,.295],[-40,-24,16,.34],[-79,-22,18,.25],[-122,-28,17,.295],[-169,-23,14,.34],
-    [-215,-29,16,.25],[-265,-24,18,.295],[-319,-30,15,.34],[-365,-21,17,.25],[-411,-27,15,.295],
-    [-49,77,16,.34],[-103,69,18,.25],[-159,73,15,.295],[-207,88,17,.34],[-349,82,18,.25],[-406,74,14,.295]
+    [-36,-9,12],[-8,63,15],[-40,-24,16],[-79,-22,18],[-122,-28,17],[-169,-23,14],
+    [-215,-29,16],[-265,-24,18],[-319,-30,15],[-365,-21,17],[-411,-27,15],
+    [-49,77,16],[-103,69,18],[-159,73,15],[-207,88,17],[-349,82,18],[-406,74,14]
   ];
-  assert.deepEqual(M01_TREES.map(t=>[t.x,t.z,t.height,t.radius]),expected);
+  assert.deepEqual(M01_TREES.map(t=>[t.x,t.z,t.height]),expected);
+  for(let i=0;i<M01_TREES.length;i++)assert.equal(M01_TREES[i].radius,.25+(i%3)*.045);
   const world=new TczewWorld();assert.equal(world.trees.length,17);assert.equal(world.treeObstacles.length,17);
   for(let i=0;i<world.trees.length;i++){
     const t=world.trees[i],o=world.treeObstacles[i];
