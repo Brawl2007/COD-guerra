@@ -59,7 +59,9 @@ test('fixed rail camera shows volumetric grove in High and a cheaper intact silh
   expect(low.player.angle).toBeCloseTo(high.player.angle,6);expect(vl.treeCount).toBe(85);expect(vl.leafCards).toBe(0);expect(vl.tracked.m01_tree_0).toBe('mid');
   expect(vl.treeTriangles).toBeLessThan(vh.treeTriangles);expect(vl.treeDrawCalls).toBeLessThanOrEqual(vh.treeDrawCalls);
   await page.screenshot({path:info.outputPath('CANDIDATE-B-rail-sappers-low.png'),style:'#pause,#hud,#menu {visibility:hidden!important}',timeout:120000});
-  await info.attach('vegetation-fixed-camera-counters',{body:JSON.stringify({high:{total:{drawCalls:high.drawCalls,triangles:high.triangles,textures:high.textures,geometries:high.geometries},vegetation:vh},low:{total:{drawCalls:low.drawCalls,triangles:low.triangles,textures:low.textures,geometries:low.geometries},vegetation:vl}},null,2),contentType:'application/json'});
+  const counters={high:{total:{drawCalls:high.drawCalls,triangles:high.triangles,textures:high.textures,geometries:high.geometries},vegetation:vh},low:{total:{drawCalls:low.drawCalls,triangles:low.triangles,textures:low.textures,geometries:low.geometries},vegetation:vl}};
+  console.log('M01_VEGETATION_COUNTERS '+JSON.stringify(counters));
+  await info.attach('vegetation-fixed-camera-counters',{body:JSON.stringify(counters,null,2),contentType:'application/json'});
   expect(watch.errors).toEqual([]);expect(watch.failed).toEqual([]);
 });
 
