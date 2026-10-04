@@ -38,8 +38,10 @@ test('real enemy hit and real near miss drive bounded directional M01 presentati
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await openSaved(page,hitFixture.snapshot,'medium');
   const authoritativeBefore=await page.evaluate(()=>window.gameDiagnostics().player);
-  await page.waitForFunction(()=>window.gameDiagnostics().m01.combatFeedback.counts.playerHit>0,null,{timeout:20000});
-  await page.waitForFunction(()=>window.gameDiagnostics().m01.combatFeedback.lastHitDirection!==null,null,{timeout:20000});
+  await page.waitForFunction(()=>{
+    const f=window.gameDiagnostics().m01.combatFeedback;
+    return f.counts.playerHit>0&&f.lastHitDirection!==null&&f.hitImpulse>0&&f.overlayAlpha>0;
+  },null,{timeout:20000});
   const hit=await page.evaluate(()=>window.gameDiagnostics());
   expect(feedback(hit).hitImpulse).toBeGreaterThan(0);expect(feedback(hit).overlayAlpha).toBeGreaterThan(0);
   expect(feedback(hit).overlayAlpha).toBeLessThanOrEqual(.42);expect(feedback(hit).shakeStrength).toBeLessThanOrEqual(.02);
@@ -66,7 +68,10 @@ test('real crack/impact, MG accumulation, close grenade and quality caps remain 
   test.setTimeout(180000);
   await openSaved(page,nearFixture.snapshot,'high');
   const start=await page.evaluate(()=>window.gameDiagnostics());
-  await page.waitForFunction(()=>window.gameDiagnostics().m01.combatFeedback.counts.nearMiss>0,null,{timeout:20000});
+  await page.waitForFunction(()=>{
+    const f=window.gameDiagnostics().m01.combatFeedback;
+    return f.counts.nearMiss>0&&f.nearMissImpulse>0&&f.direction!==0;
+  },null,{timeout:20000});
   const near=await page.evaluate(()=>window.gameDiagnostics());
   expect(feedback(near).nearMissImpulse).toBeGreaterThan(0);expect(feedback(near).direction).not.toBe(0);
   expect(feedback(near).suppressionVisual).toBeLessThanOrEqual(1);
