@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {patternMatchesUrl,classifyHarnessState} from './browser/helpers/harness.js';
+import {patternMatchesUrl,classifyHarnessState,waitForState} from './browser/helpers/harness.js';
 
 test('forced asset glob matching is deterministic and path-specific',()=>{
   assert.equal(patternMatchesUrl('**/m01_mg34_prone_animations.glb','http://127.0.0.1:4173/COD-guerra/assets/models/provisional/m01/weapons/mg34-prone/m01_mg34_prone_animations.glb'),true);
@@ -20,4 +20,14 @@ test('hang classification distinguishes crash, paused, pointer lock, required as
   assert.equal(classifyHarnessState({readyState:'complete',pointerLockId:'game',diagnostics:{paused:false,m01:{requiredAssetFailures:[{path:'bridge.glb'}],assetFailures:[]}}}),'REQUIRED_ASSET_FAILURE');
   assert.equal(classifyHarnessState({readyState:'complete',pointerLockId:'game',diagnostics:{paused:false,m01:{requiredAssetFailures:[],assetFailures:[{path:'optional.glb'}]}}}),'OPTIONAL_ASSET_FAILURE_PRESENT');
   assert.equal(classifyHarnessState({readyState:'complete',pointerLockId:'game',diagnostics:{paused:false,m01:{requiredAssetFailures:[],assetFailures:[]}}}),'WAIT_CONDITION_UNMET');
+});
+
+test('waitForState accepts a condition reached exactly at the timeout boundary without extending the budget',async()=>{
+  let evaluations=0;
+  const page={
+    waitForFunction:async()=>{throw new Error('Timeout 120000ms exceeded');},
+    evaluate:async()=>{evaluations+=1;return true;}
+  };
+  assert.equal(await waitForState(page,'boundary-state',()=>true,null,{timeout:120000}),true);
+  assert.equal(evaluations,1);
 });
