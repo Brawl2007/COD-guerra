@@ -21,7 +21,8 @@ async function openFrom(page,snapshot,quality='medium'){
 }
 
 test('east demolition runs layered blast -> dust -> smoke, freezes on pause and cleans transient pools',async({page},info)=>{
-  test.setTimeout(90000);
+  // The trace reaches cleanup at ~90 s under SwiftShader; give CI headroom without changing any FX timing.
+  test.setTimeout(process.env.CI?180000:90000);
   const {errors,failed}=await openFrom(page,preBlast,'medium');
   // Capture the short hot phase in-page so software WebGL/remote polling cannot skip the one or two relevant frames.
   await page.evaluate(()=>{
