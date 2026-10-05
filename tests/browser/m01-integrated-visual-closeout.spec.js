@@ -56,10 +56,11 @@ test('integrated closeout: locomotive wagons and Panzerzug near mid far',async({
   test.setTimeout(360000);
   const baseL=repair.sim.snapshot(false),baseP=armored.sim.snapshot(false);
   const views=[
-    {name:'train-locomotive-near.png',sim:repair.sim,snapshot:baseL,x:1038,z:25,target:{x:1075,z:-2.5,y:2.5},assets:true},
-    {name:'train-locomotive-mid.png',sim:repair.sim,snapshot:baseL,x:930,z:35,target:{x:1075,z:-2.5,y:2.5},assets:true},
-    {name:'train-consist-far.png',sim:repair.sim,snapshot:baseL,x:780,z:55,target:{x:1200,z:-2.5,y:2},assets:true},
-    {name:'panzerzug-near.png',sim:armored.sim,snapshot:baseP,x:1080,z:30,target:{x:1119,z:2.5,y:2.5},assets:true}
+    // Inspect the train from the Lisewo/east side of the 1912 portal; west-side cameras are occluded by the gate/bridge mass.
+    {name:'train-locomotive-near.png',sim:repair.sim,snapshot:baseL,x:1100,z:-28,target:{x:1075,z:-2.5,y:1.5},assets:true},
+    {name:'train-locomotive-mid.png',sim:repair.sim,snapshot:baseL,x:1150,z:-45,target:{x:1075,z:-2.5,y:1.5},assets:true},
+    {name:'train-consist-far.png',sim:repair.sim,snapshot:baseL,x:1260,z:-80,target:{x:1200,z:-2.5,y:1.5},assets:true},
+    {name:'panzerzug-near.png',sim:armored.sim,snapshot:baseP,x:1160,z:30,target:{x:1119,z:2.5,y:1.5},assets:true}
   ];
   const seen=[];
   for(const view of views){
