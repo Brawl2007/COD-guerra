@@ -1,0 +1,46 @@
+name: M01 production integration checkpoint 1
+
+on:
+  push:
+    branches:
+      - codex/m01-production-integration-checkpoint-1
+  workflow_dispatch:
+
+concurrency:
+  group: m01-production-integration-checkpoint-1
+  cancel-in-progress: true
+
+jobs:
+  structural:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact integration candidate
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Intermediate production build
+        run: npm run build
+      - name: Focused integrated systems
+        run: >
+          node --test
+          tests/m01-wz29-viewmodel.test.js
+          tests/m01-locomotive.test.js
+          tests/m01-panzerzug.test.js
+          tests/m01-soldier-visual-variation.test.js
+          tests/m01-vegetation-lod.test.js
+          tests/m01-wagon-runtime-integration.test.js
+          tests/m01-wagon-damage-glb.test.js
+          tests/m01-wagons-glb.test.js
+          tests/m01-battlefield-fx.test.js
+          tests/m01-audio-production.test.js
+          tests/m01-combat-feedback.test.js
+          tests/m01-runtime.test.js
+          tests/game.test.js
