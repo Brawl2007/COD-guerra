@@ -12,8 +12,12 @@ for(const quality of ['low','medium','high'])test(`Wz.29 production ADS, paused 
       document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();document.exitPointerLock();
     }};document.addEventListener('pointerlockchange',hold,true);
   });
+  const menuFrames=await page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames);
   await page.locator('#continue').click();await expect(page.locator('#pause')).toBeVisible();
-  await page.waitForFunction(()=>window.gameDiagnostics().m01.viewModel.active);
+  // Wait for a frame from the restored world, not merely an already-active menu viewmodel.
+  await page.waitForFunction(({clock,frames})=>{
+    const g=window.gameDiagnostics();return g.clock===clock&&g.m01.renderedFrames>frames&&g.m01.viewModel.active;
+  },{clock:snapshot.clock,frames:menuFrames});
   const before=await page.evaluate(()=>window.gameDiagnostics());
   const v=before.m01.viewModel;
   expect(v.lod).toBe(0);expect(v.aimBlend).toBe(1);expect(v.clip).toBe('aim');

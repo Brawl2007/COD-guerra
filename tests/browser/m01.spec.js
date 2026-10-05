@@ -201,7 +201,10 @@ test('the station clip alone cannot enable a viewmodel when the required weapon 
 test('the station evacuation restores its grounded drag, pauses with the mission and delivers the casualty',async({page},info)=>{
   test.setTimeout(process.env.CI?240000:180000);
   // Staged continuation of real simulation controls; not an uninterrupted browser playthrough.
-  const snapshot=toStationEvacuation(driver(),{observe:true}).sim.snapshot();
+  const station=toStationEvacuation(driver(),{observe:true});
+  // Genuine simulation-control state, staged later so combined rendering cannot turn the remaining drag into a wall-clock timeout.
+  station.until(()=>station.sim.stationEvacuation.patient.x<-329,60);
+  const snapshot=station.sim.snapshot();
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
   const {errors,failed}=await open(page);await start(page,'#continue');
   await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.actors?.some(a=>a.id==='leon_dudek'&&a.clip==='drag_wounded'));
@@ -405,13 +408,14 @@ test('the genuine train 963 and both MG34 fire sources use optional GLBs, light 
   const {errors,failed}=await open(page);await start(page,'#continue');
   await page.waitForFunction(()=>{
     const g=window.gameDiagnostics();
-    if(!g.paused&&g.m01.wagons.loaded.length===2&&g.m01.characters.actors.some(a=>a.weapon==='mg34'&&a.clip==='mg34_prone_fire_burst')){
+    if(!g.paused&&g.m01.wagons.loaded.length===6&&g.m01.characters.actors.some(a=>a.weapon==='mg34'&&a.clip==='mg34_prone_fire_burst')){
       document.exitPointerLock();return true;
     }return false;
   },null,{timeout:90000});
   await expect(page.locator('#pause')).toBeVisible();
   const frozen=await page.evaluate(()=>window.gameDiagnostics()),w=frozen.m01.wagons,mg=frozen.m01.characters.actors.filter(a=>a.weapon==='mg34');
-  expect(w).toMatchObject({wagons:65,step:9.1,lod:2,proxies:0,visible:true,first:[1090,0,-2.5],last:[1672.4,0,-2.5]});
+  expect(w).toMatchObject({wagons:65,step:9.1,proxies:0,visible:true,first:[1090,0,-2.5],last:[1672.4,0,-2.5]});
+  expect(w.loaded).toEqual(['covered:0','covered:1','covered:2','open:0','open:1','open:2']);expect(w.lodDistribution).toEqual({0:0,1:0,2:65});
   expect(w.batches).toBeLessThanOrEqual(10);expect(mg.map(a=>a.id).sort()).toEqual(['de_east_0','de_east_1']);
   expect(frozen.m01.characters.active).toBeLessThanOrEqual(18);
   for(const a of mg){expect(a.weaponLOD).toBe(2);expect(a.weaponMeshes).toContain('mg34_body');expect(a.weaponMeshes).not.toContain('rifle');expect(a.weaponMeshes).not.toContain('clip');expect(a.muzzle.every(Number.isFinite)).toBe(true);}
@@ -449,7 +453,10 @@ test('missing optional wagon models and MG34 clips preserve 65 proxies, both pro
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
   await page.route('**/m01-wagons/*.glb',r=>r.fulfill({status:404,body:'optional wagon missing'}));
   await page.route('**/mg34/m01_mg34_animations.glb',r=>r.fulfill({status:404,body:'optional MG34 clips missing'}));
-  await open(page);await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.failures.some(f=>f.path.includes('m01_mg34_animations'))&&window.gameDiagnostics().m01.assetFailures.filter(f=>f.path.includes('m01-wagons')).length===2);
+  await open(page);await page.waitForFunction(()=>{
+    const g=window.gameDiagnostics();return g.m01.characters.failures.some(f=>f.path.includes('m01_mg34_animations'))&&
+      g.m01.wagons.loaded.length===0&&g.m01.wagons.proxies===65&&g.m01.assetFailures.some(f=>f.path.includes('m01-wagons'));
+  });
   await start(page,'#continue');const g=await page.evaluate(()=>window.gameDiagnostics());
   expect(g.m01.requiredAssetFailures).toEqual([]);expect(g.m01.wagons).toMatchObject({wagons:65,proxies:65,loaded:[],visible:true});
   expect(g.m01.characters.actors.every(a=>a.weapon!=='mg34')).toBe(true);expect(g.m01.actorAnimations.aiming).toBeGreaterThan(0);

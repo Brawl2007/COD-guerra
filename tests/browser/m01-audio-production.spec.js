@@ -56,8 +56,23 @@ test('M01 battlefield audio follows real rifle/MG/impact/blast events and surviv
   await page.waitForFunction(before=>((window.gameDiagnostics().audio.eventCounts.impact??0)>before),count(beforeShot,'impact'),{timeout:15000});
 
   // A real grenade supplies an authoritative small blast after its existing fuse expires.
-  const beforeBlast=await page.evaluate(()=>window.gameDiagnostics());await page.keyboard.press('KeyG');
-  await page.waitForFunction(before=>((window.gameDiagnostics().audio.eventCounts.explosion??0)>before),count(beforeBlast,'explosion'),{timeout:15000});
+  // Observe simulation time rather than assuming wall-clock pace under the combined renderer load.
+  const beforeBlast=await page.evaluate(()=>window.gameDiagnostics()),beforeAmmo=beforeBlast.m01.grenades.ammo;
+  await page.keyboard.press('KeyG');
+  await page.waitForFunction(ammo=>{
+    const g=window.gameDiagnostics();return g.m01.grenades.ammo===ammo-1&&g.m01.grenades.active.length===1;
+  },beforeAmmo,{timeout:10000});
+  const thrown=await page.evaluate(()=>window.gameDiagnostics());
+  expect(thrown.m01.grenades.active[0].fuse).toBeGreaterThan(0);expect(thrown.m01.grenades.active[0].fuse).toBeLessThanOrEqual(4);
+  await page.waitForFunction(({before,start})=>{
+    const g=window.gameDiagnostics(),authority=g.m01.damage.some(d=>d.id?.startsWith('m01_grenade_'));
+    const presented=g.m01.pendingAudio.some(s=>s.key?.startsWith('m01_grenade_'))||(g.audio.eventCounts.explosion??0)>before;
+    return g.clock>=start+4&&authority&&presented;
+  },{before:count(beforeBlast,'explosion'),start:beforeBlast.clock},{timeout:30000});
+  await page.waitForFunction(before=>((window.gameDiagnostics().audio.eventCounts.explosion??0)>before),count(beforeBlast,'explosion'),{timeout:10000});
+  const afterBlast=await page.evaluate(()=>window.gameDiagnostics()),grenadeDamage=afterBlast.m01.damage.find(d=>d.id?.startsWith('m01_grenade_'));
+  expect(grenadeDamage).toBeTruthy();expect(afterBlast.m01.grenades.active).toEqual([]);
+  await info.attach('grenade-audio-proof',{body:JSON.stringify({before:{clock:beforeBlast.clock,ammo:beforeAmmo},thrown:{clock:thrown.clock,grenades:thrown.m01.grenades},after:{clock:afterBlast.clock,grenades:afterBlast.m01.grenades,damage:grenadeDamage,explosions:count(afterBlast,'explosion')}}),contentType:'application/json'});
 
   // Presentation-only distant battlefield activity uses its own deterministic scheduling domain.
   await page.waitForFunction(()=>((window.gameDiagnostics().audio.eventCounts['distant-battle']??0)>0),null,{timeout:30000});
