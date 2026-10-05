@@ -33,7 +33,7 @@ test('measured real clips and asset socket metadata are locked; archived BASE is
     assert.equal(createHash('sha256').update(readFileSync(new URL('../tools/verification/fixtures/m01-wz29-base-viewmodel.mjs',import.meta.url))).digest('hex'),'6fd9cc2fc5831c7d22d2f3b774b17b1194152e2a7a73b6a41f7bf37679dd062a');
   }finally{c.dispose();}
 });
-test('production simulation, muzzle/hitboxes, RNG, third-person and environment retain BASE bytes',()=>{
+test('integration keeps Wz29 gameplay, simulation, muzzle/hitboxes and RNG protected bytes unchanged',()=>{
   const hashes=JSON.parse(readFileSync(new URL('../tools/verification/fixtures/m01-wz29-protected-hashes.json',import.meta.url)));
   for(const [path,hash]of Object.entries(hashes))assert.equal(createHash('sha256').update(readFileSync(new URL('../'+path,import.meta.url))).digest('hex'),hash,path);
 });

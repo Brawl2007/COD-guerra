@@ -1,0 +1,29 @@
+<!doctype html><html lang="pt"><meta charset="utf-8"><link rel="icon" href="data:,"><title>M01 soldier visual review</title><style>body{margin:0;overflow:hidden;background:#8d969a}canvas{display:block}#label{position:fixed;left:12px;top:12px;background:#ffffffd9;padding:8px;color:#18201c;font:14px system-ui;white-space:pre-line}</style><div id="label"></div><script type="module">
+import * as THREE from 'three';
+import {M01Characters} from '../../src/render/m01-characters.js';
+import {M01Simulation} from '../../src/game/m01-simulation.js';
+import {soldierVisualVariant} from '../../src/render/m01-soldier-variation.js';
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setSize(1280,720);renderer.setPixelRatio(1);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.shadowMap.enabled=true;document.body.appendChild(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color('#8d969a');scene.add(new THREE.HemisphereLight('#d7e2ea','#4d4433',1.4));
+const sun=new THREE.DirectionalLight('#fff1dc',2.4);sun.position.set(-3,6,-4);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-5,right:5,top:5,bottom:-5,near:.5,far:30});scene.add(sun);
+const fill=new THREE.DirectionalLight('#c9d6ff',.6);fill.position.set(4,2,3);scene.add(fill);
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshStandardMaterial({color:'#6f6a58',roughness:1}));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+const camera=new THREE.PerspectiveCamera(40,1280/720,.05,300),sim=new M01Simulation(),candidate=new M01Characters(scene),baseline=new M01Characters(scene,{visualVariation:false});window.ready=false;
+await candidate.load('high');baseline.sources=candidate.sources;baseline.clips=candidate.clips;
+function originals(kind){
+ if(kind==='roles')return ['marek_zielinski','pawel_krawiec','sapper_2','sapper_3'].map(id=>sim.actor(id));
+ const nation=kind==='de'?'enemy':'ally',prefix=kind==='de'?'de_east_':'pl_east_',all=sim.actors.filter(a=>a.team===nation&&a.id.startsWith(prefix)&&a.role==='RIFLEMAN');
+ // First five different packages in stable ID order, all existing soldiers. No invented actors or military roles.
+ const seen=new Set();return all.filter(a=>{const id=soldierVisualVariant(a).id;if(seen.has(id))return false;seen.add(id);return true;}).slice(0,5);
+}
+function counts(c){let triangles=0,drawCalls=0;const materials=new Set(),textures=new Set();for(const v of c.instances.values())for(const m of v.meshes)if(m.visible){triangles+=(m.geometry.index?.count??0)/3;drawCalls++;materials.add(m.material);for(const t of Object.values(m.material))if(t?.isTexture)textures.add(t);}return {triangles,drawCalls,materials:materials.size,textures:textures.size};}
+window.stage={sim,candidate,baseline,restore(snapshot){sim.restoreSnapshot(snapshot);},snapshot(){return sim.snapshot(false);},capture({kind='pl',distance=5,base=false}){
+ const untouched=sim.snapshot(false),raw=originals(kind),actors=raw.map((a,i)=>({...a,active:true,alive:true,state:'GUARD',crouched:false,carriedBy:null,stationDrag:null,target:null,shot:0,firedAt:-1e9,x:(i-(raw.length-1)/2)*.66,y:0,z:0,facing:-Math.PI/2+(i%3-1)*.14}));
+ const c=base?baseline:candidate,other=base?candidate:baseline;for(const v of other.instances.values())v.root.visible=false;
+ c.update(actors,12,{x:0,z:-distance},'high',sim.battleClock);
+ const medium=distance>=14,position=medium?[-3,3.4,-18]:[-.7,1.65,-3.1],target=medium?[0,.9,0]:[0,1.30,0];camera.fov=medium?28:40;camera.position.fromArray(position);camera.lookAt(new THREE.Vector3(...target));camera.updateProjectionMatrix();
+ const ids=actors.map(a=>a.id);document.querySelector('#label').textContent=`${kind.toUpperCase()} · ${base?'BEFORE':'AFTER'} · LOD${c.diagnostics.actors[0]?.lod}\nExisting actor IDs: ${ids.join(', ')}\nStaged inspection poses/light; unchanged production rigs/atlas`;
+ renderer.info.autoReset=false;renderer.info.reset();renderer.render(scene,camera);
+ return {ids,actors:c.diagnostics.actors,camera:{position,target,fov:camera.fov},counts:counts(c),resources:c.diagnostics.visuals,snapshot:sim.snapshot(false),untouched,rendererCounters:{...renderer.info.render}};
+ }};window.ready=true;
+</script></html>

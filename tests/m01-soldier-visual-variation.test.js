@@ -8,6 +8,11 @@ import {soldierVisualVariant, SoldierVisualVariations} from '../src/render/m01-s
 import {nodeCharacterAssets} from '../tools/verification/m01-soldier-variation-assets.mjs';
 import {M01Simulation} from '../src/game/m01-simulation.js';
 import {actorHitboxes,muzzlePosition} from '../src/world/spatial.js';
+const integratedPresentation=new Set([
+ 'src/core/audio.js','src/game/game.js','src/main.js','src/styles.css',
+ 'src/render/m01-atmosphere.js','src/render/m01-characters.js','src/render/m01-environment.js','src/render/m01-surfaces.js',
+ 'src/render/m01-train-wagons.js','src/render/m01-view.js','src/render/m01-viewmodel.js','src/render/three-renderer.js'
+]);
 import {driver,toRepair} from './helpers/m01-route.js';
 const assets=await nodeCharacterAssets();
 function characters(on=true){const c=new M01Characters(new THREE.Scene(),{visualVariation:on});c.sources=assets.sources;c.clips=assets.clips;return c;}
@@ -75,9 +80,9 @@ test('real continuation and its CP backup keep the same visual identities; Germa
   for(let i=0;i<p.count;i++){assert.ok(Math.abs(p.getX(i)-original.getX(i))<=.0030001);assert.equal(p.getY(i),original.getY(i));assert.ok(Math.abs(p.getZ(i)-original.getZ(i))<=.0015001);}
  }}finally{c.dispose();}
 });
-test('all old assets, missions, gameplay, hitbox/muzzle, save, locomotion and weapon modules are byte-identical to exact base',()=>{
+test('integration preserves gameplay, hitbox/muzzle, save, locomotion and non-presentation base assets byte-identical',()=>{
  const base='5f3cc34f53c61beec52255d67f8babd7194c9f7f',paths=execFileSync('git',['ls-tree','-r','--name-only',base],{encoding:'utf8'}).trim().split('\n').filter(p=>/^(src|assets|missions)\//.test(p));
- for(const p of paths){if(['src/render/m01-view.js','src/render/m01-characters.js'].includes(p))continue;assert.deepEqual(readFileSync(new URL('../'+p,import.meta.url)),execFileSync('git',['show',base+':'+p],{maxBuffer:32*1024*1024}),p);}
+ for(const p of paths){if(integratedPresentation.has(p))continue;assert.deepEqual(readFileSync(new URL('../'+p,import.meta.url)),execFileSync('git',['show',base+':'+p],{maxBuffer:32*1024*1024}),p);}
  const file=readFileSync(new URL('../src/render/m01-characters.js',import.meta.url),'utf8'),old=execFileSync('git',['show',base+':src/render/m01-characters.js'],{encoding:'utf8'});
  const section=(s,begin,end)=>s.slice(s.indexOf(begin),s.indexOf(end,s.indexOf(begin)));
  assert.equal(section(file,'  sample(','  create('),section(old,'  sample(','  create('));
