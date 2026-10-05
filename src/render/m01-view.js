@@ -207,8 +207,8 @@ export class M01View {
         put('limbs',midpoint,[bone.radius,length,bone.radius],cloth,bone);
       }
       for(const foot of pose.boots)put('boots',foot,[.25,.11,.16]);
-      if(near)put('hands',[hx-.005,hy-.17,hz],[.058,.072,.060]);
-      if(near)for(const i of [3,7])put('hands',pose.limbs[i].to,[.043,.066,.048]);
+      if(near)put('hands',[hx-.005,hy-.17,hz],[.058,.072,.060],skin);
+      if(near)for(const i of [3,7])put('hands',pose.limbs[i].to,[.043,.066,.048],skin);
       if(!a.civilian&&a.role!=='MEDIC'){
         put('rifle',pose.rifle.position,[.82,.095,.06],null,{roll:pose.rifle.pitch});
         const from=pose.rifle.barrelFrom,to=pose.rifle.muzzle;
