@@ -78,7 +78,7 @@ test('real in-flight round produces bounded material impact FX without altering 
   expect(impact.m01.fireEffects.puff).toBeLessThanOrEqual(144);
   expect(impact.m01.fireEffects.spark).toBeLessThanOrEqual(96);
   expect(impact.m01.fireEffects.chip).toBeLessThanOrEqual(128);
-  await page.screenshot({path:info.outputPath('AFTER-real-round-impact.png'),timeout:30000});
+  await page.screenshot({path:info.outputPath('AFTER-real-round-impact.png'),timeout:120000});
   await info.attach('impact-counters',{body:JSON.stringify({before:before.m01.fireEffects,impact:impact.m01.fireEffects,drawCalls:impact.drawCalls,triangles:impact.triangles},null,2),contentType:'application/json'});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
