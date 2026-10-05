@@ -1,0 +1,109 @@
+{
+  "task": "M01-INTEGRATED-VISUAL-PLACEHOLDER-CLOSEOUT-V2",
+  "base_head": "6bd69521aef18f00b2ab37ccd7ceeca6a4da3a2b",
+  "evidence_run": 37349847102,
+  "validated": {
+    "node": {
+      "pass": 313,
+      "fail": 0,
+      "skipped": 0
+    },
+    "browser": {
+      "pass": 56,
+      "fail": 0,
+      "retries": 0
+    }
+  },
+  "vegetation": {
+    "high": {
+      "total": {
+        "drawCalls": 127,
+        "triangles": 392513,
+        "textures": 86,
+        "geometries": 262
+      },
+      "trees": {
+        "count": 85,
+        "solid": 17,
+        "visual": 68,
+        "lod": {
+          "near": 9,
+          "mid": 42,
+          "far": 34
+        },
+        "instances": 518,
+        "drawCalls": 7,
+        "triangles": 17812,
+        "leafCards": 18,
+        "grassInstances": 5951
+      }
+    },
+    "low": {
+      "total": {
+        "drawCalls": 126,
+        "triangles": 350820,
+        "textures": 89,
+        "geometries": 279
+      },
+      "trees": {
+        "count": 85,
+        "lod": {
+          "near": 3,
+          "mid": 23,
+          "far": 59
+        },
+        "instances": 287,
+        "drawCalls": 6,
+        "triangles": 7564,
+        "leafCards": 0,
+        "grassInstances": 2975
+      }
+    }
+  },
+  "wagons": {
+    "nearTotal": {
+      "drawCalls": 61,
+      "triangles": 370672,
+      "textures": 34,
+      "geometries": 249
+    },
+    "train": {
+      "wagons": 65,
+      "loadedModels": 6,
+      "proxies": 0,
+      "batches": 8,
+      "lodDistribution": {
+        "0": 0,
+        "1": 0,
+        "2": 65
+      }
+    }
+  },
+  "soldierInspection": {
+    "deClose": {
+      "actors": 5,
+      "triangles": 80105,
+      "drawCalls": 30,
+      "clips": [
+        "standing_idle"
+      ]
+    },
+    "plClose": {
+      "actors": 5,
+      "triangles": 73972,
+      "drawCalls": 30,
+      "clips": [
+        "standing_idle"
+      ]
+    },
+    "roles": {
+      "actors": 4,
+      "triangles": 60772,
+      "drawCalls": 30,
+      "clips": [
+        "standing_idle"
+      ]
+    }
+  },
+  "note": "Counters are scene snapshots, not an FPS benchmark."
+}
