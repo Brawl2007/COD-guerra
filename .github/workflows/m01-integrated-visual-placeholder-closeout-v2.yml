@@ -1,0 +1,67 @@
+name: M01 integrated visual placeholder closeout v2
+
+on:
+  push:
+    branches:
+      - codex/m01-integrated-visual-placeholder-closeout-v2
+
+concurrency:
+  group: m01-integrated-visual-placeholder-closeout-v2
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 70
+    steps:
+      - name: Checkout audit head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Production build
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Directed Station and Train captures
+        run: |
+          set -o pipefail
+          mkdir -p docs/verification/m01-runtime/integrated-visual-closeout-v2/runtime-evidence
+          npx playwright test tests/browser/m01-integrated-visual-closeout.spec.js 2>&1 | tee docs/verification/m01-runtime/integrated-visual-closeout-v2/runtime-evidence/directed-captures.log
+
+      - name: Integrated visual evidence matrix
+        run: |
+          set -o pipefail
+          npx playwright test             tests/browser/m01-soldier-visual-variation.spec.js             tests/browser/m01-vegetation-lod.spec.js             tests/browser/m01-wagon-runtime-integration.spec.js             tests/browser/m01-battlefield-fx.spec.js             tests/browser/m01-combat-feedback.spec.js             tests/browser/m01-wz29-viewmodel.spec.js             2>&1 | tee docs/verification/m01-runtime/integrated-visual-closeout-v2/runtime-evidence/visual-matrix.log
+
+      - name: Character action and prone captures
+        run: |
+          set -o pipefail
+          npx playwright test tests/browser/m01.spec.js --grep "the station evacuation|the real roll-call snapshot"             2>&1 | tee docs/verification/m01-runtime/integrated-visual-closeout-v2/runtime-evidence/character-action.log
+          npx playwright test tests/browser/m01-mg34-prone.spec.js --grep "shot 4"             2>&1 | tee docs/verification/m01-runtime/integrated-visual-closeout-v2/runtime-evidence/mg34-prone.log
+
+      - name: Runtime unchanged outside audit scope
+        run: |
+          git diff --exit-code 6bd69521aef18f00b2ab37ccd7ceeca6a4da3a2b --             src missions assets public package.json package-lock.json vite.config.js playwright.config.js
+
+      - name: Upload integrated visual closeout evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-integrated-visual-placeholder-closeout-v2
+          path: |
+            test-results/
+            playwright-report/
+            docs/verification/m01-runtime/integrated-visual-closeout-v2/
+          if-no-files-found: error
