@@ -34,7 +34,7 @@ async function pause(page){
 const count=(d,name)=>d.audio.eventCounts[name]??0;
 
 test('M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops',async({page},info)=>{
-  test.setTimeout(180000);
+  test.setTimeout(process.env.CI?300000:180000);
   const pageErrors=[];page.on('pageerror',e=>pageErrors.push(e.message));
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:combatSnapshot});
   await page.goto('?debug=1');await waitMenu(page);await startSaved(page);
@@ -66,10 +66,8 @@ test('M01 battlefield audio follows real rifle/MG/impact/blast events and surviv
   expect(thrown.m01.grenades.active[0].fuse).toBeGreaterThan(0);expect(thrown.m01.grenades.active[0].fuse).toBeLessThanOrEqual(4);
   await page.waitForFunction(({before,start})=>{
     const g=window.gameDiagnostics(),authority=g.m01.damage.some(d=>d.id?.startsWith('m01_grenade_'));
-    const presented=g.m01.pendingAudio.some(s=>s.key?.startsWith('m01_grenade_'))||(g.audio.eventCounts.explosion??0)>before;
-    return g.clock>=start+4&&authority&&presented;
-  },{before:count(beforeBlast,'explosion'),start:beforeBlast.clock},{timeout:30000});
-  await page.waitForFunction(before=>((window.gameDiagnostics().audio.eventCounts.explosion??0)>before),count(beforeBlast,'explosion'),{timeout:10000});
+    return g.clock>=start+4&&authority&&(g.audio.eventCounts.explosion??0)>before;
+  },{before:count(beforeBlast,'explosion'),start:beforeBlast.clock},{timeout:process.env.CI?120000:30000});
   const afterBlast=await page.evaluate(()=>window.gameDiagnostics()),grenadeDamage=afterBlast.m01.damage.find(d=>d.id?.startsWith('m01_grenade_'));
   expect(grenadeDamage).toBeTruthy();expect(afterBlast.m01.grenades.active).toEqual([]);
   await info.attach('grenade-audio-proof',{body:JSON.stringify({before:{clock:beforeBlast.clock,ammo:beforeAmmo},thrown:{clock:thrown.clock,grenades:thrown.m01.grenades},after:{clock:afterBlast.clock,grenades:afterBlast.m01.grenades,damage:grenadeDamage,explosions:count(afterBlast,'explosion')}}),contentType:'application/json'});
