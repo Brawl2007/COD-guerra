@@ -76,6 +76,36 @@ test('voice budget evicts low-priority presentation and never exceeds the hard l
   audio.dispose();
 });
 
+test('distant rifle/MG stay low priority and cannot evict more important voices; critical can evict distant',()=>{
+  const protectedPriorities=[AUDIO_PRIORITY.impact,AUDIO_PRIORITY.train,AUDIO_PRIORITY.aircraft,AUDIO_PRIORITY.rifle,AUDIO_PRIORITY.danger,AUDIO_PRIORITY.critical];
+  const {audio}=makeAudio(protectedPriorities.length);
+  protectedPriorities.forEach((priority,i)=>audio.noise(1,.02,0,0,{priority,kind:'protected-'+i,key:'protected-'+i}));
+  const before=[...audio.voices].map(v=>({kind:v.kind,priority:v.priority,serial:v.serial}));
+  const droppedBefore=audio.diagnostics.droppedVoices;
+  audio.distantBattle('rifle',0,700,'distant-rifle-protected');
+  audio.distantBattle('mg',0,700,'distant-mg-protected');
+  assert.deepEqual([...audio.voices].map(v=>({kind:v.kind,priority:v.priority,serial:v.serial})),before);
+  assert.ok(audio.diagnostics.droppedVoices>droppedBefore,'distant voices should be dropped instead of evicting protected voices');
+  assert.ok([...audio.voices].every(v=>v.priority>AUDIO_PRIORITY.distant));
+  audio.dispose();
+
+  const second=makeAudio(3),a=second.audio;
+  a.distantBattle('rifle',0,700,'distant-rifle-evictable');
+  assert.equal(a.diagnostics.activeVoices,3);
+  assert.ok([...a.voices].every(v=>v.priority===AUDIO_PRIORITY.distant),'all active distant rifle layers must inherit distant priority');
+  a.tone(120,.4,'square',.04,0,0,0,{priority:AUDIO_PRIORITY.critical,kind:'critical-test'});
+  assert.equal(a.diagnostics.activeVoices,3);
+  assert.ok([...a.voices].some(v=>v.priority===AUDIO_PRIORITY.critical),'critical voice should enter the full budget');
+  assert.equal([...a.voices].filter(v=>v.priority===AUDIO_PRIORITY.distant).length,2,'critical voice should evict one distant layer');
+  a.dispose();
+
+  const third=makeAudio(8),mg=third.audio;
+  mg.distantBattle('mg',0,700,'distant-mg-priority');
+  assert.ok([...mg.voices].length>0);
+  assert.ok([...mg.voices].every(v=>v.priority===AUDIO_PRIORITY.distant),'all distant MG layers must inherit distant priority');
+  mg.dispose();
+});
+
 test('M01 ambience/aircraft loops are unique; train clank only follows a live false-to-true transition',async()=>{
   const {audio,ctx}=makeAudio();
   const base={stukas:true,secondRaid:false,train963:false};
