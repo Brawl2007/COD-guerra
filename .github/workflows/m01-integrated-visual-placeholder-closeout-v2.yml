@@ -38,7 +38,9 @@ jobs:
         run: |
           set -o pipefail
           mkdir -p docs/verification/m01-runtime/integrated-visual-closeout-v2/runtime-evidence
-          npx playwright test tests/browser/m01-integrated-visual-closeout.spec.js 2>&1 | tee docs/verification/m01-runtime/integrated-visual-closeout-v2/runtime-evidence/directed-captures.log
+          npx playwright test tests/browser/m01-integrated-visual-closeout.spec.js \
+            --output=docs/verification/m01-runtime/integrated-visual-closeout-v2/captures/directed \
+            2>&1 | tee docs/verification/m01-runtime/integrated-visual-closeout-v2/runtime-evidence/directed-captures.log
 
       - name: Integrated visual evidence matrix
         run: |
