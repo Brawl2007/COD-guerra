@@ -1,0 +1,61 @@
+name: M01 integration browser harness stabilization v2
+
+on:
+  push:
+    branches:
+      - codex/m01-integration-browser-harness-stabilization-v2
+
+concurrency:
+  group: m01-integration-browser-harness-stabilization-v2
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    steps:
+      - name: Checkout exact stabilization head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Browser prerequisite build
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Focused historical browser trouble spots
+        run: >
+          npx playwright test
+          tests/browser/m01.spec.js
+          tests/browser/m01-audio-production.spec.js
+          --grep "a real withdrawal continuation|the station evacuation|M01 battlefield audio"
+
+      - name: Full Node checkpoint
+        run: npm test
+
+      - name: Final production build
+        run: npm run build
+
+      - name: Full browser checkpoint once
+        run: npm run test:browser
+
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-integration-browser-harness-stabilization-v2-browser
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
