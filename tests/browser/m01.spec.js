@@ -124,16 +124,23 @@ test('licensed character rigs and first-person hands follow real weapon state, p
   const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(300);
   expect((await page.evaluate(()=>window.gameDiagnostics())).m01.viewModel).toEqual(frozen.m01.viewModel);
   await page.locator('#resume').click();
+  const fireRound=async expectedMag=>{
+    // Pointer-lock native mouse movement can race the slow rendered frame. Dispatch the same window input
+    // consumed by Input without repositioning the locked cursor, then wait on authoritative weapon state.
+    await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});
+    await page.waitForFunction(expected=>window.gameDiagnostics().m01.weapon.mag===expected,expectedMag,{timeout:process.env.CI?30000:10000});
+    await expect(page.locator('#mag')).toHaveText(String(expectedMag));
+  };
   for(let i=0;i<5;i++){
     await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
-    await page.mouse.click(640,360);await expect(page.locator('#mag')).toHaveText(String(4-i));
+    await fireRound(4-i);
   }
   await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');await horizontal();
   const clipVisible=page.waitForFunction(()=>{const g=window.gameDiagnostics().m01;if(g.weapon.state==='RELOAD_CLIP'&&g.viewModel.clip==='reload_clip'&&g.viewModel.clipTime>1.1){document.exitPointerLock();return true;}return false;});
   await page.keyboard.press('KeyR');await clipVisible;
   await capture('m01-rig-clip.png');
   await page.locator('#resume').click();await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
-  await page.mouse.click(640,360);await expect(page.locator('#mag')).toHaveText('4');
+  await fireRound(4);
   await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
   await horizontal();
   const singleVisible=page.waitForFunction(()=>{const v=window.gameDiagnostics().m01.viewModel;if(v.singleRound&&v.clipTime>1.1){document.exitPointerLock();return true;}return false;});
