@@ -14,9 +14,12 @@ for(const quality of ['low','medium','high'])test(`Wz.29 production ADS, paused 
   });
   const menuFrames=await page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames);
   await page.locator('#continue').click();await expect(page.locator('#pause')).toBeVisible();
-  // Wait for a frame from the restored world, not merely an already-active menu viewmodel.
+  // renderedFrames increments before viewModel.update(), so High can expose stale menu stats while
+  // optional assets finish loading. Wait for the presentation sample to match the restored player state.
   await page.waitForFunction(({clock,frames})=>{
-    const g=window.gameDiagnostics();return g.clock===clock&&g.m01.renderedFrames>frames&&g.m01.viewModel.active;
+    const g=window.gameDiagnostics(),v=g.m01.viewModel;
+    return g.clock===clock&&g.m01.renderedFrames>frames&&v.active&&
+      v.aimBlend===Number(Boolean(g.player.aiming));
   },{clock:snapshot.clock,frames:menuFrames});
   const before=await page.evaluate(()=>window.gameDiagnostics());
   const v=before.m01.viewModel;
