@@ -12,7 +12,7 @@ A leitura vem de screenshots do browser no HEAD exato da base, inspeção do run
 
 | Prioridade | Sistema | Problema visual | Evidência | Código/asset responsável | Próxima tarefa recomendada |
 |---|---|---|---|---|---|
-| P0-1 | Station | Corpo principal lê como um bloco enorme: parede plana, repetição de tijolo, janelas rasas, roof slab, pouca profundidade de portas/annexes e nenhum interior shell convincente. | `m01-station-ground-drag.png`, `m01-station-release.png`; captura dirigida `station-facade-oblique.png` | `tczew-world.js:refresh()`; `m01-environment.js:buildArchitecture()`; `m01-view.js:buildTerrain()` | **Station Architecture Production V3** |
+| P0-1 | Station | Corpo principal lê como um bloco enorme: parede plana, repetição de tijolo, janelas rasas, roof slab, pouca profundidade de portas/annexes e nenhum interior shell convincente. | `m01-station-ground-drag.png`, `m01-station-release.png`; captura dirigida `station-facade-oblique.png` | `tczew-world.js:refresh()`; `m01-environment.js:buildArchitecture()`; `m01-view.js:buildTerrain()` | **Station Architecture Production V2** |
 | P0-2 | Environment / yard | Muito espaço jogável continua visualmente vazio; terreno domina o frame, props concentram-se em poucos pontos e há pouca leitura de pátio ferroviário/atividade humana. | `m01-station-grab.png`, `m01-repair-under-fire.png`, `m01-visual-medium.png` | `m01-view.js:buildTerrain()`; `m01-environment.js:buildClutter()/buildGroundClusters()` | **Environment Prop Density & Grounding V1** |
 | P0-3 | Soldiers / animation | A variation resolveu clones de rosto/equipamento, mas grupos próximos ainda compartilham o mesmo clip/postura; inspeção de 5 PL e 5 DE mostrou todos em `standing_idle`; roll-call repete a mesma pose sentada. | `pl-close-after.jpg`, `de-close-after.jpg`, `roles-after.jpg`, `m01-roll-call-seated.png` | `m01-characters.js:sample()`; clips em `assets/models/provisional/m01/characters/` | **Soldier Animation Anti-Clone Pass V1** |
 | P0-4 | Vegetation | Árvores perto do jogador ainda leem como tronco cilíndrico + massas poliédricas; o LOD é barato e estável, mas a silhueta próxima continua “low-poly placeholder”. | `AFTER-near-tree-medium.png`, `m01-visual-medium.png` | `m01-environment.js`: Cylinder + Icosahedron/Dodecahedron tree batches | **Vegetation Near-Silhouette Polish V2** |
@@ -77,7 +77,7 @@ Sem pesquisa histórica profunda nesta tarefa:
 | Ordem | Tarefa | Resolve | Ficheiros principais | Risco | Modelo | Dependências | Paralelo? |
 |---|---|---|---|---|---|---|---|
 | 1 | Environment Prop Density & Grounding V1 | vazio, escala e leitura do yard/rail | `m01-environment.js`, decoration layout, props | baixo-médio | **GPT-5.6 Sol HIGH** | preservar rotas/colliders | sim, excluindo Station |
-| 2 | Station Architecture Production V3 | maior placeholder único | Station asset novo + `m01-environment.js` / world anchors | alto | **GPT-6.1 Sol HIGH** | sanity de escala/história; colisão intocada | sim com animation/FX |
+| 2 | Station Architecture Production V2 | maior placeholder único | Station asset novo + `m01-environment.js` / world anchors | alto | **GPT-6.1 Sol HIGH** | sanity de escala/história; colisão intocada | sim com animation/FX |
 | 3 | Soldier Animation Anti-Clone Pass V1 | clones de movimento/formação | `m01-characters.js`, clips/animation GLB | médio-alto | **GPT-6.1 Sol HIGH** | preservar gameplay/muzzle sockets | sim |
 | 4 | Bridge Portal Material/Detail Polish V1 | portais dominantes/tiling | portal GLBs + bridge material mapping | médio | **GPT-5.6 Sol HIGH** | sanity histórica curta | sim |
 | 5 | Battlefield FX Polish V3 | billboard/repetition/lifetime | `m01-atmosphere.js`, FX presentation | médio | **GPT-5.6 Sol HIGH** | limites atuais e simulation authority | sim |
@@ -87,7 +87,7 @@ Sem pesquisa histórica profunda nesta tarefa:
 ## MAIOR GANHO VISUAL POR HORA
 
 1. **Environment Prop Density & Grounding V1** — pouca arquitetura nova; afeta muitos frames imediatamente.
-2. **Station Architecture Production V3** — ganho absoluto maior, mas exige mais horas.
+2. **Station Architecture Production V2** — ganho absoluto maior, mas exige mais horas.
 3. **Soldier Animation Anti-Clone Pass V1** — alto ganho em todas as cenas com grupos.
 4. **Bridge Portal Material/Detail Polish V1** — poucos assets dominam vários enquadramentos.
 5. **Battlefield FX Polish V3** — melhora ação sem mexer no gameplay.
