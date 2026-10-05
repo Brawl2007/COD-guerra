@@ -138,21 +138,21 @@ export class AudioManager {
     else if(kind==='clip'){this.tone(970,.04,'square',.017,-400,0,.25,{priority:AUDIO_PRIORITY.rifle,kind:'mechanism'});this.noise(.1,.021,0,1.15,{priority:AUDIO_PRIORITY.rifle,kind:'mechanism'});this.tone(360,.045,'square',.024,-140,0,2.8,{priority:AUDIO_PRIORITY.rifle,kind:'mechanism'});}
     else{this.tone(710,.03,'square',.014,-230,0,0,{priority:AUDIO_PRIORITY.rifle,kind:'mechanism'});this.noise(.045,.012,0,.46,{priority:AUDIO_PRIORITY.rifle,kind:'mechanism'});}
   }
-  rifleShot(pan=0,distance=0,weapon='kar98k',key=''){
-    const id=key||`${weapon}:${this.serial}`,v=audioVariation(id,.94,1.06);this._record('rifle',{pan,distance,priority:AUDIO_PRIORITY.rifle,key:id,detail:weapon});
-    this.noise(.075,.19,pan,0,{distance,priority:AUDIO_PRIORITY.rifle,kind:'rifle-crack',filter:15000,key:id+':crack',rate:v});
-    this.tone(118*v,.18,'triangle',.11,-48,pan,0,{distance,priority:AUDIO_PRIORITY.rifle,kind:'rifle-body'});
-    this.noise(.34,.045,pan,.08,{distance,priority:AUDIO_PRIORITY.rifle,kind:'rifle-tail',filter:4200,key:id+':tail'});
-    if(distance<90)this.tone(690*v,.032,'square',.012,-270,pan,.045,{distance,priority:AUDIO_PRIORITY.rifle,kind:'rifle-mechanism'});
+  rifleShot(pan=0,distance=0,weapon='kar98k',key='',priority=AUDIO_PRIORITY.rifle){
+    const id=key||`${weapon}:${this.serial}`,v=audioVariation(id,.94,1.06);this._record('rifle',{pan,distance,priority,key:id,detail:weapon});
+    this.noise(.075,.19,pan,0,{distance,priority,kind:'rifle-crack',filter:15000,key:id+':crack',rate:v});
+    this.tone(118*v,.18,'triangle',.11,-48,pan,0,{distance,priority,kind:'rifle-body'});
+    this.noise(.34,.045,pan,.08,{distance,priority,kind:'rifle-tail',filter:4200,key:id+':tail'});
+    if(distance<90)this.tone(690*v,.032,'square',.012,-270,pan,.045,{distance,priority,kind:'rifle-mechanism'});
   }
-  mg34Burst(pan=0,distance=0,rounds=1,interval=.075,key=''){
-    const n=clamp(Math.round(rounds),1,7),id=key||`mg34:${this.serial}`;this._record('mg34',{pan,distance,priority:AUDIO_PRIORITY.mg,key:id,detail:{rounds:n,interval}});
+  mg34Burst(pan=0,distance=0,rounds=1,interval=.075,key='',priority=AUDIO_PRIORITY.mg){
+    const n=clamp(Math.round(rounds),1,7),id=key||`mg34:${this.serial}`;this._record('mg34',{pan,distance,priority,key:id,detail:{rounds:n,interval}});
     for(let i=0;i<n;i++){const t=i*interval,v=audioVariation(id+':'+i,.95,1.05);
-      this.noise(.055,.15,pan,t,{distance,priority:AUDIO_PRIORITY.mg,kind:'mg34-crack',filter:14500,key:id+':n'+i,rate:v});
-      this.tone(96*v,.09,'sawtooth',.07,-34,pan,t,{distance,priority:AUDIO_PRIORITY.mg,kind:'mg34-body'});
-      if(i%2===0&&distance<180)this.tone(820*v,.022,'square',.009,-320,pan,t+.018,{distance,priority:AUDIO_PRIORITY.mg,kind:'mg34-mechanism'});
+      this.noise(.055,.15,pan,t,{distance,priority,kind:'mg34-crack',filter:14500,key:id+':n'+i,rate:v});
+      this.tone(96*v,.09,'sawtooth',.07,-34,pan,t,{distance,priority,kind:'mg34-body'});
+      if(i%2===0&&distance<180)this.tone(820*v,.022,'square',.009,-320,pan,t+.018,{distance,priority,kind:'mg34-mechanism'});
     }
-    this.noise(.28,.032,pan,(n-1)*interval+.05,{distance,priority:AUDIO_PRIORITY.mg,kind:'mg34-tail',filter:3600,key:id+':tail'});
+    this.noise(.28,.032,pan,(n-1)*interval+.05,{distance,priority,kind:'mg34-tail',filter:3600,key:id+':tail'});
   }
   rkmBurst(pan=0,distance=0,rounds=3,interval=.11,key=''){
     const n=clamp(Math.round(rounds),1,5),id=key||`rkm:${this.serial}`;this._record('rkm',{pan,distance,priority:AUDIO_PRIORITY.mg,key:id,detail:{rounds:n,interval}});
@@ -203,8 +203,8 @@ export class AudioManager {
   distantBattle(kind='rifle',pan=0,distance=900,key=''){
     const id=key||`battle:${kind}:${this.serial}`;this._record('distant-battle',{pan,distance,priority:AUDIO_PRIORITY.distant,key:id,detail:kind});
     if(kind==='artillery'){this.noise(.55,.045,pan,.1,{distance,priority:AUDIO_PRIORITY.distant,kind:'distant-artillery',filter:1800,key:id});this.tone(42,.8,'triangle',.05,-8,pan,.1,{distance,priority:AUDIO_PRIORITY.distant,kind:'distant-artillery'});}
-    else if(kind==='mg')this.mg34Burst(pan,Math.max(distance,500),3,.095,id);
-    else this.rifleShot(pan,Math.max(distance,500),'distant-rifle',id);
+    else if(kind==='mg')this.mg34Burst(pan,Math.max(distance,500),3,.095,id,AUDIO_PRIORITY.distant);
+    else this.rifleShot(pan,Math.max(distance,500),'distant-rifle',id,AUDIO_PRIORITY.distant);
   }
   ambience(kind,pan=0){this.distantBattle(kind==='artillery'?'artillery':'rifle',pan,900,`legacy-ambience:${kind}:${this.serial}`);}
   hit(){this._record('player-hit',{priority:AUDIO_PRIORITY.critical,key:`hit:${this.serial}`});this.tone(95,.08,'sawtooth',.05,-45,0,0,{priority:AUDIO_PRIORITY.critical,kind:'player-hit',filter:1800});}
