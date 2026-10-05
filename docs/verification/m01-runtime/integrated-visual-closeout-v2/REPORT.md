@@ -52,15 +52,16 @@ Sky sphere, contact plane, cartridge cylinder e instancing são **C — procedur
 
 ## MEDIÇÃO
 
-Base validada, run `37349847102`:
+Validação funcional da base, run `37349847102`: browser **56/56**, retries 0; Node **313/313**.
 
-- browser: **56/56**, retries 0;
-- Node: **313/313**.
-- High snapshot: 127 draw calls, 392,513 triangles, 86 textures, 262 geometries.
-- Low snapshot: 126 draw calls, 350,820 triangles, 89 textures, 279 geometries.
-- Vegetation High: 85 trees = 9 near / 42 mid / 34 far; 518 tree instances; 7 tree draws; 17,812 tree triangles; 18 leaf cards; 5,951 grass instances.
-- Vegetation Low: 3 near / 23 mid / 59 far; 287 tree instances; 6 tree draws; 7,564 tree triangles; 0 leaf cards; 2,975 grass instances.
-- Wagon snapshot: 65 train wagons, 6 real train wagon models loaded, proxies 0.
+A auditoria visual dirigida teve um run verde próprio, `37363471495`: capturas Station/Train **2/2**, matriz visual integrada **14/14**, Station/roll-call **2/2**, MG34 prone **1/1**, build PASS e produção byte-idêntica fora do escopo de auditoria.
+
+Contadores são snapshots de câmaras/cenas diferentes, não totais universais:
+
+- fixed-rail High da auditoria: **244 draw calls, 458.551 triangles, 105 textures, 237 geometries**; vegetation 85 trees = 7 near / 35 mid / 43 far, 470 tree instances, 7 tree draws, 15.468 tree triangles, 14 leaf cards, 5.951 grass instances;
+- fixed-rail Low da auditoria: **126 draw calls, 350.820 triangles, 89 textures, 279 geometries**; vegetation 3 near / 23 mid / 59 far, 287 tree instances, 6 tree draws, 7.564 tree triangles, 0 leaf cards, 2.975 grass instances;
+- outro snapshot High do checkpoint integrado mediu 127 draw calls / 392.513 triangles; a diferença confirma que estes números dependem de câmara, assets já carregados e frame de amostragem;
+- wagon near snapshot: 65 train wagons, 6 modelos reais de wagon carregados, proxies 0; total 61 draw calls / 370.672 triangles;
 - Soldier inspection: 5 DE, 5 PL e 4 role actors próximos usavam apenas `standing_idle` no frame de inspeção; variation alterava identidade visual, não o clip.
 
 ## SANITY HISTÓRICA / LÓGICA
