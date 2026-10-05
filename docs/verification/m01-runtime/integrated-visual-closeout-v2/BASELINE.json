@@ -1,7 +1,8 @@
 {
   "task": "M01-INTEGRATED-VISUAL-PLACEHOLDER-CLOSEOUT-V2",
   "base_head": "6bd69521aef18f00b2ab37ccd7ceeca6a4da3a2b",
-  "evidence_run": 37349847102,
+  "base_validation_run": 37349847102,
+  "audit_success_run": 37363471495,
   "validated": {
     "node": {
       "pass": 313,
@@ -11,72 +12,102 @@
     "browser": {
       "pass": 56,
       "fail": 0,
+      "skipped": 0,
       "retries": 0
     }
   },
-  "vegetation": {
-    "high": {
+  "sceneSnapshots": {
+    "integrationCheckpointHigh": {
       "total": {
         "drawCalls": 127,
         "triangles": 392513,
         "textures": 86,
         "geometries": 262
       },
-      "trees": {
-        "count": 85,
-        "solid": 17,
-        "visual": 68,
+      "vegetation": {
+        "treeCount": 85,
+        "solidTreeCount": 17,
+        "visualTreeCount": 68,
         "lod": {
           "near": 9,
           "mid": 42,
           "far": 34
         },
-        "instances": 518,
-        "drawCalls": 7,
-        "triangles": 17812,
+        "treeInstances": 518,
+        "treeDrawCalls": 7,
+        "treeTriangles": 17812,
         "leafCards": 18,
         "grassInstances": 5951
-      }
+      },
+      "provenance": "Earlier integrated checkpoint camera/sample; retained only as a second scene snapshot."
     },
-    "low": {
+    "visualAuditFixedRailHigh": {
+      "total": {
+        "drawCalls": 244,
+        "triangles": 458551,
+        "textures": 105,
+        "geometries": 237
+      },
+      "vegetation": {
+        "treeCount": 85,
+        "solidTreeCount": 17,
+        "visualTreeCount": 68,
+        "lod": {
+          "near": 7,
+          "mid": 35,
+          "far": 43
+        },
+        "treeInstances": 470,
+        "treeDrawCalls": 7,
+        "treeTriangles": 15468,
+        "leafCards": 14,
+        "grassInstances": 5951
+      },
+      "provenance": "Visual closeout run 37363471495 fixed rail camera."
+    },
+    "visualAuditFixedRailLow": {
       "total": {
         "drawCalls": 126,
         "triangles": 350820,
         "textures": 89,
         "geometries": 279
       },
-      "trees": {
-        "count": 85,
+      "vegetation": {
+        "treeCount": 85,
+        "solidTreeCount": 17,
+        "visualTreeCount": 68,
         "lod": {
           "near": 3,
           "mid": 23,
           "far": 59
         },
-        "instances": 287,
-        "drawCalls": 6,
-        "triangles": 7564,
+        "treeInstances": 287,
+        "treeDrawCalls": 6,
+        "treeTriangles": 7564,
         "leafCards": 0,
         "grassInstances": 2975
-      }
-    }
-  },
-  "wagons": {
-    "nearTotal": {
-      "drawCalls": 61,
-      "triangles": 370672,
-      "textures": 34,
-      "geometries": 249
+      },
+      "provenance": "Visual closeout run 37363471495 fixed rail camera."
     },
-    "train": {
-      "wagons": 65,
-      "loadedModels": 6,
-      "proxies": 0,
-      "batches": 8,
-      "lodDistribution": {
-        "0": 0,
-        "1": 0,
-        "2": 65
-      }
+    "wagonNear": {
+      "total": {
+        "drawCalls": 61,
+        "triangles": 370672,
+        "textures": 34,
+        "geometries": 249
+      },
+      "train": {
+        "wagons": 65,
+        "loadedModels": 6,
+        "proxies": 0,
+        "batches": 8,
+        "lodDistribution": {
+          "0": 0,
+          "1": 0,
+          "2": 65
+        }
+      },
+      "provenance": "Visual closeout run 37363471495 wagon near snapshot."
     }
   },
   "soldierInspection": {
@@ -103,7 +134,8 @@
       "clips": [
         "standing_idle"
       ]
-    }
+    },
+    "provenance": "Existing integrated soldier visual-variation inspection evidence; identities varied while sampled clip remained standing_idle."
   },
-  "note": "Counters are scene snapshots, not an FPS benchmark."
+  "note": "All counters are camera/scene snapshots, not universal totals and not an FPS benchmark. Geometry/texture totals are timing/load-state sensitive."
 }
