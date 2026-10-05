@@ -101,13 +101,13 @@ test('65 actual wagon models use LOD2 instances at 9.10 m with source pivots and
   const {w,close}=wagons(async key=>{if(key.includes(':open:'))throw new Error('missing optional open wagon');return sources.covered;});
   try{
     await w.load();assert.equal(w.diagnostics.wagons,65);assert.equal(w.diagnostics.proxies,16);
-    const body=w.batches.find(b=>b.name==='wagon_covered_body'),node=sources.covered.scene.getObjectByName('body');
+    const body=w.batches.find(b=>b.name==='wagon_covered_lod2_body'),node=sources.covered.scene.getObjectByName('body');
     assert.equal(body.count,49);assert.equal(body.geometry,node.geometry);assert.equal(body.material,node.material);
     const m=new THREE.Matrix4(),expected=new THREE.Matrix4().makeRotationY(-Math.PI/2);expected.setPosition(1090,0,-2.5);expected.multiply(node.matrixWorld);
     body.getMatrixAt(0,m);assert.ok(m.elements.every((v,i)=>Math.abs(v-expected.elements[i])<1e-4));
     body.getMatrixAt(1,m);assert.ok(Math.abs(m.elements[12]-expected.elements[12]-9.1)<1e-4);
-    w.sources.set('open',sources.open);w.rebuild();assert.equal(w.diagnostics.proxies,0);
-    assert.equal(w.batches.find(b=>b.name==='wagon_open_body').count,16);assert.equal(w.diagnostics.last[0],1672.4);
+    w.sources.set('open:2',sources.open);w.rebuild();assert.equal(w.diagnostics.proxies,0);
+    assert.equal(w.batches.find(b=>b.name==='wagon_open_lod2_body').count,16);assert.equal(w.diagnostics.last[0],1672.4);
     let released=0;node.geometry.addEventListener('dispose',()=>released++);w.dispose();assert.equal(released,0,'source cache owns shared geometry');
   }finally{close();for(const s of Object.values(sources))s.scene.traverse(n=>n.geometry?.dispose());material.dispose();}
   const failed=wagons(async()=>{throw new Error('offline');});try{await failed.w.load();assert.equal(failed.w.diagnostics.proxies,65);assert.equal(failed.w.batches.length,0);}finally{failed.close();}
