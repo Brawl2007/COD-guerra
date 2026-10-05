@@ -45,13 +45,25 @@ jobs:
       - name: Integrated visual evidence matrix
         run: |
           set -o pipefail
-          npx playwright test             tests/browser/m01-soldier-visual-variation.spec.js             tests/browser/m01-vegetation-lod.spec.js             tests/browser/m01-wagon-runtime-integration.spec.js             tests/browser/m01-battlefield-fx.spec.js             tests/browser/m01-combat-feedback.spec.js             tests/browser/m01-wz29-viewmodel.spec.js             2>&1 | tee docs/verification/m01-runtime/integrated-visual-closeout-v2/runtime-evidence/visual-matrix.log
+          npx playwright test \
+            tests/browser/m01-soldier-visual-variation.spec.js \
+            tests/browser/m01-vegetation-lod.spec.js \
+            tests/browser/m01-wagon-runtime-integration.spec.js \
+            tests/browser/m01-battlefield-fx.spec.js \
+            tests/browser/m01-combat-feedback.spec.js \
+            tests/browser/m01-wz29-viewmodel.spec.js \
+            --output=docs/verification/m01-runtime/integrated-visual-closeout-v2/captures/matrix \
+            2>&1 | tee docs/verification/m01-runtime/integrated-visual-closeout-v2/runtime-evidence/visual-matrix.log
 
       - name: Character action and prone captures
         run: |
           set -o pipefail
-          npx playwright test tests/browser/m01.spec.js --grep "the station evacuation|the real roll-call snapshot"             2>&1 | tee docs/verification/m01-runtime/integrated-visual-closeout-v2/runtime-evidence/character-action.log
-          npx playwright test tests/browser/m01-mg34-prone.spec.js --grep "shot 4"             2>&1 | tee docs/verification/m01-runtime/integrated-visual-closeout-v2/runtime-evidence/mg34-prone.log
+          npx playwright test tests/browser/m01.spec.js --grep "the station evacuation|the real roll-call snapshot" \
+            --output=docs/verification/m01-runtime/integrated-visual-closeout-v2/captures/character-action \
+            2>&1 | tee docs/verification/m01-runtime/integrated-visual-closeout-v2/runtime-evidence/character-action.log
+          npx playwright test tests/browser/m01-mg34-prone.spec.js --grep "shot 4" \
+            --output=docs/verification/m01-runtime/integrated-visual-closeout-v2/captures/mg34-prone \
+            2>&1 | tee docs/verification/m01-runtime/integrated-visual-closeout-v2/runtime-evidence/mg34-prone.log
 
       - name: Runtime unchanged outside audit scope
         run: |
