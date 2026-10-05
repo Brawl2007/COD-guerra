@@ -1,0 +1,68 @@
+name: M01 production integration checkpoint 1
+
+on:
+  push:
+    branches:
+      - codex/m01-production-integration-checkpoint-1
+
+concurrency:
+  group: m01-production-integration-checkpoint-1
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout exact integration head
+        uses: actions/checkout@v4
+
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Intermediate production build
+        run: npm run build
+
+      - name: Focused integrated systems
+        run: >
+          node --test
+          tests/m01-wz29-viewmodel.test.js
+          tests/m01-locomotive.test.js
+          tests/m01-panzerzug.test.js
+          tests/m01-soldier-visual-variation.test.js
+          tests/m01-vegetation-lod.test.js
+          tests/m01-wagon-runtime-integration.test.js
+          tests/m01-battlefield-fx.test.js
+          tests/m01-audio-production.test.js
+          tests/m01-combat-feedback.test.js
+          tests/m01-runtime.test.js
+          tests/m01-schema2-determinism.test.js
+          tests/game.test.js
+
+      - name: Full Node checkpoint
+        run: npm test
+
+      - name: Final production build
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Full browser checkpoint
+        run: npm run test:browser
+
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-production-integration-checkpoint-1-browser
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
