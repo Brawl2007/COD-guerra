@@ -47,13 +47,15 @@ test('M01 battlefield audio follows real rifle/MG/impact/blast events and surviv
   const afterMG=await page.evaluate(()=>window.gameDiagnostics());
   expect(count(afterMG,'mg34')).toBeGreaterThan(0);
 
-  // Player rifle and material impact through normal controls; look down so the shot meets nearby world geometry.
-  await page.evaluate(()=>window.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:260,bubbles:true})));
-  await page.waitForFunction(()=>window.gameDiagnostics().player.pitch<-.25);
+  // Player rifle and material impact through the real Input event path. Aim steeply into nearby ground and
+  // avoid native pointer repositioning, which can change the locked look vector before the click is consumed.
+  await page.evaluate(()=>window.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:430,bubbles:true})));
+  await page.waitForFunction(()=>window.gameDiagnostics().player.pitch<-.75);
   const beforeShot=await page.evaluate(()=>window.gameDiagnostics());
-  await page.mouse.click(640,360);
-  await page.waitForFunction(before=>((window.gameDiagnostics().audio.eventCounts['wz29-shot']??0)>before),count(beforeShot,'wz29-shot'),{timeout:15000});
-  await page.waitForFunction(before=>((window.gameDiagnostics().audio.eventCounts.impact??0)>before),count(beforeShot,'impact'),{timeout:15000});
+  await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});
+  await page.waitForFunction(({mag,shot,impact})=>{
+    const g=window.gameDiagnostics();return g.m01.weapon.mag===mag-1&&(g.audio.eventCounts['wz29-shot']??0)>shot&&(g.audio.eventCounts.impact??0)>impact;
+  },{mag:beforeShot.m01.weapon.mag,shot:count(beforeShot,'wz29-shot'),impact:count(beforeShot,'impact')},{timeout:process.env.CI?60000:15000});
 
   // A real grenade supplies an authoritative small blast after its existing fuse expires.
   // Observe simulation time rather than assuming wall-clock pace under the combined renderer load.
