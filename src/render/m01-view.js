@@ -12,6 +12,11 @@ import { M01Environment } from './m01-environment.js';
 import { M01Characters } from './m01-characters.js';
 import { M01ViewModel } from './m01-viewmodel.js';
 import { M01TrainWagons } from './m01-train-wagons.js';
+import { M01YardWagons, yardWagonFireDamage } from './m01-yard-wagons.js';
+import { M01Locomotive } from './m01-locomotive.js';
+import { M01Panzerzug } from './m01-panzerzug.js';
+import {soldierVisualVariant} from './m01-soldier-variation.js';
+import { M01CombatFeedback } from './m01-combat-feedback.js';
 
 export const M01_BATTLEFIELD_FX_LIMITS=Object.freeze({bursts:16,flash:16,core:48,fire:96,smoke:128,dust:128,shards:96,lights:1});
 const FX_DENSITY={low:.55,medium:.78,high:1};
@@ -56,10 +61,12 @@ export class M01View {
     this.scene.add(this.solidGroup,this.effects);this.smokes=new Map();this.grenadeViews=new Map();this.world=null;this.revision=-1;
     this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};
     this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};
+    this.combatFeedback=new M01CombatFeedback();
     this.atmosphere=new M01Atmosphere(this.scene);
     this.createWeapon();this.createActors();this.createContactShadows();this.createFireEffects();this.createAircraft();this.createTrains();
     this.characters=new M01Characters(this.scene);this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture);
-    this.ready=Promise.all([this.loadKit(),this.characters.load(this.owner.quality),this.loadAircraft(),this.wagons.load()]);
+    this.ready=Promise.all([this.loadKit(),this.characters.load(this.owner.quality),this.loadAircraft(),
+      this.wagons.load(),this.yardWagons.load(),this.locomotive.load(),this.panzerzugArt.load()]);
   }
   mesh(shape,material,p,size,parent=this.scene){
     const m=new THREE.Mesh(this[shape],this.materials[material]);m.position.set(...p);m.scale.set(...size);
@@ -174,22 +181,24 @@ export class M01View {
       if(skinned.has(a.id))continue;
       root.position.set(a.x,a.y+pose.root.offsetY,a.z);
       root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
-      const cloth=a.civilian?'#404c56':a.team==='enemy'?'#b4c0b7':'#c9bea0',helmet=a.team==='enemy'?'#465252':'#635f47';
+      const visual=!a.civilian&&this.characters?.visuals?soldierVisualVariant(a):null;
+      const cloth=a.civilian?'#404c56':visual?'#'+visual.proxyCloth:a.team==='enemy'?'#b4c0b7':'#c9bea0',
+        helmet=visual?'#'+visual.proxyHelmet:a.team==='enemy'?'#465252':'#635f47',skin=visual?'#'+visual.proxySkin:'#ffffff';
       const [hx,hy,hz]=pose.head,[tx,ty,tz]=pose.torso.position;
       const near=Math.hypot(a.x-player.x,a.z-player.z)<45;
-      put('torso',pose.torso.position,pose.prone?pose.torso.size:[.30,pose.torso.size[1],.46],cloth,{roll:pose.torso.roll});put(near?'head':'farHead',pose.head,[.125,.18,.137]);
+      put('torso',pose.torso.position,pose.prone?pose.torso.size:[.30,pose.torso.size[1],.46],cloth,{roll:pose.torso.roll});put(near?'head':'farHead',pose.head,[.125,.18,.137],skin);
       put('helmet',[hx,hy+.105,hz],[.175,.14,.188],helmet);
       put('brim',[hx+.01,hy+.12,hz],[.186,.022,.2],helmet);
-      if(near){put('nose',[hx+.126,hy+.005,hz],[.020,.039,.022]);
+      if(near){put('nose',[hx+.126,hy+.005,hz],[.020,.039,.022],skin);
       put('eyes',[hx+.121,hy-.064,hz],[.004,.002,.021]);
       for(const side of [-1,1]){
         put('eyes',[hx+.112,hy+.055,hz+side*.066],[.008,.0045,.012]);
-        put('ears',[hx,hy,hz+side*.137],[.026,.044,.017]);
+        put('ears',[hx,hy,hz+side*.137],[.026,.044,.017],skin);
         put('eyes',[hx+.109,hy+.077,hz+side*.067],[.006,.002,.020]);
       }
       if(!a.civilian){
         put('belt',[tx+.002,ty-.19,tz],[.319,.073,.48]);
-        put('pack',[tx-.23,ty+.005,tz],[.18,.35,.32],cloth);
+        put('pack',[tx-.23,ty+.005,tz],[.18*(visual?.pack??1),.35,.32*(visual?.pack??1)],cloth);
         for(const side of [-1,1])for(let i=0;i<2;i++)put('pouches',[tx+.185,ty-.13,tz+side*(.09+i*.08)],[.082,.13,.072]);
         for(let i=0;i<5;i++)put('buttons',[tx+.156,ty+.20-i*.08,tz],[.009,.009,.009]);
       }}
@@ -413,15 +422,14 @@ export class M01View {
   }
   createTrains(){
     this.train=new THREE.Group();this.panzerzug=new THREE.Group();this.scene.add(this.train,this.panzerzug);
-    // Locomotive identification remains open (P16); keep its original placeholder.
-    this.mesh('box','dark',[1075,2,-2.5],[17,3.2,2.8],this.train);
-    for(const x of [-5,5])this.mesh('cylinder','metal',[1075+x,.4,-2.5],[.6,3.1,.6],this.train).rotation.x=Math.PI/2;
+    this.locomotive=new M01Locomotive(this.train,this.assets,this.box,this.cylinder,this.materials.dark,this.materials.metal);
     this.wagons=new M01TrainWagons(this.train,this.assets,this.box,this.cylinder,this.materials.wood,this.materials.metal);
-    for(let i=0;i<5;i++)this.mesh('box','metal',[1119+i*19,2,2.5],[17,3.1,2.9],this.panzerzug);
-    for(const x of [1120,1197])this.mesh('cylinder','metal',[x,4,2.5],[1,1,1],this.panzerzug);
+    this.yardWagons=new M01YardWagons(this.scene,this.assets,this.box,this.cylinder,this.materials.wood,this.materials.metal,this.atmosphere.texture);
+    this.panzerzugArt=new M01Panzerzug(this.panzerzug,this.assets,this.box,this.cylinder,this.materials.metal);
   }
   syncDamage(sim,state){
-    this.atmosphere.update(state,sim.clock,this.owner.quality);
+    const yardFire=yardWagonFireDamage(sim.destruction,sim.world);
+    this.atmosphere.update(yardFire?{...state,damage:[...state.damage,yardFire]}:state,sim.clock,this.owner.quality);
     const live=new Set(sim.grenades.active.map(g=>g.id));
     for(const g of sim.grenades.active){let m=this.grenadeViews.get(g.id);if(!m){m=this.mesh('sphere','metal',[0,0,0],[.07,.07,.07],this.effects);this.grenadeViews.set(g.id,m);}m.position.set(g.x,g.y,g.z);}
     for(const [id,m]of this.grenadeViews)if(!live.has(id)){this.effects.remove(m);this.grenadeViews.delete(id);}
@@ -440,27 +448,36 @@ export class M01View {
     this.engine.toneMappingExposure=1.08;
     this.sun.color.set('#ffe0b0');this.skyLight.color.set('#b4c8df');this.skyLight.groundColor.set('#4b4435');
     this.atmosphere.material.uniforms.fogColor.value.copy(this.scene.fog.color);
-    this.atmosphere.lighting(p,daylight,alt,az,sim.clock);this.environment?.sync(sim.world,this.owner.quality);
+    this.atmosphere.lighting(p,daylight,alt,az,sim.clock);this.environment?.sync(sim.world,this.owner.quality,sim.player);
   }
   render(sim){
+    // Apply authoritative train/wagon state before pause-frame caching so restore cannot freeze constructor defaults.
+    const state=sim.renderState,time=sim.clock;
+    this.wagons.update(sim.player,this.owner.quality);
+    this.yardWagons.update(sim.destruction,this.owner.quality,sim.world,sim.player,time);
+    this.locomotive.update(sim.player);this.panzerzugArt.update(sim.player);
     // Retain the last canvas frame while the mission clock is frozen (menu/pause).
     // Assets, world restore, quality and resizing still invalidate it.
     const canvas=this.owner.canvas,previous=this.lastFrame;
     const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
-      width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,wagons:this.wagons.revision};
+      width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,
+      wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision};
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
     for(const material of Object.values(this.materials))if(material.userData.m01Time)material.userData.m01Time.value=sim.clock;
-    this.syncSolids(sim.world);const state=sim.renderState,time=sim.clock,dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
+    this.syncSolids(sim.world);const dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
     this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.lighting(sim);
     this.train.visible=state.train963;this.panzerzug.visible=state.panzerzug;
     this.updateAircraft(state,time,sim.player);
     const player=sim.player,eye=eyePosition(player),dir=aimDirection(player.angle,player.pitch);
     const bob=player.moveBlend*Math.sin(time*(player.sprinting?14:9))*.014;
-    const shake=time<this.shakeUntil?Math.sin(time*85)*.012:0;
-    this.camera.position.set(eye.x,eye.y+bob+shake,eye.z);this.camera.lookAt(eye.x+dir.x,eye.y+bob+shake+dir.y,eye.z+dir.z);
+    const legacyShake=time<this.shakeUntil?Math.sin(time*85)*.012:0,feedback=this.combatFeedback.sample(time,this.owner.quality);
+    // Presentation-only offsets: authoritative yaw/pitch and shot direction remain untouched.
+    this.camera.position.set(eye.x+feedback.cameraX,eye.y+bob+legacyShake+feedback.cameraY,eye.z);
+    this.camera.lookAt(eye.x+dir.x+feedback.cameraX,eye.y+bob+legacyShake+dir.y+feedback.cameraY,eye.z+dir.z);
+    if(feedback.roll)this.camera.rotateZ(feedback.roll);
     this.updateFire(sim);
     const width=this.owner.canvas.clientWidth,height=this.owner.canvas.clientHeight,aspect=width/height;
     const fov=player.aiming?48:70;
@@ -485,23 +502,34 @@ export class M01View {
   }
   muzzle(clock){this.flashUntil=clock+.06;this.shakeUntil=clock+.1;}
   blast(clock){this.shakeUntil=clock+.4;}
+  playerHit(clock,direction=null){this.combatFeedback.playerHit(clock,direction);this.lastFrame=null;}
+  directionalHit(clock,direction){this.combatFeedback.directionalHit(clock,direction);this.lastFrame=null;}
+  roundFeedback(event,clock,direction=null,weapon=null){
+    this.combatFeedback.roundImpact({clock,distance:event.distance,crack:Boolean(event.crack),direction,weapon,material:event.material});this.lastFrame=null;
+  }
+  explosionFeedback(clock,distance,direction=null){this.combatFeedback.explosion({clock,distance,direction});this.lastFrame=null;}
+  feedbackState(clock=this.lastClock){return this.combatFeedback.diagnostics(clock,this.owner.quality);}
   /** Layered visual-only blast. Scale is inferred later from the simulation-owned damage id. */
   explosion(point,clock,aerial){this.bursts.push({x:point.x,y:point.y??0,z:point.z,start:clock,aerial:Boolean(aerial),seed:fxSeed(point,clock)});if(this.bursts.length>M01_BATTLEFIELD_FX_LIMITS.bursts)this.bursts.shift();}
   resetEffects(){
-    this.lastFrame=null;this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.impacts=[];this.bursts=[];
+    this.lastFrame=null;this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.impacts=[];this.bursts=[];this.combatFeedback.reset();
     for(const b of Object.values(this.fireBatches))b.count=0;for(const b of Object.values(this.battlefieldFxBatches))b.count=0;
     this.battlefieldShards.count=0;this.explosionLight.visible=false;this.explosionLight.intensity=0;
     this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};
   }
   get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,
     requiredAssetFailures:this.assets.failures.filter(f=>manifest.files.some(m=>typeof m.lod==='number'&&m.file===f.path)),
-    characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,wagons:this.wagons.diagnostics,
+    characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,
+    locomotive:this.locomotive.diagnostics,panzerzug:this.panzerzugArt.diagnostics,wagons:this.wagons.diagnostics,yardWagons:this.yardWagons.diagnostics,
     aircraft:{loaded:[...this.aircraftSources.keys()].sort(),planes:this.planes.map(p=>{const model=p.levels.find(l=>l.object.visible)?.object,prop=model?.getObjectByName('propeller');return {visible:p.visible,lod:model?.userData.lod,position:p.position.toArray(),propeller:prop?.quaternion.toArray()};})},
-    renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+b.count,0)??0,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
+    renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+b.count,0)??0,
+    vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},
+    combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),
     battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
-    this.disposed=true;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}this.viewModel?.dispose();this.characters?.dispose();this.wagons.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
+    this.disposed=true;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}this.viewModel?.dispose();this.characters?.dispose();
+    this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
     const textures=new Set();for(const m of Object.values(this.materials)){if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
     this.scene.traverse(n=>{if(n.isInstancedMesh)n.dispose();});this.scene.clear();this.weaponScene.clear();
   }
