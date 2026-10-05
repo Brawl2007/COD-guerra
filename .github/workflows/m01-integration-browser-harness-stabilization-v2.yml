@@ -34,12 +34,13 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Focused historical browser trouble spots
+      - name: Focused browser reliability gates
         run: >
           npx playwright test
           tests/browser/m01.spec.js
           tests/browser/m01-audio-production.spec.js
-          --grep "a real withdrawal continuation|the station evacuation|M01 battlefield audio"
+          tests/browser/m01-battlefield-fx.spec.js
+          --grep "a real withdrawal continuation|the station evacuation|M01 battlefield audio|east demolition runs layered blast|licensed character rigs and first-person hands"
 
       - name: Full Node checkpoint
         run: npm test
