@@ -25,3 +25,13 @@ test('battlefield FX stays presentation-only with explicit hard pool limits',()=
   assert.match(atmosphere,/this\.capacity=256/);assert.match(atmosphere,/InstancedMesh\(this\.debrisGeometry,this\.debrisMaterial,64\)/);
   assert.match(view,/state\.damage\.find/);assert.match(view,/kind=id\.endsWith\('_demolition'\)/);
 });
+
+
+test('muzzle presentation telemetry latches only after a rendered muzzle frame and resets without simulation state',()=>{
+  const view=readFileSync(new URL('../src/render/m01-view.js',import.meta.url),'utf8');
+  assert.match(view,/this\.muzzlePresentation=\{frames:0,lastClock:null,lastFrame:null\}/);
+  assert.match(view,/this\.engine\.render\(this\.scene,this\.camera\);\s*if\(this\.fx\.muzzle>0\)\{this\.muzzlePresentation\.frames\+\+;this\.muzzlePresentation\.lastClock=time;this\.muzzlePresentation\.lastFrame=this\.renderedFrames\?\?0;\}/);
+  assert.match(view,/resetEffects\(\)[\s\S]*this\.muzzlePresentation=\{frames:0,lastClock:null,lastFrame:null\}/);
+  assert.match(view,/fireEffects:\{\.\.\.this\.fx\},muzzlePresentation:\{\.\.\.this\.muzzlePresentation\}/);
+  assert.doesNotMatch(view,/muzzlePresentation[\s\S]{0,120}(snapshot|saveCheckpoint|rng)/);
+});
