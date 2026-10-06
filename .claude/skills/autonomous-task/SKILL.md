@@ -11,7 +11,8 @@ Use this skill when a valid Task Contract exists and a task should be carried fr
 
 Execute:
 
-AUDIT CONTEXT
+RETRIEVE RELEVANT MEMORY
+→ AUDIT CONTEXT
 → IMPLEMENT
 → VERIFY
 → CORRECT IF NEEDED
@@ -47,7 +48,37 @@ Before implementation:
 
 If these cannot be established safely, return BLOCKED.
 
-## Phase 0 — Context Audit
+## Phase 0A — Memory Retrieval
+
+Before context audit, use the `project-memory` skill in RETRIEVE mode when prior project knowledge may materially help the task.
+
+Search narrowly using applicable:
+
+- TASK_ID;
+- subsystem;
+- filename or function;
+- asset;
+- decision topic;
+- branch;
+- topics listed in `context.required_memory_topics`.
+
+Normally load no more than 3-5 highly relevant CURRENT notes.
+
+Do not load the entire memory directory.
+
+Do not treat retrieved memory as authoritative.
+
+Pass mutable claims from memory to the Context Audit for revalidation.
+
+If no relevant durable memory exists, continue without creating artificial context.
+
+Produce only a compact memory result containing:
+
+- durable context;
+- relevant note paths;
+- claims requiring revalidation.
+
+## Phase 0B — Context Audit
 
 Before implementation, execute the `context-audit` skill.
 
@@ -216,6 +247,28 @@ Escalate only for:
 - insufficient evidence that cannot be obtained safely;
 - exhausted fix budget;
 - exhausted review budget.
+
+## Phase 6 — Memory Update
+
+After Reviewer ACCEPT and before the final handoff, use the `project-memory` skill in UPDATE mode.
+
+First ask:
+
+"Did this accepted task create durable knowledge future work needs?"
+
+If NO:
+- do not create a memory note.
+
+If YES:
+- create or supersede only the minimum necessary memory note;
+- use `.agent/templates/MEMORY_NOTE.md`;
+- record the final HEAD and applicable evidence;
+- never copy full logs or conversation history;
+- never store unsupported claims as confirmed facts.
+
+Memory update failure must not rewrite or invalidate completed code or evidence.
+
+If memory cannot be updated safely, report that limitation in the final handoff.
 
 ## Final output
 
