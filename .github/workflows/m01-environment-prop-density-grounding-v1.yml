@@ -42,8 +42,10 @@ jobs:
           set -euo pipefail
           mkdir -p docs/verification/m01-runtime/environment-prop-density-grounding-v1
           git checkout 6bd69521aef18f00b2ab37ccd7ceeca6a4da3a2b -- src/render/m01-environment.js src/render/m01-view.js
+          npm run build
           M01_BASELINE_CAPTURE=1 npx playwright test tests/browser/m01-environment-prop-density.spec.js             --grep "captures contextual"             --output=docs/verification/m01-runtime/environment-prop-density-grounding-v1/before
           git checkout "$GITHUB_SHA" -- src/render/m01-environment.js src/render/m01-view.js
+          npm run build
           git diff --exit-code
 
       - name: Focused after browser and lifecycle
