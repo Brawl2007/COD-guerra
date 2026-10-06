@@ -29,7 +29,7 @@ route(19390901,{support:true,onStep:({sim})=>{
 for(const name of ['bombing','raid','east','west','grenade'])if(!fixtures[name])throw new Error('Missing real FX fixture: '+name);
 for(const material of ['earth','stone','wood'])if(!fixtures.impacts[material])throw new Error('Missing real round-impact fixture: '+material);
 
-const world=new M01Simulation(19390901).world;
+const world=new M01Simulation(19390901).world,station=world.point('tczew_station');
 function relocate(snapshot,x,z,target){
   const s=structuredClone(snapshot),y=world.heightAt(x,z),dx=target.x-x,dz=target.z-z;
   s.player.x=x;s.player.z=z;s.player.y=y;s.player.angle=Math.atan2(dz,dx);
@@ -69,7 +69,6 @@ test('real earth stone and wood round impacts keep distinct visual language',asy
 
 test('small bombing east and west demolition show distinct layered profiles',async({browser},info)=>{
   test.setTimeout(540000);
-  const station=world.point('tczew_station');
   const views=[
     {name:'grenade-small-near-high.png',snapshot:fixtures.grenade,camera:{x:fixtures.grenade.player.x,z:fixtures.grenade.player.z},target:{x:fixtures.grenade.grenades.active[0].x,z:fixtures.grenade.grenades.active[0].z,y:fixtures.grenade.grenades.active[0].y}},
     {name:'station-bombing-high.png',snapshot:fixtures.bombing,camera:{x:station.x-46,z:station.z-18},target:{...station,y:(station.y??0)+4}},
