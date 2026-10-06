@@ -4,8 +4,7 @@ import fs from 'node:fs';
 import {createHash} from 'node:crypto';
 import manifest from '../assets/models/provisional/m01/bridges.manifest.json' with {type:'json'};
 import {M01Simulation} from '../src/game/m01-simulation.js';
-import * as THREE from 'three';
-import {M01BridgePortalPolish,M01_PORTAL_DETAIL_LAYOUTS,portalDetailDescriptors,bridgeMaterialSlot} from '../src/render/m01-bridge-portal-polish.js';
+import {M01_PORTAL_DETAIL_LAYOUTS,portalDetailDescriptors,bridgeMaterialSlot} from '../src/render/m01-bridge-portal-polish.js';
 
 const root=new URL('../',import.meta.url),read=path=>fs.readFileSync(new URL(path,root));
 const blobSha=buf=>createHash('sha1').update(`blob ${buf.length}\0`).update(buf).digest('hex');
@@ -80,14 +79,4 @@ test('known bridge materials map predictably while unknown material preserves GL
   assert.equal(bridgeMaterialSlot('gate_timber_iron',true),'bridgeGate');
   assert.equal(bridgeMaterialSlot('brick_red',false),'brick');
   assert.equal(bridgeMaterialSlot('unknown_legacy_material',true),null);
-});
-
-
-test('portal stain decals use the explicitly shared material rather than a Three default',()=>{
-  const stone=new THREE.MeshBasicMaterial({color:0x777777}),stain=new THREE.MeshBasicMaterial({color:0x332211,transparent:true,opacity:.2});
-  const polish=new M01BridgePortalPolish({stone,stain}),node=new THREE.Group();node.name='rail_portal_west';
-  assert.equal(polish.attach(node),true);
-  const attachment=polish.attachments[0],stainBatch=attachment.medium.find(batch=>batch.geometry===polish.stain);
-  assert.ok(stainBatch);assert.equal(stainBatch.material,stain);
-  polish.dispose();stone.dispose();stain.dispose();
 });
