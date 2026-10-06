@@ -71,6 +71,7 @@ test('Low Medium High retain composition with bounded deterministic density',asy
   expect(samples.low.totalAll).toBe(samples.high.totalAll);
   expect(samples.low.batches).toBeLessThan(samples.high.batches);
   for(const area of ['station-yard','railway-approach','bridge-approach','combat-area'])expect(samples.low.byArea[area]).toBeGreaterThan(0);
+  console.log('M01_ENV_PROP_COUNTERS '+JSON.stringify(samples));
   await info.attach('quality-density-counters',{body:JSON.stringify(samples,null,2),contentType:'application/json'});
 });
 
