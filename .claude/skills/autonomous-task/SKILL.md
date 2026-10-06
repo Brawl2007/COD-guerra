@@ -32,6 +32,65 @@ Do not ask the user to manually say:
 
 Escalate only when the Task Contract requires a real human decision or the retry budget is exhausted.
 
+## Execution tracing
+
+Every autonomous task execution must have one stable `RUN_ID`.
+
+Recommended format:
+
+`<TASK_ID>-<UTC timestamp>`
+
+Example:
+
+`M01-BRIDGE-POLISH-20261006T182500Z`
+
+Use `.agent/tools/trace_event.py` to record compact operational events under:
+
+`.agent/runs/<RUN_ID>/events.jsonl`
+
+Do not store full prompts, conversations, secrets, credentials or large command output in trace messages.
+
+At minimum record applicable events:
+
+- `task_started`
+- `memory_retrieval_started`
+- `memory_retrieval_completed`
+- `context_audit_started`
+- `context_audit_passed`
+- `context_audit_blocked`
+- `implementation_started`
+- `implementation_completed`
+- `verification_started`
+- `verification_passed`
+- `verification_failed`
+- `verification_blocked`
+- `fix_started`
+- `fix_completed`
+- `review_started`
+- `review_accepted`
+- `review_rejected`
+- `memory_update_started`
+- `memory_update_completed`
+- `memory_update_skipped`
+- `task_blocked`
+- `task_completed`
+- `human_escalation`
+
+Use the Task Contract TASK_ID for `--task-id`.
+
+Use the current node name for `--node`.
+
+Use the current Git HEAD when applicable.
+
+Increment `--attempt` for correction loops.
+
+Tracing failure must not corrupt production work.
+
+If tracing fails:
+- preserve the real task state;
+- report the tracing failure;
+- continue only when doing so is safe.
+
 ## Preconditions
 
 Before implementation:
@@ -269,6 +328,18 @@ If YES:
 Memory update failure must not rewrite or invalidate completed code or evidence.
 
 If memory cannot be updated safely, report that limitation in the final handoff.
+
+## Final trace state
+
+Before returning the final handoff:
+
+- emit `task_completed` when the task reached ACCEPTED;
+- emit `task_blocked` when completion was prevented;
+- emit `human_escalation` when a human decision is required.
+
+The final trace event must reflect the actual task state.
+
+Do not emit `task_completed` for IMPLEMENTED, VERIFIED or REVIEWED states that have not reached ACCEPTED.
 
 ## Final output
 
