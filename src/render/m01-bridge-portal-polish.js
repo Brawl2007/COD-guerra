@@ -91,14 +91,15 @@ export class M01BridgePortalPolish{
     for(const a of this.attachments){for(const b of a.medium)b.visible=medium;for(const b of a.high)b.visible=high;}
   }
   get diagnostics(){
-    let medium=0,high=0,visible=0;
+    let medium=0,high=0,visible=0,activeBatches=0;const active=[];
     for(const a of this.attachments){
       medium+=a.detail.mediumBoxes.length+a.detail.mediumRings.length;high+=a.detail.highBoxes.length;
-      if(this.quality!=='low')visible+=a.detail.mediumBoxes.length+a.detail.mediumRings.length;
-      if(this.quality==='high')visible+=a.detail.highBoxes.length;
+      if(!a.node.visible)continue;active.push(a.node.name);
+      if(this.quality!=='low'){visible+=a.detail.mediumBoxes.length+a.detail.mediumRings.length;activeBatches+=a.medium.length;}
+      if(this.quality==='high'){visible+=a.detail.highBoxes.length;activeBatches+=a.high.length;}
     }
-    return {quality:this.quality,attachments:this.attachments.map(a=>a.node.name),mediumDetails:medium,highDetails:high,visibleDetails:visible,
-      batches:this.attachments.reduce((n,a)=>n+a.medium.length+a.high.length,0),collidersAdded:0};
+    return {quality:this.quality,attachments:this.attachments.map(a=>a.node.name),activeAttachments:active,mediumDetails:medium,highDetails:high,
+      visibleDetails:visible,activeBatches,totalBatches:this.attachments.reduce((n,a)=>n+a.medium.length+a.high.length,0),collidersAdded:0};
   }
   dispose(){
     for(const a of this.attachments)a.root.removeFromParent();
