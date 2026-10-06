@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {leafTexture,texturedSurface} from './m01-surfaces.js';
+import {buildM01EnvironmentProps,M01_PROP_QUALITY_RANK,propCountsForQuality} from './m01-environment-props.js';
 
 export const M01_VEGETATION_LOD=Object.freeze({
   low:Object.freeze({near:55,mid:170,hysteresis:10,nearBranches:2,midBranches:1,nearLobes:3,midLobes:2,nearCards:0}),
@@ -49,16 +50,16 @@ export class M01Environment {
     const old=Array.from(this.grassGeometry.attributes.position.array);
     this.grassGeometry.setAttribute('position',new THREE.Float32BufferAttribute([...old,-.12,0,.04,-.06,0,.06,-.17,.32,.08,.06,0,-.09,.14,0,-.09,.20,.26,-.04],3));
     this.grassGeometry.computeVertexNormals();
-    this.lists=new Map();this.resources=[];this.dynamic=[];this.grassBatches=[];this.treeDescriptors=[];this.treeBatches={};this.treeUpdateKey='';this.treeLodCounts={near:0,mid:0,far:0};
+    this.lists=new Map();this.resources=[];this.dynamic=[];this.grassBatches=[];this.propBatches=[];this.propDescriptors=[];this.propQuality='medium';this.treeDescriptors=[];this.treeBatches={};this.treeUpdateKey='';this.treeLodCounts={near:0,mid:0,far:0};
     this.treeCardCount=0;this.treeTriangleCount=0;this.treeDrawCalls=0;this.treeDummy=new THREE.Object3D();this.treeColor=new THREE.Color();
     this.treeUp=new THREE.Vector3(0,1,0);this.treeStart=new THREE.Vector3();this.treeEnd=new THREE.Vector3();this.treeDirection=new THREE.Vector3();
     let seed=19390901;this.random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
-    this.buildVegetation();this.buildClutter();this.buildTracks();this.buildArchitecture();this.buildCovers();this.buildGroundClusters();this.flush();
+    this.buildVegetation();this.buildClutter();this.buildTracks();this.buildArchitecture();this.buildCovers();this.buildGroundClusters();this.buildProductionDressing();this.flush();
     this.buildTreeBatches();this.updateVegetationLod({x:0,z:0},'medium',true);
   }
-  put(kind,material,p,size,rotation=[0,0,0],color=null,parentId=null){
-    const key=`${kind}:${material}:${parentId??'static'}`;
-    if(!this.lists.has(key))this.lists.set(key,{kind,material,parentId,items:[]});
+  put(kind,material,p,size,rotation=[0,0,0],color=null,parentId=null,meta=null){
+    const propQuality=meta?.propQuality??null,key=`${kind}:${material}:${parentId??'static'}:${propQuality??'base'}`;
+    if(!this.lists.has(key))this.lists.set(key,{kind,material,parentId,propQuality,items:[]});
     this.lists.get(key).items.push({p,size,rotation,color});
   }
   flush(){
@@ -70,6 +71,7 @@ export class M01Environment {
       list.items.forEach((o,i)=>{dummy.position.set(...o.p);dummy.scale.set(...o.size);dummy.rotation.set(...o.rotation);dummy.updateMatrix();batch.setMatrixAt(i,dummy.matrix);if(o.color)batch.setColorAt(i,new THREE.Color(o.color));});
       batch.computeBoundingSphere();batch.castShadow=['box','trunk','bag','leaf'].includes(list.kind);batch.receiveShadow=true;
       this.group.add(batch);this.resources.push(batch);if(geometry===this.grassGeometry)this.grassBatches.push(batch);
+      if(list.propQuality){batch.userData.m01PropQuality=list.propQuality;this.propBatches.push(batch);}
       if(list.parentId)this.dynamic.push({batch,id:list.parentId,height:this.world.covers.find(c=>c.id===list.parentId)?.max.y-this.world.covers.find(c=>c.id===list.parentId)?.min.y});
     }
     this.lists.clear();
@@ -229,6 +231,10 @@ export class M01Environment {
       for(const h of [.5,1.2])this.put('box','metal',[x+8,y+h,z],[17,.018,.018]);
     }
   }
+  buildProductionDressing(){
+    this.propDescriptors=[...buildM01EnvironmentProps(this.world)];
+    for(const p of this.propDescriptors)this.put(p.kind,p.material,p.p,p.size,p.rotation,p.color,null,{propQuality:p.quality});
+  }
   buildTracks(){
     for(const id of ['rail_embankment_west','rail_line_southwest','rail_line_east']){
       const points=this.world.features.get(id).polyline;
@@ -294,9 +300,17 @@ export class M01Environment {
   }
   sync(world,quality,player={x:0,z:0}){
     for(const {id,batch,height}of this.dynamic){const cover=world.covers.find(c=>c.id===id);batch.visible=Boolean(cover);if(cover)batch.scale.y=(cover.max.y-cover.min.y)/height;}
-    // Density is reduced in the existing low preset; no quality changes affect the simulation.
+    // Density changes are presentation-only. Prop batches are authored once and toggled by minimum quality.
     for(const batch of this.grassBatches)batch.count=Math.floor(batch.instanceMatrix.count*(quality==='low'?.5:1));
+    const rank=M01_PROP_QUALITY_RANK[quality]??M01_PROP_QUALITY_RANK.medium;this.propQuality=quality;
+    for(const batch of this.propBatches)batch.visible=M01_PROP_QUALITY_RANK[batch.userData.m01PropQuality]<=rank;
     this.updateVegetationLod(player,quality);
+  }
+  get propDiagnostics(){
+    const quality=this.propQuality??'medium',counts=propCountsForQuality(this.propDescriptors,quality);
+    return {quality,clusters:new Set(this.propDescriptors.map(p=>p.cluster)).size,totalAll:this.propDescriptors.length,visible:counts.total,
+      byArea:counts.byArea,byCluster:counts.byCluster,batches:this.propBatches.filter(b=>b.visible).length,totalBatches:this.propBatches.length,
+      collidersAdded:0,deterministicSeedDomain:'m01-environment-props'};
   }
   get diagnostics(){
     const grassInstances=this.grassBatches.reduce((n,b)=>n+b.count,0),treeInstances=Object.values(this.treeBatches).reduce((n,b)=>n+b.count,0);
