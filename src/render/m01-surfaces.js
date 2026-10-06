@@ -155,12 +155,27 @@ export function weatheredBridgeSurface(kind,{seed=0,...options}={}){
       float bridgeBase=1.0-smoothstep(-.8,2.8,vM01Position.y);
       float bridgeStreak=pow(artNoise(vec2(vM01Position.x*.095+m01BridgeSeed*.021,vM01Position.z*.11+floor(vM01Position.y*.45)*.073)),2.15);
       float bridgePatch=artNoise(vM01Position.xz*.031+vec2(71.0,m01BridgeSeed*.017));
-      float bridgeAge=.05+.13*bridgeStreak+.10*(1.0-bridgePatch)+.24*bridgeBase;
-      gl_FragColor.rgb*=1.0-clamp(bridgeAge,0.0,.34);
+      float bridgeTone=(bridgeMacro-.5)*.20;
+      gl_FragColor.rgb*=vec3(1.0+bridgeTone,1.0+bridgeTone*.42,1.0-bridgeTone*.16);
+      float bridgeAge=.055+.18*bridgeStreak+.115*(1.0-bridgePatch)+.28*bridgeBase;
+      gl_FragColor.rgb*=1.0-clamp(bridgeAge,0.0,.39);
       float bridgeDust=smoothstep(.58,.86,artNoise(vM01Position.xz*.16+vec2(m01BridgeSeed*.011,29.0)))*bridgeBase;
       gl_FragColor.rgb=mix(gl_FragColor.rgb,gl_FragColor.rgb*vec3(1.12,1.06,.94),bridgeDust*.16);
       #include <dithering_fragment>`);
   };
   material.customProgramCacheKey=()=>`m01-bridge-weather-${kind}-${seed}-${baseKey?.()??''}`;
   return material;
+}
+
+
+export function masonryStainTexture(){
+  const size=128,canvas=document.createElement('canvas');canvas.width=canvas.height=size;
+  const ctx=canvas.getContext('2d'),image=ctx.createImageData(size,size);
+  for(let y=0;y<size;y++)for(let x=0;x<size;x++){
+    const dx=(x-size*.5)/(size*.5),dy=(y-size*.5)/(size*.5),rad=Math.hypot(dx*.78,dy);
+    const field=noise(x/size*5.0+3.1,y/size*7.0+1.7,8)*.62+noise(x/size*17.0,y/size*13.0,24)*.38;
+    const edge=Math.max(0,1-rad*rad),vertical=.62+.38*(1-y/size),a=Math.max(0,(field-.34)*1.7)*edge*vertical;
+    const i=(y*size+x)*4;image.data[i]=66;image.data[i+1]=58;image.data[i+2]=43;image.data[i+3]=Math.floor(Math.min(1,a)*150);
+  }
+  ctx.putImageData(image,0,0);const map=new THREE.CanvasTexture(canvas);map.colorSpace=THREE.SRGBColorSpace;return map;
 }
