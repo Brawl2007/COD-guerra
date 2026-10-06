@@ -8,6 +8,7 @@ import { actorPose } from './m01-actor-pose.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { texturedSurface,weatheredBridgeSurface } from './m01-surfaces.js';
 import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';
+import {battlefieldBlastKind,battlefieldProfile,fxLayerCount,staggeredLife,impactProfile,fxDistanceBand} from './m01-battlefield-fx-profile.js';
 import { M01Environment } from './m01-environment.js';
 import { M01Characters } from './m01-characters.js';
 import { M01ViewModel } from './m01-viewmodel.js';
@@ -64,7 +65,7 @@ export class M01View {
     this.kit=[];this.batches=new Map();this.solidGroup=new THREE.Group();this.effects=new THREE.Group();
     this.scene.add(this.solidGroup,this.effects);this.smokes=new Map();this.grenadeViews=new Map();this.world=null;this.revision=-1;
     this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};
-    this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};
+    this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
     this.combatFeedback=new M01CombatFeedback();
     this.portalPolish=new M01BridgePortalPolish({stone:this.materials.bridgeStone});
     this.atmosphere=new M01Atmosphere(this.scene);
@@ -240,7 +241,7 @@ export class M01View {
     this.fireBatches={};this.fireDummy=new THREE.Object3D();this.fireColor=new THREE.Color();
     for(const [name,material,capacity]of [['muzzle','flash',96],['tracer','tracer',48],['puff','puff',144],['spark','flash',96],['smoke','gunSmoke',64],['chip','chip',128]]){
       const soft=name==='smoke'||name==='puff',geometry=name==='chip'?this.atmosphere.debrisGeometry:this.sphere;
-      const batch=soft?this.atmosphere.billboardBatch(capacity,this.materials[material].color,this.effects):
+      const batch=soft?this.atmosphere.billboardBatch(capacity,this.materials[material].color,this.effects,name==='puff'?'dust':'smoke'):
         new THREE.InstancedMesh(geometry,this.materials[material],capacity);
       batch.instanceMatrix.setUsage(THREE.DynamicDrawUsage);batch.count=0;batch.frustumCulled=false;this.effects.add(batch);this.fireBatches[name]=batch;
     }
@@ -248,7 +249,7 @@ export class M01View {
     for(const [name,capacity,color]of [
       ['flash',M01_BATTLEFIELD_FX_LIMITS.flash,'#fff0c2'],['core',M01_BATTLEFIELD_FX_LIMITS.core,'#ffc45d'],
       ['fire',M01_BATTLEFIELD_FX_LIMITS.fire,'#e97831'],['smoke',M01_BATTLEFIELD_FX_LIMITS.smoke,'#4e4b45'],['dust',M01_BATTLEFIELD_FX_LIMITS.dust,'#8d7c67']]){
-      const batch=this.atmosphere.billboardBatch(capacity,color,this.effects);batch.count=0;this.battlefieldFxBatches[name]=batch;
+      const batch=this.atmosphere.billboardBatch(capacity,color,this.effects,name==='dust'?'dust':'smoke');batch.count=0;this.battlefieldFxBatches[name]=batch;
     }
     this.battlefieldShards=new THREE.InstancedMesh(this.atmosphere.debrisGeometry,this.materials.blastShard,M01_BATTLEFIELD_FX_LIMITS.shards);
     this.battlefieldShards.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.battlefieldShards.count=0;this.battlefieldShards.frustumCulled=false;this.effects.add(this.battlefieldShards);
@@ -257,13 +258,15 @@ export class M01View {
   updateFire(sim){
     const time=sim.clock,cam=this.camera.position,dummy=this.fireDummy,counts={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};
     const far=p=>Math.hypot(p.x-cam.x,p.y-cam.y,p.z-cam.z);
-    const put=(name,p,scale,dir=null,opacity=1,color=null)=>{
+    const put=(name,p,scale,dir=null,opacity=1,color=null,styleSeed=null,variant=0)=>{
       const batch=this.fireBatches[name],index=counts[name];if(index>=batch.instanceMatrix.count)return;
       dummy.position.set(p.x,p.y,p.z);dummy.rotation.set(0,0,0);
       if(dir){dummy.lookAt(p.x+dir.x,p.y+dir.y,p.z+dir.z);dummy.scale.set(scale[0],scale[1],scale[2]);}
       else if(Array.isArray(scale))dummy.scale.set(...scale);else dummy.scale.setScalar(scale);
       dummy.updateMatrix();batch.setMatrixAt(index,dummy.matrix);
-      batch.geometry.attributes.puffOpacity?.setX(index,opacity);if(color)batch.setColorAt(index,this.fireColor.set(color));counts[name]++;
+      batch.geometry.attributes.puffOpacity?.setX(index,opacity);
+      if(batch.geometry.attributes.puffSpin)this.atmosphere.stylePuff(batch,index,styleSeed??fxSeed(p,time),variant);
+      if(color)batch.setColorAt(index,this.fireColor.set(color));counts[name]++;
     };
     const root=new THREE.Object3D(),muzzle=new THREE.Vector3();
     for(const a of sim.actors)if(a.team==='enemy'&&a.alive&&a.active){
@@ -272,67 +275,131 @@ export class M01View {
       root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
       muzzle.fromArray(pose.rifle.muzzle);muzzle.y-=pose.root.pivotY;muzzle.applyMatrix4(root.matrix);
       const skinnedMuzzle=this.characters?.muzzle(a.id);if(skinnedMuzzle)muzzle.copy(skinnedMuzzle);
-      const p={x:muzzle.x,y:muzzle.y,z:muzzle.z},d=far(p);
+      const p={x:muzzle.x,y:muzzle.y,z:muzzle.z},d=far(p),seed=fxSeed(p,a.firedAt??time);
       if(a.mg34Prone?pose.firing:(pose.firing||pose.aiming&&age>=0&&age<.25))put('muzzle',p,Math.max(.12,d*.008)*(.8+.2*Math.sin(time*90)));
-      if(age>=0&&age<2.2){const k=age/2.2;put('smoke',{x:p.x,y:p.y+.4+k*1.6,z:p.z},Math.max(.25,d*.007)*(.6+k*.8)*(1-k*k),null,.65*(1-k));}
+      if(age>=0&&age<2.2){
+        const k=age/2.2,n0=visualNoise(seed,1),n1=visualNoise(seed,2);
+        put('smoke',{x:p.x+(n0-.5)*.22*k,y:p.y+.34+k*(1.3+n1*.55),z:p.z+(n1-.5)*.18*k},
+          Math.max(.22,d*.0065)*(.55+k*.95)*(1-k*k),null,.60*Math.pow(1-k,1.15),'#b9b8ae',seed,4);
+      }
     }
     for(const r of sim.enemyFire.rounds){
       const t=(time-r.firedAt)/(r.arriveAt-r.firedAt);if(!r.tracer||t<0||t>1)continue;
       const p=roundPoint(r,t),q=roundPoint(r,Math.min(1.02,t+.01)),len=Math.hypot(q.x-p.x,q.y-p.y,q.z-p.z)||1,d=far(p);
       put('tracer',p,[Math.max(.025,d*.0016),Math.max(.025,d*.0016),Math.max(.6,d*.012)],{x:(q.x-p.x)/len,y:(q.y-p.y)/len,z:(q.z-p.z)/len});
     }
-    this.impacts=this.impacts.filter(i=>time-i.start<1.05&&time>=i.start);
+    this.impacts=this.impacts.filter(i=>{const p=impactProfile(i.material);return time>=i.start&&time-i.start<Math.max(1.15,p.life);});
     for(const i of this.impacts){
-      const age=time-i.start,d=far(i),seed=i.seed,quality=this.owner.quality,dustColor=i.material==='wood'?'#98744f':i.material==='stone'?'#b9b09c':'#8b7658';
-      if(i.material==='metal'&&age<.18){
-        const n=fxCount(5,quality);for(let j=0;j<n;j++){const a=visualNoise(seed,j*3)*Math.PI*2,r=(.12+age*3)*(1+visualNoise(seed,j*3+1));
-          put('spark',{x:i.x+Math.cos(a)*r,y:i.y+.04+age*(.8+visualNoise(seed,j*3+2)*1.8),z:i.z+Math.sin(a)*r},Math.max(.035,d*.0018)*(1-age/.18));}
+      const age=time-i.start,d=far(i),seed=i.seed,quality=this.owner.quality,profile=impactProfile(i.material);
+      if(profile.sparks&&age<profile.life){
+        const life=Math.max(0,1-age/profile.life),n=fxCount(profile.sparks,quality);
+        for(let j=0;j<n;j++){
+          const a=visualNoise(seed,j*4)*Math.PI*2,r=(.08+age*profile.spread)*(1+visualNoise(seed,j*4+1)*.8),s=Math.max(.028,d*.00155)*(1-age/profile.life);
+          put('spark',{x:i.x+Math.cos(a)*r,y:i.y+.03+age*(profile.rise+visualNoise(seed,j*4+2)*2.4),z:i.z+Math.sin(a)*r},s,null,.92*life,'#ffd27a');
+        }
       }
-      if(i.material!=='metal'){
-        const life=i.material==='earth'?.95:.8,k=age<.12?age/.12:Math.max(0,1-(age-.12)/(life-.12)),n=fxCount(i.material==='earth'?4:3,quality);
-        for(let j=0;j<n&&k>0;j++){const a=visualNoise(seed,30+j*3)*Math.PI*2,r=age*(.3+visualNoise(seed,31+j*3)*1.7),s=Math.max(.28,d*.0032)*(.65+visualNoise(seed,32+j*3)*.65)*Math.max(.1,k);
-          put('puff',{x:i.x+Math.cos(a)*r,y:i.y+.15+age*(.35+visualNoise(seed,40+j)*.8),z:i.z+Math.sin(a)*r},s,null,.58*k,dustColor);}
+      if(profile.dust&&age<profile.life){
+        const fadeIn=Math.min(1,age/.08),fadeOut=Math.max(0,1-age/profile.life),life=fadeIn*Math.pow(fadeOut,1.18),n=fxCount(profile.dust,quality);
+        for(let j=0;j<n&&life>0;j++){
+          const n0=visualNoise(seed,30+j*4),n1=visualNoise(seed,31+j*4),n2=visualNoise(seed,32+j*4),a=n0*Math.PI*2;
+          const r=age*profile.spread*(.45+n1*.75),sx=Math.max(.24,d*.0028)*(.58+n2*.7)*(1+age*.42),sy=sx*(.42+.24*n1);
+          put('puff',{x:i.x+Math.cos(a)*r,y:i.y+.06+age*(profile.rise+.20*n2),z:i.z+Math.sin(a)*r},[sx,sy,1],null,.60*life,profile.color,seed,30+j);
+        }
       }
-      if((i.material==='wood'||i.material==='stone')&&age<.72){
-        const n=fxCount(i.material==='wood'?6:4,quality);for(let j=0;j<n;j++){const a=visualNoise(seed,70+j*3)*Math.PI*2,v=.7+visualNoise(seed,71+j*3)*2.4,s=(.045+visualNoise(seed,72+j*3)*.075)*Math.max(.18,1-age/.72);
-          put('chip',{x:i.x+Math.cos(a)*v*age,y:i.y+.08+(1.1+visualNoise(seed,100+j)*1.8)*age-2.8*age*age,z:i.z+Math.sin(a)*v*age},[s,s*(.45+visualNoise(seed,120+j)*.5),s*.75],null,1,i.material==='wood'?'#9a6d3f':'#c6bfaf');}
+      if(profile.chips&&age<Math.min(.86,profile.life)){
+        const n=fxCount(profile.chips,quality),life=Math.max(.16,1-age/Math.min(.86,profile.life));
+        for(let j=0;j<n;j++){
+          const a=visualNoise(seed,70+j*4)*Math.PI*2,v=.65+visualNoise(seed,71+j*4)*profile.spread,s=(.04+visualNoise(seed,72+j*4)*.075)*life;
+          const elong=profile.elongation*(.82+visualNoise(seed,73+j*4)*.42);
+          put('chip',{x:i.x+Math.cos(a)*v*age,y:i.y+.05+(1.0+visualNoise(seed,100+j)*1.9)*age-2.8*age*age,z:i.z+Math.sin(a)*v*age},
+            [s*elong,s*(.38+visualNoise(seed,120+j)*.48),s*.62],null,1,profile.color);
+        }
       }
     }
-    for(const [name,batch]of Object.entries(this.fireBatches)){batch.count=counts[name];batch.instanceMatrix.needsUpdate=true;
-      if(batch.instanceColor)batch.instanceColor.needsUpdate=true;if(batch.geometry.attributes.puffOpacity)batch.geometry.attributes.puffOpacity.needsUpdate=true;}
+    for(const [name,batch]of Object.entries(this.fireBatches)){
+      batch.count=counts[name];batch.instanceMatrix.needsUpdate=true;
+      if(batch.instanceColor)batch.instanceColor.needsUpdate=true;
+      for(const attr of ['puffOpacity','puffSpin','puffShape'])if(batch.geometry.attributes[attr])batch.geometry.attributes[attr].needsUpdate=true;
+    }
     this.fx=counts;
   }
   updateBattlefieldFx(state,time){
-    this.bursts=this.bursts.filter(b=>time>=b.start&&time-b.start<6.5);
-    const counts={flash:0,core:0,fire:0,smoke:0,dust:0},dummy=this.battlefieldDummy,quality=this.owner.quality;let shardCount=0,strongest=null;
-    const put=(name,p,sx,sy,opacity,color)=>{const batch=this.battlefieldFxBatches[name],index=counts[name];if(index>=batch.instanceMatrix.count)return;
+    const findDamage=b=>state.damage.find(d=>Math.abs(d.started-b.start)<.08&&Math.hypot(d.x-b.x,d.z-b.z)<2);
+    this.bursts=this.bursts.filter(b=>{const d=findDamage(b),profile=battlefieldProfile(d?.id??'',b.aerial);return time>=b.start&&time-b.start<profile.duration;});
+    const counts={flash:0,core:0,fire:0,smoke:0,dust:0},dummy=this.battlefieldDummy,quality=this.owner.quality,cam=this.camera.position;
+    const meta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};let shardCount=0,strongest=null;
+    const put=(name,p,sx,sy,opacity,color,seed,variant=0)=>{
+      const batch=this.battlefieldFxBatches[name],index=counts[name];if(index>=batch.instanceMatrix.count||opacity<=.004)return;
       dummy.position.set(p.x,p.y,p.z);dummy.rotation.set(0,0,0);dummy.scale.set(sx,sy,1);dummy.updateMatrix();batch.setMatrixAt(index,dummy.matrix);
-      batch.geometry.attributes.puffOpacity.setX(index,opacity);batch.setColorAt(index,this.battlefieldColor.set(color));counts[name]++;};
+      batch.geometry.attributes.puffOpacity.setX(index,opacity);this.atmosphere.stylePuff(batch,index,seed,variant);
+      batch.setColorAt(index,this.battlefieldColor.set(color));counts[name]++;
+    };
     for(const b of this.bursts){
-      const age=time-b.start,match=state.damage.find(d=>Math.abs(d.started-b.start)<.08&&Math.hypot(d.x-b.x,d.z-b.z)<2),id=match?.id??'';
-      const kind=id.endsWith('_demolition')?'demolition':b.aerial||/bomb|raid/.test(id)?'bombing':'small';
-      const profile=kind==='demolition'?{scale:28,duration:5.8,fire:.95,dust:1.55}:kind==='bombing'?{scale:18,duration:4.5,fire:.78,dust:1.25}:{scale:9,duration:3.1,fire:.62,dust:.95};
-      if(age>0&&age<.09){const k=1-age/.09;put('flash',{x:b.x,y:b.y+profile.scale*.18,z:b.z},profile.scale*(1+age*8),profile.scale*(.72+age*5),.92*k,'#fff3cf');}
-      if(age>=0&&age<.34){const n=fxCount(3,quality);for(let j=0;j<n;j++){const n0=visualNoise(b.seed,j*4),n1=visualNoise(b.seed,j*4+1),a=n0*Math.PI*2,r=profile.scale*(.04+age*.24)*n1,k=Math.max(0,1-age/.34),s=profile.scale*(.18+age*.72)*(.65+visualNoise(b.seed,j*4+2)*.55);
-        put('core',{x:b.x+Math.cos(a)*r,y:b.y+profile.scale*.12+Math.sin(a*1.7)*r*.18,z:b.z+Math.sin(a)*r},s,s*(.72+visualNoise(b.seed,j*4+3)*.5),.9*k,j%2?'#ffb43f':'#ffd36b');}}
-      if(age>=.06&&age<profile.fire){const n=fxCount(kind==='demolition'?10:kind==='bombing'?8:6,quality),t=(age-.06)/(profile.fire-.06);
-        for(let j=0;j<n;j++){const n0=visualNoise(b.seed,40+j*4),n1=visualNoise(b.seed,41+j*4),a=n0*Math.PI*2,r=profile.scale*(.10+.40*t)*(.35+n1*.8),rise=profile.scale*(.12+.32*t)*(1+visualNoise(b.seed,42+j*4)*.5),s=profile.scale*(.16+.42*Math.sin(Math.min(1,t)*Math.PI))*(.58+visualNoise(b.seed,43+j*4)*.7);
-          put('fire',{x:b.x+Math.cos(a)*r,y:b.y+rise,z:b.z+Math.sin(a)*r},s,s*(.78+n1*.5),.78*(1-t),j%3===0?'#ffd15a':j%2?'#ff9b3f':'#df622d');}}
-      if(age>=.08&&age<profile.dust){const n=fxCount(kind==='demolition'?10:kind==='bombing'?8:5,quality),t=(age-.08)/(profile.dust-.08);
-        for(let j=0;j<n;j++){const n0=visualNoise(b.seed,100+j*3),n1=visualNoise(b.seed,101+j*3),a=(j/n)*Math.PI*2+n0*.8,r=profile.scale*(.10+.62*t)*(.65+n1*.5),sx=profile.scale*(.12+.22*t)*(.65+visualNoise(b.seed,102+j*3)*.6);
-          put('dust',{x:b.x+Math.cos(a)*r,y:b.y+.18+profile.scale*.035*t,z:b.z+Math.sin(a)*r},sx,sx*(.38+n0*.28),.55*(1-t),kind==='demolition'?'#9a876d':'#a18e75');}}
-      if(age>=.22&&age<profile.duration){const n=fxCount(kind==='demolition'?12:kind==='bombing'?9:6,quality),t=(age-.22)/(profile.duration-.22);
-        for(let j=0;j<n;j++){const n0=visualNoise(b.seed,170+j*4),n1=visualNoise(b.seed,171+j*4),a=n0*Math.PI*2,r=profile.scale*(.08+.30*t)*(.5+n1*.8),rise=profile.scale*(.16+.72*t)*(1+visualNoise(b.seed,172+j*4)*.3),s=profile.scale*(.13+.42*t)*(.65+visualNoise(b.seed,173+j*4)*.65);
-          put('smoke',{x:b.x+Math.cos(a)*r+age*(.25+n1*.4),y:b.y+rise,z:b.z+Math.sin(a)*r},s,s*(.85+n0*.55),.58*(1-t)*(t<.12?t/.12:1),t<.35?'#514943':t<.7?'#5c5953':'#73716b');}}
-      if(age>=.03&&age<1.15){const n=fxCount(kind==='demolition'?14:kind==='bombing'?10:7,quality);for(let j=0;j<n&&shardCount<M01_BATTLEFIELD_FX_LIMITS.shards;j++){const n0=visualNoise(b.seed,260+j*4),n1=visualNoise(b.seed,261+j*4),n2=visualNoise(b.seed,262+j*4),a=n0*Math.PI*2,v=(kind==='demolition'?14:kind==='bombing'?10:6)*(.45+n1*.8);
-        dummy.position.set(b.x+Math.cos(a)*v*age,b.y+.2+(4+n2*8)*age-4.9*age*age,b.z+Math.sin(a)*v*age);dummy.rotation.set(age*(3+j),a,age*(5+n0*4));const s=(.06+n2*.16)*(kind==='demolition'?1.25:1)*Math.max(.15,1-age/1.15);
-        dummy.scale.set(s,s*(.45+n0*.55),s*(.7+n1*.5));dummy.updateMatrix();this.battlefieldShards.setMatrixAt(shardCount,dummy.matrix);this.battlefieldShards.setColorAt(shardCount,this.battlefieldColor.set(j%3?'#5b5042':'#81705b'));shardCount++;}}
-      if(age>=0&&age<.22){const power=profile.scale*(1-age/.22);if(!strongest||power>strongest.power)strongest={b,power,profile};}
+      const age=time-b.start,match=findDamage(b),id=match?.id??'',kind=battlefieldBlastKind(id,b.aerial),profile=battlefieldProfile(id,b.aerial);
+      const distance=Math.hypot(b.x-cam.x,b.y-cam.y,b.z-cam.z),band=fxDistanceBand(distance);meta.kinds[kind]++;meta.bands[band]++;
+      const farScale=band==='far'?1.12:band==='mid'?1.04:1;
+      const flashN=fxLayerCount(profile.counts.flash,quality,distance);
+      for(let j=0;j<flashN;j++){
+        const n0=visualNoise(b.seed,2+j*3),life=staggeredLife(age,0,profile.flashEnd,n0,.08);if(!life.life)continue;
+        const s=profile.scale*(.70+.34*life.t)*(.82+visualNoise(b.seed,3+j*3)*.28)*farScale;
+        put('flash',{x:b.x+(n0-.5)*profile.scale*.08,y:b.y+profile.scale*(.11+.08*life.t),z:b.z+(visualNoise(b.seed,4+j*3)-.5)*profile.scale*.08},
+          s,s*(.58+.18*visualNoise(b.seed,5+j*3)),.94*life.life,kind==='small'?'#fff1c7':'#fff0c0',b.seed,2+j);
+      }
+      const coreN=fxLayerCount(profile.counts.core,quality,distance);
+      for(let j=0;j<coreN;j++){
+        const n0=visualNoise(b.seed,20+j*5),n1=visualNoise(b.seed,21+j*5),life=staggeredLife(age,0,profile.coreEnd,n0,.24);if(!life.life)continue;
+        const a=n0*Math.PI*2,r=profile.scale*(.025+.21*life.t)*(.35+n1*.8),s=profile.scale*(.15+.38*life.t)*(.58+visualNoise(b.seed,22+j*5)*.65)*farScale;
+        put('core',{x:b.x+Math.cos(a)*r,y:b.y+profile.scale*(.10+.15*life.t)+Math.sin(a*1.7)*r*.13,z:b.z+Math.sin(a)*r},
+          s,s*(.68+visualNoise(b.seed,23+j*5)*.55),.86*life.life,j%3===0?'#ffd777':j%2?'#ffad42':'#ff8732',b.seed,20+j);
+      }
+      const fireN=fxLayerCount(profile.counts.fire,quality,distance);
+      for(let j=0;j<fireN;j++){
+        const n0=visualNoise(b.seed,60+j*5),n1=visualNoise(b.seed,61+j*5),n2=visualNoise(b.seed,62+j*5),life=staggeredLife(age,profile.fireStart,profile.fireEnd,n0,.34);if(!life.life)continue;
+        const a=n0*Math.PI*2,r=profile.scale*(.07+.33*life.t)*(.28+n1*.82),rise=profile.scale*(.10+.25*life.t)*profile.vertical*(.65+n2*.52);
+        const pulse=.82+.18*Math.sin(age*(17+n1*7)+j*2.1),s=profile.scale*(.10+.28*Math.sin(Math.min(1,life.t)*Math.PI))*(.54+n2*.68)*pulse*farScale;
+        put('fire',{x:b.x+Math.cos(a)*r,y:b.y+rise,z:b.z+Math.sin(a)*r},s,s*(.78+n1*.58),.72*life.life,
+          j%4===0?'#ffd35c':j%3===0?'#f07b2c':'#ff9a37',b.seed,60+j);
+      }
+      const dustN=fxLayerCount(profile.counts.dust,quality,distance);
+      for(let j=0;j<dustN;j++){
+        const n0=visualNoise(b.seed,120+j*5),n1=visualNoise(b.seed,121+j*5),n2=visualNoise(b.seed,122+j*5),life=staggeredLife(age,profile.dustStart,profile.dustEnd,n1,.30);if(!life.life)continue;
+        const a=(j/Math.max(1,dustN))*Math.PI*2+(n0-.5)*.72,r=profile.scale*(.06+profile.dustReach*Math.pow(life.t,.72))*(.70+n1*.46);
+        const sx=profile.scale*(.09+.22*life.t)*(.58+n2*.72)*farScale,sy=sx*(.28+.20*visualNoise(b.seed,123+j*5));
+        put('dust',{x:b.x+Math.cos(a)*r,y:b.y+.10+profile.scale*.017*life.t+visualNoise(b.seed,124+j*5)*.22,z:b.z+Math.sin(a)*r},
+          sx,sy,.52*life.life,kind==='demolition'?(j%3?'#94816a':'#aa9577'):kind==='bombing'?(j%2?'#9f8a70':'#b09a7d'):'#aa967b',b.seed,120+j);
+      }
+      const smokeN=fxLayerCount(profile.counts.smoke,quality,distance);
+      for(let j=0;j<smokeN;j++){
+        const n0=visualNoise(b.seed,190+j*6),n1=visualNoise(b.seed,191+j*6),n2=visualNoise(b.seed,192+j*6),life=staggeredLife(age,profile.smokeStart,profile.smokeEnd,n0,.38);if(!life.life)continue;
+        const a=n0*Math.PI*2,r=profile.scale*(.035+.18*life.t)*(.35+n1*.88),curl=Math.sin(age*(.35+n2*.28)+j*1.47);
+        const rise=profile.scale*(.10+profile.smokeRise*.66*Math.pow(life.t,.78))*(.72+n2*.48),drift=age*(.18+n1*.36);
+        const s=profile.scale*(.10+.34*Math.pow(life.t,.68))*(.55+visualNoise(b.seed,193+j*6)*.72)*farScale;
+        const color=life.t<.24?(kind==='demolition'?'#4c4540':'#454542'):life.t<.62?'#5e5c56':'#77756f';
+        put('smoke',{x:b.x+Math.cos(a)*r+drift+curl*s*.08,y:b.y+rise,z:b.z+Math.sin(a)*r+curl*s*.10},
+          s*(.86+n1*.34),s*(.98+n2*.62),.54*life.life,color,b.seed,190+j);
+      }
+      const shardN=fxLayerCount(profile.counts.shard,quality,distance);
+      for(let j=0;j<shardN&&shardCount<M01_BATTLEFIELD_FX_LIMITS.shards;j++){
+        const n0=visualNoise(b.seed,280+j*5),n1=visualNoise(b.seed,281+j*5),n2=visualNoise(b.seed,282+j*5),life=staggeredLife(age,profile.shardStart,profile.shardEnd,n0,.16);
+        if(!life.life)continue;
+        const a=n0*Math.PI*2,v=(kind==='demolition'?15:kind==='bombing'?10.5:6.2)*(.40+n1*.92),t=age-life.start;
+        dummy.position.set(b.x+Math.cos(a)*v*t,b.y+.18+(4+n2*(kind==='demolition'?9:6))*t-4.9*t*t,b.z+Math.sin(a)*v*t);
+        dummy.rotation.set(t*(3+j*.71),a+n1,t*(5+n0*4));const s=(.05+n2*.17)*(kind==='demolition'?1.24:1)*Math.max(.15,life.life);
+        dummy.scale.set(s*(.65+n1*.8),s*(.32+n0*.48),s*(.62+n2*.55));dummy.updateMatrix();this.battlefieldShards.setMatrixAt(shardCount,dummy.matrix);
+        this.battlefieldShards.setColorAt(shardCount,this.battlefieldColor.set(j%4===0?'#88745c':j%2?'#51483d':'#665747'));shardCount++;
+      }
+      const light=staggeredLife(age,0,Math.min(.34,profile.coreEnd),.08,.05);
+      if(light.life){
+        const intensity=profile.lightPeak*light.life;if(!strongest||intensity>strongest.intensity)strongest={b,intensity,distance:profile.lightDistance,kind};
+      }
     }
-    for(const [name,batch]of Object.entries(this.battlefieldFxBatches)){batch.count=counts[name];batch.instanceMatrix.needsUpdate=true;batch.instanceColor.needsUpdate=true;batch.geometry.attributes.puffOpacity.needsUpdate=true;}
+    for(const [name,batch]of Object.entries(this.battlefieldFxBatches)){
+      batch.count=counts[name];batch.instanceMatrix.needsUpdate=true;batch.instanceColor.needsUpdate=true;
+      for(const attr of ['puffOpacity','puffSpin','puffShape'])if(batch.geometry.attributes[attr])batch.geometry.attributes[attr].needsUpdate=true;
+    }
     this.battlefieldShards.count=shardCount;this.battlefieldShards.instanceMatrix.needsUpdate=true;if(this.battlefieldShards.instanceColor)this.battlefieldShards.instanceColor.needsUpdate=true;
-    this.explosionLight.visible=Boolean(strongest);if(strongest){this.explosionLight.position.set(strongest.b.x,strongest.b.y+3,strongest.b.z);this.explosionLight.intensity=Math.min(5,strongest.power*.18);this.explosionLight.distance=Math.min(110,35+strongest.profile.scale*2.4);}
-    this.battlefieldFxCounts={...counts,shard:shardCount};
+    this.explosionLight.visible=Boolean(strongest);if(strongest){this.explosionLight.position.set(strongest.b.x,strongest.b.y+3,strongest.b.z);this.explosionLight.intensity=Math.min(5,strongest.intensity);this.explosionLight.distance=strongest.distance;this.explosionLight.color.set(strongest.kind==='small'?'#ffb15a':'#ff9340');}
+    this.battlefieldFxCounts={...counts,shard:shardCount};this.battlefieldFxMeta=meta;
   }
   /** Impacto de um tiro alemão (evento round-impact da simulação): poeira/faísca/chips conforme a superfície. */
   impact(point,material,clock){this.impacts.push({x:point.x,y:point.y,z:point.z,material:material??'earth',start:clock,seed:fxSeed(point,clock)});if(this.impacts.length>96)this.impacts.shift();}
@@ -526,7 +593,7 @@ export class M01View {
     this.lastFrame=null;this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.impacts=[];this.bursts=[];this.combatFeedback.reset();
     for(const b of Object.values(this.fireBatches))b.count=0;for(const b of Object.values(this.battlefieldFxBatches))b.count=0;
     this.battlefieldShards.count=0;this.explosionLight.visible=false;this.explosionLight.intensity=0;
-    this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};
+    this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
   }
   get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,
     requiredAssetFailures:this.assets.failures.filter(f=>manifest.files.some(m=>typeof m.lod==='number'&&m.file===f.path)),
@@ -537,7 +604,7 @@ export class M01View {
     environmentProps:this.environment?.propDiagnostics,bridgePortalPolish:this.portalPolish?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},
     combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),
-    battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
+    battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},meta:structuredClone(this.battlefieldFxMeta),limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
     this.disposed=true;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}this.viewModel?.dispose();this.characters?.dispose();
     this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
