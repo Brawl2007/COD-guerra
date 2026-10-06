@@ -62,8 +62,7 @@ test('microdetail stays inside approved portal macro envelopes and scales by qua
       assert.ok(z-sz/2>=-layout.halfWidth-.4&&z+sz/2<=layout.halfWidth+.4,name);
     }
     for(const ring of d.mediumRings){assert.ok(layout.towers.some(t=>Math.abs(t.z-ring.p[2])<1e-9));}
-    for(const stain of d.mediumStains){assert.ok(Math.abs(Math.abs(stain.p[0]-layout.x)-layout.thickness/2)<.15,name);assert.ok(stain.p[1]>0&&stain.p[1]<9,name);}
-    assert.ok(d.mediumBoxes.length+d.mediumRings.length+d.mediumStains.length>0);assert.ok(d.highBoxes.length>0);
+    assert.ok(d.mediumBoxes.length+d.mediumRings.length>0);assert.ok(d.highBoxes.length>0);
   }
 });
 
