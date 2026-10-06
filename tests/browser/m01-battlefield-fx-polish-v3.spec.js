@@ -7,10 +7,10 @@ const key='cod-guerra:checkpoint:m01:v2',baseline=process.env.M01_BASELINE_CAPTU
 const fixtures={impacts:{}};
 
 route(19390901,{support:true,onStep:({sim})=>{
-  if(!fixtures.bombing&&!sim.consumedEvent('evt_m01_bombing_0434')&&sim.battleClock>=seconds('04:33:48'))fixtures.bombing=structuredClone(sim.snapshot(false));
-  if(!fixtures.raid&&!sim.consumedEvent('evt_m01_bombing_0530')&&sim.battleClock>=seconds('05:29:48'))fixtures.raid=structuredClone(sim.snapshot(false));
-  if(!fixtures.east&&!sim.consumedEvent('evt_m01_east_demolition')&&sim.battleClock>=seconds('06:09:48'))fixtures.east=structuredClone(sim.snapshot(false));
-  if(!fixtures.west&&!sim.consumedEvent('evt_m01_west_demolition')&&sim.battleClock>=seconds('06:39:45'))fixtures.west=structuredClone(sim.snapshot(false));
+  if(!fixtures.bombing&&!sim.consumedEvent('evt_m01_bombing_0434')&&sim.battleClock>=seconds('04:34:00')-.45)fixtures.bombing=structuredClone(sim.snapshot(false));
+  if(!fixtures.raid&&!sim.consumedEvent('evt_m01_bombing_0530')&&sim.battleClock>=seconds('05:30:00')-.45)fixtures.raid=structuredClone(sim.snapshot(false));
+  if(!fixtures.east&&!sim.consumedEvent('evt_m01_east_demolition')&&sim.battleClock>=seconds('06:10:00')-.45)fixtures.east=structuredClone(sim.snapshot(false));
+  if(!fixtures.west&&!sim.consumedEvent('evt_m01_west_demolition')&&sim.battleClock>=seconds('06:45:00')-.45)fixtures.west=structuredClone(sim.snapshot(false));
   for(const r of sim.enemyFire.rounds){
     const remaining=r.arriveAt-sim.clock;if(remaining<=.12||remaining>=.38)continue;
     const hit=traceRound(sim.world,r,[]),material=hit.material??'earth';
