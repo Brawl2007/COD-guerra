@@ -3,13 +3,13 @@ export const M01_PROP_QUALITY_RANK=Object.freeze({low:0,medium:1,high:2});
 
 export const M01_PROP_CLUSTERS=Object.freeze([
   Object.freeze({id:'station_south_01',area:'station-yard',style:'rail',x:-452,z:18,yaw:.06,seed:101}),
-  Object.freeze({id:'station_south_02',area:'station-yard',style:'freight',x:-438,z:20,yaw:-.08,seed:102}),
+  Object.freeze({id:'station_south_02',area:'station-yard',style:'freight',x:-438,z:17,yaw:-.08,seed:102}),
   Object.freeze({id:'station_south_03',area:'station-yard',style:'maintenance',x:-424,z:18,yaw:.12,seed:103}),
-  Object.freeze({id:'station_south_04',area:'station-yard',style:'freight',x:-410,z:20,yaw:-.04,seed:104}),
+  Object.freeze({id:'station_south_04',area:'station-yard',style:'freight',x:-410,z:17,yaw:-.04,seed:104}),
   Object.freeze({id:'station_south_05',area:'station-yard',style:'rail',x:-396,z:18,yaw:.10,seed:105}),
-  Object.freeze({id:'station_south_06',area:'station-yard',style:'freight',x:-382,z:20,yaw:-.12,seed:106}),
+  Object.freeze({id:'station_south_06',area:'station-yard',style:'freight',x:-382,z:17,yaw:-.12,seed:106}),
   Object.freeze({id:'station_south_07',area:'station-yard',style:'maintenance',x:-368,z:18,yaw:.08,seed:107}),
-  Object.freeze({id:'station_south_08',area:'station-yard',style:'freight',x:-354,z:20,yaw:-.06,seed:108}),
+  Object.freeze({id:'station_south_08',area:'station-yard',style:'freight',x:-354,z:17,yaw:-.06,seed:108}),
   Object.freeze({id:'station_north_01',area:'station-yard',style:'rail',x:-430,z:65,yaw:.03,seed:109}),
   Object.freeze({id:'station_north_02',area:'station-yard',style:'freight',x:-380,z:65,yaw:-.06,seed:110}),
 
