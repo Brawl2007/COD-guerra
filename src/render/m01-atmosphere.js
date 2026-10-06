@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {puffTexture,cloudFieldTexture} from './m01-surfaces.js';
+import {dustPuffTexture} from './m01-fx-textures.js';
 
 // Presentation-only deterministic noise. It never consumes the simulation RNG.
 export function visualNoise(seed,index=0){
@@ -35,30 +36,40 @@ export class M01Atmosphere {
     this.quad=new THREE.PlaneGeometry(1,1);
     this.material=new THREE.ShaderMaterial({transparent:true,depthWrite:false,
       uniforms:{cloud:{value:this.texture},fogColor:{value:new THREE.Color('#869093')}},
-      vertexShader:`attribute float puffOpacity;varying vec2 vUv;varying vec3 vColor;varying float vOpacity;varying float vDepth;
-        void main(){vUv=uv;vOpacity=puffOpacity;vColor=instanceColor;
+      vertexShader:`attribute float puffOpacity;attribute float puffSpin;attribute float puffShape;varying vec2 vUv;varying vec3 vColor;varying float vOpacity;varying float vDepth;varying float vShape;
+        void main(){vUv=uv;vOpacity=puffOpacity;vColor=instanceColor;vShape=puffShape;
           vec4 center=modelViewMatrix*instanceMatrix*vec4(0.0,0.0,0.0,1.0);
-          float sx=length(instanceMatrix[0].xyz),sy=length(instanceMatrix[1].xyz);
-          center.xy+=position.xy*vec2(sx,sy);vDepth=-center.z;gl_Position=projectionMatrix*center;}`,
-      fragmentShader:`uniform sampler2D cloud;uniform vec3 fogColor;varying vec2 vUv;varying vec3 vColor;varying float vOpacity;varying float vDepth;
-        void main(){vec4 tex=texture2D(cloud,vUv);float edge=sin(vUv.x*31.0+vUv.y*17.0)*sin(vUv.y*27.0-vUv.x*13.0);float alpha=tex.a*vOpacity*(.82+.18*edge);if(alpha<.006)discard;
+          float sx=length(instanceMatrix[0].xyz),sy=length(instanceMatrix[1].xyz);vec2 local=position.xy;float cs=cos(puffSpin),sn=sin(puffSpin);
+          local=mat2(cs,-sn,sn,cs)*local;local*=vec2(1.0+abs(puffShape)*.12,1.0-abs(puffShape)*.055);
+          center.xy+=local*vec2(sx,sy);vDepth=-center.z;gl_Position=projectionMatrix*center;}`,
+      fragmentShader:`uniform sampler2D cloud;uniform vec3 fogColor;varying vec2 vUv;varying vec3 vColor;varying float vOpacity;varying float vDepth;varying float vShape;
+        void main(){vec2 sampleUv=vUv-.5;sampleUv.x+=sin(sampleUv.y*8.0+vShape*5.0)*.028*vShape;sampleUv.y+=sin(sampleUv.x*6.0-vShape*3.0)*.018*vShape;sampleUv+=.5;vec4 tex=texture2D(cloud,sampleUv);float edge=sin(vUv.x*31.0+vUv.y*17.0+vShape*4.7)*sin(vUv.y*27.0-vUv.x*13.0-vShape*3.1);float alpha=tex.a*vOpacity*(.80+.20*edge);if(alpha<.006)discard;
           vec3 color=mix(vColor*tex.rgb,fogColor,smoothstep(500.0,2700.0,vDepth));gl_FragColor=vec4(color,alpha);
           #include <tonemapping_fragment>
           #include <colorspace_fragment>
         }`});
+    this.dustTexture=dustPuffTexture();this.dustMaterial=this.material.clone();this.dustMaterial.uniforms.cloud.value=this.dustTexture;
     this.puffBatches=[];this.puffs=this.billboardBatch(this.capacity,'#ffffff',scene);
     this.debrisGeometry=new THREE.TetrahedronGeometry(1);this.debrisMaterial=new THREE.MeshStandardMaterial({color:'#615846',roughness:1});
     this.debris=new THREE.InstancedMesh(this.debrisGeometry,this.debrisMaterial,64);this.debris.count=0;this.debris.frustumCulled=false;scene.add(this.debris);
     this.dummy=new THREE.Object3D();this.color=new THREE.Color();this.fade=this.puffs.geometry.attributes.puffOpacity;
   }
   /** Camera-facing soft particles share one material/texture; each bounded pool owns its opacity buffer. */
-  billboardBatch(capacity,color,parent){
-    const geometry=this.quad.clone(),opacity=new THREE.InstancedBufferAttribute(new Float32Array(capacity).fill(1),1);
-    opacity.setUsage(THREE.DynamicDrawUsage);geometry.setAttribute('puffOpacity',opacity);
-    const batch=new THREE.InstancedMesh(geometry,this.material,capacity);
+  billboardBatch(capacity,color,parent,style='smoke'){
+    const geometry=this.quad.clone(),opacity=new THREE.InstancedBufferAttribute(new Float32Array(capacity).fill(1),1),
+      spin=new THREE.InstancedBufferAttribute(new Float32Array(capacity),1),shape=new THREE.InstancedBufferAttribute(new Float32Array(capacity),1);
+    opacity.setUsage(THREE.DynamicDrawUsage);spin.setUsage(THREE.DynamicDrawUsage);shape.setUsage(THREE.DynamicDrawUsage);
+    geometry.setAttribute('puffOpacity',opacity);geometry.setAttribute('puffSpin',spin);geometry.setAttribute('puffShape',shape);
+    const batch=new THREE.InstancedMesh(geometry,style==='dust'?this.dustMaterial:this.material,capacity);
     batch.instanceMatrix.setUsage(THREE.DynamicDrawUsage);batch.count=0;batch.frustumCulled=false;
     const tint=new THREE.Color(color);for(let i=0;i<capacity;i++)batch.setColorAt(i,tint);
     parent.add(batch);this.puffBatches.push(batch);return batch;
+  }
+  stylePuff(batch,index,seed,variant=0){
+    const spin=batch.geometry.attributes.puffSpin,shape=batch.geometry.attributes.puffShape;
+    if(!spin||!shape)return;
+    spin.setX(index,(visualNoise(seed,variant*3)-.5)*Math.PI*1.7);
+    shape.setX(index,(visualNoise(seed,variant*3+1)*2-1)*(.45+.55*visualNoise(seed,variant*3+2)));
   }
   lighting(player,day,alt,az,clock){
     this.sky.position.set(player.x,player.y,player.z);this.skyMaterial.uniforms.day.value=day;this.skyMaterial.uniforms.time.value=clock;
@@ -92,7 +103,7 @@ export class M01Atmosphere {
         }
         this.dummy.position.set(x,d.y+2.5+height,z);this.dummy.rotation.set(0,0,0);
         this.dummy.scale.set(width*(.72+n2*.55),width*(.95+n3*.72),1);this.dummy.updateMatrix();
-        this.puffs.setMatrixAt(count,this.dummy.matrix);
+        this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,seed,i);
         const shade=demolition?(phase<.28?'#5a5145':phase<.68?'#777166':'#969188'):heavy?(i%3?'#68655e':'#4b4944'):(i%4===0?'#41413d':'#666965');
         this.puffs.setColorAt(count,this.color.set(shade));this.fade.setX(count,opacity);count++;
       }
@@ -116,7 +127,7 @@ export class M01Atmosphere {
         const r=age*(heavy?10:6.5)*(.55+n1*.65),fade=Math.max(0,1-age/(heavy?3.2:2.4)),w=(heavy?4.8:2.8)+age*(heavy?8:4.5);
         this.dummy.rotation.set(0,0,0);this.dummy.position.set(d.x+Math.cos(a)*r,d.y+.45+age*(.45+n0*.65),d.z+Math.sin(a)*r);
         this.dummy.scale.set(w*(.75+n0*.5),w*(.42+n1*.35),1);this.dummy.updateMatrix();
-        this.puffs.setMatrixAt(count,this.dummy.matrix);this.puffs.setColorAt(count,this.color.set(heavy?'#9e8d72':'#aa9a81'));this.fade.setX(count++,.48*fade);
+        this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,seed,200+i);this.puffs.setColorAt(count,this.color.set(heavy?'#9e8d72':'#aa9a81'));this.fade.setX(count++,.48*fade);
       }
     }
     this.debris.count=chips;this.debris.instanceMatrix.needsUpdate=true;this.dummy.rotation.set(0,0,0);
@@ -124,5 +135,5 @@ export class M01Atmosphere {
   }
   get diagnostics(){return {puffs:this.count,puffCapacity:this.capacity,debris:this.debris.count,debrisCapacity:this.debris.instanceMatrix.count,puffBatches:this.puffBatches.length};}
   dispose(){this.scene.remove(this.sky);this.debris.removeFromParent();this.debris.dispose();this.debrisGeometry.dispose();this.debrisMaterial.dispose();for(const batch of this.puffBatches){batch.removeFromParent();batch.dispose();batch.geometry.dispose();}this.puffBatches=[];
-    this.quad.dispose();this.skyGeometry.dispose();this.skyMaterial.dispose();this.material.dispose();this.texture.dispose();this.cloudTexture.dispose();}
+    this.quad.dispose();this.skyGeometry.dispose();this.skyMaterial.dispose();this.material.dispose();this.dustMaterial.dispose();this.texture.dispose();this.dustTexture.dispose();this.cloudTexture.dispose();}
 }
