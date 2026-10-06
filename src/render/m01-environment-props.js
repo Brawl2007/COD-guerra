@@ -10,8 +10,8 @@ export const M01_PROP_CLUSTERS=Object.freeze([
   Object.freeze({id:'station_south_06',area:'station-yard',style:'freight',x:-382,z:17,yaw:-.12,seed:106}),
   Object.freeze({id:'station_south_07',area:'station-yard',style:'maintenance',x:-368,z:18,yaw:.08,seed:107}),
   Object.freeze({id:'station_south_08',area:'station-yard',style:'freight',x:-354,z:17,yaw:-.06,seed:108}),
-  Object.freeze({id:'station_north_01',area:'station-yard',style:'rail',x:-430,z:65,yaw:.03,seed:109}),
-  Object.freeze({id:'station_north_02',area:'station-yard',style:'freight',x:-380,z:65,yaw:-.06,seed:110}),
+  Object.freeze({id:'station_north_01',area:'station-yard',style:'rail',x:-430,z:60,yaw:.03,seed:109}),
+  Object.freeze({id:'station_north_02',area:'station-yard',style:'freight',x:-380,z:60,yaw:-.06,seed:110}),
 
   Object.freeze({id:'rail_approach_01',area:'railway-approach',style:'rail',x:-520,z:-43,yaw:.34,seed:201}),
   Object.freeze({id:'rail_approach_02',area:'railway-approach',style:'rail',x:-455,z:-38,yaw:.24,seed:202}),
