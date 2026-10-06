@@ -6,7 +6,7 @@ import { seconds } from '../game/m01-simulation.js';
 import { roundPoint } from '../game/m01-fire.js';
 import { actorPose } from './m01-actor-pose.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import { texturedSurface,weatheredBridgeSurface } from './m01-surfaces.js';
+import { texturedSurface,weatheredBridgeSurface,masonryStainTexture } from './m01-surfaces.js';
 import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';
 import { M01Environment } from './m01-environment.js';
 import { M01Characters } from './m01-characters.js';
@@ -54,6 +54,7 @@ export class M01View {
       bridgeBrick:weatheredBridgeSurface('brick',{worldScale:.36,bump:.055,seed:1912}),
       bridgeStone:weatheredBridgeSurface('stone',{worldScale:.5,bump:.07,seed:1857}),
       bridgeGate:weatheredBridgeSurface('wood',{worldScale:1.0,bump:.025,seed:963,roughness:.9,metalness:.05}),
+      bridgeStain:new THREE.MeshBasicMaterial({map:masonryStainTexture(),color:'#665746',transparent:true,opacity:.26,depthWrite:false,toneMapped:true,polygonOffset:true,polygonOffsetFactor:-2}),
       glow:new THREE.MeshBasicMaterial({color:'#ffb14b',toneMapped:false}),
       smoke:new THREE.MeshBasicMaterial({color:'#454744',transparent:true,opacity:.3,depthWrite:false}),
       dust:new THREE.MeshBasicMaterial({color:'#7d6f5c',transparent:true,opacity:.42,depthWrite:false})};
@@ -66,7 +67,7 @@ export class M01View {
     this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};
     this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};
     this.combatFeedback=new M01CombatFeedback();
-    this.portalPolish=new M01BridgePortalPolish({stone:this.materials.bridgeStone});
+    this.portalPolish=new M01BridgePortalPolish({stone:this.materials.bridgeStone,stain:this.materials.bridgeStain});
     this.atmosphere=new M01Atmosphere(this.scene);
     this.createWeapon();this.createActors();this.createContactShadows();this.createFireEffects();this.createAircraft();this.createTrains();
     this.characters=new M01Characters(this.scene);this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture);
