@@ -134,11 +134,38 @@ export function cloudFieldTexture(){
 }
 
 
+export function bridgeBrickTexture(size=512){
+  const canvas=document.createElement('canvas');canvas.width=canvas.height=size;
+  const ctx=canvas.getContext('2d'),image=ctx.createImageData(size,size),cols=12,rows=24,cw=size/cols,ch=size/rows;
+  for(let y=0;y<size;y++)for(let x=0;x<size;x++){
+    const row=Math.floor(y/ch),offset=(row&1)*.5,col=Math.floor(x/cw-offset);
+    const ux=((x/cw-offset)-Math.floor(x/cw-offset)+1)%1,vy=(y/ch)-row;
+    const mortar=ux<.035||ux>.965||vy<.055||vy>.965;
+    const idX=col+row*19,variation=(hash(idX,row,1912)-.5)*38;
+    const macro=(noise(x/size*5.0,y/size*5.0,8)-.5)*22;
+    const grain=(hash(x>>1,y>>1,77)-.5)*11;
+    let r=126+variation+macro+grain,g=72+variation*.48+macro*.65+grain*.35,b=50+variation*.30+macro*.42+grain*.22;
+    if(mortar){const n=(hash(x,y,91)-.5)*9;r=104+n;g=99+n;b=86+n;}
+    else{
+      const edge=Math.min(ux,1-ux,vy*1.35,(1-vy)*1.35);
+      if(edge<.08){r+=8;g+=5;b+=3;}
+      const chip=hash(x>>2,y>>2,313);
+      if(chip>.992){r-=24;g-=18;b-=13;}
+    }
+    const at=(y*size+x)*4;image.data[at]=Math.max(0,Math.min(255,r));image.data[at+1]=Math.max(0,Math.min(255,g));image.data[at+2]=Math.max(0,Math.min(255,b));image.data[at+3]=255;
+  }
+  ctx.putImageData(image,0,0);const map=new THREE.CanvasTexture(canvas);map.colorSpace=THREE.SRGBColorSpace;
+  map.wrapS=map.wrapT=THREE.RepeatWrapping;map.anisotropy=4;return map;
+}
+
 // Bridge-only masonry/wood weathering. It keeps the same procedural base map and adds
 // low-frequency age/damp breakup in world space, so no gameplay state or authored GLB
 // geometry is involved.
 export function weatheredBridgeSurface(kind,{seed=0,...options}={}){
-  const material=texturedSurface(kind,{...options,worldScale:options.worldScale??(kind==='brick'?1.4:kind==='stone'?0.5:1.0)});
+  const material=texturedSurface(kind,{...options,worldScale:options.worldScale??(kind==='brick'?.36:kind==='stone'?0.5:1.0)});
+  if(kind==='brick'){
+    const oldMap=material.map,map=bridgeBrickTexture();material.map=map;material.bumpMap=map;oldMap?.dispose();material.needsUpdate=true;
+  }
   const baseCompile=material.onBeforeCompile,baseKey=material.customProgramCacheKey?.bind(material);
   material.onBeforeCompile=shader=>{
     baseCompile?.(shader);
