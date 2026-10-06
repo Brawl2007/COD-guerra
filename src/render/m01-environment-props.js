@@ -14,7 +14,7 @@ export const M01_PROP_CLUSTERS=Object.freeze([
   Object.freeze({id:'bridge_rail_margin',area:'bridge-approach',style:'rail',x:-48,z:-13,yaw:0,seed:301}),
   Object.freeze({id:'bridge_between_approaches',area:'bridge-approach',style:'maintenance',x:-43,z:20,yaw:.04,seed:302}),
   Object.freeze({id:'bridge_road_margin',area:'bridge-approach',style:'maintenance',x:-58,z:55,yaw:-.04,seed:303}),
-  Object.freeze({id:'combat_repair_scatter',area:'combat-area',style:'combat',x:-132,z:26,yaw:.15,seed:401}),
+  Object.freeze({id:'combat_repair_scatter',area:'combat-area',style:'combat',x:-145,z:8,yaw:.15,seed:401}),
   Object.freeze({id:'combat_portal_scatter',area:'combat-area',style:'combat',x:-24,z:59,yaw:-.10,seed:402}),
   Object.freeze({id:'combat_squad_edge',area:'combat-area',style:'combat',x:-91,z:62,yaw:.22,seed:403})
 ]);
