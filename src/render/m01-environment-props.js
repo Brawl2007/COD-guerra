@@ -14,7 +14,7 @@ export const M01_PROP_CLUSTERS=Object.freeze([
   Object.freeze({id:'station_north_02',area:'station-yard',style:'freight',x:-380,z:60,yaw:-.06,seed:110}),
 
   Object.freeze({id:'rail_approach_01',area:'railway-approach',style:'rail',x:-520,z:-43,yaw:.34,seed:201}),
-  Object.freeze({id:'rail_approach_02',area:'railway-approach',style:'rail',x:-455,z:-38,yaw:.24,seed:202}),
+  Object.freeze({id:'rail_approach_02',area:'railway-approach',style:'rail',x:-455,z:-44,yaw:.24,seed:202}),
   Object.freeze({id:'rail_approach_03',area:'railway-approach',style:'rail',x:-390,z:-31,yaw:.16,seed:203}),
   Object.freeze({id:'rail_approach_04',area:'railway-approach',style:'rail',x:-325,z:-27,yaw:.10,seed:204}),
   Object.freeze({id:'rail_approach_05',area:'railway-approach',style:'rail',x:-260,z:-22,yaw:.07,seed:205}),
