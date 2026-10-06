@@ -53,8 +53,8 @@ export function portalDetailDescriptors(name){
   const highBoxes=[];
   for(const opening of layout.openings)for(const side of [-1,1])for(const face of [-1,1]){
     highBoxes.push({
-      p:[layout.x+face*(layout.thickness/2+.065),(opening.springY-1)/2,opening.centerZ+side*opening.width/2],
-      size:[.13,opening.springY+1,.24],kind:'jamb-edge'
+      p:[layout.x+face*(layout.thickness/2+.05),(opening.springY-1)/2,opening.centerZ+side*opening.width/2],
+      size:[.10,opening.springY+1,.24],kind:'jamb-edge'
     });
   }
   return Object.freeze({
