@@ -11,7 +11,8 @@ Use this skill when a valid Task Contract exists and a task should be carried fr
 
 Execute:
 
-IMPLEMENT
+AUDIT CONTEXT
+→ IMPLEMENT
 → VERIFY
 → CORRECT IF NEEDED
 → VERIFY AGAIN
@@ -45,6 +46,36 @@ Before implementation:
 9. confirm retry budgets.
 
 If these cannot be established safely, return BLOCKED.
+
+## Phase 0 — Context Audit
+
+Before implementation, execute the `context-audit` skill.
+
+Audit task-critical mutable claims including applicable:
+
+- current branch and HEAD;
+- base branch and base HEAD;
+- remote HEAD when remote state matters;
+- previous test/build claims;
+- project invariants;
+- relevant handoff or memory claims;
+- unresolved assumptions that could materially affect implementation.
+
+Require:
+
+`AUDIT_STATUS: PASS`
+
+before delegating implementation.
+
+If the audit returns BLOCKED:
+
+- do not implement;
+- preserve the blocker;
+- escalate only if it cannot be resolved safely with available deterministic evidence.
+
+Pass downstream only the compact `CONTEXT_PACKET` plus the Task Contract.
+
+Do not forward the full audit investigation unless required for a specific failure.
 
 ## Context discipline
 
