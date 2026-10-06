@@ -1,0 +1,67 @@
+name: M01 environment prop density grounding v1
+
+on:
+  push:
+    branches:
+      - codex/m01-environment-prop-density-grounding-v1
+
+concurrency:
+  group: m01-environment-prop-density-grounding-v1
+  cancel-in-progress: true
+
+jobs:
+  focused:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 70
+    steps:
+      - name: Checkout task head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Focused deterministic and quality tests
+        run: node --test tests/m01-environment-props.test.js tests/m01-environment-quality.test.js
+
+      - name: Production build
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Capture approved base before
+        run: |
+          set -euo pipefail
+          mkdir -p docs/verification/m01-runtime/environment-prop-density-grounding-v1
+          git checkout 6bd69521aef18f00b2ab37ccd7ceeca6a4da3a2b -- src/render/m01-environment.js src/render/m01-view.js
+          M01_BASELINE_CAPTURE=1 npx playwright test tests/browser/m01-environment-prop-density.spec.js             --grep "captures contextual"             --output=docs/verification/m01-runtime/environment-prop-density-grounding-v1/before
+          git checkout "$GITHUB_SHA" -- src/render/m01-environment.js src/render/m01-view.js
+          git diff --exit-code
+
+      - name: Focused after browser and lifecycle
+        run: |
+          set -o pipefail
+          npx playwright test tests/browser/m01-environment-prop-density.spec.js             --output=docs/verification/m01-runtime/environment-prop-density-grounding-v1/after             2>&1 | tee docs/verification/m01-runtime/environment-prop-density-grounding-v1/browser.log
+
+      - name: Gameplay authority unchanged
+        run: |
+          git diff --exit-code 6bd69521aef18f00b2ab37ccd7ceeca6a4da3a2b --             src/game src/world missions assets/models public package.json package-lock.json playwright.config.js
+
+      - name: Upload focused evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-environment-prop-density-grounding-v1
+          path: |
+            docs/verification/m01-runtime/environment-prop-density-grounding-v1/
+            playwright-report/
+            test-results/
+          if-no-files-found: error
