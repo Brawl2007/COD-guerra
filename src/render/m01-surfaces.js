@@ -194,16 +194,3 @@ export function weatheredBridgeSurface(kind,{seed=0,...options}={}){
   material.customProgramCacheKey=()=>`m01-bridge-weather-${kind}-${seed}-${baseKey?.()??''}`;
   return material;
 }
-
-
-export function masonryStainTexture(){
-  const size=128,canvas=document.createElement('canvas');canvas.width=canvas.height=size;
-  const ctx=canvas.getContext('2d'),image=ctx.createImageData(size,size);
-  for(let y=0;y<size;y++)for(let x=0;x<size;x++){
-    const dx=(x-size*.5)/(size*.5),dy=(y-size*.5)/(size*.5),rad=Math.hypot(dx*.78,dy);
-    const field=noise(x/size*5.0+3.1,y/size*7.0+1.7,8)*.62+noise(x/size*17.0,y/size*13.0,24)*.38;
-    const edge=Math.max(0,1-rad*rad),vertical=.62+.38*(1-y/size),a=Math.max(0,(field-.34)*1.7)*edge*vertical;
-    const i=(y*size+x)*4;image.data[i]=154;image.data[i+1]=141;image.data[i+2]=112;image.data[i+3]=Math.floor(Math.min(1,a)*112);
-  }
-  ctx.putImageData(image,0,0);const map=new THREE.CanvasTexture(canvas);map.colorSpace=THREE.SRGBColorSpace;return map;
-}
