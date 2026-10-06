@@ -71,10 +71,10 @@ test('small bombing east and west demolition show distinct layered profiles',asy
   test.setTimeout(540000);
   const views=[
     {name:'grenade-small-near-high.png',snapshot:fixtures.grenade,camera:{x:fixtures.grenade.player.x,z:fixtures.grenade.player.z},target:{x:fixtures.grenade.grenades.active[0].x,z:fixtures.grenade.grenades.active[0].z,y:fixtures.grenade.grenades.active[0].y}},
-    {name:'station-bombing-high.png',snapshot:fixtures.bombing,camera:{x:station.x-46,z:station.z-18},target:{...station,y:(station.y??0)+4}},
-    {name:'raid-0530-high.png',snapshot:fixtures.raid,camera:{x:-545,z:72},target:{x:-600,z:100,y:8}},
-    {name:'east-demolition-high.png',snapshot:fixtures.east,camera:{x:744,z:-4},target:{x:800,z:20,y:8}},
-    {name:'west-demolition-high.png',snapshot:fixtures.west,camera:{x:18,z:-8},target:{x:70,z:20,y:8}}
+    {name:'station-bombing-high.png',snapshot:fixtures.bombing},
+    {name:'raid-0530-high.png',snapshot:fixtures.raid},
+    {name:'east-demolition-high.png',snapshot:fixtures.east},
+    {name:'west-demolition-high.png',snapshot:fixtures.west}
   ];
   for(const v of views){
     const {page,data}=await openFrom(browser,info,{...v,quality:'high',wait:'blast'});
@@ -90,14 +90,14 @@ test('distance smoke lifecycle pause restore and Low High remain bounded',async(
   test.setTimeout(480000);
   const samples={};
   for(const quality of ['low','high']){
-    const {page,data}=await openFrom(browser,info,{name:`east-demolition-${quality}.png`,snapshot:fixtures.east,quality,camera:{x:744,z:-4},target:{x:800,z:20,y:8},wait:'blast'});
+    const {page,data}=await openFrom(browser,info,{name:`east-demolition-${quality}.png`,snapshot:fixtures.east,quality,wait:'blast'});
     samples[quality]={drawCalls:data.drawCalls,triangles:data.triangles,textures:data.textures,geometries:data.geometries,fx:data.m01.battlefieldFx};
     if(!baseline){
       expect(data.m01.battlefieldFx.counts.dust).toBeGreaterThan(0);expect(data.m01.battlefieldFx.extraLights).toBeLessThanOrEqual(1);
     }
     await page.close();
   }
-  const {page,data}=await openFrom(browser,info,{name:'east-demolition-smoke-high.png',snapshot:fixtures.east,quality:'high',camera:{x:744,z:-4},target:{x:800,z:20,y:10},wait:'smoke'});
+  const {page,data}=await openFrom(browser,info,{name:'east-demolition-smoke-high.png',snapshot:fixtures.east,quality:'high',wait:'smoke'});
   if(!baseline){
     const frozen=data.m01.battlefieldFx,clock=data.clock;await page.waitForTimeout(300);
     const still=await page.evaluate(()=>window.gameDiagnostics());expect(still.clock).toBe(clock);expect(still.m01.battlefieldFx).toEqual(frozen);
@@ -107,7 +107,7 @@ test('distance smoke lifecycle pause restore and Low High remain bounded',async(
   }
   await page.close();
 
-  const far=await openFrom(browser,info,{name:'station-bombing-far-medium.png',snapshot:fixtures.bombing,quality:'medium',camera:{x:station.x-250,z:station.z-80},target:{...station,y:(station.y??0)+8},wait:'blast'});
+  const far=await openFrom(browser,info,{name:'raid-0530-medium-far.png',snapshot:fixtures.raid,quality:'medium',wait:'blast'});
   if(!baseline&&far.data.m01.battlefieldFx.meta)expect(far.data.m01.battlefieldFx.meta.bands.far).toBeGreaterThan(0);
   await far.page.close();
   if(!baseline){
