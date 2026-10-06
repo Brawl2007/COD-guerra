@@ -51,7 +51,7 @@ export class M01View {
       brass:new THREE.MeshStandardMaterial({color:'#bfa66a',roughness:.55,metalness:.6}),
       water:texturedSurface('water',{worldScale:.12,bump:.02}),
       cloth:texturedSurface('cloth',{bump:.018}),
-      bridgeBrick:weatheredBridgeSurface('brick',{worldScale:1.4,bump:.055,seed:1912}),
+      bridgeBrick:weatheredBridgeSurface('brick',{worldScale:.36,bump:.055,seed:1912}),
       bridgeStone:weatheredBridgeSurface('stone',{worldScale:.5,bump:.07,seed:1857}),
       bridgeGate:weatheredBridgeSurface('wood',{worldScale:1.0,bump:.025,seed:963,roughness:.9,metalness:.05}),
       bridgeStain:new THREE.MeshBasicMaterial({map:masonryStainTexture(),transparent:true,opacity:.78,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,toneMapped:true}),
