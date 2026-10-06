@@ -42,9 +42,9 @@ test('captures rail, road, oblique, bridge-context and post-demolition portal vi
   const east=route(19390901,{support:true}).combatSnapshots.eastDemolitionOutside;
   expect(east).toBeTruthy();
   const views=[
-    {name:'rail-portal-near-high.png',sim:fresh,snapshot:intact,x:-42,z:-20,target:{x:-4,z:0,y:4.5}},
-    {name:'road-portal-near-high.png',sim:fresh,snapshot:intact,x:-42,z:67,target:{x:-4,z:40,y:4.5}},
-    {name:'lisewo-portal-oblique-high.png',sim:fresh,snapshot:intact,x:1108,z:-35,target:{x:1063.2,z:20,y:7}},
+    {name:'rail-portal-near-high.png',sim:fresh,snapshot:intact,x:-24,z:-14,target:{x:-4,z:0,y:4.5}},
+    {name:'road-portal-near-high.png',sim:fresh,snapshot:intact,x:-24,z:60,target:{x:-4,z:40,y:4.5}},
+    {name:'lisewo-portal-oblique-high.png',sim:fresh,snapshot:intact,x:1092,z:-18,target:{x:1063.2,z:20,y:7}},
     {name:'lisewo-portal-bridge-context-high.png',sim:fresh,snapshot:intact,x:1010,z:0,target:{x:1063.2,z:0,y:5.5}},
     {name:'old-east-portal-after-demolition-high.png',sim:{world:new M01Simulation().world},snapshot:east,x:845,z:0,target:{x:793.8,z:0,y:4}}
   ];
@@ -65,7 +65,7 @@ test('Low keeps weathered portal material while High adds bounded microdetail',a
   test.setTimeout(300000);
   const sim=new M01Simulation(19390901);sim.tick(.05,{skip:true});const snapshot=sim.snapshot(false),samples={};
   for(const quality of ['low','high']){
-    const {page,data}=await openView(browser,info,{name:`lisewo-portal-${quality}.png`,sim,snapshot,x:1108,z:-35,target:{x:1063.2,z:20,y:7},quality});
+    const {page,data}=await openView(browser,info,{name:`lisewo-portal-${quality}.png`,sim,snapshot,x:1092,z:-18,target:{x:1063.2,z:20,y:7},quality});
     samples[quality]={drawCalls:data.drawCalls,triangles:data.triangles,textures:data.textures,geometries:data.geometries,...data.m01.bridgePortalPolish};
     await page.close();
   }
