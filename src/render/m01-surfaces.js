@@ -159,22 +159,6 @@ export function bridgeBrickTexture(size=512){
 }
 
 
-export function masonryStainTexture(size=128){
-  const canvas=document.createElement('canvas');canvas.width=canvas.height=size;
-  const ctx=canvas.getContext('2d'),image=ctx.createImageData(size,size);
-  for(let y=0;y<size;y++)for(let x=0;x<size;x++){
-    const u=x/(size-1),v=y/(size-1),dx=(u-.5)*1.8,dy=(v-.5)*1.55,r=Math.hypot(dx,dy);
-    const coarse=noise(u*5.5+2.7,v*7.0+4.1,16),fine=noise(u*19.0+8.3,v*17.0+1.9,32);
-    const irregular=.72*coarse+.28*fine,edge=smooth(Math.max(0,Math.min(1,(1-r)/.48)));
-    const drip=smooth(Math.max(0,Math.min(1,(.82-v+coarse*.16)/.42)));
-    const alpha=Math.max(0,(irregular-.34)*1.65)*edge*(.72+.28*drip);
-    const at=(y*size+x)*4;image.data[at]=150;image.data[at+1]=136;image.data[at+2]=108;image.data[at+3]=Math.floor(Math.min(.72,alpha)*255);
-  }
-  ctx.putImageData(image,0,0);
-  const map=new THREE.CanvasTexture(canvas);map.colorSpace=THREE.SRGBColorSpace;map.wrapS=map.wrapT=THREE.ClampToEdgeWrapping;map.anisotropy=2;
-  return map;
-}
-
 // Bridge-only masonry/wood weathering. It keeps the same procedural base map and adds
 // low-frequency age/damp breakup in world space, so no gameplay state or authored GLB
 // geometry is involved.
