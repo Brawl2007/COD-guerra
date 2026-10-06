@@ -46,7 +46,7 @@ test('captures rail, road, oblique, bridge-context and post-demolition portal vi
     {name:'road-portal-near-high.png',sim:fresh,snapshot:intact,x:-24,z:60,target:{x:-4,z:40,y:4.5}},
     {name:'lisewo-portal-oblique-high.png',sim:fresh,snapshot:intact,x:1092,z:-18,target:{x:1063.2,z:20,y:7}},
     {name:'lisewo-portal-bridge-context-high.png',sim:fresh,snapshot:intact,x:1010,z:0,target:{x:1063.2,z:0,y:5.5}},
-    {name:'old-east-portal-after-demolition-high.png',sim:{world:new M01Simulation().world},snapshot:east,x:845,z:0,target:{x:793.8,z:0,y:4}}
+    {name:'old-east-portal-after-demolition-high.png',sim:{world:new M01Simulation().world},snapshot:east,x:842,z:-34,target:{x:793.8,z:0,y:3.5}}
   ];
   for(const v of views){
     const sim=v.snapshot===east?Object.assign(new M01Simulation(),{world:fresh.world}):v.sim;
