@@ -34,7 +34,7 @@ export function fxDistanceBand(distance){
 }
 export function fxDensity(quality='medium',distance=0){
   const q=M01_FX_QUALITY_DENSITY[quality]??M01_FX_QUALITY_DENSITY.medium;
-  const distanceFactor=fxDistanceBand(distance)==='near'?1:fxDistanceBand(distance)==='mid'?.82:.62;
+  const band=fxDistanceBand(distance),distanceFactor=band==='near'?1:band==='mid'?0.82:0.62;
   return q*distanceFactor;
 }
 export function fxLayerCount(base,quality='medium',distance=0){
