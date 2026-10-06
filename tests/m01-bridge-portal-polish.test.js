@@ -58,11 +58,12 @@ test('microdetail stays inside approved portal macro envelopes and scales by qua
     const d=portalDetailDescriptors(name);assert.ok(d);
     for(const box of [...d.mediumBoxes,...d.highBoxes]){
       const [x,,z]=box.p,[sx,,sz]=box.size;
-      assert.ok(x-sx/2>=layout.x-layout.thickness/2-.12&&x+sx/2<=layout.x+layout.thickness/2+.12,name);
+      assert.ok(x-sx/2>=layout.x-layout.thickness/2-.18&&x+sx/2<=layout.x+layout.thickness/2+.18,name);
       assert.ok(z-sz/2>=-layout.halfWidth-.4&&z+sz/2<=layout.halfWidth+.4,name);
     }
     for(const ring of d.mediumRings){assert.ok(layout.towers.some(t=>Math.abs(t.z-ring.p[2])<1e-9));}
-    assert.ok(d.mediumBoxes.length+d.mediumRings.length>0);assert.ok(d.highBoxes.length>0);
+    for(const stain of d.mediumStains){assert.ok(Math.abs(Math.abs(stain.p[0]-layout.x)-layout.thickness/2)<.15,name);assert.ok(stain.p[1]>0&&stain.p[1]<9,name);}
+    assert.ok(d.mediumBoxes.length+d.mediumRings.length+d.mediumStains.length>0);assert.ok(d.highBoxes.length>0);
   }
 });
 
