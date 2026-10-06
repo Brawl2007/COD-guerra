@@ -24,6 +24,21 @@ Runtime nodes may have:
 - BLOCKED
 - SKIPPED
 
+## Optional nodes
+
+A node may be declared:
+
+`"optional": true`
+
+Only optional nodes may enter `SKIPPED`.
+
+An optional node may become `SKIPPED` from either:
+
+- READY;
+- RUNNING.
+
+Required nodes must never use `SKIPPED` merely to advance the graph.
+
 ## Dependency rule
 
 A node becomes READY only when all nodes in `depends_on` are PASS or explicitly satisfied.

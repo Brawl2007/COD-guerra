@@ -37,13 +37,15 @@
       "type": "regression",
       "depends_on": [
         "review"
-      ]
+      ],
+      "optional": true
     },
     "memory_update": {
       "type": "memory",
       "depends_on": [
         "review"
-      ]
+      ],
+      "optional": true
     },
     "handoff": {
       "type": "handoff",

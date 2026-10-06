@@ -94,6 +94,13 @@ def validate_graph(graph, allow_empty_task_id=False):
 
         node_type = node.get("type")
 
+        optional = node.get("optional", False)
+
+        if not isinstance(optional, bool):
+            errors.append(
+                f"{name}: optional must be a boolean"
+            )
+
         if node_type not in ALLOWED_NODE_TYPES:
             errors.append(
                 f"{name}: unsupported node type {node_type!r}"

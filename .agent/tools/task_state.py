@@ -287,10 +287,13 @@ if args.command == "set":
     current = state["nodes"][node]["status"]
     target = args.status
 
+    optional = bool(
+        graph["nodes"][node].get("optional", False)
+    )
+
     transitions = {
         "READY": {
             "RUNNING",
-            "SKIPPED",
             "BLOCKED",
         },
         "RUNNING": {
@@ -299,6 +302,10 @@ if args.command == "set":
             "BLOCKED",
         },
     }
+
+    if optional:
+        transitions["READY"].add("SKIPPED")
+        transitions["RUNNING"].add("SKIPPED")
 
     if target not in transitions.get(current, set()):
         fail(

@@ -207,6 +207,12 @@ If the relevant Task Contract budget is exhausted:
 
 ## Skipped optional nodes
 
+`SKIPPED` is valid only for Task Graph nodes explicitly declared:
+
+`"optional": true`
+
+Never use `SKIPPED` on a required graph node merely to advance execution.
+
 If an ACCEPTED task creates no durable regression obligation:
 
 - mark `regression_obligations` SKIPPED.
