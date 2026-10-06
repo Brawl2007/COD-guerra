@@ -132,3 +132,35 @@ export function cloudFieldTexture(){
   }
   ctx.putImageData(im,0,0);const map=new THREE.CanvasTexture(canvas);map.wrapS=map.wrapT=THREE.RepeatWrapping;return map;
 }
+
+
+// Bridge-only masonry/wood weathering. It keeps the same procedural base map and adds
+// low-frequency age/damp breakup in world space, so no gameplay state or authored GLB
+// geometry is involved.
+export function weatheredBridgeSurface(kind,{seed=0,...options}={}){
+  const material=texturedSurface(kind,{...options,worldScale:options.worldScale??(kind==='brick'?1.4:kind==='stone'?.5:1.0)});
+  const baseCompile=material.onBeforeCompile,baseKey=material.customProgramCacheKey?.bind(material);
+  material.onBeforeCompile=shader=>{
+    baseCompile?.(shader);
+    shader.uniforms.m01BridgeSeed={value:seed};
+    shader.fragmentShader=shader.fragmentShader.replace(
+      'varying vec3 vM01Position; uniform float m01Scale; uniform float m01LowDetail; uniform float m01Time;',
+      'varying vec3 vM01Position; uniform float m01Scale; uniform float m01LowDetail; uniform float m01Time; uniform float m01BridgeSeed;'
+    );
+    shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>
+      float bridgeMacro=artNoise(vM01Position.xz*.047+vec2(m01BridgeSeed*.013,m01BridgeSeed*.031));
+      float bridgeFine=artNoise(vM01Position.zy*.19+vec2(19.0+m01BridgeSeed*.007,43.0));
+      roughnessFactor*=mix(.90,1.10,bridgeMacro*.72+bridgeFine*.28);`);
+    shader.fragmentShader=shader.fragmentShader.replace('#include <dithering_fragment>',`
+      float bridgeBase=1.0-smoothstep(-.8,2.8,vM01Position.y);
+      float bridgeStreak=pow(artNoise(vec2(vM01Position.x*.095+m01BridgeSeed*.021,vM01Position.z*.11+floor(vM01Position.y*.45)*.073)),2.15);
+      float bridgePatch=artNoise(vM01Position.xz*.031+vec2(71.0,m01BridgeSeed*.017));
+      float bridgeAge=.05+.13*bridgeStreak+.10*(1.0-bridgePatch)+.24*bridgeBase;
+      gl_FragColor.rgb*=1.0-clamp(bridgeAge,0.0,.34);
+      float bridgeDust=smoothstep(.58,.86,artNoise(vM01Position.xz*.16+vec2(m01BridgeSeed*.011,29.0)))*bridgeBase;
+      gl_FragColor.rgb=mix(gl_FragColor.rgb,gl_FragColor.rgb*vec3(1.12,1.06,.94),bridgeDust*.16);
+      #include <dithering_fragment>`);
+  };
+  material.customProgramCacheKey=()=>`m01-bridge-weather-${kind}-${seed}-${baseKey?.()??''}`;
+  return material;
+}
