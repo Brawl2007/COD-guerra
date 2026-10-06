@@ -147,6 +147,7 @@ export function weatheredBridgeSurface(kind,{seed=0,...options}={}){
       'varying vec3 vM01Position; uniform float m01Scale; uniform float m01LowDetail; uniform float m01Time;',
       'varying vec3 vM01Position; uniform float m01Scale; uniform float m01LowDetail; uniform float m01Time; uniform float m01BridgeSeed;'
     );
+    shader.fragmentShader=shader.fragmentShader.replace('normal=normalize(normal-vec3(dFdx(artHeight),dFdy(artHeight),0.0)*.18);','normal=normalize(normal-vec3(dFdx(artHeight),dFdy(artHeight),0.0)*.29);');
     shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>
       float bridgeMacro=artNoise(vM01Position.xz*.047+vec2(m01BridgeSeed*.013,m01BridgeSeed*.031));
       float bridgeFine=artNoise(vM01Position.zy*.19+vec2(19.0+m01BridgeSeed*.007,43.0));
@@ -155,8 +156,8 @@ export function weatheredBridgeSurface(kind,{seed=0,...options}={}){
       float bridgeBase=1.0-smoothstep(-.8,2.8,vM01Position.y);
       float bridgeStreak=pow(artNoise(vec2(vM01Position.x*.095+m01BridgeSeed*.021,vM01Position.z*.11+floor(vM01Position.y*.45)*.073)),2.15);
       float bridgePatch=artNoise(vM01Position.xz*.031+vec2(71.0,m01BridgeSeed*.017));
-      float bridgeTone=(bridgeMacro-.5)*.20;
-      gl_FragColor.rgb*=vec3(1.0+bridgeTone,1.0+bridgeTone*.42,1.0-bridgeTone*.16);
+      float bridgeVariation=bridgeMacro*.68+bridgeFine*.32;
+      gl_FragColor.rgb*=mix(vec3(.88,.91,.93),vec3(1.13,1.07,1.0),bridgeVariation);
       float bridgeAge=.055+.18*bridgeStreak+.115*(1.0-bridgePatch)+.28*bridgeBase;
       gl_FragColor.rgb*=1.0-clamp(bridgeAge,0.0,.39);
       float bridgeDust=smoothstep(.58,.86,artNoise(vM01Position.xz*.16+vec2(m01BridgeSeed*.011,29.0)))*bridgeBase;
@@ -175,7 +176,7 @@ export function masonryStainTexture(){
     const dx=(x-size*.5)/(size*.5),dy=(y-size*.5)/(size*.5),rad=Math.hypot(dx*.78,dy);
     const field=noise(x/size*5.0+3.1,y/size*7.0+1.7,8)*.62+noise(x/size*17.0,y/size*13.0,24)*.38;
     const edge=Math.max(0,1-rad*rad),vertical=.62+.38*(1-y/size),a=Math.max(0,(field-.34)*1.7)*edge*vertical;
-    const i=(y*size+x)*4;image.data[i]=66;image.data[i+1]=58;image.data[i+2]=43;image.data[i+3]=Math.floor(Math.min(1,a)*150);
+    const i=(y*size+x)*4;image.data[i]=154;image.data[i+1]=141;image.data[i+2]=112;image.data[i+3]=Math.floor(Math.min(1,a)*112);
   }
   ctx.putImageData(image,0,0);const map=new THREE.CanvasTexture(canvas);map.colorSpace=THREE.SRGBColorSpace;return map;
 }
