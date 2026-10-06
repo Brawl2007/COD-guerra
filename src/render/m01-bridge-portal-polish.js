@@ -1,5 +1,16 @@
 import * as THREE from 'three';
 
+export function bridgeMaterialSlot(materialName,portalContext=false){
+  const generic={brick_red:'brick',stone_masonry:'stone',timber:'wood',gate_timber_iron:'wood',road_surface:'ground',
+    rubble_mixed:'stone',steel_painted:'metal',steel_rail:'metal'};
+  if(portalContext){
+    if(materialName==='brick_red')return 'bridgeBrick';
+    if(materialName==='stone_masonry')return 'bridgeStone';
+    if(materialName==='gate_timber_iron')return 'bridgeGate';
+  }
+  return generic[materialName]??null;
+}
+
 export const M01_PORTAL_DETAIL_LAYOUTS=Object.freeze({
   rail_portal_west:Object.freeze({
     node:'rail_portal_west',x:0,thickness:5,halfWidth:7.2,
