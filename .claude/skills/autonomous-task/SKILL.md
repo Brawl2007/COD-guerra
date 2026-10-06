@@ -91,6 +91,153 @@ If tracing fails:
 - report the tracing failure;
 - continue only when doing so is safe.
 
+## Task Graph runtime control
+
+Use the Task Graph runtime state as the operational execution state for the autonomous task.
+
+Graph definition:
+
+`.agent/templates/TASK_GRAPH.json`
+
+Runtime state:
+
+`.agent/runs/<RUN_ID>/graph_state.json`
+
+The runtime state is operational data and must not be committed.
+
+At task start, after establishing `RUN_ID` and `TASK_ID`, initialize the graph state when it does not already exist:
+
+`python3 .agent/tools/task_state.py init --graph .agent/templates/TASK_GRAPH.json --run-id <RUN_ID> --task-id <TASK_ID>`
+
+Do not initialize a second state for the same run.
+
+## Node mapping
+
+Use these graph nodes:
+
+- Memory Retrieval -> `memory_retrieval`
+- Context Audit -> `context_audit`
+- Implementation -> `implementation`
+- Verification -> `verification`
+- Review -> `review`
+- Regression Obligations -> `regression_obligations`
+- Memory Update -> `memory_update`
+- Structured Handoff -> `handoff`
+
+## Node execution protocol
+
+Before executing a node:
+
+1. inspect READY nodes with:
+
+   `python3 .agent/tools/task_state.py ready --state <STATE_PATH>`
+
+2. do not execute a PENDING node whose dependencies are unsatisfied;
+3. mark the selected READY node RUNNING;
+4. perform the node work;
+5. mark the node according to the real result.
+
+Use:
+
+- `PASS` when the node completed successfully;
+- `SKIPPED` only when the node is legitimately unnecessary under the Task Contract;
+- `FAIL` for a recoverable failure;
+- `BLOCKED` when safe autonomous progress cannot continue.
+
+Never mark PASS merely to advance the graph.
+
+## Local retry
+
+Use:
+
+`task_state.py retry`
+
+only when the same failed node can safely run again without changing an upstream result.
+
+Examples:
+
+- transient test runner failure;
+- temporary browser harness problem;
+- retryable tool failure.
+
+A retry must not hide a deterministic product/code failure.
+
+## Upstream correction
+
+When a failed node requires changing implementation, reopen only the affected implementation subgraph:
+
+`python3 .agent/tools/task_state.py reopen --state <STATE_PATH> --node implementation`
+
+Use this for applicable:
+
+- Verifier FAIL requiring code correction;
+- Reviewer REJECT requiring code correction.
+
+This preserves already valid upstream work such as:
+
+- Memory Retrieval;
+- Context Audit.
+
+After reopening:
+
+1. Implementation becomes READY;
+2. delegate the targeted correction to Implementer;
+3. run Verification again;
+4. only after Verification PASS may Review run again.
+
+Do not restart the entire task for a localized failure.
+
+## Retry budgets
+
+Graph `attempts` are operational telemetry.
+
+They do not replace Task Contract budgets.
+
+Continue to enforce:
+
+- `execution.max_fix_attempts`;
+- `execution.max_review_rejections`.
+
+If the relevant Task Contract budget is exhausted:
+
+- do not reopen again;
+- mark the appropriate state BLOCKED when possible;
+- emit `task_blocked`;
+- escalate with accumulated evidence.
+
+## Skipped optional nodes
+
+If an ACCEPTED task creates no durable regression obligation:
+
+- mark `regression_obligations` SKIPPED.
+
+If an ACCEPTED task creates no durable memory:
+
+- mark `memory_update` SKIPPED.
+
+`PASS` and legitimate `SKIPPED` states satisfy downstream dependencies.
+
+## Completion graph
+
+After Review ACCEPT:
+
+1. complete or skip `regression_obligations`;
+2. complete or skip `memory_update`;
+3. wait until `handoff` becomes READY;
+4. mark `handoff` RUNNING;
+5. create the structured handoff;
+6. mark `handoff` PASS.
+
+Only after the required graph reaches its valid terminal state may the task emit `task_completed`.
+
+Do not emit `task_completed` while any required node is:
+
+- PENDING;
+- READY;
+- RUNNING;
+- FAIL;
+- BLOCKED.
+
 ## Preconditions
 
 Before implementation:
