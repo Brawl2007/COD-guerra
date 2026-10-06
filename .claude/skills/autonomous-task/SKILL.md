@@ -307,6 +307,47 @@ Escalate only for:
 - exhausted fix budget;
 - exhausted review budget.
 
+## Phase 5B — Regression Obligations
+
+After Reviewer ACCEPT, inspect:
+
+`verification.regression_obligations`
+
+in the Task Contract.
+
+Regression obligations describe behavior that future integration work must continue to prove.
+
+If the list is empty:
+- do not create a regression record.
+
+If durable obligations exist:
+
+1. confirm the exact code HEAD that Verifier and Reviewer accepted;
+2. create one record under:
+
+   `.agent/regression/records/<TASK_ID>.json`
+
+3. use `.agent/templates/REGRESSION_RECORD.json`;
+4. record that accepted code HEAD as `accepted_head`;
+5. include only obligations justified by the accepted task;
+6. use stable obligation IDs;
+7. include a concrete check and reason;
+8. run:
+
+   `python3 .agent/tools/regression_union.py`
+
+   against the durable records;
+9. if the union reports a conflicting obligation definition, do not silently resolve it;
+10. return BLOCKED or escalate when the conflict materially affects future integration safety.
+
+Do not create an obligation merely because a test happened to run.
+
+An obligation means:
+
+"future integration must continue proving this behavior."
+
+The regression record itself is metadata and must never be treated as proof that the check currently passes.
+
 ## Phase 6 — Memory Update
 
 After Reviewer ACCEPT and before the final handoff, use the `project-memory` skill in UPDATE mode.
