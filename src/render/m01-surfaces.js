@@ -138,7 +138,7 @@ export function cloudFieldTexture(){
 // low-frequency age/damp breakup in world space, so no gameplay state or authored GLB
 // geometry is involved.
 export function weatheredBridgeSurface(kind,{seed=0,...options}={}){
-  const material=texturedSurface(kind,{...options,worldScale:options.worldScale??(kind==='brick'?1.4:kind==='stone'?.5:1.0)});
+  const material=texturedSurface(kind,{...options,worldScale:options.worldScale??(kind==='brick'?1.4:kind==='stone'?0.5:1.0)});
   const baseCompile=material.onBeforeCompile,baseKey=material.customProgramCacheKey?.bind(material);
   material.onBeforeCompile=shader=>{
     baseCompile?.(shader);
