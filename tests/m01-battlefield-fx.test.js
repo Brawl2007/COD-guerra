@@ -23,7 +23,7 @@ test('battlefield FX stays presentation-only with explicit hard pool limits',()=
   assert.doesNotMatch(view,/src\/core\/random|Math\.random\s*\(/);assert.doesNotMatch(atmosphere,/src\/core\/random|Math\.random\s*\(/);
   for(const token of ['bursts:16','flash:16','core:48','fire:96','smoke:128','dust:128','shards:96','lights:1'])assert.match(view,new RegExp(token.replace(':','\\s*:\\s*')));
   assert.match(atmosphere,/this\.capacity=256/);assert.match(atmosphere,/InstancedMesh\(this\.debrisGeometry,this\.debrisMaterial,64\)/);
-  assert.match(view,/state\.damage\.find/);assert.match(view,/kind=id\.endsWith\('_demolition'\)/);
+  assert.match(view,/state\.damage\.find/);assert.match(view,/battlefieldBlastKind\(id,b\.aerial\)/);
 });
 
 
