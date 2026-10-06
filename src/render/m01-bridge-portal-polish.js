@@ -45,21 +45,35 @@ const subtractOpenings=(layout)=>{
 export function portalDetailDescriptors(name){
   const layout=M01_PORTAL_DETAIL_LAYOUTS[name];if(!layout)return null;
   const mediumBoxes=subtractOpenings(layout).map(([z0,z1])=>({
-    p:[layout.x,-.78,(z0+z1)/2],size:[layout.thickness+.16,.28,z1-z0],kind:'plinth'
+    p:[layout.x,-.70,(z0+z1)/2],size:[layout.thickness+.18,.44,z1-z0],kind:'plinth'
   }));
   const mediumRings=layout.towers.map(t=>({
-    p:[layout.x,-.72,t.z],size:[t.r+.31,.22,t.r+.31],kind:'tower-base-course'
+    p:[layout.x,-.66,t.z],size:[t.r+.34,.34,t.r+.34],kind:'tower-base-course'
   }));
   const highBoxes=[];
   for(const opening of layout.openings)for(const side of [-1,1])for(const face of [-1,1]){
     highBoxes.push({
-      p:[layout.x+face*(layout.thickness/2+.05),(opening.springY-1)/2,opening.centerZ+side*opening.width/2],
-      size:[.10,opening.springY+1,.24],kind:'jamb-edge'
+      p:[layout.x+face*(layout.thickness/2+.07),(opening.springY-1)/2,opening.centerZ+side*opening.width/2],
+      size:[.16,opening.springY+1,.34],kind:'jamb-edge'
     });
   }
+  const mediumStains=[];
+  const intervals=subtractOpenings(layout);
+  intervals.forEach(([z0,z1],segment)=>{
+    const length=z1-z0,count=Math.max(1,Math.min(3,Math.floor(length/6)+1));
+    for(const face of [-1,1])for(let i=0;i<count;i++){
+      const t=(i+.5)/count,z=z0+t*length,y=1.1+((segment*1.7+i*2.35+(face>0?.8:.15))%6.2);
+      mediumStains.push({
+        p:[layout.x+face*(layout.thickness/2+.095),y,z],
+        size:[Math.min(4.4,Math.max(1.5,length/(count+1)*.8)),1.8+((segment+i)%3)*.55,1],
+        rotation:[0,face>0?Math.PI/2:-Math.PI/2,0],kind:'weather-stain'
+      });
+    }
+  });
   return Object.freeze({
     mediumBoxes:Object.freeze(mediumBoxes.map(Object.freeze)),
     mediumRings:Object.freeze(mediumRings.map(Object.freeze)),
+    mediumStains:Object.freeze(mediumStains.map(Object.freeze)),
     highBoxes:Object.freeze(highBoxes.map(Object.freeze))
   });
 }
@@ -67,22 +81,22 @@ export function portalDetailDescriptors(name){
 const makeBatch=(geometry,material,items)=>{
   if(!items.length)return null;
   const batch=new THREE.InstancedMesh(geometry,material,items.length),dummy=new THREE.Object3D();
-  items.forEach((d,i)=>{dummy.position.set(...d.p);dummy.scale.set(...d.size);dummy.rotation.set(0,0,0);dummy.updateMatrix();batch.setMatrixAt(i,dummy.matrix);});
+  items.forEach((d,i)=>{dummy.position.set(...d.p);dummy.scale.set(...d.size);dummy.rotation.set(...(d.rotation??[0,0,0]));dummy.updateMatrix();batch.setMatrixAt(i,dummy.matrix);});
   batch.instanceMatrix.needsUpdate=true;batch.castShadow=true;batch.receiveShadow=true;batch.computeBoundingSphere();return batch;
 };
 
 export class M01BridgePortalPolish{
-  constructor({stone}){
-    this.stone=stone;this.box=new THREE.BoxGeometry(1,1,1);this.ring=new THREE.CylinderGeometry(1,1,1,14);
+  constructor({stone,stain}){
+    this.stone=stone;this.stainMaterial=stain;this.box=new THREE.BoxGeometry(1,1,1);this.ring=new THREE.CylinderGeometry(1,1,1,14);this.stain=new THREE.PlaneGeometry(1,1);
     this.attachments=[];this.quality='medium';
   }
   attach(node){
     const detail=portalDetailDescriptors(node.name);if(!detail)return false;
     const root=new THREE.Group();root.name=`${node.name}_visual_polish`;root.userData.m01PortalPolish=true;
     const mediumBox=makeBatch(this.box,this.stone,detail.mediumBoxes),mediumRing=makeBatch(this.ring,this.stone,detail.mediumRings),
-      highBox=makeBatch(this.box,this.stone,detail.highBoxes);
-    for(const batch of [mediumBox,mediumRing,highBox])if(batch)root.add(batch);
-    node.add(root);this.attachments.push({node,root,medium:[mediumBox,mediumRing].filter(Boolean),high:[highBox].filter(Boolean),detail});
+      mediumStain=makeBatch(this.stain,this.stainMaterial,detail.mediumStains),highBox=makeBatch(this.box,this.stone,detail.highBoxes);
+    for(const batch of [mediumBox,mediumRing,mediumStain,highBox])if(batch)root.add(batch);
+    node.add(root);this.attachments.push({node,root,medium:[mediumBox,mediumRing,mediumStain].filter(Boolean),high:[highBox].filter(Boolean),detail});
     this.sync(this.quality);return true;
   }
   sync(quality='medium'){
@@ -93,9 +107,9 @@ export class M01BridgePortalPolish{
   get diagnostics(){
     let medium=0,high=0,visible=0,activeBatches=0;const active=[];
     for(const a of this.attachments){
-      medium+=a.detail.mediumBoxes.length+a.detail.mediumRings.length;high+=a.detail.highBoxes.length;
+      medium+=a.detail.mediumBoxes.length+a.detail.mediumRings.length+a.detail.mediumStains.length;high+=a.detail.highBoxes.length;
       if(!a.node.visible)continue;active.push(a.node.name);
-      if(this.quality!=='low'){visible+=a.detail.mediumBoxes.length+a.detail.mediumRings.length;activeBatches+=a.medium.length;}
+      if(this.quality!=='low'){visible+=a.detail.mediumBoxes.length+a.detail.mediumRings.length+a.detail.mediumStains.length;activeBatches+=a.medium.length;}
       if(this.quality==='high'){visible+=a.detail.highBoxes.length;activeBatches+=a.high.length;}
     }
     return {quality:this.quality,attachments:this.attachments.map(a=>a.node.name),activeAttachments:active,mediumDetails:medium,highDetails:high,
@@ -103,6 +117,6 @@ export class M01BridgePortalPolish{
   }
   dispose(){
     for(const a of this.attachments)a.root.removeFromParent();
-    this.attachments=[];this.box.dispose();this.ring.dispose();
+    this.attachments=[];this.box.dispose();this.ring.dispose();this.stain.dispose();
   }
 }
