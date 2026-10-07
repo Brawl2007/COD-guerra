@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {leafTexture,texturedSurface} from './m01-surfaces.js';
 import {buildM01EnvironmentProps,M01_PROP_QUALITY_RANK,propCountsForQuality} from './m01-environment-props.js';
+import {M01_TRACK_CENTRES} from './m01-bridge-structure.js';
 
 export const M01_VEGETATION_LOD=Object.freeze({
   low:Object.freeze({near:55,mid:170,hysteresis:10,nearBranches:2,midBranches:1,nearLobes:3,midLobes:2,nearCards:0}),
@@ -241,16 +242,22 @@ export class M01Environment {
       for(let i=1;i<points.length;i++){
         const a=points[i-1],b=points[i],dx=b[0]-a[0],dz=b[2]-a[2],length=Math.hypot(dx,dz),angle=-Math.atan2(dz,dx);
         if(length>1800)continue;
+        // Double-track main line meets the bridge's two tracks; the Bydgoszcz branch stays single.
+        // Double track: sleeper and ballast patch per track, shared loose gravel and no tie plates (rails sit on the
+        // sleepers), so the second track costs ~24 triangles per station instead of doubling the single-track budget.
+        const centres=M01_TRACK_CENTRES[id],single=centres.length===1,spread=centres.at(-1)-centres[0];
         for(let d=0;d<length;d+=1.35){
-          const t=d/length,x=a[0]+t*dx,z=a[2]+t*dz,y=a[1]+t*(b[1]-a[1]);
-          const grounded=this.world.heightAt(x,z);
-          this.put('box','wood',[x,grounded+.055,z],[.23,.10,2.65],[0,angle,0]);
-          for(const offset of [-.72,.72]){
-            const px=x+Math.sin(angle)*offset,pz=z+Math.cos(angle)*offset;
-            this.put('box','metal',[px,grounded+.115,pz],[.30,.035,.22],[0,angle,0]);
+          const t=d/length,cx=a[0]+t*dx,cz=a[2]+t*dz;
+          for(const centre of centres){
+            const x=cx-dz/length*centre,z=cz+dx/length*centre,grounded=this.world.heightAt(x,z);
+            this.put('box','wood',[x,grounded+.055,z],[.23,.10,2.65],[0,angle,0]);
+            if(single)for(const offset of [-.72,.72]){
+              const px=x+Math.sin(angle)*offset,pz=z+Math.cos(angle)*offset;
+              this.put('box','metal',[px,grounded+.115,pz],[.30,.035,.22],[0,angle,0]);
+            }
+            this.put('rock','stone',[x,grounded+.008,z],[.85,.045,1.5],[0,angle,0],'#5f6158');
           }
-          this.put('rock','stone',[x,grounded+.008,z],[.85,.045,1.5],[0,angle,0],'#5f6158');
-          for(let k=0;k<5;k++){const offset=(k-2)*.64,px=x+Math.sin(angle)*offset,pz=z+Math.cos(angle)*offset;this.put('gravel','stone',[px,grounded+.018,pz],[.19,.038,.22],[0,k*1.17,0],'#737168');}
+          for(let k=0;k<5;k++){const offset=(k-2)*(.64+spread/4),px=cx+Math.sin(angle)*offset,pz=cz+Math.cos(angle)*offset;this.put('gravel','stone',[px,this.world.heightAt(px,pz)+.018,pz],[.19,.038,.22],[0,k*1.17,0],'#737168');}
         }
       }
     }
