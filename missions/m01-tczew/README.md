@@ -12,6 +12,7 @@
 | [`CLAUDE_BRIDGE_TASK.md`](CLAUDE_BRIDGE_TASK.md) | Trabalho independente para Claude: kit modular das pontes, sem editar a engine |
 | [`ASSETS.md`](ASSETS.md) + [`assets-m01.json`](assets-m01.json) | Lista de assets com dimensões reais, escala, licença, candidatos e política para repositório público |
 | [`SCRIPT.md`](SCRIPT.md) | Roteiro completo: cenas, falas, atuação, set-pieces, checkpoints, skip, debrief, critérios de aceitação |
+| [`BATTLEFIELD_EXPERIENCE.md`](BATTLEFIELD_EXPERIENCE.md) | Proposta de arquitectura da batalha ao redor: eventos autoritativos, eventos de apresentação e camadas ambiente; o que pode e não pode afectar o gameplay; tarefas `BX-00`–`BX-14` por impacto. Não implementada. |
 | [`MAP.md`](MAP.md) + [`map-layout.svg`](map-layout.svg) | Sistema de coordenadas, EXACT/RECONSTRUCTED/COMPRESSED, setores, rota, limites, cobertura, luz e som |
 | [`mission.json`](mission.json) | Dados da missão com IDs estáveis: objetivos, eventos, relógio, setores, checkpoints, cenas, falas, debrief |
 | [`ENGINE_CONTRACT.md`](ENGINE_CONTRACT.md) | Semântica de gates, tempos, snapshots reais, segurança e campos ainda descritivos |

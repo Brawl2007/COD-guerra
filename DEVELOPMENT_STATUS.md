@@ -102,6 +102,14 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 - LOD0/1/2: 14,9k/6,0k/1,9k triângulos visíveis (PL), um atlas por nação. O GLB de animações tem 15 clips: ferrolho, recarga por clipe, sapadores normal/sob fogo, transporte de Bąk no `carry_socket`, locomoção, ferido, queda, sentado.
 - Verificados por `tests/m01-soldiers-glb.test.js` e capturas inspeccionadas em `docs/assets/m01-soldiers/`. Falta integrá-los em `src/render/` (trabalho do utilizador) e medir no Chromebook.
 
+## Direcção da experiência de campo de batalha (proposta, não implementada)
+
+`missions/m01-tczew/BATTLEFIELD_EXPERIENCE.md` analisa porque a guerra de M01 ainda parece acontecer só à frente do jogador e propõe a arquitectura em três camadas: eventos autoritativos (simulação), eventos de apresentação (renderer/áudio) e camadas ambiente (camas sonoras, frases, horizonte), com a tabela do que cada camada pode e não pode afectar no gameplay. Diagnóstico com ficheiros: o pelotão leste está inactivo até às 06:00 e os alemães disparam para o vazio; Stukas e avião do raid em laços `time%90`/`time%150` sem relação com `stukaPath`; S4 reduzido a um `distant-shot`; raid 05:30 com um único impacto; pátio da estação e casamata sem actores; sem cama sonora, buses ou silêncios desenhados; um humano a 1 km mede ≈0,9 px.
+
+Tarefas `BX-00`–`BX-14` ordenadas por impacto, com dono (engine/apresentação/dados), gameplay afectado, verificação e risco. Os acrescentos autoritativos são poucos e delimitados: desgaste 24→18 do pelotão leste só nos IDs 18–23 (a flag 12–18 não muda), impactos múltiplos do raid 05:30 persistidos em `sectors.damage`, actores do pátio e da ckm com tarefas por hora, tiros de exibição que nunca aterram nem suprimem, `carriedBy` nos alemães feridos. As cadências do fogo sobre o reparo, o jogador, a secção, a salva de ajuste e o tabuleiro não mudam; os invariantes de `tests/m01-cover-threat.test.js` e da comparação de 12 sementes são critério de aceitação.
+
+Nesta branch não há alterações em `src/`, dados executáveis, saves ou build. Verificação: `npm ci` e `npm test` (108/108) no estado actual da branch, para confirmar a base; não é evidência das tarefas propostas. Próximo passo: BX-00 (fundação) e BX-02 (impostores) em paralelo, depois BX-01; desempenho continua NÃO MEDIDO.
+
 ## Parcial ou pendente
 
 - No jogo, humanos, ViewModel, mãos, recarga, sons e texturas continuam placeholders. Os soldados riggados provisórios de `docs/assets/m01-soldiers/` aguardam integração; ViewModel, vozes e uniformes finais estão pendentes.
@@ -123,6 +131,6 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 
 ## Próximo passo
 
-Playtest humano completo de M01, com atenção ao fogo de cobertura a ~1,2 km (clarões de ~8 px e raio de supressão de 3 m). Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02.
+Playtest humano completo de M01, com atenção ao fogo de cobertura a ~1,2 km (clarões de ~8 px e raio de supressão de 3 m). Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02. A direcção da batalha ao redor segue `missions/m01-tczew/BATTLEFIELD_EXPERIENCE.md` (BX-00 → BX-02 → BX-01), sem tocar no combate afinado.
 
 O trabalho das pontes de Claude foi preservado e completado, incluindo dano persistente em LOD0/1/2. Mapas históricos e inventários específicos continuam úteis para as pendências de P4/P13 e de arte. Não recomeçar essa entrega.
