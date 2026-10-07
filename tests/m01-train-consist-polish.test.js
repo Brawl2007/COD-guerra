@@ -1,11 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-import {M01TrainWagons,M01_TRAIN_WAGON_PLAN,chooseWagonLod,wagonLodCandidates} from '../src/render/m01-train-wagons.js';
-import {M01_TRAIN_ART_OFFSET_Y,M01_TRAIN_TRACK,M01_TRAIN_DETAIL_BUDGET,m01DetailTier,m01WagonVariation,m01GapVariation,m01WagonWear,m01WagonArtMatrix}
+import {M01TrainWagons,M01_TRAIN_WAGON_PLAN,M01_WAGON_LOD,chooseWagonLod,wagonLodCandidates} from '../src/render/m01-train-wagons.js';
+import {M01_TRAIN_ART_OFFSET_Y,M01_TRAIN_TRACK,M01_WAGON_TREAD_AT_RAIL,M01_TRAIN_DETAIL_BUDGET,m01DetailTier,m01WagonVariation,m01GapVariation,m01WagonWear,m01WagonArtMatrix}
   from '../src/render/m01-train-consist-detail.js';
 import {yardWagonState,M01_YARD_WAGON_PLAN} from '../src/render/m01-yard-wagons.js';
 import {M01Simulation} from '../src/game/m01-simulation.js';
@@ -29,9 +29,28 @@ function fixture(assets){
   return {train,parent,box,wood,close(){train.dispose();box.dispose();cylinder.dispose();wood.dispose();metal.dispose();}};
 }
 const meshes=root=>{let n=0;root.traverse(o=>{if(o.isMesh)n++;});return n;};
+// The approved base module, imported from git so selection/plan/proxies are compared exhaustively, not sampled.
+let baseModule;const base=async()=>{if(baseModule)return baseModule;const dir=new URL('../node_modules/.cache/m01-train-consist-test/',import.meta.url);mkdirSync(dir,{recursive:true});
+  const file=new URL('m01-train-wagons.base.mjs',dir);writeFileSync(file,execFileSync('git',['show',`${BASE}:src/render/m01-train-wagons.js`]));return baseModule=await import(file.href);};
+// What the train group actually submits per frame (main pass) and how many objects also render into the shadow map.
+function submitted(group){let draws=0,shadows=0;group.traverse(o=>{if(!o.isMesh||(o.isInstancedMesh&&o.count===0))return;for(let p=o;p;p=p.parent)if(!p.visible)return;draws++;if(o.castShadow)shadows++;});return {draws,shadows};}
+// Lowest surface point of a mesh in a vertical plane `lateral` metres from the track centre (signed, per wheel side).
+function sliceMinY(geometry,world,lateral,z){
+  const pos=geometry.attributes.position,index=geometry.index.array,v=[new THREE.Vector3(),new THREE.Vector3(),new THREE.Vector3()];let min=Infinity;
+  for(let t=0;t<index.length;t+=3){
+    for(let k=0;k<3;k++)v[k].fromBufferAttribute(pos,index[t+k]).applyMatrix4(world);
+    const l=v.map(p=>p.z-z-lateral);
+    for(const [a,b] of [[0,1],[1,2],[2,0]]){if(l[a]===0)min=Math.min(min,v[a].y);if(l[a]*l[b]<0)min=Math.min(min,v[a].y+(v[b].y-v[a].y)*l[a]/(l[a]-l[b]));}
+  }
+  return min;
+}
 const instanceMatrices=batch=>Array.from({length:batch.count},(_,i)=>{const m=new THREE.Matrix4();batch.getMatrixAt(i,m);return m;});
 
-test('consist keeps 65 wagons, plan ids/types/x and the plan anchor; LOD hysteresis and candidates are unchanged',()=>{
+test('consist keeps 65 wagons, plan ids/types/x and the plan anchor; LOD hysteresis and candidates are unchanged',async()=>{
+  const b=await base();assert.deepEqual(M01_TRAIN_WAGON_PLAN,b.M01_TRAIN_WAGON_PLAN);assert.deepEqual(M01_WAGON_LOD,b.M01_WAGON_LOD);
+  for(const quality of ['low','medium','high','unknown'])for(const previous of [null,0,1,2])for(let d=0;d<=1200;d+=.25)
+    assert.equal(chooseWagonLod(d,quality,previous),b.chooseWagonLod(d,quality,previous),`${quality} ${previous} ${d}`);
+  for(const lod of [0,1,2])assert.deepEqual(wagonLodCandidates(lod),b.wagonLodCandidates(lod));
   assert.equal(M01_TRAIN_WAGON_PLAN.length,65);
   M01_TRAIN_WAGON_PLAN.forEach((w,i)=>assert.deepEqual({...w},{id:`train963_wagon_${String(i+1).padStart(2,'0')}`,type:i%4===3?'open':'covered',x:1090+i*9.1}));
   assert.equal(M01_TRAIN_WAGON_PLAN.filter(w=>w.type==='open').length,16);
@@ -47,7 +66,7 @@ test('real GLB instances keep plan x/z, sit on the rail-top offset and stay in t
   const f=fixture(new Assets(await realSources()));
   try{
     await f.train.load();f.train.update({x:1090,z:-2.5},'high');const d=f.train.diagnostics;
-    assert.equal(d.wagons,65);assert.equal(d.proxies,0);assert.deepEqual(d.first,[1090,0,-2.5]);assert.deepEqual(d.last,[1672.4,0,-2.5]);assert.equal(d.artOffsetY,-.82);
+    assert.equal(d.wagons,65);assert.equal(d.proxies,0);assert.deepEqual(d.first,[1090,0,-2.5]);assert.deepEqual(d.last,[1672.4,0,-2.5]);assert.equal(d.artOffsetY,-.8325);
     assert.equal(d.batches,24,'5 covered + 3 open nodes per LOD; no extra GLB batches');
     for(const lod of [0,1,2])assert.ok(d.lodDistribution[lod]>0);
     const byX=new Map(M01_TRAIN_WAGON_PLAN.map(w=>[w.x.toFixed(4),w])),seen=new Set(),p=new THREE.Vector3(),q=new THREE.Quaternion(),s=new THREE.Vector3();
@@ -68,56 +87,59 @@ test('real GLB instances keep plan x/z, sit on the rail-top offset and stay in t
   }finally{f.close();}
 });
 
-test('wheel/rail fit: tread on the rail head within 1 cm, flanges inside the gauge, no lateral offset (all types and LODs)',async()=>{
-  const sources=await realSources(),{railTop,railCentre,headWidth,z}=M01_TRAIN_TRACK,report=[];
-  assert.equal(railTop,M01_TRAIN_ART_OFFSET_Y);assert.ok(Math.abs(2*railCentre-headWidth-1.435)<1e-9,'standard gauge between rail-head inner faces');
-  // East track geometry used by the environment: terrain -1, rail box centre +.12, height .12 => rail top -.82.
+test('wheel/rail fit: treads sit on the rail head, flanges stay inside the gauge, no lateral offset (all types and LODs)',async()=>{
+  const sources=await realSources(),{railTop,railCentre,headWidth,z}=M01_TRAIN_TRACK,inner=railCentre-headWidth/2,outer=railCentre+headWidth/2,report=[];
+  assert.ok(Math.abs(2*railCentre-headWidth-1.435)<1e-9,'standard gauge between rail-head inner faces');
+  // East track geometry used by the environment and locomotive 963: terrain -1, rail box centre +.12, height .12 => rail top -.82.
   assert.ok(Math.abs(new TczewWorld().terrainHeightAt(1300,-2.5)+.12+.06-railTop)<1e-9);
+  assert.ok(Math.abs(M01_TRAIN_ART_OFFSET_Y-(railTop-M01_WAGON_TREAD_AT_RAIL))<1e-12);
   for(const [key,source] of Object.entries(sources)){
-    source.scene.updateMatrixWorld(true);
-    for(const wagon of [M01_TRAIN_WAGON_PLAN[0],M01_TRAIN_WAGON_PLAN[1],M01_TRAIN_WAGON_PLAN[3]]){
-      if(wagon.type!==key.split(':')[0])continue;const art=m01WagonArtMatrix(wagon);
+    source.scene.updateMatrixWorld(true);const lod0=key.endsWith(':0');
+    for(const wagon of M01_TRAIN_WAGON_PLAN.filter(w=>w.type===key.split(':')[0]).slice(0,3)){
       for(const name of ['wheelset_1','wheelset_2']){
-        const node=source.scene.getObjectByName(name),world=new THREE.Matrix4().multiplyMatrices(art,node.matrixWorld),pos=node.geometry.attributes.position,v=new THREE.Vector3();
-        const centre=new THREE.Vector3().setFromMatrixPosition(world),rings=new Map();let minY=Infinity;
-        assert.ok(Math.abs(centre.z-z)<1e-9,'wheelset centred on the track');
-        for(let i=0;i<pos.count;i++){
-          v.fromBufferAttribute(pos,i).applyMatrix4(world);minY=Math.min(minY,v.y);
-          const across=+Math.abs(v.z-z).toFixed(4);if(across<.5)continue;rings.set(across,Math.min(rings.get(across)??Infinity,v.y));
+        const node=source.scene.getObjectByName(name),world=new THREE.Matrix4().multiplyMatrices(m01WagonArtMatrix(wagon),node.matrixWorld);
+        assert.ok(Math.abs(new THREE.Vector3().setFromMatrixPosition(world).z-z)<1e-9,'wheelset centred on the track');
+        for(const side of [-1,1]){
+          const at=l=>sliceMinY(node.geometry,world,side*l,z)-railTop,centre=at(railCentre),edgeIn=at(inner+1e-4),edgeOut=at(outer-1e-4),flange=at(inner-.04);
+          report.push({key,wagon:wagon.id,name,side,centre:+centre.toFixed(4),edgeIn:+edgeIn.toFixed(4),edgeOut:+edgeOut.toFixed(4),flange:+flange.toFixed(4)});
+          // LOD0 (16 sides) touches the head centre; its 1:5.4 cone leaves ≤7 mm at the head edges. LOD1/2 (8 sides) have a
+          // flat lower edge 3.7 cm up: under 0.7 px at the nearest LOD1 switch (31 m on Low, 1 px ≈ 6 cm).
+          if(lod0){assert.ok(Math.abs(centre)<=.002,`${key} ${name}: centre ${centre}`);for(const e of [edgeIn,edgeOut])assert.ok(Math.abs(e)<=.0075,`${key} ${name}: edge ${e}`);}
+          else{assert.ok(centre>=-.002&&centre<=.04,`${key} ${name}: centre ${centre}`);assert.ok(Math.min(edgeIn,edgeOut)>=-.0075);}
+          if(lod0)assert.ok(flange<-.02,`${key}: LOD0 flange reaches below the rail top inside the gauge (${flange})`);
         }
-        // Lowest generator line of the conical tread, sampled at the rail-head centre.
-        const xs=[...rings.keys()].sort((a,b)=>a-b),hi=xs.find(x=>x>=railCentre)??xs.at(-1),lo=[...xs].reverse().find(x=>x<=railCentre)??xs[0];
-        const contact=hi===lo?rings.get(lo):rings.get(lo)+(rings.get(hi)-rings.get(lo))*(railCentre-lo)/(hi-lo);
-        const flange=xs.filter(x=>rings.get(x)<railTop-.02);
-        report.push({key,wagon:wagon.id,name,contact:+(contact-railTop).toFixed(4),minY:+(minY-railTop).toFixed(4)});
-        // LOD0 wheels are 16-sided and touch within 1 cm. LOD1/2 are 8-sided with a flat bottom edge (22.5° vertices), so
-        // the tread clears the head by ≤3.5 cm: under 0.6 px at the nearest LOD1 distance (31 m on Low, 1 px ≈ 6 cm).
-        const tolerance=key.endsWith(':0')?.01:.035;
-        assert.ok(contact>=railTop-.01&&contact-railTop<=tolerance,`${key} ${name}: tread ${contact} vs rail ${railTop}`);
-        assert.ok(minY>=railTop-.04,`${key} ${name}: not buried (${minY})`);
-        for(const x of flange)assert.ok(x<=railCentre-headWidth/2,`${key}: flange ${x} inside the gauge`);
-        if(key.endsWith(':0'))assert.ok(flange.length>0,'LOD0 keeps its flange below the rail top');
+        // Nothing of the wheel dips below the rail top outboard of the rail-head inner face.
+        const pos=node.geometry.attributes.position,v=new THREE.Vector3();
+        for(let i=0;i<pos.count;i++){v.fromBufferAttribute(pos,i).applyMatrix4(world);if(v.y<railTop-.0075)assert.ok(Math.abs(v.z-z)<inner,`${key}: ${v.z} below rail outboard`);}
       }
     }
   }
-  assert.ok(report.length>=12);
+  assert.equal(report.length,6*3*2*2);
 });
 
-test('details follow LOD/quality tiers, use a fixed number of instanced batches and stay within the draw-call budget',async()=>{
-  const f=fixture(new Assets(await realSources()));
+test('every detail batch matches the tier of the drawn LOD; near/mid sets vanish at LOD2 and on Low; budget counted on real submissions',async()=>{
+  const sources=await realSources(),f=fixture(new Assets(sources)),b=await base(),bf=new b.M01TrainWagons(new THREE.Group(),new Assets(sources),f.box,new THREE.CylinderGeometry(),f.wood,f.wood);
+  const tierOf=(lod,quality)=>quality==='low'?(lod===0?1:2):lod;   // independent statement of the mapping
   try{
-    await f.train.load();
-    for(const quality of ['high','medium','low'])for(const x of [1090,1300,1700,2500]){
-      f.train.update({x,z:-2.5},quality);const d=f.train.diagnostics,t=d.detail,lod=d.lodDistribution;
-      assert.equal(t.quality,quality);assert.equal(t.wagons,65);assert.equal(t.gaps,64);assert.equal(t.collidersAdded,0);
-      if(quality==='low')assert.deepEqual(t.instancesByTier,{near:0,mid:lod[0],far:lod[1]+lod[2]});
-      else assert.deepEqual(t.instancesByTier,{near:lod[0],mid:lod[1],far:lod[2]});
-      assert.equal(t.instances.nearFrame,t.instancesByTier.near);assert.equal(t.instances.shade,65);
-      assert.equal(t.instances.nearGap+t.instances.midGap+t.instances.farGap,64);
-      assert.ok(t.drawCalls<=M01_TRAIN_DETAIL_BUDGET.drawCalls,`${quality}@${x}: ${t.drawCalls}`);
+    await f.train.load();await bf.load();
+    for(const quality of ['high','medium','low'])for(const x of [1090,1121.85,1300,1450,1700,2500]){
+      f.train.update({x,z:-2.5},quality);bf.update({x,z:-2.5},quality);const t=f.train.diagnostics.detail,n=t.instances;
+      const tiers=M01_TRAIN_WAGON_PLAN.map(w=>tierOf(f.train.bestSource(w.type,f.train.lods.get(w.id)).lod,quality));
+      const gaps=tiers.slice(1).map((tier,i)=>Math.min(tier,tiers[i])),count=(list,v)=>list.filter(x=>x===v).length;
+      assert.equal(n.nearFrame,count(tiers,0));assert.equal(n.midFrame,count(tiers,1));assert.equal(n.shade,65);
+      assert.equal(n.nearWear,M01_TRAIN_WAGON_PLAN.filter((w,i)=>tiers[i]===0).reduce((sum,w)=>sum+m01WagonWear(w).length,0));
+      assert.equal(n.nearGap,count(gaps,0));assert.equal(n.midGap,count(gaps,1));assert.equal(n.farGap,count(gaps,2));
+      assert.equal(n.nearEnd,(tiers[0]===0)+(tiers[64]===0));
+      if(quality==='low'||x>=2500)assert.equal(n.nearFrame+n.nearWear+n.nearGap+n.nearEnd,0,`${quality}@${x}: no near set`);
+      if(x>=2500)assert.equal(n.midFrame+n.midGap,0,'all LOD2: no mid set');
+      // Real submissions of the whole train group against the approved base renderer at the same view.
+      const now=submitted(f.train.group),was=submitted(bf.group);
+      assert.equal(f.train.diagnostics.batches,bf.diagnostics.batches,'same GLB batches as base');
+      assert.ok(now.draws-was.draws<=M01_TRAIN_DETAIL_BUDGET.drawCalls,`${quality}@${x}: +${now.draws-was.draws} draws`);
+      assert.equal(was.shadows,0);assert.ok(quality==='low'?now.shadows===0:now.shadows<=11,`${quality}@${x}: ${now.shadows} shadow casters`);
       assert.equal(f.train.detail.group.children.length,11,'8 tier batches + ballast, rails, sleepers; never per wagon');
     }
-  }finally{f.close();}
+  }finally{f.close();bf.dispose();}
 });
 
 test('fallback: total and partial GLB failure keep the old proxies and never float details on them',async()=>{
@@ -128,6 +150,11 @@ test('fallback: total and partial GLB failure keep the old proxies and never flo
     assert.equal(d.detail.instances.shade,0);assert.equal(d.detail.drawCalls,3,'only the static siding');
     const m=new THREE.Matrix4(),p=new THREE.Vector3(),q=new THREE.Quaternion(),s=new THREE.Vector3();
     total.train.proxyBody.getMatrixAt(0,m);m.decompose(p,q,s);assert.deepEqual([p.x,p.y,p.z].map(v=>+v.toFixed(6)),[1090,2,-2.5]);assert.deepEqual([s.x,s.y,s.z].map(v=>+v.toFixed(6)),[7.86,3.2,2.8]);
+    // Every proxy body/wheel matrix equals the approved base renderer's.
+    const b=await base(),old=new b.M01TrainWagons(new THREE.Group(),new Assets({},()=>true),total.box,new THREE.CylinderGeometry(),total.wood,total.wood);
+    try{await old.load();old.update({x:1090,z:-2.5},'high');
+      for(const k of ['proxyBody','proxyWheels']){assert.equal(total.train[k].count,old[k].count);assert.deepEqual(Array.from(total.train[k].instanceMatrix.array),Array.from(old[k].instanceMatrix.array),k);}
+    }finally{old.dispose();}
   }finally{total.close();}
   const sources=await realSources(),partial=fixture(new Assets(sources,path=>path.includes('_open_')));
   try{
@@ -149,19 +176,30 @@ test('train consist never asks for damage art and the yard intact/burned authori
   }finally{f.close();}
 });
 
-test('save/reload, pause frames and repeated updates never mutate simulation state or RNG; detail state follows only player/quality',async()=>{
+test('save/reload, pause frames and repeated updates never mutate simulation state or RNG; every detail/GLB buffer is history-free',async()=>{
   const sources=await realSources(),sim=new M01Simulation(19390901);sim.tick(.05,{skip:true});sim.consume('evt_m01_train963_arrives');
-  const saved=sim.snapshot(),rng=sim.rng.state,f=fixture(new Assets(sources)),g=fixture(new Assets(sources));
+  const saved=sim.snapshot(),rng=sim.rng.state,f=fixture(new Assets(sources));
+  const buffers=t=>[...Object.entries(t.detail.meshes).map(([k,m])=>[k,m.count,Array.from(m.instanceMatrix.array.slice(0,m.count*16)),m.instanceColor?Array.from(m.instanceColor.array.slice(0,m.count*3)):null]),
+    ...t.batches.map(b=>[b.name,b.count,Array.from(b.instanceMatrix.array),Array.from(b.instanceColor.array),b.castShadow])];
   try{
     await f.train.load();
-    for(let i=0;i<30;i++){f.train.update(sim.player,['low','medium','high'][i%3]);assert.deepEqual(sim.snapshot(),saved);}
+    for(let i=0;i<30;i++){f.train.update(i%2?sim.player:{x:1090+i*40,z:-2.5},['low','medium','high'][i%3]);f.train.rebuild();assert.deepEqual(sim.snapshot(),saved);}
     assert.equal(sim.rng.state,rng);
-    const other=new M01Simulation();other.restoreSnapshot(saved);await g.train.load();
-    f.train.update(sim.player,'high');g.train.update(other.player,'high');
-    assert.deepEqual(g.train.diagnostics,f.train.diagnostics);assert.deepEqual(other.snapshot(),saved);
-    // Same matrices for every detail batch after an independent restore.
-    for(const [key,mesh] of Object.entries(f.train.detail.meshes))assert.deepEqual(Array.from(g.train.detail.meshes[key].instanceMatrix.array.slice(0,mesh.count*16)),Array.from(mesh.instanceMatrix.array.slice(0,mesh.count*16)),key);
-  }finally{f.close();g.close();}
+    const other=new M01Simulation();other.restoreSnapshot(saved);assert.deepEqual(other.snapshot(),saved);
+    // A fresh renderer after the reload vs the one with a long history: same LOD state (both pass through all-LOD2), then
+    // the player stands by the coupling; every detail and GLB buffer must match, near set included.
+    const g=fixture(new Assets(sources));
+    try{
+      await g.train.load();
+      for(const quality of ['high','medium','low']){
+        for(const t of [f.train,g.train]){t.update({x:6000,z:-2.5},quality);t.update({x:1121.85,z:-7.4},quality);}
+        assert.deepEqual([...g.train.lods],[...f.train.lods]);assert.deepEqual(buffers(g.train),buffers(f.train),quality);
+        assert.deepEqual(g.train.diagnostics,f.train.diagnostics);
+        const n=g.train.diagnostics.detail.instances;if(quality!=='low')assert.ok(n.nearGap>0&&n.nearWear>0&&n.nearFrame>0,'near set exercised');
+      }
+      assert.deepEqual(other.snapshot(),saved);
+    }finally{g.close();}
+  }finally{f.close();}
   const source=readFileSync(new URL('../src/render/m01-train-consist-detail.js',import.meta.url),'utf8');
   assert.doesNotMatch(source,/Math\.random|\.rng\b|src\/game|src\/world|from '\.\.\/game|from '\.\.\/world/);
   for(const w of M01_TRAIN_WAGON_PLAN)assert.deepEqual(m01WagonVariation(w.id),m01WagonVariation(w.id));
@@ -186,8 +224,10 @@ test('couplings and underframe add no collider: world obstacles/walk surfaces ar
   try{
     await f.train.load();for(const x of [1090,1121.85,1400])f.train.update({x,z:-2.5},'high');
     assert.equal(JSON.stringify({o:world.obstacles,w:world.walkSurfaces,c:world.covers,h:[1090,1121.85,1300].map(x=>world.heightAt(x,-2.5))}),before);
-    assert.equal(f.train.diagnostics.detail.collidersAdded,0);
     f.train.group.traverse(o=>assert.ok(!o.userData.collider&&!/collider/i.test(o.name),o.name));
+    // The renderer never receives the world; neither module references collision structures.
+    for(const file of ['m01-train-consist-detail.js','m01-train-wagons.js'])
+      assert.doesNotMatch(readFileSync(new URL('../src/render/'+file,import.meta.url),'utf8'),/obstacles|colliders|walkSurfaces|heightAt|\.world\b/,file);
   }finally{f.close();}
 });
 
@@ -208,4 +248,16 @@ test('only the train renderer changed: gameplay, world, missions, assets and oth
   const paths=execFileSync('git',['ls-tree','-r','--name-only',BASE],{encoding:'utf8'}).trim().split('\n').filter(p=>/^(src|missions|assets)\//.test(p)&&!allowed.has(p));
   assert.ok(paths.some(p=>p==='src/render/m01-atmosphere.js')&&paths.some(p=>p==='src/render/m01-view.js')&&paths.some(p=>p.startsWith('src/game/')));
   for(const p of paths)assert.deepEqual(readFileSync(new URL('../'+p,import.meta.url)),execFileSync('git',['show',`${BASE}:${p}`],{maxBuffer:64*1024*1024}),p);
+});
+
+test('everything the consist draws (siding included) lives under the train963 group, so visibility authority is unchanged',async()=>{
+  const scene=new THREE.Scene(),train=new THREE.Group();scene.add(train);
+  const box=new THREE.BoxGeometry(),wood=new THREE.MeshStandardMaterial(),t=new M01TrainWagons(train,new Assets(await realSources()),box,new THREE.CylinderGeometry(),wood,wood);
+  try{
+    await t.load();t.update({x:1090,z:-2.5},'high');
+    assert.deepEqual(scene.children,[train]);assert.deepEqual(train.children,[t.group]);
+    let drawn=0;t.group.traverse(o=>{if(o.isMesh)drawn++;});assert.ok(drawn>30);
+    train.visible=false;assert.equal(submitted(scene).draws,0,'hidden with train963=false');
+    train.visible=true;assert.ok(submitted(scene).draws>0);
+  }finally{t.dispose();box.dispose();wood.dispose();}
 });

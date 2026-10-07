@@ -5,11 +5,14 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 // bed the wagons stand on. Nothing here is a collider, reads the simulation or uses gameplay RNG; variation is a pure
 // hash of the authoritative wagon id. Measures are generic estimates for 1939 two-axle wagons (P16 stays open).
 export const M01_TRAIN_DETAIL_VERSION='m01-train-detail-coupling-polish-v1';
-// Existing east track: terrain -1 + rail centre .12 + half rail height .06 = -.82 m (same art offset as locomotive 963).
-export const M01_TRAIN_ART_OFFSET_Y=-.82;
-// The consist's own siding at the plan line z=-2.5: standard gauge 1.435 m between rail-head inner faces.
+// The consist's own siding at the plan line z=-2.5: standard gauge 1.435 m between rail-head inner faces. Rail top is the
+// existing east track's: terrain -1 + rail centre .12 + half rail height .06 = -.82 m (locomotive 963 sits there too).
 export const M01_TRAIN_TRACK=Object.freeze({z:-2.5,railTop:-.82,railHeight:.12,headWidth:.07,railCentre:.7525,
   sleeperTop:-.94,ballastTop:-.965,from:1062,to:2000,sleeperStep:.75,railLength:12});
+// The kit's conical tread (r .500 at .685 m → .475 at .820 m from the axle centre) has r .4875 over the rail-head centre,
+// i.e. 1.25 cm above the kit's rail-top origin; the art drops by that much so LOD0 wheels touch the head centre.
+export const M01_WAGON_TREAD_AT_RAIL=.0125;
+export const M01_TRAIN_ART_OFFSET_Y=+(M01_TRAIN_TRACK.railTop-M01_WAGON_TREAD_AT_RAIL).toFixed(4);
 export const M01_TRAIN_DETAIL_BUDGET=Object.freeze({drawCalls:12});
 const TIER=['near','mid','far'];
 // Low keeps the cheap mid set close by; Medium/High add the near set on LOD0 wagons only.
@@ -137,7 +140,8 @@ function ballast(){
   const g=new THREE.BufferGeometry();g.setIndex(index);g.setAttribute('position',new THREE.Float32BufferAttribute(position,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
   g.computeVertexNormals();g.name='m01_train_ballast';g.computeBoundingSphere();return g;
 }
-// Soft contact shade under each wagon (Low has no shadow map): black with a vertex-alpha falloff.
+// Soft contact shade under each wagon (Low has no shadow map): black with a vertex-alpha falloff, 5 mm over the sleepers.
+const SHADE_Y=M01_TRAIN_TRACK.sleeperTop+.005;
 function contactShade(){
   const nx=5,nz=9,position=[],color=[],index=[];
   for(let j=0;j<nz;j++)for(let i=0;i<nx;i++){const u=i/(nx-1)*2-1,v=j/(nz-1)*2-1;position.push(u*1.75,0,v*4.4);color.push(0,0,0,.46*(1-u*u)*(1-Math.pow(Math.abs(v),4)));}
@@ -161,9 +165,9 @@ export function m01WagonWear(wagon){
     const u=n=>m01Unit(wagon.id,`patch${k}${n}`),s=u('side')<.5?-1:1,zs=u('end')<.5?-1:1,[a,b]=w.panels[u('panel')<.5?0:1];
     const length=Math.min(b-a-.04,.55+u('len')*.85),z=zs*(a+.02+length/2+u('pos')*(b-a-.04-length)),rows=u('rows')<.3?2:1;
     const row=w.rows[0]+Math.floor(u('row')*(w.rows[1]-w.rows[0]+2-rows));
-    items.push({kind:'patch',at:[s*(w.x+.006),(row+rows/2)*.145,z],size:[.008,rows*.145-.015,length],color:u('paint')<.55?WEAR.fresh:WEAR.raw});
+    items.push({kind:'patch',at:[s*(w.x+.011),(row+rows/2)*.145,z],size:[.012,rows*.145-.015,length],color:u('paint')<.55?WEAR.fresh:WEAR.raw});
   }
-  if(v.label)for(const s of [-1,1])items.push({kind:'label',at:[s*1.05,1.0,.9],size:[.004,.11,.15],color:WEAR.paper});
+  if(v.label)for(const s of [-1,1])items.push({kind:'label',at:[s*1.0555,1.0,.9],size:[.004,.11,.15],color:WEAR.paper});
   return items;
 }
 
@@ -171,6 +175,8 @@ export class M01TrainConsistDetail{
   constructor(parent,box,wood){
     this.group=new THREE.Group();this.group.name='m01_train_consist_detail';parent.add(this.group);this.disposed=false;
     this.material=new THREE.MeshStandardMaterial({name:'m01_train_detail',vertexColors:true,roughness:.8,metalness:.22});
+    // Boards and labels sit .5–.6 cm proud; the offset keeps them ahead of the wall at LOD0 range (up to ~144 m on High).
+    this.wearMaterial=new THREE.MeshStandardMaterial({name:'m01_train_wear',vertexColors:true,roughness:.88,metalness:0,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-2});
     this.gravel=gravelTexture();this.ballastMaterial=new THREE.MeshStandardMaterial({name:'m01_train_ballast',map:this.gravel,color:'#a7a49a',roughness:.97});
     this.shadeMaterial=new THREE.MeshBasicMaterial({name:'m01_train_contact_shade',vertexColors:true,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
     this.geometries={nearFrame:nearFrame(),midFrame:midFrame(),nearGap:nearGap(),nearEnd:nearEnd(),midGap:midGap(),farGap:farGap(),wear:wearBox(),rail:railProfile(),ballast:ballast(),shade:contactShade()};
@@ -180,7 +186,7 @@ export class M01TrainConsistDetail{
     };
     this.meshes={
       nearFrame:mesh('train_detail_near_frame',g.nearFrame,this.material,65,{cast:true}),
-      nearWear:mesh('train_detail_near_wear',g.wear,this.material,65*5,{colors:true}),
+      nearWear:mesh('train_detail_near_wear',g.wear,this.wearMaterial,65*5,{colors:true}),
       nearGap:mesh('train_detail_near_gap',g.nearGap,this.material,64,{cast:true}),
       nearEnd:mesh('train_detail_near_end',g.nearEnd,this.material,2,{cast:true}),
       midFrame:mesh('train_detail_mid_frame',g.midFrame,this.material,65),
@@ -195,9 +201,10 @@ export class M01TrainConsistDetail{
   buildTrack(box,wood){
     const {from,to,z,railTop,railCentre,sleeperTop,sleeperStep,railLength}=M01_TRAIN_TRACK,m=new THREE.Matrix4(),q=new THREE.Quaternion(),c=new THREE.Color();
     const ballastMesh=new THREE.Mesh(this.geometries.ballast,this.ballastMaterial);ballastMesh.name='train_track_ballast';ballastMesh.receiveShadow=true;
-    const segments=Math.ceil((to-from)/railLength),rails=new THREE.InstancedMesh(this.geometries.rail,this.material,segments*2);rails.name='train_track_rails';rails.receiveShadow=true;
+    // Equal segments (≈11.9 m) so the rails end with the ballast and sleepers at `to`.
+    const segments=Math.ceil((to-from)/railLength),length=(to-from)/segments,rails=new THREE.InstancedMesh(this.geometries.rail,this.material,segments*2);rails.name='train_track_rails';rails.receiveShadow=true;
     q.setFromAxisAngle(AXIS_Y,Math.PI/2);
-    for(let k=0;k<segments;k++)for(const [j,s] of [-1,1].entries())rails.setMatrixAt(k*2+j,m.compose(new THREE.Vector3(from+(k+.5)*railLength,railTop,z+s*railCentre),q,new THREE.Vector3(1,1,1)));
+    for(let k=0;k<segments;k++)for(const [j,s] of [-1,1].entries())rails.setMatrixAt(k*2+j,m.compose(new THREE.Vector3(from+(k+.5)*length,railTop,z+s*railCentre),q,new THREE.Vector3(1,1,length/railLength)));
     const count=Math.floor((to-from)/sleeperStep),sleepers=new THREE.InstancedMesh(box,wood,count);sleepers.name='train_track_sleepers';sleepers.receiveShadow=true;
     for(let k=0;k<count;k++){
       const x=from+(k+.5)*sleeperStep,u=m01Unit(k,'sleeper'),yaw=(u-.5)*.03,tone=.42+m01Unit(k,'creosote')*.16;
@@ -216,7 +223,7 @@ export class M01TrainConsistDetail{
     const tiers=entries.map(e=>m01DetailTier(e.lod,quality)),instances={near:0,mid:0,far:0};
     entries.forEach(({wagon},i)=>{
       const tier=tiers[i];if(tier===null)return;const art=m01WagonArtMatrix(wagon,m);instances[TIER[tier]]++;
-      put('shade',local.makeTranslation(0,-.115,0).premultiply(art));
+      put('shade',local.makeTranslation(0,SHADE_Y-M01_TRAIN_ART_OFFSET_Y,0).premultiply(art));
       if(tier===0){put('nearFrame',art);for(const w of m01WagonWear(wagon))put('nearWear',local.compose(new THREE.Vector3(...w.at),q.identity(),new THREE.Vector3(...w.size)).premultiply(art),w.color);}
       else if(tier===1)put('midFrame',art);
     });
@@ -239,15 +246,15 @@ export class M01TrainConsistDetail{
   get trackTriangles(){const {ballast,rails,sleepers}=this.track;return ballast.geometry.index.count/3+rails.count*rails.geometry.index.count/3+sleepers.count*sleepers.geometry.index.count/3;}
   get diagnostics(){
     const s=this.lastSummary??{quality:null,wagons:0,gaps:0,instancesByTier:{near:0,mid:0,far:0},drawCalls:3,triangles:this.trackTriangles,shadowCasters:0,instances:{}};
-    return {version:M01_TRAIN_DETAIL_VERSION,...s,budget:M01_TRAIN_DETAIL_BUDGET,collidersAdded:0,ownedGeometries:Object.keys(this.geometries).length,
-      ownedMaterials:3,ownedTextures:1,artOffsetY:M01_TRAIN_ART_OFFSET_Y,track:{z:M01_TRAIN_TRACK.z,railTop:M01_TRAIN_TRACK.railTop,
+    return {version:M01_TRAIN_DETAIL_VERSION,...s,budget:M01_TRAIN_DETAIL_BUDGET,ownedGeometries:Object.keys(this.geometries).length,
+      ownedMaterials:4,ownedTextures:1,artOffsetY:M01_TRAIN_ART_OFFSET_Y,track:{z:M01_TRAIN_TRACK.z,railTop:M01_TRAIN_TRACK.railTop,
         gauge:+(2*M01_TRAIN_TRACK.railCentre-M01_TRAIN_TRACK.headWidth).toFixed(4),from:M01_TRAIN_TRACK.from,to:M01_TRAIN_TRACK.to,sleepers:this.track.sleepers.count,railSegments:this.track.rails.count}};
   }
   dispose(){
     if(this.disposed)return;this.disposed=true;
     for(const mesh of [...Object.values(this.meshes),this.track.rails,this.track.sleepers])mesh.dispose();
     for(const g of Object.values(this.geometries))g.dispose();
-    for(const material of [this.material,this.ballastMaterial,this.shadeMaterial])material.dispose();
+    for(const material of [this.material,this.wearMaterial,this.ballastMaterial,this.shadeMaterial])material.dispose();
     this.gravel.dispose();this.group.removeFromParent();
   }
 }

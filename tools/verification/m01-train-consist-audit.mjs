@@ -43,26 +43,35 @@ function count(group){
 const shared={box:new THREE.BoxGeometry(1,1,1),cylinder:new THREE.CylinderGeometry(1,1,1,8),wood:new THREE.MeshStandardMaterial({map:new THREE.Texture()}),metal:new THREE.MeshStandardMaterial({map:new THREE.Texture()})};
 const counters={};
 for(const [version,{M01TrainWagons}] of Object.entries(modules)){
-  const parent=new THREE.Group(),train=new M01TrainWagons(parent,assets,shared.box,shared.cylinder,shared.wood,shared.metal);await train.load();
-  counters[version]=VIEWS.map(([view,x,z,quality])=>{train.update({x,z},quality);const d=train.diagnostics;
-    return {view,quality,lod:d.lodDistribution,glbBatches:d.batches,activeInstancesByLod:d.activeInstancesByLod,...count(train.group),detail:d.detail?{instancesByTier:d.detail.instancesByTier,drawCalls:d.detail.drawCalls,triangles:d.detail.triangles}:null};});
-  train.dispose();
+  counters[version]=[];
+  for(const [view,x,z,quality] of VIEWS){   // fresh renderer per view, as a freshly loaded page
+    const train=new M01TrainWagons(new THREE.Group(),assets,shared.box,shared.cylinder,shared.wood,shared.metal);await train.load();
+    train.update({x,z},quality);const d=train.diagnostics;
+    counters[version].push({view,quality,lod:d.lodDistribution,glbBatches:d.batches,activeInstancesByLod:d.activeInstancesByLod,...count(train.group),
+      detail:d.detail?{instancesByTier:d.detail.instancesByTier,drawCalls:d.detail.drawCalls,triangles:d.detail.triangles}:null});
+    train.dispose();
+  }
 }
 
 // Wheel/rail fit at the first wagon of each type for both versions.
 const world=new TczewWorld(),east=world.features.get('rail_line_east').polyline;
 const envRailCentre=x=>{for(let i=1;i<east.length;i++){const a=east[i-1],b=east[i];if(Math.hypot(b[0]-a[0],b[2]-a[2])>1800)continue;if(x>=a[0]&&x<=b[0])return a[2]+(b[2]-a[2])*(x-a[0])/(b[0]-a[0]);}return null;};
 const head=await import(new URL('src/render/m01-train-consist-detail.js',ROOT).href),plan=modules.head.M01_TRAIN_WAGON_PLAN;
-const railTop=world.terrainHeightAt(1300,-2.5)+.12+.06,fit=[];
+const railTop=world.terrainHeightAt(1300,-2.5)+.12+.06,fit=[],{railCentre,headWidth}=head.M01_TRAIN_TRACK;
+// Lowest wheel surface in the vertical plane `lateral` m from the wagon axis (mesh triangles sliced, flange excluded by position).
+function sliceMinY(geometry,world4,lateral,axisZ){
+  const pos=geometry.attributes.position,index=geometry.index.array,v=[new THREE.Vector3(),new THREE.Vector3(),new THREE.Vector3()];let min=Infinity;
+  for(let t=0;t<index.length;t+=3){for(let k=0;k<3;k++)v[k].fromBufferAttribute(pos,index[t+k]).applyMatrix4(world4);
+    const l=v.map(p=>p.z-axisZ-lateral);for(const [a,b] of [[0,1],[1,2],[2,0]]){if(l[a]===0)min=Math.min(min,v[a].y);if(l[a]*l[b]<0)min=Math.min(min,v[a].y+(v[b].y-v[a].y)*l[a]/(l[a]-l[b]));}}
+  return min;
+}
 for(const version of ['base','head'])for(const [key,src] of Object.entries(sources)){
   const wagon=plan.find(w=>w.type===key.split(':')[0]);src.scene.updateMatrixWorld(true);
   const art=version==='head'?head.m01WagonArtMatrix(wagon):new THREE.Matrix4().makeRotationY(-Math.PI/2).setPosition(wagon.x,0,-2.5);
-  const node=src.scene.getObjectByName('wheelset_1'),world4=new THREE.Matrix4().multiplyMatrices(art,node.matrixWorld),pos=node.geometry.attributes.position,v=new THREE.Vector3(),rings=new Map();
-  for(let i=0;i<pos.count;i++){v.fromBufferAttribute(pos,i).applyMatrix4(world4);const a=+Math.abs(v.z+2.5).toFixed(4);if(a>=.5)rings.set(a,Math.min(rings.get(a)??Infinity,v.y));}
-  const xs=[...rings.keys()].sort((a,b)=>a-b),rc=head.M01_TRAIN_TRACK.railCentre,lo=[...xs].reverse().find(x=>x<=rc),hi=xs.find(x=>x>=rc);
-  const contact=rings.get(lo)+(rings.get(hi)-rings.get(lo))*(rc-lo)/(hi-lo),centreZ=new THREE.Vector3().setFromMatrixPosition(world4).z;
+  const node=src.scene.getObjectByName('wheelset_1'),world4=new THREE.Matrix4().multiplyMatrices(art,node.matrixWorld);
+  const at=l=>+(sliceMinY(node.geometry,world4,l,-2.5)-railTop).toFixed(4),centreZ=new THREE.Vector3().setFromMatrixPosition(world4).z;
   const nearestRail=version==='head'?head.M01_TRAIN_TRACK.z:envRailCentre(wagon.x);
-  fit.push({version,asset:key,wagon:wagon.id,treadAboveRailTop_m:+(contact-railTop).toFixed(4),
+  fit.push({version,asset:key,wagon:wagon.id,treadAboveRailTop_m:{inner:at(railCentre-headWidth/2+1e-4),centre:at(railCentre),outer:at(railCentre+headWidth/2-1e-4)},
     lateralOffsetToTrackCentre_m:nearestRail===null?null:+(centreZ-nearestRail).toFixed(3)});
 }
 const noRail=plan.filter(w=>envRailCentre(w.x)===null).length;

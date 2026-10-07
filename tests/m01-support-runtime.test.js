@@ -104,9 +104,9 @@ test('65 actual wagon models use LOD2 instances at 9.10 m with source pivots and
     await w.load();assert.equal(w.diagnostics.wagons,65);assert.equal(w.diagnostics.proxies,16);
     const body=w.batches.find(b=>b.name==='wagon_covered_lod2_body'),node=sources.covered.scene.getObjectByName('body');
     assert.equal(body.count,49);assert.equal(body.geometry,node.geometry);assert.equal(body.material,node.material);
-    // Plan anchor x/z unchanged; art sits on the rail top (-.82, as locomotive 963) and symmetric wagons may be turned end for end.
-    const flip=m01WagonVariation('train963_wagon_01').flip?Math.PI:0;assert.equal(M01_TRAIN_ART_OFFSET_Y,-.82);
-    const m=new THREE.Matrix4(),expected=new THREE.Matrix4().makeRotationY(-Math.PI/2+flip);expected.setPosition(1090,-.82,-2.5);expected.multiply(node.matrixWorld);
+    // Plan anchor x/z unchanged; treads sit on the -.82 rail top (locomotive 963's) and symmetric wagons may be turned end for end.
+    const flip=m01WagonVariation('train963_wagon_01').flip?Math.PI:0;assert.equal(M01_TRAIN_ART_OFFSET_Y,-.8325);
+    const m=new THREE.Matrix4(),expected=new THREE.Matrix4().makeRotationY(-Math.PI/2+flip);expected.setPosition(1090,-.8325,-2.5);expected.multiply(node.matrixWorld);
     body.getMatrixAt(0,m);assert.ok(m.elements.every((v,i)=>Math.abs(v-expected.elements[i])<1e-4));
     body.getMatrixAt(1,m);assert.ok(Math.abs(m.elements[12]-expected.elements[12]-9.1)<1e-4);
     w.sources.set('open:2',sources.open);w.rebuild();assert.equal(w.diagnostics.proxies,0);
