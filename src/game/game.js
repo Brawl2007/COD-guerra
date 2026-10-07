@@ -3,13 +3,14 @@ import { Input } from '../core/input.js';
 import { AudioSystem } from '../core/audio.js';
 import { Renderer } from '../render/three-renderer.js';
 import { Simulation } from './simulation.js';
-import { M01Simulation, clockText } from './m01-simulation.js';
+import { M01Simulation } from './m01-simulation.js';
+import { M01HudPresenter } from '../ui/m01-hud.js';
 
 const SAVE_KEY='cod-guerra:checkpoint:v1';
 
 export class Game {
   constructor(canvas,hud,onState=()=>{},missionId='m01_tczew'){
-    this.canvas=canvas;this.hud=hud;this.onState=onState;
+    this.canvas=canvas;this.hud=hud;this.onState=onState;this.m01Hud=new M01HudPresenter(hud);
     this.input=new Input(canvas);this.audio=new AudioSystem();this.renderer=new Renderer(canvas);
     this.sim=missionId==='m01_tczew'?new M01Simulation():new Simulation();this.started=false;this.paused=true;this.disposed=false;
     if(this.isM01)this.renderer.prepareM01();
@@ -39,6 +40,7 @@ export class Game {
     this.menu();this.sim=id==='m01_tczew'?new M01Simulation():new Simulation();this.pendingSounds=[];this.pendingM01HitFeedback=null;
     this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
     this.messageUntil=0;this.hitUntil=0;this.checkpointUntil=0;this.renderer.resetEffects();
+    this.m01Hud.clear();this.m01Hud.reset('new',this.sim.clock);
     if(this.isM01)this.renderer.prepareM01();this.onState('menu');
   }
   start({continueSaved=false}={}){
@@ -47,6 +49,7 @@ export class Game {
       let result;
       try{result=this.sim.loadCheckpoint(localStorage.getItem(this.saveKey));}catch(error){result={ok:false,error:error.message};}
       if(!result.ok){this.onState('save-error',result.error);return false;}
+      this.m01Hud.reset('continue',this.sim.clock);
     }
     this.started=true;this.rebuildSounds();
     if(this.sim.mission.complete){this.onState('complete');return true;}
@@ -63,14 +66,14 @@ export class Game {
     if(this.started&&!this.sim.mission.complete)this.onState('paused');
   }
   restartCheckpoint(){
-    this.sim.restoreCheckpoint();this.rebuildSounds();this.messageUntil=0;this.hitUntil=0;this.pendingM01HitFeedback=null;
+    this.sim.restoreCheckpoint();this.rebuildSounds();this.messageUntil=0;this.hitUntil=0;this.pendingM01HitFeedback=null;this.m01Hud.reset('restore',this.sim.clock);
     this.renderer.resetEffects();this.input.clear();
     if(this.sim.mission.complete)this.onState('complete');else this.resume();
   }
   restartMission(){
     this.sim.reset();this.started=true;this.paused=true;this.pendingSounds=[];this.pendingM01HitFeedback=null;
     this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
-    this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;
+    this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;this.m01Hud.reset('new',this.sim.clock);
     this.renderer.resetEffects();this.resume();
   }
   menu(){
@@ -204,10 +207,10 @@ export class Game {
     }
     if(event.type==='checkpoint'){
       this.checkpointUntil=now+2400;this.persistCheckpoint();
-      const label=this.sim.definition.checkpoints.find(c=>c.id===event.id).label;this.say(`${label} · progresso guardado`,1800);
+      const checkpoint=this.sim.definition.checkpoints.find(c=>c.id===event.id);this.m01Hud.checkpoint(`${checkpoint.label} · ${checkpoint.name}`,this.sim.clock);
     }
     if(event.type==='restored'){
-      this.rebuildSounds();this.pendingM01HitFeedback=null;this.renderer.resetEffects();this.input.clear();this.say('A retomar o último checkpoint');
+      this.rebuildSounds();this.pendingM01HitFeedback=null;this.renderer.resetEffects();this.input.clear();this.m01Hud.reset('restore',this.sim.clock);this.say('A retomar o último checkpoint');
     }
     if(event.type==='complete'){
       this.persistCheckpoint();this.pause();if(document.pointerLockElement===this.canvas)document.exitPointerLock();this.onState('complete');
@@ -220,29 +223,28 @@ export class Game {
   say(text,ms=1600){this.hud.message.textContent=text;this.messageUntil=this.sim.clock*1000+ms;}
   updateHud(){
     const now=this.sim.clock*1000,p=this.sim.player;
-    this.hud.health.textContent=Math.ceil(p.health);this.hud.healthBar.style.width=`${p.health}%`;
-    this.hud.grenades.textContent=`GRANADAS ×${this.sim.grenades.ammo}`;
-    this.hud.mag.textContent=this.sim.weapon.reloading?'—':this.sim.weapon.mag;this.hud.reserve.textContent=this.sim.weapon.reserve;
-    this.hud.objective.textContent=this.sim.mission.text;if(this.hud.objectiveStatus)this.hud.objectiveStatus.textContent=this.isM01?this.sim.mission.status??'':'';
-    this.hud.weaponName.textContent=this.isM01?'KARABINEK WZ.29':'M1 CARBINE';
-    this.hud.clock.textContent=this.isM01?clockText(this.sim.battleClock):'';
-    this.hud.weaponState.textContent=this.isM01?`${this.sim.weapon.sight} m · ${this.sim.weapon.boltCycling?'FERROLHO':this.sim.weapon.reloading?'A CARREGAR':'5 CARTUCHOS'}`:'';
-    this.hud.interaction.textContent=this.isM01?this.sim.interaction:'';
-    this.hud.subtitle.textContent=this.isM01&&this.sim.subtitle?`${this.sim.subtitle.speaker}: ${this.sim.subtitle.text}`:'';
-    this.hud.crosshair.classList.toggle('hidden',this.isM01&&(p.aiming||this.sim.scene?.id==='cs_m01_roll_call'));
     if(now>=this.messageUntil)this.hud.message.textContent='';
-    this.hud.checkpoint.classList.toggle('show',now<this.checkpointUntil);
+    this.hud.crosshair.classList.toggle('hidden',this.isM01&&(p.aiming||this.sim.scene?.id==='cs_m01_roll_call'));
     if(this.isM01){
+      // Apresentação de M01: textos, cartelas, fades e avisos lidos da simulação (src/ui/m01-hud.js).
+      this.m01Hud.update(this.sim);
       const feedback=this.renderer.m01.feedbackState(this.sim.clock),v=this.hud.vignette;
       v.classList.remove('hit');v.classList.add('combat-feedback');
       v.style.setProperty('--combat-edge',feedback.overlayAlpha.toFixed(3));
       v.style.setProperty('--combat-flash',feedback.exposureFlash.toFixed(3));
       v.style.setProperty('--combat-suppression',(feedback.suppressionVisual*.13).toFixed(3));
       v.style.setProperty('--combat-center',`${(50-feedback.direction*18).toFixed(1)}%`);
-    }else{
-      this.hud.vignette.classList.remove('combat-feedback');
-      this.hud.vignette.classList.toggle('hit',now<this.hitUntil);
+      return;
     }
+    this.hud.health.textContent=Math.ceil(p.health);this.hud.healthBar.style.width=`${p.health}%`;
+    this.hud.grenades.textContent=`GRANADAS ×${this.sim.grenades.ammo}`;
+    this.hud.mag.textContent=this.sim.weapon.reloading?'—':this.sim.weapon.mag;this.hud.reserve.textContent=this.sim.weapon.reserve;
+    this.hud.objective.textContent=this.sim.mission.text;if(this.hud.objectiveStatus)this.hud.objectiveStatus.textContent='';
+    this.hud.weaponName.textContent='M1 CARBINE';
+    this.hud.clock.textContent='';this.hud.weaponState.textContent='';this.hud.interaction.textContent='';this.hud.subtitle.textContent='';
+    this.hud.checkpoint.classList.toggle('show',now<this.checkpointUntil);
+    this.hud.vignette.classList.remove('combat-feedback');
+    this.hud.vignette.classList.toggle('hit',now<this.hitUntil);
   }
   get diagnostics(){return structuredClone({...this.renderer.diagnostics,audio:this.audio?.diagnostics??null,missionId:this.sim.missionId,clock:this.sim.clock,paused:this.paused,
     missionPhase:this.sim.mission.phase,complete:this.sim.mission.complete,
@@ -252,7 +254,7 @@ export class Game {
       grenades:structuredClone(this.sim.grenades),damage:(this.sim.sectors.damage??[]).map(d=>({...d})),pendingAudio:(this.pendingSounds??[]).map(s=>({...s})),
       checkpoints:[...this.sim.checkpointsReached],flags:{...this.sim.flags},scene:this.sim.scene?.id??null,gate:this.sim.gate,
       objectives:structuredClone(this.sim.objectives),parts:this.sim.renderState.parts,enemyAlive:this.sim.enemies.filter(a=>a.alive).length,
-      threat:this.sim.threat,stationEvacuation:this.sim.stationEvacuation,hudStatus:this.hud?.objectiveStatus?.textContent??''}}:{})});}
+      threat:this.sim.threat,stationEvacuation:this.sim.stationEvacuation,hudStatus:this.hud?.objectiveStatus?.textContent??'',hudPresentation:this.m01Hud?.diagnostics??null}}:{})});}
   dispose(){
     if(this.disposed)return;this.disposed=true;cancelAnimationFrame(this.frame);
     this.listeners.forEach(remove=>remove());this.input.dispose();this.audio.dispose?.();this.renderer.dispose();
