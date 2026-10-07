@@ -1,3 +1,11 @@
+# Estado actual — composição do trem 963 (2026-10-07)
+
+- TASK_ID `M01-TRAIN-DETAIL-COUPLING-POLISH-V1` (Claude). Base `codex/m01-bridge-portal-material-detail-polish-v1 @ 99309d9cb023cc94a07d41ff863e1362e4460570`. Branch `claude/m01-train-detail-coupling-polish-dws18u`, também publicada como `claude/m01-train-detail-coupling-polish-v1`. HEAD de código `09e5858`; os commits seguintes são só docs. Sem merge, main ou deploy.
+- Trabalho paralelo GPT-5.6 em `M01-BATTLEFIELD-FX-POLISH-V3`: esta tarefa não toca `m01-atmosphere.js`, FX nem `m01-view.js`.
+- Handoff, medidas e capturas: `docs/verification/m01-runtime/train-detail-coupling-polish-v1/`. Estado: READY_FOR_CAPTAIN_REVIEW. Não iniciar outra frente sem ordem.
+
+---
+
 # Estado actual — auditoria de determinismo schema 2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a MG34 aprovada nem Graphify.

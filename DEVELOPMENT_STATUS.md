@@ -1,5 +1,11 @@
 # Estado de desenvolvimento
 
+## Composição do trem 963 — acoplamentos, estrado e assentamento — 2026-10-07
+
+`M01-TRAIN-DETAIL-COUPLING-POLISH-V1`, branch `claude/m01-train-detail-coupling-polish-dws18u` (também publicada como `claude/m01-train-detail-coupling-polish-v1`), base `codex/m01-bridge-portal-material-detail-polish-v1 @ 99309d9`. Só apresentação, em `src/render/m01-train-wagons.js` e no módulo novo `src/render/m01-train-consist-detail.js`. Na base, os 65 vagões flutuavam 0,83 m acima do topo do carril e ficavam 3,0–7,4 m ao lado da via existente; 27 não tinham carril nenhum. Agora assentam numa via própria em z = −2,5 (bitola 1,435, topo −0,82, como a locomotiva; deslocamento de arte −0,8325 para o piso cónico do kit). Têm engates de parafuso, tampões, mangueiras, estrado com freio, sombra de contacto e variação determinística por id (tom, orientação, tábuas, guias). O detalhe é instanciado em 11 batches fixas por tier de LOD; da área jogável (x ≤ 440) o trem só acrescenta 2 draws e 1,2k triângulos. Plano, LOD, proxies, visibilidade `train963`, save, simulação, locomotiva, Panzerzug e pátio ficam iguais à base, e há testes que o verificam.
+
+87/87 Node focados (14 novos), build PASS, browser focado 2/2 AFTER e 2/2 BEFORE na base exacta, zero retries/skips. Suíte integral não corrida (pedido). Limites: 2,05 m entre locomotiva e vagão 1, proxies de fallback acima da via nova, rodas LOD1/2 até 4,3 cm acima da cabeça, via aparece com o trem. Provas em `docs/verification/m01-runtime/train-detail-coupling-polish-v1/HANDOFF.md`. M01 continua **PROTÓTIPO JOGÁVEL**; sem playtest humano nem FPS.
+
 ## Auditoria schema 2 — 2026-10-03
 
 Candidato isolado em `codex/m01-schema2-determinism-audit`, base MG34 prone aprovada `fbaac1e4`. Comparação de futuros A/B por tick: 61.055 comparações em duas rotas completas e fixtures definidas, sem divergência depois das correções. Corrigido o destino de recuperação ao restaurar uma continuação; schema 2 recebe backup opcional plano, mantendo CP-A..D planos e legacy compatível. Saves corrompidos não podem sobrescrever métodos/perfil da arma; RNG uint32 e fases conhecidas validados.
