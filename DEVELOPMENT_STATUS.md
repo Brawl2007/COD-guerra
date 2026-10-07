@@ -121,6 +121,10 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 
   Detalhes em `docs/verification/m01-runtime/continuous/README.md`.
 
+## Plano de produção de animação dos soldados (2026-10-07)
+
+`docs/architecture/M01_CHARACTER_ANIMATION_PRODUCTION_PASS.md` desenha o passo que elimina soldados estáticos, robóticos, a deslizar, a girar de repente, com poses repetidas, a disparar sem reacção e sem transições: contrato de apresentação autoritativo na simulação (velocidade/odómetro/marcha, `bodyYaw`, instantes de postura, supressão, impacto, morte e recarga), resolver puro por camadas, player com fundidos em tempo de missão, biblioteca de clips, guarnições/evacuações e fidelidade por distância, com invariantes, testes, critérios de aceitação e cinco TASK_IDs independentes. É um plano analisado sobre o trunk integrado `codex/m01-battlefield-fx-polish-v3` (`e08755b`), não evidência de implementação; não compete com a tarefa paralela de variação visual dos soldados, cujos ficheiros ficam intactos.
+
 ## Próximo passo
 
 Playtest humano completo de M01, com atenção ao fogo de cobertura a ~1,2 km (clarões de ~8 px e raio de supressão de 3 m). Modelar encenações e colisões que continuam simplificadas. Medir no Chromebook antes de aprovar o marco 2; só então expandir M02.
