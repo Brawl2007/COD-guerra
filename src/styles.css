@@ -28,7 +28,7 @@ button:disabled{opacity:.45;cursor:wait}#complete{overflow:auto;justify-content:
 #objective-status:empty{display:none}
 #objective.fresh{border-left-color:var(--ink)}#objective.fresh small{color:var(--brass)}
 /* Aviso central de objectivo */
-#objective-update{top:15vh;left:50%;transform:translateX(-50%);width:min(40em,80vw);text-align:center;opacity:0;
+#objective-update{top:clamp(8.5em,25vh,32vh);left:50%;transform:translateX(-50%);width:min(40em,80vw);text-align:center;opacity:0;
   background:radial-gradient(closest-side,rgba(8,10,8,.5),rgba(8,10,8,.22) 65%,transparent);padding:.9em 2.5em}
 #objective-update small{display:flex;align-items:center;justify-content:center;gap:1em;color:var(--brass);font-size:.72em;letter-spacing:.32em}
 #objective-update small::before,#objective-update small::after{content:'';width:3.5em;height:1px;background:linear-gradient(90deg,transparent,var(--brass))}
@@ -106,7 +106,7 @@ button:disabled{opacity:.45;cursor:wait}#complete{overflow:auto;justify-content:
 #resume-card .card-line-0{--ls:.1em;font-weight:700;text-transform:uppercase}
 #resume-card .card-line-1,#resume-card .card-line-2{color:var(--dim);margin-top:.15em}
 @media(max-width:820px){#objective{max-width:62vw}#captions{width:90vw}#objective-update{width:92vw}}
-@media(max-height:620px){#captions{bottom:clamp(5em,17vh,8em)}#objective-update{top:13vh}}
+@media(max-height:620px){#captions{bottom:clamp(5em,17vh,8em)}}
 @media(prefers-reduced-motion:reduce){#hud *{transition:none!important}}
 /* Pausa e debrief */
 #pause-objective{font-size:.8rem;letter-spacing:.04em;color:#d7cfb3;max-width:460px;border-top:1px solid #3d4438;padding-top:12px;margin-top:0}

@@ -74,8 +74,11 @@ try{
       });
       const overflow=await page.evaluate(()=>{const vw=innerWidth,vh=innerHeight;return [...document.querySelectorAll('#hud *')].filter(e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);
         return r.width>0&&s.visibility!=='hidden'&&Number(s.opacity)>.02&&e.textContent.trim()&&(r.left<-1||r.right>vw+1||r.top<-1||r.bottom>vh+1);}).map(e=>e.id||e.className||e.tagName);});
-      report.shots.push({scene:scene.name,viewport:`${width}x${height}`,path,clock:diag.clock,battleClock:diag.m01.battleClock,sceneId:diag.m01.scene,layout,overflow});
-      console.log(`${label} ${scene.name} ${width}x${height}${overflow.length?` overflow:${overflow.join(',')}`:''}`);
+      // Pares que não podem sobrepor-se quando ambos estão visíveis.
+      const pairs=[['objective','objective-update'],['objective','battle-clock'],['interaction','subtitle'],['interaction','message'],['subtitle','status'],['message','status'],['objective-update','interaction']];
+      const overlaps=pairs.filter(([a,b])=>{const p=layout[a],q=layout[b];return p?.visible&&q?.visible&&p.h&&q.h&&p.x<q.x+q.w&&q.x<p.x+p.w&&p.y<q.y+q.h&&q.y<p.y+p.h;}).map(p=>p.join('×'));
+      report.shots.push({scene:scene.name,viewport:`${width}x${height}`,path,clock:diag.clock,battleClock:diag.m01.battleClock,sceneId:diag.m01.scene,layout,overflow,overlaps});
+      console.log(`${label} ${scene.name} ${width}x${height}${overflow.length?` overflow:${overflow.join(',')}`:''}${overlaps.length?` overlap:${overlaps.join(',')}`:''}`);
     }
     const after=await page.evaluate(()=>window.gameDiagnostics());
     if(after.clock!==diag.clock)throw Error(`relógio avançou durante a captura de ${scene.name}`);
