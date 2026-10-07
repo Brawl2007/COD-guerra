@@ -55,6 +55,8 @@ Prioridades:
 
 Links completos e orçamentos de triângulos estão em `assets-m01.json`.
 
+Locomotiva, vagões, Panzerzug 7 e carris: plano de produção (breakdown por distância, LOD, materiais, weathering, danos, fumo, critérios) em [`docs/railway/M01_RAILWAY_PRODUCTION_PASS.md`](../../docs/railway/M01_RAILWAY_PRODUCTION_PASS.md); contrato em [`docs/railway/TASK_CONTRACT_M01_RAILWAY.md`](../../docs/railway/TASK_CONTRACT_M01_RAILWAY.md). Os orçamentos desta tabela e de `assets-m01.json` só mudam após as decisões D1/D2 do Captain.
+
 ## Checklist para aceitar um asset de terceiros
 
 1. Abrir a página do asset e **copiar a licença exata**. Recusar NC, ND e licenças de loja.
