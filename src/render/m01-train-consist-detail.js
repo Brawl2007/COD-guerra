@@ -74,8 +74,8 @@ function nearFrame(){
   for(const zs of [-1,1])for(const x of [-.22,.22])p.box([.09,.2,2.65],[x,1.05,zs*2.385],steel);
   for(const zs of [-1,1])for(const s of [-1,1])p.bar([s*.92,1.1,zs*1.08],[s*.27,1.1,zs*2.9],[.07,.1],steel);
   p.rod([.3,.8,-.66],[.3,.8,-.24],.14,rust,10).box([.08,.36,.08],[.3,1.0,-.56],steel).box([.08,.36,.08],[.3,1.0,-.34],steel);
-  p.rod([-.36,.8,-.6],[-.36,.8,.2],.19,steel,12);for(const z of [-.45,.05])p.box([.42,.05,.035],[-.36,.99,z],grease);
-  p.box([.2,.22,.16],[0,.83,.55],cock).rod([0,.83,.47],[0,.9,.2],.018,grease,6);
+  p.rod([-.36,.8,-.6],[-.36,.8,.2],.19,steel,12);for(const z of [-.45,.05]){p.box([.42,.05,.035],[-.36,.99,z],grease);for(const x of [-.55,-.17])p.box([.035,.37,.035],[x,.985,z],grease);}
+  p.box([.2,.22,.16],[0,.83,.55],cock).box([.08,.24,.08],[0,1.05,.55],steel).rod([0,.83,.47],[0,.9,.2],.018,grease,6);
   p.bar([.3,.8,-.24],[.3,.8,.25],[.05,.05],grease).bar([.55,.78,.25],[-.15,.78,.25],[.04,.07],grease);
   p.bar([.15,.76,.25],[.15,.53,1.36],[.035,.035],grease).bar([-.12,.76,.25],[-.12,.53,-1.36],[.035,.035],grease);
   for(const zs of [-1,1])for(const s of [-1,1])p.bar([s*.86,.88,zs*1.47],[s*.75,.67,zs*1.47],[.035,.05],grease);
@@ -88,6 +88,7 @@ function midFrame(){
   const p=new Parts(),{steel,rust,grease}=PAINT;
   for(const z of [-2.95,2.95])p.box([1.88,.18,.1],[0,1.05,z],steel);
   p.rod([.3,.8,-.66],[.3,.8,-.24],.14,rust,6).rod([-.36,.8,-.6],[-.36,.8,.2],.19,steel,6);
+  for(const [x,z] of [[.3,-.45],[-.36,-.45],[-.36,.05]])p.box([.06,.3,.06],[x,1.03,z],steel);   // hangers up to the floor (1.16)
   p.bar([.15,.76,.25],[.15,.53,1.36],[.04,.04],grease).bar([-.12,.76,.25],[-.12,.53,-1.36],[.04,.04],grease);
   return p.build('m01_train_mid_frame');
 }
@@ -125,8 +126,10 @@ function midGap(){
   for(const zs of [-1,1])p.bar([.32*zs,.86,zs*.56],[.05*zs,.52,zs*.05],[.06,.06],rubber);
   return p.build('m01_train_mid_gap');
 }
-// Far silhouette: buffers and coupling bridge the headstocks; LOD2 open art has no buffers of its own.
-function farGap(){const p=new Parts(),{steel}=PAINT;for(const s of [-1,1])p.box([.37,.37,1.24],[s*.875,1.04,0],steel);p.box([.1,.1,1.24],[0,1.0,0],steel);return p.build('m01_train_far_gap');}
+// Far silhouette for one wagon end whose drawn art has no buffers (LOD2 open: its body stops at the headstock, leaving
+// 1.18 m between bodies). Authored for the west wagon (+z); the half gap reaches the buffer contact plane.
+export const m01ArtLacksBuffers=(type,lod)=>type==='open'&&lod===2;
+function farBuffers(){const p=new Parts(),{steel}=PAINT;for(const s of [-1,1])p.box([.3,.3,.62],[s*.875,1.04,.31],steel);p.box([.08,.08,.62],[0,1.0,.31],steel);return p.build('m01_train_far_buffers');}
 function wearBox(){const p=new Parts();p.box([1,1,1],[0,0,0],PAINT.white);return p.build('m01_train_wear_unit');}
 function railProfile(){
   const p=new Parts(),{head,web}=PAINT,L=M01_TRAIN_TRACK.railLength;
@@ -183,7 +186,7 @@ export class M01TrainConsistDetail{
     this.wearMaterial=new THREE.MeshStandardMaterial({name:'m01_train_wear',vertexColors:true,roughness:.88,metalness:0,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-2});
     this.gravel=gravelTexture();this.ballastMaterial=new THREE.MeshStandardMaterial({name:'m01_train_ballast',map:this.gravel,color:'#a7a49a',roughness:.97});
     this.shadeMaterial=new THREE.MeshBasicMaterial({name:'m01_train_contact_shade',vertexColors:true,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
-    this.geometries={nearFrame:nearFrame(),midFrame:midFrame(),nearGap:nearGap(),nearEnd:nearEnd(),midGap:midGap(),farGap:farGap(),wear:wearBox(),rail:railProfile(),ballast:ballast(),shade:contactShade()};
+    this.geometries={nearFrame:nearFrame(),midFrame:midFrame(),nearGap:nearGap(),nearEnd:nearEnd(),midGap:midGap(),farBuffers:farBuffers(),wear:wearBox(),rail:railProfile(),ballast:ballast(),shade:contactShade()};
     // No detail batch casts into the 1024² sun shadow map: the LOD0 GLB bodies carry the wagon shadow, and couplings,
     // hoses and rods are smaller than a shadow texel.
     const g=this.geometries,mesh=(name,geometry,material,capacity,{colors=false}={})=>{
@@ -197,7 +200,7 @@ export class M01TrainConsistDetail{
       nearEnd:mesh('train_detail_near_end',g.nearEnd,this.material,2),
       midFrame:mesh('train_detail_mid_frame',g.midFrame,this.material,65),
       midGap:mesh('train_detail_mid_gap',g.midGap,this.material,64),
-      farGap:mesh('train_detail_far_gap',g.farGap,this.material,64),
+      farBuffers:mesh('train_detail_far_buffers',g.farBuffers,this.material,130),
       shade:mesh('train_detail_contact_shade',g.shade,this.shadeMaterial,65),
     };
     this.meshes.shade.receiveShadow=false;this.meshes.shade.renderOrder=1;
@@ -228,7 +231,8 @@ export class M01TrainConsistDetail{
     const m=new THREE.Matrix4(),local=new THREE.Matrix4(),q=new THREE.Quaternion(),c=new THREE.Color(),n={};
     for(const key of Object.keys(this.meshes))n[key]=0;
     const put=(key,matrix,color)=>{const mesh=this.meshes[key];mesh.setMatrixAt(n[key],matrix);if(color)mesh.setColorAt(n[key],c.setRGB(...color));n[key]++;};
-    const tiers=entries.map(e=>m01DetailTier(e.lod,quality)),instances={near:0,mid:0,far:0};
+    // Coarser of the drawn and the distance LOD: a wagon drawn with a finer fallback GLB far away stays far.
+    const tiers=entries.map(e=>e.lod===null||e.lod===undefined?null:Math.max(m01DetailTier(e.lod,quality),m01DetailTier(e.desired??e.lod,quality))),instances={near:0,mid:0,far:0};
     entries.forEach(({wagon},i)=>{
       const tier=tiers[i];if(tier===null)return;const art=m01WagonArtMatrix(wagon,m);instances[TIER[tier]]++;
       if(tier<2)put('shade',local.makeTranslation(0,SHADE_Y-M01_TRAIN_ART_OFFSET_Y,0).premultiply(art));
@@ -238,8 +242,10 @@ export class M01TrainConsistDetail{
     const gapMatrix=(x,turn)=>m.makeRotationY(-Math.PI/2+(turn?Math.PI:0)).setPosition(x,M01_TRAIN_ART_OFFSET_Y,M01_TRAIN_TRACK.z);
     for(let i=0;i+1<entries.length;i++){
       if(tiers[i]===null||tiers[i+1]===null)continue;const tier=Math.min(tiers[i],tiers[i+1]),x=(entries[i].wagon.x+entries[i+1].wagon.x)/2;
-      put(tier===0?'nearGap':tier===1?'midGap':'farGap',gapMatrix(x,m01GapVariation(i).engaged==='east'));
+      if(tier<2)put(tier===0?'nearGap':'midGap',gapMatrix(x,m01GapVariation(i).engaged==='east'));
     }
+    // Ends of art drawn without buffers get their silhouette; GLBs that model buffers keep their own at any distance.
+    entries.forEach(({wagon,lod})=>{if(m01ArtLacksBuffers(wagon.type,lod))for(const turn of [false,true])put('farBuffers',gapMatrix(wagon.x+(turn?-4.55:4.55),turn));});
     const first=entries[0],last=entries.at(-1);
     if(tiers[0]===0)put('nearEnd',gapMatrix(first.wagon.x-4.55,true));
     if(tiers.at(-1)===0)put('nearEnd',gapMatrix(last.wagon.x+4.55,false));

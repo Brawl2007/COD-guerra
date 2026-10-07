@@ -28,15 +28,17 @@ async function openView(browser,info,{name,sim,snapshot,x,z,target,quality}){
     localStorage.setItem(key,JSON.stringify(state));localStorage.setItem('cod-guerra:visual-quality',quality);
   },{key,state,quality});
   await page.goto('?debug=1');
-  await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});
+  // Everything loads in the menu: the relocated player is outside the playable area, so the mission may only run for the
+  // few frames needed to render the restored state (the 8 s out-of-bounds grace must never elapse).
+  await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9&&window.gameDiagnostics().m01.wagons.loaded.length===6,null,{timeout:120000});
   await expect(page.locator('#error')).toBeHidden();await page.locator('#quality').selectOption(quality);
+  const before=await page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames??0);
   await page.locator('#continue').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game',null,{timeout:120000});
-  // All six wagon GLBs must have arrived, so captures never show a partially loaded consist.
-  await page.waitForFunction(()=>window.gameDiagnostics().m01.wagons.loaded.length===6,null,{timeout:120000});
-  await page.waitForFunction(()=>window.gameDiagnostics().m01.renderedFrames>2,null,{timeout:120000});
+  await page.waitForFunction(before=>window.gameDiagnostics().m01.renderedFrames>before+1,before,{timeout:120000});
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
   const data=await page.evaluate(()=>window.gameDiagnostics());
+  expect(Math.hypot(data.player.x-x,data.player.z-z)).toBeLessThan(1);   // still at the staged view, never restored elsewhere
   await page.screenshot({path:info.outputPath(name),style:'#pause,#hud,#menu,#subtitle {visibility:hidden!important}',timeout:120000});
   const counters={view:name,quality:data.quality,player:{x:data.player?.x,z:data.player?.z},drawCalls:data.drawCalls,triangles:data.triangles,
     textures:data.textures,geometries:data.geometries,wagons:data.m01.wagons,locomotive:data.m01.locomotive};
@@ -94,13 +96,15 @@ test('total wagon GLB failure keeps the 65 procedural proxies and adds no detail
   const state=relocated(snapshots.sim,snapshots.arrival,1120.2,-7.4,{x:1121.85,z:-2.5,y:.2});
   await page.addInitScript(({key,state})=>{localStorage.setItem(key,JSON.stringify(state));localStorage.setItem('cod-guerra:visual-quality','high');},{key,state});
   await page.goto('?debug=1');
-  await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});
-  await page.locator('#quality').selectOption('high');await page.locator('#continue').click();
+  await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9&&
+    new Set(window.gameDiagnostics().m01.assetFailures.filter(f=>f.path.includes('m01-wagons/')).map(f=>f.path)).size===6,null,{timeout:120000});
+  await page.locator('#quality').selectOption('high');
+  const before=await page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames??0);await page.locator('#continue').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game',null,{timeout:120000});
-  await page.waitForFunction(()=>new Set(window.gameDiagnostics().m01.assetFailures.filter(f=>f.path.includes('m01-wagons/')).map(f=>f.path)).size===6,null,{timeout:120000});
-  await page.waitForFunction(()=>window.gameDiagnostics().m01.renderedFrames>2,null,{timeout:120000});
+  await page.waitForFunction(before=>window.gameDiagnostics().m01.renderedFrames>before+1,before,{timeout:120000});
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
-  const d=await page.evaluate(()=>window.gameDiagnostics().m01.wagons);
+  const all=await page.evaluate(()=>window.gameDiagnostics()),d=all.m01.wagons;
+  expect(Math.hypot(all.player.x-1120.2,all.player.z+7.4)).toBeLessThan(1);
   expect(d.proxies).toBe(65);expect(d.loaded).toEqual([]);expect(d.batches).toBe(0);
   if(!baseline){expect(d.detail.instancesByTier).toEqual({near:0,mid:0,far:0});expect(d.detail.instances.shade).toBe(0);expect(d.shadowCasters).toBe(0);}
   await page.screenshot({path:info.outputPath('fallback-proxies-high.png'),style:'#pause,#hud,#menu,#subtitle {visibility:hidden!important}',timeout:120000});
