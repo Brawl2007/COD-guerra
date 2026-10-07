@@ -29,4 +29,4 @@ Ainda não adquiridos, modelados nem licenciados. Referências históricas const
 | Poloneses de 1939 | Uniformes, wz.31/wz.37, equipamento e rig humano; clips de cobertura, ferido e arrasto | P3 e autoria/licença |
 | Grenzwacht e pioneiros alemães | Uniforme/equipamento de 1939, MG34/Kar98k, sem MP40/MG42 | P7/P8 |
 | Ju 87 | Variante de 1939, escala, trajectória e som próximo/distante | Fonte e licença pendentes |
-| Vozes e sons de M01 | IDs de falas, gravações licenciadas, wz.29, ponte, comboio e ambiente | Pendente; sem clone de voz histórica |
+| Vozes e sons de M01 | IDs de falas, gravações licenciadas, wz.29, ponte, comboio e ambiente | Pendente; sem clone de voz histórica. Lista de IDs, patamares de carregamento e ordem de produção em `docs/M01_AUDIO_PRODUCTION_PLAN.md` (§2.1, §9.3, T4) |

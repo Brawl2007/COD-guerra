@@ -104,7 +104,7 @@ Os humanos continuam estilizados e o cenário continua provisório: não foi ati
 
 ## Parcial ou pendente
 
-- No jogo, humanos, ViewModel, mãos, recarga, sons e texturas continuam placeholders. Os soldados riggados provisórios de `docs/assets/m01-soldiers/` aguardam integração; ViewModel, vozes e uniformes finais estão pendentes.
+- No jogo, humanos, ViewModel, mãos, recarga, sons e texturas continuam placeholders. O áudio é síntese procedural sem posicionamento, prioridades ou camadas por distância; o plano de produção de áudio Web Audio para M01 (arquitectura, taxonomia de eventos, near/mid/far, limites, prioridades, atenuação, oclusão, determinismo, orçamento e contrato de tarefas) está em `docs/M01_AUDIO_PRODUCTION_PLAN.md` e ainda não foi implementado nem medido. Os soldados riggados provisórios de `docs/assets/m01-soldiers/` aguardam integração; ViewModel, vozes e uniformes finais estão pendentes.
 - Combate remoto, navegação, resgate e feridos têm comportamento reduzido. Evacuação de S3, animação de agarrar, casamatas interiores, feridos carregados pelo pelotão e direcção humana completa faltam.
 - A alça muda a referência de distância; o tiro ainda usa raio recto com dispersão, conforme fallback documentado. Queda/arrasto balístico pendentes. Pontaria e probabilidade de acerto são tuning de protótipo.
 - Trussas têm aberturas e não são paredes sólidas; colisão exacta dos membros metálicos e ruínas pendente. Juntas e posts dos portais usam aproximações conservadoras declaradas.
