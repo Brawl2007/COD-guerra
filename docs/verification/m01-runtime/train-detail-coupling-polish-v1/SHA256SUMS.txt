@@ -1,7 +1,7 @@
 ef42587a64de980c84a829c5274f53aeadbac5798e8a5b7fc47d4fde3d5b1d7d  ./BEFORE_AFTER.md
 49adece4714b78bc7cf5158707aecf734a43c327278ead8df07b9eabc776d5e7  ./DESIGN.md
 76ecc710f52843ef756095bb424b1de3a4060374097a95260fbddaf1abcbe610  ./FILES_CHANGED.txt
-d4967060b2e88cbb8ddf0bae1e6e6d381135381b4c8db5d85463c18c1b09a7df  ./HANDOFF.md
+e7e04a5a6427df3f4ab8f465f7da31be60096ab402ad341c36b338db57d881b2  ./HANDOFF.md
 bdb72b865cef4981321becf98f201e8fc9f163c7e2ecab9f96f235194c29f1f9  ./audit-node.json
 924edd25d1e79ee9ca8cc91a0aedab3adf9523588e3a4558a18c4386100723aa  ./browser-after.log
 9bcf85fb7ad7d7089cafb0bca61195457bf27f6ffb61ddc02cae6468c17ed9a2  ./browser-before.log

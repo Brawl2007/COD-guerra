@@ -102,6 +102,6 @@ Duas rondas de revisão multi-agente com verificação adversarial (correcção,
 
 ## CI
 
-Workflow `m01-train-detail-coupling-polish-v1.yml` corre no push destas branches (testes focados, auditoria, build, before na base, after, invariância). Estado do run: ver entrega final.
+Workflow `m01-train-detail-coupling-polish-v1.yml`, push de `b817e4b` em `claude/m01-train-detail-coupling-polish-v1`: [run 37620301882](https://github.com/Brawl2007/COD-guerra/actions/runs/37620301882) **success** em 9 min 35 s. Passaram os testes focados, a auditoria, o build (`index-LoLDAzav.js` 1.218,61 kB), BEFORE 2/2 na base em 4,3 min, AFTER 2/2 em 4,5 min e o `git diff --exit-code` de invariância contra `99309d9`. Artefacto 11481794165. O run duplicado do mesmo SHA na branch designada (37620298735) foi cancelado de propósito para não gastar minutos. Os contadores do CI (Chromium 145) coincidem com os locais (Chromium 1194) a menos de 0,3 %.
 
 READY_FOR_CAPTAIN_REVIEW
