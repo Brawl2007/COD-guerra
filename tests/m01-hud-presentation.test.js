@@ -118,5 +118,5 @@ test('checkpoint feedback, restore fade and continue card are timed by the simul
   // Pausa: sem ticks, nada muda.
   const frozen=JSON.stringify([...el.fade.styles,...el.resumeCard.styles,presenter.diagnostics]);presenter.update(d.sim);
   assert.equal(JSON.stringify([...el.fade.styles,...el.resumeCard.styles,presenter.diagnostics]),frozen);
-  presenter.clear();assert.equal(el.root.classes.has('m01'),false);assert.equal(el.interaction.textContent,'');assert.equal(el.fade.styles.has('opacity'),false);
+  presenter.clear();assert.equal(el.root.classes.has('m01'),false);assert.equal(el.checkpointName.textContent,'');assert.equal(el.ammo.classes.has('low'),false);assert.equal(el.interaction.textContent,'');assert.equal(el.fade.styles.has('opacity'),false);
 });

@@ -75,14 +75,15 @@ export class M01HudPresenter {
   reset(kind='new',clock=0){
     this.kind=kind;this.baseline=kind==='new'?null:undefined;this.queue=[];this.banner=null;this.checkpointAt=-Infinity;this.checkpointName='';
     this.lastClock=clock;this.resumeAt=kind==='new'?-Infinity:clock;this.objectiveText=null;this.objectiveAt=-Infinity;this.lastHealth=null;
-    this.announceCurrent=kind!=='new';
+    this.announceCurrent=kind!=='new';this.resumeLines=null;
   }
   checkpoint(name,clock){this.checkpointAt=clock;this.checkpointName=name;}
   /** Repõe o DOM neutro (troca para a bancada francesa). */
   clear(){
     const e=this.el;this.cache.clear();
     e.root?.classList.remove('cinematic','m01');
-    for(const k of ['interaction','subtitle','objective','objectiveStatus','titleCard','objectiveUpdate','resumeCard'])if(e[k])e[k].textContent='';
+    for(const k of ['interaction','subtitle','objective','objectiveStatus','titleCard','objectiveUpdate','resumeCard','checkpointName'])if(e[k])e[k].textContent='';
+    e.ammo?.classList.remove('low','empty');e.objectivePanel?.classList.remove('fresh');e.interaction?.classList.remove('show');e.subtitle?.classList.remove('show');
     for(const k of ['fade','lowHealth','titleCard','objectiveUpdate','resumeCard','checkpoint'])e[k]?.style.removeProperty('opacity');
     e.rounds?.classList.add('hidden');e.status?.classList.remove('health-full','health-low');
   }
@@ -137,7 +138,7 @@ export class M01HudPresenter {
     }
     if(this.banner){
       const b=this.banner,end=b.until,fade=Math.min(T.bannerOut,Math.max(.2,end-b.at-T.bannerIn));
-      this.set('banner',`${b.kind}|${b.id}`,()=>{
+      this.set('banner',`${b.kind}|${b.id}|${b.completed??''}`,()=>{
         const u=this.el.objectiveUpdate;if(!u)return;
         u.dataset&&(u.dataset.kind=b.kind);
         u.replaceChildren(...(b.completed?[this.node('span','objective-done',b.completed)]:[]),this.node('small','',bannerLabel(b)),this.node('strong','',b.text));

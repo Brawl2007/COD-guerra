@@ -30,6 +30,9 @@ test('the intro is presented as black screen, typed title card and letterbox; sk
   await page.screenshot({path:info.outputPath('m01-hud-intro-card.png'),style:'#pause{visibility:hidden!important}'});
   await page.locator('#resume').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused);
   await expect(page.locator('#interaction kbd')).toHaveText('Espaço');await expect(page.locator('#interaction')).toHaveText('Espaço · saltar cena');
+  // O aviso fica por cima das faixas e do fade: o ponto central do texto pertence ao próprio #interaction.
+  expect(await page.evaluate(()=>{const r=document.querySelector('#interaction .interaction-action').getBoundingClientRect();
+    return document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest('#interaction')!==null;})).toBe(true);
   await page.keyboard.press('Space');
   await page.waitForFunction(()=>window.gameDiagnostics().m01.checkpoints.includes('cp_m01_a_orientacao'));
   const skipped=await page.evaluate(()=>window.gameDiagnostics().clock);await pauseAt(page,skipped+.8);
