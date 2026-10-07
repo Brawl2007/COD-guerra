@@ -122,21 +122,27 @@ test('every detail batch matches the tier of the drawn LOD; near/mid sets vanish
   const tierOf=(lod,quality)=>quality==='low'?(lod===0?1:2):lod;   // independent statement of the mapping
   try{
     await f.train.load();await bf.load();
-    for(const quality of ['high','medium','low'])for(const x of [1090,1121.85,1300,1450,1700,2500]){
-      f.train.update({x,z:-2.5},quality);bf.update({x,z:-2.5},quality);const t=f.train.diagnostics.detail,n=t.instances;
+    // Positions along the consist, beyond its end, and the playable area's east edge / bridge (x ≤ 440: all LOD2).
+    for(const quality of ['high','medium','low'])for(const [x,z] of [[1090,-2.5],[1121.85,-2.5],[1300,-2.5],[1450,-2.5],[1700,-2.5],[2500,-2.5],[440,40],[0,0]]){
+      f.train.update({x,z},quality);bf.update({x,z},quality);const t=f.train.diagnostics.detail,n=t.instances;
       const tiers=M01_TRAIN_WAGON_PLAN.map(w=>tierOf(f.train.bestSource(w.type,f.train.lods.get(w.id)).lod,quality));
       const gaps=tiers.slice(1).map((tier,i)=>Math.min(tier,tiers[i])),count=(list,v)=>list.filter(x=>x===v).length;
-      assert.equal(n.nearFrame,count(tiers,0));assert.equal(n.midFrame,count(tiers,1));assert.equal(n.shade,65);
+      assert.equal(n.nearFrame,count(tiers,0));assert.equal(n.midFrame,count(tiers,1));assert.equal(n.shade,count(tiers,0)+count(tiers,1));
+      const trackDetail=M01_TRAIN_WAGON_PLAN.some(w=>f.train.lods.get(w.id)<=1);assert.equal(t.trackDetail,trackDetail);
+      assert.equal(f.train.detail.track.rails.visible,trackDetail);assert.equal(f.train.detail.track.sleepers.visible,trackDetail);
       assert.equal(n.nearWear,M01_TRAIN_WAGON_PLAN.filter((w,i)=>tiers[i]===0).reduce((sum,w)=>sum+m01WagonWear(w).length,0));
       assert.equal(n.nearGap,count(gaps,0));assert.equal(n.midGap,count(gaps,1));assert.equal(n.farGap,count(gaps,2));
       assert.equal(n.nearEnd,(tiers[0]===0)+(tiers[64]===0));
       if(quality==='low'||x>=2500)assert.equal(n.nearFrame+n.nearWear+n.nearGap+n.nearEnd,0,`${quality}@${x}: no near set`);
-      if(x>=2500)assert.equal(n.midFrame+n.midGap,0,'all LOD2: no mid set');
+      if(x>=2500||x<=440){assert.equal(n.midFrame+n.midGap+n.shade,0,'all LOD2: no mid set or contact shade');assert.equal(trackDetail,false);}
       // Real submissions of the whole train group against the approved base renderer at the same view.
       const now=submitted(f.train.group),was=submitted(bf.group);
       assert.equal(f.train.diagnostics.batches,bf.diagnostics.batches,'same GLB batches as base');
       assert.ok(now.draws-was.draws<=M01_TRAIN_DETAIL_BUDGET.drawCalls,`${quality}@${x}: +${now.draws-was.draws} draws`);
-      assert.equal(was.shadows,0);assert.ok(quality==='low'?now.shadows===0:now.shadows<=11,`${quality}@${x}: ${now.shadows} shadow casters`);
+      // Shadow map: only the LOD0 GLB batches (≤ 5 covered + 3 open nodes) on Medium/High; nothing on Low or in the base.
+      assert.equal(was.shadows,0);assert.equal(now.shadows,f.train.diagnostics.shadowCasters);
+      assert.ok(quality==='low'?now.shadows===0:now.shadows<=8,`${quality}@${x}: ${now.shadows} shadow casters`);
+      if(x<=440)assert.equal(now.draws-was.draws,2,'playable area: only ballast + far buffer silhouettes');
       assert.equal(f.train.detail.group.children.length,11,'8 tier batches + ballast, rails, sleepers; never per wagon');
     }
   }finally{f.close();bf.dispose();}
@@ -147,7 +153,7 @@ test('fallback: total and partial GLB failure keep the old proxies and never flo
   try{
     await total.train.load();total.train.update({x:1090,z:-2.5},'high');const d=total.train.diagnostics;
     assert.equal(d.proxies,65);assert.equal(d.batches,0);assert.deepEqual(d.detail.instancesByTier,{near:0,mid:0,far:0});
-    assert.equal(d.detail.instances.shade,0);assert.equal(d.detail.drawCalls,3,'only the static siding');
+    assert.equal(d.detail.instances.shade,0);assert.equal(d.detail.drawCalls,3,'only the siding (player by the consist)');
     const m=new THREE.Matrix4(),p=new THREE.Vector3(),q=new THREE.Quaternion(),s=new THREE.Vector3();
     total.train.proxyBody.getMatrixAt(0,m);m.decompose(p,q,s);assert.deepEqual([p.x,p.y,p.z].map(v=>+v.toFixed(6)),[1090,2,-2.5]);assert.deepEqual([s.x,s.y,s.z].map(v=>+v.toFixed(6)),[7.86,3.2,2.8]);
     // Every proxy body/wheel matrix equals the approved base renderer's.
@@ -159,7 +165,7 @@ test('fallback: total and partial GLB failure keep the old proxies and never flo
   const sources=await realSources(),partial=fixture(new Assets(sources,path=>path.includes('_open_')));
   try{
     await partial.train.load();partial.train.update({x:1090,z:-2.5},'high');const d=partial.train.diagnostics;
-    assert.equal(d.proxies,16);const t=d.detail;assert.equal(t.instances.shade,49);
+    assert.equal(d.proxies,16);const t=d.detail;assert.equal(t.instances.shade,M01_TRAIN_WAGON_PLAN.filter(w=>w.type==='covered'&&partial.train.lods.get(w.id)<=1).length);
     const pairs=M01_TRAIN_WAGON_PLAN.slice(1).filter((w,i)=>w.type==='covered'&&M01_TRAIN_WAGON_PLAN[i].type==='covered').length;
     assert.equal(t.instances.nearGap+t.instances.midGap+t.instances.farGap,pairs);
   }finally{partial.close();}

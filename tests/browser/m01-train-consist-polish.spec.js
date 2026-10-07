@@ -73,6 +73,7 @@ test('captures wagon, coupling, underframe and consist views at High and Low',as
       const detail=w.detail,[l0,l1,l2]=v.lod;
       expect(detail.wagons).toBe(65);expect(detail.quality).toBe(v.quality);expect(w.artOffsetY).toBe(-.8325);
       expect(detail.instancesByTier).toEqual(v.quality==='low'?{near:0,mid:l0,far:l1+l2}:{near:l0,mid:l1,far:l2});
+      expect(w.shadowCasters).toBeLessThanOrEqual(v.quality==='low'?0:8);
     }
     samples.push(counters);await page.close();
   }
@@ -101,7 +102,7 @@ test('total wagon GLB failure keeps the 65 procedural proxies and adds no detail
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
   const d=await page.evaluate(()=>window.gameDiagnostics().m01.wagons);
   expect(d.proxies).toBe(65);expect(d.loaded).toEqual([]);expect(d.batches).toBe(0);
-  if(!baseline){expect(d.detail.instancesByTier).toEqual({near:0,mid:0,far:0});expect(d.detail.instances.shade).toBe(0);}
+  if(!baseline){expect(d.detail.instancesByTier).toEqual({near:0,mid:0,far:0});expect(d.detail.instances.shade).toBe(0);expect(d.shadowCasters).toBe(0);}
   await page.screenshot({path:info.outputPath('fallback-proxies-high.png'),style:'#pause,#hud,#menu,#subtitle {visibility:hidden!important}',timeout:120000});
   await expect(page.locator('#error')).toBeHidden();expect(errors).toEqual([]);await page.close();
 });

@@ -29,7 +29,9 @@ const modules={base:await import(baseFile.href),head:await import(new URL('src/r
 // Same viewpoints as tests/browser/m01-train-consist-polish.spec.js.
 const VIEWS=[['wagon-near',1103.6,-10.4,'high'],['coupling-pair',1120.2,-7.4,'high'],['underframe',1131.4,3.4,'high'],['consist-medium',1098,-24,'high'],
   ['consist-far',1215,-235,'high'],['coupling-pair',1120.2,-7.4,'low'],['consist-medium',1098,-24,'low'],['consist-daylight',1110,-15,'high'],
-  ['locomotive-wagon1',1081,-9.5,'high'],['coupling-pair',1120.2,-7.4,'medium']];
+  ['locomotive-wagon1',1081,-9.5,'high'],['coupling-pair',1120.2,-7.4,'medium'],
+  // Gameplay band: the playable area ends at x=440 (failure beyond 401); the whole consist is LOD2 from there.
+  ['playable-east-edge',440,40,'high'],['playable-east-edge',440,40,'low'],['west-bridgehead',0,0,'medium']];
 function count(group){
   const geometries=new Set(),materials=new Set(),textures=new Set();let drawCalls=0,shadowCasters=0,triangles=0,instances=0;
   group.traverse(o=>{
