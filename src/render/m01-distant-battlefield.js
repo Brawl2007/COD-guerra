@@ -139,13 +139,14 @@ export class M01DistantBattlefield {
     const note=(item,p)=>{stats.layers[item.layer]++;stats.sources.includes(item.source)||stats.sources.push(item.source);
       const d=Math.hypot(p.x-cam.x,p.y-cam.y,p.z-cam.z);stats.bands[BAND(d)]++;if(this.frustum.containsPoint(this.point.set(p.x,p.y,p.z)))stats.inView++;else stats.outOfView++;};
     const brief=age=>age>=0&&age<this.window;
-    // Columns first: they are the long-lived signature of the war beyond the river and the town.
+    // Columns first: they are the long-lived signature of the war beyond the river and the town. A farm or vehicle fire
+    // seen from 1,5-3 km is a column 100-300 m high and tens of metres wide, leaning with the wind aloft.
     for(const c of plan.columns){
       note(c,c);const age=clock-c.start,n=k=>visualNoise(c.seed,k),interval=.9/density,life=26,grow=smooth(0,60,age);
       for(let k=Math.floor((clock-life)/interval);k*interval<=clock;k++){
         const born=k*interval;if(born<c.start)continue;const a=clock-born,q=a/life,j=Math.abs(k)%997;
-        const rise=c.scale*(4+38*Math.pow(q,.8))*(.75+.5*n(j)),width=c.scale*(3+14*q)*(.7+.6*n(j+1))*(.4+.6*grow);
-        puff(c.x+(n(j+2)-.5)*4*c.scale+a*(.55+.3*n(j+3)),c.y+1.5+rise*(.35+.65*grow),c.z+(n(j+4)-.5)*4*c.scale+a*.18,width,width*(.9+.4*n(j+5)),
+        const rise=c.scale*(6+140*Math.pow(q,.8))*(.75+.5*n(j)),width=c.scale*(5+38*q)*(.7+.6*n(j+1))*(.4+.6*grow);
+        puff(c.x+(n(j+2)-.5)*10*c.scale+a*(1.1+.6*n(j+3))*(.3+q),c.y+1.5+rise*(.35+.65*grow),c.z+(n(j+4)-.5)*10*c.scale+a*.35*(.3+q),width,width*(.9+.4*n(j+5)),
           c.black?(q<.3?'#242220':'#3a3835'):(q<.35?'#46433f':'#67645d'),.82*(1-q)*Math.min(1,a/2)*(.6+.4*grow));
       }
       if(c.fire)for(let f=0;f<3;f++){const flicker=.55+.45*Math.sin(clock*(7+f*2.3)+n(30+f)*6)*Math.sin(clock*(3.1+f)+n(40+f)*6);
