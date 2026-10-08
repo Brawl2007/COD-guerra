@@ -30,7 +30,9 @@ jobs:
       - run: npm run build
       - name: Reproduce the missing control precondition with the native pointer-lock API
         run: |
-          npm run preview >/tmp/m01-rig-preview.log 2>&1 &
+          mkdir -p /tmp/m01-rig-site
+          ln -s "$GITHUB_WORKSPACE/dist" /tmp/m01-rig-site/COD-guerra
+          python3 -m http.server 4186 --bind 127.0.0.1 --directory /tmp/m01-rig-site >/tmp/m01-rig-preview.log 2>&1 &
           node --input-type=module <<'JS'
           import {chromium} from 'playwright';
           import assert from 'node:assert/strict';
@@ -40,10 +42,12 @@ jobs:
             const page=await browser.newPage({viewport:{width:1280,height:720}}),errors=[];
             page.on('pageerror',e=>errors.push(e.message));
             await page.addInitScript(()=>localStorage.setItem('cod-guerra:visual-quality','low'));
-            await page.goto('http://127.0.0.1:4173/COD-guerra/?debug=1');
+            await page.goto('http://127.0.0.1:4186/COD-guerra/?debug=1');
             await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);
             await page.locator('#start').click();
             await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game'&&window.gameDiagnostics().clock>.05);
+            await page.keyboard.press('Space');
+            await page.waitForFunction(()=>window.gameDiagnostics().m01.checkpoints.includes('cp_m01_a_orientacao'));
             await page.evaluate(()=>document.exitPointerLock());
             await page.locator('#pause').waitFor({state:'visible'});
             await page.evaluate(()=>{
