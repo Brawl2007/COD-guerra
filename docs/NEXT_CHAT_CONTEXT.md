@@ -1,4 +1,14 @@
-# Estado actual — auditoria de determinismo schema 2 (2026-10-03)
+# Contrato de apresentação das animações — 2026-10-08 UTC
+
+TASK_ID `M01-ANIM-CONTRACT-SIM-V1`; branch `codex/m01-anim-contract-sim-v1`, base remota confirmada `99309d9cb023cc94a07d41ff863e1362e4460570`. Confirmar o HEAD final remoto antes de continuar. Plano Claude `5583a4ab854a2e64dad85460bfd40031c3406ccc` e piloto `93aaa5c4a5651f22b4c696005501a2ac1014860a` lidos sem merge/cherry-pick.
+
+Implementado contrato schema-2 opcional por NPC: motion/odómetro/gait/instante, bodyYaw independente de facing, postureSince e timestamps de eventos reais. Gameplay da base exacto em 41.083 ticks de duas rotas completas, incluindo eventos/checkpoints/RNG; A/B com campos novos 61.055 + 1.760 comparações. Build PASS, browser restore 86/89 com pausa/reload/CP 2/2 PASS. `npm test` executado uma vez: 343/344, único vermelho numa guarda antiga de hash integral do viewmodel. Guarda corrigida com hash da base imutável mantido; quatro ficheiros afectados 38/38 PASS depois, produção idêntica. Sem nova execução completa; estado formal `READY_FOR_CAPTAIN_REVIEW_WITH_KNOWN_FAILURES`. Handoff/provas em `docs/verification/m01-runtime/anim-contract-sim-v1/`; contrato em `docs/architecture/M01_ANIMATION_PRESENTATION_CONTRACT.md`.
+
+Renderer/GLBs/HUD/Train/Bridge/Station/FX, velocidades, transporte, combate, RNG e resultados da missão não foram alterados. Não há Animation Resolver implementado nesta tarefa. Prone genérico/recarga/speed de Bąk/novas fases/política ckm ficam pendentes. Main `72bbcdd156603c9399801c95d43d9365ba50fc82` e deploy `cb400355c056955d1d6d0b22e92bd7be2443a10c` intocados. M01 continua **PROTÓTIPO JOGÁVEL**. Aguardar revisão do capitão; não integrar ou iniciar outra tarefa sem ordem.
+
+---
+
+# Histórico — auditoria de determinismo schema 2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a MG34 aprovada nem Graphify.
 

@@ -1,0 +1,24 @@
+{
+  "schema": 2,
+  "actorCount": 89,
+  "actorFieldsAdded": [
+    "motion",
+    "bodyYaw",
+    "posture",
+    "postureSince",
+    "suppressedAt",
+    "hitAt",
+    "hitYaw",
+    "diedAt",
+    "deathYaw"
+  ],
+  "initialFlatSnapshotBytes": 38971,
+  "initialFlatLegacySnapshotBytes": 29253,
+  "diagnosticsBytes": 11526,
+  "playerFieldsAdded": [],
+  "motionUnits": {
+    "speed": "m/s",
+    "odometer": "m"
+  },
+  "timestampClock": "active mission clock"
+}
