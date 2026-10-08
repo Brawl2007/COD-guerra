@@ -1,7 +1,10 @@
 {
-  "state": "HISTORICAL_CHECKPOINT",
+  "state": "COVERAGE_COMPLETE_WITH_INFRASTRUCTURE_FAILURE",
   "plannedCases": 84,
-  "completedLogLines": [
+  "localObservedPass": 81,
+  "localObservedAssertionFailures": 0,
+  "localExit": "unverified after exec-server transport disconnection",
+  "localPassLogLines": [
     "  ✓   1 tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work (13.4s)",
     "  ✓   2 tests/browser/game.spec.js:68:1 › real keyboard movement reaches and stores checkpoint; restart and page reload restore it (29.4s)",
     "  ✓   3 tests/browser/game.spec.js:98:1 › corrupt checkpoint is explained and a new mission remains available (5.5s)",
@@ -72,10 +75,70 @@
     "  ✓  68 tests/browser/m01.spec.js:280:1 › a missing optional station transition GLB keeps the grounded fallback and completes evacuation (14.8s)",
     "  ✓  69 tests/browser/m01.spec.js:294:1 › real keyboard movement traverses the approaches and E delivers the message at the rail bridge (1.5m)",
     "  ✓  70 tests/browser/m01.spec.js:320:33 › adjustment salvo at the gates restores its actual origin and follows mouse look (25.2s)",
-    "  ✓  71 tests/browser/m01.spec.js:320:33 › adjustment salvo behind the truss restores its actual origin and follows mouse look (21.2s)"
+    "  ✓  71 tests/browser/m01.spec.js:320:33 › adjustment salvo behind the truss restores its actual origin and follows mouse look (21.2s)",
+    "  ✓  72 tests/browser/m01.spec.js:339:1 › demolition inside the road truss shows the actual bearing while mouse look remains free (32.1s)",
+    "  ✓  73 tests/browser/m01.spec.js:365:1 › a genuine CP-D reload keeps east destruction and casualties, including restart and page reload (38.6s)",
+    "  ✓  74 tests/browser/m01.spec.js:378:1 › the actual outro state can be skipped through the UI into the enabled historical debrief (16.9s)",
+    "  ✓  75 tests/browser/m01.spec.js:388:1 › German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state (35.3s)",
+    "  ✓  76 tests/browser/m01.spec.js:410:1 › the genuine train 963 and both MG34 fire sources use optional GLBs, light instances and reproducible pause/restart (21.5s)",
+    "  ✓  77 tests/browser/m01.spec.js:442:1 › schema-2 continuation keeps the older CP-A on the real Restart checkpoint button (9.1s)",
+    "  ✓  78 tests/browser/m01.spec.js:460:1 › missing optional wagon models and MG34 clips preserve 65 proxies, both procedural supports and playable M01 (9.8s)",
+    "  ✓  79 tests/browser/m01.spec.js:475:1 › the real roll-call snapshot renders seated actors and keeps their pose after page reload (33.0s)",
+    "  ✓  80 tests/browser/m01.spec.js:487:1 › a real withdrawal continuation loses men only to rounds from the spans, keeps the twelve-survivor floor and shows the count in the HUD (39.4s)",
+    "  ✓  81 tests/browser/m01.spec.js:509:1 › a failed M01 bridge load prevents an invisible bridge; the French sandbox remains selectable (14.1s)"
   ],
-  "productionHead": "2a2a56734861b0801234d7ddf3cda66c0100f326",
-  "runner": "Chromium 153.0.8010.0 / SwiftShader / one worker / no retries",
-  "notFinalResult": true,
-  "supersededBy": "BROWSER_COMBINED_COVERAGE.json"
+  "localLineProvenance": "1–71 durable BROWSER_PROGRESS.json; 72–81 captured exec tool outputs before disconnection, preserved verbatim here. Durations are rounded reporter displays, not precise metrics.",
+  "recoveryRun": 37796261400,
+  "recoveryCases": [
+    {
+      "title": "textured atmosphere survives checkpoint restart without duplicating resources; low quality reduces vegetation",
+      "status": "expected",
+      "expected": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 91847,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "ckm west crew and weapon use actual saved abandon time, pause and fresh reload",
+      "status": "expected",
+      "expected": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 81611,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "optional ckm kit failure retains the crew fallback and checkpoint restoration",
+      "status": "expected",
+      "expected": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 26493,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    }
+  ],
+  "singleCompletedFullSuiteClaim": false,
+  "recoveryStats": {
+    "startTime": "2026-10-08T14:54:46.873Z",
+    "duration": 210185.155,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "totalDistinctPassedCases": 84,
+  "claim": "81 observed local PASS plus 3 CI recovery PASS; not a verified single full-suite exit"
 }

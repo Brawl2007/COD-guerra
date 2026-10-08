@@ -1,3 +1,15 @@
+# Continuação atual — consolidação M01 V6 (2026-10-08)
+
+Esta secção prevalece sobre o histórico. TASK_ID `M01-FINAL-PRODUCTION-CONSOLIDATION-V6`. Branch própria `codex/m01-final-production-consolidation-v6`; [PR #57](https://github.com/Brawl2007/COD-guerra/pull/57) draft contra V5 `d277b06937170aa433bc418ef5b83b2925c6d6de`. Confirmar HEAD remoto; exato final registado na PR. Implementação/CI `2a2a56734861b0801234d7ddf3cda66c0100f326`, provas visuais `377add30489247045fd028deb8ea9823acd41bc9`.
+
+Estado **READY_FOR_CAPTAIN_REVIEW_WITH_KNOWN_FAILURES**. 460 Node local e CI PASS, build PASS, seis casos críticos CI PASS; FX #53 demonstrados como captura tardia/fixture, sem alongar efeitos ou enfraquecer asserts. Correções estreitas: rebuildSounds restaura aerial/shake, fallbackShot reinicia e exige muzzle real, portal dispose liberta lotes, menu aplica qualidade ao áudio, pagehide persistido pausa. Src/tests/assets continuam idênticos ao HEAD validado após os commits de provas.
+
+Suíte local completa iniciada uma vez, 81 PASS observados antes de perder o exec-server. Exit/report global **UNVERIFIED**. Três finais recuperados no CI 3/3 PASS, run 37796261400; cobertura conjunta 84 casos, não full-suite 84/84 certificado. 60 screenshots, 30 pares High/Medium/Low com estado/pixels/recursos idênticos à V5 e inspeção real. Certificação global/hardware humano fica pendente. Não repetir trabalhos nem inventar resultados.
+
+Fonte da aprovação: atualização issue #55, comentário 6057373984. #54 Station V3 sem aprovação expressa, #56 direção criativa sem aprovação e demais deltas excluídos; quatro WIP não mapeadas. Seis clips não são Animation Resolver. Main `72bbcdd...`, deploy `cb400355...` intocados. Sem dispatch, force-push, merge main ou deploy. Ler o handoff/matriz/provas V6 antes de retomar. M01 continua **PROTÓTIPO JOGÁVEL**.
+
+---
+
 # Contrato de apresentação das animações — 2026-10-08 UTC
 
 TASK_ID `M01-ANIM-CONTRACT-SIM-V1`; branch `codex/m01-anim-contract-sim-v1`, base remota confirmada `99309d9cb023cc94a07d41ff863e1362e4460570`. Confirmar o HEAD final remoto antes de continuar. Plano Claude `5583a4ab854a2e64dad85460bfd40031c3406ccc` e piloto `93aaa5c4a5651f22b4c696005501a2ac1014860a` lidos sem merge/cherry-pick.

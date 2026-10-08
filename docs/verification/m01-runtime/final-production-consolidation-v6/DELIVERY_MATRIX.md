@@ -127,3 +127,11 @@ Snapshots auditados: `main` @ `72bbcdd156603c9399801c95d43d9365ba50fc82`; `deplo
 
 Handoffs/fontes lidos incluem o log V2 preservado na V5, handoff V5, e handoffs das fontes Station V3, locomotion architecture, distant battlefield, Ju87, Weapon e Decals. Blob SHAs e referências estão no JSON. Resultados de testes das fontes são relatos da evidência existente, não testes novos deste auditor.
 
+
+## Reconfirmação no encerramento
+
+- PR #54 permanece draft, HEAD `271413f26efc1dbccefc39ac401f4495928a2493`, sem reviews ou comentários de aprovação; excluída.
+- Nova PR #56: **M01-COMPLETE-NARRATIVE-GAMEPLAY-ATMOSPHERE-DIRECTION-V1**, branch `claude/upbeat-ptolemy-rzqu5g`, HEAD `03b61a380c2624ba2b704299a789749a50dc6a93`, base main, draft, 0 reviews/0 comentários. 16 ficheiros, sem src/assets; biblioteca de direção criativa, não consolidação posterior de runtime. **Excluída sem aprovação expressa**, sem alterar a sua branch.
+- Fonte Decals avançou de `f7459527c6153fdef5ced2ce43e249bde5669db7` para `12a70220ecdd0e2e3488a1c8a2e5f3cca0a78416`: prewarm do programa chip FX; altera m01-damage-decals.js/m01-view.js/teste e provas. CI verde não é aprovação do Capitão. **Delta continua excluído**; V6 conserva o checkpoint Decals integrado na V5. O inventário inicial continua como snapshot histórico, complementado por [REMOTE_CLOSURE.json](REMOTE_CLOSURE.json).
+- Issue #55 continua com a atualização `6057373984` de 09:58:31Z; nenhuma instrução de aprovação posterior observada. As quatro WIP continuam sem identificação inequívoca, sem inferir ligação à #56.
+- Main `72bbcdd156603c9399801c95d43d9365ba50fc82`, deploy `cb400355c056955d1d6d0b22e92bd7be2443a10c` e V5 `d277b06937170aa433bc418ef5b83b2925c6d6de` reconfirmadas intactas.
