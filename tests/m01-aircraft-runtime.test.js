@@ -53,3 +53,62 @@ test('missing optional Ju 87 art keeps the silhouettes; partial failure uses ava
   assert.equal(cancelled.aircraftRevision,0);assert.equal(cancelled.aircraftMixers.length,0);
   assert.ok(cancelled.planes.every(p=>p.levels.length===1));
 });
+
+function namedFixture(){
+  // Same node/material layout as the generated GLB: atlas body, translucent canopy and propeller disc.
+  const {view,sources}=fixture();
+  for(const [lod,{scene}] of sources){
+    const body=new THREE.MeshStandardMaterial({name:'ju87_b1',map:new THREE.Texture()}),glass=new THREE.MeshStandardMaterial({name:'ju87_glass',transparent:true,opacity:.3});
+    scene.getObjectByName('propeller').material=body;
+    for(const [name,material] of [['fuselage',body],['canopy',glass]]){const m=new THREE.Mesh(view.box,material);m.name=name;scene.add(m);}
+    scene.userData.body=body;scene.userData.lod=lod;
+  }
+  return {view,sources};
+}
+
+test('each Ju 87 gets its own light-weight material instances over shared textures, propeller rpm/phase and attitude',async()=>{
+  const {view,sources}=namedFixture();await view.loadAircraft();
+  const time=33.4,state={stukas:true,secondRaid:false},player={x:0,y:0,z:0};view.owner.quality='high';
+  view.updateAircraft(state,time,player);
+  const bodies=view.planes.map(p=>p.levels[0].object.getObjectByName('fuselage').material);
+  assert.equal(new Set(bodies).size,3,'one material instance per aircraft');
+  assert.ok(bodies.every(m=>m.map===sources.get(0).scene.userData.body.map&&m.alphaHash&&m.envMap===view.aircraftSky),'textures shared, dithered fade, sky reflections');
+  assert.equal(sources.get(0).scene.userData.body.alphaHash,false,'source GLB material is never modified');
+  assert.notDeepEqual(bodies[1].color.toArray(),bodies[0].color.toArray(),'paint batches differ slightly');
+  const model=view.planes[0].levels[0].object;assert.equal(model.getObjectByName('propeller').material,model.getObjectByName('fuselage').material,'one instance per GLB material');
+  const props=view.planes.map(p=>p.levels.find(l=>l.object.visible).object.getObjectByName('propeller').quaternion.toArray());
+  assert.notDeepEqual(props[0],props[1]);assert.notDeepEqual(props[1],props[2]);
+  // Heading and path are unchanged; bank/pitch come from the same saved clock, so pause/restore repeats them.
+  view.planes.forEach((p,i)=>{
+    assert.deepEqual(p.position.toArray(),[80+Math.sin(time*.02+i)*250,160+i*20,240-time%90*4+i*30]);
+    assert.equal(p.rotation.y,.1);assert.equal(p.rotation.order,'YXZ');
+    assert.ok(Math.abs(p.rotation.z)<.11&&Math.abs(p.rotation.x)<.02&&p.rotation.z!==0);
+  });
+  const attitude=view.planes.map(p=>p.rotation.toArray());view.updateAircraft(state,time+7,player);view.updateAircraft(state,time,player);
+  assert.deepEqual(view.planes.map(p=>p.rotation.toArray()),attitude);
+});
+
+test('Ju 87 fade hides the 90 s path wrap and eases in after the planes are heard, deterministically',async()=>{
+  const {view}=namedFixture();await view.loadAircraft();
+  const state={stukas:true,secondRaid:false},player={x:0,y:0,z:0};view.owner.quality='high';
+  const shown=time=>view.planes[0].levels.find(l=>l.object.visible);
+  view.updateAircraft(state,180.0,player);assert.equal(view.planes[0].userData.fade,0);assert.equal(shown(),undefined,'hidden exactly at the wrap');
+  assert.equal(view.planes[0].visible,true,'raid state is unchanged; only the rendering fades');
+  view.updateAircraft(state,181.25,player);const half=view.planes[0].userData.fade,glass=shown().object.getObjectByName('canopy').material;
+  assert.ok(half>.3&&half<.7);assert.ok(Math.abs(glass.opacity-.3*half)<1e-9,'translucent parts fade from their own opacity');
+  view.updateAircraft(state,200,player);assert.equal(view.planes[0].userData.fade,1);
+  assert.equal(shown().object.getObjectByName('fuselage').material.opacity,1);
+  view.updateAircraft(state,200,player,199);const entering=view.planes[0].userData.fade;assert.ok(entering>0&&entering<.5,'fades in after planes_heard');
+  view.updateAircraft(state,215,player,199);assert.equal(view.planes[0].userData.fade,1);
+  view.updateAircraft(state,200,player,199);assert.equal(view.planes[0].userData.fade,entering,'restoring the clock restores the fade');
+});
+
+test('Ju 87 LOD keeps 10 % hysteresis at thresholds while the quality floor always applies',async()=>{
+  const {view}=namedFixture();await view.loadAircraft();const state={stukas:true},time=40;
+  const p0=()=>view.planes[0].position,at=d=>({x:p0().x,y:p0().y-d,z:p0().z});
+  const lod=d=>{view.updateAircraft(state,time,at(d));return view.planes[0].levels.find(l=>l.object.visible).object.userData.lod;};
+  view.owner.quality='high';view.updateAircraft(state,time,{x:0,y:0,z:0});
+  assert.deepEqual([160,145,140,130,160,170,640,670,560,520].map(lod),[1,1,1,0,0,1,1,2,2,1]);
+  view.owner.quality='low';assert.equal(lod(10),2,'low quality never shows LOD0/1');
+  view.owner.quality='medium';assert.equal(lod(10),1);
+});

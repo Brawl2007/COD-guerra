@@ -15,6 +15,9 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+// Materiais por avião e céu de ambiente exactamente como no jogo (src/render/m01-aircraft.js), para as vistas de voo.
+import { instanceJu87Materials, ju87SkyEnvironment } from '/src/render/m01-aircraft.js';
+const sky = ju87SkyEnvironment();
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
 renderer.setPixelRatio(1);
@@ -47,9 +50,10 @@ window.stage = {
     return cache.get(url);
   },
   /** Adiciona um actor: clone com SkeletonUtils, mostra só as malhas pedidas (por nome ou expressão) e toca um clip. */
-  async add(url, { position = [0, 0, 0], rotationY = 0, rotation = null, show = null, clip = null, time = 0, morphs = null, unskinned = false, anims = null } = {}) {
+  async add(url, { position = [0, 0, 0], rotationY = 0, rotation = null, show = null, clip = null, time = 0, morphs = null, unskinned = false, anims = null, runtime = false } = {}) {
     const gltf = await this.load(url), clipSrc = anims ? await this.load(anims) : gltf;
     const root = SkeletonUtils.clone(gltf.scene);
+    if (runtime) instanceJu87Materials(root, 0, sky);
     if (unskinned) { const list = []; root.traverse(o => { if (o.isSkinnedMesh) list.push(o); }); for (const o of list) { const m = new THREE.Mesh(o.geometry, o.material); m.name = o.name; m.userData = o.userData; o.parent.add(m); o.parent.remove(o); } }
     root.position.set(...position); root.rotation.y = rotationY; if (rotation) root.rotation.set(...rotation, 'YXZ');
     const info = { meshes: [], triangles: 0, drawCalls: 0, bones: 0 };
