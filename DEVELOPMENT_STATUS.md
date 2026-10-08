@@ -6,6 +6,10 @@ Candidato isolado em `codex/m01-schema2-determinism-audit`, base MG34 prone apro
 
 242/242 Node (18 novos), build PASS, 4/4 browser focados e **36/36 browser integrais**, zero retries/skips/falhas, 1.182,745 s. Auditoria concluída para revisão do capitão. Provas e limites em `docs/verification/m01-runtime/schema2-determinism-audit-2026-10-03/HANDOFF.md`. Produção alterada apenas na persistência/validação; simulação de combate/relógios/gates, renderer/assets e bancada francesa conservados. M01 permanece **PROTÓTIPO JOGÁVEL**; nenhum marco, playtest humano ou FPS de Chromebook é aprovado por estes testes.
 
+## Campo de batalha distante — 2026-10-08
+
+Candidato isolado em `codex/m01-distant-battlefield-presentation-v1`, base `99309d9`, sem merge nem PR. Camada de **apresentação** que mostra a guerra para lá do jogador: clarões e traçantes em trocas, morteiros e artilharia com voo, colunas de fumo e fogo, silhuetas em lanços na planície, aviões distantes, ritmo com calmas e surtos. Separa três camadas no código: AUTORITATIVA (simulação, só leitura de `clock`/`consumed`), APRESENTAÇÃO (episódios que só existem depois de um evento consumido) e AMBIENTE (seed + relógio, modulado pela fase). Não decide dano, missão, visibilidade, IA nem objectivos. O plano é puro e não recebe jogador nem câmara. Integração com a correcção de FX `codex/m01-battlefield-fx-polish-v3` documentada (merge de ensaio sem conflitos). Validação: **339/339 Node**, build PASS, browser focado **2/2**, capturas com diff da camada. Merge de ensaio com FX V3 e arma: 367/370; as 3 falhas são da V3 sozinha. Provas em `docs/verification/m01-runtime/distant-battlefield-presentation-v1-2026-10-08/HANDOFF.md`.
+
 O texto abaixo documenta etapas anteriores, incluindo pendências posteriormente entregues na base MG34. O contexto actual está em `docs/NEXT_CHAT_CONTEXT.md`.
 
 

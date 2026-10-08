@@ -1,0 +1,1547 @@
+{
+  "kind": "LOCAL Chromium/SwiftShader, production M01View, genuine route snapshots; player-eye frames, eye-pose and explicitly posed probe frames, each diffed against the same frame without the distant layer; staged captures, not a playtest",
+  "quality": "low",
+  "viewport": [
+    1280,
+    720
+  ],
+  "commit": "24d2ed73c211ae9254cce387f99a6945df798bbc",
+  "captures": [
+    {
+      "name": "player-01-dawn-looking-east",
+      "state": {
+        "clock": 326.65000000004,
+        "battle": 17732.250000001022,
+        "consumed": {
+          "evt_m01_intro_card": 0,
+          "evt_m01_prelude_start": 0.05,
+          "evt_m01_railway_worker_report": 16.000000000000092,
+          "evt_m01_planes_heard": 17.750000000000117,
+          "evt_m01_bombing_0434": 67.7499999999983,
+          "evt_m01_cable_cut": 67.7499999999983,
+          "evt_m01_forward_post_bombed": 69.89999999999817,
+          "evt_m01_nowicki_lost": 72.79999999999801,
+          "evt_m01_wounded_dragged": 93.54999999999683,
+          "evt_m01_second_air_pass": 170.70000000000456,
+          "evt_m01_train963_arrives": 256.400000000024,
+          "evt_m01_panzerzug_arrives": 303.10000000003464
+        },
+        "player": {
+          "x": -29.031662158118294,
+          "z": 27.978035144077193,
+          "angle": -6.633185307179586,
+          "pitch": 0.02
+        },
+        "distant": {
+          "clock": 326.65000000004,
+          "events": 3,
+          "layers": {
+            "presentation": 0,
+            "ambient": 11
+          },
+          "kinds": {
+            "mg": 1,
+            "exchange": 1,
+            "rifle": 1
+          },
+          "bands": {
+            "0-1.2km": 0,
+            "1.2-2.6km": 4,
+            ">2.6km": 7
+          },
+          "inView": 6,
+          "outOfView": 5,
+          "instances": {
+            "flashes": 1,
+            "streaks": 0,
+            "puffs": 0,
+            "figures": 13,
+            "aircraft": 5
+          },
+          "requested": {
+            "flashes": 1,
+            "streaks": 0,
+            "puffs": 0,
+            "figures": 13,
+            "aircraft": 5
+          },
+          "sources": [
+            "ambient:east_dike<-evt_m01_train963_arrives",
+            "ambient:far_plain<-evt_m01_train963_arrives",
+            "ambient:sky<-evt_m01_planes_heard"
+          ],
+          "ids": [
+            "east_dike:1284",
+            "east_dike:1292",
+            "east_dike:1298"
+          ],
+          "limits": {
+            "events": 96,
+            "flashes": 72,
+            "streaks": 48,
+            "puffs": 168,
+            "figures": 64,
+            "aircraft": 21,
+            "columns": 4
+          },
+          "squads": 3,
+          "vehicles": 0,
+          "columns": [],
+          "aircraftActive": 5,
+          "milestones": {
+            "planes": 17.750000000000117,
+            "train": 256.400000000024,
+            "panzerzug": 303.10000000003464
+          },
+          "window": 0.07
+        }
+      },
+      "layer": {
+        "changed": 7,
+        "strong": 2,
+        "bbox": [
+          1164,
+          212,
+          1180,
+          214
+        ]
+      }
+    },
+    {
+      "name": "eye-02-dawn-floodplain-flash",
+      "state": {
+        "clock": 326.65000000004,
+        "battle": 17732.250000001022,
+        "consumed": {
+          "evt_m01_intro_card": 0,
+          "evt_m01_prelude_start": 0.05,
+          "evt_m01_railway_worker_report": 16.000000000000092,
+          "evt_m01_planes_heard": 17.750000000000117,
+          "evt_m01_bombing_0434": 67.7499999999983,
+          "evt_m01_cable_cut": 67.7499999999983,
+          "evt_m01_forward_post_bombed": 69.89999999999817,
+          "evt_m01_nowicki_lost": 72.79999999999801,
+          "evt_m01_wounded_dragged": 93.54999999999683,
+          "evt_m01_second_air_pass": 170.70000000000456,
+          "evt_m01_train963_arrives": 256.400000000024,
+          "evt_m01_panzerzug_arrives": 303.10000000003464
+        },
+        "player": {
+          "x": -29.031662158118294,
+          "z": 27.978035144077193,
+          "angle": -6.261897778318308,
+          "pitch": 0
+        },
+        "distant": {
+          "clock": 326.65000000004,
+          "events": 3,
+          "layers": {
+            "presentation": 0,
+            "ambient": 11
+          },
+          "kinds": {
+            "mg": 1,
+            "exchange": 1,
+            "rifle": 1
+          },
+          "bands": {
+            "0-1.2km": 0,
+            "1.2-2.6km": 4,
+            ">2.6km": 7
+          },
+          "inView": 0,
+          "outOfView": 11,
+          "instances": {
+            "flashes": 1,
+            "streaks": 0,
+            "puffs": 0,
+            "figures": 13,
+            "aircraft": 5
+          },
+          "requested": {
+            "flashes": 1,
+            "streaks": 0,
+            "puffs": 0,
+            "figures": 13,
+            "aircraft": 5
+          },
+          "sources": [
+            "ambient:east_dike<-evt_m01_train963_arrives",
+            "ambient:far_plain<-evt_m01_train963_arrives",
+            "ambient:sky<-evt_m01_planes_heard"
+          ],
+          "ids": [
+            "east_dike:1284",
+            "east_dike:1292",
+            "east_dike:1298"
+          ],
+          "limits": {
+            "events": 96,
+            "flashes": 72,
+            "streaks": 48,
+            "puffs": 168,
+            "figures": 64,
+            "aircraft": 21,
+            "columns": 4
+          },
+          "squads": 3,
+          "vehicles": 0,
+          "columns": [],
+          "aircraftActive": 5,
+          "milestones": {
+            "planes": 17.750000000000117,
+            "train": 256.400000000024,
+            "panzerzug": 303.10000000003464
+          },
+          "window": 0.07
+        },
+        "probe": {
+          "position": [
+            -29.03,
+            -1.92,
+            27.98
+          ],
+          "target": [
+            -35.7,
+            -2,
+            -1729.5
+          ],
+          "fov": 24
+        }
+      },
+      "layer": {
+        "changed": 0,
+        "strong": 0,
+        "bbox": null
+      }
+    },
+    {
+      "name": "eye-03-dawn-tracer-across-river",
+      "state": {
+        "clock": 340.10000000004305,
+        "battle": 17853.300000001218,
+        "consumed": {
+          "evt_m01_intro_card": 0,
+          "evt_m01_prelude_start": 0.05,
+          "evt_m01_railway_worker_report": 16.000000000000092,
+          "evt_m01_planes_heard": 17.750000000000117,
+          "evt_m01_bombing_0434": 67.7499999999983,
+          "evt_m01_cable_cut": 67.7499999999983,
+          "evt_m01_forward_post_bombed": 69.89999999999817,
+          "evt_m01_nowicki_lost": 72.79999999999801,
+          "evt_m01_wounded_dragged": 93.54999999999683,
+          "evt_m01_second_air_pass": 170.70000000000456,
+          "evt_m01_train963_arrives": 256.400000000024,
+          "evt_m01_panzerzug_arrives": 303.10000000003464
+        },
+        "player": {
+          "x": -29.031662158118294,
+          "z": 27.978035144077193,
+          "angle": -6.261897778318308,
+          "pitch": 0
+        },
+        "distant": {
+          "clock": 340.10000000004305,
+          "events": 3,
+          "layers": {
+            "presentation": 0,
+            "ambient": 12
+          },
+          "kinds": {
+            "rifle": 2,
+            "mg": 1
+          },
+          "bands": {
+            "0-1.2km": 0,
+            "1.2-2.6km": 4,
+            ">2.6km": 8
+          },
+          "inView": 2,
+          "outOfView": 10,
+          "instances": {
+            "flashes": 1,
+            "streaks": 1,
+            "puffs": 0,
+            "figures": 19,
+            "aircraft": 5
+          },
+          "requested": {
+            "flashes": 1,
+            "streaks": 1,
+            "puffs": 0,
+            "figures": 19,
+            "aircraft": 5
+          },
+          "sources": [
+            "ambient:east_dike<-evt_m01_train963_arrives",
+            "ambient:far_plain<-evt_m01_train963_arrives",
+            "ambient:sky<-evt_m01_planes_heard"
+          ],
+          "ids": [
+            "east_dike:1342",
+            "east_dike:1357",
+            "east_dike:1359"
+          ],
+          "limits": {
+            "events": 96,
+            "flashes": 72,
+            "streaks": 48,
+            "puffs": 168,
+            "figures": 64,
+            "aircraft": 21,
+            "columns": 4
+          },
+          "squads": 4,
+          "vehicles": 0,
+          "columns": [],
+          "aircraftActive": 5,
+          "milestones": {
+            "planes": 17.750000000000117,
+            "train": 256.400000000024,
+            "panzerzug": 303.10000000003464
+          },
+          "window": 0.07
+        },
+        "probe": {
+          "position": [
+            -29.03,
+            -1.92,
+            27.98
+          ],
+          "target": [
+            927.6,
+            -4,
+            -1721.7
+          ],
+          "fov": 40
+        }
+      },
+      "layer": {
+        "changed": 0,
+        "strong": 0,
+        "bbox": null
+      }
+    },
+    {
+      "name": "probe-04-hold-floodplain-south",
+      "state": {
+        "clock": 594.500000000007,
+        "battle": 20682.00000000321,
+        "consumed": {
+          "evt_m01_intro_card": 0,
+          "evt_m01_prelude_start": 0.05,
+          "evt_m01_railway_worker_report": 16.000000000000092,
+          "evt_m01_planes_heard": 17.750000000000117,
+          "evt_m01_bombing_0434": 67.7499999999983,
+          "evt_m01_cable_cut": 67.7499999999983,
+          "evt_m01_forward_post_bombed": 69.89999999999817,
+          "evt_m01_nowicki_lost": 72.79999999999801,
+          "evt_m01_wounded_dragged": 93.54999999999683,
+          "evt_m01_second_air_pass": 170.70000000000456,
+          "evt_m01_train963_arrives": 256.400000000024,
+          "evt_m01_panzerzug_arrives": 303.10000000003464,
+          "evt_m01_repair_complete": 448.1500000000676,
+          "evt_m01_order_demolish": 484.25000000007583,
+          "evt_m01_bombing_0530": 484.25000000007583,
+          "evt_m01_runner_pressure_report": 559.2500000000391
+        },
+        "player": {
+          "x": 28.849398752978303,
+          "z": 39.967102258363504,
+          "angle": -6.25460131112508,
+          "pitch": 0
+        },
+        "distant": {
+          "clock": 594.500000000007,
+          "events": 2,
+          "layers": {
+            "presentation": 0,
+            "ambient": 10
+          },
+          "kinds": {
+            "mg": 1,
+            "rifle": 1
+          },
+          "bands": {
+            "0-1.2km": 0,
+            "1.2-2.6km": 5,
+            ">2.6km": 5
+          },
+          "inView": 4,
+          "outOfView": 6,
+          "instances": {
+            "flashes": 0,
+            "streaks": 0,
+            "puffs": 0,
+            "figures": 29,
+            "aircraft": 2
+          },
+          "requested": {
+            "flashes": 0,
+            "streaks": 0,
+            "puffs": 0,
+            "figures": 29,
+            "aircraft": 2
+          },
+          "sources": [
+            "ambient:east_dike<-evt_m01_train963_arrives",
+            "ambient:far_plain<-evt_m01_train963_arrives",
+            "ambient:sky<-evt_m01_planes_heard"
+          ],
+          "ids": [
+            "east_dike:2370",
+            "east_dike:2375"
+          ],
+          "limits": {
+            "events": 96,
+            "flashes": 72,
+            "streaks": 48,
+            "puffs": 168,
+            "figures": 64,
+            "aircraft": 21,
+            "columns": 4
+          },
+          "squads": 6,
+          "vehicles": 0,
+          "columns": [],
+          "aircraftActive": 2,
+          "milestones": {
+            "planes": 17.750000000000117,
+            "train": 256.400000000024,
+            "panzerzug": 303.10000000003464,
+            "bombing530": 484.25000000007583
+          },
+          "window": 0.07
+        },
+        "probe": {
+          "position": [
+            20,
+            -1.2,
+            85
+          ],
+          "target": [
+            1000,
+            -4.5,
+            650
+          ],
+          "fov": 40
+        }
+      },
+      "layer": {
+        "changed": 12,
+        "strong": 0,
+        "bbox": [
+          200,
+          356,
+          371,
+          356
+        ]
+      }
+    },
+    {
+      "name": "probe-05-far-plain-squads-binocular",
+      "state": {
+        "clock": 594.500000000007,
+        "battle": 20682.00000000321,
+        "consumed": {
+          "evt_m01_intro_card": 0,
+          "evt_m01_prelude_start": 0.05,
+          "evt_m01_railway_worker_report": 16.000000000000092,
+          "evt_m01_planes_heard": 17.750000000000117,
+          "evt_m01_bombing_0434": 67.7499999999983,
+          "evt_m01_cable_cut": 67.7499999999983,
+          "evt_m01_forward_post_bombed": 69.89999999999817,
+          "evt_m01_nowicki_lost": 72.79999999999801,
+          "evt_m01_wounded_dragged": 93.54999999999683,
+          "evt_m01_second_air_pass": 170.70000000000456,
+          "evt_m01_train963_arrives": 256.400000000024,
+          "evt_m01_panzerzug_arrives": 303.10000000003464,
+          "evt_m01_repair_complete": 448.1500000000676,
+          "evt_m01_order_demolish": 484.25000000007583,
+          "evt_m01_bombing_0530": 484.25000000007583,
+          "evt_m01_runner_pressure_report": 559.2500000000391
+        },
+        "player": {
+          "x": 28.849398752978303,
+          "z": 39.967102258363504,
+          "angle": -6.25460131112508,
+          "pitch": 0
+        },
+        "distant": {
+          "clock": 594.500000000007,
+          "events": 2,
+          "layers": {
+            "presentation": 0,
+            "ambient": 10
+          },
+          "kinds": {
+            "mg": 1,
+            "rifle": 1
+          },
+          "bands": {
+            "0-1.2km": 0,
+            "1.2-2.6km": 5,
+            ">2.6km": 5
+          },
+          "inView": 1,
+          "outOfView": 9,
+          "instances": {
+            "flashes": 0,
+            "streaks": 0,
+            "puffs": 0,
+            "figures": 29,
+            "aircraft": 2
+          },
+          "requested": {
+            "flashes": 0,
+            "streaks": 0,
+            "puffs": 0,
+            "figures": 29,
+            "aircraft": 2
+          },
+          "sources": [
+            "ambient:east_dike<-evt_m01_train963_arrives",
+            "ambient:far_plain<-evt_m01_train963_arrives",
+            "ambient:sky<-evt_m01_planes_heard"
+          ],
+          "ids": [
+            "east_dike:2370",
+            "east_dike:2375"
+          ],
+          "limits": {
+            "events": 96,
+            "flashes": 72,
+            "streaks": 48,
+            "puffs": 168,
+            "figures": 64,
+            "aircraft": 21,
+            "columns": 4
+          },
+          "squads": 6,
+          "vehicles": 0,
+          "columns": [],
+          "aircraftActive": 2,
+          "milestones": {
+            "planes": 17.750000000000117,
+            "train": 256.400000000024,
+            "panzerzug": 303.10000000003464,
+            "bombing530": 484.25000000007583
+          },
+          "window": 0.07
+        },
+        "probe": {
+          "position": [
+            20,
+            -1.2,
+            85
+          ],
+          "target": [
+            2150,
+            -1,
+            60
+          ],
+          "fov": 10
+        }
+      },
+      "layer": {
+        "changed": 44,
+        "strong": 20,
+        "bbox": [
+          1122,
+          355,
+          1151,
+          359
+        ]
+      }
+    },
+    {
+      "name": "eye-06-north-front-wide",
+      "state": {
+        "clock": 794.4999999998251,
+        "battle": 22266.724999999886,
+        "consumed": {
+          "evt_m01_intro_card": 0,
+          "evt_m01_prelude_start": 0.05,
+          "evt_m01_railway_worker_report": 16.000000000000092,
+          "evt_m01_planes_heard": 17.750000000000117,
+          "evt_m01_bombing_0434": 67.7499999999983,
+          "evt_m01_cable_cut": 67.7499999999983,
+          "evt_m01_forward_post_bombed": 69.89999999999817,
+          "evt_m01_nowicki_lost": 72.79999999999801,
+          "evt_m01_wounded_dragged": 93.54999999999683,
+          "evt_m01_second_air_pass": 170.70000000000456,
+          "evt_m01_train963_arrives": 256.400000000024,
+          "evt_m01_panzerzug_arrives": 303.10000000003464,
+          "evt_m01_repair_complete": 448.1500000000676,
+          "evt_m01_order_demolish": 484.25000000007583,
+          "evt_m01_bombing_0530": 484.25000000007583,
+          "evt_m01_runner_pressure_report": 559.2500000000391,
+          "evt_m01_north_contact_distant": 634.2499999999709,
+          "evt_m01_east_platoon_withdraws": 709.2499999999027,
+          "evt_m01_bak_wounded": 739.2499999998754,
+          "evt_m01_germans_on_east_spans": 746.7499999998686,
+          "evt_m01_east_demolition": 786.6499999998323
+        },
+        "player": {
+          "x": -17.02602159365086,
+          "z": 39.61614033214287,
+          "angle": -3.0135270850551117,
+          "pitch": 0
+        },
+        "distant": {
+          "clock": 794.4999999998251,
+          "events": 18,
+          "layers": {
+            "presentation": 19,
+            "ambient": 14
+          },
+          "kinds": {
+            "artillery": 6,
+            "mortar": 4,
+            "rifle": 6,
+            "mg": 2
+          },
+          "bands": {
+            "0-1.2km": 0,
+            "1.2-2.6km": 18,
+            ">2.6km": 15
+          },
+          "inView": 22,
+          "outOfView": 11,
+          "instances": {
+            "flashes": 3,
+            "streaks": 0,
+            "puffs": 37,
+            "figures": 24,
+            "aircraft": 8
+          },
+          "requested": {
+            "flashes": 3,
+            "streaks": 0,
+            "puffs": 37,
+            "figures": 24,
+            "aircraft": 8
+          },
+          "sources": [
+            "evt_m01_north_contact_distant",
+            "ambient:far_plain<-evt_m01_train963_arrives",
+            "ambient:sky<-evt_m01_planes_heard"
+          ],
+          "ids": [
+            "north_guns:3117",
+            "north_line:3120",
+            "north_guns:3129",
+            "north_guns:3132",
+            "north_line:3136",
+            "north_guns:3143",
+            "north_line:3146",
+            "north_line:3159",
+            "north_line:3160",
+            "north_line:3161",
+            "north_line:3165",
+            "north_guns:3165",
+            "north_line:3166",
+            "north_line:3167",
+            "north_line:3168",
+            "north_line:3169",
+            "north_line:3176",
+            "north_guns:3176"
+          ],
+          "limits": {
+            "events": 96,
+            "flashes": 72,
+            "streaks": 48,
+            "puffs": 168,
+            "figures": 64,
+            "aircraft": 21,
+            "columns": 4
+          },
+          "squads": 6,
+          "vehicles": 0,
+          "columns": [
+            "north_farm"
+          ],
+          "aircraftActive": 8,
+          "milestones": {
+            "planes": 17.750000000000117,
+            "train": 256.400000000024,
+            "panzerzug": 303.10000000003464,
+            "bombing530": 484.25000000007583,
+            "north": 634.2499999999709,
+            "withdraw": 709.2499999999027,
+            "spans": 746.7499999998686,
+            "eastDemolition": 786.6499999998323
+          },
+          "window": 0.07
+        },
+        "probe": {
+          "position": [
+            -17.03,
+            1.29,
+            39.62
+          ],
+          "target": [
+            -900,
+            30,
+            -1200
+          ],
+          "fov": 60
+        }
+      },
+      "layer": {
+        "changed": 238,
+        "strong": 0,
+        "bbox": [
+          212,
+          227,
+          736,
+          375
+        ]
+      }
+    },
+    {
+      "name": "eye-07-north-front-flash",
+      "state": {
+        "clock": 794.7499999998249,
+        "battle": 22268.849999999882,
+        "consumed": {
+          "evt_m01_intro_card": 0,
+          "evt_m01_prelude_start": 0.05,
+          "evt_m01_railway_worker_report": 16.000000000000092,
+          "evt_m01_planes_heard": 17.750000000000117,
+          "evt_m01_bombing_0434": 67.7499999999983,
+          "evt_m01_cable_cut": 67.7499999999983,
+          "evt_m01_forward_post_bombed": 69.89999999999817,
+          "evt_m01_nowicki_lost": 72.79999999999801,
+          "evt_m01_wounded_dragged": 93.54999999999683,
+          "evt_m01_second_air_pass": 170.70000000000456,
+          "evt_m01_train963_arrives": 256.400000000024,
+          "evt_m01_panzerzug_arrives": 303.10000000003464,
+          "evt_m01_repair_complete": 448.1500000000676,
+          "evt_m01_order_demolish": 484.25000000007583,
+          "evt_m01_bombing_0530": 484.25000000007583,
+          "evt_m01_runner_pressure_report": 559.2500000000391,
+          "evt_m01_north_contact_distant": 634.2499999999709,
+          "evt_m01_east_platoon_withdraws": 709.2499999999027,
+          "evt_m01_bak_wounded": 739.2499999998754,
+          "evt_m01_germans_on_east_spans": 746.7499999998686,
+          "evt_m01_east_demolition": 786.6499999998323
+        },
+        "player": {
+          "x": -17.02602159365086,
+          "z": 39.61614033214287,
+          "angle": -3.0135270850551117,
+          "pitch": 0
+        },
+        "distant": {
+          "clock": 794.7499999998249,
+          "events": 17,
+          "layers": {
+            "presentation": 18,
+            "ambient": 14
+          },
+          "kinds": {
+            "artillery": 6,
+            "mortar": 4,
+            "rifle": 5,
+            "mg": 2
+          },
+          "bands": {
+            "0-1.2km": 0,
+            "1.2-2.6km": 17,
+            ">2.6km": 15
+          },
+          "inView": 12,
+          "outOfView": 20,
+          "instances": {
+            "flashes": 4,
+            "streaks": 0,
+            "puffs": 37,
+            "figures": 24,
+            "aircraft": 8
+          },
+          "requested": {
+            "flashes": 4,
+            "streaks": 0,
+            "puffs": 37,
+            "figures": 24,
+            "aircraft": 8
+          },
+          "sources": [
+            "evt_m01_north_contact_distant",
+            "ambient:far_plain<-evt_m01_train963_arrives",
+            "ambient:sky<-evt_m01_planes_heard"
+          ],
+          "ids": [
+            "north_guns:3117",
+            "north_line:3120",
+            "north_guns:3129",
+            "north_guns:3132",
+            "north_line:3136",
+            "north_guns:3143",
+            "north_line:3146",
+            "north_line:3161",
+            "north_line:3165",
+            "north_guns:3165",
+            "north_line:3166",
+            "north_line:3167",
+            "north_line:3168",
+            "north_line:3169",
+            "north_line:3176",
+            "north_guns:3176",
+            "north_line:3178"
+          ],
+          "limits": {
+            "events": 96,
+            "flashes": 72,
+            "streaks": 48,
+            "puffs": 168,
+            "figures": 64,
+            "aircraft": 21,
+            "columns": 4
+          },
+          "squads": 6,
+          "vehicles": 0,
+          "columns": [
+            "north_farm"
+          ],
+          "aircraftActive": 8,
+          "milestones": {
+            "planes": 17.750000000000117,
+            "train": 256.400000000024,
+            "panzerzug": 303.10000000003464,
+            "bombing530": 484.25000000007583,
+            "north": 634.2499999999709,
+            "withdraw": 709.2499999999027,
+            "spans": 746.7499999998686,
+            "eastDemolition": 786.6499999998323
+          },
+          "window": 0.07
+        },
+        "probe": {
+          "position": [
+            -17.03,
+            1.29,
+            39.62
+          ],
+          "target": [
+            -1008.2,
+            -2.9,
+            -990.4
+          ],
+          "fov": 24
+        }
+      },
+      "layer": {
+        "changed": 1571,
+        "strong": 17,
+        "bbox": [
+          415,
+          276,
+          1167,
+          360
+        ]
+      }
+    },
+    {
+      "name": "player-08-facing-south-north-still-runs",
+      "state": {
+        "clock": 794.7999999998249,
+        "battle": 22269.27499999988,
+        "consumed": {
+          "evt_m01_intro_card": 0,
+          "evt_m01_prelude_start": 0.05,
+          "evt_m01_railway_worker_report": 16.000000000000092,
+          "evt_m01_planes_heard": 17.750000000000117,
+          "evt_m01_bombing_0434": 67.7499999999983,
+          "evt_m01_cable_cut": 67.7499999999983,
+          "evt_m01_forward_post_bombed": 69.89999999999817,
+          "evt_m01_nowicki_lost": 72.79999999999801,
+          "evt_m01_wounded_dragged": 93.54999999999683,
+          "evt_m01_second_air_pass": 170.70000000000456,
+          "evt_m01_train963_arrives": 256.400000000024,
+          "evt_m01_panzerzug_arrives": 303.10000000003464,
+          "evt_m01_repair_complete": 448.1500000000676,
+          "evt_m01_order_demolish": 484.25000000007583,
+          "evt_m01_bombing_0530": 484.25000000007583,
+          "evt_m01_runner_pressure_report": 559.2500000000391,
+          "evt_m01_north_contact_distant": 634.2499999999709,
+          "evt_m01_east_platoon_withdraws": 709.2499999999027,
+          "evt_m01_bak_wounded": 739.2499999998754,
+          "evt_m01_germans_on_east_spans": 746.7499999998686,
+          "evt_m01_east_demolition": 786.6499999998323
+        },
+        "player": {
+          "x": -17.02602159365086,
+          "z": 39.61614033214287,
+          "angle": -4.712388980384691,
+          "pitch": 0
+        },
+        "distant": {
+          "clock": 794.7999999998249,
+          "events": 17,
+          "layers": {
+            "presentation": 18,
+            "ambient": 14
+          },
+          "kinds": {
+            "artillery": 6,
+            "mortar": 4,
+            "rifle": 5,
+            "mg": 2
+          },
+          "bands": {
+            "0-1.2km": 0,
+            "1.2-2.6km": 17,
+            ">2.6km": 15
+          },
+          "inView": 0,
+          "outOfView": 32,
+          "instances": {
+            "flashes": 3,
+            "streaks": 0,
+            "puffs": 37,
+            "figures": 24,
+            "aircraft": 8
+          },
+          "requested": {
+            "flashes": 3,
+            "streaks": 0,
+            "puffs": 37,
+            "figures": 24,
+            "aircraft": 8
+          },
+          "sources": [
+            "evt_m01_north_contact_distant",
+            "ambient:far_plain<-evt_m01_train963_arrives",
+            "ambient:sky<-evt_m01_planes_heard"
+          ],
+          "ids": [
+            "north_guns:3117",
+            "north_line:3120",
+            "north_guns:3129",
+            "north_guns:3132",
+            "north_line:3136",
+            "north_guns:3143",
+            "north_line:3146",
+            "north_line:3161",
+            "north_line:3165",
+            "north_guns:3165",
+            "north_line:3166",
+            "north_line:3167",
+            "north_line:3168",
+            "north_line:3169",
+            "north_line:3176",
+            "north_guns:3176",
+            "north_line:3178"
+          ],
+          "limits": {
+            "events": 96,
+            "flashes": 72,
+            "streaks": 48,
+            "puffs": 168,
+            "figures": 64,
+            "aircraft": 21,
+            "columns": 4
+          },
+          "squads": 6,
+          "vehicles": 0,
+          "columns": [
+            "north_farm"
+          ],
+          "aircraftActive": 8,
+          "milestones": {
+            "planes": 17.750000000000117,
+            "train": 256.400000000024,
+            "panzerzug": 303.10000000003464,
+            "bombing530": 484.25000000007583,
+            "north": 634.2499999999709,
+            "withdraw": 709.2499999999027,
+            "spans": 746.7499999998686,
+            "eastDemolition": 786.6499999998323
+          },
+          "window": 0.07
+        }
+      },
+      "layer": {
+        "changed": 0,
+        "strong": 0,
+        "bbox": null
+      }
+    },
+    {
+      "name": "eye-09-east-reaction-surge",
+      "state": {
+        "clock": 817.4499999998043,
+        "battle": 22461.79999999955,
+        "consumed": {
+          "evt_m01_intro_card": 0,
+          "evt_m01_prelude_start": 0.05,
+          "evt_m01_railway_worker_report": 16.000000000000092,
+          "evt_m01_planes_heard": 17.750000000000117,
+          "evt_m01_bombing_0434": 67.7499999999983,
+          "evt_m01_cable_cut": 67.7499999999983,
+          "evt_m01_forward_post_bombed": 69.89999999999817,
+          "evt_m01_nowicki_lost": 72.79999999999801,
+          "evt_m01_wounded_dragged": 93.54999999999683,
+          "evt_m01_second_air_pass": 170.70000000000456,
+          "evt_m01_train963_arrives": 256.400000000024,
+          "evt_m01_panzerzug_arrives": 303.10000000003464,
+          "evt_m01_repair_complete": 448.1500000000676,
+          "evt_m01_order_demolish": 484.25000000007583,
+          "evt_m01_bombing_0530": 484.25000000007583,
+          "evt_m01_runner_pressure_report": 559.2500000000391,
+          "evt_m01_north_contact_distant": 634.2499999999709,
+          "evt_m01_east_platoon_withdraws": 709.2499999999027,
+          "evt_m01_bak_wounded": 739.2499999998754,
+          "evt_m01_germans_on_east_spans": 746.7499999998686,
+          "evt_m01_east_demolition": 786.6499999998323,
+          "evt_m01_dudek_retrieves_bak": 814.8999999998066
+        },
+        "player": {
+          "x": -114.6251183063329,
+          "z": 27.125067893837887,
+          "angle": -3.140812806601516,
+          "pitch": 0
+        },
+        "distant": {
+          "clock": 817.4499999998043,
+          "events": 22,
+          "layers": {
+            "presentation": 20,
+            "ambient": 12
+          },
+          "kinds": {
+            "artillery": 4,
+            "mortar": 3,
+            "exchange": 5,
+            "mg": 6,
+            "rifle": 4
+          },
+          "bands": {
+            "0-1.2km": 0,
+            "1.2-2.6km": 19,
+            ">2.6km": 13
+          },
+          "inView": 2,
+          "outOfView": 30,
+          "instances": {
+            "flashes": 7,
+            "streaks": 1,
+            "puffs": 39,
+            "figures": 17,
+            "aircraft": 5
+          },
+          "requested": {
+            "flashes": 7,
+            "streaks": 1,
+            "puffs": 39,
+            "figures": 17,
+            "aircraft": 5
+          },
+          "sources": [
+            "evt_m01_north_contact_distant",
+            "ambient:east_dike<-evt_m01_train963_arrives",
+            "ambient:far_plain<-evt_m01_train963_arrives",
+            "ambient:sky<-evt_m01_planes_heard"
+          ],
+          "ids": [
+            "north_guns:3176",
+            "north_guns:3185",
+            "north_guns:3203",
+            "north_line:3219",
+            "north_line:3243",
+            "north_guns:3246",
+            "north_line:3250",
+            "north_line:3252",
+            "north_line:3253",
+            "north_line:3255",
+            "north_line:3257",
+            "north_line:3258",
+            "north_line:3259",
+            "north_line:3261",
+            "north_line:3264",
+            "north_line:3265",
+            "east_dike:3266",
+            "north_line:3266",
+            "east_dike:3267",
+            "east_dike:3268",
+            "north_line:3268",
+            "north_line:3269"
+          ],
+          "limits": {
+            "events": 96,
+            "flashes": 72,
+            "streaks": 48,
+            "puffs": 168,
+            "figures": 64,
+            "aircraft": 21,
+            "columns": 4
+          },
+          "squads": 4,
+          "vehicles": 0,
+          "columns": [
+            "north_farm"
+          ],
+          "aircraftActive": 5,
+          "milestones": {
+            "planes": 17.750000000000117,
+            "train": 256.400000000024,
+            "panzerzug": 303.10000000003464,
+            "bombing530": 484.25000000007583,
+            "north": 634.2499999999709,
+            "withdraw": 709.2499999999027,
+            "spans": 746.7499999998686,
+            "eastDemolition": 786.6499999998323
+          },
+          "window": 0.07
+        },
+        "probe": {
+          "position": [
+            -114.63,
+            -1.36,
+            27.13
+          ],
+          "target": [
+            911.2,
+            -4,
+            -1725.7
+          ],
+          "fov": 40
+        }
+      },
+      "layer": {
+        "changed": 0,
+        "strong": 0,
+        "bbox": null
+      }
+    },
+    {
+      "name": "eye-10-distant-aircraft",
+      "state": {
+        "clock": 811.6999999998095,
+        "battle": 22412.924999999635,
+        "consumed": {
+          "evt_m01_intro_card": 0,
+          "evt_m01_prelude_start": 0.05,
+          "evt_m01_railway_worker_report": 16.000000000000092,
+          "evt_m01_planes_heard": 17.750000000000117,
+          "evt_m01_bombing_0434": 67.7499999999983,
+          "evt_m01_cable_cut": 67.7499999999983,
+          "evt_m01_forward_post_bombed": 69.89999999999817,
+          "evt_m01_nowicki_lost": 72.79999999999801,
+          "evt_m01_wounded_dragged": 93.54999999999683,
+          "evt_m01_second_air_pass": 170.70000000000456,
+          "evt_m01_train963_arrives": 256.400000000024,
+          "evt_m01_panzerzug_arrives": 303.10000000003464,
+          "evt_m01_repair_complete": 448.1500000000676,
+          "evt_m01_order_demolish": 484.25000000007583,
+          "evt_m01_bombing_0530": 484.25000000007583,
+          "evt_m01_runner_pressure_report": 559.2500000000391,
+          "evt_m01_north_contact_distant": 634.2499999999709,
+          "evt_m01_east_platoon_withdraws": 709.2499999999027,
+          "evt_m01_bak_wounded": 739.2499999998754,
+          "evt_m01_germans_on_east_spans": 746.7499999998686,
+          "evt_m01_east_demolition": 786.6499999998323
+        },
+        "player": {
+          "x": -114.6251183063329,
+          "z": 27.125067893837887,
+          "angle": -3.140812806601516,
+          "pitch": 0
+        },
+        "distant": {
+          "clock": 811.6999999998095,
+          "events": 24,
+          "layers": {
+            "presentation": 16,
+            "ambient": 18
+          },
+          "kinds": {
+            "artillery": 5,
+            "mortar": 3,
+            "mg": 7,
+            "rifle": 7,
+            "exchange": 2
+          },
+          "bands": {
+            "0-1.2km": 1,
+            "1.2-2.6km": 19,
+            ">2.6km": 14
+          },
+          "inView": 3,
+          "outOfView": 31,
+          "instances": {
+            "flashes": 5,
+            "streaks": 1,
+            "puffs": 29,
+            "figures": 17,
+            "aircraft": 5
+          },
+          "requested": {
+            "flashes": 5,
+            "streaks": 1,
+            "puffs": 29,
+            "figures": 17,
+            "aircraft": 5
+          },
+          "sources": [
+            "evt_m01_north_contact_distant",
+            "ambient:east_dike<-evt_m01_train963_arrives",
+            "ambient:far_plain<-evt_m01_train963_arrives",
+            "ambient:sky<-evt_m01_planes_heard"
+          ],
+          "ids": [
+            "north_guns:3165",
+            "north_line:3176",
+            "north_guns:3176",
+            "north_guns:3185",
+            "north_line:3186",
+            "north_guns:3203",
+            "north_line:3219",
+            "east_dike:3223",
+            "east_dike:3226",
+            "east_dike:3228",
+            "north_line:3228",
+            "east_dike:3231",
+            "north_line:3231",
+            "east_dike:3233",
+            "east_dike:3234",
+            "east_dike:3235",
+            "north_line:3236",
+            "east_dike:3237",
+            "north_line:3239",
+            "north_line:3241",
+            "north_line:3243",
+            "north_line:3245",
+            "east_dike:3245",
+            "north_guns:3246"
+          ],
+          "limits": {
+            "events": 96,
+            "flashes": 72,
+            "streaks": 48,
+            "puffs": 168,
+            "figures": 64,
+            "aircraft": 21,
+            "columns": 4
+          },
+          "squads": 4,
+          "vehicles": 0,
+          "columns": [
+            "north_farm"
+          ],
+          "aircraftActive": 5,
+          "milestones": {
+            "planes": 17.750000000000117,
+            "train": 256.400000000024,
+            "panzerzug": 303.10000000003464,
+            "bombing530": 484.25000000007583,
+            "north": 634.2499999999709,
+            "withdraw": 709.2499999999027,
+            "spans": 746.7499999998686,
+            "eastDemolition": 786.6499999998323
+          },
+          "window": 0.07
+        },
+        "probe": {
+          "position": [
+            -114.63,
+            -1.36,
+            27.13
+          ],
+          "target": [
+            -3904.5,
+            1453.4,
+            3206.3
+          ],
+          "fov": 14
+        }
+      },
+      "layer": {
+        "changed": 38,
+        "strong": 23,
+        "bbox": [
+          637,
+          342,
+          753,
+          367
+        ]
+      }
+    },
+    {
+      "name": "player-11-kozliny-columns",
+      "state": {
+        "clock": 2019.0999999987114,
+        "battle": 25285.34999998566,
+        "consumed": {
+          "evt_m01_intro_card": 0,
+          "evt_m01_prelude_start": 0.05,
+          "evt_m01_railway_worker_report": 16.000000000000092,
+          "evt_m01_planes_heard": 17.750000000000117,
+          "evt_m01_bombing_0434": 67.7499999999983,
+          "evt_m01_cable_cut": 67.7499999999983,
+          "evt_m01_forward_post_bombed": 69.89999999999817,
+          "evt_m01_nowicki_lost": 72.79999999999801,
+          "evt_m01_wounded_dragged": 93.54999999999683,
+          "evt_m01_second_air_pass": 170.70000000000456,
+          "evt_m01_train963_arrives": 256.400000000024,
+          "evt_m01_panzerzug_arrives": 303.10000000003464,
+          "evt_m01_repair_complete": 448.1500000000676,
+          "evt_m01_order_demolish": 484.25000000007583,
+          "evt_m01_bombing_0530": 484.25000000007583,
+          "evt_m01_runner_pressure_report": 559.2500000000391,
+          "evt_m01_north_contact_distant": 634.2499999999709,
+          "evt_m01_east_platoon_withdraws": 709.2499999999027,
+          "evt_m01_bak_wounded": 739.2499999998754,
+          "evt_m01_germans_on_east_spans": 746.7499999998686,
+          "evt_m01_east_demolition": 786.6499999998323,
+          "evt_m01_dudek_retrieves_bak": 814.8999999998066,
+          "evt_m01_west_demolition": 1033.7499999996076,
+          "evt_m01_kozliny_attack_distant": 1933.749999998789
+        },
+        "player": {
+          "x": -291.8650353233892,
+          "z": 62.34509737328585,
+          "angle": -2.011946710584651,
+          "pitch": 0.03
+        },
+        "distant": {
+          "clock": 2019.0999999987114,
+          "events": 8,
+          "layers": {
+            "presentation": 14,
+            "ambient": 3
+          },
+          "kinds": {
+            "mortar": 1,
+            "exchange": 1,
+            "mg": 2,
+            "rifle": 4
+          },
+          "bands": {
+            "0-1.2km": 1,
+            "1.2-2.6km": 14,
+            ">2.6km": 2
+          },
+          "inView": 14,
+          "outOfView": 3,
+          "instances": {
+            "flashes": 6,
+            "streaks": 0,
+            "puffs": 59,
+            "figures": 10,
+            "aircraft": 1
+          },
+          "requested": {
+            "flashes": 6,
+            "streaks": 0,
+            "puffs": 59,
+            "figures": 10,
+            "aircraft": 1
+          },
+          "sources": [
+            "evt_m01_north_contact_distant",
+            "evt_m01_kozliny_attack_distant",
+            "ambient:far_plain<-evt_m01_east_demolition",
+            "ambient:sky<-evt_m01_planes_heard"
+          ],
+          "ids": [
+            "north_line:8000",
+            "north_line:8046",
+            "north_line:8052",
+            "north_line:8054",
+            "north_line:8064",
+            "north_line:8070",
+            "north_line:8071",
+            "north_line:8073"
+          ],
+          "limits": {
+            "events": 96,
+            "flashes": 72,
+            "streaks": 48,
+            "puffs": 168,
+            "figures": 64,
+            "aircraft": 21,
+            "columns": 4
+          },
+          "squads": 2,
+          "vehicles": 3,
+          "columns": [
+            "north_farm",
+            "north_far",
+            "kozliny:1:burning"
+          ],
+          "aircraftActive": 1,
+          "milestones": {
+            "planes": 17.750000000000117,
+            "train": 256.400000000024,
+            "panzerzug": 303.10000000003464,
+            "bombing530": 484.25000000007583,
+            "north": 634.2499999999709,
+            "withdraw": 709.2499999999027,
+            "spans": 746.7499999998686,
+            "eastDemolition": 786.6499999998323,
+            "westDemolition": 1033.7499999996076,
+            "kozliny": 1933.749999998789
+          },
+          "window": 0.07
+        }
+      },
+      "layer": {
+        "changed": 389,
+        "strong": 0,
+        "bbox": [
+          597,
+          324,
+          825,
+          377
+        ]
+      }
+    },
+    {
+      "name": "eye-12-kozliny-assault",
+      "state": {
+        "clock": 2019.0999999987114,
+        "battle": 25285.34999998566,
+        "consumed": {
+          "evt_m01_intro_card": 0,
+          "evt_m01_prelude_start": 0.05,
+          "evt_m01_railway_worker_report": 16.000000000000092,
+          "evt_m01_planes_heard": 17.750000000000117,
+          "evt_m01_bombing_0434": 67.7499999999983,
+          "evt_m01_cable_cut": 67.7499999999983,
+          "evt_m01_forward_post_bombed": 69.89999999999817,
+          "evt_m01_nowicki_lost": 72.79999999999801,
+          "evt_m01_wounded_dragged": 93.54999999999683,
+          "evt_m01_second_air_pass": 170.70000000000456,
+          "evt_m01_train963_arrives": 256.400000000024,
+          "evt_m01_panzerzug_arrives": 303.10000000003464,
+          "evt_m01_repair_complete": 448.1500000000676,
+          "evt_m01_order_demolish": 484.25000000007583,
+          "evt_m01_bombing_0530": 484.25000000007583,
+          "evt_m01_runner_pressure_report": 559.2500000000391,
+          "evt_m01_north_contact_distant": 634.2499999999709,
+          "evt_m01_east_platoon_withdraws": 709.2499999999027,
+          "evt_m01_bak_wounded": 739.2499999998754,
+          "evt_m01_germans_on_east_spans": 746.7499999998686,
+          "evt_m01_east_demolition": 786.6499999998323,
+          "evt_m01_dudek_retrieves_bak": 814.8999999998066,
+          "evt_m01_west_demolition": 1033.7499999996076,
+          "evt_m01_kozliny_attack_distant": 1933.749999998789
+        },
+        "player": {
+          "x": -291.8650353233892,
+          "z": 62.34509737328585,
+          "angle": -2.011946710584651,
+          "pitch": 0.03
+        },
+        "distant": {
+          "clock": 2019.0999999987114,
+          "events": 8,
+          "layers": {
+            "presentation": 14,
+            "ambient": 3
+          },
+          "kinds": {
+            "mortar": 1,
+            "exchange": 1,
+            "mg": 2,
+            "rifle": 4
+          },
+          "bands": {
+            "0-1.2km": 1,
+            "1.2-2.6km": 14,
+            ">2.6km": 2
+          },
+          "inView": 14,
+          "outOfView": 3,
+          "instances": {
+            "flashes": 6,
+            "streaks": 0,
+            "puffs": 59,
+            "figures": 10,
+            "aircraft": 1
+          },
+          "requested": {
+            "flashes": 6,
+            "streaks": 0,
+            "puffs": 59,
+            "figures": 10,
+            "aircraft": 1
+          },
+          "sources": [
+            "evt_m01_north_contact_distant",
+            "evt_m01_kozliny_attack_distant",
+            "ambient:far_plain<-evt_m01_east_demolition",
+            "ambient:sky<-evt_m01_planes_heard"
+          ],
+          "ids": [
+            "north_line:8000",
+            "north_line:8046",
+            "north_line:8052",
+            "north_line:8054",
+            "north_line:8064",
+            "north_line:8070",
+            "north_line:8071",
+            "north_line:8073"
+          ],
+          "limits": {
+            "events": 96,
+            "flashes": 72,
+            "streaks": 48,
+            "puffs": 168,
+            "figures": 64,
+            "aircraft": 21,
+            "columns": 4
+          },
+          "squads": 2,
+          "vehicles": 3,
+          "columns": [
+            "north_farm",
+            "north_far",
+            "kozliny:1:burning"
+          ],
+          "aircraftActive": 1,
+          "milestones": {
+            "planes": 17.750000000000117,
+            "train": 256.400000000024,
+            "panzerzug": 303.10000000003464,
+            "bombing530": 484.25000000007583,
+            "north": 634.2499999999709,
+            "withdraw": 709.2499999999027,
+            "spans": 746.7499999998686,
+            "eastDemolition": 786.6499999998323,
+            "westDemolition": 1033.7499999996076,
+            "kozliny": 1933.749999998789
+          },
+          "window": 0.07
+        },
+        "probe": {
+          "position": [
+            -291.87,
+            3.55,
+            62.35
+          ],
+          "target": [
+            -950,
+            -3,
+            -1650
+          ],
+          "fov": 24
+        }
+      },
+      "layer": {
+        "changed": 4000,
+        "strong": 21,
+        "bbox": [
+          375,
+          183,
+          1114,
+          362
+        ]
+      }
+    }
+  ],
+  "errors": []
+}

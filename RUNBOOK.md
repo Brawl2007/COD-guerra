@@ -150,6 +150,14 @@ CHROME_EXECUTABLE=/caminho/chromium node tools/capture-m01-visual.mjs docs/verif
 
 O script gere o seu preview, importa a rota do directório corrente e continua snapshots genuínos no browser; não é playtest contínuo/humano. Captura reparo, estação, retirada e chamada, com diagnóstico e erros. Antes de comparar, usar a mesma qualidade/viewport. Não executar com outro servidor na porta 4173. Guardar capturas fora de `test-results/` se precisarem sobreviver ao próximo Playwright, que limpa essa pasta.
 
+Campo de batalha distante (apresentação): `gameDiagnostics().m01.distantBattlefield` mostra só dados de apresentação. Inclui camadas (`presentation`/`ambient`), fontes (`evt_m01_*` ou `ambient:*`), bandas de distância, instâncias pedidas/desenhadas e limites. Capturas com o olho do jogador, poses registadas e um diff de cada frame contra o mesmo frame sem a camada:
+
+```sh
+CHROME_EXECUTABLE=/caminho/chromium node tools/verification/m01-distant-battlefield-capture.mjs test-results/distant-battlefield
+```
+
+Não é playtest nem medida de FPS. Provas em `docs/verification/m01-runtime/distant-battlefield-presentation-v1-2026-10-08/`.
+
 ## Auditoria de continuação schema 2
 
 ```sh

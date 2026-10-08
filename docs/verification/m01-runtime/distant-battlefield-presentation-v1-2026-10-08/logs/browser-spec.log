@@ -1,0 +1,7 @@
+
+Running 2 tests using 1 worker
+
+[1/2] tests/browser/m01-distant-battlefield.spec.js:23:62 › distant battlefield (east, low): presentation + ambient layers render bounded, freeze on pause, leave gameplay untouched
+[2/2] tests/browser/m01-distant-battlefield.spec.js:23:62 › distant battlefield (north, high): presentation + ambient layers render bounded, freeze on pause, leave gameplay untouched
+  2 passed (1.7m)
+EXIT 0

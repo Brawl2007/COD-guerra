@@ -20,6 +20,18 @@ Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 cont
 
 ---
 
+# Estado actual — campo de batalha distante (2026-10-08)
+
+Esta secção prevalece para a tarefa do campo de batalha distante. M01 continua **PROTÓTIPO JOGÁVEL**.
+
+- TASK_ID `M01-DISTANT-BATTLEFIELD-PRESENTATION-V1`. Base `99309d9cb023cc94a07d41ff863e1362e4460570`; branch própria `codex/m01-distant-battlefield-presentation-v1`, sem merge, sem PR, `main` intacta.
+- Plano puro `src/render/m01-distant-battlefield-plan.js` (relógio, marcos consumidos, seed) e renderer `src/render/m01-distant-battlefield.js`. Em `m01-view.js` só +6 linhas. Camadas: AUTORITATIVA (só leitura), APRESENTAÇÃO (frente norte, quinta/coluna, Koźliny depois dos eventos consumidos), AMBIENTE (escaramuça de Lisewo, grupos na planície, aviões).
+- Não compete com a correcção de FX/capture timing (`codex/m01-battlefield-fx-polish-v3` @ `e08755b`): não toca nos pools/perfis/atmosfera nem no timing das capturas. Usa `atmosphere.billboardBatch`, compatível com o 4.º parâmetro opcional da V3. Merge de ensaio T2 + V3 + T1 sem conflitos.
+- Validação: 339/339 Node, build PASS, browser focado 2/2. As capturas medem o que a camada acrescenta ao frame (diff com a camada escondida): do olho do jogador é subtil, com colunas finas e pontos no horizonte. Merge de ensaio T2 + V3 + T1: 367/370; as 3 falhas (`m01-mg34-prone-presentation`) são da V3 sozinha. Provas em `docs/verification/m01-runtime/distant-battlefield-presentation-v1-2026-10-08/`.
+- Pendentes: som acoplado aos clarões (hook descrito no HANDOFF, exige `game.js`/`audio.js`), chão para lá da malha (buraco pré-existente do mundo), playtest humano, Chromebook físico.
+
+---
+
 ## Histórico anterior — não substitui a auditoria acima
 
 # Estado atual — MG34 prone runtime V2 (2026-10-03)
