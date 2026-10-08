@@ -1,0 +1,71 @@
+name: M01 approved consolidation checkpoint V1
+
+on:
+  push:
+    branches:
+      - codex/m01-approved-consolidation-checkpoint-v1
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-approved-consolidation-checkpoint-v1
+  cancel-in-progress: true
+
+jobs:
+  focused:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Station and animation integrated regressions
+        run: >-
+          node --test
+          tests/m01-station-architecture.test.js
+          tests/m01-animation-contract.test.js
+          tests/m01-runtime.test.js
+          tests/m01-wz29-viewmodel.test.js
+          tests/m01-locomotive.test.js
+          tests/m01-panzerzug.test.js
+      - name: Integrated production build
+        run: npm run build
+
+  full-browser:
+    needs: focused
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Full Node suite on combined tree
+        run: npm test
+      - name: Build on combined tree
+        run: npm run build
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Full browser suite once
+        run: npm run test:browser
+      - name: Collect browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-approved-consolidation-browser
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
