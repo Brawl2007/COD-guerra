@@ -70,12 +70,12 @@ try{
       const layout=await page.evaluate(()=>{
         const box=id=>{const e=document.getElementById(id);if(!e)return null;const r=e.getBoundingClientRect(),s=getComputedStyle(e);
           return {x:Math.round(r.x),y:Math.round(r.y),w:Math.round(r.width),h:Math.round(r.height),visible:s.display!=='none'&&s.visibility!=='hidden'&&Number(s.opacity)>.02&&r.width>0,text:e.textContent.trim().slice(0,90)};};
-        return Object.fromEntries(['objective','objective-update','battle-clock','subtitle','message','interaction','status','ammo','checkpoint','title-card','fade'].map(id=>[id,box(id)]));
+        return Object.fromEntries(['objective','objective-update','battle-clock','subtitle','message','interaction','health-wrap','ammo','checkpoint','title-card','fade'].map(id=>[id,box(id)]));
       });
       const overflow=await page.evaluate(()=>{const vw=innerWidth,vh=innerHeight;return [...document.querySelectorAll('#hud *')].filter(e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);
         return r.width>0&&s.visibility!=='hidden'&&Number(s.opacity)>.02&&e.textContent.trim()&&(r.left<-1||r.right>vw+1||r.top<-1||r.bottom>vh+1);}).map(e=>e.id||e.className||e.tagName);});
       // Pares que não podem sobrepor-se quando ambos estão visíveis.
-      const pairs=[['objective','objective-update'],['objective','battle-clock'],['interaction','subtitle'],['interaction','message'],['subtitle','status'],['message','status'],['objective-update','interaction']];
+      const pairs=[['objective','objective-update'],['objective','battle-clock'],['interaction','subtitle'],['interaction','message'],['subtitle','ammo'],['subtitle','health-wrap'],['message','ammo'],['message','health-wrap'],['objective-update','interaction']];
       const overlaps=pairs.filter(([a,b])=>{const p=layout[a],q=layout[b];return p?.visible&&q?.visible&&p.h&&q.h&&p.x<q.x+q.w&&q.x<p.x+p.w&&p.y<q.y+q.h&&q.y<p.y+p.h;}).map(p=>p.join('×'));
       report.shots.push({scene:scene.name,viewport:`${width}x${height}`,path,clock:diag.clock,battleClock:diag.m01.battleClock,sceneId:diag.m01.scene,layout,overflow,overlaps});
       console.log(`${label} ${scene.name} ${width}x${height}${overflow.length?` overflow:${overflow.join(',')}`:''}${overlaps.length?` overlap:${overlaps.join(',')}`:''}`);
