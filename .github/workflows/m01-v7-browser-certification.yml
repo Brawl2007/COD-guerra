@@ -1,3 +1,5 @@
+# Corrected full execution after the original 80/84 trace-driven harness fixes.
+# No historical/focused result union, unchanged 84-case corpus, retries/skips zero.
 name: M01 V7 combined browser certification
 on:
   push:
@@ -33,6 +35,10 @@ jobs:
           set -o pipefail
           npm run build | tee "$EVIDENCE/logs/build-browser-ci.log"
           sha256sum dist/assets/*.js dist/assets/*.css | tee "$EVIDENCE/logs/build-browser-sha256-ci.log"
+      - name: Record the corrected harness and exact browser sources
+        run: |
+          git merge-base --is-ancestor 91c7a844c7d5020a552969027a424aad1f13dcd4 HEAD
+          sha256sum tests/browser/*.js | tee "$EVIDENCE/logs/browser-test-sha256-ci.log"
       - name: Inventory every browser case
         run: npx playwright test --list --reporter=json > "$EVIDENCE/BROWSER_INVENTORY.json"
       - name: One complete browser execution, retries zero
