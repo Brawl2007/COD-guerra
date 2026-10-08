@@ -18,6 +18,7 @@ import { M01Panzerzug } from './m01-panzerzug.js';
 import {soldierVisualVariant} from './m01-soldier-variation.js';
 import { M01CombatFeedback } from './m01-combat-feedback.js';
 import {M01BridgePortalPolish,bridgeMaterialSlot} from './m01-bridge-portal-polish.js';
+import {M01BridgeStructure,M01_TRACK_CENTRES} from './m01-bridge-structure.js';
 
 export const M01_BATTLEFIELD_FX_LIMITS=Object.freeze({bursts:16,flash:16,core:48,fire:96,smoke:128,dust:128,shards:96,lights:1});
 const FX_DENSITY={low:.55,medium:.78,high:1};
@@ -54,6 +55,8 @@ export class M01View {
       bridgeBrick:weatheredBridgeSurface('brick',{worldScale:.36,bump:.055,seed:1912}),
       bridgeStone:weatheredBridgeSurface('stone',{worldScale:.5,bump:.07,seed:1857}),
       bridgeGate:weatheredBridgeSurface('wood',{worldScale:1.0,bump:.025,seed:963,roughness:.9,metalness:.05}),
+      // Painted truss steel reads as paint (dielectric, grey-green, weathered), not bare black metal. Colour of 1939 uncertain.
+      bridgeSteel:weatheredBridgeSurface('metal',{worldScale:.8,bump:.018,seed:1891,roughness:.66,metalness:.15,color:'#d2d9d0'}),
       glow:new THREE.MeshBasicMaterial({color:'#ffb14b',toneMapped:false}),
       smoke:new THREE.MeshBasicMaterial({color:'#454744',transparent:true,opacity:.3,depthWrite:false}),
       dust:new THREE.MeshBasicMaterial({color:'#7d6f5c',transparent:true,opacity:.42,depthWrite:false})};
@@ -67,6 +70,7 @@ export class M01View {
     this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};
     this.combatFeedback=new M01CombatFeedback();
     this.portalPolish=new M01BridgePortalPolish({stone:this.materials.bridgeStone});
+    this.bridgeStructure=new M01BridgeStructure({steel:this.materials.bridgeSteel,rail:this.materials.metal,timber:this.materials.wood,stone:this.materials.bridgeStone});
     this.atmosphere=new M01Atmosphere(this.scene);
     this.createWeapon();this.createActors();this.createContactShadows();this.createFireEffects();this.createAircraft();this.createTrains();
     this.characters=new M01Characters(this.scene);this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture);
@@ -82,12 +86,14 @@ export class M01View {
       try{
         const asset=await this.assets.load(file.file,file.file);if(this.disposed)return;
         const portalAsset=file.file.includes('portal_lisewo_1912');
-        asset.scene.traverse(n=>{if(n.isMesh){n.castShadow=n.receiveShadow=true;
+        asset.scene.traverse(n=>{if(n.isMesh){n.castShadow=n.receiveShadow=true;n.userData.m01SourceMaterial=n.material?.name;
           let cursor=n,context='';while(cursor){context+='|'+(cursor.name??'');cursor=cursor.parent;}
-          const replacement=bridgeMaterialSlot(n.material?.name,portalAsset||/portal|tower/i.test(context));if(replacement)n.material=this.materials[replacement];
+          const slot=bridgeMaterialSlot(n.material?.name,portalAsset||/portal|tower/i.test(context));
+          const replacement=slot==='metal'&&n.material?.name==='steel_painted'?'bridgeSteel':slot;if(replacement)n.material=this.materials[replacement];
         }});
         const pieces=file.nodes.map(n=>({name:n.name,node:asset.scene.getObjectByName(n.name)})).filter(n=>n.node);
         for(const piece of pieces)this.portalPolish.attach(piece.node);
+        this.bridgeStructure.attachKit(asset.scene,file);
         this.kit.push({file,root:asset.scene,pieces});this.scene.add(asset.scene);
       }catch(error){if(!this.disposed)console.warn(`Ponte M01: ${error.message}`);}
     }));
@@ -111,7 +117,7 @@ export class M01View {
       for(let i=1;i<points.length;i++){
         const a=points[i-1],b=points[i],dx=b[0]-a[0],dz=b[2]-a[2],length=Math.hypot(dx,dz);if(length>1800)continue;
         const n=Math.ceil(length/10);
-        for(let k=0;k<n;k++)for(const offset of [-.72,.72]){
+        for(let k=0;k<n;k++)for(const centre of M01_TRACK_CENTRES[name])for(const offset of [centre-.72,centre+.72]){
           const x=a[0]+dx*(k+.5)/n-dz/length*offset,z=a[2]+dz*(k+.5)/n+dx/length*offset;
           pieces.push({x,y:world.heightAt(x,z)+.12,z,length:length/n+.05,angle:-Math.atan2(dz,dx)});
         }
@@ -476,7 +482,7 @@ export class M01View {
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
     for(const material of Object.values(this.materials))if(material.userData.m01Time)material.userData.m01Time.value=sim.clock;
-    this.syncSolids(sim.world);this.portalPolish.sync(this.owner.quality);const dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
+    this.syncSolids(sim.world);this.portalPolish.sync(this.owner.quality);this.bridgeStructure.sync(this.owner.quality,this.camera.position,sim.world);const dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
     this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.lighting(sim);
     this.train.visible=state.train963;this.panzerzug.visible=state.panzerzug;
@@ -535,13 +541,13 @@ export class M01View {
     aircraft:{loaded:[...this.aircraftSources.keys()].sort(),planes:this.planes.map(p=>{const model=p.levels.find(l=>l.object.visible)?.object,prop=model?.getObjectByName('propeller');return {visible:p.visible,lod:model?.userData.lod,position:p.position.toArray(),propeller:prop?.quaternion.toArray()};})},
     renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+(b.visible===false?0:b.count),0)??0,
     stationArchitecture:this.environment?.station?.diagnostics??{ready:false,failure:this.environment?.stationFailure??null},
-    environmentProps:this.environment?.propDiagnostics,bridgePortalPolish:this.portalPolish?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
+    environmentProps:this.environment?.propDiagnostics,bridgePortalPolish:this.portalPolish?.diagnostics,bridgeStructure:this.bridgeStructure?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},
     combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),
     battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
     this.disposed=true;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}this.viewModel?.dispose();this.characters?.dispose();
-    this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
+    this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
     const textures=new Set();for(const m of Object.values(this.materials)){if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
     this.scene.traverse(n=>{if(n.isInstancedMesh)n.dispose();});this.scene.clear();this.weaponScene.clear();
   }
