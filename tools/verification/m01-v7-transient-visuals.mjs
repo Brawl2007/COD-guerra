@@ -10,6 +10,7 @@ import {driver,route} from '../../tests/helpers/m01-route.js';
 
 const out=path.resolve(process.env.M01_V7_EVIDENCE??'docs/verification/m01-runtime/final-approved-deliveries-integration-v7');
 const base='cbc7de5668a1b2e4bc646b86548196a5f4f1039a',hash=x=>createHash('sha256').update(x).digest('hex');
+const supplementary=process.argv.includes('--supplementary'),reportName=supplementary?'SUPPLEMENTARY_EXPLOSIONS.json':'TRANSIENT_COMPARISON.json';
 assert.ok(process.env.M01_V6_CHECKOUT,'Set M01_V6_CHECKOUT');
 fs.mkdirSync(path.join(out,'visual'),{recursive:true});
 const start=driver();start.step({skip:true});for(let i=0;i<20;i++)start.step();
@@ -42,10 +43,14 @@ try{
       const before=await call('snapshot'),state=await call('state');await call('repeat',2);assert.deepEqual(await call('snapshot'),before,'Pause cannot advance simulation');
       const file=`visual/${version}-${name}-${quality}.png`;await page.screenshot({path:path.join(out,file),timeout:120000});
       assert.deepEqual(pageErrors,[]);captures.push({version,name,quality,file,clock:before.clock,snapshotSha256:hash(JSON.stringify(before)),state,errors:[...pageErrors]});
-      fs.writeFileSync(path.join(out,'TRANSIENT_COMPARISON.json'),JSON.stringify({base,testedHead:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),browser:browser.version(),kind:'Existing production-renderer fixture, genuine saves/events and identical stepped controls; no authority or event injection',viewport:[1280,720],events:{grenade:grenadeEvent,eastDemolition:eastEvent},captures,errors},null,2)+'\n');
+      fs.writeFileSync(path.join(out,reportName),JSON.stringify({base,testedHead:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),browser:browser.version(),kind:'Existing production-renderer fixture, genuine saves/events and identical stepped controls; no authority or event injection',viewport:[1280,720],events:{grenade:grenadeEvent,eastDemolition:eastEvent},captures,errors},null,2)+'\n');
       console.log(`${version} ${name} ${quality}: ${state.render?.calls??'not exposed by V6 fixture'} calls / ${state.render?.triangles??'not exposed by V6 fixture'} triangles`);
     };
     await call('prepareM01',start.sim.snapshot(),quality);await page.waitForLoadState('networkidle');
+    if(supplementary){
+      await call('prepareM01',grenadeBefore,quality);await call('step',{},5);await capture('grenade-explosion-hot');
+      await call('prepareM01',eastBefore,quality);await call('step',eastControls,1);await call('step',{},5);await capture('east-demolition-hot');
+    }else{
     await call('step',{},4);await capture('weapon-hip');
     await call('step',{aim:true},16,3);await call('step',{aim:true,lookX:10},2);await capture('weapon-ads-turn');
     await call('step',{aim:true,fire:true},1);await capture('weapon-shot');
@@ -56,10 +61,11 @@ try{
     await call('step',{reload:true},1);await call('step',{},20,3);assert.equal((await call('state')).weapon.state,'RELOAD_CLIP');await capture('weapon-reload');
     await call('prepareM01',grenadeBefore,quality);await call('step',{},1);await capture('grenade-explosion');
     await call('prepareM01',eastBefore,quality);await call('step',eastControls,1);await capture('east-demolition');
+    }
     await page.close();
   }
   for(const quality of ['low','medium','high'])for(const name of [...new Set(captures.map(c=>c.name))]){
     const pair=captures.filter(c=>c.quality===quality&&c.name===name);assert.equal(pair.length,2);assert.equal(pair[0].snapshotSha256,pair[1].snapshotSha256,`${name}/${quality} equivalent gameplay`);
   }
-  console.log('PASS: 21 matched transient pairs; every simulation snapshot identical');
+  console.log(`PASS: ${supplementary?6:21} matched transient pairs; every simulation snapshot identical`);
 }finally{await browser?.close();servers.forEach(s=>s.kill('SIGTERM'));}

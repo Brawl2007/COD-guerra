@@ -11,6 +11,8 @@ import {driver,route,toStationEvacuation} from '../../tests/helpers/m01-route.js
 const out=path.resolve(process.env.M01_V7_EVIDENCE??'docs/verification/m01-runtime/final-approved-deliveries-integration-v7');
 const base='cbc7de5668a1b2e4bc646b86548196a5f4f1039a',key='cod-guerra:checkpoint:m01:v2';
 const hash=x=>createHash('sha256').update(x).digest('hex');
+const supplementary=process.argv.includes('--supplementary');
+const reportName=supplementary?'SUPPLEMENTARY_PRODUCTION.json':'VISUAL_COMPARISON.json';
 fs.mkdirSync(path.join(out,'visual'),{recursive:true});
 
 const d=driver();d.step({skip:true});const initial=d.sim.snapshot();
@@ -27,7 +29,12 @@ function camera(snapshot,x,z,tx,ty,tz){
   Object.assign(s.player,{x,y,z,angle:Math.atan2(dz,dx),pitch:Math.atan2(ty-y-1.6,Math.hypot(dx,dz)),aiming:false,sprinting:false,moveBlend:0});return s;
 }
 // Player-height cameras. No spectator transform or renderer mutation.
-const views=[
+const views=supplementary?[
+  ['soldiers-close',camera(repair,-121,15,-122,-1.7,10)],
+  ['train-963-close',camera(trainState,1088,-12,1075,2,-2.5)],
+  // Explicit artistic inspection, not a navigable point or player-height gameplay claim.
+  ['station-roof-artistic',(()=>{const s=camera(initial,-397,4,-399,10.5,42);s.player.y=17.5;s.player.pitch=Math.atan2(10.5-19.1,Math.hypot(2,38));return s;})()]
+]:[
   ['station-frontal',camera(initial,-397,17,-397,3,39)],
   ['station-oblique',camera(initial,-323,10,-403,5,40)],
   ['station-platform',camera(initial,-392,65,-391,4,45)],
@@ -91,7 +98,7 @@ try{
         train:diagnostics.m01.wagons,locomotive:diagnostics.m01.locomotive,panzerzug:diagnostics.m01.panzerzug,
         battlefieldFx:diagnostics.m01.battlefieldFx,errors,failed};
       captures.push(record);await page.locator('#back-menu').click();
-      fs.writeFileSync(path.join(out,'VISUAL_COMPARISON.json'),JSON.stringify({base,testedHead:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),kind:'Production app, real Schema 2 saves and frozen player-height cameras; no tick or renderer injection',browserVersion:browser.version(),viewport:{width:1280,height:720},builds,captures},null,2)+'\n');
+      fs.writeFileSync(path.join(out,reportName),JSON.stringify({base,testedHead:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),kind:supplementary?'Production app, genuine saves; soldiers/train at player height, elevated roof pose explicitly artistic':'Production app, real Schema 2 saves and frozen player-height cameras; no tick or renderer injection',browserVersion:browser.version(),viewport:{width:1280,height:720},builds,captures},null,2)+'\n');
       console.log(`${version} ${name} ${quality}: ${record.drawCalls} calls / ${record.triangles} triangles`);
       }
       await page.close();

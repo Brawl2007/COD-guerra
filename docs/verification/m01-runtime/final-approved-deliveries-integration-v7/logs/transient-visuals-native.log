@@ -1,0 +1,43 @@
+V6 weapon-hip low: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 weapon-ads-turn low: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 weapon-shot low: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 weapon-brass low: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 weapon-reload low: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 grenade-explosion low: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 east-demolition low: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V7 weapon-hip low: 250 calls / 442493 triangles
+V7 weapon-ads-turn low: 250 calls / 442493 triangles
+V7 weapon-shot low: 254 calls / 442501 triangles
+V7 weapon-brass low: 260 calls / 442731 triangles
+V7 weapon-reload low: 255 calls / 444217 triangles
+V7 grenade-explosion low: 253 calls / 442565 triangles
+V7 east-demolition low: 186 calls / 558388 triangles
+V6 weapon-hip medium: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 weapon-ads-turn medium: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 weapon-shot medium: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 weapon-brass medium: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 weapon-reload medium: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 grenade-explosion medium: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 east-demolition medium: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V7 weapon-hip medium: 286 calls / 569042 triangles
+V7 weapon-ads-turn medium: 286 calls / 569042 triangles
+V7 weapon-shot medium: 290 calls / 569050 triangles
+V7 weapon-brass medium: 296 calls / 569280 triangles
+V7 weapon-reload medium: 291 calls / 570766 triangles
+V7 grenade-explosion medium: 289 calls / 569142 triangles
+V7 east-demolition medium: 323 calls / 914266 triangles
+V6 weapon-hip high: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 weapon-ads-turn high: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 weapon-shot high: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 weapon-brass high: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 weapon-reload high: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 grenade-explosion high: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 east-demolition high: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V7 weapon-hip high: 295 calls / 629657 triangles
+V7 weapon-ads-turn high: 295 calls / 629657 triangles
+V7 weapon-shot high: 299 calls / 629665 triangles
+V7 weapon-brass high: 305 calls / 629895 triangles
+V7 weapon-reload high: 300 calls / 631381 triangles
+V7 grenade-explosion high: 298 calls / 629781 triangles
+V7 east-demolition high: 334 calls / 992380 triangles
+PASS: 21 matched transient pairs; every simulation snapshot identical
