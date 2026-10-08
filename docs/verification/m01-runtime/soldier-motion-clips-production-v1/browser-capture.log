@@ -1,0 +1,7 @@
+{"clip":"sprint","captures":5,"sequence_frames":58}
+{"clip":"crouch_walk","captures":5,"sequence_frames":87}
+{"clip":"turn_left","captures":5,"sequence_frames":47}
+{"clip":"turn_right","captures":5,"sequence_frames":47}
+{"clip":"hit_front","captures":5,"sequence_frames":35}
+{"clip":"near_miss_duck","captures":5,"sequence_frames":42}
+{"pass":true,"captures":30,"variants":36,"videos":6,"errors":[],"additional_draw_calls":0}
