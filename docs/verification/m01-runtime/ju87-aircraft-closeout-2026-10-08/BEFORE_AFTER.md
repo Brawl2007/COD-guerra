@@ -18,17 +18,17 @@ Os originais são PNG sem alterações. Os recortes são uma janela 1:1 de 320×
 
 [`tools/verification/m01-ju87-silhouette-metrics.py`](../../../../tools/verification/m01-ju87-silhouette-metrics.py) segmenta cada imagem sozinha (fundo local por mediana 21×21; avião = píxeis a mais de 18 de luminância do fundo) e reporta a mediana; [SILHOUETTE_METRICS.json](SILHOUETTE_METRICS.json) tem os valores completos. A contagem de píxeis inclui a cruz da mira, igual nos dois lados.
 
-| Captura | Píxeis do avião BASE / CANDIDATA | Luminância mediana do avião BASE → CANDIDATA | Céu (mediana) | Contraste céu − avião BASE → CANDIDATA |
+| Captura | Píxeis do avião BASE / CANDIDATA | Luminância mediana do avião BASE → CANDIDATA | Céu (mediana) BASE / CANDIDATA | Contraste céu − avião BASE → CANDIDATA |
 |---|---:|---:|---:|---:|
-| raid-low | 217 / 214 | 14.6 → 79.3 | 170.9 | 157.3 → 91.5 |
-| raid-medium | 225 / 214 | 14.9 → 76.8 | 171.9 | 155.9 → 95.1 |
-| raid-high | 229 / 213 | 15.5 → 76.2 | 171.8 | 156.3 → 95.6 |
-| raid-low-t30 | 289 / 287 | 14.3 → 79.2 | 161.5 | 147.9 → 82.2 |
-| raid-high-t30 | 282 / 288 | 14.3 → 79.8 | 161.5 | 147.2 → 81.7 |
+| raid-low | 217 / 214 (-1 %) | 14.6 → 79.3 | 171.9 / 170.9 | 157.3 → 91.5 |
+| raid-medium | 225 / 214 (-5 %) | 14.9 → 76.8 | 170.9 / 171.9 | 155.9 → 95.1 |
+| raid-high | 229 / 213 (-7 %) | 15.5 → 76.2 | 171.8 / 171.8 | 156.3 → 95.6 |
+| raid-low-t30 | 289 / 287 (-1 %) | 14.3 → 79.2 | 162.2 / 161.5 | 147.9 → 82.2 |
+| raid-high-t30 | 282 / 288 (+2 %) | 14.3 → 79.8 | 161.5 / 161.5 | 147.2 → 81.7 |
 
 ## Leitura
 
 - **Barriga e volume:** na base o avião é um recorte quase preto (luminância mediana ~15 contra um céu a ~160–172). Na candidata a barriga RLM 65 lê-se como superfície pintada iluminada pelo solo (~76–80); o contraste com o céu continua alto (~82–96), por isso o avião não se perde no céu.
-- **Forma:** a área da silhueta é a mesma (diferenças de poucos píxeis, dentro do deslocamento entre corridas); a gaivota, as calças e a cauda continuam legíveis em LOD1 e LOD2.
+- **Forma:** o contorno é o do mesmo modelo (a inclinação de apresentação, de poucos graus, muda ligeiramente a projecção); a gaivota, as calças e a cauda continuam legíveis em LOD1 e LOD2. A +4 s a área segmentada da candidata é 1–7 % menor (−3 a −16 px), porque as bordas agora claras ficam abaixo do limiar de 18 de luminância da segmentação; a +30 s fica igual (−1 % / +2 %).
 - **Atitude:** a +30 s a candidata mostra a inclinação para o lado da deriva; o rumo e a posição são os mesmos.
 - **O que não se vê a esta distância (~210–245 m):** o disco da hélice, o vidro e a tripulação ficam abaixo de um píxel útil; vêem-se de perto na galeria (`docs/assets/m01-aircraft/ju87_views.png`, `ju87_details.png`). Fade e histerese não aparecem em fotos estáticas; estão cobertos por testes (`tests/m01-aircraft-runtime.test.js`) e pelos diagnósticos `fade`/`attitude` em `captures/*/raid-capture*.json`.

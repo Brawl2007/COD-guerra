@@ -64,7 +64,7 @@ O manifesto repete esta tabela em `measures`, com `estimated: true/false` e a fo
 
 | Ficheiro | Triângulos | Draw calls | Texturas | Tamanho | Uso sugerido |
 | --- | --- | --- | --- | --- | --- |
-| `m01_ju87_b1_lod0.glb` | 14 710 | 7 | cor 2048² JPEG, ORM 1024² JPEG, normais 1024² PNG, disco 128² PNG | 922 kB | perto, até 150 m: galeria e futuros passes próximos (no caminho actual os aviões ficam a ≥ 163 m e nunca o mostram) |
+| `m01_ju87_b1_lod0.glb` | 14 710 | 7 | cor 2048² JPEG, ORM 1024² JPEG, normais 1024² PNG, disco 128² PNG | 922 kB | perto, até 150 m: galeria e futuros passes próximos (no caminho actual os aviões voam a 160–200 m de altitude com o jogador no solo e nunca o mostram) |
 | `m01_ju87_b1_lod1.glb` | 5 357 | 7 | cor 1024², ORM 512², normais 512², disco 128² | 359 kB | 150 a 600 m (alto e médio no raid) |
 | `m01_ju87_b1_lod2.glb` | 1 929 | 7 | cor 512², ORM 256², disco 128² | 136 kB | longe; qualidade baixa (Chromebook) |
 
@@ -131,8 +131,8 @@ As capturas foram renderizadas com o GLTFLoader e o AnimationMixer do three.js e
   - céu de ambiente 256×128 (PMREM do three.js) só nos aviões: reflexo no vidro e no metal e o ressalto do solo na barriga RLM 65, que só com a luz hemisférica da cena ficava quase preta contra o céu;
   - hélices com rpm (~1476–1524) e fase próprias; inclinação para o lado da deriva lateral do caminho existente e pequenas oscilações, sem mudar a posição nem o rumo (`rotation.y = 0,1`);
   - LOD com histerese de 10 % nos limiares (o mínimo por qualidade prevalece);
-  - fade por dithering (`alphaHash`) e opacidade durante 3 s depois de `evt_m01_planes_heard` e 2,5 s de cada lado da volta de 90 s do caminho, que antes teleportava os aviões ~360 m; o nível seleccionado (ou o proxy de fallback) continua visível e reportado nos diagnósticos com fade 0;
-  - `compileAsync` por avião ao carregar (shaders e PMREM do céu prontos antes do primeiro frame do raid) e o disco de dupla face desenhado numa só passagem (`forceSinglePass`).
+  - fade por dithering (`alphaHash`) e opacidade durante 3 s depois de `evt_m01_planes_heard` e 2,5 s de cada lado da volta de 90 s do caminho, que antes teleportava os aviões ~360 m; o nível seleccionado continua visível e reportado nos diagnósticos com fade 0. O proxy de caixas (fallback sem a arte opcional) partilha material e não tem fade: nesse caso a volta continua a saltar, como antes;
+  - `compileAsync` ao carregar, só dos níveis que a qualidade actual pode mostrar (em Baixa, só o LOD2): shaders e PMREM do céu ficam prontos antes do primeiro frame do raid; o disco de dupla face é desenhado numa só passagem (`forceSinglePass`).
 - Prova em produção, por continuação de snapshot genuíno, em `docs/verification/m01-runtime/aircraft/` (integração) e `docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/` (esta revisão, antes/depois); não é novo playtest contínuo/humano.
 - **Dados que a engine poderia expor** (proposta, não implementada):
   - início do mergulho de cada avião, para abrir os freios;

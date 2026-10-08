@@ -12,9 +12,9 @@ Build de produção, viewport 1280×720, Chromium headless com ANGLE/SwiftShader
 
 ## Leitura
 
-- **Draw calls:** +2 por Ju 87 dentro do frustum (vidro da capota e disco da hélice). A +4 s só o avião visado está no ecrã (+2); a +30 s estão os três (+6). O disco de dupla face é desenhado numa só passagem (`forceSinglePass`); sem isso eram +3 por avião (medido numa captura anterior: 144 → 153 e 154 → 163 a +30 s).
+- **Draw calls:** +2 por Ju 87 dentro do frustum (vidro da capota e disco da hélice). A +4 s só o avião visado está no ecrã (+2); a +30 s estão os três (+6). O disco de dupla face é desenhado numa só passagem (`forceSinglePass`); sem isso o three.js desenha materiais transparentes de dupla face em duas passagens (+3 por avião).
 - **Triângulos:** +0,08 % a +0,43 % do frame (LOD2: 1 929 contra 1 636; LOD1: 5 357 contra 4 730 por avião).
 - **Texturas (`renderer.info.memory.textures`, texturas na GPU):** +5 nas três qualidades. Entram a textura do disco, o céu de ambiente e os alvos do seu PMREM, e o ORM do LOD2 (Baixa) ou o mapa de normais do LOD1 (Média/Alta). As texturas do LOD0 nunca chegam à GPU no caminho actual, porque o LOD0 nunca é seleccionado.
-- **Geometrias:** +11 a +17 (malhas novas `canopy`/`propeller_disc` e os clones por nível).
+- **Geometrias:** +11 em Baixa: 9 planos internos do PMREM do céu de ambiente (three.js r186) e as 2 malhas novas (`canopy`, `propeller_disc`); os clones por nível partilham a geometria. Em Média/Alta há mais +6, já presentes no menu e ligados ao carregamento dos aviões (desaparecem com os GLB bloqueados) mas não ao LOD0; o verificador independente não conseguiu atribuí-los com precisão.
 - **Materiais:** um clone leve por avião × nível × material (27 instâncias, 4 programas: `ju87_b1` com e sem mapa de normais, vidro, disco). Os programas e o PMREM são preparados com `compileAsync` ao carregar, antes do primeiro frame do raid.
 - **Download:** LOD0/1/2 = 922/359/136 kB (antes 652/248/96 kB). Os três LOD continuam a ser descarregados em qualquer qualidade, como antes; o LOD0 (~24 MB de texturas descodificadas) nunca aparece no caminho actual. Carregá-lo só quando for necessário é o próximo passo recomendado para memória.

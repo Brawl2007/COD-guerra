@@ -97,6 +97,7 @@ test('Ju 87 fade hides the 90 s path wrap and eases in after the planes are hear
   const {view}=namedFixture();await view.loadAircraft();
   const state={stukas:true,secondRaid:false},player={x:0,y:0,z:0};view.owner.quality='high';
   const shown=time=>view.planes[0].levels.find(l=>l.object.visible);
+  view.updateAircraft(state,178.75,player);const closing=view.planes[0].userData.fade;assert.ok(closing>.3&&closing<.7,'fades out before the wrap');
   view.updateAircraft(state,180.0,player);assert.equal(view.planes[0].userData.fade,0);
   assert.ok(shown()?.object.userData.materials.every(m=>m.opacity===0),'fully dissolved exactly at the wrap (level kept, not culled)');
   assert.equal(view.planes[0].visible,true,'raid state is unchanged; only the rendering fades');
@@ -119,7 +120,7 @@ test('Ju 87 LOD keeps 10 % hysteresis at thresholds while the quality floor alwa
   view.owner.quality='medium';assert.equal(lod(10),1);
 });
 
-test('at fade 0 the selected level (GLB or fallback proxy) stays visible and reported; opacity does the hiding',async()=>{
+test('at fade 0 the selected level stays visible and reported: GLB materials fully transparent, fallback proxy unfaded',async()=>{
   const state={stukas:true,secondRaid:false},player={x:0,y:0,z:0},time=146;
   const proxy=fixture(()=>true).view;await proxy.loadAircraft();proxy.updateAircraft(state,time,player,time);
   assert.ok(proxy.planes.every(p=>p.userData.fade===0&&p.levels.filter(l=>l.object.visible).length===1&&p.levels[p.userData.level].object.userData.lod==='proxy'));
@@ -139,4 +140,13 @@ test('the entry fade reads the saved planes_heard time of the real simulation',(
   assert.equal(ju87Fade(heard,heard),0);assert.equal(ju87Fade(heard+3,heard),1);
   const restored=structuredClone(d.sim.snapshot());assert.equal(restored.consumed.evt_m01_planes_heard,heard,'saved with the checkpoint');
   assert.equal(ju87HeardAt({consumed:{}}),undefined);assert.equal(ju87HeardAt(undefined),undefined);
+});
+
+test('load-time warm-up compiles only the levels the current quality can show',async()=>{
+  for(const [quality,want] of [['low',[2]],['medium',[1,2]],['high',[0,1,2]]]){
+    const {view}=namedFixture(),compiled=[];view.owner.quality=quality;view.camera=new THREE.PerspectiveCamera();
+    view.engine={compileAsync:(object,camera,scene)=>{assert.equal(scene,view.scene);compiled.push(object.userData.lod);return Promise.resolve(object);}};
+    await view.loadAircraft();
+    assert.deepEqual(compiled,view.planes.flatMap(()=>want),quality);
+  }
 });

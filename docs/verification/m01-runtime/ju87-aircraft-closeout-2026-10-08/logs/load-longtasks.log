@@ -1,0 +1,8 @@
+{"label":"BASE","quality":"low","rep":0,"longtasks":3,"total_ms":6314,"max_ms":3594,"after_aircraft_loaded_ms":0,"aircraft_loaded_at_ms":8746}
+{"label":"BASE","quality":"low","rep":1,"longtasks":3,"total_ms":5955,"max_ms":3430,"after_aircraft_loaded_ms":0,"aircraft_loaded_at_ms":8531}
+{"label":"BASE","quality":"high","rep":0,"longtasks":3,"total_ms":6152,"max_ms":3299,"after_aircraft_loaded_ms":0,"aircraft_loaded_at_ms":8776}
+{"label":"BASE","quality":"high","rep":1,"longtasks":3,"total_ms":5849,"max_ms":3240,"after_aircraft_loaded_ms":0,"aircraft_loaded_at_ms":8577}
+{"label":"CANDIDATE","quality":"low","rep":0,"longtasks":4,"total_ms":8972,"max_ms":3555,"after_aircraft_loaded_ms":0,"aircraft_loaded_at_ms":11412}
+{"label":"CANDIDATE","quality":"low","rep":1,"longtasks":4,"total_ms":8206,"max_ms":3370,"after_aircraft_loaded_ms":0,"aircraft_loaded_at_ms":10706}
+{"label":"CANDIDATE","quality":"high","rep":0,"longtasks":4,"total_ms":8782,"max_ms":3300,"after_aircraft_loaded_ms":0,"aircraft_loaded_at_ms":11547}
+{"label":"CANDIDATE","quality":"high","rep":1,"longtasks":4,"total_ms":8616,"max_ms":3362,"after_aircraft_loaded_ms":0,"aircraft_loaded_at_ms":11611}
