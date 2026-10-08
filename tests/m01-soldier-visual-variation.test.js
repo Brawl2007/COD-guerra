@@ -84,7 +84,17 @@ test('real continuation and its CP backup keep the same visual identities; Germa
 });
 test('integration preserves gameplay, hitbox/muzzle, save, locomotion and non-presentation base assets byte-identical',()=>{
  const base='5f3cc34f53c61beec52255d67f8babd7194c9f7f',paths=execFileSync('git',['ls-tree','-r','--name-only',base],{encoding:'utf8'}).trim().split('\n').filter(p=>/^(src|assets|missions)\//.test(p));
- for(const p of paths){if(integratedPresentation.has(p))continue;assert.deepEqual(readFileSync(new URL('../'+p,import.meta.url)),execFileSync('git',['show',base+':'+p],{maxBuffer:32*1024*1024}),p);}
+ for(const p of paths){
+  if(integratedPresentation.has(p))continue;
+  const baseline=execFileSync('git',['show',base+':'+p],{maxBuffer:32*1024*1024});
+  const actual=readFileSync(new URL('../'+p,import.meta.url));
+  if(p==='missions/m01-tczew/ENGINE_CONTRACT.md'){
+    const start=baseline.indexOf(Buffer.from('Dados revistos nos PRs #8 e #10;'));
+    assert.ok(start>=0,'baseline engine contract marker');
+    assert.ok(actual.includes(baseline.subarray(start)),'original M01 gameplay contract remains intact');
+    assert.match(actual.toString('utf8'),/## Apresentação das animações — V1 \(schema 2\)/);
+  }else{assert.deepEqual(actual,baseline,p);}
+ }
  const file=readFileSync(new URL('../src/render/m01-characters.js',import.meta.url),'utf8'),old=execFileSync('git',['show',base+':src/render/m01-characters.js'],{encoding:'utf8'});
  const section=(s,begin,end)=>s.slice(s.indexOf(begin),s.indexOf(end,s.indexOf(begin)));
  assert.equal(section(file,'  sample(','  create('),section(old,'  sample(','  create('));
