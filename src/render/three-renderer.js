@@ -257,10 +257,7 @@ export class Renderer {
     for(const [id,view] of this.actorViews)if(!ids.has(id)){this.releaseActor(view);this.actorViews.delete(id);}
     this.mixers.forEach(mixer=>mixer.update(dt));
     this.updateWeapon(player,weapon,time,dt);
-    this.updateEffects(time,battle);this.weaponWorldFx.update(time/1000,world);
-    // Once, before any shot: compile and link the carbine's shot-FX programs instead of stalling the first shot frame.
-    this.weaponFxWarm??=prewarmWeaponFx(this.engine,[{scene:this.weaponScene,camera:this.weaponCamera,objects:this.weaponFx.warmObjects},
-      {scene:this.scene,camera:this.camera,objects:this.weaponWorldFx.warmObjects([WEAPON_PRESENTATION.m1_carbine.casing.kind])}]);
+    this.updateEffects(time,battle);this.weaponWorldFx.update(time/1000,world);this.warmWeaponFx();
     const angle=time*.00001;this.aircraft.position.set(80-Math.sin(angle)*200,100,20+Math.cos(angle)*240);this.aircraft.rotation.y=-angle;
     if(!this.grenadeViews)this.grenadeViews=new Map();
     const grenadeIds=new Set(grenades.map(g=>g.id));
@@ -272,6 +269,17 @@ export class Renderer {
     for(const [id,view] of this.grenadeViews)if(!grenadeIds.has(id)){this.effects.remove(view);this.grenadeViews.delete(id);}
     this.engine.info.autoReset=false;this.engine.info.reset();this.engine.clear();
     this.engine.render(this.scene,this.camera);this.engine.clearDepth();this.engine.render(this.weaponScene,this.weaponCamera);
+  }
+  /**
+   * The carbine's shot-FX programs compiled and linked before they are needed (prewarmWeaponFx): the weapon pass once,
+   * the world pass again when a quality change turns shadow maps on or off (the bench's world lights never change).
+   */
+  warmWeaponFx(){
+    const key=`${this.engine.shadowMap?.enabled}`;this.weaponFxWarm??=new Set();
+    if(this.weaponFxWarm.has(key))return 0;
+    const passes=[{scene:this.scene,camera:this.camera,objects:this.weaponWorldFx.warmObjects([WEAPON_PRESENTATION.m1_carbine.casing.kind])}];
+    if(!this.weaponFxWarm.size)passes.unshift({scene:this.weaponScene,camera:this.weaponCamera,objects:this.weaponFx.warmObjects});
+    this.weaponFxWarm.add(key);return prewarmWeaponFx(this.engine,passes);
   }
   updateWeapon(player,weapon,time,dt){
     // Presentation clock = simulation ms. A frozen/restored clock rebuilds the blends at rest instead of tweening.

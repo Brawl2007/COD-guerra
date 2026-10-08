@@ -390,7 +390,7 @@ export class WeaponWorldFx {
     return this.counts;
   }
   get diagnostics(){return {...this.counts,capacity:{...this.capacity}};}
-  /** Objects whose programs prewarmWeaponFx compiles: muzzle-cloud sprites, the clip pool and the case pools of `kinds`. */
+  /** Objects whose programs prewarmWeaponFx compiles: muzzle-cloud sprites, the clip pool and the case pools of `kinds` (created here). */
   warmObjects(kinds=[]){for(const kind of kinds)this.casingMesh(kind);return [...this.sprites,...this.meshes.values()];}
   dispose(){
     for(const mesh of this.meshes.values()){mesh.removeFromParent();mesh.dispose();if(mesh.geometry!==this.clipGeometry)mesh.geometry.dispose();}
@@ -400,19 +400,26 @@ export class WeaponWorldFx {
 }
 
 /**
- * Compile and link the shot-FX programs before the first shot. Their sprites and pools are hidden at rest, so the
- * first shot used to build them on that frame, and software WebGL (or a driver without parallel compile) finishes
- * the compile/link only when a program is first used: a stall of seconds in SwiftShader, a stutter on weak GPUs.
- * Each object is compiled alone against its own scene (`compile(object, camera, scene)`: that scene's lights, fog
- * and environment, so the programs the shot will use) and each program is used once (its uniform lookup), so the
- * link happens now. Nothing is drawn and no visibility changes. Returns the number of programs prepared (0 without
- * a WebGL renderer).
+ * Compile and link the shot-FX programs before they are needed. The flash layers, smoke wisps and muzzle-cloud sprites
+ * are hidden at rest (and the case pool only exists from the first case), so the first shot used to build their
+ * programs on that frame, and software WebGL (or a driver without parallel compile) finishes the compile/link only when
+ * a program is first used: a stall of seconds in SwiftShader, a stutter on weak GPUs. Each object is compiled alone
+ * against its own scene (`compile(object, camera, scene)`: that scene's visible lights, shadows, fog and environment,
+ * so the programs the shot will use) and each program is used once (its uniform lookup), so the link happens now.
+ * `lights` flicker while playing: every on/off combination is compiled, then their visibility is restored. Nothing is
+ * drawn. Program keys follow the light setup, so callers run this again when that setup changes. Returns the number of
+ * programs prepared (0 without a WebGL renderer).
  */
 export function prewarmWeaponFx(engine,passes){
   if(typeof engine?.compile!=='function')return 0;const programs=new Set();
-  for(const {scene,camera,objects}of passes)for(const object of objects)
-    for(const material of engine.compile(object,camera,scene)??[])
-      for(const program of engine.properties?.get(material)?.programs?.values()??[])programs.add(program);
+  for(const {scene,camera,objects,lights=[]}of passes){
+    const saved=lights.map(l=>l.visible);
+    try{
+      for(let mask=0;mask<1<<lights.length;mask++){lights.forEach((l,i)=>{l.visible=Boolean(mask>>i&1);});
+        for(const object of objects)for(const material of engine.compile(object,camera,scene)??[])
+          for(const program of engine.properties?.get(material)?.programs?.values()??[])programs.add(program);}
+    }finally{lights.forEach((l,i)=>{l.visible=saved[i];});}
+  }
   for(const program of programs)program.getUniforms?.();
   return programs.size;
 }

@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import {WEAPON_PRESENTATION,weaponRecoil,recoilImpulse,idleSway,advanceLookLag,mechanicalPulse,viewPointToWorld,viewUp,ejectaPose,
   WeaponViewFx,WeaponWorldFx,WeaponLighting,casingGeometry,stripperClipGeometry,prewarmWeaponFx} from '../src/render/first-person-weapon-fx.js';
 import {Renderer} from '../src/render/three-renderer.js';
+import {M01View} from '../src/render/m01-view.js';
 import {presentationPose,WZ29_VISUAL} from '../src/render/m01-wz29-presentation.js';
 import {M01ViewModel} from '../src/render/m01-viewmodel.js';
 import {M01Simulation} from '../src/game/m01-simulation.js';
@@ -427,26 +428,75 @@ test('a restore drops the barrel smoke of the previous timeline: the restored fr
   }finally{r.dispose();f.dispose();}
 });
 
-test('shot-FX programs are compiled and linked before the first shot, each against its own scene, without drawing or showing anything',()=>{
-  const weaponScene=new THREE.Scene(),world=new THREE.Scene(),weapon=new THREE.Group();weaponScene.add(weapon);weapon.visible=false;
+// Stub of the three.js surface prewarmWeaponFx uses. compile(object, camera, targetScene) returns the object's materials;
+// each material gets one program per light setup (the visible lights of the target scene), listed in
+// renderer.properties; getUniforms() is a program's first use, where a deferred link completes. Only ids, names and
+// booleans are compared, so a failing assertion never prints whole scene graphs.
+function warmEngine(){
+  const calls=[],used=[],properties=new Map();
+  const engine={shadowMap:{enabled:false},properties:{get:m=>properties.get(m)},compile(object,camera,target){
+    const lights=[];target.traverseVisible(o=>{if(o.isLight)lights.push(o.id);});const key=lights.join(','),found=new Set();
+    object.traverse(o=>{if(o.material)found.add(o.material);});
+    for(const m of found){const entry=properties.get(m)??{programs:new Map()};properties.set(m,entry);
+      if(!entry.programs.has(key))entry.programs.set(key,{getUniforms:()=>used.push(`${m.id}:${key}`)});}
+    calls.push({object:object.id,camera:camera.id,target:target.id,lights:key});return found;}};
+  return {engine,calls,used};
+}
+const ids=list=>list.map(o=>o.id);
+
+test('shot-FX programs are compiled and linked ahead of the shot, per object against its own scene, for every state of a flickering light',()=>{
+  const weaponScene=new THREE.Scene(),world=new THREE.Scene(),weapon=new THREE.Group(),burst=new THREE.PointLight();weaponScene.add(weapon,new THREE.DirectionalLight());
+  world.add(new THREE.HemisphereLight(),burst);weapon.visible=false;burst.visible=false;
   const fx=new WeaponViewFx(weaponScene,wz29);fx.attach(weapon,WZ29_VISUAL.muzzle);const worldFx=new WeaponWorldFx(world);
-  const camera=new THREE.PerspectiveCamera(),calls=[],used=[],properties=new Map();
-  // Stub of the three.js surface used: compile(object, camera, targetScene) returns its materials, and their programs
-  // are listed in renderer.properties; getUniforms() is a program's first use (where the deferred link completes).
-  const engine={properties:{get:m=>properties.get(m)},compile(object,cam,target){const found=new Set();object.traverse(o=>{if(o.material)found.add(o.material);});
-    for(const m of found)if(!properties.has(m)){const program={getUniforms:()=>used.push(m)};properties.set(m,{programs:new Map([['key',program]])});}
-    calls.push({object,cam,target});return found;}};
+  const viewCamera=new THREE.PerspectiveCamera(),worldCamera=new THREE.PerspectiveCamera(),{engine,calls,used}=warmEngine();
   try{
-    const objects=worldFx.warmObjects([wz29.casing.kind]);assert.ok(worldFx.meshes.has(wz29.casing.kind),'the case pool exists before the first case');
-    const rest=new Map([weapon,...fx.warmObjects,...objects].map(o=>[o,o.visible]));assert.ok(fx.warmObjects.every(o=>!o.visible),'the view FX are hidden at rest');
-    const prepared=prewarmWeaponFx(engine,[{scene:weaponScene,camera,objects:fx.warmObjects},{scene:world,camera,objects}]);
-    // Only the FX objects are compiled (not the whole scene), each with its own scene as the target for lights/fog/environment.
-    assert.deepEqual(calls.map(c=>c.object),[...fx.warmObjects,...objects]);
-    for(const c of calls){assert.equal(c.cam,camera);assert.equal(c.target,fx.warmObjects.includes(c.object)?weaponScene:world);}
-    // Every program was used once now (the flash layers too, despite their hidden weapon parent).
-    const materials=new Set([...fx.warmObjects,...objects].map(o=>o.material));
-    assert.equal(prepared,materials.size);assert.deepEqual(new Set(used),materials);assert.equal(used.length,materials.size);
-    for(const [o,visible]of rest)assert.equal(o.visible,visible,o.name);
+    // What is warmed: the three flash layers and nine wisps of the weapon pass; the 16 muzzle-cloud sprites, the clip
+    // pool and the case pool (created here, before the first case) of the world pass.
+    assert.deepEqual(fx.warmObjects.map(o=>o.name),[...fx.layers,...fx.wisps].map(o=>o.name));assert.equal(fx.layers.length,3);assert.equal(fx.wisps.length,9);
+    const objects=worldFx.warmObjects([wz29.casing.kind]),names=objects.map(o=>o.name);
+    assert.equal(names.filter(n=>n==='shot_smoke').length,16);assert.ok(names.includes('ejected_clip')&&names.includes(`ejected_${wz29.casing.kind}`),names.join());assert.equal(objects.length,18);
+    const rest=new Map([weapon,burst,...fx.warmObjects,...objects].map(o=>[o.id,o.visible]));assert.ok(fx.warmObjects.every(o=>!o.visible),'the view FX are hidden at rest');
+    const prepared=prewarmWeaponFx(engine,[{scene:weaponScene,camera:viewCamera,objects:fx.warmObjects},{scene:world,camera:worldCamera,objects,lights:[burst]}]);
+    // Each object alone, against its own scene and camera; the world objects once with the burst light off, once on.
+    const weaponCalls=calls.slice(0,fx.warmObjects.length),worldCalls=calls.slice(fx.warmObjects.length);
+    assert.deepEqual(weaponCalls.map(c=>c.object),ids(fx.warmObjects));assert.ok(weaponCalls.every(c=>c.target===weaponScene.id&&c.camera===viewCamera.id));
+    assert.deepEqual(worldCalls.map(c=>c.object),[...ids(objects),...ids(objects)]);assert.ok(worldCalls.every(c=>c.target===world.id&&c.camera===worldCamera.id));
+    assert.deepEqual([...new Set(worldCalls.map(c=>c.lights.split(',').includes(String(burst.id))))],[false,true],'both burst-light states');
+    // Every program was used exactly once now (the flash layers too, despite their hidden weapon parent).
+    const programs=new Set(fx.warmObjects.map(o=>o.material.id)).size+2*new Set(objects.map(o=>o.material.id)).size;
+    assert.equal(prepared,programs);assert.equal(used.length,programs);assert.equal(new Set(used).size,programs);
+    // Nothing shown, the light restored, nothing drawn.
+    for(const [id,visible]of rest)assert.equal(weaponScene.getObjectById(id)?.visible??world.getObjectById(id)?.visible,visible,`object ${id}`);
     assert.equal(prewarmWeaponFx(null,[]),0);assert.equal(prewarmWeaponFx({},[]),0);
   }finally{fx.dispose();worldFx.dispose();}
+});
+
+test('M01 and the bench warm their shot FX before the world render, and again whenever the world light setup changes',()=>{
+  // M01: the weapon pass once; the world pass per (shadow maps, sun shadow) setup, with the burst light in both states.
+  const make=()=>{const weaponScene=new THREE.Scene(),scene=new THREE.Scene(),weaponCamera=new THREE.PerspectiveCamera(),camera=new THREE.PerspectiveCamera();
+    weaponScene.add(new THREE.DirectionalLight());const sun=new THREE.DirectionalLight(),explosionLight=new THREE.PointLight();explosionLight.visible=false;scene.add(sun,explosionLight);
+    return {weaponScene,scene,weaponCamera,camera,sun,explosionLight};};
+  const m=make(),{engine,calls}=warmEngine(),fallbackFx=new WeaponViewFx(m.weaponScene,wz29),rigFx=new WeaponViewFx(m.weaponScene,wz29,{light:fallbackFx.light}),worldFx=new WeaponWorldFx(m.scene);
+  const view={...m,engine,fallbackFx,viewModel:{fx:rigFx},weaponWorldFx:worldFx};m.sun.castShadow=false;
+  const b=make(),bench=warmEngine(),carbineFx=new WeaponViewFx(b.weaponScene,carbine),carbineWorld=new WeaponWorldFx(b.scene),renderer={...b,engine:bench.engine,weaponFx:carbineFx,weaponWorldFx:carbineWorld};
+  try{
+    const weaponObjects=[...fallbackFx.warmObjects,...rigFx.warmObjects],step=()=>{const from=calls.length;M01View.prototype.warmWeaponFx.call(view);return calls.slice(from);};
+    let c=step(),world=worldFx.warmObjects([wz29.casing.kind]);
+    assert.deepEqual(c.filter(x=>x.target===m.weaponScene.id).map(x=>x.object),ids(weaponObjects),'weapon pass on the first frame');
+    assert.equal(c.filter(x=>x.target===m.scene.id).length,2*world.length,'world pass, burst light off and on');assert.ok(worldFx.meshes.has(wz29.casing.kind));
+    assert.equal(m.explosionLight.visible,false);assert.equal(step().length,0,'same setup: nothing to do');
+    m.sun.castShadow=true;c=step();assert.ok(c.length===2*world.length&&c.every(x=>x.target===m.scene.id),'sunrise shadows: the world pass again, the weapon pass not');
+    engine.shadowMap.enabled=true;assert.equal(step().length,2*world.length,'shadow quality: the world pass again');
+    engine.shadowMap.enabled=false;assert.equal(step().length,0,'a setup seen before is already warm');
+    // Bench: the same once-per-setup rule; its world lights never change, only shadow maps with quality.
+    const benchStep=()=>{const from=bench.calls.length;Renderer.prototype.warmWeaponFx.call(renderer);return bench.calls.slice(from);};
+    c=benchStep();const benchWorld=carbineWorld.warmObjects([carbine.casing.kind]);
+    assert.deepEqual(c.filter(x=>x.target===b.weaponScene.id).map(x=>x.object),ids(carbineFx.warmObjects));assert.equal(c.filter(x=>x.target===b.scene.id).length,benchWorld.length);
+    assert.ok(carbineWorld.meshes.has(carbine.casing.kind));assert.equal(benchStep().length,0);
+    bench.engine.shadowMap.enabled=true;c=benchStep();assert.ok(c.length===benchWorld.length&&c.every(x=>x.target===b.scene.id));
+    // Both renderers call it every frame before drawing the world (and M01 after its lighting has set the sun's shadow).
+    const order=(fn,keys)=>{const src=fn.toString(),at=keys.map(k=>src.indexOf(k));assert.ok(at.every((v,i)=>v>=0&&(!i||v>at[i-1])),`${keys.join(' < ')}: ${at}`);};
+    order(M01View.prototype.render,['this.lighting(','this.warmWeaponFx()','this.engine.render(this.scene,this.camera)']);
+    order(Renderer.prototype.render,['this.warmWeaponFx()','this.engine.render(this.scene,this.camera)']);
+  }finally{fallbackFx.dispose();rigFx.dispose();worldFx.dispose();carbineFx.dispose();carbineWorld.dispose();}
 });

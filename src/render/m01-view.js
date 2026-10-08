@@ -466,6 +466,19 @@ export class M01View {
     this.atmosphere.material.uniforms.fogColor.value.copy(this.scene.fog.color);
     this.atmosphere.lighting(p,daylight,alt,az,sim.clock);this.environment?.sync(sim.world,this.owner.quality,sim.player);
   }
+  /**
+   * Shot-FX programs compiled and linked before they are needed (prewarmWeaponFx), so no shot frame compiles them.
+   * The weapon pass has a constant light setup: once. The world pass again whenever its setup changes (the sun starts
+   * casting shadows at sunrise; a quality change turns shadow maps on or off), with the burst light in both states
+   * because it flickers. Returns the number of programs prepared by this call.
+   */
+  warmWeaponFx(){
+    const key=`${this.engine.shadowMap?.enabled}|${this.sun.castShadow}`;this.weaponFxWarm??=new Set();
+    if(this.weaponFxWarm.has(key))return 0;
+    const passes=[{scene:this.scene,camera:this.camera,objects:this.weaponWorldFx.warmObjects([WEAPON_PRESENTATION.wz29.casing.kind]),lights:[this.explosionLight]}];
+    if(!this.weaponFxWarm.size)passes.unshift({scene:this.weaponScene,camera:this.weaponCamera,objects:[...this.fallbackFx.warmObjects,...this.viewModel.fx.warmObjects]});
+    this.weaponFxWarm.add(key);return prewarmWeaponFx(this.engine,passes);
+  }
   render(sim){
     // Apply authoritative train/wagon state before pause-frame caching so restore cannot freeze constructor defaults.
     const state=sim.renderState,time=sim.clock;
@@ -521,10 +534,7 @@ export class M01View {
         muzzle:r.localToWorld(new THREE.Vector3(0,.045,-.66)),axis:new THREE.Vector3(0,0,-1).transformDirection(r.matrixWorld),
         port:r.localToWorld(new THREE.Vector3(.03,.05,-.03)),up:viewUp(player.pitch),chamberAt:shotAt+WEAPON_PRESENTATION.wz29.mechanics.chamberOpen*this.viewModel.boltSeconds});
     }
-    this.weaponWorldFx.update(time,sim.world);
-    // Once, before any shot: compile and link the shot-FX programs now instead of stalling the first shot frame.
-    this.weaponFxWarm??=prewarmWeaponFx(this.engine,[{scene:this.weaponScene,camera:this.weaponCamera,objects:[...this.fallbackFx.warmObjects,...this.viewModel.fx.warmObjects]},
-      {scene:this.scene,camera:this.camera,objects:this.weaponWorldFx.warmObjects([WEAPON_PRESENTATION.wz29.casing.kind])}]);
+    this.weaponWorldFx.update(time,sim.world);this.warmWeaponFx();
     this.updateBattlefieldFx(state,time);
     this.engine.info.autoReset=false;this.engine.info.reset();this.engine.clear();this.engine.render(this.scene,this.camera);
     if(this.fx.muzzle>0){this.muzzlePresentation.frames++;this.muzzlePresentation.lastClock=time;this.muzzlePresentation.lastFrame=this.renderedFrames??0;}
