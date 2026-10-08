@@ -458,7 +458,7 @@ export class M01View {
     this.engine.toneMappingExposure=1.08;
     this.sun.color.set('#ffe0b0');this.skyLight.color.set('#b4c8df');this.skyLight.groundColor.set('#4b4435');
     this.atmosphere.material.uniforms.fogColor.value.copy(this.scene.fog.color);
-    this.atmosphere.lighting(p,daylight,alt,az,sim.clock);this.environment?.sync(sim.world,this.owner.quality,sim.player);
+    this.atmosphere.lighting(p,daylight,alt,az,sim.clock);this.environment?.sync(sim.world,this.owner.quality,sim.player,sim.clock);
   }
   render(sim){
     // Apply authoritative train/wagon state before pause-frame caching so restore cannot freeze constructor defaults.

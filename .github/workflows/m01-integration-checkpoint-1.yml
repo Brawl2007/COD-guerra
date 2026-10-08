@@ -36,6 +36,7 @@ jobs:
           tests/m01-panzerzug.test.js
           tests/m01-soldier-visual-variation.test.js
           tests/m01-vegetation-lod.test.js
+          tests/m01-vegetation-layout.test.js
           tests/m01-wagon-runtime-integration.test.js
           tests/m01-wagon-damage-glb.test.js
           tests/m01-wagons-glb.test.js

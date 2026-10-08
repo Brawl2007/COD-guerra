@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## Vegetação e folhagem M01 — 2026-10-07
+
+Branch própria a partir de `codex/m01-bridge-portal-material-detail-polish-v1 @ 99309d9`. Só apresentação: 8 espécies de árvore por contexto (sem `serial % 6`), 195 árvores visuais em bosques sem grelha, 716 arbustos, relva em 4 geometrias com vento e fade por distância, ervas ferroviárias, copas danificadas/troncos mortos junto da cabeça de ponte, troncos enterrados com raiz e sombras de contacto. As 17 árvores sólidas, colliders, pathing, IA, RNG e estado da missão ficam iguais; 15 capturas fixas BASE/CANDIDATE têm o mesmo SHA-256 de estado. Média +3/+4 draw calls e +5,5% a +11,5% triângulos; sem FPS medido. Provas em `docs/verification/m01-runtime/vegetation-foliage-closeout-2026-10-07/HANDOFF.md`. M01 continua **PROTÓTIPO JOGÁVEL**.
+
 ## Auditoria schema 2 — 2026-10-03
 
 Candidato isolado em `codex/m01-schema2-determinism-audit`, base MG34 prone aprovada `fbaac1e4`. Comparação de futuros A/B por tick: 61.055 comparações em duas rotas completas e fixtures definidas, sem divergência depois das correções. Corrigido o destino de recuperação ao restaurar uma continuação; schema 2 recebe backup opcional plano, mantendo CP-A..D planos e legacy compatível. Saves corrompidos não podem sobrescrever métodos/perfil da arma; RNG uint32 e fases conhecidas validados.
