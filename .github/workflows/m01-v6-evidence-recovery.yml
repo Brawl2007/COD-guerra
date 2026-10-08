@@ -1,0 +1,83 @@
+name: M01 V6 evidence recovery
+on:
+  push:
+    branches: [codex/m01-final-production-consolidation-v6]
+    paths: [.github/workflows/m01-v6-evidence-recovery.yml]
+permissions:
+  contents: write
+concurrency:
+  group: m01-v6-evidence-recovery-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  recovery:
+    if: github.ref == 'refs/heads/codex/m01-final-production-consolidation-v6'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0, ref: '${{ github.sha }}'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - name: Assert the previously validated executable tree is preserved
+        run: git diff --exit-code 2a2a56734861b0801234d7ddf3cda66c0100f326 HEAD -- src tests assets package.json package-lock.json playwright.config.js
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Recover only the three final browser cases
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: docs/verification/m01-runtime/final-production-consolidation-v6/BROWSER_RECOVERY.json
+        run: |
+          set -o pipefail
+          npx playwright test tests/browser/m01.spec.js --workers=1 --reporter=list,json --grep 'textured atmosphere survives|ckm west crew and weapon|optional ckm kit failure' | tee docs/verification/m01-runtime/final-production-consolidation-v6/logs/browser-recovery.log
+      - name: Build isolated V5 and capture the same frozen player cameras
+        run: |
+          set -o pipefail
+          git worktree add --detach /tmp/m01-v5 d277b06937170aa433bc418ef5b83b2925c6d6de
+          ln -s "$GITHUB_WORKSPACE/node_modules" /tmp/m01-v5/node_modules
+          (cd /tmp/m01-v5 && npm run build)
+          mkdir -p /tmp/m01-sites/v5 /tmp/m01-sites/v6
+          ln -s /tmp/m01-v5/dist /tmp/m01-sites/v5/COD-guerra
+          ln -s "$GITHUB_WORKSPACE/dist" /tmp/m01-sites/v6/COD-guerra
+          python3 -m http.server 4184 --bind 127.0.0.1 --directory /tmp/m01-sites/v5 >/tmp/m01-v5-server.log 2>&1 &
+          python3 -m http.server 4185 --bind 127.0.0.1 --directory /tmp/m01-sites/v6 >/tmp/m01-v6-server.log 2>&1 &
+          export CHROME_EXECUTABLE="$(node --input-type=module -e "import {chromium} from 'playwright';console.log(chromium.executablePath())")"
+          node tools/verification/m01-final-consolidation-v6.mjs | tee docs/verification/m01-runtime/final-production-consolidation-v6/logs/visual-recovery.log
+      - name: Assemble inspection sheets and exact pixel comparisons
+        run: |
+          python3 -m pip install Pillow
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          from PIL import Image,ImageDraw,ImageChops,ImageStat
+          p=Path('docs/verification/m01-runtime/final-production-consolidation-v6')
+          r=json.loads((p/'VISUAL_COMPARISON.json').read_text());pairs=[]
+          for q in ['low','medium','high']:
+            names=[c['name'] for c in r['captures'] if c['version']=='V5' and c['quality']==q]
+            for group in range(2):
+              board=Image.new('RGB',(960,290*5),'#18191b');d=ImageDraw.Draw(board)
+              for i,n in enumerate(names[group*5:group*5+5]):
+                a,b=[next(c for c in r['captures'] if c['name']==n and c['quality']==q and c['version']==v) for v in ['V5','V6']]
+                ia,ib=[Image.open(p/c['file']).convert('RGB') for c in [a,b]]
+                diff=ImageChops.difference(ia,ib);stat=ImageStat.Stat(diff)
+                pairs.append({'name':n,'quality':q,'sameSnapshot':a['snapshotSha256']==b['snapshotSha256'],'pixelIdentical':diff.getbbox() is None,'meanAbsoluteRGB':stat.mean,'v5':a['file'],'v6':b['file'],'v5Resources':{k:a[k] for k in ['drawCalls','triangles','textures','geometries','environmentInstances']},'v6Resources':{k:b[k] for k in ['drawCalls','triangles','textures','geometries','environmentInstances']}})
+                for j,im in enumerate([ia,ib]):
+                  im.thumbnail((480,270));board.paste(im,(j*480,i*290));d.text((j*480+4,i*290+272),f'{n} {q} '+['V5','V6'][j],fill='white')
+              board.save(p/'visual'/f'comparison-{q}-{group+1}.jpg',quality=92)
+          (p/'VISUAL_PAIRS.json').write_text(json.dumps(pairs,indent=2)+'\n')
+          PY
+      - name: Publish evidence by normal fast-forward to this branch only
+        if: success()
+        run: |
+          git config user.name "M01 V6 evidence"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/verification/m01-runtime/final-production-consolidation-v6/BROWSER_RECOVERY.json docs/verification/m01-runtime/final-production-consolidation-v6/VISUAL_COMPARISON.json docs/verification/m01-runtime/final-production-consolidation-v6/VISUAL_PAIRS.json docs/verification/m01-runtime/final-production-consolidation-v6/visual docs/verification/m01-runtime/final-production-consolidation-v6/logs/browser-recovery.log docs/verification/m01-runtime/final-production-consolidation-v6/logs/visual-recovery.log
+          git commit -m "docs(m01): preserve recovery browser results and frozen V5 V6 comparisons"
+          git push origin HEAD:refs/heads/codex/m01-final-production-consolidation-v6
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-v6-evidence-recovery-${{ github.sha }}
+          path: |
+            docs/verification/m01-runtime/final-production-consolidation-v6/
+            test-results/
+          if-no-files-found: error
