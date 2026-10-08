@@ -27,7 +27,7 @@ const scenes=[
   {name:'intro-dialogue',kind:'new',at:19.5},
   {name:'cp-a-objective',kind:'new',skip:true,after:.9},
   {name:'interaction-post',kind:'continue',snapshot:atPost.sim.snapshot(),after:1.2},
-  {name:'objective-update',kind:'continue',snapshot:atPost.sim.snapshot(),press:'KeyE',after:.5},
+  {name:'objective-update',kind:'continue',snapshot:atPost.sim.snapshot(),press:'KeyE',after:1.3},
   {name:'repair-status',kind:'continue',snapshot:flow.combatSnapshots.repairThreat??repair,after:4.5},
   {name:'withdrawal',kind:'continue',snapshot:flow.combatSnapshots.withdrawal,after:3},
   {name:'cp-d-restore',kind:'continue',snapshot:flow.checkpoints.cp_m01_d_retirada,restart:true,after:.25},
