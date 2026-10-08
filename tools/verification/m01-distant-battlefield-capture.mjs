@@ -91,6 +91,9 @@ try{
     await shot('probe-13-floodplain-tracer-north-of-embankment','probe',[eye,round(await seek(shots.dawn,['east_dike'],{tracer:true,max:2400,where:e=>e.origin.z<0})),40]);}
   await call('prepare',shots.north,quality);
   await shot('eye-14-north-line-tracer','probe',['eye',round(await seek(shots.north,['north_line'],{tracer:true})),40]);
+  // From a genuine route position on the road bridge (the hold snapshot), the southern floodplain line is in view.
+  await call('prepare',shots.hold,quality);
+  await shot('eye-15-road-bridge-south-floodplain-tracer','probe',['eye',round(await seek(shots.hold,['east_dike'],{tracer:true,max:2400,where:e=>e.origin.z>0})),40]);
   writeFileSync(`${out}/report.json`,JSON.stringify(report,null,2));
   console.log(JSON.stringify({captures:report.captures.length,errors}));
   if(errors.length)process.exitCode=1;
