@@ -57,8 +57,8 @@ const SHOTS=[
   {name:'repair-crater-track',label:'bomba junto à via (evento real nowicki_lost com o jogador a sul): cratera no talude e travessas queimadas',consumeFrom:{x:-66,z:22},pose:{x:-38,z:.8,angle:.47,pitch:-.3},
     consume:['evt_m01_nowicki_lost'],advance:6},
   // The bomb only falls on the station itself when the player is over 30 m away (M01Simulation.safeImpact).
-  {name:'station-bomb',label:'bomba na estação (evento real bombing_0434): entulho e poeira na base da fachada norte',consumeFrom:{x:-300,z:20},
-    pose:{x:-392,z:16,angle:2.2,pitch:-.12},consume:['evt_m01_bombing_0434'],advance:8},
+  {name:'station-bomb',label:'bomba na estação (evento real bombing_0434): poeira clara de alvenaria e entulho na base da fachada norte',consumeFrom:{x:-300,z:20},
+    pose:{x:-400,z:17.5,angle:Math.PI/2,pitch:-.32},consume:['evt_m01_bombing_0434'],advance:8},
   {name:'west-demolition',label:'demolição oeste (evento real): via queimada e entulho no encontro ferroviário danificado',pose:{x:-30,z:2,angle:0,pitch:-.25},
     consume:['evt_m01_west_demolition'],advance:10},
   // Overview only: the camera is lifted 30 m above the pose (not a gameplay view) to show the scorch around the ruin.

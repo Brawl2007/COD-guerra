@@ -19,6 +19,7 @@ import {M01Simulation} from '/src/game/m01-simulation.js';
 import {traceShot,eyePosition,aimDirection} from '/src/world/spatial.js';
 import {makeRound,traceRound} from '/src/game/m01-fire.js';
 import {seconds} from '/src/game/m01-simulation.js';
+import {m01DecalAtlasReady} from '/src/render/m01-damage-decals.js';
 
 const canvas=document.getElementById('game'),renderer=new Renderer(canvas);
 renderer.setQuality(new URLSearchParams(location.search).get('quality')??'high');
@@ -46,7 +47,8 @@ function enemyRound(aim,by='de_east_2'){
   sim.clock+=.04;view.surfaceDamage(event,sim);view.impact(event.point,event.material,sim.clock);return {point:event.point,material:event.material};
 }
 window.stage={
-  ready:()=>view.ready,
+  // Models loaded and the procedural decal atlas painted (it is painted in timer slices; captures must not race it).
+  ready:()=>Promise.all([view.ready,m01DecalAtlasReady()]),
   reset(){sim=new M01Simulation();renderer.resetEffects();},
   place,aimAt,playerShot,enemyRound,label,
   // Real mission events (east/west demolition, bombing) through M01Simulation.consume; a grenade as its saved record.

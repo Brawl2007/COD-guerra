@@ -260,6 +260,8 @@ export class M01View {
         new THREE.InstancedMesh(geometry,this.materials[material],capacity);
       batch.instanceMatrix.setUsage(THREE.DynamicDrawUsage);batch.count=0;batch.frustumCulled=false;this.effects.add(batch);this.fireBatches[name]=batch;
     }
+    // Allocate instance colours before the first chip, keeping its shader variant stable.
+    this.fireBatches.chip.setColorAt(0,this.fireColor.set('#ffffff'));
     this.battlefieldFxBatches={};this.battlefieldDummy=new THREE.Object3D();this.battlefieldColor=new THREE.Color();
     for(const [name,capacity,color]of [
       ['flash',M01_BATTLEFIELD_FX_LIMITS.flash,'#fff0c2'],['core',M01_BATTLEFIELD_FX_LIMITS.core,'#ffc45d'],
@@ -604,7 +606,7 @@ export class M01View {
     this.weaponFxWarm??=prewarmWeaponFx(this.engine,[{scene:this.weaponScene,camera:this.weaponCamera,objects:[...this.fallbackFx.warmObjects,...this.viewModel.fx.warmObjects]},
       {scene:this.scene,camera:this.camera,objects:this.weaponWorldFx.warmObjects([WEAPON_PRESENTATION.wz29.casing.kind])}]);
     this.updateBattlefieldFx(state,time);
-    try{this.damageDecals.update({state,time,world:sim.world,trees:this.environment?.treeDescriptors,quality:this.owner.quality,camera:this.camera.position,renderer:this.engine,view:this.camera});}
+    try{this.damageDecals.update({state,time,world:sim.world,trees:this.environment?.treeDescriptors,quality:this.owner.quality,camera:this.camera.position,renderer:this.engine,view:this.camera,warm:[this.fireBatches.chip]});}
     catch(error){this.damageDecals.fail(error);}   // presentation only: never stops the frame
     this.engine.info.autoReset=false;this.engine.info.reset();this.engine.clear();this.engine.render(this.scene,this.camera);
     if(this.fx.muzzle>0){this.muzzlePresentation.frames++;this.muzzlePresentation.lastClock=time;this.muzzlePresentation.lastFrame=this.renderedFrames??0;}
