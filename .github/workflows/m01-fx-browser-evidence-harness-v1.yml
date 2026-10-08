@@ -1,0 +1,44 @@
+name: M01 FX browser evidence harness V1
+
+on:
+  push:
+    branches:
+      - codex/m01-fx-browser-evidence-harness-v1
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-fx-browser-evidence-harness-v1
+  cancel-in-progress: true
+
+jobs:
+  fx-diagnostics:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    steps:
+      - name: Checkout full project history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: FX numerical contracts
+        run: node --test --test-concurrency=1 tests/m01-battlefield-fx-polish-v3.test.js
+      - name: Integrated production build
+        run: npm run build
+      - name: Chromium for video effects inspection
+        run: npx playwright install --with-deps chromium
+      - name: Observe real events, dump authoritative failures
+        run: npx playwright test tests/browser/m01-battlefield-fx-polish-v3.spec.js --workers=1
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-fx-harness-probes
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
