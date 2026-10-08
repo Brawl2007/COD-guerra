@@ -1,0 +1,87 @@
+name: M01 environmental damage decal pass v1
+
+on:
+  push:
+    branches:
+      - codex/m01-environmental-damage-decal-pass-v1
+      - claude/bold-cannon-rkvxjp
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-environmental-damage-decal-pass-v1-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BASE_SHA: 99309d9cb023cc94a07d41ff863e1362e4460570
+  EVIDENCE: docs/verification/m01-runtime/environmental-damage-decal-pass-v1/ci
+
+jobs:
+  focused:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 80
+    steps:
+      - name: Checkout task head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Gameplay authority unchanged (simulation, world, mission, assets, engine)
+        run: |
+          set -euo pipefail
+          git diff --exit-code "$BASE_SHA" -- src/game src/world src/core missions assets tools/assets \
+            package.json package-lock.json playwright.config.js vite.config.js ':!src/game/game.js'
+          # game.js: exactly one added line, the presentation hook, and nothing removed.
+          changes=$(git diff "$BASE_SHA" -- src/game/game.js | grep -E '^[+-]' | grep -vE '^(\+\+\+|---) ')
+          echo "$changes"
+          test "$(printf '%s\n' "$changes" | wc -l)" -eq 1
+          printf '%s\n' "$changes" | grep -qF "+    if(event.type==='round-impact'||event.type==='player-shot')this.renderer.m01.surfaceDamage(event,this.sim);   // presentation only"
+
+      - name: Node (full suite, includes tests/m01-damage-decals.test.js)
+        run: |
+          set -o pipefail
+          mkdir -p "$EVIDENCE"
+          npm test 2>&1 | tee "$EVIDENCE/node-test.log"
+
+      - name: Production build
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Capture base BEFORE (base renderer hooks, same views)
+        run: |
+          set -euo pipefail
+          git checkout "$BASE_SHA" -- src/render/m01-view.js src/game/game.js
+          npm run build
+          M01_BASELINE_CAPTURE=1 npx playwright test tests/browser/m01-damage-decals.spec.js \
+            --output="$EVIDENCE/before" 2>&1 | tee "$EVIDENCE/browser-before.log"
+          git checkout "$GITHUB_SHA" -- src/render/m01-view.js src/game/game.js
+          npm run build
+          git diff --exit-code
+
+      - name: Focused AFTER browser (damage decals, battlefield FX, combat feedback)
+        run: |
+          set -o pipefail
+          npx playwright test tests/browser/m01-damage-decals.spec.js tests/browser/m01-battlefield-fx.spec.js \
+            tests/browser/m01-combat-feedback.spec.js --output="$EVIDENCE/after" 2>&1 | tee "$EVIDENCE/browser-after.log"
+
+      - name: Upload focused evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-environmental-damage-decal-pass-v1
+          path: |
+            docs/verification/m01-runtime/environmental-damage-decal-pass-v1/
+            test-results/
+          if-no-files-found: error
