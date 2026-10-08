@@ -2,11 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {AudioManager,AUDIO_PRIORITY,audioHash,audioVariation,audioDistanceShape} from '../src/core/audio.js';
 import {M01Simulation} from '../src/game/m01-simulation.js';
+import {DISTANT_SLOT_SEC} from '../src/core/battlefield-audio.js';
 
 class Param{
   constructor(value=0){this.value=value;}
   setValueAtTime(value){this.value=value;}
   exponentialRampToValueAtTime(value){this.value=value;}
+  setTargetAtTime(value){this.value=value;}
+  cancelScheduledValues(){}
 }
 class Node{
   constructor(ctx){this.ctx=ctx;this.connections=[];this.disconnected=false;}
@@ -16,13 +19,13 @@ class Node{
 class Source extends Node{
   constructor(ctx){super(ctx);this.onended=null;this.loop=false;this.playbackRate=new Param(1);ctx.sources.push(this);}
   start(){this.started=true;}
-  stop(){this.stopped=true;}
+  stop(when=0){this.stopped=true;this.stopAt=when;}
   finish(){if(this.onended){const fn=this.onended;this.onended=null;fn();}}
 }
 class FakeAudioContext{
   constructor(){this.state='suspended';this.currentTime=0;this.sampleRate=2000;this.destination=new Node(this);this.sources=[];}
   createGain(){const n=new Node(this);n.gain=new Param(1);return n;}
-  createBiquadFilter(){const n=new Node(this);n.frequency=new Param(18000);n.type='lowpass';return n;}
+  createBiquadFilter(){const n=new Node(this);n.frequency=new Param(18000);n.Q=new Param(1);n.type='lowpass';return n;}
   createStereoPanner(){const n=new Node(this);n.pan=new Param(0);return n;}
   createOscillator(){const n=new Source(this);n.frequency=new Param(440);n.type='sine';return n;}
   createBufferSource(){return new Source(this);}
@@ -34,7 +37,7 @@ class FakeAudioContext{
   async resume(){this.state='running';}
   async suspend(){this.state='suspended';}
   async close(){this.state='closed';}
-  flush(){for(const s of [...this.sources])if(!s.loop)s.finish();}
+  flush(){for(const s of [...this.sources])if(s.stopAt!==undefined)s.finish();}
 }
 const makeAudio=(maxVoices=32)=>{const ctx=new FakeAudioContext(),audio=new AudioManager({contextFactory:()=>ctx,maxVoices});assert.equal(audio.init(),true);return {audio,ctx};};
 const spatial=point=>({distance:Math.hypot(point.x,point.z),pan:Math.sin(Math.atan2(point.z,point.x))});
@@ -54,7 +57,7 @@ test('rifle, MG34, RKM, CKM, impacts, near miss and layered explosion remain dis
   audio.crack(-.6,3,'near-a');audio.explosion(.4,45,{scale:'demolition',key:'blast-a'});
   const e=audio.diagnostics.eventCounts;
   assert.equal(e.rifle,1);assert.equal(e.mg34,1);assert.equal(e.rkm,1);assert.equal(e.ckm,1);assert.equal(e.impact,4);assert.equal(e['near-miss'],1);assert.equal(e.explosion,1);
-  assert.ok(audio.diagnostics.activeVoices<=64);assert.ok(audio.diagnostics.proceduralBuffers===1);
+  assert.ok(audio.diagnostics.activeVoices<=64);assert.equal(audio.diagnostics.proceduralBuffers,2,'one white and one brown noise buffer, shared by every voice');
   ctx.flush();assert.equal(audio.diagnostics.activeVoices,0);audio.dispose();
 });
 
@@ -90,7 +93,8 @@ test('distant rifle/MG stay low priority and cannot evict more important voices;
   audio.dispose();
 
   const second=makeAudio(3),a=second.audio;
-  a.distantBattle('rifle',0,700,'distant-rifle-evictable');
+  // Cada evento é agora uma voz com várias camadas: três salvas longínquas enchem o orçamento de 3.
+  for(const k of ['a','b','c'])a.distantBattle('rifle',0,700,'distant-rifle-evictable-'+k);
   assert.equal(a.diagnostics.activeVoices,3);
   assert.ok([...a.voices].every(v=>v.priority===AUDIO_PRIORITY.distant),'all active distant rifle layers must inherit distant priority');
   a.tone(120,.4,'square',.04,0,0,0,{priority:AUDIO_PRIORITY.critical,kind:'critical-test'});
@@ -111,7 +115,7 @@ test('M01 ambience/aircraft loops are unique; train clank only follows a live fa
   const base={stukas:true,secondRaid:false,train963:false};
   audio.resetPresentation(30,base);audio.updateM01Presentation({clock:30,state:base,spatial});
   audio.updateM01Presentation({clock:30.1,state:base,spatial});
-  assert.deepEqual(audio.diagnostics.loops,['aircraft','wind']);assert.equal(audio.diagnostics.permanentLoops,2);
+  assert.deepEqual(audio.diagnostics.loops,['aircraft','battle-bed','wind']);assert.equal(audio.diagnostics.permanentLoops,3);
   const arrivals=audio.diagnostics.eventCounts['train-arrival']??0;
   audio.updateM01Presentation({clock:31,state:{...base,train963:true},spatial});
   audio.updateM01Presentation({clock:31.1,state:{...base,train963:true},spatial});
@@ -120,14 +124,14 @@ test('M01 ambience/aircraft loops are unique; train clank only follows a live fa
   audio.resetPresentation(31,{...base,train963:true});assert.equal(audio.diagnostics.activeVoices,0);assert.equal(audio.diagnostics.permanentLoops,0);
   audio.updateM01Presentation({clock:31.2,state:{...base,train963:true},spatial});
   assert.equal(audio.diagnostics.eventCounts['train-arrival'],arrivals+1,'reload after arrival must not replay the arrival clank');
-  assert.deepEqual(audio.diagnostics.loops,['aircraft','wind']);audio.dispose();
+  assert.deepEqual(audio.diagnostics.loops,['aircraft','battle-bed','locomotive','wind']);audio.dispose();
 });
 
 test('distant battle scheduler is presentation-only, bounded and does not backlog skipped clock slots',()=>{
   const {audio}=makeAudio(16),state={stukas:false,secondRaid:false,train963:false};
   audio.resetPresentation(0,state);
   for(const clock of [4.01,8.01,12.01,40.01])audio.updateM01Presentation({clock,state,spatial});
-  assert.equal(audio.presentation.lastBattleSlot,10);assert.ok((audio.diagnostics.eventCounts['distant-battle']??0)<=4);
+  assert.equal(audio.presentation.lastBattleSlot,Math.floor(40.01/DISTANT_SLOT_SEC));assert.ok((audio.diagnostics.eventCounts['distant-battle']??0)<=4);
   assert.ok(audio.diagnostics.activeVoices<=16);audio.dispose();
 });
 
@@ -143,10 +147,10 @@ test('audio activity cannot consume or mutate M01 gameplay RNG/snapshot',()=>{
 test('reset/dispose stop transient and permanent nodes without duplicated loops',()=>{
   const {audio,ctx}=makeAudio();
   audio.rifleShot(0,10,'kar98k','cleanup');audio.updateM01Presentation({clock:8,state:{stukas:true,secondRaid:false,train963:false},spatial});
-  assert.ok(audio.diagnostics.activeVoices>0);assert.equal(audio.diagnostics.permanentLoops,2);
+  assert.ok(audio.diagnostics.activeVoices>0);assert.equal(audio.diagnostics.permanentLoops,3);
   audio.resetPresentation(8,{stukas:true,secondRaid:false,train963:false});
   assert.equal(audio.diagnostics.activeVoices,0);assert.equal(audio.diagnostics.permanentLoops,0);
-  audio.updateM01Presentation({clock:8.1,state:{stukas:true,secondRaid:false,train963:false},spatial});assert.equal(audio.diagnostics.permanentLoops,2);
+  audio.updateM01Presentation({clock:8.1,state:{stukas:true,secondRaid:false,train963:false},spatial});assert.equal(audio.diagnostics.permanentLoops,3);
   audio.dispose();assert.equal(audio.diagnostics.activeVoices,0);assert.equal(audio.diagnostics.permanentLoops,0);assert.equal(ctx.state,'closed');
   assert.ok(audio.diagnostics.nodesDisposed>0);
 });

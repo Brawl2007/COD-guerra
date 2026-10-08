@@ -1,5 +1,11 @@
 # Estado de desenvolvimento
 
+## Áudio de campo de batalha M01 — production pass v1 — 2026-10-08
+
+Branch `codex/m01-battlefield-audio-production-pass-v1` (base `99309d9c`). Áudio Web Audio sintetizado (sem amostras): identidade própria para wz.29 do jogador, Kar98k, wz.29 aliado, MG34, rkm wz.28 e ckm wz.30; bandas perto/médio/longe/muito longe com atenuação contínua, absorção do ar, reverberação exterior e sombra da cabeça; estalo supersónico (da simulação) e zumbido de ricochete; impactos por material; granadas, bombas, demolição da ponte em camadas (cargas, aço a ceder, vigas, água, ribombo), destroços, artilharia longínqua; comboio/locomotiva/comboio blindado; Ju 87 com camadas por distância na trajectória partilhada com o renderer; fogo; frente longínqua com intensidade dinâmica; limites por categoria, 32 vozes, orçamento de fontes e variação determinista sem ciclo curto. A simulação continua autoridade: rota completa com áudio = mesmo estado, RNG e eventos.
+
+Node 344/344 (20 novos), build PASS. Navegador: render offline (OfflineAudioContext, 31 clips medidos) e runtime real 3/3; 4 falhas da suíte integral reproduzidas iguais na base intacta (rato sintético/temporização do ambiente). Verifier e Reviewer independentes; achados corrigidos. **ckm wz.30 não toca em jogo** (disparo ainda pendente na simulação). Sem playtest de escuta humano e sem medição de CPU/FPS ou Chromebook. Relatório, métricas e WAV em `docs/verification/m01-runtime/battlefield-audio-production-pass-v1-2026-10-07/`. M01 permanece **PROTÓTIPO JOGÁVEL**.
+
 ## Auditoria schema 2 — 2026-10-03
 
 Candidato isolado em `codex/m01-schema2-determinism-audit`, base MG34 prone aprovada `fbaac1e4`. Comparação de futuros A/B por tick: 61.055 comparações em duas rotas completas e fixtures definidas, sem divergência depois das correções. Corrigido o destino de recuperação ao restaurar uma continuação; schema 2 recebe backup opcional plano, mantendo CP-A..D planos e legacy compatível. Saves corrompidos não podem sobrescrever métodos/perfil da arma; RNG uint32 e fases conhecidas validados.

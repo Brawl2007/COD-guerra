@@ -10,7 +10,7 @@ const SAVE_KEY='cod-guerra:checkpoint:v1';
 export class Game {
   constructor(canvas,hud,onState=()=>{},missionId='m01_tczew'){
     this.canvas=canvas;this.hud=hud;this.onState=onState;
-    this.input=new Input(canvas);this.audio=new AudioSystem();this.renderer=new Renderer(canvas);
+    this.input=new Input(canvas);this.audio=new AudioSystem();this.renderer=new Renderer(canvas);this.audio.setQuality(this.renderer.quality);
     this.sim=missionId==='m01_tczew'?new M01Simulation():new Simulation();this.started=false;this.paused=true;this.disposed=false;
     if(this.isM01)this.renderer.prepareM01();
     this.last=performance.now();this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;
@@ -102,15 +102,21 @@ export class Game {
       this.pendingSounds=this.pendingSounds.filter(sound=>sound.at>this.sim.clock);
       due.forEach(sound=>{
         if(sound.kind==='fire'){
-          if(sound.weapon==='mg34')this.audio.mg34Burst(sound.pan,sound.distance,sound.rounds,sound.interval,sound.key);
+          if(this.isM01)this.audio.weaponFire(sound.weapon??'kar98k',sound.pan,sound.distance,{rounds:sound.rounds,interval:sound.interval,key:sound.key,front:sound.front,source:sound.source});
+          else if(sound.weapon==='mg34')this.audio.mg34Burst(sound.pan,sound.distance,sound.rounds,sound.interval,sound.key);
           else this.audio.rifleShot(sound.pan,sound.distance,sound.weapon??'kar98k',sound.key);
           return;
         }
-        if(sound.kind==='blast')this.audio.explosion(sound.pan,sound.distance,{scale:sound.scale??'large',key:sound.key});
+        if(sound.kind==='blast'){
+          this.audio.explosion(sound.pan,sound.distance,{scale:sound.scale??'large',key:sound.key,front:sound.front});
+          // Ju 87 a sair da picada: só depois de um sopro aéreo real, vindo de cima do ponto de impacto.
+          if(sound.aerial&&this.isM01)this.audio.ju87PullOutNearest(this.sim.clock,point=>this.spatial(point),`${sound.key}:ju87`,this.sim.renderState.stukas);
+        }
         else this.audio.explosion(sound.pan,sound.distance*UNITS_PER_METRE);
         if(sound.shake&&this.isM01)this.renderer.m01.blast(this.sim.clock);
       });
-      if(this.isM01)this.audio.updateM01Presentation({clock:this.sim.clock,state:this.sim.renderState,spatial:point=>this.spatial(point)});
+      if(this.isM01)this.audio.updateM01Presentation({clock:this.sim.clock,state:this.sim.renderState,spatial:point=>this.spatial(point),
+        phase:this.sim.mission.phase,quality:this.renderer.quality});
     }
     if(this.isM01)this.renderer.renderMission(this.sim);
     else this.renderer.render(this.sim.world,this.sim.player,this.sim.combatants,this.sim.radio,
@@ -120,7 +126,9 @@ export class Game {
   spatial(point){
     const dx=point.x-(this.isM01?this.sim.player.x:this.sim.player.x/UNITS_PER_METRE),
       dz=point.z-(this.isM01?this.sim.player.z:this.sim.player.y/UNITS_PER_METRE);
-    return {distance:Math.hypot(dx,dz),pan:Math.sin(Math.atan2(dz,dx)-this.sim.player.angle)};
+    const relative=Math.atan2(dz,dx)-this.sim.player.angle,dy=this.isM01&&Number.isFinite(point.y)?point.y-this.sim.player.y:0;
+    // front = cos do ângulo relativo: o áudio escurece ligeiramente o que vem de trás. dy serve só a aviões (distância 3D).
+    return {distance:Math.hypot(dx,dz),pan:Math.sin(relative),front:Math.cos(relative),dy};
   }
   handleEvent(event){
     const now=this.sim.clock*1000;
@@ -158,7 +166,7 @@ export class Game {
     this.pendingSounds=[];this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);if(!this.isM01)return;
     for(const damage of this.sim.sectors.damage)if(damage.soundAt>this.sim.clock){
       const scale=damage.id?.startsWith('m01_grenade_')?'small':damage.id?.includes('demolition')?'demolition':'large';
-      this.pendingSounds.push({...this.spatial(damage),at:damage.soundAt,kind:'blast',scale,key:damage.id});
+      this.pendingSounds.push({...this.spatial(damage),at:damage.soundAt,kind:'blast',scale,key:damage.id,point:{x:damage.x,y:damage.y,z:damage.z}});
     }
   }
   handleM01Event(event){
@@ -171,14 +179,16 @@ export class Game {
     }
     if(event.type==='npc-shot'){
       const s=this.spatial(event.point);
-      if(event.rounds>1)this.audio.rkmBurst(s.pan,s.distance,event.rounds,.11,`kowal:${this.sim.clock.toFixed(3)}`);
-      else this.audio.rifleShot(s.pan,s.distance,'ally-rifle',`ally:${this.sim.clock.toFixed(3)}`);
+      if(event.rounds>1)this.audio.rkmBurst(s.pan,s.distance,event.rounds,.11,`kowal:${this.sim.clock.toFixed(3)}`,s.front);
+      else this.audio.rifleShot(s.pan,s.distance,'ally-rifle',`ally:${this.sim.clock.toFixed(3)}`,undefined,s.front);
     }
     if(event.type==='distant-shot'){
-      const s=this.spatial(event.point);this.audio.distantBattle('rifle',s.pan,Math.max(500,s.distance),`scripted:${this.sim.clock.toFixed(3)}`);
+      const s=this.spatial(event.point);this.audio.distantBattle('rifle',s.pan,Math.max(500,s.distance),`scripted:${this.sim.clock.toFixed(3)}`,{rounds:3,front:s.front});
     }
     // Fogo alemão: o estampido chega com o atraso da distância (343 m/s); o impacto e o estalo de quem passa perto, à chegada do tiro.
-    if(event.type==='enemy-fire'){const s=this.spatial(event.origin);this.pendingSounds.push({...s,at:event.at+s.distance/343,kind:'fire',rounds:event.rounds,interval:event.interval,weapon:event.weapon,key:`${event.weapon}:${event.at.toFixed(3)}`});}
+    // source: arma que dispara (posição da boca arredondada), só para juntar os tiros da MG34 deitada numa rajada sonora.
+    if(event.type==='enemy-fire'){const s=this.spatial(event.origin),source=`${event.weapon}@${Math.round(event.origin.x)},${Math.round(event.origin.z)}`;
+      this.pendingSounds.push({...s,at:event.at+s.distance/343,kind:'fire',rounds:event.rounds,interval:event.interval,weapon:event.weapon,source,key:`${source}:${event.at.toFixed(3)}`});}
     if(event.type==='round-impact'){
       this.renderer.m01.impact(event.point,event.material,this.sim.clock);
       const s=this.spatial(event.point),key=`${event.by}:${this.sim.clock.toFixed(3)}`,shooter=this.sim.actor?.(event.by);
@@ -187,8 +197,9 @@ export class Game {
       if(this.pendingM01HitFeedback&&Math.abs(this.pendingM01HitFeedback.clock-this.sim.clock)<1e-6){
         this.renderer.m01.directionalHit(this.sim.clock,direction);this.pendingM01HitFeedback=null;
       }
-      if(event.crack)this.audio.crack(s.pan,Math.min(12,event.distance),key);
-      if(event.distance<120)this.audio.impact(event.material,s.pan,event.distance,key);
+      // Estalo supersónico só quando a simulação diz que o tiro passou a ≤6 m (o zumbido fica para ricochetes próximos).
+      if(event.crack)this.audio.crack(s.pan,Math.min(12,event.distance),key,s.front);
+      if(event.distance<120)this.audio.impact(event.material,s.pan,event.distance,key,s.front);
     }
     if(event.type==='player-hit'){
       this.audio.hit();this.hitUntil=now+170;this.pendingM01HitFeedback={clock:this.sim.clock};
@@ -198,7 +209,8 @@ export class Game {
       // O estrondo e a vibração chegam juntos (atraso = distância/343 m/s); o áudio só apresenta a autoridade já emitida.
       const s=this.spatial(event.point),damage=[...this.sim.sectors.damage].reverse().find(d=>d.soundAt===event.soundAt&&d.x===event.point.x&&d.z===event.point.z);
       const scale=damage?.id?.startsWith('m01_grenade_')?'small':damage?.id?.includes('demolition')?'demolition':'large';
-      this.pendingSounds.push({...s,at:event.soundAt,kind:'blast',scale,key:damage?.id??`blast:${event.soundAt.toFixed(3)}`,shake:s.distance<(event.aerial?500:1000)});
+      this.pendingSounds.push({...s,at:event.soundAt,kind:'blast',scale,key:damage?.id??`blast:${event.soundAt.toFixed(3)}`,shake:s.distance<(event.aerial?500:1000),
+        aerial:Boolean(event.aerial),point:{...event.point}});
       this.renderer.m01.explosionFeedback(this.sim.clock,s.distance,s.pan);
       this.renderer.m01.explosion(event.point,this.sim.clock,event.aerial);
     }
