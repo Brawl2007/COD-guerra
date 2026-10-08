@@ -29,6 +29,7 @@ jobs:
     timeout-minutes: 35
     strategy:
       fail-fast: false
+      max-parallel: 3
       matrix:
         test:
           - m01-soldier-motion-clips.test.js
