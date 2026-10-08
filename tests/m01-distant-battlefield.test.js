@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import {DISTANT_SECTORS,DISTANT_LIMITS,MILESTONE_EVENTS,SAFE_DISTANCE,BUCKET,distanceFromMovementArea,distantMilestones,planDistantBattlefield,
-  activeEvents,bucketEvent,sectorLevel,sectorEnvelope,squadFigures,activeSquads,distantAircraft,kozlinyVehicles,fireColumns} from '../src/render/m01-distant-battlefield-plan.js';
+  activeEvents,activeEventsUncached,bucketEvent,sectorLevel,sectorEnvelope,squadFigures,activeSquads,distantAircraft,kozlinyVehicles,fireColumns} from '../src/render/m01-distant-battlefield-plan.js';
 import {M01DistantBattlefield} from '../src/render/m01-distant-battlefield.js';
 import {M01Simulation} from '../src/game/m01-simulation.js';
 import {route} from './helpers/m01-route.js';
@@ -52,6 +52,13 @@ test('pure and deterministic: same clock and milestones give the same plan; rest
     assert.deepEqual(planDistantBattlefield(t,restored(run.sim.snapshot()).consumed),a);
   }
   const before=JSON.stringify(consumed);planDistantBattlefield(m.north+60,consumed);assert.equal(JSON.stringify(consumed),before);
+});
+
+test('the bucket cache changes nothing: cached and recomputed events agree over the route, also after a milestone changes',()=>{
+  for(const t of ALL(m.train-30,m.westDemolition+120,1.37))assert.deepEqual(activeEvents(t,m),activeEventsUncached(t,m),`${t}`);
+  // A newly consumed milestone is a new signature: never a stale cached event.
+  const early={...m};delete early.eastDemolition;delete early.westDemolition;delete early.kozliny;
+  for(const t of ALL(m.eastDemolition-5,m.eastDemolition+40,.7)){assert.deepEqual(activeEvents(t,early),activeEventsUncached(t,early));assert.deepEqual(activeEvents(t,m),activeEventsUncached(t,m));}
 });
 
 test('battlefield rhythm: Poisson-like arrivals, lulls and flare-ups, no periodicity, no repeated spot or burst',()=>{

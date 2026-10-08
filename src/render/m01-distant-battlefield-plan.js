@@ -157,8 +157,26 @@ export function bucketEvent(name,b,m,seed=DISTANT_SEED){
     const prev=rawBucketEvent(name,b-back,m,seed);if(prev?.impact&&heavy(prev.kind)&&Math.abs(prev.impact.at-event.impact.at)<HEAVY_SPACING)return null;}
   return event;
 }
+// A frame scans ~260 buckets, but a bucket's event depends only on (sector, bucket, milestones, seed): it is computed
+// once per milestone signature and reused. Same output as recomputing (tested); bounded memory. Cached events are
+// shared between frames and must be treated as read-only.
+const STORES=new Map(),STORE_LIMIT=4096,MILESTONE_KEYS=Object.keys(MILESTONE_EVENTS);
+function storeFor(m,seed){
+  const key=`${seed}|${MILESTONE_KEYS.map(k=>m[k]??'').join(',')}`;let store=STORES.get(key);
+  if(!store){if(STORES.size>=4)STORES.delete(STORES.keys().next().value);STORES.set(key,store=new Map());}
+  if(store.size>STORE_LIMIT)store.clear();return store;
+}
 /** Every event active at `clock`, across sectors, oldest first and bounded. */
 export function activeEvents(clock,m,seed=DISTANT_SEED){
+  const out=[],last=Math.floor(clock/BUCKET),store=storeFor(m,seed);
+  for(const [name,sector]of Object.entries(DISTANT_SECTORS))
+    for(let b=Math.max(0,Math.floor((clock-sector.scan)/BUCKET));b<=last;b++){
+      const key=`${name}:${b}`;let e=store.get(key);if(e===undefined){e=bucketEvent(name,b,m,seed);store.set(key,e);}
+      if(e&&e.start<=clock&&clock<e.end)out.push(e);}
+  return out.sort((a,b)=>a.start-b.start||a.id.localeCompare(b.id)).slice(-DISTANT_LIMITS.events);
+}
+/** activeEvents without the cache (reference for tests). */
+export function activeEventsUncached(clock,m,seed=DISTANT_SEED){
   const out=[],last=Math.floor(clock/BUCKET);
   for(const [name,sector]of Object.entries(DISTANT_SECTORS))
     for(let b=Math.max(0,Math.floor((clock-sector.scan)/BUCKET));b<=last;b++){const e=bucketEvent(name,b,m,seed);if(e&&e.start<=clock&&clock<e.end)out.push(e);}
