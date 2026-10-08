@@ -286,15 +286,15 @@ function maps(kind,size=128){
       height=lap?90:edge?132:167+v*16+grain*9;rough=180+stain*53+grain*8;
     }else if(kind==='wood'){
       const grainLine=Math.sin(x*.69+Math.sin(sy*Math.PI*2)*2.8)*5,split=x%32<1;
-      const exposed=tileNoise(sx,sy,10,53)>.66;
-      c=(exposed?[119,107,86]:base).map(v=>(v+(cloud-.5)*19+grainLine+grain*7)*(split?.70:1));
-      height=split?93:147+grainLine+grain*6;rough=exposed?232:178+cloud*37;
+      const exposed=Math.max(0,(tileNoise(sx,sy,10,53)-.52)*1.6);
+      c=base.map((v,k)=>(v+([119,107,86][k]-v)*exposed+(cloud-.5)*12+grainLine+grain*7)*(split?.70:1));
+      height=split?93:147+grainLine+grain*6;rough=178+cloud*37+exposed*17;
     }else if(kind==='stone'){
       const pore=hash(x,y,55)>.955;
       c=c.map(v=>v-(pore?19:0));height=139+cloud*26+grain*17-(pore?28:0);rough=218+cloud*26;
     }else if(kind==='metal'){
-      const rust=tileNoise(sx,sy,12,59)>.64;
-      c=(rust?[113,81,56]:base).map(v=>v+(cloud-.5)*21+grain*7);height=rust?149+grain*7:128+grain*3;rough=rust?237:134+cloud*44;
+      const rust=Math.max(0,(tileNoise(sx,sy,12,59)-.48)*2.0);
+      c=base.map((v,k)=>v+([113,81,56][k]-v)*rust+(cloud-.5)*15+grain*7);height=128+rust*21+grain*4;rough=134+cloud*44+rust*58;
     }
     const i=(y*size+x)*4;for(let k=0;k<3;k++){albedo[i+k]=clampByte(c[k]);detail[i+k]=clampByte(k===1?rough:height);}albedo[i+3]=detail[i+3]=255;
   }
@@ -312,7 +312,7 @@ function stationFinish(material,kind){
     shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vStationWorld;').replace('#include <worldpos_vertex>','#include <worldpos_vertex>\nvStationWorld=(modelMatrix*vec4(transformed,1.0)).xyz;');
     shader.fragmentShader=shader.fragmentShader.replace('#include <common>',`#include <common>
       varying vec3 vStationWorld;
-      float stationHash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+      float stationHash(vec2 p){vec3 q=fract(vec3(p.xyx)*.1031);q+=dot(q,q.yzx+33.33);return fract((q.x+q.y)*q.z);}
       float stationNoise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(stationHash(i),stationHash(i+vec2(1.,0.)),f.x),mix(stationHash(i+vec2(0.,1.)),stationHash(i+vec2(1.,1.)),f.x),f.y);}
     `).replace('#include <color_fragment>',`#include <color_fragment>
       float broad=stationNoise(vStationWorld.xz*.31+vec2(vStationWorld.y*.24,0.));
