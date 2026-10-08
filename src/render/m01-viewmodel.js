@@ -40,10 +40,11 @@ export function viewModelArmsGeometry(source,jointNames){
 // The same licensed rig supplies the hands, wz.29 and mechanical animation. Never edits weapon state.
 export class M01ViewModel {
   // worldFx (optional) receives world-space brass, clips and muzzle smoke; texture stays for caller compatibility.
-  constructor(scene,characters,texture,worldFx=null){
+  // muzzleLight (optional): the weapon pass's existing muzzle light, shared instead of adding a second one.
+  constructor(scene,characters,texture,worldFx=null,{muzzleLight=null}={}){
     this.scene=scene;this.characters=characters;this.root=null;this.lod=null;this.mixer=null;this.worldFx=worldFx;
     // Layered flash, muzzle light and barrel/chamber smoke. `flash` remains the core sprite on the real muzzle socket.
-    this.fx=new WeaponViewFx(scene,PROFILE);this.flash=this.fx.core;
+    this.fx=new WeaponViewFx(scene,PROFILE,{light:muzzleLight});this.flash=this.fx.core;
     this.flash.position.fromArray(WZ29_VISUAL.muzzle);this.flash.scale.set(.105,.105,1);
     this.roundGeometry=new THREE.CylinderGeometry(.0056,.0056,.064,8);this.roundGeometry.rotateX(Math.PI/2);
     this.round=new THREE.Mesh(this.roundGeometry,new THREE.MeshStandardMaterial({color:'#b99b4e',metalness:.65,roughness:.45}));
@@ -82,7 +83,8 @@ export class M01ViewModel {
     if(shot>0&&Number.isFinite(shotAt)){
       const seed=(0x5eed^Math.imul(shot,0x9e3779b1)^Math.floor(w.lastShot))>>>0,n=i=>visualNoise(seed,i);
       if(t-shotAt>=0&&t-shotAt<.3)this.worldFx.spawnPuffs({id:`wz29:puff:${shot}:${w.lastShot}`,start:shotAt,
-        origin:viewPointToWorld(weapon.localToWorld(a.fromArray(WZ29_VISUAL.muzzle)),camera,fov,a),direction:toWorldDir([0,0,-1],b),profile:PROFILE.smoke,seed});
+        origin:viewPointToWorld(weapon.localToWorld(a.fromArray(WZ29_VISUAL.muzzle)),camera,fov,a),direction:toWorldDir([0,0,-1],b),profile:PROFILE.smoke,seed,
+        aim:sim.player.aiming?1:0});
       const ejectAt=shotAt+PROFILE.mechanics.eject*BOLT_SECONDS;
       if(t>=ejectAt&&t-ejectAt<.35){
         const v=PROFILE.casing.velocity,jitter=[v[0]*(.85+.3*n(1)),v[1]*(.85+.3*n(2)),v[2]*(.6+.8*n(3))];
@@ -126,7 +128,7 @@ export class M01ViewModel {
     if(this.lod!==lod)this.build(lod);
     // Restore replaces the data world; reconstruct visual flags/phase at that safe
     // boundary instead of blending from an old menu/checkpoint presentation.
-    if(this.sourceWorld!==sim.world){this.sourceWorld=sim.world;this.visual=null;this.sampleKey=null;this.flashShot=sim.weapon.shotCount;}
+    if(this.sourceWorld!==sim.world){this.sourceWorld=sim.world;this.visual=null;this.sampleKey=null;this.flashShot=sim.weapon.shotCount;this.fx.reset();}
     const p=sim.player,w=sim.weapon,t=sim.clock,carry=p.carrying==='jozef_bak';
     const key=JSON.stringify([t,p.aiming,p.moveBlend,p.sprinting,p.carrying,sim.renderState.weaponVisible,w.state,w.started,w.until,w.lastShot,w.shotCount,flashUntil,p.angle,p.pitch]);
     if(this.sampleKey===key)return true;
@@ -151,13 +153,15 @@ export class M01ViewModel {
       // A new rig/restore reconstructs immediately from authoritative flags. No mixer
       // or blend state enters schema 2; a repeated clock cannot advance a transition.
       if(!this.visual||t<this.visual.clock)this.visual={clock:t,aim:Number(Boolean(p.aiming)),move:p.moveBlend??0,run:Number(Boolean(p.sprinting)),phase:t*9,
-        look:advanceLookLag(null,p.angle??0,p.pitch??0,0)};
+        look:advanceLookLag(null,p.angle??0,p.pitch??0,0),lookShot:w.shotCount};
       const v=this.visual;
-      // A 4 kg rifle comes up to the eye a touch slower than it drops; the pose eases the blend in/out.
+      // A 4 kg rifle: the eye blend is a touch slower than before (55 ms, both ways); the pose eases it in/out.
       v.aim=advanceVisualBlend(v.aim,Number(Boolean(p.aiming)),dt,.055);
       v.move=advanceVisualBlend(v.move,p.moveBlend??0,dt,.09);
       v.run=advanceVisualBlend(v.run,Number(Boolean(p.sprinting)),dt,.10);
-      // Look lag is an exponential of the true frame time (capped): it settles identically at 4 or 60 fps.
+      // Look lag is an exponential of the true frame time (capped), so a turn settles alike at 4 or 60 fps. The
+      // simulation's own recoil kick to the view pitch is not the player looking up: the shot frame's pitch change is skipped.
+      if(w.shotCount!==v.lookShot){v.look.pitch=p.pitch??0;v.lookShot=w.shotCount;}
       v.look=advanceLookLag(v.look,p.angle??0,p.pitch??0,Math.min(.5,Math.max(0,t-v.clock)));v.phase+=dt*(9+5*v.run);v.clock=t;
       // Weight at the authored mechanical markers: bolt stop/slam (fire_bolt 0,70/1,00 s), clip seated/bolt closed (1,00/2,70 s).
       mechanical=clip==='fire_bolt'?mechanicalPulse(sample,1,.12)+.45*mechanicalPulse(sample,.7,.1):
@@ -174,7 +178,7 @@ export class M01ViewModel {
     }
     this.root.getObjectByName('rifle').visible=!carry;
     // From clip_ejected the empty clip continues as a world object; the asset's short arc would otherwise vanish mid-air.
-    const clipEjected=this.worldFx&&view&&sample>=PROFILE.mechanics.clipEjected;
+    const clipEjected=Boolean(this.worldFx&&view)&&w.state==='RELOAD_CLIP'&&sample>=PROFILE.mechanics.clipEjected;
     this.root.getObjectByName('clip').visible=!carry&&w.state==='RELOAD_CLIP'&&!clipEjected;
     // Partial reload inserts one cartridge. The five-round clip mesh stays hidden.
     this.round.visible=w.state==='RELOAD_SINGLE'&&sample>.7&&sample<2.3;

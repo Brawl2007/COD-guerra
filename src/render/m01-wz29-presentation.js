@@ -97,10 +97,11 @@ export function riflePresentationMaterial(source){
     '#include <metalnessmap_fragment>\nroughnessFactor = max(roughnessFactor, mix(0.62, 0.46, metalnessFactor));\nmetalnessFactor = min(metalnessFactor, 0.86);'+
     // The atlas paints steel at ~0.03 linear, which a PBR metal turns into a black hole; lift only metal texels to a blued-steel reflectance.
     '\ndiffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * 3.2 + vec3(0.025), metalnessFactor);');};
-  material.envMapIntensity=1;material.customProgramCacheKey=()=> 'm01-wz29-presentation-v3';
+  // Reflection strength is the weapon pass's scene.environmentIntensity (three ignores envMapIntensity without an own envMap).
+  material.customProgramCacheKey=()=> 'm01-wz29-presentation-v3';
   return material;
 }
 /** Hands/sleeves/clip use a private atlas copy: the eye pass has its own environment and must not flip the world soldiers' programs. */
 export function viewAtlasMaterial(source){
-  const material=source.clone();material.name='m01_first_person_atlas';material.envMapIntensity=.55;return material;
+  const material=source.clone();material.name='m01_first_person_atlas';return material;
 }

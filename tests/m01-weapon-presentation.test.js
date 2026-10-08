@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {createHash} from 'node:crypto';
 import * as THREE from 'three';
 import {WEAPON_PRESENTATION,weaponRecoil,recoilImpulse,idleSway,advanceLookLag,mechanicalPulse,viewPointToWorld,viewUp,ejectaPose,
   WeaponViewFx,WeaponWorldFx,WeaponLighting,casingGeometry,stripperClipGeometry} from '../src/render/first-person-weapon-fx.js';
+import {Renderer} from '../src/render/three-renderer.js';
 import {presentationPose,WZ29_VISUAL} from '../src/render/m01-wz29-presentation.js';
 import {M01ViewModel} from '../src/render/m01-viewmodel.js';
 import {M01Simulation} from '../src/game/m01-simulation.js';
@@ -16,20 +16,14 @@ import {driver} from './helpers/m01-route.js';
 const {wz29,m1_carbine:carbine}=WEAPON_PRESENTATION;
 const BOLT=1.05;
 
-test('gameplay sources (both weapons, simulations, RNG, spatial, glue) are byte-identical to base 99309d9',()=>{
-  // Presentation only: damage, authoritative spread, cadence, ammunition, hits and Simulation are untouched.
-  const hashes={'src/game/weapon.js':'4b4e7bf93653509189f4d2d28ade314b7488d15ede69e217f1d98b6eae9a9fda',
-    'src/game/simulation.js':'59b206413ab76abf9c93d6d76e48831f13c7358cb1caade409e2a759238c34f3',
-    'src/game/wz29.js':'3bd376bf1d1d6d4978871a4a35e4067779a1c9afda0adde155aba27b10636be5',
-    'src/game/m01-simulation.js':'5da7f3b357caa14d002e6999ddde0eb518fbfc942e08284f8ef0a92b2c47f364',
-    'src/game/m01-fire.js':'f5962ee028e5a6d101793ba3fe6896ccba9350c2e22de7bab60666ef9f53aa1e',
-    'src/game/grenade.js':'8b588b862e5ffe0b7144412807ae89df14553bd55b6bc1187b0d9bd3813c846d',
-    'src/game/game.js':'30969dad34c96236cc2bc59128967500e0b41e5e6b12323154426d80d415a452',
-    'src/world/spatial.js':'49409541cf8b9c8542aba5cdaf79a46227e973932fa795743969a0f893551dcb',
-    'src/core/random.js':'c7fe17d39b70b37adeab22bfdb488029476b489a8e940d43db06558251b273e1',
-    'research/weapons/kb_wz29.profile.json':'73a3cf9a9300d1e34cbedd8f103988854147377956c031f5645616f4ca8e589e'};
-  for(const [path,hash]of Object.entries(hashes))
-    assert.equal(createHash('sha256').update(readFileSync(new URL('../'+path,import.meta.url))).digest('hex'),hash,path);
+test('the presentation modules read gameplay state but never import gameplay code (game, world, core)',()=>{
+  // Presentation only: damage, authoritative spread, cadence, ammunition, hits and Simulation stay in src/game. The
+  // branch's unchanged gameplay files are recorded as evidence against its base, not pinned here.
+  for(const path of ['src/render/first-person-weapon-fx.js','src/render/m01-wz29-presentation.js','src/render/m01-viewmodel.js']){
+    const source=readFileSync(new URL('../'+path,import.meta.url),'utf8'),imports=[...source.matchAll(/^import\s[^;]*?from\s*['"]([^'"]+)['"]/gm)].map(m=>m[1]);
+    assert.ok(imports.includes('three'),path);
+    for(const spec of imports)assert.ok(!/(^|\/)(game|world|core)\//.test(spec),`${path} imports ${spec}`);
+  }
 });
 
 test('each weapon keeps its own frozen presentation identity and carries no gameplay keys',()=>{
@@ -326,10 +320,85 @@ test('look lag after the authoritative recoil pitch settles by READY at 4 fps as
       const {d,v}=r,camera=new THREE.PerspectiveCamera(70,16/9,.05,7500);let flashUntil=0;
       const frame=(controls={})=>{const shots=d.sim.weapon.shotCount;d.step(controls);if(d.sim.weapon.shotCount>shots)flashUntil=d.sim.clock+.06;
         for(let i=1;i<ticksPerFrame;i++)d.step({aim:true});placeCamera(camera,d.sim.player);v.update(d.sim,'low',flashUntil,{camera,viewFov:58});};
-      for(let i=0;i<4;i++)frame({aim:true});frame({aim:true,fire:true});
+      for(let i=0;i<4;i++)frame({aim:true});const pitch=d.sim.player.pitch;frame({aim:true,fire:true});
+      assert.ok(d.sim.player.pitch>pitch,'the simulation kicked the view up');
+      assert.equal(v.stats.presentation.lookPitch,0,`the recoil kick is not read as looking up (${ticksPerFrame} ticks/frame)`);
       while(d.sim.weapon.state!=='READY')frame({aim:true});
       assert.equal(v.stats.presentation.lookPitch,0,`${ticksPerFrame} ticks/frame`);
       const a=alignmentReport(v);assert.ok(a.horizontalPixels<1e-3&&a.verticalPixels<1e-3,`${a.horizontalPixels} ${a.verticalPixels}`);
     }finally{r.dispose();}
   }
+});
+
+test('ejected pieces turn continuously into a resting attitude: cases on their side, the clip flat on its base plate',()=>{
+  const clipGeometry=stripperClipGeometry(),caseGeometry=casingGeometry('7.92x57'),angle=(a,b)=>2*Math.acos(Math.min(1,Math.abs(a.dot(b)))),landings=new Set();
+  try{
+    for(const [geometry,spin]of [[caseGeometry,26],[clipGeometry,-17]])for(const seed of [0,.1,.25,.37,.5,.62,.75,.9]){
+      const {radius,attitude,restLift,restLiftFlipped}=geometry.userData,item={origin:[0,1.4,0],velocity:[1.2,2.1,.3],ground:0,radius,attitude,restLift,restLiftFlipped,spin,seed,
+        spinAxis:[.25,1,.3].map(v=>v/Math.hypot(.25,1,.3)),rotation:new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI/2+seed*7,seed*13,seed*3))};
+      let previous=null,phases=new Set();
+      for(let i=0;i<=1500;i++){const pose=ejectaPose(item,i*.001),q=pose.quaternion.clone();phases.add(pose.phase);
+        if(previous)assert.ok(angle(previous,q)<.2,`${attitude} seed ${seed}: orientation jumps ${angle(previous,q).toFixed(3)} rad at ${i} ms`);previous=q;}
+      assert.deepEqual([...phases],['flight','bounce','rest']);
+      // At rest no vertex is more than a hair inside the surface and the piece lies flat instead of standing on end.
+      const rest=ejectaPose(item,30),matrix=new THREE.Matrix4().compose(rest.position,rest.quaternion,new THREE.Vector3(1,1,1)),p=geometry.attributes.position,v=new THREE.Vector3();
+      let low=Infinity,high=-Infinity;for(let k=0;k<p.count;k++){v.fromBufferAttribute(p,k).applyMatrix4(matrix);low=Math.min(low,v.y);high=Math.max(high,v.y);}
+      assert.ok(low>-.0015&&low<.0005,`${attitude} seed ${seed}: lowest vertex ${low}`);
+      assert.ok(high<(attitude==='flat'?.006:.0135),`${attitude} seed ${seed}: stands up to ${high}`);
+      const length=new THREE.Vector3(...(attitude==='flat'?[0,0,1]:[0,1,0])).applyQuaternion(rest.quaternion);
+      assert.ok(Math.abs(length.y)<1e-9,`${attitude} seed ${seed}: long axis tilted ${length.y}`);
+      if(attitude==='flat')landings.add(new THREE.Vector3(0,1,0).applyQuaternion(rest.quaternion).y>0?'base':'walls');
+    }
+    assert.deepEqual([...landings].sort(),['base','walls'],'the clip comes to rest either way up');
+  }finally{clipGeometry.dispose();caseGeometry.dispose();}
+});
+
+test('one weapon pass, one muzzle light: the procedural fallback and the rig share it and the drawing FX drives it',()=>{
+  const scene=new THREE.Scene(),weapon=new THREE.Object3D();scene.add(weapon);weapon.updateMatrixWorld(true);
+  const fallback=new WeaponViewFx(scene,wz29),rig=new WeaponViewFx(scene,wz29,{light:fallback.light});
+  fallback.attach(weapon,WZ29_VISUAL.muzzle);rig.attach(weapon,WZ29_VISUAL.muzzle);
+  const lights=()=>{let n=0;scene.traverse(o=>{if(o.isLight)n++;});return n;};
+  try{
+    assert.equal(lights(),1);
+    const muzzle=weapon.localToWorld(new THREE.Vector3(...WZ29_VISUAL.muzzle));rig.update({clock:10,shotAt:10,shot:1,muzzle,axis:new THREE.Vector3(0,0,-1),up:viewUp(0)});
+    const lit=rig.light.intensity;assert.ok(lit>0);fallback.hide(false);assert.equal(fallback.light.intensity,lit,'a hidden fallback leaves the shared light to the rig');
+    rig.hide();assert.equal(fallback.light.intensity,0);
+    rig.dispose();assert.equal(lights(),1,'only the owner removes the light');
+  }finally{fallback.dispose();}
+  assert.equal(lights(),0);
+});
+
+test('a quick follow-up shot leaves the previous barrel smoke fading instead of cutting it off; a reset forgets it',()=>{
+  const scene=new THREE.Scene(),weapon=new THREE.Object3D();scene.add(weapon);weapon.updateMatrixWorld(true);
+  const fx=new WeaponViewFx(scene,carbine);fx.attach(weapon,[0,0,-.4]);
+  const muzzle=new THREE.Vector3(0,0,-.4),frame=(clock,shotAt,shot)=>fx.update({clock,shotAt,shot,gate:false,muzzle,axis:new THREE.Vector3(0,0,-1),up:viewUp(0)}).wisps;
+  try{
+    assert.equal(frame(10.17,10,1),carbine.smoke.wisps);
+    // 180 ms later the next shot's wisps have not started yet; the first shot's are still there, then both are.
+    assert.equal(frame(10.19,10.18,2),carbine.smoke.wisps);assert.equal(frame(10.19,10.18,2),carbine.smoke.wisps,'a repeated frame is identical');
+    assert.equal(frame(10.31,10.18,2),2*carbine.smoke.wisps);
+    fx.reset();assert.equal(frame(10.31,10.18,2),carbine.smoke.wisps,'a restored timeline has no previous shot');
+    assert.equal(frame(10.31,10,1),carbine.smoke.wisps,'an earlier shot time (restore) drops the history');
+  }finally{fx.dispose();}
+});
+
+test('down the sights the world muzzle cloud is a thin haze: thinner and smaller than from the hip',()=>{
+  const world=new WeaponWorldFx(new THREE.Scene(),{puffs:8});
+  const spawn=(id,aim)=>world.spawnPuffs({id,start:1,origin:new THREE.Vector3(),direction:new THREE.Vector3(0,0,-1),profile:wz29.smoke,seed:9,aim});
+  try{
+    world.update(1,{});spawn('hip',0);spawn('ads',1);const [hip,ads]=world.puffItems;
+    assert.equal(hip.opacity,wz29.smoke.puffOpacity);assert.ok(ads.opacity<=.45*hip.opacity&&ads.size<hip.size);
+  }finally{world.dispose();}
+});
+
+test('bench brass rests on the road slab it lands on, not inside it',()=>{
+  const bench={restSurfaces:[new THREE.Box3(new THREE.Vector3(18,-.001,2),new THREE.Vector3(22,.005,34))]},height=(x,z)=>Renderer.prototype.restHeight.call(bench,x,z);
+  assert.equal(height(20,18),.005);assert.equal(height(10,18),0);
+  const world=new WeaponWorldFx(new THREE.Scene());
+  try{
+    world.spawnEjecta({id:'c',kind:'.30-carbine',start:0,origin:new THREE.Vector3(19.6,1.5,10),velocity:new THREE.Vector3(.6,1.2,.1),rotation:new THREE.Quaternion(),
+      spinAxis:new THREE.Vector3(0,1,0),spin:30,ground:0,groundAt:height,rest:18,seed:.3});
+    const item=world.items[0],rest=ejectaPose(item,20).position;
+    assert.equal(height(rest.x,rest.z),.005,'it landed on the slab');assert.ok(Math.abs(item.ground-.005)<1e-4,`rest surface ${item.ground}`);
+  }finally{world.dispose();}
 });

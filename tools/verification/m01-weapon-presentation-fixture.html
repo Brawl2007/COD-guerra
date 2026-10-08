@@ -46,7 +46,9 @@ window.wp={
   state(){
     const weapon=mode==='m01'?sim.weapon.snapshot():{mag:sim.weapon.mag,reserve:sim.weapon.reserve,shotCount:sim.weapon.shotCount,lastShot:sim.weapon.lastShot};
     const d=mode==='m01'?{viewModel:view.viewModel.stats,weaponFx:view.weaponWorldFx.diagnostics,lighting:view.weaponLighting.state}:bench.diagnostics.weaponFx;
-    return structuredClone({mode,clock:sim.clock,player:{x:sim.player.x,y:sim.player.y,z:sim.player.z,angle:sim.player.angle,pitch:sim.player.pitch,aiming:sim.player.aiming},weapon,presentation:d});
+    const info=(mode==='m01'?engine:bench.engine).info.render;
+    return structuredClone({mode,clock:sim.clock,player:{x:sim.player.x,y:sim.player.y,z:sim.player.z,angle:sim.player.angle,pitch:sim.player.pitch,aiming:sim.player.aiming},weapon,presentation:d,
+      render:{calls:info.calls,triangles:info.triangles}});
   },
   snapshot(){return mode==='m01'?sim.snapshot():null;},
 };

@@ -33,7 +33,8 @@ export class M01View {
     this.scene=new THREE.Scene();this.scene.fog=new THREE.Fog('#a0a7a8',420,2800);
     this.camera=new THREE.PerspectiveCamera(70,1,.05,7500);this.weaponCamera=new THREE.PerspectiveCamera(58,1,.03,6);
     this.weaponScene=new THREE.Scene();this.weaponRoot=new THREE.Group();this.weaponScene.add(this.weaponRoot);
-    // Weapon-pass fill/key keep their tuned base values and follow the world's sky, sun direction and daylight.
+    // Weapon-pass fill/key start from the old tuned values; every frame they follow the world's sky, sun and daylight
+    // (dimmer at dawn than the old constant 2,7/2,0, so the rifle sits in the same light as the world around it).
     this.weaponLighting=new WeaponLighting(this.weaponScene,{fill:['#bfd0d5','#58422d',2.7],key:['#ffe0b0',2]});
     this.skyLight=new THREE.HemisphereLight('#bac9d5','#625846',1.25);this.scene.add(this.skyLight);
     this.sun=new THREE.DirectionalLight('#ffd6a0',.45);this.sun.castShadow=true;this.sun.shadow.mapSize.set(1024,1024);
@@ -71,7 +72,9 @@ export class M01View {
     this.atmosphere=new M01Atmosphere(this.scene);
     this.createWeapon();this.createActors();this.createContactShadows();this.createFireEffects();this.createAircraft();this.createTrains();
     this.weaponWorldFx=new WeaponWorldFx(this.effects);
-    this.characters=new M01Characters(this.scene);this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture,this.weaponWorldFx);
+    // One muzzle light in the weapon pass: the licensed rig drives the procedural fallback's light.
+    this.characters=new M01Characters(this.scene);
+    this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture,this.weaponWorldFx,{muzzleLight:this.fallbackFx.light});
     this.ready=Promise.all([this.loadKit(),this.characters.load(this.owner.quality),this.loadAircraft(),
       this.wagons.load(),this.yardWagons.load(),this.locomotive.load(),this.panzerzugArt.load()]);
   }
@@ -508,8 +511,10 @@ export class M01View {
     this.carryBody.visible=sim.player.carrying==='jozef_bak';this.carryCrate.visible=sim.player.carrying==='sapper_crate';
     this.carryBody.position.y=this.carryCrate.position.y=bob*1.5;
     this.weaponLighting.sync({sky:this.skyLight,sun:this.sun,camera:this.camera,daylight:this.daylight??1,pitch:player.pitch});
-    if(this.viewModel.update(sim,this.owner.quality,this.flashUntil,{camera:this.camera,viewFov:this.weaponCamera.fov})){this.weaponRoot.visible=false;this.carryBody.visible=false;this.fallbackFx.hide();}
+    if(this.viewModel.update(sim,this.owner.quality,this.flashUntil,{camera:this.camera,viewFov:this.weaponCamera.fov})){this.weaponRoot.visible=false;this.carryBody.visible=false;this.fallbackFx.hide(false);}
     else{
+      // A restore builds a new world: the fallback's smoke history belongs to the old timeline.
+      if(this.fallbackWorld!==sim.world){this.fallbackWorld=sim.world;this.fallbackFx.reset();}
       const r=this.weaponRoot,shotAt=Number.isFinite(w.lastShot)?w.lastShot/1000:-Infinity;r.updateMatrixWorld(true);
       const fresh=w.shotCount!==this.fallbackShot&&time<this.flashUntil+.2&&time-shotAt>=0&&time-shotAt<.25;if(fresh)this.fallbackShot=w.shotCount;
       this.fallbackFx.update({clock:time,shotAt,gate:time<this.flashUntil,fresh,aim:player.aiming?1:0,shot:w.shotCount??0,visible:r.visible&&!player.carrying,
