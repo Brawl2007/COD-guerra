@@ -1,0 +1,356 @@
+[
+  {
+    "file": "sheets/sprint-front.jpg",
+    "kind": "five exact requested phases from raw screenshots",
+    "views": [
+      "front"
+    ]
+  },
+  {
+    "file": "sheets/sprint-side.jpg",
+    "kind": "five exact requested phases from raw screenshots",
+    "views": [
+      "side"
+    ]
+  },
+  {
+    "file": "sheets/sprint-sequence.jpg",
+    "kind": "chronological frames extracted from encoded MP4",
+    "sample_times_s": [
+      0.0,
+      0.0768,
+      0.1536,
+      0.2368,
+      0.32,
+      0.3968,
+      0.4736,
+      0.5632,
+      0.6336
+    ]
+  },
+  {
+    "file": "sheets/sprint-compat.jpg",
+    "kind": "six real textured original models at a shared clip phase",
+    "variants": [
+      {
+        "nation": "pl",
+        "lod": 0
+      },
+      {
+        "nation": "pl",
+        "lod": 1
+      },
+      {
+        "nation": "pl",
+        "lod": 2
+      },
+      {
+        "nation": "de",
+        "lod": 0
+      },
+      {
+        "nation": "de",
+        "lod": 1
+      },
+      {
+        "nation": "de",
+        "lod": 2
+      }
+    ]
+  },
+  {
+    "file": "sheets/crouch_walk-front.jpg",
+    "kind": "five exact requested phases from raw screenshots",
+    "views": [
+      "front"
+    ]
+  },
+  {
+    "file": "sheets/crouch_walk-side.jpg",
+    "kind": "five exact requested phases from raw screenshots",
+    "views": [
+      "side"
+    ]
+  },
+  {
+    "file": "sheets/crouch_walk-sequence.jpg",
+    "kind": "chronological frames extracted from encoded MP4",
+    "sample_times_s": [
+      0.0,
+      0.1152,
+      0.2304,
+      0.35519999999999996,
+      0.48,
+      0.5952,
+      0.7103999999999999,
+      0.8448,
+      0.9503999999999999
+    ]
+  },
+  {
+    "file": "sheets/crouch_walk-compat.jpg",
+    "kind": "six real textured original models at a shared clip phase",
+    "variants": [
+      {
+        "nation": "pl",
+        "lod": 0
+      },
+      {
+        "nation": "pl",
+        "lod": 1
+      },
+      {
+        "nation": "pl",
+        "lod": 2
+      },
+      {
+        "nation": "de",
+        "lod": 0
+      },
+      {
+        "nation": "de",
+        "lod": 1
+      },
+      {
+        "nation": "de",
+        "lod": 2
+      }
+    ]
+  },
+  {
+    "file": "sheets/turn_left-front.jpg",
+    "kind": "five exact requested phases from raw screenshots",
+    "views": [
+      "front"
+    ]
+  },
+  {
+    "file": "sheets/turn_left-side.jpg",
+    "kind": "five exact requested phases from raw screenshots",
+    "views": [
+      "side"
+    ]
+  },
+  {
+    "file": "sheets/turn_left-sequence.jpg",
+    "kind": "chronological frames extracted from encoded MP4",
+    "sample_times_s": [
+      0.0,
+      0.13679999999999998,
+      0.27359999999999995,
+      0.42179999999999995,
+      0.57,
+      0.7068,
+      0.8435999999999999,
+      1.0031999999999999,
+      1.1285999999999998
+    ]
+  },
+  {
+    "file": "sheets/turn_left-compat.jpg",
+    "kind": "six real textured original models at a shared clip phase",
+    "variants": [
+      {
+        "nation": "pl",
+        "lod": 0
+      },
+      {
+        "nation": "pl",
+        "lod": 1
+      },
+      {
+        "nation": "pl",
+        "lod": 2
+      },
+      {
+        "nation": "de",
+        "lod": 0
+      },
+      {
+        "nation": "de",
+        "lod": 1
+      },
+      {
+        "nation": "de",
+        "lod": 2
+      }
+    ]
+  },
+  {
+    "file": "sheets/turn_right-front.jpg",
+    "kind": "five exact requested phases from raw screenshots",
+    "views": [
+      "front"
+    ]
+  },
+  {
+    "file": "sheets/turn_right-side.jpg",
+    "kind": "five exact requested phases from raw screenshots",
+    "views": [
+      "side"
+    ]
+  },
+  {
+    "file": "sheets/turn_right-sequence.jpg",
+    "kind": "chronological frames extracted from encoded MP4",
+    "sample_times_s": [
+      0.0,
+      0.13679999999999998,
+      0.27359999999999995,
+      0.42179999999999995,
+      0.57,
+      0.7068,
+      0.8435999999999999,
+      1.0031999999999999,
+      1.1285999999999998
+    ]
+  },
+  {
+    "file": "sheets/turn_right-compat.jpg",
+    "kind": "six real textured original models at a shared clip phase",
+    "variants": [
+      {
+        "nation": "pl",
+        "lod": 0
+      },
+      {
+        "nation": "pl",
+        "lod": 1
+      },
+      {
+        "nation": "pl",
+        "lod": 2
+      },
+      {
+        "nation": "de",
+        "lod": 0
+      },
+      {
+        "nation": "de",
+        "lod": 1
+      },
+      {
+        "nation": "de",
+        "lod": 2
+      }
+    ]
+  },
+  {
+    "file": "sheets/hit_front-front.jpg",
+    "kind": "five exact requested phases from raw screenshots",
+    "views": [
+      "front"
+    ]
+  },
+  {
+    "file": "sheets/hit_front-side.jpg",
+    "kind": "five exact requested phases from raw screenshots",
+    "views": [
+      "side"
+    ]
+  },
+  {
+    "file": "sheets/hit_front-sequence.jpg",
+    "kind": "chronological frames extracted from encoded MP4",
+    "sample_times_s": [
+      0.0,
+      0.0912,
+      0.1824,
+      0.2812,
+      0.38,
+      0.4712,
+      0.5624,
+      0.6688000000000001,
+      0.7524
+    ]
+  },
+  {
+    "file": "sheets/hit_front-compat.jpg",
+    "kind": "six real textured original models at a shared clip phase",
+    "variants": [
+      {
+        "nation": "pl",
+        "lod": 0
+      },
+      {
+        "nation": "pl",
+        "lod": 1
+      },
+      {
+        "nation": "pl",
+        "lod": 2
+      },
+      {
+        "nation": "de",
+        "lod": 0
+      },
+      {
+        "nation": "de",
+        "lod": 1
+      },
+      {
+        "nation": "de",
+        "lod": 2
+      }
+    ]
+  },
+  {
+    "file": "sheets/near_miss_duck-front.jpg",
+    "kind": "five exact requested phases from raw screenshots",
+    "views": [
+      "front"
+    ]
+  },
+  {
+    "file": "sheets/near_miss_duck-side.jpg",
+    "kind": "five exact requested phases from raw screenshots",
+    "views": [
+      "side"
+    ]
+  },
+  {
+    "file": "sheets/near_miss_duck-sequence.jpg",
+    "kind": "chronological frames extracted from encoded MP4",
+    "sample_times_s": [
+      0.0,
+      0.1176,
+      0.2352,
+      0.3626,
+      0.49,
+      0.6076,
+      0.7252,
+      0.8623999999999999,
+      0.9702
+    ]
+  },
+  {
+    "file": "sheets/near_miss_duck-compat.jpg",
+    "kind": "six real textured original models at a shared clip phase",
+    "variants": [
+      {
+        "nation": "pl",
+        "lod": 0
+      },
+      {
+        "nation": "pl",
+        "lod": 1
+      },
+      {
+        "nation": "pl",
+        "lod": 2
+      },
+      {
+        "nation": "de",
+        "lod": 0
+      },
+      {
+        "nation": "de",
+        "lod": 1
+      },
+      {
+        "nation": "de",
+        "lod": 2
+      }
+    ]
+  }
+]

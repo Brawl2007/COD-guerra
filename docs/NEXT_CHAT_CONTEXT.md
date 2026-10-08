@@ -1,4 +1,18 @@
-# Contrato de apresentação das animações — 2026-10-08 UTC
+# Biblioteca adicional de movimento — 2026-10-08 UTC
+
+TASK_ID `M01-SOLDIER-MOTION-CLIPS-PRODUCTION-V1`; base remota `codex/m01-anim-contract-sim-v1` @ `d070225d49840f5bd304a0825c0656651b82c26d`; branch `codex/m01-soldier-motion-clips-production-v1`. Confirmar o HEAD final da PR draft antes de integrar. Estado **READY_FOR_CAPTAIN_REVIEW**; M01 continua **PROTÓTIPO JOGÁVEL**.
+
+Seis clips originais no novo pacote `assets/models/provisional/m01/characters/motion-clips-v1/`: sprint, crouch_walk, giros ±90°, hit_front e near_miss_duck. GLB 415.724 bytes, SHA-256 `dbcb3e56015c1902d691c9fdb1783997e86c0a69e7c2abc29135ea773611031c`; manifesto/animation.extras com durações, contactos e distâncias para o odómetro, grips e compensação de yaw. Geração reproduzível byte a byte, reutilizando FK/IK existente, sem download/reextração de assets.
+
+27/27 focados Node (12 novos + 15 existentes), build PASS. GLTFLoader/AnimationMixer reais em PL/DE LOD0/1/2 a 240 Hz: 36 combinações, 8.148 amostras, raiz fixa, sem NaN/bindings inválidos; soles ≥1,905 mm, drift ≤1,088 mm, grip ≤2,050 mm. Browser isolado com texturas, zero erros/draw calls adicionais; 30 comparativas nas cinco fases com duas vistas + 36 compatibilidade, seis vídeos MP4 e 24 sheets. Inspeção visual feita também sobre frames cronológicos dos MP4 finais. Primeiro sprint com reach/drift rejeitado; primeiro vídeo estático por action pausada após seek de 100% rejeitado e regenerado. Sem suite completa, playtest humano ou FPS alegados.
+
+Runtime/simulação/presentation/renderer/hitboxes/GLBs originais/dependências/workflows preservados por hashes da base. Não há integração dos clips nem Animation Resolver. Manter precedência dos adaptadores MG34/RKM/CKM/transportes/feridos/mortos; grips genéricos são de espingarda. Giro tem yaw esquelético, precisa de compensação no grupo visual; base não persiste instante próprio de giro. Blends, terrain IK e políticas determinísticas de entrada/saída/restore pertencem ao resolver. Handoff/provas/galeria em `docs/verification/m01-runtime/soldier-motion-clips-production-v1/`.
+
+Main `72bbcdd156603c9399801c95d43d9365ba50fc82`, deploy `cb400355c056955d1d6d0b22e92bd7be2443a10c` e base aprovada intocados. PR contra a base aprovada, sem merge/deploy/dispatch. Não recomeçar investigações, não iniciar Graphify. Aguardar revisão do Capitão e nova tarefa concreta.
+
+---
+
+# Histórico — contrato de apresentação das animações (2026-10-08 UTC)
 
 TASK_ID `M01-ANIM-CONTRACT-SIM-V1`; branch `codex/m01-anim-contract-sim-v1`, base remota confirmada `99309d9cb023cc94a07d41ff863e1362e4460570`. Confirmar o HEAD final remoto antes de continuar. Plano Claude `5583a4ab854a2e64dad85460bfd40031c3406ccc` e piloto `93aaa5c4a5651f22b4c696005501a2ac1014860a` lidos sem merge/cherry-pick.
 
