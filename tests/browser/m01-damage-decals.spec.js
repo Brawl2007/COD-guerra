@@ -12,14 +12,18 @@ const key='cod-guerra:checkpoint:m01:v2',baseline=process.env.M01_BASELINE_CAPTU
 const hidden={style:'#pause,#hud,#menu {visibility:hidden!important}',timeout:120000};
 
 // Genuine states: the opening, and the real route (no injected events) ~4 min after the east demolition (its smoke
-// has cleared; the west charges have not fired yet) and 13 s after the west demolition, inside its in-world scene.
+// has cleared; the west charges have not fired yet) and at the first sample 8 s or more after the west demolition
+// (8.25 s), inside its in-world scene (in the route the roll call follows at 15 s and moves the player; from the staged
+// pose, away from the shelter, it does not fire). No scripted change reaches a probe for at least 6.75 s of mission time
+// (27 frames at the game's 0.25 s step cap): from the station-facade pose the west demolition fires 6.75 s after
+// preWest, and the east-deck-end pose (x > 401) is restored out of bounds 8.1 s after it.
 const start=new M01Simulation(19390901);start.tick(.05,{skip:true});const opening=start.snapshot();
 let preWest=null,postWest=null,step=0;
 const flow=route(19390901,{onStep:({sim})=>{
   if(++step%20)return;
   if(sim.consumedEvent('evt_m01_east_demolition')&&!sim.consumedEvent('evt_m01_west_demolition')&&(!preWest||sim.clock-sim.consumed['evt_m01_east_demolition']<=241))
     preWest=sim.snapshot();
-  if(!postWest&&sim.consumedEvent('evt_m01_west_demolition')&&sim.clock-sim.consumed['evt_m01_west_demolition']>=13)postWest=sim.snapshot();
+  if(!postWest&&sim.consumedEvent('evt_m01_west_demolition')&&sim.clock-sim.consumed['evt_m01_west_demolition']>=8)postWest=sim.snapshot();
 }});
 if(!preWest||!postWest)throw new Error('Post-blast fixtures were not reached through the real simulation route');
 
@@ -112,6 +116,10 @@ test('saved blasts draw their persistent aftermath on load (frozen probes of gen
   for(const probe of probes){
     const {page,errors,failed}=await open(browser,staged(probe.snapshot,probe));await pause(page);
     const data=await page.evaluate(()=>window.gameDiagnostics());
+    // The capture must still show the staged state: no event since the load (a slow run could reach the west demolition)
+    // and the player still within 0.5 m of the staged x/z (the out-of-bounds restore of east-deck-end moves it).
+    expect([...data.eventIds].sort(),`${probe.name}: an event fired before the capture (clock ${data.clock})`).toEqual(Object.keys(probe.snapshot.consumed).sort());
+    expect(Math.hypot(data.player.x-probe.x,data.player.z-probe.z),`${probe.name} left its staged pose (clock ${data.clock})`).toBeLessThan(.5);
     await page.screenshot({path:info.outputPath(`${prefix}-${probe.name}-high.png`),...hidden});
     samples[probe.name]=counters(data);
     if(!baseline){

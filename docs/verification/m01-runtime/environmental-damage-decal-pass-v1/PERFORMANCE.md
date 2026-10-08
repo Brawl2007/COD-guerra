@@ -16,14 +16,14 @@ Global: 16 explosões, 6000 triângulos de resíduo, até **4 draw calls** e **2
 
 | Vista (Alta) | Draw calls BEFORE → AFTER | Triângulos BEFORE → AFTER | Texturas | Geometrias | Marcas | Resíduo (tri) | Detritos | Brasas |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| portal-brick | 175 → 179 | 389.053 → 389.123 (+0.02 %) | 110 → 112 | 251 → 255 | 4 | 0 | 2 | 0 |
-| track-bed | 137 → 140 | 413.367 → 414.319 (+0.23 %) | 107 → 109 | 226 → 230 | 4 | 0 | 3 | 0 |
+| portal-brick | 174 → 179 | 389.017 → 389.123 (+0.03 %) | 110 → 112 | 251 → 255 | 4 | 0 | 2 | 0 |
+| track-bed | 137 → 139 | 413.367 → 413.435 (+0.02 %) | 107 → 109 | 226 → 230 | 4 | 0 | 3 | 0 |
 | repair-crater | 359 → 359 | 777.285 → 779.842 (+0.33 %) | 110 → 112 | 270 → 274 | 0 | 659 | 121 | 0 |
 | station-facade | 215 → 217 | 654.408 → 657.487 (+0.47 %) | 124 → 126 | 256 → 260 | 0 | 659 | 121 | 0 |
-| east-deck-end | 211 → 212 | 698.124 → 701.201 (+0.44 %) | 62 → 64 | 327 → 331 | 0 | 659 | 121 | 0 |
-| west-bridgehead | 317 → 322 | 749.231 → 754.206 (+0.66 %) | 110 → 112 | 284 → 288 | 0 | 1235 | 134 | 10 |
+| east-deck-end | 212 → 212 | 698.644 → 701.201 (+0.37 %) | 62 → 64 | 327 → 331 | 0 | 659 | 121 | 0 |
+| west-bridgehead | 319 → 319 | 750.271 → 753.164 (+0.39 %) | 110 → 112 | 284 → 288 | 0 | 1235 | 134 | 10 |
 
-Os decals acrescentam no máximo 4 draw calls (marcas, resíduo, detritos, brasas), +2 texturas e +4 geometrias. Os seus próprios triângulos, pelos diagnósticos (resíduo + 20 por detrito + 2 por marca/brasa), vão de 48 a 3.935 nestas vistas, 0,01 % a 0,53 % do frame. As diferenças totais do frame (0 a +5 draw calls, +0,02 % a +0,66 % de triângulos) incluem também variação de conteúdo entre as continuações BEFORE e AFTER (NPC, FX, frames diferentes).
+Os decals acrescentam no máximo 4 draw calls (marcas, resíduo, detritos, brasas), +2 texturas e +4 geometrias. Os seus próprios triângulos, pelos diagnósticos (resíduo + 20 por detrito + 2 por marca/brasa), vão de 48 a 3.935 nestas vistas, 0,01 % a 0,52 % dos triângulos do frame AFTER. As diferenças totais do frame (0 a +5 draw calls, +0,02 % a +0,47 % de triângulos) incluem também variação de conteúdo entre as continuações BEFORE e AFTER (NPC, FX, frames diferentes).
 
 ## CPU do módulo nas rotas reais (Node, esta máquina)
 
@@ -45,4 +45,4 @@ Os decals acrescentam no máximo 4 draw calls (marcas, resíduo, detritos, brasa
 
 ## Diagnóstico do teste `m01-battlefield-fx` que expirou num run de CI
 
-No run `37720348114` (branch `codex/…`, mesmo SHA que passou verde na branch `claude/…`), o teste existente "real in-flight round…" expirou em `page.screenshot` (30 s) com o jogo a correr em Alta. Sonda local no mesmo estado, com o código de `b084bba` (2 amostras cada, SwiftShader; saída em [logs/session-probes.txt](logs/session-probes.txt)): intervalo mediano entre frames BEFORE 1,37 s vs AFTER 1,32–1,43 s; captura 5,6–5,7 s vs 6,2–7,0 s, isto é 9–23 % mais lenta nestas amostras. Não há regressão de frame mensurável; a captura ficou um pouco mais lenta e depende de frames de cerca de 1,4 s neste renderer por software. A causa do timeout no CI não está provada. Hipótese do Reviewer, plausível mas não provada: o ANGLE sobre Vulkan/SwiftShader só constrói o pipeline no primeiro desenho de cada malha nova, e as marcas aparecem pela primeira vez precisamente no frame do impacto que o teste captura. Por isso cada malha passou a ser desenhada uma vez, sem píxeis, no primeiro frame. Ver o resultado do CI final no HANDOFF.
+No run `37720348114` (branch `codex/…`, mesmo SHA que passou verde na branch `claude/…`), o teste existente "real in-flight round…" expirou em `page.screenshot` (30 s) com o jogo a correr em Alta. Sonda local no mesmo estado, com o código de `b084bba` (2 amostras cada, SwiftShader; saída em [logs/session-probes.txt](logs/session-probes.txt)): intervalo mediano entre frames BEFORE 1,37 s vs AFTER 1,32–1,43 s; captura 5,6–5,7 s vs 6,2–7,0 s, isto é 9–23 % mais lenta nestas amostras. Não há regressão de frame mensurável; a captura ficou um pouco mais lenta e depende de frames de cerca de 1,4 s neste renderer por software. A causa do timeout no CI não está provada. Hipótese do Reviewer, plausível mas não provada: o ANGLE sobre Vulkan/SwiftShader só constrói o pipeline no primeiro desenho de cada malha nova, e as marcas aparecem pela primeira vez precisamente no frame do impacto que o teste captura. Por isso cada malha passou a ser desenhada uma vez, sem píxeis, no primeiro frame. No commit `61db784`, já com este desenho, o workflow passou nas duas branches e o teste não expirou (runs no HANDOFF); um resultado verde não prova a causa.

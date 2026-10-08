@@ -29,3 +29,39 @@ BEFORE {"frames":6,"medianMs":1366.6,"p90Ms":1466.6,"maxMs":1466.6,"screenshotMs
    (src/render/zz-failcopy.mjs, deleted), constructed with a THREE.Scene in Node, 1.5 s later:
 {"constructed":true,"errors":1,"lastError":"probe: painter failure","atlasReady":false,"atlasError":"probe: painter failure","timerPending":false,"logged":1,"ready":"rejected: probe: painter failure","sync":"threw: probe: painter failure"}
 second instance after failure: 1 null
+
+5) Staged views of tests/browser/m01-damage-decals.spec.js: mission time from each staged state to the next scripted change
+   (Node, M01Simulation ticked at 0.05 s without input; same seed, route and fixtures as the spec; temporary probe
+   tests/zz-west-probe.mjs, deleted). Run because CI run 37751291323 (branch claude/bold-cannon-rkvxjp, commit 61db784)
+   captured the AFTER west-bridgehead probe at clock 1049.43 with the player at (-260.5, 68.2), crouched: the roll-call
+   scene, not the staged view. The test passed, because its assertions only check the residue. "postWest" is the spec
+   fixture of commit 61db784 (first route sample 13 s or more after the west demolition); "early" is the first sample
+   8 s or more after it, the fixture of the fix.
+west demolition at 1033.750 | preWest 1027.000 | postWest 1047.000 (+13.25 s) | early 1042.000 (+8.25 s)
+portal-brick     clock 0.05 scene null | +15.95 s: events evt_m01_railway_worker_report
+track-bed        clock 0.05 scene null | +15.95 s: events evt_m01_railway_worker_report
+repair-crater    clock 1027.00 scene null | nothing within 40 s
+station-facade   clock 1027.00 scene null | +6.75 s: events evt_m01_west_demolition scene null→cs_m01_west_blast +1 blasts | +6.80 s:  scene null→cs_m01_west_blast +1 blasts | +6.85 s:  scene null→cs_m01_west_blast +1 blasts | +6.90 s:  scene null→cs_m01_west_blast +1 blasts
+east-deck-end    clock 1027.00 scene null | +-232.20 s: player→(-20.0,39.2)  scene null→cs_m01_east_blast
+west-bridgehead  clock 1047.00 scene cs_m01_west_blast | +1.75 s: player→(-260.5,68.2) events evt_m01_roll_call,evt_m01_kozliny_attack_distant scene cs_m01_west_blast→cs_m01_roll_call
+west (early)     clock 1042.00 scene cs_m01_west_blast | +6.75 s:  scene cs_m01_west_blast→null | +6.80 s:  scene cs_m01_west_blast→null | +6.85 s:  scene cs_m01_west_blast→null | +6.90 s:  scene cs_m01_west_blast→null
+   east-deck-end traced tick by tick (temporary tests/zz-east-probe.mjs, deleted): pose unchanged up to +8.00 s
+   (clock 1035.00); at +8.10 s the simulation restores its checkpoint (clock 794.80, player (-20.0, 39.2)), which is the
+   "+-232.20 s" line above: the staged pose x = 650 is beyond outOfBoundsX 401 (map-layout.json) for longer than its 8 s grace.
+   The game advances the mission at most 0.25 s per rendered frame (src/game/game.js). Between "continue" and the pause the
+   probes advanced 0.27-0.57 s in the local evidence runs of commit 61db784 and 0.68-2.77 s in its CI runs.
+   Fix: the spec takes postWest at the first sample 8 s or more after the west demolition (+8.25 s, 6.75 s before its scene
+   ends, the same margin station-facade has before the west blast; from the staged pose, away from the shelter, the roll
+   call does not fire). Before each capture every probe asserts that no event fired since the load (this also covers
+   station-facade, whose pose does not change when the west demolition fires) and that the player is still within 0.5 m
+   of its staged x/z (the out-of-bounds restore moves it).
+
+6) Event guard check on the final spec (temporary copy tests/browser/zz-guard-proof.spec.js, deleted): the station-facade
+   probe waits until the mission clock passes preWest + 7 s before the pause (production build, Chromium/SwiftShader,
+   `-g "saved blasts"`). Excerpt of the Playwright output:
+    Error: station-facade: an event fired before the capture (clock 1034.316699999607)
+    - Expected  - 0
+    + Received  + 1
+    +   "evt_m01_west_demolition",
+  1 failed
+   The position check alone would pass here: the west demolition does not move the player.

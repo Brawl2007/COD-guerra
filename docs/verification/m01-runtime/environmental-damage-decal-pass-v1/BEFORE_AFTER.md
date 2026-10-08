@@ -2,7 +2,7 @@
 
 Capturas do build de produção (`npm run preview`), Chromium/SwiftShader, 1280×720, qualidade Alta, geradas por `tests/browser/m01-damage-decals.spec.js`. **BEFORE** é o mesmo spec com `M01_BASELINE_CAPTURE=1` contra o renderer da base `99309d9` (`src/render/m01-view.js` e `src/game/game.js` repostos; o módulo novo existe mas não é importado). Mesmos snapshots, mesma posição encenada do jogador e mesmos comandos de rato; nas continuações os NPC podem diferir ligeiramente por temporização. HUD/pausa escondidos na captura. Não é um playtest humano nem uma medição de FPS.
 
-Estados de origem (todos genuínos, sem eventos injectados): abertura da missão depois do skip da intro; rota real ~4 min depois da demolição leste (fumo já dissipado, cargas oeste ainda por detonar); rota real 13 s depois da demolição oeste. A posição/orientação do jogador é encenada no snapshot (como nas sondas de `m01-bridge-portal-polish.spec.js`).
+Estados de origem (todos genuínos, sem eventos injectados): abertura da missão depois do skip da intro; rota real ~4 min depois da demolição leste (fumo já dissipado, cargas oeste ainda por detonar); rota real 8,25 s depois da demolição oeste (na rota, a chamada segue-se à cena dessa demolição aos 15 s e muda o jogador de sítio; na pose encenada, longe do abrigo, não dispara). Antes de cada captura de sonda o spec verifica que nenhum evento disparou desde o carregamento e que o jogador continua a menos de 0,5 m da posição encenada. A posição/orientação do jogador é encenada no snapshot (como nas sondas de `m01-bridge-portal-polish.spec.js`).
 
 | Vista | Origem e câmara | BEFORE | AFTER | O que muda |
 |---|---|---|---|---|
@@ -11,7 +11,7 @@ Estados de origem (todos genuínos, sem eventos injectados): abertura da missão
 | Cratera do reparo 1 | rota real pré-demolição oeste; (−49; 15,5) virado ao ponto de reparo | [BEFORE](before/BEFORE-repair-crater-high.png) | [AFTER](after/AFTER-repair-crater-high.png) | Cratera com bordo suave e núcleo escuro, terra e pedras espalhadas. Na base o terreno fica liso depois da bomba. |
 | Fachada da estação | mesma rota; (−400; 17,5) de frente para a base da fachada norte | [BEFORE](before/BEFORE-station-facade-high.png) | [AFTER](after/AFTER-station-facade-high.png) | Poeira clara de alvenaria com flocos de fuligem e pedaços de tijolo na base da fachada (fora da caixa desenhada do edifício). A fuligem das janelas existe mas mal se distingue na fachada escura. |
 | Ponta do vão 5 (rodoviário) | mesma rota; no tabuleiro em (650; 40) virado ao vão demolido | [BEFORE](before/BEFORE-east-deck-end-high.png) | [AFTER](after/AFTER-east-deck-end-high.png) | Fuligem nos últimos 9 m do tabuleiro junto ao vão. Discreta mas visível; na base o tabuleiro fica limpo. |
-| Cabeça de ponte oeste | rota real 13 s após a demolição oeste; (−30; 2) no aterro | [BEFORE](before/BEFORE-west-bridgehead-high.png) | [AFTER](after/AFTER-west-bridgehead-high.png) | Via e encontro queimados, blocos de alvenaria e pedaços de tijolo. Na base só a ponte muda; o chão e a via ficam limpos depois da demolição. |
+| Cabeça de ponte oeste | rota real 8,25 s após a demolição oeste; (−30; 2) no aterro | [BEFORE](before/BEFORE-west-bridgehead-high.png) | [AFTER](after/AFTER-west-bridgehead-high.png) | Via e encontro queimados, blocos de alvenaria e pedaços de tijolo. Na base só a ponte muda; o chão e a via ficam limpos depois da demolição. |
 
 ## Galeria de grandes planos (fixture de verificação)
 

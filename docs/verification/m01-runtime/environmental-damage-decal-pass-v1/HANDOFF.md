@@ -33,7 +33,8 @@ Nada de dano, acertos, RNG, eventos, objectivos, colisões, mundo, missão, asse
 | Browser BEFORE (ganchos da base, mesmas vistas) | 3/3 — [log](logs/browser-before.log) |
 | Galeria (fixture) | 17 vistas, atlas pronto em todas, sem erros — [relatório](gallery/gallery-report.json) |
 | Invariância da autoridade (`git diff --exit-code 99309d9` em simulação/mundo/core/missão/assets/configs; `game.js` só +1 linha) | PASS (passo do workflow) |
-| CI do workflow focado no checkpoint `b084bba` | verde em `claude/bold-cannon-rkvxjp` ([run 37720345045](https://github.com/Brawl2007/COD-guerra/actions/runs/37720345045)); em `codex/…` ([run 37720348114](https://github.com/Brawl2007/COD-guerra/actions/runs/37720348114)) o browser deu 7/8: o teste existente `m01-battlefield-fx` "real in-flight round…" expirou num `page.screenshot` de 30 s (excerto do log do job e sonda local em [logs/session-probes.txt](logs/session-probes.txt); diagnóstico em [PERFORMANCE.md](PERFORMANCE.md)). O commit final volta a correr o workflow nas duas branches. |
+| CI do workflow focado no checkpoint `b084bba` | verde em `claude/bold-cannon-rkvxjp` ([run 37720345045](https://github.com/Brawl2007/COD-guerra/actions/runs/37720345045)); em `codex/…` ([run 37720348114](https://github.com/Brawl2007/COD-guerra/actions/runs/37720348114)) o browser deu 7/8: o teste existente `m01-battlefield-fx` "real in-flight round…" expirou num `page.screenshot` de 30 s (excerto do log do job e sonda local em [logs/session-probes.txt](logs/session-probes.txt); diagnóstico em [PERFORMANCE.md](PERFORMANCE.md)). No commit seguinte passou nas duas branches (linha abaixo). |
+| CI do workflow focado no commit `61db784` | verde nas duas branches, em todos os passos: `claude/…` ([run 37751291323](https://github.com/Brawl2007/COD-guerra/actions/runs/37751291323)) e `codex/…` ([run 37751298242](https://github.com/Brawl2007/COD-guerra/actions/runs/37751298242)); browser AFTER 8/8 e BEFORE 3/3 em cada uma, incluindo o teste "real in-flight round…" que tinha expirado (um run verde não prova a causa desse timeout). No run da branch `claude/…` a sonda `west-bridgehead` AFTER foi capturada já na cena da chamada, sem falhar o teste: corrigido a seguir (ver "Depois do CI do commit `61db784`"). Este resultado pertence à revisão anterior; o CI do commit com a correcção é separado. |
 
 ## Revisão e verificação independentes (antes do commit)
 
@@ -68,6 +69,22 @@ Segunda revisão (sobre as alterações posteriores ao commit `b084bba`):
 | pintar no carregamento do módulo gastava CPU em páginas sem M01 | a pintura começa na criação da vista M01 |
 | possível custo de construção de pipeline no primeiro desenho (ANGLE/Vulkan), no frame do primeiro impacto | primeiro frame: compilação mais um desenho sem píxeis de cada malha; teste Node novo |
 | poeira da estação | aprovada (raio 4,5 m; polígonos dentro da caixa do edifício descartados) |
+
+Depois do CI do commit `61db784`:
+
+| Achado | Resolução |
+|---|---|
+| a sonda `west-bridgehead` partia de um estado 13,25 s depois da demolição oeste (primeira amostra da rota a 13 s ou mais); a cena acaba aos 15 s com a chamada, que leva o jogador para (−260,5; 68,2). O jogo avança no máximo 0,25 s por frame e as sondas avançaram 0,27–2,77 s antes da pausa; no run 37751291323 a captura AFTER saiu já na chamada (relógio 1049,43) e o teste passou na mesma, porque só verifica o resíduo | estado 8,25 s depois da demolição (primeira amostra a 8 s ou mais; 6,75 s de margem até ao fim da cena, a mesma da `station-facade` antes da demolição oeste; na pose encenada, longe do abrigo, a chamada não dispara); antes da captura, cada sonda exige que nenhum evento tenha disparado desde o carregamento e que o jogador continue a menos de 0,5 m da posição encenada (x/z); margens de todas as vistas medidas em Node ([logs/session-probes.txt](logs/session-probes.txt)); capturas BEFORE/AFTER, logs e contadores regenerados com o spec corrigido |
+
+Revisão e verificação independentes desta correcção, antes do commit (os mesmos papéis, só leitura sobre a árvore de trabalho):
+
+| Origem | Achado | Resolução |
+|---|---|---|
+| Reviewer (a corrigir) | a guarda de posição não cobria a `station-facade`: a demolição oeste dispara 6,75 s depois do estado sem mover o jogador, e no modo BEFORE nada apanhava uma captura tardia | cada sonda verifica também, antes da captura, que nenhum evento disparou desde o carregamento (`eventIds`, igual na base); uma cópia temporária do spec que segura a `station-facade` 7 s antes da pausa falha nessa asserção ([logs/session-probes.txt](logs/session-probes.txt)) |
+| Reviewer | os comentários do spec davam a chamada como limite no estado novo (com o jogador longe do abrigo ela não dispara); asserções sem mensagem | comentários com os limites reais (demolição oeste na `station-facade`, restauro fora dos limites na `east-deck-end`); mensagens com a sonda e o relógio |
+| Verifier | desvios reais de 8,25 s e 13,25 s (a rota é amostrada a cada 1 s); a guarda verifica só x/z; no estado de 8,25 s a chamada não está pendente | textos corrigidos no HANDOFF, BEFORE_AFTER, sondas, status e contexto |
+
+O Verifier confirmou ainda, sobre a primeira versão da correcção: só spec, docs e provas mudam e a invariância da autoridade passa; Node 336/336; teste das sondas com o spec corrigido (`west-bridgehead` no relógio 1042,30, na posição encenada); a guarda de posição falha quando forçada (estado de 13,25 s e espera até ao relógio 1049: 239,8 m, e a imagem da falha mostra a chamada); checksums 44/44; tabela e resumo do PERFORMANCE recalculados dos logs; factos de CI conferidos nos logs dos jobs; entrada 5 das sondas reproduzida. O Reviewer releu a versão final do spec sem achados. As provas do browser foram depois regeneradas com o spec final (BEFORE 3/3, AFTER 8/8).
 
 Os relatórios integrais dos agentes não são publicados; os pontos acima são o resumo fiel do que foi encontrado e corrigido.
 
