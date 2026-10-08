@@ -4,6 +4,7 @@ import manifest from '../../assets/models/provisional/m01/bridges.manifest.json'
 import { eyePosition, aimDirection } from '../world/spatial.js';
 import { seconds } from '../game/m01-simulation.js';
 import { roundPoint } from '../game/m01-fire.js';
+import { m01StukaPosition, m01RaidPlanePosition } from '../world/m01-aircraft-path.js';
 import { actorPose } from './m01-actor-pose.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { texturedSurface,weatheredBridgeSurface } from './m01-surfaces.js';
@@ -427,14 +428,14 @@ export class M01View {
   updateAircraft(state,time,player){
     const quality=this.owner.quality;
     this.planes.forEach((plane,i)=>{
-      plane.visible=state.stukas;plane.position.set(80+Math.sin(time*.02+i)*250,160+i*20,240-time%90*4+i*30);plane.rotation.y=.1;
+      const path=m01StukaPosition(time,i);plane.visible=state.stukas;plane.position.set(path.x,path.y,path.z);plane.rotation.y=.1;
       const distance=Math.hypot(plane.position.x-player.x,plane.position.y-player.y,plane.position.z-player.z);
       const selected=plane.getObjectForDistance(Math.max(distance,quality==='low'?600:quality==='medium'?150:0));
       for(const {object} of plane.levels)object.visible=object===selected;
       // Deterministic presentation at an estimated 1500 rpm; pause and restore sample the same saved clock.
       selected?.userData.propellerMixer?.setTime((time*25)%1);
     });
-    this.raidPlane.visible=state.secondRaid;this.raidPlane.position.set(-700,1100,800-(time%150)*8);
+    const raid=m01RaidPlanePosition(time);this.raidPlane.visible=state.secondRaid;this.raidPlane.position.set(raid.x,raid.y,raid.z);
   }
   createTrains(){
     this.train=new THREE.Group();this.panzerzug=new THREE.Group();this.scene.add(this.train,this.panzerzug);

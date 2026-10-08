@@ -25,3 +25,9 @@
 - HEAD `21c1ae653836522e74c071c31e917a1609f5611a`; source code/tests/screenshots retained and merged.
 - Retain Station `dispose()` while adding foliage and ground-shadow cleanup. Retain bridge rail and Station imports; simulation/colliders unchanged.
 - Task source handoff retained; common status docs retained from checkpoint. Combined CI still required, main/deploy untouched.
+
+## Integrated — battlefield audio production pass V1
+
+- Source `2d797a1f5988cc1d86f0f2260967c6b0a170eddd`: Web Audio buses, source profiles, acoustic paths and real-event subscriptions.
+- Reconciled `src/game/game.js` while keeping HUD controller and animation diagnostic; `m01-view.js` retains Bridge/Station/Foliage resources.
+- All source tests, recordings and REPORT remain in tree. Integration CI is still necessary, with no main/deploy updates.
