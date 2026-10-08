@@ -1,0 +1,4 @@
+{"label":"base","rest":{"fps":2.37,"simPerWall":0.119},"afterShot":{"fps":2.5,"simPerWall":0.116},"duringReload":{"fps":4.65,"simPerWall":0.116},"reloadWallSeconds":11.793,"reloadSimSeconds":1.52}
+{"label":"candidate-dfb1572","rest":{"fps":2.5,"simPerWall":0.125},"afterShot":{"fps":2.98,"simPerWall":0.145},"duringReload":{"fps":4.66,"simPerWall":0.116},"reloadWallSeconds":11.489,"reloadSimSeconds":1.55}
+{"label":"base","rest":{"fps":2.5,"simPerWall":0.123},"afterShot":{"fps":2.74,"simPerWall":0.129},"duringReload":{"fps":4.65,"simPerWall":0.116},"reloadWallSeconds":11.91,"reloadSimSeconds":1.52}
+{"label":"candidate-dfb1572","rest":{"fps":2.5,"simPerWall":0.123},"afterShot":{"fps":2.99,"simPerWall":0.141},"duringReload":{"fps":4.66,"simPerWall":0.117},"reloadWallSeconds":12.42,"reloadSimSeconds":1.52}

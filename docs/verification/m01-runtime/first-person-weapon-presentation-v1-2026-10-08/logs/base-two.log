@@ -1,0 +1,89 @@
+
+Running 2 tests using 1 worker
+
+[1A[2K[1/2] tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work
+[1A[2K  1) tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('#mag')
+    Expected: [32m"15"[39m
+    Received: [31m"—"[39m
+    Timeout:  12000ms
+
+    Call log:
+    [2m  - Expect "toHaveText" with timeout 12000ms[22m
+    [2m  - waiting for locator('#mag')[22m
+    [2m    16 × locator resolved to <b id="mag">—</b>[22m
+    [2m       - unexpected value "—"[22m
+
+
+      57 |   await page.locator('#resume').click();
+      58 |   await page.waitForFunction(()=>document.pointerLockElement?.id==='game');
+    > 59 |   await expect(page.locator('#mag')).toHaveText('15',{timeout:12000});
+         |                                      ^
+      60 |   await expect(page.locator('#reserve')).toHaveText('59');
+      61 |   const resumedPlayer=await page.evaluate(()=>window.gameDiagnostics().player);
+      62 |   expect(resumedPlayer.angle).toBeCloseTo(pausedPlayer.angle,4);
+        at <base-worktree>/tests/browser/game.spec.js:59:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/game-production-prefix-loa-a150d-oting-reload-and-pause-work/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/game-production-prefix-loa-a150d-oting-reload-and-pause-work/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/game-production-prefix-loa-a150d-oting-reload-and-pause-work/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/game-production-prefix-loa-a150d-oting-reload-and-pause-work/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[2/2] tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A
+[1A[2K  2) tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('#mag')
+    Expected: [32m"5"[39m
+    Received: [31m"—"[39m
+    Timeout:  15000ms
+
+    Call log:
+    [2m  - Expect "toHaveText" with timeout 15000ms[22m
+    [2m  - waiting for locator('#mag')[22m
+    [2m    19 × locator resolved to <b id="mag">—</b>[22m
+    [2m       - unexpected value "—"[22m
+
+
+      53 |   const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(350);
+      54 |   const still=await page.evaluate(()=>window.gameDiagnostics());expect(still.clock).toBe(frozen.clock);expect(still.m01.battleClock).toBe(frozen.m01.battleClock);expect(still.m01.weapon).toEqual(frozen.m01.weapon);
+    > 55 |   await page.locator('#resume').click();await expect(page.locator('#mag')).toHaveText('5',{timeout:15000});await expect(page.locator('#reserve')).toHaveText('35');
+         |                                                                            ^
+      56 |   await page.keyboard.press('KeyV');await expect(page.locator('#weapon-state')).toContainText('500 m');
+      57 |   await page.mouse.down({button:'right'});await expect(page.locator('#crosshair')).toBeHidden();await page.mouse.up({button:'right'});
+      58 |   await page.screenshot({path:info.outputPath('m01-playing.png')});
+        at <base-worktree>/tests/browser/m01.spec.js:55:76
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-M01-loads-the-nine-bri-7850e-sight-aiming-pause-and-CP-A/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-M01-loads-the-nine-bri-7850e-sight-aiming-pause-and-CP-A/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-M01-loads-the-nine-bri-7850e-sight-aiming-pause-and-CP-A/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-M01-loads-the-nine-bri-7850e-sight-aiming-pause-and-CP-A/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  2 failed
+    tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work 
+    tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A 
+EXIT 1

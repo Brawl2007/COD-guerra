@@ -15,7 +15,7 @@ Running 7 tests using 1 worker
       54 |   const beforeShot=await page.evaluate(()=>window.gameDiagnostics());
       55 |   await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});
       56 |   await page.waitForFunction(({mag,shot,impact})=>{
-        at /tmp/claude-0/-home-user-COD-guerra/1e581609-5301-5005-855c-b268dac9f774/scratchpad/base/tests/browser/m01-audio-production.spec.js:53:14
+        at <base-worktree>/tests/browser/m01-audio-production.spec.js:53:14
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     test-results/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/test-failed-1.png
@@ -49,8 +49,8 @@ M01_WAGON_COUNTERS {"near":{"yard":{"loaded":["covered:burned:0","covered:burned
       132 |     await expect(page.locator('#mag')).toHaveText(String(expectedMag));
       133 |   };
       134 |   for(let i=0;i<5;i++){
-        at fireRound (/tmp/claude-0/-home-user-COD-guerra/1e581609-5301-5005-855c-b268dac9f774/scratchpad/base/tests/browser/m01.spec.js:131:16)
-        at /tmp/claude-0/-home-user-COD-guerra/1e581609-5301-5005-855c-b268dac9f774/scratchpad/base/tests/browser/m01.spec.js:136:5
+        at fireRound (<base-worktree>/tests/browser/m01.spec.js:131:16)
+        at <base-worktree>/tests/browser/m01.spec.js:136:5
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     test-results/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/test-failed-1.png
@@ -91,7 +91,7 @@ M01_WAGON_COUNTERS {"near":{"yard":{"loaded":["covered:burned:0","covered:burned
       333 |   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
       334 |   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
       335 |   expect(errors).toEqual([]);expect(failed).toEqual([]);
-        at /tmp/claude-0/-home-user-COD-guerra/1e581609-5301-5005-855c-b268dac9f774/scratchpad/base/tests/browser/m01.spec.js:332:51
+        at <base-worktree>/tests/browser/m01.spec.js:332:51
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/test-failed-1.png
@@ -124,7 +124,7 @@ M01_WAGON_COUNTERS {"near":{"yard":{"loaded":["covered:burned:0","covered:burned
       400 |   // Os sapadores deitados aparecem na pose de quem está sob fogo, e o trabalho retoma depois.
       401 |   expect(samples.some(s=>s.pinned&&s.poses>0)).toBe(true);expect(samples.at(-1).progress).toBeGreaterThan(samples[0].progress);
       402 |   expect(samples.some(s=>s.animations.aiming>0)).toBe(true);
-        at /tmp/claude-0/-home-user-COD-guerra/1e581609-5301-5005-855c-b268dac9f774/scratchpad/base/tests/browser/m01.spec.js:399:65
+        at <base-worktree>/tests/browser/m01.spec.js:399:65
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     test-results/m01-German-fire-on-the-rep-7588e-ine-is-the-simulation-state/test-failed-1.png

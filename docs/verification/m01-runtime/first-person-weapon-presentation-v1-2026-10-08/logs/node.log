@@ -6,2093 +6,2111 @@ TAP version 13
 # Subtest: planar y becomes scene z; height is independent
 ok 1 - planar y becomes scene z; height is independent
   ---
-  duration_ms: 2.202498
+  duration_ms: 4.581449
   type: 'test'
   ...
 # Subtest: horizontal head shot hits, aiming above the head misses
 ok 2 - horizontal head shot hits, aiming above the head misses
   ---
-  duration_ms: 1.577029
+  duration_ms: 3.188708
   type: 'test'
   ...
 # Subtest: nearest wall shields an enemy; lowering the aim hits terrain
 ok 3 - nearest wall shields an enemy; lowering the aim hits terrain
   ---
-  duration_ms: 0.399261
+  duration_ms: 0.949338
   type: 'test'
   ...
 # Subtest: wall around muzzle blocks a clear camera sightline
 ok 4 - wall around muzzle blocks a clear camera sightline
   ---
-  duration_ms: 0.411
+  duration_ms: 0.68031
   type: 'test'
   ...
 # Subtest: enemy in cover cannot cause damage through a wall
 ok 5 - enemy in cover cannot cause damage through a wall
   ---
-  duration_ms: 1.473322
+  duration_ms: 7.131886
   type: 'test'
   ...
 # Subtest: unreachable destination reports failure and does not move through walls
 ok 6 - unreachable destination reports failure and does not move through walls
   ---
-  duration_ms: 1.194513
+  duration_ms: 0.750394
   type: 'test'
   ...
 # Subtest: wall shields blast damage but visible nearby actor takes damage
 ok 7 - wall shields blast damage but visible nearby actor takes damage
   ---
-  duration_ms: 0.624715
+  duration_ms: 1.262004
   type: 'test'
   ...
 # Subtest: JSON checkpoint restores actors, reload, grenade, phase, clock and RNG exactly
 ok 8 - JSON checkpoint restores actors, reload, grenade, phase, clock and RNG exactly
   ---
-  duration_ms: 8.737841
+  duration_ms: 18.587633
   type: 'test'
   ...
 # Subtest: corrupt and incompatible saves are rejected atomically
 ok 9 - corrupt and incompatible saves are rejected atomically
   ---
-  duration_ms: 3.123217
+  duration_ms: 5.928385
   type: 'test'
   ...
 # Subtest: death restores the last living checkpoint without reviving defeated enemies
 ok 10 - death restores the last living checkpoint without reviving defeated enemies
   ---
-  duration_ms: 7.650603
+  duration_ms: 11.4002
   type: 'test'
   ...
 # Subtest: restored simulation reproduces future seeded decisions and events
 ok 11 - restored simulation reproduces future seeded decisions and events
   ---
-  duration_ms: 257.006783
+  duration_ms: 457.362123
   type: 'test'
   ...
 # Subtest: two independent sectors evolve for 90 seconds with stable losses and unique events
 ok 12 - two independent sectors evolve for 90 seconds with stable losses and unique events
   ---
-  duration_ms: 1.3214
+  duration_ms: 1.4905
   type: 'test'
   ...
 # Subtest: partial fourth reinforcement group activates and visible candidates remain hidden
 ok 13 - partial fourth reinforcement group activates and visible candidates remain hidden
   ---
-  duration_ms: 0.491352
+  duration_ms: 0.544584
   type: 'test'
   ...
 # Subtest: zero time never advances reload or the battle
 ok 14 - zero time never advances reload or the battle
   ---
-  duration_ms: 1.9343
+  duration_ms: 3.214705
   type: 'test'
   ...
 # Subtest: weapon enforces cadence, ammo, and reload transfer
 ok 15 - weapon enforces cadence, ammo, and reload transfer
   ---
-  duration_ms: 2.56409
+  duration_ms: 3.173777
   type: 'test'
   ...
 # Subtest: world blocks walls and permits open cells
 ok 16 - world blocks walls and permits open cells
   ---
-  duration_ms: 1.115497
+  duration_ms: 1.677489
   type: 'test'
   ...
 # Subtest: navigation chooses a walkable next tile around cover
 ok 17 - navigation chooses a walkable next tile around cover
   ---
-  duration_ms: 6.920014
+  duration_ms: 2.337793
   type: 'test'
   ...
 # Subtest: mission advances through checkpoint, combat, and radio
 ok 18 - mission advances through checkpoint, combat, and radio
   ---
-  duration_ms: 0.317234
+  duration_ms: 0.422012
   type: 'test'
   ...
 # Subtest: shot geometry detects targets on aim line
 ok 19 - shot geometry detects targets on aim line
   ---
-  duration_ms: 0.236194
+  duration_ms: 0.27774
   type: 'test'
   ...
 # Subtest: 3D matrix composition preserves translation and scale
 ok 20 - 3D matrix composition preserves translation and scale
   ---
-  duration_ms: 5.954425
+  duration_ms: 0.663482
   type: 'test'
   ...
 # Subtest: weapon exposes a stable reload animation timeline
 ok 21 - weapon exposes a stable reload animation timeline
   ---
-  duration_ms: 0.42253
+  duration_ms: 0.423357
   type: 'test'
   ...
 # Subtest: enemy selects cover instead of charging directly at player
 ok 22 - enemy selects cover instead of charging directly at player
   ---
-  duration_ms: 1.603069
+  duration_ms: 1.870466
   type: 'test'
   ...
 # Subtest: grenade bounces on walls, warns AI, and applies radial damage
 ok 23 - grenade bounces on walls, warns AI, and applies radial damage
   ---
-  duration_ms: 9.644105
+  duration_ms: 11.933041
   type: 'test'
   ...
 # Subtest: battle director activates reinforcement groups without replacing individual AI
 ok 24 - battle director activates reinforcement groups without replacing individual AI
   ---
-  duration_ms: 0.867735
+  duration_ms: 1.243085
   type: 'test'
   ...
 # Subtest: text-only OBJ assets load with meshes, normals, and MTL colors
 ok 25 - text-only OBJ assets load with meshes, normals, and MTL colors
   ---
-  duration_ms: 18.161358
+  duration_ms: 18.080696
   type: 'test'
   ...
 # Subtest: pointer lock entry and resume ignore cursor warps while later mouse movement works
 ok 26 - pointer lock entry and resume ignore cursor warps while later mouse movement works
   ---
-  duration_ms: 2.644125
+  duration_ms: 1.978632
   type: 'test'
   ...
 # Subtest: Ju 87 clones use native LODs, share art, sample the saved clock and preserve the existing raid path
 ok 27 - Ju 87 clones use native LODs, share art, sample the saved clock and preserve the existing raid path
   ---
-  duration_ms: 11.433441
+  duration_ms: 18.166175
   type: 'test'
   ...
 # Subtest: missing optional Ju 87 art keeps the silhouettes; partial failure uses available detail and disposal prevents attachment
 ok 28 - missing optional Ju 87 art keeps the silhouettes; partial failure uses available detail and disposal prevents attachment
   ---
-  duration_ms: 4.109103
+  duration_ms: 5.470337
   type: 'test'
   ...
 # Subtest: damage presentation is bounded, frozen at pause, reconstructible and never mutates source state
 ok 29 - damage presentation is bounded, frozen at pause, reconstructible and never mutates source state
   ---
-  duration_ms: 93.391037
+  duration_ms: 125.96062
   type: 'test'
   ...
 # Subtest: audio variation is deterministic and independent of Math.random
 ok 30 - audio variation is deterministic and independent of Math.random
   ---
-  duration_ms: 1.194127
+  duration_ms: 1.435645
   type: 'test'
   ...
 # Subtest: rifle, MG34, RKM, CKM, impacts, near miss and layered explosion remain distinct presentation events
 ok 31 - rifle, MG34, RKM, CKM, impacts, near miss and layered explosion remain distinct presentation events
   ---
-  duration_ms: 4.585824
+  duration_ms: 5.408545
   type: 'test'
   ...
 # Subtest: near/mid/far routing lowers gain and bandwidth without changing event identity
 ok 32 - near/mid/far routing lowers gain and bandwidth without changing event identity
   ---
-  duration_ms: 0.631095
+  duration_ms: 0.846586
   type: 'test'
   ...
 # Subtest: voice budget evicts low-priority presentation and never exceeds the hard limit
 ok 33 - voice budget evicts low-priority presentation and never exceeds the hard limit
   ---
-  duration_ms: 5.067938
+  duration_ms: 4.911202
   type: 'test'
   ...
 # Subtest: distant rifle/MG stay low priority and cannot evict more important voices; critical can evict distant
 ok 34 - distant rifle/MG stay low priority and cannot evict more important voices; critical can evict distant
   ---
-  duration_ms: 2.546324
+  duration_ms: 2.84938
   type: 'test'
   ...
 # Subtest: M01 ambience/aircraft loops are unique; train clank only follows a live false-to-true transition
 ok 35 - M01 ambience/aircraft loops are unique; train clank only follows a live false-to-true transition
   ---
-  duration_ms: 1.125679
+  duration_ms: 1.445625
   type: 'test'
   ...
 # Subtest: distant battle scheduler is presentation-only, bounded and does not backlog skipped clock slots
 ok 36 - distant battle scheduler is presentation-only, bounded and does not backlog skipped clock slots
   ---
-  duration_ms: 0.670354
+  duration_ms: 0.776275
   type: 'test'
   ...
 # Subtest: audio activity cannot consume or mutate M01 gameplay RNG/snapshot
 ok 37 - audio activity cannot consume or mutate M01 gameplay RNG/snapshot
   ---
-  duration_ms: 7.478871
+  duration_ms: 13.389664
   type: 'test'
   ...
 # Subtest: reset/dispose stop transient and permanent nodes without duplicated loops
 ok 38 - reset/dispose stop transient and permanent nodes without duplicated loops
   ---
-  duration_ms: 0.609135
+  duration_ms: 1.035439
   type: 'test'
   ...
 # Subtest: battlefield FX visual noise is deterministic, bounded and independent from simulation RNG
 ok 39 - battlefield FX visual noise is deterministic, bounded and independent from simulation RNG
   ---
-  duration_ms: 108.731448
+  duration_ms: 144.900268
   type: 'test'
   ...
 # Subtest: battlefield FX stays presentation-only with explicit hard pool limits
 ok 40 - battlefield FX stays presentation-only with explicit hard pool limits
   ---
-  duration_ms: 1.631889
+  duration_ms: 1.936608
   type: 'test'
   ...
 # Subtest: muzzle presentation telemetry latches only after a rendered muzzle frame and resets without simulation state
 ok 41 - muzzle presentation telemetry latches only after a rendered muzzle frame and resets without simulation state
   ---
-  duration_ms: 0.612423
+  duration_ms: 0.726275
   type: 'test'
   ...
 # M01_PORTAL_ASSET_AUDIT {"portal_lisewo_1912.glb":{"meshes":5,"materials":["brick_red","stone_masonry","opening_dark","gate_timber_iron"],"textures":0,"triangles":1996,"nodes":7,"hasNormals":true,"hasUvs":true},"portal_lisewo_1912.lod1.glb":{"meshes":5,"materials":["brick_red","stone_masonry","gate_timber_iron"],"textures":0,"triangles":764,"nodes":7,"hasNormals":true,"hasUvs":true},"portal_lisewo_1912.lod2.glb":{"meshes":5,"materials":["brick_red","stone_masonry","gate_timber_iron"],"textures":0,"triangles":524,"nodes":7,"hasNormals":true,"hasUvs":true}}
 # Subtest: Lisewo portal GLBs and collider authority remain byte-identical to approved production base
 ok 42 - Lisewo portal GLBs and collider authority remain byte-identical to approved production base
   ---
-  duration_ms: 2.075148
+  duration_ms: 2.793422
   type: 'test'
   ...
 # Subtest: portal macro placement, LOD budgets and documented uncertainty remain unchanged
 ok 43 - portal macro placement, LOD budgets and documented uncertainty remain unchanged
   ---
-  duration_ms: 1.680385
+  duration_ms: 1.916423
   type: 'test'
   ...
 # Subtest: portal binaries keep normals/UVs/material slots without adding texture assets
 ok 44 - portal binaries keep normals/UVs/material slots without adding texture assets
   ---
-  duration_ms: 1.94521
+  duration_ms: 2.446761
   type: 'test'
   ...
 # Subtest: microdetail stays inside approved portal macro envelopes and scales by quality
 ok 45 - microdetail stays inside approved portal macro envelopes and scales by quality
   ---
-  duration_ms: 0.877844
+  duration_ms: 0.998077
   type: 'test'
   ...
 # Subtest: portal material/detail lookup cannot consume gameplay RNG or mutate save/colliders
 ok 46 - portal material/detail lookup cannot consume gameplay RNG or mutate save/colliders
   ---
-  duration_ms: 7.613727
+  duration_ms: 10.111796
   type: 'test'
   ...
 # Subtest: known bridge materials map predictably while unknown material preserves GLB fallback
 ok 47 - known bridge materials map predictably while unknown material preserves GLB fallback
   ---
-  duration_ms: 0.160763
+  duration_ms: 0.193408
   type: 'test'
   ...
 # Subtest: M01 GLBs keep nine spans, measured supports and map placement in every LOD
 ok 48 - M01 GLBs keep nine spans, measured supports and map placement in every LOD
   ---
-  duration_ms: 15.286617
+  duration_ms: 22.984202
   type: 'test'
   ...
 # Subtest: M01 all LODs ship event-linked damage replacements with stable logical IDs
 ok 49 - M01 all LODs ship event-linked damage replacements with stable logical IDs
   ---
-  duration_ms: 10.417821
+  duration_ms: 13.344225
   type: 'test'
   ...
 # Subtest: M01 demolition IDs survive LOD changes and JSON restoration; colliders stay removed
 ok 50 - M01 demolition IDs survive LOD changes and JSON restoration; colliders stay removed
   ---
-  duration_ms: 39.293703
+  duration_ms: 87.237127
   type: 'test'
   ...
 # Subtest: M01 road towers remain separate, measured and damage-linked in all LODs
 ok 51 - M01 road towers remain separate, measured and damage-linked in all LODs
   ---
-  duration_ms: 6.369663
+  duration_ms: 12.319694
   type: 'test'
   ...
 # Subtest: M01 binary exports contain finite positions and unit normals
 ok 52 - M01 binary exports contain finite positions and unit normals
   ---
-  duration_ms: 150.338518
+  duration_ms: 230.413102
   type: 'test'
   ...
 # Subtest: M01 manifest matches binary counts, current map hash and decreasing LOD budgets
 ok 53 - M01 manifest matches binary counts, current map hash and decreasing LOD budgets
   ---
-  duration_ms: 8.545398
+  duration_ms: 10.23702
   type: 'test'
   ...
 # Subtest: M01 historical uncertainty and modern geometry conflicts remain explicit
 ok 54 - M01 historical uncertainty and modern geometry conflicts remain explicit
   ---
-  duration_ms: 7.29898
+  duration_ms: 8.111643
   type: 'test'
   ...
 # Subtest: all six GLBs have finite skin weights, valid joint indices, embedded textures and decreasing LOD budgets
 ok 55 - all six GLBs have finite skin weights, valid joint indices, embedded textures and decreasing LOD budgets
   ---
-  duration_ms: 102.208791
+  duration_ms: 174.511125
   type: 'test'
   ...
 # Subtest: all twenty-five animation clips bind to real named bones, have monotonic times and finite transforms
 ok 56 - all twenty-five animation clips bind to real named bones, have monotonic times and finite transforms
   ---
-  duration_ms: 28.3988
+  duration_ms: 67.079539
   type: 'test'
   ...
 # Subtest: the original station drag loops on the existing rig with a locked source and finite transforms
 ok 57 - the original station drag loops on the existing rig with a locked source and finite transforms
   ---
-  duration_ms: 10.729601
+  duration_ms: 27.95368
   type: 'test'
   ...
 # Subtest: first-person geometry keeps actual GLB arm/hand surfaces and leaves the world uniform unchanged
 ok 58 - first-person geometry keeps actual GLB arm/hand surfaces and leaves the world uniform unchanged
   ---
-  duration_ms: 69.036159
+  duration_ms: 121.395141
   type: 'test'
   ...
 # Subtest: the actual reload rig keeps the open action, clip and hand in the first-person frustum on both usable LODs
 ok 59 - the actual reload rig keeps the open action, clip and hand in the first-person frustum on both usable LODs
   ---
-  duration_ms: 161.763322
+  duration_ms: 274.201637
   type: 'test'
   ...
 # Subtest: sampling real clock, changing LOD and restoring a copy preserves bone transforms and immutable data
 ok 60 - sampling real clock, changing LOD and restoring a copy preserves bone transforms and immutable data
   ---
-  duration_ms: 7.624947
+  duration_ms: 18.880001
   type: 'test'
   ...
 # Subtest: wounded attachment follows its carrier socket and detaches after delivery without changing simulation coordinates
 ok 61 - wounded attachment follows its carrier socket and detaches after delivery without changing simulation coordinates
   ---
-  duration_ms: 9.002843
+  duration_ms: 10.50701
   type: 'test'
   ...
 # Subtest: MakeHuman data licence is shipped exactly as locked at its source revision
 ok 62 - MakeHuman data licence is shipped exactly as locked at its source revision
   ---
-  duration_ms: 1.456374
+  duration_ms: 3.035914
   type: 'test'
   ...
 # Subtest: the station casualty remains grounded while the medic samples the backward drag and its fallback
 ok 63 - the station casualty remains grounded while the medic samples the backward drag and its fallback
   ---
-  duration_ms: 4.103728
+  duration_ms: 8.700217
   type: 'test'
   ...
 # Subtest: Kowal and healthy Bąk use their own meshes and muzzle sockets, preserve data and hide the casualty weapon
 ok 64 - Kowal and healthy Bąk use their own meshes and muzzle sockets, preserve data and hide the casualty weapon
   ---
-  duration_ms: 13.632263
+  duration_ms: 30.29939
   type: 'test'
   ...
 # Subtest: riflemen finish the bolt after the flash; pinned engineers stop their working hands until the repair resumes
 ok 65 - riflemen finish the bolt after the flash; pinned engineers stop their working hands until the repair resumes
   ---
-  duration_ms: 1.939959
+  duration_ms: 2.457905
   type: 'test'
   ...
 # Subtest: schema 2 legacy 86 roster becomes 89 at the aligned post without changing old actors or RNG
 ok 66 - schema 2 legacy 86 roster becomes 89 at the aligned post without changing old actors or RNG
   ---
-  duration_ms: 18.965437
+  duration_ms: 42.83789
   type: 'test'
   ...
 # Subtest: old 89-actor idle placement migrates once and snapshot restore is stable
 ok 67 - old 89-actor idle placement migrates once and snapshot restore is stable
   ---
-  duration_ms: 23.02788
+  duration_ms: 32.202416
   type: 'test'
   ...
 # Subtest: old 89-actor save immediately after east demolition keeps idle phase/start time while aligning the old post
 ok 68 - old 89-actor save immediately after east demolition keeps idle phase/start time while aligning the old post
   ---
-  duration_ms: 17.901259
+  duration_ms: 28.371974
   type: 'test'
   ...
 # Subtest: old 89-actor abandon placement shifts rigidly but preserves phase and startedAt exactly
 ok 69 - old 89-actor abandon placement shifts rigidly but preserves phase and startedAt exactly
   ---
-  duration_ms: 21.017265
+  duration_ms: 34.68638
   type: 'test'
   ...
 # Subtest: retreat saves are never translated, including an actor still on an old authored coordinate
 ok 70 - retreat saves are never translated, including an actor still on an old authored coordinate
   ---
-  duration_ms: 11.022092
+  duration_ms: 23.729691
   type: 'test'
   ...
 # Subtest: casualties stay casualties and post-west saves preserve their saved positions
 ok 71 - casualties stay casualties and post-west saves preserve their saved positions
   ---
-  duration_ms: 17.020654
+  duration_ms: 38.44948
   type: 'test'
   ...
 # Subtest: 86-actor saves after east or west demolition remain safe and do not restart abandon
 ok 72 - 86-actor saves after east or west demolition remain safe and do not restart abandon
   ---
-  duration_ms: 22.297677
+  duration_ms: 42.680539
   type: 'test'
   ...
 # Subtest: restore stays atomic when a legacy-position ckm save is invalid
 ok 73 - restore stays atomic when a legacy-position ckm save is invalid
   ---
-  duration_ms: 7.212579
+  duration_ms: 14.317411
   type: 'test'
   ...
 # Subtest: placement migration changes no non-ckm actor or unrelated saved state
 ok 74 - placement migration changes no non-ckm actor or unrelated saved state
   ---
-  duration_ms: 5.731724
+  duration_ms: 12.308685
   type: 'test'
   ...
 # Subtest: new ckm root puts gun_muzzle_flash on the mapped south embrasure x/z
 ok 75 - new ckm root puts gun_muzzle_flash on the mapped south embrasure x/z
   ---
-  duration_ms: 1.437406
+  duration_ms: 1.657238
   type: 'test'
   ...
 # Subtest: ckm crew is grounded below the deck, leaves after the real event and reaches safety before demolition
 ok 76 - ckm crew is grounded below the deck, leaves after the real event and reaches safety before demolition
   ---
-  duration_ms: 5106.377044
+  duration_ms: 7560.100538
   type: 'test'
   ...
 # Subtest: schema 2 accepts exact legacy rosters and migrates atomically without changing old actors or RNG
 ok 77 - schema 2 accepts exact legacy rosters and migrates atomically without changing old actors or RNG
   ---
-  duration_ms: 4144.779167
+  duration_ms: 6681.481979
   type: 'test'
   ...
 # Subtest: real ckm clips and weapon share saved time across pause, reload, casualties and optional fallback
 ok 78 - real ckm clips and weapon share saved time across pause, reload, casualties and optional fallback
   ---
-  duration_ms: 75.700431
+  duration_ms: 123.933892
   type: 'test'
   ...
 # Subtest: M01 ckm wz.30: metros, +Y, cano para −Z, 1,2 m ±2 %, hierarquia de pivôs e três LODs no orçamento
 ok 79 - M01 ckm wz.30: metros, +Y, cano para −Z, 1,2 m ±2 %, hierarquia de pivôs e três LODs no orçamento
   ---
-  duration_ms: 6.506317
+  duration_ms: 8.911491
   type: 'test'
   ...
 # Subtest: M01 ckm wz.30: clips da arma animam os nós móveis; rajada de 8 a 600/min; alimentação puxa a ponta e arma duas vezes
 ok 80 - M01 ckm wz.30: clips da arma animam os nós móveis; rajada de 8 a 600/min; alimentação puxa a ponta e arma duas vezes
   ---
-  duration_ms: 4.678371
+  duration_ms: 5.85868
   type: 'test'
   ...
 # Subtest: M01 ckm wz.30: clips ckm_wz30_* do atirador e do municiador ligam-se ao rig polaco, não repetem nomes e mostram uma só arma
 ok 81 - M01 ckm wz.30: clips ckm_wz30_* do atirador e do municiador ligam-se ao rig polaco, não repetem nomes e mostram uma só arma
   ---
-  duration_ms: 37.684784
+  duration_ms: 42.059134
   type: 'test'
   ...
 # Subtest: M01 ckm wz.30: LOD0 dentro dos 4000 triângulos sem mudar silhueta, pivôs, sockets, fita nem clips; LOD1, LOD2 e clips intactos
 ok 82 - M01 ckm wz.30: LOD0 dentro dos 4000 triângulos sem mudar silhueta, pivôs, sockets, fita nem clips; LOD1, LOD2 e clips intactos
   ---
-  duration_ms: 7.732192
+  duration_ms: 9.609245
   type: 'test'
   ...
 # Subtest: real player-hit presentation is clear, bounded and directional cue stays presentation-only
 ok 83 - real player-hit presentation is clear, bounded and directional cue stays presentation-only
   ---
-  duration_ms: 1.532761
+  duration_ms: 2.574766
   type: 'test'
   ...
 # Subtest: near miss and close impact react while distant impact stays quiet
 ok 84 - near miss and close impact react while distant impact stays quiet
   ---
-  duration_ms: 0.427342
+  duration_ms: 0.738587
   type: 'test'
   ...
 # Subtest: multiple real MG34 near rounds accumulate danger but obey every hard cap
 ok 85 - multiple real MG34 near rounds accumulate danger but obey every hard cap
   ---
-  duration_ms: 0.519944
+  duration_ms: 1.008796
   type: 'test'
   ...
 # Subtest: near explosion has weight, distant explosion does not create exaggerated feedback
 ok 86 - near explosion has weight, distant explosion does not create exaggerated feedback
   ---
-  duration_ms: 0.32947
+  duration_ms: 0.453584
   type: 'test'
   ...
 # Subtest: feedback decay is driven only by mission clock, so pause freezes and resume continues without duplication
 ok 87 - feedback decay is driven only by mission clock, so pause freezes and resume continues without duplication
   ---
-  duration_ms: 2.46796
+  duration_ms: 2.726747
   type: 'test'
   ...
 # Subtest: restart/checkpoint reset clears all transient combat presentation state
 ok 88 - restart/checkpoint reset clears all transient combat presentation state
   ---
-  duration_ms: 0.260925
+  duration_ms: 2.519538
   type: 'test'
   ...
 # Subtest: quality tiers preserve danger reading while Low stays cheaper and omits exposure flash
 ok 89 - quality tiers preserve danger reading while Low stays cheaper and omits exposure flash
   ---
-  duration_ms: 0.19033
+  duration_ms: 0.344034
   type: 'test'
   ...
 # Subtest: combat presentation consumes no gameplay RNG and cannot alter snapshot, aim, position, HP or clocks
 ok 90 - combat presentation consumes no gameplay RNG and cannot alter snapshot, aim, position, HP or clocks
   ---
-  duration_ms: 5.340409
+  duration_ms: 10.37278
   type: 'test'
   ...
 # Subtest: the sappers walk to the second cut where the crate is delivered, so "leve a caixa aos sapadores" is true
 ok 91 - the sappers walk to the second cut where the crate is delivered, so "leve a caixa aos sapadores" is true
   ---
-  duration_ms: 5653.688429
+  duration_ms: 7966.196746
   type: 'test'
   ...
 # Subtest: Bąk takes the deck position with the 05:30 order and falls at bak_wound_point, in front of the player
 ok 92 - Bąk takes the deck position with the 05:30 order and falls at bak_wound_point, in front of the player
   ---
-  duration_ms: 1127.250933
+  duration_ms: 1896.253892
   type: 'test'
   ...
 # Subtest: a direction hint names the destination, distance and side when the player does not approach it
 ok 93 - a direction hint names the destination, distance and side when the player does not approach it
   ---
-  duration_ms: 95.338705
+  duration_ms: 162.46519
   type: 'test'
   ...
 # Subtest: once the repair gate is ready the rest of seg_repair runs at readyScale; before that it keeps scale
 ok 94 - once the repair gate is ready the rest of seg_repair runs at readyScale; before that it keeps scale
   ---
-  duration_ms: 1.962562
+  duration_ms: 10.79589
   type: 'test'
   ...
 # Subtest: the full control route still reaches the debrief with every required objective after the fixes
 ok 95 - the full control route still reaches the debrief with every required objective after the fixes
   ---
-  duration_ms: 0.29427
+  duration_ms: 0.515858
   type: 'test'
   ...
 # Subtest: the withdrawing east platoon runs past the firing point during the corridor phase and does not stall at x = -109
 ok 96 - the withdrawing east platoon runs past the firing point during the corridor phase and does not stall at x = -109
   ---
-  duration_ms: 2551.353448
+  duration_ms: 3897.998504
   type: 'test'
   ...
 # Subtest: a Bąk delivered by the player stays visible beside Dudek, who carries him west before the west demolition
 ok 97 - a Bąk delivered by the player stays visible beside Dudek, who carries him west before the west demolition
   ---
-  duration_ms: 1196.005021
+  duration_ms: 1571.113637
   type: 'test'
   ...
 # Subtest: when Dudek retrieves Bąk he walks to him on the deck and carries him to the station, visible all the way
 ok 98 - when Dudek retrieves Bąk he walks to him on the deck and carries him to the station, visible all the way
   ---
-  duration_ms: 1021.701378
+  duration_ms: 2276.076251
   type: 'test'
   ...
 # Subtest: the roll call positions the present section in the shelter facing Jan; the absent stay away
 ok 99 - the roll call positions the present section in the shelter facing Jan; the absent stay away
   ---
-  duration_ms: 1132.596472
+  duration_ms: 1842.341781
   type: 'test'
   ...
 # Subtest: Kowal hands over at most six clips of section ammunition; saves keep the ammunition invariant
 ok 100 - Kowal hands over at most six clips of section ammunition; saves keep the ammunition invariant
   ---
-  duration_ms: 29.385319
+  duration_ms: 112.118778
   type: 'test'
   ...
 # Subtest: legacy schema 2 saves receive the unused section supply and can resupply after loading
 ok 101 - legacy schema 2 saves receive the unused section supply and can resupply after loading
   ---
-  duration_ms: 13.142535
+  duration_ms: 32.84142
   type: 'test'
   ...
 # Subtest: the bridge trusses contain movement: no falling off a span sideways or into a blown gap; the river bank still can
 ok 102 - the bridge trusses contain movement: no falling off a span sideways or into a blown gap; the river bank still can
   ---
-  duration_ms: 3.357301
+  duration_ms: 4.556868
   type: 'test'
   ...
 # Subtest: a Bąk delivered after the east demolition is still evacuated, so the west demolition is not held forever
 ok 103 - a Bąk delivered after the east demolition is still evacuated, so the west demolition is not held forever
   ---
-  duration_ms: 979.612886
+  duration_ms: 2047.198537
   type: 'test'
   ...
 # Subtest: real control routes compare covering and ignoring: faster repair, fewer near misses and more survivors with support
 ok 104 - real control routes compare covering and ignoring: faster repair, fewer near misses and more survivors with support
   ---
-  duration_ms: 9389.231143
+  duration_ms: 14052.503096
   type: 'test'
   ...
 # Subtest: repair suppression requires a round that really arrives within 3 m; a solid wall shields the sappers
 ok 105 - repair suppression requires a round that really arrives within 3 m; a solid wall shields the sappers
   ---
-  duration_ms: 345.699927
+  duration_ms: 483.73599
   type: 'test'
   ...
 # Subtest: inactive or suppressed Germans on the spans cause no withdrawal losses; looking away does not stop combat
 ok 106 - inactive or suppressed Germans on the spans cause no withdrawal losses; looking away does not stop combat
   ---
-  duration_ms: 1089.900912
+  duration_ms: 1737.343248
   type: 'test'
   ...
 # Subtest: casualty IDs and rounds in flight survive reload and checkpoint restore; invalid optional timers are rejected atomically
 ok 107 - casualty IDs and rounds in flight survive reload and checkpoint restore; invalid optional timers are rejected atomically
   ---
-  duration_ms: 363.296229
+  duration_ms: 558.711284
   type: 'test'
   ...
 # Subtest: legacy schema 2 saves migrate and the six reserve slots stay outside the eighteen-man platoon
 ok 108 - legacy schema 2 saves migrate and the six reserve slots stay outside the eighteen-man platoon
   ---
-  duration_ms: 61.346663
+  duration_ms: 93.719417
   type: 'test'
   ...
 # Subtest: the air-raid cover instruction remains visible briefly even if the player was already in cover
 ok 109 - the air-raid cover instruction remains visible briefly even if the player was already in cover
   ---
-  duration_ms: 9.867054
+  duration_ms: 17.822269
   type: 'test'
   ...
 # Subtest: adjustment warning and HUD identify a real salvo; view direction changes the bearing without changing combat
 ok 110 - adjustment warning and HUD identify a real salvo; view direction changes the bearing without changing combat
   ---
-  duration_ms: 2301.303074
+  duration_ms: 3696.292106
   type: 'test'
   ...
 # Subtest: a salvo from the dike behind the trusses identifies its actual origin, rather than the visible gate MG
 ok 111 - a salvo from the dike behind the trusses identifies its actual origin, rather than the visible gate MG
   ---
-  duration_ms: 1984.744241
+  duration_ms: 3957.529963
   type: 'test'
   ...
 # Subtest: an occluding wall prevents an adjustment warning and cover reservation, with a bounded retry
 ok 112 - an occluding wall prevents an adjustment warning and cover reservation, with a bounded retry
   ---
-  duration_ms: 279.056156
+  duration_ms: 567.263849
   type: 'test'
   ...
 # Subtest: saved origin restores as data, expires after eight active seconds, and invalid or legacy saves remain safe
 ok 113 - saved origin restores as data, expires after eight active seconds, and invalid or legacy saves remain safe
   ---
-  duration_ms: 86.000414
+  duration_ms: 271.601851
   type: 'test'
   ...
 # Subtest: German fire starts on the east bank; only shooters in sight of the west bank (the Lisewo gates) aim at it
 ok 114 - German fire starts on the east bank; only shooters in sight of the west bank (the Lisewo gates) aim at it
   ---
-  duration_ms: 1421.560664
+  duration_ms: 2454.01344
   type: 'test'
   ...
 # Subtest: rounds that pass within 3 m pin the sappers and stop the repair; the HUD line is exactly the simulation state
 ok 115 - rounds that pass within 3 m pin the sappers and stop the repair; the HUD line is exactly the simulation state
   ---
-  duration_ms: 1055.514495
+  duration_ms: 2292.415712
   type: 'test'
   ...
 # Subtest: keeping the gate MG down shortens the repair; ignoring it lets the sappers be pinned again and again
 ok 116 - keeping the gate MG down shortens the repair; ignoring it lets the sappers be pinned again and again
   ---
-  duration_ms: 9470.182272
+  duration_ms: 17014.552321
   type: 'test'
   ...
 # Subtest: covering fire on the Germans on the spans saves men; without it the platoon falls to the predicted minimum
 ok 117 - covering fire on the Germans on the spans saves men; without it the platoon falls to the predicted minimum
   ---
-  duration_ms: 0.723275
+  duration_ms: 1.129182
   type: 'test'
   ...
 # Subtest: historical times, checkpoints and demolition safety are unchanged in both routes
 ok 118 - historical times, checkpoints and demolition safety are unchanged in both routes
   ---
-  duration_ms: 0.297602
+  duration_ms: 0.557409
   type: 'test'
   ...
 # Subtest: rounds in flight survive save and restore and play out identically; corrupt rounds are rejected
 ok 119 - rounds in flight survive save and restore and play out identically; corrupt rounds are rejected
   ---
-  duration_ms: 815.763582
+  duration_ms: 1522.821395
   type: 'test'
   ...
 # Subtest: after 120 s of continuous suppression the fire on the repair eases without warning until work resumes
 ok 120 - after 120 s of continuous suppression the fire on the repair eases without warning until work resumes
   ---
-  duration_ms: 1542.501097
+  duration_ms: 2014.450108
   type: 'test'
   ...
 # Subtest: the withdrawal HUD line reports the real count by ID and whether the Germans on the spans are suppressed
 ok 121 - the withdrawal HUD line reports the real count by ID and whether the Germans on the spans are suppressed
   ---
-  duration_ms: 2757.284896
+  duration_ms: 4488.127228
   type: 'test'
   ...
 # Subtest: allies under fire are drawn hunched (pinned pose) only while suppressedUntil lasts, without touching the actor
 ok 122 - allies under fire are drawn hunched (pinned pose) only while suppressedUntil lasts, without touching the actor
   ---
-  duration_ms: 1.972262
+  duration_ms: 3.759668
   type: 'test'
   ...
 # Subtest: a designated withdrawal casualty needs an actual actor hit; a wall, a miss or an already dead target cannot lower the count
 ok 123 - a designated withdrawal casualty needs an actual actor hit; a wall, a miss or an already dead target cannot lower the count
   ---
-  duration_ms: 1.724652
+  duration_ms: 3.8389
   type: 'test'
   ...
 # Subtest: demolition bearing follows the actual impact and player view without changing the event or camera
 ok 124 - demolition bearing follows the actual impact and player view without changing the event or camera
   ---
-  duration_ms: 4965.019217
+  duration_ms: 9483.319016
   type: 'test'
   ...
 # Subtest: demolition cue restores from data, expires on active time, and distinguishes the west blast
 ok 125 - demolition cue restores from data, expires on active time, and distinguishes the west blast
   ---
-  duration_ms: 307.826221
+  duration_ms: 469.454742
   type: 'test'
   ...
 # Subtest: M01 environment prop layout is deterministic, uniquely identified and grounded
 ok 126 - M01 environment prop layout is deterministic, uniquely identified and grounded
   ---
-  duration_ms: 28.012766
+  duration_ms: 31.899027
   type: 'test'
   ...
 # Subtest: visual prop generation cannot consume gameplay RNG or mutate world colliders/save state
 ok 127 - visual prop generation cannot consume gameplay RNG or mutate world colliders/save state
   ---
-  duration_ms: 6.732627
+  duration_ms: 13.169759
   type: 'test'
   ...
 # Subtest: critical rail, road and station access corridors remain visually clear
 ok 128 - critical rail, road and station access corridors remain visually clear
   ---
-  duration_ms: 8.077044
+  duration_ms: 12.548069
   type: 'test'
   ...
 # Subtest: Low, Medium and High preserve composition while scaling detail coherently
 ok 129 - Low, Medium and High preserve composition while scaling detail coherently
   ---
-  duration_ms: 2.472931
+  duration_ms: 6.448077
   type: 'test'
   ...
 # Subtest: rebuilding the visual layout is idempotent and does not create logical duplicates
 ok 130 - rebuilding the visual layout is idempotent and does not create logical duplicates
   ---
-  duration_ms: 7.645933
+  duration_ms: 27.883231
   type: 'test'
   ...
 # Subtest: visual quality respects explicit settings and conservative hardware fallback
 ok 131 - visual quality respects explicit settings and conservative hardware fallback
   ---
-  duration_ms: 1.138385
+  duration_ms: 1.856643
   type: 'test'
   ...
 # Subtest: foreground trunks obstruct walking and shots; restoring destruction reconstructs the same static obstacles
 ok 132 - foreground trunks obstruct walking and shots; restoring destruction reconstructs the same static obstacles
   ---
-  duration_ms: 8.280836
+  duration_ms: 9.304994
   type: 'test'
   ...
 # Subtest: M01 Ju 87 B-1: metres, nose to −Z, 11.10 × 13.80 m, stable nodes and three LODs within budget
 ok 133 - M01 Ju 87 B-1: metres, nose to −Z, 11.10 × 13.80 m, stable nodes and three LODs within budget
   ---
-  duration_ms: 4.032318
+  duration_ms: 7.284206
   type: 'test'
   ...
 # Subtest: M01 Ju 87 B-1: propeller turns a full revolution about Z; dive brakes open 90° about their hinge
 ok 134 - M01 Ju 87 B-1: propeller turns a full revolution about Z; dive brakes open 90° about their hinge
   ---
-  duration_ms: 2.59186
+  duration_ms: 5.194555
   type: 'test'
   ...
 # Subtest: real GLBs: bounded decreasing LOD budgets, finite valid attributes, original licence and visible locomotive features
 ok 135 - real GLBs: bounded decreasing LOD budgets, finite valid attributes, original licence and visible locomotive features
   ---
-  duration_ms: 80.07097
+  duration_ms: 78.189966
   type: 'test'
   ...
 # Subtest: loaded actual assets retain anchor and orientation; one visible LOD and three draw meshes
 ok 136 - loaded actual assets retain anchor and orientation; one visible LOD and three draw meshes
   ---
-  duration_ms: 209.871493
+  duration_ms: 358.713802
   type: 'test'
   ...
 # Subtest: LOD hysteresis avoids boundary flicker and ignores quality, clock and camera semantics
 ok 137 - LOD hysteresis avoids boundary flicker and ignores quality, clock and camera semantics
   ---
-  duration_ms: 0.189019
+  duration_ms: 0.293747
   type: 'test'
   ...
 # Subtest: partial asset failure uses a surviving LOD; total failure retains exact old proxy extents
 ok 138 - partial asset failure uses a surviving LOD; total failure retains exact old proxy extents
   ---
-  duration_ms: 25.879515
+  duration_ms: 41.536463
   type: 'test'
   ...
 # Subtest: late optional downloads cannot attach after disposal; asset cache owns shared buffers
 ok 139 - late optional downloads cannot attach after disposal; asset cache owns shared buffers
   ---
-  duration_ms: 26.961082
+  duration_ms: 47.518997
   type: 'test'
   ...
 # Subtest: integration preserves gameplay, RNG, hitboxes/muzzle modules, missions and non-presentation base assets byte-identical
 ok 140 - integration preserves gameplay, RNG, hitboxes/muzzle modules, missions and non-presentation base assets byte-identical
   ---
-  duration_ms: 1193.744075
+  duration_ms: 1836.381613
   type: 'test'
   ...
 # Subtest: pause/restore and repeated rendering never mutate a save or introduce train movement authority
 ok 141 - pause/restore and repeated rendering never mutate a save or introduce train movement authority
   ---
-  duration_ms: 51.533951
+  duration_ms: 125.248752
   type: 'test'
   ...
 # Subtest: M01 MG 34: metros, cano para −Z, 1,219 m ±2 %, peças móveis com pivô e três LODs no orçamento
 ok 142 - M01 MG 34: metros, cano para −Z, 1,219 m ±2 %, peças móveis com pivô e três LODs no orçamento
   ---
-  duration_ms: 5.556454
+  duration_ms: 9.85629
   type: 'test'
   ...
 # Subtest: M01 MG 34: clips mg34_* ligam-se ao rig do soldado alemão e aos nós da arma; rajada de 7 a 800/min; recarga do tambor
 ok 143 - M01 MG 34: clips mg34_* ligam-se ao rig do soldado alemão e aos nós da arma; rajada de 7 a 800/min; recarga do tambor
   ---
-  duration_ms: 15.15672
+  duration_ms: 14.812053
   type: 'test'
   ...
 # Subtest: M01 MG 34 deitada: nomes novos, kit da MG 34 e soldados reutilizados sem alterações (hashes do manifesto)
 ok 144 - M01 MG 34 deitada: nomes novos, kit da MG 34 e soldados reutilizados sem alterações (hashes do manifesto)
   ---
-  duration_ms: 28.910204
+  duration_ms: 41.047475
   type: 'test'
   ...
 # Subtest: M01 MG 34 deitada: alvos do rig e da arma, valores finitos, quaternões unitários e durações
 ok 145 - M01 MG 34 deitada: alvos do rig e da arma, valores finitos, quaternões unitários e durações
   ---
-  duration_ms: 46.053094
+  duration_ms: 73.140379
   type: 'test'
   ...
 # Subtest: M01 MG 34 deitada: rajada de 7 a 0,075 s, janela e cortes; bípode aberto/dobrado; recarga coordenada
 ok 146 - M01 MG 34 deitada: rajada de 7 a 0,075 s, janela e cortes; bípode aberto/dobrado; recarga coordenada
   ---
-  duration_ms: 2.718591
+  duration_ms: 6.29177
   type: 'test'
   ...
 # Subtest: M01 MG 34 deitada: continuidade com mg34_aim do kit e entre clips deitados
 ok 147 - M01 MG 34 deitada: continuidade com mg34_aim do kit e entre clips deitados
   ---
-  duration_ms: 72.054061
+  duration_ms: 113.79169
   type: 'test'
   ...
 # Subtest: M01 MG 34 deitada: AnimationMixer do three.js — contactos, passagem do tambor e pausa/retoma no mesmo frame
 ok 148 - M01 MG 34 deitada: AnimationMixer do three.js — contactos, passagem do tambor e pausa/retoma no mesmo frame
   ---
-  duration_ms: 84.027972
+  duration_ms: 234.038655
   type: 'test'
   ...
 # Subtest: actual renderer samples enter, idle, burst and exit from simulation and matches its muzzle within 2 mm
 ok 149 - actual renderer samples enter, idle, burst and exit from simulation and matches its muzzle within 2 mm
   ---
-  duration_ms: 214.388543
+  duration_ms: 338.592657
   type: 'test'
   ...
 # Subtest: renderer save after 1 shots restores same frame and flash without replay or RNG draws
 ok 150 - renderer save after 1 shots restores same frame and flash without replay or RNG draws
   ---
-  duration_ms: 192.739471
+  duration_ms: 254.760428
   type: 'test'
   ...
 # Subtest: renderer save after 4 shots restores same frame and flash without replay or RNG draws
 ok 151 - renderer save after 4 shots restores same frame and flash without replay or RNG draws
   ---
-  duration_ms: 84.970121
+  duration_ms: 158.462159
   type: 'test'
   ...
 # Subtest: renderer save after 6 shots restores same frame and flash without replay or RNG draws
 ok 152 - renderer save after 6 shots restores same frame and flash without replay or RNG draws
   ---
-  duration_ms: 96.061349
+  duration_ms: 156.197522
   type: 'test'
   ...
 # Subtest: missing prone GLB uses existing procedural batches without changing gameplay, hitboxes, save, RNG or real shots
 ok 153 - missing prone GLB uses existing procedural batches without changing gameplay, hitboxes, save, RNG or real shots
   ---
-  duration_ms: 105.856219
+  duration_ms: 153.343478
   type: 'test'
   ...
 # Subtest: rendered death during enter has no residual prone frame, weapon, flash or loader
 ok 154 - rendered death during enter has no residual prone frame, weapon, flash or loader
   ---
-  duration_ms: 70.320833
+  duration_ms: 105.917619
   type: 'test'
   ...
 # Subtest: rendered death during idle has no residual prone frame, weapon, flash or loader
 ok 155 - rendered death during idle has no residual prone frame, weapon, flash or loader
   ---
-  duration_ms: 93.012589
+  duration_ms: 110.534199
   type: 'test'
   ...
 # Subtest: rendered death during fire_burst has no residual prone frame, weapon, flash or loader
 ok 156 - rendered death during fire_burst has no residual prone frame, weapon, flash or loader
   ---
-  duration_ms: 98.718538
+  duration_ms: 125.253129
   type: 'test'
   ...
 # Subtest: rendered death during exit has no residual prone frame, weapon, flash or loader
 ok 157 - rendered death during exit has no residual prone frame, weapon, flash or loader
   ---
-  duration_ms: 88.18225
+  duration_ms: 162.316648
   type: 'test'
   ...
 # Subtest: actual muzzle effect after shot 1 has no extra flash in the .06/.075 gap or restore
 ok 158 - actual muzzle effect after shot 1 has no extra flash in the .06/.075 gap or restore
   ---
-  duration_ms: 17.773866
+  duration_ms: 62.015105
   type: 'test'
   ...
 # Subtest: actual muzzle effect after shot 4 has no extra flash in the .06/.075 gap or restore
 ok 159 - actual muzzle effect after shot 4 has no extra flash in the .06/.075 gap or restore
   ---
-  duration_ms: 17.826665
+  duration_ms: 27.422496
   type: 'test'
   ...
 # Subtest: actual muzzle effect after shot 6 has no extra flash in the .06/.075 gap or restore
 ok 160 - actual muzzle effect after shot 6 has no extra flash in the .06/.075 gap or restore
   ---
-  duration_ms: 32.176705
+  duration_ms: 24.552955
   type: 'test'
   ...
 # Subtest: actual muzzle batches have no post-death flash during all four prone phases
 ok 161 - actual muzzle batches have no post-death flash during all four prone phases
   ---
-  duration_ms: 8.539665
+  duration_ms: 13.774789
   type: 'test'
   ...
 # Subtest: existing MG34 gunners enter for exactly 1.9 seconds; other actors have no new posture
 ok 162 - existing MG34 gunners enter for exactly 1.9 seconds; other actors have no new posture
   ---
-  duration_ms: 9.162537
+  duration_ms: 11.965311
   type: 'test'
   ...
 # Subtest: save and atomic restore preserve enter, idle, aim and exit and consume no RNG
 ok 163 - save and atomic restore preserve enter, idle, aim and exit and consume no RNG
   ---
-  duration_ms: 79.199463
+  duration_ms: 129.544468
   type: 'test'
   ...
 # Subtest: save after shot 1: resume without duplicate/lost rounds, events, frames or RNG
 ok 164 - save after shot 1: resume without duplicate/lost rounds, events, frames or RNG
   ---
-  duration_ms: 35.173772
+  duration_ms: 62.392132
   type: 'test'
   ...
 # Subtest: save after shot 4: resume without duplicate/lost rounds, events, frames or RNG
 ok 165 - save after shot 4: resume without duplicate/lost rounds, events, frames or RNG
   ---
-  duration_ms: 26.621289
+  duration_ms: 29.980364
   type: 'test'
   ...
 # Subtest: save after shot 6: resume without duplicate/lost rounds, events, frames or RNG
 ok 166 - save after shot 6: resume without duplicate/lost rounds, events, frames or RNG
   ---
-  duration_ms: 16.134357
+  duration_ms: 24.1509
   type: 'test'
   ...
 # Subtest: 4, 5, 6 and 7 shots preserve the requested count and real .075 cadence
 ok 167 - 4, 5, 6 and 7 shots preserve the requested count and real .075 cadence
   ---
-  duration_ms: 5.800887
+  duration_ms: 8.207503
   type: 'test'
   ...
 # Subtest: pause leaves posture, progress, shot, pending burst, RNG and complete snapshot exactly stable
 ok 168 - pause leaves posture, progress, shot, pending burst, RNG and complete snapshot exactly stable
   ---
-  duration_ms: 45.943713
+  duration_ms: 76.369782
   type: 'test'
   ...
 # Subtest: ADVANCE exits prone, blocks firing, then remains standing
 ok 169 - ADVANCE exits prone, blocks firing, then remains standing
   ---
-  duration_ms: 1.933502
+  duration_ms: 1.663583
   type: 'test'
   ...
 # Subtest: RETREAT exits prone, blocks firing, then remains standing
 ok 170 - RETREAT exits prone, blocks firing, then remains standing
   ---
-  duration_ms: 1.225409
+  duration_ms: 1.931004
   type: 'test'
   ...
 # Subtest: movement waits for exit; interrupted entry reverses its saved fractional progress
 ok 171 - movement waits for exit; interrupted entry reverses its saved fractional progress
   ---
-  duration_ms: 2.362493
+  duration_ms: 3.745866
   type: 'test'
   ...
 # Subtest: suppression keeps the gunner low and cancels pending shots without cancelling those in flight
 ok 172 - suppression keeps the gunner low and cancels pending shots without cancelling those in flight
   ---
-  duration_ms: 10.080777
+  duration_ms: 19.548868
   type: 'test'
   ...
 # Subtest: death during enter immediately clears posture and future shots
 ok 173 - death during enter immediately clears posture and future shots
   ---
-  duration_ms: 12.945036
+  duration_ms: 13.309776
   type: 'test'
   ...
 # Subtest: death during idle immediately clears posture and future shots
 ok 174 - death during idle immediately clears posture and future shots
   ---
-  duration_ms: 8.866075
+  duration_ms: 28.902907
   type: 'test'
   ...
 # Subtest: death during fire_burst immediately clears posture and future shots
 ok 175 - death during fire_burst immediately clears posture and future shots
   ---
-  duration_ms: 10.469458
+  duration_ms: 18.20312
   type: 'test'
   ...
 # Subtest: death during exit immediately clears posture and future shots
 ok 176 - death during exit immediately clears posture and future shots
   ---
-  duration_ms: 8.800054
+  duration_ms: 12.912524
   type: 'test'
   ...
 # Subtest: inactivity discards pending combat and never creates a loader association
 ok 177 - inactivity discards pending combat and never creates a loader association
   ---
-  duration_ms: 1.877875
+  duration_ms: 2.757718
   type: 'test'
   ...
 # Subtest: legacy missing prone data resumes safely with no marker; 86 roster/CKM migration stays unchanged
 ok 178 - legacy missing prone data resumes safely with no marker; 86 roster/CKM migration stays unchanged
   ---
-  duration_ms: 13.624067
+  duration_ms: 35.745442
   type: 'test'
   ...
 # Subtest: invalid partial/impossible prone fields reject atomically without changing source or target
 ok 179 - invalid partial/impossible prone fields reject atomically without changing source or target
   ---
-  duration_ms: 72.438031
+  duration_ms: 138.800575
   type: 'test'
   ...
 # Subtest: movement and S3 station evacuation bodies remain byte-for-byte identical to the fixed base
 ok 180 - movement and S3 station evacuation bodies remain byte-for-byte identical to the fixed base
   ---
-  duration_ms: 9.898749
+  duration_ms: 16.998434
   type: 'test'
   ...
 # Subtest: a nonlethal hit interrupts the remaining burst and stays low with a valid snapshot
 ok 181 - a nonlethal hit interrupts the remaining burst and stays low with a valid snapshot
   ---
-  duration_ms: 2.789554
+  duration_ms: 6.792163
   type: 'test'
   ...
 # Subtest: player fire observes the current transition progress within a real simulation tick
 ok 182 - player fire observes the current transition progress within a real simulation tick
   ---
-  duration_ms: 3.155895
+  duration_ms: 7.467008
   type: 'test'
   ...
 # Subtest: save cannot remove or alter an emitted round still in flight
 ok 183 - save cannot remove or alter an emitted round still in flight
   ---
-  duration_ms: 10.099955
+  duration_ms: 15.476167
   type: 'test'
   ...
 # Subtest: OUTRO cancels pending rounds and blocks new MG bursts while preserving existing flight
 ok 184 - OUTRO cancels pending rounds and blocks new MG bursts while preserving existing flight
   ---
-  duration_ms: 1.244514
+  duration_ms: 1.536428
   type: 'test'
   ...
 # Subtest: a target already reached never rewrites the state of a fixed prone burst
 ok 185 - a target already reached never rewrites the state of a fixed prone burst
   ---
-  duration_ms: 3.448412
+  duration_ms: 8.126348
   type: 'test'
   ...
 # MG34 muzzle proof: 2496 comparisons, max=0.000038402 m, tolerance=0.002 m
 # Subtest: numeric muzzle proof against real attached soldier/weapon GLBs for all phases and four facings
 ok 186 - numeric muzzle proof against real attached soldier/weapon GLBs for all phases and four facings
   ---
-  duration_ms: 272.973855
+  duration_ms: 493.72622
   type: 'test'
   ...
 # Subtest: geometry table is derived reproducibly from the exact real GLBs, without a graphics or asset dependency in simulation
 ok 187 - geometry table is derived reproducibly from the exact real GLBs, without a graphics or asset dependency in simulation
   ---
-  duration_ms: 168.20173
+  duration_ms: 229.673803
   type: 'test'
   ...
 # Subtest: head/torso/legs move along body axis facing=0 during prone and transitions
 ok 188 - head/torso/legs move along body axis facing=0 during prone and transitions
   ---
-  duration_ms: 1.194044
+  duration_ms: 1.393157
   type: 'test'
   ...
 # Subtest: head/torso/legs move along body axis facing=1.5707963267948966 during prone and transitions
 ok 189 - head/torso/legs move along body axis facing=1.5707963267948966 during prone and transitions
   ---
-  duration_ms: 0.510881
+  duration_ms: 0.489613
   type: 'test'
   ...
 # Subtest: head/torso/legs move along body axis facing=3.141592653589793 during prone and transitions
 ok 190 - head/torso/legs move along body axis facing=3.141592653589793 during prone and transitions
   ---
-  duration_ms: 0.315744
+  duration_ms: 0.412658
   type: 'test'
   ...
 # Subtest: head/torso/legs move along body axis facing=-1.5707963267948966 during prone and transitions
 ok 191 - head/torso/legs move along body axis facing=-1.5707963267948966 during prone and transitions
   ---
-  duration_ms: 0.515698
+  duration_ms: 0.342613
   type: 'test'
   ...
 # Subtest: partial entry interruption reverses the actual enter clip continuously instead of jumping to an unrelated exit frame
 ok 192 - partial entry interruption reverses the actual enter clip continuously instead of jumping to an unrelated exit frame
   ---
-  duration_ms: 0.934659
+  duration_ms: 1.023439
   type: 'test'
   ...
 # Subtest: real rounds start at the rendered prone socket at each of seven scheduled shot instants
 ok 193 - real rounds start at the rendered prone socket at each of seven scheduled shot instants
   ---
-  duration_ms: 54.771261
+  duration_ms: 64.027291
   type: 'test'
   ...
 # Subtest: pause keeps eye, hitboxes, muzzle and canonical clip frame exactly stable across all saved phases
 ok 194 - pause keeps eye, hitboxes, muzzle and canonical clip frame exactly stable across all saved phases
   ---
-  duration_ms: 2.699105
+  duration_ms: 6.093257
   type: 'test'
   ...
 # Subtest: real GLBs: bounded decreasing LOD budgets, finite valid attributes, original licence and five distinct conservative profiles
 ok 195 - real GLBs: bounded decreasing LOD budgets, finite valid attributes, original licence and five distinct conservative profiles
   ---
-  duration_ms: 59.715852
+  duration_ms: 114.489042
   type: 'test'
   ...
 # Subtest: loaded actual assets retain anchor and orientation; one visible LOD and three draw meshes
 ok 196 - loaded actual assets retain anchor and orientation; one visible LOD and three draw meshes
   ---
-  duration_ms: 237.280108
+  duration_ms: 480.392943
   type: 'test'
   ...
 # Subtest: LOD hysteresis avoids boundary flicker and ignores quality, clock and camera semantics
 ok 197 - LOD hysteresis avoids boundary flicker and ignores quality, clock and camera semantics
   ---
-  duration_ms: 0.202883
+  duration_ms: 0.396261
   type: 'test'
   ...
 # Subtest: partial asset failure uses a surviving LOD; total failure retains exact old proxy extents
 ok 198 - partial asset failure uses a surviving LOD; total failure retains exact old proxy extents
   ---
-  duration_ms: 28.852701
+  duration_ms: 67.029621
   type: 'test'
   ...
 # Subtest: late optional downloads cannot attach after disposal; asset cache owns shared buffers
 ok 199 - late optional downloads cannot attach after disposal; asset cache owns shared buffers
   ---
-  duration_ms: 30.456844
+  duration_ms: 53.385315
   type: 'test'
   ...
 # Subtest: integration preserves gameplay, RNG, hitboxes/muzzle modules, missions and non-presentation base assets byte-identical
 ok 200 - integration preserves gameplay, RNG, hitboxes/muzzle modules, missions and non-presentation base assets byte-identical
   ---
-  duration_ms: 1154.24754
+  duration_ms: 2054.101115
   type: 'test'
   ...
 # Subtest: pause/restore and repeated rendering never mutate a save or introduce train movement authority
 ok 201 - pause/restore and repeated rendering never mutate a save or introduce train movement authority
   ---
-  duration_ms: 59.113965
+  duration_ms: 109.807867
   type: 'test'
   ...
 # Subtest: the real roll call seats only the present actors and keeps their positions and pose through save/reload
 ok 202 - the real roll call seats only the present actors and keeps their positions and pose through save/reload
   ---
-  duration_ms: 5752.395427
+  duration_ms: 9554.511303
   type: 'test'
   ...
 # Subtest: actual instance matrices lower seated/crouched heads, keep seated feet on the floor and render horizontal wounded/carried bodies without mutating data
 ok 203 - actual instance matrices lower seated/crouched heads, keep seated feet on the floor and render horizontal wounded/carried bodies without mutating data
   ---
-  duration_ms: 65.887741
+  duration_ms: 67.814775
   type: 'test'
   ...
 # Subtest: legacy actors without pose remain accepted and an unknown saved pose is rejected atomically
 ok 204 - legacy actors without pose remain accepted and an unknown saved pose is rejected atomically
   ---
-  duration_ms: 32.093445
+  duration_ms: 38.5414
   type: 'test'
   ...
 # Subtest: distance removes face accessories while retaining the same head position, pose and immutable actor
 ok 205 - distance removes face accessories while retaining the same head position, pose and immutable actor
   ---
-  duration_ms: 9.996556
+  duration_ms: 14.813024
   type: 'test'
   ...
 # Subtest: a shot shoulders the rifle, keeps both hands on it and attaches the flash to the barrel through yaw and recoil
 ok 206 - a shot shoulders the rifle, keeps both hands on it and attaches the flash to the barrel through yaw and recoil
   ---
-  duration_ms: 5.434184
+  duration_ms: 7.263948
   type: 'test'
   ...
 # Subtest: suppression lowers the upper body with feet planted and takes priority over a recent shot; seated, wounded and unarmed actors do not aim
 ok 207 - suppression lowers the upper body with feet planted and takes priority over a recent shot; seated, wounded and unarmed actors do not aim
   ---
-  duration_ms: 18.274623
+  duration_ms: 21.465611
   type: 'test'
   ...
 # Subtest: a real combat save reproduces the same animation matrices at the same clock after reload and walking lifts a foot without sinking either boot
 ok 208 - a real combat save reproduces the same animation matrices at the same clock after reload and walking lifts a foot without sinking either boot
   ---
-  duration_ms: 843.39567
+  duration_ms: 1269.895668
   type: 'test'
   ...
 # Subtest: M01 rkm wz.28: metres, barrel to −Z, 1.11 m ±2 %, movable parts and three LODs within budget
 ok 209 - M01 rkm wz.28: metres, barrel to −Z, 1.11 m ±2 %, movable parts and three LODs within budget
   ---
-  duration_ms: 3.968389
+  duration_ms: 4.64433
   type: 'test'
   ...
 # Subtest: M01 rkm wz.28: clips bind to the soldier skeleton; burst fires 3 rounds; rifle clip hidden
 ok 210 - M01 rkm wz.28: clips bind to the soldier skeleton; burst fires 3 rounds; rifle clip hidden
   ---
-  duration_ms: 5.374249
+  duration_ms: 7.415486
   type: 'test'
   ...
 # Subtest: the pure collision JSON remains reproducible from the checked GLB translations
 ok 211 - the pure collision JSON remains reproducible from the checked GLB translations
   ---
-  duration_ms: 74.718919
+  duration_ms: 100.398236
   type: 'test'
   ...
 # Subtest: debug diagnostics return copies; editing a returned gate or failure cannot change live state
 ok 212 - debug diagnostics return copies; editing a returned gate or failure cannot change live state
   ---
-  duration_ms: 16.57861
+  duration_ms: 24.331961
   type: 'test'
   ...
 # Subtest: wz.29 requires a bolt cycle; an empty magazine uses a clip of five, preserving ammunition
 ok 213 - wz.29 requires a bolt cycle; an empty magazine uses a clip of five, preserving ammunition
   ---
-  duration_ms: 0.33374
+  duration_ms: 0.61523
   type: 'test'
   ...
 # Subtest: wz.29 partial loading commits one round at a time and can be interrupted; in-progress saves resume it
 ok 214 - wz.29 partial loading commits one round at a time and can be interrupted; in-progress saves resume it
   ---
-  duration_ms: 0.302856
+  duration_ms: 0.656923
   type: 'test'
   ...
 # Subtest: M01 complete control route reaches debrief, all required objectives, unique events and all four actual checkpoints
 ok 215 - M01 complete control route reaches debrief, all required objectives, unique events and all four actual checkpoints
   ---
-  duration_ms: 6047.979978
+  duration_ms: 9012.928743
   type: 'test'
   ...
 # Subtest: every M01 checkpoint restores exact actors, ammunition, RNG, dialogue, destruction and real clocks after death
 ok 216 - every M01 checkpoint restores exact actors, ammunition, RNG, dialogue, destruction and real clocks after death
   ---
-  duration_ms: 58.55297
+  duration_ms: 80.401116
   type: 'test'
   ...
 # Subtest: damaged bridge pieces and German casualties survive LOD changes and checkpoint restoration
 ok 217 - damaged bridge pieces and German casualties survive LOD changes and checkpoint restoration
   ---
-  duration_ms: 10.795057
+  duration_ms: 13.704486
   type: 'test'
   ...
 # Subtest: overdue events use >=; delayed events wait active seconds; pause freezes both clocks and weapon work
 ok 218 - overdue events use >=; delayed events wait active seconds; pause freezes both clocks and weapon work
   ---
-  duration_ms: 51.208416
+  duration_ms: 53.389921
   type: 'test'
   ...
 # Subtest: a late message never rewinds battle time and every aerial impact stays at least thirty metres away
 ok 219 - a late message never rewinds battle time and every aerial impact stays at least thirty metres away
   ---
-  duration_ms: 8.28492
+  duration_ms: 5.123215
   type: 'test'
   ...
 # Subtest: west demolition waits inside the safety zone, then releases once the player and allies have left
 ok 220 - west demolition waits inside the safety zone, then releases once the player and allies have left
   ---
-  duration_ms: 100.168076
+  duration_ms: 74.196047
   type: 'test'
   ...
 # Subtest: boundary warning precedes failure and its eight second timer resets when the player returns
 ok 221 - boundary warning precedes failure and its eight second timer resets when the player returns
   ---
-  duration_ms: 2.858466
+  duration_ms: 2.576713
   type: 'test'
   ...
 # Subtest: metre-space hitboxes, actual cover and bridge joints support shots and continuous travel
 ok 222 - metre-space hitboxes, actual cover and bridge joints support shots and continuous travel
   ---
-  duration_ms: 1.436142
+  duration_ms: 1.923627
   type: 'test'
   ...
 # Subtest: corrupt M01 state is rejected atomically before an active scene, grenade or missing timer can crash the game
 ok 223 - corrupt M01 state is rejected atomically before an active scene, grenade or missing timer can crash the game
   ---
-  duration_ms: 39.475901
+  duration_ms: 36.156434
   type: 'test'
   ...
 # Subtest: outro calls Nowicki twice as distinct beats and consumes completion once, including skip after partial playback
 ok 224 - outro calls Nowicki twice as distinct beats and consumes completion once, including skip after partial playback
   ---
-  duration_ms: 83.872455
+  duration_ms: 130.19884
   type: 'test'
   ...
 # Subtest: optional Bąk rescue cannot be taken away mid-carry; delivery chooses the player continuity branch
 ok 225 - optional Bąk rescue cannot be taken away mid-carry; delivery chooses the player continuity branch
   ---
-  duration_ms: 4.023957
+  duration_ms: 5.716368
   type: 'test'
   ...
 # Subtest: all five sectors keep their schedule and stable casualties for ninety seconds while the player looks away
 ok 226 - all five sectors keep their schedule and stable casualties for ninety seconds while the player looks away
   ---
-  duration_ms: 602.171196
+  duration_ms: 956.909347
   type: 'test'
   ...
 # Subtest: west hold timeout sends the sergeant to escort the player without demolition damage
 ok 227 - west hold timeout sends the sergeant to escort the player without demolition damage
   ---
-  duration_ms: 1040.713699
+  duration_ms: 1948.556209
   type: 'test'
   ...
 # Subtest: grenade blast starts at its real height; solid cover shields a nearby actor and inactive actors stay unharmed
 ok 228 - grenade blast starts at its real height; solid cover shields a nearby actor and inactive actors stay unharmed
   ---
-  duration_ms: 1.687666
+  duration_ms: 2.158755
   type: 'test'
   ...
 # Subtest: first divergence diagnostic detects exact tick, field, missing key and event changes
 ok 229 - first divergence diagnostic detects exact tick, field, missing key and event changes
   ---
-  duration_ms: 45.280807
+  duration_ms: 74.711707
   type: 'test'
   ...
 # Subtest: full route A/B with CP-A..D, events, RNG and long continuation: seed 19390901, support false
 ok 230 - full route A/B with CP-A..D, events, RNG and long continuation: seed 19390901, support false
   ---
-  duration_ms: 71576.523974
+  duration_ms: 108268.081462
   type: 'test'
   ...
 # Subtest: full route A/B with CP-A..D, events, RNG and long continuation: seed 7, support true
 ok 231 - full route A/B with CP-A..D, events, RNG and long continuation: seed 7, support true
   ---
-  duration_ms: 63103.337495
+  duration_ms: 96255.819017
   type: 'test'
   ...
 # Subtest: MG34 seven-shot burst after 1, actual tick pipeline plus grenade, rifle RNG and double load
 ok 232 - MG34 seven-shot burst after 1, actual tick pipeline plus grenade, rifle RNG and double load
   ---
-  duration_ms: 442.110051
+  duration_ms: 684.201368
   type: 'test'
   ...
 # Subtest: MG34 seven-shot burst after 4, actual tick pipeline plus grenade, rifle RNG and double load
 ok 233 - MG34 seven-shot burst after 4, actual tick pipeline plus grenade, rifle RNG and double load
   ---
-  duration_ms: 454.710313
+  duration_ms: 802.514687
   type: 'test'
   ...
 # Subtest: MG34 seven-shot burst after 6, actual tick pipeline plus grenade, rifle RNG and double load
 ok 234 - MG34 seven-shot burst after 6, actual tick pipeline plus grenade, rifle RNG and double load
   ---
-  duration_ms: 469.424776
+  duration_ms: 667.108445
   type: 'test'
   ...
 # Subtest: station grab: variable timestep, zero-dt pause, double save/load
 ok 235 - station grab: variable timestep, zero-dt pause, double save/load
   ---
-  duration_ms: 985.74502
+  duration_ms: 1326.611067
   type: 'test'
   ...
 # Subtest: station drag: variable timestep, zero-dt pause, double save/load
 ok 236 - station drag: variable timestep, zero-dt pause, double save/load
   ---
-  duration_ms: 849.956498
+  duration_ms: 1354.48463
   type: 'test'
   ...
 # Subtest: station release: variable timestep, zero-dt pause, double save/load
 ok 237 - station release: variable timestep, zero-dt pause, double save/load
   ---
-  duration_ms: 914.205336
+  duration_ms: 1466.512556
   type: 'test'
   ...
 # Subtest: grenade bounce/fuse, rifle bolt and partial reload continue with exact RNG and events
 ok 238 - grenade bounce/fuse, rifle bolt and partial reload continue with exact RNG and events
   ---
-  duration_ms: 477.262017
+  duration_ms: 665.796848
   type: 'test'
   ...
 # Subtest: Bąk player carry/late delivery followed by Dudek evacuation and both demolitions
 ok 239 - Bąk player carry/late delivery followed by Dudek evacuation and both demolitions
   ---
-  duration_ms: 26577.680258
+  duration_ms: 39428.233111
   type: 'test'
   ...
 # Subtest: legacy 86/89 actors, missing optional fields and old CKM placement migrate once then have identical futures
 ok 240 - legacy 86/89 actors, missing optional fields and old CKM placement migrate once then have identical futures
   ---
-  duration_ms: 803.258455
+  duration_ms: 1148.911336
   type: 'test'
   ...
 # Subtest: legacy MG34 pre-created future rounds migrate without replay, then continue identically
 ok 241 - legacy MG34 pre-created future rounds migrate without replay, then continue identically
   ---
-  duration_ms: 467.965206
+  duration_ms: 629.582933
   type: 'test'
   ...
 # Subtest: death between each real CP-A..D and the next CP preserves exact recovery and subsequent future
 ok 242 - death between each real CP-A..D and the next CP preserves exact recovery and subsequent future
   ---
-  duration_ms: 2350.337916
+  duration_ms: 3416.564828
   type: 'test'
   ...
 # Subtest: corrupt cross-system states reject atomically and leave the destination future unchanged
 ok 243 - corrupt cross-system states reject atomically and leave the destination future unchanged
   ---
-  duration_ms: 1047.829202
+  duration_ms: 1396.67904
   type: 'test'
   ...
 # Subtest: corrupt weapon method/profile, unsigned RNG and unknown phase reject before changing future gameplay
 ok 244 - corrupt weapon method/profile, unsigned RNG and unknown phase reject before changing future gameplay
   ---
-  duration_ms: 773.141368
+  duration_ms: 945.220474
   type: 'test'
   ...
 # Subtest: OUTRO playback, skip, double load and completed no-op use the same dialogue/event future
 ok 245 - OUTRO playback, skip, double load and completed no-op use the same dialogue/event future
   ---
-  duration_ms: 4070.02399
+  duration_ms: 6066.63748
   type: 'test'
   ...
 # Subtest: save between checkpoints preserves the future respawn destination
 ok 246 - save between checkpoints preserves the future respawn destination
   ---
-  duration_ms: 16.733507
+  duration_ms: 25.953744
   type: 'test'
   ...
 # Subtest: eight bounded profiles per nation are deterministic by ID/side/real role and independent of clocks, health, order and quality
 ok 247 - eight bounded profiles per nation are deterministic by ID/side/real role and independent of clocks, health, order and quality
   ---
-  duration_ms: 18.113758
+  duration_ms: 26.144688
   type: 'test'
   ...
 # Subtest: actual GLB variants survive all three LODs, pause, rebind and re-created renderers without actor/source mutation
 ok 248 - actual GLB variants survive all three LODs, pause, rebind and re-created renderers without actor/source mutation
   ---
-  duration_ms: 464.308106
+  duration_ms: 686.456887
   type: 'test'
   ...
 # Subtest: OFF vs ON has exactly equal world bones, root/facing, gameplay hitboxes, weapon meshes and rendered muzzle at every LOD
 ok 249 - OFF vs ON has exactly equal world bones, root/facing, gameplay hitboxes, weapon meshes and rendered muzzle at every LOD
   ---
-  duration_ms: 287.878326
+  duration_ms: 470.370258
   type: 'test'
   ...
 # Subtest: shared originals retain all attributes and indices; source atlas is shared; cached variants add no textures/draws
 ok 250 - shared originals retain all attributes and indices; source atlas is shared; cached variants add no textures/draws
   ---
-  duration_ms: 242.701115
+  duration_ms: 313.352236
   type: 'test'
   ...
 # Subtest: actual gear silhouettes differ through existing breadbag fullness/optional shovel; ammo pouches and skins remain
 ok 251 - actual gear silhouettes differ through existing breadbag fullness/optional shovel; ammo pouches and skins remain
   ---
-  duration_ms: 82.942921
+  duration_ms: 86.576367
   type: 'test'
   ...
 # Subtest: simulation futures/RNG/saves/checkpoints are exact with visual OFF vs ON; renderer freeze/reload does not write state
 ok 252 - simulation futures/RNG/saves/checkpoints are exact with visual OFF vs ON; renderer freeze/reload does not write state
   ---
-  duration_ms: 675.274356
+  duration_ms: 1250.781495
   type: 'test'
   ...
 # Subtest: missing optional art stays procedural; release/rebind keeps cached buffers until owner disposal
 ok 253 - missing optional art stays procedural; release/rebind keeps cached buffers until owner disposal
   ---
-  duration_ms: 30.172106
+  duration_ms: 77.08252
   type: 'test'
   ...
 # Subtest: real continuation and its CP backup keep the same visual identities; German face treatments stay within 3 mm
 ok 254 - real continuation and its CP backup keep the same visual identities; German face treatments stay within 3 mm
   ---
-  duration_ms: 628.713551
+  duration_ms: 931.240452
   type: 'test'
   ...
 # Subtest: integration preserves gameplay, hitbox/muzzle, save, locomotion and non-presentation base assets byte-identical
 ok 255 - integration preserves gameplay, hitbox/muzzle, save, locomotion and non-presentation base assets byte-identical
   ---
-  duration_ms: 1299.12458
+  duration_ms: 1870.294569
   type: 'test'
   ...
 # Subtest: M01 soldiers: metres, −Z facing, 1.65–1.85 m and the full game skeleton in every LOD
 ok 256 - M01 soldiers: metres, −Z facing, 1.65–1.85 m and the full game skeleton in every LOD
   ---
-  duration_ms: 13.511328
+  duration_ms: 17.404736
   type: 'test'
   ...
 # Subtest: M01 soldiers: visible triangle budget, textures per LOD and togglable variants
 ok 257 - M01 soldiers: visible triangle budget, textures per LOD and togglable variants
   ---
-  duration_ms: 12.996949
+  duration_ms: 14.956283
   type: 'test'
   ...
 # Subtest: M01 soldiers: weapons keep documented length (wz.29 1.10, Kar98k ~1.11, wz.98a 1.25, rkm wz.28 1.11 m) with bolt and magazine bones
 ok 258 - M01 soldiers: weapons keep documented length (wz.29 1.10, Kar98k ~1.11, wz.98a 1.25, rkm wz.28 1.11 m) with bolt and magazine bones
   ---
-  duration_ms: 13.010792
+  duration_ms: 19.832157
   type: 'test'
   ...
 # Subtest: M01 soldier animations bind by bone name and keep kb_wz29 timings
 ok 259 - M01 soldier animations bind by bone name and keep kb_wz29 timings
   ---
-  duration_ms: 9.531393
+  duration_ms: 8.108953
   type: 'test'
   ...
 # Subtest: the real station clips sample both roles from saved phase time, with pause, fresh renderer and LOD restore
 ok 260 - the real station clips sample both roles from saved phase time, with pause, fresh renderer and LOD restore
   ---
-  duration_ms: 1491.626517
+  duration_ms: 2194.068495
   type: 'test'
   ...
 # Subtest: the patient holds the actual final grab pose throughout the moving backward drag
 ok 261 - the patient holds the actual final grab pose throughout the moving backward drag
   ---
-  duration_ms: 356.478034
+  duration_ms: 431.868283
   type: 'test'
   ...
 # Subtest: a missing or incomplete optional transition pair falls back together and leaves evacuation success to simulation
 ok 262 - a missing or incomplete optional transition pair falls back together and leaves evacuation success to simulation
   ---
-  duration_ms: 6011.160826
+  duration_ms: 9006.330283
   type: 'test'
   ...
 # Subtest: M01 arrasto da estação: ficheiros novos, rig e clips reutilizados sem alterações (SHA-256 do manifesto)
 ok 263 - M01 arrasto da estação: ficheiros novos, rig e clips reutilizados sem alterações (SHA-256 do manifesto)
   ---
-  duration_ms: 12.14504
+  duration_ms: 15.980339
   type: 'test'
   ...
 # Subtest: M01 arrasto da estação: alvos dos 61 ossos, valores finitos, quaternões unitários, relógio e eventos dos pares
 ok 264 - M01 arrasto da estação: alvos dos 61 ossos, valores finitos, quaternões unitários, relógio e eventos dos pares
   ---
-  duration_ms: 57.672689
+  duration_ms: 73.873457
   type: 'test'
   ...
 # Subtest: M01 arrasto da estação: extremos iguais às poses reais, percurso inverso e raiz sem deslocação
 ok 265 - M01 arrasto da estação: extremos iguais às poses reais, percurso inverso e raiz sem deslocação
   ---
-  duration_ms: 305.158262
+  duration_ms: 421.348671
   type: 'test'
   ...
 # Subtest: M01 arrasto da estação: AnimationMixer do three.js — contactos, paciente de costas, corpos e pausa/retoma
 ok 266 - M01 arrasto da estação: AnimationMixer do three.js — contactos, paciente de costas, corpos e pausa/retoma
   ---
-  duration_ms: 201.099444
+  duration_ms: 242.006698
   type: 'test'
   ...
 # Subtest: the fictional station casualty starts in the yard and the clock triggers his injury only once
 ok 267 - the fictional station casualty starts in the yard and the clock triggers his injury only once
   ---
-  duration_ms: 529.875176
+  duration_ms: 796.255812
   type: 'test'
   ...
 # Subtest: the backward drag stays on the ground, completes outside the camera and returns Dudek to his post
 ok 268 - the backward drag stays on the ground, completes outside the camera and returns Dudek to his post
   ---
-  duration_ms: 863.337935
+  duration_ms: 1151.892944
   type: 'test'
   ...
 # Subtest: changing the player look never changes the station evacuation or its delivery
 ok 269 - changing the player look never changes the station evacuation or its delivery
   ---
-  duration_ms: 996.675427
+  duration_ms: 1591.373958
   type: 'test'
   ...
 # Subtest: a save during the drag restores the same actors, task and future positions with no scene objects
 ok 270 - a save during the drag restores the same actors, task and future positions with no scene objects
   ---
-  duration_ms: 733.970706
+  duration_ms: 990.424207
   type: 'test'
   ...
 # Subtest: death or removal of a participant detaches the casualty instead of leaving an invalid or moving carrier reference
 ok 271 - death or removal of a participant detaches the casualty instead of leaving an invalid or moving carrier reference
   ---
-  duration_ms: 1528.833155
+  duration_ms: 1940.894872
   type: 'test'
   ...
 # Subtest: legacy schema 2 saves with an already consumed station event do not replay an injury
 ok 272 - legacy schema 2 saves with an already consumed station event do not replay an injury
   ---
-  duration_ms: 344.221301
+  duration_ms: 478.193167
   type: 'test'
   ...
 # Subtest: station care coexists with Bąk, all objectives, checkpoints and both historical demolitions on supported and ignored routes
 ok 273 - station care coexists with Bąk, all objectives, checkpoints and both historical demolitions on supported and ignored routes
   ---
-  duration_ms: 8079.939265
+  duration_ms: 13802.767402
   type: 'test'
   ...
 # Subtest: grab and release last 1.6 mission seconds, hold both roots and deliver only after settling
 ok 274 - grab and release last 1.6 mission seconds, hold both roots and deliver only after settling
   ---
-  duration_ms: 445.995957
+  duration_ms: 621.641687
   type: 'test'
   ...
 # Subtest: schema 2 restores every station phase and its future clocks, actors and RNG exactly
 ok 275 - schema 2 restores every station phase and its future clocks, actors and RNG exactly
   ---
-  duration_ms: 1098.099274
+  duration_ms: 1840.497622
   type: 'test'
   ...
 # Subtest: all station phases interrupt on casualty/medic death, removal or reassignment without delivery
 ok 276 - all station phases interrupt on casualty/medic death, removal or reassignment without delivery
   ---
-  duration_ms: 4866.875535
+  duration_ms: 6857.495803
   type: 'test'
   ...
 # Subtest: old schema 2 transit saves resume without a new grab and corrupt station phases are rejected atomically
 ok 277 - old schema 2 transit saves resume without a new grab and corrupt station phases are rejected atomically
   ---
-  duration_ms: 329.920021
+  duration_ms: 494.515187
   type: 'test'
   ...
 # Subtest: actual MG34 rig cuts 4/5/6/7-round bursts at their saved duration, keeps one weapon and samples pause/restore without mutation
 ok 278 - actual MG34 rig cuts 4/5/6/7-round bursts at their saved duration, keeps one weapon and samples pause/restore without mutation
   ---
-  duration_ms: 346.339052
+  duration_ms: 418.831203
   type: 'test'
   ...
 # Subtest: two existing MG sources share art and retain independent rigs within the light budget; LOD, suppression, casualties and missing kit fall back
 ok 279 - two existing MG sources share art and retain independent rigs within the light budget; LOD, suppression, casualties and missing kit fall back
   ---
-  duration_ms: 328.940516
+  duration_ms: 453.581264
   type: 'test'
   ...
 # Subtest: 65 actual wagon models use LOD2 instances at 9.10 m with source pivots and shared art; partial/full failures preserve the whole consist
 ok 280 - 65 actual wagon models use LOD2 instances at 9.10 m with source pivots and shared art; partial/full failures preserve the whole consist
   ---
-  duration_ms: 20.052746
+  duration_ms: 27.879745
   type: 'test'
   ...
 # Subtest: disposing while optional wagon downloads are pending never attaches models to the old scene
 ok 281 - disposing while optional wagon downloads are pending never attaches models to the old scene
   ---
-  duration_ms: 7.231708
+  duration_ms: 2.393625
   type: 'test'
   ...
 # Subtest: M01 declares the mission contract fields of Prompt §74
 ok 282 - M01 declares the mission contract fields of Prompt §74
   ---
-  duration_ms: 1.228871
+  duration_ms: 1.44428
   type: 'test'
   ...
 # Subtest: M01 IDs are unique across the mission and every reference resolves
 ok 283 - M01 IDs are unique across the mission and every reference resolves
   ---
-  duration_ms: 1.394671
+  duration_ms: 1.66454
   type: 'test'
   ...
 # Subtest: M01 keeps the documented chronology on the battle clock
 ok 284 - M01 keeps the documented chronology on the battle clock
   ---
-  duration_ms: 2.258635
+  duration_ms: 2.449214
   type: 'test'
   ...
 # Subtest: M01 equips only gear available on 1 September 1939 and never the forbidden weapons
 ok 285 - M01 equips only gear available on 1 September 1939 and never the forbidden weapons
   ---
-  duration_ms: 0.272453
+  duration_ms: 0.42829
   type: 'test'
   ...
 # Subtest: M01 keeps the mandatory lines of the master script verbatim
 ok 286 - M01 keeps the mandatory lines of the master script verbatim
   ---
-  duration_ms: 0.235858
+  duration_ms: 0.247432
   type: 'test'
   ...
 # Subtest: M01 labels history and space only with the agreed vocabularies
 ok 287 - M01 labels history and space only with the agreed vocabularies
   ---
-  duration_ms: 1.364402
+  duration_ms: 1.980834
   type: 'test'
   ...
 # Subtest: M01 checkpoints accumulate state and never save inside a demolition zone
 ok 288 - M01 checkpoints accumulate state and never save inside a demolition zone
   ---
-  duration_ms: 0.582498
+  duration_ms: 0.578136
   type: 'test'
   ...
 # Subtest: M01 runs at least two independent battle sectors on the clock
 ok 289 - M01 runs at least two independent battle sectors on the clock
   ---
-  duration_ms: 0.496666
+  duration_ms: 0.571136
   type: 'test'
   ...
 # Subtest: M01 map geometry matches the documented bridges of 1939 and the measured piers
 ok 290 - M01 map geometry matches the documented bridges of 1939 and the measured piers
   ---
-  duration_ms: 0.783797
+  duration_ms: 0.832463
   type: 'test'
   ...
 # Subtest: M01 debrief keeps unconfirmed paragraphs disabled until their checks pass
 ok 291 - M01 debrief keeps unconfirmed paragraphs disabled until their checks pass
   ---
-  duration_ms: 1.142895
+  duration_ms: 1.369487
   type: 'test'
   ...
 # Subtest: vegetation variation is deterministic, visual-only and does not consume gameplay RNG
 ok 292 - vegetation variation is deterministic, visual-only and does not consume gameplay RNG
   ---
-  duration_ms: 97.670806
+  duration_ms: 117.608016
   type: 'test'
   ...
 # Subtest: vegetation LOD tiers use hysteresis and Low keeps a geometric canopy
 ok 293 - vegetation LOD tiers use hysteresis and Low keeps a geometric canopy
   ---
-  duration_ms: 0.430769
+  duration_ms: 0.535083
   type: 'test'
   ...
 # Subtest: approved tree colliders and critical route remain unchanged by the visual pass
 ok 294 - approved tree colliders and critical route remain unchanged by the visual pass
   ---
-  duration_ms: 626.496382
+  duration_ms: 831.624744
   type: 'test'
   ...
 # Subtest: M01 vagões danificados: o kit intacto não foi alterado (sha256 registados no manifesto)
 ok 295 - M01 vagões danificados: o kit intacto não foi alterado (sha256 registados no manifesto)
   ---
-  duration_ms: 5.527409
+  duration_ms: 11.007547
   type: 'test'
   ...
 # Subtest: M01 vagões danificados: metros, 9,10 m no LOD0, rodas no carril, pivôs do intacto e três LODs no orçamento
 ok 296 - M01 vagões danificados: metros, 9,10 m no LOD0, rodas no carril, pivôs do intacto e três LODs no orçamento
   ---
-  duration_ms: 32.920452
+  duration_ms: 58.773644
   type: 'test'
   ...
 # Subtest: M01 vagões danificados: sockets iguais aos do intacto, mais impact só no danificado
 ok 297 - M01 vagões danificados: sockets iguais aos do intacto, mais impact só no danificado
   ---
-  duration_ms: 3.306287
+  duration_ms: 4.254747
   type: 'test'
   ...
 # Subtest: M01 vagões danificados: wheels_roll igual ao intacto; doors_open só na porta esquerda do coberto danificado
 ok 298 - M01 vagões danificados: wheels_roll igual ao intacto; doors_open só na porta esquerda do coberto danificado
   ---
-  duration_ms: 2.855496
+  duration_ms: 3.688347
   type: 'test'
   ...
 # Subtest: M01 vagões danificados: restos só visuais no nó debris, alterações registadas e sem efeitos próprios
 ok 299 - M01 vagões danificados: restos só visuais no nó debris, alterações registadas e sem efeitos próprios
   ---
-  duration_ms: 5.102269
+  duration_ms: 2.937335
   type: 'test'
   ...
 # Subtest: train and yard LOD selectors cover 0/1/2 with hysteresis and stable identities
 ok 300 - train and yard LOD selectors cover 0/1/2 with hysteresis and stable identities
   ---
-  duration_ms: 2.315588
+  duration_ms: 2.932199
   type: 'test'
   ...
 # Subtest: yard authority is only intact/burned; damaged art is never invented
 ok 301 - yard authority is only intact/burned; damaged art is never invented
   ---
-  duration_ms: 0.471231
+  duration_ms: 0.712912
   type: 'test'
   ...
 # Subtest: authoritative marker survives save/reload and checkpoint restore chooses the saved visual state
 ok 302 - authoritative marker survives save/reload and checkpoint restore chooses the saved visual state
   ---
-  duration_ms: 26.65202
+  duration_ms: 30.523242
   type: 'test'
   ...
 # Subtest: yard positions/covers stay authoritative and fire/smoke use authored sockets
 ok 303 - yard positions/covers stay authoritative and fire/smoke use authored sockets
   ---
-  duration_ms: 0.94537
+  duration_ms: 1.370697
   type: 'test'
   ...
 # Subtest: yard renderer falls back to the best loaded asset, then procedural proxy, without changing semantic state
 ok 304 - yard renderer falls back to the best loaded asset, then procedural proxy, without changing semantic state
   ---
-  duration_ms: 9.080773
+  duration_ms: 13.108694
   type: 'test'
   ...
 # Subtest: train renderer uses all three real LODs and retains procedural fallback when every asset fails
 ok 305 - train renderer uses all three real LODs and retains procedural fallback when every asset fails
   ---
-  duration_ms: 21.65634
+  duration_ms: 32.35217
   type: 'test'
   ...
 # Subtest: missing individual LODs choose the closest real train asset and missing burned art falls back to intact GLB
 ok 306 - missing individual LODs choose the closest real train asset and missing burned art falls back to intact GLB
   ---
-  duration_ms: 26.329606
+  duration_ms: 28.399226
   type: 'test'
   ...
 # Subtest: late GLB completion after dispose cannot reattach or populate yard sources
 ok 307 - late GLB completion after dispose cannot reattach or populate yard sources
   ---
-  duration_ms: 1.307383
+  duration_ms: 3.002675
   type: 'test'
   ...
 # Subtest: M01 vagões: metros, 9,10 m entre tampões no LOD0, rodas no carril, nós estáveis e três LODs no orçamento
 ok 308 - M01 vagões: metros, 9,10 m entre tampões no LOD0, rodas no carril, nós estáveis e três LODs no orçamento
   ---
-  duration_ms: 5.095913
+  duration_ms: 6.2331
   type: 'test'
   ...
 # Subtest: M01 vagões: rodados dão uma volta por segundo em X; portas do coberto correm 1,95 m em Z
 ok 309 - M01 vagões: rodados dão uma volta por segundo em X; portas do coberto correm 1,95 m em Z
   ---
-  duration_ms: 2.98342
+  duration_ms: 3.913124
   type: 'test'
   ...
 # Subtest: the presentation modules read gameplay state but never import gameplay code (game, world, core)
 ok 310 - the presentation modules read gameplay state but never import gameplay code (game, world, core)
   ---
-  duration_ms: 2.084633
+  duration_ms: 2.693786
   type: 'test'
   ...
 # Subtest: each weapon keeps its own frozen presentation identity and carries no gameplay keys
 ok 311 - each weapon keeps its own frozen presentation identity and carries no gameplay keys
   ---
-  duration_ms: 4.381338
+  duration_ms: 6.267117
   type: 'test'
   ...
 # Subtest: recoil is a finite per-weapon impulse: zero at rest, bounded, weaker in ADS, deterministic per shot
 ok 312 - recoil is a finite per-weapon impulse: zero at rest, bounded, weaker in ADS, deterministic per shot
   ---
-  duration_ms: 11.858833
+  duration_ms: 18.602781
   type: 'test'
   ...
 # Subtest: hip sway is bounded and does not visibly loop; ADS at rest keeps the exact sight pose
 ok 313 - hip sway is bounded and does not visibly loop; ADS at rest keeps the exact sight pose
   ---
-  duration_ms: 15.779584
+  duration_ms: 12.685923
   type: 'test'
   ...
 # Subtest: look lag trails turns, is clamped, settles, ignores frozen clocks and wraps at ±π
 ok 314 - look lag trails turns, is clamped, settles, ignores frozen clocks and wraps at ±π
   ---
-  duration_ms: 0.925822
+  duration_ms: 0.788399
   type: 'test'
   ...
 # Subtest: a weapon-pass point maps to the world point under the same pixel at hip and ADS fields of view
 ok 315 - a weapon-pass point maps to the world point under the same pixel at hip and ADS fields of view
   ---
-  duration_ms: 3.053889
+  duration_ms: 2.432091
   type: 'test'
   ...
 # Subtest: brass/clip flight is analytic in age, never sinks below the ground plane and comes to rest
 ok 316 - brass/clip flight is analytic in age, never sinks below the ground plane and comes to rest
   ---
-  duration_ms: 10.607952
+  duration_ms: 11.432513
   type: 'test'
   ...
 # Subtest: weapon-pass FX: flash only in the event window, layered on the socket, constant light count, smoke after the shot
 ok 317 - weapon-pass FX: flash only in the event window, layered on the socket, constant light count, smoke after the shot
   ---
-  duration_ms: 39.247863
+  duration_ms: 52.595751
   type: 'test'
   ...
 # Subtest: world FX: emissions are idempotent by id, bounded, discarded by a restored world or an earlier clock
 ok 318 - world FX: emissions are idempotent by id, bounded, discarded by a restored world or an earlier clock
   ---
-  duration_ms: 6.404737
+  duration_ms: 10.737902
   type: 'test'
   ...
 # Subtest: weapon lighting follows the world sky/sun and the view, without new light types per frame
 ok 319 - weapon lighting follows the world sky/sun and the view, without new light types per frame
   ---
-  duration_ms: 3.123524
+  duration_ms: 8.983982
   type: 'test'
   ...
 # Subtest: wz.29: one case per shot at the authored eject marker, one muzzle cloud, nothing duplicated by repeated frames
 ok 320 - wz.29: one case per shot at the authored eject marker, one muzzle cloud, nothing duplicated by repeated frames
   ---
-  duration_ms: 678.09461
+  duration_ms: 973.263452
   type: 'test'
   ...
 # Subtest: wz.29 clip reload throws exactly one empty stripper clip at 2,45 s; a single-round reload throws none
 ok 321 - wz.29 clip reload throws exactly one empty stripper clip at 2,45 s; a single-round reload throws none
   ---
-  duration_ms: 847.255219
+  duration_ms: 1451.379005
   type: 'test'
   ...
 # Subtest: wz.29 stroke, lag and FX keep every viewmodel vertex beyond the near plane and the flash on the socket
 ok 322 - wz.29 stroke, lag and FX keep every viewmodel vertex beyond the near plane and the flash on the socket
   ---
-  duration_ms: 971.513736
+  duration_ms: 1344.635909
   type: 'test'
   ...
 # Subtest: pause and restore: repeated frames are frozen; a restored world rebuilds presentation at rest and drops world history
 ok 323 - pause and restore: repeated frames are frozen; a restored world rebuilds presentation at rest and drops world history
   ---
-  duration_ms: 396.979815
+  duration_ms: 557.953394
   type: 'test'
   ...
 # Subtest: independent renderers of the same restored mid-bolt state produce the same frame (no hidden clocks)
 ok 324 - independent renderers of the same restored mid-bolt state produce the same frame (no hidden clocks)
   ---
-  duration_ms: 360.527265
+  duration_ms: 406.086564
   type: 'test'
   ...
 # Subtest: a slow frame that steps past the 60 ms window still shows the shot once at full strength, never again or after restore
 ok 325 - a slow frame that steps past the 60 ms window still shows the shot once at full strength, never again or after restore
   ---
-  duration_ms: 246.477471
+  duration_ms: 441.870279
   type: 'test'
   ...
 # Subtest: ejected pieces settle on the surface under their landing point, never inside a slope
 ok 326 - ejected pieces settle on the surface under their landing point, never inside a slope
   ---
-  duration_ms: 2.577463
+  duration_ms: 4.997001
   type: 'test'
   ...
 # Subtest: look lag after the authoritative recoil pitch settles by READY at 4 fps as at 20 fps; sights exact
 ok 327 - look lag after the authoritative recoil pitch settles by READY at 4 fps as at 20 fps; sights exact
   ---
-  duration_ms: 492.257828
+  duration_ms: 1000.330931
   type: 'test'
   ...
 # Subtest: ejected pieces turn continuously into a resting attitude: cases on their side, the clip flat on its base plate
 ok 328 - ejected pieces turn continuously into a resting attitude: cases on their side, the clip flat on its base plate
   ---
-  duration_ms: 46.172897
+  duration_ms: 99.108677
   type: 'test'
   ...
 # Subtest: one weapon pass, one muzzle light: the procedural fallback and the rig share it and the drawing FX drives it
 ok 329 - one weapon pass, one muzzle light: the procedural fallback and the rig share it and the drawing FX drives it
   ---
-  duration_ms: 14.441407
+  duration_ms: 15.514905
   type: 'test'
   ...
 # Subtest: a quick follow-up shot leaves the previous barrel smoke fading instead of cutting it off; a reset forgets it
 ok 330 - a quick follow-up shot leaves the previous barrel smoke fading instead of cutting it off; a reset forgets it
   ---
-  duration_ms: 6.36445
+  duration_ms: 7.289453
   type: 'test'
   ...
 # Subtest: down the sights the world muzzle cloud is a thin haze: thinner and smaller than from the hip
 ok 331 - down the sights the world muzzle cloud is a thin haze: thinner and smaller than from the hip
   ---
-  duration_ms: 1.947775
+  duration_ms: 2.610613
   type: 'test'
   ...
 # Subtest: bench brass rests on the road slab it lands on, not inside it
 ok 332 - bench brass rests on the road slab it lands on, not inside it
   ---
-  duration_ms: 2.392001
+  duration_ms: 10.331352
+  type: 'test'
+  ...
+# Subtest: down the sights the rifle follows a turn exactly: no look lag, the sights stay on the aim point every frame
+ok 333 - down the sights the rifle follows a turn exactly: no look lag, the sights stay on the aim point every frame
+  ---
+  duration_ms: 525.243558
+  type: 'test'
+  ...
+# Subtest: a restore drops the barrel smoke of the previous timeline: the restored frame equals a fresh renderer of that save
+ok 334 - a restore drops the barrel smoke of the previous timeline: the restored frame equals a fresh renderer of that save
+  ---
+  duration_ms: 820.7933
+  type: 'test'
+  ...
+# Subtest: shot-FX programs are compiled and linked before the first shot, each against its own scene, without drawing or showing anything
+ok 335 - shot-FX programs are compiled and linked before the first shot, each against its own scene, without drawing or showing anything
+  ---
+  duration_ms: 13.347119
   type: 'test'
   ...
 # Subtest: measured real clips and asset socket metadata are locked; archived BASE is exact
-ok 333 - measured real clips and asset socket metadata are locked; archived BASE is exact
+ok 336 - measured real clips and asset socket metadata are locked; archived BASE is exact
   ---
-  duration_ms: 415.606212
+  duration_ms: 532.592234
   type: 'test'
   ...
 # Subtest: integration keeps Wz29 gameplay, simulation, muzzle/hitboxes and RNG protected bytes unchanged
-ok 334 - integration keeps Wz29 gameplay, simulation, muzzle/hitboxes and RNG protected bytes unchanged
+ok 337 - integration keeps Wz29 gameplay, simulation, muzzle/hitboxes and RNG protected bytes unchanged
   ---
-  duration_ms: 0.771263
+  duration_ms: 0.973777
   type: 'test'
   ...
 # Subtest: ADS aligns actual rear/front with camera -Z on LOD0, all qualities
-ok 335 - ADS aligns actual rear/front with camera -Z on LOD0, all qualities
+ok 338 - ADS aligns actual rear/front with camera -Z on LOD0, all qualities
   ---
-  duration_ms: 282.719613
+  duration_ms: 364.933557
   type: 'test'
   ...
 # Subtest: ADS aligns actual rear/front with camera -Z on LOD1, all qualities
-ok 336 - ADS aligns actual rear/front with camera -Z on LOD1, all qualities
+ok 339 - ADS aligns actual rear/front with camera -Z on LOD1, all qualities
   ---
-  duration_ms: 174.44391
+  duration_ms: 232.072926
   type: 'test'
   ...
 # Subtest: visual flash starts exactly on the barrel socket through hip, ADS, bolt, reload and run
-ok 337 - visual flash starts exactly on the barrel socket through hip, ADS, bolt, reload and run
+ok 340 - visual flash starts exactly on the barrel socket through hip, ADS, bolt, reload and run
   ---
-  duration_ms: 349.031407
+  duration_ms: 405.826633
   type: 'test'
   ...
 # Subtest: dense clipping matrix samples all referenced vertices, LOD0
-ok 338 - dense clipping matrix samples all referenced vertices, LOD0
+ok 341 - dense clipping matrix samples all referenced vertices, LOD0
   ---
-  duration_ms: 892.600652
+  duration_ms: 1533.187147
   type: 'test'
   ...
 # Subtest: dense clipping matrix samples all referenced vertices, LOD1
-ok 339 - dense clipping matrix samples all referenced vertices, LOD1
+ok 342 - dense clipping matrix samples all referenced vertices, LOD1
   ---
-  duration_ms: 546.999492
+  duration_ms: 832.210098
   type: 'test'
   ...
 # Subtest: local arm skin/pose/material changes leave source geometry, bones, clips and materials intact
-ok 340 - local arm skin/pose/material changes leave source geometry, bones, clips and materials intact
+ok 343 - local arm skin/pose/material changes leave source geometry, bones, clips and materials intact
   ---
-  duration_ms: 227.863039
+  duration_ms: 305.45473
   type: 'test'
   ...
 # Subtest: pause freezes phase, transition, arms and mechanics including clamped clip endpoint
-ok 341 - pause freezes phase, transition, arms and mechanics including clamped clip endpoint
+ok 344 - pause freezes phase, transition, arms and mechanics including clamped clip endpoint
   ---
-  duration_ms: 220.831273
+  duration_ms: 284.184886
   type: 'test'
   ...
 # Subtest: ADS/run transitions are controlled by mission dt and converge without action rebind
-ok 342 - ADS/run transitions are controlled by mission dt and converge without action rebind
+ok 345 - ADS/run transitions are controlled by mission dt and converge without action rebind
   ---
-  duration_ms: 250.499305
+  duration_ms: 298.426899
   type: 'test'
   ...
 # Subtest: recoil is finite, damped, bounded and has weaker ADS presentation
-ok 343 - recoil is finite, damped, bounded and has weaker ADS presentation
+ok 346 - recoil is finite, damped, bounded and has weaker ADS presentation
   ---
-  duration_ms: 5.253069
+  duration_ms: 4.546663
   type: 'test'
   ...
 # Subtest: missing optional model/clips returns to existing caller fallback; LOD1 remains viable
-ok 344 - missing optional model/clips returns to existing caller fallback; LOD1 remains viable
+ok 347 - missing optional model/clips returns to existing caller fallback; LOD1 remains viable
   ---
-  duration_ms: 148.12718
+  duration_ms: 182.430953
   type: 'test'
   ...
 # Subtest: restore mid-bolt and both reloads reconstruct mechanical phase without saving a mixer
-ok 345 - restore mid-bolt and both reloads reconstruct mechanical phase without saving a mixer
+ok 348 - restore mid-bolt and both reloads reconstruct mechanical phase without saving a mixer
   ---
-  duration_ms: 372.70006
+  duration_ms: 594.136164
   type: 'test'
   ...
 # Subtest: an existing menu/checkpoint renderer reconstructs ADS at a replaced world boundary
-ok 346 - an existing menu/checkpoint renderer reconstructs ADS at a replaced world boundary
+ok 349 - an existing menu/checkpoint renderer reconstructs ADS at a replaced world boundary
   ---
-  duration_ms: 221.567228
+  duration_ms: 382.845678
   type: 'test'
   ...
 # Subtest: BASE/CANDIDATE whole save, HP/ammo/shots/hits/transforms/muzzle/RNG/clocks/CP remain exact for 600 input ticks
-ok 347 - BASE/CANDIDATE whole save, HP/ammo/shots/hits/transforms/muzzle/RNG/clocks/CP remain exact for 600 input ticks
+ok 350 - BASE/CANDIDATE whole save, HP/ammo/shots/hits/transforms/muzzle/RNG/clocks/CP remain exact for 600 input ticks
   ---
-  duration_ms: 2912.950263
+  duration_ms: 4619.851118
   type: 'test'
   ...
-1..347
-# tests 347
+1..350
+# tests 350
 # suites 0
-# pass 347
+# pass 350
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 202985.910233
+# duration_ms 309882.654802

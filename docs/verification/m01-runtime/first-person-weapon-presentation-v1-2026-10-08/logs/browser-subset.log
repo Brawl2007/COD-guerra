@@ -1,0 +1,86 @@
+
+Running 9 tests using 1 worker
+
+  ✘  1 tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work (27.9s)
+  ✓  2 tests/browser/m01-weapon-presentation.spec.js:38:1 › wz.29 ADS shot: layered flash on the socket, bolt stroke, one case into the world; gameplay state is the simulation's (45.1s)
+  ✓  3 tests/browser/m01-weapon-presentation.spec.js:64:1 › wz.29 clip reload: the empty stripper clip leaves at the 2,45 s marker and lands in the world (40.5s)
+  ✓  4 tests/browser/m01-weapon-presentation.spec.js:77:1 › bench M1 Carbine keeps its own semi-auto identity: flash, brass with the shot, smooth ADS (12.0s)
+  ✓  5 tests/browser/m01-wz29-viewmodel.spec.js:4:46 › Wz.29 production ADS, paused save reconstruction and actual sights on low (18.7s)
+  ✓  6 tests/browser/m01-wz29-viewmodel.spec.js:4:46 › Wz.29 production ADS, paused save reconstruction and actual sights on medium (18.4s)
+  ✓  7 tests/browser/m01-wz29-viewmodel.spec.js:4:46 › Wz.29 production ADS, paused save reconstruction and actual sights on high (19.3s)
+  ✓  8 tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A (1.8m)
+  ✘  9 tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset (58.6s)
+
+
+  1) tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('#mag')
+    Expected: [32m"15"[39m
+    Received: [31m"—"[39m
+    Timeout:  12000ms
+
+    Call log:
+    [2m  - Expect "toHaveText" with timeout 12000ms[22m
+    [2m  - waiting for locator('#mag')[22m
+    [2m    16 × locator resolved to <b id="mag">—</b>[22m
+    [2m       - unexpected value "—"[22m
+
+
+      57 |   await page.locator('#resume').click();
+      58 |   await page.waitForFunction(()=>document.pointerLockElement?.id==='game');
+    > 59 |   await expect(page.locator('#mag')).toHaveText('15',{timeout:12000});
+         |                                      ^
+      60 |   await expect(page.locator('#reserve')).toHaveText('59');
+      61 |   const resumedPlayer=await page.evaluate(()=>window.gameDiagnostics().player);
+      62 |   expect(resumedPlayer.angle).toBeCloseTo(pausedPlayer.angle,4);
+        at /home/user/COD-guerra/tests/browser/game.spec.js:59:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset 
+
+    TimeoutError: page.waitForFunction: Timeout 30000ms exceeded.
+
+      129 |     // consumed by Input without repositioning the locked cursor, then wait on authoritative weapon state.
+      130 |     await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});
+    > 131 |     await page.waitForFunction(expected=>window.gameDiagnostics().m01.weapon.mag===expected,expectedMag,{timeout:process.env.CI?30000:10000});
+          |                ^
+      132 |     await expect(page.locator('#mag')).toHaveText(String(expectedMag));
+      133 |   };
+      134 |   for(let i=0;i<5;i++){
+        at fireRound (/home/user/COD-guerra/tests/browser/m01.spec.js:131:16)
+        at /home/user/COD-guerra/tests/browser/m01.spec.js:136:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work 
+    tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset 
+  7 passed (5.9m)
+exit 1

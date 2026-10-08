@@ -9,7 +9,7 @@ Candidato isolado em `codex/m01-first-person-weapon-presentation-v1`, base `9930
 - invólucros e clipe vazio no mundo, pousados no chão real;
 - materiais e iluminação do passe da arma a seguir o céu/sol do mundo.
 
-Dano, dispersão, cadência, munição, impactos, `Simulation`, mundo e core estão inalterados (diff vazio contra a base). Validação: **347/347 Node**, build PASS, browser integral **59/64**. As 5 falhas repetem-se na base `99309d9` nas mesmas condições: testes de tempo de parede com < 1 frame/s em SwiftShader, sem relação com a arma. Provas, revisão independente e limites em `docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/HANDOFF.md`.
+Dano, dispersão, cadência, munição, impactos, `Simulation`, mundo e core estão inalterados (diff vazio contra a base). Validação em `dfb1572`: **350/350 Node**, build PASS, subconjunto de navegador da arma e testes afectados **7/9**. As 2 falhas falham igual na base nas mesmas condições (`m01.spec.js:99`; `game.spec.js:28` está no limite de 12 s nas duas). O browser integral deu **59/64** em `a428925`; as 5 falhas não são causadas por esta branch (o mesmo passo falha na base `99309d9` nas mesmas condições, testes de pointer lock/tempo de parede com < 1 frame/s em SwiftShader). O primeiro tiro compilava os shaders de FX nesse frame (~3,9 s em SwiftShader); agora são compilados e ligados no arranque, e o primeiro tiro fica como na base. Provas, revisão independente e limites em `docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/HANDOFF.md`.
 
 ## Auditoria schema 2 — 2026-10-03
 

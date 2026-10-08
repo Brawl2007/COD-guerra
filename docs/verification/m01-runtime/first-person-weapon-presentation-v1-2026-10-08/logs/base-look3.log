@@ -25,7 +25,7 @@ Running 3 tests using 1 worker
       333 |   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
       334 |   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
       335 |   expect(errors).toEqual([]);expect(failed).toEqual([]);
-        at /tmp/claude-0/-home-user-COD-guerra/1e581609-5301-5005-855c-b268dac9f774/scratchpad/base/tests/browser/m01.spec.js:332:51
+        at <base-worktree>/tests/browser/m01.spec.js:332:51
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/test-failed-1.png
@@ -66,7 +66,7 @@ Running 3 tests using 1 worker
       333 |   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
       334 |   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
       335 |   expect(errors).toEqual([]);expect(failed).toEqual([]);
-        at /tmp/claude-0/-home-user-COD-guerra/1e581609-5301-5005-855c-b268dac9f774/scratchpad/base/tests/browser/m01.spec.js:332:51
+        at <base-worktree>/tests/browser/m01.spec.js:332:51
 
     Error Context: test-results/m01-adjustment-salvo-behin-454be-igin-and-follows-mouse-look/error-context.md
 
@@ -103,7 +103,7 @@ Running 3 tests using 1 worker
       352 |   const away=await page.evaluate(()=>window.gameDiagnostics());
       353 |   await turn(aim-away.player.angle);
       354 |   await expect(page.locator('#objective-status')).toContainText('em frente');
-        at /tmp/claude-0/-home-user-COD-guerra/1e581609-5301-5005-855c-b268dac9f774/scratchpad/base/tests/browser/m01.spec.js:351:51
+        at <base-worktree>/tests/browser/m01.spec.js:351:51
 
     Error Context: test-results/m01-demolition-inside-the--ecd5c-ile-mouse-look-remains-free/error-context.md
 

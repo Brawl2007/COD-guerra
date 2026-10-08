@@ -1,0 +1,155 @@
+== dfb1572 run 1
+
+Running 1 test using 1 worker
+
+  ✘  1 tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work (28.6s)
+
+
+  1) tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('#mag')
+    Expected: [32m"15"[39m
+    Received: [31m"—"[39m
+    Timeout:  12000ms
+
+    Call log:
+    [2m  - Expect "toHaveText" with timeout 12000ms[22m
+    [2m  - waiting for locator('#mag')[22m
+    [2m    16 × locator resolved to <b id="mag">—</b>[22m
+    [2m       - unexpected value "—"[22m
+
+
+      57 |   await page.locator('#resume').click();
+      58 |   await page.waitForFunction(()=>document.pointerLockElement?.id==='game');
+    > 59 |   await expect(page.locator('#mag')).toHaveText('15',{timeout:12000});
+         |                                      ^
+      60 |   await expect(page.locator('#reserve')).toHaveText('59');
+      61 |   const resumedPlayer=await page.evaluate(()=>window.gameDiagnostics().player);
+      62 |   expect(resumedPlayer.angle).toBeCloseTo(pausedPlayer.angle,4);
+        at /home/user/COD-guerra/tests/browser/game.spec.js:59:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work 
+exit 1
+== 99309d9 run 1
+
+Running 1 test using 1 worker
+
+  ✘  1 tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work (25.3s)
+
+
+  1) tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('#mag')
+    Expected: [32m"15"[39m
+    Received: [31m"—"[39m
+    Timeout:  12000ms
+
+    Call log:
+    [2m  - Expect "toHaveText" with timeout 12000ms[22m
+    [2m  - waiting for locator('#mag')[22m
+    [2m    16 × locator resolved to <b id="mag">—</b>[22m
+    [2m       - unexpected value "—"[22m
+
+
+      57 |   await page.locator('#resume').click();
+      58 |   await page.waitForFunction(()=>document.pointerLockElement?.id==='game');
+    > 59 |   await expect(page.locator('#mag')).toHaveText('15',{timeout:12000});
+         |                                      ^
+      60 |   await expect(page.locator('#reserve')).toHaveText('59');
+      61 |   const resumedPlayer=await page.evaluate(()=>window.gameDiagnostics().player);
+      62 |   expect(resumedPlayer.angle).toBeCloseTo(pausedPlayer.angle,4);
+        at <base-worktree>/tests/browser/game.spec.js:59:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work 
+exit 1
+== dfb1572 run 2
+
+Running 1 test using 1 worker
+
+  ✓  1 tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work (28.3s)
+
+  1 passed (31.2s)
+exit 0
+== 99309d9 run 2
+
+Running 1 test using 1 worker
+
+  ✘  1 tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work (24.9s)
+
+
+  1) tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('#mag')
+    Expected: [32m"15"[39m
+    Received: [31m"—"[39m
+    Timeout:  12000ms
+
+    Call log:
+    [2m  - Expect "toHaveText" with timeout 12000ms[22m
+    [2m  - waiting for locator('#mag')[22m
+    [2m    16 × locator resolved to <b id="mag">—</b>[22m
+    [2m       - unexpected value "—"[22m
+
+
+      57 |   await page.locator('#resume').click();
+      58 |   await page.waitForFunction(()=>document.pointerLockElement?.id==='game');
+    > 59 |   await expect(page.locator('#mag')).toHaveText('15',{timeout:12000});
+         |                                      ^
+      60 |   await expect(page.locator('#reserve')).toHaveText('59');
+      61 |   const resumedPlayer=await page.evaluate(()=>window.gameDiagnostics().player);
+      62 |   expect(resumedPlayer.angle).toBeCloseTo(pausedPlayer.angle,4);
+        at <base-worktree>/tests/browser/game.spec.js:59:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work 
+exit 1

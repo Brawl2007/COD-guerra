@@ -1,15 +1,15 @@
-# Files changed vs base 99309d9 (runtime commit a428925)
- src/render/first-person-weapon-fx.js                    | 437 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- src/render/m01-view.js                                  |  33 ++++++--
- src/render/m01-viewmodel.js                             | 118 +++++++++++++++++++++-----
- src/render/m01-wz29-presentation.js                     |  43 +++++++---
- src/render/three-renderer.js                            |  75 +++++++++++++----
- tests/browser/m01-weapon-presentation.spec.js           |  92 +++++++++++++++++++++
- tests/m01-weapon-presentation.test.js                   | 404 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- tools/verification/m01-weapon-presentation-capture.mjs  |  69 ++++++++++++++++
- tools/verification/m01-weapon-presentation-fixture.html |  56 +++++++++++++
- tools/verification/vite.capture.config.mjs              |   4 +
- 10 files changed, 1270 insertions(+), 61 deletions(-)
+# Files changed vs base 99309d9 (runtime commit dfb1572)
+ src/render/first-person-weapon-fx.js                    | 459 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/render/m01-view.js                                  |  36 ++++++++---
+ src/render/m01-viewmodel.js                             | 118 ++++++++++++++++++++++++++++-------
+ src/render/m01-wz29-presentation.js                     |  44 +++++++++----
+ src/render/three-renderer.js                            |  78 +++++++++++++++++------
+ tests/browser/m01-weapon-presentation.spec.js           |  92 ++++++++++++++++++++++++++++
+ tests/m01-weapon-presentation.test.js                   | 452 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/verification/m01-weapon-presentation-capture.mjs  |  71 +++++++++++++++++++++
+ tools/verification/m01-weapon-presentation-fixture.html |  70 +++++++++++++++++++++
+ tools/verification/vite.capture.config.mjs              |   4 ++
+ 10 files changed, 1363 insertions(+), 61 deletions(-)
 
 # Gameplay, world, core, assets, research, missions, build and CI paths vs base (empty = unchanged)
 $ git diff --stat 99309d9 HEAD -- src/game src/world src/core src/assets src/main.js src/config.js research missions package.json package-lock.json playwright.config.js vite.config.js .github

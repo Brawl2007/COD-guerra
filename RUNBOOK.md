@@ -116,6 +116,18 @@ CHROME_EXECUTABLE=/caminho/para/chromium node tools/verify-m01-characters.mjs te
 
 É revisão isolada de assets. As capturas de produção por trechos e as verificações de ferrolho/clipe/cartucho usam o jogo construído. `gameDiagnostics().m01.characters` e `.viewModel` expõem apenas dados de apresentação; não são guardados no save. Créditos, limitações e provas em `docs/verification/m01-runtime/characters/README.md`.
 
+Apresentação da arma em primeira pessoa (wz.29 de M01 e M1 Carbine da bancada): `gameDiagnostics().m01.viewModel.presentation`, `.m01.weaponFx` e `.m01.weaponLighting` expõem só dados de apresentação (clarão, fumo, invólucros/clipe no mundo, luz do passe da arma). Nada entra no save. Capturas por trechos, com controlos reais, a partir do início genuíno da rota e na bancada:
+
+```sh
+CHROME_EXECUTABLE=/caminho/chromium node tools/verification/m01-weapon-presentation-capture.mjs test-results/weapon-presentation
+```
+
+Não é playtest nem medida de FPS. Provas em `docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/`. Os programas dos FX do tiro são compilados e ligados no primeiro frame (`prewarmWeaponFx`), porque o primeiro tiro os compilava nesse frame. Essa pré-compilação usa peças internas do three r186. Depois de actualizar o three, repetir a medição do primeiro disparo:
+
+```sh
+npm run build && CHROME_EXECUTABLE=/caminho/chromium node docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/first-shot-ab.mjs . 4321 candidata
+```
+
 `?debug=1` habilita somente `window.gameDiagnostics()`: renderer, preset, chamadas/triângulos, assets, relógio, posição, fase e sectores. Não expõe a instância nem permite mutações. Não deixar informação de engenharia no HUD normal.
 
 Se o ecrã falha, inspeccionar consola, rede e `#error`. Ausência de WebGL2 mostra mensagem. Asset ausente aparece no diagnóstico e utiliza fallback, sem aprovar qualidade final. `base` deve continuar `/COD-guerra/`; Vite copia `assets` para `dist/assets` no build.
