@@ -13,9 +13,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  node-build:
+  node-tests:
+    name: Node shard ${{ matrix.shard }}/4
     runs-on: ubuntu-24.04
-    timeout-minutes: 35
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -25,15 +30,36 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - name: All Node tests (combined content)
-        run: node --test --test-concurrency=2 tests/*.test.js
-      - name: Production build (combined content)
+      - name: Complete Node suite — deterministic file shard
+        shell: bash
+        env:
+          SHARD: ${{ matrix.shard }}
+        run: |
+          mapfile -t selected < <(find tests -maxdepth 1 -type f -name '*.test.js' | LC_ALL=C sort | awk -v shard="$SHARD" '(NR-1)%4==shard {print}')
+          printf 'Shard %s: %s files\n' "$SHARD" "${#selected[@]}"
+          test "${#selected[@]}" -gt 0
+          node --test --test-concurrency=1 "${selected[@]}"
+
+  production-build:
+    needs: node-tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Build complete candidate
         run: npm run build
 
   focused-browser:
-    needs: node-build
+    needs: production-build
     runs-on: ubuntu-24.04
-    timeout-minutes: 75
+    timeout-minutes: 85
     steps:
       - uses: actions/checkout@v4
         with:
@@ -45,7 +71,7 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npx playwright install --with-deps chromium
-      - name: Combined production browser tests
+      - name: Browser regressions of combined deliveries
         run: >-
           npx playwright test
           tests/browser/m01-bridge-structural.spec.js
@@ -53,6 +79,8 @@ jobs:
           tests/browser/m01-hud-presentation.spec.js
           tests/browser/m01-battlefield-audio-runtime.spec.js
           tests/browser/m01-train-consist-polish.spec.js
+          tests/browser/m01-weapon-presentation.spec.js
+          tests/browser/m01-damage-decals.spec.js
           tests/browser/m01.spec.js
           --workers=1
       - name: Browser evidence
