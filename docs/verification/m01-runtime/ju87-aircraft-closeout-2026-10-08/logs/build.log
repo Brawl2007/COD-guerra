@@ -1,3 +1,4 @@
+# HEAD ae97790
 
 > operation-ashen-road@0.2.0 build
 > vite build
@@ -9,12 +10,16 @@ rendering chunks...
 computing gzip size...
 dist/index.html                     3.99 kB │ gzip:   1.79 kB
 dist/assets/index-mOWPjXkr.css      8.43 kB │ gzip:   2.81 kB
-dist/assets/index-DRDVVw47.js   1,201.45 kB │ gzip: 322.58 kB
+dist/assets/index-DBJGxfTk.js   1,201.37 kB │ gzip: 322.54 kB
 
-✓ built in 1.22s
+✓ built in 1.06s
 [plugin builtin:vite-reporter] 
 (!) Some chunks are larger than 500 kB after minification. Consider:
 - Using dynamic import() to code-split the application
 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+real	0m1.656s
+user	0m0.877s
+sys	0m1.481s
 build exit 0

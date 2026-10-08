@@ -1,0 +1,15 @@
+# Regeneração no HEAD ae97790 e comparação byte a byte com os ficheiros do repositório
+# node tools/assets/m01-aircraft/build.mjs --out <tmp>/aircraft ; node tools/assets/m01-wagons/build.mjs --out <tmp>/wagons
+aircraft build exit 0
+IDENTICAL m01-aircraft/m01_ju87_b1_lod0.glb sha256=47cd82a53ac5a047d32faff8d66c2b9e8c7041ad193b43c8d23f9e7359e0b893
+IDENTICAL m01-aircraft/m01_ju87_b1_lod1.glb sha256=c3d0354b65bc87ff4badeb597a223ffded4ebd6ab8d25358a5caa6602ecb3d70
+IDENTICAL m01-aircraft/m01_ju87_b1_lod2.glb sha256=eb5252eabfc43c31b25504fee0087a07089b07e4ed00c0e28681c18d59bcb1d7
+IDENTICAL m01-aircraft/manifest.json sha256=ce4e61c6666bce6498da2013ba460596f0ba38c803395a0ef0f7f80e9a5b0ddd
+wagons build exit 0
+IDENTICAL m01-wagons/m01_wagon_covered_lod0.glb
+IDENTICAL m01-wagons/m01_wagon_covered_lod1.glb
+IDENTICAL m01-wagons/m01_wagon_covered_lod2.glb
+IDENTICAL m01-wagons/m01_wagon_open_lod0.glb
+IDENTICAL m01-wagons/m01_wagon_open_lod1.glb
+IDENTICAL m01-wagons/m01_wagon_open_lod2.glb
+IDENTICAL m01-wagons/manifest.json

@@ -1,5 +1,18 @@
 # Estado de desenvolvimento
 
+## Fecho de produção do Ju 87 do primeiro raid — 2026-10-08
+
+Branch `codex/m01-ju87-aircraft-production-closeout-v2`, base `codex/m01-bridge-portal-material-detail-polish-v1` @ `99309d9`; runtime final `d90f8de`. Os três Ju 87 deixam de ser recortes pretos contra o céu: a luminância mediana do avião em jogo passa de ~15 para ~75–79, com contraste alto contra o céu. O kit ganhou:
+- capota transparente com aros e tripulação;
+- disco da hélice;
+- MG 17, Pitot e antena;
+- juntas e folgas das superfícies de controlo;
+- normais, lascas, fuligem, óleo e poeira.
+
+No jogo, cada avião tem materiais próprios e há um céu de ambiente só nos aviões. A inclinação é só rotação, o LOD tem histerese, e o fade cobre a entrada e a volta de 90 s do caminho. Trajectória, tempos, eventos, dano e `Simulation` ficam inalterados, com hashes de gameplay idênticos aos da base.
+
+Validação: Node 329/329, build PASS e navegador Ju 87 2/2. A suite completa de navegador dá **55/61**. As 6 falhas também acontecem na base neste Chromium/SwiftShader (1–2 frames/s), em cenas sem Ju 87 visível e com frames iguais nas duas builds. A revisão e a verificação independentes foram feitas e as correcções aplicadas. Estado **READY_FOR_CAPTAIN_REVIEW**; não é ACCEPTED. Provas, limites e recomendação em `docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/HANDOFF.md`. M01 permanece **PROTÓTIPO JOGÁVEL**; nenhum playtest humano nem FPS de Chromebook é aprovado por estes testes.
+
 ## Auditoria schema 2 — 2026-10-03
 
 Candidato isolado em `codex/m01-schema2-determinism-audit`, base MG34 prone aprovada `fbaac1e4`. Comparação de futuros A/B por tick: 61.055 comparações em duas rotas completas e fixtures definidas, sem divergência depois das correções. Corrigido o destino de recuperação ao restaurar uma continuação; schema 2 recebe backup opcional plano, mantendo CP-A..D planos e legacy compatível. Saves corrompidos não podem sobrescrever métodos/perfil da arma; RNG uint32 e fases conhecidas validados.

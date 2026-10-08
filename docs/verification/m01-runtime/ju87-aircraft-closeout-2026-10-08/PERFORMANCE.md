@@ -30,3 +30,16 @@ Build de produção, viewport 1280×720, Chromium headless com ANGLE/SwiftShader
 | Candidata sem warm-up (código equivalente ao runtime final) | 4,4–4,7 s | 0–57 ms | ~0,75–0,77 s / 0,92–1,20 s |
 
 Fonte: [logs/raid-start-frames.log](logs/raid-start-frames.log); corridas anteriores com o mesmo método em [logs/load-longtasks.log](logs/load-longtasks.log) (base 5,85–6,31 s contra 8,2–9,0 s com warm-up) e [logs/raid-start-longtasks.log](logs/raid-start-longtasks.log). O warm-up acrescentava uma tarefa longa de ~1,5–2 s ao carregamento sem melhoria mensurável no primeiro frame dos aviões, por isso foi retirado: o runtime final compila no primeiro uso, como a base, e custa ~0,3–0,5 s a mais no carregamento (GLB e texturas maiores). O efeito da compilação de shaders num GPU real fica por medir num Chromebook.
+
+## Cenas sem Ju 87 visível
+
+O mesmo script, com `MODE=cover` e `MODE=repair`, usa os snapshots de dois testes de navegador: "adjustment salvo at the gates" e "German fire on the repair". Nestas cenas, depois das 04:40:00, os Ju 87 já não estão visíveis. Medi o intervalo entre frames e o relógio da missão nos 8 s seguintes a **Continuar**. Base e candidata correram intercaladas, uma build servida de cada vez, em Baixa, com 3 corridas cada.
+
+| Cena | Build | Frames em ~10 s | Intervalo máximo entre frames | Relógio da missão em 8 s | Tarefas longas no carregamento |
+|---|---|---:|---:|---:|---:|
+| Salva nos portões | BASE | 13–14 | 2,07–2,17 s | +1,30 s | 4,2–4,7 s |
+| Salva nos portões | CANDIDATA | 13–14 | 1,90–2,20 s | +1,53–1,55 s | 4,5–4,6 s |
+| Fogo alemão no reparo | BASE | 17–19 | 1,85–2,02 s | +2,07–2,55 s | 4,1–4,2 s |
+| Fogo alemão no reparo | CANDIDATA | 18–19 | 1,78–1,95 s | +2,30–2,57 s | 4,1–4,6 s |
+
+Fonte: [logs/scene-frames.log](logs/scene-frames.log). Com os aviões fora do ecrã, a candidata desenha ao mesmo ritmo que a base; os GLB maiores só pesam no carregamento. Este SwiftShader desenha 1–2 frames por segundo nestas cenas, o que explica as falhas de testes de navegador com esperas curtas em tempo real, que acontecem nas duas builds (ver [HANDOFF.md](HANDOFF.md)).

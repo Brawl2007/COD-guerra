@@ -1,0 +1,141 @@
+# Repetição ×5 de 'adjustment salvo at the gates' (BASE), base e candidata em sequência, sem outra carga
+# CI=1 npx playwright test tests/browser/m01.spec.js -g 'adjustment salvo at the gates' --repeat-each=5 --reporter=line
+99309d9 test: align portal invariants with material-driven weathering
+
+Running 5 tests using 1 worker
+
+[1/5] tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look
+  1) tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('#objective-status')
+    Expected substring: "atrás de si"
+    Received string:    "Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('#objective-status')
+        6 × locator resolved to <span id="objective-status">Metralhadora nos portões de Lisewo · 1081 m, em f…</span>
+          - unexpected value "Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura"
+
+
+      330 |     document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
+      331 |   },Math.atan2(Math.sin(aim+Math.PI-before.player.angle),Math.cos(aim+Math.PI-before.player.angle))/.0022);
+    > 332 |   await expect(page.locator('#objective-status')).toContainText('atrás de si');
+          |                                                   ^
+      333 |   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+      334 |   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
+      335 |   expect(errors).toEqual([]);expect(failed).toEqual([]);
+        at /tmp/claude-0/base/tests/browser/m01.spec.js:332:51
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[2/5] tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look
+[3/5] tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look
+  2) tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('#objective-status')
+    Expected substring: "atrás de si"
+    Received string:    "Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('#objective-status')
+        6 × locator resolved to <span id="objective-status">Metralhadora nos portões de Lisewo · 1081 m, em f…</span>
+          - unexpected value "Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura"
+
+
+      330 |     document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
+      331 |   },Math.atan2(Math.sin(aim+Math.PI-before.player.angle),Math.cos(aim+Math.PI-before.player.angle))/.0022);
+    > 332 |   await expect(page.locator('#objective-status')).toContainText('atrás de si');
+          |                                                   ^
+      333 |   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+      334 |   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
+      335 |   expect(errors).toEqual([]);expect(failed).toEqual([]);
+        at /tmp/claude-0/base/tests/browser/m01.spec.js:332:51
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look-repeat2/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look-repeat2/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look-repeat2/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look-repeat2/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[4/5] tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look
+[5/5] tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look
+  3) tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('#objective-status')
+    Expected substring: "atrás de si"
+    Received string:    "Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('#objective-status')
+        6 × locator resolved to <span id="objective-status">Metralhadora nos portões de Lisewo · 1081 m, em f…</span>
+          - unexpected value "Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura"
+
+
+      330 |     document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
+      331 |   },Math.atan2(Math.sin(aim+Math.PI-before.player.angle),Math.cos(aim+Math.PI-before.player.angle))/.0022);
+    > 332 |   await expect(page.locator('#objective-status')).toContainText('atrás de si');
+          |                                                   ^
+      333 |   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+      334 |   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
+      335 |   expect(errors).toEqual([]);expect(failed).toEqual([]);
+        at /tmp/claude-0/base/tests/browser/m01.spec.js:332:51
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look-repeat4/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look-repeat4/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look-repeat4/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look-repeat4/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  3 failed
+    tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look 
+    tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look 
+    tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look 
+  2 passed (2.0m)
+
+real	2m1.005s
+user	0m39.425s
+sys	0m6.308s
+exit 1

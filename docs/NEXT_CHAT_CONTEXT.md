@@ -1,3 +1,30 @@
+# Estado actual — fecho de produção do Ju 87 (2026-10-08)
+
+Esta secção prevalece sobre o histórico abaixo para a tarefa do Ju 87. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar o kit nem a integração do Ju 87.
+
+- TASK_ID `M01-JU87-AIRCRAFT-PRODUCTION-CLOSEOUT-V2`.
+- Base `codex/m01-bridge-portal-material-detail-polish-v1` @ `99309d9cb023cc94a07d41ff863e1362e4460570`.
+- Branch `codex/m01-ju87-aircraft-production-closeout-v2`. Runtime final `d90f8de`; os commits seguintes só trazem evidência e documentação.
+- Sem PR, merge nem deploy. `main` intacta.
+- Feito no kit: capota, aros e tripulação, disco da hélice, MG 17, Pitot, antena, juntas e folgas, normais e desgaste.
+- Feito no runtime, em `src/render/m01-aircraft.js` e `m01-view.js`: materiais por avião, céu de ambiente nos aviões, atitude só rotacional, histerese de LOD, fade na entrada e na volta de 90 s.
+- Trajectória, tempos, eventos, dano e `Simulation` intactos.
+- Estado **READY_FOR_CAPTAIN_REVIEW**:
+  - Node 329/329, build PASS, navegador Ju 87 2/2;
+  - hashes de gameplay idênticos à base;
+  - revisor e verificador independentes, com as correcções aplicadas;
+  - suite completa de navegador 55/61, com as 6 falhas também na base neste SwiftShader.
+- Pendente:
+  - mergulho, freios e lançamento ligados a dados reais da simulação;
+  - LOD0 carregado só quando necessário;
+  - medição num Chromebook;
+  - testes de navegador dependentes do ritmo de frames.
+- Handoff: `docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/HANDOFF.md`.
+
+---
+
+## Histórico anterior — não substitui o estado acima
+
 # Estado actual — auditoria de determinismo schema 2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a MG34 aprovada nem Graphify.
