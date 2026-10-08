@@ -1,0 +1,54 @@
+<!doctype html><meta charset="utf-8"><title>First-person weapon presentation verification</title>
+<style>html,body{margin:0;background:#151918}canvas{width:1280px;height:720px;display:block}</style>
+<canvas id="frame" width="1280" height="720"></canvas>
+<script type="module">
+// Verification fixture only: production M01View / bench Renderer, real simulation ticks and controls.
+// It reproduces game.js event handling for the player's shot (muzzle window). It never edits simulation state.
+import {M01View} from '../../src/render/m01-view.js';
+import {Renderer} from '../../src/render/three-renderer.js';
+import {M01Simulation} from '../../src/game/m01-simulation.js';
+import {Simulation} from '../../src/game/simulation.js';
+import * as THREE from 'three';
+const canvas=document.querySelector('canvas');
+let mode=null,sim=null,view=null,bench=null,owner=null,engine=null;
+async function m01(quality){
+  if(!view){
+    engine=new THREE.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true});
+    engine.setSize(1280,720,false);engine.setPixelRatio(1);engine.outputColorSpace=THREE.SRGBColorSpace;engine.toneMapping=THREE.ACESFilmicToneMapping;
+    engine.toneMappingExposure=1.15;engine.autoClear=false;engine.shadowMap.type=THREE.PCFSoftShadowMap;
+    owner={canvas,engine,quality};view=new M01View(owner);await view.ready;
+  }
+  owner.quality=quality;engine.shadowMap.enabled=quality!=='low';await view.characters.load(quality);
+}
+function handle(events){
+  for(const e of events){
+    if(mode==='m01'&&e.type==='player-shot')view.muzzle(sim.clock);
+    if(mode==='m01'&&e.type==='m01-blast')view.explosion(e.point,sim.clock,e.aerial);
+    if(mode==='m01'&&e.type==='round-impact')view.impact(e.point,e.material,sim.clock);
+    if(mode==='bench'&&e.type==='player-shot')bench.muzzle(sim.clock*1000);
+  }
+}
+function frame(){
+  if(mode==='m01')view.render(sim);
+  else bench.render(sim.world,sim.player,sim.combatants,sim.radio,sim.weapon,sim.grenades.active,sim.clock*1000,sim.sectors);
+}
+window.wp={
+  async prepareM01(snapshot,quality='low'){mode='m01';await m01(quality);sim=new M01Simulation();sim.restoreSnapshot(snapshot);sim.drainEvents();view.resetEffects();frame();return this.state();},
+  async prepareBench(quality='low'){
+    mode='bench';if(!bench){bench=new Renderer(canvas);await bench.assetsReady;}
+    bench.setQuality(quality);sim=new Simulation();bench.resetEffects();frame();return this.state();
+  },
+  // Software WebGL is slow: long sequences may render every `stride` ticks (always the last four).
+  // Presentation spawns use windows of >=0,3 s, so a stride of 3 (0,15 s) still renders each emission.
+  step(controls={},n=1,stride=1,dt=.05){for(let i=0;i<n;i++){sim.tick(dt,controls);handle(sim.drainEvents());if(i>=n-4||i%stride===0)frame();}return this.state();},
+  /** Frames without ticks (pause): the presentation must not move. */
+  repeat(n=1){for(let i=0;i<n;i++){if(mode==='m01')view.lastFrame=null;frame();}return this.state();},
+  state(){
+    const weapon=mode==='m01'?sim.weapon.snapshot():{mag:sim.weapon.mag,reserve:sim.weapon.reserve,shotCount:sim.weapon.shotCount,lastShot:sim.weapon.lastShot};
+    const d=mode==='m01'?{viewModel:view.viewModel.stats,weaponFx:view.weaponWorldFx.diagnostics,lighting:view.weaponLighting.state}:bench.diagnostics.weaponFx;
+    return structuredClone({mode,clock:sim.clock,player:{x:sim.player.x,y:sim.player.y,z:sim.player.z,angle:sim.player.angle,pitch:sim.player.pitch,aiming:sim.player.aiming},weapon,presentation:d});
+  },
+  snapshot(){return mode==='m01'?sim.snapshot():null;},
+};
+window.wpReady=true;
+</script>

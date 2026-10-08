@@ -1,0 +1,72 @@
+name: M01 ready deliveries consolidation V3
+
+on:
+  push:
+    branches:
+      - codex/m01-ready-deliveries-consolidation-v3
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-ready-deliveries-consolidation-v3
+  cancel-in-progress: true
+
+jobs:
+  focused-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Focused cross-pass Node regression
+        run: >-
+          node --test --test-concurrency=1
+          tests/m01-weapon-presentation.test.js
+          tests/m01-bridge-structure.test.js
+          tests/m01-vegetation-layout.test.js
+          tests/m01-station-architecture.test.js
+          tests/m01-animation-contract.test.js
+          tests/m01-train-consist-polish.test.js
+          tests/m01-aircraft-runtime.test.js
+          tests/m01-audio-production.test.js
+          tests/m01-hud-presentation.test.js
+      - name: Production build
+        run: npm run build
+
+  browser:
+    needs: focused-build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Focused integration browser
+        run: >-
+          npx playwright test
+          tests/browser/m01-weapon-presentation.spec.js
+          tests/browser/m01-train-consist-polish.spec.js
+          tests/browser/m01-bridge-structural.spec.js
+          --workers=1
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-consolidation-v3-browser
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore

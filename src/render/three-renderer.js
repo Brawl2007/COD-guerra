@@ -5,6 +5,8 @@ import { toScene, aimDirection } from '../world/spatial.js';
 import { AssetManager } from '../assets/asset-manager.js';
 import { surface } from './materials.js';
 import { M01View } from './m01-view.js';
+import { WEAPON_PRESENTATION, WeaponViewFx, WeaponWorldFx, WeaponLighting, weaponRecoil, idleSway, advanceLookLag, viewPointToWorld, viewUp } from './first-person-weapon-fx.js';
+import { visualNoise } from './m01-atmosphere.js';
 
 const QUALITY={low:{ratio:1,shadows:false,particles:70},medium:{ratio:1.25,shadows:true,particles:120},high:{ratio:1.5,shadows:true,particles:180}};
 export function initialQuality({saved,cores=0,memory=0,renderer='',maxTexture=0}={}){
@@ -27,9 +29,8 @@ export class Renderer {
     this.scene.fog=new THREE.Fog('#9ba9a8',35,320);
     this.camera=new THREE.PerspectiveCamera(70,1,.05,2000);
     this.weaponScene=new THREE.Scene();this.weaponCamera=new THREE.PerspectiveCamera(58,1,.03,6);
-    this.weaponScene.add(new THREE.HemisphereLight('#d8e6ed','#54462f',2.7));
-    this.weaponScene.add(new THREE.DirectionalLight('#ffe4bb',2));
-    this.scene.add(new THREE.HemisphereLight('#c8d7e0','#5b5740',2.0));
+    this.weaponLighting=new WeaponLighting(this.weaponScene,{fill:['#d8e6ed','#54462f',2.7],key:['#ffe4bb',2]});
+    this.skyLight=new THREE.HemisphereLight('#c8d7e0','#5b5740',2.0);this.scene.add(this.skyLight);
     this.sun=new THREE.DirectionalLight('#ffddaa',2.8);this.sun.position.set(-18,35,-8);
     this.sun.castShadow=true;this.sun.shadow.mapSize.set(1024,1024);
     Object.assign(this.sun.shadow.camera,{left:-30,right:30,top:30,bottom:-30,near:.1,far:100});
@@ -50,6 +51,9 @@ export class Renderer {
     let saved;try{saved=localStorage.getItem('cod-guerra:visual-quality');}catch{}
     const debug=context.getExtension('WEBGL_debug_renderer_info');
     this.setQuality(initialQuality({saved,cores:navigator.hardwareConcurrency,memory:navigator.deviceMemory,renderer:debug?context.getParameter(debug.UNMASKED_RENDERER_WEBGL):'',maxTexture:context.getParameter(context.MAX_TEXTURE_SIZE)}));
+    // M1 Carbine presentation identity: flash/light/smoke on the barrel, brass into the world. Never gameplay.
+    this.weaponFx=new WeaponViewFx(this.weaponScene,WEAPON_PRESENTATION.m1_carbine);this.weaponWorldFx=new WeaponWorldFx(this.effects,{casings:12,puffs:24});
+    this.weaponPose=null;this.weaponMaterials=[];
     this.createWeapon();this.createHorizon();
     this.particleMesh=new THREE.InstancedMesh(this.geometries.sphere,this.materials.glow,180);
     this.particleMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.particleMesh.count=0;
@@ -159,9 +163,13 @@ export class Renderer {
     this.scene.add(this.aircraft);
   }
   createWeapon(){
-    this.weaponRoot.clear();
+    this.weaponRoot.clear();this.weaponMaterials.forEach(m=>m.dispose());this.weaponMaterials=[];
     if(this.models.weapon){
       const model=SkeletonUtils.clone(this.models.weapon.scene);model.scale.setScalar(.48);this.weaponRoot.add(model);
+      // Viewmodel-only copies: oiled walnut stays satin, blued/parkerized steel gets a restrained metallic sheen.
+      const finish={Walnut:{roughness:.6,metalness:0},Gunmetal:{roughness:.42,metalness:.7},Steel_details:{roughness:.38,metalness:.75}};
+      model.traverse(node=>{if(!node.isMesh||!finish[node.material?.name])return;
+        const material=node.material.clone();Object.assign(material,finish[material.name]);node.material=material;this.weaponMaterials.push(material);});
     }else{
       this.mesh('box','wood',[0,-.05,.1],[.1,.09,.5],this.weaponRoot);
       const barrel=this.mesh('cylinder','metal',[0,.01,-.4],[.025,.5,.025],this.weaponRoot);barrel.rotation.x=Math.PI/2;
@@ -174,7 +182,7 @@ export class Renderer {
       for(let i=0;i<4;i++)this.mesh('box','skin',[x-.025+i*.016,-.08,z-.035],[.013,.025,.04],arm);
       const sleeve=this.mesh('cylinder','cloth',[x*1.5,-.16,z+.18],[.065,.36,.07],arm);sleeve.rotation.x=1.15;sleeve.rotation.z=rotation;
     }
-    this.flash=this.mesh('sphere','glow',[0,.012,-.39],[.06,.045,.12],this.weaponRoot);this.flash.visible=false;
+    this.weaponFx.attach(this.weaponRoot,[0,.0145,-.378]);this.flash=this.weaponFx.core;
     this.weaponRoot.position.set(.2,-.24,-.65);
   }
   createActor(actor){
@@ -248,7 +256,7 @@ export class Renderer {
     for(const [id,view] of this.actorViews)if(!ids.has(id)){this.releaseActor(view);this.actorViews.delete(id);}
     this.mixers.forEach(mixer=>mixer.update(dt));
     this.updateWeapon(player,weapon,time,dt);
-    this.updateEffects(time,battle);
+    this.updateEffects(time,battle);this.weaponWorldFx.update(time/1000,world);
     const angle=time*.00001;this.aircraft.position.set(80-Math.sin(angle)*200,100,20+Math.cos(angle)*240);this.aircraft.rotation.y=-angle;
     if(!this.grenadeViews)this.grenadeViews=new Map();
     const grenadeIds=new Set(grenades.map(g=>g.id));
@@ -262,17 +270,42 @@ export class Renderer {
     this.engine.render(this.scene,this.camera);this.engine.clearDepth();this.engine.render(this.weaponScene,this.weaponCamera);
   }
   updateWeapon(player,weapon,time,dt){
-    const progress=weapon.reloadProgress(time),arc=Math.sin(progress*Math.PI);
-    const age=time-player.weaponShotAt,recoil=age>=0&&age<180?Math.exp(-age/60)*.06:0;
-    const bob=player.moveBlend*Math.sin(time*(player.sprinting?.015:.01))*.012;
-    const goal=player.aiming?0:.2;
-    this.weaponRoot.position.x=THREE.MathUtils.lerp(this.weaponRoot.position.x,goal,Math.min(1,dt*12));
-    this.weaponRoot.position.y=(player.aiming?-.1:-.24)-arc*.15+Math.abs(bob);
-    this.weaponRoot.position.z=-.65+recoil;
-    this.weaponRoot.rotation.set(arc*.24,0,arc*.35+(player.sprinting?.15:0));
+    // Presentation clock = simulation ms. A frozen/restored clock rebuilds the blends at rest instead of tweening.
+    const t=time/1000,profile=WEAPON_PRESENTATION.m1_carbine;
+    if(!this.weaponPose||t<this.weaponPose.clock)this.weaponPose={clock:t,aim:Number(Boolean(player.aiming)),run:Number(Boolean(player.sprinting)),look:advanceLookLag(null,player.angle,player.pitch,0)};
+    const s=this.weaponPose,step=Math.min(.05,Math.max(0,t-s.clock)),blend=(v,target,tau)=>{const n=v+(target-v)*(1-Math.exp(-step/tau));return Math.abs(n-target)<1e-4?target:n;};
+    s.look=advanceLookLag(s.look,player.angle,player.pitch,Math.min(.5,Math.max(0,t-s.clock)));
+    s.clock=t;s.aim=blend(s.aim,Number(Boolean(player.aiming)),.045);s.run=blend(s.run,Number(Boolean(player.sprinting)),.09);
+    const progress=weapon.reloadProgress(time),arc=Math.sin(progress*Math.PI),eased=s.aim*s.aim*(3-2*s.aim),hip=1-eased,raise=4*s.aim*(1-s.aim)*(1-arc);
+    const recoil=weaponRecoil(profile,(time-player.weaponShotAt)/1000,s.aim,weapon.shotCount??0),sway=idleSway(t),lag=(1-.75*eased)*(1-arc);
+    const bob=player.moveBlend*Math.sin(time*(player.sprinting?.015:.01))*.012,hold=hip*(1-arc)*(1-.65*Math.min(1,player.moveBlend));
+    this.weaponRoot.position.set(.2*hip+sway.x*hold-s.look.yaw*.05*lag,
+      -.24+.14*eased-arc*.15+Math.abs(bob)+sway.y*hold-.01*raise+recoil.rise+s.look.pitchLag*.04*lag,-.65+recoil.back*2.4);
+    this.weaponRoot.rotation.set(arc*.24+recoil.pitch+sway.pitch*hold-.016*raise+s.look.pitchLag*lag,recoil.yaw+sway.yaw*hold+s.look.yaw*lag,
+      arc*.35+.15*s.run+recoil.roll+sway.roll*hold+.05*raise-s.look.yaw*.5*lag);
     this.leftArm.position.y=-Math.sin(progress*Math.PI)*.08;
     this.magazine.position.y=-.09-arc*.1;
-    this.flash.visible=time<this.muzzleUntil;
+    const r=this.weaponRoot;r.updateMatrixWorld(true);
+    const shotAt=player.weaponShotAt/1000,muzzle=r.localToWorld(new THREE.Vector3(0,.0145,-.378)),axis=new THREE.Vector3(0,0,-1).transformDirection(r.matrixWorld);
+    const port=r.localToWorld(new THREE.Vector3(.026,.034,-.02));
+    // A slow frame may already be past the 50 ms window: the first frame after a shot event always flashes.
+    const fresh=(weapon.shotCount??0)!==this.flashShot&&time<this.muzzleUntil+200&&time-player.weaponShotAt>=0&&time-player.weaponShotAt<250;if(fresh)this.flashShot=weapon.shotCount;
+    this.weaponFx.update({clock:t,shotAt,gate:time<this.muzzleUntil,fresh,aim:s.aim,shot:weapon.shotCount??0,muzzle,axis,port,up:viewUp(player.pitch??0),chamberAt:shotAt+.008});
+    this.weaponLighting.sync({sky:this.skyLight,sun:this.sun,camera:this.camera,daylight:1,pitch:player.pitch??0});
+    // Semi-auto: the case leaves the port with the shot. World brass is keyed by shot, so no frame can duplicate it.
+    const shot=weapon.shotCount??0,age=t-shotAt;
+    if(shot>0&&age>=0&&age<.3){
+      this.weaponWorldFx.sync(this.world);this.camera.updateMatrixWorld();const q=r.getWorldQuaternion(new THREE.Quaternion()),camera=this.camera,fov=this.weaponCamera.fov;
+      const seed=(0xca7b^Math.imul(shot,0x9e3779b1))>>>0,n=i=>visualNoise(seed,i);
+      const world=(v,target=new THREE.Vector3())=>target.set(...v).applyQuaternion(q).applyQuaternion(camera.quaternion);
+      const v=profile.casing.velocity,align=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),-Math.PI/2);
+      this.weaponWorldFx.spawnEjecta({id:`m1:case:${shot}:${player.weaponShotAt}`,kind:profile.casing.kind,start:shotAt,
+        origin:viewPointToWorld(port.clone(),camera,fov),velocity:world([v[0]*(.85+.3*n(1)),v[1]*(.85+.3*n(2)),v[2]*(.6+.8*n(3))]),
+        rotation:camera.quaternion.clone().multiply(q.clone().multiply(align)),spinAxis:world([.3,1,.2]),spin:profile.casing.spin*(.8+.4*n(4)),
+        ground:0,rest:profile.casing.rest,seed:n(5)});
+      this.weaponWorldFx.spawnPuffs({id:`m1:puff:${shot}:${player.weaponShotAt}`,start:shotAt,origin:viewPointToWorld(muzzle.clone(),camera,fov),
+        direction:world([0,0,-1]),profile:profile.smoke,seed});
+    }
   }
   updateEffects(time,battle){
     this.particles=this.particles.filter(p=>time-p.born<p.life).slice(-QUALITY[this.quality].particles);
@@ -305,10 +338,10 @@ export class Renderer {
     this.shake=12;
   }
   muzzle(now){this.muzzleUntil=now+60;this.shake=2;}
-  resetEffects(){this.particles=[];this.muzzleUntil=0;this.shake=0;this.m01?.resetEffects();}
+  resetEffects(){this.particles=[];this.muzzleUntil=0;this.shake=0;this.weaponPose=null;this.flashShot=undefined;this.weaponWorldFx.reset();this.m01?.resetEffects();}
   get diagnostics(){return {renderer:'Three.js',quality:this.quality,drawCalls:this.engine.info.render.calls,
     triangles:this.engine.info.render.triangles,geometries:this.engine.info.memory.geometries,textures:this.engine.info.memory.textures,
-    assetFailures:this.assets.failures,models:Object.keys(this.models)};}
+    assetFailures:this.assets.failures,models:Object.keys(this.models),weaponFx:{...this.weaponFx.stats,world:this.weaponWorldFx.diagnostics,lighting:this.weaponLighting.state}};}
   dispose(){
     if(this.disposed)return;this.disposed=true;
     this.mixers.forEach(m=>m.stopAllAction());this.assets.dispose();this.m01?.dispose();
@@ -316,6 +349,7 @@ export class Renderer {
     Object.values(this.geometries).forEach(g=>g.dispose());
     this.scene.traverse(node=>{if(node.isInstancedMesh)node.dispose();});
     Object.values(this.materials).forEach(m=>{m.map?.dispose();m.dispose();});this.horizonMaterial.dispose();
+    this.weaponFx.dispose();this.weaponWorldFx.dispose();this.weaponLighting.dispose();this.weaponMaterials.forEach(m=>m.dispose());
     this.scene.clear();this.weaponScene.clear();this.engine.dispose();
   }
 }
