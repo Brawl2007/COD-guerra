@@ -1,0 +1,76 @@
+name: M01 V7 combined browser certification
+on:
+  push:
+    branches: [codex/m01-final-production-consolidation-v7]
+    paths: [.github/workflows/m01-v7-browser-certification.yml]
+permissions:
+  contents: read
+concurrency:
+  group: m01-v7-browser-certification-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  browser:
+    if: github.ref == 'refs/heads/codex/m01-final-production-consolidation-v7'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 110
+    env:
+      CI: '1'
+      EVIDENCE: docs/verification/m01-runtime/final-approved-deliveries-integration-v7
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0, ref: '${{ github.sha }}'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Verify recovery ancestry and protected authority
+        run: |
+          git merge-base --is-ancestor cbc7de5668a1b2e4bc646b86548196a5f4f1039a HEAD
+          git diff --exit-code cbc7de5668a1b2e4bc646b86548196a5f4f1039a HEAD -- src/game src/world src/core src/assets src/main.js src/ui assets missions research package.json package-lock.json playwright.config.js tools/assets
+      - run: npx playwright install --with-deps chromium
+      - name: Build exact combined V7
+        run: |
+          mkdir -p "$EVIDENCE/logs"
+          set -o pipefail
+          npm run build | tee "$EVIDENCE/logs/build-browser-ci.log"
+          sha256sum dist/assets/*.js dist/assets/*.css | tee "$EVIDENCE/logs/build-browser-sha256-ci.log"
+      - name: Inventory every browser case
+        run: npx playwright test --list --reporter=json > "$EVIDENCE/BROWSER_INVENTORY.json"
+      - name: One complete browser execution, retries zero
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: docs/verification/m01-runtime/final-approved-deliveries-integration-v7/BROWSER_FULL.json
+        run: |
+          set -o pipefail
+          npx playwright test --workers=1 --retries=0 --reporter=list,json 2>&1 | tee "$EVIDENCE/logs/browser-full-ci.log"
+      - name: Verify actual count, no unexpected skips and no retries
+        if: always()
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import assert from 'node:assert/strict';
+          const dir=process.env.EVIDENCE;
+          if(!fs.existsSync(dir+'/BROWSER_FULL.json'))throw Error('No browser report: infrastructure or previous step failed');
+          const inventory=JSON.parse(fs.readFileSync(dir+'/BROWSER_INVENTORY.json'));
+          const report=JSON.parse(fs.readFileSync(dir+'/BROWSER_FULL.json'));
+          const cases=suites=>suites.flatMap(s=>[...(s.specs??[]).flatMap(p=>p.tests.map(t=>({file:p.file,line:p.line,title:p.title,...t}))),...cases(s.suites??[])]);
+          const listed=cases(inventory.suites),actual=cases(report.suites);
+          const passed=actual.filter(t=>t.expectedStatus==='passed'&&t.status==='expected'&&t.results.length===1&&t.results[0].status==='passed'&&t.results[0].retry===0);
+          const problems=actual.filter(t=>!passed.includes(t));
+          const summary={taskId:'M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7',testedHead:process.env.GITHUB_SHA,runId:process.env.GITHUB_RUN_ID,runAttempt:process.env.GITHUB_RUN_ATTEMPT,inventory:listed.length,executed:actual.length,passed:passed.length,problems:problems.map(t=>({file:t.file,line:t.line,title:t.title,status:t.status,expected:t.expectedStatus,results:t.results})),stats:report.stats,errors:report.errors,retries:report.config.projects.map(p=>p.retries),workers:report.config.workers,execution:'One full unfiltered invocation; no result union',status:passed.length===84&&actual.length===listed.length&&problems.length===0&&(report.errors??[]).length===0?'PASS':'FAIL'};
+          fs.writeFileSync(dir+'/BROWSER_FULL_SUMMARY.json',JSON.stringify(summary,null,2)+'\n');
+          console.log(JSON.stringify(summary,null,2));
+          assert.equal(listed.length,84,'Original V6 inventory retained');
+          assert.equal(actual.length,listed.length);
+          assert.equal(summary.status,'PASS');
+          assert.ok(report.config.projects.every(p=>p.retries===0));
+          NODE
+      - name: Preserve complete raw evidence and failure traces without hosting
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-v7-browser-full-${{ github.sha }}
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            docs/verification/m01-runtime/final-approved-deliveries-integration-v7/BROWSER_*.json
+            docs/verification/m01-runtime/final-approved-deliveries-integration-v7/logs/
+            test-results/
