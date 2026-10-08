@@ -49,7 +49,7 @@ export class M01ViewModel {
     this.round=new THREE.Mesh(this.roundGeometry,new THREE.MeshStandardMaterial({color:'#b99b4e',metalness:.65,roughness:.45}));
     this.round.position.z=-.03;this.round.visible=false;
     this.wounded=null;this.armGeometry=null;this.rifleMaterial=null;this.atlasMaterial=null;this.visual=null;this.stats={active:false};
-    this.tmp={a:new THREE.Vector3(),b:new THREE.Vector3(),c:new THREE.Vector3(),q:new THREE.Quaternion(),r:new THREE.Quaternion(),up:new THREE.Vector3()};
+    this.tmp={a:new THREE.Vector3(),b:new THREE.Vector3(),c:new THREE.Vector3(),q:new THREE.Quaternion(),r:new THREE.Quaternion(),r2:new THREE.Quaternion(),up:new THREE.Vector3()};
   }
   release(root,mixer){
     if(!root)return;root.removeFromParent();mixer.stopAllAction();mixer.uncacheRoot(root);
@@ -91,7 +91,7 @@ export class M01ViewModel {
         this.worldFx.spawnEjecta({id:`wz29:case:${shot}:${w.lastShot}`,kind:PROFILE.casing.kind,start:ejectAt,
           origin:viewPointToWorld(weapon.localToWorld(a.fromArray(this.port)),camera,fov,a),velocity:toWorldDir(jitter,b),
           rotation:toWorldQuat(q.clone().multiply(r),r),spinAxis:toWorldDir([.25+.2*n(4),1,.3],c),spin:PROFILE.casing.spin*(.8+.4*n(5)),
-          ground:sim.player.y??0,rest:PROFILE.casing.rest,seed:n(6)});
+          ground:sim.player.y??0,groundAt:(x,z)=>sim.world.heightAt?.(x,z),rest:PROFILE.casing.rest,seed:n(6)});
       }
     }
     // Clip reload: the bolt closing pushes the empty stripper clip out (asset curve 2,40-2,60 s), then it falls away.
@@ -99,12 +99,13 @@ export class M01ViewModel {
       const duration=(w.until-w.started)/1000,start=w.started/1000+PROFILE.mechanics.clipEjected/RELOAD_CLIP_SECONDS*duration;
       const e=(PROFILE.mechanics.clipEjected-CLIP_EJECT.from)/(CLIP_EJECT.to-CLIP_EJECT.from),[lx,ly,lz]=CLIP_EJECT.local;
       const seed=(0xc11b^Math.floor(w.started))>>>0,v=PROFILE.clip.velocity;
-      r.setFromAxisAngle(c.set(0,0,1),-200*Math.PI/180*e);
+      // Asset spin about the bore, then the strip's 55 mm length upright in the guide (geometry Z -> weapon Y).
+      r.setFromAxisAngle(c.set(0,0,1),-200*Math.PI/180*e).multiply(this.tmp.r2.setFromAxisAngle(c.set(1,0,0),Math.PI/2));
       this.worldFx.spawnEjecta({id:`wz29:clip:${w.started}`,kind:'clip',start,
         origin:viewPointToWorld(weapon.localToWorld(a.set(lx+.12*e,ly+.1*e-.15*e*e,lz+.02*e)),camera,fov,a),
         velocity:toWorldDir([v[0]*(.85+.3*visualNoise(seed,1)),v[1]*(.85+.3*visualNoise(seed,2)),v[2]],b),
         rotation:toWorldQuat(q.clone().multiply(r),r),spinAxis:toWorldDir([0,0,1],c),spin:-PROFILE.clip.spin,
-        ground:sim.player.y??0,rest:PROFILE.clip.rest,seed:visualNoise(seed,3)});
+        ground:sim.player.y??0,groundAt:(x,z)=>sim.world.heightAt?.(x,z),rest:PROFILE.clip.rest,seed:visualNoise(seed,3)});
     }
   }
   play(root,mixer,clip,time){
@@ -125,7 +126,7 @@ export class M01ViewModel {
     if(this.lod!==lod)this.build(lod);
     // Restore replaces the data world; reconstruct visual flags/phase at that safe
     // boundary instead of blending from an old menu/checkpoint presentation.
-    if(this.sourceWorld!==sim.world){this.sourceWorld=sim.world;this.visual=null;this.sampleKey=null;}
+    if(this.sourceWorld!==sim.world){this.sourceWorld=sim.world;this.visual=null;this.sampleKey=null;this.flashShot=sim.weapon.shotCount;}
     const p=sim.player,w=sim.weapon,t=sim.clock,carry=p.carrying==='jozef_bak';
     const key=JSON.stringify([t,p.aiming,p.moveBlend,p.sprinting,p.carrying,sim.renderState.weaponVisible,w.state,w.started,w.until,w.lastShot,w.shotCount,flashUntil,p.angle,p.pitch]);
     if(this.sampleKey===key)return true;
@@ -156,7 +157,8 @@ export class M01ViewModel {
       v.aim=advanceVisualBlend(v.aim,Number(Boolean(p.aiming)),dt,.055);
       v.move=advanceVisualBlend(v.move,p.moveBlend??0,dt,.09);
       v.run=advanceVisualBlend(v.run,Number(Boolean(p.sprinting)),dt,.10);
-      v.phase+=dt*(9+5*v.run);v.clock=t;v.look=advanceLookLag(v.look,p.angle??0,p.pitch??0,dt);
+      // Look lag is an exponential of the true frame time (capped): it settles identically at 4 or 60 fps.
+      v.look=advanceLookLag(v.look,p.angle??0,p.pitch??0,Math.min(.5,Math.max(0,t-v.clock)));v.phase+=dt*(9+5*v.run);v.clock=t;
       // Weight at the authored mechanical markers: bolt stop/slam (fire_bolt 0,70/1,00 s), clip seated/bolt closed (1,00/2,70 s).
       mechanical=clip==='fire_bolt'?mechanicalPulse(sample,1,.12)+.45*mechanicalPulse(sample,.7,.1):
         w.state==='RELOAD_CLIP'?mechanicalPulse(sample,PROFILE.mechanics.boltClosed,.14)+.35*mechanicalPulse(sample,1,.1):0;
@@ -188,7 +190,9 @@ export class M01ViewModel {
     }
     this.root.updateMatrixWorld(true);
     const weapon=this.root.getObjectByName('weapon'),{a,b,c,up}=this.tmp,shotAt=Number.isFinite(w.lastShot)?w.lastShot/1000:-Infinity;
-    const fx=carry?this.fx.hide():this.fx.update({clock:t,shotAt,gate:t<flashUntil,aim:this.visual?.aim??0,shot:w.shotCount??0,
+    // Low frame rates can step past the 60 ms window in one frame: the first frame after a shot event always flashes.
+    const fresh=!carry&&w.shotCount!==this.flashShot&&t<flashUntil+.2&&t-shotAt>=0&&t-shotAt<.25;if(fresh)this.flashShot=w.shotCount;
+    const fx=carry?this.fx.hide():this.fx.update({clock:t,shotAt,gate:t<flashUntil,fresh,aim:this.visual?.aim??0,shot:w.shotCount??0,
       muzzle:weapon.localToWorld(a.fromArray(WZ29_VISUAL.muzzle)),axis:b.set(0,0,-1).transformDirection(weapon.matrixWorld),
       port:weapon.localToWorld(c.fromArray(this.port)),up:viewUp(p.pitch??0,up),chamberAt:shotAt+PROFILE.mechanics.chamberOpen*BOLT_SECONDS});
     if(this.worldFx&&view&&!carry)this.emitWorld(sim,view,weapon,clip,sample);

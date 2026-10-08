@@ -94,9 +94,9 @@ export function riflePresentationMaterial(source){
   // Preserve baked wood grain, wear and metal masks. The weapon pass now has a low sky/ground reflection
   // environment, so blued steel may read as metal (sheen) while oiled wood stays satin, never mirror-like.
   material.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <metalnessmap_fragment>',
-    '#include <metalnessmap_fragment>\nroughnessFactor = max(roughnessFactor, mix(0.62, 0.42, metalnessFactor));\nmetalnessFactor = min(metalnessFactor, 0.86);'+
+    '#include <metalnessmap_fragment>\nroughnessFactor = max(roughnessFactor, mix(0.62, 0.46, metalnessFactor));\nmetalnessFactor = min(metalnessFactor, 0.86);'+
     // The atlas paints steel at ~0.03 linear, which a PBR metal turns into a black hole; lift only metal texels to a blued-steel reflectance.
-    '\ndiffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * 4.5 + vec3(0.04), metalnessFactor);');};
+    '\ndiffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * 3.2 + vec3(0.025), metalnessFactor);');};
   material.envMapIntensity=1;material.customProgramCacheKey=()=> 'm01-wz29-presentation-v3';
   return material;
 }

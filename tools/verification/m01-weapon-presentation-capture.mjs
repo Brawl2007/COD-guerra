@@ -8,7 +8,7 @@ import {driver} from '../../tests/helpers/m01-route.js';
 const args=process.argv.slice(2),out=args.find(a=>!a.startsWith('--'))??'test-results/weapon-presentation';
 const quality=args.includes('--quality')?args[args.indexOf('--quality')+1]:'low';
 mkdirSync(out,{recursive:true});
-const port=5184,server=spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port',String(port),'--strictPort'],{stdio:'ignore'});
+const port=5184,server=spawn(process.execPath,['node_modules/vite/bin/vite.js','--config','tools/verification/vite.capture.config.mjs','--host','127.0.0.1','--port',String(port),'--strictPort'],{stdio:'ignore'});
 let browser;
 try{
   for(let i=0;i<80;i++){try{await fetch(`http://127.0.0.1:${port}/COD-guerra/`);break;}catch{await new Promise(r=>setTimeout(r,250));}}
@@ -49,8 +49,10 @@ try{
   await shot('m01-16-reload-clip-falling',await call('step',{},3));
   await shot('m01-17-reload-end',await call('step',{},14,3));
   await shot('m01-18-turn-lag',await call('step',{lookX:30},3));
-  await shot('m01-19-sprint',await call('step',{forward:1,sprint:true},10,3));
-  await shot('m01-20-brass-on-ground',await call('step',{lookY:260},1));
+  // The cases and the clip fell to the right of the firing position and lie there for a while.
+  await call('step',{lookX:420,lookY:300},1);await shot('m01-19-brass-on-ground',await call('step',{},4));
+  await call('step',{lookX:-420,lookY:-300},1);
+  await shot('m01-20-sprint',await call('step',{forward:1,sprint:true},10,3));
   // Bench M1 Carbine: semi-automatic identity on the preserved French sandbox.
   await call('prepareBench',quality);
   await shot('bench-01-hip-idle',await call('step',{},6,3));

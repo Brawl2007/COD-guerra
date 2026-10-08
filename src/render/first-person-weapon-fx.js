@@ -17,11 +17,11 @@ export const WEAPON_PRESENTATION=freeze({
       roll:{hip:-.020,ads:-.006},yaw:{hip:.007,ads:.0022},settle:{pitch:.0055,freq:15,delay:.06,decay:.11}},
     // 600 mm barrel: compact white core, short tongue and a four-point star; the 60 ms event window is kept.
     flash:{life:.06,hold:.024,core:{hip:.12,ads:.095},tongue:{length:.20,width:.07},star:.17,
-      color:'#ffd18b',tongueColor:'#ffab55',light:{color:'#ffb466',intensity:1.8,distance:1.6,decay:2}},
+      color:'#ffd18b',tongueColor:'#ffab55',light:{color:'#ffb466',intensity:1.0,distance:1.6,decay:2}},
     smoke:{wisps:4,wispLife:1.3,wispSize:.07,wispOpacity:{hip:.26,ads:.13},chamber:{life:.75,size:.05,opacity:.24},
       puffs:4,puffLife:2.3,puffSize:.30,puffSpeed:3.4,puffOpacity:.34},
     casing:{kind:'7.92x57',velocity:[1.5,1.7,.35],spin:26,rest:24},
-    clip:{velocity:[.9,1.35,.18],spin:17,rest:24},
+    clip:{velocity:[1.2,2.4,.4],spin:17,rest:24},
     // Fractions of the authoritative bolt cycle / absolute reload_clip seconds where the asset shows the action.
     mechanics:{eject:.6/1.17,chamberOpen:.43/1.17,chambered:1/1.17,clipEjected:2.45,boltClosed:2.7}},
   m1_carbine:{id:'m1_carbine',label:'M1 Carbine, .30 Carbine',action:'semi',
@@ -30,7 +30,7 @@ export const WEAPON_PRESENTATION=freeze({
       roll:{hip:-.010,ads:-.003},yaw:{hip:.006,ads:.0018},settle:{pitch:.003,freq:24,delay:.035,decay:.05}},
     // Short 457 mm barrel: proportionally larger, bushier flash than the long rifle.
     flash:{life:.05,hold:.018,core:{hip:.13,ads:.11},tongue:{length:.15,width:.09},star:.21,
-      color:'#ffd9a0',tongueColor:'#ffbe6a',light:{color:'#ffc27a',intensity:1.6,distance:1.5,decay:2}},
+      color:'#ffd9a0',tongueColor:'#ffbe6a',light:{color:'#ffc27a',intensity:1.0,distance:1.5,decay:2}},
     smoke:{wisps:3,wispLife:.9,wispSize:.055,wispOpacity:{hip:.22,ads:.11},chamber:{life:.45,size:.035,opacity:.2},
       puffs:3,puffLife:1.7,puffSize:.22,puffSpeed:2.6,puffOpacity:.28},
     casing:{kind:'.30-carbine',velocity:[2.3,2.1,-.15],spin:34,rest:18},
@@ -146,7 +146,7 @@ export function casingGeometry(kind){
   const length=profile.reduce((m,p)=>Math.max(m,p[1]),0),geometry=new THREE.LatheGeometry(profile.map(([r,y])=>new THREE.Vector2(r,y)),10);
   geometry.translate(0,-length/2,0);geometry.userData.length=length;geometry.userData.radius=profile[1][0];return geometry;
 }
-/** Empty five-round stripper clip: thin folded steel channel, 55 mm long along Z. */
+/** Empty five-round stripper clip: thin folded steel channel, 55 mm long along Z (stood upright in the guide at spawn). */
 export function stripperClipGeometry(){
   const base=new THREE.BoxGeometry(.0128,.0008,.055),left=new THREE.BoxGeometry(.0008,.0042,.055),right=left.clone();
   left.translate(-.006,.0021,0);right.translate(.006,.0021,0);
@@ -185,12 +185,13 @@ export class WeaponViewFx {
   hide(){for(const s of [...this.layers,...this.wisps])s.visible=false;this.light.intensity=0;this.stats={flash:0,layers:0,light:0,wisps:0};return this.stats;}
   /**
    * @param {object} o clock, shotAt (s, authoritative), gate (event-window flag), aim (0..1), shot (count),
-   *   muzzle/axis/port/up (eye-space Vector3), chamberAt (s or null) and visible.
+   *   muzzle/axis/port/up (eye-space Vector3), chamberAt (s or null), visible, and fresh: the first rendered
+   *   frame of a shot event, drawn at full strength even when a slow frame already passed the 60 ms window.
    */
-  update({clock,shotAt,gate=true,aim=0,shot=0,muzzle,axis,port=null,up,chamberAt=null,visible=true}){
+  update({clock,shotAt,gate=true,aim=0,shot=0,muzzle,axis,port=null,up,chamberAt=null,visible=true,fresh=false}){
     if(!visible)return this.hide();
     const p=this.profile,f=p.flash,age=clock-shotAt,seed=(0x6d2b^Math.imul(shot+1,0x9e3779b1))>>>0,n=i=>visualNoise(seed,i);
-    let k=0;if(gate&&age>=0&&age<f.life)k=age<f.hold?1:1-smooth(age,f.hold,f.life);
+    let k=0;if(fresh)k=1;else if(gate&&age>=0&&age<f.life)k=age<f.hold?1:1-smooth(age,f.hold,f.life);
     for(const s of this.layers)s.visible=k>0;
     if(k>0){
       const core=blend(f.core,aim)*(.85+.3*n(1))*(.78+.22*k);this.core.scale.set(core,core,1);this.core.material.opacity=k;this.core.material.rotation=n(2)*Math.PI*2;
@@ -251,6 +252,21 @@ export function ejectaPose(item,age,position=new THREE.Vector3(),quaternion=new 
 }
 
 /**
+ * Rest height h where a piece landing on plane h meets the real surface under it: bisection on
+ * surface(landing(h)) - h. Neither buried in a slope nor hovering; non-finite answers keep the start height.
+ */
+export function settleGround(item,groundAt){
+  const top=item.origin[1]-item.radius,f=h=>{item.ground=h;const p=ejectaPose(item,60).position,g=groundAt(p.x,p.z);return Number.isFinite(g)?g-h:NaN;};
+  const start=item.ground;let lo=start,hi=start,v=f(start);
+  if(!Number.isFinite(v)){item.ground=start;return start;}
+  if(Math.abs(v)<.001)return item.ground=start+v;
+  if(v>0){lo=start;hi=Math.min(top,start+v+.5);if(!(f(hi)<=0)){item.ground=Math.min(top,start+v);return item.ground;}}
+  else{hi=start;lo=start+v-.5;if(!(f(lo)>=0)){item.ground=start+v;return item.ground;}}
+  for(let i=0;i<14;i++){const mid=(lo+hi)/2,m=f(mid);if(!Number.isFinite(m))break;if(m>0)lo=mid;else hi=mid;}
+  return item.ground=hi;
+}
+
+/**
  * World-space consequences of the player's shots: brass and clips that fall and lie for a while, and
  * the muzzle cloud that hangs where the shot was fired. Emissions are keyed by authoritative shot/reload
  * ids, so a repeated or late frame can never duplicate one; a restored world discards them.
@@ -275,12 +291,17 @@ export class WeaponWorldFx {
   }
   casingMesh(kind){return this.meshes.get(kind)??this.instanced(kind,casingGeometry(kind),this.brass,this.capacity.casings);}
   has(id){return this.items.some(i=>i.id===id)||this.puffItems.some(i=>i.id===id);}
-  /** kind: casing kind or 'clip'. origin/velocity in world metres; rotation = initial world quaternion. */
-  spawnEjecta({id,kind,start,origin,velocity,rotation,spinAxis,spin,ground,rest,seed}){
+  /**
+   * kind: casing kind or 'clip'. origin/velocity in world metres; rotation = initial world quaternion.
+   * groundAt(x,z) (optional, read-only world query) settles the rest height where the piece actually lands.
+   */
+  spawnEjecta({id,kind,start,origin,velocity,rotation,spinAxis,spin,ground,rest,seed,groundAt=null}){
     if(this.has(id))return false;
     const mesh=kind==='clip'?this.clips:this.casingMesh(kind),radius=mesh.geometry.userData.radius??.005;
-    this.items.push({id,kind,start,origin:origin.toArray(),velocity:velocity.toArray(),rotation:rotation.clone(),spinAxis:spinAxis.clone().normalize().toArray(),
-      spin,ground,rest,seed,radius});
+    const item={id,kind,start,origin:origin.toArray(),velocity:velocity.toArray(),rotation:rotation.clone(),spinAxis:spinAxis.clone().normalize().toArray(),
+      spin,ground,rest,seed,radius};
+    if(groundAt)settleGround(item,groundAt);
+    this.items.push(item);
     const limit=kind==='clip'?this.capacity.clips:this.capacity.casings,same=this.items.filter(i=>(i.kind==='clip')===(kind==='clip'));
     if(same.length>limit)this.items.splice(this.items.indexOf(same[0]),1);return true;
   }

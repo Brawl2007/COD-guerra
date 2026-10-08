@@ -274,7 +274,8 @@ export class Renderer {
     const t=time/1000,profile=WEAPON_PRESENTATION.m1_carbine;
     if(!this.weaponPose||t<this.weaponPose.clock)this.weaponPose={clock:t,aim:Number(Boolean(player.aiming)),run:Number(Boolean(player.sprinting)),look:advanceLookLag(null,player.angle,player.pitch,0)};
     const s=this.weaponPose,step=Math.min(.05,Math.max(0,t-s.clock)),blend=(v,target,tau)=>{const n=v+(target-v)*(1-Math.exp(-step/tau));return Math.abs(n-target)<1e-4?target:n;};
-    s.clock=t;s.aim=blend(s.aim,Number(Boolean(player.aiming)),.045);s.run=blend(s.run,Number(Boolean(player.sprinting)),.09);s.look=advanceLookLag(s.look,player.angle,player.pitch,step);
+    s.look=advanceLookLag(s.look,player.angle,player.pitch,Math.min(.5,Math.max(0,t-s.clock)));
+    s.clock=t;s.aim=blend(s.aim,Number(Boolean(player.aiming)),.045);s.run=blend(s.run,Number(Boolean(player.sprinting)),.09);
     const progress=weapon.reloadProgress(time),arc=Math.sin(progress*Math.PI),eased=s.aim*s.aim*(3-2*s.aim),hip=1-eased,raise=4*s.aim*(1-s.aim)*(1-arc);
     const recoil=weaponRecoil(profile,(time-player.weaponShotAt)/1000,s.aim,weapon.shotCount??0),sway=idleSway(t),lag=(1-.75*eased)*(1-arc);
     const bob=player.moveBlend*Math.sin(time*(player.sprinting?.015:.01))*.012,hold=hip*(1-arc)*(1-.65*Math.min(1,player.moveBlend));
@@ -287,7 +288,9 @@ export class Renderer {
     const r=this.weaponRoot;r.updateMatrixWorld(true);
     const shotAt=player.weaponShotAt/1000,muzzle=r.localToWorld(new THREE.Vector3(0,.0145,-.378)),axis=new THREE.Vector3(0,0,-1).transformDirection(r.matrixWorld);
     const port=r.localToWorld(new THREE.Vector3(.026,.034,-.02));
-    this.weaponFx.update({clock:t,shotAt,gate:time<this.muzzleUntil,aim:s.aim,shot:weapon.shotCount??0,muzzle,axis,port,up:viewUp(player.pitch??0),chamberAt:shotAt+.008});
+    // A slow frame may already be past the 50 ms window: the first frame after a shot event always flashes.
+    const fresh=(weapon.shotCount??0)!==this.flashShot&&time<this.muzzleUntil+200&&time-player.weaponShotAt>=0&&time-player.weaponShotAt<250;if(fresh)this.flashShot=weapon.shotCount;
+    this.weaponFx.update({clock:t,shotAt,gate:time<this.muzzleUntil,fresh,aim:s.aim,shot:weapon.shotCount??0,muzzle,axis,port,up:viewUp(player.pitch??0),chamberAt:shotAt+.008});
     this.weaponLighting.sync({sky:this.skyLight,sun:this.sun,camera:this.camera,daylight:1,pitch:player.pitch??0});
     // Semi-auto: the case leaves the port with the shot. World brass is keyed by shot, so no frame can duplicate it.
     const shot=weapon.shotCount??0,age=t-shotAt;
@@ -296,7 +299,7 @@ export class Renderer {
       const seed=(0xca7b^Math.imul(shot,0x9e3779b1))>>>0,n=i=>visualNoise(seed,i);
       const world=(v,target=new THREE.Vector3())=>target.set(...v).applyQuaternion(q).applyQuaternion(camera.quaternion);
       const v=profile.casing.velocity,align=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),-Math.PI/2);
-      this.weaponWorldFx.spawnEjecta({id:`m1:case:${shot}:${player.weaponShotAt}`,kind:profile.casing.kind,start:shotAt+.004,
+      this.weaponWorldFx.spawnEjecta({id:`m1:case:${shot}:${player.weaponShotAt}`,kind:profile.casing.kind,start:shotAt,
         origin:viewPointToWorld(port.clone(),camera,fov),velocity:world([v[0]*(.85+.3*n(1)),v[1]*(.85+.3*n(2)),v[2]*(.6+.8*n(3))]),
         rotation:camera.quaternion.clone().multiply(q.clone().multiply(align)),spinAxis:world([.3,1,.2]),spin:profile.casing.spin*(.8+.4*n(4)),
         ground:0,rest:profile.casing.rest,seed:n(5)});
@@ -335,7 +338,7 @@ export class Renderer {
     this.shake=12;
   }
   muzzle(now){this.muzzleUntil=now+60;this.shake=2;}
-  resetEffects(){this.particles=[];this.muzzleUntil=0;this.shake=0;this.weaponPose=null;this.weaponWorldFx.reset();this.m01?.resetEffects();}
+  resetEffects(){this.particles=[];this.muzzleUntil=0;this.shake=0;this.weaponPose=null;this.flashShot=undefined;this.weaponWorldFx.reset();this.m01?.resetEffects();}
   get diagnostics(){return {renderer:'Three.js',quality:this.quality,drawCalls:this.engine.info.render.calls,
     triangles:this.engine.info.render.triangles,geometries:this.engine.info.memory.geometries,textures:this.engine.info.memory.textures,
     assetFailures:this.assets.failures,models:Object.keys(this.models),weaponFx:{...this.weaponFx.stats,world:this.weaponWorldFx.diagnostics,lighting:this.weaponLighting.state}};}

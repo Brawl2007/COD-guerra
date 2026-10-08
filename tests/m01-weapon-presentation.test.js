@@ -288,3 +288,48 @@ test('independent renderers of the same restored mid-bolt state produce the same
     assert.equal(a.world.counts.casings,1,'restored after the eject marker: the case is in flight');
   }finally{views.forEach(x=>{x.v.dispose();x.world.dispose();});c.dispose();}
 });
+
+test('a slow frame that steps past the 60 ms window still shows the shot once at full strength, never again or after restore',async()=>{
+  const r=await rig();
+  try{
+    const {d,v}=r;let flashUntil=0;
+    // 5 fps: four 50 ms ticks per rendered frame; the shot fires in the first tick, like game.js substeps.
+    const slowFrame=(controls={})=>{const shots=d.sim.weapon.shotCount;d.step(controls);if(d.sim.weapon.shotCount>shots)flashUntil=d.sim.clock+.06;
+      for(let i=0;i<3;i++)d.step();const camera=new THREE.PerspectiveCamera(70,16/9,.05,7500);placeCamera(camera,d.sim.player);
+      v.update(d.sim,'low',flashUntil,{camera,viewFov:58});return v.stats.presentation;};
+    slowFrame();const shot=slowFrame({fire:true});assert.ok(d.sim.clock-d.sim.weapon.lastShot/1000>.06,'the window is already over');
+    assert.equal(shot.flash,1);assert.equal(shot.layers,3);
+    assert.equal(slowFrame().flash,0,'one flash per shot');
+    const save=d.sim.snapshot();while(d.sim.weapon.state!=='READY')slowFrame();slowFrame({fire:true});
+    d.sim.restoreSnapshot(save);flashUntil=0;assert.equal(slowFrame().flash,0,'a restored world never replays an old shot');
+  }finally{r.dispose();}
+});
+
+test('ejected pieces settle on the surface under their landing point, never inside a slope',()=>{
+  const world=new WeaponWorldFx(new THREE.Scene()),slope=(x,z)=>.4*x+.1*z;
+  try{
+    world.spawnEjecta({id:'s',kind:'7.92x57',start:0,origin:new THREE.Vector3(0,1.5,0),velocity:new THREE.Vector3(1.6,1.7,.2),rotation:new THREE.Quaternion(),
+      spinAxis:new THREE.Vector3(0,1,0),spin:20,ground:0,groundAt:slope,rest:20,seed:.5});
+    const item=world.items[0],rest=ejectaPose(item,30).position;
+    assert.ok(Math.abs(item.ground-slope(rest.x,rest.z))<.02,`ground ${item.ground} surface ${slope(rest.x,rest.z)}`);
+    assert.ok(rest.y>=slope(rest.x,rest.z));
+    world.spawnEjecta({id:'w',kind:'7.92x57',start:0,origin:new THREE.Vector3(0,1.5,0),velocity:new THREE.Vector3(1,1,0),rotation:new THREE.Quaternion(),
+      spinAxis:new THREE.Vector3(0,1,0),spin:20,ground:.2,groundAt:()=>NaN,rest:20,seed:.5});
+    assert.equal(world.items[1].ground,.2,'no surface answer keeps the start height');
+  }finally{world.dispose();}
+});
+
+test('look lag after the authoritative recoil pitch settles by READY at 4 fps as at 20 fps; sights exact',async()=>{
+  for(const ticksPerFrame of [1,5]){
+    const r=await rig();
+    try{
+      const {d,v}=r,camera=new THREE.PerspectiveCamera(70,16/9,.05,7500);let flashUntil=0;
+      const frame=(controls={})=>{const shots=d.sim.weapon.shotCount;d.step(controls);if(d.sim.weapon.shotCount>shots)flashUntil=d.sim.clock+.06;
+        for(let i=1;i<ticksPerFrame;i++)d.step({aim:true});placeCamera(camera,d.sim.player);v.update(d.sim,'low',flashUntil,{camera,viewFov:58});};
+      for(let i=0;i<4;i++)frame({aim:true});frame({aim:true,fire:true});
+      while(d.sim.weapon.state!=='READY')frame({aim:true});
+      assert.equal(v.stats.presentation.lookPitch,0,`${ticksPerFrame} ticks/frame`);
+      const a=alignmentReport(v);assert.ok(a.horizontalPixels<1e-3&&a.verticalPixels<1e-3,`${a.horizontalPixels} ${a.verticalPixels}`);
+    }finally{r.dispose();}
+  }
+});
