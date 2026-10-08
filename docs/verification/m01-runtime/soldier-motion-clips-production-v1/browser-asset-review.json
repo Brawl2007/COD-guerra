@@ -1,0 +1,1505 @@
+{
+  "task": "M01-SOLDIER-MOTION-CLIPS-PRODUCTION-V1",
+  "package_sha256": "dbcb3e56015c1902d691c9fdb1783997e86c0a69e7c2abc29135ea773611031c",
+  "kind": "isolated GLTFLoader/AnimationMixer asset review, not gameplay/playtest/FPS",
+  "captures": [
+    {
+      "file": "captures/sprint-000.jpg",
+      "phase": 0,
+      "name": "sprint",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "5966c47c",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/sprint-025.jpg",
+      "phase": 0.25,
+      "name": "sprint",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "d9addfbe",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/sprint-050.jpg",
+      "phase": 0.5,
+      "name": "sprint",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "7b10e6c2",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/sprint-075.jpg",
+      "phase": 0.75,
+      "name": "sprint",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "2affa7ec",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/sprint-100.jpg",
+      "phase": 1,
+      "name": "sprint",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "5966c47c",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/crouch_walk-000.jpg",
+      "phase": 0,
+      "name": "crouch_walk",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "4a69f4dc",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/crouch_walk-025.jpg",
+      "phase": 0.25,
+      "name": "crouch_walk",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "f1edc6c7",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/crouch_walk-050.jpg",
+      "phase": 0.5,
+      "name": "crouch_walk",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "4c2064dc",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/crouch_walk-075.jpg",
+      "phase": 0.75,
+      "name": "crouch_walk",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "b49145e5",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/crouch_walk-100.jpg",
+      "phase": 1,
+      "name": "crouch_walk",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "4a69f4dc",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/turn_left-000.jpg",
+      "phase": 0,
+      "name": "turn_left",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "399d7eb6",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/turn_left-025.jpg",
+      "phase": 0.25,
+      "name": "turn_left",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "a520a29b",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/turn_left-050.jpg",
+      "phase": 0.5,
+      "name": "turn_left",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "40db1c6b",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/turn_left-075.jpg",
+      "phase": 0.75,
+      "name": "turn_left",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "ffa096d2",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/turn_left-100.jpg",
+      "phase": 1,
+      "name": "turn_left",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "51834131",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/turn_right-000.jpg",
+      "phase": 0,
+      "name": "turn_right",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "399d7eb6",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/turn_right-025.jpg",
+      "phase": 0.25,
+      "name": "turn_right",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "f37bd331",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/turn_right-050.jpg",
+      "phase": 0.5,
+      "name": "turn_right",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "7a0fc62a",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/turn_right-075.jpg",
+      "phase": 0.75,
+      "name": "turn_right",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "534b1deb",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/turn_right-100.jpg",
+      "phase": 1,
+      "name": "turn_right",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "72b25f26",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/hit_front-000.jpg",
+      "phase": 0,
+      "name": "hit_front",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "b8b40733",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/hit_front-025.jpg",
+      "phase": 0.25,
+      "name": "hit_front",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "19c0902a",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/hit_front-050.jpg",
+      "phase": 0.5,
+      "name": "hit_front",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "0bff78af",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/hit_front-075.jpg",
+      "phase": 0.75,
+      "name": "hit_front",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "02c18a0b",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/hit_front-100.jpg",
+      "phase": 1,
+      "name": "hit_front",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "b8b40733",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/near_miss_duck-000.jpg",
+      "phase": 0,
+      "name": "near_miss_duck",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "54f28609",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/near_miss_duck-025.jpg",
+      "phase": 0.25,
+      "name": "near_miss_duck",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "344504e6",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/near_miss_duck-050.jpg",
+      "phase": 0.5,
+      "name": "near_miss_duck",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "47438a9e",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/near_miss_duck-075.jpg",
+      "phase": 0.75,
+      "name": "near_miss_duck",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "c6bc53a1",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    },
+    {
+      "file": "captures/near_miss_duck-100.jpg",
+      "phase": 1,
+      "name": "near_miss_duck",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "54f28609",
+      "renderCalls": 32,
+      "views": [
+        "front",
+        "right side"
+      ],
+      "comparison": true
+    }
+  ],
+  "videos": [
+    {
+      "file": "sequences/sprint.mp4",
+      "fps": 30,
+      "frames": 58,
+      "distinct_pose_signatures": 58,
+      "duration_s": 1.9333333333333333,
+      "content": "real mixer samples in frontal/side views; base left, new right"
+    },
+    {
+      "file": "sequences/crouch_walk.mp4",
+      "fps": 30,
+      "frames": 87,
+      "distinct_pose_signatures": 87,
+      "duration_s": 2.9,
+      "content": "real mixer samples in frontal/side views; base left, new right"
+    },
+    {
+      "file": "sequences/turn_left.mp4",
+      "fps": 30,
+      "frames": 47,
+      "distinct_pose_signatures": 31,
+      "duration_s": 1.5666666666666667,
+      "content": "real mixer samples in frontal/side views; base left, new right"
+    },
+    {
+      "file": "sequences/turn_right.mp4",
+      "fps": 30,
+      "frames": 47,
+      "distinct_pose_signatures": 31,
+      "duration_s": 1.5666666666666667,
+      "content": "real mixer samples in frontal/side views; base left, new right"
+    },
+    {
+      "file": "sequences/hit_front.mp4",
+      "fps": 30,
+      "frames": 35,
+      "distinct_pose_signatures": 23,
+      "duration_s": 1.1666666666666667,
+      "content": "real mixer samples in frontal/side views; base left, new right"
+    },
+    {
+      "file": "sequences/near_miss_duck.mp4",
+      "fps": 30,
+      "frames": 42,
+      "distinct_pose_signatures": 30,
+      "duration_s": 1.4,
+      "content": "real mixer samples in frontal/side views; base left, new right"
+    }
+  ],
+  "variants": [
+    {
+      "file": "captures/compat-pl-lod0-sprint.jpg",
+      "phase": 0.25,
+      "name": "sprint",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "d9addfbe",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-pl-lod0-crouch_walk.jpg",
+      "phase": 0.25,
+      "name": "crouch_walk",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "f1edc6c7",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-pl-lod0-turn_left.jpg",
+      "phase": 0.25,
+      "name": "turn_left",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "a520a29b",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-pl-lod0-turn_right.jpg",
+      "phase": 0.25,
+      "name": "turn_right",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "f37bd331",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-pl-lod0-hit_front.jpg",
+      "phase": 0.17,
+      "name": "hit_front",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "7ba267f2",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-pl-lod0-near_miss_duck.jpg",
+      "phase": 0.3,
+      "name": "near_miss_duck",
+      "nation": "pl",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 14861,
+        "bones": 61
+      },
+      "candidatePoseSignature": "6bc58ead",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-pl-lod1-sprint.jpg",
+      "phase": 0.25,
+      "name": "sprint",
+      "nation": "pl",
+      "lod": 1,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 6022,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 6022,
+        "bones": 61
+      },
+      "candidatePoseSignature": "d9addfbe",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-pl-lod1-crouch_walk.jpg",
+      "phase": 0.25,
+      "name": "crouch_walk",
+      "nation": "pl",
+      "lod": 1,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 6022,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 6022,
+        "bones": 61
+      },
+      "candidatePoseSignature": "f1edc6c7",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-pl-lod1-turn_left.jpg",
+      "phase": 0.25,
+      "name": "turn_left",
+      "nation": "pl",
+      "lod": 1,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 6022,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 6022,
+        "bones": 61
+      },
+      "candidatePoseSignature": "a520a29b",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-pl-lod1-turn_right.jpg",
+      "phase": 0.25,
+      "name": "turn_right",
+      "nation": "pl",
+      "lod": 1,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 6022,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 6022,
+        "bones": 61
+      },
+      "candidatePoseSignature": "f37bd331",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-pl-lod1-hit_front.jpg",
+      "phase": 0.17,
+      "name": "hit_front",
+      "nation": "pl",
+      "lod": 1,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 6022,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 6022,
+        "bones": 61
+      },
+      "candidatePoseSignature": "7ba267f2",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-pl-lod1-near_miss_duck.jpg",
+      "phase": 0.3,
+      "name": "near_miss_duck",
+      "nation": "pl",
+      "lod": 1,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 6022,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 6022,
+        "bones": 61
+      },
+      "candidatePoseSignature": "6bc58ead",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-pl-lod2-sprint.jpg",
+      "phase": 0.25,
+      "name": "sprint",
+      "nation": "pl",
+      "lod": 2,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 1895,
+        "bones": 28
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 1895,
+        "bones": 28
+      },
+      "candidatePoseSignature": "d9addfbe",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-pl-lod2-crouch_walk.jpg",
+      "phase": 0.25,
+      "name": "crouch_walk",
+      "nation": "pl",
+      "lod": 2,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 1895,
+        "bones": 28
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 1895,
+        "bones": 28
+      },
+      "candidatePoseSignature": "f1edc6c7",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-pl-lod2-turn_left.jpg",
+      "phase": 0.25,
+      "name": "turn_left",
+      "nation": "pl",
+      "lod": 2,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 1895,
+        "bones": 28
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 1895,
+        "bones": 28
+      },
+      "candidatePoseSignature": "a520a29b",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-pl-lod2-turn_right.jpg",
+      "phase": 0.25,
+      "name": "turn_right",
+      "nation": "pl",
+      "lod": 2,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 1895,
+        "bones": 28
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 1895,
+        "bones": 28
+      },
+      "candidatePoseSignature": "f37bd331",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-pl-lod2-hit_front.jpg",
+      "phase": 0.17,
+      "name": "hit_front",
+      "nation": "pl",
+      "lod": 2,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 1895,
+        "bones": 28
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 1895,
+        "bones": 28
+      },
+      "candidatePoseSignature": "7ba267f2",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-pl-lod2-near_miss_duck.jpg",
+      "phase": 0.3,
+      "name": "near_miss_duck",
+      "nation": "pl",
+      "lod": 2,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 1895,
+        "bones": 28
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 1895,
+        "bones": 28
+      },
+      "candidatePoseSignature": "6bc58ead",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-de-lod0-sprint.jpg",
+      "phase": 0.25,
+      "name": "sprint",
+      "nation": "de",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 16055,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 16055,
+        "bones": 61
+      },
+      "candidatePoseSignature": "d9addfbe",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-de-lod0-crouch_walk.jpg",
+      "phase": 0.25,
+      "name": "crouch_walk",
+      "nation": "de",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 16055,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 16055,
+        "bones": 61
+      },
+      "candidatePoseSignature": "f1edc6c7",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-de-lod0-turn_left.jpg",
+      "phase": 0.25,
+      "name": "turn_left",
+      "nation": "de",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 16055,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 16055,
+        "bones": 61
+      },
+      "candidatePoseSignature": "a520a29b",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-de-lod0-turn_right.jpg",
+      "phase": 0.25,
+      "name": "turn_right",
+      "nation": "de",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 16055,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 16055,
+        "bones": 61
+      },
+      "candidatePoseSignature": "f37bd331",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-de-lod0-hit_front.jpg",
+      "phase": 0.17,
+      "name": "hit_front",
+      "nation": "de",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 16055,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 16055,
+        "bones": 61
+      },
+      "candidatePoseSignature": "7ba267f2",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-de-lod0-near_miss_duck.jpg",
+      "phase": 0.3,
+      "name": "near_miss_duck",
+      "nation": "de",
+      "lod": 0,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 16055,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 16055,
+        "bones": 61
+      },
+      "candidatePoseSignature": "6bc58ead",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-de-lod1-sprint.jpg",
+      "phase": 0.25,
+      "name": "sprint",
+      "nation": "de",
+      "lod": 1,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 6446,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 6446,
+        "bones": 61
+      },
+      "candidatePoseSignature": "d9addfbe",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-de-lod1-crouch_walk.jpg",
+      "phase": 0.25,
+      "name": "crouch_walk",
+      "nation": "de",
+      "lod": 1,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 6446,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 6446,
+        "bones": 61
+      },
+      "candidatePoseSignature": "f1edc6c7",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-de-lod1-turn_left.jpg",
+      "phase": 0.25,
+      "name": "turn_left",
+      "nation": "de",
+      "lod": 1,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 6446,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 6446,
+        "bones": 61
+      },
+      "candidatePoseSignature": "a520a29b",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-de-lod1-turn_right.jpg",
+      "phase": 0.25,
+      "name": "turn_right",
+      "nation": "de",
+      "lod": 1,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 6446,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 6446,
+        "bones": 61
+      },
+      "candidatePoseSignature": "f37bd331",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-de-lod1-hit_front.jpg",
+      "phase": 0.17,
+      "name": "hit_front",
+      "nation": "de",
+      "lod": 1,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 6446,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 6446,
+        "bones": 61
+      },
+      "candidatePoseSignature": "7ba267f2",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-de-lod1-near_miss_duck.jpg",
+      "phase": 0.3,
+      "name": "near_miss_duck",
+      "nation": "de",
+      "lod": 1,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 6446,
+        "bones": 61
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 6446,
+        "bones": 61
+      },
+      "candidatePoseSignature": "6bc58ead",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-de-lod2-sprint.jpg",
+      "phase": 0.25,
+      "name": "sprint",
+      "nation": "de",
+      "lod": 2,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 2059,
+        "bones": 28
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 2059,
+        "bones": 28
+      },
+      "candidatePoseSignature": "d9addfbe",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-de-lod2-crouch_walk.jpg",
+      "phase": 0.25,
+      "name": "crouch_walk",
+      "nation": "de",
+      "lod": 2,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 2059,
+        "bones": 28
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 2059,
+        "bones": 28
+      },
+      "candidatePoseSignature": "f1edc6c7",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-de-lod2-turn_left.jpg",
+      "phase": 0.25,
+      "name": "turn_left",
+      "nation": "de",
+      "lod": 2,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 2059,
+        "bones": 28
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 2059,
+        "bones": 28
+      },
+      "candidatePoseSignature": "a520a29b",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-de-lod2-turn_right.jpg",
+      "phase": 0.25,
+      "name": "turn_right",
+      "nation": "de",
+      "lod": 2,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 2059,
+        "bones": 28
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 2059,
+        "bones": 28
+      },
+      "candidatePoseSignature": "f37bd331",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-de-lod2-hit_front.jpg",
+      "phase": 0.17,
+      "name": "hit_front",
+      "nation": "de",
+      "lod": 2,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 2059,
+        "bones": 28
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 2059,
+        "bones": 28
+      },
+      "candidatePoseSignature": "7ba267f2",
+      "renderCalls": 32
+    },
+    {
+      "file": "captures/compat-de-lod2-near_miss_duck.jpg",
+      "phase": 0.3,
+      "name": "near_miss_duck",
+      "nation": "de",
+      "lod": 2,
+      "candidate": {
+        "meshes": 6,
+        "triangles": 2059,
+        "bones": 28
+      },
+      "baseline": {
+        "meshes": 6,
+        "triangles": 2059,
+        "bones": 28
+      },
+      "candidatePoseSignature": "6bc58ead",
+      "renderCalls": 32
+    }
+  ],
+  "errors": [],
+  "browser": "153.0.8010.0",
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "package": {
+    "clips": [
+      {
+        "name": "sprint",
+        "duration": 0.6399999856948853,
+        "tracks": 64
+      },
+      {
+        "name": "crouch_walk",
+        "duration": 0.9599999785423279,
+        "tracks": 64
+      },
+      {
+        "name": "turn_left",
+        "duration": 1.1399999856948853,
+        "tracks": 64
+      },
+      {
+        "name": "turn_right",
+        "duration": 1.1399999856948853,
+        "tracks": 64
+      },
+      {
+        "name": "hit_front",
+        "duration": 0.7599999904632568,
+        "tracks": 64
+      },
+      {
+        "name": "near_miss_duck",
+        "duration": 0.9800000190734863,
+        "tracks": 64
+      }
+    ],
+    "packageMeshes": 0,
+    "renderCallsBefore": 32,
+    "renderCallsAfter": 32,
+    "additionalCalls": 0
+  },
+  "pass": true
+}

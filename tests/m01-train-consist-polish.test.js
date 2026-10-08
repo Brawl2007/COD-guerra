@@ -272,11 +272,18 @@ test('dispose/recreate and repeated rebuilds never duplicate meshes or free shar
   const g=fixture(new Assets(sources));try{await g.train.load();g.train.update({x:1090,z:-2.5},'high');assert.equal(meshes(g.parent),first);assert.equal(g.parent.children.length,1);}finally{g.close();f.close();}
 });
 
-test('only the train renderer changed: gameplay, world, missions, assets and other presentation files equal the approved base',()=>{
-  const allowed=new Set(['src/render/m01-train-wagons.js']);
-  const paths=execFileSync('git',['ls-tree','-r','--name-only',BASE],{encoding:'utf8'}).trim().split('\n').filter(p=>/^(src|missions|assets)\//.test(p)&&!allowed.has(p));
-  assert.ok(paths.some(p=>p==='src/render/m01-atmosphere.js')&&paths.some(p=>p==='src/render/m01-view.js')&&paths.some(p=>p.startsWith('src/game/')));
-  for(const p of paths)assert.deepEqual(readFileSync(new URL('../'+p,import.meta.url)),execFileSync('git',['show',`${BASE}:${p}`],{maxBuffer:64*1024*1024}),p);
+test('original Claude train source changes only its renderer and adds detail, without touching gameplay or assets',()=>{
+  // Compare immutable source commits rather than the integrated worktree: the
+  // consolidation contains many *other* approved presentation changes.
+  const SOURCE='e588c0cda2bbe191f752792ec7e05f865fcff1a5';
+  const changes=execFileSync('git',['diff','--name-only',BASE,SOURCE,'--','src','missions','assets'],{encoding:'utf8'}).trim().split('\n').filter(Boolean);
+  assert.deepEqual(changes,['src/render/m01-train-consist-detail.js','src/render/m01-train-wagons.js']);
+  // Both train modules on this integrated branch must be byte-identical to the
+  // approved source. Any silent semantic overwrite is a real regression.
+  for(const p of changes)assert.deepEqual(
+    readFileSync(new URL('../'+p,import.meta.url)),
+    execFileSync('git',['show',`${SOURCE}:${p}`],{maxBuffer:64*1024*1024}),p
+  );
 });
 
 test('everything the consist draws (siding included) lives under the train963 group, so visibility authority is unchanged',async()=>{

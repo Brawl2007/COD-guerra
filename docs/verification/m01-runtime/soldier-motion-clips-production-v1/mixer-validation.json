@@ -1,0 +1,1106 @@
+{
+  "schema": 1,
+  "task": "M01-SOLDIER-MOTION-CLIPS-PRODUCTION-V1",
+  "package_sha256": "dbcb3e56015c1902d691c9fdb1783997e86c0a69e7c2abc29135ea773611031c",
+  "loader": "Three.js GLTFLoader 0.186.1 (real mesh/skin/tracks; texture bindings removed only in Node)",
+  "sampler": "AnimationMixer LoopOnce; bones and actual skinned boot vertices at 240 Hz, including interpolated subframes",
+  "fps": 240,
+  "skinFps": 240,
+  "variants": [
+    {
+      "nation": "pl",
+      "lod": 0,
+      "file": "m01_soldier_pl_lod0.glb",
+      "skin_joints": 61,
+      "clips": [
+        {
+          "name": "sprint",
+          "duration_s": 0.6399999856948853,
+          "samples": 155,
+          "maxGripError_m": 0.000002823,
+          "maxLengthError_m": 2.8e-8,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.094741956,
+          "maxContactDrift_m": 0.001088231,
+          "minElbowChestDistance_m": 0.252450513,
+          "maxPelvisExcursion_m": 0.053780317,
+          "skinSamples": 155,
+          "finiteVertices": 195765,
+          "footMinimum_m": {
+            "l": 0.002071775,
+            "r": 0.0019053
+          },
+          "contactMinimum_m": {
+            "l": 0.002071775,
+            "r": 0.0019053
+          },
+          "contactMaximum_m": {
+            "l": 0.002840921,
+            "r": 0.002840908
+          },
+          "endpointPosition_m": 3.6e-8,
+          "endpointAngle_rad": 8.9e-8
+        },
+        {
+          "name": "crouch_walk",
+          "duration_s": 0.9599999785423279,
+          "samples": 232,
+          "maxGripError_m": 4.31e-7,
+          "maxLengthError_m": 1.7e-8,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.038251664,
+          "maxContactDrift_m": 0.00002857,
+          "minElbowChestDistance_m": 0.25064915,
+          "maxPelvisExcursion_m": 0.023342253,
+          "skinSamples": 232,
+          "finiteVertices": 293016,
+          "footMinimum_m": {
+            "l": 0.00282934,
+            "r": 0.002827755
+          },
+          "contactMinimum_m": {
+            "l": 0.00282934,
+            "r": 0.002827755
+          },
+          "contactMaximum_m": {
+            "l": 0.002840876,
+            "r": 0.002851747
+          },
+          "endpointPosition_m": 1.8e-8,
+          "endpointAngle_rad": 6.7e-8
+        },
+        {
+          "name": "turn_left",
+          "duration_s": 1.1399999856948853,
+          "samples": 275,
+          "maxGripError_m": 0.000087199,
+          "maxLengthError_m": 9e-9,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.023489347,
+          "maxContactDrift_m": 0.00041325,
+          "minElbowChestDistance_m": 0.215482341,
+          "maxPelvisExcursion_m": 0.056662013,
+          "skinSamples": 275,
+          "finiteVertices": 347325,
+          "footMinimum_m": {
+            "l": 0.002786536,
+            "r": 0.002795502
+          },
+          "contactMinimum_m": {
+            "l": 0.002786536,
+            "r": 0.002795502
+          },
+          "contactMaximum_m": {
+            "l": 0.002843314,
+            "r": 0.002993597
+          },
+          "endpointPosition_m": 0.540453393,
+          "endpointAngle_rad": 1.683204953
+        },
+        {
+          "name": "turn_right",
+          "duration_s": 1.1399999856948853,
+          "samples": 275,
+          "maxGripError_m": 0.000085341,
+          "maxLengthError_m": 9e-9,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.023667501,
+          "maxContactDrift_m": 0.000413258,
+          "minElbowChestDistance_m": 0.227383745,
+          "maxPelvisExcursion_m": 0.056662013,
+          "skinSamples": 275,
+          "finiteVertices": 347325,
+          "footMinimum_m": {
+            "l": 0.002795052,
+            "r": 0.002787365
+          },
+          "contactMinimum_m": {
+            "l": 0.002795052,
+            "r": 0.002787365
+          },
+          "contactMaximum_m": {
+            "l": 0.002993556,
+            "r": 0.002843332
+          },
+          "endpointPosition_m": 0.540453393,
+          "endpointAngle_rad": 1.690760235
+        },
+        {
+          "name": "hit_front",
+          "duration_s": 0.7599999904632568,
+          "samples": 184,
+          "maxGripError_m": 0.002049782,
+          "maxLengthError_m": 7e-9,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.056538527,
+          "maxContactDrift_m": 0.000033851,
+          "minElbowChestDistance_m": 0.211459703,
+          "maxPelvisExcursion_m": 0.04350422,
+          "skinSamples": 184,
+          "finiteVertices": 232392,
+          "footMinimum_m": {
+            "l": 0.002814307,
+            "r": 0.002812997
+          },
+          "contactMinimum_m": {
+            "l": 0.002814307,
+            "r": 0.002812997
+          },
+          "contactMaximum_m": {
+            "l": 0.002840903,
+            "r": 0.002840903
+          },
+          "endpointPosition_m": 1.5e-8,
+          "endpointAngle_rad": 9.4e-8
+        },
+        {
+          "name": "near_miss_duck",
+          "duration_s": 0.9800000190734863,
+          "samples": 237,
+          "maxGripError_m": 0.000102825,
+          "maxLengthError_m": 1.2e-8,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.041088379,
+          "maxContactDrift_m": 0.000638527,
+          "minElbowChestDistance_m": 0.227383753,
+          "maxPelvisExcursion_m": 0.216501706,
+          "skinSamples": 237,
+          "finiteVertices": 299331,
+          "footMinimum_m": {
+            "l": 0.002234137,
+            "r": 0.00220616
+          },
+          "contactMinimum_m": {
+            "l": 0.002234137,
+            "r": 0.00220616
+          },
+          "contactMaximum_m": {
+            "l": 0.002840927,
+            "r": 0.002840917
+          },
+          "endpointPosition_m": 0,
+          "endpointAngle_rad": 3e-8
+        }
+      ]
+    },
+    {
+      "nation": "pl",
+      "lod": 1,
+      "file": "m01_soldier_pl_lod1.glb",
+      "skin_joints": 61,
+      "clips": [
+        {
+          "name": "sprint",
+          "duration_s": 0.6399999856948853,
+          "samples": 155,
+          "maxGripError_m": 0.000002823,
+          "maxLengthError_m": 2.8e-8,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.094741956,
+          "maxContactDrift_m": 0.001088231,
+          "minElbowChestDistance_m": 0.252450513,
+          "maxPelvisExcursion_m": 0.053780317,
+          "skinSamples": 155,
+          "finiteVertices": 113615,
+          "footMinimum_m": {
+            "l": 0.002071775,
+            "r": 0.0019053
+          },
+          "contactMinimum_m": {
+            "l": 0.002071775,
+            "r": 0.0019053
+          },
+          "contactMaximum_m": {
+            "l": 0.002840921,
+            "r": 0.002840908
+          },
+          "endpointPosition_m": 3.6e-8,
+          "endpointAngle_rad": 8.9e-8
+        },
+        {
+          "name": "crouch_walk",
+          "duration_s": 0.9599999785423279,
+          "samples": 232,
+          "maxGripError_m": 4.31e-7,
+          "maxLengthError_m": 1.7e-8,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.038251664,
+          "maxContactDrift_m": 0.00002857,
+          "minElbowChestDistance_m": 0.25064915,
+          "maxPelvisExcursion_m": 0.023342253,
+          "skinSamples": 232,
+          "finiteVertices": 170056,
+          "footMinimum_m": {
+            "l": 0.00282934,
+            "r": 0.002827755
+          },
+          "contactMinimum_m": {
+            "l": 0.00282934,
+            "r": 0.002827755
+          },
+          "contactMaximum_m": {
+            "l": 0.002840876,
+            "r": 0.002851747
+          },
+          "endpointPosition_m": 1.8e-8,
+          "endpointAngle_rad": 6.7e-8
+        },
+        {
+          "name": "turn_left",
+          "duration_s": 1.1399999856948853,
+          "samples": 275,
+          "maxGripError_m": 0.000087199,
+          "maxLengthError_m": 9e-9,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.023489347,
+          "maxContactDrift_m": 0.00041325,
+          "minElbowChestDistance_m": 0.215482341,
+          "maxPelvisExcursion_m": 0.056662013,
+          "skinSamples": 275,
+          "finiteVertices": 201575,
+          "footMinimum_m": {
+            "l": 0.002786536,
+            "r": 0.002795502
+          },
+          "contactMinimum_m": {
+            "l": 0.002786536,
+            "r": 0.002795502
+          },
+          "contactMaximum_m": {
+            "l": 0.002843314,
+            "r": 0.002993597
+          },
+          "endpointPosition_m": 0.540453393,
+          "endpointAngle_rad": 1.683204953
+        },
+        {
+          "name": "turn_right",
+          "duration_s": 1.1399999856948853,
+          "samples": 275,
+          "maxGripError_m": 0.000085341,
+          "maxLengthError_m": 9e-9,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.023667501,
+          "maxContactDrift_m": 0.000413258,
+          "minElbowChestDistance_m": 0.227383745,
+          "maxPelvisExcursion_m": 0.056662013,
+          "skinSamples": 275,
+          "finiteVertices": 201575,
+          "footMinimum_m": {
+            "l": 0.002795052,
+            "r": 0.002787365
+          },
+          "contactMinimum_m": {
+            "l": 0.002795052,
+            "r": 0.002787365
+          },
+          "contactMaximum_m": {
+            "l": 0.002993556,
+            "r": 0.002843332
+          },
+          "endpointPosition_m": 0.540453393,
+          "endpointAngle_rad": 1.690760235
+        },
+        {
+          "name": "hit_front",
+          "duration_s": 0.7599999904632568,
+          "samples": 184,
+          "maxGripError_m": 0.002049782,
+          "maxLengthError_m": 7e-9,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.056538527,
+          "maxContactDrift_m": 0.000033851,
+          "minElbowChestDistance_m": 0.211459703,
+          "maxPelvisExcursion_m": 0.04350422,
+          "skinSamples": 184,
+          "finiteVertices": 134872,
+          "footMinimum_m": {
+            "l": 0.002814307,
+            "r": 0.002812997
+          },
+          "contactMinimum_m": {
+            "l": 0.002814307,
+            "r": 0.002812997
+          },
+          "contactMaximum_m": {
+            "l": 0.002840903,
+            "r": 0.002840903
+          },
+          "endpointPosition_m": 1.5e-8,
+          "endpointAngle_rad": 9.4e-8
+        },
+        {
+          "name": "near_miss_duck",
+          "duration_s": 0.9800000190734863,
+          "samples": 237,
+          "maxGripError_m": 0.000102825,
+          "maxLengthError_m": 1.2e-8,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.041088379,
+          "maxContactDrift_m": 0.000638527,
+          "minElbowChestDistance_m": 0.227383753,
+          "maxPelvisExcursion_m": 0.216501706,
+          "skinSamples": 237,
+          "finiteVertices": 173721,
+          "footMinimum_m": {
+            "l": 0.002234137,
+            "r": 0.00220616
+          },
+          "contactMinimum_m": {
+            "l": 0.002234137,
+            "r": 0.00220616
+          },
+          "contactMaximum_m": {
+            "l": 0.002840927,
+            "r": 0.002840917
+          },
+          "endpointPosition_m": 0,
+          "endpointAngle_rad": 3e-8
+        }
+      ]
+    },
+    {
+      "nation": "pl",
+      "lod": 2,
+      "file": "m01_soldier_pl_lod2.glb",
+      "skin_joints": 28,
+      "clips": [
+        {
+          "name": "sprint",
+          "duration_s": 0.6399999856948853,
+          "samples": 155,
+          "maxGripError_m": 0.000002823,
+          "maxLengthError_m": 2.8e-8,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.094741956,
+          "maxContactDrift_m": 0.001088231,
+          "minElbowChestDistance_m": 0.252450513,
+          "maxPelvisExcursion_m": 0.053780317,
+          "skinSamples": 155,
+          "finiteVertices": 31620,
+          "footMinimum_m": {
+            "l": 0.002090856,
+            "r": 0.002233069
+          },
+          "contactMinimum_m": {
+            "l": 0.002090856,
+            "r": 0.002233069
+          },
+          "contactMaximum_m": {
+            "l": 0.002869036,
+            "r": 0.003168252
+          },
+          "endpointPosition_m": 3.6e-8,
+          "endpointAngle_rad": 8.9e-8
+        },
+        {
+          "name": "crouch_walk",
+          "duration_s": 0.9599999785423279,
+          "samples": 232,
+          "maxGripError_m": 4.31e-7,
+          "maxLengthError_m": 1.7e-8,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.038251664,
+          "maxContactDrift_m": 0.00002857,
+          "minElbowChestDistance_m": 0.25064915,
+          "maxPelvisExcursion_m": 0.023342253,
+          "skinSamples": 232,
+          "finiteVertices": 47328,
+          "footMinimum_m": {
+            "l": 0.00285719,
+            "r": 0.003155069
+          },
+          "contactMinimum_m": {
+            "l": 0.00285719,
+            "r": 0.003155069
+          },
+          "contactMaximum_m": {
+            "l": 0.002868984,
+            "r": 0.003179093
+          },
+          "endpointPosition_m": 1.8e-8,
+          "endpointAngle_rad": 6.7e-8
+        },
+        {
+          "name": "turn_left",
+          "duration_s": 1.1399999856948853,
+          "samples": 275,
+          "maxGripError_m": 0.000087199,
+          "maxLengthError_m": 9e-9,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.023489347,
+          "maxContactDrift_m": 0.00041325,
+          "minElbowChestDistance_m": 0.215482341,
+          "maxPelvisExcursion_m": 0.056662013,
+          "skinSamples": 275,
+          "finiteVertices": 56100,
+          "footMinimum_m": {
+            "l": 0.002842966,
+            "r": 0.003122348
+          },
+          "contactMinimum_m": {
+            "l": 0.002842966,
+            "r": 0.003122348
+          },
+          "contactMaximum_m": {
+            "l": 0.002871692,
+            "r": 0.003320939
+          },
+          "endpointPosition_m": 0.540453393,
+          "endpointAngle_rad": 1.683204953
+        },
+        {
+          "name": "turn_right",
+          "duration_s": 1.1399999856948853,
+          "samples": 275,
+          "maxGripError_m": 0.000085341,
+          "maxLengthError_m": 9e-9,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.023667501,
+          "maxContactDrift_m": 0.000413258,
+          "minElbowChestDistance_m": 0.227383745,
+          "maxPelvisExcursion_m": 0.056662013,
+          "skinSamples": 275,
+          "finiteVertices": 56100,
+          "footMinimum_m": {
+            "l": 0.002845136,
+            "r": 0.003114204
+          },
+          "contactMinimum_m": {
+            "l": 0.002845136,
+            "r": 0.003114204
+          },
+          "contactMaximum_m": {
+            "l": 0.003021647,
+            "r": 0.003170682
+          },
+          "endpointPosition_m": 0.540453393,
+          "endpointAngle_rad": 1.690760235
+        },
+        {
+          "name": "hit_front",
+          "duration_s": 0.7599999904632568,
+          "samples": 184,
+          "maxGripError_m": 0.002049782,
+          "maxLengthError_m": 7e-9,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.056538527,
+          "maxContactDrift_m": 0.000033851,
+          "minElbowChestDistance_m": 0.211459703,
+          "maxPelvisExcursion_m": 0.04350422,
+          "skinSamples": 184,
+          "finiteVertices": 37536,
+          "footMinimum_m": {
+            "l": 0.002842214,
+            "r": 0.003140105
+          },
+          "contactMinimum_m": {
+            "l": 0.002842214,
+            "r": 0.003140105
+          },
+          "contactMaximum_m": {
+            "l": 0.002869023,
+            "r": 0.003168246
+          },
+          "endpointPosition_m": 1.5e-8,
+          "endpointAngle_rad": 9.4e-8
+        },
+        {
+          "name": "near_miss_duck",
+          "duration_s": 0.9800000190734863,
+          "samples": 237,
+          "maxGripError_m": 0.000102825,
+          "maxLengthError_m": 1.2e-8,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.041088379,
+          "maxContactDrift_m": 0.000638527,
+          "minElbowChestDistance_m": 0.227383753,
+          "maxPelvisExcursion_m": 0.216501706,
+          "skinSamples": 237,
+          "finiteVertices": 48348,
+          "footMinimum_m": {
+            "l": 0.002262341,
+            "r": 0.002533539
+          },
+          "contactMinimum_m": {
+            "l": 0.002262341,
+            "r": 0.002533539
+          },
+          "contactMaximum_m": {
+            "l": 0.002869042,
+            "r": 0.003168261
+          },
+          "endpointPosition_m": 0,
+          "endpointAngle_rad": 3e-8
+        }
+      ]
+    },
+    {
+      "nation": "de",
+      "lod": 0,
+      "file": "m01_soldier_de_lod0.glb",
+      "skin_joints": 61,
+      "clips": [
+        {
+          "name": "sprint",
+          "duration_s": 0.6399999856948853,
+          "samples": 155,
+          "maxGripError_m": 0.000002823,
+          "maxLengthError_m": 2.8e-8,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.094741956,
+          "maxContactDrift_m": 0.001088231,
+          "minElbowChestDistance_m": 0.252450513,
+          "maxPelvisExcursion_m": 0.053780317,
+          "skinSamples": 155,
+          "finiteVertices": 151280,
+          "footMinimum_m": {
+            "l": 0.002071775,
+            "r": 0.0019053
+          },
+          "contactMinimum_m": {
+            "l": 0.002071775,
+            "r": 0.0019053
+          },
+          "contactMaximum_m": {
+            "l": 0.002840921,
+            "r": 0.002840908
+          },
+          "endpointPosition_m": 3.6e-8,
+          "endpointAngle_rad": 8.9e-8
+        },
+        {
+          "name": "crouch_walk",
+          "duration_s": 0.9599999785423279,
+          "samples": 232,
+          "maxGripError_m": 4.31e-7,
+          "maxLengthError_m": 1.7e-8,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.038251664,
+          "maxContactDrift_m": 0.00002857,
+          "minElbowChestDistance_m": 0.25064915,
+          "maxPelvisExcursion_m": 0.023342253,
+          "skinSamples": 232,
+          "finiteVertices": 226432,
+          "footMinimum_m": {
+            "l": 0.00282934,
+            "r": 0.002827755
+          },
+          "contactMinimum_m": {
+            "l": 0.00282934,
+            "r": 0.002827755
+          },
+          "contactMaximum_m": {
+            "l": 0.002840876,
+            "r": 0.002851747
+          },
+          "endpointPosition_m": 1.8e-8,
+          "endpointAngle_rad": 6.7e-8
+        },
+        {
+          "name": "turn_left",
+          "duration_s": 1.1399999856948853,
+          "samples": 275,
+          "maxGripError_m": 0.000087199,
+          "maxLengthError_m": 9e-9,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.023489347,
+          "maxContactDrift_m": 0.00041325,
+          "minElbowChestDistance_m": 0.215482341,
+          "maxPelvisExcursion_m": 0.056662013,
+          "skinSamples": 275,
+          "finiteVertices": 268400,
+          "footMinimum_m": {
+            "l": 0.002786536,
+            "r": 0.002795502
+          },
+          "contactMinimum_m": {
+            "l": 0.002786536,
+            "r": 0.002795502
+          },
+          "contactMaximum_m": {
+            "l": 0.002843314,
+            "r": 0.002993597
+          },
+          "endpointPosition_m": 0.540453393,
+          "endpointAngle_rad": 1.683204953
+        },
+        {
+          "name": "turn_right",
+          "duration_s": 1.1399999856948853,
+          "samples": 275,
+          "maxGripError_m": 0.000085341,
+          "maxLengthError_m": 9e-9,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.023667501,
+          "maxContactDrift_m": 0.000413258,
+          "minElbowChestDistance_m": 0.227383745,
+          "maxPelvisExcursion_m": 0.056662013,
+          "skinSamples": 275,
+          "finiteVertices": 268400,
+          "footMinimum_m": {
+            "l": 0.002795052,
+            "r": 0.002787365
+          },
+          "contactMinimum_m": {
+            "l": 0.002795052,
+            "r": 0.002787365
+          },
+          "contactMaximum_m": {
+            "l": 0.002993556,
+            "r": 0.002843332
+          },
+          "endpointPosition_m": 0.540453393,
+          "endpointAngle_rad": 1.690760235
+        },
+        {
+          "name": "hit_front",
+          "duration_s": 0.7599999904632568,
+          "samples": 184,
+          "maxGripError_m": 0.002049782,
+          "maxLengthError_m": 7e-9,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.056538527,
+          "maxContactDrift_m": 0.000033851,
+          "minElbowChestDistance_m": 0.211459703,
+          "maxPelvisExcursion_m": 0.04350422,
+          "skinSamples": 184,
+          "finiteVertices": 179584,
+          "footMinimum_m": {
+            "l": 0.002814307,
+            "r": 0.002812997
+          },
+          "contactMinimum_m": {
+            "l": 0.002814307,
+            "r": 0.002812997
+          },
+          "contactMaximum_m": {
+            "l": 0.002840903,
+            "r": 0.002840903
+          },
+          "endpointPosition_m": 1.5e-8,
+          "endpointAngle_rad": 9.4e-8
+        },
+        {
+          "name": "near_miss_duck",
+          "duration_s": 0.9800000190734863,
+          "samples": 237,
+          "maxGripError_m": 0.000102825,
+          "maxLengthError_m": 1.2e-8,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.041088379,
+          "maxContactDrift_m": 0.000638527,
+          "minElbowChestDistance_m": 0.227383753,
+          "maxPelvisExcursion_m": 0.216501706,
+          "skinSamples": 237,
+          "finiteVertices": 231312,
+          "footMinimum_m": {
+            "l": 0.002234137,
+            "r": 0.00220616
+          },
+          "contactMinimum_m": {
+            "l": 0.002234137,
+            "r": 0.00220616
+          },
+          "contactMaximum_m": {
+            "l": 0.002840927,
+            "r": 0.002840917
+          },
+          "endpointPosition_m": 0,
+          "endpointAngle_rad": 3e-8
+        }
+      ]
+    },
+    {
+      "nation": "de",
+      "lod": 1,
+      "file": "m01_soldier_de_lod1.glb",
+      "skin_joints": 61,
+      "clips": [
+        {
+          "name": "sprint",
+          "duration_s": 0.6399999856948853,
+          "samples": 155,
+          "maxGripError_m": 0.000002823,
+          "maxLengthError_m": 2.8e-8,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.094741956,
+          "maxContactDrift_m": 0.001088231,
+          "minElbowChestDistance_m": 0.252450513,
+          "maxPelvisExcursion_m": 0.053780317,
+          "skinSamples": 155,
+          "finiteVertices": 98115,
+          "footMinimum_m": {
+            "l": 0.002071775,
+            "r": 0.0019053
+          },
+          "contactMinimum_m": {
+            "l": 0.002071775,
+            "r": 0.0019053
+          },
+          "contactMaximum_m": {
+            "l": 0.002840921,
+            "r": 0.002840908
+          },
+          "endpointPosition_m": 3.6e-8,
+          "endpointAngle_rad": 8.9e-8
+        },
+        {
+          "name": "crouch_walk",
+          "duration_s": 0.9599999785423279,
+          "samples": 232,
+          "maxGripError_m": 4.31e-7,
+          "maxLengthError_m": 1.7e-8,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.038251664,
+          "maxContactDrift_m": 0.00002857,
+          "minElbowChestDistance_m": 0.25064915,
+          "maxPelvisExcursion_m": 0.023342253,
+          "skinSamples": 232,
+          "finiteVertices": 146856,
+          "footMinimum_m": {
+            "l": 0.00282934,
+            "r": 0.002827755
+          },
+          "contactMinimum_m": {
+            "l": 0.00282934,
+            "r": 0.002827755
+          },
+          "contactMaximum_m": {
+            "l": 0.002840876,
+            "r": 0.002851747
+          },
+          "endpointPosition_m": 1.8e-8,
+          "endpointAngle_rad": 6.7e-8
+        },
+        {
+          "name": "turn_left",
+          "duration_s": 1.1399999856948853,
+          "samples": 275,
+          "maxGripError_m": 0.000087199,
+          "maxLengthError_m": 9e-9,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.023489347,
+          "maxContactDrift_m": 0.00041325,
+          "minElbowChestDistance_m": 0.215482341,
+          "maxPelvisExcursion_m": 0.056662013,
+          "skinSamples": 275,
+          "finiteVertices": 174075,
+          "footMinimum_m": {
+            "l": 0.002786536,
+            "r": 0.002795502
+          },
+          "contactMinimum_m": {
+            "l": 0.002786536,
+            "r": 0.002795502
+          },
+          "contactMaximum_m": {
+            "l": 0.002843314,
+            "r": 0.002993597
+          },
+          "endpointPosition_m": 0.540453393,
+          "endpointAngle_rad": 1.683204953
+        },
+        {
+          "name": "turn_right",
+          "duration_s": 1.1399999856948853,
+          "samples": 275,
+          "maxGripError_m": 0.000085341,
+          "maxLengthError_m": 9e-9,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.023667501,
+          "maxContactDrift_m": 0.000413258,
+          "minElbowChestDistance_m": 0.227383745,
+          "maxPelvisExcursion_m": 0.056662013,
+          "skinSamples": 275,
+          "finiteVertices": 174075,
+          "footMinimum_m": {
+            "l": 0.002795052,
+            "r": 0.002787365
+          },
+          "contactMinimum_m": {
+            "l": 0.002795052,
+            "r": 0.002787365
+          },
+          "contactMaximum_m": {
+            "l": 0.002993556,
+            "r": 0.002843332
+          },
+          "endpointPosition_m": 0.540453393,
+          "endpointAngle_rad": 1.690760235
+        },
+        {
+          "name": "hit_front",
+          "duration_s": 0.7599999904632568,
+          "samples": 184,
+          "maxGripError_m": 0.002049782,
+          "maxLengthError_m": 7e-9,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.056538527,
+          "maxContactDrift_m": 0.000033851,
+          "minElbowChestDistance_m": 0.211459703,
+          "maxPelvisExcursion_m": 0.04350422,
+          "skinSamples": 184,
+          "finiteVertices": 116472,
+          "footMinimum_m": {
+            "l": 0.002814307,
+            "r": 0.002812997
+          },
+          "contactMinimum_m": {
+            "l": 0.002814307,
+            "r": 0.002812997
+          },
+          "contactMaximum_m": {
+            "l": 0.002840903,
+            "r": 0.002840903
+          },
+          "endpointPosition_m": 1.5e-8,
+          "endpointAngle_rad": 9.4e-8
+        },
+        {
+          "name": "near_miss_duck",
+          "duration_s": 0.9800000190734863,
+          "samples": 237,
+          "maxGripError_m": 0.000102825,
+          "maxLengthError_m": 1.2e-8,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.041088379,
+          "maxContactDrift_m": 0.000638527,
+          "minElbowChestDistance_m": 0.227383753,
+          "maxPelvisExcursion_m": 0.216501706,
+          "skinSamples": 237,
+          "finiteVertices": 150021,
+          "footMinimum_m": {
+            "l": 0.002234137,
+            "r": 0.00220616
+          },
+          "contactMinimum_m": {
+            "l": 0.002234137,
+            "r": 0.00220616
+          },
+          "contactMaximum_m": {
+            "l": 0.002840927,
+            "r": 0.002840917
+          },
+          "endpointPosition_m": 0,
+          "endpointAngle_rad": 3e-8
+        }
+      ]
+    },
+    {
+      "nation": "de",
+      "lod": 2,
+      "file": "m01_soldier_de_lod2.glb",
+      "skin_joints": 28,
+      "clips": [
+        {
+          "name": "sprint",
+          "duration_s": 0.6399999856948853,
+          "samples": 155,
+          "maxGripError_m": 0.000002823,
+          "maxLengthError_m": 2.8e-8,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.094741956,
+          "maxContactDrift_m": 0.001088231,
+          "minElbowChestDistance_m": 0.252450513,
+          "maxPelvisExcursion_m": 0.053780317,
+          "skinSamples": 155,
+          "finiteVertices": 23095,
+          "footMinimum_m": {
+            "l": 0.002072102,
+            "r": 0.002233069
+          },
+          "contactMinimum_m": {
+            "l": 0.002072102,
+            "r": 0.002233069
+          },
+          "contactMaximum_m": {
+            "l": 0.002840921,
+            "r": 0.003168252
+          },
+          "endpointPosition_m": 3.6e-8,
+          "endpointAngle_rad": 8.9e-8
+        },
+        {
+          "name": "crouch_walk",
+          "duration_s": 0.9599999785423279,
+          "samples": 232,
+          "maxGripError_m": 4.31e-7,
+          "maxLengthError_m": 1.7e-8,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.038251664,
+          "maxContactDrift_m": 0.00002857,
+          "minElbowChestDistance_m": 0.25064915,
+          "maxPelvisExcursion_m": 0.023342253,
+          "skinSamples": 232,
+          "finiteVertices": 34568,
+          "footMinimum_m": {
+            "l": 0.00282934,
+            "r": 0.003155069
+          },
+          "contactMinimum_m": {
+            "l": 0.00282934,
+            "r": 0.003155069
+          },
+          "contactMaximum_m": {
+            "l": 0.002840876,
+            "r": 0.003179093
+          },
+          "endpointPosition_m": 1.8e-8,
+          "endpointAngle_rad": 6.7e-8
+        },
+        {
+          "name": "turn_left",
+          "duration_s": 1.1399999856948853,
+          "samples": 275,
+          "maxGripError_m": 0.000087199,
+          "maxLengthError_m": 9e-9,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.023489347,
+          "maxContactDrift_m": 0.00041325,
+          "minElbowChestDistance_m": 0.215482341,
+          "maxPelvisExcursion_m": 0.056662013,
+          "skinSamples": 275,
+          "finiteVertices": 40975,
+          "footMinimum_m": {
+            "l": 0.002786536,
+            "r": 0.003122348
+          },
+          "contactMinimum_m": {
+            "l": 0.002786536,
+            "r": 0.003122348
+          },
+          "contactMaximum_m": {
+            "l": 0.002843317,
+            "r": 0.003320939
+          },
+          "endpointPosition_m": 0.540453393,
+          "endpointAngle_rad": 1.683204953
+        },
+        {
+          "name": "turn_right",
+          "duration_s": 1.1399999856948853,
+          "samples": 275,
+          "maxGripError_m": 0.000085341,
+          "maxLengthError_m": 9e-9,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.023667501,
+          "maxContactDrift_m": 0.000413258,
+          "minElbowChestDistance_m": 0.227383745,
+          "maxPelvisExcursion_m": 0.056662013,
+          "skinSamples": 275,
+          "finiteVertices": 40975,
+          "footMinimum_m": {
+            "l": 0.002795052,
+            "r": 0.003114204
+          },
+          "contactMinimum_m": {
+            "l": 0.002795052,
+            "r": 0.003114204
+          },
+          "contactMaximum_m": {
+            "l": 0.002993556,
+            "r": 0.003170682
+          },
+          "endpointPosition_m": 0.540453393,
+          "endpointAngle_rad": 1.690760235
+        },
+        {
+          "name": "hit_front",
+          "duration_s": 0.7599999904632568,
+          "samples": 184,
+          "maxGripError_m": 0.002049782,
+          "maxLengthError_m": 7e-9,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.056538527,
+          "maxContactDrift_m": 0.000033851,
+          "minElbowChestDistance_m": 0.211459703,
+          "maxPelvisExcursion_m": 0.04350422,
+          "skinSamples": 184,
+          "finiteVertices": 27416,
+          "footMinimum_m": {
+            "l": 0.002814307,
+            "r": 0.003140105
+          },
+          "contactMinimum_m": {
+            "l": 0.002814307,
+            "r": 0.003140105
+          },
+          "contactMaximum_m": {
+            "l": 0.002840903,
+            "r": 0.003168246
+          },
+          "endpointPosition_m": 1.5e-8,
+          "endpointAngle_rad": 9.4e-8
+        },
+        {
+          "name": "near_miss_duck",
+          "duration_s": 0.9800000190734863,
+          "samples": 237,
+          "maxGripError_m": 0.000102825,
+          "maxLengthError_m": 1.2e-8,
+          "maxRootError_m": 0,
+          "maxRootAngle_rad": 0,
+          "maxJointStep_rad": 0.041088379,
+          "maxContactDrift_m": 0.000638527,
+          "minElbowChestDistance_m": 0.227383753,
+          "maxPelvisExcursion_m": 0.216501706,
+          "skinSamples": 237,
+          "finiteVertices": 35313,
+          "footMinimum_m": {
+            "l": 0.002234159,
+            "r": 0.002533539
+          },
+          "contactMinimum_m": {
+            "l": 0.002234159,
+            "r": 0.002533539
+          },
+          "contactMaximum_m": {
+            "l": 0.002840927,
+            "r": 0.003168261
+          },
+          "endpointPosition_m": 0,
+          "endpointAngle_rad": 3e-8
+        }
+      ]
+    }
+  ],
+  "failures": [],
+  "warnings": [],
+  "pass": true
+}
