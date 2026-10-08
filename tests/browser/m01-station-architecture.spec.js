@@ -7,6 +7,9 @@ async function startFrozen(page){
   await page.evaluate(()=>{const hold=e=>{if(document.pointerLockElement?.id==='game'){document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();document.exitPointerLock();}};document.addEventListener('pointerlockchange',hold,true);});
   await page.locator('#continue').click();
   await page.waitForFunction(()=>window.gameDiagnostics().paused&&window.gameDiagnostics().m01.renderedFrames>0,null,{timeout:120000});
+  // A previous paused/menu frame may still describe the distant default camera.
+  // Wait for the restored player and its actual architectural LOD to be rendered.
+  await page.waitForFunction(()=>{const d=window.gameDiagnostics();return d.player.x===-325&&d.m01.stationArchitecture.lod===({low:2,medium:1,high:0})[d.quality];},null,{timeout:120000});
 }
 test('Station quality, checkpoint restart and page reload retain one architectural root and all prop clusters',async({page},info)=>{
   test.setTimeout(180000);const errors=[];page.on('pageerror',e=>errors.push(e.message));

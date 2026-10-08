@@ -102,7 +102,7 @@ export class M01BridgePortalPolish{
       visibleDetails:visible,activeBatches,totalBatches:this.attachments.reduce((n,a)=>n+a.medium.length+a.high.length,0),collidersAdded:0};
   }
   dispose(){
-    for(const a of this.attachments)a.root.removeFromParent();
+    for(const a of this.attachments){for(const batch of [...a.medium,...a.high])batch.dispose();a.root.removeFromParent();}
     this.attachments=[];this.box.dispose();this.ring.dispose();
   }
 }

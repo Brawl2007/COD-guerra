@@ -2,6 +2,7 @@ import {test,expect} from '@playwright/test';
 import {M01Simulation,seconds} from '../../src/game/m01-simulation.js';
 import {traceRound} from '../../src/game/m01-fire.js';
 import {driver,route} from '../helpers/m01-route.js';
+import {armFxCapture} from './helpers/fx-frame-capture.js';
 
 const key='cod-guerra:checkpoint:m01:v2',baseline=process.env.M01_BASELINE_CAPTURE==='1';
 const fixtures={impacts:{}},preEvent={};
@@ -18,10 +19,12 @@ route(19390901,{support:true,onStep:({sim})=>{
     else if(sim.consumedEvent(eventId)&&preEvent[name])fixtures[name]=preEvent[name];
   }
   for(const r of sim.enemyFire.rounds){
+    if(r.kind==='east')continue; // landRound deliberately emits no impact for this distant fire.
     const remaining=r.arriveAt-sim.clock;if(remaining<=.12||remaining>=.38)continue;
-    const hit=traceRound(sim.world,r,[]),material=hit.material??'earth';
+    const victim=r.victim&&!sim.consumedEvent('evt_m01_east_demolition')?sim.actor(r.victim):null;
+    const hit=traceRound(sim.world,r,victim?.alive?[sim.player,victim]:[sim.player]),material=hit.material??'earth';
     if(['earth','stone','wood'].includes(material)&&!fixtures.impacts[material]){
-      fixtures.impacts[material]={snapshot:structuredClone(sim.snapshot(false)),point:structuredClone(hit.point),material};
+      fixtures.impacts[material]={snapshot:structuredClone(sim.snapshot(false)),point:structuredClone(hit.point),material,round:structuredClone(r)};
     }
   }
 }});
@@ -41,20 +44,24 @@ function relocate(snapshot,x,z,target){
   s.player.x=x;s.player.z=z;s.player.y=y;s.player.angle=Math.atan2(dz,dx);
   s.player.pitch=Math.atan2((target.y??y+1.3)-y-1.6,Math.hypot(dx,dz));s.player.aiming=false;return s;
 }
-async function openFrom(browser,info,{name,snapshot,quality='high',camera,target,wait='blast'}){
+async function openFrom(browser,info,{name,snapshot,quality='high',camera,target,wait='blast',round,material,damageId}){
   const page=await browser.newPage(),errors=[],failed=[],state=camera?relocate(snapshot,camera.x,camera.z,target):structuredClone(snapshot);
   page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)failed.push(`${r.status()} ${r.url()}`);});
   await page.addInitScript(({key,state,quality})=>{localStorage.setItem(key,JSON.stringify(state));localStorage.setItem('cod-guerra:visual-quality',quality);},{key,state,quality});
-  await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});
+  const blastIds={'station-bombing-high.png':'station_bomb','raid-0530-high.png':'raid_0530','raid-0530-medium-far.png':'raid_0530','west-demolition-high.png':'west_demolition'};
+  damageId??=name.startsWith('grenade')?snapshot.grenades.active[0].id:blastIds[name]??'east_demolition';
+  await armFxCapture(page,{round,material,damageId,clock:snapshot.clock,phase:wait});
+  await page.goto('?debug=1&visual-verify=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});
   await page.locator('#quality').selectOption(quality);await page.locator('#continue').click();
-  await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game',null,{timeout:120000});
-  if(wait==='impact')await page.waitForFunction(()=>{const f=window.gameDiagnostics().m01.fireEffects;return f.puff>0||f.spark>0||f.chip>0;},null,{timeout:25000});
-  else if(wait==='smoke')await page.waitForFunction(()=>{const f=window.gameDiagnostics().m01.battlefieldFx;return f.active>0&&f.counts.smoke>0&&f.counts.core===0;},null,{timeout:30000});
-  else await page.waitForFunction(()=>{const f=window.gameDiagnostics().m01.battlefieldFx;return f.active>0&&f.counts.dust>0&&(f.counts.core>0||f.counts.fire>0);},null,{timeout:30000});
-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.waitForFunction(()=>window.__fxCapture,null,{timeout:wait==='impact'?25000:30000});
+  await expect(page.locator('#pause')).toBeVisible();
   const data=await page.evaluate(()=>window.gameDiagnostics());
+  const capture=await page.evaluate(()=>window.__fxCapture);
+  expect(data.clock).toBe(capture.diagnostics.clock);expect(data.paused).toBe(true);
+  if(round){expect(capture.probe.roundConsumed).toBe(true);expect(data.clock-round.arriveAt).toBeLessThan(.76);}
   await page.screenshot({path:info.outputPath(name),style:'#pause,#hud,#menu{visibility:hidden!important}',timeout:120000});
   await info.attach(name+'.json',{body:JSON.stringify({quality:data.quality,drawCalls:data.drawCalls,triangles:data.triangles,textures:data.textures,geometries:data.geometries,
+    clock:data.clock,battleClock:data.m01.battleClock,fixture:{round,material,damageId},probe:capture.probe,damageDecals:data.m01.damageDecals,
     fireEffects:data.m01.fireEffects,battlefieldFx:data.m01.battlefieldFx,smokePuffs:data.m01.smokePuffs},null,2),contentType:'application/json'});
   expect(errors).toEqual([]);expect(failed).toEqual([]);return {page,data};
 }
@@ -63,7 +70,7 @@ test('real earth stone and wood round impacts keep distinct visual language',asy
   test.setTimeout(360000);
   for(const material of ['earth','stone','wood']){
     const f=fixtures.impacts[material],p=f.point,camera={x:p.x-8,z:p.z-6};
-    const {page,data}=await openFrom(browser,info,{name:`${material}-round-impact-high.png`,snapshot:f.snapshot,quality:'high',camera,target:p,wait:'impact'});
+    const {page,data}=await openFrom(browser,info,{name:`${material}-round-impact-high.png`,snapshot:f.snapshot,quality:'high',camera,target:p,wait:'impact',round:f.round,material});
     if(!baseline){
       if(material==='earth')expect(data.m01.fireEffects.puff).toBeGreaterThan(0);
       if(material==='stone')expect(data.m01.fireEffects.chip).toBeGreaterThan(0);
@@ -107,9 +114,14 @@ test('distance smoke lifecycle pause restore and Low High remain bounded',async(
   if(!baseline){
     const frozen=data.m01.battlefieldFx,clock=data.clock;await page.waitForTimeout(300);
     const still=await page.evaluate(()=>window.gameDiagnostics());expect(still.clock).toBe(clock);expect(still.m01.battlefieldFx).toEqual(frozen);
-    await page.locator('#restart-checkpoint').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game',null,{timeout:120000});
+    // This legacy snapshot is itself the checkpoint and is just before east blast.
+    // Inspect reset at the restored clock, before a legitimate new blast can fire.
+    await page.evaluate(()=>{const hold=e=>{if(document.pointerLockElement?.id==='game'){
+      document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();window.dispatchEvent(new Event('blur'));document.exitPointerLock();
+    }};document.addEventListener('pointerlockchange',hold,true);});
+    await page.locator('#restart-checkpoint').click();await page.waitForFunction(clock=>window.gameDiagnostics().paused&&window.gameDiagnostics().clock===clock,fixtures.east.clock,{timeout:120000});
     const clean=await page.evaluate(()=>window.gameDiagnostics());expect(clean.m01.battlefieldFx.active).toBe(0);expect(Object.values(clean.m01.battlefieldFx.counts).every(n=>n===0)).toBe(true);
-    expect(clean.m01.battlefieldFx.extraLights).toBe(0);
+    expect(clean.m01.battlefieldFx.extraLights).toBe(0);expect(clean.clock).toBe(fixtures.east.clock);
   }
   await page.close();
 

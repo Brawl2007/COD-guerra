@@ -595,13 +595,7 @@ export class M01View {
     this.carryBody.position.y=this.carryCrate.position.y=bob*1.5;
     this.weaponLighting.sync({sky:this.skyLight,sun:this.sun,camera:this.camera,daylight:this.daylight??1,pitch:player.pitch});
     if(this.viewModel.update(sim,this.owner.quality,this.flashUntil,{camera:this.camera,viewFov:this.weaponCamera.fov})){this.weaponRoot.visible=false;this.carryBody.visible=false;this.fallbackFx.hide();}
-    else{
-      const r=this.weaponRoot,shotAt=Number.isFinite(w.lastShot)?w.lastShot/1000:-Infinity;r.updateMatrixWorld(true);
-      const fresh=w.shotCount!==this.fallbackShot&&time<this.flashUntil+.2&&time-shotAt>=0&&time-shotAt<.25;if(fresh)this.fallbackShot=w.shotCount;
-      this.fallbackFx.update({clock:time,shotAt,gate:time<this.flashUntil,fresh,aim:player.aiming?1:0,shot:w.shotCount??0,visible:r.visible&&!player.carrying,
-        muzzle:r.localToWorld(new THREE.Vector3(0,.045,-.66)),axis:new THREE.Vector3(0,0,-1).transformDirection(r.matrixWorld),
-        port:r.localToWorld(new THREE.Vector3(.03,.05,-.03)),up:viewUp(player.pitch),chamberAt:shotAt+WEAPON_PRESENTATION.wz29.mechanics.chamberOpen*1.05});
-    }
+    else this.updateFallbackWeapon(sim);
     this.weaponWorldFx.update(time,sim.world);
     this.updateBattlefieldFx(state,time);
     try{this.damageDecals.update({state,time,world:sim.world,trees:this.environment?.treeDescriptors,quality:this.owner.quality,camera:this.camera.position,renderer:this.engine,view:this.camera});}
@@ -609,6 +603,13 @@ export class M01View {
     this.engine.info.autoReset=false;this.engine.info.reset();this.engine.clear();this.engine.render(this.scene,this.camera);
     if(this.fx.muzzle>0){this.muzzlePresentation.frames++;this.muzzlePresentation.lastClock=time;this.muzzlePresentation.lastFrame=this.renderedFrames??0;}
     this.engine.clearDepth();this.engine.render(this.weaponScene,this.weaponCamera);this.engine.toneMappingExposure=1.15;
+  }
+  updateFallbackWeapon(sim){
+    const time=sim.clock,w=sim.weapon,player=sim.player,r=this.weaponRoot,shotAt=Number.isFinite(w.lastShot)?w.lastShot/1000:-Infinity;r.updateMatrixWorld(true);
+    const fresh=this.flashUntil>0&&w.shotCount!==this.fallbackShot&&time<this.flashUntil+.2&&time-shotAt>=0&&time-shotAt<.25;if(fresh)this.fallbackShot=w.shotCount;
+    return this.fallbackFx.update({clock:time,shotAt,gate:time<this.flashUntil,fresh,aim:player.aiming?1:0,shot:w.shotCount??0,visible:r.visible&&!player.carrying,
+      muzzle:r.localToWorld(new THREE.Vector3(0,.045,-.66)),axis:new THREE.Vector3(0,0,-1).transformDirection(r.matrixWorld),
+      port:r.localToWorld(new THREE.Vector3(.03,.05,-.03)),up:viewUp(player.pitch),chamberAt:shotAt+WEAPON_PRESENTATION.wz29.mechanics.chamberOpen*1.05});
   }
   muzzle(clock){this.flashUntil=clock+.06;this.shakeUntil=clock+.1;}
   blast(clock){this.shakeUntil=clock+.4;}
@@ -637,7 +638,7 @@ export class M01View {
   }
   resetEffects(){
     for(const plane of this.planes??[])plane.userData.level=null;
-    this.lastFrame=null;this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.impacts=[];this.bursts=[];this.combatFeedback.reset();this.damageDecals.reset();
+    this.lastFrame=null;this.flashUntil=0;this.fallbackShot=null;this.shakeUntil=0;this.lastClock=0;this.impacts=[];this.bursts=[];this.combatFeedback.reset();this.damageDecals.reset();
     for(const b of Object.values(this.fireBatches))b.count=0;for(const b of Object.values(this.battlefieldFxBatches))b.count=0;
     this.battlefieldShards.count=0;this.explosionLight.visible=false;this.explosionLight.intensity=0;
     this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};

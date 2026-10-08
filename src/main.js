@@ -69,10 +69,12 @@ try{
   $('#replay').addEventListener('click',()=>{complete.classList.add('hidden');hudRoot.classList.remove('hidden');game.restartMission();});
   $('#complete-menu').addEventListener('click',()=>game.menu());
   $('#quality').value=game.renderer.quality;
-  $('#quality').addEventListener('change',e=>{game.renderer.setQuality(e.target.value);try{localStorage.setItem('cod-guerra:visual-quality',e.target.value);}catch{}});
+  $('#quality').addEventListener('change',e=>{game.renderer.setQuality(e.target.value);game.audio.setQuality(e.target.value);try{localStorage.setItem('cod-guerra:visual-quality',e.target.value);}catch{}});
   $('#volume').addEventListener('input',e=>game.audio.setVolume(e.target.value));
   $('#close-error').addEventListener('click',()=>errorPanel.classList.add('hidden'));
-  window.addEventListener('pagehide',()=>game.dispose(),{once:true});
+  // A persisted page retains its WebGL/audio objects and resumes via the usual
+  // pause controls after Back. Only a real unload destroys the game.
+  window.addEventListener('pagehide',event=>{if(event.persisted)game.pause();else game.dispose();});
   // Read-only debug information, opt-in. No state mutation or exposed gameplay instance.
   if(new URLSearchParams(location.search).has('debug'))window.gameDiagnostics=()=>game.diagnostics;
   if(params.has('debug')&&params.has('visual-verify'))window.gameVerificationState=()=>structuredClone({snapshot:game.sim.snapshot(),checkpoint:game.sim.checkpoint,events:game.sim.events});
