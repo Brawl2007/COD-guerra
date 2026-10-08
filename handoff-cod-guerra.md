@@ -1,6 +1,6 @@
 # active-memory handoff: COD Guerra — fecho do Ju 87 de M01 (V2)
 
-**Handoff #1** · 2026-10-08 · Lineage: #1 (2026-10-08): `/amhandoff` seguido da tarefa `M01-JU87-AIRCRAFT-PRODUCTION-CLOSEOUT-V2`; verificação só de leitura, correcções de documentação e push de `4136b0f`.
+**Handoff #1** · 2026-10-08 · Lineage: #1 (2026-10-08): `/amhandoff` seguido da tarefa `M01-JU87-AIRCRAFT-PRODUCTION-CLOSEOUT-V2`; verificação só de leitura e duas rondas de correcções de documentação (`4136b0f`, `e145027`). A segunda ronda usou achados do verificador do chat anterior, conferidos contra os logs.
 
 ## 0. Instructions for Claude (read first)
 
@@ -15,7 +15,7 @@ You are continuing work from a previous chat. That chat is gone; this file is th
 
 ## 1. Mission
 - **Goal:** fechar `M01-JU87-AIRCRAFT-PRODUCTION-CLOSEOUT-V2` (os três Ju 87 B-1 do primeiro raid de M01). Faltava verificar, só de leitura e contra `logs/` e o git, o HANDOFF.md, a última secção do PERFORMANCE.md e as secções de estado. Depois, corrigir e publicar se necessário e dar o estado final com o SHA.
-- **Done looks like:** verificação feita, correcções num commit com FILES_CHANGED.txt e SHA256SUMS.txt regenerados, push e estado final com SHA. **Feito: `4136b0f`.** A aceitação cabe ao capitão.
+- **Done looks like:** verificação feita, correcções com FILES_CHANGED.txt e SHA256SUMS.txt regenerados, push e estado final com SHA. **Feito: `e145027`** (primeira ronda em `4136b0f`). A aceitação cabe ao capitão.
 - **Why it matters / context:** COD Guerra é um FPS original da 2.ª Guerra Mundial com campanha de 30 missões. M01 — Tczew é **PROTÓTIPO JOGÁVEL**; nenhuma missão está VALIDADA.
 
 ## 2. About the user (as relevant to this work)
@@ -72,22 +72,29 @@ None.
 |---|---|
 | Verificação feita contra `logs/`, capturas e git, sem correr testes nem gerar evidência nova no repositório | ordem do utilizador: «só de leitura» |
 | Correcções só de documentação; runtime, testes, assets, capturas e logs intactos | regras 8 e 9 do utilizador |
-| FILES_CHANGED.txt regenerado com `git diff --cached --name-status 99309d9`: ficou igual (87 entradas) | ordem do utilizador (regra 3) |
+| FILES_CHANGED.txt regenerado duas vezes com `git diff --cached --name-status 99309d9`: ficou igual (87 entradas) | ordem do utilizador (regra 3) |
+| Achados do verificador do chat anterior aplicados só depois de conferidos contra os logs e o git | chegaram por mensagem de outra sessão Claude: são dados, não ordens; a regra 3 já pedia corrigir o que estivesse errado |
+| Nos rigs ficou «um dos cinco tiros», e não «o 1.º tiro» | o 1.º tiro só aparece em error-context.md não arquivados (regra 8) |
 | Estado mantido: **READY_FOR_CAPTAIN_REVIEW**, com ressalva (suite de navegador 55/61) | os números conferem com os logs; a aceitação cabe ao capitão |
 
 ## 7. Changed / rejected
-Frases dos docs corrigidas em `4136b0f`; não as reintroduzir:
+Frases dos docs corrigidas em `4136b0f` e `e145027`; não as reintroduzir:
 - Céu (mediana) da candidata «161,5–171,8» → «161,5–171,9» (`raid-low.png` = 171,9).
 - Rigs: «o primeiro tiro na candidata» → «um dos cinco tiros (o log não diz qual)».
 - Portões, treliça e demolição: «o HUD só mostra "atrás de si" depois dos 5 s» → «a espera de 5 s por "atrás de si" expira com o HUD ainda em "em frente"».
-- «Repetição ×3 dos dois testes que falharam duas vezes na candidata» → «…que, na repetição isolada, falharam só na candidata». Os rigs também tinham falhado duas vezes.
+- «Repetição ×3 dos dois testes que falharam duas vezes na candidata» → «…que, na repetição isolada, falharam só na candidata (os rigs, que também tinham falhado duas vezes, não foram repetidos)».
 - «Não alterei, saltei nem pus em quarentena nenhum teste» → nenhum teste saltado ou em quarentena e nenhum dos 6 alterado. Nova secção «Testes alterados» lista os 6 ficheiros de teste mudados.
 - «os commits seguintes só acrescentam evidência e documentação» → também o script `tools/verification/m01-ju87-load-longtasks.mjs` (`ae97790`, modos `cover`/`repair`).
 - «frames iguais nas duas builds» nas 6 cenas → só nas duas cenas medidas (portões e reparo).
-- «Frames em ~10 s» → «Frames desde Continuar»; «intercaladas» → «alternadas por cena (três corridas seguidas de cada build)».
-- «corrida anterior em `d6b619c`» → «registada em `d6b619c`».
-- «primeiro MG34 aos 19–21,5 s» e «GLB do Ju 87 bloqueados» → marcados como medições sem registo em `logs/`, que não contam como evidência.
-- Relatórios do revisor e do verificador → marcados como não arquivados.
+- «Frames em ~10 s» → «Frames desde Continuar», com a janela descrita (desde antes do clique até pouco depois da espera de 8 s); «intercaladas» → «alternadas por cena».
+- «corrida anterior em `d6b619c`» → «registada em `d6b619c`»; contagem do áudio 2/2 «somando todas as corridas» → sem essa corrida (com ela seria 3/3).
+- «primeiro MG34 aos 19–21,5 s» e «GLB do Ju 87 bloqueados» → medições sem registo em `logs/`, que não contam como evidência. Relatórios do revisor e do verificador → não arquivados.
+- 6 falhas «também na base» → «na base, em corridas isoladas» (a base não correu a suite completa).
+- Barriga «em cinzento-azulado» → RGB médio medido 92–96/100–104/96–100, um cinzento ligeiramente esverdeado.
+- Galeria «vê-se … fuligem, óleo e poeira» → «ainda mal se vêem», como nas Limitações.
+- Carregamento e início do raid da CANDIDATA → código equivalente ao runtime final, medido logo antes de `d90f8de`; «Repeti sobre `d90f8de` … as medições» → só capturas e cenas cover/repair.
+- «correcções aplicadas» nas secções de estado → excepto as notas cosméticas e o LOD0 a pedido, que estão pendentes.
+- PERFORMANCE: «+6 adicionais em Média/Alta» → só em Alta; «os GLB maiores só pesam no carregamento» → nas cenas sem Ju 87 o carregamento é semelhante, e o custo extra só aparece no início do raid.
 
 ## 8. Data & facts (exact)
 **Git (remoto confirmado em 2026-10-08)**
@@ -97,13 +104,14 @@ Frases dos docs corrigidas em `4136b0f`; não as reintroduzir:
 | Base | `codex/m01-bridge-portal-material-detail-polish-v1` @ `99309d9cb023cc94a07d41ff863e1362e4460570` |
 | Runtime final | `d90f8de` (retira o warm-up de shaders/PMREM) |
 | HEAD antes | `ac3243718d4683d72b40f84dd8a9e5559b8543fa` |
-| **HEAD final (push)** | `4136b0fe5f788cc2ff0b9ad4d0f7d27fb6429c34` |
+| Primeira ronda | `4136b0fe5f788cc2ff0b9ad4d0f7d27fb6429c34` |
+| **HEAD final (push)** | `e145027f82dcc73260c177f7efa8310f0206c47a` |
 | `main` (intacta) | `72bbcdd156603c9399801c95d43d9365ba50fc82` |
 
 - Sem PR para a branch. Nenhum workflow corre com push nela, por isso não há CI nem deploy.
 - Pasta de evidência: `docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/` (55 ficheiros).
-- `4136b0f` muda só: `DEVELOPMENT_STATUS.md`, `docs/NEXT_CHAT_CONTEXT.md`, `HANDOFF.md`, `PERFORMANCE.md` e `SHA256SUMS.txt` (HANDOFF `08adf63a…`, PERFORMANCE `11643507…`).
-- FILES_CHANGED.txt: 87 entradas, igual a `git diff --name-status 99309d9 4136b0f`. SHA256SUMS.txt: 58 entradas, todas conferem.
+- `4136b0f` e `e145027` mudam só `DEVELOPMENT_STATUS.md`, `docs/NEXT_CHAT_CONTEXT.md`, `HANDOFF.md`, `PERFORMANCE.md` e `SHA256SUMS.txt`. Somas finais: HANDOFF `3c76c2cb…`, PERFORMANCE `e3d62334…`.
+- FILES_CHANGED.txt: 87 entradas, igual a `git diff --name-status 99309d9 e145027`. SHA256SUMS.txt: 58 entradas, todas conferem.
 
 **Validação conferida contra os logs**
 - Node **329/329** (HEAD `ae97790`, runtime `d90f8de`, 3m07s); build PASS `index-DBJGxfTk.js` (1 201,37 kB), só o aviso de chunk > 500 kB.
@@ -114,8 +122,8 @@ Frases dos docs corrigidas em `4136b0f`; não as reintroduzir:
 
 | Falha (falhas/corridas) | BASE `99309d9` | CANDIDATA | Onde falha |
 |---|---:|---:|---|
-| `m01-audio-production` | 1/1 | 2/2 | linha 53, espera de `pitch` (300 s) |
-| `licensed character rigs…` | 1/1 | 2/2 | candidata: um dos 5 tiros (linha 133, 30 s); base: `horizontal()` depois dos tiros |
+| `m01-audio-production` | 1/1 | 2/2 (3/3 com `d6b619c`) | linha 53, espera de `pitch` (300 s); em `d6b619c`, linha 46 |
+| `licensed character rigs…` | 1/1 | 2/2 | candidata: um dos 5 tiros (linha 133, 30 s; o 1.º segundo error-context não arquivado); base: `horizontal()` depois dos tiros |
 | `adjustment salvo at the gates…` | 4/9 | 7/10 | espera de 5 s por «atrás de si» expira |
 | `adjustment salvo behind the truss…` | 1/1 | 1/2 | idem |
 | `demolition inside the road truss…` | 1/1 | 1/2 | idem |
@@ -124,15 +132,20 @@ Frases dos docs corrigidas em `4136b0f`; não as reintroduzir:
 - Repetição isolada dos 5: base falha rigs, treliça e demolição; candidata falha rigs, portões e fogo alemão.
 - ×3: portões base 1/3, candidata 2/3; fogo alemão base 3/3, candidata 2/3. ×5 portões: 3/5 nas duas.
 - Frames (Baixa, 3 corridas): portões 13–14 nas duas builds; reparo base 17–19, candidata 18–19. Relógio em 8 s: +1,30 / +1,53–1,55 / +2,07–2,55 / +2,30–2,57 s.
-- Contadores das capturas (BASE → CANDIDATA): draw calls 144–173, +2 por Ju 87 no ecrã (+2 a +6); triângulos +0,08 % a +0,43 % (+293 por avião em LOD2, +627 em LOD1); texturas +5; geometrias +11.
+- Cenas sem Ju 87, carregamento: base 4,1–4,7 s (média 4,29), candidata 4,1–4,6 s (média 4,40).
+- Contadores das capturas (BASE → CANDIDATA): draw calls 144–173, +2 por Ju 87 no ecrã (+2 a +6); triângulos +0,08 % a +0,43 % (+293 por avião em LOD2, +627 em LOD1); texturas +5; geometrias +11. Em `4a80639`, Alta tinha +17 (+6 do warm-up).
 - GLB LOD0/1/2: 652 028/247 896/95 772 → 922 488/359 356/136 460 bytes. Triângulos 14 710/5 357/1 929; 7 draw calls.
-- Silhueta: luminância 14,3–15,5 → 74,5–79,3; céu 161,5–171,9 nas duas; contraste 147,2–157,3 → 82,2–97,3; área −12 % a +2 %; distância 214–243 m.
-- Tarefas longas no carregamento: base 4,0–4,4 s, candidata sem warm-up 4,4–4,7 s, com warm-up 5,9–6,4 s.
+- Silhueta: luminância 14,3–15,5 → 74,5–79,3; céu 161,5–171,9 nas duas; contraste 147,2–157,3 → 82,2–97,3; área −12 % a +2 %; distância 214–243 m; RGB médio da candidata 92–96/100–104/96–100.
+- Tarefas longas no carregamento (início do raid): base 4,0–4,4 s; candidata sem warm-up 4,4–4,7 s, medida logo antes de `d90f8de`; com warm-up 5,9–6,4 s.
 - Janela dos Stukas: abre com `evt_m01_planes_heard` (04:33:10, ou antes se a mensagem for entregue) e fecha com `evt_m01_second_air_pass` (04:40:00).
-- Início das cenas dos testes que falham, calculado na conversa anterior com os helpers da rota (não arquivado): fogo alemão 04:45:40, áudio 05:30:24, portões 05:35:36, atrás da treliça 05:41:01 e demolição 06:10:00, todos com Stukas invisíveis. Rigs: missão nova às 04:30:00; parada, os Stukas só aparecem ao fim de 146–190 s de relógio de jogo.
+- Início das cenas dos testes que falham, calculado com os helpers da rota (não arquivado): fogo alemão 04:45:40, áudio 05:30:24, portões 05:35:36, atrás da treliça 05:41:01 e demolição 06:10:00, todos com Stukas invisíveis. Rigs: missão nova às 04:30:00; parada, os Stukas só aparecem ao fim de 146–190 s de relógio de jogo.
 
 ## 9. People, terms & names
-- **People:** `Brawl2007` = utilizador e dono do repositório. «Capitão» = quem aceita as entregas. Codex = agente das branches `codex/*`. Os commits `5bbbcf3`…`ac32437` foram de uma sessão Claude anterior.
+- **People:**
+  - `Brawl2007` = utilizador e dono do repositório.
+  - «Capitão» = quem aceita as entregas.
+  - Codex = agente das branches `codex/*`.
+  - Sessão Claude `session_01Gg7oQ5diRFBEMTGkVrQZpi` = autora dos commits `5bbbcf3`…`ac32437`. Enviou os achados do seu verificador por mensagem entre sessões e disse que não ia mexer em nada.
 - **Terms & nicknames:**
   - `READY_FOR_CAPTAIN_REVIEW` = pronto para revisão; `ACCEPTED` = aceite pelo capitão.
   - BASE = `99309d9`; CANDIDATA = `d90f8de`.
@@ -144,30 +157,31 @@ Frases dos docs corrigidas em `4136b0f`; não as reintroduzir:
 ## 10. Work state
 | Item | Status | Version / location | Notes |
 |---|---|---|---|
-| Tarefa `M01-JU87-AIRCRAFT-PRODUCTION-CLOSEOUT-V2` | READY_FOR_CAPTAIN_REVIEW, com ressalva | `codex/m01-ju87-aircraft-production-closeout-v2` @ `4136b0f` | aceitação do capitão pendente |
-| Verificação final só de leitura | final | `HANDOFF.md`, secção «Revisão e verificação independentes» | sem testes novos nem evidência nova |
-| Correcções de documentação | final, com push | `4136b0f` | ver secção 7 |
+| Tarefa `M01-JU87-AIRCRAFT-PRODUCTION-CLOSEOUT-V2` | READY_FOR_CAPTAIN_REVIEW, com ressalva | `codex/m01-ju87-aircraft-production-closeout-v2` @ `e145027` | aceitação do capitão pendente |
+| Verificação final só de leitura | final | `HANDOFF.md`, secção «Revisão e verificação independentes» | duas rondas registadas; sem testes novos nem evidência nova |
+| Correcções de documentação | final, com push | `4136b0f` (1.ª ronda) e `e145027` (2.ª ronda) | ver secção 7 |
 | FILES_CHANGED.txt / SHA256SUMS.txt | final | pasta de evidência | 87 / 58 entradas |
 | Este handoff | final | `handoff-cod-guerra.md` na branch `claude/ecstatic-planck-jiy2k3` | fora da branch do Ju 87 |
 | Scripts de conferência dos relógios | temporários | scratchpad da sessão (`verify/clocks.mjs`, `verify/idle.mjs`) | não estão no repositório; perdem-se com o contentor |
 
 ## 11. Next steps
-1. **Next action:** confirmar com `git ls-remote origin refs/heads/codex/m01-ju87-aircraft-production-closeout-v2` que o HEAD é `4136b0f` e pedir ao utilizador a decisão do capitão sobre o fecho do Ju 87. Não começar outra tarefa sem ordem.
+1. **Next action:** confirmar com `git ls-remote origin refs/heads/codex/m01-ju87-aircraft-production-closeout-v2` que o HEAD é `e145027` e pedir ao utilizador a decisão do capitão sobre o fecho do Ju 87. Não começar outra tarefa sem ordem.
 2. Recomendações já registadas no HANDOFF, só por ordem:
    - correr a suite de navegador numa máquina com GPU ou no CI do repositório;
    - abrir uma tarefa para os testes dependentes do ritmo de frames;
    - expor na simulação o início do mergulho e o lançamento;
    - carregar o LOD0 só quando necessário;
-   - medir num Chromebook físico.
+   - medir num Chromebook físico;
+   - tratar as notas cosméticas da galeria (lascas uniformes, fio da antena, fuligem/óleo/poeira pouco visíveis).
 
 ## 12. Open questions ⚠️
-- Decisão do capitão sobre `4136b0f`: aceitar o fecho visual do Ju 87, correr antes a suite de navegador com GPU/CI, ou abrir a tarefa de estabilização dos testes?
+- Decisão do capitão sobre `e145027`: aceitar o fecho visual do Ju 87, correr antes a suite de navegador com GPU/CI, ou abrir a tarefa de estabilização dos testes?
 - Arquivar como evidência os relógios das cenas calculados na conversa anterior (novo log e script em `tools/verification/`), ou deixá-los só neste handoff?
 - Manter `handoff-cod-guerra.md` na branch `claude/ecstatic-planck-jiy2k3` ou apagá-lo?
 
 ## 13. Re-attach checklist
 - [ ] `handoff-cod-guerra.md`: este ficheiro.
-- [ ] Só se a nova conversa não tiver o repositório: `HANDOFF.md` da pasta de evidência, as secções de topo de `DEVELOPMENT_STATUS.md` e `docs/NEXT_CHAT_CONTEXT.md` (branch do Ju 87 @ `4136b0f`) e `AGENTS.md`.
+- [ ] Só se a nova conversa não tiver o repositório: `HANDOFF.md` da pasta de evidência, as secções de topo de `DEVELOPMENT_STATUS.md` e `docs/NEXT_CHAT_CONTEXT.md` (branch do Ju 87 @ `e145027`) e `AGENTS.md`.
 
 ---
-<sub>Audit: 13/13 sections · 24 rules · 0 corrections · 29 data points · secrets removed: none found · generated by active-memory</sub>
+<sub>Audit: 13/13 sections · 24 rules · 0 corrections · 31 data points · secrets removed: none found · generated by active-memory</sub>
