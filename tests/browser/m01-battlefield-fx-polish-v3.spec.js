@@ -53,7 +53,13 @@ async function openFrom(browser,info,{name,snapshot,quality='high',camera,target
   await armFxCapture(page,{round,material,damageId,clock:snapshot.clock,phase:wait});
   await page.goto('?debug=1&visual-verify=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});
   await page.locator('#quality').selectOption(quality);await page.locator('#continue').click();
-  await page.waitForFunction(()=>window.__fxCapture,null,{timeout:wait==='impact'?25000:30000});
+  // SwiftShader can spend ~27 s reaching the 1.18 s smoke phase; the
+  // simulation caps catch-up at .25 s/frame. Keep the phase assertion intact.
+  try{await page.waitForFunction(()=>window.__fxCapture,null,{timeout:wait==='smoke'?120000:wait==='impact'?25000:30000});}
+  catch(error){
+    await info.attach(name+'.capture-timeout.json',{body:JSON.stringify(await page.evaluate(()=>({probe:window.__fxProbe,diagnostics:window.gameDiagnostics(),hidden:document.hidden,locked:document.pointerLockElement?.id})),null,2),contentType:'application/json'});
+    throw error;
+  }
   await expect(page.locator('#pause')).toBeVisible();
   const data=await page.evaluate(()=>window.gameDiagnostics());
   const capture=await page.evaluate(()=>window.__fxCapture);
@@ -112,7 +118,28 @@ test('distance smoke lifecycle pause restore and Low High remain bounded',async(
   }
   const {page,data}=await openFrom(browser,info,{name:'east-demolition-smoke-high.png',snapshot:fixtures.east,quality:'high',wait:'smoke'});
   if(!baseline){
-    const frozen=data.m01.battlefieldFx,clock=data.clock;await page.waitForTimeout(300);
+    const frozen=data.m01.battlefieldFx,clock=data.clock;
+    // Compare density at one frozen event age/camera. Separate hot captures can
+    // legitimately sample Low later than High and invert transient layer counts.
+    const snapshot=await page.evaluate(()=>window.gameVerificationState().snapshot);
+    const qualitySamples={high:frozen};
+    await page.locator('#quality').selectOption('low',{force:true});
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+    const low=await page.evaluate(()=>window.gameDiagnostics());
+    expect(low.quality).toBe('low');expect(low.paused).toBe(true);expect(low.clock).toBe(clock);
+    qualitySamples.low=low.m01.battlefieldFx;
+    expect(qualitySamples.low.counts.smoke).toBeGreaterThan(0);
+    expect(qualitySamples.low.counts.dust).toBeGreaterThan(0);
+    expect(qualitySamples.low.counts.smoke).toBeLessThanOrEqual(qualitySamples.high.counts.smoke);
+    expect(qualitySamples.low.counts.dust).toBeLessThanOrEqual(qualitySamples.high.counts.dust);
+    await page.locator('#quality').selectOption('high',{force:true});
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+    const high=await page.evaluate(()=>window.gameDiagnostics());
+    expect(high.quality).toBe('high');expect(high.paused).toBe(true);expect(high.clock).toBe(clock);
+    expect(high.m01.battlefieldFx).toEqual(frozen);
+    expect(await page.evaluate(()=>window.gameVerificationState().snapshot)).toEqual(snapshot);
+    await info.attach('quality-same-clock',{body:JSON.stringify({clock,qualitySamples},null,2),contentType:'application/json'});
+    await page.waitForTimeout(300);
     const still=await page.evaluate(()=>window.gameDiagnostics());expect(still.clock).toBe(clock);expect(still.m01.battlefieldFx).toEqual(frozen);
     // This legacy snapshot is itself the checkpoint and is just before east blast.
     // Inspect reset at the restored clock, before a legitimate new blast can fire.
@@ -129,8 +156,6 @@ test('distance smoke lifecycle pause restore and Low High remain bounded',async(
   if(!baseline&&far.data.m01.battlefieldFx.meta)expect(far.data.m01.battlefieldFx.meta.bands.far).toBeGreaterThan(0);
   await far.page.close();
   if(!baseline){
-    expect(samples.low.fx.counts.smoke).toBeLessThanOrEqual(samples.high.fx.counts.smoke);
-    expect(samples.low.fx.counts.dust).toBeLessThanOrEqual(samples.high.fx.counts.dust);
     console.log('M01_BATTLEFIELD_FX_V3_COUNTERS '+JSON.stringify(samples));
   }
   await info.attach('quality-counters',{body:JSON.stringify(samples,null,2),contentType:'application/json'});
