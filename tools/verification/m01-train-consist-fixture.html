@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="data:,">
+<title>Composição do trem 963 — bancada isolada</title>
+<style>html,body{margin:0;background:#8d969a;overflow:hidden}canvas{display:block}#label{position:fixed;left:10px;top:8px;font:13px/1.35 system-ui,sans-serif;color:#111;background:#ffffffc0;padding:4px 8px;border-radius:3px;white-space:pre}</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+</head>
+<body>
+<div id="label"></div>
+<script type="module">
+// Verification page only (not part of the game): the real M01TrainWagons module with the real wagon GLBs, a neutral
+// sun and a free camera, so couplings/underframe/LOD tiers can be inspected close up. No simulation is loaded.
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { M01TrainWagons, M01_TRAIN_WAGON_PLAN } from '/src/render/m01-train-wagons.js';
+
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(1);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.shadowMap.enabled=true;
+document.body.appendChild(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color('#9aa4a8');scene.fog=new THREE.Fog('#9aa4a8',420,2800);
+const camera=new THREE.PerspectiveCamera(50,1,.1,5000);
+scene.add(new THREE.HemisphereLight('#c9d6e2','#4b4435',1.5));
+const sun=new THREE.DirectionalLight('#ffe8cc',2.6);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
+Object.assign(sun.shadow.camera,{left:-30,right:30,top:30,bottom:-30,near:.5,far:200});sun.shadow.bias=-.0003;sun.shadow.normalBias=.02;
+scene.add(sun,sun.target);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(3000,800),new THREE.MeshStandardMaterial({color:'#5d6346',roughness:1}));
+ground.rotation.x=-Math.PI/2;ground.position.set(1500,-1,0);ground.receiveShadow=true;scene.add(ground);
+const loader=new GLTFLoader(),cache=new Map();
+const assets={load:(name,path)=>{if(!cache.has(path))cache.set(path,loader.loadAsync('/'+path));return cache.get(path);}};
+const box=new THREE.BoxGeometry(1,1,1),cylinder=new THREE.CylinderGeometry(1,1,1,8);
+const wood=new THREE.MeshStandardMaterial({color:'#725a3c',roughness:.9}),metal=new THREE.MeshStandardMaterial({color:'#6f7773',roughness:.5,metalness:.6});
+const parent=new THREE.Group();scene.add(parent);
+let train=new M01TrainWagons(parent,assets,box,cylinder,wood,metal);
+window.stage={
+  async load(){await train.load();},
+  update(player,quality){train.update(player,quality);},
+  camera(pos,target,fov=50){camera.position.set(...pos);camera.lookAt(...target);camera.fov=fov;camera.updateProjectionMatrix();
+    sun.target.position.set(...target);sun.position.set(target[0]-35,target[1]+45,target[2]-50);},
+  resize(w,h){renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();},
+  label(text){document.getElementById('label').textContent=text;document.getElementById('label').style.display=text?'block':'none';},
+  render(){renderer.render(scene,camera);return renderer.info.render;},
+  diagnostics(){return train.diagnostics;},
+  plan:M01_TRAIN_WAGON_PLAN.map(w=>({...w})),
+  async recreate(){train.dispose();train=new M01TrainWagons(parent,assets,box,cylinder,wood,metal);await train.load();return parent.children.length;},
+};
+window.ready=true;
+</script>
+</body>
+</html>
