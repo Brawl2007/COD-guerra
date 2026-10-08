@@ -1,3 +1,4 @@
+# Recovery evidence only; own branch, no deploy and no dispatch.
 name: M01 V6 evidence recovery
 on:
   push:
