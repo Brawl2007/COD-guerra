@@ -2,7 +2,7 @@
 
 TASK_ID: `M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7`.
 
-**Estado: VALIDATION_IN_PROGRESS.** A primeira execução browser integral terminou com quatro falhas demonstradas no harness; os cinco retestes focados passaram, e a nova execução integral sem filtros está em curso. M01 continua **PROTÓTIPO JOGÁVEL**; não há alegação de qualidade AAA ou de certificação no Chromebook.
+**Estado: VALIDATION_IN_PROGRESS.** As execuções browser integrais terminaram 80/84 e 82/84. As quatro primeiras correções passaram na segunda execução; as duas falhas restantes têm provas preservadas e correções em validação focada, sem alterações de produção. A nova certificação integral ainda está pendente. M01 continua **PROTÓTIPO JOGÁVEL**; não há alegação de qualidade AAA ou de certificação no Chromebook.
 
 ## Identidade, recuperação e decisões
 
@@ -14,7 +14,7 @@ TASK_ID: `M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7`.
 | Node completo/build | `a97a3152d4848517a267d80c0cbbdc24bf2ddaeb` |
 | Primeira execução browser integral, FAIL 80/84 | `1b636303beeebf019aa2cd13819c6e0637f2b0bc` |
 | Harness corrigido e retestado 5/5 | `91c7a844c7d5020a552969027a424aad1f13dcd4` |
-| Nova execução browser integral sem filtros | `13b14fe75cdffc4e6425dcff4cb7b1f5dbb75e24`, [run 37851294926](https://github.com/Brawl2007/COD-guerra/actions/runs/37851294926) |
+| Segunda execução browser integral, FAIL 82/84 | `13b14fe75cdffc4e6425dcff4cb7b1f5dbb75e24`, [run 37851294926](https://github.com/Brawl2007/COD-guerra/actions/runs/37851294926) |
 | PR draft | [#59 — V7 → V6](https://github.com/Brawl2007/COD-guerra/pull/59) |
 | HEAD final publicado | O `head.sha` exato da PR #59, registrado na descrição final da PR; inclui este próprio handoff. `git rev-parse origin/codex/m01-final-production-consolidation-v7` reproduz esse SHA após fetch. |
 
@@ -61,7 +61,8 @@ Exclusões: os quatro commits de armas posteriores a `7dbc0a5` continuam com fal
 | Browser focado armas/decals/FX | **8/8 PASS**, retries 0 | `BROWSER_FOCUSED_WEAPON_FX.json`, log; 6,8 min |
 | Browser integral combinado, primeira execução | **80 PASS / 4 FAIL**, 84 executados, zero skips/retries/erros globais | [Run 37833355993](https://github.com/Brawl2007/COD-guerra/actions/runs/37833355993); `BROWSER_FULL_FIRST.json.gz`, resumo/log originais e `BROWSER_FAILURE_DIAGNOSIS.json` |
 | Browser focado após correção do harness | **5/5 PASS**, Chromium 153, workers 1, retries/skips zero | `BROWSER_HARNESS_FOCUSED.json.gz`, resumo e log; prova de yaw/HUD, impacto pausado e muzzle real |
-| Browser integral após correção | **EM EXECUÇÃO**, inventário de 84 casos, uma invocação sem filtros, retries 0 | [Run 37851294926](https://github.com/Brawl2007/COD-guerra/actions/runs/37851294926); build, proteção e inventário já passaram |
+| Browser integral combinado, segunda execução | **82 PASS / 2 FAIL**, 84 executados, zero skips/retries/erros globais | [Run 37851294926](https://github.com/Brawl2007/COD-guerra/actions/runs/37851294926); `BROWSER_FULL_SECOND.json.gz`, resumo/log e `BROWSER_FULL_SECOND_DIAGNOSIS.json`; quatro correções anteriores passaram |
+| Browser focado após segunda correção | **4/4 PASS**, Chromium 153, workers 1, retries/skips zero | `BROWSER_SECOND_HARNESS_FOCUSED.json.gz`, resumo e log; fases reais FX e burned/reload/checkpoint/LOD/fallback |
 | Autoridade e recuperação | **PASS** | 291 ficheiros protegidos, duas rotas completas e futuros dos quatro CPs; `INVARIANTS.json` e reteste corrigido abaixo |
 | Helper adicional de LOD, após correção de QA | **PASS** — Low/Medium/High/Low = 2/1/0/2 em V6 e V7 | `INVARIANTS_LOD_CORRECTED.json`, `logs/invariants-lod-corrected.log`; commit `158c30edea72869144cb0b0c875029dc3818adc2` |
 | Visual principal local e CI | **57/57 pares PASS para estado equivalente**, 114 frames | 12 boards inspecionadas; os 114 PNGs locais e CI têm hashes idênticos, `VISUAL_SUMMARY.json`; não é uma aprovação artística automática |
@@ -110,6 +111,15 @@ A primeira suíte completa não foi cancelada: 84 casos executados, **80 PASS / 
 - **Retirada:** o loop terminava na primeira baixa (17 homens, clock 749,6667, muzzle frames 5), antes do próximo clarão submetido. O attachment posterior observou muzzle frames 6 em 750,1667, somente 0,5 s simulados depois. O loop continua limitado a 300 amostras, mas espera pelas duas condições já exigidas: baixa real e novo frame de muzzle. Todos os checks de origem, piso de 12 sobreviventes e igualdade HUD/simulação permanecem. Captura com pausa nativa.
 
 Somente `tests/browser/m01.spec.js` e `m01-battlefield-fx.spec.js` mudam nesta correção. Nenhuma asserção original foi removida; nenhum evento, RNG, input, HUD de produção ou lifetime foi alterado. O build continua com o mesmo SHA. Os cinco cenários focados passaram em 2,4 min; isso autoriza uma nova execução integral após a correção, sem filtros e sem somar resultados históricos.
+
+## Diagnóstico e correção da segunda execução integral
+
+A segunda suíte completa terminou **82 PASS / 2 FAIL**, 84 casos, sem retries, skips, flaky ou erros globais, em 94,35 min. Não foi cancelamento nem limite do runner. Artifact **11585538865**, 96 110 429 B, SHA-256 `7ab1ecf84c461281554125965427cd533e83282611551ce90ca73afa7421a8f3`, ZIP/CRC verificado; raw report, resumo e excertos primários dos traces foram preservados. As quatro correções da primeira execução passaram nesta segunda invocação.
+
+- **Fallback dos vagões:** o trace contém `evt_m01_wounded_dragged` no estado autoritativo restaurado, clock 0, player perto do vagão, mas ainda apresenta os vagões intactos e distantes, em LOD2. O helper aceitava frame 10 comparado ao frame 9 do menu, cuja qualidade/assets podiam invalidar o frame antes de Continuar. Agora o contador é recolhido **após** confirmar controlo real, e exige outro frame submetido antes de pausar. Não se espera pelo estado desejado: as mesmas asserções de burned/fire/fallback/65 proxies continuam a decidir se está correto. O renderer herdado já aplica destruição antes do cache; não foi alterado.
+- **FX da demolição leste:** o `waitForFunction` de 30 s expirou sob software WebGL/trace. A montagem do observador levou 14,22 s, após 11,19 s na confirmação de controlo; o trace acaba com a indicação real de demolição e pausa nativa às 06:10:02. O trace não inclui os contadores no instante da falha, portanto **não permite afirmar isoladamente** se a leitura atrasou ou se o callback perdeu a fase quente. Agora o observador é armado no menu pausado antes de Continuar, exige controlo nativo, evento real e core/fire+dust positivos; o orçamento de leitura é 60 s de parede. Smoke mantém seu predicado positivo; capturas pausadas usam o orçamento de readback de 120 s já usado pelos outros casos. Diagnóstico do estado/captura é anexado se voltar a falhar. Nenhum lifetime, timing, evento ou RNG foi alterado.
+
+O build da correção continua com o mesmo SHA-256. Os quatro casos focados (ambos os FX e ambos os cenários de vagões) passaram em 3,8 min, Chromium 153, sem retries/skips/erros globais. A certificação combinada permanece pendente até uma nova execução integral real; os resultados focados não substituem essa execução.
 
 ## Battlefield FX e infraestrutura
 

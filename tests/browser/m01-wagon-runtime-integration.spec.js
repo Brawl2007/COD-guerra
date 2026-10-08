@@ -17,9 +17,12 @@ async function waitMenu(page){
   await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#continue')).toBeVisible();
 }
 async function freezeButton(page,selector){
-  const before=await page.evaluate(()=>window.gameDiagnostics()?.m01?.renderedFrames??0);
   await page.locator(selector).click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game',null,{timeout:30000});
+  // A quality/asset frame can finish between the old menu counter and Continue.
+  // Observe control first, then require a new submitted frame of the restored
+  // world. Do not wait for a desired wagon state: the assertions below decide it.
+  const before=await page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames);
   await page.waitForFunction(before=>window.gameDiagnostics().m01.renderedFrames>before,before,{timeout:30000});
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible({timeout:30000});
   await page.waitForFunction(()=>window.gameDiagnostics().paused&&window.gameDiagnostics().m01?.yardWagons?.wagons?.length===3);
