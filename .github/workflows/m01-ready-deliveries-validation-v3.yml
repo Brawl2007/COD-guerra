@@ -1,0 +1,86 @@
+name: M01 consolidated deliveries independent validation V3
+
+on:
+  push:
+    branches:
+      - codex/m01-ready-deliveries-validation-v3
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-deliveries-validation-v3
+  cancel-in-progress: false
+
+jobs:
+  node-shards:
+    name: Node shard ${{ matrix.shard }} of 6
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Run deterministic test shard
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t TESTS < <(find tests -maxdepth 1 -name '*.test.js' -type f | sort | awk -v shard="${{ matrix.shard }}" '((NR-1)%6)==shard')
+          echo "Shard ${{ matrix.shard }}: ${#TESTS[@]} files"
+          printf '%s\n' "${TESTS[@]}"
+          node --test --test-concurrency=1 "${TESTS[@]}"
+
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Production build on consolidated tree
+        run: npm run build
+
+  browser-sanity:
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Focused combined restore and presentation
+        run: >-
+          npx playwright test
+          tests/browser/m01-bridge-structural.spec.js
+          tests/browser/m01-vegetation-lod.spec.js
+          --workers=1
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-validation-v3-browser
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
