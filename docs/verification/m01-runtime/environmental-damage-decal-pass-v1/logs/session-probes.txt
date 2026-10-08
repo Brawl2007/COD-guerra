@@ -65,3 +65,45 @@ west (early)     clock 1042.00 scene cs_m01_west_blast | +6.75 s:  scene cs_m01_
     +   "evt_m01_west_demolition",
   1 failed
    The position check alone would pass here: the west demolition does not move the player.
+
+7) Screenshot time in the exact state of tests/browser/m01-battlefield-fx.spec.js "real in-flight round…" (preImpact fixture,
+   High, production build, Chromium/SwiftShader; browser pinned to 2 cores with taskset to approach a CI runner; temporary
+   spec tests/browser/zz-shot-probe.spec.js, deleted). BEFORE = base renderer hooks (99309d9), AFTER = code of f745952;
+   two alternating rounds of 3. shotMs = page.screenshot duration; frameMs = 5 rAF intervals after it (not FPS).
+SHOT_PROBE {"label":"BEFORE-r1","i":0,"shotMs":9335,"frameMs":[1950,2117,2183,2100,2283],"dc":286,"tri":518009,"decals":null}
+SHOT_PROBE {"label":"BEFORE-r1","i":1,"shotMs":8637,"frameMs":[2300,2533,2250,2283,2200],"dc":285,"tri":516961,"decals":null}
+SHOT_PROBE {"label":"BEFORE-r1","i":2,"shotMs":9098,"frameMs":[2217,2150,2333,2267,2117],"dc":285,"tri":516961,"decals":null}
+SHOT_PROBE {"label":"AFTER-r1","i":0,"shotMs":9168,"frameMs":[2300,2317,17,2500,2183],"dc":289,"tri":518956,"decals":{"marks":9,"res":109,"debris":67,"embers":0,"atlas":true}}
+SHOT_PROBE {"label":"AFTER-r1","i":1,"shotMs":15242,"frameMs":[33,2267,2417,2550,2350],"dc":289,"tri":519478,"decals":{"marks":10,"res":109,"debris":67,"embers":0,"atlas":true}}
+SHOT_PROBE {"label":"AFTER-r1","i":2,"shotMs":10272,"frameMs":[2150,2433,33,2767,2417],"dc":289,"tri":519478,"decals":{"marks":9,"res":109,"debris":67,"embers":0,"atlas":true}}
+SHOT_PROBE {"label":"BEFORE-r2","i":0,"shotMs":9297,"frameMs":[33,2350,2033,2333,2650],"dc":286,"tri":518009,"decals":null}
+SHOT_PROBE {"label":"BEFORE-r2","i":1,"shotMs":9053,"frameMs":[4483,200,2367,2350,2200],"dc":284,"tri":516441,"decals":null}
+SHOT_PROBE {"label":"BEFORE-r2","i":2,"shotMs":9929,"frameMs":[2450,4400,2400,4633,267],"dc":285,"tri":516963,"decals":null}
+SHOT_PROBE {"label":"AFTER-r2","i":0,"shotMs":9430,"frameMs":[2517,2633,2433,33,2250],"dc":289,"tri":518436,"decals":{"marks":9,"res":109,"debris":67,"embers":0,"atlas":true}}
+SHOT_PROBE {"label":"AFTER-r2","i":1,"shotMs":16255,"frameMs":[33,2833,2283,2800,2433],"dc":288,"tri":517918,"decals":{"marks":10,"res":109,"debris":67,"embers":0,"atlas":true}}
+SHOT_PROBE {"label":"AFTER-r2","i":2,"shotMs":12444,"frameMs":[33,2650,2233,2250,2317],"dc":289,"tri":518958,"decals":{"marks":10,"res":109,"debris":67,"embers":0,"atlas":true}}
+   Summary: BEFORE 8637-9929 ms (median 9198), frame median 2283 ms; AFTER 9168-16255 ms (median 11358), frame median 2417 ms
+   (frame medians over the intervals longer than 1 s; with the short intervals right after each capture: 2275 and 2317 ms).
+
+8) Same state, instrumented (temporary spec tests/browser/zz-shot-probe2.spec.js, deleted): WebGL linkProgram calls (three.js
+   SHADER_NAME and defines) and rAF callbacks, times in ms relative to the moment the first impact FX was seen.
+PROBE2 {"label":"BEFORE","i":0,"shotMs":8967,"impactAfterContinue":15376,"shotWindow":[0,8999],"fx":{"muzzle":1,"tracer":1,"puff":4,"spark":0,"smoke":13,"chip":0},"linksBeforeContinue":37,"linksAfterContinue":[],"longFrames":[{"at":6596,"cpu":46,"gap":4530}]}
+PROBE2 {"label":"BEFORE","i":1,"shotMs":8802,"impactAfterContinue":15521,"shotWindow":[0,8873],"fx":{"muzzle":1,"tracer":1,"puff":4,"spark":0,"smoke":13,"chip":0},"linksBeforeContinue":37,"linksAfterContinue":[],"longFrames":[]}
+PROBE2 {"label":"BEFORE","i":2,"shotMs":9023,"impactAfterContinue":21115,"shotWindow":[0,9061],"fx":{"muzzle":1,"tracer":1,"puff":4,"spark":0,"smoke":13,"chip":0},"linksBeforeContinue":34,"linksAfterContinue":[{"at":-18342,"ms":0,"name":"dark_glass_lamp","flags":""},{"at":-16362,"ms":0,"name":"wagon_covered","flags":"USE_MAP+USE_INSTANCING"},{"at":-16345,"ms":0,"name":"paint_soot_coal","flags":"USE_MAP"}],"longFrames":[{"at":-18425,"cpu":2101,"gap":null}]}
+PROBE2 {"label":"AFTER","i":0,"shotMs":15149,"impactAfterContinue":18118,"shotWindow":[0,15180],"fx":{"muzzle":2,"tracer":0,"puff":12,"spark":0,"smoke":13,"chip":0},"linksBeforeContinue":41,"linksAfterContinue":[{"at":8649,"ms":0,"name":"MeshStandardMaterial","flags":"USE_INSTANCING_COLOR+USE_INSTANCING"}],"longFrames":[{"at":-4596,"cpu":30,"gap":4173},{"at":6206,"cpu":26,"gap":4156},{"at":8595,"cpu":6520,"gap":2361},{"at":15131,"cpu":29,"gap":6536}]}
+PROBE2 {"label":"AFTER","i":1,"shotMs":15342,"impactAfterContinue":18836,"shotWindow":[0,15387],"fx":{"muzzle":1,"tracer":0,"puff":4,"spark":0,"smoke":13,"chip":0},"linksBeforeContinue":41,"linksAfterContinue":[{"at":8721,"ms":0,"name":"MeshStandardMaterial","flags":"USE_INSTANCING_COLOR+USE_INSTANCING"}],"longFrames":[{"at":-6867,"cpu":28,"gap":4208},{"at":6606,"cpu":50,"gap":4653},{"at":8697,"cpu":6630,"gap":31},{"at":15331,"cpu":20,"gap":6634}]}
+PROBE2 {"label":"AFTER","i":2,"shotMs":15910,"impactAfterContinue":16363,"shotWindow":[0,15930],"fx":{"muzzle":1,"tracer":0,"puff":4,"spark":0,"smoke":13,"chip":0},"linksBeforeContinue":41,"linksAfterContinue":[{"at":9507,"ms":0,"name":"MeshStandardMaterial","flags":"USE_INSTANCING_COLOR+USE_INSTANCING"}],"longFrames":[{"at":9480,"cpu":6396,"gap":2445},{"at":15887,"cpu":26,"gap":6407}]}
+   Every AFTER capture links a new MeshStandardMaterial program with USE_INSTANCING_COLOR 8.6-9.5 s after the impact, in a
+   frame of 6.4-6.6 s of CPU; BEFORE links nothing after the impact (the three links in BEFORE 2 are world models loading
+   18-16 s before it). Two MeshStandardMaterial batches with per-instance colour and no map start without instance
+   colours: M01View's chip FX batch and battlefieldShards (blasts only). setColorAt on the first chip adds instanceColor
+   and three.js switches the program; the decal pass routes rounds on drawn wood and stone to chip FX. Fixing the chip
+   batch removes the link (entry 9).
+
+9) Same instrumented probe after the fix (chip batch instance colours created in createFireEffects; one zero-size draw of
+   the chip batch on the first frame through damageDecals.update({warm})), working tree before commit:
+PROBE2 {"label":"FIXED","i":0,"shotMs":9694,"impactAfterContinue":16233,"shotWindow":[0,9726],"fx":{"muzzle":1,"tracer":0,"puff":4,"spark":0,"smoke":13,"chip":0},"linksBeforeContinue":42,"linksAfterContinue":[],"longFrames":[{"at":6844,"cpu":58,"gap":4698}]}
+PROBE2 {"label":"FIXED","i":1,"shotMs":9483,"impactAfterContinue":18660,"shotWindow":[0,9540],"fx":{"muzzle":2,"tracer":0,"puff":16,"spark":0,"smoke":13,"chip":0},"linksBeforeContinue":42,"linksAfterContinue":[],"longFrames":[{"at":9102,"cpu":45,"gap":4732}]}
+PROBE2 {"label":"FIXED","i":2,"shotMs":9644,"impactAfterContinue":23452,"shotWindow":[0,9669],"fx":{"muzzle":1,"tracer":0,"puff":4,"spark":0,"smoke":13,"chip":0},"linksBeforeContinue":39,"linksAfterContinue":[{"at":-20119,"ms":0,"name":"dark_glass_lamp","flags":""},{"at":-20113,"ms":0,"name":"wagon_covered","flags":"USE_MAP+USE_INSTANCING"},{"at":-17661,"ms":0,"name":"paint_soot_coal","flags":"USE_MAP"}],"longFrames":[{"at":-20207,"cpu":2580,"gap":null},{"at":6891,"cpu":45,"gap":4756}]}
+   No program linked and no long CPU frame after the impact; screenshots 9483-9694 ms, inside the BEFORE range. One more
+   program before continue (42 instead of 41): the chip program, now compiled while loading.

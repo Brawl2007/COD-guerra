@@ -1008,7 +1008,7 @@ export class M01DamageDecals {
     }
   }
   /** Per rendered frame: persistent aftermath from saved damage, mark fades, bounded debris and embers. */
-  update({state,time,world,trees=null,quality='medium',camera=null,renderer=null,view=null}){
+  update({state,time,world,trees=null,quality='medium',camera=null,renderer=null,view=null,warm=[]}){
     // Compile the four (still hidden) programs on the first frame, not on the first impact in combat.
     if(renderer&&view&&!this.compiled){this.compiled=true;this.warmFrame=true;renderer.compile(this.group,view,this.scene);}
     if(!world||!state)return;
@@ -1019,13 +1019,16 @@ export class M01DamageDecals {
     while(this.marks.length>L.marks){this.remove(this.marks[0]);this.counts.evicted++;}
     const spallCap=Math.floor(L.debris*(1-M01_DAMAGE_DECAL_LIMITS.residueDebrisShare));if(this.spall.length>spallCap)this.spall.splice(0,this.spall.length-spallCap);
     this.writeMarks(time,L,trees);this.writeDebris(time,L);this.writeEmbers(time,L,camera);this.residueMesh.visible=this.residueTriangles>0;
-    if(this.warmFrame){this.warmFrame=false;this.warmUp();}
+    if(this.warmFrame){this.warmFrame=false;this.warmUp(warm);}
   }
   /** One invisible draw of each mesh (zero-size instances, the degenerate residue triangle) on the first frame, so drivers
-   *  that build their pipeline at first draw (ANGLE over Vulkan, SwiftShader) do it while loading, not on a first impact. */
-  warmUp(){
+   *  that build their pipeline at first draw (ANGLE over Vulkan, SwiftShader) do it while loading, not on a first impact.
+   *  `extra` are the owner's empty instanced meshes this module makes appear (the chip FX of rounds on drawn wood and
+   *  stone): same zero-size draw; the owner rewrites their counts on its next frame. */
+  warmUp(extra=[]){
     const zero=this.matrix.makeScale(0,0,0);
     for(const mesh of [this.marksMesh,this.debrisMesh,this.emberMesh])if(!mesh.visible){mesh.setMatrixAt(0,zero);mesh.count=1;mesh.visible=true;mesh.instanceMatrix.needsUpdate=true;}
+    for(const mesh of extra)if(mesh?.isInstancedMesh&&mesh.count===0){mesh.setMatrixAt(0,zero);mesh.count=1;mesh.instanceMatrix.needsUpdate=true;}
     if(this.marksMesh.count===1&&!this.marks.length){this.opacityAttribute.setX(0,0);this.opacityAttribute.needsUpdate=true;}
     if(this.emberMesh.count===1&&!(this.residueEmbers??[]).length){this.glowAttribute.setX(0,0);this.glowAttribute.needsUpdate=true;}
     this.residueMesh.visible=true;

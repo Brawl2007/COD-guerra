@@ -246,6 +246,9 @@ export class M01View {
         new THREE.InstancedMesh(geometry,this.materials[material],capacity);
       batch.instanceMatrix.setUsage(THREE.DynamicDrawUsage);batch.count=0;batch.frustumCulled=false;this.effects.add(batch);this.fireBatches[name]=batch;
     }
+    // Chips are always tinted: their instance colours exist from the start, so the first chip (frequent since rounds on
+    // drawn wood and stone get chip FX) does not switch the batch to a new program in combat.
+    this.fireBatches.chip.setColorAt(0,this.fireColor.set('#ffffff'));
     this.battlefieldFxBatches={};this.battlefieldDummy=new THREE.Object3D();this.battlefieldColor=new THREE.Color();
     for(const [name,capacity,color]of [
       ['flash',M01_BATTLEFIELD_FX_LIMITS.flash,'#fff0c2'],['core',M01_BATTLEFIELD_FX_LIMITS.core,'#ffc45d'],
@@ -509,7 +512,7 @@ export class M01View {
     this.carryBody.position.y=this.carryCrate.position.y=bob*1.5;
     if(this.viewModel.update(sim,this.owner.quality,this.flashUntil)){this.weaponRoot.visible=false;this.carryBody.visible=false;}
     this.updateBattlefieldFx(state,time);
-    try{this.damageDecals.update({state,time,world:sim.world,trees:this.environment?.treeDescriptors,quality:this.owner.quality,camera:this.camera.position,renderer:this.engine,view:this.camera});}
+    try{this.damageDecals.update({state,time,world:sim.world,trees:this.environment?.treeDescriptors,quality:this.owner.quality,camera:this.camera.position,renderer:this.engine,view:this.camera,warm:[this.fireBatches.chip]});}
     catch(error){this.damageDecals.fail(error);}   // presentation only: never stops the frame
     this.engine.info.autoReset=false;this.engine.info.reset();this.engine.clear();this.engine.render(this.scene,this.camera);
     if(this.fx.muzzle>0){this.muzzlePresentation.frames++;this.muzzlePresentation.lastClock=time;this.muzzlePresentation.lastFrame=this.renderedFrames??0;}

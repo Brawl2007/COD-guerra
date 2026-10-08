@@ -6,6 +6,7 @@ import {M01Simulation} from '../src/game/m01-simulation.js';
 import {makeRound,traceRound} from '../src/game/m01-fire.js';
 import {traceShot,eyePosition} from '../src/world/spatial.js';
 import {M01Environment} from '../src/render/m01-environment.js';
+import {M01View} from '../src/render/m01-view.js';
 import {driver,toRepair} from './helpers/m01-route.js';
 import {M01DamageDecals,M01_DAMAGE_DECAL_LIMITS as LIMITS,M01_SURFACE_PROFILES,M01_DAMAGED_ABUTMENTS,M01_PORTALS,m01VisualSurface,m01BlastResidue,
   m01BlastKind,m01DecalAtlas,m01SurfaceTop,renderedTerrainHeight,deckSurfaceAt,fitMark} from '../src/render/m01-damage-decals.js';
@@ -319,19 +320,45 @@ test('marks on a demolished span or a lowered cover are invalidated; marks elsew
 
 test('the first frame compiles the decal programs and draws every mesh once invisibly; later frames hide empty meshes',()=>{
   const b=bench(),compiled=[],renderer={compile:(group,camera,scene)=>compiled.push([group,camera,scene])},view=new THREE.PerspectiveCamera();
-  const frame=()=>b.decals.update({state:b.sim.renderState,time:b.sim.clock,world:b.sim.world,trees:b.trees,quality:'high',renderer,view});
+  // The owner's empty chip batch is passed in: warmed by the same zero-size draw, then left to its owner.
+  const chip=new THREE.InstancedMesh(new THREE.TetrahedronGeometry(1),new THREE.MeshStandardMaterial({vertexColors:true}),8);chip.count=0;
+  const busy=new THREE.InstancedMesh(new THREE.TetrahedronGeometry(1),new THREE.MeshStandardMaterial(),8);busy.count=2;   // already drawing: left alone
+  busy.setMatrixAt(0,new THREE.Matrix4().makeTranslation(1,2,3));const busyMatrices=Array.from(busy.instanceMatrix.array);
+  const frame=()=>b.decals.update({state:b.sim.renderState,time:b.sim.clock,world:b.sim.world,trees:b.trees,quality:'high',renderer,view,warm:[chip,busy]});
   frame();
   assert.equal(compiled.length,1);assert.equal(compiled[0][0],b.decals.group);assert.equal(compiled[0][2],b.decals.scene);
-  for(const mesh of [b.decals.marksMesh,b.decals.debrisMesh,b.decals.emberMesh]){
+  for(const mesh of [b.decals.marksMesh,b.decals.debrisMesh,b.decals.emberMesh,chip]){
     assert.equal(mesh.visible,true);assert.equal(mesh.count,1);
     const m=new THREE.Matrix4();mesh.getMatrixAt(0,m);assert.equal(m.determinant(),0);   // zero-size instance: no pixels
   }
+  assert.equal(busy.count,2);assert.deepEqual(Array.from(busy.instanceMatrix.array),busyMatrices);
   assert.equal(b.decals.residueMesh.visible,true);assert.equal(b.decals.residueTriangles,0);
   const p=b.decals.residueGeometry.attributes.position.array;assert.ok(p.length===9&&p.every(v=>v===0));   // degenerate triangle
-  frame();
-  assert.equal(compiled.length,1);
+  chip.count=0;frame();   // the owner rewrites its count on its next frame; the decals no longer touch it
+  assert.equal(compiled.length,1);assert.equal(chip.count,0);
   for(const mesh of [b.decals.marksMesh,b.decals.debrisMesh,b.decals.emberMesh,b.decals.residueMesh])assert.equal(mesh.visible,false);
   assert.equal(b.decals.diagnostics.drawCalls,0);
+});
+
+test('the chip FX batch has instance colours from construction, so the first chip does not switch its program',()=>{
+  // Rounds on drawn wood and stone get chip FX; three.js changes an InstancedMesh's program when instanceColor first
+  // appears, and software WebGL then builds a new pipeline in the middle of combat (6.5 s frames measured on 2 cores).
+  const view=Object.create(M01View.prototype),batch=(capacity,color,parent)=>{
+    const b=new THREE.InstancedMesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({color}),capacity);parent.add(b);return b;};
+  Object.assign(view,{materials:{},sphere:new THREE.SphereGeometry(1,8,6),effects:new THREE.Group(),camera:{position:new THREE.Vector3()},
+    characters:null,impacts:[],atmosphere:{debrisGeometry:new THREE.TetrahedronGeometry(1),billboardBatch:batch}});
+  view.createFireEffects();
+  const chip=view.fireBatches.chip;
+  assert.ok(chip.instanceColor);assert.equal(chip.count,0);assert.equal(chip.material,view.materials.chip);
+  assert.deepEqual(Array.from(chip.instanceColor.array.slice(0,3)),[1,1,1]);
+  // First frame, in M01View.render order: the decals give the empty batch one zero-size instance, and the view's own
+  // updateFire rewrites its count on the next rendered frame.
+  const decals=new M01DamageDecals(new THREE.Scene()),sim=new M01Simulation(SEED);sim.tick(.05,{skip:true});
+  decals.update({state:sim.renderState,time:sim.clock,world:sim.world,quality:'high',renderer:{compile(){}},view:new THREE.PerspectiveCamera(),warm:[chip]});
+  const m=new THREE.Matrix4();chip.getMatrixAt(0,m);assert.equal(chip.count,1);assert.equal(m.determinant(),0);
+  view.updateFire(sim);assert.equal(chip.count,0);
+  assert.match(source('../src/render/m01-view.js'),/warm:\[[^\]]*this\.fireBatches\.chip\b/);   // the view passes it
+  decals.dispose();
 });
 
 test('the decal atlas is original, deterministic art with bounded size',()=>{

@@ -20,14 +20,14 @@ Nada de dano, acertos, RNG, eventos, objectivos, colisões, mundo, missão, asse
 
 ## Ficheiros
 
-[FILES_CHANGED.txt](FILES_CHANGED.txt). Produção: `src/render/m01-damage-decals.js` (novo), `src/render/m01-view.js` (ganchos), `src/game/game.js` (+1 linha). Testes: `tests/m01-damage-decals.test.js`, `tests/browser/m01-damage-decals.spec.js`. Verificação: `tools/verification/m01-damage-decals-{fixture.html,gallery.mjs,cpu.mjs}`. CI: `.github/workflows/m01-environmental-damage-decal-pass-v1.yml`. Docs: esta pasta, `RUNBOOK.md`, `DEVELOPMENT_STATUS.md`, `docs/NEXT_CHAT_CONTEXT.md`, índice `docs/verification/m01-runtime/README.md`.
+[FILES_CHANGED.txt](FILES_CHANGED.txt). Produção: `src/render/m01-damage-decals.js` (novo), `src/render/m01-view.js` (ganchos; cores de instância do lote de lascas desde a construção), `src/game/game.js` (+1 linha). Testes: `tests/m01-damage-decals.test.js`, `tests/browser/m01-damage-decals.spec.js`. Verificação: `tools/verification/m01-damage-decals-{fixture.html,gallery.mjs,cpu.mjs}`. CI: `.github/workflows/m01-environmental-damage-decal-pass-v1.yml`. Docs: esta pasta, `RUNBOOK.md`, `DEVELOPMENT_STATUS.md`, `docs/NEXT_CHAT_CONTEXT.md`, índice `docs/verification/m01-runtime/README.md`.
 
 ## Resultados
 
 | Verificação | Resultado |
 |---|---|
-| Node completo (`npm test`) | **336/336** (12 novos em `tests/m01-damage-decals.test.js`, incluindo rota real bit-idêntica com eventos congelados) — [log](logs/node-test.log) |
-| Node focado | 12/12 — [log](logs/node-focused.log) |
+| Node completo (`npm test`) | **337/337** (13 novos em `tests/m01-damage-decals.test.js`, incluindo rota real bit-idêntica com eventos congelados) — [log](logs/node-test.log) |
+| Node focado | 13/13 — [log](logs/node-focused.log) |
 | Build de produção | PASS (aviso de chunk > 500 kB já existente na base) — [log](logs/build.log) |
 | Browser AFTER (decals 3, battlefield FX 2, combat feedback 3) | **8/8** — [log](logs/browser-after.log) |
 | Browser BEFORE (ganchos da base, mesmas vistas) | 3/3 — [log](logs/browser-before.log) |
@@ -35,6 +35,7 @@ Nada de dano, acertos, RNG, eventos, objectivos, colisões, mundo, missão, asse
 | Invariância da autoridade (`git diff --exit-code 99309d9` em simulação/mundo/core/missão/assets/configs; `game.js` só +1 linha) | PASS (passo do workflow) |
 | CI do workflow focado no checkpoint `b084bba` | verde em `claude/bold-cannon-rkvxjp` ([run 37720345045](https://github.com/Brawl2007/COD-guerra/actions/runs/37720345045)); em `codex/…` ([run 37720348114](https://github.com/Brawl2007/COD-guerra/actions/runs/37720348114)) o browser deu 7/8: o teste existente `m01-battlefield-fx` "real in-flight round…" expirou num `page.screenshot` de 30 s (excerto do log do job e sonda local em [logs/session-probes.txt](logs/session-probes.txt); diagnóstico em [PERFORMANCE.md](PERFORMANCE.md)). No commit seguinte passou nas duas branches (linha abaixo). |
 | CI do workflow focado no commit `61db784` | verde nas duas branches, em todos os passos: `claude/…` ([run 37751291323](https://github.com/Brawl2007/COD-guerra/actions/runs/37751291323)) e `codex/…` ([run 37751298242](https://github.com/Brawl2007/COD-guerra/actions/runs/37751298242)); browser AFTER 8/8 e BEFORE 3/3 em cada uma, incluindo o teste "real in-flight round…" que tinha expirado (um run verde não prova a causa desse timeout). No run da branch `claude/…` a sonda `west-bridgehead` AFTER foi capturada já na cena da chamada, sem falhar o teste: corrigido a seguir (ver "Depois do CI do commit `61db784`"). Este resultado pertence à revisão anterior; o CI do commit com a correcção é separado. |
+| CI do workflow focado no commit `f745952` | vermelho nas duas branches: `claude/…` ([run 37759525691](https://github.com/Brawl2007/COD-guerra/actions/runs/37759525691)) e `codex/…` ([run 37759527952](https://github.com/Brawl2007/COD-guerra/actions/runs/37759527952)); autoridade, Node, build e BEFORE 3/3 verdes; browser AFTER 7/8, com todos os testes dos decals verdes (as sondas passaram com as guardas novas). O teste existente "real in-flight round…" expirou outra vez em `page.screenshot` (30 s). Causa medida e corrigida a seguir: a primeira lasca de FX trocava o programa a meio do combate (ver "Depois do CI do commit `f745952`" e [PERFORMANCE.md](PERFORMANCE.md)). Este resultado pertence à revisão anterior; o CI do commit com a correcção é separado. |
 
 ## Revisão e verificação independentes (antes do commit)
 
@@ -86,6 +87,22 @@ Revisão e verificação independentes desta correcção, antes do commit (os me
 
 O Verifier confirmou ainda, sobre a primeira versão da correcção: só spec, docs e provas mudam e a invariância da autoridade passa; Node 336/336; teste das sondas com o spec corrigido (`west-bridgehead` no relógio 1042,30, na posição encenada); a guarda de posição falha quando forçada (estado de 13,25 s e espera até ao relógio 1049: 239,8 m, e a imagem da falha mostra a chamada); checksums 44/44; tabela e resumo do PERFORMANCE recalculados dos logs; factos de CI conferidos nos logs dos jobs; entrada 5 das sondas reproduzida. O Reviewer releu a versão final do spec sem achados. As provas do browser foram depois regeneradas com o spec final (BEFORE 3/3, AFTER 8/8).
 
+Depois do CI do commit `f745952`:
+
+| Achado | Resolução |
+|---|---|
+| o teste existente `m01-battlefield-fx` "real in-flight round…" expirou em `page.screenshot` (30 s) nos dois runs; já tinha expirado num run de `b084bba`. Sonda A/B no estado do teste (2 núcleos, 6 capturas de cada lado): base 8,6–9,9 s, candidato 9,2–16,3 s; nas 3 capturas instrumentadas do candidato um programa novo (`MeshStandardMaterial` + `USE_INSTANCING_COLOR`) era ligado depois do impacto num frame de 6,4–6,6 s de CPU. Origem: este passe dá lascas às balas em madeira e pedra desenhadas, e o lote de lascas só ganhava cores de instância na primeira lasca | `M01View.createFireEffects` cria as cores de instância das lascas na construção e o lote é desenhado uma vez, sem píxeis, no primeiro frame (`damageDecals.update({…, warm})`); teste Node novo (falha sem a correcção) e teste de aquecimento alargado; na mesma sonda depois da correcção 9,5–9,7 s, sem programas novos depois do impacto ([logs/session-probes.txt](logs/session-probes.txt), entradas 7–9) |
+
+Revisão e verificação independentes desta correcção, antes do commit:
+
+| Origem | Achado | Resolução |
+|---|---|---|
+| Reviewer | correcção certa em todos os caminhos: o programa das lascas com cores de instância é o único ligado, no primeiro frame; a instância de aquecimento tem área zero e o `updateFire` reescreve a contagem em cada frame desenhado; cores das lascas inalteradas; nada bloqueante | — |
+| Reviewer (testes) | verificar a lista `warm` por expressão regular; caso com uma malha já ocupada, que fica intacta; usar o `updateFire` da própria vista para repor a contagem | aplicados |
+| Reviewer (notas) | faíscas sem aquecimento; trocas de iluminação da base religam os materiais iluminados; `battlefieldShards` e possíveis lascas pretas por `vertexColors` sem atributo de cor vêm da base | registados nas limitações; fora desta correcção |
+| Verifier | âmbito e autoridade PASS; Node 337/337, e cada metade da correcção tem um teste que falha sem ela; teste "real in-flight round…" 3/3 em 2 núcleos (49,5–51,4 s); sonda: 8,9–10,1 s, sem programas novos depois do impacto (a base na mesma máquina: 9,3–10,1 s); checksums 44/44; tabela, resumo e diagnóstico do PERFORMANCE conferidos com os logs; factos de CI conferidos nos logs dos jobs | — |
+| Verifier (texto) | seis imprecisões: a base também liga modelos do mundo depois de continuar (antes do impacto); `battlefieldShards` também começa sem cores de instância; frames longos e medianas sem a condição; "três runs concluídos"; ligações medidas nas 3 capturas instrumentadas | corrigidas |
+
 Os relatórios integrais dos agentes não são publicados; os pontos acima são o resumo fiel do que foi encontrado e corrigido.
 
 ## Evidências
@@ -100,4 +117,6 @@ Os relatórios integrais dos agentes não são publicados; os pontos acima são 
 - Fuligem das janelas da estação quase invisível na fachada escura; queimados da demolição leste discretos ao nível do chão (legíveis de cima e junto aos destroços).
 - Reconstruir o resíduo custa 3–4,5 ms (mediana) a 14–21 ms (máximo) de CPU em Node, uma vez por explosão ou restauro.
 - Sem marcas em personagens, vagões, locomotiva, Panzerzug, treliças, água e portal de Lisewo.
+- Primeiros desenhos e trocas de programa por tratar: o lote de faíscas vem da base, partilha programa e geometria com o clarão das armas inimigas e não é aquecido; o caso de um tiro do jogador num carril construir esse pipeline (pequeno) antes de qualquer tiro inimigo é novo neste passe, porque antes os tiros do jogador não tinham FX de impacto; o lote `battlefieldShards` das explosões só cria cores de instância no primeiro uso; as trocas de iluminação (luz da explosão visível, sombra do sol por volta das 04:57) religam todos os materiais iluminados, incluindo os dos decals. Ficam para o FX de batalha e a iluminação.
+- Possível defeito da base, não verificado em imagem: as lascas e os estilhaços usam `vertexColors` numa geometria sem atributo de cor, por isso o tom final pode vir do valor genérico do WebGL (preto ou herdado) e não da cor de instância.
 - Provas em Chromium/SwiftShader; sem Chromebook físico nem playtest humano.

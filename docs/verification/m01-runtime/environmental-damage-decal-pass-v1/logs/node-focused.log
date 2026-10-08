@@ -2,81 +2,87 @@ TAP version 13
 # Subtest: damage decals never write simulation state: the real repair route stays bit-identical with them attached
 ok 1 - damage decals never write simulation state: the real repair route stays bit-identical with them attached
   ---
-  duration_ms: 2798.015858
+  duration_ms: 2443.162754
   type: 'test'
   ...
 # Subtest: damage decal sources stay presentation-only: no RNG, no simulation writes, a single Game hook
 ok 2 - damage decal sources stay presentation-only: no RNG, no simulation writes, a single Game hook
   ---
-  duration_ms: 3.40735
+  duration_ms: 3.033446
   type: 'test'
   ...
 # Subtest: marks sit on the drawn receiver with a fixed lift, differ per material and never z-fight
 ok 3 - marks sit on the drawn receiver with a fixed lift, differ per material and never z-fight
   ---
-  duration_ms: 55.270821
+  duration_ms: 48.025445
   type: 'test'
   ...
 # Subtest: portal wall marks stay on masonry: never across the arch opening or below its apex
 ok 4 - portal wall marks stay on masonry: never across the arch opening or below its apex
   ---
-  duration_ms: 2.764432
+  duration_ms: 2.530731
   type: 'test'
   ...
 # Subtest: the west bridgehead marks the drawn embankment, never the walkable abutment buried under it
 ok 5 - the west bridgehead marks the drawn embankment, never the walkable abutment buried under it
   ---
-  duration_ms: 13.879507
+  duration_ms: 14.242458
   type: 'test'
   ...
 # Subtest: mark pools, spall, debris and embers stay within the declared per-quality budget
 ok 6 - mark pools, spall, debris and embers stay within the declared per-quality budget
   ---
-  duration_ms: 576.948772
+  duration_ms: 434.030449
   type: 'test'
   ...
 # Subtest: marks expire on the mission clock and are dropped deterministically when time runs backwards
 ok 7 - marks expire on the mission clock and are dropped deterministically when time runs backwards
   ---
-  duration_ms: 34.635572
+  duration_ms: 34.483268
   type: 'test'
   ...
 # Subtest: blast residue lies on drawn surfaces, skips destroyed decks and the station interior, and is deterministic
 ok 8 - blast residue lies on drawn surfaces, skips destroyed decks and the station interior, and is deterministic
   ---
-  duration_ms: 34.005926
+  duration_ms: 31.654122
   type: 'test'
   ...
 # Subtest: reset clears every transient mark and the residue rebuilds identically from saved damage; restore follows the save
 ok 9 - reset clears every transient mark and the residue rebuilds identically from saved damage; restore follows the save
   ---
-  duration_ms: 1073.563837
+  duration_ms: 951.405939
   type: 'test'
   ...
 # Subtest: marks on a demolished span or a lowered cover are invalidated; marks elsewhere persist
 ok 10 - marks on a demolished span or a lowered cover are invalidated; marks elsewhere persist
   ---
-  duration_ms: 15.724234
+  duration_ms: 13.26002
   type: 'test'
   ...
 # Subtest: the first frame compiles the decal programs and draws every mesh once invisibly; later frames hide empty meshes
 ok 11 - the first frame compiles the decal programs and draws every mesh once invisibly; later frames hide empty meshes
   ---
-  duration_ms: 4.618607
+  duration_ms: 3.661856
+  type: 'test'
+  ...
+# Subtest: the chip FX batch has instance colours from construction, so the first chip does not switch its program
+ok 12 - the chip FX batch has instance colours from construction, so the first chip does not switch its program
+  ---
+  duration_ms: 5.50642
   type: 'test'
   ...
 # Subtest: the decal atlas is original, deterministic art with bounded size
-ok 12 - the decal atlas is original, deterministic art with bounded size
+ok 13 - the decal atlas is original, deterministic art with bounded size
   ---
-  duration_ms: 229.538202
+  duration_ms: 230.454055
   type: 'test'
   ...
-1..12
-# tests 12
+1..13
+# tests 13
 # suites 0
-# pass 12
+# pass 13
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 5017.349346
+# duration_ms 4371.086086
