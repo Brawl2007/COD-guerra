@@ -418,9 +418,6 @@ export class M01View {
         if(spin)mixer.clipAction(spin).play();model.userData.propellerMixer=mixer;this.aircraftMixers.push(mixer);
         plane.addLevel(model,JU87_LOD_DISTANCES[lod]);
       }
-      // Warm only the programs this quality can show (and the sky PMREM) now, so the raid's first frame does not stall.
-      const first=selectJu87Level(plane.levels,0,JU87_QUALITY_FLOOR[this.owner.quality]??0,null);
-      for(const {object} of plane.levels.slice(first)){try{this.engine?.compileAsync?.(object,this.camera,this.scene).catch(()=>{});}catch{/* Warm-up is optional. */}}
     });
     this.aircraftRevision++;
   }

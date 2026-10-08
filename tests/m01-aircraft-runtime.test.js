@@ -141,12 +141,3 @@ test('the entry fade reads the saved planes_heard time of the real simulation',(
   const restored=structuredClone(d.sim.snapshot());assert.equal(restored.consumed.evt_m01_planes_heard,heard,'saved with the checkpoint');
   assert.equal(ju87HeardAt({consumed:{}}),undefined);assert.equal(ju87HeardAt(undefined),undefined);
 });
-
-test('load-time warm-up compiles only the levels the current quality can show',async()=>{
-  for(const [quality,want] of [['low',[2]],['medium',[1,2]],['high',[0,1,2]]]){
-    const {view}=namedFixture(),compiled=[];view.owner.quality=quality;view.camera=new THREE.PerspectiveCamera();
-    view.engine={compileAsync:(object,camera,scene)=>{assert.equal(scene,view.scene);compiled.push(object.userData.lod);return Promise.resolve(object);}};
-    await view.loadAircraft();
-    assert.deepEqual(compiled,view.planes.flatMap(()=>want),quality);
-  }
-});

@@ -1,0 +1,6 @@
+{"label":"BASE","quality":"low","rep":0,"longtasks":4,"total_ms":6589,"max_ms":3932,"after_aircraft_loaded_ms":0,"aircraft_loaded_at_ms":9142,"raid_longtasks":1,"raid_total_ms":488,"raid_max_ms":488}
+{"label":"BASE","quality":"low","rep":1,"longtasks":3,"total_ms":4425,"max_ms":2485,"after_aircraft_loaded_ms":0,"aircraft_loaded_at_ms":6205,"raid_longtasks":0,"raid_total_ms":0,"raid_max_ms":0}
+{"label":"CANDIDATE","quality":"low","rep":0,"longtasks":4,"total_ms":7401,"max_ms":2280,"after_aircraft_loaded_ms":0,"aircraft_loaded_at_ms":9581,"raid_longtasks":1,"raid_total_ms":61,"raid_max_ms":61}
+{"label":"CANDIDATE","quality":"low","rep":1,"longtasks":4,"total_ms":5892,"max_ms":2079,"after_aircraft_loaded_ms":0,"aircraft_loaded_at_ms":7773,"raid_longtasks":0,"raid_total_ms":0,"raid_max_ms":0}
+{"label":"CANDIDATE-sem-warmup","quality":"low","rep":0,"longtasks":3,"total_ms":4590,"max_ms":2331,"after_aircraft_loaded_ms":0,"aircraft_loaded_at_ms":6360,"raid_longtasks":1,"raid_total_ms":60,"raid_max_ms":60}
+{"label":"CANDIDATE-sem-warmup","quality":"low","rep":1,"longtasks":3,"total_ms":3795,"max_ms":2398,"after_aircraft_loaded_ms":0,"aircraft_loaded_at_ms":6124,"raid_longtasks":0,"raid_total_ms":0,"raid_max_ms":0}
