@@ -8,11 +8,11 @@ Os originais são PNG sem alterações. Os recortes são uma janela 1:1 de 320×
 
 | Captura | Qualidade | Relógio da missão BASE / CANDIDATA | Hora de batalha | Distância ao avião 0 | LOD | Originais | Recortes 1:1 ×3 | Par |
 |---|---|---|---|---|---|---|---|---|
-| raid-low | low | 150.35 s / 150.88 s | 04:33:14.35 / 04:33:14.88 | 244 m / 242 m | 2 / 2 | [BASE](captures/BASE/raid-low.png) · [CANDIDATA](captures/CANDIDATE/raid-low.png) | [BASE](captures/BASE/raid-low-crop3x.png) · [CANDIDATA](captures/CANDIDATE/raid-low-crop3x.png) | [par](pairs/PAIR-raid-low.png) |
-| raid-medium | medium | 150.92 s / 150.65 s | 04:33:14.92 / 04:33:14.65 | 242 m / 243 m | 1 / 1 | [BASE](captures/BASE/raid-medium.png) · [CANDIDATA](captures/CANDIDATE/raid-medium.png) | [BASE](captures/BASE/raid-medium-crop3x.png) · [CANDIDATA](captures/CANDIDATE/raid-medium-crop3x.png) | [par](pairs/PAIR-raid-medium.png) |
-| raid-high | high | 150.62 s / 150.62 s | 04:33:14.62 / 04:33:14.62 | 243 m / 243 m | 1 / 1 | [BASE](captures/BASE/raid-high.png) · [CANDIDATA](captures/CANDIDATE/raid-high.png) | [BASE](captures/BASE/raid-high-crop3x.png) · [CANDIDATA](captures/CANDIDATE/raid-high-crop3x.png) | [par](pairs/PAIR-raid-high.png) |
+| raid-low | low | 150.35 s / 150.63 s | 04:33:14.35 / 04:33:14.63 | 244 m / 243 m | 2 / 2 | [BASE](captures/BASE/raid-low.png) · [CANDIDATA](captures/CANDIDATE/raid-low.png) | [BASE](captures/BASE/raid-low-crop3x.png) · [CANDIDATA](captures/CANDIDATE/raid-low-crop3x.png) | [par](pairs/PAIR-raid-low.png) |
+| raid-medium | medium | 150.92 s / 150.57 s | 04:33:14.92 / 04:33:14.57 | 242 m / 243 m | 1 / 1 | [BASE](captures/BASE/raid-medium.png) · [CANDIDATA](captures/CANDIDATE/raid-medium.png) | [BASE](captures/BASE/raid-medium-crop3x.png) · [CANDIDATA](captures/CANDIDATE/raid-medium-crop3x.png) | [par](pairs/PAIR-raid-medium.png) |
+| raid-high | high | 150.62 s / 150.58 s | 04:33:14.62 / 04:33:14.58 | 243 m / 243 m | 1 / 1 | [BASE](captures/BASE/raid-high.png) · [CANDIDATA](captures/CANDIDATE/raid-high.png) | [BASE](captures/BASE/raid-high-crop3x.png) · [CANDIDATA](captures/CANDIDATE/raid-high-crop3x.png) | [par](pairs/PAIR-raid-high.png) |
 | raid-low-t30 | low | 176.35 s / 176.60 s | 04:33:40.35 / 04:33:40.60 | 213 m / 214 m | 2 / 2 | [BASE](captures/BASE/raid-low-t30.png) · [CANDIDATA](captures/CANDIDATE/raid-low-t30.png) | [BASE](captures/BASE/raid-low-t30-crop3x.png) · [CANDIDATA](captures/CANDIDATE/raid-low-t30-crop3x.png) | [par](pairs/PAIR-raid-low-t30.png) |
-| raid-high-t30 | high | 176.82 s / 176.60 s | 04:33:40.82 / 04:33:40.60 | 214 m / 214 m | 1 / 1 | [BASE](captures/BASE/raid-high-t30.png) · [CANDIDATA](captures/CANDIDATE/raid-high-t30.png) | [BASE](captures/BASE/raid-high-t30-crop3x.png) · [CANDIDATA](captures/CANDIDATE/raid-high-t30-crop3x.png) | [par](pairs/PAIR-raid-high-t30.png) |
+| raid-high-t30 | high | 176.82 s / 176.58 s | 04:33:40.82 / 04:33:40.58 | 214 m / 214 m | 1 / 1 | [BASE](captures/BASE/raid-high-t30.png) · [CANDIDATA](captures/CANDIDATE/raid-high-t30.png) | [BASE](captures/BASE/raid-high-t30-crop3x.png) · [CANDIDATA](captures/CANDIDATE/raid-high-t30-crop3x.png) | [par](pairs/PAIR-raid-high-t30.png) |
 
 ## Medida da silhueta
 
@@ -20,15 +20,15 @@ Os originais são PNG sem alterações. Os recortes são uma janela 1:1 de 320×
 
 | Captura | Píxeis do avião BASE / CANDIDATA | Luminância mediana do avião BASE → CANDIDATA | Céu (mediana) BASE / CANDIDATA | Contraste céu − avião BASE → CANDIDATA |
 |---|---:|---:|---:|---:|
-| raid-low | 217 / 214 (-1 %) | 14.6 → 79.3 | 171.9 / 170.9 | 157.3 → 91.5 |
-| raid-medium | 225 / 214 (-5 %) | 14.9 → 76.8 | 170.9 / 171.9 | 155.9 → 95.1 |
-| raid-high | 229 / 213 (-7 %) | 15.5 → 76.2 | 171.8 / 171.8 | 156.3 → 95.6 |
-| raid-low-t30 | 289 / 287 (-1 %) | 14.3 → 79.2 | 162.2 / 161.5 | 147.9 → 82.2 |
-| raid-high-t30 | 282 / 288 (+2 %) | 14.3 → 79.8 | 161.5 / 161.5 | 147.2 → 81.7 |
+| raid-low | 217 / 214 (-1 %) | 14.6 → 77.8 | 171.9 / 171.9 | 157.3 → 94.0 |
+| raid-medium | 225 / 206 (-8 %) | 14.9 → 76.3 | 170.9 / 171.8 | 155.9 → 95.5 |
+| raid-high | 229 / 202 (-12 %) | 15.5 → 74.5 | 171.8 / 171.8 | 156.3 → 97.3 |
+| raid-low-t30 | 289 / 287 (-1 %) | 14.3 → 79.3 | 162.2 / 161.5 | 147.9 → 82.2 |
+| raid-high-t30 | 282 / 289 (+2 %) | 14.3 → 79.3 | 161.5 / 161.5 | 147.2 → 82.2 |
 
 ## Leitura
 
-- **Barriga e volume:** na base o avião é um recorte quase preto (luminância mediana ~15 contra um céu a ~160–172). Na candidata a barriga RLM 65 lê-se como superfície pintada iluminada pelo solo (~76–80); o contraste com o céu continua alto (~82–96), por isso o avião não se perde no céu.
-- **Forma:** o contorno é o do mesmo modelo (a inclinação de apresentação, de poucos graus, muda ligeiramente a projecção); a gaivota, as calças e a cauda continuam legíveis em LOD1 e LOD2. A +4 s a área segmentada da candidata é 1–7 % menor (−3 a −16 px), porque as bordas agora claras ficam abaixo do limiar de 18 de luminância da segmentação; a +30 s fica igual (−1 % / +2 %).
+- **Barriga e volume:** na base o avião é um recorte quase preto (luminância mediana ~15 contra um céu a ~160–172). Na candidata a barriga RLM 65 lê-se como superfície pintada iluminada pelo solo (~75–79); o contraste com o céu continua alto (~82–97), por isso o avião não se perde no céu.
+- **Forma:** o contorno é o do mesmo modelo (a inclinação de apresentação, de poucos graus, muda ligeiramente a projecção); a gaivota, as calças e a cauda continuam legíveis em LOD1 e LOD2. A +4 s a área segmentada da candidata é 1–12 % menor (−3 a −27 px): nos pares a forma e a envergadura são as mesmas, mas as bordas agora cinzento-claras ficam abaixo do limiar de 18 de luminância da segmentação e a inclinação muda um pouco a projecção. A +30 s fica igual (−1 % / +2 %).
 - **Atitude:** a +30 s a candidata mostra a inclinação para o lado da deriva; o rumo e a posição são os mesmos.
 - **O que não se vê a esta distância (~210–245 m):** o disco da hélice, o vidro e a tripulação ficam abaixo de um píxel útil; vêem-se de perto na galeria (`docs/assets/m01-aircraft/ju87_views.png`, `ju87_details.png`). Fade e histerese não aparecem em fotos estáticas; estão cobertos por testes (`tests/m01-aircraft-runtime.test.js`) e pelos diagnósticos `fade`/`attitude` em `captures/*/raid-capture*.json`.

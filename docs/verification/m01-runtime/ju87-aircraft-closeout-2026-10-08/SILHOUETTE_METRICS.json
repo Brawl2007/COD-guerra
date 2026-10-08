@@ -20,7 +20,7 @@
         103.9,
         100.0
       ],
-      "median_luminance": 79.2,
+      "median_luminance": 79.3,
       "sky_median_luminance": 161.5,
       "contrast": 82.2
     }
@@ -40,15 +40,15 @@
       "contrast": 147.2
     },
     "candidate": {
-      "pixels": 288,
+      "pixels": 289,
       "mean_rgb": [
-        95.7,
-        103.6,
-        99.5
+        95.9,
+        103.7,
+        99.7
       ],
-      "median_luminance": 79.8,
+      "median_luminance": 79.3,
       "sky_median_luminance": 161.5,
-      "contrast": 81.7
+      "contrast": 82.2
     }
   },
   {
@@ -68,13 +68,13 @@
     "candidate": {
       "pixels": 214,
       "mean_rgb": [
-        92.9,
-        101.4,
-        97.8
+        94.0,
+        102.3,
+        98.7
       ],
-      "median_luminance": 79.3,
-      "sky_median_luminance": 170.9,
-      "contrast": 91.5
+      "median_luminance": 77.8,
+      "sky_median_luminance": 171.9,
+      "contrast": 94.0
     }
   },
   {
@@ -92,15 +92,15 @@
       "contrast": 155.9
     },
     "candidate": {
-      "pixels": 214,
+      "pixels": 206,
       "mean_rgb": [
-        94.0,
-        102.5,
-        98.8
+        92.7,
+        100.8,
+        96.6
       ],
-      "median_luminance": 76.8,
-      "sky_median_luminance": 171.9,
-      "contrast": 95.1
+      "median_luminance": 76.3,
+      "sky_median_luminance": 171.8,
+      "contrast": 95.5
     }
   },
   {
@@ -118,15 +118,15 @@
       "contrast": 156.3
     },
     "candidate": {
-      "pixels": 213,
+      "pixels": 202,
       "mean_rgb": [
-        93.1,
-        101.4,
-        97.6
+        92.1,
+        100.2,
+        95.6
       ],
-      "median_luminance": 76.2,
+      "median_luminance": 74.5,
       "sky_median_luminance": 171.8,
-      "contrast": 95.6
+      "contrast": 97.3
     }
   }
 ]

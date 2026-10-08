@@ -132,7 +132,7 @@ As capturas foram renderizadas com o GLTFLoader e o AnimationMixer do three.js e
   - hélices com rpm (~1476–1524) e fase próprias; inclinação para o lado da deriva lateral do caminho existente e pequenas oscilações, sem mudar a posição nem o rumo (`rotation.y = 0,1`);
   - LOD com histerese de 10 % nos limiares (o mínimo por qualidade prevalece);
   - fade por dithering (`alphaHash`) e opacidade durante 3 s depois de `evt_m01_planes_heard` e 2,5 s de cada lado da volta de 90 s do caminho, que antes teleportava os aviões ~360 m; o nível seleccionado continua visível e reportado nos diagnósticos com fade 0. O proxy de caixas (fallback sem a arte opcional) partilha material e não tem fade: nesse caso a volta continua a saltar, como antes;
-  - `compileAsync` ao carregar, só dos níveis que a qualidade actual pode mostrar (em Baixa, só o LOD2): shaders e PMREM do céu ficam prontos antes do primeiro frame do raid; o disco de dupla face é desenhado numa só passagem (`forceSinglePass`).
+  - o disco de dupla face é desenhado numa só passagem (`forceSinglePass`). Shaders e PMREM do céu compilam no primeiro uso, como na base: um warm-up ao carregar foi medido e retirado porque acrescentava ~1,5–2 s de tarefas longas no carregamento (SwiftShader) sem melhoria mensurável no início do raid (`docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/PERFORMANCE.md`).
 - Prova em produção, por continuação de snapshot genuíno, em `docs/verification/m01-runtime/aircraft/` (integração) e `docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/` (esta revisão, antes/depois); não é novo playtest contínuo/humano.
 - **Dados que a engine poderia expor** (proposta, não implementada):
   - início do mergulho de cada avião, para abrir os freios;

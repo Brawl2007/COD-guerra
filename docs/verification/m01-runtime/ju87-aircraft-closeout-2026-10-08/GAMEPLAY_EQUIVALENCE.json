@@ -12,7 +12,7 @@
     "eventCount": 2923
   },
   "candidate": {
-    "tree": "working tree on codex/m01-ju87-aircraft-production-closeout-v2 (runtime = commit 8947f20)",
+    "commit": "d90f8de (runtime final de codex/m01-ju87-aircraft-production-closeout-v2)",
     "raidWindow": "5f6f6d3ef3efa0dc82d1860318a09b4a0c4335a4d9affe84ae85847e94cec9ae",
     "raidSnapshot": "7ada7dad021ab3bd791cb15ca3f711314be075ad8c60ac5cf838b09a657b5faf",
     "finalSnapshot": "16d08af5e94d922b7aa7e8f6a200f068b2c0684a8a6907d1d54f39a79ffbd427",
@@ -22,5 +22,5 @@
     "eventCount": 2923
   },
   "identical": true,
-  "note": "rota completa até 07:05:00 e 400 ticks da janela visível do primeiro raid; src/game, src/world, src/core, missions e src/main.js sem diferenças contra a base (git diff vazio)"
+  "note": "rota completa até 07:05:00 e 400 ticks da janela visível do primeiro raid. Prova que a simulação não mudou (src/game, src/world, src/core, missions e src/main.js sem diferenças contra a base); o renderer está coberto por tests/m01-aircraft-runtime.test.js (posição e rumo iguais à expressão anterior)."
 }
