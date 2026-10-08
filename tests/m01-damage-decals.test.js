@@ -6,6 +6,7 @@ import {M01Simulation} from '../src/game/m01-simulation.js';
 import {makeRound,traceRound} from '../src/game/m01-fire.js';
 import {traceShot,eyePosition} from '../src/world/spatial.js';
 import {M01Environment} from '../src/render/m01-environment.js';
+import {buildM01VegetationLayout} from '../src/render/m01-vegetation-layout.js';
 import {driver,toRepair} from './helpers/m01-route.js';
 import {M01DamageDecals,M01_DAMAGE_DECAL_LIMITS as LIMITS,M01_SURFACE_PROFILES,M01_DAMAGED_ABUTMENTS,M01_PORTALS,m01VisualSurface,m01BlastResidue,
   m01BlastKind,m01DecalAtlas,m01SurfaceTop,renderedTerrainHeight,deckSurfaceAt,fitMark} from '../src/render/m01-damage-decals.js';
@@ -15,7 +16,15 @@ import {M01DamageDecals,M01_DAMAGE_DECAL_LIMITS as LIMITS,M01_SURFACE_PROFILES,M
 const SEED=19390901;
 const source=path=>readFileSync(new URL(path,import.meta.url),'utf8');
 const deepFreeze=o=>{if(o&&typeof o==='object'&&!Object.isFrozen(o)){Object.freeze(o);for(const v of Object.values(o))deepFreeze(v);}return o;};
-const solidTrees=world=>world.trees.map((t,i)=>M01Environment.prototype.makeTreeDescriptor.call(null,{...t,solid:true,serial:i}));
+const solidTrees=world=>{
+  // Use the current production tree descriptors, whose species and serial are supplied by the deterministic layout.
+  // Avoid instantiating the full renderer for a material/impact unit test.
+  const e=Object.create(M01Environment.prototype);
+  e.treeDummy=new THREE.Object3D();e.treeColor=new THREE.Color();
+  e.treeStart=new THREE.Vector3();e.treeEnd=new THREE.Vector3();e.treeDirection=new THREE.Vector3();
+  e.treeUp=new THREE.Vector3(0,1,0);
+  return buildM01VegetationLayout(world).solid.map((tree,i)=>e.makeTreeDescriptor(tree,i));
+};
 const markData=m=>({sequence:m.sequence,key:m.key,kind:m.kind,cell:m.cell,flip:m.flip,position:m.position,normal:m.normal,axisU:m.axisU,axisV:m.axisV,
   sizeU:m.sizeU,sizeV:m.sizeV,start:m.start,life:m.life,tint:m.tint});
 const residueData=d=>{const g=d.residueGeometry;return ['position','normal','uv','color','residueStart'].map(k=>Array.from(g.attributes[k]?.array??[]));};
