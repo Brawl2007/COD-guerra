@@ -15,7 +15,7 @@ Build de produção, viewport 1280×720, Chromium headless com ANGLE/SwiftShader
 - **Draw calls:** +2 por Ju 87 dentro do frustum (vidro da capota e disco da hélice). A +4 s só o avião visado está no ecrã (+2); a +30 s estão os três (+6). O disco de dupla face é desenhado numa só passagem (`forceSinglePass`); sem isso o three.js desenha materiais transparentes de dupla face em duas passagens (+3 por avião).
 - **Triângulos:** +0,08 % a +0,43 % do frame (LOD2: 1 929 contra 1 636; LOD1: 5 357 contra 4 730 por avião).
 - **Texturas (`renderer.info.memory.textures`, texturas na GPU):** +5 nas três qualidades. Entram a textura do disco, o céu de ambiente e os alvos do seu PMREM, e o ORM do LOD2 (Baixa) ou o mapa de normais do LOD1 (Média/Alta). As texturas do LOD0 nunca chegam à GPU no caminho actual, porque o LOD0 nunca é seleccionado.
-- **Geometrias:** +11 em todas as qualidades: 9 planos internos do PMREM do céu de ambiente (three.js r186) e as 2 malhas novas (`canopy`, `propeller_disc`); os clones por nível partilham a geometria. As +6 adicionais em Média/Alta que o verificador independente encontrou vinham do warm-up de shaders, entretanto retirado (ver abaixo).
+- **Geometrias:** +11 em todas as qualidades: 9 planos internos do PMREM do céu de ambiente (three.js r186) e as 2 malhas novas (`canopy`, `propeller_disc`); os clones por nível partilham a geometria. As +6 adicionais em Alta (capturas de `4a80639`; em Média eram +11) que o verificador independente encontrou vinham do warm-up de shaders, entretanto retirado (ver abaixo).
 - **Materiais:** um clone leve por avião × nível × material (27 instâncias, até 4 programas: `ju87_b1` com e sem mapa de normais, vidro, disco), compilados no primeiro uso como na base.
 - **Download:** LOD0/1/2 = 922/359/136 kB (antes 652/248/96 kB). Os três LOD continuam a ser descarregados em qualquer qualidade, como antes; o LOD0 (~24 MB de texturas descodificadas) nunca aparece no caminho actual. Carregá-lo só quando for necessário é o próximo passo recomendado para memória.
 
@@ -33,7 +33,7 @@ Fonte: [logs/raid-start-frames.log](logs/raid-start-frames.log); corridas anteri
 
 ## Cenas sem Ju 87 visível
 
-O mesmo script, com `MODE=cover` e `MODE=repair`, usa os snapshots de dois testes de navegador: "adjustment salvo at the gates" e "German fire on the repair". Nestas cenas, depois das 04:40:00, os Ju 87 já não estão visíveis. O script conta os frames e o intervalo entre eles desde o clique em **Continuar** até 8 s depois de o jogo retomar, e o relógio da missão nesses 8 s. Base e candidata correram alternadas por cena (três corridas seguidas de cada build), uma build servida de cada vez, em Baixa.
+O mesmo script, com `MODE=cover` e `MODE=repair`, usa os snapshots de dois testes de navegador: "adjustment salvo at the gates" e "German fire on the repair". Nestas cenas, depois das 04:40:00, os Ju 87 já não estão visíveis. O script conta os frames e o maior intervalo entre eles desde imediatamente antes do clique em **Continuar**, incluindo a passagem do menu para o jogo, até pouco depois de uma espera de 8 s com o jogo retomado. O avanço do relógio da missão mede-se nessa espera de 8 s. Base e candidata correram alternadas por cena (três corridas seguidas de cada build), uma build servida de cada vez, em Baixa.
 
 | Cena | Build | Frames desde Continuar | Intervalo máximo entre frames | Relógio da missão em 8 s | Tarefas longas no carregamento |
 |---|---|---:|---:|---:|---:|
@@ -42,4 +42,4 @@ O mesmo script, com `MODE=cover` e `MODE=repair`, usa os snapshots de dois teste
 | Fogo alemão no reparo | BASE | 17–19 | 1,85–2,02 s | +2,07–2,55 s | 4,1–4,2 s |
 | Fogo alemão no reparo | CANDIDATA | 18–19 | 1,78–1,95 s | +2,30–2,57 s | 4,1–4,6 s |
 
-Fonte: [logs/scene-frames.log](logs/scene-frames.log). Com os aviões fora do ecrã, a candidata desenha ao mesmo ritmo que a base; os GLB maiores só pesam no carregamento. Este SwiftShader desenha 1–2 frames por segundo nestas cenas, o que explica as falhas de testes de navegador com esperas curtas em tempo real, que acontecem nas duas builds (ver [HANDOFF.md](HANDOFF.md)).
+Fonte: [logs/scene-frames.log](logs/scene-frames.log). Com os aviões fora do ecrã, a candidata desenha ao mesmo ritmo que a base. Nestas cenas, o carregamento também é semelhante (base 4,1–4,7 s, candidata 4,1–4,6 s); o custo extra dos GLB maiores só aparece nas medições do início do raid (secção anterior). Este SwiftShader desenha 1–2 frames por segundo nestas cenas, o que explica as falhas de testes de navegador com esperas curtas em tempo real, que acontecem nas duas builds (ver [HANDOFF.md](HANDOFF.md)).

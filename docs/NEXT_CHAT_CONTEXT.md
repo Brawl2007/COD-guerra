@@ -12,8 +12,8 @@ Esta secção prevalece sobre o histórico abaixo para a tarefa do Ju 87. M01 co
 - Estado **READY_FOR_CAPTAIN_REVIEW**:
   - Node 329/329, build PASS, navegador Ju 87 2/2;
   - hashes de gameplay idênticos à base;
-  - revisor e verificador independentes, com as correcções aplicadas;
-  - suite completa de navegador 55/61, com as 6 falhas também na base neste SwiftShader;
+  - revisor e verificador independentes, com as correcções aplicadas, excepto as notas cosméticas e o LOD0 a pedido (pendentes);
+  - suite completa de navegador 55/61, com as 6 falhas também na base (corridas isoladas) neste SwiftShader;
   - testes do Ju 87 e lista de excepções de três guardas de invariância alterados; nenhum teste saltado nem em quarentena (ver HANDOFF);
   - verificação final só de leitura sobre `ac32437`, com correcções só de documentação.
 - Pendente:

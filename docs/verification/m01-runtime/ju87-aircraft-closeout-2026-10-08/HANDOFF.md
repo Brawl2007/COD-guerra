@@ -7,18 +7,18 @@ Runtime final: `d90f8de`. Os commits seguintes só acrescentam evidência, docum
 
 M01 continua **PROTÓTIPO JOGÁVEL**. Sem merge, deploy ou alteração em `main`.
 
-**Estado: READY_FOR_CAPTAIN_REVIEW**, com uma ressalva: neste ambiente, a suite completa de navegador tem 6 falhas que também acontecem na base `99309d9` (ver [Validação](#validação)). Não é ACCEPTED: a aceitação cabe ao capitão.
+**Estado: READY_FOR_CAPTAIN_REVIEW**, com uma ressalva: neste ambiente, a suite completa de navegador tem 6 falhas que também acontecem na base `99309d9`, em corridas isoladas (ver [Validação](#validação)). Não é ACCEPTED: a aceitação cabe ao capitão.
 
 ## O que o jogador percebe
 
-Os três Stukas do primeiro raid deixam de ser recortes pretos contra o céu. A barriga RLM 65 lê-se pintada, em cinzento-azulado iluminado pelo solo, e a asa em gaivota, as calças do trem e a cauda distinguem-se. O avião inclina-se ligeiramente para o lado da deriva. As hélices rodam com rotações e fases diferentes e cada avião tem pequenas diferenças de tinta e desgaste. Na volta de 90 s do caminho os aviões já não saltam ~360 m à vista: dissolvem-se e voltam a aparecer. Também entram em fade quando são ouvidos.
+Os três Stukas do primeiro raid deixam de ser recortes pretos contra o céu. A barriga RLM 65 lê-se pintada e iluminada pelo solo: nas capturas, o avião segmentado tem RGB médio 92–96/100–104/96–100, um cinzento ligeiramente esverdeado. A asa em gaivota, as calças do trem e a cauda distinguem-se. O avião inclina-se ligeiramente para o lado da deriva. As hélices rodam com rotações e fases diferentes e cada avião tem pequenas diferenças de tinta e desgaste. Na volta de 90 s do caminho os aviões já não saltam ~360 m à vista: dissolvem-se e voltam a aparecer. Também entram em fade quando são ouvidos.
 
 De perto (galeria) vê-se:
 - a capota de vidro com aros, piloto e atirador;
 - o disco da hélice;
 - MG 17, Pitot e antena;
 - juntas e folgas das superfícies de controlo;
-- lascas, fuligem, óleo e poeira.
+- lascas (a fuligem, o óleo e a poeira ainda mal se vêem; ver Limitações).
 
 Trajectória, rumo, tempos, eventos, dano, saves e a autoridade da Simulation são os mesmos. A rota completa dá hashes idênticos aos da base, e a posição de cada avião continua a ser exactamente a expressão anterior.
 
@@ -76,7 +76,7 @@ A galeria isolada (`docs/assets/m01-aircraft/ju87_views.png`, `ju87_details.png`
 | Tarefas longas no carregamento (Baixa, 3×) | 4,0–4,4 s | 4,4–4,7 s |
 | Início do raid: intervalo máximo entre frames (Baixa, 3×) | 1,08–1,48 s | 0,92–1,20 s |
 
-O disco da hélice é desenhado numa só passagem; sem isso seriam +3 draw calls por avião. As texturas do LOD0 nunca chegam à GPU no caminho actual. A pré-compilação de shaders e do PMREM ao carregar foi medida e retirada: acrescentava 1,5–2 s de tarefas longas ao carregamento sem melhoria mensurável na entrada do raid.
+Nas duas últimas linhas, a CANDIDATA é o código sem pré-compilação, equivalente ao runtime final, medido logo antes do commit `d90f8de` (o log entrou nesse commit). O disco da hélice é desenhado numa só passagem; sem isso seriam +3 draw calls por avião. As texturas do LOD0 nunca chegam à GPU no caminho actual. A pré-compilação de shaders e do PMREM ao carregar foi medida e retirada: acrescentava 1,5–2 s de tarefas longas ao carregamento sem melhoria mensurável na entrada do raid.
 
 ## Validação
 
@@ -91,12 +91,12 @@ Tudo sobre o runtime final `d90f8de`. Os testes de navegador correm em Chromium 
 | Testes de navegador do Ju 87 | 2/2, dentro da suite completa | [logs/browser.log](logs/browser.log) |
 | Suite completa de navegador | **55 passaram, 6 falharam** em 61 (33,9 min) | [logs/browser.log](logs/browser.log) |
 | Repetição isolada das outras 5 falhas da suite | base: 3 falham, 2 passam; candidata: 3 falham, 2 passam; os conjuntos são diferentes | [BASE](logs/browser-rerun5-BASE-99309d9.log) · [CANDIDATA](logs/browser-rerun5-CANDIDATE.log) |
-| Repetição ×3 dos dois testes que, na repetição isolada, falharam só na candidata | portões: base falha 1 de 3, candidata 2 de 3; fogo alemão: base falha 3 de 3, candidata 2 de 3 | [BASE](logs/browser-repeat2-BASE-99309d9.log) · [CANDIDATA](logs/browser-repeat2-CANDIDATE.log) |
+| Repetição ×3 dos dois testes que, na repetição isolada, falharam só na candidata (os rigs, que também tinham falhado duas vezes, não foram repetidos) | portões: base falha 1 de 3, candidata 2 de 3; fogo alemão: base falha 3 de 3, candidata 2 de 3 | [BASE](logs/browser-repeat2-BASE-99309d9.log) · [CANDIDATA](logs/browser-repeat2-CANDIDATE.log) |
 | Repetição ×5 da salva nos portões | base falha 3 de 5, candidata 3 de 5 | [BASE](logs/browser-gates5-BASE-99309d9.log) · [CANDIDATA](logs/browser-gates5-CANDIDATE.log) |
 | Frames nas cenas desses testes (Ju 87 invisíveis) | iguais nas duas builds (tabela abaixo) | [logs/scene-frames.log](logs/scene-frames.log) |
 | Teste de áudio de produção, isolado | falha nas duas builds na linha 53 (ver Limitações) | [BASE](logs/browser-audio-production-BASE-99309d9.log) · [CANDIDATA `d90f8de`](logs/browser-audio-production-CANDIDATE-d90f8de.log) · [corrida anterior, registada em `d6b619c`](logs/browser-audio-production-CANDIDATE.log) |
 
-**As 6 falhas da suite completa, somando todas as corridas acima** (falhas / corridas):
+**As 6 falhas da suite completa, somando as corridas acima na base e no runtime final** (falhas / corridas). A corrida de áudio registada em `d6b619c` fica de fora; com ela, a candidata teria 3/3 no áudio.
 
 | Teste | BASE `99309d9` | CANDIDATA | Onde falha |
 |---|---:|---:|---|
@@ -160,7 +160,7 @@ Dois agentes separados, sem alterar ficheiros nem o estado do git. Os relatório
 
 As imprecisões dos documentos foram corrigidas em `9f532e1` e `0e493d6`; a descrição do teste de áudio está corrigida nas Limitações. As +6 geometrias que o verificador não conseguiu atribuir vinham da pré-compilação, entretanto retirada.
 
-Depois da verificação, o runtime só mudou na pré-compilação: `9f532e1` limitou-a aos níveis da qualidade actual e `d90f8de` retirou-a. Entre `4a80639` e `d90f8de`, `src/` difere apenas nas duas linhas retiradas. Repeti sobre `d90f8de` os testes Node, o build, a equivalência de gameplay, as capturas, as medições e a suite de navegador.
+Depois da verificação, o runtime só mudou na pré-compilação: `9f532e1` limitou-a aos níveis da qualidade actual e `d90f8de` retirou-a. Entre `4a80639` e `d90f8de`, `src/` difere apenas nas duas linhas retiradas. Repeti sobre `d90f8de` os testes Node, o build, a equivalência de gameplay, as capturas e os seus contadores, as medições das cenas cover/repair e a suite de navegador. O início do raid foi medido logo antes do commit `d90f8de`, com código equivalente.
 
 **Verificação final, só de leitura, sobre `ac32437`.** Foi feita contra `logs/`, as capturas e o git, sem correr testes nem gerar evidência nova. Conferem:
 - FILES_CHANGED (87 entradas) e SHA256SUMS (58/58), antes destas correcções;
@@ -179,6 +179,15 @@ As correcções são só de documentação:
 - frames medidos só em duas das seis cenas, com a janela e a ordem das corridas descritas;
 - origem da corrida de áudio em `d6b619c`;
 - medições do MG34 e relatórios do revisor e do verificador sem registo arquivado.
+
+Uma segunda ronda incluiu os achados do verificador do chat anterior, cada um conferido contra os logs e o git antes de entrar:
+- a base só tem corridas isoladas;
+- a cor medida do avião nas capturas;
+- fuligem, óleo e poeira pouco visíveis na galeria;
+- o início do raid foi medido com código equivalente, antes de `d90f8de`;
+- a contagem do áudio não inclui a corrida de `d6b619c`;
+- correcções ainda pendentes nas secções de estado (notas cosméticas e LOD0 a pedido);
+- no PERFORMANCE.md, as +6 geometrias só em Alta e o carregamento semelhante nas cenas sem Ju 87.
 
 Runtime, testes, assets, capturas e logs ficaram iguais.
 
