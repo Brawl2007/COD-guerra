@@ -19,13 +19,36 @@ window.dv={
   look(angle,pitch=0,aim=false){const da=Math.atan2(Math.sin(angle-sim.player.angle),Math.cos(angle-sim.player.angle));
     sim.tick(.05,{lookX:da/.0022,lookY:(sim.player.pitch-pitch)/.0022,aim});handle(sim.drainEvents());view.render(sim);return this.state();},
   step(controls={},n=1,stride=1){for(let i=0;i<n;i++){sim.tick(.05,controls);handle(sim.drainEvents());if(i>=n-3||i%stride===0)view.render(sim);}return this.state();},
-  /** Evidence probe: re-render the same world frame from an explicit camera pose (no weapon pass), then restore. */
+  /**
+   * Evidence probe: re-render the same world frame from an explicit camera pose (no weapon pass), then restore.
+   * position 'eye' keeps the player's own eye (as last rendered) and only turns/narrows the view.
+   */
   probe(position,target,fov=70){const c=view.camera,saved={p:c.position.clone(),q:c.quaternion.clone(),fov:c.fov};
+    if(position==='eye')position=saved.p.toArray().map(v=>Math.round(v*100)/100);
     c.position.set(...position);c.lookAt(...target);c.fov=fov;c.updateProjectionMatrix();c.updateMatrixWorld();
-    view.distantBattlefield.update(sim,c,owner.quality,{daylight:Math.max(0,Math.min(1,(view.skyLight.intensity-1.6)/.22)),viewportHeight:720});
+    view.distantBattlefield.update(sim,c,owner.quality,{daylight:Math.max(0,Math.min(1,(view.skyLight.intensity-1.6)/.22)),viewportHeight:720,fogColor:view.scene.fog.color});
     engine.clear();engine.render(view.scene,c);const state=this.state();state.probe={position,target,fov};
     c.position.copy(saved.p);c.quaternion.copy(saved.q);c.fov=saved.fov;c.updateProjectionMatrix();return state;},
-  state(){return structuredClone({clock:sim.clock,battle:sim.battleClock,player:{x:sim.player.x,z:sim.player.z,angle:sim.player.angle,pitch:sim.player.pitch},distant:view.distantBattlefield.diagnostics});},
+  state(){return structuredClone({clock:sim.clock,battle:sim.battleClock,consumed:sim.consumed,player:{x:sim.player.x,z:sim.player.z,angle:sim.player.angle,pitch:sim.player.pitch},distant:view.distantBattlefield.diagnostics});},
+  /** Re-draw the current frame from the player's eye (same clock: the same world). The view keeps a paused frame
+   *  cached by clock, so the cache is cleared first: otherwise a layer-off redraw would not draw anything. */
+  redraw(){view.lastFrame=null;view.render(sim);return this.state();},
+  /**
+   * Evidence: re-render the frame just drawn with the distant layer hidden, compare both images, then restore it.
+   * Reports what the layer adds on screen (pixels changed by >= 8 and >= 40 of 255, bounding box) and a mask image.
+   */
+  layerDiff(redraw,args=[]){
+    const gl=engine.getContext(),w=1280,h=720,read=()=>{const p=new Uint8Array(w*h*4);gl.readPixels(0,0,w,h,gl.RGBA,gl.UNSIGNED_BYTE,p);return p;};
+    const on=read(),group=view.distantBattlefield.group;group.visible=false;this[redraw](...args);const off=read();group.visible=true;this[redraw](...args);
+    const mask=document.createElement('canvas');mask.width=w;mask.height=h;const ctx=mask.getContext('2d'),image=ctx.createImageData(w,h);
+    let changed=0,strong=0,minX=w,minY=h,maxX=-1,maxY=-1;
+    for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=((h-1-y)*w+x)*4,o=(y*w+x)*4;
+      const d=Math.max(Math.abs(on[i]-off[i]),Math.abs(on[i+1]-off[i+1]),Math.abs(on[i+2]-off[i+2]));
+      for(let k=0;k<3;k++)image.data[o+k]=d>=8?on[i+k]:off[i+k]*.18;image.data[o+3]=255;
+      if(d>=8){changed++;if(d>=40)strong++;minX=Math.min(minX,x);minY=Math.min(minY,y);maxX=Math.max(maxX,x);maxY=Math.max(maxY,y);}}
+    ctx.putImageData(image,0,0);
+    return {changed,strong,bbox:maxX<0?null:[minX,minY,maxX,maxY],mask:mask.toDataURL('image/png')};
+  },
 };
 window.dvReady=true;
 </script>
