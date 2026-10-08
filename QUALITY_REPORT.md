@@ -1,3 +1,7 @@
+## Contrato de apresentação das animações — 2026-10-08 UTC
+
+Contrato persistido no schema 2, sem alteração de gameplay. Duas rotas completas contra a base imutável: **41.083 ticks** com os bytes de gameplay/checkpoint/eventos iguais. A/B de snapshots completos com campos novos: **61.055 + 1.760 comparações**, sem divergência. Corrupção de apresentação: 44 mutações rejeitadas atomicamente. Build PASS; Chromium 153/SwiftShader focado: **2/2 PASS**, 62,537 s, zero retries/skips/erros. Uma execução `npm test`: **343/344**, 189,858 s; único vermelho é uma guarda obsoleta de hash da simulação. A guarda foi adaptada para manter o hash original da base, com invariância verificada por tick; os quatro ficheiros afectados passaram **38/38**, 5,337 s. Sem segunda execução completa ou browser 56/56. Limitação formal explícita no [handoff](docs/verification/m01-runtime/anim-contract-sim-v1/HANDOFF.md); nenhum resultado 344/344 é alegado. M01 permanece **PROTÓTIPO JOGÁVEL**.
+
 ## Soldados, armas e evacuação da estação
 
 A branch preserva os PRs #23/#25 do Claude e liga soldados, primeira pessoa, rkm wz.28 e wz.98a ao jogo. S3 tem lesão única, aproximação, arrasto no chão, entrega e regresso de Dudek; os dados e o futuro da operação restauram pelo schema 2. Os disparos e a troca de carregador de Kowal lêem campos de combate existentes. O clip da estação sozinho não activa um viewmodel sem as animações obrigatórias da arma.
