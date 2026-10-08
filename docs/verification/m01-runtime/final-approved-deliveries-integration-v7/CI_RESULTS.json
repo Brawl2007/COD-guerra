@@ -1,0 +1,111 @@
+{
+  "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
+  "observedAt": "2026-10-08T20:40:38.822Z",
+  "runtimeHead": "8f7d1ea8f096472436c860e118a8c799e740e23f",
+  "node": {
+    "runId": 37831786923,
+    "head": "a97a3152d4848517a267d80c0cbbdc24bf2ddaeb",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37831786923",
+    "tests": 474,
+    "passed": 474,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 167534.073728,
+    "artifacts": [
+      {
+        "id": 11573683250,
+        "name": "m01-v7-node-build-a97a3152d4848517a267d80c0cbbdc24bf2ddaeb",
+        "size_in_bytes": 11711660,
+        "url": "https://api.github.com/repos/Brawl2007/COD-guerra/actions/artifacts/11573683250",
+        "archive_download_url": "https://api.github.com/repos/Brawl2007/COD-guerra/actions/artifacts/11573683250/zip",
+        "expired": false,
+        "created_at": "2026-10-08T19:28:16Z",
+        "expires_at": "2026-11-07T19:28:14Z",
+        "updated_at": "2026-10-08T19:28:16Z",
+        "digest": "sha256:ad8c64324dbe6f56f79886d5ccb3099d4b3125d6a06e25411822a0b67bb247a8",
+        "workflow_run": {
+          "id": 37831786923,
+          "repository_id": 1397655434,
+          "head_repository_id": 1397655434,
+          "head_branch": "codex/m01-final-production-consolidation-v7",
+          "head_sha": "a97a3152d4848517a267d80c0cbbdc24bf2ddaeb"
+        }
+      }
+    ]
+  },
+  "build": {
+    "status": "PASS",
+    "v6JsBytes": 1408885,
+    "v7JsBytes": 1418098,
+    "v6JsSha256": "b9d9f57d83317dc2114561c7c8b7d443ebbfeb66c3ccdc5ab07bfd09dd8d035a",
+    "v7JsSha256": "258742274390e6ccac1d17da4a01c6f9a82a7f9506179b66614d42691c6e3d1a",
+    "cssSha256": "199d38325c505021278bfaff8be2fe6f86a0f742bb82f9cf6a1909fdfa3b7e06"
+  },
+  "visualPreview": {
+    "runId": 37835181912,
+    "head": "6e61aaa2efa98ff6a05f12f9ae5b0bf7190ba353",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37835181912",
+    "matchedPairs": 57,
+    "frames": 114,
+    "controlsValidated": 14,
+    "onlineHostingCreated": false,
+    "artifacts": [
+      {
+        "id": 11577000458,
+        "name": "m01-v7-visual-preview-6e61aaa2efa98ff6a05f12f9ae5b0bf7190ba353",
+        "size_in_bytes": 114336244,
+        "url": "https://api.github.com/repos/Brawl2007/COD-guerra/actions/artifacts/11577000458",
+        "archive_download_url": "https://api.github.com/repos/Brawl2007/COD-guerra/actions/artifacts/11577000458/zip",
+        "expired": false,
+        "created_at": "2026-10-08T20:15:18Z",
+        "expires_at": "2027-01-06T19:52:20Z",
+        "updated_at": "2026-10-08T20:15:18Z",
+        "digest": "sha256:10615b9c0069e9a0eb7f3c7c357e93cc152317b9ce21d6b29b1b743dd6a9390f",
+        "workflow_run": {
+          "id": 37835181912,
+          "repository_id": 1397655434,
+          "head_repository_id": 1397655434,
+          "head_branch": "codex/m01-final-production-consolidation-v7",
+          "head_sha": "6e61aaa2efa98ff6a05f12f9ae5b0bf7190ba353"
+        }
+      }
+    ]
+  },
+  "fullBrowser": {
+    "runId": 37833355993,
+    "head": "1b636303beeebf019aa2cd13819c6e0637f2b0bc",
+    "status": "in_progress",
+    "retriesConfigured": 0,
+    "inventoryCases": 84,
+    "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37833355993",
+    "resultsNotYetAsserted": true
+  },
+  "fpsMeasured": false,
+  "physicalGpuMemoryMeasured": false,
+  "chromebookPhysicalTest": false,
+  "additionalLodInvariantRecheck": {
+    "status": "PASS",
+    "testedHead": "158c30edea72869144cb0b0c875029dc3818adc2",
+    "report": "INVARIANTS_LOD_CORRECTED.json",
+    "originalReport": "INVARIANTS.json",
+    "correctedHelper": "sync(player, quality), previous helper had swapped arguments",
+    "sequence": [
+      "low",
+      "medium",
+      "high",
+      "low"
+    ],
+    "lods": [
+      2,
+      1,
+      0,
+      2
+    ],
+    "runtimeOrBrowserTestChanged": false
+  }
+}
