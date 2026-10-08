@@ -144,24 +144,27 @@ const CASING_PROFILES={
 export function casingGeometry(kind){
   const profile=CASING_PROFILES[kind];if(!profile)throw new Error(`Cartucho sem perfil: ${kind}`);
   const length=profile.reduce((m,p)=>Math.max(m,p[1]),0),geometry=new THREE.LatheGeometry(profile.map(([r,y])=>new THREE.Vector2(r,y)),10);
-  geometry.translate(0,-length/2,0);geometry.userData.length=length;geometry.userData.radius=profile[1][0];return geometry;
+  geometry.translate(0,-length/2,0);Object.assign(geometry.userData,{length,radius:profile[1][0],attitude:'side'});return geometry;
 }
-/** Empty five-round stripper clip: thin folded steel channel, 55 mm long along Z (stood upright in the guide at spawn). */
+/** Empty five-round stripper clip: thin folded steel channel, 55 mm long along Z (stood upright in the guide at spawn).
+ * It rests flat on its 0,8 mm base plate (origin 0,3 mm above the surface: a hair into the soil) or upside down on its 4,2 mm walls. */
 export function stripperClipGeometry(){
   const base=new THREE.BoxGeometry(.0128,.0008,.055),left=new THREE.BoxGeometry(.0008,.0042,.055),right=left.clone();
   left.translate(-.006,.0021,0);right.translate(.006,.0021,0);
-  const geometry=mergeGeometries([base,left,right]);[base,left,right].forEach(g=>g.dispose());geometry.userData.radius=.003;return geometry;
+  const geometry=mergeGeometries([base,left,right]);[base,left,right].forEach(g=>g.dispose());
+  Object.assign(geometry.userData,{radius:.003,attitude:'flat',restLift:.0003,restLiftFlipped:.0041});return geometry;
 }
 
 const additive=(map,color)=>new THREE.SpriteMaterial({map,color,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false,fog:false});
 
 /**
  * Weapon-scene (eye-space) shot presentation: layered flash on the muzzle socket, muzzle light on the
- * hands/weapon and barrel/chamber smoke. Every value is a pure function of the authoritative shot time
- * and the rendered clock, so pause, repeated frames and restore reproduce the same frame.
+ * hands/weapon and barrel/chamber smoke. Every value is a function of the authoritative shot times and the
+ * rendered clock, so pause and repeated frames reproduce the same frame; restore calls reset().
  */
 export class WeaponViewFx {
-  constructor(scene,profile){
+  /** light: an existing muzzle PointLight to drive instead of adding one (two FX of one weapon pass share it). */
+  constructor(scene,profile,{light=null}={}){
     this.scene=scene;this.profile=profile;const f=profile.flash;
     this.textures={core:flashCoreTexture(),star:flashStarTexture(),tongue:flashTongueTexture(),smoke:weaponSmokeTexture()};
     this.core=new THREE.Sprite(additive(this.textures.core,f.color));this.core.name='muzzle_flash_core';
@@ -172,17 +175,25 @@ export class WeaponViewFx {
     // Looking down the sights the rear sight hides the muzzle: only the star's thin rays may show around it.
     this.star.material.depthTest=false;this.star.renderOrder=13;
     // Always present with intensity 0 at rest: a constant light count never forces shader recompiles.
-    this.light=new THREE.PointLight(f.light.color,0,f.light.distance,f.light.decay);this.light.name='muzzle_light';this.light.castShadow=false;scene.add(this.light);
+    this.ownsLight=!light;this.lightColor=new THREE.Color(f.light.color);
+    this.light=light??new THREE.PointLight(f.light.color,0,f.light.distance,f.light.decay);
+    if(this.ownsLight){this.light.name='muzzle_light';this.light.castShadow=false;scene.add(this.light);}
+    // Barrel wisps for the latest and the previous shot (a quick follow-up must not cut the old smoke off), then the chamber puff.
     this.wisps=[];
-    for(let i=0;i<profile.smoke.wisps+1;i++){
+    for(let i=0;i<2*profile.smoke.wisps+1;i++){
       const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:this.textures.smoke,color:'#d2cdc3',transparent:true,depthWrite:false,opacity:0,fog:false}));
-      sprite.name=i<profile.smoke.wisps?'barrel_smoke':'chamber_smoke';sprite.visible=false;sprite.frustumCulled=false;sprite.renderOrder=11;scene.add(sprite);this.wisps.push(sprite);
+      sprite.name=i<2*profile.smoke.wisps?'barrel_smoke':'chamber_smoke';sprite.visible=false;sprite.frustumCulled=false;sprite.renderOrder=11;scene.add(sprite);this.wisps.push(sprite);
     }
-    this.v={a:new THREE.Vector3(),b:new THREE.Vector3(),c:new THREE.Vector3(),d:new THREE.Vector3()};this.stats=null;
+    this.v={a:new THREE.Vector3(),b:new THREE.Vector3(),c:new THREE.Vector3(),d:new THREE.Vector3()};this.stats=null;this.history=null;
   }
   /** Parent the flash layers to a weapon frame at its muzzle socket (local -Z along the bore). */
   attach(parent,muzzle){for(const s of [this.core,this.star]){parent.add(s);s.position.fromArray(muzzle);}parent.add(this.tongue);this.muzzle=[...muzzle];this.tongue.position.fromArray(muzzle);}
-  hide(){for(const s of [...this.layers,...this.wisps])s.visible=false;this.light.intensity=0;this.stats={flash:0,layers:0,light:0,wisps:0};return this.stats;}
+  /** light=false leaves a shared muzzle light to the FX that is drawing this frame. */
+  hide(light=true){for(const s of [...this.layers,...this.wisps])s.visible=false;if(light)this.light.intensity=0;this.stats={flash:0,layers:0,light:0,wisps:0};return this.stats;}
+  /** A restored world: forget the previous shot (its smoke belonged to another timeline). */
+  reset(){this.history=null;}
+  /** Objects whose programs prewarmWeaponFx compiles (flash layers, wisps). */
+  get warmObjects(){return [...this.layers,...this.wisps];}
   /**
    * @param {object} o clock, shotAt (s, authoritative), gate (event-window flag), aim (0..1), shot (count),
    *   muzzle/axis/port/up (eye-space Vector3), chamberAt (s or null), visible, and fresh: the first rendered
@@ -190,7 +201,11 @@ export class WeaponViewFx {
    */
   update({clock,shotAt,gate=true,aim=0,shot=0,muzzle,axis,port=null,up,chamberAt=null,visible=true,fresh=false}){
     if(!visible)return this.hide();
-    const p=this.profile,f=p.flash,age=clock-shotAt,seed=(0x6d2b^Math.imul(shot+1,0x9e3779b1))>>>0,n=i=>visualNoise(seed,i);
+    // History keyed by the authoritative shot time: a later shot keeps the previous one; an earlier time (a restore) drops it.
+    const h=this.history;
+    if(!h||!(shotAt>=h.shotAt))this.history={shotAt,shot,previous:null};
+    else if(shotAt>h.shotAt)this.history={shotAt,shot,previous:{shotAt:h.shotAt,shot:h.shot}};
+    const p=this.profile,f=p.flash,age=clock-shotAt,noise=id=>{const seed=(0x6d2b^Math.imul(id+1,0x9e3779b1))>>>0;return i=>visualNoise(seed,i);},n=noise(shot);
     let k=0;if(fresh)k=1;else if(gate&&age>=0&&age<f.life)k=age<f.hold?1:1-smooth(age,f.hold,f.life);
     for(const s of this.layers)s.visible=k>0;
     if(k>0){
@@ -203,18 +218,22 @@ export class WeaponViewFx {
       this.tongue.parent?.worldToLocal(this.v.d.copy(center));this.tongue.position.copy(this.v.d);
       this.tongue.scale.set(width+length*across.length(),width,1);this.tongue.material.rotation=Math.atan2(across.y,across.x);this.tongue.material.opacity=.95*k;
     }
+    this.light.color.copy(this.lightColor);this.light.distance=f.light.distance;this.light.decay=f.light.decay;
     this.light.position.copy(muzzle);this.light.intensity=k*f.light.intensity*(.85+.3*n(7));
     // Barrel wisps leave the muzzle after the flash and rise in world-up; the last sprite is the chamber puff.
     let wisps=0;const s=p.smoke,opacity=blend(s.wispOpacity,aim),side=this.v.c.crossVectors(axis,up).normalize();
-    for(let j=0;j<s.wisps;j++){
-      const sprite=this.wisps[j],start=.02+.045*j,life=s.wispLife*(.8+.4*n(10+j)),t=age-start,q=t/life;
-      if(!(t>=0&&q<1)){sprite.visible=false;continue;}
-      sprite.position.copy(muzzle).addScaledVector(up,.015+.17*Math.pow(q,.75)*(.8+.4*n(20+j))).addScaledVector(axis,.035*q)
-        .addScaledVector(side,Math.sin(t*4.2+n(30+j)*6.28)*.018*q);
-      const size=s.wispSize*(.35+1.3*q)*(.85+.3*n(40+j));sprite.scale.set(size,size,1);
-      sprite.material.opacity=opacity*Math.pow(1-q,1.4)*Math.min(1,t/.1);sprite.material.rotation=n(50+j)*6.28+t*.6;sprite.visible=true;wisps++;
+    for(const [g,shotTime,id]of [[0,shotAt,shot],[1,this.history.previous?.shotAt,this.history.previous?.shot]]){
+      const gn=g?noise(id):n,gage=clock-shotTime;
+      for(let j=0;j<s.wisps;j++){
+        const sprite=this.wisps[g*s.wisps+j],start=.02+.045*j,life=s.wispLife*(.8+.4*gn(10+j)),t=gage-start,q=t/life;
+        if(!(t>=0&&q<1)){sprite.visible=false;continue;}
+        sprite.position.copy(muzzle).addScaledVector(up,.015+.17*Math.pow(q,.75)*(.8+.4*gn(20+j))).addScaledVector(axis,.035*q)
+          .addScaledVector(side,Math.sin(t*4.2+gn(30+j)*6.28)*.018*q);
+        const size=s.wispSize*(.35+1.3*q)*(.85+.3*gn(40+j));sprite.scale.set(size,size,1);
+        sprite.material.opacity=opacity*Math.pow(1-q,1.4)*Math.min(1,t/.1);sprite.material.rotation=gn(50+j)*6.28+t*.6;sprite.visible=true;wisps++;
+      }
     }
-    const chamber=this.wisps[s.wisps],c=s.chamber,ct=chamberAt===null?-1:clock-chamberAt,cq=ct/c.life;
+    const chamber=this.wisps[2*s.wisps],c=s.chamber,ct=chamberAt===null?-1:clock-chamberAt,cq=ct/c.life;
     if(port&&ct>=0&&cq<1){
       chamber.position.copy(port).addScaledVector(up,.01+.07*cq).addScaledVector(side,-.02*cq);
       const size=c.size*(.6+1.6*cq);chamber.scale.set(size,size,1);chamber.material.opacity=c.opacity*Math.pow(1-cq,1.3)*Math.min(1,ct/.06);
@@ -224,30 +243,49 @@ export class WeaponViewFx {
   }
   dispose(){
     for(const s of [...this.layers,...this.wisps]){s.removeFromParent();s.material.dispose();}
-    this.light.removeFromParent();this.light.dispose?.();for(const t of Object.values(this.textures))t.dispose();
+    if(this.ownsLight){this.light.removeFromParent();this.light.dispose?.();}for(const t of Object.values(this.textures))t.dispose();
   }
 }
 
-const GRAVITY=9.81,UP=new THREE.Vector3(0,1,0);
+const GRAVITY=9.81,AXIS=new THREE.Vector3(),LONG=new THREE.Vector3(),TARGET=new THREE.Vector3(),
+  LAND=new THREE.Quaternion(),SPIN=new THREE.Quaternion(),TIP=new THREE.Quaternion(),IDENTITY=new THREE.Quaternion();
+/** Height of the piece's origin above the surface when it rests (cases sink a little into soft ground). */
+export const restLift=item=>item.restLift??item.radius*.85;
+/**
+ * Resting attitude reached from the touchdown orientation: the spin winds down to a stop while the piece tips, by at
+ * most 90°, into the nearest way to lie. 'side': a lathe case with its axis (geometry Y) flat. 'flat': the stripper
+ * clip on its base plate (geometry Y up) or, if it came down the other way, upside down on its side walls.
+ */
+function settle(item,t1,t2){
+  LAND.setFromAxisAngle(AXIS,item.spin*t1).multiply(item.rotation);SPIN.setFromAxisAngle(AXIS,.2*item.spin*t2).multiply(LAND);
+  LONG.set(0,1,0).applyQuaternion(SPIN);const flat=item.attitude==='flat',flipped=flat&&LONG.y<0;
+  if(flat)TARGET.set(0,flipped?-1:1,0);
+  else{TARGET.set(LONG.x,0,LONG.z);if(TARGET.lengthSq()<1e-8)TARGET.set(Math.cos(item.seed*Math.PI*2),0,Math.sin(item.seed*Math.PI*2));TARGET.normalize();}
+  TIP.setFromUnitVectors(LONG,TARGET);
+  return flipped?item.restLiftFlipped??restLift(item):restLift(item);
+}
 /**
  * Analytic brass/clip flight with one damped bounce on a flat ground plane, then rest. Pure in age:
- * no integration, so pause, repeated frames and late first frames sample the same trajectory.
+ * no integration, so pause, repeated frames and late first frames sample the same trajectory, and the
+ * orientation never jumps (touchdown, bounce and rest are one continuous motion).
  */
 export function ejectaPose(item,age,position=new THREE.Vector3(),quaternion=new THREE.Quaternion()){
   const o=item.origin,v=item.velocity,ground=item.ground+item.radius;
   const c=o[1]-ground,disc=v[1]*v[1]+2*GRAVITY*Math.max(0,c),t1=c<=0?0:(v[1]+Math.sqrt(disc))/GRAVITY;
-  const lay=yaw=>quaternion.setFromUnitVectors(UP,position.set(Math.cos(yaw),0,Math.sin(yaw)));
+  AXIS.fromArray(item.spinAxis);
   if(age<t1){
     position.set(o[0]+v[0]*age,o[1]+v[1]*age-GRAVITY*age*age/2,o[2]+v[2]*age);
-    quaternion.setFromAxisAngle(position.clone().set(...item.spinAxis),item.spin*age).multiply(item.rotation);return {position,quaternion,phase:'flight'};
+    quaternion.setFromAxisAngle(AXIS,item.spin*age).multiply(item.rotation);return {position,quaternion,phase:'flight'};
   }
-  const land=[o[0]+v[0]*t1,ground,o[2]+v[2]*t1],bounce=[v[0]*.35,Math.max(.25,(GRAVITY*t1-v[1])*.26),v[2]*.35],t2=2*bounce[1]/GRAVITY;
-  const yaw=item.seed*Math.PI*2;
+  const land=[o[0]+v[0]*t1,o[2]+v[2]*t1],bounce=[v[0]*.35,Math.max(.25,(GRAVITY*t1-v[1])*.26),v[2]*.35],t2=2*bounce[1]/GRAVITY;
+  const lift=settle(item,t1,t2);
   if(age<t1+t2){
-    const t=age-t1;position.set(land[0]+bounce[0]*t,ground+bounce[1]*t-GRAVITY*t*t/2,land[2]+bounce[2]*t);
-    quaternion.setFromAxisAngle(position.clone().set(...item.spinAxis),item.spin*.4*age).multiply(item.rotation);return {position,quaternion,phase:'bounce'};
+    // Spin rate drops at the impact and winds down to zero by the end of the bounce while the tip blends in.
+    const t=age-t1,s=smooth(t,0,t2),turn=.4*item.spin*(t-t*t/(2*t2));
+    position.set(land[0]+bounce[0]*t,ground+(lift-item.radius)*s+bounce[1]*t-GRAVITY*t*t/2,land[1]+bounce[2]*t);
+    quaternion.copy(IDENTITY).slerp(TIP,s).multiply(SPIN.setFromAxisAngle(AXIS,turn).multiply(LAND));return {position,quaternion,phase:'bounce'};
   }
-  lay(yaw);position.set(land[0]+bounce[0]*t2,ground-item.radius*.15,land[2]+bounce[2]*t2);
+  position.set(land[0]+bounce[0]*t2,item.ground+lift,land[1]+bounce[2]*t2);quaternion.copy(TIP).multiply(SPIN);
   return {position,quaternion,phase:'rest'};
 }
 
@@ -297,18 +335,23 @@ export class WeaponWorldFx {
    */
   spawnEjecta({id,kind,start,origin,velocity,rotation,spinAxis,spin,ground,rest,seed,groundAt=null}){
     if(this.has(id))return false;
-    const mesh=kind==='clip'?this.clips:this.casingMesh(kind),radius=mesh.geometry.userData.radius??.005;
+    const mesh=kind==='clip'?this.clips:this.casingMesh(kind),{radius=.005,attitude='side',restLift,restLiftFlipped}=mesh.geometry.userData;
     const item={id,kind,start,origin:origin.toArray(),velocity:velocity.toArray(),rotation:rotation.clone(),spinAxis:spinAxis.clone().normalize().toArray(),
-      spin,ground,rest,seed,radius};
+      spin,ground,rest,seed,radius,attitude,...(restLift===undefined?{}:{restLift}),...(restLiftFlipped===undefined?{}:{restLiftFlipped})};
     if(groundAt)settleGround(item,groundAt);
     this.items.push(item);
     const limit=kind==='clip'?this.capacity.clips:this.capacity.casings,same=this.items.filter(i=>(i.kind==='clip')===(kind==='clip'));
     if(same.length>limit)this.items.splice(this.items.indexOf(same[0]),1);return true;
   }
-  spawnPuffs({id,start,origin,direction,profile,seed}){
+  /**
+   * aim: the authoritative aiming flag at the shot. Down the sights the cloud lies along the line of sight, over
+   * the target: smokeless powder leaves a thin haze there, so it is drawn thinner and a little smaller.
+   */
+  spawnPuffs({id,start,origin,direction,profile,seed,aim=0}){
     if(this.has(id))return false;
+    const ads=clamp(aim,0,1);
     this.puffItems.push({id,start,origin:origin.toArray(),direction:direction.clone().normalize().toArray(),count:profile.puffs,life:profile.puffLife,
-      size:profile.puffSize,speed:profile.puffSpeed,opacity:profile.puffOpacity,seed});
+      size:profile.puffSize*(1-.25*ads),speed:profile.puffSpeed,opacity:profile.puffOpacity*(1-.6*ads),seed});
     while(this.puffItems.reduce((n,p)=>n+p.count,0)>this.capacity.puffs)this.puffItems.shift();return true;
   }
   /** Bind to the simulation's world before spawning: a restored/replaced world discards presentation history. */
@@ -347,11 +390,31 @@ export class WeaponWorldFx {
     return this.counts;
   }
   get diagnostics(){return {...this.counts,capacity:{...this.capacity}};}
+  /** Objects whose programs prewarmWeaponFx compiles: muzzle-cloud sprites, the clip pool and the case pools of `kinds`. */
+  warmObjects(kinds=[]){for(const kind of kinds)this.casingMesh(kind);return [...this.sprites,...this.meshes.values()];}
   dispose(){
     for(const mesh of this.meshes.values()){mesh.removeFromParent();mesh.dispose();if(mesh.geometry!==this.clipGeometry)mesh.geometry.dispose();}
     this.clipGeometry.dispose();this.brass.dispose();this.steel.dispose();
     for(const s of this.sprites){s.removeFromParent();s.material.dispose();}this.smokeTexture.dispose();this.items=[];this.puffItems=[];
   }
+}
+
+/**
+ * Compile and link the shot-FX programs before the first shot. Their sprites and pools are hidden at rest, so the
+ * first shot used to build them on that frame, and software WebGL (or a driver without parallel compile) finishes
+ * the compile/link only when a program is first used: a stall of seconds in SwiftShader, a stutter on weak GPUs.
+ * Each object is compiled alone against its own scene (`compile(object, camera, scene)`: that scene's lights, fog
+ * and environment, so the programs the shot will use) and each program is used once (its uniform lookup), so the
+ * link happens now. Nothing is drawn and no visibility changes. Returns the number of programs prepared (0 without
+ * a WebGL renderer).
+ */
+export function prewarmWeaponFx(engine,passes){
+  if(typeof engine?.compile!=='function')return 0;const programs=new Set();
+  for(const {scene,camera,objects}of passes)for(const object of objects)
+    for(const material of engine.compile(object,camera,scene)??[])
+      for(const program of engine.properties?.get(material)?.programs?.values()??[])programs.add(program);
+  for(const program of programs)program.getUniforms?.();
+  return programs.size;
 }
 
 /** Equirect sky/ground gradient for weapon reflections; pitch-corrected through scene.environmentRotation. */

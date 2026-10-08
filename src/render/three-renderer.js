@@ -5,7 +5,7 @@ import { toScene, aimDirection } from '../world/spatial.js';
 import { AssetManager } from '../assets/asset-manager.js';
 import { surface } from './materials.js';
 import { M01View } from './m01-view.js';
-import { WEAPON_PRESENTATION, WeaponViewFx, WeaponWorldFx, WeaponLighting, weaponRecoil, idleSway, advanceLookLag, viewPointToWorld, viewUp } from './first-person-weapon-fx.js';
+import { WEAPON_PRESENTATION, WeaponViewFx, WeaponWorldFx, WeaponLighting, weaponRecoil, idleSway, advanceLookLag, viewPointToWorld, viewUp, prewarmWeaponFx } from './first-person-weapon-fx.js';
 import { visualNoise } from './m01-atmosphere.js';
 
 const QUALITY={low:{ratio:1,shadows:false,particles:70},medium:{ratio:1.25,shadows:true,particles:120},high:{ratio:1.5,shadows:true,particles:180}};
@@ -125,7 +125,8 @@ export class Renderer {
       batch.castShadow=batch.receiveShadow=true;batch.computeBoundingSphere();this.worldGroup.add(batch);
     }
     this.mesh('box','earth',[20,-.1,18],[1000,.2,1000]);
-    this.mesh('box','road',[20,.002,18],[4,.006,32]);
+    // The road slab stands 5 mm proud of the ground: ejected brass must rest on it, not inside it (presentation only).
+    this.restSurfaces=[new THREE.Box3().setFromObject(this.mesh('box','road',[20,.002,18],[4,.006,32]))];
     // Decorative details sit on solid wall faces; they don't create invisible door openings.
     const tile=CONFIG.tile/UNITS_PER_METRE;
     for(let y=1;y<world.layout.length-1;y++)for(let x=1;x<world.layout[y].length-1;x++){
@@ -257,6 +258,9 @@ export class Renderer {
     this.mixers.forEach(mixer=>mixer.update(dt));
     this.updateWeapon(player,weapon,time,dt);
     this.updateEffects(time,battle);this.weaponWorldFx.update(time/1000,world);
+    // Once, before any shot: compile and link the carbine's shot-FX programs instead of stalling the first shot frame.
+    this.weaponFxWarm??=prewarmWeaponFx(this.engine,[{scene:this.weaponScene,camera:this.weaponCamera,objects:this.weaponFx.warmObjects},
+      {scene:this.scene,camera:this.camera,objects:this.weaponWorldFx.warmObjects([WEAPON_PRESENTATION.m1_carbine.casing.kind])}]);
     const angle=time*.00001;this.aircraft.position.set(80-Math.sin(angle)*200,100,20+Math.cos(angle)*240);this.aircraft.rotation.y=-angle;
     if(!this.grenadeViews)this.grenadeViews=new Map();
     const grenadeIds=new Set(grenades.map(g=>g.id));
@@ -272,12 +276,14 @@ export class Renderer {
   updateWeapon(player,weapon,time,dt){
     // Presentation clock = simulation ms. A frozen/restored clock rebuilds the blends at rest instead of tweening.
     const t=time/1000,profile=WEAPON_PRESENTATION.m1_carbine;
-    if(!this.weaponPose||t<this.weaponPose.clock)this.weaponPose={clock:t,aim:Number(Boolean(player.aiming)),run:Number(Boolean(player.sprinting)),look:advanceLookLag(null,player.angle,player.pitch,0)};
+    if(!this.weaponPose||t<this.weaponPose.clock)this.weaponPose={clock:t,aim:Number(Boolean(player.aiming)),run:Number(Boolean(player.sprinting)),look:advanceLookLag(null,player.angle,player.pitch,0),lookShot:weapon.shotCount??0};
     const s=this.weaponPose,step=Math.min(.05,Math.max(0,t-s.clock)),blend=(v,target,tau)=>{const n=v+(target-v)*(1-Math.exp(-step/tau));return Math.abs(n-target)<1e-4?target:n;};
+    // The simulation's recoil kick to the view pitch is not the player looking up: skip the shot frame's pitch change.
+    if((weapon.shotCount??0)!==s.lookShot){s.look.pitch=player.pitch;s.lookShot=weapon.shotCount??0;}
     s.look=advanceLookLag(s.look,player.angle,player.pitch,Math.min(.5,Math.max(0,t-s.clock)));
     s.clock=t;s.aim=blend(s.aim,Number(Boolean(player.aiming)),.045);s.run=blend(s.run,Number(Boolean(player.sprinting)),.09);
     const progress=weapon.reloadProgress(time),arc=Math.sin(progress*Math.PI),eased=s.aim*s.aim*(3-2*s.aim),hip=1-eased,raise=4*s.aim*(1-s.aim)*(1-arc);
-    const recoil=weaponRecoil(profile,(time-player.weaponShotAt)/1000,s.aim,weapon.shotCount??0),sway=idleSway(t),lag=(1-.75*eased)*(1-arc);
+    const recoil=weaponRecoil(profile,(time-player.weaponShotAt)/1000,s.aim,weapon.shotCount??0),sway=idleSway(t),lag=(1-eased)*(1-arc);
     const bob=player.moveBlend*Math.sin(time*(player.sprinting?.015:.01))*.012,hold=hip*(1-arc)*(1-.65*Math.min(1,player.moveBlend));
     this.weaponRoot.position.set(.2*hip+sway.x*hold-s.look.yaw*.05*lag,
       -.24+.14*eased-arc*.15+Math.abs(bob)+sway.y*hold-.01*raise+recoil.rise+s.look.pitchLag*.04*lag,-.65+recoil.back*2.4);
@@ -302,9 +308,9 @@ export class Renderer {
       this.weaponWorldFx.spawnEjecta({id:`m1:case:${shot}:${player.weaponShotAt}`,kind:profile.casing.kind,start:shotAt,
         origin:viewPointToWorld(port.clone(),camera,fov),velocity:world([v[0]*(.85+.3*n(1)),v[1]*(.85+.3*n(2)),v[2]*(.6+.8*n(3))]),
         rotation:camera.quaternion.clone().multiply(q.clone().multiply(align)),spinAxis:world([.3,1,.2]),spin:profile.casing.spin*(.8+.4*n(4)),
-        ground:0,rest:profile.casing.rest,seed:n(5)});
+        ground:0,groundAt:(x,z)=>this.restHeight(x,z),rest:profile.casing.rest,seed:n(5)});
       this.weaponWorldFx.spawnPuffs({id:`m1:puff:${shot}:${player.weaponShotAt}`,start:shotAt,origin:viewPointToWorld(muzzle.clone(),camera,fov),
-        direction:world([0,0,-1]),profile:profile.smoke,seed});
+        direction:world([0,0,-1]),profile:profile.smoke,seed,aim:player.aiming?1:0});
     }
   }
   updateEffects(time,battle){
@@ -337,8 +343,10 @@ export class Renderer {
       vx:(Math.random()-.5)*7,vy:1+Math.random()*5,vz:(Math.random()-.5)*7,born:time,life:1100,size:.08,color:i<14?'#ffb450':'#736654'});
     this.shake=12;
   }
+  /** Bench surface height for resting brass: the ground plane or the top of a raised slab. Read-only. */
+  restHeight(x,z){return (this.restSurfaces??[]).reduce((h,b)=>x>=b.min.x&&x<=b.max.x&&z>=b.min.z&&z<=b.max.z?Math.max(h,b.max.y):h,0);}
   muzzle(now){this.muzzleUntil=now+60;this.shake=2;}
-  resetEffects(){this.particles=[];this.muzzleUntil=0;this.shake=0;this.weaponPose=null;this.flashShot=undefined;this.weaponWorldFx.reset();this.m01?.resetEffects();}
+  resetEffects(){this.particles=[];this.muzzleUntil=0;this.shake=0;this.weaponPose=null;this.flashShot=undefined;this.weaponFx.reset();this.weaponWorldFx.reset();this.m01?.resetEffects();}
   get diagnostics(){return {renderer:'Three.js',quality:this.quality,drawCalls:this.engine.info.render.calls,
     triangles:this.engine.info.render.triangles,geometries:this.engine.info.memory.geometries,textures:this.engine.info.memory.textures,
     assetFailures:this.assets.failures,models:Object.keys(this.models),weaponFx:{...this.weaponFx.stats,world:this.weaponWorldFx.diagnostics,lighting:this.weaponLighting.state}};}

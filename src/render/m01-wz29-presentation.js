@@ -22,7 +22,8 @@ export function presentationPose({clock,lastShot,aim,move,run,reload,phase,shot=
   // Presentation offsets only. At rest in full ADS every extra term is zero, so the measured sight line is exact.
   const recoil=weaponRecoil(profile,clock-lastShot/1000,aim,shot),eased=aim*aim*(3-2*aim),hip=1-eased,active=1-reload;
   const arc=4*aim*(1-aim)*active*(1-stroke),bob=move*hip*active,breath=Math.sin(clock*1.7)*.0012*hip*active;
-  const hold=hip*active*(1-.65*Math.min(1,move)),sway=idleSway(clock),lag=(1-.75*eased)*active;
+  // Down the sights the rifle follows the view exactly, also while turning: the sights show where the round goes.
+  const hold=hip*active*(1-.65*Math.min(1,move)),sway=idleSway(clock),lag=(1-eased)*active;
   const yawLag=(look?.yaw??0)*lag,pitchLag=(look?.pitchLag??0)*lag;
   const position=new THREE.Vector3(.145*hip,-.175*hip,-WZ29_VISUAL.rearDepth);
   position.x+=Math.sin(phase)*.003*bob+sway.x*hold-yawLag*.05;
@@ -97,10 +98,11 @@ export function riflePresentationMaterial(source){
     '#include <metalnessmap_fragment>\nroughnessFactor = max(roughnessFactor, mix(0.62, 0.46, metalnessFactor));\nmetalnessFactor = min(metalnessFactor, 0.86);'+
     // The atlas paints steel at ~0.03 linear, which a PBR metal turns into a black hole; lift only metal texels to a blued-steel reflectance.
     '\ndiffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * 3.2 + vec3(0.025), metalnessFactor);');};
-  material.envMapIntensity=1;material.customProgramCacheKey=()=> 'm01-wz29-presentation-v3';
+  // Reflection strength is the weapon pass's scene.environmentIntensity (three ignores envMapIntensity without an own envMap).
+  material.customProgramCacheKey=()=> 'm01-wz29-presentation-v3';
   return material;
 }
 /** Hands/sleeves/clip use a private atlas copy: the eye pass has its own environment and must not flip the world soldiers' programs. */
 export function viewAtlasMaterial(source){
-  const material=source.clone();material.name='m01_first_person_atlas';material.envMapIntensity=.55;return material;
+  const material=source.clone();material.name='m01_first_person_atlas';return material;
 }

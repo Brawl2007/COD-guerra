@@ -51,6 +51,8 @@ try{
   await shot('m01-18-turn-lag',await call('step',{lookX:30},3));
   // The cases and the clip fell to the right of the firing position and lie there for a while.
   await call('step',{lookX:420,lookY:300},1);await shot('m01-19-brass-on-ground',await call('step',{},4));
+  // Close look at the pieces lying in the world (candidate fixture only: the base has no world ejecta).
+  if(await page.evaluate(()=>typeof window.wp.probeEjecta==='function')){const probe=await call('probeEjecta');if(probe)await shot('m01-19b-ejecta-probe',probe);}
   await call('step',{lookX:-420,lookY:-300},1);
   await shot('m01-20-sprint',await call('step',{forward:1,sprint:true},10,3));
   // Bench M1 Carbine: semi-automatic identity on the preserved French sandbox.

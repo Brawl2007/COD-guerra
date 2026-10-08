@@ -4,7 +4,8 @@ import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import * as THREE from 'three';
 import {WEAPON_PRESENTATION,weaponRecoil,recoilImpulse,idleSway,advanceLookLag,mechanicalPulse,viewPointToWorld,viewUp,ejectaPose,
-  WeaponViewFx,WeaponWorldFx,WeaponLighting,casingGeometry,stripperClipGeometry} from '../src/render/first-person-weapon-fx.js';
+  WeaponViewFx,WeaponWorldFx,WeaponLighting,casingGeometry,stripperClipGeometry,prewarmWeaponFx} from '../src/render/first-person-weapon-fx.js';
+import {Renderer} from '../src/render/three-renderer.js';
 import {presentationPose,WZ29_VISUAL} from '../src/render/m01-wz29-presentation.js';
 import {M01ViewModel} from '../src/render/m01-viewmodel.js';
 import {M01Simulation} from '../src/game/m01-simulation.js';
@@ -28,6 +29,16 @@ test('unmodified weapon ballistics, RNG and spatial gameplay sources remain byte
     'research/weapons/kb_wz29.profile.json':'73a3cf9a9300d1e34cbedd8f103988854147377956c031f5645616f4ca8e589e'};
   for(const [path,hash]of Object.entries(hashes))
     assert.equal(createHash('sha256').update(readFileSync(new URL('../'+path,import.meta.url))).digest('hex'),hash,path);
+});
+
+test('the presentation modules read gameplay state but never import gameplay code (game, world, core)',()=>{
+  // Presentation only: damage, authoritative spread, cadence, ammunition, hits and Simulation stay in src/game. The
+  // branch's unchanged gameplay files are recorded as evidence against its base, not pinned here.
+  for(const path of ['src/render/first-person-weapon-fx.js','src/render/m01-wz29-presentation.js','src/render/m01-viewmodel.js']){
+    const source=readFileSync(new URL('../'+path,import.meta.url),'utf8'),imports=[...source.matchAll(/^import\s[^;]*?from\s*['"]([^'"]+)['"]/gm)].map(m=>m[1]);
+    assert.ok(imports.includes('three'),path);
+    for(const spec of imports)assert.ok(!/(^|\/)(game|world|core)\//.test(spec),`${path} imports ${spec}`);
+  }
 });
 
 test('each weapon keeps its own frozen presentation identity and carries no gameplay keys',()=>{
@@ -324,10 +335,133 @@ test('look lag after the authoritative recoil pitch settles by READY at 4 fps as
       const {d,v}=r,camera=new THREE.PerspectiveCamera(70,16/9,.05,7500);let flashUntil=0;
       const frame=(controls={})=>{const shots=d.sim.weapon.shotCount;d.step(controls);if(d.sim.weapon.shotCount>shots)flashUntil=d.sim.clock+.06;
         for(let i=1;i<ticksPerFrame;i++)d.step({aim:true});placeCamera(camera,d.sim.player);v.update(d.sim,'low',flashUntil,{camera,viewFov:58});};
-      for(let i=0;i<4;i++)frame({aim:true});frame({aim:true,fire:true});
+      for(let i=0;i<4;i++)frame({aim:true});const pitch=d.sim.player.pitch;frame({aim:true,fire:true});
+      assert.ok(d.sim.player.pitch>pitch,'the simulation kicked the view up');
+      assert.equal(v.stats.presentation.lookPitch,0,`the recoil kick is not read as looking up (${ticksPerFrame} ticks/frame)`);
       while(d.sim.weapon.state!=='READY')frame({aim:true});
       assert.equal(v.stats.presentation.lookPitch,0,`${ticksPerFrame} ticks/frame`);
       const a=alignmentReport(v);assert.ok(a.horizontalPixels<1e-3&&a.verticalPixels<1e-3,`${a.horizontalPixels} ${a.verticalPixels}`);
     }finally{r.dispose();}
   }
+});
+
+test('ejected pieces turn continuously into a resting attitude: cases on their side, the clip flat on its base plate',()=>{
+  const clipGeometry=stripperClipGeometry(),caseGeometry=casingGeometry('7.92x57'),angle=(a,b)=>2*Math.acos(Math.min(1,Math.abs(a.dot(b)))),landings=new Set();
+  try{
+    for(const [geometry,spin]of [[caseGeometry,26],[clipGeometry,-17]])for(const seed of [0,.1,.25,.37,.5,.62,.75,.9]){
+      const {radius,attitude,restLift,restLiftFlipped}=geometry.userData,item={origin:[0,1.4,0],velocity:[1.2,2.1,.3],ground:0,radius,attitude,restLift,restLiftFlipped,spin,seed,
+        spinAxis:[.25,1,.3].map(v=>v/Math.hypot(.25,1,.3)),rotation:new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI/2+seed*7,seed*13,seed*3))};
+      let previous=null,phases=new Set();
+      for(let i=0;i<=1500;i++){const pose=ejectaPose(item,i*.001),q=pose.quaternion.clone();phases.add(pose.phase);
+        if(previous)assert.ok(angle(previous,q)<.2,`${attitude} seed ${seed}: orientation jumps ${angle(previous,q).toFixed(3)} rad at ${i} ms`);previous=q;}
+      assert.deepEqual([...phases],['flight','bounce','rest']);
+      // At rest no vertex is more than a hair inside the surface and the piece lies flat instead of standing on end.
+      const rest=ejectaPose(item,30),matrix=new THREE.Matrix4().compose(rest.position,rest.quaternion,new THREE.Vector3(1,1,1)),p=geometry.attributes.position,v=new THREE.Vector3();
+      let low=Infinity,high=-Infinity;for(let k=0;k<p.count;k++){v.fromBufferAttribute(p,k).applyMatrix4(matrix);low=Math.min(low,v.y);high=Math.max(high,v.y);}
+      assert.ok(low>-.0015&&low<.0005,`${attitude} seed ${seed}: lowest vertex ${low}`);
+      assert.ok(high<(attitude==='flat'?.006:.0135),`${attitude} seed ${seed}: stands up to ${high}`);
+      const length=new THREE.Vector3(...(attitude==='flat'?[0,0,1]:[0,1,0])).applyQuaternion(rest.quaternion);
+      assert.ok(Math.abs(length.y)<1e-9,`${attitude} seed ${seed}: long axis tilted ${length.y}`);
+      if(attitude==='flat')landings.add(new THREE.Vector3(0,1,0).applyQuaternion(rest.quaternion).y>0?'base':'walls');
+    }
+    assert.deepEqual([...landings].sort(),['base','walls'],'the clip comes to rest either way up');
+  }finally{clipGeometry.dispose();caseGeometry.dispose();}
+});
+
+test('one weapon pass, one muzzle light: the procedural fallback and the rig share it and the drawing FX drives it',()=>{
+  const scene=new THREE.Scene(),weapon=new THREE.Object3D();scene.add(weapon);weapon.updateMatrixWorld(true);
+  const fallback=new WeaponViewFx(scene,wz29),rig=new WeaponViewFx(scene,wz29,{light:fallback.light});
+  fallback.attach(weapon,WZ29_VISUAL.muzzle);rig.attach(weapon,WZ29_VISUAL.muzzle);
+  const lights=()=>{let n=0;scene.traverse(o=>{if(o.isLight)n++;});return n;};
+  try{
+    assert.equal(lights(),1);
+    const muzzle=weapon.localToWorld(new THREE.Vector3(...WZ29_VISUAL.muzzle));rig.update({clock:10,shotAt:10,shot:1,muzzle,axis:new THREE.Vector3(0,0,-1),up:viewUp(0)});
+    const lit=rig.light.intensity;assert.ok(lit>0);fallback.hide(false);assert.equal(fallback.light.intensity,lit,'a hidden fallback leaves the shared light to the rig');
+    rig.hide();assert.equal(fallback.light.intensity,0);
+    rig.dispose();assert.equal(lights(),1,'only the owner removes the light');
+  }finally{fallback.dispose();}
+  assert.equal(lights(),0);
+});
+
+test('a quick follow-up shot leaves the previous barrel smoke fading instead of cutting it off; a reset forgets it',()=>{
+  const scene=new THREE.Scene(),weapon=new THREE.Object3D();scene.add(weapon);weapon.updateMatrixWorld(true);
+  const fx=new WeaponViewFx(scene,carbine);fx.attach(weapon,[0,0,-.4]);
+  const muzzle=new THREE.Vector3(0,0,-.4),frame=(clock,shotAt,shot)=>fx.update({clock,shotAt,shot,gate:false,muzzle,axis:new THREE.Vector3(0,0,-1),up:viewUp(0)}).wisps;
+  try{
+    assert.equal(frame(10.17,10,1),carbine.smoke.wisps);
+    // 180 ms later the next shot's wisps have not started yet; the first shot's are still there, then both are.
+    assert.equal(frame(10.19,10.18,2),carbine.smoke.wisps);assert.equal(frame(10.19,10.18,2),carbine.smoke.wisps,'a repeated frame is identical');
+    assert.equal(frame(10.31,10.18,2),2*carbine.smoke.wisps);
+    fx.reset();assert.equal(frame(10.31,10.18,2),carbine.smoke.wisps,'a restored timeline has no previous shot');
+    assert.equal(frame(10.31,10,1),carbine.smoke.wisps,'an earlier shot time (restore) drops the history');
+  }finally{fx.dispose();}
+});
+
+test('down the sights the world muzzle cloud is a thin haze: thinner and smaller than from the hip',()=>{
+  const world=new WeaponWorldFx(new THREE.Scene(),{puffs:8});
+  const spawn=(id,aim)=>world.spawnPuffs({id,start:1,origin:new THREE.Vector3(),direction:new THREE.Vector3(0,0,-1),profile:wz29.smoke,seed:9,aim});
+  try{
+    world.update(1,{});spawn('hip',0);spawn('ads',1);const [hip,ads]=world.puffItems;
+    assert.equal(hip.opacity,wz29.smoke.puffOpacity);assert.ok(ads.opacity<=.45*hip.opacity&&ads.size<hip.size);
+  }finally{world.dispose();}
+});
+
+test('bench brass rests on the road slab it lands on, not inside it',()=>{
+  const bench={restSurfaces:[new THREE.Box3(new THREE.Vector3(18,-.001,2),new THREE.Vector3(22,.005,34))]},height=(x,z)=>Renderer.prototype.restHeight.call(bench,x,z);
+  assert.equal(height(20,18),.005);assert.equal(height(10,18),0);
+  const world=new WeaponWorldFx(new THREE.Scene());
+  try{
+    world.spawnEjecta({id:'c',kind:'.30-carbine',start:0,origin:new THREE.Vector3(19.6,1.5,10),velocity:new THREE.Vector3(.6,1.2,.1),rotation:new THREE.Quaternion(),
+      spinAxis:new THREE.Vector3(0,1,0),spin:30,ground:0,groundAt:height,rest:18,seed:.3});
+    const item=world.items[0],rest=ejectaPose(item,20).position;
+    assert.equal(height(rest.x,rest.z),.005,'it landed on the slab');assert.ok(Math.abs(item.ground-.005)<1e-4,`rest surface ${item.ground}`);
+  }finally{world.dispose();}
+});
+
+test('down the sights the rifle follows a turn exactly: no look lag, the sights stay on the aim point every frame',async()=>{
+  const r=await rig();
+  try{
+    for(let i=0;i<12&&r.v.stats.aimBlend!==1;i++)r.tick({aim:true});assert.equal(r.v.stats.aimBlend,1);
+    for(const lookX of [60,60,60,-90,-90,0,30])for(const lookY of [0,25]){r.tick({aim:true,lookX,lookY});
+      const a=alignmentReport(r.v);assert.ok(a.horizontalPixels<1e-3&&a.verticalPixels<1e-3,`lookX ${lookX} lookY ${lookY}: ${a.horizontalPixels} ${a.verticalPixels} px`);}
+    // From the hip the same turn still trails (presentation weight), so the lag itself is alive.
+    r.tick({});for(let i=0;i<10&&r.v.stats.aimBlend!==0;i++)r.tick({});r.tick({lookX:60});assert.ok(Math.abs(r.v.stats.presentation.lookYaw)>1e-3);
+  }finally{r.dispose();}
+});
+
+test('a restore drops the barrel smoke of the previous timeline: the restored frame equals a fresh renderer of that save',async()=>{
+  const r=await rig(),f=await rig();
+  try{
+    while(r.d.sim.weapon.state!=='READY')r.tick();const before=r.d.sim.snapshot();
+    r.tick({fire:true});r.tick();r.tick();assert.ok(r.v.stats.presentation.wisps>0,'smoke of the first timeline');
+    // Another timeline from the same save fires a little later; restoring it must not keep the first shot's wisps.
+    const other=new M01Simulation();other.restoreSnapshot(before);for(let i=0;i<4;i++)other.tick(.05,{});other.tick(.05,{fire:true});other.tick(.05,{});
+    const save=other.snapshot();assert.ok(save.weapon.lastShot>r.d.sim.weapon.lastShot);
+    r.d.sim.restoreSnapshot(save);r.frame();f.d.sim.restoreSnapshot(save);f.frame();
+    assert.equal(r.v.stats.presentation.wisps,f.v.stats.presentation.wisps);assert.deepEqual(r.v.stats.presentation,f.v.stats.presentation);
+  }finally{r.dispose();f.dispose();}
+});
+
+test('shot-FX programs are compiled and linked before the first shot, each against its own scene, without drawing or showing anything',()=>{
+  const weaponScene=new THREE.Scene(),world=new THREE.Scene(),weapon=new THREE.Group();weaponScene.add(weapon);weapon.visible=false;
+  const fx=new WeaponViewFx(weaponScene,wz29);fx.attach(weapon,WZ29_VISUAL.muzzle);const worldFx=new WeaponWorldFx(world);
+  const camera=new THREE.PerspectiveCamera(),calls=[],used=[],properties=new Map();
+  // Stub of the three.js surface used: compile(object, camera, targetScene) returns its materials, and their programs
+  // are listed in renderer.properties; getUniforms() is a program's first use (where the deferred link completes).
+  const engine={properties:{get:m=>properties.get(m)},compile(object,cam,target){const found=new Set();object.traverse(o=>{if(o.material)found.add(o.material);});
+    for(const m of found)if(!properties.has(m)){const program={getUniforms:()=>used.push(m)};properties.set(m,{programs:new Map([['key',program]])});}
+    calls.push({object,cam,target});return found;}};
+  try{
+    const objects=worldFx.warmObjects([wz29.casing.kind]);assert.ok(worldFx.meshes.has(wz29.casing.kind),'the case pool exists before the first case');
+    const rest=new Map([weapon,...fx.warmObjects,...objects].map(o=>[o,o.visible]));assert.ok(fx.warmObjects.every(o=>!o.visible),'the view FX are hidden at rest');
+    const prepared=prewarmWeaponFx(engine,[{scene:weaponScene,camera,objects:fx.warmObjects},{scene:world,camera,objects}]);
+    // Only the FX objects are compiled (not the whole scene), each with its own scene as the target for lights/fog/environment.
+    assert.deepEqual(calls.map(c=>c.object),[...fx.warmObjects,...objects]);
+    for(const c of calls){assert.equal(c.cam,camera);assert.equal(c.target,fx.warmObjects.includes(c.object)?weaponScene:world);}
+    // Every program was used once now (the flash layers too, despite their hidden weapon parent).
+    const materials=new Set([...fx.warmObjects,...objects].map(o=>o.material));
+    assert.equal(prepared,materials.size);assert.deepEqual(new Set(used),materials);assert.equal(used.length,materials.size);
+    for(const [o,visible]of rest)assert.equal(o.visible,visible,o.name);
+    assert.equal(prewarmWeaponFx(null,[]),0);assert.equal(prewarmWeaponFx({},[]),0);
+  }finally{fx.dispose();worldFx.dispose();}
 });
