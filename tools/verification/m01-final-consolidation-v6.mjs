@@ -59,6 +59,7 @@ const views=[
 const executablePath=process.env.CHROME_EXECUTABLE;assert.ok(executablePath,'Set CHROME_EXECUTABLE');
 const browser=await chromium.launch({executablePath,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const captures=[];
+const builds=[];
 try{
   for(const quality of ['low','medium','high'])
     for(const [version,url] of [['V5',process.env.M01_V5_URL??'http://127.0.0.1:4184/COD-guerra/'],['V6',process.env.M01_V6_URL??'http://127.0.0.1:4185/COD-guerra/']]){
@@ -66,6 +67,11 @@ try{
       page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)failed.push(`${r.status()} ${r.url()}`);});
       await page.addInitScript(({key,snapshot,quality})=>{localStorage.setItem(key,JSON.stringify(snapshot));localStorage.setItem('cod-guerra:visual-quality',quality);},{key,snapshot:views[0][1],quality});
       await page.goto(url+'?debug=1&visual-verify=1');
+      const script=await page.locator('script[type="module"][src]').getAttribute('src');
+      const scriptUrl=new URL(script,url).href,response=await page.request.get(scriptUrl);
+      assert.ok(response.ok(),'Production JS bundle must load');
+      const bundleSha256=hash(await response.body());
+      builds.push({version,quality,url,scriptUrl,bundleSha256});
       await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});
       await page.waitForLoadState('networkidle');
       // Reuse one page per version/quality, and finish the incremental atlas before
@@ -93,7 +99,7 @@ try{
         train:diagnostics.m01.wagons,locomotive:diagnostics.m01.locomotive,panzerzug:diagnostics.m01.panzerzug,
         battlefieldFx:diagnostics.m01.battlefieldFx,errors,failed};
       captures.push(record);await page.locator('#back-menu').click();
-      fs.writeFileSync(path.join(out,'VISUAL_COMPARISON.json'),JSON.stringify({base,browserVersion:browser.version(),viewport:{width:1280,height:720},captures},null,2)+'\n');
+      fs.writeFileSync(path.join(out,'VISUAL_COMPARISON.json'),JSON.stringify({base,browserVersion:browser.version(),viewport:{width:1280,height:720},builds,captures},null,2)+'\n');
       console.log(`${version} ${name} ${quality}: ${record.drawCalls} calls / ${record.triangles} triangles`);
       }
       await page.close();
