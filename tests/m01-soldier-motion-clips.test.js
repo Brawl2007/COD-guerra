@@ -151,9 +151,19 @@ test('generation reproduces the exact GLB and metadata twice without modifying o
   } finally { await rm(folder, { recursive: true, force: true }); }
 });
 
-test('gameplay, runtime, original assets, dependencies and deployment workflows remain byte-identical to the approved base', () => {
-  const result = spawnSync('git', ['diff', '--name-only', manifest.base_commit, '--', 'src', 'assets', 'package.json', 'package-lock.json', '.github'], { encoding: 'utf8' });
-  assert.equal(result.status, 0, result.stderr);
-  const changed = result.stdout.trim().split('\n').filter(Boolean).filter(p => !p.startsWith('assets/models/provisional/m01/characters/motion-clips-v1/'));
-  assert.deepEqual(changed, []);
+test('motion package source commit preserves gameplay, original assets, dependencies and workflows', () => {
+  // This immutable asset source may be merged into a larger M01 integration.
+  // Compare the delivered source commit, not the combined HEAD containing other approved work.
+  const source='075effaf72d3ceaf4dbda153f1221dc1541b8bef';
+  const result=spawnSync('git',['diff','--name-only',manifest.base_commit,source,'--','src','assets','package.json','package-lock.json','.github'],{encoding:'utf8'});
+  assert.equal(result.status,0,result.stderr);
+  const changed=result.stdout.trim().split('\n').filter(Boolean).filter(p=>!p.startsWith('assets/models/provisional/m01/characters/motion-clips-v1/'));
+  assert.deepEqual(changed,[]);
+  // The integrated GLB and manifest must also be byte-identical to the source delivery.
+  for(const relative of [manifest.file,'manifest.json']){
+    const path='assets/models/provisional/m01/characters/motion-clips-v1/'+relative;
+    const original=spawnSync('git',['show',source+':'+path],{maxBuffer:4*1024*1024});
+    assert.equal(original.status,0,original.stderr.toString());
+    assert.deepEqual(original.stdout,relative===manifest.file?bytes:Buffer.from(JSON.stringify(manifest,null,2)+'\n'),path);
+  }
 });
