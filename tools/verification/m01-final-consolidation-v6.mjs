@@ -33,7 +33,12 @@ if(process.argv.includes('--invariants')){
 
 const d=driver();d.step({skip:true});const initial=d.sim.snapshot();
 const evacuation=toStationEvacuation(driver(),{observe:true}).sim.snapshot();
-const full=route(19390901,{support:true}),repair=full.combatSnapshots.repair,raid=full.combatSnapshots.withdrawal;
+let trainState,panzerState;
+const full=route(19390901,{support:true,onStep:({sim})=>{
+  if(sim.renderState.train963&&!trainState)trainState=sim.snapshot();
+  if(sim.renderState.panzerzug&&!panzerState)panzerState=sim.snapshot();
+}}),repair=full.combatSnapshots.repair;
+assert.ok(trainState&&panzerState,'Real train and Panzerzug visibility events must be reached');
 const world=new M01Simulation().world;
 function camera(snapshot,x,z,tx,ty,tz){
   const s=structuredClone(snapshot),y=world.heightAt(x,z),dx=tx-x,dz=tz-z;
@@ -47,44 +52,54 @@ const views=[
   ['station-yard',camera(initial,-300,4,-397,5,40)],
   ['bridge-west',camera(repair,-28,23,90,8,20)],
   ['bridge-east',camera(repair,38,42,900,9,20)],
-  ['train-963',camera(repair,-450,16,-462,4,0)],
-  ['panzerzug',camera(raid,38,42,1060,5,0)],
+  ['train-963',camera(trainState,1063,-17,1075,2.5,-2.5)],
+  ['panzerzug',camera(panzerState,1107,18,1119,2.5,2.5)],
   ['evacuation',evacuation],['roll-call',full.outro]
 ];
 const executablePath=process.env.CHROME_EXECUTABLE;assert.ok(executablePath,'Set CHROME_EXECUTABLE');
 const browser=await chromium.launch({executablePath,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const captures=[];
 try{
-  for(const quality of ['low','medium','high'])for(const [name,snapshot] of views){
-    const pair=[];
+  for(const quality of ['low','medium','high'])
     for(const [version,url] of [['V5',process.env.M01_V5_URL??'http://127.0.0.1:4184/COD-guerra/'],['V6',process.env.M01_V6_URL??'http://127.0.0.1:4185/COD-guerra/']]){
       const page=await browser.newPage({viewport:{width:1280,height:720}}),errors=[],failed=[];
       page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)failed.push(`${r.status()} ${r.url()}`);});
-      await page.addInitScript(({key,snapshot,quality})=>{localStorage.setItem(key,JSON.stringify(snapshot));localStorage.setItem('cod-guerra:visual-quality',quality);},{key,snapshot,quality});
+      await page.addInitScript(({key,snapshot,quality})=>{localStorage.setItem(key,JSON.stringify(snapshot));localStorage.setItem('cod-guerra:visual-quality',quality);},{key,snapshot:views[0][1],quality});
       await page.goto(url+'?debug=1&visual-verify=1');
       await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});
       await page.waitForLoadState('networkidle');
+      // Reuse one page per version/quality, and finish the incremental atlas before
+      // restoring the camera. The new world then forces a real, fully painted frame.
+      await page.waitForFunction(()=>window.gameDiagnostics().m01.damageDecals.atlasReady,null,{timeout:120000});
+      for(const [name,snapshot] of views){
+      await page.evaluate(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
       await page.evaluate(()=>{const hold=e=>{if(document.pointerLockElement?.id==='game'){
         document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();document.exitPointerLock();
       }};document.addEventListener('pointerlockchange',hold,true);});
       await page.locator('#continue').click();
       await page.waitForFunction(s=>{const d=window.gameDiagnostics();return d.paused&&d.clock===s.clock&&d.player.x===s.player.x&&d.m01.renderedFrames>0;},snapshot,{timeout:120000});
-      await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.loaded.includes('pl:0')&&window.gameDiagnostics().m01.aircraft.loaded.length===3,null,{timeout:120000});
+      await page.waitForFunction(()=>{const m=window.gameDiagnostics().m01;return m.characters.loaded.includes('pl:0')&&m.aircraft.loaded.length===3&&m.locomotive.loaded.length===3&&m.panzerzug.loaded.length===3&&m.wagons.loaded.length>=6&&m.yardWagons.pending.length===0;},null,{timeout:120000});
+      await page.waitForLoadState('networkidle');
       const before=await page.evaluate(()=>window.gameVerificationState().snapshot);
       await page.waitForTimeout(750);
       const diagnostics=await page.evaluate(()=>window.gameDiagnostics()),after=await page.evaluate(()=>window.gameVerificationState().snapshot);
       assert.deepEqual(after,before);assert.equal(diagnostics.clock,snapshot.clock);assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);
       const filename=`${version}-${name}-${quality}.png`;
-      await page.screenshot({path:path.join(out,'visual',filename),style:'#pause,#menu{visibility:hidden!important}',timeout:120000});
+      await page.screenshot({path:path.join(out,'visual',filename),style:'#pause,#menu,#hud{visibility:hidden!important}',timeout:120000});
       const record={version,name,quality,file:`visual/${filename}`,snapshotSha256:hash(JSON.stringify(after)),clock:diagnostics.clock,player:diagnostics.player,
         drawCalls:diagnostics.drawCalls,triangles:diagnostics.triangles,textures:diagnostics.textures,geometries:diagnostics.geometries,
         environmentInstances:diagnostics.m01.environmentInstances,station:diagnostics.m01.stationArchitecture,bridge:diagnostics.m01.bridgeStructure,
         props:diagnostics.m01.environmentProps,aircraft:diagnostics.m01.aircraft,characters:diagnostics.m01.characters,fireEffects:diagnostics.m01.fireEffects,
+        train:diagnostics.m01.wagons,locomotive:diagnostics.m01.locomotive,panzerzug:diagnostics.m01.panzerzug,
         battlefieldFx:diagnostics.m01.battlefieldFx,errors,failed};
-      captures.push(record);pair.push(record);await page.close();
+      captures.push(record);await page.locator('#back-menu').click();
       fs.writeFileSync(path.join(out,'VISUAL_COMPARISON.json'),JSON.stringify({base,browserVersion:browser.version(),viewport:{width:1280,height:720},captures},null,2)+'\n');
       console.log(`${version} ${name} ${quality}: ${record.drawCalls} calls / ${record.triangles} triangles`);
+      }
+      await page.close();
     }
+  for(const quality of ['low','medium','high'])for(const [name] of views){
+    const pair=captures.filter(c=>c.name===name&&c.quality===quality);
     assert.equal(pair[0].snapshotSha256,pair[1].snapshotSha256,`${name}/${quality} frozen state`);
   }
 }finally{await browser.close();}
