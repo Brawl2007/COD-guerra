@@ -128,7 +128,7 @@ test('at fade 0 the selected level (GLB or fallback proxy) stays visible and rep
     const shown=plane.levels.filter(l=>l.object.visible);assert.equal(shown.length,1);assert.equal(shown[0].object.userData.lod,2);
     assert.ok(shown[0].object.userData.materials.every(m=>m.opacity===0),'fully dissolved, not culled');
   }
-  view.resetEffects?.call({planes:view.planes,fireBatches:{},battlefieldFxBatches:{},combatFeedback:{reset(){}},battlefieldShards:{},explosionLight:{}});
+  view.resetEffects?.call({planes:view.planes,fireBatches:{},battlefieldFxBatches:{},combatFeedback:{reset(){}},battlefieldShards:{},explosionLight:{},damageDecals:{reset(){}}});
   assert.ok(view.planes.every(p=>p.userData.level===null),'checkpoint restore forgets LOD hysteresis');
 });
 

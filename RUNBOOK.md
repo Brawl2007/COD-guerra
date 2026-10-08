@@ -94,6 +94,14 @@ CHROME_EXECUTABLE=/caminho/para/chromium node tools/verify-m01-poses.mjs --comba
 
 Os controlos de relógio desta galeria existem apenas na fixture de verificação. `gameDiagnostics().m01.actorAnimations` mostra as contagens renderizadas de mira, disparo, movimento e supressão; não é estado de gameplay. Provas e limites em `docs/verification/m01-runtime/combat-animation/`.
 
+Galeria de danos ambientais (marcas por material, crateras, queimados e resíduo das demolições), com o renderer real e uma `M01Simulation` descartável servidos pelo `vite` de desenvolvimento; impactos vêm de `traceShot`/`traceRound` e explosões de `consume()` reais:
+
+```sh
+CHROME_EXECUTABLE=/caminho/para/chromium node tools/verification/m01-damage-decals-gallery.mjs test-results/m01-damage-decals [brick-portal,railway,...]
+```
+
+`gameDiagnostics().m01.damageDecals` mostra marcas, resíduo, detritos, brasas e contadores; é apresentação, não entra no save. Provas e limites em `docs/verification/m01-runtime/environmental-damage-decal-pass-v1/`.
+
 Comparação do combate de cobertura, duas rotas completas da simulação com a mesma seed:
 
 ```sh
