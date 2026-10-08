@@ -1,0 +1,571 @@
+﻿2026-10-08T18:13:57.2201694Z Current runner version: '2.337.0'
+2026-10-08T18:13:57.2224303Z ##[group]Runner Image Provisioner
+2026-10-08T18:13:57.2225410Z Hosted Compute Agent
+2026-10-08T18:13:57.2226012Z Version: 20261002.596
+2026-10-08T18:13:57.2226589Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-08T18:13:57.2227247Z Build Date: 2026-10-02T22:28:27Z
+2026-10-08T18:13:57.2227903Z Worker ID: {049df819-04e4-4bb2-802d-85572b50a914}
+2026-10-08T18:13:57.2228565Z Region: westus3
+2026-10-08T18:13:57.2229054Z Cloud: Azure
+2026-10-08T18:13:57.2229620Z ##[endgroup]
+2026-10-08T18:13:57.2231320Z ##[group]Operating System
+2026-10-08T18:13:57.2231983Z Ubuntu
+2026-10-08T18:13:57.2232480Z 24.04.5
+2026-10-08T18:13:57.2232957Z LTS
+2026-10-08T18:13:57.2233549Z ##[endgroup]
+2026-10-08T18:13:57.2234053Z ##[group]Runner Image
+2026-10-08T18:13:57.2234623Z Image: ubuntu-24.04
+2026-10-08T18:13:57.2235302Z Version: 20261004.327.1
+2026-10-08T18:13:57.2236493Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-08T18:13:57.2238040Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-08T18:13:57.2239243Z ##[endgroup]
+2026-10-08T18:13:57.2240274Z ##[group]GITHUB_TOKEN Permissions
+2026-10-08T18:13:57.2242360Z Contents: read
+2026-10-08T18:13:57.2242948Z Metadata: read
+2026-10-08T18:13:57.2243442Z ##[endgroup]
+2026-10-08T18:13:57.2245707Z Secret source: Actions
+2026-10-08T18:13:57.2246518Z Cache mode: write
+2026-10-08T18:13:57.2247272Z Prepare workflow directory
+2026-10-08T18:13:57.2606471Z Prepare all required actions
+2026-10-08T18:13:57.2653155Z Getting action download info
+2026-10-08T18:13:57.5880666Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-08T18:13:57.6900571Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-10-08T18:13:57.7628221Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-08T18:13:57.9417954Z Complete job name: critical-browser
+2026-10-08T18:13:58.0219477Z ##[group]Run actions/checkout@v4
+2026-10-08T18:13:58.0220230Z with:
+2026-10-08T18:13:58.0220607Z   fetch-depth: 0
+2026-10-08T18:13:58.0221026Z   repository: Brawl2007/COD-guerra
+2026-10-08T18:13:58.0224804Z   token: ***
+2026-10-08T18:13:58.0225505Z   ssh-strict: true
+2026-10-08T18:13:58.0225899Z   ssh-user: git
+2026-10-08T18:13:58.0226297Z   persist-credentials: true
+2026-10-08T18:13:58.0226734Z   clean: true
+2026-10-08T18:13:58.0227141Z   sparse-checkout-cone-mode: true
+2026-10-08T18:13:58.0227618Z   fetch-tags: false
+2026-10-08T18:13:58.0228004Z   show-progress: true
+2026-10-08T18:13:58.0228390Z   lfs: false
+2026-10-08T18:13:58.0228748Z   submodules: false
+2026-10-08T18:13:58.0229138Z   set-safe-directory: true
+2026-10-08T18:13:58.0229583Z   allow-unsafe-pr-checkout: false
+2026-10-08T18:13:58.0230319Z ##[endgroup]
+2026-10-08T18:13:58.1193152Z Syncing repository: Brawl2007/COD-guerra
+2026-10-08T18:13:58.1196175Z ##[group]Getting Git version info
+2026-10-08T18:13:58.1197487Z Working directory is '/home/runner/work/COD-guerra/COD-guerra'
+2026-10-08T18:13:58.1199188Z [command]/usr/bin/git version
+2026-10-08T18:13:58.1231119Z git version 2.55.0
+2026-10-08T18:13:58.1250391Z ##[endgroup]
+2026-10-08T18:13:58.1264148Z Temporarily overriding HOME='/home/runner/work/_temp/919f2d01-4a9c-4b00-b48d-030ae195f475' before making global git config changes
+2026-10-08T18:13:58.1266754Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-08T18:13:58.1269010Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/COD-guerra/COD-guerra
+2026-10-08T18:13:58.1347467Z Deleting the contents of '/home/runner/work/COD-guerra/COD-guerra'
+2026-10-08T18:13:58.1348533Z ##[group]Initializing the repository
+2026-10-08T18:13:58.1349569Z [command]/usr/bin/git init /home/runner/work/COD-guerra/COD-guerra
+2026-10-08T18:13:58.1435547Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-08T18:13:58.1437560Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-08T18:13:58.1439230Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-08T18:13:58.1440557Z hint: call:
+2026-10-08T18:13:58.1441573Z hint:
+2026-10-08T18:13:58.1442476Z hint: 	git config --global init.defaultBranch <name>
+2026-10-08T18:13:58.1443551Z hint:
+2026-10-08T18:13:58.1444559Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-08T18:13:58.1446362Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-08T18:13:58.1447595Z hint:
+2026-10-08T18:13:58.1448321Z hint: 	git branch -m <name>
+2026-10-08T18:13:58.1449156Z hint:
+2026-10-08T18:13:58.1450260Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-08T18:13:58.1456738Z Initialized empty Git repository in /home/runner/work/COD-guerra/COD-guerra/.git/
+2026-10-08T18:13:58.1465652Z [command]/usr/bin/git remote add origin https://github.com/Brawl2007/COD-guerra
+2026-10-08T18:13:58.1510159Z ##[endgroup]
+2026-10-08T18:13:58.1510890Z ##[group]Disabling automatic garbage collection
+2026-10-08T18:13:58.1523544Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-08T18:13:58.1543699Z ##[endgroup]
+2026-10-08T18:13:58.1544375Z ##[group]Setting up auth
+2026-10-08T18:13:58.1552438Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-08T18:13:58.1581645Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-08T18:13:58.1911936Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-08T18:13:58.1941583Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-08T18:13:58.2131090Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-08T18:13:58.2159776Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-08T18:13:58.2338878Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-08T18:13:58.2370637Z ##[endgroup]
+2026-10-08T18:13:58.2371428Z ##[group]Fetching the repository
+2026-10-08T18:13:58.2379840Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+2026-10-08T18:14:05.5783986Z From https://github.com/Brawl2007/COD-guerra
+2026-10-08T18:14:05.5787607Z  * [new branch]      claude/bold-cannon-rkvxjp -> origin/claude/bold-cannon-rkvxjp
+2026-10-08T18:14:05.5791007Z  * [new branch]      claude/busy-edison-mokkrb -> origin/claude/busy-edison-mokkrb
+2026-10-08T18:14:05.5794812Z  * [new branch]      claude/clever-goldberg-avn7dj -> origin/claude/clever-goldberg-avn7dj
+2026-10-08T18:14:05.5798507Z  * [new branch]      claude/cool-euler-fkyo43 -> origin/claude/cool-euler-fkyo43
+2026-10-08T18:14:05.5802307Z  * [new branch]      claude/ecstatic-planck-jiy2k3 -> origin/claude/ecstatic-planck-jiy2k3
+2026-10-08T18:14:05.5806500Z  * [new branch]      claude/exciting-planck-5ylz7z -> origin/claude/exciting-planck-5ylz7z
+2026-10-08T18:14:05.5810110Z  * [new branch]      claude/m01-bridge-models -> origin/claude/m01-bridge-models
+2026-10-08T18:14:05.5812152Z  * [new branch]      claude/m01-ckm-budget   -> origin/claude/m01-ckm-budget
+2026-10-08T18:14:05.5814055Z  * [new branch]      claude/m01-ckm-wz30     -> origin/claude/m01-ckm-wz30
+2026-10-08T18:14:05.5817044Z  * [new branch]      claude/m01-continuous-playtest -> origin/claude/m01-continuous-playtest
+2026-10-08T18:14:05.5819667Z  * [new branch]      claude/m01-integration-prep -> origin/claude/m01-integration-prep
+2026-10-08T18:14:05.5822090Z  * [new branch]      claude/m01-ju87         -> origin/claude/m01-ju87
+2026-10-08T18:14:05.5824044Z  * [new branch]      claude/m01-mg34-prone   -> origin/claude/m01-mg34-prone
+2026-10-08T18:14:05.5827259Z  * [new branch]      claude/m01-rkm-wz28     -> origin/claude/m01-rkm-wz28
+2026-10-08T18:14:05.5829238Z  * [new branch]      claude/m01-soldiers-1939 -> origin/claude/m01-soldiers-1939
+2026-10-08T18:14:05.5831274Z  * [new branch]      claude/m01-staging      -> origin/claude/m01-staging
+2026-10-08T18:14:05.5835319Z  * [new branch]      claude/m01-station-drag-transitions -> origin/claude/m01-station-drag-transitions
+2026-10-08T18:14:05.5841099Z  * [new branch]      claude/m01-train-detail-coupling-polish-dws18u -> origin/claude/m01-train-detail-coupling-polish-dws18u
+2026-10-08T18:14:05.5846817Z  * [new branch]      claude/m01-train-detail-coupling-polish-v1 -> origin/claude/m01-train-detail-coupling-polish-v1
+2026-10-08T18:14:05.5851449Z  * [new branch]      claude/m01-wagon-damage -> origin/claude/m01-wagon-damage
+2026-10-08T18:14:05.5854388Z  * [new branch]      claude/m01-wagons       -> origin/claude/m01-wagons
+2026-10-08T18:14:05.5857091Z  * [new branch]      claude/pensive-thompson-jc2y12 -> origin/claude/pensive-thompson-jc2y12
+2026-10-08T18:14:05.5860965Z  * [new branch]      claude/railway-production-pass-3c7fwx -> origin/claude/railway-production-pass-3c7fwx
+2026-10-08T18:14:05.5863997Z  * [new branch]      claude/upbeat-ptolemy-rzqu5g -> origin/claude/upbeat-ptolemy-rzqu5g
+2026-10-08T18:14:05.5867808Z  * [new branch]      claude/zealous-ramanujan-2el38r -> origin/claude/zealous-ramanujan-2el38r
+2026-10-08T18:14:05.5872026Z  * [new branch]      codex/agentic-engineering-v1 -> origin/codex/agentic-engineering-v1
+2026-10-08T18:14:05.5876681Z  * [new branch]      codex/campaign-cinematic-m02-m30 -> origin/codex/campaign-cinematic-m02-m30
+2026-10-08T18:14:05.5881706Z  * [new branch]      codex/campaign-script-polish-v2-30-missions -> origin/codex/campaign-script-polish-v2-30-missions
+2026-10-08T18:14:05.5888318Z  * [new branch]      codex/criar-base-tecnica-para-fps-da-segunda-guerra -> origin/codex/criar-base-tecnica-para-fps-da-segunda-guerra
+2026-10-08T18:14:05.5895602Z  * [new branch]      codex/criar-base-tecnica-para-fps-da-segunda-guerra-8d0uog -> origin/codex/criar-base-tecnica-para-fps-da-segunda-guerra-8d0uog
+2026-10-08T18:14:05.5900770Z  * [new branch]      codex/criar-base-tecnica-para-fps-da-segunda-guerra-9pjnmy -> origin/codex/criar-base-tecnica-para-fps-da-segunda-guerra-9pjnmy
+2026-10-08T18:14:05.5905923Z  * [new branch]      codex/criar-base-tecnica-para-fps-da-segunda-guerra-bza8xt -> origin/codex/criar-base-tecnica-para-fps-da-segunda-guerra-bza8xt
+2026-10-08T18:14:05.5910923Z  * [new branch]      codex/criar-base-tecnica-para-fps-da-segunda-guerra-gdherg -> origin/codex/criar-base-tecnica-para-fps-da-segunda-guerra-gdherg
+2026-10-08T18:14:05.5915675Z  * [new branch]      codex/criar-base-tecnica-para-fps-da-segunda-guerra-os0vaa -> origin/codex/criar-base-tecnica-para-fps-da-segunda-guerra-os0vaa
+2026-10-08T18:14:05.5920247Z  * [new branch]      codex/criar-base-tecnica-para-fps-da-segunda-guerra-p5srg5 -> origin/codex/criar-base-tecnica-para-fps-da-segunda-guerra-p5srg5
+2026-10-08T18:14:05.5924650Z  * [new branch]      codex/criar-base-tecnica-para-fps-da-segunda-guerra-t54j0b -> origin/codex/criar-base-tecnica-para-fps-da-segunda-guerra-t54j0b
+2026-10-08T18:14:05.5929883Z  * [new branch]      codex/criar-base-tecnica-para-fps-da-segunda-guerra-y4di6h -> origin/codex/criar-base-tecnica-para-fps-da-segunda-guerra-y4di6h
+2026-10-08T18:14:05.5933435Z  * [new branch]      codex/m01-anim-contract-sim-v1 -> origin/codex/m01-anim-contract-sim-v1
+2026-10-08T18:14:05.5936745Z  * [new branch]      codex/m01-approved-consolidation-checkpoint-v1 -> origin/codex/m01-approved-consolidation-checkpoint-v1
+2026-10-08T18:14:05.5939830Z  * [new branch]      codex/m01-assets-review -> origin/codex/m01-assets-review
+2026-10-08T18:14:05.5942034Z  * [new branch]      codex/m01-authority-lease -> origin/codex/m01-authority-lease
+2026-10-08T18:14:05.5945169Z  * [new branch]      codex/m01-battlefield-audio-architecture -> origin/codex/m01-battlefield-audio-architecture
+2026-10-08T18:14:05.5949225Z  * [new branch]      codex/m01-battlefield-audio-production-pass -> origin/codex/m01-battlefield-audio-production-pass
+2026-10-08T18:14:05.5952873Z  * [new branch]      codex/m01-battlefield-audio-production-pass-v1 -> origin/codex/m01-battlefield-audio-production-pass-v1
+2026-10-08T18:14:05.5956282Z  * [new branch]      codex/m01-battlefield-fx-polish-v3 -> origin/codex/m01-battlefield-fx-polish-v3
+2026-10-08T18:14:05.5959710Z  * [new branch]      codex/m01-battlefield-fx-visual-runtime-v2 -> origin/codex/m01-battlefield-fx-visual-runtime-v2
+2026-10-08T18:14:05.5962918Z  * [new branch]      codex/m01-bridge-completion -> origin/codex/m01-bridge-completion
+2026-10-08T18:14:05.5966899Z  * [new branch]      codex/m01-bridge-portal-material-detail-polish-v1 -> origin/codex/m01-bridge-portal-material-detail-polish-v1
+2026-10-08T18:14:05.5971150Z  * [new branch]      codex/m01-bridge-structural-production-closeout-v2 -> origin/codex/m01-bridge-structural-production-closeout-v2
+2026-10-08T18:14:05.5974632Z  * [new branch]      codex/m01-browser-harness-hardening -> origin/codex/m01-browser-harness-hardening
+2026-10-08T18:14:05.5977607Z  * [new branch]      codex/m01-character-integration -> origin/codex/m01-character-integration
+2026-10-08T18:14:05.5980085Z  * [new branch]      codex/m01-chromebook-benchmark -> origin/codex/m01-chromebook-benchmark
+2026-10-08T18:14:05.5982937Z  * [new branch]      codex/m01-ci-capture-budget -> origin/codex/m01-ci-capture-budget
+2026-10-08T18:14:05.5985999Z  * [new branch]      codex/m01-ckm-fire-arc-resolution -> origin/codex/m01-ckm-fire-arc-resolution
+2026-10-08T18:14:05.5988397Z  * [new branch]      codex/m01-ckm-fire-runtime -> origin/codex/m01-ckm-fire-runtime
+2026-10-08T18:14:05.5990940Z  * [new branch]      codex/m01-ckm-placement-migration -> origin/codex/m01-ckm-placement-migration
+2026-10-08T18:14:05.5993547Z  * [new branch]      codex/m01-ckm-runtime   -> origin/codex/m01-ckm-runtime
+2026-10-08T18:14:05.5996228Z  * [new branch]      codex/m01-combat-ai-architecture -> origin/codex/m01-combat-ai-architecture
+2026-10-08T18:14:05.5998750Z  * [new branch]      codex/m01-combat-animation -> origin/codex/m01-combat-animation
+2026-10-08T18:14:05.6001039Z  * [new branch]      codex/m01-cover-fire-origin -> origin/codex/m01-cover-fire-origin
+2026-10-08T18:14:05.6003368Z  * [new branch]      codex/m01-demolition-cue -> origin/codex/m01-demolition-cue
+2026-10-08T18:14:05.6005867Z  * [new branch]      codex/m01-demolition-dust -> origin/codex/m01-demolition-dust
+2026-10-08T18:14:05.6008226Z  * [new branch]      codex/m01-destruction-persistence -> origin/codex/m01-destruction-persistence
+2026-10-08T18:14:05.6011250Z  * [new branch]      codex/m01-distant-battle-sectors -> origin/codex/m01-distant-battle-sectors
+2026-10-08T18:14:05.6014436Z  * [new branch]      codex/m01-distant-battlefield-presentation-v1 -> origin/codex/m01-distant-battlefield-presentation-v1
+2026-10-08T18:14:05.6018039Z  * [new branch]      codex/m01-environment-prop-density-grounding-v1 -> origin/codex/m01-environment-prop-density-grounding-v1
+2026-10-08T18:14:05.6021433Z  * [new branch]      codex/m01-environment-visual-runtime-pass -> origin/codex/m01-environment-visual-runtime-pass
+2026-10-08T18:14:05.6024619Z  * [new branch]      codex/m01-environmental-damage-decal-pass-v1 -> origin/codex/m01-environmental-damage-decal-pass-v1
+2026-10-08T18:14:05.6028193Z  * [new branch]      codex/m01-final-production-consolidation-v6 -> origin/codex/m01-final-production-consolidation-v6
+2026-10-08T18:14:05.6031869Z  * [new branch]      codex/m01-first-person-weapon-presentation-v1 -> origin/codex/m01-first-person-weapon-presentation-v1
+2026-10-08T18:14:05.6035255Z  * [new branch]      codex/m01-fx-browser-evidence-harness-v1 -> origin/codex/m01-fx-browser-evidence-harness-v1
+2026-10-08T18:14:05.6038589Z  * [new branch]      codex/m01-handoff-aircraft -> origin/codex/m01-handoff-aircraft
+2026-10-08T18:14:05.6043253Z  * [new branch]      codex/m01-historical-soldier-equipment-audit -> origin/codex/m01-historical-soldier-equipment-audit
+2026-10-08T18:14:05.6047308Z  * [new branch]      codex/m01-hud-cinematic-presentation-pass-v1 -> origin/codex/m01-hud-cinematic-presentation-pass-v1
+2026-10-08T18:14:05.6049885Z  * [new branch]      codex/m01-idle-render   -> origin/codex/m01-idle-render
+2026-10-08T18:14:05.6052645Z  * [new branch]      codex/m01-integrated-visual-placeholder-closeout-v2 -> origin/codex/m01-integrated-visual-placeholder-closeout-v2
+2026-10-08T18:14:05.6056583Z  * [new branch]      codex/m01-integration-browser-harness-stabilization-v2 -> origin/codex/m01-integration-browser-harness-stabilization-v2
+2026-10-08T18:14:05.6060132Z  * [new branch]      codex/m01-ju87-aircraft-production-closeout-v2 -> origin/codex/m01-ju87-aircraft-production-closeout-v2
+2026-10-08T18:14:05.6063514Z  * [new branch]      codex/m01-locomotive-963-production-asset-runtime -> origin/codex/m01-locomotive-963-production-asset-runtime
+2026-10-08T18:14:05.6066529Z  * [new branch]      codex/m01-mg34-prone-runtime -> origin/codex/m01-mg34-prone-runtime
+2026-10-08T18:14:05.6069485Z  * [new branch]      codex/m01-near-far-authority-runtime-pilot -> origin/codex/m01-near-far-authority-runtime-pilot
+2026-10-08T18:14:05.6072569Z  * [new branch]      codex/m01-next-pendencies-audit -> origin/codex/m01-next-pendencies-audit
+2026-10-08T18:14:05.6075749Z  * [new branch]      codex/m01-panzerzug-production-asset-runtime -> origin/codex/m01-panzerzug-production-asset-runtime
+2026-10-08T18:14:05.6078847Z  * [new branch]      codex/m01-per-formation-rng-architecture -> origin/codex/m01-per-formation-rng-architecture
+2026-10-08T18:14:05.6081720Z  * [new branch]      codex/m01-player-hit-near-miss-feedback -> origin/codex/m01-player-hit-near-miss-feedback
+2026-10-08T18:14:05.6084691Z  * [new branch]      codex/m01-production-integration-checkpoint-1 -> origin/codex/m01-production-integration-checkpoint-1
+2026-10-08T18:14:05.6088007Z  * [new branch]      codex/m01-ready-deliveries-consolidation-v2 -> origin/codex/m01-ready-deliveries-consolidation-v2
+2026-10-08T18:14:05.6091835Z  * [new branch]      codex/m01-ready-deliveries-consolidation-v3 -> origin/codex/m01-ready-deliveries-consolidation-v3
+2026-10-08T18:14:05.6094809Z  * [new branch]      codex/m01-ready-deliveries-consolidation-v4 -> origin/codex/m01-ready-deliveries-consolidation-v4
+2026-10-08T18:14:05.6098100Z  * [new branch]      codex/m01-ready-deliveries-consolidation-v5 -> origin/codex/m01-ready-deliveries-consolidation-v5
+2026-10-08T18:14:05.6101016Z  * [new branch]      codex/m01-ready-deliveries-validation-v3 -> origin/codex/m01-ready-deliveries-validation-v3
+2026-10-08T18:14:05.6103766Z  * [new branch]      codex/m01-rifleman-locomotion-runtime -> origin/codex/m01-rifleman-locomotion-runtime
+2026-10-08T18:14:05.6106165Z  * [new branch]      codex/m01-runtime       -> origin/codex/m01-runtime
+2026-10-08T18:14:05.6108269Z  * [new branch]      codex/m01-schema2-determinism-audit -> origin/codex/m01-schema2-determinism-audit
+2026-10-08T18:14:05.6111200Z  * [new branch]      codex/m01-soldier-locomotion-animation -> origin/codex/m01-soldier-locomotion-animation
+2026-10-08T18:14:05.6114209Z  * [new branch]      codex/m01-soldier-motion-clips-production-v1 -> origin/codex/m01-soldier-motion-clips-production-v1
+2026-10-08T18:14:05.6117238Z  * [new branch]      codex/m01-soldier-visual-variation-pass -> origin/codex/m01-soldier-visual-variation-pass
+2026-10-08T18:14:05.6120147Z  * [new branch]      codex/m01-station-architecture-production-v2 -> origin/codex/m01-station-architecture-production-v2
+2026-10-08T18:14:05.6122954Z  * [new branch]      codex/m01-station-visual-fidelity-v3 -> origin/codex/m01-station-visual-fidelity-v3
+2026-10-08T18:14:05.6125358Z  * [new branch]      codex/m01-station-wagon-state -> origin/codex/m01-station-wagon-state
+2026-10-08T18:14:05.6127640Z  * [new branch]      codex/m01-station-wagon-validation -> origin/codex/m01-station-wagon-validation
+2026-10-08T18:14:05.6129995Z  * [new branch]      codex/m01-support-runtime -> origin/codex/m01-support-runtime
+2026-10-08T18:14:05.6132230Z  * [new branch]      codex/m01-v3-isolated-cancelled-tests -> origin/codex/m01-v3-isolated-cancelled-tests
+2026-10-08T18:14:05.6135385Z  * [new branch]      codex/m01-vegetation-foliage-production-closeout-v1 -> origin/codex/m01-vegetation-foliage-production-closeout-v1
+2026-10-08T18:14:05.6138606Z  * [new branch]      codex/m01-vegetation-mesh-lod-runtime-pass -> origin/codex/m01-vegetation-mesh-lod-runtime-pass
+2026-10-08T18:14:05.6141124Z  * [new branch]      codex/m01-viewmodel-visual-v2 -> origin/codex/m01-viewmodel-visual-v2
+2026-10-08T18:14:05.6143583Z  * [new branch]      codex/m01-visual-placeholder-asset-audit -> origin/codex/m01-visual-placeholder-asset-audit
+2026-10-08T18:14:05.6146028Z  * [new branch]      codex/m01-visual-sprint -> origin/codex/m01-visual-sprint
+2026-10-08T18:14:05.6148489Z  * [new branch]      codex/m01-wagon-lod-damage-runtime-integration -> origin/codex/m01-wagon-lod-damage-runtime-integration
+2026-10-08T18:14:05.6151060Z  * [new branch]      codex/m01-world-interactions -> origin/codex/m01-world-interactions
+2026-10-08T18:14:05.6153425Z  * [new branch]      codex/m01-wz29-viewmodel-visual-runtime -> origin/codex/m01-wz29-viewmodel-visual-runtime
+2026-10-08T18:14:05.6155760Z  * [new branch]      codex/m01-yard-wagon-fit -> origin/codex/m01-yard-wagon-fit
+2026-10-08T18:14:05.6157912Z  * [new branch]      codex/three-foundation-checkpoints -> origin/codex/three-foundation-checkpoints
+2026-10-08T18:14:05.6160100Z  * [new branch]      deploy/m01-latest-playable -> origin/deploy/m01-latest-playable
+2026-10-08T18:14:05.6161748Z  * [new branch]      main                    -> origin/main
+2026-10-08T18:14:05.6164823Z [command]/usr/bin/git branch --list --remote origin/codex/m01-final-production-consolidation-v6
+2026-10-08T18:14:05.6166741Z   origin/codex/m01-final-production-consolidation-v6
+2026-10-08T18:14:05.6169768Z [command]/usr/bin/git rev-parse refs/remotes/origin/codex/m01-final-production-consolidation-v6
+2026-10-08T18:14:05.6171536Z 9a9946450b0ba77e8c649d0b28def2542e188c4e
+2026-10-08T18:14:05.6175863Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +edefda544c702962ad3e378d06fb1bd7e792254e:refs/remotes/origin/codex/m01-final-production-consolidation-v6
+2026-10-08T18:14:05.6179172Z From https://github.com/Brawl2007/COD-guerra
+2026-10-08T18:14:05.6181397Z  + 9a99464...edefda5 edefda544c702962ad3e378d06fb1bd7e792254e -> origin/codex/m01-final-production-consolidation-v6  (forced update)
+2026-10-08T18:14:05.6185277Z ##[endgroup]
+2026-10-08T18:14:05.6186673Z ##[group]Determining the checkout info
+2026-10-08T18:14:05.6188174Z ##[endgroup]
+2026-10-08T18:14:05.6189039Z [command]/usr/bin/git sparse-checkout disable
+2026-10-08T18:14:05.6191518Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-08T18:14:05.6194472Z ##[group]Checking out the ref
+2026-10-08T18:14:05.6196963Z [command]/usr/bin/git checkout --progress --force -B codex/m01-final-production-consolidation-v6 refs/remotes/origin/codex/m01-final-production-consolidation-v6
+2026-10-08T18:14:06.2826958Z Switched to a new branch 'codex/m01-final-production-consolidation-v6'
+2026-10-08T18:14:06.2831535Z branch 'codex/m01-final-production-consolidation-v6' set up to track 'origin/codex/m01-final-production-consolidation-v6'.
+2026-10-08T18:14:06.2863893Z ##[endgroup]
+2026-10-08T18:14:06.2906809Z [command]/usr/bin/git log -1 --format=%H
+2026-10-08T18:14:06.2928220Z edefda544c702962ad3e378d06fb1bd7e792254e
+2026-10-08T18:14:06.3157395Z ##[group]Run actions/setup-node@v4
+2026-10-08T18:14:06.3157728Z with:
+2026-10-08T18:14:06.3157989Z   node-version: 24
+2026-10-08T18:14:06.3158249Z   cache: npm
+2026-10-08T18:14:06.3158503Z   always-auth: false
+2026-10-08T18:14:06.3158774Z   check-latest: false
+2026-10-08T18:14:06.3161640Z   token: ***
+2026-10-08T18:14:06.3162091Z ##[endgroup]
+2026-10-08T18:14:06.4574368Z Found in cache @ /opt/hostedtoolcache/node/24.21.0/x64
+2026-10-08T18:14:06.4577614Z (node:2246) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-08T18:14:06.4578452Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-08T18:14:06.4580629Z ##[group]Environment details
+2026-10-08T18:14:06.8402722Z node: v24.21.0
+2026-10-08T18:14:06.8403153Z npm: 11.19.0
+2026-10-08T18:14:06.8403488Z yarn: 1.22.22
+2026-10-08T18:14:06.8404247Z ##[endgroup]
+2026-10-08T18:14:06.8442814Z [command]/opt/hostedtoolcache/node/24.21.0/x64/bin/npm config get cache
+2026-10-08T18:14:06.9573848Z /home/runner/.npm
+2026-10-08T18:14:07.1789599Z Cache hit for: node-cache-Linux-x64-npm-8f1cf7dcbae8d9792eb3058e1b70088e2662e09ea7a497e59bda9a9876b25d95
+2026-10-08T18:14:07.1900672Z (node:2246) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-08T18:14:08.3230880Z Received 32592483 of 32592483 (100.0%), 33.5 MBs/sec
+2026-10-08T18:14:08.3231543Z Cache Size: ~31 MB (32592483 B)
+2026-10-08T18:14:08.3262345Z [command]/usr/bin/tar -xf /home/runner/work/_temp/5047e475-61dd-4a93-9f52-8b114581fe95/cache.tzst -P -C /home/runner/work/COD-guerra/COD-guerra --use-compress-program unzstd
+2026-10-08T18:14:08.3632935Z Cache restored successfully
+2026-10-08T18:14:08.3648464Z Cache restored from key: node-cache-Linux-x64-npm-8f1cf7dcbae8d9792eb3058e1b70088e2662e09ea7a497e59bda9a9876b25d95
+2026-10-08T18:14:08.3793240Z ##[group]Run npm ci
+2026-10-08T18:14:08.3793569Z [36;1mnpm ci[0m
+2026-10-08T18:14:08.3981641Z shell: /usr/bin/bash -e {0}
+2026-10-08T18:14:08.3981988Z ##[endgroup]
+2026-10-08T18:14:09.9971675Z 
+2026-10-08T18:14:09.9978901Z added 21 packages, and audited 22 packages in 2s
+2026-10-08T18:14:09.9979396Z 
+2026-10-08T18:14:09.9979626Z 9 packages are looking for funding
+2026-10-08T18:14:09.9979967Z   run `npm fund` for details
+2026-10-08T18:14:09.9982551Z 
+2026-10-08T18:14:09.9982724Z found 0 vulnerabilities
+2026-10-08T18:14:10.0253432Z ##[group]Run npx playwright install --with-deps chromium
+2026-10-08T18:14:10.0253855Z [36;1mnpx playwright install --with-deps chromium[0m
+2026-10-08T18:14:10.0293913Z shell: /usr/bin/bash -e {0}
+2026-10-08T18:14:10.0294192Z ##[endgroup]
+2026-10-08T18:14:10.8543696Z Installing dependencies...
+2026-10-08T18:14:10.8602526Z Switching to root user to install dependencies...
+2026-10-08T18:14:10.9279092Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-08T18:14:10.9599372Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+2026-10-08T18:14:10.9603121Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-10-08T18:14:10.9618614Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-10-08T18:14:10.9666394Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-10-08T18:14:10.9705694Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-10-08T18:14:11.0697619Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [474 kB]
+2026-10-08T18:14:11.0847485Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [531 kB]
+2026-10-08T18:14:11.0876184Z Get:9 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [12.3 kB]
+2026-10-08T18:14:11.0889738Z Get:10 https://packages.microsoft.com/ubuntu/24.04/prod noble/main all Packages [640 B]
+2026-10-08T18:14:11.1071105Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1375 kB]
+2026-10-08T18:14:11.1149612Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [306 kB]
+2026-10-08T18:14:11.1157683Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1702 kB]
+2026-10-08T18:14:11.1242704Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [342 kB]
+2026-10-08T18:14:11.1267599Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1761 kB]
+2026-10-08T18:14:11.1347845Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [401 kB]
+2026-10-08T18:14:11.1372266Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [55.0 kB]
+2026-10-08T18:14:11.1381913Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [14.3 kB]
+2026-10-08T18:14:11.1986984Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1115 kB]
+2026-10-08T18:14:11.2042592Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [227 kB]
+2026-10-08T18:14:11.2527474Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1218 kB]
+2026-10-08T18:14:11.2594902Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [245 kB]
+2026-10-08T18:14:11.2644049Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1632 kB]
+2026-10-08T18:14:11.2734381Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [376 kB]
+2026-10-08T18:14:11.2760099Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse Translation-en [11.6 kB]
+2026-10-08T18:14:14.0531416Z Fetched 12.2 MB in 1s (9983 kB/s)
+2026-10-08T18:14:14.8785495Z Reading package lists...
+2026-10-08T18:14:14.9025911Z Reading package lists...
+2026-10-08T18:14:15.0677530Z Building dependency tree...
+2026-10-08T18:14:15.0683661Z Reading state information...
+2026-10-08T18:14:15.2111384Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.3).
+2026-10-08T18:14:15.2112216Z libasound2t64 set to manually installed.
+2026-10-08T18:14:15.2113006Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-08T18:14:15.2113752Z libatk-bridge2.0-0t64 set to manually installed.
+2026-10-08T18:14:15.2114572Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-08T18:14:15.2116084Z libatk1.0-0t64 set to manually installed.
+2026-10-08T18:14:15.2116938Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-08T18:14:15.2117730Z libatspi2.0-0t64 set to manually installed.
+2026-10-08T18:14:15.2118497Z libcairo2 is already the newest version (1.18.0-3build1).
+2026-10-08T18:14:15.2119229Z libcairo2 set to manually installed.
+2026-10-08T18:14:15.2119974Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.14).
+2026-10-08T18:14:15.2120721Z libcups2t64 set to manually installed.
+2026-10-08T18:14:15.2121539Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+2026-10-08T18:14:15.2121986Z libdbus-1-3 set to manually installed.
+2026-10-08T18:14:15.2122453Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.2).
+2026-10-08T18:14:15.2122897Z libdrm2 set to manually installed.
+2026-10-08T18:14:15.2123350Z libgbm1 is already the newest version (25.2.8-0ubuntu0.24.04.4).
+2026-10-08T18:14:15.2123788Z libgbm1 set to manually installed.
+2026-10-08T18:14:15.2124251Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.9).
+2026-10-08T18:14:15.2124718Z libglib2.0-0t64 set to manually installed.
+2026-10-08T18:14:15.2125640Z libnspr4 is already the newest version (2:4.35-1.1build1).
+2026-10-08T18:14:15.2126281Z libnspr4 set to manually installed.
+2026-10-08T18:14:15.2126986Z libnss3 is already the newest version (2:3.98-1ubuntu0.2).
+2026-10-08T18:14:15.2127629Z libnss3 set to manually installed.
+2026-10-08T18:14:15.2128531Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+2026-10-08T18:14:15.2129282Z libpango-1.0-0 set to manually installed.
+2026-10-08T18:14:15.2129926Z libx11-6 is already the newest version (2:1.8.7-1build1).
+2026-10-08T18:14:15.2130518Z libx11-6 set to manually installed.
+2026-10-08T18:14:15.2131129Z libxcb1 is already the newest version (1.15-1ubuntu2).
+2026-10-08T18:14:15.2132270Z libxcb1 set to manually installed.
+2026-10-08T18:14:15.2132991Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+2026-10-08T18:14:15.2133732Z libxcomposite1 set to manually installed.
+2026-10-08T18:14:15.2134449Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+2026-10-08T18:14:15.2135400Z libxdamage1 set to manually installed.
+2026-10-08T18:14:15.2136097Z libxext6 is already the newest version (2:1.3.4-1build2).
+2026-10-08T18:14:15.2136760Z libxext6 set to manually installed.
+2026-10-08T18:14:15.2137453Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+2026-10-08T18:14:15.2138106Z libxfixes3 set to manually installed.
+2026-10-08T18:14:15.2138832Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+2026-10-08T18:14:15.2139511Z libxkbcommon0 set to manually installed.
+2026-10-08T18:14:15.2140207Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+2026-10-08T18:14:15.2140852Z libxrandr2 set to manually installed.
+2026-10-08T18:14:15.2141500Z xvfb is already the newest version (2:21.1.12-1ubuntu1.8).
+2026-10-08T18:14:15.2142323Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+2026-10-08T18:14:15.2143268Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+2026-10-08T18:14:15.2143951Z libfontconfig1 set to manually installed.
+2026-10-08T18:14:15.2144659Z fonts-liberation is already the newest version (1:2.1.5-3).
+2026-10-08T18:14:15.2145513Z fonts-liberation set to manually installed.
+2026-10-08T18:14:15.2146124Z The following additional packages will be installed:
+2026-10-08T18:14:15.2146731Z   xfonts-encodings xfonts-utils
+2026-10-08T18:14:15.2147221Z Recommended packages:
+2026-10-08T18:14:15.2147659Z   fonts-ipafont-mincho fonts-tlwg-loma
+2026-10-08T18:14:15.2277070Z The following NEW packages will be installed:
+2026-10-08T18:14:15.2277788Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+2026-10-08T18:14:15.2284545Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+2026-10-08T18:14:15.2285255Z   xfonts-utils
+2026-10-08T18:14:15.2289365Z The following packages will be upgraded:
+2026-10-08T18:14:15.2294096Z   libfreetype6
+2026-10-08T18:14:15.2433403Z 1 upgraded, 9 newly installed, 0 to remove and 20 not upgraded.
+2026-10-08T18:14:15.2434033Z Need to get 21.5 MB of archives.
+2026-10-08T18:14:15.2434455Z After this operation, 79.5 MB of additional disk space will be used.
+2026-10-08T18:14:15.2434936Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-08T18:14:15.3838303Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+2026-10-08T18:14:16.0401745Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+2026-10-08T18:14:16.6781095Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+2026-10-08T18:14:16.7444103Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+2026-10-08T18:14:16.8309159Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+2026-10-08T18:14:17.1237583Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libfreetype6 amd64 2.13.2+dfsg-1ubuntu0.2 [403 kB]
+2026-10-08T18:14:17.1894087Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+2026-10-08T18:14:17.2578557Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+2026-10-08T18:14:17.3219221Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+2026-10-08T18:14:17.3879976Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+2026-10-08T18:14:17.6209939Z Fetched 21.5 MB in 2s (9972 kB/s)
+2026-10-08T18:14:17.6419503Z Selecting previously unselected package fonts-ipafont-gothic.
+2026-10-08T18:14:17.6622193Z (Reading database ... 
+2026-10-08T18:14:17.6622730Z (Reading database ... 5%
+2026-10-08T18:14:17.6623478Z (Reading database ... 10%
+2026-10-08T18:14:17.6623866Z (Reading database ... 15%
+2026-10-08T18:14:17.6624144Z (Reading database ... 20%
+2026-10-08T18:14:17.6624387Z (Reading database ... 25%
+2026-10-08T18:14:17.6624723Z (Reading database ... 30%
+2026-10-08T18:14:17.6625271Z (Reading database ... 35%
+2026-10-08T18:14:17.6625686Z (Reading database ... 40%
+2026-10-08T18:14:17.6625964Z (Reading database ... 45%
+2026-10-08T18:14:17.6626203Z (Reading database ... 50%
+2026-10-08T18:14:17.6667253Z (Reading database ... 55%
+2026-10-08T18:14:17.7566597Z (Reading database ... 60%
+2026-10-08T18:14:18.0003112Z (Reading database ... 65%
+2026-10-08T18:14:18.1645935Z (Reading database ... 70%
+2026-10-08T18:14:18.3512611Z (Reading database ... 75%
+2026-10-08T18:14:18.5101150Z (Reading database ... 80%
+2026-10-08T18:14:18.7533326Z (Reading database ... 85%
+2026-10-08T18:14:18.9586486Z (Reading database ... 90%
+2026-10-08T18:14:19.1111552Z (Reading database ... 95%
+2026-10-08T18:14:19.1111947Z (Reading database ... 100%
+2026-10-08T18:14:19.1112487Z (Reading database ... 203191 files and directories currently installed.)
+2026-10-08T18:14:19.1155589Z Preparing to unpack .../0-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+2026-10-08T18:14:19.1231644Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-10-08T18:14:19.3489839Z Selecting previously unselected package fonts-freefont-ttf.
+2026-10-08T18:14:19.3596969Z Preparing to unpack .../1-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+2026-10-08T18:14:19.3604488Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-10-08T18:14:19.4325335Z Selecting previously unselected package fonts-tlwg-loma-otf.
+2026-10-08T18:14:19.4433039Z Preparing to unpack .../2-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+2026-10-08T18:14:19.4439598Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-10-08T18:14:19.4586691Z Selecting previously unselected package fonts-unifont.
+2026-10-08T18:14:19.4693999Z Preparing to unpack .../3-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+2026-10-08T18:14:19.4701841Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+2026-10-08T18:14:19.5610148Z Selecting previously unselected package fonts-wqy-zenhei.
+2026-10-08T18:14:19.5718313Z Preparing to unpack .../4-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+2026-10-08T18:14:19.5797913Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+2026-10-08T18:14:20.0628185Z Preparing to unpack .../5-libfreetype6_2.13.2+dfsg-1ubuntu0.2_amd64.deb ...
+2026-10-08T18:14:20.0660155Z Unpacking libfreetype6:amd64 (2.13.2+dfsg-1ubuntu0.2) over (2.13.2+dfsg-1ubuntu0.1) ...
+2026-10-08T18:14:20.0854358Z Selecting previously unselected package xfonts-encodings.
+2026-10-08T18:14:20.0963618Z Preparing to unpack .../6-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+2026-10-08T18:14:20.0970577Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-10-08T18:14:20.1163154Z Selecting previously unselected package xfonts-utils.
+2026-10-08T18:14:20.1270699Z Preparing to unpack .../7-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+2026-10-08T18:14:20.1277880Z Unpacking xfonts-utils (1:7.7+6build3) ...
+2026-10-08T18:14:20.1575820Z Selecting previously unselected package xfonts-cyrillic.
+2026-10-08T18:14:20.1699883Z Preparing to unpack .../8-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+2026-10-08T18:14:20.1709930Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-10-08T18:14:20.1923097Z Selecting previously unselected package xfonts-scalable.
+2026-10-08T18:14:20.2030831Z Preparing to unpack .../9-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+2026-10-08T18:14:20.2037301Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+2026-10-08T18:14:20.2424147Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+2026-10-08T18:14:20.2556016Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-10-08T18:14:20.2577375Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-10-08T18:14:20.2597146Z Setting up libfreetype6:amd64 (2.13.2+dfsg-1ubuntu0.2) ...
+2026-10-08T18:14:20.2614597Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-10-08T18:14:20.2632580Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-10-08T18:14:20.2685414Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+2026-10-08T18:14:20.2698222Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+2026-10-08T18:14:20.2715877Z Setting up xfonts-utils (1:7.7+6build3) ...
+2026-10-08T18:14:20.2749420Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-10-08T18:14:20.2980191Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+2026-10-08T18:14:20.3187007Z Processing triggers for libc-bin (2.39-0ubuntu8.9) ...
+2026-10-08T18:14:20.3427554Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-10-08T18:14:20.3446765Z Not building database; man-db/auto-update is not 'true'.
+2026-10-08T18:14:20.3459546Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+2026-10-08T18:14:20.9590378Z 
+2026-10-08T18:14:20.9590999Z Running kernel seems to be up-to-date.
+2026-10-08T18:14:20.9591382Z 
+2026-10-08T18:14:20.9591569Z Restarting services...
+2026-10-08T18:14:20.9656224Z  systemctl restart php8.3-fpm.service
+2026-10-08T18:14:21.0428049Z 
+2026-10-08T18:14:21.0429142Z No containers need to be restarted.
+2026-10-08T18:14:21.0429499Z 
+2026-10-08T18:14:21.0429908Z No user sessions are running outdated binaries.
+2026-10-08T18:14:21.0430336Z 
+2026-10-08T18:14:21.0430877Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-10-08T18:14:21.8653742Z Downloading Chrome for Testing 145.0.7632.6 (playwright chromium v1208) from https://cdn.playwright.dev/builds/cft/145.0.7632.6/linux64/chrome-linux64.zip
+2026-10-08T18:14:22.0766261Z |                                                                                |   0% of 167.3 MiB
+2026-10-08T18:14:22.2821958Z |■■■■■■■■                                                                        |  10% of 167.3 MiB
+2026-10-08T18:14:22.3773155Z |■■■■■■■■■■■■■■■■                                                                |  20% of 167.3 MiB
+2026-10-08T18:14:22.4709947Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 167.3 MiB
+2026-10-08T18:14:22.5410511Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 167.3 MiB
+2026-10-08T18:14:22.6183350Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 167.3 MiB
+2026-10-08T18:14:22.7098147Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 167.3 MiB
+2026-10-08T18:14:22.8062817Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 167.3 MiB
+2026-10-08T18:14:22.9020216Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 167.3 MiB
+2026-10-08T18:14:22.9997850Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 167.3 MiB
+2026-10-08T18:14:23.0671518Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 167.3 MiB
+2026-10-08T18:14:25.4323673Z Chrome for Testing 145.0.7632.6 (playwright chromium v1208) downloaded to /home/runner/.cache/ms-playwright/chromium-1208
+2026-10-08T18:14:25.4328390Z Downloading FFmpeg (playwright ffmpeg v1011) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+2026-10-08T18:14:25.5739365Z |                                                                                |   0% of 2.3 MiB
+2026-10-08T18:14:25.5777414Z |■■■■■■■■                                                                        |  10% of 2.3 MiB
+2026-10-08T18:14:25.5800434Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+2026-10-08T18:14:25.5815997Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+2026-10-08T18:14:25.5836407Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+2026-10-08T18:14:25.5866929Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+2026-10-08T18:14:25.5877481Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+2026-10-08T18:14:25.5890426Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+2026-10-08T18:14:25.5909715Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+2026-10-08T18:14:25.5923386Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+2026-10-08T18:14:25.5933023Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+2026-10-08T18:14:25.6482441Z FFmpeg (playwright ffmpeg v1011) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1011
+2026-10-08T18:14:25.6486588Z Downloading Chrome Headless Shell 145.0.7632.6 (playwright chromium-headless-shell v1208) from https://cdn.playwright.dev/builds/cft/145.0.7632.6/linux64/chrome-headless-shell-linux64.zip
+2026-10-08T18:14:25.8456922Z |                                                                                |   0% of 110.9 MiB
+2026-10-08T18:14:26.0084672Z |■■■■■■■■                                                                        |  10% of 110.9 MiB
+2026-10-08T18:14:26.1402626Z |■■■■■■■■■■■■■■■■                                                                |  20% of 110.9 MiB
+2026-10-08T18:14:26.2136276Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 110.9 MiB
+2026-10-08T18:14:26.2799249Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 110.9 MiB
+2026-10-08T18:14:26.3911207Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 110.9 MiB
+2026-10-08T18:14:26.4894996Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 110.9 MiB
+2026-10-08T18:14:26.5488732Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 110.9 MiB
+2026-10-08T18:14:26.6007824Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 110.9 MiB
+2026-10-08T18:14:26.6462649Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 110.9 MiB
+2026-10-08T18:14:26.7166156Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 110.9 MiB
+2026-10-08T18:14:28.4495877Z Chrome Headless Shell 145.0.7632.6 (playwright chromium-headless-shell v1208) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1208
+2026-10-08T18:14:28.4838706Z ##[group]Run npm run build
+2026-10-08T18:14:28.4838978Z [36;1mnpm run build[0m
+2026-10-08T18:14:28.4874972Z shell: /usr/bin/bash -e {0}
+2026-10-08T18:14:28.4875438Z ##[endgroup]
+2026-10-08T18:14:28.5755481Z 
+2026-10-08T18:14:28.5756067Z > operation-ashen-road@0.2.0 build
+2026-10-08T18:14:28.5756650Z > vite build
+2026-10-08T18:14:28.5756843Z 
+2026-10-08T18:14:28.7891675Z [36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+2026-10-08T18:14:28.7984786Z transforming...
+2026-10-08T18:14:28.9356788Z ✓ 74 modules transformed.
+2026-10-08T18:14:28.9928985Z rendering chunks...
+2026-10-08T18:14:29.1408836Z computing gzip size...
+2026-10-08T18:14:29.1628490Z dist/index.html                     4.65 kB │ gzip:   1.93 kB
+2026-10-08T18:14:29.1629240Z dist/assets/index-DQURwQ3m.css     14.89 kB │ gzip:   4.65 kB
+2026-10-08T18:14:29.1629897Z dist/assets/index-QzIf-9Lu.js   1,408.88 kB │ gzip: 395.93 kB
+2026-10-08T18:14:29.1630187Z 
+2026-10-08T18:14:29.1640128Z [33m[plugin builtin:vite-reporter] 
+2026-10-08T18:14:29.1641170Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-10-08T18:14:29.1642261Z - Using dynamic import() to code-split the application
+2026-10-08T18:14:29.1643965Z - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+2026-10-08T18:14:29.1646174Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2026-10-08T18:14:29.1647607Z [32m✓ built in 374ms[39m
+2026-10-08T18:14:29.2246902Z ##[group]Run npx playwright test tests/browser/m01-battlefield-fx-polish-v3.spec.js tests/browser/m01-consolidation-lifecycle.spec.js tests/browser/m01-station-architecture.spec.js --workers=1
+2026-10-08T18:14:29.2248226Z [36;1mnpx playwright test tests/browser/m01-battlefield-fx-polish-v3.spec.js tests/browser/m01-consolidation-lifecycle.spec.js tests/browser/m01-station-architecture.spec.js --workers=1[0m
+2026-10-08T18:14:29.2285906Z shell: /usr/bin/bash -e {0}
+2026-10-08T18:14:29.2286184Z ##[endgroup]
+2026-10-08T18:14:36.1840461Z 
+2026-10-08T18:14:36.1840927Z Running 6 tests using 1 worker
+2026-10-08T18:21:56.2259690Z ··M01_BATTLEFIELD_FX_V3_COUNTERS {"low":{"drawCalls":190,"triangles":558415,"textures":76,"geometries":289,"fx":{"active":1,"counts":{"flash":0,"core":2,"fire":3,"smoke":0,"dust":1,"shard":3},"meta":{"kinds":{"small":0,"bombing":0,"demolition":1},"bands":{"near":0,"mid":0,"far":1}},"limits":{"bursts":16,"flash":16,"core":48,"fire":96,"smoke":128,"dust":128,"shards":96,"lights":1},"extraLights":1,"atmosphere":{"puffs":29,"puffCapacity":256,"debris":16,"debrisCapacity":64,"puffBatches":8}}},"high":{"drawCalls":336,"triangles":982243,"textures":98,"geometries":306,"fx":{"active":1,"counts":{"flash":0,"core":4,"fire":3,"smoke":0,"dust":2,"shard":7},"meta":{"kinds":{"small":0,"bombing":0,"demolition":1},"bands":{"near":0,"mid":0,"far":1}},"limits":{"bursts":16,"flash":16,"core":48,"fire":96,"smoke":128,"dust":128,"shards":96,"lights":1},"extraLights":1,"atmosphere":{"puffs":49,"puffCapacity":256,"debris":28,"debrisCapacity":64,"puffBatches":8}}}}
+2026-10-08T18:23:37.2125779Z ····
+2026-10-08T18:23:37.2130203Z   Slow test file: tests/browser/m01-battlefield-fx-polish-v3.spec.js (7.2m)
+2026-10-08T18:23:37.2131376Z   Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+2026-10-08T18:23:37.2132265Z   6 passed (9.1m)
+2026-10-08T18:23:37.2407911Z ##[group]Run actions/upload-artifact@v4
+2026-10-08T18:23:37.2408215Z with:
+2026-10-08T18:23:37.2408545Z   name: m01-v6-critical-browser-edefda544c702962ad3e378d06fb1bd7e792254e
+2026-10-08T18:23:37.2408964Z   path: test-results/
+playwright-report/
+
+2026-10-08T18:23:37.2409258Z   if-no-files-found: ignore
+2026-10-08T18:23:37.2409519Z   compression-level: 6
+2026-10-08T18:23:37.2409742Z   overwrite: false
+2026-10-08T18:23:37.2409964Z   include-hidden-files: false
+2026-10-08T18:23:37.2410252Z ##[endgroup]
+2026-10-08T18:23:37.3990472Z (node:3492) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-08T18:23:37.3991230Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-08T18:23:37.4094130Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-10-08T18:23:37.4095810Z The least common ancestor is /home/runner/work/COD-guerra/COD-guerra. This will be the root directory of the artifact
+2026-10-08T18:23:37.4096445Z With the provided path, there will be 12 files uploaded
+2026-10-08T18:23:37.4097009Z Artifact name is valid!
+2026-10-08T18:23:37.4097504Z Root directory input is valid!
+2026-10-08T18:23:37.9102737Z Beginning upload of artifact content to blob storage
+2026-10-08T18:23:38.1854898Z (node:3492) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-08T18:23:38.9441675Z Uploaded bytes 8388608
+2026-10-08T18:23:39.1229840Z Uploaded bytes 9791035
+2026-10-08T18:23:39.1863277Z Finished uploading artifact content to blob storage!
+2026-10-08T18:23:39.1864382Z SHA256 digest of uploaded artifact zip is 844f0acdf2f2636ecf019d8bf47ad904a839bca601482827cabed622d8c76896
+2026-10-08T18:23:39.1866743Z Finalizing artifact upload
+2026-10-08T18:23:39.4633956Z Artifact m01-v6-critical-browser-edefda544c702962ad3e378d06fb1bd7e792254e.zip successfully finalized. Artifact ID 11569913035
+2026-10-08T18:23:39.4635603Z Artifact m01-v6-critical-browser-edefda544c702962ad3e378d06fb1bd7e792254e has been successfully uploaded! Final size is 9791035 bytes. Artifact ID is 11569913035
+2026-10-08T18:23:39.4640675Z Artifact download URL: https://github.com/Brawl2007/COD-guerra/actions/runs/37821714679/artifacts/11569913035
+2026-10-08T18:23:39.4796576Z Post job cleanup.
+2026-10-08T18:23:39.5978382Z (node:3505) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-08T18:23:39.5982244Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-08T18:23:39.5983871Z Cache hit occurred on the primary key node-cache-Linux-x64-npm-8f1cf7dcbae8d9792eb3058e1b70088e2662e09ea7a497e59bda9a9876b25d95, not saving cache.
+2026-10-08T18:23:39.6098613Z Post job cleanup.
+2026-10-08T18:23:39.6908851Z [command]/usr/bin/git version
+2026-10-08T18:23:39.6948925Z git version 2.55.0
+2026-10-08T18:23:39.6986744Z Temporarily overriding HOME='/home/runner/work/_temp/02258e68-140b-4505-b7ca-00babfa2291f' before making global git config changes
+2026-10-08T18:23:39.6988479Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-08T18:23:39.6992901Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/COD-guerra/COD-guerra
+2026-10-08T18:23:39.7030971Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-08T18:23:39.7063200Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-08T18:23:39.7269137Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-08T18:23:39.7295741Z http.https://github.com/.extraheader
+2026-10-08T18:23:39.7317007Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-08T18:23:39.7341836Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-08T18:23:39.7596944Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-08T18:23:39.7620948Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-08T18:23:39.7952294Z Cleaning up orphan processes
+2026-10-08T18:23:39.8322146Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

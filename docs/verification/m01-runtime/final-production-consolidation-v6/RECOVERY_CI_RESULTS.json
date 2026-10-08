@@ -183,6 +183,13 @@
       }
     }
   ],
-  "archiveDigestDownloadedAndVerifiedLocally": false,
-  "imagesAndJSONReadFromGit": true
+  "archiveDigestDownloadedAndVerifiedLocally": true,
+  "imagesAndJSONReadFromGit": true,
+  "archiveVerificationContinuation": {
+    "sha256": "029029f6ba3f05dbec8f4f9bf766a6a0970ad077844e452af9cdd2a010dd71ac",
+    "crc": "PASS",
+    "filesComparedToPublishedGit": 99,
+    "pixelIdenticalPairsRecomputed": 30,
+    "provenance": "Observed native archive verification in continuation before executor loss; final CI independently recomputed all 30 visual pairs."
+  }
 }
