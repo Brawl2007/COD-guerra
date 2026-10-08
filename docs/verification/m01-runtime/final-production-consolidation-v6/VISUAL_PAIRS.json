@@ -1,0 +1,812 @@
+[
+  {
+    "name": "station-frontal",
+    "quality": "low",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-station-frontal-low.png",
+    "v6": "visual/V6-station-frontal-low.png",
+    "v5Resources": {
+      "drawCalls": 48,
+      "triangles": 384047,
+      "textures": 51,
+      "geometries": 233,
+      "environmentInstances": 15296
+    },
+    "v6Resources": {
+      "drawCalls": 48,
+      "triangles": 384047,
+      "textures": 51,
+      "geometries": 233,
+      "environmentInstances": 15296
+    }
+  },
+  {
+    "name": "station-oblique",
+    "quality": "low",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-station-oblique-low.png",
+    "v6": "visual/V6-station-oblique-low.png",
+    "v5Resources": {
+      "drawCalls": 56,
+      "triangles": 388517,
+      "textures": 55,
+      "geometries": 241,
+      "environmentInstances": 15645
+    },
+    "v6Resources": {
+      "drawCalls": 56,
+      "triangles": 388517,
+      "textures": 55,
+      "geometries": 241,
+      "environmentInstances": 15645
+    }
+  },
+  {
+    "name": "station-platform",
+    "quality": "low",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-station-platform-low.png",
+    "v6": "visual/V6-station-platform-low.png",
+    "v5Resources": {
+      "drawCalls": 61,
+      "triangles": 390732,
+      "textures": 57,
+      "geometries": 244,
+      "environmentInstances": 15693
+    },
+    "v6Resources": {
+      "drawCalls": 61,
+      "triangles": 390732,
+      "textures": 57,
+      "geometries": 244,
+      "environmentInstances": 15693
+    }
+  },
+  {
+    "name": "station-yard",
+    "quality": "low",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-station-yard-low.png",
+    "v6": "visual/V6-station-yard-low.png",
+    "v5Resources": {
+      "drawCalls": 62,
+      "triangles": 390942,
+      "textures": 59,
+      "geometries": 249,
+      "environmentInstances": 15688
+    },
+    "v6Resources": {
+      "drawCalls": 62,
+      "triangles": 390942,
+      "textures": 59,
+      "geometries": 249,
+      "environmentInstances": 15688
+    }
+  },
+  {
+    "name": "bridge-west",
+    "quality": "low",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-bridge-west-low.png",
+    "v6": "visual/V6-bridge-west-low.png",
+    "v5Resources": {
+      "drawCalls": 226,
+      "triangles": 421029,
+      "textures": 117,
+      "geometries": 256,
+      "environmentInstances": 15364
+    },
+    "v6Resources": {
+      "drawCalls": 226,
+      "triangles": 421029,
+      "textures": 117,
+      "geometries": 256,
+      "environmentInstances": 15364
+    }
+  },
+  {
+    "name": "bridge-east",
+    "quality": "low",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-bridge-east-low.png",
+    "v6": "visual/V6-bridge-east-low.png",
+    "v5Resources": {
+      "drawCalls": 154,
+      "triangles": 404318,
+      "textures": 69,
+      "geometries": 286,
+      "environmentInstances": 15052
+    },
+    "v6Resources": {
+      "drawCalls": 154,
+      "triangles": 404318,
+      "textures": 69,
+      "geometries": 286,
+      "environmentInstances": 15052
+    }
+  },
+  {
+    "name": "train-963",
+    "quality": "low",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-train-963-low.png",
+    "v6": "visual/V6-train-963-low.png",
+    "v5Resources": {
+      "drawCalls": 192,
+      "triangles": 499143,
+      "textures": 171,
+      "geometries": 364,
+      "environmentInstances": 14968
+    },
+    "v6Resources": {
+      "drawCalls": 192,
+      "triangles": 499143,
+      "textures": 171,
+      "geometries": 364,
+      "environmentInstances": 14968
+    }
+  },
+  {
+    "name": "panzerzug",
+    "quality": "low",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-panzerzug-low.png",
+    "v6": "visual/V6-panzerzug-low.png",
+    "v5Resources": {
+      "drawCalls": 165,
+      "triangles": 497095,
+      "textures": 174,
+      "geometries": 370,
+      "environmentInstances": 14964
+    },
+    "v6Resources": {
+      "drawCalls": 165,
+      "triangles": 497095,
+      "textures": 174,
+      "geometries": 370,
+      "environmentInstances": 14964
+    }
+  },
+  {
+    "name": "evacuation",
+    "quality": "low",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-evacuation-low.png",
+    "v6": "visual/V6-evacuation-low.png",
+    "v5Resources": {
+      "drawCalls": 63,
+      "triangles": 393783,
+      "textures": 80,
+      "geometries": 385,
+      "environmentInstances": 15606
+    },
+    "v6Resources": {
+      "drawCalls": 63,
+      "triangles": 393783,
+      "textures": 80,
+      "geometries": 385,
+      "environmentInstances": 15606
+    }
+  },
+  {
+    "name": "roll-call",
+    "quality": "low",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-roll-call-low.png",
+    "v6": "visual/V6-roll-call-low.png",
+    "v5Resources": {
+      "drawCalls": 155,
+      "triangles": 512906,
+      "textures": 184,
+      "geometries": 400,
+      "environmentInstances": 15702
+    },
+    "v6Resources": {
+      "drawCalls": 155,
+      "triangles": 512906,
+      "textures": 184,
+      "geometries": 400,
+      "environmentInstances": 15702
+    }
+  },
+  {
+    "name": "station-frontal",
+    "quality": "medium",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-station-frontal-medium.png",
+    "v6": "visual/V6-station-frontal-medium.png",
+    "v5Resources": {
+      "drawCalls": 53,
+      "triangles": 428618,
+      "textures": 51,
+      "geometries": 242,
+      "environmentInstances": 17878
+    },
+    "v6Resources": {
+      "drawCalls": 53,
+      "triangles": 428618,
+      "textures": 51,
+      "geometries": 242,
+      "environmentInstances": 17878
+    }
+  },
+  {
+    "name": "station-oblique",
+    "quality": "medium",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-station-oblique-medium.png",
+    "v6": "visual/V6-station-oblique-medium.png",
+    "v5Resources": {
+      "drawCalls": 61,
+      "triangles": 437719,
+      "textures": 55,
+      "geometries": 254,
+      "environmentInstances": 17812
+    },
+    "v6Resources": {
+      "drawCalls": 61,
+      "triangles": 437719,
+      "textures": 55,
+      "geometries": 254,
+      "environmentInstances": 17812
+    }
+  },
+  {
+    "name": "station-platform",
+    "quality": "medium",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-station-platform-medium.png",
+    "v6": "visual/V6-station-platform-medium.png",
+    "v5Resources": {
+      "drawCalls": 66,
+      "triangles": 440717,
+      "textures": 59,
+      "geometries": 262,
+      "environmentInstances": 18748
+    },
+    "v6Resources": {
+      "drawCalls": 66,
+      "triangles": 440717,
+      "textures": 59,
+      "geometries": 262,
+      "environmentInstances": 18748
+    }
+  },
+  {
+    "name": "station-yard",
+    "quality": "medium",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-station-yard-medium.png",
+    "v6": "visual/V6-station-yard-medium.png",
+    "v5Resources": {
+      "drawCalls": 67,
+      "triangles": 446887,
+      "textures": 59,
+      "geometries": 262,
+      "environmentInstances": 18402
+    },
+    "v6Resources": {
+      "drawCalls": 67,
+      "triangles": 446887,
+      "textures": 59,
+      "geometries": 262,
+      "environmentInstances": 18402
+    }
+  },
+  {
+    "name": "bridge-west",
+    "quality": "medium",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-bridge-west-medium.png",
+    "v6": "visual/V6-bridge-west-medium.png",
+    "v5Resources": {
+      "drawCalls": 271,
+      "triangles": 518676,
+      "textures": 125,
+      "geometries": 290,
+      "environmentInstances": 17382
+    },
+    "v6Resources": {
+      "drawCalls": 271,
+      "triangles": 518676,
+      "textures": 125,
+      "geometries": 290,
+      "environmentInstances": 17382
+    }
+  },
+  {
+    "name": "bridge-east",
+    "quality": "medium",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-bridge-east-medium.png",
+    "v6": "visual/V6-bridge-east-medium.png",
+    "v5Resources": {
+      "drawCalls": 201,
+      "triangles": 513041,
+      "textures": 89,
+      "geometries": 320,
+      "environmentInstances": 15881
+    },
+    "v6Resources": {
+      "drawCalls": 201,
+      "triangles": 513041,
+      "textures": 89,
+      "geometries": 320,
+      "environmentInstances": 15881
+    }
+  },
+  {
+    "name": "train-963",
+    "quality": "medium",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-train-963-medium.png",
+    "v6": "visual/V6-train-963-medium.png",
+    "v5Resources": {
+      "drawCalls": 234,
+      "triangles": 530379,
+      "textures": 209,
+      "geometries": 405,
+      "environmentInstances": 15101
+    },
+    "v6Resources": {
+      "drawCalls": 234,
+      "triangles": 530379,
+      "textures": 209,
+      "geometries": 405,
+      "environmentInstances": 15101
+    }
+  },
+  {
+    "name": "panzerzug",
+    "quality": "medium",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-panzerzug-medium.png",
+    "v6": "visual/V6-panzerzug-medium.png",
+    "v5Resources": {
+      "drawCalls": 206,
+      "triangles": 532943,
+      "textures": 210,
+      "geometries": 408,
+      "environmentInstances": 15079
+    },
+    "v6Resources": {
+      "drawCalls": 206,
+      "triangles": 532943,
+      "textures": 210,
+      "geometries": 408,
+      "environmentInstances": 15079
+    }
+  },
+  {
+    "name": "evacuation",
+    "quality": "medium",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-evacuation-medium.png",
+    "v6": "visual/V6-evacuation-medium.png",
+    "v5Resources": {
+      "drawCalls": 69,
+      "triangles": 441267,
+      "textures": 80,
+      "geometries": 416,
+      "environmentInstances": 17890
+    },
+    "v6Resources": {
+      "drawCalls": 69,
+      "triangles": 441267,
+      "textures": 80,
+      "geometries": 416,
+      "environmentInstances": 17890
+    }
+  },
+  {
+    "name": "roll-call",
+    "quality": "medium",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-roll-call-medium.png",
+    "v6": "visual/V6-roll-call-medium.png",
+    "v5Resources": {
+      "drawCalls": 280,
+      "triangles": 767211,
+      "textures": 222,
+      "geometries": 421,
+      "environmentInstances": 19093
+    },
+    "v6Resources": {
+      "drawCalls": 280,
+      "triangles": 767211,
+      "textures": 222,
+      "geometries": 421,
+      "environmentInstances": 19093
+    }
+  },
+  {
+    "name": "station-frontal",
+    "quality": "high",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-station-frontal-high.png",
+    "v6": "visual/V6-station-frontal-high.png",
+    "v5Resources": {
+      "drawCalls": 56,
+      "triangles": 484908,
+      "textures": 51,
+      "geometries": 250,
+      "environmentInstances": 22049
+    },
+    "v6Resources": {
+      "drawCalls": 56,
+      "triangles": 484908,
+      "textures": 51,
+      "geometries": 250,
+      "environmentInstances": 22049
+    }
+  },
+  {
+    "name": "station-oblique",
+    "quality": "high",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-station-oblique-high.png",
+    "v6": "visual/V6-station-oblique-high.png",
+    "v5Resources": {
+      "drawCalls": 64,
+      "triangles": 492444,
+      "textures": 55,
+      "geometries": 262,
+      "environmentInstances": 21744
+    },
+    "v6Resources": {
+      "drawCalls": 64,
+      "triangles": 492444,
+      "textures": 55,
+      "geometries": 262,
+      "environmentInstances": 21744
+    }
+  },
+  {
+    "name": "station-platform",
+    "quality": "high",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-station-platform-high.png",
+    "v6": "visual/V6-station-platform-high.png",
+    "v5Resources": {
+      "drawCalls": 69,
+      "triangles": 494913,
+      "textures": 55,
+      "geometries": 262,
+      "environmentInstances": 22272
+    },
+    "v6Resources": {
+      "drawCalls": 69,
+      "triangles": 494913,
+      "textures": 55,
+      "geometries": 262,
+      "environmentInstances": 22272
+    }
+  },
+  {
+    "name": "station-yard",
+    "quality": "high",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-station-yard-high.png",
+    "v6": "visual/V6-station-yard-high.png",
+    "v5Resources": {
+      "drawCalls": 70,
+      "triangles": 497147,
+      "textures": 55,
+      "geometries": 262,
+      "environmentInstances": 21860
+    },
+    "v6Resources": {
+      "drawCalls": 70,
+      "triangles": 497147,
+      "textures": 55,
+      "geometries": 262,
+      "environmentInstances": 21860
+    }
+  },
+  {
+    "name": "bridge-west",
+    "quality": "high",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-bridge-west-high.png",
+    "v6": "visual/V6-bridge-west-high.png",
+    "v5Resources": {
+      "drawCalls": 276,
+      "triangles": 555041,
+      "textures": 121,
+      "geometries": 290,
+      "environmentInstances": 20136
+    },
+    "v6Resources": {
+      "drawCalls": 276,
+      "triangles": 555041,
+      "textures": 121,
+      "geometries": 290,
+      "environmentInstances": 20136
+    }
+  },
+  {
+    "name": "bridge-east",
+    "quality": "high",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-bridge-east-high.png",
+    "v6": "visual/V6-bridge-east-high.png",
+    "v5Resources": {
+      "drawCalls": 210,
+      "triangles": 549813,
+      "textures": 91,
+      "geometries": 320,
+      "environmentInstances": 17559
+    },
+    "v6Resources": {
+      "drawCalls": 210,
+      "triangles": 549813,
+      "textures": 91,
+      "geometries": 320,
+      "environmentInstances": 17559
+    }
+  },
+  {
+    "name": "train-963",
+    "quality": "high",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-train-963-high.png",
+    "v6": "visual/V6-train-963-high.png",
+    "v5Resources": {
+      "drawCalls": 259,
+      "triangles": 653774,
+      "textures": 236,
+      "geometries": 443,
+      "environmentInstances": 15293
+    },
+    "v6Resources": {
+      "drawCalls": 259,
+      "triangles": 653774,
+      "textures": 236,
+      "geometries": 443,
+      "environmentInstances": 15293
+    }
+  },
+  {
+    "name": "panzerzug",
+    "quality": "high",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-panzerzug-high.png",
+    "v6": "visual/V6-panzerzug-high.png",
+    "v5Resources": {
+      "drawCalls": 230,
+      "triangles": 574463,
+      "textures": 237,
+      "geometries": 454,
+      "environmentInstances": 15265
+    },
+    "v6Resources": {
+      "drawCalls": 230,
+      "triangles": 574463,
+      "textures": 237,
+      "geometries": 454,
+      "environmentInstances": 15265
+    }
+  },
+  {
+    "name": "evacuation",
+    "quality": "high",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-evacuation-high.png",
+    "v6": "visual/V6-evacuation-high.png",
+    "v5Resources": {
+      "drawCalls": 80,
+      "triangles": 515809,
+      "textures": 91,
+      "geometries": 469,
+      "environmentInstances": 22293
+    },
+    "v6Resources": {
+      "drawCalls": 80,
+      "triangles": 515809,
+      "textures": 91,
+      "geometries": 469,
+      "environmentInstances": 22293
+    }
+  },
+  {
+    "name": "roll-call",
+    "quality": "high",
+    "sameSnapshot": true,
+    "pixelIdentical": true,
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "v5": "visual/V5-roll-call-high.png",
+    "v6": "visual/V6-roll-call-high.png",
+    "v5Resources": {
+      "drawCalls": 315,
+      "triangles": 951720,
+      "textures": 245,
+      "geometries": 496,
+      "environmentInstances": 22471
+    },
+    "v6Resources": {
+      "drawCalls": 315,
+      "triangles": 951720,
+      "textures": 245,
+      "geometries": 496,
+      "environmentInstances": 22471
+    }
+  }
+]
