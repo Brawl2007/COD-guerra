@@ -6,15 +6,19 @@
       "nodes": [
         "ju87_b1_1",
         "fuselage",
+        "canopy",
         "propeller",
+        "propeller_disc",
         "dive_brake_r",
         "dive_brake_l",
         "bomb_sc250"
       ],
       "materials": [
-        "ju87_b1"
+        "ju87_b1",
+        "ju87_glass",
+        "ju87_prop_disc"
       ],
-      "triangles": 13102,
+      "triangles": 14710,
       "finite": true,
       "animations": [
         {
@@ -41,7 +45,7 @@
         ],
         "max": [
           6.900000095367432,
-          1.7000000476837158,
+          1.7200000286102295,
           6.550000190734863
         ]
       }
@@ -50,15 +54,19 @@
       "nodes": [
         "ju87_b1_1",
         "fuselage",
+        "canopy",
         "propeller",
+        "propeller_disc",
         "dive_brake_r",
         "dive_brake_l",
         "bomb_sc250"
       ],
       "materials": [
-        "ju87_b1"
+        "ju87_b1",
+        "ju87_glass",
+        "ju87_prop_disc"
       ],
-      "triangles": 4730,
+      "triangles": 5356,
       "finite": true,
       "animations": [
         {
@@ -85,7 +93,7 @@
         ],
         "max": [
           6.900000095367432,
-          1.7000000476837158,
+          1.7200000286102295,
           6.550000190734863
         ]
       }
@@ -94,15 +102,19 @@
       "nodes": [
         "ju87_b1_1",
         "fuselage",
+        "canopy",
         "propeller",
+        "propeller_disc",
         "dive_brake_r",
         "dive_brake_l",
         "bomb_sc250"
       ],
       "materials": [
-        "ju87_b1"
+        "ju87_b1",
+        "ju87_glass",
+        "ju87_prop_disc"
       ],
-      "triangles": 1636,
+      "triangles": 1929,
       "finite": true,
       "animations": [
         {
@@ -129,8 +141,8 @@
         ],
         "max": [
           6.900000095367432,
-          1.7000000476837158,
-          6.550000190734863
+          1.7200000286102295,
+          6.522740840911865
         ]
       }
     }

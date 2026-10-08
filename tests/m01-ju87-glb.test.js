@@ -16,7 +16,7 @@ function glb(file) {
   const box = name => { const n = node(name), a = json.accessors[json.meshes[n.mesh].primitives[0].attributes.POSITION], t = n.translation ?? [0, 0, 0]; return { min: a.min.map((v, k) => v + t[k]), max: a.max.map((v, k) => v + t[k]) }; };
   return { json, floats, node, box };
 }
-const NODES = ['fuselage', 'propeller', 'dive_brake_l', 'dive_brake_r', 'bomb_sc250'];
+const NODES = ['fuselage', 'canopy', 'propeller', 'propeller_disc', 'dive_brake_l', 'dive_brake_r', 'bomb_sc250'];
 const near = (a, b, tol, msg) => assert.ok(Math.abs(a - b) <= tol, `${msg}: ${a} (esperado ${b} ± ${tol})`);
 
 test('M01 Ju 87 B-1: metres, nose to −Z, 11.10 × 13.80 m, stable nodes and three LODs within budget', () => {
@@ -35,9 +35,25 @@ test('M01 Ju 87 B-1: metres, nose to −Z, 11.10 × 13.80 m, stable nodes and th
     assert.ok(tris <= (lod === 'lod0' ? 15000 : prev) && tris < prev, `${file}: ${tris} triângulos`);
     assert.equal(tris, manifest.files[file].triangles, file);
     prev = tris;
-    assert.equal(g.json.materials.length, 1, `${file}: um material`);
-    assert.ok(g.json.materials[0].pbrMetallicRoughness.baseColorTexture, `${file}: textura`);
+    const mats = Object.fromEntries(g.json.materials.map(m => [m.name, m])), matOf = n => g.json.materials[g.json.meshes[g.node(n).mesh].primitives[0].material].name;
+    assert.deepEqual(Object.keys(mats).sort(), ['ju87_b1', 'ju87_glass', 'ju87_prop_disc'], `${file}: materiais`);
+    const body = mats.ju87_b1;
+    assert.ok(body.pbrMetallicRoughness.baseColorTexture && body.pbrMetallicRoughness.metallicRoughnessTexture, `${file}: cor e ORM`);
+    assert.equal(Boolean(body.normalTexture), lod !== 'lod2', `${file}: mapa de normais só em LOD0/LOD1`);
+    assert.ok(body.alphaMode === undefined || body.alphaMode === 'OPAQUE', `${file}: célula opaca`);
+    assert.equal(mats.ju87_glass.alphaMode, 'BLEND'); assert.ok(mats.ju87_glass.pbrMetallicRoughness.baseColorFactor[3] < 0.5, `${file}: vidro translúcido`);
+    assert.equal(mats.ju87_prop_disc.alphaMode, 'BLEND'); assert.equal(mats.ju87_prop_disc.doubleSided, true); assert.ok(mats.ju87_prop_disc.pbrMetallicRoughness.baseColorTexture);
+    assert.deepEqual(['fuselage', 'canopy', 'propeller', 'propeller_disc'].map(matOf), ['ju87_b1', 'ju87_glass', 'ju87_b1', 'ju87_prop_disc'], `${file}: material por nó`);
+    assert.equal(g.json.meshes.length, manifest.files[file].draw_calls, file);
+    // Vidro por cima da fuselagem entre o pára-brisas e o atirador; disco centrado no cubo com o raio da hélice.
+    const c = g.box('canopy'); assert.ok(c.min[2] > -2.1 && c.max[2] < 1.6 && c.max[1] > 1.2 && c.max[1] < 1.45 && Math.abs(c.min[0] + c.max[0]) < 0.01, `${file}: capota`);
+    const d = g.box('propeller_disc'), hub = manifest.sockets.propeller_hub;
+    near(d.max[0] - d.min[0], 3.44, 0.06, `${file}: diâmetro do disco`); near((d.min[1] + d.max[1]) / 2, hub[1], 0.01, `${file}: disco no cubo`); near(d.min[2], hub[2] - 0.03, 0.01, `${file}: plano do disco`);
   }
+  const pieces = manifest.nodes.find(n => n.node === 'fuselage').pieces;
+  for (const piece of ['pilot_head', 'gunner_head', 'instrument_panel', 'mg17_r0', 'mg17_l0', 'pitot', 'antenna_wire']) assert.ok(pieces.includes(piece), `peça ${piece}`);
+  assert.ok(pieces.filter(p => p.startsWith('canopy_frame_')).length >= 8, 'aros da capota');
+  assert.ok(['mg17', 'pitot', 'antenna', 'canopy_frames'].every(id => manifest.measures.find(m => m.id === id)?.estimated), 'pormenores novos marcados como estimados');
   assert.equal(manifest.variant.id, 'Ju 87 B-1');
   assert.ok(manifest.measures.some(m => m.estimated) && manifest.measures.find(m => m.id === 'length').source === 'T29');
 });
