@@ -19,8 +19,8 @@ import {visualNoise} from './m01-atmosphere.js';
  */
 
 export const DISTANT_SEED=0x7c2e1939;
-// MAP.md §5 movement area. Fire sources/targets/paths stay ≥380 m from it, the north front (S4) inside its documented
-// 800-1500 m. Anything that could pass for an engageable S2 enemy (the Lisewo floodplain) and the far-plain figures
+// MAP.md §5 movement area. Fire sources/targets/paths stay ≥380 m from it, the north front ≥800 m (the near edge of S4,
+// documented at 800-1500 m; its guns and far column stand beyond, on the horizon). Anything that could pass for an engageable S2 enemy (the Lisewo floodplain) and the far-plain figures
 // stay beyond the player's 1200 m shot ray, so nothing non-engageable sits where the player's rounds can land;
 // aircraft stay ≥2 km away. All distances are from the edge of the movement area (the closest a player can be).
 export const MOVEMENT_AREA=Object.freeze({x:Object.freeze([-460,440]),z:Object.freeze([-80,140])});
@@ -57,8 +57,9 @@ export const DISTANT_SECTORS=freeze({
 });
 // `scan` (s) must cover the longest event a sector can start (an exchange's last reply cloud, a heavy impact's smoke),
 // or an active event would drop out of activeEvents before it ends (tested). Aircraft: at most 7 elements of 3 can
-// overlap, so that pool never saturates (no ship pops in mid-flight). Puffs: the route peaks at ~165 on High and every
-// front at once at ~186, so the pool keeps ~20 % above that (tested along the whole route and with every front open).
+// overlap, so that pool never saturates (no ship pops in mid-flight). Puffs: the route peaks at 145 on High and every
+// front at once at ~186 (183 sampled every 0,5 s, 186 every 0,1 s), so the pool keeps ~20 % above that (the test checks
+// and logs the peaks along the whole route and with every front open).
 export const DISTANT_LIMITS=freeze({events:96,flashes:72,streaks:48,puffs:224,figures:64,aircraft:21,columns:4});
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));

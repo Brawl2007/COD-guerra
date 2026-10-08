@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
-import {DISTANT_SECTORS,DISTANT_LIMITS,MILESTONE_EVENTS,SAFE_DISTANCE,BUCKET,AIR_BUCKET,distanceFromMovementArea,distantMilestones,planDistantBattlefield,
+import {DISTANT_SECTORS,DISTANT_LIMITS,MILESTONE_EVENTS,SAFE_DISTANCE,MOVEMENT_AREA,BUCKET,AIR_BUCKET,LOOKBACK,distanceFromMovementArea,distantMilestones,planDistantBattlefield,
   activeEvents,activeEventsUncached,bucketEvent,sectorLevel,sectorEnvelope,squadFigures,activeSquads,distantAircraft,kozlinyVehicles,fireColumns} from '../src/render/m01-distant-battlefield-plan.js';
 import {M01DistantBattlefield} from '../src/render/m01-distant-battlefield.js';
 import {M01Simulation} from '../src/game/m01-simulation.js';
@@ -112,11 +112,16 @@ test('every event a sector can start ends inside its scan window, so nothing act
 });
 
 test('no artificially synchronised explosions: heavy impacts in each sector land ≥0,3 s apart; sectors keep independent phases',()=>{
-  const impacts={north_line:[],north_guns:[]};
-  for(let b=0;b<(3600/BUCKET);b++)for(const name of Object.keys(impacts)){const e=bucketEvent(name,b,OPEN);if(e?.impact)impacts[name].push(e.impact.at);}
+  const impacts={north_line:[],north_guns:[]},flights={north_line:[],north_guns:[]};
+  for(let b=0;b<(3600/BUCKET);b++)for(const name of Object.keys(impacts)){const e=bucketEvent(name,b,OPEN);if(e?.impact){impacts[name].push(e.impact.at);flights[name].push(e.impact.at-e.start);}}
   for(const [name,times]of Object.entries(impacts)){times.sort((a,b)=>a-b);assert.ok(times.length>20,`${name}: ${times.length}`);
     // Compared on impact time: a shell fired earlier can land later than the next one.
-    for(let i=1;i<times.length;i++)assert.ok(times[i]-times[i-1]>=.3-1e-9,`${name} ${times[i-1].toFixed(3)} ${times[i].toFixed(3)}`);}
+    for(let i=1;i<times.length;i++)assert.ok(times[i]-times[i-1]>=.3-1e-9,`${name} ${times[i-1].toFixed(3)} ${times[i].toFixed(3)}`);
+    // So the spacing looks back over 0,3 s plus the spread of flight times (sampled here: the box corners are rare),
+    // with one bucket to spare; a shorter look-back lets a long flight land on a later short one.
+    const spread=Math.max(...flights[name])-Math.min(...flights[name]);
+    assert.ok((LOOKBACK[name]-1)*BUCKET>=.3+spread,`${name}: look-back ${LOOKBACK[name]} buckets for flights spread over ${spread.toFixed(3)} s`);}
+  assert.ok(Math.max(...flights.north_guns)-Math.min(...flights.north_guns)>2.5,'the guns fly 3,5-6,5 s');
   const cross=impacts.north_line.filter(t=>impacts.north_guns.some(u=>Math.abs(u-t)<.1)).length;
   assert.ok(cross/impacts.north_line.length<.03,`coincident cross-sector impacts ${cross}`);
   const env=n=>ALL(0,600,1).map(t=>sectorEnvelope(n,t));const a=env('east_dike'),b=env('north_line');
@@ -132,7 +137,13 @@ test('world-anchored and away from the player: fire and its paths keep their sec
     if(e.origin&&e.target)assert.ok(segmentDistance(e.origin,e.target)>=sector.minDistance,`${e.id} path`);
     if(e.reply)assert.ok(segmentDistance(e.reply.origin,e.reply.target)>=sector.minDistance,`${e.id} reply path`);}
   assert.ok(DISTANT_SECTORS.east_dike.minDistance>=SAFE_DISTANCE.ray&&SAFE_DISTANCE.ray>1200,'the floodplain skirmish is beyond the 1200 m player ray');
-  for(const name of ['north_line','north_guns'])assert.ok(DISTANT_SECTORS[name].minDistance>=800,`${name} inside MAP.md S4 (800-1500 m)`);
+  for(const name of ['north_line','north_guns'])assert.ok(DISTANT_SECTORS[name].minDistance>=800,`${name}: ≥800 m, the near edge of MAP.md S4`);
+  // By construction: a line's shooters, targets, replies and impacts, and every path between them, lie in the box that
+  // spans its two boxes, so that box's distance from the movement area bounds them all.
+  const gapOf=(a,b)=>Math.max(0,a[0]-b[1],b[0]-a[1]),both=(line,axis)=>[Math.min(line.shooters[axis][0],line.targets[axis][0]),Math.max(line.shooters[axis][1],line.targets[axis][1])];
+  for(const [name,sector]of Object.entries(DISTANT_SECTORS))for(const line of sector.lines){
+    const d=Math.hypot(gapOf(both(line,'x'),MOVEMENT_AREA.x),gapOf(both(line,'z'),MOVEMENT_AREA.z));
+    assert.ok(d>=sector.minDistance,`${name}: a line's box is ${d.toFixed(1)} m from the movement area`);}
   const elements=new Map();
   for(const t of ALL(0,7200,1)){const aircraft=distantAircraft(t,OPEN);
     for(const a of aircraft){assert.ok(distanceFromMovementArea(a)>=SAFE_DISTANCE.aircraft,`${a.id} ${distanceFromMovementArea(a)}`);
@@ -140,7 +151,8 @@ test('world-anchored and away from the player: fire and its paths keep their sec
     // Uncapped by the plan: every overlapping element fits the renderer's pool.
     assert.ok(aircraft.length<=DISTANT_LIMITS.aircraft,`${aircraft.length} aircraft at ${t}`);
   }
-  // And by construction, not only on these two hours: the buckets a flight can overlap times the largest element.
+  // And the bound behind it, with the longest flight and largest element seen over these two hours (sampled; the plan's
+  // constants give ≤117 s and ≤3 aircraft): the buckets a flight can overlap times the largest element.
   const ships=Math.max(...[...elements.values()].map(e=>e.ships)),flight=Math.max(...[...elements.values()].map(e=>e.last-e.first+1));
   assert.ok(elements.size>50&&ships===3,`${elements.size} elements, up to ${ships} aircraft`);
   assert.ok((Math.ceil(flight/AIR_BUCKET)+1)*ships<=DISTANT_LIMITS.aircraft,`flights of ${flight} s overlap ${Math.ceil(flight/AIR_BUCKET)+1} buckets of ${ships}`);
@@ -220,7 +232,7 @@ test('camera, player and quality never change which events exist; out-of-view ac
   }finally{north.r.dispose();south.r.dispose();}
 });
 
-test('pools never saturate (nothing is silently dropped): the whole route on High every 0,25 s, and every front at once for an hour',()=>{
+test('pools never saturate (nothing is silently dropped): the whole route on High every 0,25 s, and every front at once for an hour',t=>{
   const r=new M01DistantBattlefield(new THREE.Scene()),cam=camera();
   try{
     for(const [label,at,times]of [['route',routeAt,ALL(0,run.sim.clock+600,.25)],['every front',openAt,ALL(0,3600,.5)]]){const peak={};
@@ -228,6 +240,7 @@ test('pools never saturate (nothing is silently dropped): the whole route on Hig
         for(const [k,v]of Object.entries(stats.requested)){peak[k]=Math.max(peak[k]??0,v);assert.ok(v<=DISTANT_LIMITS[k],`${label} ${t}: ${k} requested ${v} of ${DISTANT_LIMITS[k]}`);}
         assert.deepEqual(stats.instances,stats.requested,`${label} ${t}`);assert.ok(stats.events<DISTANT_LIMITS.events);}
       for(const [k,v]of Object.entries(peak))assert.ok(v>0,`${label}: no ${k} at all`);
+      t.diagnostic(`${label}: peak requested ${JSON.stringify(peak)} of ${JSON.stringify(DISTANT_LIMITS)}`);
     }
   }finally{r.dispose();}
 });

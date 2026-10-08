@@ -140,8 +140,9 @@ export class M01DistantBattlefield {
     const note=(item,p)=>{stats.layers[item.layer]++;stats.sources.includes(item.source)||stats.sources.push(item.source);
       const d=Math.hypot(p.x-cam.x,p.y-cam.y,p.z-cam.z);stats.bands[BAND(d)]++;if(this.frustum.containsPoint(this.point.set(p.x,p.y,p.z)))stats.inView++;else stats.outOfView++;};
     const brief=age=>age>=0&&age<this.window;
-    // Columns first: they are the long-lived signature of the war beyond the river and the town. A farm or vehicle fire
-    // seen from 1,3-3 km is a column 100-400 m high (by scale) and tens of metres wide, leaning with the wind aloft.
+    // Columns first: they are the long-lived signature of the war beyond the river and the town. Seen from 1,3-3 km, by
+    // scale: the burning farm and vehicle rise up to ~210 and ~165 m above their fire, the far smoke column (no fire) up
+    // to ~400 m; tens of metres wide, leaning with the wind aloft.
     for(const c of plan.columns){
       note(c,c);const age=clock-c.start,n=k=>visualNoise(c.seed,k),interval=.9/density,life=26,grow=smooth(0,60,age);
       for(let k=Math.floor((clock-life)/interval);k*interval<=clock;k++){
