@@ -198,5 +198,6 @@ Use agents sequentially on the Chromebook.
 Preserve Task Contract, Context Packet, retry budgets and existing safety gates.
 Log the chosen agent and reason in the task handoff.
 If a model or effort is unavailable, report the limitation and choose a safe supported fallback.
+Optional advisory router (Jev pilot, not operational until a real call is proven): see `docs/direction/JEV_ROUTING_PILOT.md`.
 Never bypass human approval for protected Git actions or additional paid credits.
 Do not enable Ultracode or Fable Advisor without checking availability and resource implications.
