@@ -15,6 +15,7 @@ Esta pasta é uma **biblioteca de proposta criativa**: nada aqui entra em códig
 7. `CAMPAIGN-TECHNICAL-ROADMAP.md` — sistemas por classe [A]/[B]/[C]/[D] por missão, lotes de produção, ordem recomendada, dependências de V5/Animation Resolver, riscos e critérios de aceitação.
 8. `CAMPAIGN-CRITICAL-REVIEW.md` — revisões histórica (Fase 6), de continuidade (Fase 7) e de gameplay (Fase 8), scorecard 0–10 × 15 critérios das 29 missões, e §7 com a validação executada (comandos e resultados).
 9. `missions/MNN-*-PRODUCTION-DOSSIER.md` — um dossiê por missão, 12 secções cada.
+10. `maps/MNN-*-MAP-BRIEF.md` — um roteiro de mapa por missão (M02–M30), derivado do dossiê: intenção de nível, sem medições.
 
 ## O que é um dossiê de missão
 
@@ -35,6 +36,25 @@ Cada ficheiro em `missions/` consolida os dez documentos pedidos pelo brief (sto
 | 10 | Handoff técnico: contrato `mission.json`, flags, sistemas por classe com fallbacks honestos, as disciplinas, testes |
 | 11 | **Matriz Narrativa-Gameplay** (`Evento narrativo · Objetivo jogável · Ação do jogador · Comportamento dos NPCs · Transformação ambiental · Trigger · Consequência`) |
 | 12 | Revisão crítica 0–10 nos 15 critérios + "Correções aplicadas" |
+
+## O que é um roteiro de mapa
+
+Cada ficheiro em `maps/` traduz o dossiê da missão num **brief de nível**: o documento que um level designer lê antes de medir o terreno e de escrever `missions/<id>/MAP.md`, `map-layout.json` e `MEASUREMENTS.md` no pipeline de M01 (`tools/measure_osm_overture.py --dem`, `render-map-svg.mjs`). Todos têm as mesmas 10 secções:
+
+| § | Conteúdo |
+| --- | --- |
+| 1 | Ficha do mapa: lugar real, classe global (`EXACT` / `RECONSTRUCTED` / `COMPRESSED_FOR_GAMEPLAY`), o que medir depois, origem e eixos propostos, área jogável, compressões declaradas, relógio da missão |
+| 2 | Planta esquemática em ASCII (topologia, não escala) |
+| 3 | Setores e camadas (`sN_<slug>`), com o que cada setor mostra e onde está a cobertura |
+| 4 | Rota principal: `# · De → para · Distância aproximada · Hora · Objetivo / checkpoint` |
+| 5 | Rotas alternativas e decisões espaciais (onde o jogador escolhe e o que cada escolha custa) |
+| 6 | Cobertura, linhas de visão e oclusão (longa, média, curta; o que o inimigo vê) |
+| 7 | Zonas de segurança e perigo (`safeImpact`, artilharia, limites de setor, civis) |
+| 8 | Encenação e objetos por zona (environmental storytelling com origem no dossiê §5) |
+| 9 | Luz, tempo e som por fase, com tabela solar **calculada (NOAA) e marcada "a validar"** |
+| 10 | Requisitos de produção do nível: tamanho, assets, sistemas do roadmap (S1–S17), risco, fallback, **o que medir primeiro** |
+
+Os roteiros de mapa **não** contêm medições, coordenadas reais, `map-layout.json`, SVG nem código; as distâncias são intenções de ritmo e serão substituídas pelas medições Overture/OSM + DEM de cada missão.
 
 ## Convenções
 

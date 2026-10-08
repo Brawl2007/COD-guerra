@@ -195,6 +195,7 @@ Preenchido no fecho da sessão (2026-10-08). Tudo o que está abaixo foi executa
 | --- | --- | --- |
 | Documentos de campanha (`README.md`, este handoff, MASTER-STORY-BIBLE, HISTORICAL-TIMELINE, CHARACTER-CONTINUITY, GAMEPLAY-VARIETY-MATRIX, ATMOSPHERE-ART-DIRECTION, AUDIO-DIRECTION, TECHNICAL-ROADMAP, CRITICAL-REVIEW) | 10 | 196238 bytes |
 | Dossiês de missão `missions/M02…M30-*-PRODUCTION-DOSSIER.md` (12 secções cada, incluindo a Matriz Narrativa-Gameplay e a revisão 0–10) | 29 | 1017358 bytes |
+| Roteiros de mapa `maps/M02…M30-*-MAP-BRIEF.md` (10 secções cada: ficha, planta esquemática, setores, rota principal, rotas alternativas, cobertura/visão, zonas de segurança, encenação, luz/tempo/som, requisitos de produção; sem medições, sem JSON, sem SVG) | 29 | 267584 bytes |
 
 Notas por missão e médias: `CAMPAIGN-CRITICAL-REVIEW.md` §5 (média global 8,0; critério 15 "integração técnica" 5,9 por nada estar implementado). Cronologia e pendências: `CAMPAIGN-HISTORICAL-TIMELINE.md` §1/§6. Elenco adicional proposto em M20–M30 e reatribuições de falas: `CAMPAIGN-CHARACTER-CONTINUITY.md` §11.
 
@@ -214,6 +215,6 @@ Registada em `CAMPAIGN-CRITICAL-REVIEW.md` §7. Resumo: `npm test` 108/108 (16,7
 
 1. **Nada de M02–M30 entra em código antes de** M01 atingir o Marco 2 aprovado (playtest humano, Chromebook) e da aprovação do Capitão a esta biblioteca, no todo ou por missão (Prompt §77 Marco 5: "M02–M07").
 2. **Ordem recomendada de produção**: M02 → M03 (arco polaco, reutiliza mais de M01), depois Marco 4 (bancadas de veículo) em paralelo com M04/M06/M07; ver `CAMPAIGN-TECHNICAL-ROADMAP.md`.
-3. **Para cada missão**: o dossiê → `missions/<id>/SCRIPT.md` + `mission.json` (schema de M01) + `HISTORICAL_RESEARCH.md` + `SOURCE_CHECK.md` **só depois** da leitura integral das fontes e da revisão histórica (Prompt §58, §74).
+3. **Para cada missão**: o dossiê → `missions/<id>/SCRIPT.md` + `mission.json` (schema de M01) + `HISTORICAL_RESEARCH.md` + `SOURCE_CHECK.md` **só depois** da leitura integral das fontes e da revisão histórica (Prompt §58, §74). Para o mapa: o roteiro em `maps/` → medições (`tools/measure_osm_overture.py --dem`) → `MAP.md` + `map-layout.json` + `MEASUREMENTS.md` + SVG, como em `missions/m01-tczew/`; as tabelas solares dos roteiros são calculadas e **têm de ser validadas** antes de entrarem em `mission.json`.
 4. **Nunca**: alterar datas/unidades/POV/falas canónicas de §79, as correções de §78, as perdas fixas; premiar atrocidades; criar escolha falsa; reunir protagonistas que nunca se conheceram; fazer Jan/secção de Tczew transitar.
 5. **Referir o ID** (`obj_/evt_/cs_/dlg_/mNN.`) no commit e no handoff de cada implementação; manter tabela de acompanhamento em `docs/verification/<missão>/HANDOFF.md`, como nas entregas anteriores.
