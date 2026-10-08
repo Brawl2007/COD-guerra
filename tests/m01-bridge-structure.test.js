@@ -154,6 +154,16 @@ test('runtime attaches to real GLB nodes, swaps only the rail deck primitives by
   structure.sync('high',new THREE.Vector3(30,2,0));assert.equal(rivets.mesh.count,rivets.high);assert.equal(rivets.mesh.visible,true);assert.equal(rails.mesh.count,rails.medium+rails.high);
   structure.sync('medium',new THREE.Vector3(30,2,0));assert.equal(rivets.mesh.count,0);
   assert.ok(M01_BRIDGE_MICRO_DETAIL_RANGE>=100);
+  // Rail stubs over a pier joint follow the world's joints: a demolished neighbour removes them, restore brings them back.
+  const sim=new M01Simulation(19390901),span3=structure.attachments.find(x=>x.node.name==='rail_span_03'),west=span3.stubs.filter(st=>st.side==='w');
+  assert.ok(west.length===12&&span3.stubs.length===24);
+  const shown=st=>{const m=new THREE.Matrix4();st.mesh.getMatrixAt(st.index,m);return m.determinant()!==0;};
+  structure.sync('medium',null,sim.world);assert.ok(span3.stubs.every(shown));assert.equal(structure.diagnostics.hiddenJointStubs>0,true); // collapsed copies stay hidden
+  const collapsedStubs=structure.attachments.find(x=>x.node.name==='rail_span_02_collapsed').stubs;assert.ok(collapsedStubs.length>0&&!collapsedStubs.some(shown));
+  sim.world.refresh(['evt_m01_east_demolition','evt_m01_west_demolition']);structure.sync('medium',null,sim.world);
+  assert.ok(!west.some(shown));assert.ok(span3.stubs.filter(st=>st.side==='e').every(shown));
+  const span5=structure.attachments.find(x=>x.node.name==='rail_span_05');assert.ok(!span5.stubs.filter(st=>st.side==='e').some(shown));
+  sim.world.refresh([]);structure.sync('medium',null,sim.world);assert.ok(span3.stubs.every(shown)&&span5.stubs.every(shown));
   // Collapsed spans inherit the same structure as their intact span (same descriptors, posed by the GLB node).
   const intact=structure.attachments.find(x=>x.node.name==='rail_span_06'),collapsed=structure.attachments.find(x=>x.node.name==='rail_span_06_collapsed');
   assert.deepEqual(collapsed.detail,intact.detail);

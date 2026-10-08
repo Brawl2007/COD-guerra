@@ -72,10 +72,11 @@ function rivetGrid(sink,cx,cy,z,facing,angle,cols,rows,dx,dy){
   }
 }
 
-function gusset(sink,x,y,zPlane,angle,{w=1.4,h=1.15,chordHalf=.35,rivets=false}={}){
-  // Plates on both faces of the truss plane, following the chord slope.
+function gusset(sink,x,y,zPlane,angle,{w=1.4,h=1.15,webHalf=.3,rivets=false}={}){
+  // Plates either side of the web members (outside the vertical flanges), following the chord slope;
+  // inside the chord they are hidden, below/above it they join chord, vertical and diagonals.
   for(const face of [-1,1]){
-    const z=zPlane+face*(chordHalf+.0175);
+    const z=zPlane+face*(webHalf+.0175);
     sink.box('medium',[x,y,z],[w,h,.035],angle?qAxisZ(angle):null,'gusset');
     if(rivets&&Math.sign(zPlane)===-face)rivetGrid(sink,x,y,z+face*.0175,face,angle,3,3,w*.3,h*.3);
   }
@@ -107,7 +108,7 @@ function bearing(sink,x,z,{shoeTop=-.88}={}){
 
 function railDeck(sink,L,hz,beams,{extW=1.2,extE=1.2}={}){
   const tracks=M01_BRIDGE_STRUCTURE_SPEC.rail.tracks,g=M01_BRIDGE_STRUCTURE_SPEC.rail.halfGauge;
-  const x0=-extW,x1=L+extE,len=x1-x0,mid=(x0+x1)/2;
+  const x0=-extW,x1=L+extE;
   // Floor beams become I sections, stringers get flanges, plus bottom lateral bracing under the deck.
   for(const x of beams){
     for(const y of [-.83,-1.67])sink.box('medium',[x,y,0],[.56,.04,2*hz-.2],null,'floor-beam-flange');
@@ -118,8 +119,8 @@ function railDeck(sink,L,hz,beams,{extW=1.2,extE=1.2}={}){
   }
   for(let k=0;k<beams.length-1;k++){
     const xa=beams[k],xb=beams[k+1];
-    sink.member('medium',[xa,-1.76,-hz+.4],[xb,-1.76,hz-.4],.14,.1,{kind:'bottom-lateral'});
-    sink.member('medium',[xa,-1.76,hz-.4],[xb,-1.76,-hz+.4],.14,.1,{kind:'bottom-lateral'});
+    sink.member('medium',[xa,-1.74,-hz+.4],[xb,-1.74,hz-.4],.14,.1,{kind:'bottom-lateral'});
+    sink.member('medium',[xa,-1.74,hz-.4],[xb,-1.74,-hz+.4],.14,.1,{kind:'bottom-lateral'});
   }
   // Open sleeper deck replaces the continuous plank slab: oak sleepers on the stringers, 0.62 m pitch.
   let i=0;
@@ -143,9 +144,13 @@ function railDeck(sink,L,hz,beams,{extW=1.2,extE=1.2}={}){
   // Running rails as flat-bottom profiles (head/web/foot), with inner guard rails as on period river bridges.
   for(const tz of tracks)for(const s of [-1,1]){
     const z=tz+s*g;
-    sink.box('medium',[mid,-.0105,z],[len,.045,.07],null,'rail');
-    sink.box('medium',[mid,-.0705,z],[len,.075,.018],null,'rail');
-    sink.box('medium',[mid,-.123,z],[len,.03,.13],null,'rail');
+    // Main rail over the span, plus stubs over each pier joint that only show while that joint exists in the world.
+    for(const [a,b,joint] of [[0,L,null],[-extW,0,'w'],[L,L+extE,'e']]){
+      if(b-a<1e-6)continue;
+      for(const [y,h,w] of [[-.0105,.045,.07],[-.0705,.075,.018],[-.123,.03,.13]]){
+        const it=sink.box('medium',[(a+b)/2,y,z],[b-a,h,w],null,'rail');if(joint)it.joint=joint;
+      }
+    }
     const gz=tz+s*(g-.24);
     sink.box('medium',[L/2,-.035,gz],[L,.035,.06],null,'guard-rail');
     sink.box('medium',[L/2,-.1,gz],[L,.095,.016],null,'guard-rail');
@@ -171,7 +176,7 @@ function roadDeck(sink,L,hz,beams,{joints=true}={}){
 // ---------------------------------------------------------------------------------------------
 // Span types
 
-function lensSpan(sink,L,lod){
+function lensSpan(sink,L,lod,index){
   const hz=M01_BRIDGE_STRUCTURE_SPEC.rail.trussHalf,n=Math.max(8,Math.round(L/8/2)*2);
   const xk=k=>k/n*L,yt=k=>BEARING_Y+11*4*(k/n)*(1-k/n),yb=k=>BEARING_Y-5*4*(k/n)*(1-k/n);
   for(const z of [-hz,hz]){
@@ -179,9 +184,11 @@ function lensSpan(sink,L,lod){
       for(let k=0;k<n;k++){
         coverPlates(sink,[xk(k),yt(k),z],[xk(k+1),yt(k+1),z],.7,.6);
         coverPlates(sink,[xk(k),yb(k),z],[xk(k+1),yb(k+1),z],.7,.6);
-        // Batten plate where the two diagonals of the panel cross.
-        const cx=(xk(k)+xk(k+1))/2,cy=(yt(k)+yt(k+1)+yb(k)+yb(k+1))/4;
-        sink.box('medium',[cx,cy,z],[.5,.5,.3],qAxisZ(Math.PI/4),'crossing-plate');
+        // Batten plate where the two diagonals of the panel actually cross (trapezoid panel: t = h0/(h0+h1)).
+        if(k>0&&k<n-1){
+          const h0=yt(k)-yb(k),h1=yt(k+1)-yb(k+1),t=h0/(h0+h1);
+          sink.box('medium',[xk(k)+t*(xk(k+1)-xk(k)),yb(k)+t*(yt(k+1)-yb(k)),z],[.5,.5,.3],qAxisZ(Math.PI/4),'crossing-plate');
+        }
       }
       for(let k=1;k<n;k++){
         hFlanges(sink,xk(k),yb(k),yt(k),z,{rivets:true});
@@ -202,7 +209,8 @@ function lensSpan(sink,L,lod){
     for(const s of [-1,1])sink.member('medium',[xk(k),yt(k)-.3,s*(hz-1.5)],[xk(k),yt(k)-1.9,s*(hz-.25)],.18,.18,{kind:'knee-brace'});
     if(lod===0)sink.box('medium',[xk(k),yt(k)-.17,0],[.45,.04,2*hz-.7],null,'strut-flange');
   }
-  if(lod===0)railDeck(sink,L,hz,Array.from({length:n+1},(_,k)=>xk(k)),{});
+  // Span 1 starts inside the west abutment: its approach track belongs to the abutment overlay.
+  if(lod===0)railDeck(sink,L,hz,Array.from({length:n+1},(_,k)=>xk(k)),{extW:index===1?0:1.2});
 }
 
 function prattSpan(sink,L,lod,prefix,index){
@@ -216,10 +224,10 @@ function prattSpan(sink,L,lod,prefix,index){
       coverPlates(sink,[xk(n-1),y1,z],[xk(n),y0,z],.6,.6);
       for(let k=1;k<n;k++){
         hFlanges(sink,xk(k),y0,y1,z,{core:.35,depth:.5,rivets:true});
-        gusset(sink,xk(k),y0+.42,z,0,{w:1.3,h:1.0,chordHalf:.3,rivets:true});
-        gusset(sink,xk(k),y1-.42,z,0,{w:1.3,h:1.0,chordHalf:.3});
+        gusset(sink,xk(k),y0+.42,z,0,{w:1.3,h:1.0,webHalf:.27,rivets:true});
+        gusset(sink,xk(k),y1-.42,z,0,{w:1.3,h:1.0,webHalf:.27});
       }
-      for(const x of [.75,L-.75])gusset(sink,x,y0+.5,z,0,{w:1.7,h:1.2,chordHalf:.3,rivets:true});
+      for(const x of [.75,L-.75])gusset(sink,x,y0+.5,z,0,{w:1.7,h:1.2,webHalf:.27,rivets:true});
     }else{
       for(let k=1;k<n-1;k++){
         const toCenter=k<n/2;
@@ -311,22 +319,13 @@ export function spanStructureDescriptors({prefix,index,length,lod}){
   const sink=new Sink();
   if(lod===0||lod===1){
     if(index>=7)prattSpan(sink,length,lod,prefix,index);
-    else if(prefix==='rail')lensSpan(sink,length,lod);
+    else if(prefix==='rail')lensSpan(sink,length,lod,index);
     else lentzeSpan(sink,length,lod);
   }
-  // Span 1 starts inside the west abutment: its track stub belongs to the abutment overlay instead.
-  if(lod===0&&prefix==='rail'&&index===1)trimWestStub(sink);
   const hide=lod===0&&prefix==='rail'?['timber','steel_rail']:[];
   return Object.freeze({medium:Object.freeze(sink.medium),high:Object.freeze(sink.high),hide:Object.freeze(hide)});
 }
 
-function trimWestStub(sink){
-  for(const item of sink.medium)if(['rail'].includes(item.kind)&&item.p[0]<item.s[0]/2){
-    // Rails of span 1 start at its bearing (x = 0); the abutment overlay carries the approach track.
-    const x0=item.p[0]-item.s[0]/2,x1=item.p[0]+item.s[0]/2,nx0=Math.max(0,x0);
-    item.p[0]=ROUND((nx0+x1)/2);item.s[0]=ROUND(x1-nx0);
-  }
-}
 
 // ---------------------------------------------------------------------------------------------
 // Supports: masonry courses, bearing pedestals and the track across the abutments.
@@ -382,7 +381,7 @@ function pierBandGeometry({lengthX,lengthZ,nose,offset,y0,y1}){
   s.moveTo(-hx,-hz);s.absarc(0,-hz,hx,Math.PI,0,false);s.lineTo(hx,hz);s.lineTo(0,hz+nose+offset*1.4);s.lineTo(-hx,hz);s.lineTo(-hx,-hz);
   const g=new THREE.ExtrudeGeometry(s,{depth:y1-y0,bevelEnabled:false,curveSegments:6});
   g.applyMatrix4(new THREE.Matrix4().set(1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1));g.translate(0,y0,0);
-  const out=g.toNonIndexed();g.dispose();
+  const out=g.index?g.toNonIndexed():g;if(out!==g)g.dispose();
   // Axis swap mirrors the winding: flip it back so faces point outwards.
   const pos=out.attributes.position,uv=out.attributes.uv;
   for(let i=0;i<pos.count;i+=3)for(const attr of [pos,uv]){const n=attr.itemSize;for(let k=0;k<n;k++){const a=attr.array[(i+1)*n+k];attr.array[(i+1)*n+k]=attr.array[(i+2)*n+k];attr.array[(i+2)*n+k]=a;}}
@@ -412,7 +411,7 @@ export class M01BridgeStructure{
     this.materials={steel,rail,rivet:steel,timber,stone};this.box=new THREE.BoxGeometry(1,1,1);
     // 4-triangle rivet head, apex along +Z, same unit extents as the box.
     this.rivet=new THREE.ConeGeometry(.5,1,4,1,true).rotateX(Math.PI/2);this.geometries=[];
-    this.attachments=[];this.quality='medium';this.viewer=null;
+    this.attachments=[];this.quality='medium';this.viewer=null;this.jointKey=null;this.joints=null;
   }
   // Attach to the span/support nodes of one loaded kit file (GLB untouched). Returns the attachments created.
   attachKit(scene,file){
@@ -425,7 +424,8 @@ export class M01BridgeStructure{
       if(span){
         const source=span[3]?byName.get(node.userData?.m01?.replaces??''):node,length=source?.userData?.m01?.lengthM;
         if(typeof length!=='number')continue;
-        this.attachDescriptors(node,spanStructureDescriptors({prefix:span[1],index:Number(span[2]),length,lod}),{kind:'span',lod});
+        this.attachDescriptors(node,spanStructureDescriptors({prefix:span[1],index:Number(span[2]),length,lod}),
+          {kind:'span',lod,prefix:span[1],index:Number(span[2]),collapsed:Boolean(span[3])});
         continue;
       }
       const support=SUPPORT.exec(name);if(!support||!supportsX)continue;
@@ -444,20 +444,21 @@ export class M01BridgeStructure{
         mesh.name=`${parent.name}_support_courses`;mesh.castShadow=mesh.receiveShadow=true;
         const root=new THREE.Group();root.name=mesh.name;root.userData.m01BridgeStructure=true;root.add(mesh);parent.add(root);
         const detail={medium:statics.flatMap(s=>s.d.medium.filter(i=>slotFor(i)==='stone')),high:[],bands:statics.flatMap(s=>s.d.bands)};
-        this.attachments.push({node:parent,root,batches:[],bands:mesh,hidden:[],detail,meta:{kind:'support-courses',lod},center:null,radius:0,micro:false});
+        this.attachments.push({node:parent,root,batches:[],bands:mesh,hidden:[],stubs:[],hasHigh:false,detail,meta:{kind:'support-courses',lod},center:null,radius:0,micro:false});
       }
     }
-    this.sync(this.quality,this.viewer);return this.attachments.length-before;
+    this.jointKey=null;this.sync(this.quality,this.viewer);return this.attachments.length-before;
   }
   attachDescriptors(node,d,meta){
     const root=new THREE.Group();root.name=`${node.name}_structure`;root.userData.m01BridgeStructure=true;
-    const batches=[];
+    const batches=[],stubs=[];
     for(const slot of ['steel','rail','timber','rivet']){
       const medium=d.medium.filter(i=>slotFor(i)===slot),high=d.high.filter(i=>slotFor(i)===slot);
       if(!medium.length&&!high.length)continue;
       const items=[...medium,...high],mesh=new THREE.InstancedMesh(slot==='rivet'?this.rivet:this.box,this.materials[slot],items.length),dummy=new THREE.Object3D();
       items.forEach((it,i)=>{dummy.position.set(...it.p);dummy.scale.set(...it.s);
-        if(it.q)dummy.quaternion.set(...it.q);else dummy.quaternion.identity();dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);});
+        if(it.q)dummy.quaternion.set(...it.q);else dummy.quaternion.identity();dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);
+        if(it.joint)stubs.push({mesh,index:i,side:it.joint,matrix:dummy.matrix.clone(),shown:true});});
       mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();mesh.computeBoundingBox();mesh.name=`${node.name}_${slot}`;
       // Sleepers/boards only receive shadows; structural steel casts them.
       mesh.castShadow=slot==='steel';mesh.receiveShadow=slot!=='rivet';
@@ -470,18 +471,23 @@ export class M01BridgeStructure{
     const hidden=[];
     if(d.hide?.length)node.traverse(n=>{if(n.isMesh&&d.hide.includes(n.userData.m01SourceMaterial))hidden.push(n);});
     node.add(root);
-    this.attachments.push({node,root,batches,bands,hidden,detail:d,meta,center:null,radius:0,micro:false});return true;
+    this.attachments.push({node,root,batches,bands,hidden,stubs,hasHigh:batches.some(b=>b.high),detail:d,meta,center:null,radius:0,micro:false});return true;
   }
   // viewer: camera position (Vector3) used only to range-limit rivets/fishplates.
-  sync(quality='medium',viewer=null){
+  // world (optional): rail stubs over a pier joint follow world.joints, which the simulation state already drops
+  // when a neighbouring span is demolished; read only when world.revision changes.
+  sync(quality='medium',viewer=null,world=null){
     this.quality=quality;if(viewer)this.viewer=viewer;
+    if(world&&(this.jointKey?.world!==world||this.jointKey.revision!==world.revision)){
+      this.jointKey={world,revision:world.revision};this.joints=new Set(world.joints.map(j=>j.id));this.syncStubs();
+    }else if(!world&&!this.jointKey){this.jointKey={world:null,revision:null};this.syncStubs();}
     const on=quality!=='low',high=quality==='high';
     for(const a of this.attachments){
       a.root.visible=on;
       for(const h of a.hidden)h.visible=!on;
       if(!on)continue;
       let micro=high;
-      if(high&&a.batches.some(b=>b.high)){
+      if(high&&a.hasHigh){
         if(!a.center){
           a.node.updateWorldMatrix(true,false);const sphere=new THREE.Sphere();
           const box=new THREE.Box3();for(const b of a.batches)box.union(b.mesh.boundingBox);
@@ -491,6 +497,17 @@ export class M01BridgeStructure{
       }
       a.micro=micro;
       for(const b of a.batches){b.mesh.count=micro?b.medium+b.high:b.medium;b.mesh.visible=b.mesh.count>0;}
+    }
+  }
+  syncStubs(){
+    const zero=new THREE.Matrix4().makeScale(0,0,0);
+    for(const a of this.attachments){
+      if(!a.stubs.length)continue;const {prefix,index,collapsed}=a.meta,dirty=new Set();
+      for(const st of a.stubs){
+        const show=!this.joints||(!collapsed&&this.joints.has(`${prefix}_joint_${st.side==='w'?index-1:index}`));
+        if(show===st.shown)continue;st.shown=show;st.mesh.setMatrixAt(st.index,show?st.matrix:zero);dirty.add(st.mesh);
+      }
+      for(const m of dirty)m.instanceMatrix.needsUpdate=true;
     }
   }
   get diagnostics(){
@@ -505,7 +522,7 @@ export class M01BridgeStructure{
     }
     return {quality:this.quality,attachments:this.attachments.length,activeAttachments:active.length,active,mediumDetails:medium,highDetails:high,
       visibleDetails:visible,activeBatches,totalBatches:this.attachments.reduce((n,a)=>n+a.batches.length+(a.bands?1:0),0),
-      hiddenSourcePrimitives:hiddenSource,microRange:M01_BRIDGE_MICRO_DETAIL_RANGE,collidersAdded:0};
+      hiddenSourcePrimitives:hiddenSource,hiddenJointStubs:this.attachments.reduce((n,a)=>n+a.stubs.filter(s=>!s.shown).length,0),microRange:M01_BRIDGE_MICRO_DETAIL_RANGE,collidersAdded:0};
   }
   dispose(){
     for(const a of this.attachments){a.root.removeFromParent();for(const h of a.hidden)h.visible=true;for(const b of a.batches)b.mesh.dispose();}

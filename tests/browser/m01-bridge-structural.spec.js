@@ -96,6 +96,13 @@ test('captures demolished spans with the structural detail they inherit',async({
     // The renderer only reads the restored save: span_06 hidden, its collapsed replacement shown.
     expect(Object.hasOwn(east.consumed,'evt_m01_east_demolition')).toBe(true);
     expect(data.m01.visiblePieces).toBeGreaterThan(0);
+    if(!baseline){
+      // Structure follows the GLB swap: collapsed spans carry it, the hidden intact spans do not count as shown.
+      const active=data.m01.bridgeStructure.active;
+      expect(active).toEqual(expect.arrayContaining(['rail_span_06_collapsed','rail_span_07_collapsed']));
+      expect(active).not.toContain('rail_span_06');expect(active).not.toContain('rail_span_07');
+      expect(data.m01.bridgeStructure.hiddenJointStubs).toBeGreaterThan(0);
+    }
     await page.close();
   }
 });
