@@ -1,0 +1,1480 @@
+{
+  "pairs": [
+    {
+      "name": "frontal",
+      "quality": "high",
+      "before": "screenshots/BEFORE_REFRAMED-frontal-high.png",
+      "after": "screenshots/AFTER_FINAL-frontal-high.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 74,
+        "triangles": 375567,
+        "textures": 37,
+        "geometries": 232
+      },
+      "afterCost": {
+        "drawCalls": 66,
+        "triangles": 403436,
+        "textures": 46,
+        "geometries": 239
+      },
+      "station": {
+        "ready": true,
+        "quality": "high",
+        "lod": 0,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 30881,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 20434,
+      "afterInstances": 20209
+    },
+    {
+      "name": "oblique",
+      "quality": "high",
+      "before": "screenshots/BEFORE-oblique-high.png",
+      "after": "screenshots/AFTER_FINAL-oblique-high.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 70,
+        "triangles": 380800,
+        "textures": 37,
+        "geometries": 233
+      },
+      "afterCost": {
+        "drawCalls": 61,
+        "triangles": 408657,
+        "textures": 46,
+        "geometries": 267
+      },
+      "station": {
+        "ready": true,
+        "quality": "high",
+        "lod": 0,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 30881,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 20459,
+      "afterInstances": 20234
+    },
+    {
+      "name": "roof",
+      "quality": "high",
+      "before": "screenshots/BEFORE_REFRAMED-roof-high.png",
+      "after": "screenshots/AFTER_FINAL-roof-high.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 60,
+        "triangles": 371875,
+        "textures": 33,
+        "geometries": 246
+      },
+      "afterCost": {
+        "drawCalls": 53,
+        "triangles": 399756,
+        "textures": 42,
+        "geometries": 259
+      },
+      "station": {
+        "ready": true,
+        "quality": "high",
+        "lod": 0,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 30881,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 20452,
+      "afterInstances": 20227
+    },
+    {
+      "name": "annexes",
+      "quality": "high",
+      "before": "screenshots/BEFORE-annexes-high.png",
+      "after": "screenshots/AFTER_FINAL-annexes-high.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 190,
+        "triangles": 400607,
+        "textures": 31,
+        "geometries": 301
+      },
+      "afterCost": {
+        "drawCalls": 183,
+        "triangles": 428548,
+        "textures": 40,
+        "geometries": 308
+      },
+      "station": {
+        "ready": true,
+        "quality": "high",
+        "lod": 0,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 30881,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 20381,
+      "afterInstances": 20156
+    },
+    {
+      "name": "yard",
+      "quality": "high",
+      "before": "screenshots/BEFORE-yard-high.png",
+      "after": "screenshots/AFTER_FINAL-yard-high.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 194,
+        "triangles": 403759,
+        "textures": 37,
+        "geometries": 332
+      },
+      "afterCost": {
+        "drawCalls": 189,
+        "triangles": 431724,
+        "textures": 46,
+        "geometries": 312
+      },
+      "station": {
+        "ready": true,
+        "quality": "high",
+        "lod": 0,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 30881,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 20416,
+      "afterInstances": 20191
+    },
+    {
+      "name": "platform",
+      "quality": "high",
+      "before": "screenshots/BEFORE-platform-high.png",
+      "after": "screenshots/AFTER_FINAL-platform-high.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 201,
+        "triangles": 402539,
+        "textures": 37,
+        "geometries": 305
+      },
+      "afterCost": {
+        "drawCalls": 194,
+        "triangles": 430480,
+        "textures": 46,
+        "geometries": 312
+      },
+      "station": {
+        "ready": true,
+        "quality": "high",
+        "lod": 0,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 30881,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 20393,
+      "afterInstances": 20168
+    },
+    {
+      "name": "window-door",
+      "quality": "high",
+      "before": "screenshots/BEFORE-window-door-high.png",
+      "after": "screenshots/AFTER_FINAL-window-door-high.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 53,
+        "triangles": 371833,
+        "textures": 33,
+        "geometries": 252
+      },
+      "afterCost": {
+        "drawCalls": 53,
+        "triangles": 399798,
+        "textures": 42,
+        "geometries": 232
+      },
+      "station": {
+        "ready": true,
+        "quality": "high",
+        "lod": 0,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 30881,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 20433,
+      "afterInstances": 20208
+    },
+    {
+      "name": "window-upper",
+      "quality": "high",
+      "before": "screenshots/BEFORE-window-upper-high.png",
+      "after": "screenshots/AFTER_FINAL-window-upper-high.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 53,
+        "triangles": 371497,
+        "textures": 33,
+        "geometries": 225
+      },
+      "afterCost": {
+        "drawCalls": 53,
+        "triangles": 399462,
+        "textures": 42,
+        "geometries": 232
+      },
+      "station": {
+        "ready": true,
+        "quality": "high",
+        "lod": 0,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 30881,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 20425,
+      "afterInstances": 20200
+    },
+    {
+      "name": "roll-call",
+      "quality": "high",
+      "before": "screenshots/BEFORE_ROLLCALL-roll-call-high.png",
+      "after": "screenshots/AFTER_ROLLCALL-roll-call-high.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 314,
+        "triangles": 801901,
+        "textures": 190,
+        "geometries": 275
+      },
+      "afterCost": {
+        "drawCalls": 306,
+        "triangles": 823147,
+        "textures": 191,
+        "geometries": 293
+      },
+      "station": {
+        "ready": true,
+        "quality": "high",
+        "lod": 0,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 30881,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 20293,
+      "afterInstances": 20068
+    },
+    {
+      "name": "evacuation",
+      "quality": "high",
+      "before": "screenshots/BEFORE-evacuation-high.png",
+      "after": "screenshots/AFTER_FINAL-evacuation-high.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 184,
+        "triangles": 432701,
+        "textures": 35,
+        "geometries": 273
+      },
+      "afterCost": {
+        "drawCalls": 183,
+        "triangles": 430361,
+        "textures": 34,
+        "geometries": 273
+      },
+      "station": {
+        "ready": true,
+        "quality": "high",
+        "lod": 0,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 30881,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 20443,
+      "afterInstances": 20218
+    },
+    {
+      "name": "frontal",
+      "quality": "low",
+      "before": "screenshots/BEFORE_REFRAMED-frontal-low.png",
+      "after": "screenshots/AFTER_FINAL-frontal-low.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 60,
+        "triangles": 342803,
+        "textures": 31,
+        "geometries": 224
+      },
+      "afterCost": {
+        "drawCalls": 52,
+        "triangles": 353173,
+        "textures": 40,
+        "geometries": 231
+      },
+      "station": {
+        "ready": true,
+        "quality": "low",
+        "lod": 2,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 13382,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 16926,
+      "afterInstances": 16701
+    },
+    {
+      "name": "oblique",
+      "quality": "low",
+      "before": "screenshots/BEFORE-oblique-low.png",
+      "after": "screenshots/AFTER_FINAL-oblique-low.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 62,
+        "triangles": 344823,
+        "textures": 37,
+        "geometries": 220
+      },
+      "afterCost": {
+        "drawCalls": 53,
+        "triangles": 355181,
+        "textures": 46,
+        "geometries": 227
+      },
+      "station": {
+        "ready": true,
+        "quality": "low",
+        "lod": 2,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 13382,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 16932,
+      "afterInstances": 16707
+    },
+    {
+      "name": "roof",
+      "quality": "low",
+      "before": "screenshots/BEFORE_REFRAMED-roof-low.png",
+      "after": "screenshots/AFTER_FINAL-roof-low.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 52,
+        "triangles": 340179,
+        "textures": 33,
+        "geometries": 221
+      },
+      "afterCost": {
+        "drawCalls": 45,
+        "triangles": 350561,
+        "textures": 42,
+        "geometries": 219
+      },
+      "station": {
+        "ready": true,
+        "quality": "low",
+        "lod": 2,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 13382,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 16927,
+      "afterInstances": 16702
+    },
+    {
+      "name": "annexes",
+      "quality": "low",
+      "before": "screenshots/BEFORE-annexes-low.png",
+      "after": "screenshots/AFTER_FINAL-annexes-low.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 171,
+        "triangles": 370209,
+        "textures": 30,
+        "geometries": 288
+      },
+      "afterCost": {
+        "drawCalls": 164,
+        "triangles": 380651,
+        "textures": 39,
+        "geometries": 295
+      },
+      "station": {
+        "ready": true,
+        "quality": "low",
+        "lod": 2,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 13382,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 16919,
+      "afterInstances": 16694
+    },
+    {
+      "name": "yard",
+      "quality": "low",
+      "before": "screenshots/BEFORE-yard-low.png",
+      "after": "screenshots/AFTER_FINAL-yard-low.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 171,
+        "triangles": 370967,
+        "textures": 31,
+        "geometries": 297
+      },
+      "afterCost": {
+        "drawCalls": 166,
+        "triangles": 381433,
+        "textures": 40,
+        "geometries": 295
+      },
+      "station": {
+        "ready": true,
+        "quality": "low",
+        "lod": 2,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 13382,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 16922,
+      "afterInstances": 16697
+    },
+    {
+      "name": "platform",
+      "quality": "low",
+      "before": "screenshots/BEFORE-platform-low.png",
+      "after": "screenshots/AFTER_FINAL-platform-low.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 176,
+        "triangles": 371343,
+        "textures": 32,
+        "geometries": 302
+      },
+      "afterCost": {
+        "drawCalls": 169,
+        "triangles": 381785,
+        "textures": 41,
+        "geometries": 309
+      },
+      "station": {
+        "ready": true,
+        "quality": "low",
+        "lod": 2,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 13382,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 16921,
+      "afterInstances": 16696
+    },
+    {
+      "name": "window-door",
+      "quality": "low",
+      "before": "screenshots/BEFORE-window-door-low.png",
+      "after": "screenshots/AFTER_FINAL-window-door-low.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 45,
+        "triangles": 341069,
+        "textures": 33,
+        "geometries": 212
+      },
+      "afterCost": {
+        "drawCalls": 45,
+        "triangles": 351535,
+        "textures": 42,
+        "geometries": 219
+      },
+      "station": {
+        "ready": true,
+        "quality": "low",
+        "lod": 2,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 13382,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 16926,
+      "afterInstances": 16701
+    },
+    {
+      "name": "window-upper",
+      "quality": "low",
+      "before": "screenshots/BEFORE-window-upper-low.png",
+      "after": "screenshots/AFTER_FINAL-window-upper-low.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 39,
+        "triangles": 340769,
+        "textures": 27,
+        "geometries": 208
+      },
+      "afterCost": {
+        "drawCalls": 39,
+        "triangles": 351235,
+        "textures": 36,
+        "geometries": 224
+      },
+      "station": {
+        "ready": true,
+        "quality": "low",
+        "lod": 2,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 13382,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 16926,
+      "afterInstances": 16701
+    },
+    {
+      "name": "roll-call",
+      "quality": "low",
+      "before": "screenshots/BEFORE_ROLLCALL-roll-call-low.png",
+      "after": "screenshots/AFTER_ROLLCALL-roll-call-low.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 164,
+        "triangles": 476386,
+        "textures": 141,
+        "geometries": 241
+      },
+      "afterCost": {
+        "drawCalls": 164,
+        "triangles": 474202,
+        "textures": 141,
+        "geometries": 241
+      },
+      "station": {
+        "ready": true,
+        "quality": "low",
+        "lod": 2,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 13382,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 16803,
+      "afterInstances": 16578
+    },
+    {
+      "name": "evacuation",
+      "quality": "low",
+      "before": "screenshots/BEFORE-evacuation-low.png",
+      "after": "screenshots/AFTER_FINAL-evacuation-low.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 167,
+        "triangles": 384672,
+        "textures": 35,
+        "geometries": 269
+      },
+      "afterCost": {
+        "drawCalls": 166,
+        "triangles": 382332,
+        "textures": 34,
+        "geometries": 260
+      },
+      "station": {
+        "ready": true,
+        "quality": "low",
+        "lod": 2,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 13382,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 16930,
+      "afterInstances": 16705
+    },
+    {
+      "name": "frontal",
+      "quality": "medium",
+      "before": "screenshots/BEFORE_REFRAMED-frontal-medium.png",
+      "after": "screenshots/AFTER_FINAL-frontal-medium.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 71,
+        "triangles": 361201,
+        "textures": 37,
+        "geometries": 225
+      },
+      "afterCost": {
+        "drawCalls": 63,
+        "triangles": 386896,
+        "textures": 46,
+        "geometries": 259
+      },
+      "station": {
+        "ready": true,
+        "quality": "medium",
+        "lod": 1,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 28707,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 20080,
+      "afterInstances": 19855
+    },
+    {
+      "name": "window-door",
+      "quality": "medium",
+      "before": "screenshots/BEFORE-window-door-medium.png",
+      "after": "screenshots/AFTER_FINAL-window-door-medium.png",
+      "stateIdentical": true,
+      "beforeCost": {
+        "drawCalls": 50,
+        "triangles": 359189,
+        "textures": 33,
+        "geometries": 218
+      },
+      "afterCost": {
+        "drawCalls": 50,
+        "triangles": 384980,
+        "textures": 42,
+        "geometries": 225
+      },
+      "station": {
+        "ready": true,
+        "quality": "medium",
+        "lod": 1,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 28707,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "propsEqual": true,
+      "bridgeTrainAndEvacuationDiagnosticsEqual": true,
+      "beforeInstances": 20078,
+      "afterInstances": 19853
+    }
+  ],
+  "allStateHashesEqual": true,
+  "bridgeAttachmentOrderingNormalized": true
+}

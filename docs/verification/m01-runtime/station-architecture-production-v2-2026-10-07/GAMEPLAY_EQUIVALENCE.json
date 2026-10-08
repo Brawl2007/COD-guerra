@@ -1,0 +1,16 @@
+{
+  "pass": true,
+  "route": "real controls through full M01",
+  "baselineHash": "8799c7fccdd93490f9b22dbfea673541acca97ab83e87a97f75e0ea701a14408",
+  "candidateHash": "8799c7fccdd93490f9b22dbfea673541acca97ab83e87a97f75e0ea701a14408",
+  "checks": [
+    "player/actors/hitboxes/HP/ammo/RNG/mission and battle clocks/objectives/checkpoints/all emitted gameplay events",
+    "full combat snapshots"
+  ],
+  "protectedFiles": [
+    "src/game/m01-simulation.js",
+    "src/world/spatial.js",
+    "src/world/tczew-world.js",
+    "src/core/random.js"
+  ]
+}

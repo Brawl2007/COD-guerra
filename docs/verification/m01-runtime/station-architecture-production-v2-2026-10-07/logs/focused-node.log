@@ -1,0 +1,36 @@
+✔ M01 environment prop layout is deterministic, uniquely identified and grounded (10.947046ms)
+✔ visual prop generation cannot consume gameplay RNG or mutate world colliders/save state (4.148184ms)
+✔ critical rail, road and station access corridors remain visually clear (3.420217ms)
+✔ Low, Medium and High preserve composition while scaling detail coherently (1.294835ms)
+✔ rebuilding the visual layout is idempotent and does not create logical duplicates (4.750924ms)
+✔ foreground trunks obstruct walking and shots; restoring destruction reconstructs the same static obstacles (6.060401ms)
+✔ Station mesh vertices remain inside the authorised visual envelope at all LODs (308.020861ms)
+✔ the facade has real missing wall faces, deep closed reveals and physical parallax (127.726117ms)
+✔ silhouette, roofs and openings survive quality switches; detail and allocation stay bounded (84.78245ms)
+✔ geometry and material maps regenerate byte for byte without random state or external assets (345.856276ms)
+✔ Station construction/sync preserves all anchors, colliders, props and save/RNG/evacuation authority (809.189174ms)
+✔ platform and awning preserve walking clearance in the existing facade and evacuation strips (82.865155ms)
+✔ dispose is idempotent; recreate replaces one root and frees owned geometry/material/texture resources once (225.134977ms)
+✔ unexpected or missing Station anchors fail safely before attaching any replacement root (0.883977ms)
+✔ the real station clips sample both roles from saved phase time, with pause, fresh renderer and LOD restore (1001.301342ms)
+✔ the patient holds the actual final grab pose throughout the moving backward drag (315.474433ms)
+✔ a missing or incomplete optional transition pair falls back together and leaves evacuation success to simulation (3880.870308ms)
+✔ the fictional station casualty starts in the yard and the clock triggers his injury only once (319.554801ms)
+✔ the backward drag stays on the ground, completes outside the camera and returns Dudek to his post (553.723827ms)
+✔ changing the player look never changes the station evacuation or its delivery (724.508113ms)
+✔ a save during the drag restores the same actors, task and future positions with no scene objects (476.206443ms)
+✔ death or removal of a participant detaches the casualty instead of leaving an invalid or moving carrier reference (988.315351ms)
+✔ legacy schema 2 saves with an already consumed station event do not replay an injury (243.630403ms)
+✔ station care coexists with Bąk, all objectives, checkpoints and both historical demolitions on supported and ignored routes (5432.940203ms)
+✔ grab and release last 1.6 mission seconds, hold both roots and deliver only after settling (302.057071ms)
+✔ schema 2 restores every station phase and its future clocks, actors and RNG exactly (769.884133ms)
+✔ all station phases interrupt on casualty/medic death, removal or reassignment without delivery (3369.513971ms)
+✔ old schema 2 transit saves resume without a new grab and corrupt station phases are rejected atomically (230.090018ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13525.972866

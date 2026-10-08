@@ -1,0 +1,27 @@
+{
+  "canonicalReports": [
+    "BEFORE_PAIRED-report.json",
+    "AFTER_PAIRED-report.json"
+  ],
+  "finalOriginalPngs": 44,
+  "supersededPreflightPngsOmitted": [
+    "BEFORE-roof-low.png",
+    "AFTER-window-upper-high.png",
+    "BEFORE-roof-high.png",
+    "AFTER_FINAL-roll-call-high.png",
+    "BEFORE-roll-call-high.png",
+    "BEFORE-frontal-medium.png",
+    "AFTER_FINAL-roll-call-low.png",
+    "AFTER-oblique-high.png",
+    "AFTER-annexes-high.png",
+    "BEFORE-frontal-high.png",
+    "AFTER-window-door-high.png",
+    "BEFORE-frontal-low.png",
+    "BEFORE-roll-call-low.png",
+    "AFTER-frontal-high.png"
+  ],
+  "rawPreflightReportsRetained": true,
+  "cameraNotes": "frontal y=8m and roof y=22m are elevated art inspection probes; all other cameras use grounded staged player coordinates. Roll-call camera is inside the unchanged shelter. These are not a human playtest.",
+  "traceBinaryNetworkResourcesOmitted": "Initial failed fixture trace zip contains 38 MB of asset copies. Event/step/network metadata traces are preserved as gzip; binary resource copies are omitted.",
+  "buildLog": "Raw build stdout preserved byte for byte in logs/build.log.gz, including its original trailing whitespace."
+}

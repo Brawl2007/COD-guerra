@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {leafTexture,texturedSurface} from './m01-surfaces.js';
+import {M01StationArchitecture} from './m01-station-architecture.js';
 import {buildM01EnvironmentProps,M01_PROP_QUALITY_RANK,propCountsForQuality} from './m01-environment-props.js';
 
 export const M01_VEGETATION_LOD=Object.freeze({
@@ -256,31 +257,9 @@ export class M01Environment {
     }
   }
   buildArchitecture(){
-    // Facade details rest on the current station/hut colliders. Their doors stay blocked/open as before.
-    for(let x=-450;x<-340;x+=10)for(const y of [1.5,6]){
-      this.put('box','dark',[x,y,27.96],[2.2,2.8,.06]);
-      for(const dx of [-1.2,1.2])this.put('box','stone',[x+dx,y,27.85],[.17,3,.16]);
-      for(const dy of [-1.5,1.5])this.put('box','stone',[x,y+dy,27.72],[2.6,.20,.35]);
-      this.put('box','wood',[x,y,27.75],[.07,2.8,.08]);this.put('box','wood',[x,y,27.74],[2.2,.07,.08]);
-    }
-    // Original mass/colliders retained: pilasters, plinth, cornice and shallow roof courses only.
-    this.put('box','stone',[-399,-1.9,27.75],[123,1.15,.40]);
-    for(let x=-455;x<-338;x+=10){
-      this.put('box','brick',[x+4.5,3.2,27.77],[.75,13.8,.30]);
-      this.put('box','stone',[x+4.5,10.1,27.61],[1,.32,.48]);
-    }
-    this.put('box','stone',[-399,4.05,27.55],[123,.28,.46]);
-    this.put('box','stone',[-399,9.15,27.58],[123,.36,.40]);
-    for(let x=-457;x<-337;x+=4.5)this.put('box','metal',[x,12.04,41.5],[.08,.08,28.5]);
-    for(const x of [-452,-412,-372,-342]){
-      this.put('trunk','metal',[x,3.5,27.45],[.07,14,.07]);
-      this.put('box','stone',[x,10.6,27.4],[.38,.28,.42]);
-    }
-    // Narrow edging at the wall; no new platform/door route or collision.
-    this.put('box','stone',[-399,-2.8,26.8],[122,.16,.55]);
-    for(const z of [27.5,55.5])this.put('box','stone',[-399,10.6,z],[123,.6,.7]);
-    this.put('box','wood',[-399,11.5,41.5],[124,1,29]);
-    for(let x=-450;x<-340;x+=24)this.put('box','brick',[x,13,44],[1.4,4,1.5]);
+    // Station replaces presentation only. Original solid box survives if construction fails.
+    try{this.station=new M01StationArchitecture(this.group,this.world);}
+    catch(error){this.stationFailure=error.message;console.warn(`Station M01: ${error.message}`);}
     for(let x=-269;x<-250;x+=1.6)this.put('box','wood',[x,-1.25,13.78],[.12,3.5,.14]);
     for(let z=15;z<26;z+=1.5)this.put('box','wood',[-249.5,-1.25,z],[.14,3.5,.12]);
     this.put('box','metal',[-260,.8,20],[21,.15,13]);
@@ -305,6 +284,7 @@ export class M01Environment {
     const rank=M01_PROP_QUALITY_RANK[quality]??M01_PROP_QUALITY_RANK.medium;this.propQuality=quality;
     for(const batch of this.propBatches)batch.visible=M01_PROP_QUALITY_RANK[batch.userData.m01PropQuality]<=rank;
     this.updateVegetationLod(player,quality);
+    this.station?.sync(player,quality);
   }
   get propDiagnostics(){
     const quality=this.propQuality??'medium',counts=propCountsForQuality(this.propDescriptors,quality);
@@ -319,5 +299,5 @@ export class M01Environment {
       legacyLeafCardEstimate:M01_LEGACY_LEAF_CARD_ESTIMATE,alphaCardReductionApprox:1-this.treeCardCount/M01_LEGACY_LEAF_CARD_ESTIMATE,
       grassInstances,materials:4,textures:2,tracked:Object.fromEntries(this.treeDescriptors.filter(t=>t.solid).map(t=>[t.id,t.lod]))};
   }
-  dispose(){this.group.removeFromParent();this.resources.forEach(b=>b.dispose());Object.values(this.geometry).forEach(g=>g.dispose());this.grassGeometry.dispose();this.foliage.dispose();this.canopyMaterial.dispose();this.leafMap.dispose();this.bark.map.dispose();this.bark.dispose();this.grassMaterial.dispose();}
+  dispose(){this.station?.dispose();this.group.removeFromParent();this.resources.forEach(b=>b.dispose());Object.values(this.geometry).forEach(g=>g.dispose());this.grassGeometry.dispose();this.foliage.dispose();this.canopyMaterial.dispose();this.leafMap.dispose();this.bark.map.dispose();this.bark.dispose();this.grassMaterial.dispose();}
 }
