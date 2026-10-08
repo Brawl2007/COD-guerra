@@ -285,3 +285,25 @@
 | Marines/Exército dos EUA | inglês americano | — |
 | Civis | polaco, francês, holandês, italiano (siciliano), alemão, japonês/okinawano | barreira de língua real; legendas só quando o protagonista compreende |
 | Inimigos | alemão, japonês | nunca "monstros intercambiáveis"; rendidos têm voz |
+
+---
+
+## 11. Adições registadas na revisão de continuidade (Fase 7)
+
+Elenco secundário **proposto pelos dossiês** de M20–M30 e não listado em §4 à data da sua redação. Todos são ficção; nenhum representa pessoa real. Entram em §4 na próxima revisão aprovada; até lá, são válidos como propostas dos respetivos dossiês.
+
+| Missão | Nome proposto | Função | Estado/flag | Dossiê |
+| --- | --- | --- | --- | --- |
+| M20 | pte. Len Ashby; pte. Colin Marsh; família Van Dijk (Hendrik, Anneke, Mieke) | feridos do posto; família da casa-posto | Ashby capturado vivo (contexto); Marsh fica (estado não anunciado); a família fica | M20 §0 |
+| M21 | pte. Carl Brenner; pfc. Lyle Osgood; ten. Harker (voz); Mason (voz) | ferido do rebentamento; segundo maqueiro; tenente; outra esquadra | Brenner evacuado (ravina: cedo; exposto: tarde) | M21 §0/§9 |
+| M22 | pte. Owen Kessock; pfc. Hal Dugan; ten. Sayer; Weller (voz); Bricker e Nunes (só na lista); Marks e Teller (ficam com Sayer) | feridos; oficial do posto; outro grupo; posto da estrada | Sayer `captured` (fixo); Bricker/Nunes "sem contacto" (nunca "mortos") | M22 §0/§9 |
+| M23 | sgt. Walt Ingram; pfc. Abel Munro; ten. Cassidy (voz); Pell (só nome) | graduado ("A coluna abriu passagem…"); ferido de 23/12; tenente | Munro evacuado 27/12 | M23 §0/§9 |
+| M24 | pfc. Ray Okafor | BAR | vivo | M24 §0/§9 |
+| M25 | pfc. Lou Brandt; pte. Teddy Kowalczyk; T/5 Reyes; "Hartmann" (rendido, diz o nome) | equipa de acesso; o que conta; motorista; Volkssturm | Brandt ferido leve (fixo); Hartmann entregue | M25 §0/§9 |
+| M26 | cabo Vic Prado (substituto de Ruiz); pfc. Walt Jessup (regresso de M08); família Nakama (avô, mãe, duas crianças) | substituto por `m08.ruiz_status`; BAR; civis (revisão cultural P-C26) | Ruiz e Prado nunca juntos | M26 §0/§9 |
+| M27 | krasnoarmeyets Timur Aliyev; ten. Rudenko (voz, T-34); "Peter" (ferido alemão, diz o nome) | ferido do canal; comandante de blindado; inimigo incapaz de combater | Aliyev evacuado (fixo) | M27 §0/§9 |
+| M28 | krasnoarmeyets Grigory Petrenko; o Feldwebel da oficina (sem nome); o idoso Volkssturm; o rapaz da HJ (nunca alvo) | ferido do prédio; rendido; ferido civil-militar; foge | Petrenko evacuado; `m28.pow_secured` | M28 §0/§9 |
+| M29 | cpl. Hank Dorsey; ten. Royce (voz) | rádio da companhia; tenente | vivos | M29 §0/§9 |
+| M30 | o contramestre; a guarda do nível 01; o sobrevivente com a mão enfaixada e as crianças | divisão de convés; epílogo europeu | — | M30 §0 |
+
+**Reatribuições de falas canónicas registadas** (o texto de §79 é literal; só muda o falante quando o canónico diz "companheiro"/"substituto" ou quando o falante nomeado não pode estar presente por continuidade): M21 `002` → Halvorsen (o "Companheiro"; Ames já partiu como estafeta); M27 `001` → Danilin se Makarov ausente (§79: "Makarov ou um substituto"); M27 `002` → Gusev (§79: "Saveliev/substituto"); M03 `003b` → Nowak; M11 → Coote/Barrow (ver dossiês). Nenhuma fala canónica foi alterada no texto.
