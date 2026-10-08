@@ -5,7 +5,7 @@ import { toScene, aimDirection } from '../world/spatial.js';
 import { AssetManager } from '../assets/asset-manager.js';
 import { surface } from './materials.js';
 import { M01View } from './m01-view.js';
-import { WEAPON_PRESENTATION, WeaponViewFx, WeaponWorldFx, WeaponLighting, weaponRecoil, idleSway, advanceLookLag, viewPointToWorld, viewUp } from './first-person-weapon-fx.js';
+import { WEAPON_PRESENTATION, WeaponViewFx, WeaponWorldFx, WeaponLighting, weaponRecoil, idleSway, advanceLookLag, viewPointToWorld, viewUp, prewarmWeaponFx } from './first-person-weapon-fx.js';
 import { visualNoise } from './m01-atmosphere.js';
 
 const QUALITY={low:{ratio:1,shadows:false,particles:70},medium:{ratio:1.25,shadows:true,particles:120},high:{ratio:1.5,shadows:true,particles:180}};
@@ -258,6 +258,9 @@ export class Renderer {
     this.mixers.forEach(mixer=>mixer.update(dt));
     this.updateWeapon(player,weapon,time,dt);
     this.updateEffects(time,battle);this.weaponWorldFx.update(time/1000,world);
+    // Once, before any shot: compile and link the carbine's shot-FX programs instead of stalling the first shot frame.
+    this.weaponFxWarm??=prewarmWeaponFx(this.engine,[{scene:this.weaponScene,camera:this.weaponCamera,objects:this.weaponFx.warmObjects},
+      {scene:this.scene,camera:this.camera,objects:this.weaponWorldFx.warmObjects([WEAPON_PRESENTATION.m1_carbine.casing.kind])}]);
     const angle=time*.00001;this.aircraft.position.set(80-Math.sin(angle)*200,100,20+Math.cos(angle)*240);this.aircraft.rotation.y=-angle;
     if(!this.grenadeViews)this.grenadeViews=new Map();
     const grenadeIds=new Set(grenades.map(g=>g.id));

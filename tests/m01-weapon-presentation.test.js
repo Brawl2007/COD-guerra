@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import * as THREE from 'three';
 import {WEAPON_PRESENTATION,weaponRecoil,recoilImpulse,idleSway,advanceLookLag,mechanicalPulse,viewPointToWorld,viewUp,ejectaPose,
-  WeaponViewFx,WeaponWorldFx,WeaponLighting,casingGeometry,stripperClipGeometry} from '../src/render/first-person-weapon-fx.js';
+  WeaponViewFx,WeaponWorldFx,WeaponLighting,casingGeometry,stripperClipGeometry,prewarmWeaponFx} from '../src/render/first-person-weapon-fx.js';
 import {Renderer} from '../src/render/three-renderer.js';
 import {presentationPose,WZ29_VISUAL} from '../src/render/m01-wz29-presentation.js';
 import {M01ViewModel} from '../src/render/m01-viewmodel.js';
@@ -425,4 +425,28 @@ test('a restore drops the barrel smoke of the previous timeline: the restored fr
     r.d.sim.restoreSnapshot(save);r.frame();f.d.sim.restoreSnapshot(save);f.frame();
     assert.equal(r.v.stats.presentation.wisps,f.v.stats.presentation.wisps);assert.deepEqual(r.v.stats.presentation,f.v.stats.presentation);
   }finally{r.dispose();f.dispose();}
+});
+
+test('shot-FX programs are compiled and linked before the first shot, each against its own scene, without drawing or showing anything',()=>{
+  const weaponScene=new THREE.Scene(),world=new THREE.Scene(),weapon=new THREE.Group();weaponScene.add(weapon);weapon.visible=false;
+  const fx=new WeaponViewFx(weaponScene,wz29);fx.attach(weapon,WZ29_VISUAL.muzzle);const worldFx=new WeaponWorldFx(world);
+  const camera=new THREE.PerspectiveCamera(),calls=[],used=[],properties=new Map();
+  // Stub of the three.js surface used: compile(object, camera, targetScene) returns its materials, and their programs
+  // are listed in renderer.properties; getUniforms() is a program's first use (where the deferred link completes).
+  const engine={properties:{get:m=>properties.get(m)},compile(object,cam,target){const found=new Set();object.traverse(o=>{if(o.material)found.add(o.material);});
+    for(const m of found)if(!properties.has(m)){const program={getUniforms:()=>used.push(m)};properties.set(m,{programs:new Map([['key',program]])});}
+    calls.push({object,cam,target});return found;}};
+  try{
+    const objects=worldFx.warmObjects([wz29.casing.kind]);assert.ok(worldFx.meshes.has(wz29.casing.kind),'the case pool exists before the first case');
+    const rest=new Map([weapon,...fx.warmObjects,...objects].map(o=>[o,o.visible]));assert.ok(fx.warmObjects.every(o=>!o.visible),'the view FX are hidden at rest');
+    const prepared=prewarmWeaponFx(engine,[{scene:weaponScene,camera,objects:fx.warmObjects},{scene:world,camera,objects}]);
+    // Only the FX objects are compiled (not the whole scene), each with its own scene as the target for lights/fog/environment.
+    assert.deepEqual(calls.map(c=>c.object),[...fx.warmObjects,...objects]);
+    for(const c of calls){assert.equal(c.cam,camera);assert.equal(c.target,fx.warmObjects.includes(c.object)?weaponScene:world);}
+    // Every program was used once now (the flash layers too, despite their hidden weapon parent).
+    const materials=new Set([...fx.warmObjects,...objects].map(o=>o.material));
+    assert.equal(prepared,materials.size);assert.deepEqual(new Set(used),materials);assert.equal(used.length,materials.size);
+    for(const [o,visible]of rest)assert.equal(o.visible,visible,o.name);
+    assert.equal(prewarmWeaponFx(null,[]),0);assert.equal(prewarmWeaponFx({},[]),0);
+  }finally{fx.dispose();worldFx.dispose();}
 });

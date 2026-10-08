@@ -192,6 +192,8 @@ export class WeaponViewFx {
   hide(light=true){for(const s of [...this.layers,...this.wisps])s.visible=false;if(light)this.light.intensity=0;this.stats={flash:0,layers:0,light:0,wisps:0};return this.stats;}
   /** A restored world: forget the previous shot (its smoke belonged to another timeline). */
   reset(){this.history=null;}
+  /** Objects whose programs prewarmWeaponFx compiles (flash layers, wisps). */
+  get warmObjects(){return [...this.layers,...this.wisps];}
   /**
    * @param {object} o clock, shotAt (s, authoritative), gate (event-window flag), aim (0..1), shot (count),
    *   muzzle/axis/port/up (eye-space Vector3), chamberAt (s or null), visible, and fresh: the first rendered
@@ -388,11 +390,31 @@ export class WeaponWorldFx {
     return this.counts;
   }
   get diagnostics(){return {...this.counts,capacity:{...this.capacity}};}
+  /** Objects whose programs prewarmWeaponFx compiles: muzzle-cloud sprites, the clip pool and the case pools of `kinds`. */
+  warmObjects(kinds=[]){for(const kind of kinds)this.casingMesh(kind);return [...this.sprites,...this.meshes.values()];}
   dispose(){
     for(const mesh of this.meshes.values()){mesh.removeFromParent();mesh.dispose();if(mesh.geometry!==this.clipGeometry)mesh.geometry.dispose();}
     this.clipGeometry.dispose();this.brass.dispose();this.steel.dispose();
     for(const s of this.sprites){s.removeFromParent();s.material.dispose();}this.smokeTexture.dispose();this.items=[];this.puffItems=[];
   }
+}
+
+/**
+ * Compile and link the shot-FX programs before the first shot. Their sprites and pools are hidden at rest, so the
+ * first shot used to build them on that frame, and software WebGL (or a driver without parallel compile) finishes
+ * the compile/link only when a program is first used: a stall of seconds in SwiftShader, a stutter on weak GPUs.
+ * Each object is compiled alone against its own scene (`compile(object, camera, scene)`: that scene's lights, fog
+ * and environment, so the programs the shot will use) and each program is used once (its uniform lookup), so the
+ * link happens now. Nothing is drawn and no visibility changes. Returns the number of programs prepared (0 without
+ * a WebGL renderer).
+ */
+export function prewarmWeaponFx(engine,passes){
+  if(typeof engine?.compile!=='function')return 0;const programs=new Set();
+  for(const {scene,camera,objects}of passes)for(const object of objects)
+    for(const material of engine.compile(object,camera,scene)??[])
+      for(const program of engine.properties?.get(material)?.programs?.values()??[])programs.add(program);
+  for(const program of programs)program.getUniforms?.();
+  return programs.size;
 }
 
 /** Equirect sky/ground gradient for weapon reflections; pitch-corrected through scene.environmentRotation. */
