@@ -1,5 +1,11 @@
 # Estado de desenvolvimento
 
+## HUD e apresentação cinematográfica de M01 — 2026-10-07
+
+Branch `codex/m01-hud-cinematic-presentation-pass-v1`, base `99309d9`. Só apresentação (`src/ui/m01-hud.js`, `index.html`, `src/styles.css`, ligações em `game.js`/`main.js`): introdução com ecrã preto, cartelas e fade-in nos beats do roteiro; chamada no abrigo com cartela 07:05 e fade para o debrief; avisos de objectivo, interacção com tecla, cartuchos/alça, aviso de vida baixa, checkpoint discreto, fades de continuar/restaurar, pausa com objectivo. Objectivos, estados, tempos, `Simulation` e triggers inalterados; percurso real com e sem HUD dá snapshot idêntico.
+
+Node **329/329**, build PASS, browser HUD **2/2**. Suíte de browser integral 57/63; das falhas, uma era o teste novo do HUD (corrigido, agora 2/2) e cinco dependem de `mousemove` sintético e falham também na base ou passaram ao repetir. Capturas: 13 estados × 6 resoluções, 0 elementos fora do ecrã, 0 sobreposições. Reviewer e Verifier independentes. Provas e limites em `docs/verification/m01-runtime/hud-cinematic-presentation-2026-10-07/README.md`. M01 continua **PROTÓTIPO JOGÁVEL**; não é playtest humano nem medição de FPS.
+
 ## Auditoria schema 2 — 2026-10-03
 
 Candidato isolado em `codex/m01-schema2-determinism-audit`, base MG34 prone aprovada `fbaac1e4`. Comparação de futuros A/B por tick: 61.055 comparações em duas rotas completas e fixtures definidas, sem divergência depois das correções. Corrigido o destino de recuperação ao restaurar uma continuação; schema 2 recebe backup opcional plano, mantendo CP-A..D planos e legacy compatível. Saves corrompidos não podem sobrescrever métodos/perfil da arma; RNG uint32 e fases conhecidas validados.

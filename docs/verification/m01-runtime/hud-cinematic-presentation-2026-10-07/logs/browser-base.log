@@ -1,0 +1,111 @@
+
+Running 5 tests using 1 worker
+
+  ✘  1 tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops (3.1m)
+  ✘  2 tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset (26.5s)
+  ✓  3 tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look (16.9s)
+  ✓  4 tests/browser/m01.spec.js:318:33 › adjustment salvo behind the truss restores its actual origin and follows mouse look (18.0s)
+  ✘  5 tests/browser/m01.spec.js:337:1 › demolition inside the road truss shows the actual bearing while mouse look remains free (22.2s)
+
+
+  1) tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops 
+
+    Test timeout of 180000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 180000ms exceeded.
+
+      51 |   // avoid native pointer repositioning, which can change the locked look vector before the click is consumed.
+      52 |   await page.evaluate(()=>window.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:430,bubbles:true})));
+    > 53 |   await page.waitForFunction(()=>window.gameDiagnostics().player.pitch<-.75);
+         |              ^
+      54 |   const beforeShot=await page.evaluate(()=>window.gameDiagnostics());
+      55 |   await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});
+      56 |   await page.waitForFunction(({mag,shot,impact})=>{
+        at /tmp/claude-0/-home-user-COD-guerra/18b33185-30d9-598c-a2d8-a31402ae0260/scratchpad/basewt/tests/browser/m01-audio-production.spec.js:53:14
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset 
+
+    TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.
+
+      129 |     // consumed by Input without repositioning the locked cursor, then wait on authoritative weapon state.
+      130 |     await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});
+    > 131 |     await page.waitForFunction(expected=>window.gameDiagnostics().m01.weapon.mag===expected,expectedMag,{timeout:process.env.CI?30000:10000});
+          |                ^
+      132 |     await expect(page.locator('#mag')).toHaveText(String(expectedMag));
+      133 |   };
+      134 |   for(let i=0;i<5;i++){
+        at fireRound (/tmp/claude-0/-home-user-COD-guerra/18b33185-30d9-598c-a2d8-a31402ae0260/scratchpad/basewt/tests/browser/m01.spec.js:131:16)
+        at /tmp/claude-0/-home-user-COD-guerra/18b33185-30d9-598c-a2d8-a31402ae0260/scratchpad/basewt/tests/browser/m01.spec.js:136:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests/browser/m01.spec.js:337:1 › demolition inside the road truss shows the actual bearing while mouse look remains free 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('#objective-status')
+    Expected substring: "atrás de si"
+    Received string:    "Demolição leste · 771 m, em frente · recue para o posto de disparo"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('#objective-status')
+        6 × locator resolved to <span id="objective-status">Demolição leste · 771 m, em frente · recue para o…</span>
+          - unexpected value "Demolição leste · 771 m, em frente · recue para o posto de disparo"
+
+
+      349 |   },Math.atan2(Math.sin(angle),Math.cos(angle))/.0022);
+      350 |   await turn(aim+Math.PI-initial.player.angle);
+    > 351 |   await expect(page.locator('#objective-status')).toContainText('atrás de si');
+          |                                                   ^
+      352 |   const away=await page.evaluate(()=>window.gameDiagnostics());
+      353 |   await turn(aim-away.player.angle);
+      354 |   await expect(page.locator('#objective-status')).toContainText('em frente');
+        at /tmp/claude-0/-home-user-COD-guerra/18b33185-30d9-598c-a2d8-a31402ae0260/scratchpad/basewt/tests/browser/m01.spec.js:351:51
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-demolition-inside-the--ecd5c-ile-mouse-look-remains-free/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-demolition-inside-the--ecd5c-ile-mouse-look-remains-free/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-demolition-inside-the--ecd5c-ile-mouse-look-remains-free/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-demolition-inside-the--ecd5c-ile-mouse-look-remains-free/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops 
+    tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset 
+    tests/browser/m01.spec.js:337:1 › demolition inside the road truss shows the actual bearing while mouse look remains free 
+  2 passed (4.7m)

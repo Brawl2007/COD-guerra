@@ -1,3 +1,12 @@
+# Estado actual — HUD e apresentação de M01 (2026-10-07)
+
+- TASK_ID `M01-HUD-CINEMATIC-PRESENTATION-PASS-V1`; branch `codex/m01-hud-cinematic-presentation-pass-v1`, base `99309d9`. Nenhuma integração em main; PR ainda não aberto.
+- Só apresentação: `src/ui/m01-hud.js` (lê a simulação, escreve no DOM, tempos pelo relógio da simulação). Objectivos, estados, tempos, `Simulation` e triggers intactos.
+- Node 329/329, build PASS, browser HUD 2/2; suíte integral 57/63, com cinco falhas dependentes de `mousemove` sintético que reproduzem na base ou passam ao repetir (ver README de provas). Não é playtest humano nem FPS.
+- Provas: `docs/verification/m01-runtime/hud-cinematic-presentation-2026-10-07/README.md`.
+
+---
+
 # Estado actual — auditoria de determinismo schema 2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a MG34 aprovada nem Graphify.

@@ -1,0 +1,7 @@
+
+Running 2 tests using 1 worker
+
+  ✓  1 tests/browser/m01-hud-presentation.spec.js:20:1 › the intro is presented as black screen, typed title card and letterbox; skipping reveals the objective and checkpoint (53.3s)
+  ✓  2 tests/browser/m01-hud-presentation.spec.js:56:1 › a continued save shows the place card and keyed interaction prompt; HUD fits common resolutions without overlap (27.5s)
+
+  2 passed (1.4m)
