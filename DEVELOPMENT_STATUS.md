@@ -1,5 +1,11 @@
 # Estado de desenvolvimento
 
+## Pontes — fecho estrutural de produção v2 — 2026-10-08
+
+Branch `codex/m01-bridge-structural-production-closeout-v2`, base `99309d9` (polish material do portal, intacto). Nova camada de runtime `src/render/m01-bridge-structure.js`, sem colliders, nos nós GLB existentes: banzos com chapas/cantoneiras, montantes em H, gussets, chapas de cruzamento, contraventamentos, pórticos Pratt/Lentze, apoios e pedestais, tabuleiro ferroviário de travessas abertas com carris de patim e contracarris, guarda-rodas rodoviários, fiadas de pilares/encontros, via dupla balastrada sobre os encontros e no aterro oeste. Aço das pontes passa a tinta dieléctrica envelhecida. GLB, manifesto, colliders, demolições 06:10/06:40, simulação e saves intactos (SHA bloqueados). Low inalterado no kit (+2,5 % triângulos da segunda via); Medium/High +23–27 draw calls perto das pontes.
+
+331/331 Node, build PASS, 4/4 browser focados em `ce73304`; integral 61/63 em `115333a` com os 2 timeouts reproduzidos também na base neste sandbox. Provas, custos e limites em `docs/verification/m01-runtime/bridge-structural-production-closeout-v2/HANDOFF.md`. M01 continua **PROTÓTIPO JOGÁVEL**; sem playtest humano nem FPS de Chromebook.
+
 ## Auditoria schema 2 — 2026-10-03
 
 Candidato isolado em `codex/m01-schema2-determinism-audit`, base MG34 prone aprovada `fbaac1e4`. Comparação de futuros A/B por tick: 61.055 comparações em duas rotas completas e fixtures definidas, sem divergência depois das correções. Corrigido o destino de recuperação ao restaurar uma continuação; schema 2 recebe backup opcional plano, mantendo CP-A..D planos e legacy compatível. Saves corrompidos não podem sobrescrever métodos/perfil da arma; RNG uint32 e fases conhecidas validados.

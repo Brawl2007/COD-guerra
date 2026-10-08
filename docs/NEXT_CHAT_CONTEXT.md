@@ -1,3 +1,15 @@
+# Estado actual — pontes, fecho estrutural v2 (2026-10-08)
+
+Esta secção prevalece para a frente das pontes. Não refazer materiais/portal aprovados nem regenerar os GLB.
+
+- TASK_ID `M01-BRIDGE-STRUCTURAL-PRODUCTION-CLOSEOUT-V2`; base `codex/m01-bridge-portal-material-detail-polish-v1 @ 99309d9`; branch `codex/m01-bridge-structural-production-closeout-v2`. Runtime verificado `ce73304`; confirmar HEAD remoto.
+- Estrutura em runtime (`src/render/m01-bridge-structure.js`), ligada em `m01-view.js`; via dupla do aterro em `m01-environment.js`. Low = kit autoral; Medium = estrutura; High = + rebites/talas a ≤140 m.
+- Autoridade: GLB/manifesto/colliders byte a byte (testado), sem colliders novos, troca intacto/colapsado só por `renderState`, troços sobre juntas por `world.joints`.
+- Validação: 331/331 Node, build, 4/4 browser focados; integral 61/63 em `115333a` — áudio e rigs também falham na base neste sandbox (pré-existente). Integral não repetida após `ce73304`.
+- Pendente: medidas/cor são estimativas; CI do GitHub não acompanhado; Chromebook e playtest humano. Handoff: `docs/verification/m01-runtime/bridge-structural-production-closeout-v2/HANDOFF.md`.
+
+---
+
 # Estado actual — auditoria de determinismo schema 2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a MG34 aprovada nem Graphify.
