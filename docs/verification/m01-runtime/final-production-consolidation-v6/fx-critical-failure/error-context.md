@@ -1,0 +1,47 @@
+# Page snapshot
+
+```yaml
+- main [ref=e2]:
+  - generic "Jogo de tiro em primeira pessoa" [active] [ref=e3]
+  - generic [ref=e4]:
+    - paragraph [ref=e5]: MISSÃO SUSPENSA
+    - heading "PAUSADO" [level=2] [ref=e6]
+    - paragraph [ref=e7]: A batalha está em pausa. Retome quando estiver pronto.
+    - paragraph [ref=e8]: "Objectivo: Saia da ponte! Para o posto de disparo · (Opcional) Leve Bąk até o socorrista"
+    - button "RETOMAR" [ref=e9] [cursor=pointer]
+    - button "REINICIAR CHECKPOINT" [ref=e10] [cursor=pointer]
+    - button "VOLTAR AO MENU" [ref=e11] [cursor=pointer]
+  - generic:
+    - generic:
+      - generic: OBJECTIVO
+      - strong:
+        - text: Saia da ponte! Para o posto de disparo ·
+        - generic: ＋ (Opcional) Leve Bąk até o socorrista
+      - generic: Demolição leste · 763 m, em frente · recue para o posto de disparo
+    - generic:
+      - generic: Objectivo
+      - strong: Saia da ponte! Para o posto de disparo
+    - generic:
+      - generic: 1 · IX · 1939
+      - time: 06:10:10
+      - status:
+        - generic: PROGRESSO GUARDADO
+    - generic:
+      - generic: Tczew — pontes do Vístula
+      - generic: 1 de setembro de 1939 · 06:10
+      - generic: CP-C · Proteção dos engenheiros
+    - generic:
+      - generic: "Marek Zieliński: Cabeças baixas! Lá do outro lado!"
+    - generic:
+      - generic:
+        - generic: SAÚDE
+        - generic: "92"
+      - generic:
+        - generic: KARABINEK WZ.29
+        - generic:
+          - generic: —
+          - emphasis: /
+          - generic: "20"
+        - generic: Alça 300 m · a carregar
+        - generic: Granadas ×2
+```
