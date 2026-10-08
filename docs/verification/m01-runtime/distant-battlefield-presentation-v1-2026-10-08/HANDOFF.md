@@ -82,7 +82,7 @@ A correcção de timing das capturas de FX está em `codex/m01-battlefield-fx-po
 | `src/render/m01-view.js` | +7 linhas: import, construção depois de `this.atmosphere`, `update` depois de `updateBattlefieldFx`, diagnóstico, `dispose` | 165 linhas alteradas noutros hunks | Merge de ensaio sem conflitos (ver [`EVIDENCE.md`](EVIDENCE.md)) |
 | `M01Atmosphere` | Só lê `atmosphere.texture` (puff partilhado). O fumo distante tem batch e material próprios. | Altera o material/batches de puffs da atmosfera | Sem sobreposição: o fumo distante não muda com a V3 e não entra em `atmosphere.diagnostics`. |
 
-**Testes no merge de ensaio** (esta branch `5c5eed1` + V3 `e08755b` + branch da arma `d97329c`, merges automáticos): 373/376. As 3 falhas são de `tests/m01-mg34-prone-presentation.test.js` e falham igual na V3 sozinha (`e08755b`). O `M01View` parcial do teste não tem `fireColor`, que o `updateFire` da V3 passou a usar. A correcção pertence à V3.
+**Testes no merge de ensaio** (esta branch `8b4d001` + V3 `e08755b` + runtime da branch da arma `5743b83`, merges automáticos): 374/377. As 3 falhas são de `tests/m01-mg34-prone-presentation.test.js` e falham igual na V3 sozinha (`e08755b`). O `M01View` parcial do teste não tem `fireColor`, que o `updateFire` da V3 passou a usar. A correcção pertence à V3.
 
 Pontos semânticos a saber na integração:
 - As bandas de distância desta camada chamam-se `0-1.2km` / `1.2-2.6km` / `>2.6km`, para não se confundirem com `near/mid/far` (< 85 / < 300 / ≥ 300 m) do `battlefieldFx.meta` da V3.

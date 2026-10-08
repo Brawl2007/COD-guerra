@@ -1,5 +1,5 @@
-# Trial merge (scratch worktree, no conflicts expected): codex/m01-distant-battlefield-presentation-v1 @ 5c5eed1 + codex/m01-battlefield-fx-polish-v3 @ e08755b + codex/m01-first-person-weapon-presentation-v1 @ d97329c
-$ git merge --no-edit e08755b
+$ git checkout --detach 8b4d001   # this branch (runtime 6ffa820 + tests/comments 4763521)
+$ git merge --no-edit e08755b   # codex/m01-battlefield-fx-polish-v3
 Auto-merging src/render/m01-view.js
 Merge made by the 'ort' strategy.
  .github/workflows/m01-battlefield-fx-polish-v3.yml |  70 +++++++++
@@ -16,8 +16,7 @@ Merge made by the 'ort' strategy.
  create mode 100644 src/render/m01-fx-textures.js
  create mode 100644 tests/browser/m01-battlefield-fx-polish-v3.spec.js
  create mode 100644 tests/m01-battlefield-fx-polish-v3.test.js
-exit 0
-$ git merge --no-edit d97329c
+$ git merge --no-edit 5743b83   # codex/m01-first-person-weapon-presentation-v1 runtime
 Auto-merging DEVELOPMENT_STATUS.md
 Auto-merging RUNBOOK.md
 Auto-merging docs/NEXT_CHAT_CONTEXT.md
@@ -29,11 +28,11 @@ Merge made by the 'ort' strategy.
  .../BASE-report.json                               | 1468 +++++++++++
  .../CANDIDATE-report.json                          | 2542 ++++++++++++++++++++
  .../CAPTURES.md                                    |   40 +
- .../EVIDENCE.md                                    |  102 +
- .../FILES_CHANGED.txt                              |   16 +
- .../HANDOFF.md                                     |   53 +
+ .../EVIDENCE.md                                    |  127 +
+ .../FILES_CHANGED.txt                              |   19 +
+ .../HANDOFF.md                                     |   55 +
  .../REVIEW.md                                      |   30 +
- .../VERIFICATION.md                                |   49 +
+ .../VERIFICATION.md                                |   84 +
  .../captures/bench-02-hip-shot.jpg                 |  Bin 0 -> 137050 bytes
  .../captures/bench-03-hip-brass.jpg                |  Bin 0 -> 135838 bytes
  .../captures/bench-04-ads-shot.jpg                 |  Bin 0 -> 132705 bytes
@@ -50,6 +49,7 @@ Merge made by the 'ort' strategy.
  .../captures/m01-16-reload-clip-falling.jpg        |  Bin 0 -> 162013 bytes
  .../captures/m01-19b-ejecta-probe-zoom4x.png       |  Bin 0 -> 46092 bytes
  .../captures/m01-19b-ejecta-probe.jpg              |  Bin 0 -> 146887 bytes
+ .../logs/base-build.log                            |   15 +
  .../logs/base-failing7.log                         |  152 ++
  .../logs/base-look3.log                            |  123 +
  .../logs/base-subset.log                           |   40 +
@@ -57,28 +57,37 @@ Merge made by the 'ort' strategy.
  .../logs/bench-reload.jsonl                        |    4 +
  .../logs/bench-reload.mjs                          |   33 +
  .../logs/browser-full.log                          |  251 ++
+ .../logs/browser-subset-d97329c.log                |   55 +
  .../logs/browser-subset.log                        |   86 +
  .../logs/build.log                                 |   19 +
- .../logs/first-shot-ab.jsonl                       |    6 +
+ .../logs/capture-identity.txt                      |   31 +
+ .../logs/first-shot-ab.jsonl                       |   10 +
  .../logs/first-shot-ab.mjs                         |   26 +
- .../logs/first-shot-gl.jsonl                       |    4 +
+ .../logs/first-shot-gl.jsonl                       |    6 +
  .../logs/first-shot-gl.mjs                         |   36 +
+ .../logs/fixture-frame-cost.jsonl                  |    2 +
+ .../logs/fixture-frame-cost.mjs                    |   38 +
  .../logs/frame-cost-ab.jsonl                       |    4 +
  .../logs/frame-rate-ab.mjs                         |   30 +
  .../logs/game28-repeat.log                         |  155 ++
- .../logs/node.log                                  | 2116 ++++++++++++++++
+ .../logs/m01-38-repeat.log                         |  179 ++
+ .../logs/m01-reload.jsonl                          |    6 +
+ .../logs/m01-reload.mjs                            |   30 +
+ .../logs/node.log                                  | 2122 ++++++++++++++++
+ .../logs/sheets.py                                 |   23 +
  .../logs/t1-look3.log                              |   87 +
  .../logs/t1-two-9827c73.log                        |   89 +
- src/render/first-person-weapon-fx.js               |  466 ++++
- src/render/m01-view.js                             |   46 +-
+ src/render/first-person-weapon-fx.js               |  473 ++++
+ src/render/m01-view.js                             |   45 +-
  src/render/m01-viewmodel.js                        |  118 +-
  src/render/m01-wz29-presentation.js                |   44 +-
- src/render/three-renderer.js                       |   86 +-
+ src/render/three-renderer.js                       |   91 +-
  tests/browser/m01-weapon-presentation.spec.js      |   92 +
- tests/m01-weapon-presentation.test.js              |  502 ++++
+ tests/helpers/fake-webgl2.js                       |   26 +
+ tests/m01-weapon-presentation.test.js              |  581 +++++
  .../m01-weapon-presentation-capture.mjs            |   71 +
  .../m01-weapon-presentation-fixture.html           |   70 +
- 55 files changed, 9120 insertions(+), 61 deletions(-)
+ 65 files changed, 9691 insertions(+), 62 deletions(-)
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/BASE-report.json
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/CANDIDATE-report.json
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/CAPTURES.md
@@ -103,6 +112,7 @@ Merge made by the 'ort' strategy.
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/captures/m01-16-reload-clip-falling.jpg
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/captures/m01-19b-ejecta-probe-zoom4x.png
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/captures/m01-19b-ejecta-probe.jpg
+ create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/base-build.log
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/base-failing7.log
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/base-look3.log
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/base-subset.log
@@ -110,25 +120,32 @@ Merge made by the 'ort' strategy.
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/bench-reload.jsonl
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/bench-reload.mjs
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/browser-full.log
+ create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/browser-subset-d97329c.log
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/browser-subset.log
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/build.log
+ create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/capture-identity.txt
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/first-shot-ab.jsonl
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/first-shot-ab.mjs
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/first-shot-gl.jsonl
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/first-shot-gl.mjs
+ create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/fixture-frame-cost.jsonl
+ create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/fixture-frame-cost.mjs
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/frame-cost-ab.jsonl
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/frame-rate-ab.mjs
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/game28-repeat.log
+ create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/m01-38-repeat.log
+ create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/m01-reload.jsonl
+ create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/m01-reload.mjs
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/node.log
+ create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/sheets.py
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/t1-look3.log
  create mode 100644 docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/t1-two-9827c73.log
  create mode 100644 src/render/first-person-weapon-fx.js
  create mode 100644 tests/browser/m01-weapon-presentation.spec.js
+ create mode 100644 tests/helpers/fake-webgl2.js
  create mode 100644 tests/m01-weapon-presentation.test.js
  create mode 100644 tools/verification/m01-weapon-presentation-capture.mjs
  create mode 100644 tools/verification/m01-weapon-presentation-fixture.html
-exit 0
-
-$ git status --short (empty = clean)
-
-# tree 9c4e3205eb1de2d9a7cb3b22e2e9b63d148dc287
+$ git status --short
+$ git rev-parse HEAD^{tree}
+69eddab0d08b856332c86048a97a839dcdf3442a

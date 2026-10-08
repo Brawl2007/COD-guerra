@@ -68,9 +68,9 @@ Depois das correcções, 8 mutações numa cópia descartável foram todas apanh
 
 ## Merge de ensaio com a correcção de FX e com a arma em primeira pessoa
 
-Worktree descartável: esta branch (`5c5eed1`) + `origin/codex/m01-battlefield-fx-polish-v3` (`e08755b`) + a branch da arma em primeira pessoa (`d97329c`). **Os dois merges são automáticos, sem conflitos** ([`logs/merged-merge.log`](logs/merged-merge.log), árvore `9c4e320`).
+Worktree descartável: esta branch (`8b4d001`) + `origin/codex/m01-battlefield-fx-polish-v3` (`e08755b`) + o runtime da branch da arma em primeira pessoa (`5743b83`). **Os dois merges são automáticos, sem conflitos** ([`logs/merged-merge.log`](logs/merged-merge.log), árvore `69eddab`). O ensaio anterior, com a arma em `d97329c`, também era automático (árvore `9c4e320`, 373/376).
 
-`npm test` no resultado: **373/376** ([`logs/merged-node.log`](logs/merged-node.log)).
+`npm test` no resultado: **374/377** ([`logs/merged-node.log`](logs/merged-node.log)); o teste a mais é o teste novo da arma.
 - As 3 falhas são de `tests/m01-mg34-prone-presentation.test.js` («actual muzzle effect after shot 1/4/6…»), com o mesmo `TypeError` (`fireColor.set`).
 - **Falham igual na FX V3 sozinha** (`e08755b`: 10/13 nesse ficheiro, confirmado também pela verificação independente).
 - O teste constrói um `M01View` parcial sem `fireColor`, e o `updateFire` da V3 passou a pintar o fumo com cor.
