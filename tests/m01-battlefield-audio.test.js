@@ -302,5 +302,10 @@ test('looped brown noise has no seam; ricochets (not distance) add the whizz; bu
   const low=makeAudio(32).audio;low.setQuality('low');for(let i=0;i<200;i++)low.weaponFire('mg34',0,40,{rounds:9,key:'b'+i});
   assert.ok(low.diagnostics.liveSources<=low.diagnostics.sourceBudget+60,'source budget caps live grains');assert.ok(low.diagnostics.budgetDropped>0);
   low.explosion(0,30,{scale:'large',key:'still-heard'});assert.ok([...low.voices].some(v=>v.category==='explosion'),'explosions bypass the budget');low.dispose();
+  const full=makeAudio(32).audio;full.setQuality('low');full.weaponFire('mg34',0,30,{rounds:1,key:'g0',source:'gun'});full.liveSources=full.diagnostics.sourceBudget;
+  const before=full.bursts.get('gun').voice.sources.size;full.weaponFire('mg34',0,30,{rounds:1,key:'g1',source:'gun'});
+  assert.equal(full.bursts.get('gun').voice.sources.size,before,'a burst round cannot exceed the source budget either');full.liveSources=before;full.dispose();
+  const broken=makeAudio(),ctx=broken.ctx;const original=ctx.createOscillator.bind(ctx);ctx.createOscillator=()=>{const o=original();o.start=()=>{throw new Error('start');};return o;};
+  broken.audio.tone(200,.1);assert.equal(broken.audio.fading.size,0,'a source that never started is cut, not left fading');assert.equal(broken.audio.liveSources,0);broken.audio.dispose();
   const far=makeAudio().audio;far.distantBattle('mg',0,4000,'very-far',{rounds:7});assert.ok(far.diagnostics.culledGrains>0,'inaudible grains are not created');far.dispose();
 });

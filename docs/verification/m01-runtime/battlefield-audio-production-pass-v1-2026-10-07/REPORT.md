@@ -85,7 +85,9 @@ Um Verifier e um Reviewer independentes analisaram a primeira versão. Confirmad
 - Stuka alto demais na mistura (RMS > bomba a 80 m) → loop do avião baixado (pico 0,234 → 0,074); granada mais presente; impactos +4 dB.
 - qualidade: a reverberação é criada com a qualidade do renderer (baixa → resposta de 1,2 s).
 
-Aceite sem alteração (documentado): a bancada francesa usa o mesmo motor e por isso também ganhou camadas/reverberação (continua seleccionável e funcional; `explosion` legacy recebe distância em unidades, como antes). `channel()` sem fontes é pré-existente e não tem chamadores.
+Segunda passagem do Verifier sobre `57b00f1`: todas as correcções confirmadas (stress de 6000 passos com nós criados = descartados, contador de fontes sem deriva, costura 0,328 → 0,005, Doppler na volta 0,992–1,015, ducking recupera sempre). Dois casos-limite baixos corrigidos a seguir, com testes: fonte que falha `start()` é cortada em vez de ficar a desvanecer; tiros juntos numa rajada também respeitam o orçamento de fontes.
+
+Aceite sem alteração (documentado): a bancada francesa usa o mesmo motor e por isso também ganhou camadas/reverberação (continua seleccionável e funcional; `explosion` legacy recebe distância em unidades, como antes). `channel()` sem fontes é pré-existente e não tem chamadores. A resposta da reverberação é criada uma vez com a qualidade inicial do renderer (baixa por omissão): mudar depois para alta só altera envios e detalhe, não o comprimento da resposta.
 
 ## Limites honestos
 - **Nenhum playtest de escuta humano** foi feito nesta sessão; as métricas provam forma e identidade do sinal, não gosto ou mistura final. Os WAV existem para essa escuta.

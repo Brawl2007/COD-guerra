@@ -231,7 +231,7 @@ export class AudioManager {
       else{const length=src.buffer?.duration??2,offset=audioVariation(`${key}:${g.layer}:${g.at}`,0,Math.max(0,length-dur-.01));
         if(dur>length-.05)src.loop=true;src.start(t,src.loop?0:offset);}
       src.stop(t+dur+.03);
-    }catch{this._release(voice,true);return false;}
+    }catch{this._release(voice,true,false);return false;}
     return true;
   }
   _playPlan(grains,{kind,category='fx',priority=AUDIO_PRIORITY.impact,pan=0,distance=0,front=1,volume=1,key='',filter=null}={}){
@@ -306,6 +306,7 @@ export class AudioManager {
     if(n===1&&p.family==='mg'&&source&&this.ctx){
       const now=this.ctx.currentTime,b=this.bursts.get(source);
       if(b&&!b.voice.closed&&now-b.at<=step*1.9+.05){
+        if(this.liveSources>=(SOURCE_BUDGET[this.quality]??SOURCE_BUDGET.high)&&pr<AUDIO_PRIORITY.explosion){this.budgetDropped++;return b.voice;}
         b.round++;b.at=now;const grains=planWeaponShot(id,distance,{key:b.key,round:b.round,detail:this.detail});
         for(const g of grains)if(b.voice.closed||!this._grain(b.voice,g,now,`${b.key}:${b.round}`))break;
         return b.voice.closed?null:b.voice;
@@ -408,7 +409,7 @@ export class AudioManager {
       if(f)src.connect(f);(f??src).connect(g);
       if(!this._attach(voice,src,f?[g,f]:[g])){this._release(voice,true);return null;}
       voice.layers.set(layer.name,{source:src,gain:g,freq:layer.freq??null,rate:layer.src==='osc'?null:layer.rate??1});
-      try{src.start(this.ctx.currentTime,layer.src==='osc'?undefined:audioVariation(`${key}:${layer.name}`,0,1.5));}catch{this._release(voice,true);return null;}
+      try{src.start(this.ctx.currentTime,layer.src==='osc'?undefined:audioVariation(`${key}:${layer.name}`,0,1.5));}catch{this._release(voice,true,false);return null;}
     }
     this.loops.set(key,voice);return voice;
   }
