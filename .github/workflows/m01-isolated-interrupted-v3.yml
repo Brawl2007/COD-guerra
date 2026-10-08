@@ -1,0 +1,31 @@
+name: M01 isolated interrupted Node files V3
+on:
+  push:
+    branches:
+      - codex/m01-v3-isolated-cancelled-tests
+permissions:
+  contents: read
+jobs:
+  isolated:
+    name: Run ${{ matrix.name }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: train-consist
+            file: tests/m01-train-consist-polish.test.js
+          - name: wz29-viewmodel
+            file: tests/m01-wz29-viewmodel.test.js
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Run interrupted test independently
+        run: node --test "${{ matrix.file }}"
