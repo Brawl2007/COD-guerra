@@ -1,0 +1,1641 @@
+{
+ "errors": [],
+ "shots": [
+  {
+   "name": "brick-portal",
+   "label": "tijolo: face leste do portal ferroviário (tiros do jogador) e torre (tiros alemães do dique)",
+   "results": [
+    {
+     "point": {
+      "x": -1.5,
+      "y": 0.9,
+      "z": -5
+     },
+     "material": "stone"
+    },
+    {
+     "point": {
+      "x": -1.5,
+      "y": 1.5,
+      "z": -5.8
+     },
+     "material": "stone"
+    },
+    {
+     "point": {
+      "x": -1.5,
+      "y": 2.2,
+      "z": -4.9
+     },
+     "material": "stone"
+    },
+    {
+     "point": {
+      "x": -1.5,
+      "y": 0.6,
+      "z": -6.3
+     },
+     "material": "stone"
+    },
+    {
+     "point": {
+      "x": -1.5,
+      "y": 2.6,
+      "z": -5.5
+     },
+     "material": "stone"
+    },
+    {
+     "point": {
+      "x": -1.5,
+      "y": 1.2,
+      "z": -4.6
+     },
+     "material": "stone"
+    },
+    {
+     "point": {
+      "x": -1.5,
+      "y": 1.4,
+      "z": -8.2
+     },
+     "material": "stone"
+    },
+    {
+     "point": {
+      "x": -1.5,
+      "y": 2.4,
+      "z": -8.899999999999999
+     },
+     "material": "stone"
+    },
+    {
+     "point": {
+      "x": -1.5,
+      "y": 0.8,
+      "z": -7.399999999999999
+     },
+     "material": "stone"
+    }
+   ],
+   "draw": {
+    "calls": 256,
+    "triangles": 488813
+   },
+   "decals": {
+    "version": "m01-environmental-damage-decal-pass-v1",
+    "marks": 9,
+    "visibleMarks": 9,
+    "byKind": {
+     "brick": 9
+    },
+    "spall": 8,
+    "residueBlasts": [],
+    "residueTriangles": 0,
+    "debris": 8,
+    "embers": 0,
+    "drawCalls": 2,
+    "counts": {
+     "spawned": 9,
+     "placed": 9,
+     "noSurface": 0,
+     "outOfRange": 0,
+     "dedup": 0,
+     "clustered": 0,
+     "evicted": 0,
+     "expired": 0,
+     "invalidated": 0,
+     "errors": 0
+    },
+    "lastError": null,
+    "limits": {
+     "quality": {
+      "low": {
+       "marks": 48,
+       "debris": 64,
+       "embers": 0,
+       "range": 55,
+       "cluster": 4
+      },
+      "medium": {
+       "marks": 96,
+       "debris": 128,
+       "embers": 24,
+       "range": 90,
+       "cluster": 5
+      },
+      "high": {
+       "marks": 144,
+       "debris": 192,
+       "embers": 40,
+       "range": 130,
+       "cluster": 6
+      }
+     },
+     "blasts": 16,
+     "residueTriangles": 6000,
+     "residueDebrisShare": 0.7,
+     "drawCalls": 4,
+     "textures": 2,
+     "pxRange": 450,
+     "clusterRadius": 0.6,
+     "earthClusterRadius": 1.1
+    },
+    "atlasReady": true,
+    "atlasError": null,
+    "atlasChecksum": 726099253
+   }
+  },
+  {
+   "name": "stone-abutment",
+   "label": "pedra: tampo do encontro oeste e lancil da ponte rodoviária",
+   "results": [
+    {
+     "point": {
+      "x": 9.038460078848686,
+      "y": -0.7757688349837533,
+      "z": 33.51923003942434
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": 9.77852094811692,
+      "y": -0.5324568093695907,
+      "z": 34.889389099694085
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": 6.9547180733931855,
+      "y": -0.6905845676661098,
+      "z": 31.554009638761222
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": 8.113873214666706,
+      "y": -0.6943390473773792,
+      "z": 36.56582846690201
+     },
+     "material": "earth"
+    }
+   ],
+   "draw": {
+    "calls": 343,
+    "triangles": 556835
+   },
+   "decals": {
+    "version": "m01-environmental-damage-decal-pass-v1",
+    "marks": 4,
+    "visibleMarks": 4,
+    "byKind": {
+     "stone": 4
+    },
+    "spall": 8,
+    "residueBlasts": [],
+    "residueTriangles": 0,
+    "debris": 8,
+    "embers": 0,
+    "drawCalls": 2,
+    "counts": {
+     "spawned": 4,
+     "placed": 4,
+     "noSurface": 0,
+     "outOfRange": 0,
+     "dedup": 0,
+     "clustered": 0,
+     "evicted": 0,
+     "expired": 0,
+     "invalidated": 0,
+     "errors": 0
+    },
+    "lastError": null,
+    "limits": {
+     "quality": {
+      "low": {
+       "marks": 48,
+       "debris": 64,
+       "embers": 0,
+       "range": 55,
+       "cluster": 4
+      },
+      "medium": {
+       "marks": 96,
+       "debris": 128,
+       "embers": 24,
+       "range": 90,
+       "cluster": 5
+      },
+      "high": {
+       "marks": 144,
+       "debris": 192,
+       "embers": 40,
+       "range": 130,
+       "cluster": 6
+      }
+     },
+     "blasts": 16,
+     "residueTriangles": 6000,
+     "residueDebrisShare": 0.7,
+     "drawCalls": 4,
+     "textures": 2,
+     "pxRange": 450,
+     "clusterRadius": 0.6,
+     "earthClusterRadius": 1.1
+    },
+    "atlasReady": true,
+    "atlasError": null,
+    "atlasChecksum": 726099253
+   }
+  },
+  {
+   "name": "wood-hut",
+   "label": "madeira: parede norte do barracão (veio vertical)",
+   "results": [
+    {
+     "point": {
+      "x": -263.4,
+      "y": -1.6,
+      "z": 14
+     },
+     "material": "wood"
+    },
+    {
+     "point": {
+      "x": -261.8,
+      "y": -0.9,
+      "z": 14
+     },
+     "material": "wood"
+    },
+    {
+     "point": {
+      "x": -260.2,
+      "y": -2.1,
+      "z": 14
+     },
+     "material": "wood"
+    },
+    {
+     "point": {
+      "x": -258.6,
+      "y": -0.5,
+      "z": 14
+     },
+     "material": "wood"
+    },
+    {
+     "point": {
+      "x": -257,
+      "y": -1.3,
+      "z": 14
+     },
+     "material": "wood"
+    }
+   ],
+   "draw": {
+    "calls": 122,
+    "triangles": 472688
+   },
+   "decals": {
+    "version": "m01-environmental-damage-decal-pass-v1",
+    "marks": 5,
+    "visibleMarks": 5,
+    "byKind": {
+     "wood": 5
+    },
+    "spall": 1,
+    "residueBlasts": [],
+    "residueTriangles": 0,
+    "debris": 1,
+    "embers": 0,
+    "drawCalls": 2,
+    "counts": {
+     "spawned": 5,
+     "placed": 5,
+     "noSurface": 0,
+     "outOfRange": 0,
+     "dedup": 0,
+     "clustered": 0,
+     "evicted": 0,
+     "expired": 0,
+     "invalidated": 0,
+     "errors": 0
+    },
+    "lastError": null,
+    "limits": {
+     "quality": {
+      "low": {
+       "marks": 48,
+       "debris": 64,
+       "embers": 0,
+       "range": 55,
+       "cluster": 4
+      },
+      "medium": {
+       "marks": 96,
+       "debris": 128,
+       "embers": 24,
+       "range": 90,
+       "cluster": 5
+      },
+      "high": {
+       "marks": 144,
+       "debris": 192,
+       "embers": 40,
+       "range": 130,
+       "cluster": 6
+      }
+     },
+     "blasts": 16,
+     "residueTriangles": 6000,
+     "residueDebrisShare": 0.7,
+     "drawCalls": 4,
+     "textures": 2,
+     "pxRange": 450,
+     "clusterRadius": 0.6,
+     "earthClusterRadius": 1.1
+    },
+    "atlasReady": true,
+    "atlasError": null,
+    "atlasChecksum": 726099253
+   }
+  },
+  {
+   "name": "tree-bark",
+   "label": "casca: tronco da árvore m01_tree_0 (polígono do tronco perto)",
+   "results": [
+    {
+     "point": {
+      "x": -36,
+      "y": 0.2999999999999998,
+      "z": -8.75
+     },
+     "material": "wood"
+    },
+    {
+     "point": {
+      "x": -35.90694444444444,
+      "y": 0.951388888888889,
+      "z": -8.75
+     },
+     "material": "wood"
+    },
+    {
+     "point": {
+      "x": -36.09305555555556,
+      "y": -0.2583333333333335,
+      "z": -8.75
+     },
+     "material": "wood"
+    }
+   ],
+   "draw": {
+    "calls": 229,
+    "triangles": 499148
+   },
+   "decals": {
+    "version": "m01-environmental-damage-decal-pass-v1",
+    "marks": 3,
+    "visibleMarks": 3,
+    "byKind": {
+     "bark": 3
+    },
+    "spall": 1,
+    "residueBlasts": [],
+    "residueTriangles": 0,
+    "debris": 1,
+    "embers": 0,
+    "drawCalls": 2,
+    "counts": {
+     "spawned": 3,
+     "placed": 3,
+     "noSurface": 0,
+     "outOfRange": 0,
+     "dedup": 0,
+     "clustered": 0,
+     "evicted": 0,
+     "expired": 0,
+     "invalidated": 0,
+     "errors": 0
+    },
+    "lastError": null,
+    "limits": {
+     "quality": {
+      "low": {
+       "marks": 48,
+       "debris": 64,
+       "embers": 0,
+       "range": 55,
+       "cluster": 4
+      },
+      "medium": {
+       "marks": 96,
+       "debris": 128,
+       "embers": 24,
+       "range": 90,
+       "cluster": 5
+      },
+      "high": {
+       "marks": 144,
+       "debris": 192,
+       "embers": 40,
+       "range": 130,
+       "cluster": 6
+      }
+     },
+     "blasts": 16,
+     "residueTriangles": 6000,
+     "residueDebrisShare": 0.7,
+     "drawCalls": 4,
+     "textures": 2,
+     "pxRange": 450,
+     "clusterRadius": 0.6,
+     "earthClusterRadius": 1.1
+    },
+    "atlasReady": true,
+    "atlasError": null,
+    "atlasChecksum": 726099253
+   }
+  },
+  {
+   "name": "earth-slope",
+   "label": "terra: tiros alemães (portões de Lisewo, entre as pontes) na encosta sul do aterro",
+   "results": [
+    {
+     "point": {
+      "x": -112.49923829851126,
+      "y": -3.047727704935315,
+      "z": 17.497432811132686
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": -113.99923845484666,
+      "y": -3.0477778647708704,
+      "z": 18.59884624659311
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": -111.49924151358263,
+      "y": -3.0476941863358693,
+      "z": 19.199614590870542
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": -115.09923482884669,
+      "y": -3.047814755104682,
+      "z": 17.19705429685089
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": -115.79923697194441,
+      "y": -3.047838118393219,
+      "z": 19.600127997692475
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": -113.29923920083185,
+      "y": -3.047754433781004,
+      "z": 20.401154444969837
+     },
+     "material": "earth"
+    }
+   ],
+   "draw": {
+    "calls": 277,
+    "triangles": 523896
+   },
+   "decals": {
+    "version": "m01-environmental-damage-decal-pass-v1",
+    "marks": 6,
+    "visibleMarks": 6,
+    "byKind": {
+     "earth": 6
+    },
+    "spall": 12,
+    "residueBlasts": [],
+    "residueTriangles": 0,
+    "debris": 12,
+    "embers": 0,
+    "drawCalls": 2,
+    "counts": {
+     "spawned": 6,
+     "placed": 6,
+     "noSurface": 0,
+     "outOfRange": 0,
+     "dedup": 0,
+     "clustered": 0,
+     "evicted": 0,
+     "expired": 0,
+     "invalidated": 0,
+     "errors": 0
+    },
+    "lastError": null,
+    "limits": {
+     "quality": {
+      "low": {
+       "marks": 48,
+       "debris": 64,
+       "embers": 0,
+       "range": 55,
+       "cluster": 4
+      },
+      "medium": {
+       "marks": 96,
+       "debris": 128,
+       "embers": 24,
+       "range": 90,
+       "cluster": 5
+      },
+      "high": {
+       "marks": 144,
+       "debris": 192,
+       "embers": 40,
+       "range": 130,
+       "cluster": 6
+      }
+     },
+     "blasts": 16,
+     "residueTriangles": 6000,
+     "residueDebrisShare": 0.7,
+     "drawCalls": 4,
+     "textures": 2,
+     "pxRange": 450,
+     "clusterRadius": 0.6,
+     "earthClusterRadius": 1.1
+    },
+    "atlasReady": true,
+    "atlasError": null,
+    "atlasChecksum": 726099253
+   }
+  },
+  {
+   "name": "earth-cover",
+   "label": "terra: face do parapeito cv_sandbag_mid_1 (tiros alemães)",
+   "results": [
+    {
+     "point": {
+      "x": -24.55,
+      "y": -2.4000000000000012,
+      "z": 17.6
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": -24.55,
+      "y": -2.2000000000000015,
+      "z": 18.4
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": -24.55,
+      "y": -2.6000000000000014,
+      "z": 19
+     },
+     "material": "earth"
+    }
+   ],
+   "draw": {
+    "calls": 358,
+    "triangles": 550088
+   },
+   "decals": {
+    "version": "m01-environmental-damage-decal-pass-v1",
+    "marks": 3,
+    "visibleMarks": 3,
+    "byKind": {
+     "earth": 3
+    },
+    "spall": 6,
+    "residueBlasts": [],
+    "residueTriangles": 0,
+    "debris": 6,
+    "embers": 0,
+    "drawCalls": 2,
+    "counts": {
+     "spawned": 3,
+     "placed": 3,
+     "noSurface": 0,
+     "outOfRange": 0,
+     "dedup": 0,
+     "clustered": 0,
+     "evicted": 0,
+     "expired": 0,
+     "invalidated": 0,
+     "errors": 0
+    },
+    "lastError": null,
+    "limits": {
+     "quality": {
+      "low": {
+       "marks": 48,
+       "debris": 64,
+       "embers": 0,
+       "range": 55,
+       "cluster": 4
+      },
+      "medium": {
+       "marks": 96,
+       "debris": 128,
+       "embers": 24,
+       "range": 90,
+       "cluster": 5
+      },
+      "high": {
+       "marks": 144,
+       "debris": 192,
+       "embers": 40,
+       "range": 130,
+       "cluster": 6
+      }
+     },
+     "blasts": 16,
+     "residueTriangles": 6000,
+     "residueDebrisShare": 0.7,
+     "drawCalls": 4,
+     "textures": 2,
+     "pxRange": 450,
+     "clusterRadius": 0.6,
+     "earthClusterRadius": 1.1
+    },
+    "atlasReady": true,
+    "atlasError": null,
+    "atlasChecksum": 726099253
+   }
+  },
+  {
+   "name": "railway",
+   "label": "via férrea: carril, travessa e balastro (tiros do jogador)",
+   "results": [
+    {
+     "point": {
+      "x": -87.57683104874728,
+      "y": -0.17719049227235195,
+      "z": -2.553007631494924
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": -88.57061773371305,
+      "y": -0.0993830744232631,
+      "z": -1.4409479389903446
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": -85.6715232134301,
+      "y": -0.2399643703106047,
+      "z": -0.9461252251326178
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": -90.36110806027898,
+      "y": -0.1945740330764143,
+      "z": -0.8639899289929032
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": -87.85542451905864,
+      "y": -0.24511882411452168,
+      "z": -0.273195913712998
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": -89.87886459728546,
+      "y": -0.06034377055003026,
+      "z": -1.7088572943524998
+     },
+     "material": "earth"
+    }
+   ],
+   "draw": {
+    "calls": 288,
+    "triangles": 546529
+   },
+   "decals": {
+    "version": "m01-environmental-damage-decal-pass-v1",
+    "marks": 6,
+    "visibleMarks": 6,
+    "byKind": {
+     "rail": 3,
+     "sleeper": 2,
+     "ballast": 1
+    },
+    "spall": 3,
+    "residueBlasts": [],
+    "residueTriangles": 0,
+    "debris": 3,
+    "embers": 0,
+    "drawCalls": 2,
+    "counts": {
+     "spawned": 6,
+     "placed": 6,
+     "noSurface": 0,
+     "outOfRange": 0,
+     "dedup": 0,
+     "clustered": 0,
+     "evicted": 0,
+     "expired": 0,
+     "invalidated": 0,
+     "errors": 0
+    },
+    "lastError": null,
+    "limits": {
+     "quality": {
+      "low": {
+       "marks": 48,
+       "debris": 64,
+       "embers": 0,
+       "range": 55,
+       "cluster": 4
+      },
+      "medium": {
+       "marks": 96,
+       "debris": 128,
+       "embers": 24,
+       "range": 90,
+       "cluster": 5
+      },
+      "high": {
+       "marks": 144,
+       "debris": 192,
+       "embers": 40,
+       "range": 130,
+       "cluster": 6
+      }
+     },
+     "blasts": 16,
+     "residueTriangles": 6000,
+     "residueDebrisShare": 0.7,
+     "drawCalls": 4,
+     "textures": 2,
+     "pxRange": 450,
+     "clusterRadius": 0.6,
+     "earthClusterRadius": 1.1
+    },
+    "atlasReady": true,
+    "atlasError": null,
+    "atlasChecksum": 726099253
+   }
+  },
+  {
+   "name": "road-deck",
+   "label": "tabuleiro rodoviário: pavimento e lancis (tiros alemães do tabuleiro leste)",
+   "results": [
+    {
+     "point": {
+      "x": 20.50054390416813,
+      "y": -0.04038658519197776,
+      "z": 39.19941655404832
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": 22.50054348742877,
+      "y": -0.040315768875356886,
+      "z": 41.10219218788388
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": 19.500545198782525,
+      "y": -0.04042202514385222,
+      "z": 40.40116575689113
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": 24.00054048495154,
+      "y": -0.04026260107704718,
+      "z": 39.80029272025672
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": 0.7580407126702582,
+      "y": -0.3942163424013091,
+      "z": 42.81822022566221
+     },
+     "material": "earth"
+    }
+   ],
+   "draw": {
+    "calls": 321,
+    "triangles": 590879
+   },
+   "decals": {
+    "version": "m01-environmental-damage-decal-pass-v1",
+    "marks": 5,
+    "visibleMarks": 5,
+    "byKind": {
+     "road": 4,
+     "earth": 1
+    },
+    "spall": 6,
+    "residueBlasts": [],
+    "residueTriangles": 0,
+    "debris": 6,
+    "embers": 0,
+    "drawCalls": 2,
+    "counts": {
+     "spawned": 5,
+     "placed": 5,
+     "noSurface": 0,
+     "outOfRange": 0,
+     "dedup": 0,
+     "clustered": 0,
+     "evicted": 0,
+     "expired": 0,
+     "invalidated": 0,
+     "errors": 0
+    },
+    "lastError": null,
+    "limits": {
+     "quality": {
+      "low": {
+       "marks": 48,
+       "debris": 64,
+       "embers": 0,
+       "range": 55,
+       "cluster": 4
+      },
+      "medium": {
+       "marks": 96,
+       "debris": 128,
+       "embers": 24,
+       "range": 90,
+       "cluster": 5
+      },
+      "high": {
+       "marks": 144,
+       "debris": 192,
+       "embers": 40,
+       "range": 130,
+       "cluster": 6
+      }
+     },
+     "blasts": 16,
+     "residueTriangles": 6000,
+     "residueDebrisShare": 0.7,
+     "drawCalls": 4,
+     "textures": 2,
+     "pxRange": 450,
+     "clusterRadius": 0.6,
+     "earthClusterRadius": 1.1
+    },
+    "atlasReady": true,
+    "atlasError": null,
+    "atlasChecksum": 726099253
+   }
+  },
+  {
+   "name": "metal-joint",
+   "label": "metal: junta de dilatação ferroviária entre vãos 1 e 2",
+   "results": [
+    {
+     "point": {
+      "x": 140.86535636460763,
+      "y": -0.1956883174247499,
+      "z": -2.383525501339832
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": 142.13666408200308,
+      "y": -0.32683597755001315,
+      "z": -1.0003548848932886
+     },
+     "material": "earth"
+    },
+    {
+     "point": {
+      "x": 141.8301234635656,
+      "y": -0.3928842977319913,
+      "z": -3.4593453942670656
+     },
+     "material": "earth"
+    }
+   ],
+   "draw": {
+    "calls": 235,
+    "triangles": 507769
+   },
+   "decals": {
+    "version": "m01-environmental-damage-decal-pass-v1",
+    "marks": 3,
+    "visibleMarks": 3,
+    "byKind": {
+     "metal": 3
+    },
+    "spall": 0,
+    "residueBlasts": [],
+    "residueTriangles": 0,
+    "debris": 0,
+    "embers": 0,
+    "drawCalls": 1,
+    "counts": {
+     "spawned": 3,
+     "placed": 3,
+     "noSurface": 0,
+     "outOfRange": 0,
+     "dedup": 0,
+     "clustered": 0,
+     "evicted": 0,
+     "expired": 0,
+     "invalidated": 0,
+     "errors": 0
+    },
+    "lastError": null,
+    "limits": {
+     "quality": {
+      "low": {
+       "marks": 48,
+       "debris": 64,
+       "embers": 0,
+       "range": 55,
+       "cluster": 4
+      },
+      "medium": {
+       "marks": 96,
+       "debris": 128,
+       "embers": 24,
+       "range": 90,
+       "cluster": 5
+      },
+      "high": {
+       "marks": 144,
+       "debris": 192,
+       "embers": 40,
+       "range": 130,
+       "cluster": 6
+      }
+     },
+     "blasts": 16,
+     "residueTriangles": 6000,
+     "residueDebrisShare": 0.7,
+     "drawCalls": 4,
+     "textures": 2,
+     "pxRange": 450,
+     "clusterRadius": 0.6,
+     "earthClusterRadius": 1.1
+    },
+    "atlasReady": true,
+    "atlasError": null,
+    "atlasChecksum": 726099253
+   }
+  },
+  {
+   "name": "grenade-terrain",
+   "label": "granada no terreno: queimado, terra lançada, detritos e brasas (4 s depois)",
+   "results": [],
+   "draw": {
+    "calls": 279,
+    "triangles": 525064
+   },
+   "decals": {
+    "version": "m01-environmental-damage-decal-pass-v1",
+    "marks": 0,
+    "visibleMarks": 0,
+    "byKind": {},
+    "spall": 0,
+    "residueBlasts": [
+     {
+      "id": "m01_grenade_0",
+      "kind": "grenade",
+      "polygons": 3,
+      "debris": 12,
+      "embers": 4
+     }
+    ],
+    "residueTriangles": 6,
+    "debris": 12,
+    "embers": 4,
+    "drawCalls": 3,
+    "counts": {
+     "spawned": 0,
+     "placed": 0,
+     "noSurface": 0,
+     "outOfRange": 0,
+     "dedup": 0,
+     "clustered": 0,
+     "evicted": 0,
+     "expired": 0,
+     "invalidated": 0,
+     "errors": 0
+    },
+    "lastError": null,
+    "limits": {
+     "quality": {
+      "low": {
+       "marks": 48,
+       "debris": 64,
+       "embers": 0,
+       "range": 55,
+       "cluster": 4
+      },
+      "medium": {
+       "marks": 96,
+       "debris": 128,
+       "embers": 24,
+       "range": 90,
+       "cluster": 5
+      },
+      "high": {
+       "marks": 144,
+       "debris": 192,
+       "embers": 40,
+       "range": 130,
+       "cluster": 6
+      }
+     },
+     "blasts": 16,
+     "residueTriangles": 6000,
+     "residueDebrisShare": 0.7,
+     "drawCalls": 4,
+     "textures": 2,
+     "pxRange": 450,
+     "clusterRadius": 0.6,
+     "earthClusterRadius": 1.1
+    },
+    "atlasReady": true,
+    "atlasError": null,
+    "atlasChecksum": 726099253
+   }
+  },
+  {
+   "name": "grenade-road-deck",
+   "label": "granada no tabuleiro rodoviário (só o tabuleiro, nunca o chão por baixo; 4 s depois)",
+   "results": [],
+   "draw": {
+    "calls": 324,
+    "triangles": 591793
+   },
+   "decals": {
+    "version": "m01-environmental-damage-decal-pass-v1",
+    "marks": 0,
+    "visibleMarks": 0,
+    "byKind": {},
+    "spall": 0,
+    "residueBlasts": [
+     {
+      "id": "m01_grenade_0",
+      "kind": "grenade",
+      "polygons": 1,
+      "debris": 12,
+      "embers": 4
+     }
+    ],
+    "residueTriangles": 2,
+    "debris": 12,
+    "embers": 4,
+    "drawCalls": 3,
+    "counts": {
+     "spawned": 0,
+     "placed": 0,
+     "noSurface": 0,
+     "outOfRange": 0,
+     "dedup": 0,
+     "clustered": 0,
+     "evicted": 0,
+     "expired": 0,
+     "invalidated": 0,
+     "errors": 0
+    },
+    "lastError": null,
+    "limits": {
+     "quality": {
+      "low": {
+       "marks": 48,
+       "debris": 64,
+       "embers": 0,
+       "range": 55,
+       "cluster": 4
+      },
+      "medium": {
+       "marks": 96,
+       "debris": 128,
+       "embers": 24,
+       "range": 90,
+       "cluster": 5
+      },
+      "high": {
+       "marks": 144,
+       "debris": 192,
+       "embers": 40,
+       "range": 130,
+       "cluster": 6
+      }
+     },
+     "blasts": 16,
+     "residueTriangles": 6000,
+     "residueDebrisShare": 0.7,
+     "drawCalls": 4,
+     "textures": 2,
+     "pxRange": 450,
+     "clusterRadius": 0.6,
+     "earthClusterRadius": 1.1
+    },
+    "atlasReady": true,
+    "atlasError": null,
+    "atlasChecksum": 726099253
+   }
+  },
+  {
+   "name": "repair-crater",
+   "label": "cratera da bomba no ponto de reparo 1 (evento real nowicki_lost)",
+   "results": [],
+   "draw": {
+    "calls": 385,
+    "triangles": 641367
+   },
+   "decals": {
+    "version": "m01-environmental-damage-decal-pass-v1",
+    "marks": 0,
+    "visibleMarks": 0,
+    "byKind": {},
+    "spall": 0,
+    "residueBlasts": [
+     {
+      "id": "repair_crater",
+      "kind": "bomb",
+      "polygons": 30,
+      "debris": 21,
+      "embers": 9
+     }
+    ],
+    "residueTriangles": 42,
+    "debris": 21,
+    "embers": 9,
+    "drawCalls": 3,
+    "counts": {
+     "spawned": 0,
+     "placed": 0,
+     "noSurface": 0,
+     "outOfRange": 0,
+     "dedup": 0,
+     "clustered": 0,
+     "evicted": 0,
+     "expired": 0,
+     "invalidated": 0,
+     "errors": 0
+    },
+    "lastError": null,
+    "limits": {
+     "quality": {
+      "low": {
+       "marks": 48,
+       "debris": 64,
+       "embers": 0,
+       "range": 55,
+       "cluster": 4
+      },
+      "medium": {
+       "marks": 96,
+       "debris": 128,
+       "embers": 24,
+       "range": 90,
+       "cluster": 5
+      },
+      "high": {
+       "marks": 144,
+       "debris": 192,
+       "embers": 40,
+       "range": 130,
+       "cluster": 6
+      }
+     },
+     "blasts": 16,
+     "residueTriangles": 6000,
+     "residueDebrisShare": 0.7,
+     "drawCalls": 4,
+     "textures": 2,
+     "pxRange": 450,
+     "clusterRadius": 0.6,
+     "earthClusterRadius": 1.1
+    },
+    "atlasReady": true,
+    "atlasError": null,
+    "atlasChecksum": 726099253
+   }
+  },
+  {
+   "name": "repair-crater-track",
+   "label": "bomba junto à via (evento real nowicki_lost com o jogador a sul): cratera no talude e travessas queimadas",
+   "results": [],
+   "draw": {
+    "calls": 356,
+    "triangles": 605287
+   },
+   "decals": {
+    "version": "m01-environmental-damage-decal-pass-v1",
+    "marks": 0,
+    "visibleMarks": 0,
+    "byKind": {},
+    "spall": 0,
+    "residueBlasts": [
+     {
+      "id": "repair_crater",
+      "kind": "bomb",
+      "polygons": 41,
+      "debris": 21,
+      "embers": 9
+     }
+    ],
+    "residueTriangles": 64,
+    "debris": 21,
+    "embers": 9,
+    "drawCalls": 3,
+    "counts": {
+     "spawned": 0,
+     "placed": 0,
+     "noSurface": 0,
+     "outOfRange": 0,
+     "dedup": 0,
+     "clustered": 0,
+     "evicted": 0,
+     "expired": 0,
+     "invalidated": 0,
+     "errors": 0
+    },
+    "lastError": null,
+    "limits": {
+     "quality": {
+      "low": {
+       "marks": 48,
+       "debris": 64,
+       "embers": 0,
+       "range": 55,
+       "cluster": 4
+      },
+      "medium": {
+       "marks": 96,
+       "debris": 128,
+       "embers": 24,
+       "range": 90,
+       "cluster": 5
+      },
+      "high": {
+       "marks": 144,
+       "debris": 192,
+       "embers": 40,
+       "range": 130,
+       "cluster": 6
+      }
+     },
+     "blasts": 16,
+     "residueTriangles": 6000,
+     "residueDebrisShare": 0.7,
+     "drawCalls": 4,
+     "textures": 2,
+     "pxRange": 450,
+     "clusterRadius": 0.6,
+     "earthClusterRadius": 1.1
+    },
+    "atlasReady": true,
+    "atlasError": null,
+    "atlasChecksum": 726099253
+   }
+  },
+  {
+   "name": "station-bomb",
+   "label": "bomba na estação (evento real bombing_0434): poeira clara de alvenaria e entulho na base da fachada norte",
+   "results": [],
+   "draw": {
+    "calls": 120,
+    "triangles": 463922
+   },
+   "decals": {
+    "version": "m01-environmental-damage-decal-pass-v1",
+    "marks": 0,
+    "visibleMarks": 0,
+    "byKind": {},
+    "spall": 0,
+    "residueBlasts": [
+     {
+      "id": "station_bomb",
+      "kind": "bomb",
+      "polygons": 14,
+      "debris": 7,
+      "embers": 0
+     }
+    ],
+    "residueTriangles": 25,
+    "debris": 7,
+    "embers": 0,
+    "drawCalls": 2,
+    "counts": {
+     "spawned": 0,
+     "placed": 0,
+     "noSurface": 0,
+     "outOfRange": 0,
+     "dedup": 0,
+     "clustered": 0,
+     "evicted": 0,
+     "expired": 0,
+     "invalidated": 0,
+     "errors": 0
+    },
+    "lastError": null,
+    "limits": {
+     "quality": {
+      "low": {
+       "marks": 48,
+       "debris": 64,
+       "embers": 0,
+       "range": 55,
+       "cluster": 4
+      },
+      "medium": {
+       "marks": 96,
+       "debris": 128,
+       "embers": 24,
+       "range": 90,
+       "cluster": 5
+      },
+      "high": {
+       "marks": 144,
+       "debris": 192,
+       "embers": 40,
+       "range": 130,
+       "cluster": 6
+      }
+     },
+     "blasts": 16,
+     "residueTriangles": 6000,
+     "residueDebrisShare": 0.7,
+     "drawCalls": 4,
+     "textures": 2,
+     "pxRange": 450,
+     "clusterRadius": 0.6,
+     "earthClusterRadius": 1.1
+    },
+    "atlasReady": true,
+    "atlasError": null,
+    "atlasChecksum": 726099253
+   }
+  },
+  {
+   "name": "west-demolition",
+   "label": "demolição oeste (evento real): via queimada e entulho no encontro ferroviário danificado",
+   "results": [],
+   "draw": {
+    "calls": 331,
+    "triangles": 525096
+   },
+   "decals": {
+    "version": "m01-environmental-damage-decal-pass-v1",
+    "marks": 0,
+    "visibleMarks": 0,
+    "byKind": {},
+    "spall": 0,
+    "residueBlasts": [
+     {
+      "id": "west_demolition",
+      "kind": "demolition",
+      "polygons": 414,
+      "debris": 30,
+      "embers": 10
+     }
+    ],
+    "residueTriangles": 572,
+    "debris": 30,
+    "embers": 10,
+    "drawCalls": 3,
+    "counts": {
+     "spawned": 0,
+     "placed": 0,
+     "noSurface": 0,
+     "outOfRange": 0,
+     "dedup": 0,
+     "clustered": 0,
+     "evicted": 0,
+     "expired": 0,
+     "invalidated": 0,
+     "errors": 0
+    },
+    "lastError": null,
+    "limits": {
+     "quality": {
+      "low": {
+       "marks": 48,
+       "debris": 64,
+       "embers": 0,
+       "range": 55,
+       "cluster": 4
+      },
+      "medium": {
+       "marks": 96,
+       "debris": 128,
+       "embers": 24,
+       "range": 90,
+       "cluster": 5
+      },
+      "high": {
+       "marks": 144,
+       "debris": 192,
+       "embers": 40,
+       "range": 130,
+       "cluster": 6
+      }
+     },
+     "blasts": 16,
+     "residueTriangles": 6000,
+     "residueDebrisShare": 0.7,
+     "drawCalls": 4,
+     "textures": 2,
+     "pxRange": 450,
+     "clusterRadius": 0.6,
+     "earthClusterRadius": 1.1
+    },
+    "atlasReady": true,
+    "atlasError": null,
+    "atlasChecksum": 726099253
+   }
+  },
+  {
+   "name": "east-demolition",
+   "label": "demolição leste (evento real), vista aérea de verificação a 30 m: queimados à volta dos pilares 6",
+   "results": [],
+   "draw": {
+    "calls": 133,
+    "triangles": 438643
+   },
+   "decals": {
+    "version": "m01-environmental-damage-decal-pass-v1",
+    "marks": 0,
+    "visibleMarks": 0,
+    "byKind": {},
+    "spall": 0,
+    "residueBlasts": [
+     {
+      "id": "east_demolition",
+      "kind": "demolition",
+      "polygons": 359,
+      "debris": 30,
+      "embers": 10
+     }
+    ],
+    "residueTriangles": 506,
+    "debris": 30,
+    "embers": 10,
+    "drawCalls": 3,
+    "counts": {
+     "spawned": 0,
+     "placed": 0,
+     "noSurface": 0,
+     "outOfRange": 0,
+     "dedup": 0,
+     "clustered": 0,
+     "evicted": 0,
+     "expired": 0,
+     "invalidated": 0,
+     "errors": 0
+    },
+    "lastError": null,
+    "limits": {
+     "quality": {
+      "low": {
+       "marks": 48,
+       "debris": 64,
+       "embers": 0,
+       "range": 55,
+       "cluster": 4
+      },
+      "medium": {
+       "marks": 96,
+       "debris": 128,
+       "embers": 24,
+       "range": 90,
+       "cluster": 5
+      },
+      "high": {
+       "marks": 144,
+       "debris": 192,
+       "embers": 40,
+       "range": 130,
+       "cluster": 6
+      }
+     },
+     "blasts": 16,
+     "residueTriangles": 6000,
+     "residueDebrisShare": 0.7,
+     "drawCalls": 4,
+     "textures": 2,
+     "pxRange": 450,
+     "clusterRadius": 0.6,
+     "earthClusterRadius": 1.1
+    },
+    "atlasReady": true,
+    "atlasError": null,
+    "atlasChecksum": 726099253
+   }
+  },
+  {
+   "name": "east-demolition-deck-end",
+   "label": "demolição leste: fuligem na ponta do vão 5 (tabuleiro rodoviário)",
+   "results": [],
+   "draw": {
+    "calls": 161,
+    "triangles": 456189
+   },
+   "decals": {
+    "version": "m01-environmental-damage-decal-pass-v1",
+    "marks": 0,
+    "visibleMarks": 0,
+    "byKind": {},
+    "spall": 0,
+    "residueBlasts": [
+     {
+      "id": "east_demolition",
+      "kind": "demolition",
+      "polygons": 359,
+      "debris": 30,
+      "embers": 10
+     }
+    ],
+    "residueTriangles": 506,
+    "debris": 30,
+    "embers": 1,
+    "drawCalls": 3,
+    "counts": {
+     "spawned": 0,
+     "placed": 0,
+     "noSurface": 0,
+     "outOfRange": 0,
+     "dedup": 0,
+     "clustered": 0,
+     "evicted": 0,
+     "expired": 0,
+     "invalidated": 0,
+     "errors": 0
+    },
+    "lastError": null,
+    "limits": {
+     "quality": {
+      "low": {
+       "marks": 48,
+       "debris": 64,
+       "embers": 0,
+       "range": 55,
+       "cluster": 4
+      },
+      "medium": {
+       "marks": 96,
+       "debris": 128,
+       "embers": 24,
+       "range": 90,
+       "cluster": 5
+      },
+      "high": {
+       "marks": 144,
+       "debris": 192,
+       "embers": 40,
+       "range": 130,
+       "cluster": 6
+      }
+     },
+     "blasts": 16,
+     "residueTriangles": 6000,
+     "residueDebrisShare": 0.7,
+     "drawCalls": 4,
+     "textures": 2,
+     "pxRange": 450,
+     "clusterRadius": 0.6,
+     "earthClusterRadius": 1.1
+    },
+    "atlasReady": true,
+    "atlasError": null,
+    "atlasChecksum": 726099253
+   }
+  }
+ ]
+}

@@ -44,3 +44,10 @@
 - Source f6db41d5ead1a21871fb674b396886f9805de16f; viewmodel FX, shell casings, lighting, pose, tests and handoff.
 - Semantically integrated src/render/m01-view.js with existing Station, Bridge, Vegetation, Audio, Ju87 and disposal, without touching gameplay.
 - Combined Node/build/browser pending. main and deploy untouched.
+
+## Integrated — environmental damage decals V1
+
+- Source 61db784b95c352f14d34f3ca0967bdb659a01442: environmental impact marks, debris, burns and save-derived residue with 336/336 source Node tests, 8/8 focused browser on source branch. Source handoff evidence intact.
+- Surgically reconciled surfaceDamage hook with HUD and audio; decals add one visual event subscription, no authoritative damage. Retained Bridge/Station/Vegetation/Weapon/Ju87 cleanup and diagnostics.
+- RUNBOOK appended; two status docs retained, source handoff preserved.
+- Combined tests remain pending; no main/deploy changes.
