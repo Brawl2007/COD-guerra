@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "task_id": "",
+  "accepted_head": "",
+  "status": "ACCEPTED",
+  "obligations": [
+    {
+      "id": "",
+      "kind": "test",
+      "check": "",
+      "reason": ""
+    }
+  ]
+}
