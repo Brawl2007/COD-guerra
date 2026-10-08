@@ -38,3 +38,9 @@
 - Semantic integration preserves **shared first-raid and second-raid audio flight paths** (`m01StukaPosition` / `m01RaidPlanePosition`), preserves Station/bridge/vegetation and adds `ju87HeardAt` audio timing.
 - Guard-test asset whitelist expanded without removing previously approved engine-contract protection. Source licence and RUNBOOK updated without dropping prior lines.
 - Combined CI pending; no deploy or main change.
+
+## Integrated — first-person weapon presentation V1
+
+- Source f6db41d5ead1a21871fb674b396886f9805de16f; viewmodel FX, shell casings, lighting, pose, tests and handoff.
+- Semantically integrated src/render/m01-view.js with existing Station, Bridge, Vegetation, Audio, Ju87 and disposal, without touching gameplay.
+- Combined Node/build/browser pending. main and deploy untouched.

@@ -1,0 +1,123 @@
+
+Running 3 tests using 1 worker
+
+[1/3] tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look
+  1) tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('#objective-status')
+    Expected substring: "atrás de si"
+    Received string:    "Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('#objective-status')
+        6 × locator resolved to <span id="objective-status">Metralhadora nos portões de Lisewo · 1081 m, em f…</span>
+          - unexpected value "Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura"
+
+
+      330 |     document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
+      331 |   },Math.atan2(Math.sin(aim+Math.PI-before.player.angle),Math.cos(aim+Math.PI-before.player.angle))/.0022);
+    > 332 |   await expect(page.locator('#objective-status')).toContainText('atrás de si');
+          |                                                   ^
+      333 |   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+      334 |   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
+      335 |   expect(errors).toEqual([]);expect(failed).toEqual([]);
+        at /tmp/claude-0/-home-user-COD-guerra/1e581609-5301-5005-855c-b268dac9f774/scratchpad/base/tests/browser/m01.spec.js:332:51
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[2/3] tests/browser/m01.spec.js:318:33 › adjustment salvo behind the truss restores its actual origin and follows mouse look
+  2) tests/browser/m01.spec.js:318:33 › adjustment salvo behind the truss restores its actual origin and follows mouse look 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('#objective-status')
+    Expected substring: "atrás de si"
+    Received string:    "Salva do dique norte · 1064 m, em frente · mude de cobertura"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('#objective-status')
+        6 × locator resolved to <span id="objective-status">Salva do dique norte · 1064 m, em frente · mude d…</span>
+          - unexpected value "Salva do dique norte · 1064 m, em frente · mude de cobertura"
+
+
+      330 |     document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
+      331 |   },Math.atan2(Math.sin(aim+Math.PI-before.player.angle),Math.cos(aim+Math.PI-before.player.angle))/.0022);
+    > 332 |   await expect(page.locator('#objective-status')).toContainText('atrás de si');
+          |                                                   ^
+      333 |   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+      334 |   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
+      335 |   expect(errors).toEqual([]);expect(failed).toEqual([]);
+        at /tmp/claude-0/-home-user-COD-guerra/1e581609-5301-5005-855c-b268dac9f774/scratchpad/base/tests/browser/m01.spec.js:332:51
+
+    Error Context: test-results/m01-adjustment-salvo-behin-454be-igin-and-follows-mouse-look/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-adjustment-salvo-behin-454be-igin-and-follows-mouse-look/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-adjustment-salvo-behin-454be-igin-and-follows-mouse-look/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[3/3] tests/browser/m01.spec.js:337:1 › demolition inside the road truss shows the actual bearing while mouse look remains free
+  3) tests/browser/m01.spec.js:337:1 › demolition inside the road truss shows the actual bearing while mouse look remains free 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('#objective-status')
+    Expected substring: "atrás de si"
+    Received string:    "Demolição leste · 771 m, em frente · recue para o posto de disparo"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('#objective-status')
+        6 × locator resolved to <span id="objective-status">Demolição leste · 771 m, em frente · recue para o…</span>
+          - unexpected value "Demolição leste · 771 m, em frente · recue para o posto de disparo"
+
+
+      349 |   },Math.atan2(Math.sin(angle),Math.cos(angle))/.0022);
+      350 |   await turn(aim+Math.PI-initial.player.angle);
+    > 351 |   await expect(page.locator('#objective-status')).toContainText('atrás de si');
+          |                                                   ^
+      352 |   const away=await page.evaluate(()=>window.gameDiagnostics());
+      353 |   await turn(aim-away.player.angle);
+      354 |   await expect(page.locator('#objective-status')).toContainText('em frente');
+        at /tmp/claude-0/-home-user-COD-guerra/1e581609-5301-5005-855c-b268dac9f774/scratchpad/base/tests/browser/m01.spec.js:351:51
+
+    Error Context: test-results/m01-demolition-inside-the--ecd5c-ile-mouse-look-remains-free/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-demolition-inside-the--ecd5c-ile-mouse-look-remains-free/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-demolition-inside-the--ecd5c-ile-mouse-look-remains-free/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  3 failed
+    tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look 
+    tests/browser/m01.spec.js:318:33 › adjustment salvo behind the truss restores its actual origin and follows mouse look 
+    tests/browser/m01.spec.js:337:1 › demolition inside the road truss shows the actual bearing while mouse look remains free 
+EXIT 1
