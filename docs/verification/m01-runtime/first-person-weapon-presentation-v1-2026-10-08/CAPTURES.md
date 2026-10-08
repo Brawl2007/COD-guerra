@@ -3,14 +3,14 @@
 Ferramenta: `tools/verification/m01-weapon-presentation-capture.mjs` (fixture `m01-weapon-presentation-fixture.html`).
 - **Ambiente:** Chromium/SwiftShader local, 1280×720, qualidade Baixa, `M01View`/`Renderer` de produção.
 - **Simulação:** avança com controlos reais na página, a partir do início genuíno da rota.
-- **Pares:** a mesma sequência de controlos corre na base `99309d9` e na candidata `dfb1572`. Os 28 frames da candidata são idênticos píxel a píxel aos de `9827c73`, com o mesmo estado e os mesmos contadores: a pré-compilação de `dfb1572` não desenha nada.
+- **Pares:** a mesma sequência de controlos corre na base `99309d9` e na candidata `d97329c`. Os 28 frames da candidata são idênticos píxel a píxel aos de `9827c73` e `dfb1572`, com o mesmo estado e os mesmos contadores: a pré-compilação não desenha nada. SHA-256 por frame em [`logs/capture-identity.txt`](logs/capture-identity.txt).
 - **Âmbito:** são capturas encenadas, não um playtest.
 
 Relatórios completos por frame (estado, apresentação, `calls`/`triangles`): [`BASE-report.json`](BASE-report.json), [`CANDIDATE-report.json`](CANDIDATE-report.json).
 
 **Equivalência de gameplay nas capturas:** relógio, jogador (posição, ângulos, ADS) e arma (`mag`, `reserve`, `shotCount`, `lastShot`, estado) são **idênticos** em base e candidata nos 27 frames comuns. A pausa (frames repetidos sem ticks) é estável nas duas.
 
-Cada imagem tem a base em cima e a candidata em baixo.
+Cada imagem tem a base em cima e a candidata em baixo. As composições são feitas com [`logs/sheets.py`](logs/sheets.py) (`pairs`) a partir dos PNG da ferramenta.
 
 | Par | O que mostra na candidata |
 |---|---|

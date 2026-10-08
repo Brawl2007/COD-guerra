@@ -39,11 +39,46 @@ Verificado sem problemas pelo verificador:
 
 ## Depois da verificação: primeiro disparo
 
-Constatação própria, depois do verificador. Na suíte integral, `m01.spec.js:38` falhava na candidata no primeiro disparo (linha 45: `mag` 4 em 5 s), e na base só na linha 55. Medição do primeiro disparo no build de produção (detalhe em [`EVIDENCE.md`](EVIDENCE.md)):
-- `9827c73` levava 4,8–4,9 s até `mag` 4, contra 0,8–1,1 s na base;
-- o frame do tiro durava ~3,9 s, gastos a terminar a compilação/link de 3 programas de FX que estavam escondidos até ao tiro.
+Constatação própria, depois do verificador. Num par de testes corrido enquanto o verificador da outra branch usava a CPU:
+- `m01.spec.js:38` falhava em `9827c73` no primeiro disparo (linha 45: `mag` 4 em 5 s, [`logs/t1-two-9827c73.log`](logs/t1-two-9827c73.log));
+- na base, nessa mesma carga, falhava só na linha 55 ([`logs/base-two.log`](logs/base-two.log)).
 
-Corrigido em `dfb1572` (`prewarmWeaponFx`). O primeiro disparo fica como na base (1,0–1,3 s, frame do tiro sem compilação), e `m01.spec.js:38` passa (detalhe em [`EVIDENCE.md`](EVIDENCE.md)). O teste novo verifica:
-- que só os objectos de FX são compilados, cada um contra a sua cena;
-- que cada programa é usado uma vez;
-- que nenhuma visibilidade muda.
+Na suíte integral (`a428925`) esse teste passava.
+
+A medição do primeiro disparo no build de produção (detalhe em [`EVIDENCE.md`](EVIDENCE.md)) mostrou o resto:
+- `9827c73` levava 4,8–4,9 s até `mag` 4, contra 0,8–1,1 s na base;
+- o frame do tiro durava ~3,9 s, gastos a terminar a compilação/link dos programas de FX que estavam escondidos até ao tiro.
+
+Corrigido em `dfb1572` (`prewarmWeaponFx`):
+- o frame do tiro já não tem compilação e o tempo até `mag` 4 fica no intervalo da base (1,0–1,3 s);
+- os frames seguintes, com efeitos activos, foram até 0,5 s mais pesados em SwiftShader;
+- `m01.spec.js:38` passa sem carga, como na base.
+
+## Revisão da pré-compilação (`f6db41d..7dbc0a5`)
+
+Revisor: subagente independente, só leitura. Leu o código do three r186 e as provas, e fez mutações só ao teste focado, numa cópia descartável. Sem bloqueadores.
+
+O revisor confirmou:
+- as chaves de programa são as mesmas no momento da chamada;
+- o link é mesmo forçado (`onFirstUse`);
+- não fica estado alterado;
+- a colocação antes do render do mundo e o `??=` estão correctos;
+- os números citados conferem com os artefactos.
+
+Incidente: algumas das suas execuções de mutantes esgotaram a memória (finding 2) e o sistema matou um Chrome da suíte de navegador da outra branch que corria ao mesmo tempo. Os testes dessa suíte afectados foram repetidos (ver a evidência da outra branch).
+
+| # | Gravidade | Constatação | Resolução |
+|---|---|---|---|
+| 1 | Deve corrigir | A pré-compilação só cobria a configuração de luzes do mundo no primeiro frame. As chaves de programa incluem luzes e sombras, e o M01 muda-as depois:<ul><li>o sol passa a projectar sombra ao nascer;</li><li>a luz das explosões liga e desliga;</li><li>a qualidade liga ou desliga os shadow maps.</li></ul> Um primeiro tiro depois disso podia voltar a compilar no frame do tiro (sprites da nuvem). | **Corrigido em código (`d97329c`).** `warmWeaponFx()` no `M01View` e na bancada: o passe da arma uma vez; o do mundo de novo por cada configuração (shadow maps × sombra do sol; na bancada, shadow maps), com a luz das explosões compilada nos dois estados (visibilidade reposta). Teste novo para as duas chamadas. |
+| 2 | Deve corrigir | Quando falhava, o teste novo comparava objectos do three com `deepEqual`/`equal`. A mensagem de erro imprimia cenas inteiras e o processo chegava a ~13 GB. | Corrigido: o teste compara só ids, nomes e booleanos. |
+| 3 | Deve corrigir | O teste não verificava que objectos eram preparados nem as chamadas: retirar os fios, retirar os sprites da nuvem, usar uma só câmara ou retirar a chamada da bancada passava. | Corrigido. O teste verifica os membros explicitamente (3 camadas + 9 fios; 16 sprites + pool do clipe + pool de invólucros) e usa duas câmaras e uma luz que pisca. Teste novo das duas chamadas, com stubs: uma vez por configuração, de novo quando ela muda, e a ordem no `render` (depois da iluminação, antes do render do mundo). |
+| 4 | Deve corrigir | Esta secção punha a falha da linha 45 na suíte integral; é do par de testes sob carga. | Corrigido acima. |
+| 5 | Deve corrigir | Os tempos GL dados como causa vinham da build intermédia, não commitada. | Rotulados como build intermédia. Acrescentada uma execução GL de `9827c73` (EVIDENCE). |
+| 6 | Deve corrigir (redacção) | «O primeiro tiro fica como na base» exagerava; os frames com efeitos activos foram 0,1–0,6 s mais pesados. «Custo com efeitos activos não medido em tempo» era contradito pelo log. | Corrigido em EVIDENCE, HANDOFF e nos documentos de estado. |
+| 7 | Nit | Os pools de invólucros/clipe não estão escondidos em repouso (visíveis com `count` 0). | Redacção corrigida no JSDoc e em EVIDENCE. |
+| 8 | Nit | A identidade píxel a píxel das capturas não tinha artefacto. | [`logs/capture-identity.txt`](logs/capture-identity.txt): SHA-256 de cada PNG em `a428925`, `9827c73`, `dfb1572` e `d97329c`. |
+| 9 | Nit | Afirmações desactualizadas ou inconsistentes. | Corrigidas: <ul><li>HANDOFF linha 6;</li><li>bundle da altura (abaixo);</li><li>log do build da base;</li><li>«frames/s» passa a «callbacks de rAF por segundo de parede» (campo `rafPerWallSecond`);</li><li>`m01.spec.js:99` falha em `fireRound`, sem dizer em que tiro;</li><li>sem afirmação sobre GPU real;</li><li>os identificadores de modelo só aparecem nas linhas de atribuição obrigatórias dos commits.</li></ul> |
+
+Notas sobre a tabela da primeira verificação:
+- O «mesmo bundle que `logs/build.log`» e «+31,9 kB, gzip +11,5 kB» referem-se a `a428925` (1 230,71 kB). O log actual é do runtime final (EVIDENCE).
+- «Não há identificadores de modelo» vale fora das linhas de atribuição obrigatórias dos commits.

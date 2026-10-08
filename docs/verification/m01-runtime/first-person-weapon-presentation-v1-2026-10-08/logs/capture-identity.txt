@@ -1,0 +1,31 @@
+# SHA-256 of each candidate capture PNG (1280x720) by runtime commit; written by the capture tool, same controls and route.
+# frame  a428925  9827c73  dfb1572  d97329c  (= means identical to the previous column)
+m01-01-hip-idle  e2c8ec812573dc77  =  =  =
+m01-02-ads-mid-raise  b12eb6e837cde3f7  =  =  =
+m01-03-ads-idle  7660ddccc0f463ae  =  =  =
+m01-04-ads-shot-flash  370c1e3aba2deafb  =  =  =
+m01-05-ads-shot-recoil  9e38a4babd9f06af  =  =  =
+m01-06-bolt-chamber-smoke  dad2a07b1b774ec0  =  =  =
+m01-07-bolt-ejected-case  f104a6ef490d6deb  =  =  =
+m01-08-case-falling  98713dbe482754cd  =  =  =
+m01-09-after-bolt-smoke  7ff8f2fbc9f2d9c1  =  =  =
+m01-10-hip-shot-flash  b49c1bc9f114ec6e  =  =  =
+m01-11-hip-recoil  50751e715cbd3d92  =  =  =
+m01-12-hip-bolt-eject  f0108ac5b93e562b  =  =  =
+m01-13-reload-start  65223ff056bde5cb  =  =  =
+m01-14-reload-clip-in  be81bf5c49bc0bb4  =  =  =
+m01-15-reload-clip-ejected  f2297de2c60e90e1  =  =  =
+m01-16-reload-clip-falling  859d9c2f306f68a0  =  =  =
+m01-17-reload-end  d973be3f39a1c1d7  =  =  =
+m01-18-turn-lag  7b862def1c330733  =  =  =
+m01-19-brass-on-ground  766bcff90d381dbd  =  =  =
+m01-19b-ejecta-probe  527155a541c8d324  =  =  =
+m01-20-sprint  a5c515b242cd80c3  =  =  =
+bench-01-hip-idle  d4c3063eafece1c0  =  =  =
+bench-02-hip-shot  870eb35c2eb6ca96  =  =  =
+bench-03-hip-brass  c9265b926d6a8baf  =  =  =
+bench-04-ads-shot  644d2c049da9266e  55f826d2de3a9e9e  =  =
+bench-05-ads-follow-up  77a7fb181d04892e  697e216ba70941a6  =  =
+bench-06-ads-second-shot  a35dced31623fd53  fe71b07eef9d5672  =  =
+bench-07-smoke  c24464c328613aa0  47bbaa066dc3fe02  =  =
+# identical frames of 28: a428925=9827c73: 24, 9827c73=dfb1572: 28, dfb1572=d97329c: 28

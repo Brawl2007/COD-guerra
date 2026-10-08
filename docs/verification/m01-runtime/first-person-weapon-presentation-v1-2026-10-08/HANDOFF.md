@@ -3,7 +3,7 @@
 TASK_ID: `M01-FIRST-PERSON-WEAPON-PRESENTATION-V1`  
 BASE: `99309d9cb023cc94a07d41ff863e1362e4460570`  
 BRANCH: `codex/m01-first-person-weapon-presentation-v1` (sem merge, sem PR, `main` intacta)  
-Runtime verificado: commit indicado em [`EVIDENCE.md`](EVIDENCE.md). Os commits seguintes só acrescentam documentação, capturas e um probe de evidência no fixture de verificação.
+Runtime verificado: commit indicado em [`EVIDENCE.md`](EVIDENCE.md). Os commits seguintes só acrescentam documentação.
 
 M01 continua **PROTÓTIPO JOGÁVEL**. Trabalho **só de apresentação**: dano, dispersão autoritativa, cadência, munição, detecção de impactos e `Simulation` não mudaram.
 
@@ -30,7 +30,7 @@ M01 continua **PROTÓTIPO JOGÁVEL**. Trabalho **só de apresentação**: dano, 
 | ILUMINAÇÃO | `WeaponLighting`: chave e enchimento seguem o céu e o sol do mundo e a vista. Número constante de luzes (sem recompilações por frame); ambiente céu/chão de baixa resolução no passe da arma. Ao amanhecer (início da rota) a chave fica em 0,60 e o enchimento em 2,17, com ambiente 0,33; antes eram constantes 2,0/2,7, como ao meio-dia. A bancada fica em 1,95/2,6. |
 | CLIPPING | Todos os vértices do viewmodel ficam além do near plane durante curso do ferrolho, atraso de olhar e FX (teste). |
 | PAUSA / RESTORE | Tudo é função do relógio da simulação; pausa repete o mesmo frame; restore reconstrói em repouso e descarta o histórico de mundo (teste). |
-| PRÉ-COMPILAÇÃO | `prewarmWeaponFx`, uma vez, no primeiro frame desenhado (M01 e bancada). Os FX do tiro estão escondidos em repouso, por isso os seus programas eram criados no primeiro tiro. O SwiftShader só termina compilação/link no primeiro uso: um frame de ~3,9 s nesse tiro. Agora cada objecto de FX é compilado sozinho contra a sua cena (luzes, nevoeiro, ambiente) e cada programa é usado uma vez, por isso o link acontece no arranque. Não desenha nada e não muda visibilidades (teste; medição em [`EVIDENCE.md`](EVIDENCE.md)). |
+| PRÉ-COMPILAÇÃO | `prewarmWeaponFx`, via `warmWeaponFx()` no M01 e na bancada, antes do render do mundo. Os FX do tiro estão escondidos em repouso, por isso os seus programas eram criados no primeiro tiro. O SwiftShader só termina compilação/link no primeiro uso: um frame de ~3,9 s nesse tiro. Agora cada objecto de FX é compilado sozinho contra a sua cena (luzes visíveis, sombras, nevoeiro, ambiente) e cada programa é usado uma vez, por isso o link acontece antes. O passe da arma é preparado uma vez. O do mundo é preparado de novo sempre que a configuração de luzes muda (sombra do sol ao nascer, shadow maps da qualidade), com a luz das explosões nos dois estados. Não desenha nada e não muda visibilidades (testes; medição em [`EVIDENCE.md`](EVIDENCE.md)). |
 
 Ficheiros alterados: `src/render/first-person-weapon-fx.js` (novo), `src/render/m01-wz29-presentation.js`, `src/render/m01-viewmodel.js`, `src/render/m01-view.js`, `src/render/three-renderer.js`; testes e ferramentas de captura novos. Lista em [`FILES_CHANGED.txt`](FILES_CHANGED.txt).
 
@@ -49,5 +49,7 @@ Ver [`EVIDENCE.md`](EVIDENCE.md).
 - O teste de clipping cobre o rig GLB; o fallback procedural não tem esse teste.
 - O blend de ADS continua limitado a 50 ms por frame (como na base): abaixo de 20 frames/s a subida ao olho demora mais frames.
 - A pré-compilação usa duas peças internas do three r186, `renderer.properties` e `WebGLProgram.getUniforms`, com encadeamento opcional. Se mudarem numa actualização do three, fica só o `compile` (sem erro), e o primeiro tiro pode voltar a pagar o link: repetir `logs/first-shot-ab.mjs` depois de actualizar o three.
+- A configuração de luzes que a pré-compilação acompanha é a que o M01 e a bancada mudam hoje: sombra do sol, shadow maps e a luz das explosões. Uma luz nova no mundo, ligada e desligada durante o jogo, tem de entrar na chave de `warmWeaponFx()`.
+- Em SwiftShader, os frames com efeitos de tiro activos foram até 0,5 s mais pesados do que na base (medição do primeiro disparo, n = 2). Não foi medido em GPU real.
 - Sem som novo (o áudio do wz.29 existente não mudou).
 - Sem playtest humano, sem Chromebook físico, sem números de FPS.

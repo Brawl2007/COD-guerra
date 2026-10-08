@@ -1,0 +1,179 @@
+== 99309d9 run 1
+
+Running 1 test using 1 worker
+
+  ✓  1 tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A (1.6m)
+
+  1 passed (1.7m)
+exit 0
+== d97329c run 1
+
+Running 1 test using 1 worker
+
+  ✘  1 tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A (1.3m)
+
+
+  1) tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('#mag')
+    Expected: [32m"5"[39m
+    Received: [31m"—"[39m
+    Timeout:  15000ms
+
+    Call log:
+    [2m  - Expect "toHaveText" with timeout 15000ms[22m
+    [2m  - waiting for locator('#mag')[22m
+    [2m    19 × locator resolved to <b id="mag">—</b>[22m
+    [2m       - unexpected value "—"[22m
+
+
+      53 |   const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(350);
+      54 |   const still=await page.evaluate(()=>window.gameDiagnostics());expect(still.clock).toBe(frozen.clock);expect(still.m01.battleClock).toBe(frozen.m01.battleClock);expect(still.m01.weapon).toEqual(frozen.m01.weapon);
+    > 55 |   await page.locator('#resume').click();await expect(page.locator('#mag')).toHaveText('5',{timeout:15000});await expect(page.locator('#reserve')).toHaveText('35');
+         |                                                                            ^
+      56 |   await page.keyboard.press('KeyV');await expect(page.locator('#weapon-state')).toContainText('500 m');
+      57 |   await page.mouse.down({button:'right'});await expect(page.locator('#crosshair')).toBeHidden();await page.mouse.up({button:'right'});
+      58 |   await page.screenshot({path:info.outputPath('m01-playing.png')});
+        at /home/user/COD-guerra/tests/browser/m01.spec.js:55:76
+
+    Error Context: <results>/m01-M01-loads-the-nine-bri-7850e-sight-aiming-pause-and-CP-A/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/m01-M01-loads-the-nine-bri-7850e-sight-aiming-pause-and-CP-A/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/m01-M01-loads-the-nine-bri-7850e-sight-aiming-pause-and-CP-A/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A 
+exit 1
+== 99309d9 run 2
+
+Running 1 test using 1 worker
+
+  ✓  1 tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A (1.7m)
+
+  1 passed (1.7m)
+exit 0
+== d97329c run 2
+
+Running 1 test using 1 worker
+
+  ✘  1 tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A (1.3m)
+
+
+  1) tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('#mag')
+    Expected: [32m"5"[39m
+    Received: [31m"—"[39m
+    Timeout:  15000ms
+
+    Call log:
+    [2m  - Expect "toHaveText" with timeout 15000ms[22m
+    [2m  - waiting for locator('#mag')[22m
+    [2m    19 × locator resolved to <b id="mag">—</b>[22m
+    [2m       - unexpected value "—"[22m
+
+
+      53 |   const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(350);
+      54 |   const still=await page.evaluate(()=>window.gameDiagnostics());expect(still.clock).toBe(frozen.clock);expect(still.m01.battleClock).toBe(frozen.m01.battleClock);expect(still.m01.weapon).toEqual(frozen.m01.weapon);
+    > 55 |   await page.locator('#resume').click();await expect(page.locator('#mag')).toHaveText('5',{timeout:15000});await expect(page.locator('#reserve')).toHaveText('35');
+         |                                                                            ^
+      56 |   await page.keyboard.press('KeyV');await expect(page.locator('#weapon-state')).toContainText('500 m');
+      57 |   await page.mouse.down({button:'right'});await expect(page.locator('#crosshair')).toBeHidden();await page.mouse.up({button:'right'});
+      58 |   await page.screenshot({path:info.outputPath('m01-playing.png')});
+        at /home/user/COD-guerra/tests/browser/m01.spec.js:55:76
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    <results>/m01-M01-loads-the-nine-bri-7850e-sight-aiming-pause-and-CP-A/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: <results>/m01-M01-loads-the-nine-bri-7850e-sight-aiming-pause-and-CP-A/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/m01-M01-loads-the-nine-bri-7850e-sight-aiming-pause-and-CP-A/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/m01-M01-loads-the-nine-bri-7850e-sight-aiming-pause-and-CP-A/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A 
+exit 1
+== dfb1572 run 1
+
+Running 1 test using 1 worker
+
+  ✓  1 tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A (1.7m)
+
+  1 passed (1.7m)
+exit 0
+== d97329c run 1
+
+Running 1 test using 1 worker
+
+  ✘  1 tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A (1.3m)
+
+
+  1) tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('#mag')
+    Expected: [32m"5"[39m
+    Received: [31m"—"[39m
+    Timeout:  15000ms
+
+    Call log:
+    [2m  - Expect "toHaveText" with timeout 15000ms[22m
+    [2m  - waiting for locator('#mag')[22m
+    [2m    19 × locator resolved to <b id="mag">—</b>[22m
+    [2m       - unexpected value "—"[22m
+
+
+      53 |   const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(350);
+      54 |   const still=await page.evaluate(()=>window.gameDiagnostics());expect(still.clock).toBe(frozen.clock);expect(still.m01.battleClock).toBe(frozen.m01.battleClock);expect(still.m01.weapon).toEqual(frozen.m01.weapon);
+    > 55 |   await page.locator('#resume').click();await expect(page.locator('#mag')).toHaveText('5',{timeout:15000});await expect(page.locator('#reserve')).toHaveText('35');
+         |                                                                            ^
+      56 |   await page.keyboard.press('KeyV');await expect(page.locator('#weapon-state')).toContainText('500 m');
+      57 |   await page.mouse.down({button:'right'});await expect(page.locator('#crosshair')).toBeHidden();await page.mouse.up({button:'right'});
+      58 |   await page.screenshot({path:info.outputPath('m01-playing.png')});
+        at /home/user/COD-guerra/tests/browser/m01.spec.js:55:76
+
+    Error Context: <results>/m01-M01-loads-the-nine-bri-7850e-sight-aiming-pause-and-CP-A/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/m01-M01-loads-the-nine-bri-7850e-sight-aiming-pause-and-CP-A/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/m01-M01-loads-the-nine-bri-7850e-sight-aiming-pause-and-CP-A/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A 
+exit 1
+== dfb1572 run 2
+
+Running 1 test using 1 worker
+
+  ✓  1 tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A (1.7m)
+
+  1 passed (1.8m)
+exit 0
+== d97329c run 2
+
+Running 1 test using 1 worker
+
+  ✓  1 tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A (1.7m)
+
+  1 passed (1.8m)
+exit 0

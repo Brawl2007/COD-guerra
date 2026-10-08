@@ -1,4 +1,4 @@
-// Bench (sandbox-1944) at Medium (not FPS of the game; SwiftShader wall clock): shoot once, reload, pause/resume as game.spec.js:28 does; measure rAF frames/s and
+// Bench (sandbox-1944) at Medium (SwiftShader wall clock, not game FPS): shoot once, reload, pause/resume as game.spec.js:28 does; count rAF callbacks per wall second and
 // the wall time until the reload completes after resume. Usage: CHROME_EXECUTABLE=<chromium> node bench-reload.mjs <repoRoot with dist/ and node_modules/> <port> <label>
 import {spawn} from 'node:child_process';
 import {pathToFileURL} from 'node:url';
@@ -17,7 +17,7 @@ try{
   await page.locator('#start').click();
   await page.waitForFunction(()=>document.pointerLockElement?.id==='game'&&window.gameDiagnostics().clock>.05,null,{timeout:120000});
   const rate=async ms=>{const a=await page.evaluate(()=>[window.__t.length,performance.now(),window.gameDiagnostics().clock]);await page.waitForTimeout(ms);
-    const b=await page.evaluate(()=>[window.__t.length,performance.now(),window.gameDiagnostics().clock]);return {fps:+((b[0]-a[0])/((b[1]-a[1])/1000)).toFixed(2),simPerWall:+((b[2]-a[2])/((b[1]-a[1])/1000)).toFixed(3)};};
+    const b=await page.evaluate(()=>[window.__t.length,performance.now(),window.gameDiagnostics().clock]);return {rafPerWallSecond:+((b[0]-a[0])/((b[1]-a[1])/1000)).toFixed(2),simPerWall:+((b[2]-a[2])/((b[1]-a[1])/1000)).toFixed(3)};};
   const rest=await rate(8000);
   await page.mouse.down();await page.mouse.up();
   await page.waitForFunction(()=>document.querySelector('#mag')?.textContent==='14',null,{timeout:30000});

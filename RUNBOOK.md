@@ -122,7 +122,7 @@ Apresentação da arma em primeira pessoa (wz.29 de M01 e M1 Carbine da bancada)
 CHROME_EXECUTABLE=/caminho/chromium node tools/verification/m01-weapon-presentation-capture.mjs test-results/weapon-presentation
 ```
 
-Não é playtest nem medida de FPS. Provas em `docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/`. Os programas dos FX do tiro são compilados e ligados no primeiro frame (`prewarmWeaponFx`), porque o primeiro tiro os compilava nesse frame. Essa pré-compilação usa peças internas do three r186. Depois de actualizar o three, repetir a medição do primeiro disparo:
+Não é playtest nem medida de FPS. Provas em `docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/`. Os programas dos FX do tiro são compilados e ligados antes de serem precisos (`warmWeaponFx()` → `prewarmWeaponFx`), porque o primeiro tiro os compilava nesse frame. O passe do mundo repete-se quando muda a configuração de luzes: uma luz nova que ligue e desligue durante o jogo tem de entrar na chave. Essa pré-compilação usa peças internas do three r186. Depois de actualizar o three, repetir a medição do primeiro disparo:
 
 ```sh
 npm run build && CHROME_EXECUTABLE=/caminho/chromium node docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/first-shot-ab.mjs . 4321 candidata

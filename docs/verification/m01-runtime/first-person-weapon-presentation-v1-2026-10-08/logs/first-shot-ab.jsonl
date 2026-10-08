@@ -4,3 +4,7 @@
 {"label":"base-99309d9","secondsUntilMag4":1.064,"frameMsBefore":[21,82,47,1316,1385],"frameMsAfterClick":[1362,23,1234,1253,1327,1499]}
 {"label":"candidate-9827c73-no-prewarm","secondsUntilMag4":4.795,"frameMsBefore":[19,76,33,1253,1250],"frameMsAfterClick":[1316,3990,8,453,24,1496,1657,1660]}
 {"label":"candidate-final-prewarm","secondsUntilMag4":0.999,"frameMsBefore":[30,62,46,1345,1294],"frameMsAfterClick":[1324,47,1201,1441,1776,1448]}
+{"label":"base-99309d9","secondsUntilMag4":0.778,"frameMsBefore":[24,64,29,1212,1233],"frameMsAfterClick":[1296,50,1137,1137,1121,1311,1223]}
+{"label":"candidate-d97329c","secondsUntilMag4":1.157,"frameMsBefore":[34,58,37,1344,1402],"frameMsAfterClick":[1395,36,1294,1609,1901]}
+{"label":"base-99309d9","secondsUntilMag4":0.708,"frameMsBefore":[31,107,47,1253,1187],"frameMsAfterClick":[1233,42,1172,1323,1251,1278]}
+{"label":"candidate-d97329c","secondsUntilMag4":1.018,"frameMsBefore":[21,67,33,1472,1197],"frameMsAfterClick":[1323,42,1226,1608,1561,1515]}
