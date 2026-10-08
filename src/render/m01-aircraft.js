@@ -63,6 +63,7 @@ export function instanceJu87Materials(model,i,sky){
       m=o.material.clone();m.userData.baseOpacity=m.opacity;
       if(m.name==='ju87_b1'){m.color.multiply(new THREE.Color(...v.tint));m.roughness*=v.roughness;m.alphaHash=true;m.envMap=sky;m.envMapIntensity=.85;}
       else if(m.name==='ju87_glass'){m.envMap=sky;m.envMapIntensity=1.2;}
+      else if(m.name==='ju87_prop_disc')m.forceSinglePass=true;   // flat double-sided disc: one draw instead of two
       own.set(o.material,m);
     }
     o.material=m;

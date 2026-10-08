@@ -30,7 +30,7 @@
 | Trem | fixo, com carenagens grandes (“calças”) e sirene (*Jericho-Trompete*) à frente de cada perna | B-1; posição da sirene **estimada** |
 | Motor | Jumo 211 com **radiador grande debaixo do nariz** e 6 escapes por lado | é o que separa o B do D, que tem os radiadores sob as asas |
 | Cabine | capota comprida transparente com nove aros e calhas, piloto (virado para a frente) e atirador (para trás) em silhueta simples, encosto blindado, painel, uma MG 15 atrás | B; aros e tripulação **estimados** |
-| Armamento e antena | duas MG 17 nas asas por fora do trem, tubo de Pitot na asa esquerda, mastro curto atrás da capota com fio até à deriva | posições **estimadas** por vistas genéricas |
+| Armamento e antena | duas MG 17 nas asas por fora do trem, tubo de Pitot na asa esquerda, mastro curto na espinha da secção fixa central da capota com fio, por cima do atirador, até ao bordo de ataque da deriva | posições **estimadas** por vistas genéricas |
 | Cauda | deriva e leme, estabilizador escorado por montantes, roda de cauda | B |
 | Freios de mergulho | grelhas sob as asas exteriores, que rodam 90° na dobradiça dianteira | B; dimensões **estimadas** |
 | Carga | SC 250 no garfo ventral | carga do raid não documentada; dimensões **estimadas** |
@@ -55,7 +55,7 @@
 | SC 250 | 1,64 m, Ø 0,368 m | **estimada** |
 | MG 17 | x = ±2,6 m | **estimada** |
 | Pitot | x = −5,7 m | **estimada** |
-| Antena | mastro a z = 1,42 m, fio até z = 5,2 m | **estimada** |
+| Antena | mastro a z = 0,3 m; fio até à deriva a y = 1,5 m (z ≈ 5,55 m) | **estimada** |
 | Aros da capota | nove, de z = −1,86 a 1,22 m | **estimados** |
 
 O manifesto repete esta tabela em `measures`, com `estimated: true/false` e a fonte de cada linha.
@@ -64,8 +64,8 @@ O manifesto repete esta tabela em `measures`, com `estimated: true/false` e a fo
 
 | Ficheiro | Triângulos | Draw calls | Texturas | Tamanho | Uso sugerido |
 | --- | --- | --- | --- | --- | --- |
-| `m01_ju87_b1_lod0.glb` | 14 710 | 7 | cor 2048² JPEG, ORM 1024² JPEG, normais 1024² PNG, disco 128² PNG | 922 kB | perto, até 150 m; mergulho sobre o jogador |
-| `m01_ju87_b1_lod1.glb` | 5 356 | 7 | cor 1024², ORM 512², normais 512², disco 128² | 359 kB | 150 a 600 m (alto e médio no raid) |
+| `m01_ju87_b1_lod0.glb` | 14 710 | 7 | cor 2048² JPEG, ORM 1024² JPEG, normais 1024² PNG, disco 128² PNG | 922 kB | perto, até 150 m: galeria e futuros passes próximos (no caminho actual os aviões ficam a ≥ 163 m e nunca o mostram) |
+| `m01_ju87_b1_lod1.glb` | 5 357 | 7 | cor 1024², ORM 512², normais 512², disco 128² | 359 kB | 150 a 600 m (alto e médio no raid) |
 | `m01_ju87_b1_lod2.glb` | 1 929 | 7 | cor 512², ORM 256², disco 128² | 136 kB | longe; qualidade baixa (Chromebook) |
 
 O orçamento do LOD0 em `assets-m01.json` é de 15 000 triângulos. Antes desta revisão (PR #28): 13 102/4 730/1 636 triângulos, 5 draw calls e 652/248/96 kB.
@@ -131,7 +131,8 @@ As capturas foram renderizadas com o GLTFLoader e o AnimationMixer do three.js e
   - céu de ambiente 256×128 (PMREM do three.js) só nos aviões: reflexo no vidro e no metal e o ressalto do solo na barriga RLM 65, que só com a luz hemisférica da cena ficava quase preta contra o céu;
   - hélices com rpm (~1476–1524) e fase próprias; inclinação para o lado da deriva lateral do caminho existente e pequenas oscilações, sem mudar a posição nem o rumo (`rotation.y = 0,1`);
   - LOD com histerese de 10 % nos limiares (o mínimo por qualidade prevalece);
-  - fade por dithering (`alphaHash`) durante 3 s depois de `evt_m01_planes_heard` e 2,5 s de cada lado da volta de 90 s do caminho, que antes teleportava os aviões ~360 m.
+  - fade por dithering (`alphaHash`) e opacidade durante 3 s depois de `evt_m01_planes_heard` e 2,5 s de cada lado da volta de 90 s do caminho, que antes teleportava os aviões ~360 m; o nível seleccionado (ou o proxy de fallback) continua visível e reportado nos diagnósticos com fade 0;
+  - `compileAsync` por avião ao carregar (shaders e PMREM do céu prontos antes do primeiro frame do raid) e o disco de dupla face desenhado numa só passagem (`forceSinglePass`).
 - Prova em produção, por continuação de snapshot genuíno, em `docs/verification/m01-runtime/aircraft/` (integração) e `docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/` (esta revisão, antes/depois); não é novo playtest contínuo/humano.
 - **Dados que a engine poderia expor** (proposta, não implementada):
   - início do mergulho de cada avião, para abrir os freios;
@@ -149,3 +150,5 @@ Todo o kit é original e foi gerado por código neste repositório pelo Claude C
 - O garfo da bomba (Trapez) é fixo. As sirenes não giram, e não há som.
 - As cores RLM estão aproximadas em sRGB, sem verificação em amostras. O céu de ambiente é estático (cores de madrugada); o raid acontece antes do nascer do sol.
 - O caminho dos três aviões é um voo nivelado em ciclo de 90 s: não há mergulho, freios abertos nem lançamento visível porque a trajectória e os tempos estão fixados. Os freios e a bomba estão prontos no kit para quando a simulação expuser esses dados.
+- Os três LOD são descarregados e descodificados em qualquer qualidade (comportamento anterior); o LOD0 (922 kB, ~24 MB de texturas descodificadas) nunca aparece no caminho actual. Carregar o LOD0 só quando for necessário é o próximo passo de memória recomendado.
+- O ambiente do céu e o fade não foram medidos num Chromebook físico; os contadores do renderer em `docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/` não são FPS.

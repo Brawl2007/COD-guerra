@@ -61,8 +61,9 @@ function namedFixture(){
   const {view,sources}=fixture();
   for(const [lod,{scene}] of sources){
     const body=new THREE.MeshStandardMaterial({name:'ju87_b1',map:new THREE.Texture()}),glass=new THREE.MeshStandardMaterial({name:'ju87_glass',transparent:true,opacity:.3});
+    const disc=new THREE.MeshStandardMaterial({name:'ju87_prop_disc',transparent:true,side:THREE.DoubleSide});
     scene.getObjectByName('propeller').material=body;
-    for(const [name,material] of [['fuselage',body],['canopy',glass]]){const m=new THREE.Mesh(view.box,material);m.name=name;scene.add(m);}
+    for(const [name,material] of [['fuselage',body],['canopy',glass],['propeller_disc',disc]]){const m=new THREE.Mesh(view.box,material);m.name=name;scene.add(m);}
     scene.userData.body=body;scene.userData.lod=lod;
   }
   return {view,sources};
@@ -78,6 +79,8 @@ test('each Ju 87 gets its own light-weight material instances over shared textur
   assert.equal(sources.get(0).scene.userData.body.alphaHash,false,'source GLB material is never modified');
   assert.notDeepEqual(bodies[1].color.toArray(),bodies[0].color.toArray(),'paint batches differ slightly');
   const model=view.planes[0].levels[0].object;assert.equal(model.getObjectByName('propeller').material,model.getObjectByName('fuselage').material,'one instance per GLB material');
+  assert.equal(model.getObjectByName('propeller_disc').material.forceSinglePass,true,'transparent double-sided disc drawn in one pass');
+  assert.equal(sources.get(0).scene.getObjectByName('propeller_disc').material.forceSinglePass,false);
   const props=view.planes.map(p=>p.levels.find(l=>l.object.visible).object.getObjectByName('propeller').quaternion.toArray());
   assert.notDeepEqual(props[0],props[1]);assert.notDeepEqual(props[1],props[2]);
   // Heading and path are unchanged; bank/pitch come from the same saved clock, so pause/restore repeats them.
