@@ -1,0 +1,27 @@
+{
+  "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
+  "observedAt": "2026-10-08T22:11:31.572Z",
+  "observedV7Head": "13b14fe75cdffc4e6425dcff4cb7b1f5dbb75e24",
+  "branches": 117,
+  "changesSincePriorClosureSnapshot": [
+    {
+      "branch": "codex/m01-final-production-consolidation-v7",
+      "previous": "93c2519d7647b58de3ea7f0a88c6237784aca00f",
+      "current": "13b14fe75cdffc4e6425dcff4cb7b1f5dbb75e24"
+    }
+  ],
+  "sourcesAndProtectedUnchanged": true,
+  "protected": {
+    "v6": "cbc7de5668a1b2e4bc646b86548196a5f4f1039a",
+    "main": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+    "deploy": "cb400355c056955d1d6d0b22e92bd7be2443a10c",
+    "branch": "deploy/m01-latest-playable"
+  },
+  "browserCorrectedRun": {
+    "id": 37851294926,
+    "jobId": 113564557176,
+    "head": "13b14fe75cdffc4e6425dcff4cb7b1f5dbb75e24",
+    "status": "in_progress"
+  },
+  "decision": "No source delivery or protected branch advanced; no new candidates to integrate."
+}

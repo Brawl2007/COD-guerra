@@ -2,7 +2,7 @@
 
 TASK_ID: `M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7`.
 
-**Estado: VALIDATION_IN_PROGRESS.** A primeira execução browser integral terminou com quatro falhas demonstradas no harness; os cinco retestes focados passaram, aguardando agora uma nova execução integral sem filtros. M01 continua **PROTÓTIPO JOGÁVEL**; não há alegação de qualidade AAA ou de certificação no Chromebook.
+**Estado: VALIDATION_IN_PROGRESS.** A primeira execução browser integral terminou com quatro falhas demonstradas no harness; os cinco retestes focados passaram, e a nova execução integral sem filtros está em curso. M01 continua **PROTÓTIPO JOGÁVEL**; não há alegação de qualidade AAA ou de certificação no Chromebook.
 
 ## Identidade, recuperação e decisões
 
@@ -13,6 +13,8 @@ TASK_ID: `M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7`.
 | Runtime combinado final, antes dos commits exclusivamente de CI/provas/docs | `8f7d1ea8f096472436c860e118a8c799e740e23f` |
 | Node completo/build | `a97a3152d4848517a267d80c0cbbdc24bf2ddaeb` |
 | Primeira execução browser integral, FAIL 80/84 | `1b636303beeebf019aa2cd13819c6e0637f2b0bc` |
+| Harness corrigido e retestado 5/5 | `91c7a844c7d5020a552969027a424aad1f13dcd4` |
+| Nova execução browser integral sem filtros | `13b14fe75cdffc4e6425dcff4cb7b1f5dbb75e24`, [run 37851294926](https://github.com/Brawl2007/COD-guerra/actions/runs/37851294926) |
 | PR draft | [#59 — V7 → V6](https://github.com/Brawl2007/COD-guerra/pull/59) |
 | HEAD final publicado | O `head.sha` exato da PR #59, registrado na descrição final da PR; inclui este próprio handoff. `git rev-parse origin/codex/m01-final-production-consolidation-v7` reproduz esse SHA após fetch. |
 
@@ -59,6 +61,7 @@ Exclusões: os quatro commits de armas posteriores a `7dbc0a5` continuam com fal
 | Browser focado armas/decals/FX | **8/8 PASS**, retries 0 | `BROWSER_FOCUSED_WEAPON_FX.json`, log; 6,8 min |
 | Browser integral combinado, primeira execução | **80 PASS / 4 FAIL**, 84 executados, zero skips/retries/erros globais | [Run 37833355993](https://github.com/Brawl2007/COD-guerra/actions/runs/37833355993); `BROWSER_FULL_FIRST.json.gz`, resumo/log originais e `BROWSER_FAILURE_DIAGNOSIS.json` |
 | Browser focado após correção do harness | **5/5 PASS**, Chromium 153, workers 1, retries/skips zero | `BROWSER_HARNESS_FOCUSED.json.gz`, resumo e log; prova de yaw/HUD, impacto pausado e muzzle real |
+| Browser integral após correção | **EM EXECUÇÃO**, inventário de 84 casos, uma invocação sem filtros, retries 0 | [Run 37851294926](https://github.com/Brawl2007/COD-guerra/actions/runs/37851294926); build, proteção e inventário já passaram |
 | Autoridade e recuperação | **PASS** | 291 ficheiros protegidos, duas rotas completas e futuros dos quatro CPs; `INVARIANTS.json` e reteste corrigido abaixo |
 | Helper adicional de LOD, após correção de QA | **PASS** — Low/Medium/High/Low = 2/1/0/2 em V6 e V7 | `INVARIANTS_LOD_CORRECTED.json`, `logs/invariants-lod-corrected.log`; commit `158c30edea72869144cb0b0c875029dc3818adc2` |
 | Visual principal local e CI | **57/57 pares PASS para estado equivalente**, 114 frames | 12 boards inspecionadas; os 114 PNGs locais e CI têm hashes idênticos, `VISUAL_SUMMARY.json`; não é uma aprovação artística automática |

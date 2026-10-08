@@ -1,6 +1,6 @@
 {
   "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
-  "observedAt": "2026-10-08T22:01:47.971504+00:00",
+  "observedAt": "2026-10-08T22:14:35.420189+00:00",
   "runtimeHead": "8f7d1ea8f096472436c860e118a8c799e740e23f",
   "node": {
     "runId": 37831786923,
@@ -77,10 +77,18 @@
     ]
   },
   "fullBrowser": {
-    "status": "CORRECTED_FULL_EXECUTION_PENDING",
-    "execution": "A corrected full unfiltered invocation is required; 80 old passes plus focused retests will not be reported as 84/84.",
+    "runId": 37851294926,
+    "jobId": 113564557176,
+    "head": "13b14fe75cdffc4e6425dcff4cb7b1f5dbb75e24",
+    "status": "in_progress",
+    "conclusion": null,
+    "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37851294926",
+    "execution": "One corrected complete unfiltered invocation; no historical/focused result union",
+    "workers": 1,
+    "retries": 0,
+    "inventory": 84,
     "productionUnchanged": true,
-    "originalFailureRetained": "BROWSER_FULL_FIRST.json.gz"
+    "harnessCorrectionHead": "91c7a844c7d5020a552969027a424aad1f13dcd4"
   },
   "fpsMeasured": false,
   "physicalGpuMemoryMeasured": false,

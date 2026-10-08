@@ -1,7 +1,7 @@
 {
   "productionRuntimeHead": "8f7d1ea8f096472436c860e118a8c799e740e23f",
   "nodeHead": "a97a3152d4848517a267d80c0cbbdc24bf2ddaeb",
-  "browserHead": "1b636303beeebf019aa2cd13819c6e0637f2b0bc",
+  "browserHead": "13b14fe75cdffc4e6425dcff4cb7b1f5dbb75e24",
   "visualPreviewHead": "6e61aaa2efa98ff6a05f12f9ae5b0bf7190ba353",
   "ciEvidenceCommit": "93c2519d7647b58de3ea7f0a88c6237784aca00f",
   "runtimeFiles": [
@@ -48,6 +48,9 @@
       "tests/browser/m01.spec.js",
       "tests/browser/m01-battlefield-fx.spec.js"
     ],
-    "reason": "Four failures in original 80/84 CI report diagnosed in traces; no original assertion removed, no simulation or effect timing changed."
-  }
+    "reason": "Four failures in original 80/84 CI report diagnosed in traces; no original assertion removed, no simulation or effect timing changed.",
+    "head": "91c7a844c7d5020a552969027a424aad1f13dcd4"
+  },
+  "firstBrowserHead": "1b636303beeebf019aa2cd13819c6e0637f2b0bc",
+  "sourceAndTestsUnchangedAfterCorrectedFullBrowserStart": true
 }
