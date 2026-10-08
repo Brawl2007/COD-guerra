@@ -1,0 +1,111 @@
+name: M01 V6 rig input regression follow-up
+on:
+  push:
+    branches: [codex/m01-final-production-consolidation-v6]
+    paths: [.github/workflows/m01-v6-rig-followup.yml]
+permissions:
+  contents: write
+concurrency:
+  group: m01-v6-rig-followup-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  rig-followup:
+    if: github.ref == 'refs/heads/codex/m01-final-production-consolidation-v6'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      EVIDENCE: docs/verification/m01-runtime/final-production-consolidation-v6
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0, ref: '${{ github.sha }}'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - name: Preserve production and every unaffected test
+        run: |
+          git diff --exit-code 2a2a56734861b0801234d7ddf3cda66c0100f326 HEAD -- src assets package.json package-lock.json playwright.config.js
+          git diff --exit-code 2a2a56734861b0801234d7ddf3cda66c0100f326 HEAD -- tests ':!tests/browser/m01.spec.js'
+          git diff 2a2a56734861b0801234d7ddf3cda66c0100f326 HEAD -- tests/browser/m01.spec.js
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Reproduce the missing control precondition with the native pointer-lock API
+        run: |
+          npm run preview >/tmp/m01-rig-preview.log 2>&1 &
+          node --input-type=module <<'JS'
+          import {chromium} from 'playwright';
+          import assert from 'node:assert/strict';
+          import fs from 'node:fs/promises';
+          const browser=await chromium.launch({args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+          try{
+            const page=await browser.newPage({viewport:{width:1280,height:720}}),errors=[];
+            page.on('pageerror',e=>errors.push(e.message));
+            await page.addInitScript(()=>localStorage.setItem('cod-guerra:visual-quality','low'));
+            await page.goto('http://127.0.0.1:4173/COD-guerra/?debug=1');
+            await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);
+            await page.locator('#start').click();
+            await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game'&&window.gameDiagnostics().clock>.05);
+            await page.evaluate(()=>document.exitPointerLock());
+            await page.locator('#pause').waitFor({state:'visible'});
+            await page.evaluate(()=>{
+              const c=document.querySelector('#game'),native=c.requestPointerLock.bind(c);
+              c.requestPointerLock=(...args)=>new Promise((resolve,reject)=>{
+                window.__releaseNativePointerLock=()=>{try{Promise.resolve(native(...args)).then(resolve,reject);}catch(e){reject(e);}};
+              });
+            });
+            await page.locator('#resume').click();
+            const premature=await page.evaluate(()=>{
+              const before={paused:window.gameDiagnostics().paused,locked:document.pointerLockElement?.id==='game',weapon:window.gameDiagnostics().m01.weapon};
+              window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));
+              window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));
+              return before;
+            });
+            assert.equal(premature.paused,true);assert.equal(premature.locked,false);
+            await page.evaluate(()=>window.__releaseNativePointerLock());
+            await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
+            const clock=await page.evaluate(()=>window.gameDiagnostics().clock);
+            await page.waitForFunction(t=>window.gameDiagnostics().clock>t+.3,clock);
+            const lost=await page.evaluate(()=>window.gameDiagnostics().m01.weapon);
+            assert.equal(lost.mag,5);assert.equal(lost.shotCount,0);
+            await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});
+            await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.mag===4);
+            const accepted=await page.evaluate(()=>window.gameDiagnostics().m01.weapon);
+            assert.equal(accepted.shotCount,1);assert.deepEqual(errors,[]);
+            const proof={browser:browser.version(),premature,lost,accepted,errors,claim:'Controlled ordering of the native pointer-lock API reproduces the unsafe fixture. No simulation, weapon or clock injection.'};
+            await fs.writeFile(process.env.EVIDENCE+'/RIG_POINTER_LOCK_PROOF.json',JSON.stringify(proof,null,2)+'\n');
+            console.log(JSON.stringify(proof));
+          }finally{await browser.close();}
+          JS
+          kill %1
+      - name: Run the corrected complete rig scenario three times without retries
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: docs/verification/m01-runtime/final-production-consolidation-v6/RIG_FOLLOWUP.json
+        run: |
+          set -o pipefail
+          npx playwright test tests/browser/m01.spec.js --grep 'licensed character rigs' --repeat-each=3 --workers=1 --retries=0 --reporter=list,json | tee "$EVIDENCE/logs/rig-followup.log"
+      - name: Require every independent scenario to pass
+        run: |
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ['EVIDENCE'])
+          r=json.loads((p/'RIG_FOLLOWUP.json').read_text())
+          assert r['stats']['expected']==3 and all(r['stats'][k]==0 for k in ['unexpected','skipped','flaky']) and not r['errors']
+          print(r['stats'])
+          PY
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-v6-rig-followup-${{ github.sha }}
+          path: |
+            docs/verification/m01-runtime/final-production-consolidation-v6/RIG_*
+            docs/verification/m01-runtime/final-production-consolidation-v6/logs/rig-followup.log
+            test-results/
+          if-no-files-found: error
+      - name: Publish successful focused evidence to the owned branch only
+        if: success()
+        run: |
+          git config user.name "M01 V6 rig evidence"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$EVIDENCE/RIG_POINTER_LOCK_PROOF.json" "$EVIDENCE/RIG_FOLLOWUP.json" "$EVIDENCE/logs/rig-followup.log"
+          git commit -m "docs(m01): preserve native pointer lock proof and three rig passes"
+          git push origin HEAD:refs/heads/codex/m01-final-production-consolidation-v6
