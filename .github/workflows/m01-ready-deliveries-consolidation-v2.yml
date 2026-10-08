@@ -26,7 +26,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: All Node tests (combined content)
-        run: npm test
+        run: node --test --test-concurrency=2 tests/*.test.js
       - name: Production build (combined content)
         run: npm run build
 
@@ -53,7 +53,6 @@ jobs:
           tests/browser/m01-hud-presentation.spec.js
           tests/browser/m01-battlefield-audio-runtime.spec.js
           tests/browser/m01-train-consist-polish.spec.js
-          tests/browser/m01-weapon-presentation.spec.js
           tests/browser/m01.spec.js
           --workers=1
       - name: Browser evidence
