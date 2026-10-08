@@ -1,31 +1,32 @@
-# SHA-256 of each candidate capture PNG (1280x720) by runtime commit; written by the capture tool, same controls and route.
-# frame  a428925  9827c73  dfb1572  d97329c  (= means identical to the previous column)
-m01-01-hip-idle  e2c8ec812573dc77  =  =  =
-m01-02-ads-mid-raise  b12eb6e837cde3f7  =  =  =
-m01-03-ads-idle  7660ddccc0f463ae  =  =  =
-m01-04-ads-shot-flash  370c1e3aba2deafb  =  =  =
-m01-05-ads-shot-recoil  9e38a4babd9f06af  =  =  =
-m01-06-bolt-chamber-smoke  dad2a07b1b774ec0  =  =  =
-m01-07-bolt-ejected-case  f104a6ef490d6deb  =  =  =
-m01-08-case-falling  98713dbe482754cd  =  =  =
-m01-09-after-bolt-smoke  7ff8f2fbc9f2d9c1  =  =  =
-m01-10-hip-shot-flash  b49c1bc9f114ec6e  =  =  =
-m01-11-hip-recoil  50751e715cbd3d92  =  =  =
-m01-12-hip-bolt-eject  f0108ac5b93e562b  =  =  =
-m01-13-reload-start  65223ff056bde5cb  =  =  =
-m01-14-reload-clip-in  be81bf5c49bc0bb4  =  =  =
-m01-15-reload-clip-ejected  f2297de2c60e90e1  =  =  =
-m01-16-reload-clip-falling  859d9c2f306f68a0  =  =  =
-m01-17-reload-end  d973be3f39a1c1d7  =  =  =
-m01-18-turn-lag  7b862def1c330733  =  =  =
-m01-19-brass-on-ground  766bcff90d381dbd  =  =  =
-m01-19b-ejecta-probe  527155a541c8d324  =  =  =
-m01-20-sprint  a5c515b242cd80c3  =  =  =
-bench-01-hip-idle  d4c3063eafece1c0  =  =  =
-bench-02-hip-shot  870eb35c2eb6ca96  =  =  =
-bench-03-hip-brass  c9265b926d6a8baf  =  =  =
-bench-04-ads-shot  644d2c049da9266e  55f826d2de3a9e9e  =  =
-bench-05-ads-follow-up  77a7fb181d04892e  697e216ba70941a6  =  =
-bench-06-ads-second-shot  a35dced31623fd53  fe71b07eef9d5672  =  =
-bench-07-smoke  c24464c328613aa0  47bbaa066dc3fe02  =  =
-# identical frames of 28: a428925=9827c73: 24, 9827c73=dfb1572: 28, dfb1572=d97329c: 28
+# SHA-256 of each candidate capture PNG (1280x720) by runtime commit, same controls and route. Computed after each
+# capture run with `sha256sum <capture dir>/<frame>.png`; the PNGs stay out of the repository (captures/ has the JPEG
+# composites). "=" means identical to the previous column.
+# frame  a428925  9827c73  dfb1572  d97329c
+m01-01-hip-idle  e2c8ec812573dc77808fc9c6ccbaac450b54063ab86a607d1034b2822a324deb  =  =  =
+m01-02-ads-mid-raise  b12eb6e837cde3f73b5d88a5a59b426aa6af325f43cad7a3dc2c272483378fea  =  =  =
+m01-03-ads-idle  7660ddccc0f463ae0e2a6c7673285e29c10ba05479aa0933c753a3d687fab11d  =  =  =
+m01-04-ads-shot-flash  370c1e3aba2deafb0eced273263819d0c037f225429952c1e35904eed8e65308  =  =  =
+m01-05-ads-shot-recoil  9e38a4babd9f06af4a966c0a454d008ea6c38668ccba69a459cb5d28e5d3d99a  =  =  =
+m01-06-bolt-chamber-smoke  dad2a07b1b774ec08a1d0cfbc777decfad1882608cf5e5e97863b8109773ba9b  =  =  =
+m01-07-bolt-ejected-case  f104a6ef490d6deb4267b87d3c6e37d82d62e567dadcbf8709558d104b81ba29  =  =  =
+m01-08-case-falling  98713dbe482754cd024044e9fbd923a4296163320d6a65ef6409c52e4955c744  =  =  =
+m01-09-after-bolt-smoke  7ff8f2fbc9f2d9c12db08a882707eae513fca92f11f721a10ebc4469c92d62e0  =  =  =
+m01-10-hip-shot-flash  b49c1bc9f114ec6edd2203f8311abc6359bf16b0d05bc8769a171e433c1f074c  =  =  =
+m01-11-hip-recoil  50751e715cbd3d92fcf95266970fb061c068ce2b1e32777ded0cf1074bb39440  =  =  =
+m01-12-hip-bolt-eject  f0108ac5b93e562b9444bc53e4021678ad1c43c4dcf4193632dde520dd4be6f5  =  =  =
+m01-13-reload-start  65223ff056bde5cb93d280990babccec9e1385eb3acc6bf1868e0624f4053262  =  =  =
+m01-14-reload-clip-in  be81bf5c49bc0bb4c8880a9c91abb07826e09cf3928169f467ff14a479c244de  =  =  =
+m01-15-reload-clip-ejected  f2297de2c60e90e1b2cf9e6b4fc6b250daebfe81529cde89b00e0db05e818e34  =  =  =
+m01-16-reload-clip-falling  859d9c2f306f68a08eb4ddcf5a1a1731d2ac377465b6d3174df5bbaabe99dad7  =  =  =
+m01-17-reload-end  d973be3f39a1c1d7edb8bfe81a454862a3635c8c05632e69663dd19109b27721  =  =  =
+m01-18-turn-lag  7b862def1c330733c030d56ff836cef669885b7f371e408aa5438e478112e80a  =  =  =
+m01-19-brass-on-ground  766bcff90d381dbd3587e0a61af6ccba2e7cf463546ff1c27e9dee74ef81cddc  =  =  =
+m01-19b-ejecta-probe  527155a541c8d324df488ebb39212c7dbe0e03ddaca1e8cbd1778b0beb6ce1f3  =  =  =
+m01-20-sprint  a5c515b242cd80c331afcbe95ccc4e0ecddf2ec13e4792a587ac87d1af64ab32  =  =  =
+bench-01-hip-idle  d4c3063eafece1c07f9ba8975fea459b66fb12957e204c57bd924d6c3a2f002a  =  =  =
+bench-02-hip-shot  870eb35c2eb6ca9608940633755ab60fa3f42464b0d7682fd5358bfac5a5cbf7  =  =  =
+bench-03-hip-brass  c9265b926d6a8baf926bc8bd4293c4adc1914049f9198c954b37dd608678a11f  =  =  =
+bench-04-ads-shot  644d2c049da9266e6cd3ee63c20347e2677a2610382ae0ac3f7c435251e0b27c  55f826d2de3a9e9e85b40cceb50e97e48cfa0b8b19a7a01c55160f1d627089aa  =  =
+bench-05-ads-follow-up  77a7fb181d04892e17774058f836f331f11859840ee8d578db052ec38d28182d  697e216ba70941a61b2ed0bd9fd5b6627cdbb3ac150cc38db4935362101cbe5b  =  =
+bench-06-ads-second-shot  a35dced31623fd53edeb23a0069b539792cc98a5ebec106b5e0f242f533e7c60  fe71b07eef9d5672563385c21076c1fe2c143040da244b783949585db57b4758  =  =
+bench-07-smoke  c24464c328613aa09f43b341bcb87150422da48242d86fc2a57850d8685dca2d  47bbaa066dc3fe023dbc63b8859e64c938582d71280587295d4fc7ca6b7d74ac  =  =

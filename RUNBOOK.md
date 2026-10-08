@@ -122,10 +122,20 @@ Apresentação da arma em primeira pessoa (wz.29 de M01 e M1 Carbine da bancada)
 CHROME_EXECUTABLE=/caminho/chromium node tools/verification/m01-weapon-presentation-capture.mjs test-results/weapon-presentation
 ```
 
-Não é playtest nem medida de FPS. Provas em `docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/`. Os programas dos FX do tiro são compilados e ligados antes de serem precisos (`warmWeaponFx()` → `prewarmWeaponFx`), porque o primeiro tiro os compilava nesse frame. O passe do mundo repete-se quando muda a configuração de luzes: uma luz nova que ligue e desligue durante o jogo tem de entrar na chave. Essa pré-compilação usa peças internas do three r186. Depois de actualizar o three, repetir a medição do primeiro disparo:
+Não é playtest nem medida de FPS. Provas em `docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/`. Os programas dos FX do tiro são compilados e ligados antes de serem precisos (`warmWeaponFx()` → `prewarmWeaponFx`), porque o primeiro tiro os compilava nesse frame.
+- Os dois passes repetem-se quando muda um valor das chaves dos programas (`programStateKey`): shadow maps ligados, o tipo de shadow map e, no M01, a sombra do sol.
+- Uma luz que pisca durante o jogo entra na lista `lights` do passe do mundo; uma mudança de configuração entra na chave.
+- A bancada pede `PCFShadowMap`, o tipo que o three r186 desenha.
+
+Essa pré-compilação usa peças internas do three r186. Depois de actualizar o three, repetir as medições do primeiro disparo, também em Média (bancada e M01 depois do nascer do sol):
 
 ```sh
-npm run build && CHROME_EXECUTABLE=/caminho/chromium node docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs/first-shot-ab.mjs . 4321 candidata
+npm run build
+L=docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/logs
+CHROME_EXECUTABLE=/caminho/chromium node $L/first-shot-ab.mjs . 4321 candidata
+node $L/sunrise-save.mjs . test-results/sunrise-save.json
+CHROME_EXECUTABLE=/caminho/chromium node $L/first-shot-programs.mjs . 4322 candidata bench medium
+CHROME_EXECUTABLE=/caminho/chromium node $L/first-shot-programs.mjs . 4323 candidata m01 medium test-results/sunrise-save.json
 ```
 
 `?debug=1` habilita somente `window.gameDiagnostics()`: renderer, preset, chamadas/triângulos, assets, relógio, posição, fase e sectores. Não expõe a instância nem permite mutações. Não deixar informação de engenharia no HUD normal.

@@ -46,13 +46,15 @@ Constatação própria, depois do verificador. Num par de testes corrido enquant
 Na suíte integral (`a428925`) esse teste passava.
 
 A medição do primeiro disparo no build de produção (detalhe em [`EVIDENCE.md`](EVIDENCE.md)) mostrou o resto:
-- `9827c73` levava 4,8–4,9 s até `mag` 4, contra 0,8–1,1 s na base;
+- `9827c73` levava 4,8–4,9 s até `mag` 4, contra 0,71–1,06 s na base (4 execuções);
 - o frame do tiro durava ~3,9 s, gastos a terminar a compilação/link dos programas de FX que estavam escondidos até ao tiro.
 
 Corrigido em `dfb1572` (`prewarmWeaponFx`):
-- o frame do tiro já não tem compilação e o tempo até `mag` 4 fica no intervalo da base (1,0–1,3 s);
-- os frames seguintes, com efeitos activos, foram até 0,5 s mais pesados em SwiftShader;
-- `m01.spec.js:38` passa sem carga, como na base.
+- o frame do tiro já não tem compilação (em Baixa) e o tempo até `mag` 4 fica a menos de um frame da base (`dfb1572` 1,00–1,26 s, `d97329c` 1,02–1,16 s, base 0,71–1,06 s);
+- os frames seguintes, com efeitos activos, foram mais pesados em SwiftShader: até ~1,9 s contra 1,1–1,5 s na base (n = 2 por build);
+- `m01.spec.js:38` passou 3 de 3 em `dfb1572`, mas 1 de 5 em `d97329c` (segunda revisão, abaixo).
+
+A segunda revisão encontrou ainda que a correcção só valia sem sombras (Baixa); em Média o primeiro tiro voltava a compilar. Corrigido em `5743b83` (abaixo).
 
 ## Revisão da pré-compilação (`f6db41d..7dbc0a5`)
 
@@ -69,16 +71,55 @@ Incidente: algumas das suas execuções de mutantes esgotaram a memória (findin
 
 | # | Gravidade | Constatação | Resolução |
 |---|---|---|---|
-| 1 | Deve corrigir | A pré-compilação só cobria a configuração de luzes do mundo no primeiro frame. As chaves de programa incluem luzes e sombras, e o M01 muda-as depois:<ul><li>o sol passa a projectar sombra ao nascer;</li><li>a luz das explosões liga e desliga;</li><li>a qualidade liga ou desliga os shadow maps.</li></ul> Um primeiro tiro depois disso podia voltar a compilar no frame do tiro (sprites da nuvem). | **Corrigido em código (`d97329c`).** `warmWeaponFx()` no `M01View` e na bancada: o passe da arma uma vez; o do mundo de novo por cada configuração (shadow maps × sombra do sol; na bancada, shadow maps), com a luz das explosões compilada nos dois estados (visibilidade reposta). Teste novo para as duas chamadas. |
+| 1 | Deve corrigir | A pré-compilação só cobria a configuração de luzes do mundo no primeiro frame. As chaves de programa incluem luzes e sombras, e o M01 muda-as depois:<ul><li>o sol passa a projectar sombra ao nascer;</li><li>a luz das explosões liga e desliga;</li><li>a qualidade liga ou desliga os shadow maps.</li></ul> Um primeiro tiro depois disso podia voltar a compilar no frame do tiro (sprites da nuvem). | **Corrigido em código (`d97329c`), incompleto:** com sombras ligadas a chave não seguia o tipo de shadow map (segunda revisão, corrigido em `5743b83`). `warmWeaponFx()` no `M01View` e na bancada: o passe da arma uma vez; o do mundo de novo por cada configuração (shadow maps × sombra do sol; na bancada, shadow maps), com a luz das explosões compilada nos dois estados (visibilidade reposta). Teste novo para as duas chamadas. |
 | 2 | Deve corrigir | Quando falhava, o teste novo comparava objectos do three com `deepEqual`/`equal`. A mensagem de erro imprimia cenas inteiras e o processo chegava a ~13 GB. | Corrigido: o teste compara só ids, nomes e booleanos. |
 | 3 | Deve corrigir | O teste não verificava que objectos eram preparados nem as chamadas: retirar os fios, retirar os sprites da nuvem, usar uma só câmara ou retirar a chamada da bancada passava. | Corrigido. O teste verifica os membros explicitamente (3 camadas + 9 fios; 16 sprites + pool do clipe + pool de invólucros) e usa duas câmaras e uma luz que pisca. Teste novo das duas chamadas, com stubs: uma vez por configuração, de novo quando ela muda, e a ordem no `render` (depois da iluminação, antes do render do mundo). |
 | 4 | Deve corrigir | Esta secção punha a falha da linha 45 na suíte integral; é do par de testes sob carga. | Corrigido acima. |
 | 5 | Deve corrigir | Os tempos GL dados como causa vinham da build intermédia, não commitada. | Rotulados como build intermédia. Acrescentada uma execução GL de `9827c73` (EVIDENCE). |
 | 6 | Deve corrigir (redacção) | «O primeiro tiro fica como na base» exagerava; os frames com efeitos activos foram 0,1–0,6 s mais pesados. «Custo com efeitos activos não medido em tempo» era contradito pelo log. | Corrigido em EVIDENCE, HANDOFF e nos documentos de estado. |
 | 7 | Nit | Os pools de invólucros/clipe não estão escondidos em repouso (visíveis com `count` 0). | Redacção corrigida no JSDoc e em EVIDENCE. |
-| 8 | Nit | A identidade píxel a píxel das capturas não tinha artefacto. | [`logs/capture-identity.txt`](logs/capture-identity.txt): SHA-256 de cada PNG em `a428925`, `9827c73`, `dfb1572` e `d97329c`. |
+| 8 | Nit | A identidade píxel a píxel das capturas não tinha artefacto. | [`logs/capture-identity.txt`](logs/capture-identity.txt): SHA-256 de cada PNG em `a428925`, `9827c73`, `dfb1572` e `d97329c` (primeiro só os 16 primeiros dígitos; agora completos, ver a segunda revisão). |
 | 9 | Nit | Afirmações desactualizadas ou inconsistentes. | Corrigidas: <ul><li>HANDOFF linha 6;</li><li>bundle da altura (abaixo);</li><li>log do build da base;</li><li>«frames/s» passa a «callbacks de rAF por segundo de parede» (campo `rafPerWallSecond`);</li><li>`m01.spec.js:99` falha em `fireRound`, sem dizer em que tiro;</li><li>sem afirmação sobre GPU real;</li><li>os identificadores de modelo só aparecem nas linhas de atribuição obrigatórias dos commits.</li></ul> |
 
 Notas sobre a tabela da primeira verificação:
 - O «mesmo bundle que `logs/build.log`» e «+31,9 kB, gzip +11,5 kB» referem-se a `a428925` (1 230,71 kB). O log actual é do runtime final (EVIDENCE).
 - «Não há identificadores de modelo» vale fora das linhas de atribuição obrigatórias dos commits.
+
+## Segunda revisão da pré-compilação (`7dbc0a5..c7284d4`)
+
+Revisor: subagente independente, só leitura, sem navegador. Leu o three r186 e conduziu o renderer real do three sobre um contexto WebGL2 falso, chamando os `warmWeaponFx()` reais do M01 e da bancada. Fez 26 mutações ao teste focado.
+
+**Resultado principal: a correcção do item 1 não aguentava com sombras ligadas** (Média/Alta, a qualidade por omissão em hardware real).
+- A bancada pede `PCFSoftShadowMap`, que o three r186 já não tem: dentro do primeiro render com sombra reescreve o tipo para `PCFShadowMap`.
+- Esse render vem **depois** da pré-compilação desse frame, e o tipo entra na chave de todos os programas. Os programas preparados deixavam de servir.
+- A chave da pré-compilação não incluía o tipo, por isso nunca se repetia: o primeiro tiro voltava a compilar os programas dos FX no frame do tiro, na bancada em Média e no M01 depois do nascer do sol.
+- As provas não o mostravam porque todas as medições correram em Baixa (sem sombras).
+
+| # | Gravidade | Constatação | Resolução |
+|---|---|---|---|
+| 1 | **Bloqueia o «Corrigido» do item 1** (não é regressão face à base) | Com sombras ligadas, a pré-compilação ficava obsoleta: 3 programas criados no frame do tiro na bancada em Média e no M01 depois do nascer do sol. | **Corrigido em código (`5743b83`).**<ul><li>A bancada pede `PCFShadowMap`, o tipo que o r186 desenha: imagem igual, sem o aviso do three.</li><li>`programStateKey`: shadow maps ligados, tipo e, no M01, a sombra do sol. Uma chave nova repete os dois passes; os programas já ligados são reaproveitados.</li><li>Teste novo com o `WebGLRenderer` real do three sobre um contexto WebGL2 falso, em 15 cenários: bancada e M01, Baixa e Média, mudança de qualidade, nascer do sol, explosões e a reescrita do tipo pelo r186. Verifica que nenhum desenho dos FX do tiro usa um programa criado nesse frame.</li><li>13 mutações apanhadas (lista abaixo).</li><li>No navegador, em Média: `d97329c` cria 3 programas no frame do tiro, na bancada e no M01 depois do nascer do sol; `5743b83` não cria nenhum programa dos FX da arma ([`EVIDENCE.md`](EVIDENCE.md)).</li></ul> |
+| 2 | Deve corrigir | «O passa/falha vira com o ruído» (`m01.spec.js:38`) não tinha apoio: em execuções alternadas, `d97329c` falhou 4 de 5 e base/`dfb1572` 0 de 6 (Fisher p ≈ 0,015). A causa atribuída (+6,8 %) também não servia: `dfb1572` tem os mesmos FX e passou 3 de 3. Faltava dizer que a base e `dfb1572` também passaram dos 15 s numa medição (15,10 e 15,02 s). | Nova série alternada ([`logs/m01-38-interleaved.log`](logs/m01-38-interleaved.log)), máquina sem outra carga, duas rondas completas: base 2 de 2 PASS; `d97329c` e `5743b83` 0 de 2, na linha 55. No total: base 5 de 5, `dfb1572` 3 de 3, `d97329c` 1 de 7, `5743b83` 0 de 2. A diferença repete-se, mas **a causa não foi encontrada**; fica como risco aberto em EVIDENCE e HANDOFF. Retirados «vira com o ruído» e a ligação a +6,8 %. Corrigida a frase sobre a base: a base e `dfb1572` passaram dos 15 s numa medição sem prazo; `d97329c` não. |
+| 3 | Deve corrigir | +6,8 % vinha de uma só execução por build, não alternada. O JSONL não era a saída do script (era uma transformação). | Saída bruta e transformação commitadas ([`logs/fixture-frame-cost-raw.jsonl`](logs/fixture-frame-cost-raw.jsonl), [`logs/fixture-frame-cost-summary.py`](logs/fixture-frame-cost-summary.py)). A transformação reproduz o resumo byte a byte. A medição antiga fica rotulada n = 1, sem conclusão causal. Não foi repetida alternada. |
+| 4 | Deve corrigir (redacção) | «No intervalo da base (1,0–1,3 s)» era falso: a base mede 0,71–1,06 s e 1,0–1,3 s é o intervalo de `dfb1572`. «0,8–1,1 s» na base era anterior às últimas execuções. | Corrigido nesta página e nos documentos de estado: a menos de um frame da base. |
+| 5 | Nit | O teste das chamadas não apanhava: a câmara errada nos dois sítios de chamada (M12, M13, M22); `lights:[this.sun]` em vez da luz das explosões (M25). E `meshes.has` era verificado depois da própria chamada do teste. | O teste verifica a câmara de cada chamada, e que a luz das explosões está acesa em metade das chamadas do mundo. `meshes.has` passa a ser verificado antes, depois da pré-compilação. O teste com o renderer real também apanha M25. |
+| 6 | Nit | `capture-identity.txt` dizia «SHA-256 escrito pela ferramenta de captura»: eram prefixos de 16 dígitos, calculados depois. | Digests SHA-256 completos, com o comando, calculados depois de cada execução. Os PNG ficam fora do repositório (tamanho); as composições JPEG estão em `captures/`. |
+| 7 | Nit | Proveniência dos logs:<ul><li>`bench-reload.jsonl` tinha sido reescrito (`fps` → `rafPerWallSecond`);</li><li>`m01-38-repeat.log` repete rótulos;</li><li>`sheets.py` dizia copiar originais e tinha o modo `layers` de outra branch.</li></ul> | <ul><li>`bench-reload.jsonl` reposto tal como foi produzido (campo `fps`; o script e os documentos usam depois o nome `rafPerWallSecond`, mesmo valor).</li><li>As duas séries de `m01-38-repeat.log` estão descritas em EVIDENCE.</li><li>`sheets.py` só com `pairs` e `zoom`; o recorte 4× do probe regenera-se idêntico byte a byte.</li></ul> |
+| 8 | Nit | Redacção:<ul><li>«número de programas preparados por esta chamada» (conta todos os programas dos materiais preparados);</li><li>«uma luz nova tem de entrar na chave» (uma luz que pisca entra na lista `lights` do passe; na chave entram as mudanças de configuração);</li><li>custo dos frames com efeitos citado de formas diferentes;</li><li>a repetição (true,false)/(false,false) é redundante.</li></ul> | <ul><li>Comentários corrigidos no código (`5743b83`).</li><li>HANDOFF e RUNBOOK distinguem a lista `lights` da chave.</li><li>O custo dos frames com efeitos é citado a partir das medições em pares.</li><li>A repetição redundante fica: custa só as chamadas a `compile()` com programas já em cache.</li></ul> |
+
+Mutações em `5743b83` (cópia descartável, só os testes focados), todas apanhadas:
+- tipo de shadow map fora da chave;
+- a bancada volta a `PCFSoftShadowMap`;
+- passe da arma só uma vez, no M01 e na bancada;
+- passe do mundo sem a luz das explosões, ou com o sol no lugar dela;
+- pool de invólucros não criado pela pré-compilação, no M01 e na bancada;
+- sombra do sol fora da chave;
+- câmara trocada num passe, no M01 e na bancada;
+- sem link forçado;
+- pré-compilação depois do render do mundo.
+
+Só com o teste do renderer real:
+- a bancada com `PCFSoftShadowMap` falha 3 cenários (primeiro frame com sombra, mudança para Média, nascer do sol no M01);
+- o tipo fora da chave falha os 2 cenários da reescrita;
+- o sol no lugar da luz das explosões falha os 2 cenários de explosões.
+
+O pool de invólucros criado no frame do tiro não cria programa: o material do latão partilha o programa do pool do clipe. Só o teste das chamadas o apanha.
