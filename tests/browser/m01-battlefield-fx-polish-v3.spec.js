@@ -41,16 +41,41 @@ function relocate(snapshot,x,z,target){
   s.player.x=x;s.player.z=z;s.player.y=y;s.player.angle=Math.atan2(dz,dx);
   s.player.pitch=Math.atan2((target.y??y+1.3)-y-1.6,Math.hypot(dx,dz));s.player.aiming=false;return s;
 }
-async function openFrom(browser,info,{name,snapshot,quality='high',camera,target,wait='blast'}){
+async function openFrom(browser,info,{name,snapshot,quality='high',camera,target,wait='blast',material=null}){
   const page=await browser.newPage(),errors=[],failed=[],state=camera?relocate(snapshot,camera.x,camera.z,target):structuredClone(snapshot);
   page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)failed.push(`${r.status()} ${r.url()}`);});
   await page.addInitScript(({key,state,quality})=>{localStorage.setItem(key,JSON.stringify(state));localStorage.setItem('cod-guerra:visual-quality',quality);},{key,state,quality});
-  await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});
+  await page.goto('?debug=1&visual-verify=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});
   await page.locator('#quality').selectOption(quality);await page.locator('#continue').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game',null,{timeout:120000});
-  if(wait==='impact')await page.waitForFunction(()=>{const f=window.gameDiagnostics().m01.fireEffects;return f.puff>0||f.spark>0||f.chip>0;},null,{timeout:25000});
-  else if(wait==='smoke')await page.waitForFunction(()=>{const f=window.gameDiagnostics().m01.battlefieldFx;return f.active>0&&f.counts.smoke>0&&f.counts.core===0;},null,{timeout:30000});
-  else await page.waitForFunction(()=>{const f=window.gameDiagnostics().m01.battlefieldFx;return f.active>0&&f.counts.dust>0&&(f.counts.core>0||f.counts.fire>0);},null,{timeout:30000});
+  // Diagnostic-only instrumentation: trace actual browser and simulation state, not generated test effects.
+  // Do not skip assertions or fake a blast. These samples identify missed transients vs absent events.
+  await page.evaluate(()=>{window.__fxProbe={samples:0,first:null,last:null,max:{active:0,core:0,fire:0,dust:0,smoke:0,puff:0,spark:0,chip:0}};});
+  try{
+    await page.waitForFunction(({wait,material})=>{
+      const d=window.gameDiagnostics(),fx=d.m01.battlefieldFx,hit=d.m01.fireEffects,probe=window.__fxProbe;
+      const row={clock:d.clock,battleClock:d.battleClock,paused:d.paused,active:fx.active,counts:fx.counts,fireEffects:hit};
+      if(!probe.first)probe.first=row;probe.last=row;probe.samples++;
+      for(const key of Object.keys(probe.max)){
+        const val=key==='active'?fx.active:key in fx.counts?fx.counts[key]:hit[key]??0;
+        probe.max[key]=Math.max(probe.max[key],val);
+      }
+      if(wait==='impact')return material==='earth'?hit.puff>0:material==='stone'||material==='wood'?hit.chip>0:(hit.puff>0||hit.spark>0||hit.chip>0);
+      if(wait==='smoke')return fx.active>0&&fx.counts.smoke>0&&fx.counts.core===0;
+      return fx.active>0&&fx.counts.dust>0&&(fx.counts.core>0||fx.counts.fire>0);
+    },{wait,material},{timeout:wait==='impact'?25000:30000});
+  }catch(error){
+    const debug=await page.evaluate(()=>{
+      const d=window.gameDiagnostics(),state=window.gameVerificationState?.().snapshot;
+      return {probe:window.__fxProbe,quality:d.quality,clock:d.clock,paused:d.paused,diagnostics:d.m01,
+        authoritative:{clock:state?.clock,battleClock:state?.battleClock,phase:state?.mission?.phase,
+          player:state?.player,damage:state?.sectors?.damage?.map(v=>({id:v.id,started:v.started,x:v.x,z:v.z,soundAt:v.soundAt})),
+          consumed:state?.consumed,objectives:state?.objectives}};
+    });
+    await info.attach(name+'.fx-failure.json',{body:JSON.stringify(debug,null,2),contentType:'application/json'});
+    throw new Error('FX event not observed for '+name+': '+error.message+'; probe='+JSON.stringify(debug.probe)
+      +'; authoritative='+JSON.stringify(debug.authoritative));
+  }
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
   const data=await page.evaluate(()=>window.gameDiagnostics());
   await page.screenshot({path:info.outputPath(name),style:'#pause,#hud,#menu{visibility:hidden!important}',timeout:120000});
@@ -63,7 +88,7 @@ test('real earth stone and wood round impacts keep distinct visual language',asy
   test.setTimeout(360000);
   for(const material of ['earth','stone','wood']){
     const f=fixtures.impacts[material],p=f.point,camera={x:p.x-8,z:p.z-6};
-    const {page,data}=await openFrom(browser,info,{name:`${material}-round-impact-high.png`,snapshot:f.snapshot,quality:'high',camera,target:p,wait:'impact'});
+    const {page,data}=await openFrom(browser,info,{name:`${material}-round-impact-high.png`,snapshot:f.snapshot,quality:'high',camera,target:p,wait:'impact',material});
     if(!baseline){
       if(material==='earth')expect(data.m01.fireEffects.puff).toBeGreaterThan(0);
       if(material==='stone')expect(data.m01.fireEffects.chip).toBeGreaterThan(0);
