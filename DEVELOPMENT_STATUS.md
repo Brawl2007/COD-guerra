@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## Contrato de apresentação das animações — 2026-10-08 UTC
+
+`M01-ANIM-CONTRACT-SIM-V1`, base `99309d9`, branch `codex/m01-anim-contract-sim-v1`: motion/odómetro/gait, bodyYaw independente de facing e timestamps reais opcionais persistidos no schema 2. Saves 86/89 e adaptadores existentes preservados. Gameplay byte-equivalente em 41.083 ticks contra a base; A/B com apresentação incluída: 61.055 comparações da auditoria existente + 1.760 novas. Build PASS e restore browser 2/2 PASS. Uma execução completa `npm test`: 343/344; única falha foi a guarda antiga do hash integral da simulação no viewmodel. Corrigida a guarda mantendo o hash da base imutável; os quatro ficheiros de testes afectados passaram 38/38 depois, sem mudar produção. A suíte completa não foi repetida, conforme o escopo. Handoff: `docs/verification/m01-runtime/anim-contract-sim-v1/HANDOFF.md`; estado formal `READY_FOR_CAPTAIN_REVIEW_WITH_KNOWN_FAILURES` pelo resultado vermelho dessa execução completa, sem regressão de runtime observada. M01 continua **PROTÓTIPO JOGÁVEL**; resolver/clips/visual ficam para a próxima tarefa. Main/deploy intocados.
+
 ## Station Architecture Production V2 — 2026-10-07
 
 `M01-STATION-ARCHITECTURE-PRODUCTION-V2`, base `99309d9`, branch `codex/m01-station-architecture-production-v2`. **READY_FOR_CAPTAIN_REVIEW**. Substituição visual do bloco da Station por cinco volumes, roof inclinado, marquise e 140 aberturas com recessos/shell fechado; malhas originais partilhadas por material, três LODs. Âncoras/colliders, gameplay, stationDrag, clocks/saves/RNG e 30 clusters de props preservados. 133 ficheiros protegidos byte a byte; rota integral equivalente à base.

@@ -1,0 +1,4 @@
+✔ player rifle hit/death and real near-miss suppression stamp only the existing combat outcomes (19.622512ms)
+✔ integration preserves gameplay, RNG, hitboxes/muzzle modules, missions and non-presentation base assets byte-identical (412.389233ms)
+✔ movement and S3 station evacuation bodies remain byte-for-byte identical to the fixed base (6.220848ms)
+✔ integration preserves gameplay, RNG, hitboxes/muzzle modules, missions and non-presentation base assets byte-identical (411.325615ms)

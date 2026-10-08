@@ -17,8 +17,8 @@ export function coverControls(sim){
 
 // A bounded route through the real simulation; no event, clock or objective injection.
 // This is an automated state/control test, not a browser playthrough.
-export function driver(seed=19390901,{support=false,onStep}={}){
-  const sim=new M01Simulation(seed),checkpoints={},events=[],combatSnapshots={};
+export function driver(seed=19390901,{support=false,onStep,Simulation=M01Simulation}={}){
+  const sim=new Simulation(seed),checkpoints={},events=[],combatSnapshots={};
   function step(controls={}){
     sim.tick(.05,controls);
     const emitted=sim.drainEvents();
@@ -91,8 +91,8 @@ export function toCoverAdjustment({truss=false}={}){
   return d;
 }
 // support: on the embankment slope beside the sappers (where the Lisewo gates are in sight) and on the south side of the deck.
-export function route(seed=19390901,{support=false,onStep}={}){
-  const {sim,checkpoints,events,combatSnapshots,step,until,walk}=toRepair(driver(seed,{support,onStep}));
+export function route(seed=19390901,{support=false,onStep,Simulation=M01Simulation}={}){
+  const {sim,checkpoints,events,combatSnapshots,step,until,walk}=toRepair(driver(seed,{support,onStep,Simulation}));
   if(support)walk(-120,16.5);else{walk(-115,27);walk(-28,28);step({crouch:true});}
   until(()=>sim.active('hold_access'),500);
   if(!support)step({crouch:true});
