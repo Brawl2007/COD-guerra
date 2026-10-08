@@ -30,17 +30,13 @@ jobs:
           p=Path(os.environ['EVIDENCE'])
           old=subprocess.check_output(['git','show','dd743de922f32b7391ce8e9e69a2ede2903eafb8:tests/browser/m01.spec.js']).decode()
           current=Path('tests/browser/m01.spec.js').read_text()
-          added="""      // Resume requests pointer lock asynchronously; pointerlockchange clears Input.
-                // A READY weapon alone does not mean the browser has returned control yet.
-                await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
-          """
-          # Derive the exact five-line delta instead of depending on indentation.
-          stripped='\n'.join(l for l in current.split('\n') if not any(x in l for x in [
-              '// Resume requests pointer lock asynchronously;',
-              '// A READY weapon alone does not mean',
-              "await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');",
-              "expect((await page.evaluate(()=>window.gameDiagnostics())).m01.weapon.shotCount).toBe(before+1);"
-          ]))
+          guard=('    // Resume requests pointer lock asynchronously; pointerlockchange clears Input.\n'
+                 '    // A READY weapon alone does not mean the browser has returned control yet.\n'
+                 "    await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');\n"
+                 '    const before=await page.evaluate(()=>window.gameDiagnostics().m01.weapon.shotCount);\n')
+          correlation='    expect((await page.evaluate(()=>window.gameDiagnostics())).m01.weapon.shotCount).toBe(before+1);\n'
+          assert current.count(guard)==1 and current.count(correlation)==1
+          stripped=current.replace(guard,'',1).replace(correlation,'',1)
           assert stripped==old,'Unexpected rig delta beyond the control guard and shot correlation'
           proof={'productionEqualTo':'2a2a56734861b0801234d7ddf3cda66c0100f326','otherTestsEqualToFullSuite':True,'rigFiveAddedLinesOnly':True,
               'rigOldSha256':hashlib.sha256(old.encode()).hexdigest(),'rigNewSha256':hashlib.sha256(current.encode()).hexdigest(),
