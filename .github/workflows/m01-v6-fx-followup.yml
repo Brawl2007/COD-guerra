@@ -1,0 +1,94 @@
+name: M01 V6 FX frozen-quality follow-up
+on:
+  push:
+    branches: [codex/m01-final-production-consolidation-v6]
+    paths: [.github/workflows/m01-v6-fx-followup.yml]
+permissions:
+  contents: write
+concurrency:
+  group: m01-v6-fx-followup-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  fx-followup:
+    if: github.ref == 'refs/heads/codex/m01-final-production-consolidation-v6'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      EVIDENCE: docs/verification/m01-runtime/final-production-consolidation-v6
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0, ref: '${{ github.sha }}'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - name: Guard production and prove the restricted fixture delta
+        run: |
+          git diff --exit-code 2a2a56734861b0801234d7ddf3cda66c0100f326 HEAD -- src assets package.json package-lock.json playwright.config.js
+          git diff --exit-code 2a2a56734861b0801234d7ddf3cda66c0100f326 HEAD -- tests ':!tests/browser/m01.spec.js' ':!tests/browser/m01-battlefield-fx-polish-v3.spec.js'
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,gzip,subprocess,hashlib,os
+          p=Path(os.environ['EVIDENCE'])
+          old=subprocess.check_output(['git','show','dd743de922f32b7391ce8e9e69a2ede2903eafb8:tests/browser/m01.spec.js']).decode()
+          current=Path('tests/browser/m01.spec.js').read_text()
+          added="""      // Resume requests pointer lock asynchronously; pointerlockchange clears Input.
+                // A READY weapon alone does not mean the browser has returned control yet.
+                await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
+          """
+          # Derive the exact five-line delta instead of depending on indentation.
+          stripped='\n'.join(l for l in current.split('\n') if not any(x in l for x in [
+              '// Resume requests pointer lock asynchronously;',
+              '// A READY weapon alone does not mean',
+              "await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');",
+              "expect((await page.evaluate(()=>window.gameDiagnostics())).m01.weapon.shotCount).toBe(before+1);"
+          ]))
+          assert stripped==old,'Unexpected rig delta beyond the control guard and shot correlation'
+          proof={'productionEqualTo':'2a2a56734861b0801234d7ddf3cda66c0100f326','otherTestsEqualToFullSuite':True,'rigFiveAddedLinesOnly':True,
+              'rigOldSha256':hashlib.sha256(old.encode()).hexdigest(),'rigNewSha256':hashlib.sha256(current.encode()).hexdigest(),
+              'fixtureFiles':['tests/browser/m01.spec.js','tests/browser/m01-battlefield-fx-polish-v3.spec.js'],
+              'fxDiff':subprocess.check_output(['git','diff','dd743de922f32b7391ce8e9e69a2ede2903eafb8','HEAD','--','tests/browser/m01-battlefield-fx-polish-v3.spec.js']).decode()}
+          (p/'TEST_DELTA_PROOF.json').write_text(json.dumps(proof,indent=2)+'\n')
+          extra=[];counts={}
+          for f in (p/'fx-critical-failure').glob('*.trace.gz'):
+              for line in gzip.decompress(f.read_bytes()).decode().splitlines():
+                  e=json.loads(line);k=e.get('type','unknown');counts[k]=counts.get(k,0)+1
+                  if k not in ['before','after','event','frame-snapshot','screencast-frame','context-options','resource-snapshot']:
+                      extra.append({'stream':f.name,'event':e})
+          (p/'fx-critical-failure/ADDITIONAL_TRACE_EVENTS.json').write_text(json.dumps({'types':counts,'events':extra},indent=2)+'\n')
+          print(json.dumps({'proof':{k:v for k,v in proof.items() if k!='fxDiff'},'traceTypes':counts,'additionalEvents':extra},indent=2))
+          PY
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Verify the entire corrected smoke pause restore quality scenario twice without retries
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: docs/verification/m01-runtime/final-production-consolidation-v6/FX_FOLLOWUP.json
+        run: |
+          set -o pipefail
+          npx playwright test tests/browser/m01-battlefield-fx-polish-v3.spec.js --grep 'distance smoke lifecycle' --repeat-each=2 --workers=1 --retries=0 --reporter=list,json | tee "$EVIDENCE/logs/fx-followup.log"
+      - name: Require both independent scenarios
+        run: |
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          r=json.loads((Path(os.environ['EVIDENCE'])/'FX_FOLLOWUP.json').read_text())
+          assert r['stats']['expected']==2 and all(r['stats'][k]==0 for k in ['unexpected','skipped','flaky']) and not r['errors']
+          print(r['stats'])
+          PY
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-v6-fx-followup-${{ github.sha }}
+          path: |
+            docs/verification/m01-runtime/final-production-consolidation-v6/FX_FOLLOWUP.json
+            docs/verification/m01-runtime/final-production-consolidation-v6/TEST_DELTA_PROOF.json
+            docs/verification/m01-runtime/final-production-consolidation-v6/logs/fx-followup.log
+            test-results/
+          if-no-files-found: error
+      - name: Preserve reports to the owned branch
+        if: always()
+        run: |
+          git config user.name "M01 V6 FX follow-up evidence"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$EVIDENCE/FX_FOLLOWUP.json" "$EVIDENCE/TEST_DELTA_PROOF.json" "$EVIDENCE/logs/fx-followup.log" "$EVIDENCE/fx-critical-failure/ADDITIONAL_TRACE_EVENTS.json"
+          git commit -m "docs(m01): preserve frozen-clock FX validation and exact fixture scope"
+          git push origin HEAD:refs/heads/codex/m01-final-production-consolidation-v6
