@@ -1,3 +1,20 @@
+# Estado atual — Station Architecture Production V2 (2026-10-07)
+
+Esta secção prevalece para a tarefa atual; o conteúdo abaixo é histórico. M01 continua **PROTÓTIPO JOGÁVEL**.
+
+- TASK_ID `M01-STATION-ARCHITECTURE-PRODUCTION-V2`; modelo/esforço pedido GPT-6.1 Sol HIGH; sem delegação.
+- Base remota confirmada `codex/m01-bridge-portal-material-detail-polish-v1` @ `99309d9cb023cc94a07d41ff863e1362e4460570`.
+- Branch isolada `codex/m01-station-architecture-production-v2`; confirmar HEAD remoto. Estado **READY_FOR_CAPTAIN_REVIEW**.
+- Cinco volumes, cobertura inclinada com cumeeiras/chaminés, marquise e 140 vãos com profundidade física. Módulo próprio `src/render/m01-station-architecture.js`, sem assets externos obrigatórios. Malhas agrupadas por material, três LODs; portas/vidros fechados, sem salas ou colliders novos.
+- 28/28 Node focados e build PASS; três casos browser focados verdes em duas execuções, timeout inicial de fixture preservado; 22 pares finais antes/depois com hashes de estado iguais e zero erros. Não houve suíte browser integral nesta tarefa.
+- 133 ficheiros de gameplay/world/core/missão/assets/bridge/train/personagens/props byte a byte; rota completa, saves, checkpoints, clocks e RNG iguais à base. Os 30 clusters de props mantêm posições e contagens.
+- Orçamento Station: 7 lotes, 21 geometrias para os três LODs, 10 mapas 128²; LOD0/1/2 30.881/28.707/13.382 triângulos. Sem FPS/hardware físico aprovados. P4 e medidas exatas da planta histórica continuam pendentes; fotos do acervo municipal sustentam a composição, com estimativas explicitamente marcadas.
+- Handoff/capturas/custos/limites: `docs/verification/m01-runtime/station-architecture-production-v2-2026-10-07/`.
+- A tarefa de bridge structural do Claude NÃO foi integrada. Nesta entrega `m01-view.js` muda somente remoção das janelas antigas, exclusão VISUAL do bloco Station em syncSolids e diagnóstico; `m01-environment.js` muda o trecho Station de buildArchitecture e sync/dispose. Preservar mudanças da ponte e fazer integração sem substituir esses ficheiros completos.
+- Main continua `72bbcdd156603c9399801c95d43d9365ba50fc82`; sem deploy/workflow_dispatch/merge/Graphify. Parar após handoff; próxima certificação combinada pertence ao checkpoint autorizado pelo capitão.
+
+---
+
 # Estado actual — auditoria de determinismo schema 2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a MG34 aprovada nem Graphify.

@@ -1,0 +1,118 @@
+{
+  "config": {
+    "configFile": "/workspace/scratch/2975fbb80cc7/COD-guerra/playwright.config.js",
+    "rootDir": "/workspace/scratch/2975fbb80cc7/COD-guerra/tests/browser",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/scratch/2975fbb80cc7/COD-guerra/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/workspace/scratch/2975fbb80cc7/COD-guerra/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run preview",
+      "url": "http://127.0.0.1:4173/COD-guerra/",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "m01-station-architecture.spec.js",
+      "file": "m01-station-architecture.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Station quality, checkpoint restart and page reload retain one architectural root and all prop clusters",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 28459,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-07T23:54:50.678Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "station-quality-lifecycle.json",
+                      "contentType": "application/json",
+                      "body": "eyJzYW1wbGVzIjpbeyJyZWFkeSI6dHJ1ZSwicXVhbGl0eSI6ImxvdyIsImxvZCI6MiwiYW5jaG9yIjp7Im1pbiI6eyJ4IjotNDYwLCJ5IjotMywieiI6Mjh9LCJtYXgiOnsieCI6LTMzOCwieSI6MTEsInoiOjU1fX0sImVudmVsb3BlIjp7Im1pbiI6Wy00NzAsLTMsMjBdLCJtYXgiOlstMzMwLDE1LDU1XX0sInZvbHVtZXMiOjUsIm9wZW5pbmdzIjoxNDAsInRyaWFuZ2xlcyI6MTMzODIsInRyaWFuZ2xlc0J5TG9kIjpbMzA4ODEsMjg3MDcsMTMzODJdLCJkcmF3Q2FsbHMiOjcsImdlb21ldHJpZXMiOjIxLCJ0ZXh0dXJlcyI6MTAsImluc3RhbmNlcyI6MCwic291cmNlIjoib3JpZ2luYWwtbWVzaC1uby1leHRlcm5hbC1hc3NldC1kZXBlbmRlbmN5IiwiY29sbGlkZXJzQWRkZWQiOjAsImRpc3Bvc2VkIjpmYWxzZX0seyJyZWFkeSI6dHJ1ZSwicXVhbGl0eSI6Im1lZGl1bSIsImxvZCI6MSwiYW5jaG9yIjp7Im1pbiI6eyJ4IjotNDYwLCJ5IjotMywieiI6Mjh9LCJtYXgiOnsieCI6LTMzOCwieSI6MTEsInoiOjU1fX0sImVudmVsb3BlIjp7Im1pbiI6Wy00NzAsLTMsMjBdLCJtYXgiOlstMzMwLDE1LDU1XX0sInZvbHVtZXMiOjUsIm9wZW5pbmdzIjoxNDAsInRyaWFuZ2xlcyI6Mjg3MDcsInRyaWFuZ2xlc0J5TG9kIjpbMzA4ODEsMjg3MDcsMTMzODJdLCJkcmF3Q2FsbHMiOjcsImdlb21ldHJpZXMiOjIxLCJ0ZXh0dXJlcyI6MTAsImluc3RhbmNlcyI6MCwic291cmNlIjoib3JpZ2luYWwtbWVzaC1uby1leHRlcm5hbC1hc3NldC1kZXBlbmRlbmN5IiwiY29sbGlkZXJzQWRkZWQiOjAsImRpc3Bvc2VkIjpmYWxzZX0seyJyZWFkeSI6dHJ1ZSwicXVhbGl0eSI6ImhpZ2giLCJsb2QiOjAsImFuY2hvciI6eyJtaW4iOnsieCI6LTQ2MCwieSI6LTMsInoiOjI4fSwibWF4Ijp7IngiOi0zMzgsInkiOjExLCJ6Ijo1NX19LCJlbnZlbG9wZSI6eyJtaW4iOlstNDcwLC0zLDIwXSwibWF4IjpbLTMzMCwxNSw1NV19LCJ2b2x1bWVzIjo1LCJvcGVuaW5ncyI6MTQwLCJ0cmlhbmdsZXMiOjMwODgxLCJ0cmlhbmdsZXNCeUxvZCI6WzMwODgxLDI4NzA3LDEzMzgyXSwiZHJhd0NhbGxzIjo3LCJnZW9tZXRyaWVzIjoyMSwidGV4dHVyZXMiOjEwLCJpbnN0YW5jZXMiOjAsInNvdXJjZSI6Im9yaWdpbmFsLW1lc2gtbm8tZXh0ZXJuYWwtYXNzZXQtZGVwZW5kZW5jeSIsImNvbGxpZGVyc0FkZGVkIjowLCJkaXNwb3NlZCI6ZmFsc2V9XSwiYmVmb3JlIjp7InJlYWR5Ijp0cnVlLCJxdWFsaXR5IjoiaGlnaCIsImxvZCI6MCwiYW5jaG9yIjp7Im1pbiI6eyJ4IjotNDYwLCJ5IjotMywieiI6Mjh9LCJtYXgiOnsieCI6LTMzOCwieSI6MTEsInoiOjU1fX0sImVudmVsb3BlIjp7Im1pbiI6Wy00NzAsLTMsMjBdLCJtYXgiOlstMzMwLDE1LDU1XX0sInZvbHVtZXMiOjUsIm9wZW5pbmdzIjoxNDAsInRyaWFuZ2xlcyI6MzA4ODEsInRyaWFuZ2xlc0J5TG9kIjpbMzA4ODEsMjg3MDcsMTMzODJdLCJkcmF3Q2FsbHMiOjcsImdlb21ldHJpZXMiOjIxLCJ0ZXh0dXJlcyI6MTAsImluc3RhbmNlcyI6MCwic291cmNlIjoib3JpZ2luYWwtbWVzaC1uby1leHRlcm5hbC1hc3NldC1kZXBlbmRlbmN5IiwiY29sbGlkZXJzQWRkZWQiOjAsImRpc3Bvc2VkIjpmYWxzZX0sInJlc3RhcnQiOnsicmVhZHkiOnRydWUsInF1YWxpdHkiOiJoaWdoIiwibG9kIjowLCJhbmNob3IiOnsibWluIjp7IngiOi00NjAsInkiOi0zLCJ6IjoyOH0sIm1heCI6eyJ4IjotMzM4LCJ5IjoxMSwieiI6NTV9fSwiZW52ZWxvcGUiOnsibWluIjpbLTQ3MCwtMywyMF0sIm1heCI6Wy0zMzAsMTUsNTVdfSwidm9sdW1lcyI6NSwib3BlbmluZ3MiOjE0MCwidHJpYW5nbGVzIjozMDg4MSwidHJpYW5nbGVzQnlMb2QiOlszMDg4MSwyODcwNywxMzM4Ml0sImRyYXdDYWxscyI6NywiZ2VvbWV0cmllcyI6MjEsInRleHR1cmVzIjoxMCwiaW5zdGFuY2VzIjowLCJzb3VyY2UiOiJvcmlnaW5hbC1tZXNoLW5vLWV4dGVybmFsLWFzc2V0LWRlcGVuZGVuY3kiLCJjb2xsaWRlcnNBZGRlZCI6MCwiZGlzcG9zZWQiOmZhbHNlfSwicmVsb2FkZWQiOnsicmVhZHkiOnRydWUsInF1YWxpdHkiOiJoaWdoIiwibG9kIjowLCJhbmNob3IiOnsibWluIjp7IngiOi00NjAsInkiOi0zLCJ6IjoyOH0sIm1heCI6eyJ4IjotMzM4LCJ5IjoxMSwieiI6NTV9fSwiZW52ZWxvcGUiOnsibWluIjpbLTQ3MCwtMywyMF0sIm1heCI6Wy0zMzAsMTUsNTVdfSwidm9sdW1lcyI6NSwib3BlbmluZ3MiOjE0MCwidHJpYW5nbGVzIjozMDg4MSwidHJpYW5nbGVzQnlMb2QiOlszMDg4MSwyODcwNywxMzM4Ml0sImRyYXdDYWxscyI6NywiZ2VvbWV0cmllcyI6MjEsInRleHR1cmVzIjoxMCwiaW5zdGFuY2VzIjowLCJzb3VyY2UiOiJvcmlnaW5hbC1tZXNoLW5vLWV4dGVybmFsLWFzc2V0LWRlcGVuZGVuY3kiLCJjb2xsaWRlcnNBZGRlZCI6MCwiZGlzcG9zZWQiOmZhbHNlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c606a350a2a597c05aa8-7e400e0731c8372045a4",
+          "file": "m01-station-architecture.spec.js",
+          "line": 11,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-07T23:54:49.155Z",
+    "duration": 31235.678999999996,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

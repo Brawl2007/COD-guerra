@@ -120,8 +120,7 @@ export class M01View {
     const tracks=new THREE.InstancedMesh(this.box,this.materials.metal,pieces.length),dummy=new THREE.Object3D();
     pieces.forEach((t,i)=>{dummy.position.set(t.x,t.y,t.z);dummy.rotation.set(0,t.angle,0);dummy.scale.set(t.length,.12,.08);dummy.updateMatrix();tracks.setMatrixAt(i,dummy.matrix);});
     tracks.receiveShadow=true;tracks.computeBoundingSphere();this.scene.add(tracks);
-    // Empty windows sit on the station's solid wall, rather than implying open paths.
-    for(let x=-450;x<-340;x+=10)this.mesh('box','dark',[x,3,27.97],[2.2,2.8,.05]);
+    // Station openings and their closed visual shells belong to M01Environment.
     this.mesh('box','dark',[-262,.57,20],[21,.18,13]);
     // Signals identify the barracão, sapper station and shelter without minimap arrows.
     this.mesh('box','wood',[-263,-2.5,22],[1.2,1,.8]);
@@ -138,6 +137,7 @@ export class M01View {
     for(const m of this.solidGroup.children)if(m.isInstancedMesh)m.dispose();this.solidGroup.clear();
     const byMaterial=new Map();
     for(const b of [...world.buildings,...world.covers,...world.joints]){
+      if(b.id==='station'&&this.environment?.station?.ready)continue; // Visual replacement; collider remains in world.
       const key=b.material??'stone';if(!byMaterial.has(key))byMaterial.set(key,[]);byMaterial.get(key).push(b);
     }
     for(const [material,boxes]of byMaterial){
@@ -534,6 +534,7 @@ export class M01View {
     locomotive:this.locomotive.diagnostics,panzerzug:this.panzerzugArt.diagnostics,wagons:this.wagons.diagnostics,yardWagons:this.yardWagons.diagnostics,
     aircraft:{loaded:[...this.aircraftSources.keys()].sort(),planes:this.planes.map(p=>{const model=p.levels.find(l=>l.object.visible)?.object,prop=model?.getObjectByName('propeller');return {visible:p.visible,lod:model?.userData.lod,position:p.position.toArray(),propeller:prop?.quaternion.toArray()};})},
     renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+(b.visible===false?0:b.count),0)??0,
+    stationArchitecture:this.environment?.station?.diagnostics??{ready:false,failure:this.environment?.stationFailure??null},
     environmentProps:this.environment?.propDiagnostics,bridgePortalPolish:this.portalPolish?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},
     combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),
