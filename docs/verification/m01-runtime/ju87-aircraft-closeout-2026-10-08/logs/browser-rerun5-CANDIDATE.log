@@ -1,0 +1,121 @@
+# Repetição isolada dos 5 testes de m01.spec.js que falharam na suite completa da candidata (CANDIDATE), em sequência, sem outra carga
+# CI=1 npx playwright test tests/browser/m01.spec.js -g 'licensed character rigs|adjustment salvo|demolition inside the road truss|German fire on the repair' --reporter=line
+0e493d6 M01 Ju 87: evidência refeita no runtime final (d90f8de)
+
+Running 5 tests using 1 worker
+
+[1/5] tests/browser/m01.spec.js:101:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset
+  1) tests/browser/m01.spec.js:101:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset 
+
+    TimeoutError: page.waitForFunction: Timeout 30000ms exceeded.
+
+      131 |     // consumed by Input without repositioning the locked cursor, then wait on authoritative weapon state.
+      132 |     await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});
+    > 133 |     await page.waitForFunction(expected=>window.gameDiagnostics().m01.weapon.mag===expected,expectedMag,{timeout:process.env.CI?30000:10000});
+          |                ^
+      134 |     await expect(page.locator('#mag')).toHaveText(String(expectedMag));
+      135 |   };
+      136 |   for(let i=0;i<5;i++){
+        at fireRound (/home/user/COD-guerra/tests/browser/m01.spec.js:133:16)
+        at /home/user/COD-guerra/tests/browser/m01.spec.js:138:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[2/5] tests/browser/m01.spec.js:320:33 › adjustment salvo at the gates restores its actual origin and follows mouse look
+  2) tests/browser/m01.spec.js:320:33 › adjustment salvo at the gates restores its actual origin and follows mouse look 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('#objective-status')
+    Expected substring: "atrás de si"
+    Received string:    "Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('#objective-status')
+        6 × locator resolved to <span id="objective-status">Metralhadora nos portões de Lisewo · 1081 m, em f…</span>
+          - unexpected value "Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura"
+
+
+      332 |     document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
+      333 |   },Math.atan2(Math.sin(aim+Math.PI-before.player.angle),Math.cos(aim+Math.PI-before.player.angle))/.0022);
+    > 334 |   await expect(page.locator('#objective-status')).toContainText('atrás de si');
+          |                                                   ^
+      335 |   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+      336 |   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
+      337 |   expect(errors).toEqual([]);expect(failed).toEqual([]);
+        at /home/user/COD-guerra/tests/browser/m01.spec.js:334:51
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[3/5] tests/browser/m01.spec.js:320:33 › adjustment salvo behind the truss restores its actual origin and follows mouse look
+[4/5] tests/browser/m01.spec.js:339:1 › demolition inside the road truss shows the actual bearing while mouse look remains free
+[5/5] tests/browser/m01.spec.js:388:1 › German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state
+  3) tests/browser/m01.spec.js:388:1 › German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      399 |   }
+      400 |   expect(samples.some(s=>s.fx.muzzle>0)).toBe(true);expect(samples.some(s=>s.fx.puff>0)).toBe(true);
+    > 401 |   expect(samples.some(s=>s.pinned)&&samples.some(s=>!s.pinned)).toBe(true);
+          |                                                                 ^
+      402 |   // Os sapadores deitados aparecem na pose de quem está sob fogo, e o trabalho retoma depois.
+      403 |   expect(samples.some(s=>s.pinned&&s.poses>0)).toBe(true);expect(samples.at(-1).progress).toBeGreaterThan(samples[0].progress);
+      404 |   expect(samples.some(s=>s.animations.aiming>0)).toBe(true);
+        at /home/user/COD-guerra/tests/browser/m01.spec.js:401:65
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-German-fire-on-the-rep-7588e-ine-is-the-simulation-state/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-German-fire-on-the-rep-7588e-ine-is-the-simulation-state/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-German-fire-on-the-rep-7588e-ine-is-the-simulation-state/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-German-fire-on-the-rep-7588e-ine-is-the-simulation-state/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  3 failed
+    tests/browser/m01.spec.js:101:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset 
+    tests/browser/m01.spec.js:320:33 › adjustment salvo at the gates restores its actual origin and follows mouse look 
+    tests/browser/m01.spec.js:388:1 › German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state 
+  2 passed (2.7m)
+
+real	2m42.432s
+user	0m37.554s
+sys	0m5.642s
+exit 1

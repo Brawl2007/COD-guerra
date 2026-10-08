@@ -1,0 +1,124 @@
+# Repetição isolada dos 5 testes de m01.spec.js que falharam na suite completa da candidata (BASE), em sequência, sem outra carga
+# CI=1 npx playwright test tests/browser/m01.spec.js -g 'licensed character rigs|adjustment salvo|demolition inside the road truss|German fire on the repair' --reporter=line
+99309d9 test: align portal invariants with material-driven weathering
+
+Running 5 tests using 1 worker
+
+[1/5] tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset
+  1) tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset 
+
+    Test timeout of 180000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 180000ms exceeded.
+
+      112 |     const view=await page.evaluate(()=>window.gameDiagnostics().player);
+      113 |     await page.evaluate(({angle,pitch})=>window.dispatchEvent(new MouseEvent('mousemove',{movementX:-angle/.0022,movementY:pitch/.0022})),view);
+    > 114 |     await page.waitForFunction(()=>Math.abs(window.gameDiagnostics().player.pitch)<.03);
+          |                ^
+      115 |   }
+      116 |   async function capture(name){
+      117 |     await page.evaluate(()=>document.exitPointerLock());
+        at horizontal (/tmp/claude-0/base/tests/browser/m01.spec.js:114:16)
+        at /tmp/claude-0/base/tests/browser/m01.spec.js:138:87
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[2/5] tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look
+[3/5] tests/browser/m01.spec.js:318:33 › adjustment salvo behind the truss restores its actual origin and follows mouse look
+  2) tests/browser/m01.spec.js:318:33 › adjustment salvo behind the truss restores its actual origin and follows mouse look 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('#objective-status')
+    Expected substring: "atrás de si"
+    Received string:    "Salva do dique norte · 1064 m, em frente · mude de cobertura"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('#objective-status')
+        6 × locator resolved to <span id="objective-status">Salva do dique norte · 1064 m, em frente · mude d…</span>
+          - unexpected value "Salva do dique norte · 1064 m, em frente · mude de cobertura"
+
+
+      330 |     document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
+      331 |   },Math.atan2(Math.sin(aim+Math.PI-before.player.angle),Math.cos(aim+Math.PI-before.player.angle))/.0022);
+    > 332 |   await expect(page.locator('#objective-status')).toContainText('atrás de si');
+          |                                                   ^
+      333 |   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+      334 |   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
+      335 |   expect(errors).toEqual([]);expect(failed).toEqual([]);
+        at /tmp/claude-0/base/tests/browser/m01.spec.js:332:51
+
+    Error Context: test-results/m01-adjustment-salvo-behin-454be-igin-and-follows-mouse-look/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-adjustment-salvo-behin-454be-igin-and-follows-mouse-look/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-adjustment-salvo-behin-454be-igin-and-follows-mouse-look/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[4/5] tests/browser/m01.spec.js:337:1 › demolition inside the road truss shows the actual bearing while mouse look remains free
+  3) tests/browser/m01.spec.js:337:1 › demolition inside the road truss shows the actual bearing while mouse look remains free 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('#objective-status')
+    Expected substring: "atrás de si"
+    Received string:    "Demolição leste · 771 m, em frente · recue para o posto de disparo"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('#objective-status')
+        6 × locator resolved to <span id="objective-status">Demolição leste · 771 m, em frente · recue para o…</span>
+          - unexpected value "Demolição leste · 771 m, em frente · recue para o posto de disparo"
+
+
+      349 |   },Math.atan2(Math.sin(angle),Math.cos(angle))/.0022);
+      350 |   await turn(aim+Math.PI-initial.player.angle);
+    > 351 |   await expect(page.locator('#objective-status')).toContainText('atrás de si');
+          |                                                   ^
+      352 |   const away=await page.evaluate(()=>window.gameDiagnostics());
+      353 |   await turn(aim-away.player.angle);
+      354 |   await expect(page.locator('#objective-status')).toContainText('em frente');
+        at /tmp/claude-0/base/tests/browser/m01.spec.js:351:51
+
+    Error Context: test-results/m01-demolition-inside-the--ecd5c-ile-mouse-look-remains-free/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-demolition-inside-the--ecd5c-ile-mouse-look-remains-free/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-demolition-inside-the--ecd5c-ile-mouse-look-remains-free/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[5/5] tests/browser/m01.spec.js:386:1 › German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state
+  3 failed
+    tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset 
+    tests/browser/m01.spec.js:318:33 › adjustment salvo behind the truss restores its actual origin and follows mouse look 
+    tests/browser/m01.spec.js:337:1 › demolition inside the road truss shows the actual bearing while mouse look remains free 
+  2 passed (5.2m)
+
+real	5m11.334s
+user	0m44.645s
+sys	0m7.507s
+exit 1
