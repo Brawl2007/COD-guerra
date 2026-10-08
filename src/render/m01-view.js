@@ -18,7 +18,7 @@ import { M01Panzerzug } from './m01-panzerzug.js';
 import {soldierVisualVariant} from './m01-soldier-variation.js';
 import { M01CombatFeedback } from './m01-combat-feedback.js';
 import {M01BridgePortalPolish,bridgeMaterialSlot} from './m01-bridge-portal-polish.js';
-import {WEAPON_PRESENTATION,WeaponViewFx,WeaponWorldFx,WeaponLighting,viewUp,prewarmWeaponFx} from './first-person-weapon-fx.js';
+import {WEAPON_PRESENTATION,WeaponViewFx,WeaponWorldFx,WeaponLighting,viewUp,prewarmWeaponFx,programStateKey} from './first-person-weapon-fx.js';
 
 export const M01_BATTLEFIELD_FX_LIMITS=Object.freeze({bursts:16,flash:16,core:48,fire:96,smoke:128,dust:128,shards:96,lights:1});
 const FX_DENSITY={low:.55,medium:.78,high:1};
@@ -468,16 +468,15 @@ export class M01View {
   }
   /**
    * Shot-FX programs compiled and linked before they are needed (prewarmWeaponFx), so no shot frame compiles them.
-   * The weapon pass has a constant light setup: once. The world pass again whenever its setup changes (the sun starts
-   * casting shadows at sunrise; a quality change turns shadow maps on or off), with the burst light in both states
-   * because it flickers. Returns the number of programs prepared by this call.
+   * Both passes again whenever a value in their program keys changes: the renderer's shadow state (programStateKey: a
+   * quality change, the shadow type) or the sun starting to cast shadows at sunrise. The world pass covers the burst
+   * light in both states because it flickers. Returns how many programs the warmed materials hold (0: already warm).
    */
   warmWeaponFx(){
-    const key=`${this.engine.shadowMap?.enabled}|${this.sun.castShadow}`;this.weaponFxWarm??=new Set();
-    if(this.weaponFxWarm.has(key))return 0;
-    const passes=[{scene:this.scene,camera:this.camera,objects:this.weaponWorldFx.warmObjects([WEAPON_PRESENTATION.wz29.casing.kind]),lights:[this.explosionLight]}];
-    if(!this.weaponFxWarm.size)passes.unshift({scene:this.weaponScene,camera:this.weaponCamera,objects:[...this.fallbackFx.warmObjects,...this.viewModel.fx.warmObjects]});
-    this.weaponFxWarm.add(key);return prewarmWeaponFx(this.engine,passes);
+    const key=programStateKey(this.engine,this.sun.castShadow);this.weaponFxWarm??=new Set();
+    if(this.weaponFxWarm.has(key))return 0;this.weaponFxWarm.add(key);
+    return prewarmWeaponFx(this.engine,[{scene:this.weaponScene,camera:this.weaponCamera,objects:[...this.fallbackFx.warmObjects,...this.viewModel.fx.warmObjects]},
+      {scene:this.scene,camera:this.camera,objects:this.weaponWorldFx.warmObjects([WEAPON_PRESENTATION.wz29.casing.kind]),lights:[this.explosionLight]}]);
   }
   render(sim){
     // Apply authoritative train/wagon state before pause-frame caching so restore cannot freeze constructor defaults.

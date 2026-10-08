@@ -407,8 +407,9 @@ export class WeaponWorldFx {
  * against its own scene (`compile(object, camera, scene)`: that scene's visible lights, shadows, fog and environment,
  * so the programs the shot will use) and each program is used once (its uniform lookup), so the link happens now.
  * `lights` flicker while playing: every on/off combination is compiled, then their visibility is restored. Nothing is
- * drawn. Program keys follow the light setup, so callers run this again when that setup changes. Returns the number of
- * programs prepared (0 without a WebGL renderer).
+ * drawn. Program keys follow the light and shadow setup (programStateKey), so callers run this again when it changes;
+ * programs already linked are reused. Returns how many distinct programs the warmed materials hold, earlier setups
+ * included (0 without a WebGL renderer).
  */
 export function prewarmWeaponFx(engine,passes){
   if(typeof engine?.compile!=='function')return 0;const programs=new Set();
@@ -423,6 +424,12 @@ export function prewarmWeaponFx(engine,passes){
   for(const program of programs)program.getUniforms?.();
   return programs.size;
 }
+/**
+ * Renderer state in every program's cache key that can change while playing: shadow maps on or off (quality) and their
+ * type (three r186 rewrites a removed type inside the first shadow render). Callers append their scene's own setup; a
+ * new key means the warmed programs no longer match, so both passes are warmed again.
+ */
+export const programStateKey=(engine,...scene)=>[engine?.shadowMap?.enabled,engine?.shadowMap?.type,...scene].join('|');
 
 /** Equirect sky/ground gradient for weapon reflections; pitch-corrected through scene.environmentRotation. */
 export function weaponEnvironmentTexture(){

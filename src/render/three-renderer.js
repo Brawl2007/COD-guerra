@@ -5,7 +5,7 @@ import { toScene, aimDirection } from '../world/spatial.js';
 import { AssetManager } from '../assets/asset-manager.js';
 import { surface } from './materials.js';
 import { M01View } from './m01-view.js';
-import { WEAPON_PRESENTATION, WeaponViewFx, WeaponWorldFx, WeaponLighting, weaponRecoil, idleSway, advanceLookLag, viewPointToWorld, viewUp, prewarmWeaponFx } from './first-person-weapon-fx.js';
+import { WEAPON_PRESENTATION, WeaponViewFx, WeaponWorldFx, WeaponLighting, weaponRecoil, idleSway, advanceLookLag, viewPointToWorld, viewUp, prewarmWeaponFx, programStateKey } from './first-person-weapon-fx.js';
 import { visualNoise } from './m01-atmosphere.js';
 
 const QUALITY={low:{ratio:1,shadows:false,particles:70},medium:{ratio:1.25,shadows:true,particles:120},high:{ratio:1.5,shadows:true,particles:180}};
@@ -14,6 +14,9 @@ export function initialQuality({saved,cores=0,memory=0,renderer='',maxTexture=0}
   return cores>=4&&memory>=4&&maxTexture>=8192&&renderer&&!/swiftshader|llvmpipe|software/i.test(renderer)?'medium':'low';
 }
 const matrix=new THREE.Object3D();
+// three r186 removed PCFSoftShadowMap: it draws it as PCFShadowMap and rewrites the type inside the first shadow render,
+// which re-keys every program compiled before that render. Set the type that is actually drawn.
+export const SHADOW_MAP_TYPE=THREE.PCFShadowMap;
 
 export class Renderer {
   constructor(canvas){
@@ -23,7 +26,7 @@ export class Renderer {
     this.engine=new THREE.WebGLRenderer({canvas,context,antialias:true});
     this.engine.outputColorSpace=THREE.SRGBColorSpace;
     this.engine.toneMapping=THREE.ACESFilmicToneMapping;this.engine.toneMappingExposure=1.15;
-    this.engine.shadowMap.type=THREE.PCFSoftShadowMap;
+    this.engine.shadowMap.type=SHADOW_MAP_TYPE;
     this.engine.autoClear=false;
     this.scene=new THREE.Scene();this.scene.background=new THREE.Color('#8d9da0');
     this.scene.fog=new THREE.Fog('#9ba9a8',35,320);
@@ -271,15 +274,15 @@ export class Renderer {
     this.engine.render(this.scene,this.camera);this.engine.clearDepth();this.engine.render(this.weaponScene,this.weaponCamera);
   }
   /**
-   * The carbine's shot-FX programs compiled and linked before they are needed (prewarmWeaponFx): the weapon pass once,
-   * the world pass again when a quality change turns shadow maps on or off (the bench's world lights never change).
+   * The carbine's shot-FX programs compiled and linked before they are needed (prewarmWeaponFx). Both passes again
+   * whenever the renderer's shadow state in their program keys changes (programStateKey: a quality change turns shadow
+   * maps on or off); the bench's world lights never change.
    */
   warmWeaponFx(){
-    const key=`${this.engine.shadowMap?.enabled}`;this.weaponFxWarm??=new Set();
-    if(this.weaponFxWarm.has(key))return 0;
-    const passes=[{scene:this.scene,camera:this.camera,objects:this.weaponWorldFx.warmObjects([WEAPON_PRESENTATION.m1_carbine.casing.kind])}];
-    if(!this.weaponFxWarm.size)passes.unshift({scene:this.weaponScene,camera:this.weaponCamera,objects:this.weaponFx.warmObjects});
-    this.weaponFxWarm.add(key);return prewarmWeaponFx(this.engine,passes);
+    const key=programStateKey(this.engine);this.weaponFxWarm??=new Set();
+    if(this.weaponFxWarm.has(key))return 0;this.weaponFxWarm.add(key);
+    return prewarmWeaponFx(this.engine,[{scene:this.weaponScene,camera:this.weaponCamera,objects:this.weaponFx.warmObjects},
+      {scene:this.scene,camera:this.camera,objects:this.weaponWorldFx.warmObjects([WEAPON_PRESENTATION.m1_carbine.casing.kind])}]);
   }
   updateWeapon(player,weapon,time,dt){
     // Presentation clock = simulation ms. A frozen/restored clock rebuilds the blends at rest instead of tweening.

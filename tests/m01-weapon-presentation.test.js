@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import * as THREE from 'three';
 import {WEAPON_PRESENTATION,weaponRecoil,recoilImpulse,idleSway,advanceLookLag,mechanicalPulse,viewPointToWorld,viewUp,ejectaPose,
-  WeaponViewFx,WeaponWorldFx,WeaponLighting,casingGeometry,stripperClipGeometry,prewarmWeaponFx} from '../src/render/first-person-weapon-fx.js';
-import {Renderer} from '../src/render/three-renderer.js';
+  WeaponViewFx,WeaponWorldFx,WeaponLighting,casingGeometry,stripperClipGeometry,prewarmWeaponFx,programStateKey} from '../src/render/first-person-weapon-fx.js';
+import {Renderer,SHADOW_MAP_TYPE} from '../src/render/three-renderer.js';
 import {M01View} from '../src/render/m01-view.js';
 import {presentationPose,WZ29_VISUAL} from '../src/render/m01-wz29-presentation.js';
 import {M01ViewModel} from '../src/render/m01-viewmodel.js';
@@ -13,6 +13,7 @@ import {eyePosition,aimDirection} from '../src/world/spatial.js';
 import {viewModelFixture,geometryReport} from './helpers/m01-viewmodel-fixture.js';
 import {alignmentReport} from '../tools/verification/m01-wz29-viewmodel-audit.mjs';
 import {driver} from './helpers/m01-route.js';
+import {fakeWebGL2} from './helpers/fake-webgl2.js';
 
 const {wz29,m1_carbine:carbine}=WEAPON_PRESENTATION;
 const BOLT=1.05;
@@ -471,8 +472,8 @@ test('shot-FX programs are compiled and linked ahead of the shot, per object aga
   }finally{fx.dispose();worldFx.dispose();}
 });
 
-test('M01 and the bench warm their shot FX before the world render, and again whenever the world light setup changes',()=>{
-  // M01: the weapon pass once; the world pass per (shadow maps, sun shadow) setup, with the burst light in both states.
+test('M01 and the bench warm their shot FX before the world render, and again whenever a program-key value changes',()=>{
+  // Both passes per (shadow maps on, shadow type, sun shadow) setup; M01's world pass with the burst light in both states.
   const make=()=>{const weaponScene=new THREE.Scene(),scene=new THREE.Scene(),weaponCamera=new THREE.PerspectiveCamera(),camera=new THREE.PerspectiveCamera();
     weaponScene.add(new THREE.DirectionalLight());const sun=new THREE.DirectionalLight(),explosionLight=new THREE.PointLight();explosionLight.visible=false;scene.add(sun,explosionLight);
     return {weaponScene,scene,weaponCamera,camera,sun,explosionLight};};
@@ -481,22 +482,100 @@ test('M01 and the bench warm their shot FX before the world render, and again wh
   const b=make(),bench=warmEngine(),carbineFx=new WeaponViewFx(b.weaponScene,carbine),carbineWorld=new WeaponWorldFx(b.scene),renderer={...b,engine:bench.engine,weaponFx:carbineFx,weaponWorldFx:carbineWorld};
   try{
     const weaponObjects=[...fallbackFx.warmObjects,...rigFx.warmObjects],step=()=>{const from=calls.length;M01View.prototype.warmWeaponFx.call(view);return calls.slice(from);};
-    let c=step(),world=worldFx.warmObjects([wz29.casing.kind]);
-    assert.deepEqual(c.filter(x=>x.target===m.weaponScene.id).map(x=>x.object),ids(weaponObjects),'weapon pass on the first frame');
-    assert.equal(c.filter(x=>x.target===m.scene.id).length,2*world.length,'world pass, burst light off and on');assert.ok(worldFx.meshes.has(wz29.casing.kind));
-    assert.equal(m.explosionLight.visible,false);assert.equal(step().length,0,'same setup: nothing to do');
-    m.sun.castShadow=true;c=step();assert.ok(c.length===2*world.length&&c.every(x=>x.target===m.scene.id),'sunrise shadows: the world pass again, the weapon pass not');
-    engine.shadowMap.enabled=true;assert.equal(step().length,2*world.length,'shadow quality: the world pass again');
-    engine.shadowMap.enabled=false;assert.equal(step().length,0,'a setup seen before is already warm');
-    // Bench: the same once-per-setup rule; its world lights never change, only shadow maps with quality.
+    assert.ok(!worldFx.meshes.has(wz29.casing.kind),'no case pool before the first warm');
+    let c=step();assert.ok(worldFx.meshes.has(wz29.casing.kind),'the warm creates the case pool');const world=worldFx.warmObjects([wz29.casing.kind]);
+    // Each pass with its own scene and camera; the world pass once without and once with the burst light.
+    const both=(c,label)=>{
+      const w=c.filter(x=>x.target===m.weaponScene.id),s=c.filter(x=>x.target===m.scene.id);
+      assert.deepEqual(w.map(x=>x.object),ids(weaponObjects),`${label}: weapon pass`);assert.ok(w.every(x=>x.camera===m.weaponCamera.id),`${label}: weapon camera`);
+      assert.deepEqual(s.map(x=>x.object),[...ids(world),...ids(world)],`${label}: world pass`);assert.ok(s.every(x=>x.camera===m.camera.id),`${label}: world camera`);
+      assert.equal(s.filter(x=>x.lights.split(',').includes(String(m.explosionLight.id))).length,world.length,`${label}: burst light on in half of the world calls`);
+      assert.equal(c.length,w.length+s.length);};
+    both(c,'first frame');assert.equal(m.explosionLight.visible,false);assert.equal(step().length,0,'same setup: nothing to do');
+    m.sun.castShadow=true;both(step(),'sunrise shadows');
+    engine.shadowMap.enabled=true;both(step(),'shadow quality');
+    engine.shadowMap.type=THREE.PCFShadowMap;both(step(),'shadow type rewritten by the renderer');
+    engine.shadowMap.enabled=false;assert.equal(step().length,2*world.length+weaponObjects.length,'a new combination');
+    engine.shadowMap.enabled=true;assert.equal(step().length,0,'a setup seen before is already warm');
+    assert.equal(programStateKey(engine,true),programStateKey({shadowMap:{enabled:true,type:THREE.PCFShadowMap}},true));
+    // Bench: the same rule; its world lights never change, only the shadow maps with quality.
     const benchStep=()=>{const from=bench.calls.length;Renderer.prototype.warmWeaponFx.call(renderer);return bench.calls.slice(from);};
-    c=benchStep();const benchWorld=carbineWorld.warmObjects([carbine.casing.kind]);
-    assert.deepEqual(c.filter(x=>x.target===b.weaponScene.id).map(x=>x.object),ids(carbineFx.warmObjects));assert.equal(c.filter(x=>x.target===b.scene.id).length,benchWorld.length);
-    assert.ok(carbineWorld.meshes.has(carbine.casing.kind));assert.equal(benchStep().length,0);
-    bench.engine.shadowMap.enabled=true;c=benchStep();assert.ok(c.length===benchWorld.length&&c.every(x=>x.target===b.scene.id));
+    const benchBoth=(c,label)=>{
+      const w=c.filter(x=>x.target===b.weaponScene.id),s=c.filter(x=>x.target===b.scene.id);
+      assert.deepEqual(w.map(x=>x.object),ids(carbineFx.warmObjects),`${label}: weapon pass`);assert.ok(w.every(x=>x.camera===b.weaponCamera.id),`${label}: weapon camera`);
+      assert.deepEqual(s.map(x=>x.object),ids(carbineWorld.warmObjects([carbine.casing.kind])),`${label}: world pass`);assert.ok(s.every(x=>x.camera===b.camera.id),`${label}: world camera`);
+      assert.equal(c.length,w.length+s.length);};
+    assert.ok(!carbineWorld.meshes.has(carbine.casing.kind));c=benchStep();assert.ok(carbineWorld.meshes.has(carbine.casing.kind),'the warm creates the case pool');
+    benchBoth(c,'bench first frame');assert.equal(benchStep().length,0);
+    bench.engine.shadowMap.enabled=true;benchBoth(benchStep(),'bench shadow quality');
+    bench.engine.shadowMap.type=THREE.PCFShadowMap;benchBoth(benchStep(),'bench shadow type');
     // Both renderers call it every frame before drawing the world (and M01 after its lighting has set the sun's shadow).
     const order=(fn,keys)=>{const src=fn.toString(),at=keys.map(k=>src.indexOf(k));assert.ok(at.every((v,i)=>v>=0&&(!i||v>at[i-1])),`${keys.join(' < ')}: ${at}`);};
     order(M01View.prototype.render,['this.lighting(','this.warmWeaponFx()','this.engine.render(this.scene,this.camera)']);
     order(Renderer.prototype.render,['this.warmWeaponFx()','this.engine.render(this.scene,this.camera)']);
   }finally{fallbackFx.dispose();rigFx.dispose();worldFx.dispose();carbineFx.dispose();carbineWorld.dispose();}
+});
+
+// The real three renderer over a fake WebGL2 context, with the bench's or M01's own warmWeaponFx() before the world
+// render and then the world and weapon passes, in the order their render() uses. Not a GPU: it shows which programs
+// exist when, not how long they take.
+const quiet=fn=>{const warn=console.warn;console.warn=()=>{};try{return fn();}finally{console.warn=warn;}};
+function shotRig(kind,{shadows,type=SHADOW_MAP_TYPE}){
+  const {gl,canvas}=fakeWebGL2(),engine=quiet(()=>new THREE.WebGLRenderer({canvas,context:gl}));
+  engine.autoClear=false;engine.toneMapping=THREE.ACESFilmicToneMapping;engine.shadowMap.type=type;engine.shadowMap.enabled=shadows;
+  const scene=new THREE.Scene(),effects=new THREE.Group(),sun=new THREE.DirectionalLight(),ground=new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial());
+  ground.castShadow=ground.receiveShadow=true;scene.fog=new THREE.Fog('#9ba9a8',35,320);scene.add(new THREE.HemisphereLight(),sun,sun.target,ground,effects);
+  const weaponScene=new THREE.Scene(),weaponRoot=new THREE.Group();new WeaponLighting(weaponScene);weaponScene.add(weaponRoot);
+  const self={engine,scene,camera:new THREE.PerspectiveCamera(70,1,.05,2000),weaponScene,weaponCamera:new THREE.PerspectiveCamera(58,1,.03,6),sun,weaponWorldFx:new WeaponWorldFx(effects)};
+  let views,casing,warm;
+  if(kind==='bench'){sun.castShadow=true;self.weaponFx=new WeaponViewFx(weaponScene,carbine);self.weaponFx.attach(weaponRoot,[0,0,-.4]);views=[self.weaponFx];casing=carbine.casing.kind;warm=Renderer.prototype.warmWeaponFx;}
+  else{self.explosionLight=new THREE.PointLight('#ff9e45',0,80,2);self.explosionLight.visible=false;effects.add(self.explosionLight);
+    self.fallbackFx=new WeaponViewFx(weaponScene,wz29);self.fallbackFx.attach(weaponRoot,WZ29_VISUAL.muzzle);
+    // The rig's FX shares the fallback's muzzle light and is attached to the rig's weapon node, as M01ViewModel does.
+    const rigWeapon=new THREE.Group();weaponScene.add(rigWeapon);self.viewModel={fx:new WeaponViewFx(weaponScene,wz29,{light:self.fallbackFx.light})};
+    self.viewModel.fx.attach(rigWeapon,WZ29_VISUAL.muzzle);views=[self.fallbackFx,self.viewModel.fx];casing=wz29.casing.kind;warm=M01View.prototype.warmWeaponFx;}
+  // One frame. `quality` switches shadow maps, `cast` is the M01 sun's shadow (set by its lighting before the warm),
+  // `burst` the blast light. On a shot frame every shot-FX object is shown (a superset of one shot), the case pool is
+  // fetched the way the first ejection does (created now unless the warm made it) and each draw records its program.
+  const frame=({quality,cast,burst=false,shot=false}={})=>{
+    if(quality)engine.shadowMap.enabled=quality!=='low';if(kind==='m01'){if(cast!==undefined)sun.castShadow=cast;self.explosionLight.visible=burst;}
+    const world=self.weaponWorldFx,fx=shot?[...views.flatMap(v=>v.warmObjects),...world.sprites,world.clips,world.casingMesh(casing)]:[],drawn=new Map();
+    const rest=fx.map(o=>[o,o.visible,o.count]);
+    for(const o of fx){o.visible=true;if(o.isInstancedMesh)o.count=1;if(o.isSprite&&o.parent===effects)o.position.set(0,0,-2);
+      o.onAfterRender=(r,s,c,g,material)=>drawn.set(`${o.name}#${o.id}`,r.properties.get(material).currentProgram);}
+    let before;
+    quiet(()=>{warm.call(self);before=new Set(engine.info.programs);engine.render(scene,self.camera);engine.clearDepth();engine.render(weaponScene,self.weaponCamera);});
+    for(const [o,visible,count]of rest){o.visible=visible;if(o.isInstancedMesh)o.count=count;delete o.onAfterRender;}
+    return {drawn,before,shown:fx.length};
+  };
+  return {frame,dispose(){for(const v of views)v.dispose();self.weaponWorldFx.dispose();engine.dispose();}};
+}
+
+test('no shot frame compiles a program: bench and M01, low and medium, quality switch, sunrise and blasts (real three renderer, fake WebGL2)',()=>{
+  // The bench draws the shadow type it sets: three r186 rewrites the removed PCFSoftShadowMap inside the first shadow
+  // render, after that frame's warm, which re-keys every program.
+  assert.equal(SHADOW_MAP_TYPE,THREE.PCFShadowMap);assert.match(Renderer.toString(),/shadowMap\.type=SHADOW_MAP_TYPE/);
+  const dawn={cast:false},day={cast:true},shot={shot:true};
+  const scenarios=[
+    ['bench low, first frame','bench',{shadows:false},[{...shot}]],
+    ['bench low','bench',{shadows:false},[{},{},{...shot}]],
+    ['bench medium, first frame (the first shadow frame)','bench',{shadows:true},[{...shot}]],
+    ['bench medium','bench',{shadows:true},[{},{},{...shot}]],
+    ['bench low to medium, shot on the switch frame','bench',{shadows:false},[{},{},{quality:'medium',...shot}]],
+    ['bench medium to low','bench',{shadows:true},[{},{quality:'low'},{...shot}]],
+    ['bench medium, shadow type rewritten by r186 on frame 1','bench',{shadows:true,type:THREE.PCFSoftShadowMap},[{},{...shot}]],
+    ['M01 low, before sunrise','m01',{shadows:false},[dawn,dawn,{...dawn,...shot}]],
+    ['M01 medium, before sunrise','m01',{shadows:true},[dawn,dawn,{...dawn,...shot}]],
+    ['M01 medium, shot on the sunrise frame','m01',{shadows:true},[dawn,dawn,{...day,...shot}]],
+    ['M01 medium, after sunrise','m01',{shadows:true},[dawn,dawn,day,day,{...day,...shot}]],
+    ['M01 medium, during the first blast after sunrise','m01',{shadows:true},[dawn,day,{...day,burst:true,...shot}]],
+    ['M01 low, during a blast, after an earlier one','m01',{shadows:false},[dawn,{...dawn,burst:true},dawn,{...dawn,burst:true,...shot}]],
+    ['M01 medium switched on after sunrise','m01',{shadows:false},[dawn,day,{...day,quality:'medium'},{...day,...shot}]],
+    ['M01 medium after sunrise, shadow type rewritten by r186','m01',{shadows:true,type:THREE.PCFSoftShadowMap},[dawn,dawn,day,day,{...day,...shot}]],
+  ];
+  for(const [label,kind,options,frames]of scenarios){const rig=shotRig(kind,options);
+    try{let last;for(const f of frames)last=rig.frame(f);const {drawn,before,shown}=last;
+      assert.ok(shown>20&&drawn.size===shown,`${label}: ${drawn.size} of ${shown} shot-FX objects drawn`);
+      assert.deepEqual([...drawn].filter(([,program])=>!before.has(program)).map(([name])=>name),[],`${label}: programs compiled on the shot frame`);
+    }finally{rig.dispose();}}
 });
