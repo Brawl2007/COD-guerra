@@ -124,6 +124,17 @@ Se o ecrã falha, inspeccionar consola, rede e `#error`. Ausência de WebGL2 mos
 
 Há um único workflow `.github/workflows/pages.yml`. PRs executam validação; pushes para main/master ou workflow_dispatch validam e publicam somente dist. Deploy depende da validação e tem concorrência Pages própria. Esta alteração deve chegar por PR para main; não publicar directamente uma bancada como campanha concluída.
 
+## HUD e apresentação de M01
+
+`src/ui/m01-hud.js` apresenta objectivos, avisos, cartelas, fades, interacção, munição e saúde a partir do estado da simulação; não escreve nela. Os tempos usam o relógio da simulação (congelam na pausa). `gameDiagnostics().m01.hudPresentation` mostra aviso actual, fila, fade e cartelas (só apresentação). Capturas em seis resoluções, por snapshots da rota real e pausa real:
+
+```sh
+npm run build
+CHROME_EXECUTABLE=/caminho/chromium node tools/verification/m01-hud-capture.mjs test-results/m01-hud after
+```
+
+`HUD_VIEWPORTS=1280x720,800x600` e `HUD_SCENES=intro-card-place,cp-a-objective` restringem a execução. O relatório regista elementos fora do ecrã e sobreposições entre blocos do HUD. Não é playtest humano nem medição de FPS.
+
 ## Verificação visual de M01
 
 Para verificar a origem da salva nos portões e atrás da treliça, depois do build:

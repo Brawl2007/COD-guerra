@@ -5,7 +5,9 @@ const $=selector=>document.querySelector(selector);
 const canvas=$('#game'),menu=$('#menu'),pause=$('#pause'),hudRoot=$('#hud'),complete=$('#complete'),errorPanel=$('#error');
 const hud={health:$('#health'),healthBar:$('#health-bar'),grenades:$('#grenades'),mag:$('#mag'),reserve:$('#reserve'),
   objective:$('#objective-text'),objectiveStatus:$('#objective-status'),message:$('#message'),checkpoint:$('#checkpoint'),vignette:$('#damage-vignette'),
-  weaponName:$('#weapon-name'),weaponState:$('#weapon-state'),clock:$('#battle-clock'),interaction:$('#interaction'),subtitle:$('#subtitle'),crosshair:$('#crosshair')};
+  weaponName:$('#weapon-name'),weaponState:$('#weapon-state'),clock:$('#battle-clock'),interaction:$('#interaction'),subtitle:$('#subtitle'),crosshair:$('#crosshair'),
+  root:hudRoot,objectivePanel:$('#objective'),objectiveUpdate:$('#objective-update'),checkpointName:$('#checkpoint-name'),status:$('#status'),ammo:$('#ammo'),
+  rounds:$('#rounds'),lowHealth:$('#low-health'),fade:$('#fade'),titleCard:$('#title-card'),resumeCard:$('#resume-card')};
 let game;
 const showError=message=>{$('#error-text').textContent=message;errorPanel.classList.remove('hidden');};
 function stateChanged(state,detail){
@@ -17,6 +19,8 @@ function stateChanged(state,detail){
   if(state==='paused'||state==='control-error'){
     pause.classList.remove('hidden');
     $('#pause-text').textContent=state==='control-error'?'O Chrome não capturou o rato. Clique em Retomar para tentar novamente.':'A batalha está em pausa. Retome quando estiver pronto.';
+    const objective=game.isM01&&game.sim.scene?.id!=='cs_m01_intro'&&game.sim.scene?.id!=='cs_m01_roll_call'?game.sim.mission.text:'';
+    $('#pause-objective').textContent=objective?`Objectivo: ${objective}`:'';
   }
   if(state==='save-error'){showError(`Não foi possível abrir o checkpoint: ${detail} Pode iniciar uma nova missão.`);menu.classList.remove('hidden');}
   if(state==='complete'){

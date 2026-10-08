@@ -13,3 +13,9 @@
 - Semantic non-destructive integration of `src/render/m01-view.js` and `m01-environment.js`: retain Station V2 sections and add bridge material, truss/rivet/deck/rail structure and disposal. Patch segments matched uniquely.
 - Historical `DEVELOPMENT_STATUS.md` and `docs/NEXT_CHAT_CONTEXT.md` kept on this consolidated branch; source notes preserved in Git history and dedicated HANDOFF.
 - No runtime/regression certification until combined CI passes. No main/deploy change.
+
+## Integrated — M01 HUD Cinematic Presentation V1
+
+- Source `codex/m01-hud-cinematic-presentation-pass-v1` at `4b0e883dd58988fbbcaf24c062f69285c46a1457`; all source assets and tests preserved.
+- Merged `src/game/game.js` semantically: keep Animation Contract diagnostic and add HUD state/scene presentation; preserve scene timers and gameplay. Historical status docs retained; task README and source parent preserve evidence.
+- Combined CI pending; no main/deploy changes.

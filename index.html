@@ -27,15 +27,21 @@
       <div class="mission-note"><span id="mission-note">AS PONTES DO VÍSTULA</span><p>Mantenha contacto.<br>Avance sob cobertura.</p></div>
       <p class="menu-footer" id="mission-status">PROTÓTIPO JOGÁVEL · MODELOS E ÁUDIO PROVISÓRIOS</p>
     </section>
-    <section id="pause" class="overlay centered hidden"><p class="eyebrow">MISSÃO SUSPENSA</p><h2>PAUSADO</h2><p id="pause-text"></p><button id="resume">RETOMAR</button><button id="restart-checkpoint" class="secondary">REINICIAR CHECKPOINT</button><button id="back-menu" class="quiet">VOLTAR AO MENU</button></section>
+    <section id="pause" class="overlay centered hidden"><p class="eyebrow">MISSÃO SUSPENSA</p><h2>PAUSADO</h2><p id="pause-text"></p><p id="pause-objective"></p><button id="resume">RETOMAR</button><button id="restart-checkpoint" class="secondary">REINICIAR CHECKPOINT</button><button id="back-menu" class="quiet">VOLTAR AO MENU</button></section>
     <section id="complete" class="overlay centered hidden"><p class="eyebrow" id="complete-place">TCZEW · 1 SETEMBRO 1939</p><h2>MISSÃO CONCLUÍDA</h2><div id="debrief"></div><button id="replay">JOGAR NOVAMENTE</button><button id="complete-menu" class="secondary">VOLTAR AO MENU</button></section>
     <section id="error" class="error-panel hidden" role="alert"><h2>Não foi possível continuar</h2><p id="error-text"></p><button id="close-error" class="secondary">FECHAR</button></section>
     <div id="hud" class="hidden">
-      <div id="objective"><small>OBJETIVO ACTUAL</small><strong id="objective-text">AVANCE PELA ALDEIA</strong><span id="objective-status"></span></div>
-      <div id="crosshair"><i></i><i></i><i></i><i></i></div><div id="damage-vignette"></div>
-      <time id="battle-clock"></time><div id="subtitle"></div><div id="interaction"></div>
-      <div id="status"><div id="health-wrap"><small>SAÚDE</small><b id="health">100</b><span><i id="health-bar"></i></span><small id="grenades">GRANADAS ×2</small></div><div id="ammo"><small id="weapon-name">KARABINEK WZ.29</small><b id="mag">5</b><em>/</em><span id="reserve">40</span><small id="weapon-state"></small></div></div>
-      <div id="message" aria-live="polite"></div><div id="checkpoint">CHECKPOINT ALCANÇADO</div>
+      <div id="damage-vignette"></div><div id="low-health" aria-hidden="true"></div>
+      <div id="objective"><small id="objective-label">OBJECTIVO</small><strong id="objective-text">AVANCE PELA ALDEIA</strong><span id="objective-status"></span></div>
+      <div id="objective-update" aria-live="polite"></div>
+      <div id="clock-wrap"><small id="clock-date">1 · IX · 1939</small><time id="battle-clock"></time><div id="checkpoint" role="status"><i aria-hidden="true"></i><span>PROGRESSO GUARDADO</span><small id="checkpoint-name"></small></div></div>
+      <div id="crosshair"><i></i><i></i><i></i><i></i></div>
+      <div id="letterbox" aria-hidden="true"><i></i><i></i></div>
+      <div id="fade" aria-hidden="true"></div>
+      <div id="title-card" aria-live="polite"></div><div id="resume-card"></div>
+      <div id="interaction"></div>
+      <div id="captions"><div id="message" aria-live="polite"></div><div id="subtitle"></div></div>
+      <div id="status"><div id="health-wrap"><small>SAÚDE</small><b id="health">100</b><span><i id="health-bar"></i></span></div><div id="ammo"><small id="weapon-name">KARABINEK WZ.29</small><div class="ammo-count"><b id="mag">5</b><em>/</em><span id="reserve">40</span></div><div id="rounds" class="hidden" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><small id="weapon-state"></small><small id="grenades">GRANADAS ×2</small></div></div>
     </div>
   </main>
   <script type="module" src="/src/main.js"></script>
