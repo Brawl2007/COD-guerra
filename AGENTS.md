@@ -12,3 +12,4 @@ A especificação completa é `docs/PROMPT_MESTRE.txt`; o índice do produto é 
 - Assets finais precisam de autoria/licença, escala e animações verificadas. Não extrair conteúdo de COD.
 - Trabalhar em branch própria; abrir PR para main. Actualizar status e evidências antes de terminar.
 - Trabalho simultâneo com Claude Code: pesquisa/mapa/roteiro de M01 em branch própria, evitando alterações concorrentes em engine/combate/build.
+- Direção do Captain (estado verificado, plano das 30 missões, grafo de tarefas, decisões, handoff): `docs/direction/README.md`.
