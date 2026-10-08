@@ -2,7 +2,7 @@
 
 > **DOCUMENTO DE PROPOSTAS PARA APROVAÇÃO DO CAPITÃO — NÃO IMPLEMENTADO.**
 >
-> Base textual: seção 79 de \`docs/PROMPT_MESTRE.txt\` na branch \`main\`, conservada integralmente abaixo, missão a missão, com os acréscimos V2 identificados. Este documento não substitui \`mission.json\`, o \`SCRIPT.md\` detalhado de M01, o mapa histórico, a \`STORY_BIBLE.md\` nem os contratos de simulação. **M01 permanece PROTÓTIPO JOGÁVEL; M02–M30 continuam PLANEADAS.**
+> Base textual: seção 79 de `docs/PROMPT_MESTRE.txt` na branch `main`, conservada integralmente abaixo, missão a missão, com os acréscimos V2 identificados. Este documento não substitui `mission.json`, o `SCRIPT.md` detalhado de M01, o mapa histórico, a `STORY_BIBLE.md` nem os contratos de simulação. **M01 permanece PROTÓTIPO JOGÁVEL; M02–M30 continuam PLANEADAS.**
 
 ## Objetivo de qualidade
 
@@ -28,7 +28,7 @@ Os *tratamentos canónicos preservados abaixo* frequentemente usam comunicação
 
 ### Processo de implementação segura
 
-- Esta versão é **aditiva**. Não fazer merge automático, nem editar \`main\`, nem reescrever o \`SCRIPT.md\` de M01 ou o runtime.
+- Esta versão é **aditiva**. Não fazer merge automático, nem editar `main`, nem reescrever o `SCRIPT.md` de M01 ou o runtime.
 - Converter cada acréscimo V2 em alteração ao **roteiro próprio da missão**, apenas depois de revisão histórica, continuidade e contrato de assets/IA/mapa.
 - Cada alteração de missão exige uma *matriz de decisões e consequências*, pelo menos um playtest humano, e sinalização de conteúdos ainda não produzidos.
 - Propostas de diálogo são material de escrita, não factos históricos. Verificar atribuições e evitar reutilizar frases/planos proprietários de outros jogos.
@@ -1081,9 +1081,9 @@ Checkpoints: preparação; cerimônia; epílogos. Skip permite concluir/rever se
 
 ### Dependências e próximos documentos
 
-1. Expandir \`STORY_BIBLE.md\` para os protagonistas e aliados de **M02–M30** em documento de proposta isolado, sem editar o original.
+1. Expandir `STORY_BIBLE.md` para os protagonistas e aliados de **M02–M30** em documento de proposta isolado, sem editar o original.
 2. Fazer revisão histórica específica por missão, guardando as fontes e os limites de reconstrução. O texto original não é comprovação documental por si só.
-3. Criar contratos próprios de missão \`SCRIPT.md\` / \`mission.json\` somente quando a história tiver revisão.
+3. Criar contratos próprios de missão `SCRIPT.md` / `mission.json` somente quando a história tiver revisão.
 4. Implementar em branches independentes. Não reabrir o que já foi produzido em Tczew sem provas de falha.
 5. Convocar jogadores reais para verificar tensão, ritmo, clareza e ligação aos personagens, antes de promover o estado de cada missão.
 
