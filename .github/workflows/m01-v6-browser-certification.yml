@@ -1,0 +1,88 @@
+# Re-run required only because the original full-suite report was lost with the executor.
+name: M01 V6 complete browser certification
+on:
+  push:
+    branches: [codex/m01-final-production-consolidation-v6]
+    paths: [.github/workflows/m01-v6-browser-certification.yml]
+permissions:
+  contents: read
+concurrency:
+  group: m01-v6-browser-certification-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  complete-browser:
+    if: github.ref == 'refs/heads/codex/m01-final-production-consolidation-v6'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      contents: write
+    env:
+      EVIDENCE: docs/verification/m01-runtime/final-production-consolidation-v6
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0, ref: '${{ github.sha }}'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - name: Guard the already validated production and test tree
+        run: git diff --exit-code 2a2a56734861b0801234d7ddf3cda66c0100f326 HEAD -- src tests assets package.json package-lock.json playwright.config.js
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Build the guarded production tree
+        run: |
+          set -o pipefail
+          npm run build | tee "$EVIDENCE/logs/build-browser-certification.log"
+      - name: Run every browser test once, with the existing assertions and timeouts
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: docs/verification/m01-runtime/final-production-consolidation-v6/BROWSER_FULL_CI.json
+        run: |
+          set -o pipefail
+          npx playwright test --workers=1 --retries=0 --reporter=list,json | tee "$EVIDENCE/logs/browser-full-ci.log"
+      - name: Preserve the raw report and verify all 84 cases
+        if: always()
+        env:
+          CERTIFICATION_HEAD: ${{ github.sha }}
+          CERTIFICATION_RUN: ${{ github.run_id }}
+        run: |
+          python3 - <<'PY'
+          import json, gzip, hashlib, os
+          from pathlib import Path
+          p=Path(os.environ['EVIDENCE'])
+          source=p/'BROWSER_FULL_CI.json'
+          raw=source.read_bytes()
+          r=json.loads(raw)
+          tests=[]
+          def walk(s, parents):
+              names=parents+[s.get('title','')]
+              for spec in s.get('specs',[]):
+                  for t in spec.get('tests',[]):
+                      tests.append({'file':spec.get('file'),'line':spec.get('line'),'title':spec['title'],'project':t.get('projectName'),'status':t.get('status'),'expectedStatus':t.get('expectedStatus'),'results':[{'status':x.get('status'),'duration':x.get('duration'),'retry':x.get('retry'),'errors':x.get('errors',[])} for x in t.get('results',[])]})
+              for child in s.get('suites',[]): walk(child,names)
+          for s in r.get('suites',[]): walk(s,[])
+          report=gzip.compress(raw,mtime=0)
+          (p/'BROWSER_FULL_CI.json.gz').write_bytes(report)
+          ok=len(tests)==84 and r['stats']['expected']==84 and all(r['stats'][k]==0 for k in ['unexpected','flaky','skipped']) and not r.get('errors') and all(t['expectedStatus']=='passed' and t['status']=='expected' and len(t['results'])==1 and t['results'][0]['status']=='passed' and t['results'][0]['retry']==0 for t in tests)
+          summary={'status':'PASS' if ok else 'FAIL','testedHead':os.environ['CERTIFICATION_HEAD'],'executableHead':'2a2a56734861b0801234d7ddf3cda66c0100f326','runId':os.environ['CERTIFICATION_RUN'],'stats':r['stats'],'globalErrors':r.get('errors',[]),'testCount':len(tests),'tests':tests,'rawReportSha256':hashlib.sha256(raw).hexdigest(),'gzipSha256':hashlib.sha256(report).hexdigest(),'buildFiles':{str(f):{'bytes':f.stat().st_size,'sha256':hashlib.sha256(f.read_bytes()).hexdigest()} for f in Path('dist/assets').glob('*') if f.suffix in ['.js','.css']}}
+          (p/'BROWSER_FULL_CI_SUMMARY.json').write_text(json.dumps(summary,indent=2)+'\n')
+          print(json.dumps({k:v for k,v in summary.items() if k!='tests'},indent=2))
+          assert ok, 'Complete-suite certification requires 84 passes, no skips/retries/flaky/global errors'
+          PY
+      - name: Upload logs, report and all browser evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-v6-complete-browser-${{ github.sha }}
+          retention-days: 30
+          path: |
+            docs/verification/m01-runtime/final-production-consolidation-v6/BROWSER_FULL_CI*
+            docs/verification/m01-runtime/final-production-consolidation-v6/logs/browser-full-ci.log
+            docs/verification/m01-runtime/final-production-consolidation-v6/logs/build-browser-certification.log
+            test-results/
+          if-no-files-found: error
+      - name: Publish verified reports to the owned branch by normal fast-forward
+        if: success()
+        run: |
+          git config user.name "M01 V6 certification"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$EVIDENCE/BROWSER_FULL_CI.json.gz" "$EVIDENCE/BROWSER_FULL_CI_SUMMARY.json" "$EVIDENCE/logs/browser-full-ci.log" "$EVIDENCE/logs/build-browser-certification.log"
+          git commit -m "docs(m01): preserve verified complete V6 browser certification"
+          git push origin HEAD:refs/heads/codex/m01-final-production-consolidation-v6
