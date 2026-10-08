@@ -402,3 +402,27 @@ test('bench brass rests on the road slab it lands on, not inside it',()=>{
     assert.equal(height(rest.x,rest.z),.005,'it landed on the slab');assert.ok(Math.abs(item.ground-.005)<1e-4,`rest surface ${item.ground}`);
   }finally{world.dispose();}
 });
+
+test('down the sights the rifle follows a turn exactly: no look lag, the sights stay on the aim point every frame',async()=>{
+  const r=await rig();
+  try{
+    for(let i=0;i<12&&r.v.stats.aimBlend!==1;i++)r.tick({aim:true});assert.equal(r.v.stats.aimBlend,1);
+    for(const lookX of [60,60,60,-90,-90,0,30])for(const lookY of [0,25]){r.tick({aim:true,lookX,lookY});
+      const a=alignmentReport(r.v);assert.ok(a.horizontalPixels<1e-3&&a.verticalPixels<1e-3,`lookX ${lookX} lookY ${lookY}: ${a.horizontalPixels} ${a.verticalPixels} px`);}
+    // From the hip the same turn still trails (presentation weight), so the lag itself is alive.
+    r.tick({});for(let i=0;i<10&&r.v.stats.aimBlend!==0;i++)r.tick({});r.tick({lookX:60});assert.ok(Math.abs(r.v.stats.presentation.lookYaw)>1e-3);
+  }finally{r.dispose();}
+});
+
+test('a restore drops the barrel smoke of the previous timeline: the restored frame equals a fresh renderer of that save',async()=>{
+  const r=await rig(),f=await rig();
+  try{
+    while(r.d.sim.weapon.state!=='READY')r.tick();const before=r.d.sim.snapshot();
+    r.tick({fire:true});r.tick();r.tick();assert.ok(r.v.stats.presentation.wisps>0,'smoke of the first timeline');
+    // Another timeline from the same save fires a little later; restoring it must not keep the first shot's wisps.
+    const other=new M01Simulation();other.restoreSnapshot(before);for(let i=0;i<4;i++)other.tick(.05,{});other.tick(.05,{fire:true});other.tick(.05,{});
+    const save=other.snapshot();assert.ok(save.weapon.lastShot>r.d.sim.weapon.lastShot);
+    r.d.sim.restoreSnapshot(save);r.frame();f.d.sim.restoreSnapshot(save);f.frame();
+    assert.equal(r.v.stats.presentation.wisps,f.v.stats.presentation.wisps);assert.deepEqual(r.v.stats.presentation,f.v.stats.presentation);
+  }finally{r.dispose();f.dispose();}
+});

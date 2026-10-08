@@ -280,7 +280,7 @@ export class Renderer {
     s.look=advanceLookLag(s.look,player.angle,player.pitch,Math.min(.5,Math.max(0,t-s.clock)));
     s.clock=t;s.aim=blend(s.aim,Number(Boolean(player.aiming)),.045);s.run=blend(s.run,Number(Boolean(player.sprinting)),.09);
     const progress=weapon.reloadProgress(time),arc=Math.sin(progress*Math.PI),eased=s.aim*s.aim*(3-2*s.aim),hip=1-eased,raise=4*s.aim*(1-s.aim)*(1-arc);
-    const recoil=weaponRecoil(profile,(time-player.weaponShotAt)/1000,s.aim,weapon.shotCount??0),sway=idleSway(t),lag=(1-.75*eased)*(1-arc);
+    const recoil=weaponRecoil(profile,(time-player.weaponShotAt)/1000,s.aim,weapon.shotCount??0),sway=idleSway(t),lag=(1-eased)*(1-arc);
     const bob=player.moveBlend*Math.sin(time*(player.sprinting?.015:.01))*.012,hold=hip*(1-arc)*(1-.65*Math.min(1,player.moveBlend));
     this.weaponRoot.position.set(.2*hip+sway.x*hold-s.look.yaw*.05*lag,
       -.24+.14*eased-arc*.15+Math.abs(bob)+sway.y*hold-.01*raise+recoil.rise+s.look.pitchLag*.04*lag,-.65+recoil.back*2.4);

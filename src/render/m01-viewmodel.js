@@ -44,7 +44,7 @@ export class M01ViewModel {
   constructor(scene,characters,texture,worldFx=null,{muzzleLight=null}={}){
     this.scene=scene;this.characters=characters;this.root=null;this.lod=null;this.mixer=null;this.worldFx=worldFx;
     // Layered flash, muzzle light and barrel/chamber smoke. `flash` remains the core sprite on the real muzzle socket.
-    this.fx=new WeaponViewFx(scene,PROFILE,{light:muzzleLight});this.flash=this.fx.core;
+    this.fx=new WeaponViewFx(scene,PROFILE,{light:muzzleLight});this.flash=this.fx.core;this.boltSeconds=BOLT_SECONDS;
     this.flash.position.fromArray(WZ29_VISUAL.muzzle);this.flash.scale.set(.105,.105,1);
     this.roundGeometry=new THREE.CylinderGeometry(.0056,.0056,.064,8);this.roundGeometry.rotateX(Math.PI/2);
     this.round=new THREE.Mesh(this.roundGeometry,new THREE.MeshStandardMaterial({color:'#b99b4e',metalness:.65,roughness:.45}));

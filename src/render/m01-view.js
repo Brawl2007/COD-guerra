@@ -519,7 +519,7 @@ export class M01View {
       const fresh=w.shotCount!==this.fallbackShot&&time<this.flashUntil+.2&&time-shotAt>=0&&time-shotAt<.25;if(fresh)this.fallbackShot=w.shotCount;
       this.fallbackFx.update({clock:time,shotAt,gate:time<this.flashUntil,fresh,aim:player.aiming?1:0,shot:w.shotCount??0,visible:r.visible&&!player.carrying,
         muzzle:r.localToWorld(new THREE.Vector3(0,.045,-.66)),axis:new THREE.Vector3(0,0,-1).transformDirection(r.matrixWorld),
-        port:r.localToWorld(new THREE.Vector3(.03,.05,-.03)),up:viewUp(player.pitch),chamberAt:shotAt+WEAPON_PRESENTATION.wz29.mechanics.chamberOpen*1.05});
+        port:r.localToWorld(new THREE.Vector3(.03,.05,-.03)),up:viewUp(player.pitch),chamberAt:shotAt+WEAPON_PRESENTATION.wz29.mechanics.chamberOpen*this.viewModel.boltSeconds});
     }
     this.weaponWorldFx.update(time,sim.world);
     this.updateBattlefieldFx(state,time);
