@@ -1,0 +1,2542 @@
+{
+  "kind": "LOCAL Chromium/SwiftShader, production M01View/Renderer, simulation stepped with real controls in-page; staged captures, not a playtest",
+  "quality": "low",
+  "viewport": [
+    1280,
+    720
+  ],
+  "commit": "a4289253d702f343ba006c3ff7c6001ae11540d6",
+  "captures": [
+    {
+      "name": "m01-01-hip-idle",
+      "state": {
+        "mode": "m01",
+        "clock": 1.2500000000000004,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 0,
+          "pitch": 0,
+          "aiming": false
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 5,
+          "reserve": 40,
+          "state": "READY",
+          "until": 0,
+          "started": 0,
+          "lastShot": -1000000000,
+          "shotCount": 0,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": null
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "aim",
+            "clipTime": 0,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 0,
+            "runBlend": 0,
+            "phase": 11.25,
+            "visualMuzzle": [
+              0.07450260005163915,
+              -0.23361892984040958,
+              -1.2059837696983442
+            ],
+            "visualSights": {
+              "rear": [
+                0.1480883959271776,
+                -0.17324296588881588,
+                -0.74
+              ],
+              "front": [
+                0.07808392177643454,
+                -0.19977882464186061,
+                -1.19598269901293
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 0,
+              "lookYaw": 0,
+              "lookPitch": 0,
+              "clipEjected": false,
+              "flash": 0,
+              "layers": 0,
+              "light": 0,
+              "wisps": 0
+            }
+          },
+          "weaponFx": {
+            "casings": 0,
+            "clips": 0,
+            "puffs": 0,
+            "resting": 0,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.325,
+              0.28,
+              -0.903
+            ]
+          }
+        },
+        "render": {
+          "calls": 247,
+          "triangles": 407099
+        }
+      }
+    },
+    {
+      "name": "m01-02-ads-mid-raise",
+      "state": {
+        "mode": "m01",
+        "clock": 1.3500000000000005,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 0,
+          "pitch": 0,
+          "aiming": true
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 5,
+          "reserve": 40,
+          "state": "READY",
+          "until": 0,
+          "started": 0,
+          "lastShot": -1000000000,
+          "shotCount": 0,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": null
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "aim",
+            "clipTime": 0,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 0.8376793888181518,
+            "runBlend": 0,
+            "phase": 12.149999999999999,
+            "visualMuzzle": [
+              0.006131006753508512,
+              -0.05697193573707657,
+              -1.2139590485099117
+            ],
+            "visualSights": {
+              "rear": [
+                0.010432845809789525,
+                -0.017661447107286544,
+                -0.7399999999999999
+              ],
+              "front": [
+                0.005481181485184644,
+                -0.023578612390757196,
+                -1.2020232333718992
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 0,
+              "lookYaw": 0,
+              "lookPitch": 0,
+              "clipEjected": false,
+              "flash": 0,
+              "layers": 0,
+              "light": 0,
+              "wisps": 0
+            }
+          },
+          "weaponFx": {
+            "casings": 0,
+            "clips": 0,
+            "puffs": 0,
+            "resting": 0,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.325,
+              0.28,
+              -0.903
+            ]
+          }
+        },
+        "render": {
+          "calls": 247,
+          "triangles": 407099
+        }
+      }
+    },
+    {
+      "name": "m01-03-ads-idle",
+      "state": {
+        "mode": "m01",
+        "clock": 2.0500000000000007,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 0,
+          "pitch": 0,
+          "aiming": true
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 5,
+          "reserve": 40,
+          "state": "READY",
+          "until": 0,
+          "started": 0,
+          "lastShot": -1000000000,
+          "shotCount": 0,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": null
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "aim",
+            "clipTime": 0,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 0.9998873144194922,
+            "runBlend": 0,
+            "phase": 15.749999999999993,
+            "visualMuzzle": [
+              7.519912429259824e-7,
+              -0.03325487474452178,
+              -1.2144422130043506
+            ],
+            "visualSights": {
+              "rear": [
+                5.595048838727187e-9,
+                -0.000004513558853641575,
+                -0.74
+              ],
+              "front": [
+                2.9223298146415672e-9,
+                -0.000007846734406999345,
+                -1.2020876540104593
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 0,
+              "lookYaw": 0,
+              "lookPitch": 0,
+              "clipEjected": false,
+              "flash": 0,
+              "layers": 0,
+              "light": 0,
+              "wisps": 0
+            }
+          },
+          "weaponFx": {
+            "casings": 0,
+            "clips": 0,
+            "puffs": 0,
+            "resting": 0,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.325,
+              0.28,
+              -0.903
+            ]
+          }
+        },
+        "render": {
+          "calls": 247,
+          "triangles": 407099
+        }
+      }
+    },
+    {
+      "name": "m01-04-ads-shot-flash",
+      "state": {
+        "mode": "m01",
+        "clock": 2.1000000000000005,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 0,
+          "pitch": 0.024,
+          "aiming": true
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 4,
+          "reserve": 40,
+          "state": "BOLT_CYCLE",
+          "until": 3150.0000000000005,
+          "started": 2100.0000000000005,
+          "lastShot": 2100.0000000000005,
+          "shotCount": 1,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": null
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "fire_bolt",
+            "clipTime": 0,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 1,
+            "runBlend": 0,
+            "phase": 16.199999999999992,
+            "visualMuzzle": [
+              -1.4458378071180443e-17,
+              -0.03324693890058495,
+              -1.2144424528367384
+            ],
+            "visualSights": {
+              "rear": [
+                -1.4097880848829014e-17,
+                2.0816681711721685e-17,
+                -0.74
+              ],
+              "front": [
+                -1.4448511831410827e-17,
+                -1.3877787807814457e-16,
+                -1.2020876540224807
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 0,
+              "lookYaw": 0,
+              "lookPitch": 0,
+              "clipEjected": false,
+              "flash": 1,
+              "layers": 3,
+              "light": 0.9992,
+              "wisps": 0
+            }
+          },
+          "weaponFx": {
+            "casings": 0,
+            "clips": 0,
+            "puffs": 1,
+            "resting": 0,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.326,
+              0.28,
+              -0.903
+            ]
+          }
+        },
+        "render": {
+          "calls": 251,
+          "triangles": 407107
+        }
+      }
+    },
+    {
+      "name": "m01-05-ads-shot-recoil",
+      "state": {
+        "mode": "m01",
+        "clock": 2.1500000000000004,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 0,
+          "pitch": 0.024,
+          "aiming": true
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 4,
+          "reserve": 40,
+          "state": "BOLT_CYCLE",
+          "until": 3150.0000000000005,
+          "started": 2100.0000000000005,
+          "lastShot": 2100.0000000000005,
+          "shotCount": 1,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": null
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "fire_bolt",
+            "clipTime": 0.05571428367069789,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 1,
+            "runBlend": 0,
+            "phase": 16.64999999999999,
+            "visualMuzzle": [
+              0.00005014494606809649,
+              -0.027112823120765954,
+              -1.207526758828278
+            ],
+            "visualSights": {
+              "rear": [
+                1.9678269430611905e-17,
+                0.0032801819057541384,
+                -0.7328929392041996
+              ],
+              "front": [
+                0.000164200695447756,
+                0.006059006177514294,
+                -1.1949722085658518
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 0,
+              "lookYaw": 0,
+              "lookPitch": 0,
+              "clipEjected": false,
+              "flash": 0.1886,
+              "layers": 3,
+              "light": 0.1885,
+              "wisps": 1
+            }
+          },
+          "weaponFx": {
+            "casings": 0,
+            "clips": 0,
+            "puffs": 4,
+            "resting": 0,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.326,
+              0.28,
+              -0.903
+            ]
+          }
+        },
+        "render": {
+          "calls": 255,
+          "triangles": 407115
+        }
+      }
+    },
+    {
+      "name": "m01-06-bolt-chamber-smoke",
+      "state": {
+        "mode": "m01",
+        "clock": 2.549999999999999,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 0,
+          "pitch": 0.024,
+          "aiming": true
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 4,
+          "reserve": 40,
+          "state": "BOLT_CYCLE",
+          "until": 3150.0000000000005,
+          "started": 2100.0000000000005,
+          "lastShot": 2100.0000000000005,
+          "shotCount": 1,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": null
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "fire_bolt",
+            "clipTime": 0.5014285530362795,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 1,
+            "runBlend": 0,
+            "phase": 19.349999999999987,
+            "visualMuzzle": [
+              0.043440228360005106,
+              -0.18199851258194372,
+              -1.210125799265528
+            ],
+            "visualSights": {
+              "rear": [
+                0.09448524621426398,
+                -0.13123298276854647,
+                -0.74
+              ],
+              "front": [
+                0.04905309394547641,
+                -0.14862171007538566,
+                -1.1995199143702893
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 1,
+              "lookYaw": 0,
+              "lookPitch": 0,
+              "clipEjected": false,
+              "flash": 0,
+              "layers": 0,
+              "light": 0,
+              "wisps": 5
+            }
+          },
+          "weaponFx": {
+            "casings": 0,
+            "clips": 0,
+            "puffs": 4,
+            "resting": 0,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.326,
+              0.28,
+              -0.903
+            ]
+          }
+        },
+        "render": {
+          "calls": 256,
+          "triangles": 407117
+        }
+      }
+    },
+    {
+      "name": "m01-07-bolt-ejected-case",
+      "state": {
+        "mode": "m01",
+        "clock": 2.6999999999999984,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 0,
+          "pitch": 0.024,
+          "aiming": true
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 4,
+          "reserve": 40,
+          "state": "BOLT_CYCLE",
+          "until": 3150.0000000000005,
+          "started": 2100.0000000000005,
+          "lastShot": 2100.0000000000005,
+          "shotCount": 1,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": null
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "fire_bolt",
+            "clipTime": 0.6685714040483722,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 1,
+            "runBlend": 0,
+            "phase": 20.699999999999985,
+            "visualMuzzle": [
+              0.043220149851811565,
+              -0.18196699150658688,
+              -1.2101287285077498
+            ],
+            "visualSights": {
+              "rear": [
+                0.09428352922213555,
+                -0.13124707511275663,
+                -0.74
+              ],
+              "front": [
+                0.04883306583082275,
+                -0.14859116780428572,
+                -1.1995197904619848
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 1,
+              "lookYaw": 0,
+              "lookPitch": 0,
+              "clipEjected": false,
+              "flash": 0,
+              "layers": 0,
+              "light": 0,
+              "wisps": 5
+            }
+          },
+          "weaponFx": {
+            "casings": 1,
+            "clips": 0,
+            "puffs": 4,
+            "resting": 0,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.326,
+              0.28,
+              -0.903
+            ]
+          }
+        },
+        "render": {
+          "calls": 257,
+          "triangles": 407337
+        }
+      }
+    },
+    {
+      "name": "m01-08-case-falling",
+      "state": {
+        "mode": "m01",
+        "clock": 2.849999999999998,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 0,
+          "pitch": 0.024,
+          "aiming": true
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 4,
+          "reserve": 40,
+          "state": "BOLT_CYCLE",
+          "until": 3150.0000000000005,
+          "started": 2100.0000000000005,
+          "lastShot": 2100.0000000000005,
+          "shotCount": 1,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": null
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "fire_bolt",
+            "clipTime": 0.8357142550604653,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 1,
+            "runBlend": 0,
+            "phase": 22.049999999999983,
+            "visualMuzzle": [
+              0.043011784157880664,
+              -0.18191289793644472,
+              -1.210132173852924
+            ],
+            "visualSights": {
+              "rear": [
+                0.09409446079815525,
+                -0.13124437461459,
+                -0.74
+              ],
+              "front": [
+                0.04862500310950435,
+                -0.1485382158104503,
+                -1.1995198053122371
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 1,
+              "lookYaw": 0,
+              "lookPitch": 0,
+              "clipEjected": false,
+              "flash": 0,
+              "layers": 0,
+              "light": 0,
+              "wisps": 5
+            }
+          },
+          "weaponFx": {
+            "casings": 1,
+            "clips": 0,
+            "puffs": 4,
+            "resting": 0,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.326,
+              0.28,
+              -0.903
+            ]
+          }
+        },
+        "render": {
+          "calls": 257,
+          "triangles": 407337
+        }
+      }
+    },
+    {
+      "name": "m01-09-after-bolt-smoke",
+      "state": {
+        "mode": "m01",
+        "clock": 3.149999999999997,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 0,
+          "pitch": 0.024,
+          "aiming": true
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 4,
+          "reserve": 40,
+          "state": "BOLT_CYCLE",
+          "until": 3150.0000000000005,
+          "started": 2100.0000000000005,
+          "lastShot": 2100.0000000000005,
+          "shotCount": 1,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": null
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "fire_bolt",
+            "clipTime": 1.1699999570846518,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 1,
+            "runBlend": 0,
+            "phase": 24.29999999999998,
+            "visualMuzzle": [
+              -1.6588293239028219e-18,
+              -0.03324693890139967,
+              -1.2144424528367108
+            ],
+            "visualSights": {
+              "rear": [
+                -6.288372600415926e-19,
+                -9.71445146547012e-17,
+                -0.7399999999999999
+              ],
+              "front": [
+                -1.6306400674181986e-18,
+                1.3877787807814457e-17,
+                -1.2020876540224852
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 0,
+              "lookYaw": 0,
+              "lookPitch": 0,
+              "clipEjected": false,
+              "flash": 0,
+              "layers": 0,
+              "light": 0,
+              "wisps": 5
+            }
+          },
+          "weaponFx": {
+            "casings": 1,
+            "clips": 0,
+            "puffs": 4,
+            "resting": 0,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.326,
+              0.28,
+              -0.903
+            ]
+          }
+        },
+        "render": {
+          "calls": 257,
+          "triangles": 407337
+        }
+      }
+    },
+    {
+      "name": "m01-10-hip-shot-flash",
+      "state": {
+        "mode": "m01",
+        "clock": 3.7999999999999945,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 0,
+          "pitch": 0.048,
+          "aiming": false
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 3,
+          "reserve": 40,
+          "state": "BOLT_CYCLE",
+          "until": 4849.9999999999945,
+          "started": 3799.9999999999945,
+          "lastShot": 3799.9999999999945,
+          "shotCount": 2,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": null
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "fire_bolt",
+            "clipTime": 0,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 0.0006942160929985695,
+            "runBlend": 0,
+            "phase": 27.899999999999974,
+            "visualMuzzle": [
+              0.07051095647755565,
+              -0.2348278131357594,
+              -1.206018519107393
+            ],
+            "visualSights": {
+              "rear": [
+                0.14412904151078,
+                -0.1747602061833162,
+                -0.74
+              ],
+              "front": [
+                0.07407441713158124,
+                -0.200993198894422,
+                -1.1959925215357248
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 0,
+              "lookYaw": 0,
+              "lookPitch": 0,
+              "clipEjected": false,
+              "flash": 1,
+              "layers": 3,
+              "light": 1.0431,
+              "wisps": 0
+            }
+          },
+          "weaponFx": {
+            "casings": 1,
+            "clips": 0,
+            "puffs": 5,
+            "resting": 1,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.326,
+              0.28,
+              -0.903
+            ]
+          }
+        },
+        "render": {
+          "calls": 256,
+          "triangles": 407335
+        }
+      }
+    },
+    {
+      "name": "m01-11-hip-recoil",
+      "state": {
+        "mode": "m01",
+        "clock": 3.899999999999994,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 0,
+          "pitch": 0.048,
+          "aiming": false
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 3,
+          "reserve": 40,
+          "state": "BOLT_CYCLE",
+          "until": 4849.9999999999945,
+          "started": 3799.9999999999945,
+          "lastShot": 3799.9999999999945,
+          "shotCount": 2,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": null
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "fire_bolt",
+            "clipTime": 0.11142856734139528,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 0.00011268558050780325,
+            "runBlend": 0,
+            "phase": 28.799999999999972,
+            "visualMuzzle": [
+              0.07108663537462695,
+              -0.22754426964417607,
+              -1.1991281431149183
+            ],
+            "visualSights": {
+              "rear": [
+                0.1441029216885083,
+                -0.17077793174892794,
+                -0.7326013970275242
+              ],
+              "front": [
+                0.07480964721825877,
+                -0.19379229212877316,
+                -1.1888839644454536
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 0,
+              "lookYaw": 0,
+              "lookPitch": 0,
+              "clipEjected": false,
+              "flash": 0,
+              "layers": 0,
+              "light": 0,
+              "wisps": 2
+            }
+          },
+          "weaponFx": {
+            "casings": 1,
+            "clips": 0,
+            "puffs": 8,
+            "resting": 1,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.326,
+              0.28,
+              -0.903
+            ]
+          }
+        },
+        "render": {
+          "calls": 258,
+          "triangles": 407339
+        }
+      }
+    },
+    {
+      "name": "m01-12-hip-bolt-eject",
+      "state": {
+        "mode": "m01",
+        "clock": 4.3499999999999925,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 0,
+          "pitch": 0.048,
+          "aiming": false
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 3,
+          "reserve": 40,
+          "state": "BOLT_CYCLE",
+          "until": 4849.9999999999945,
+          "started": 3799.9999999999945,
+          "lastShot": 3799.9999999999945,
+          "shotCount": 2,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": null
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "fire_bolt",
+            "clipTime": 0.6128571203776748,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 0,
+            "runBlend": 0,
+            "phase": 31.499999999999968,
+            "visualMuzzle": [
+              0.07074672282786772,
+              -0.23556445490446598,
+              -1.2060124222002249
+            ],
+            "visualSights": {
+              "rear": [
+                0.1441432643568999,
+                -0.1751792742167792,
+                -0.7400000000000001
+              ],
+              "front": [
+                0.07431887234281818,
+                -0.20172383793765294,
+                -1.1960098029831556
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 0,
+              "lookYaw": 0,
+              "lookPitch": 0,
+              "clipEjected": false,
+              "flash": 0,
+              "layers": 0,
+              "light": 0,
+              "wisps": 5
+            }
+          },
+          "weaponFx": {
+            "casings": 2,
+            "clips": 0,
+            "puffs": 6,
+            "resting": 1,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.326,
+              0.28,
+              -0.903
+            ]
+          }
+        },
+        "render": {
+          "calls": 259,
+          "triangles": 407561
+        }
+      }
+    },
+    {
+      "name": "m01-13-reload-start",
+      "state": {
+        "mode": "m01",
+        "clock": 9.049999999999994,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 0,
+          "pitch": 0.12,
+          "aiming": false
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 0,
+          "reserve": 40,
+          "state": "RELOAD_CLIP",
+          "until": 12449.999999999993,
+          "started": 9049.999999999993,
+          "lastShot": 7799.99999999998,
+          "shotCount": 5,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": "clip"
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "reload_clip",
+            "clipTime": 0,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 0,
+            "runBlend": 0,
+            "phase": 51.749999999999986,
+            "visualMuzzle": [
+              0.07182751944574181,
+              -0.23559894460432426,
+              -1.2060480208663162
+            ],
+            "visualSights": {
+              "rear": [
+                0.14376869846138057,
+                -0.1737547127922193,
+                -0.7399999999999999
+              ],
+              "front": [
+                0.07553623300359631,
+                -0.20173796161641638,
+                -1.1961647382720362
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 0,
+              "lookYaw": 0,
+              "lookPitch": 0,
+              "clipEjected": false,
+              "flash": 0,
+              "layers": 0,
+              "light": 0,
+              "wisps": 2
+            }
+          },
+          "weaponFx": {
+            "casings": 5,
+            "clips": 0,
+            "puffs": 4,
+            "resting": 4,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.329,
+              0.28,
+              -0.902
+            ]
+          }
+        },
+        "render": {
+          "calls": 255,
+          "triangles": 408829
+        }
+      }
+    },
+    {
+      "name": "m01-14-reload-clip-in",
+      "state": {
+        "mode": "m01",
+        "clock": 10.050000000000008,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 0,
+          "pitch": 0.12,
+          "aiming": false
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 0,
+          "reserve": 40,
+          "state": "RELOAD_CLIP",
+          "until": 12449.999999999993,
+          "started": 9049.999999999993,
+          "lastShot": 7799.99999999998,
+          "shotCount": 5,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": "clip"
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "reload_clip",
+            "clipTime": 1.0000000280492591,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 0,
+            "runBlend": 0,
+            "phase": 56.250000000000014,
+            "visualMuzzle": [
+              -0.053468313477807256,
+              -0.24142200375724224,
+              -1.3632886238709423
+            ],
+            "visualSights": {
+              "rear": [
+                0.04499999999999997,
+                -0.10000000000000009,
+                -0.9199999987663294
+              ],
+              "front": [
+                -0.04226936320768687,
+                -0.2078628042828673,
+                -1.3607660037914773
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 0,
+              "lookYaw": 0,
+              "lookPitch": 0,
+              "clipEjected": false,
+              "flash": 0,
+              "layers": 0,
+              "light": 0,
+              "wisps": 0
+            }
+          },
+          "weaponFx": {
+            "casings": 5,
+            "clips": 0,
+            "puffs": 3,
+            "resting": 5,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.329,
+              0.28,
+              -0.902
+            ]
+          }
+        },
+        "render": {
+          "calls": 252,
+          "triangles": 408823
+        }
+      }
+    },
+    {
+      "name": "m01-15-reload-clip-ejected",
+      "state": {
+        "mode": "m01",
+        "clock": 11.500000000000028,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 0,
+          "pitch": 0.12,
+          "aiming": false
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 0,
+          "reserve": 40,
+          "state": "RELOAD_CLIP",
+          "until": 12449.999999999993,
+          "started": 9049.999999999993,
+          "lastShot": 7799.99999999998,
+          "shotCount": 5,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": "clip"
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "reload_clip",
+            "clipTime": 2.4500000687206853,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 0,
+            "runBlend": 0,
+            "phase": 62.10000000000005,
+            "visualMuzzle": [
+              -0.05346831347780731,
+              -0.24142200293693392,
+              -1.3632886253663148
+            ],
+            "visualSights": {
+              "rear": [
+                0.044999999999999915,
+                -0.09999999999999995,
+                -0.92
+              ],
+              "front": [
+                -0.04226936320768693,
+                -0.20786280346722713,
+                -1.3607660052247486
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 0,
+              "lookYaw": 0,
+              "lookPitch": 0,
+              "clipEjected": true,
+              "flash": 0,
+              "layers": 0,
+              "light": 0,
+              "wisps": 0
+            }
+          },
+          "weaponFx": {
+            "casings": 5,
+            "clips": 1,
+            "puffs": 0,
+            "resting": 5,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.329,
+              0.28,
+              -0.902
+            ]
+          }
+        },
+        "render": {
+          "calls": 249,
+          "triangles": 408235
+        }
+      }
+    },
+    {
+      "name": "m01-16-reload-clip-falling",
+      "state": {
+        "mode": "m01",
+        "clock": 11.65000000000003,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 0,
+          "pitch": 0.12,
+          "aiming": false
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 0,
+          "reserve": 40,
+          "state": "RELOAD_CLIP",
+          "until": 12449.999999999993,
+          "started": 9049.999999999993,
+          "lastShot": 7799.99999999998,
+          "shotCount": 5,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": "clip"
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "reload_clip",
+            "clipTime": 2.6000000729280743,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 0,
+            "runBlend": 0,
+            "phase": 63.45000000000006,
+            "visualMuzzle": [
+              -0.05346831347780731,
+              -0.24142200293693392,
+              -1.3632886253663148
+            ],
+            "visualSights": {
+              "rear": [
+                0.044999999999999915,
+                -0.09999999999999995,
+                -0.92
+              ],
+              "front": [
+                -0.04226936320768693,
+                -0.20786280346722713,
+                -1.3607660052247486
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 0,
+              "lookYaw": 0,
+              "lookPitch": 0,
+              "clipEjected": true,
+              "flash": 0,
+              "layers": 0,
+              "light": 0,
+              "wisps": 0
+            }
+          },
+          "weaponFx": {
+            "casings": 5,
+            "clips": 1,
+            "puffs": 0,
+            "resting": 5,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.329,
+              0.28,
+              -0.902
+            ]
+          }
+        },
+        "render": {
+          "calls": 249,
+          "triangles": 408235
+        }
+      }
+    },
+    {
+      "name": "m01-17-reload-end",
+      "state": {
+        "mode": "m01",
+        "clock": 12.35000000000004,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 0,
+          "pitch": 0.12,
+          "aiming": false
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 0,
+          "reserve": 40,
+          "state": "RELOAD_CLIP",
+          "until": 12449.999999999993,
+          "started": 9049.999999999993,
+          "lastShot": 7799.99999999998,
+          "shotCount": 5,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": "clip"
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "reload_clip",
+            "clipTime": 3.3000000925625543,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 0,
+            "runBlend": 0,
+            "phase": 67.05000000000008,
+            "visualMuzzle": [
+              0.06521955799884076,
+              -0.23448128351328396,
+              -1.2166906236258812
+            ],
+            "visualSights": {
+              "rear": [
+                0.13975707546150049,
+                -0.16955759867747414,
+                -0.7514701665973104
+              ],
+              "front": [
+                0.06946853974455722,
+                -0.2005925606409534,
+                -1.2071250281786363
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 0,
+              "lookYaw": 0,
+              "lookPitch": 0,
+              "clipEjected": true,
+              "flash": 0,
+              "layers": 0,
+              "light": 0,
+              "wisps": 0
+            }
+          },
+          "weaponFx": {
+            "casings": 5,
+            "clips": 1,
+            "puffs": 0,
+            "resting": 5,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.329,
+              0.28,
+              -0.902
+            ]
+          }
+        },
+        "render": {
+          "calls": 249,
+          "triangles": 408235
+        }
+      }
+    },
+    {
+      "name": "m01-18-turn-lag",
+      "state": {
+        "mode": "m01",
+        "clock": 12.500000000000043,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 0.198,
+          "pitch": 0.12,
+          "aiming": false
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 5,
+          "reserve": 35,
+          "state": "READY",
+          "until": 0,
+          "started": 9049.999999999993,
+          "lastShot": 7799.99999999998,
+          "shotCount": 5,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": null
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "aim",
+            "clipTime": 0,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 0,
+            "runBlend": 0,
+            "phase": 68.40000000000009,
+            "visualMuzzle": [
+              0.0658401938145202,
+              -0.2338859676907273,
+              -1.2050987870980432
+            ],
+            "visualSights": {
+              "rear": [
+                0.1454922140166719,
+                -0.17439080891587308,
+                -0.7399999999999998
+              ],
+              "front": [
+                0.06999407143106684,
+                -0.2000950197532991,
+                -1.1951530775589116
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 0,
+              "lookYaw": 0.0137,
+              "lookPitch": 0,
+              "clipEjected": false,
+              "flash": 0,
+              "layers": 0,
+              "light": 0,
+              "wisps": 0
+            }
+          },
+          "weaponFx": {
+            "casings": 5,
+            "clips": 1,
+            "puffs": 0,
+            "resting": 5,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.502,
+              0.28,
+              -0.818
+            ]
+          }
+        },
+        "render": {
+          "calls": 249,
+          "triangles": 408235
+        }
+      }
+    },
+    {
+      "name": "m01-19-brass-on-ground",
+      "state": {
+        "mode": "m01",
+        "clock": 12.750000000000046,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 1.122,
+          "pitch": -0.54,
+          "aiming": false
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 5,
+          "reserve": 35,
+          "state": "READY",
+          "until": 0,
+          "started": 9049.999999999993,
+          "lastShot": 7799.99999999998,
+          "shotCount": 5,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": null
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "aim",
+            "clipTime": 0,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 0,
+            "runBlend": 0,
+            "phase": 70.6500000000001,
+            "visualMuzzle": [
+              0.07172870087004556,
+              -0.23385369869975317,
+              -1.2060388544120555
+            ],
+            "visualSights": {
+              "rear": [
+                0.1459411950209563,
+                -0.17468198341111255,
+                -0.74
+              ],
+              "front": [
+                0.07555330879609586,
+                -0.20005442659783013,
+                -1.195989895282267
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 0,
+              "lookYaw": 0.00201,
+              "lookPitch": 0.00118,
+              "clipEjected": false,
+              "flash": 0,
+              "layers": 0,
+              "light": 0,
+              "wisps": 0
+            }
+          },
+          "weaponFx": {
+            "casings": 5,
+            "clips": 1,
+            "puffs": 0,
+            "resting": 6,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.953,
+              0.28,
+              -0.116
+            ]
+          }
+        },
+        "render": {
+          "calls": 140,
+          "triangles": 372403
+        }
+      }
+    },
+    {
+      "name": "m01-19b-ejecta-probe",
+      "state": {
+        "mode": "m01",
+        "clock": 12.750000000000046,
+        "player": {
+          "x": -66,
+          "y": -3,
+          "z": 22,
+          "angle": 1.122,
+          "pitch": -0.54,
+          "aiming": false
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 5,
+          "reserve": 35,
+          "state": "READY",
+          "until": 0,
+          "started": 9049.999999999993,
+          "lastShot": 7799.99999999998,
+          "shotCount": 5,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": null
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "aim",
+            "clipTime": 0,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 0,
+            "runBlend": 0,
+            "phase": 70.6500000000001,
+            "visualMuzzle": [
+              0.07172870087004556,
+              -0.23385369869975317,
+              -1.2060388544120555
+            ],
+            "visualSights": {
+              "rear": [
+                0.1459411950209563,
+                -0.17468198341111255,
+                -0.74
+              ],
+              "front": [
+                0.07555330879609586,
+                -0.20005442659783013,
+                -1.195989895282267
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 0,
+              "lookYaw": 0.00201,
+              "lookPitch": 0.00118,
+              "clipEjected": false,
+              "flash": 0,
+              "layers": 0,
+              "light": 0,
+              "wisps": 0
+            }
+          },
+          "weaponFx": {
+            "casings": 5,
+            "clips": 1,
+            "puffs": 0,
+            "resting": 6,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.953,
+              0.28,
+              -0.116
+            ]
+          }
+        },
+        "render": {
+          "calls": 268,
+          "triangles": 728207
+        },
+        "probe": {
+          "eye": [
+            -64.376,
+            -1.696,
+            24.7
+          ],
+          "target": [
+            -65.4764,
+            -2.9957,
+            23.6005
+          ],
+          "fov": 55,
+          "items": [
+            {
+              "kind": "7.92x57",
+              "phase": "rest",
+              "position": [
+                -65.4888,
+                -2.9949,
+                23.6581
+              ],
+              "surface": -3,
+              "axisY": [
+                1,
+                0,
+                -0.0049
+              ],
+              "axisZ": [
+                0.0008,
+                0.9872,
+                0.1592
+              ]
+            },
+            {
+              "kind": "7.92x57",
+              "phase": "rest",
+              "position": [
+                -65.6422,
+                -2.9949,
+                23.464
+              ],
+              "surface": -3,
+              "axisY": [
+                -0.3461,
+                0,
+                -0.9382
+              ],
+              "axisZ": [
+                -0.6275,
+                0.7434,
+                0.2315
+              ]
+            },
+            {
+              "kind": "7.92x57",
+              "phase": "rest",
+              "position": [
+                -65.5795,
+                -2.9949,
+                23.6001
+              ],
+              "surface": -3,
+              "axisY": [
+                0.3629,
+                0,
+                0.9318
+              ],
+              "axisZ": [
+                -0.0865,
+                0.9957,
+                0.0337
+              ]
+            },
+            {
+              "kind": "7.92x57",
+              "phase": "rest",
+              "position": [
+                -65.484,
+                -2.9949,
+                23.4119
+              ],
+              "surface": -3,
+              "axisY": [
+                0.6731,
+                0,
+                0.7396
+              ],
+              "axisZ": [
+                -0.1169,
+                0.9874,
+                0.1064
+              ]
+            },
+            {
+              "kind": "7.92x57",
+              "phase": "rest",
+              "position": [
+                -65.6319,
+                -2.9949,
+                23.4845
+              ],
+              "surface": -3,
+              "axisY": [
+                0.631,
+                0,
+                -0.7758
+              ],
+              "axisZ": [
+                -0.2116,
+                0.9621,
+                -0.1721
+              ]
+            },
+            {
+              "kind": "clip",
+              "phase": "rest",
+              "position": [
+                -65.0318,
+                -2.9997,
+                23.9844
+              ],
+              "surface": -3,
+              "axisY": [
+                0,
+                1,
+                0
+              ],
+              "axisZ": [
+                0.9878,
+                0,
+                0.1557
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "m01-20-sprint",
+      "state": {
+        "mode": "m01",
+        "clock": 13.300000000000054,
+        "player": {
+          "x": -63.05861413168373,
+          "y": -3,
+          "z": 22.590126404822797,
+          "angle": 0.19800000000000006,
+          "pitch": 0.12,
+          "aiming": false
+        },
+        "weapon": {
+          "id": "kb_wz29",
+          "mag": 5,
+          "reserve": 35,
+          "state": "READY",
+          "until": 0,
+          "started": 9049.999999999993,
+          "lastShot": 7799.99999999998,
+          "shotCount": 5,
+          "received": 0,
+          "sight": 300,
+          "reloadMode": null
+        },
+        "presentation": {
+          "viewModel": {
+            "active": true,
+            "visible": true,
+            "lod": 0,
+            "clip": "aim",
+            "clipTime": 0,
+            "carrying": false,
+            "singleRound": false,
+            "armTriangles": 1603,
+            "aimBlend": 0,
+            "runBlend": 0.950212931632136,
+            "phase": 74.9338130971849,
+            "visualMuzzle": [
+              0.06687336459517383,
+              -0.3607804917463048,
+              -1.2181668653505677
+            ],
+            "visualSights": {
+              "rear": [
+                0.14408474948908195,
+                -0.24352200597392254,
+                -0.7637553232908035
+              ],
+              "front": [
+                0.07468237560395365,
+                -0.3265721586573993,
+                -1.2129890961066505
+              ]
+            },
+            "presentation": {
+              "profile": "wz29",
+              "mechanical": 0,
+              "boltStroke": 0,
+              "lookYaw": -0.00003,
+              "lookPitch": -0.00002,
+              "clipEjected": false,
+              "flash": 0,
+              "layers": 0,
+              "light": 0,
+              "wisps": 0
+            }
+          },
+          "weaponFx": {
+            "casings": 5,
+            "clips": 1,
+            "puffs": 0,
+            "resting": 6,
+            "capacity": {
+              "casings": 10,
+              "clips": 3,
+              "puffs": 16
+            }
+          },
+          "lighting": {
+            "fill": 2.173,
+            "key": 0.595,
+            "environment": 0.331,
+            "keyDirection": [
+              -0.502,
+              0.28,
+              -0.818
+            ]
+          }
+        },
+        "render": {
+          "calls": 249,
+          "triangles": 403804
+        }
+      }
+    },
+    {
+      "name": "bench-01-hip-idle",
+      "state": {
+        "mode": "bench",
+        "clock": 0.3,
+        "player": {
+          "x": 96,
+          "y": 96,
+          "angle": 0,
+          "pitch": 0,
+          "aiming": false
+        },
+        "weapon": {
+          "mag": 15,
+          "reserve": 60,
+          "shotCount": 0,
+          "lastShot": -1000000000
+        },
+        "presentation": {
+          "flash": 0,
+          "layers": 0,
+          "light": 0,
+          "wisps": 0,
+          "world": {
+            "casings": 0,
+            "clips": 0,
+            "puffs": 0,
+            "resting": 0,
+            "capacity": {
+              "casings": 12,
+              "clips": 3,
+              "puffs": 24
+            }
+          },
+          "lighting": {
+            "fill": 2.6,
+            "key": 1.95,
+            "environment": 0.58,
+            "keyDirection": [
+              -0.199,
+              0.871,
+              0.448
+            ]
+          }
+        },
+        "render": {
+          "calls": 206,
+          "triangles": 27976
+        }
+      }
+    },
+    {
+      "name": "bench-02-hip-shot",
+      "state": {
+        "mode": "bench",
+        "clock": 0.35,
+        "player": {
+          "x": 96,
+          "y": 96,
+          "angle": 0.0034826009944081307,
+          "pitch": 0.028,
+          "aiming": false
+        },
+        "weapon": {
+          "mag": 14,
+          "reserve": 60,
+          "shotCount": 1,
+          "lastShot": 350
+        },
+        "presentation": {
+          "flash": 1,
+          "layers": 3,
+          "light": 0.9992,
+          "wisps": 0,
+          "world": {
+            "casings": 1,
+            "clips": 0,
+            "puffs": 1,
+            "resting": 0,
+            "capacity": {
+              "casings": 12,
+              "clips": 3,
+              "puffs": 24
+            }
+          },
+          "lighting": {
+            "fill": 2.6,
+            "key": 1.95,
+            "environment": 0.58,
+            "keyDirection": [
+              -0.198,
+              0.884,
+              0.424
+            ]
+          }
+        },
+        "render": {
+          "calls": 211,
+          "triangles": 28144
+        }
+      }
+    },
+    {
+      "name": "bench-03-hip-brass",
+      "state": {
+        "mode": "bench",
+        "clock": 0.44999999999999996,
+        "player": {
+          "x": 96,
+          "y": 96,
+          "angle": 0.0034826009944081307,
+          "pitch": 0.028,
+          "aiming": false
+        },
+        "weapon": {
+          "mag": 14,
+          "reserve": 60,
+          "shotCount": 1,
+          "lastShot": 350
+        },
+        "presentation": {
+          "flash": 0,
+          "layers": 0,
+          "light": 0,
+          "wisps": 3,
+          "world": {
+            "casings": 1,
+            "clips": 0,
+            "puffs": 3,
+            "resting": 0,
+            "capacity": {
+              "casings": 12,
+              "clips": 3,
+              "puffs": 24
+            }
+          },
+          "lighting": {
+            "fill": 2.6,
+            "key": 1.95,
+            "environment": 0.58,
+            "keyDirection": [
+              -0.198,
+              0.884,
+              0.424
+            ]
+          }
+        },
+        "render": {
+          "calls": 213,
+          "triangles": 28148
+        }
+      }
+    },
+    {
+      "name": "bench-04-ads-shot",
+      "state": {
+        "mode": "bench",
+        "clock": 1.1000000000000003,
+        "player": {
+          "x": 96,
+          "y": 96,
+          "angle": 0.0067356338622048505,
+          "pitch": 0.056,
+          "aiming": true
+        },
+        "weapon": {
+          "mag": 13,
+          "reserve": 60,
+          "shotCount": 2,
+          "lastShot": 1100.0000000000002
+        },
+        "presentation": {
+          "flash": 1,
+          "layers": 3,
+          "light": 1.0431,
+          "wisps": 3,
+          "world": {
+            "casings": 2,
+            "clips": 0,
+            "puffs": 4,
+            "resting": 0,
+            "capacity": {
+              "casings": 12,
+              "clips": 3,
+              "puffs": 24
+            }
+          },
+          "lighting": {
+            "fill": 2.6,
+            "key": 1.95,
+            "environment": 0.58,
+            "keyDirection": [
+              -0.196,
+              0.895,
+              0.4
+            ]
+          }
+        },
+        "render": {
+          "calls": 217,
+          "triangles": 28296
+        }
+      }
+    },
+    {
+      "name": "bench-05-ads-follow-up",
+      "state": {
+        "mode": "bench",
+        "clock": 1.3000000000000005,
+        "player": {
+          "x": 96,
+          "y": 96,
+          "angle": 0.0067356338622048505,
+          "pitch": 0.056,
+          "aiming": true
+        },
+        "weapon": {
+          "mag": 13,
+          "reserve": 60,
+          "shotCount": 2,
+          "lastShot": 1100.0000000000002
+        },
+        "presentation": {
+          "flash": 0,
+          "layers": 0,
+          "light": 0,
+          "wisps": 7,
+          "world": {
+            "casings": 2,
+            "clips": 0,
+            "puffs": 6,
+            "resting": 0,
+            "capacity": {
+              "casings": 12,
+              "clips": 3,
+              "puffs": 24
+            }
+          },
+          "lighting": {
+            "fill": 2.6,
+            "key": 1.95,
+            "environment": 0.58,
+            "keyDirection": [
+              -0.196,
+              0.895,
+              0.4
+            ]
+          }
+        },
+        "render": {
+          "calls": 220,
+          "triangles": 28302
+        }
+      }
+    },
+    {
+      "name": "bench-06-ads-second-shot",
+      "state": {
+        "mode": "bench",
+        "clock": 1.3500000000000005,
+        "player": {
+          "x": 96,
+          "y": 96,
+          "angle": 0.004102718870155514,
+          "pitch": 0.084,
+          "aiming": true
+        },
+        "weapon": {
+          "mag": 12,
+          "reserve": 60,
+          "shotCount": 3,
+          "lastShot": 1350.0000000000005
+        },
+        "presentation": {
+          "flash": 1,
+          "layers": 3,
+          "light": 1.0983,
+          "wisps": 3,
+          "world": {
+            "casings": 3,
+            "clips": 0,
+            "puffs": 7,
+            "resting": 0,
+            "capacity": {
+              "casings": 12,
+              "clips": 3,
+              "puffs": 24
+            }
+          },
+          "lighting": {
+            "fill": 2.6,
+            "key": 1.95,
+            "environment": 0.58,
+            "keyDirection": [
+              -0.197,
+              0.906,
+              0.374
+            ]
+          }
+        },
+        "render": {
+          "calls": 220,
+          "triangles": 28462
+        }
+      }
+    },
+    {
+      "name": "bench-07-smoke",
+      "state": {
+        "mode": "bench",
+        "clock": 1.6500000000000008,
+        "player": {
+          "x": 96,
+          "y": 96,
+          "angle": 0.004102718870155514,
+          "pitch": 0.084,
+          "aiming": true
+        },
+        "weapon": {
+          "mag": 12,
+          "reserve": 60,
+          "shotCount": 3,
+          "lastShot": 1350.0000000000005
+        },
+        "presentation": {
+          "flash": 0,
+          "layers": 0,
+          "light": 0,
+          "wisps": 7,
+          "world": {
+            "casings": 3,
+            "clips": 0,
+            "puffs": 8,
+            "resting": 1,
+            "capacity": {
+              "casings": 12,
+              "clips": 3,
+              "puffs": 24
+            }
+          },
+          "lighting": {
+            "fill": 2.6,
+            "key": 1.95,
+            "environment": 0.58,
+            "keyDirection": [
+              -0.197,
+              0.906,
+              0.374
+            ]
+          }
+        },
+        "render": {
+          "calls": 222,
+          "triangles": 28466
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "pauseStable": true
+}

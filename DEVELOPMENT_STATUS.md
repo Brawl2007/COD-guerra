@@ -1,5 +1,16 @@
 # Estado de desenvolvimento
 
+## Apresentação da arma em primeira pessoa — 2026-10-08
+
+Candidato isolado em `codex/m01-first-person-weapon-presentation-v1`, base `99309d9`, sem merge nem PR. **Só apresentação**: wz.29 (M01) e M1 Carbine (bancada francesa preservada) ganham identidade visual própria:
+- recuo visual por arma, ADS com easing, oscilação de anca não periódica e atraso de olhar;
+- solavancos nos marcadores do GLB e curso do ferrolho fora do olho;
+- clarão em camadas no socket real, com luz curta e fumo de cano/câmara;
+- invólucros e clipe vazio no mundo, pousados no chão real;
+- materiais e iluminação do passe da arma a seguir o céu/sol do mundo.
+
+Dano, dispersão, cadência, munição, impactos, `Simulation`, mundo e core estão inalterados (diff vazio contra a base). Validação: **347/347 Node**, build PASS, browser integral **59/64**. As 5 falhas repetem-se na base `99309d9` nas mesmas condições: testes de tempo de parede com < 1 frame/s em SwiftShader, sem relação com a arma. Provas, revisão independente e limites em `docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/HANDOFF.md`.
+
 ## Auditoria schema 2 — 2026-10-03
 
 Candidato isolado em `codex/m01-schema2-determinism-audit`, base MG34 prone aprovada `fbaac1e4`. Comparação de futuros A/B por tick: 61.055 comparações em duas rotas completas e fixtures definidas, sem divergência depois das correções. Corrigido o destino de recuperação ao restaurar uma continuação; schema 2 recebe backup opcional plano, mantendo CP-A..D planos e legacy compatível. Saves corrompidos não podem sobrescrever métodos/perfil da arma; RNG uint32 e fases conhecidas validados.

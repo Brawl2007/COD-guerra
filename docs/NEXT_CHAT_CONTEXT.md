@@ -1,3 +1,16 @@
+# Estado actual — apresentação da arma em primeira pessoa (2026-10-08)
+
+Esta secção prevalece para a tarefa da arma em primeira pessoa. M01 continua **PROTÓTIPO JOGÁVEL**.
+
+- TASK_ID `M01-FIRST-PERSON-WEAPON-PRESENTATION-V1`. Base `99309d9cb023cc94a07d41ff863e1362e4460570`; branch própria `codex/m01-first-person-weapon-presentation-v1`, sem merge, sem PR, `main` intacta.
+- Só apresentação. Módulo novo `src/render/first-person-weapon-fx.js` com perfis congelados `wz29` (bolt) e `m1_carbine` (semi). Pose, FX, invólucros/clipe, luzes e materiais estão em `m01-wz29-presentation.js`, `m01-viewmodel.js`, `m01-view.js` e `three-renderer.js`. Gameplay/world/core/assets/research/missions sem alterações.
+- Tudo é função do relógio e de dados autoritativos (`lastShot`, `shotCount`, clip/amostra da recarga, marcadores do GLB). As emissões são chaveadas por id. Um mundo restaurado descarta o histórico. A pausa repete o mesmo frame.
+- A revisão independente encontrou nove pontos e uma suspeita, sem bloqueadores. O clipe em repouso de pé e o salto de orientação foram corrigidos, a luz da boca passou a ser partilhada, o fumo de cano tem duas gerações e o fumo em ADS é mais fino. O pin de hashes foi substituído por um teste de imports. Ver `REVIEW.md`.
+- Validação: 347/347 Node, build PASS, browser integral 59/64. As 5 falhas (áudio, rig :99, salva :318, demolição :337, fogo alemão :386) falham igual na base `99309d9` sozinhas: corridas de pointer lock/tempo de parede a < 1 frame/s em SwiftShader. A/B de custo por frame igual dentro do ruído; capturas BASE/CANDIDATE com estado de gameplay idêntico em 27 frames. Detalhes em `docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/`.
+- Pendentes: animação própria do ferrolho em ADS (o antebraço do asset ainda cobre parte da vista), som novo, playtest humano e Chromebook físico.
+
+---
+
 # Estado actual — auditoria de determinismo schema 2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a MG34 aprovada nem Graphify.
