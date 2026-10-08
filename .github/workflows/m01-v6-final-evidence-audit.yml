@@ -79,7 +79,7 @@ jobs:
           names=['east-demolition-low.png','east-demolition-high.png','east-demolition-smoke-high.png','raid-0530-medium-far.png']
           src=Path('/tmp/m01-v6-final-fx')
           for name in names:
-              found=sorted(src.rglob(name))
+              found=sorted(src.rglob(name),key=lambda f:('repeat' in f.parent.name,str(f)))
               assert len(found)==2,(name,found)
               for n,f in enumerate(found,1):shutil.copy2(f,out/f'{n}-{name}')
           for n in [1,2]:
