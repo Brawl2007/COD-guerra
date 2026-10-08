@@ -33,7 +33,7 @@ const tile = (o) => scene(o.w ?? 600, o.h ?? 338, async (o) => {
   const s = window.stage; if (o.ground === false) s.ground(false); if (o.sky) s.background(o.sky);
   await s.load(o.url);
   const dur = o.clip ? s.clips(o.url).find(c => c.name === o.clip).duration : 0;
-  await s.add(o.url, { position: o.pos, rotation: o.rot ?? null, clip: o.clip ?? null, time: Math.min(o.t ?? 0, dur - 1e-4) });
+  await s.add(o.url, { position: o.pos, rotation: o.rot ?? null, clip: o.clip ?? null, time: Math.min(o.t ?? 0, dur - 1e-4), runtime: o.runtime ?? false });
   const p = o.pos.map((v, k) => v + (o.off?.[k] ?? 0)), A = o.az * Math.PI / 180, E = o.el * Math.PI / 180;
   const cam = o.cam ?? [p[0] + o.d * Math.sin(A) * Math.cos(E), p[1] + o.d * Math.sin(E), p[2] - o.d * Math.cos(A) * Math.cos(E)];
   s.camera(cam, p, o.fov ?? 30); s.label(o.label);
@@ -70,7 +70,7 @@ const VIEWS = {
     save('ju87_details.png', grid(tiles, 4));
   },
   async flight() {
-    const f = { w: 640, h: 360, ground: false, sky: '#b9c6cf', cam: [0, 0, 0], clip: 'propeller_spin', t: 0.3 };
+    const f = { w: 640, h: 360, ground: false, sky: '#b9c6cf', cam: [0, 0, 0], clip: 'propeller_spin', t: 0.3, runtime: true };
     const tiles = [];
     const shots = [
       ['lod1', 300, 120, [0, -Math.PI / 2, 0], 'nivelado a 300 m (LOD1)'],
@@ -79,7 +79,7 @@ const VIEWS = {
     ];
     // Linha 1: tamanho real com FOV vertical de 60°; linha 2: a mesma cena com FOV de 15° (ampliação ~4×).
     for (const fov of [60, 15]) for (const [lod, dist, alt, rot, label] of shots) tiles.push(await tile({ ...f, fov, url: B + `m01_ju87_b1_${lod}.glb`, pos: [0, alt, -Math.sqrt(dist * dist - alt * alt)], rot,
-      ...(label.includes('freios') ? { clip: 'dive_brakes_extend', t: 1.2 } : {}), label: `${label}, FOV ${fov}°${fov === 15 ? ' (ampliado)' : ''} — galeria isolada` }));
+      ...(label.includes('freios') ? { clip: 'dive_brakes_extend', t: 1.2 } : {}), label: `${label}, FOV ${fov}°${fov === 15 ? ' (ampliado)' : ''} — galeria, materiais do jogo` }));
     save('ju87_flight.png', grid(tiles, 3));
   },
   async report() {

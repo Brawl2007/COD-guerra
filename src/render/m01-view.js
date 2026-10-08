@@ -16,6 +16,7 @@ import { M01TrainWagons } from './m01-train-wagons.js';
 import { M01YardWagons, yardWagonFireDamage } from './m01-yard-wagons.js';
 import { M01Locomotive } from './m01-locomotive.js';
 import { M01Panzerzug } from './m01-panzerzug.js';
+import {JU87_LOD_DISTANCES,JU87_QUALITY_FLOOR,ju87Attitude,ju87Fade,ju87HeardAt,ju87PropellerTime,selectJu87Level,ju87SkyEnvironment,instanceJu87Materials,setJu87Fade} from './m01-aircraft.js';
 import {soldierVisualVariant} from './m01-soldier-variation.js';
 import { M01CombatFeedback } from './m01-combat-feedback.js';
 import {M01BridgePortalPolish,bridgeMaterialSlot} from './m01-bridge-portal-polish.js';
@@ -388,7 +389,7 @@ export class M01View {
     this.carryBody.visible=this.carryCrate.visible=false;
   }
   createAircraft(){
-    this.planes=[];this.aircraftSources=new Map();this.aircraftMixers=[];this.aircraftRevision=0;
+    this.planes=[];this.aircraftSources=new Map();this.aircraftMixers=[];this.aircraftMaterials=[];this.aircraftRevision=0;
     for(let i=0;i<3;i++){
       const plane=new THREE.LOD(),proxy=new THREE.Group();plane.autoUpdate=false;proxy.userData.lod='proxy';this.scene.add(plane);
       this.mesh('box','dark',[0,0,0],[1.2,1.3,11],proxy);
@@ -411,29 +412,38 @@ export class M01View {
       }catch{/* The existing silhouette keeps the raid visible when optional art is unavailable. */}
     }));
     if(this.disposed||!this.aircraftSources.size)return;
-    for(const plane of this.planes){
-      plane.clear();plane.levels.length=0;
+    const sky=this.aircraftSky??=ju87SkyEnvironment();
+    this.planes.forEach((plane,i)=>{
+      plane.clear();plane.levels.length=0;plane.userData.level=null;
       for(const lod of [0,1,2]){
         const source=this.aircraftSources.get(lod);if(!source)continue;
         const model=source.scene.clone(true);model.userData.lod=lod;
         // The raid's bomb type and individual releases are not established: keep the optional payload hidden.
         const bomb=model.getObjectByName('bomb_sc250');if(bomb)bomb.visible=false;
+        model.userData.materials=instanceJu87Materials(model,i,sky);this.aircraftMaterials.push(...model.userData.materials);
         const mixer=new THREE.AnimationMixer(model),spin=source.animations.find(c=>c.name==='propeller_spin');
         if(spin)mixer.clipAction(spin).play();model.userData.propellerMixer=mixer;this.aircraftMixers.push(mixer);
-        plane.addLevel(model,[0,150,600][lod]);
+        plane.addLevel(model,JU87_LOD_DISTANCES[lod]);
       }
-    }
+      // Warm the aircraft programs and the sky PMREM now, so the raid's first visible frame does not stall.
+      try{this.engine?.compileAsync?.(plane,this.camera,this.scene).catch(()=>{});}catch{/* Warm-up is optional. */}
+    });
     this.aircraftRevision++;
   }
-  updateAircraft(state,time,player){
-    const quality=this.owner.quality;
+  updateAircraft(state,time,player,heardAt){
+    const floor=JU87_QUALITY_FLOOR[this.owner.quality]??0,fade=ju87Fade(time,heardAt);
     this.planes.forEach((plane,i)=>{
-      const path=m01StukaPosition(time,i);plane.visible=state.stukas;plane.position.set(path.x,path.y,path.z);plane.rotation.y=.1;
+      // The raid path and heading are unchanged; attitude, fade and LOD below are presentation only.
+      const path=m01StukaPosition(time,i);plane.visible=state.stukas;plane.position.set(path.x,path.y,path.z);
+      const {pitch,bank}=ju87Attitude(time,i);plane.rotation.set(pitch,.1,bank,'YXZ');
       const distance=Math.hypot(plane.position.x-player.x,plane.position.y-player.y,plane.position.z-player.z);
-      const selected=plane.getObjectForDistance(Math.max(distance,quality==='low'?600:quality==='medium'?150:0));
+      const level=selectJu87Level(plane.levels,distance,floor,plane.userData.level),selected=plane.levels[level]?.object;
+      plane.userData.level=level;plane.userData.fade=fade;
+      // The selected level stays visible (and reported) at any fade; opacity/alpha hash do the hiding.
       for(const {object} of plane.levels)object.visible=object===selected;
-      // Deterministic presentation at an estimated 1500 rpm; pause and restore sample the same saved clock.
-      selected?.userData.propellerMixer?.setTime((time*25)%1);
+      if(selected?.userData.materials)setJu87Fade(selected.userData.materials,fade);
+      // Deterministic presentation at an estimated ~1500 rpm; pause and restore sample the same saved clock.
+      selected?.userData.propellerMixer?.setTime(ju87PropellerTime(time,i));
     });
     const raid=m01RaidPlanePosition(time);this.raidPlane.visible=state.secondRaid;this.raidPlane.position.set(raid.x,raid.y,raid.z);
   }
@@ -487,7 +497,7 @@ export class M01View {
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
     this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.lighting(sim);
     this.train.visible=state.train963;this.panzerzug.visible=state.panzerzug;
-    this.updateAircraft(state,time,sim.player);
+    this.updateAircraft(state,time,sim.player,ju87HeardAt(sim));
     const player=sim.player,eye=eyePosition(player),dir=aimDirection(player.angle,player.pitch);
     const bob=player.moveBlend*Math.sin(time*(player.sprinting?14:9))*.014;
     const legacyShake=time<this.shakeUntil?Math.sin(time*85)*.012:0,feedback=this.combatFeedback.sample(time,this.owner.quality);
@@ -530,6 +540,7 @@ export class M01View {
   /** Layered visual-only blast. Scale is inferred later from the simulation-owned damage id. */
   explosion(point,clock,aerial){this.bursts.push({x:point.x,y:point.y??0,z:point.z,start:clock,aerial:Boolean(aerial),seed:fxSeed(point,clock)});if(this.bursts.length>M01_BATTLEFIELD_FX_LIMITS.bursts)this.bursts.shift();}
   resetEffects(){
+    for(const plane of this.planes??[])plane.userData.level=null;
     this.lastFrame=null;this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.impacts=[];this.bursts=[];this.combatFeedback.reset();
     for(const b of Object.values(this.fireBatches))b.count=0;for(const b of Object.values(this.battlefieldFxBatches))b.count=0;
     this.battlefieldShards.count=0;this.explosionLight.visible=false;this.explosionLight.intensity=0;
@@ -539,7 +550,7 @@ export class M01View {
     requiredAssetFailures:this.assets.failures.filter(f=>manifest.files.some(m=>typeof m.lod==='number'&&m.file===f.path)),
     characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,
     locomotive:this.locomotive.diagnostics,panzerzug:this.panzerzugArt.diagnostics,wagons:this.wagons.diagnostics,yardWagons:this.yardWagons.diagnostics,
-    aircraft:{loaded:[...this.aircraftSources.keys()].sort(),planes:this.planes.map(p=>{const model=p.levels.find(l=>l.object.visible)?.object,prop=model?.getObjectByName('propeller');return {visible:p.visible,lod:model?.userData.lod,position:p.position.toArray(),propeller:prop?.quaternion.toArray()};})},
+    aircraft:{loaded:[...this.aircraftSources.keys()].sort(),planes:this.planes.map(p=>{const model=(p.levels[p.userData.level]??p.levels.find(l=>l.object.visible))?.object,prop=model?.getObjectByName('propeller');return {visible:p.visible,lod:model?.userData.lod,position:p.position.toArray(),attitude:[p.rotation.x,p.rotation.y,p.rotation.z],fade:p.userData.fade,propeller:prop?.quaternion.toArray()};})},
     renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+(b.visible===false?0:b.count),0)??0,
     stationArchitecture:this.environment?.station?.diagnostics??{ready:false,failure:this.environment?.stationFailure??null},
     environmentProps:this.environment?.propDiagnostics,bridgePortalPolish:this.portalPolish?.diagnostics,bridgeStructure:this.bridgeStructure?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
@@ -547,7 +558,7 @@ export class M01View {
     combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),
     battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
-    this.disposed=true;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}this.viewModel?.dispose();this.characters?.dispose();
+    this.disposed=true;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();
     this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
     const textures=new Set();for(const m of Object.values(this.materials)){if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
     this.scene.traverse(n=>{if(n.isInstancedMesh)n.dispose();});this.scene.clear();this.weaponScene.clear();

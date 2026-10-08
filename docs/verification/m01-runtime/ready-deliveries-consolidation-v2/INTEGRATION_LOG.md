@@ -31,3 +31,10 @@
 - Source `2d797a1f5988cc1d86f0f2260967c6b0a170eddd`: Web Audio buses, source profiles, acoustic paths and real-event subscriptions.
 - Reconciled `src/game/game.js` while keeping HUD controller and animation diagnostic; `m01-view.js` retains Bridge/Station/Foliage resources.
 - All source tests, recordings and REPORT remain in tree. Integration CI is still necessary, with no main/deploy updates.
+
+## Integrated — Ju 87 production aircraft closeout V2
+
+- Source 4a8063916ad858fe594346b76915b9b9b6b8a12c: high/medium/low aircraft material improvements, procedural painted surfaces, faded LOD, animated attitudes, frame-warmup, original GLBs and evidence.
+- Semantic integration preserves **shared first-raid and second-raid audio flight paths** (`m01StukaPosition` / `m01RaidPlanePosition`), preserves Station/bridge/vegetation and adds `ju87HeardAt` audio timing.
+- Guard-test asset whitelist expanded without removing previously approved engine-contract protection. Source licence and RUNBOOK updated without dropping prior lines.
+- Combined CI pending; no deploy or main change.
