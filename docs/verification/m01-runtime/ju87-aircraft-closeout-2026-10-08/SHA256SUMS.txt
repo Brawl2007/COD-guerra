@@ -6,8 +6,8 @@ ce4e61c6666bce6498da2013ba460596f0ba38c803395a0ef0f7f80e9a5b0ddd  assets/models/
 c6f83feda05eae903098d2a23ef6cbe5e6e4360f19e22a9bb94e3791b20139dd  docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/BEFORE_AFTER.md
 0b1a7306b91c953868cd92b8c08594a426f16fc8db496421a3ae527b6b1653c0  docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/FILES_CHANGED.txt
 412aceb6a6a8f8c36af4013dcd90c46ee455f924d4529cdd8f35f87d91b03091  docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/GAMEPLAY_EQUIVALENCE.json
-af2576b2fb125adcc011eb25fd76a0180ca2d6b4b4ed8eae7b11d6c3d8b68f22  docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/HANDOFF.md
-a48d6e973e68be70d246ebd54c04ff6625792ef146a0dbdca54db872815e7b08  docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/PERFORMANCE.md
+08adf63a4e776decedc8f32ea46cf8197d00b3d3deafbdaaf1122e5276606091  docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/HANDOFF.md
+1164350768059963b3d9465d9b3e28448e7ace2a99866021a9477a6a8d0c7c1f  docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/PERFORMANCE.md
 f9af5d6c2a3d3e58ecfd2644cb24f11957bd2f6bd1f3c200791183449134d38b  docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/SILHOUETTE_METRICS.json
 1859a785ae6986b22850d09d713de0300c2d24f03f7a09dfe7fb4e710016d422  docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/captures/BASE/raid-capture-t30.json
 5e5fe65dd854ac9fa20958368ad4f784dbfd6d39c1a41a3c7b481d890be9cf56  docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/captures/BASE/raid-capture.json

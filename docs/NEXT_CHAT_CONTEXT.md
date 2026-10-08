@@ -4,7 +4,7 @@ Esta secção prevalece sobre o histórico abaixo para a tarefa do Ju 87. M01 co
 
 - TASK_ID `M01-JU87-AIRCRAFT-PRODUCTION-CLOSEOUT-V2`.
 - Base `codex/m01-bridge-portal-material-detail-polish-v1` @ `99309d9cb023cc94a07d41ff863e1362e4460570`.
-- Branch `codex/m01-ju87-aircraft-production-closeout-v2`. Runtime final `d90f8de`; os commits seguintes só trazem evidência e documentação.
+- Branch `codex/m01-ju87-aircraft-production-closeout-v2`. Runtime final `d90f8de`; os commits seguintes só trazem evidência, documentação e o script de medição `tools/verification/m01-ju87-load-longtasks.mjs`.
 - Sem PR, merge nem deploy. `main` intacta.
 - Feito no kit: capota, aros e tripulação, disco da hélice, MG 17, Pitot, antena, juntas e folgas, normais e desgaste.
 - Feito no runtime, em `src/render/m01-aircraft.js` e `m01-view.js`: materiais por avião, céu de ambiente nos aviões, atitude só rotacional, histerese de LOD, fade na entrada e na volta de 90 s.
@@ -13,7 +13,9 @@ Esta secção prevalece sobre o histórico abaixo para a tarefa do Ju 87. M01 co
   - Node 329/329, build PASS, navegador Ju 87 2/2;
   - hashes de gameplay idênticos à base;
   - revisor e verificador independentes, com as correcções aplicadas;
-  - suite completa de navegador 55/61, com as 6 falhas também na base neste SwiftShader.
+  - suite completa de navegador 55/61, com as 6 falhas também na base neste SwiftShader;
+  - testes do Ju 87 e lista de excepções de três guardas de invariância alterados; nenhum teste saltado nem em quarentena (ver HANDOFF);
+  - verificação final só de leitura sobre `ac32437`, com correcções só de documentação.
 - Pendente:
   - mergulho, freios e lançamento ligados a dados reais da simulação;
   - LOD0 carregado só quando necessário;

@@ -3,7 +3,7 @@
 TASK_ID: `M01-JU87-AIRCRAFT-PRODUCTION-CLOSEOUT-V2`  
 BASE: `codex/m01-bridge-portal-material-detail-polish-v1 @ 99309d9cb023cc94a07d41ff863e1362e4460570`  
 BRANCH: `codex/m01-ju87-aircraft-production-closeout-v2`  
-Runtime final: `d90f8de`. Os commits seguintes só acrescentam evidência e documentação; o SHA final é comunicado na entrega.
+Runtime final: `d90f8de`. Os commits seguintes só acrescentam evidência, documentação e os modos `cover`/`repair` do script de medição `tools/verification/m01-ju87-load-longtasks.mjs` (`ae97790`); `src/`, testes e assets ficam iguais aos de `d90f8de`. O SHA final é comunicado na entrega.
 
 M01 continua **PROTÓTIPO JOGÁVEL**. Sem merge, deploy ou alteração em `main`.
 
@@ -54,7 +54,7 @@ Inclui os originais PNG 1280×720, recortes 1:1 ampliados ×3 e pares lado a lad
 | | BASE | CANDIDATA |
 |---|---:|---:|
 | Luminância mediana do avião | 14,3–15,5 | 74,5–79,3 |
-| Céu (mediana) | 161,5–171,9 | 161,5–171,8 |
+| Céu (mediana) | 161,5–171,9 | 161,5–171,9 |
 | Contraste céu − avião | 147,2–157,3 | 82,2–97,3 |
 | Área segmentada | — | −12 % a +2 % da base |
 
@@ -91,18 +91,18 @@ Tudo sobre o runtime final `d90f8de`. Os testes de navegador correm em Chromium 
 | Testes de navegador do Ju 87 | 2/2, dentro da suite completa | [logs/browser.log](logs/browser.log) |
 | Suite completa de navegador | **55 passaram, 6 falharam** em 61 (33,9 min) | [logs/browser.log](logs/browser.log) |
 | Repetição isolada das outras 5 falhas da suite | base: 3 falham, 2 passam; candidata: 3 falham, 2 passam; os conjuntos são diferentes | [BASE](logs/browser-rerun5-BASE-99309d9.log) · [CANDIDATA](logs/browser-rerun5-CANDIDATE.log) |
-| Repetição ×3 dos dois testes que falharam duas vezes na candidata | portões: base falha 1 de 3, candidata 2 de 3; fogo alemão: base falha 3 de 3, candidata 2 de 3 | [BASE](logs/browser-repeat2-BASE-99309d9.log) · [CANDIDATA](logs/browser-repeat2-CANDIDATE.log) |
+| Repetição ×3 dos dois testes que, na repetição isolada, falharam só na candidata | portões: base falha 1 de 3, candidata 2 de 3; fogo alemão: base falha 3 de 3, candidata 2 de 3 | [BASE](logs/browser-repeat2-BASE-99309d9.log) · [CANDIDATA](logs/browser-repeat2-CANDIDATE.log) |
 | Repetição ×5 da salva nos portões | base falha 3 de 5, candidata 3 de 5 | [BASE](logs/browser-gates5-BASE-99309d9.log) · [CANDIDATA](logs/browser-gates5-CANDIDATE.log) |
 | Frames nas cenas desses testes (Ju 87 invisíveis) | iguais nas duas builds (tabela abaixo) | [logs/scene-frames.log](logs/scene-frames.log) |
-| Teste de áudio de produção, isolado | falha nas duas builds na linha 53 (ver Limitações) | [BASE](logs/browser-audio-production-BASE-99309d9.log) · [CANDIDATA `d90f8de`](logs/browser-audio-production-CANDIDATE-d90f8de.log) · [corrida anterior em `d6b619c`](logs/browser-audio-production-CANDIDATE.log) |
+| Teste de áudio de produção, isolado | falha nas duas builds na linha 53 (ver Limitações) | [BASE](logs/browser-audio-production-BASE-99309d9.log) · [CANDIDATA `d90f8de`](logs/browser-audio-production-CANDIDATE-d90f8de.log) · [corrida anterior, registada em `d6b619c`](logs/browser-audio-production-CANDIDATE.log) |
 
 **As 6 falhas da suite completa, somando todas as corridas acima** (falhas / corridas):
 
 | Teste | BASE `99309d9` | CANDIDATA | Onde falha |
 |---|---:|---:|---|
 | `m01-audio-production` | 1/1 | 2/2 | linha 53 nas duas builds: espera de `pitch` depois de um único movimento sintético do rato |
-| `licensed character rigs…` | 1/1 | 2/2 | rato sintético com pointer lock: o primeiro tiro na candidata, o regresso à horizontal na base |
-| `adjustment salvo at the gates…` | 4/9 | 7/10 | o HUD só mostra "atrás de si" depois dos 5 s do teste |
+| `licensed character rigs…` | 1/1 | 2/2 | rato sintético com pointer lock: na candidata, um dos cinco tiros (o carregador não muda em 30 s; o log não diz qual); na base, o regresso à horizontal depois dos tiros |
+| `adjustment salvo at the gates…` | 4/9 | 7/10 | a espera de 5 s por "atrás de si" expira com o HUD ainda em "em frente" |
 | `adjustment salvo behind the truss…` | 1/1 | 1/2 | idem |
 | `demolition inside the road truss…` | 1/1 | 1/2 | idem |
 | `German fire on the repair…` | 3/4 | 4/5 | os ~15 s de amostragem não chegam a ver sapadores deitados e de pé |
@@ -111,18 +111,26 @@ A salva nos portões começou por falhar mais na candidata (4/5 contra 1/4). Na 
 
 Em nenhum destes testes os Ju 87 estão visíveis: o relógio da missão está fora da janela 04:33:10–04:40:00 de `renderState.stukas`. Depois de Continuar, nos snapshots dos testes da salva nos portões e do fogo alemão, medi nas duas builds (Baixa, 3 corridas, uma build servida de cada vez):
 
-| Cena | Build | Frames em ~10 s | Intervalo máximo | Relógio da missão em 8 s |
+| Cena | Build | Frames desde Continuar | Intervalo máximo | Relógio da missão em 8 s |
 |---|---|---:|---:|---:|
 | Salva nos portões | BASE | 13–14 | 2,07–2,17 s | +1,30 s |
 | Salva nos portões | CANDIDATA | 13–14 | 1,90–2,20 s | +1,53–1,55 s |
 | Fogo alemão no reparo | BASE | 17–19 | 1,85–2,02 s | +2,07–2,55 s |
 | Fogo alemão no reparo | CANDIDATA | 18–19 | 1,78–1,95 s | +2,30–2,57 s |
 
-A candidata não fica mais lenta. Este ambiente desenha 1–2 frames por segundo nestas cenas, e o jogo avança 0,16–0,32 s de relógio por segundo real. Por isso, as esperas de 5 s pelo HUD, os ~15 s de amostragem e as corridas entre o pointer lock e o rato sintético destes testes ficam no limite em qualquer das builds. As 6 falhas não são regressão desta tarefa, mas a suite completa não está verde neste ambiente. Não alterei, saltei nem pus em quarentena nenhum teste.
+A candidata não fica mais lenta. Este ambiente desenha 1–2 frames por segundo nestas cenas, e o jogo avança 0,16–0,32 s de relógio por segundo real. Por isso, as esperas de 5 s pelo HUD, os ~15 s de amostragem e as corridas entre o pointer lock e o rato sintético destes testes ficam no limite em qualquer das builds. As 6 falhas não são regressão desta tarefa, mas a suite completa não está verde neste ambiente. Nenhum teste foi saltado nem posto em quarentena, e nenhum dos 6 que falham foi alterado. Os testes que esta tarefa alterou estão listados a seguir.
+
+### Testes alterados
+
+`git diff 99309d9` em `tests/` (nenhuma asserção dos 6 testes que falham foi tocada):
+- `tests/browser/m01.spec.js`: o teste do primeiro raid espera `fade === 1` antes de medir (+2 linhas). O snapshot restaurado é o instante em que os aviões são ouvidos.
+- `tests/m01-ju87-glb.test.js`: as asserções passam de um material para três (`ju87_b1`, `ju87_glass`, `ju87_prop_disc`) e verificam `canopy`, `propeller_disc`, as peças novas e as medidas estimadas (+19/−3).
+- `tests/m01-aircraft-runtime.test.js`: cinco testes novos, sem asserções retiradas (+88). Cobrem materiais, rpm/fase da hélice e atitude por avião, o fade, a histerese de LOD, o fade 0 com o nível visível e o proxy sem fade, e o `planes_heard` da simulação real.
+- `tests/m01-locomotive.test.js`, `tests/m01-panzerzug.test.js` e `tests/m01-soldier-visual-variation.test.js` (+3/−1 cada): a lista `integratedPresentation` da guarda de invariância contra `5f3cc34` passa a incluir os três GLB e o `manifest.json` do Ju 87. Os restantes ficheiros dessa guarda continuam a ter de ser idênticos.
 
 ## Revisão e verificação independentes
 
-Dois agentes separados, sem alterar ficheiros nem o estado do git.
+Dois agentes separados, sem alterar ficheiros nem o estado do git. Os relatórios destes dois agentes não estão arquivados nesta pasta; as resoluções conferem com os commits citados.
 
 **Revisor (código de `8947f20` e documentos de `2ea0a68`):**
 
@@ -154,6 +162,26 @@ As imprecisões dos documentos foram corrigidas em `9f532e1` e `0e493d6`; a desc
 
 Depois da verificação, o runtime só mudou na pré-compilação: `9f532e1` limitou-a aos níveis da qualidade actual e `d90f8de` retirou-a. Entre `4a80639` e `d90f8de`, `src/` difere apenas nas duas linhas retiradas. Repeti sobre `d90f8de` os testes Node, o build, a equivalência de gameplay, as capturas, as medições e a suite de navegador.
 
+**Verificação final, só de leitura, sobre `ac32437`.** Foi feita contra `logs/`, as capturas e o git, sem correr testes nem gerar evidência nova. Conferem:
+- FILES_CHANGED (87 entradas) e SHA256SUMS (58/58), antes destas correcções;
+- Node 329/329, build, reprodutibilidade 4/4 e 7/7, e equivalência de gameplay;
+- suite 55/61 e todas as contagens das repetições e da tabela das 6 falhas;
+- contadores `renderer.info`, tamanhos dos GLB, métricas de silhueta, tarefas longas e frames;
+- implementação contra o código, o manifesto e os GLB;
+- janela dos Stukas contra `mission.json` e o código da simulação.
+
+As correcções são só de documentação:
+- céu da candidata (171,9);
+- descrição das falhas dos rigs e do HUD;
+- critério da repetição ×3;
+- testes alterados;
+- script de medição alterado depois de `d90f8de`;
+- frames medidos só em duas das seis cenas, com a janela e a ordem das corridas descritas;
+- origem da corrida de áudio em `d6b619c`;
+- medições do MG34 e relatórios do revisor e do verificador sem registo arquivado.
+
+Runtime, testes, assets, capturas e logs ficaram iguais.
+
 ## Limitações
 
 - As formas vêm de proporções, sem planos medidos. Aros, tripulação, antena, MG 17, Pitot, juntas e compensadores são estimados e estão marcados no `manifest.json`.
@@ -168,9 +196,9 @@ Depois da verificação, o runtime só mudou na pré-compilação: `9f532e1` lim
   - o fio da antena quebra-se em traços;
   - fuligem, óleo e poeira mal se vêem.
 - `tests/browser/m01-audio-production.spec.js` falha nas duas builds neste ambiente:
-  - a base `99309d9` e a candidata `d90f8de`, isolada e na suite completa, expiram na linha 53 (espera de `pitch`, 300 s);
-  - uma corrida anterior da candidata, em `d6b619c`, expirou antes, na linha 46 (espera de 20 s pelo primeiro evento MG34);
-  - a espera da linha 46 está no limite nas duas builds: o primeiro MG34 chega aos 19–21,5 s em ambas, e o resultado é o mesmo com os GLB do Ju 87 bloqueados;
+  - a base `99309d9` (isolada) e a candidata `d90f8de` (isolada e na suite completa) expiram na linha 53 (espera de `pitch`, 300 s);
+  - uma corrida anterior da candidata, registada no commit `d6b619c`, expirou antes, na linha 46 (espera de 20 s pelo primeiro evento MG34);
+  - segundo medições da sessão anterior, a espera da linha 46 está no limite nas duas builds: o primeiro MG34 chega aos 19–21,5 s em ambas, também com os GLB do Ju 87 bloqueados. Essas medições não ficaram em `logs/` e não contam como evidência;
   - nesta cena os Ju 87 não estão visíveis;
   - não é regressão desta tarefa, mas o teste continua instável neste ambiente.
 - A suite completa de navegador não está verde neste ambiente: tem 6 falhas, todas reproduzidas na base (ver Validação). Precisa de outra máquina ou de testes menos dependentes do ritmo de frames.

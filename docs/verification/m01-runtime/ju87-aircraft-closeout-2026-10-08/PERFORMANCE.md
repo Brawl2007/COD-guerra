@@ -33,9 +33,9 @@ Fonte: [logs/raid-start-frames.log](logs/raid-start-frames.log); corridas anteri
 
 ## Cenas sem Ju 87 visível
 
-O mesmo script, com `MODE=cover` e `MODE=repair`, usa os snapshots de dois testes de navegador: "adjustment salvo at the gates" e "German fire on the repair". Nestas cenas, depois das 04:40:00, os Ju 87 já não estão visíveis. Medi o intervalo entre frames e o relógio da missão nos 8 s seguintes a **Continuar**. Base e candidata correram intercaladas, uma build servida de cada vez, em Baixa, com 3 corridas cada.
+O mesmo script, com `MODE=cover` e `MODE=repair`, usa os snapshots de dois testes de navegador: "adjustment salvo at the gates" e "German fire on the repair". Nestas cenas, depois das 04:40:00, os Ju 87 já não estão visíveis. O script conta os frames e o intervalo entre eles desde o clique em **Continuar** até 8 s depois de o jogo retomar, e o relógio da missão nesses 8 s. Base e candidata correram alternadas por cena (três corridas seguidas de cada build), uma build servida de cada vez, em Baixa.
 
-| Cena | Build | Frames em ~10 s | Intervalo máximo entre frames | Relógio da missão em 8 s | Tarefas longas no carregamento |
+| Cena | Build | Frames desde Continuar | Intervalo máximo entre frames | Relógio da missão em 8 s | Tarefas longas no carregamento |
 |---|---|---:|---:|---:|---:|
 | Salva nos portões | BASE | 13–14 | 2,07–2,17 s | +1,30 s | 4,2–4,7 s |
 | Salva nos portões | CANDIDATA | 13–14 | 1,90–2,20 s | +1,53–1,55 s | 4,5–4,6 s |
