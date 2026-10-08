@@ -19,11 +19,12 @@ import {visualNoise} from './m01-atmosphere.js';
  */
 
 export const DISTANT_SEED=0x7c2e1939;
-// MAP.md §5 movement area. Fire sources/targets/paths stay ≥380 m from it. Anything that could pass for an engageable
-// S2 enemy (the Lisewo floodplain) and the far-plain figures stay beyond the player's 1200 m shot ray, so nothing
-// non-engageable sits where the player's rounds can land; aircraft stay ≥2 km away.
+// MAP.md §5 movement area. Fire sources/targets/paths stay ≥380 m from it, the north front (S4) inside its documented
+// 800-1500 m. Anything that could pass for an engageable S2 enemy (the Lisewo floodplain) and the far-plain figures
+// stay beyond the player's 1200 m shot ray, so nothing non-engageable sits where the player's rounds can land;
+// aircraft stay ≥2 km away. All distances are from the edge of the movement area (the closest a player can be).
 export const MOVEMENT_AREA=Object.freeze({x:Object.freeze([-460,440]),z:Object.freeze([-80,140])});
-export const SAFE_DISTANCE=Object.freeze({fire:380,ray:1250,figure:1250,aircraft:2000});
+export const SAFE_DISTANCE=Object.freeze({fire:380,s4:800,ray:1250,figure:1250,aircraft:2000});
 export const distanceFromMovementArea=(p,area=MOVEMENT_AREA)=>Math.hypot(Math.max(area.x[0]-p.x,0,p.x-area.x[1]),Math.max(area.z[0]-p.z,0,p.z-area.z[1]));
 const freeze=o=>{for(const v of Object.values(o))if(v&&typeof v==='object'&&!Object.isFrozen(v))freeze(v);return Object.freeze(o);};
 const box=(x,z,y)=>({x,z,y});
@@ -45,19 +46,20 @@ export const DISTANT_SECTORS=freeze({
   east_dike:{layer:'ambient',trigger:MILESTONE_EVENTS.train,base:.55,scan:12,minDistance:SAFE_DISTANCE.ray,kinds:{rifle:.55,mg:.30,exchange:.15},tracer:'#ff9a48',
     lines:[{shooters:box([960,1045],[-1950,-1340],-4.25),targets:box([-80,10],[-1950,-1340],-2)},
       {shooters:box([960,1045],[1400,1960],-4.25),targets:box([-80,10],[1400,1960],-2)}]},
-  // S4 north perimeter (MAP.md §3, 0,8-1,5 km): Polish field works ~0,85-1,25 km from the play area and the attackers
-  // ~1,2-1,5 km, firing at each other across 100-570 m.
-  north_line:{layer:'presentation',trigger:MILESTONE_EVENTS.north,base:.85,scan:22,minDistance:SAFE_DISTANCE.fire,kinds:{rifle:.42,mg:.30,exchange:.12,mortar:.16},tracer:'#ffb05a',
+  // S4 north perimeter (MAP.md §3, 0,8-1,5 km): Polish field works 0,85-1,24 km from the play area and the attackers
+  // 1,2-1,5 km, firing at each other across 100-674 m.
+  north_line:{layer:'presentation',trigger:MILESTONE_EVENTS.north,base:.85,scan:22,minDistance:SAFE_DISTANCE.s4,kinds:{rifle:.42,mg:.30,exchange:.12,mortar:.16},tracer:'#ffb05a',
     lines:[{shooters:box([-1080,-720],[-1450,-1250],-2.95),targets:box([-1080,-760],[-1150,-880],-3.5)},
       {shooters:box([-1080,-760],[-1150,-880],-2.95),targets:box([-1080,-720],[-1450,-1250],-3.5)}]},
-  // Guns far north: a flash on the horizon, the impact on the Polish line after the flight time (or an unseen over).
-  north_guns:{layer:'presentation',trigger:MILESTONE_EVENTS.north,base:.075,scan:34,minDistance:SAFE_DISTANCE.fire,kinds:{artillery:1},
-    lines:[{shooters:box([-1100,-500],[-3600,-2600],2),targets:box([-1090,-740],[-1180,-760],-3.75)}]},
+  // Guns far north: a flash on the horizon, the impact on the Polish field works after the flight time (or an unseen over).
+  north_guns:{layer:'presentation',trigger:MILESTONE_EVENTS.north,base:.075,scan:34,minDistance:SAFE_DISTANCE.s4,kinds:{artillery:1},
+    lines:[{shooters:box([-1100,-500],[-3600,-2600],2),targets:box([-1080,-760],[-1150,-880],-3.75)}]},
 });
 // `scan` (s) must cover the longest event a sector can start (an exchange's last reply cloud, a heavy impact's smoke),
 // or an active event would drop out of activeEvents before it ends (tested). Aircraft: at most 7 elements of 3 can
-// overlap, so that pool never saturates (no ship pops in mid-flight).
-export const DISTANT_LIMITS=freeze({events:96,flashes:72,streaks:48,puffs:168,figures:64,aircraft:21,columns:4});
+// overlap, so that pool never saturates (no ship pops in mid-flight). Puffs: the route peaks at ~165 on High and every
+// front at once at ~186, so the pool keeps ~20 % above that (tested along the whole route and with every front open).
+export const DISTANT_LIMITS=freeze({events:96,flashes:72,streaks:48,puffs:224,figures:64,aircraft:21,columns:4});
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const smooth=(a,b,v)=>{const t=clamp((v-a)/(b-a),0,1);return t*t*(3-2*t);};
@@ -80,7 +82,8 @@ export function sectorLevel(name,t,m){
     }
     return Math.max(0,v*(1-.5*step(t,m.westDemolition,30)));
   }
-  if(name==='north_line')return step(t,m.north,45)+.55*pulse(t,m.north,3,55)+.65*step(t,m.kozliny,25)+.5*pulse(t,m.kozliny,4,80);
+  // The north line exists only once north contact was consumed (its items name that event as their source).
+  if(name==='north_line')return Number.isFinite(m.north)?step(t,m.north,45)+.55*pulse(t,m.north,3,55)+.65*step(t,m.kozliny,25)+.5*pulse(t,m.kozliny,4,80):0;
   if(name==='north_guns')return Number.isFinite(m.north)?.8*step(t,m.north+70,90)+.6*step(t,m.kozliny,30):0;
   return 0;
 }
@@ -103,13 +106,15 @@ const inBox=(b,u,v)=>({x:lerp(b.x[0],b.x[1],u),y:b.y,z:lerp(b.z[0],b.z[1],v)});
 const span=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y,a.z-b.z);
 const heavy=kind=>kind==='mortar'||kind==='artillery';
 const corners=b=>[[0,0],[0,1],[1,0],[1,1]].map(([u,v])=>inBox(b,u,v));
+// Closest and farthest points of two flat boxes: the gap per axis, and the farthest pair of corners.
+const gap=(a,b)=>Math.max(0,a[0]-b[1],b[0]-a[1]);
+const nearest=(a,b)=>Math.hypot(gap(a.x,b.x),a.y-b.y,gap(a.z,b.z)),farthest=(a,b)=>Math.max(...corners(a).flatMap(p=>corners(b).map(q=>span(p,q))));
 // Heavy impacts are spaced on impact time: a shell fired earlier can land later, so the look-back covers 0,3 s plus
-// the spread of flight times between the sector's guns and targets (corners overestimate it: conservative).
+// the exact spread of flight times between the sector's guns and targets, and one bucket more.
 const HEAVY_SPACING=.3;
-const LOOKBACK=Object.freeze(Object.fromEntries(Object.entries(DISTANT_SECTORS).map(([name,sector])=>{
+export const LOOKBACK=Object.freeze(Object.fromEntries(Object.entries(DISTANT_SECTORS).map(([name,sector])=>{
   let spread=0;
-  if('artillery' in sector.kinds){const flights=sector.lines.flatMap(l=>corners(l.shooters).flatMap(a=>corners(l.targets).map(b=>span(a,b)/SPEED.artillery)));
-    spread=Math.max(...flights)-Math.min(...flights);}
+  if('artillery' in sector.kinds)spread=(Math.max(...sector.lines.map(l=>farthest(l.shooters,l.targets)))-Math.min(...sector.lines.map(l=>nearest(l.shooters,l.targets))))/SPEED.artillery;
   return [name,Math.ceil((HEAVY_SPACING+spread)/BUCKET)+1];
 })));
 
@@ -129,7 +134,8 @@ function rawBucketEvent(name,b,m,seed){
     let at=start;event.speed=SPEED.mg;event.color=sector.tracer;
     event.shots=Array.from({length:rounds},(_,i)=>{if(i)at+=interval*(1+.2*(rnd(s,b,20+i)-.5));return {at,tracer:(i+first)%every===0};});
     if(kind==='exchange'){
-      // The answer comes from the line under fire, aimed back at the burst: after the first rounds arrive, plus a human delay.
+      // The answer comes from the line under fire, aimed back at the burst: once the burst is over and its first rounds
+      // have arrived (whichever is later), plus a human delay of 0,45-1,55 s.
       const arrive=event.shots[0].at+span(origin,target)/SPEED.mg;
       let reply=Math.max(event.shots.at(-1).at,arrive)+.45+u(12)*1.1;const count=2+Math.floor(u(13)*4);
       event.reply={origin:inBox(line.targets,u(14),u(15)),target:{...origin},speed:SPEED.rifle,
@@ -157,7 +163,7 @@ export function bucketEvent(name,b,m,seed=DISTANT_SEED){
     const prev=rawBucketEvent(name,b-back,m,seed);if(prev?.impact&&heavy(prev.kind)&&Math.abs(prev.impact.at-event.impact.at)<HEAVY_SPACING)return null;}
   return event;
 }
-// A frame scans ~260 buckets, but a bucket's event depends only on (sector, bucket, milestones, seed): it is computed
+// A frame scans 275 buckets, but a bucket's event depends only on (sector, bucket, milestones, seed): it is computed
 // once per milestone signature and reused. Same output as recomputing (tested); bounded memory. Cached events are
 // shared between frames and must be treated as read-only.
 const STORES=new Map(),STORE_LIMIT=4096,MILESTONE_KEYS=Object.keys(MILESTONE_EVENTS);
@@ -246,11 +252,12 @@ export function fireColumns(clock,m,seed=DISTANT_SEED){
   for(const v of kozlinyVehicles(clock,m,seed))if(clock>=v.hitAt)out.push({id:`${v.id}:burning`,layer:'presentation',source:MILESTONE_EVENTS.kozliny,x:v.x,y:v.y,z:v.z,start:v.hitAt,scale:.9,fire:true,black:true,seed:v.seed});
   return out.slice(0,DISTANT_LIMITS.columns);
 }
-const AIR_BUCKET=20,AIR_SCAN=140,AIR_OFFSET=2700;
+export const AIR_BUCKET=20;const AIR_SCAN=140,AIR_OFFSET=2700;
 /**
  * Distant aircraft once the raid has been heard: elements of 1-3 aircraft far off, never over the play area. The chord's
  * closest approach to (-150, 0) is ≥2700 m; the play area reaches 606 m from that point and wingmen fly ≤68 m abreast,
- * so every aircraft stays ≥2 km from it by construction.
+ * so every aircraft stays ≥2 km from it by construction. Not capped here: a flight lasts ≤117 s, so at most 7 buckets
+ * of ≤3 aircraft overlap, which is the renderer's pool (tested).
  */
 export function distantAircraft(clock,m,seed=DISTANT_SEED){
   const out=[],s=seedOf(seed,'air');if(!Number.isFinite(m.planes))return out;
@@ -265,7 +272,7 @@ export function distantAircraft(clock,m,seed=DISTANT_SEED){
         y:alt+i*12,z:cz+Math.sin(heading)*d+Math.cos(heading)*lat,heading,bank:(u(9)-.5)*.2});
     }
   }
-  return out.slice(0,DISTANT_LIMITS.aircraft);
+  return out;
 }
 
 /** Whole plan at `clock`. Camera, player and quality are deliberately not parameters. */

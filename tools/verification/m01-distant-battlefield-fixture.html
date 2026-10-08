@@ -36,19 +36,27 @@ window.dv={
   /**
    * Evidence: re-render the frame just drawn with the distant layer hidden, compare both images, then restore it.
    * Reports what the layer adds on screen (pixels changed by >= 8 and >= 40 of 255, bounding box) and a mask image.
+   * `xray` re-renders once more with the layer's depth test off: what it would add if no world geometry stood in
+   * front of it. Changed 0 with xray > 0 means the layer is there but hidden (embankment, buildings), not absent.
    */
   layerDiff(redraw,args=[]){
     const gl=engine.getContext(),w=1280,h=720,read=()=>{const p=new Uint8Array(w*h*4);gl.readPixels(0,0,w,h,gl.RGBA,gl.UNSIGNED_BYTE,p);return p;};
-    const on=read(),group=view.distantBattlefield.group;group.visible=false;this[redraw](...args);const off=read();group.visible=true;this[redraw](...args);
+    const d=view.distantBattlefield,materials=[d.glowMaterial,d.streakMaterial,d.smokeMaterial,d.silhouette,d.airMaterial];
+    const on=read(),group=d.group;group.visible=false;this[redraw](...args);const off=read();group.visible=true;
+    for(const m of materials)m.depthTest=false;this[redraw](...args);const xray=read();for(const m of materials)m.depthTest=true;this[redraw](...args);
     const mask=document.createElement('canvas');mask.width=w;mask.height=h;const ctx=mask.getContext('2d'),image=ctx.createImageData(w,h);
-    let changed=0,strong=0,minX=w,minY=h,maxX=-1,maxY=-1;
+    let changed=0,strong=0,minX=w,minY=h,maxX=-1,maxY=-1,hidden=0,hiddenStrong=0;
+    const diff=(a,i)=>Math.max(Math.abs(a[i]-off[i]),Math.abs(a[i+1]-off[i+1]),Math.abs(a[i+2]-off[i+2]));
     for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=((h-1-y)*w+x)*4,o=(y*w+x)*4;
-      const d=Math.max(Math.abs(on[i]-off[i]),Math.abs(on[i+1]-off[i+1]),Math.abs(on[i+2]-off[i+2]));
+      const d=diff(on,i),x2=diff(xray,i);
       for(let k=0;k<3;k++)image.data[o+k]=d>=8?on[i+k]:off[i+k]*.18;image.data[o+3]=255;
+      if(x2>=8){hidden++;if(x2>=40)hiddenStrong++;}
       if(d>=8){changed++;if(d>=40)strong++;minX=Math.min(minX,x);minY=Math.min(minY,y);maxX=Math.max(maxX,x);maxY=Math.max(maxY,y);}}
     ctx.putImageData(image,0,0);
-    return {changed,strong,bbox:maxX<0?null:[minX,minY,maxX,maxY],mask:mask.toDataURL('image/png')};
+    return {changed,strong,bbox:maxX<0?null:[minX,minY,maxX,maxY],xray:{changed:hidden,strong:hiddenStrong},mask:mask.toDataURL('image/png')};
   },
+  /** Ground height at a point (read-only), to pose a probe at eye height above a reachable spot. */
+  ground(x,z){return sim.world.heightAt(x,z);},
 };
 window.dvReady=true;
 </script>

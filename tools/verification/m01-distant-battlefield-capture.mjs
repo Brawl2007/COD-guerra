@@ -49,9 +49,9 @@ try{
     console.log(name,JSON.stringify({layer,events:state.distant.events,layers:state.distant.layers,kinds:state.distant.kinds,inView:state.distant.inView,instances:state.distant.instances}));};
   // Flashes live ~70 ms and tracers ~1 s: seek the first tick where the pure plan has one of them in the sector
   // being framed (same arithmetic as the renderer), step there drawing only the last ticks, and return where it is.
-  const seek=async(snapshot,sectors,{tracer=false,max=600}={})=>{
+  const seek=async(snapshot,sectors,{tracer=false,max=600,where=()=>true}={})=>{
     for(let k=1;k<=max;k++){const t=snapshot.clock+k*.05,plan=planDistantBattlefield(t,snapshot.consumed);
-      for(const e of plan.events){if(!sectors.includes(e.sector))continue;
+      for(const e of plan.events){if(!sectors.includes(e.sector)||!where(e))continue;
         for(const [shots,origin,target]of [[e.shots??[],e.origin,e.target],[e.reply?.shots??[],e.reply?.origin,e.reply?.target]])for(const s of shots){const a=t-s.at;
           if(tracer?s.tracer&&a>.1&&a<.9:a>=0&&a<.07){
             await call('step',{},k,100000);
@@ -83,6 +83,14 @@ try{
   await call('prepare',shots.kozliny,quality);await call('step',{},6,3);
   await shot('player-11-kozliny-columns','look',[-Math.PI*.72+.25,.03]);
   await shot('eye-12-kozliny-assault','probe',['eye',[-950,-3,-1650],24]);
+  // Tracers. From the bridgehead pocket the rail embankment hides the low floodplain to the north-east (frames 02, 03,
+  // 09: xray > 0). A reachable spot north of the embankment, inside the movement area, sees across it; the north
+  // line is in view from the player's own eye.
+  await call('prepare',shots.dawn,quality);
+  {const spot=[-40,-70],eye=[spot[0],Math.round(((await call('ground',...spot))+1.6)*100)/100,spot[1]];
+    await shot('probe-13-floodplain-tracer-north-of-embankment','probe',[eye,round(await seek(shots.dawn,['east_dike'],{tracer:true,max:2400,where:e=>e.origin.z<0})),40]);}
+  await call('prepare',shots.north,quality);
+  await shot('eye-14-north-line-tracer','probe',['eye',round(await seek(shots.north,['north_line'],{tracer:true})),40]);
   writeFileSync(`${out}/report.json`,JSON.stringify(report,null,2));
   console.log(JSON.stringify({captures:report.captures.length,errors}));
   if(errors.length)process.exitCode=1;

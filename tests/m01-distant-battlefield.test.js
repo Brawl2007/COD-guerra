@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
-import {DISTANT_SECTORS,DISTANT_LIMITS,MILESTONE_EVENTS,SAFE_DISTANCE,BUCKET,distanceFromMovementArea,distantMilestones,planDistantBattlefield,
+import {DISTANT_SECTORS,DISTANT_LIMITS,MILESTONE_EVENTS,SAFE_DISTANCE,BUCKET,AIR_BUCKET,distanceFromMovementArea,distantMilestones,planDistantBattlefield,
   activeEvents,activeEventsUncached,bucketEvent,sectorLevel,sectorEnvelope,squadFigures,activeSquads,distantAircraft,kozlinyVehicles,fireColumns} from '../src/render/m01-distant-battlefield-plan.js';
 import {M01DistantBattlefield} from '../src/render/m01-distant-battlefield.js';
 import {M01Simulation} from '../src/game/m01-simulation.js';
@@ -21,6 +21,10 @@ const ALL=(t0,t1,dt=.5)=>{const out=[];for(let t=t0;t<t1;t+=dt)out.push(t);retur
 // Every milestone at 0: all sectors at full phase (Koźliny included), for statistics independent of this route.
 const OPEN=Object.freeze({planes:0,train:0,panzerzug:0,bombing530:0,north:0,withdraw:0,spans:0,kozliny:0});
 const segmentDistance=(a,b,steps=24)=>{let d=Infinity;for(let i=0;i<=steps;i++){const k=i/steps;d=Math.min(d,distanceFromMovementArea({x:a.x+(b.x-a.x)*k,z:a.z+(b.z-a.z)*k}));}return d;};
+const inside=(b,p)=>p.x>=b.x[0]&&p.x<=b.x[1]&&p.z>=b.z[0]&&p.z<=b.z[1]&&p.y===b.y;
+// What the renderer reads at `t` on this route: the clock, the events consumed by then and the (pure) ground height.
+const routeAt=t=>({clock:t,consumed:Object.fromEntries(Object.entries(consumed).filter(([,c])=>c<=t)),world:run.sim.world});
+const openAt=t=>({clock:t,consumed:Object.fromEntries(Object.entries(OPEN).map(([k,c])=>[MILESTONE_EVENTS[k],c])),world:run.sim.world});
 
 test('the route consumed every milestone the layer reads, in mission order',()=>{
   for(const id of Object.values(MILESTONE_EVENTS))assert.ok(Number.isFinite(consumed[id]),id);
@@ -40,6 +44,8 @@ test('three layers stay separate: presentation needs a consumed trigger, ambient
       for(const key of ['damage','health','alive','objective','actor','visible','hit'])assert.ok(!(key in item),`${item.id}.${key}`);
     }
   }
+  // A presentation episode needs its own trigger: Koźliny consumed without north contact opens no north front.
+  for(const name of ['north_line','north_guns'])assert.equal(sectorLevel(name,600,{kozliny:0,train:0}),0,name);
   // Before the train arrives the river is quiet; before north contact the north is silent (tense, unseen).
   for(const t of ALL(0,m.train,2))assert.equal(planDistantBattlefield(t,consumed).events.length,0);
   for(const t of ALL(0,m.north,1))assert.ok(activeEvents(t,m).every(e=>e.sector==='east_dike'));
@@ -50,6 +56,9 @@ test('pure and deterministic: same clock and milestones give the same plan; rest
   for(const t of [m.train+12.3,m.north+44.1,m.eastDemolition+31.7,m.westDemolition+9.2]){
     const a=planDistantBattlefield(t,consumed),b=planDistantBattlefield(t,structuredClone(consumed));assert.deepEqual(a,b);
     assert.deepEqual(planDistantBattlefield(t,restored(run.sim.snapshot()).consumed),a);
+    // Recomputed from scratch, twice: the plan itself is pure, not only its bucket cache.
+    const fresh=()=>({clock:t,milestones:m,events:activeEventsUncached(t,m),squads:activeSquads(t,m),vehicles:kozlinyVehicles(t,m),columns:fireColumns(t,m),aircraft:distantAircraft(t,m)});
+    assert.deepEqual(fresh(),a);assert.deepEqual(fresh(),fresh());
   }
   const before=JSON.stringify(consumed);planDistantBattlefield(m.north+60,consumed);assert.equal(JSON.stringify(consumed),before);
 });
@@ -80,6 +89,18 @@ test('battlefield rhythm: Poisson-like arrivals, lulls and flare-ups, no periodi
   }
 });
 
+test('exchanges: the line under fire answers once the burst is over and its first rounds have arrived, after a human delay',()=>{
+  let exchanges=0;
+  for(const name of ['east_dike','north_line'])for(let b=0;b<14400;b++){const e=bucketEvent(name,b,OPEN);if(e?.kind!=='exchange')continue;exchanges++;
+    const arrive=e.shots[0].at+Math.hypot(e.target.x-e.origin.x,e.target.y-e.origin.y,e.target.z-e.origin.z)/e.speed,ready=Math.max(e.shots.at(-1).at,arrive),first=e.reply.shots[0].at;
+    assert.ok(first>=ready+.45-1e-9&&first<=ready+1.55+1e-9,`${e.id}: reply ${(first-ready).toFixed(3)} s after the burst and the first arrival`);
+    // From the line under fire, back at the shooters, with rifles (no tracer), in order and over before the event ends.
+    assert.ok(DISTANT_SECTORS[name].lines.some(l=>inside(l.targets,e.reply.origin)),`${e.id} reply origin`);assert.deepEqual(e.reply.target,e.origin);
+    assert.ok(e.reply.shots.every(x=>!x.tracer)&&e.reply.shots.every((x,i,a)=>!i||x.at>a[i-1].at)&&e.reply.shots.at(-1).at<e.end,e.id);
+  }
+  assert.ok(exchanges>100,`${exchanges} exchanges`);
+});
+
 test('every event a sector can start ends inside its scan window, so nothing active drops out early',()=>{
   for(const [name,sector]of Object.entries(DISTANT_SECTORS)){let longest=0,events=0;
     for(let b=0;b<20000;b++){const e=bucketEvent(name,b,OPEN);if(!e)continue;events++;longest=Math.max(longest,e.end-b*BUCKET);}
@@ -105,15 +126,29 @@ test('no artificially synchronised explosions: heavy impacts in each sector land
 });
 
 test('world-anchored and away from the player: fire and its paths keep their sector distance, the Lisewo skirmish and figures stay beyond the shot ray, aircraft ≥2 km',()=>{
-  // By construction, not only on this route: every sector at full phase over two hours.
+  // Guaranteed by the sector boxes, checked beyond this route: every sector at full phase, every third bucket over two hours.
   for(let b=0;b<28800;b+=3)for(const [name,sector]of Object.entries(DISTANT_SECTORS)){const e=bucketEvent(name,b,OPEN);if(!e)continue;
     for(const p of [e.origin,e.target,e.reply?.origin,e.impact?.point].filter(Boolean))assert.ok(distanceFromMovementArea(p)>=sector.minDistance,`${e.id} ${JSON.stringify(p)}`);
     if(e.origin&&e.target)assert.ok(segmentDistance(e.origin,e.target)>=sector.minDistance,`${e.id} path`);
     if(e.reply)assert.ok(segmentDistance(e.reply.origin,e.reply.target)>=sector.minDistance,`${e.id} reply path`);}
   assert.ok(DISTANT_SECTORS.east_dike.minDistance>=SAFE_DISTANCE.ray&&SAFE_DISTANCE.ray>1200,'the floodplain skirmish is beyond the 1200 m player ray');
-  for(const t of ALL(0,7200,7)){
-    for(const a of distantAircraft(t,OPEN))assert.ok(distanceFromMovementArea(a)>=SAFE_DISTANCE.aircraft,`${a.id} ${distanceFromMovementArea(a)}`);
-    assert.ok(distantAircraft(t,OPEN).length<=DISTANT_LIMITS.aircraft,'the aircraft pool holds every overlapping element');
+  for(const name of ['north_line','north_guns'])assert.ok(DISTANT_SECTORS[name].minDistance>=800,`${name} inside MAP.md S4 (800-1500 m)`);
+  const elements=new Map();
+  for(const t of ALL(0,7200,1)){const aircraft=distantAircraft(t,OPEN);
+    for(const a of aircraft){assert.ok(distanceFromMovementArea(a)>=SAFE_DISTANCE.aircraft,`${a.id} ${distanceFromMovementArea(a)}`);
+      const [,b,i]=a.id.split(':'),e=elements.get(b)??{ships:0,first:t,last:t};e.ships=Math.max(e.ships,+i+1);e.last=t;elements.set(b,e);}
+    // Uncapped by the plan: every overlapping element fits the renderer's pool.
+    assert.ok(aircraft.length<=DISTANT_LIMITS.aircraft,`${aircraft.length} aircraft at ${t}`);
+  }
+  // And by construction, not only on these two hours: the buckets a flight can overlap times the largest element.
+  const ships=Math.max(...[...elements.values()].map(e=>e.ships)),flight=Math.max(...[...elements.values()].map(e=>e.last-e.first+1));
+  assert.ok(elements.size>50&&ships===3,`${elements.size} elements, up to ${ships} aircraft`);
+  assert.ok((Math.ceil(flight/AIR_BUCKET)+1)*ships<=DISTANT_LIMITS.aircraft,`flights of ${flight} s overlap ${Math.ceil(flight/AIR_BUCKET)+1} buckets of ${ships}`);
+  // Figures, vehicles, the anti-tank gun and the columns as well, in both phases of the far plain (walking west, pulling back).
+  for(const milestones of [OPEN,{...OPEN,eastDemolition:900}])for(const t of ALL(0,7200,4)){
+    for(const s of activeSquads(t,milestones))for(const f of squadFigures(s,t))assert.ok(distanceFromMovementArea(f)>=SAFE_DISTANCE.figure,`${f.id}`);
+    for(const v of kozlinyVehicles(t,milestones)){assert.ok(distanceFromMovementArea(v)>=SAFE_DISTANCE.figure,v.id);assert.ok(distanceFromMovementArea(v.gun)>=SAFE_DISTANCE.s4,`${v.id} gun`);}
+    for(const c of fireColumns(t,milestones))assert.ok(distanceFromMovementArea(c)>=SAFE_DISTANCE.s4,c.id);
   }
   for(const t of ALL(m.train,run.sim.clock+200,.75)){
     const plan=planDistantBattlefield(t,consumed);
@@ -185,7 +220,19 @@ test('camera, player and quality never change which events exist; out-of-view ac
   }finally{north.r.dispose();south.r.dispose();}
 });
 
-test('pools never saturate on the route (nothing is silently dropped), distance bands and both layers in the late battle',()=>{
+test('pools never saturate (nothing is silently dropped): the whole route on High every 0,25 s, and every front at once for an hour',()=>{
+  const r=new M01DistantBattlefield(new THREE.Scene()),cam=camera();
+  try{
+    for(const [label,at,times]of [['route',routeAt,ALL(0,run.sim.clock+600,.25)],['every front',openAt,ALL(0,3600,.5)]]){const peak={};
+      for(const t of times){const stats=r.update(at(t),cam,'high',{daylight:.3,viewportHeight:720});
+        for(const [k,v]of Object.entries(stats.requested)){peak[k]=Math.max(peak[k]??0,v);assert.ok(v<=DISTANT_LIMITS[k],`${label} ${t}: ${k} requested ${v} of ${DISTANT_LIMITS[k]}`);}
+        assert.deepEqual(stats.instances,stats.requested,`${label} ${t}`);assert.ok(stats.events<DISTANT_LIMITS.events);}
+      for(const [k,v]of Object.entries(peak))assert.ok(v>0,`${label}: no ${k} at all`);
+    }
+  }finally{r.dispose();}
+});
+
+test('snapshots of the route: distance bands and both layers in the late battle',()=>{
   for(const name of ['east','north','hush','surge','late']){
     const {r,stats}=render(restored(shots[name]),{quality:'high'});
     try{
@@ -203,9 +250,13 @@ test('pause and restore: the same clock renders the same frame; a restored or ea
   try{
     for(let i=0;i<3;i++)assert.deepEqual(r.update(sim,camera(),'low',{daylight:.3,viewportHeight:720}),stats);
     const copy=restored(sim.snapshot()),other=render(copy);assert.deepEqual(other.stats,stats);other.r.dispose();
-    // A slow-frame history widens the flash window; a checkpoint restore (new world, earlier clock) must not keep it.
-    const save=sim.snapshot();for(let i=0;i<4;i++)sim.tick(.05,{});sim.drainEvents();r.update(sim,camera(),'low',{daylight:.3,viewportHeight:720});
-    for(let i=0;i<4;i++)sim.tick(.05,{});sim.drainEvents();assert.ok(r.update(sim,camera(),'low',{daylight:.3,viewportHeight:720}).window>.15);
-    const back=restored(save),fresh=render(restored(save));assert.deepEqual(r.update(back,camera(),'low',{daylight:.3,viewportHeight:720}),fresh.stats);fresh.r.dispose();
+    // A slow-frame history widens the flash window. A restore must not keep it, whether the save is earlier (a checkpoint),
+    // later or at the very same clock: only the new world tells, so each case renders like a fresh renderer.
+    const save=sim.snapshot(),frame=s=>r.update(s,camera(),'low',{daylight:.3,viewportHeight:720});
+    const widen=()=>{for(let k=0;k<2;k++){for(let i=0;i<4;i++)sim.tick(.05,{});sim.drainEvents();frame(sim);}assert.ok(r.stats.window>.15,'slow frames widen the window');};
+    const same=(target,label)=>{const fresh=render(restored(target.snapshot()));try{assert.equal(fresh.stats.window,.07);assert.deepEqual(frame(restored(target.snapshot())),fresh.stats,label);}finally{fresh.r.dispose();}};
+    widen();const back=restored(save);assert.ok(back.clock<sim.clock);same(back,'earlier save');
+    widen();const ahead=restored(sim.snapshot());for(let i=0;i<10;i++)ahead.tick(.05,{});ahead.drainEvents();assert.ok(ahead.clock>sim.clock);same(ahead,'later save');
+    widen();same(sim,'save at the same clock');
   }finally{r.dispose();}
 });

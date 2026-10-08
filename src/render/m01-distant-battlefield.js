@@ -35,7 +35,8 @@ void main(){float across=exp(-pow((vUv.y-.5)*2.,2.)*2.2),along=smoothstep(0.,.8,
   #include <colorspace_fragment>
 }`;
 // Distant smoke: camera-facing puffs with their own aerial perspective. Near smoke fades fully into fog by 2,7 km; a
-// column 1-3 km away stays a pale, hazy column (≤80 % haze colour) instead of dissolving into the sky.
+// column 1-3 km away stays a pale, hazy column instead of dissolving into the sky (haze 11 % at 1 km, 46 % at 3 km,
+// capped at 80 % from 4,9 km).
 const smokeVertex=`attribute float puffOpacity;varying vec2 vUv;varying vec3 vColor;varying float vOpacity;varying float vDepth;
 void main(){vUv=uv;vOpacity=puffOpacity;vColor=instanceColor;vec4 c=modelViewMatrix*instanceMatrix*vec4(0.,0.,0.,1.);
   c.xy+=position.xy*vec2(length(instanceMatrix[0].xyz),length(instanceMatrix[1].xyz));vDepth=-c.z;gl_Position=projectionMatrix*c;}`;
@@ -140,7 +141,7 @@ export class M01DistantBattlefield {
       const d=Math.hypot(p.x-cam.x,p.y-cam.y,p.z-cam.z);stats.bands[BAND(d)]++;if(this.frustum.containsPoint(this.point.set(p.x,p.y,p.z)))stats.inView++;else stats.outOfView++;};
     const brief=age=>age>=0&&age<this.window;
     // Columns first: they are the long-lived signature of the war beyond the river and the town. A farm or vehicle fire
-    // seen from 1,5-3 km is a column 100-300 m high and tens of metres wide, leaning with the wind aloft.
+    // seen from 1,3-3 km is a column 100-400 m high (by scale) and tens of metres wide, leaning with the wind aloft.
     for(const c of plan.columns){
       note(c,c);const age=clock-c.start,n=k=>visualNoise(c.seed,k),interval=.9/density,life=26,grow=smooth(0,60,age);
       for(let k=Math.floor((clock-life)/interval);k*interval<=clock;k++){
@@ -172,7 +173,8 @@ export class M01DistantBattlefield {
       if(e.shots){
         const perp=e.origin&&e.target?(()=>{const dx=e.target.x-e.origin.x,dz=e.target.z-e.origin.z,l=Math.hypot(dx,dz)||1;return {x:-dz/l,z:dx/l};})():{x:0,z:1};
         fire(e.shots,e.origin,e.target,e.speed,e.color,perp);
-        if(e.reply)fire(e.reply.shots,e.reply.origin,e.reply.target,e.reply.speed,'#ffc070',{x:0,z:1});
+        // The reply is rifle fire: flashes and a cloud, no tracer (so no colour).
+        if(e.reply)fire(e.reply.shots,e.reply.origin,e.reply.target,e.reply.speed,null,{x:0,z:1});
       }
       if(e.flash){const age=clock-e.flash.at,hold=Math.max(.12,this.window);if(age>=0&&age<hold)flash({x:e.origin.x,y:e.origin.y+2,z:e.origin.z},7*e.flash.size,'#fff0c8',1-age/hold);
         if(age>=0&&age<5)puff(e.origin.x,e.origin.y+4+age*1.2,e.origin.z,(6+age*2.5)*e.flash.size,(5+age*2)*e.flash.size,'#837e75',.6*(1-age/5));}

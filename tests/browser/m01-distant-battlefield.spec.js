@@ -28,7 +28,8 @@ for(const [name,quality]of [['east','low'],['north','high']])test(`distant battl
   const a=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(300);const b=await page.evaluate(()=>window.gameDiagnostics());
   const d=a.m01.distantBattlefield;
   expect(b.clock).toBe(a.clock);expect(b.m01.distantBattlefield).toEqual(d);
-  for(const [k,v]of Object.entries(d.instances))expect(v).toBeLessThanOrEqual(d.limits[k]);
+  // Requested before the pools cap them: every requested item fits, so nothing was silently dropped.
+  for(const [k,v]of Object.entries(d.requested))expect(v).toBeLessThanOrEqual(d.limits[k]);expect(d.instances).toEqual(d.requested);
   expect(d.layers.ambient).toBeGreaterThan(0);
   if(name==='north'){expect(d.layers.presentation).toBeGreaterThan(0);expect(d.sources).toContain('evt_m01_north_contact_distant');}
   expect(d.sources.every(s=>s.startsWith('evt_m01_')||s.startsWith('ambient:'))).toBe(true);
