@@ -1,0 +1,31 @@
+<!doctype html><meta charset="utf-8"><title>Distant battlefield verification</title>
+<style>html,body{margin:0;background:#151918}canvas{width:1280px;height:720px;display:block}</style>
+<canvas id="frame" width="1280" height="720"></canvas>
+<script type="module">
+// Verification fixture only: production M01View, real simulation ticks. The view is turned with the same look
+// controls the game feeds the simulation; nothing here edits simulation state.
+import {M01View} from '../../src/render/m01-view.js';
+import {M01Simulation} from '../../src/game/m01-simulation.js';
+import * as THREE from 'three';
+const canvas=document.querySelector('canvas'),engine=new THREE.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true});
+engine.setSize(1280,720,false);engine.setPixelRatio(1);engine.outputColorSpace=THREE.SRGBColorSpace;engine.toneMapping=THREE.ACESFilmicToneMapping;
+engine.toneMappingExposure=1.15;engine.autoClear=false;engine.shadowMap.type=THREE.PCFSoftShadowMap;
+const owner={canvas,engine,quality:'low'},view=new M01View(owner);await view.ready;let sim=null;
+const handle=events=>{for(const e of events){if(e.type==='m01-blast')view.explosion(e.point,sim.clock,e.aerial);if(e.type==='round-impact')view.impact(e.point,e.material,sim.clock);}};
+window.dv={
+  async prepare(snapshot,quality='low'){owner.quality=quality;engine.shadowMap.enabled=quality!=='low';await view.characters.load(quality);
+    sim=new M01Simulation();sim.restoreSnapshot(snapshot);sim.drainEvents();view.resetEffects();view.render(sim);return this.state();},
+  /** Turn to an absolute yaw/pitch through look input (one tick), as the game does. */
+  look(angle,pitch=0,aim=false){const da=Math.atan2(Math.sin(angle-sim.player.angle),Math.cos(angle-sim.player.angle));
+    sim.tick(.05,{lookX:da/.0022,lookY:(sim.player.pitch-pitch)/.0022,aim});handle(sim.drainEvents());view.render(sim);return this.state();},
+  step(controls={},n=1,stride=1){for(let i=0;i<n;i++){sim.tick(.05,controls);handle(sim.drainEvents());if(i>=n-3||i%stride===0)view.render(sim);}return this.state();},
+  /** Evidence probe: re-render the same world frame from an explicit camera pose (no weapon pass), then restore. */
+  probe(position,target,fov=70){const c=view.camera,saved={p:c.position.clone(),q:c.quaternion.clone(),fov:c.fov};
+    c.position.set(...position);c.lookAt(...target);c.fov=fov;c.updateProjectionMatrix();c.updateMatrixWorld();
+    view.distantBattlefield.update(sim,c,owner.quality,{daylight:Math.max(0,Math.min(1,(view.skyLight.intensity-1.6)/.22)),viewportHeight:720});
+    engine.clear();engine.render(view.scene,c);const state=this.state();state.probe={position,target,fov};
+    c.position.copy(saved.p);c.quaternion.copy(saved.q);c.fov=saved.fov;c.updateProjectionMatrix();return state;},
+  state(){return structuredClone({clock:sim.clock,battle:sim.battleClock,player:{x:sim.player.x,z:sim.player.z,angle:sim.player.angle,pitch:sim.player.pitch},distant:view.distantBattlefield.diagnostics});},
+};
+window.dvReady=true;
+</script>
