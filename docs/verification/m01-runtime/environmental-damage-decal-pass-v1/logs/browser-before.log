@@ -1,0 +1,16 @@
+
+Running 3 tests using 1 worker
+
+[1A[2K[1/3] tests/browser/m01-damage-decals.spec.js:72:3 › player fire leaves bounded portal-brick marks; pause freezes them and a checkpoint restore clears them
+[1A[2Ktests/browser/m01-damage-decals.spec.js:72:3 › player fire leaves bounded portal-brick marks; pause freezes them and a checkpoint restore clears them
+M01_DAMAGE_DECAL_FIRE BEFORE portal-brick {"quality":"high","drawCalls":175,"triangles":389053,"textures":110,"geometries":251,"clock":5.2166999999999915,"player":{"x":4.5,"y":-0.35000020265579224,"z":-5.4,"angle":-3.2248716577115464,"pitch":0.10772114019307602,"health":100,"crouched":false,"aiming":false},"damageDecals":null}
+
+[1A[2K[2/3] tests/browser/m01-damage-decals.spec.js:72:3 › player fire leaves bounded track-bed marks; pause freezes them and a checkpoint restore clears them
+[1A[2Ktests/browser/m01-damage-decals.spec.js:72:3 › player fire leaves bounded track-bed marks; pause freezes them and a checkpoint restore clears them
+M01_DAMAGE_DECAL_FIRE BEFORE track-bed {"quality":"high","drawCalls":137,"triangles":413367,"textures":107,"geometries":226,"clock":5.099899999999991,"player":{"x":-86.37208237294094,"y":0,"z":-4.217035281084344,"angle":1.4859314029213526,"pitch":-0.30061493859811617,"health":100,"crouched":false,"aiming":false},"damageDecals":null}
+
+[1A[2K[3/3] tests/browser/m01-damage-decals.spec.js:101:1 › saved blasts draw their persistent aftermath on load (frozen probes of genuine route states)
+[1A[2Ktests/browser/m01-damage-decals.spec.js:101:1 › saved blasts draw their persistent aftermath on load (frozen probes of genuine route states)
+M01_DAMAGE_DECAL_COUNTERS BEFORE {"repair-crater":{"quality":"high","drawCalls":359,"triangles":777285,"textures":110,"geometries":270,"clock":1027.5333999996133,"player":{"x":-49,"y":-3,"z":15.5,"angle":-0.5485494024505281,"pitch":-0.2630199568763997,"health":92,"crouched":false,"aiming":false},"damageDecals":null},"station-facade":{"quality":"high","drawCalls":215,"triangles":654408,"textures":124,"geometries":256,"clock":1027.533399999613,"player":{"x":-400,"y":-3,"z":17.5,"angle":1.5707963267948966,"pitch":-0.31905150562009504,"health":92,"crouched":false,"aiming":false},"damageDecals":null},"east-deck-end":{"quality":"high","drawCalls":211,"triangles":698124,"textures":62,"geometries":327,"clock":1027.566699999613,"player":{"x":650,"y":0,"z":40,"angle":0,"pitch":-0.4529241594681928,"health":92,"crouched":false,"aiming":false},"damageDecals":null},"west-bridgehead":{"quality":"high","drawCalls":317,"triangles":749231,"textures":110,"geometries":284,"clock":1047.566599999595,"player":{"x":-30,"y":0,"z":2,"angle":0,"pitch":-0.24706907032498035,"health":92,"crouched":false,"aiming":false},"damageDecals":null}}
+
+[1A[2K  3 passed (2.8m)

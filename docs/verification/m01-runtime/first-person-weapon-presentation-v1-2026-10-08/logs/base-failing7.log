@@ -1,0 +1,152 @@
+
+Running 7 tests using 1 worker
+
+[1/7] tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops
+  1) tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops 
+
+    Test timeout of 300000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 300000ms exceeded.
+
+      51 |   // avoid native pointer repositioning, which can change the locked look vector before the click is consumed.
+      52 |   await page.evaluate(()=>window.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:430,bubbles:true})));
+    > 53 |   await page.waitForFunction(()=>window.gameDiagnostics().player.pitch<-.75);
+         |              ^
+      54 |   const beforeShot=await page.evaluate(()=>window.gameDiagnostics());
+      55 |   await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});
+      56 |   await page.waitForFunction(({mag,shot,impact})=>{
+        at /tmp/claude-0/-home-user-COD-guerra/1e581609-5301-5005-855c-b268dac9f774/scratchpad/base/tests/browser/m01-audio-production.spec.js:53:14
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[2/7] tests/browser/m01-wagon-runtime-integration.spec.js:41:1 › yard wagon uses real LOD0/1/2 and authoritative burned state survives reload then obeys prior checkpoint
+tests/browser/m01-wagon-runtime-integration.spec.js:41:1 › yard wagon uses real LOD0/1/2 and authoritative burned state survives reload then obeys prior checkpoint
+M01_WAGON_COUNTERS {"near":{"yard":{"loaded":["covered:burned:0","covered:burned:1","covered:burned:2","covered:intact:0","covered:intact:1","covered:intact:2","open:intact:0","open:intact:1","open:intact:2"],"pending":[],"wagons":[{"id":"yard_wagon_1","type":"covered","state":"intact","lod":0,"position":[-320,-0.13091553254588018,-6],"key":"covered:intact:0","cover":"cv_wagon_1","fire":false},{"id":"yard_wagon_2","type":"open","state":"intact","lod":0,"position":[-340,-3,8],"key":"open:intact:0","cover":"cv_wagon_2","fire":false},{"id":"yard_wagon_3","type":"covered","state":"intact","lod":0,"position":[-352,-3,8],"key":"covered:intact:0","cover":null,"fire":false}]},"train":{"wagons":65,"step":9.1,"lodDistribution":{"0":0,"1":0,"2":65},"loaded":["covered:0","covered:1","covered:2","open:0","open:1","open:2"],"proxies":0,"batches":8,"activeInstancesByLod":{"0":0,"1":0,"2":293},"visible":false,"first":[1090,0,-2.5],"last":[1672.4,0,-2.5]},"total":{"drawCalls":70,"triangles":380128,"textures":37,"geometries":227}},"mid":{"yard":{"loaded":["covered:burned:0","covered:burned:1","covered:burned:2","covered:intact:0","covered:intact:1","covered:intact:2","open:intact:0","open:intact:1","open:intact:2"],"pending":[],"wagons":[{"id":"yard_wagon_1","type":"covered","state":"intact","lod":1,"position":[-320,-0.13091553254588018,-6],"key":"covered:intact:1","cover":"cv_wagon_1","fire":false},{"id":"yard_wagon_2","type":"open","state":"intact","lod":1,"position":[-340,-3,8],"key":"open:intact:1","cover":"cv_wagon_2","fire":false},{"id":"yard_wagon_3","type":"covered","state":"intact","lod":1,"position":[-352,-3,8],"key":"covered:intact:1","cover":null,"fire":false}]}},"far":{"yard":{"loaded":["covered:burned:0","covered:burned:1","covered:burned:2","covered:intact:0","covered:intact:1","covered:intact:2","open:intact:0","open:intact:1","open:intact:2"],"pending":[],"wagons":[{"id":"yard_wagon_1","type":"covered","state":"intact","lod":2,"position":[-320,-0.13091553254588018,-6],"key":"covered:intact:2","cover":"cv_wagon_1","fire":false},{"id":"yard_wagon_2","type":"open","state":"intact","lod":2,"position":[-340,-3,8],"key":"open:intact:2","cover":"cv_wagon_2","fire":false},{"id":"yard_wagon_3","type":"covered","state":"intact","lod":2,"position":[-352,-3,8],"key":"covered:intact:2","cover":null,"fire":false}]}}}
+
+[3/7] tests/browser/m01.spec.js:66:1 › the genuine first raid displays three Ju 87 GLBs with light LODs and freezes the propellers on pause
+[4/7] tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset
+  2) tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset 
+
+    TimeoutError: page.waitForFunction: Timeout 30000ms exceeded.
+
+      129 |     // consumed by Input without repositioning the locked cursor, then wait on authoritative weapon state.
+      130 |     await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});
+    > 131 |     await page.waitForFunction(expected=>window.gameDiagnostics().m01.weapon.mag===expected,expectedMag,{timeout:process.env.CI?30000:10000});
+          |                ^
+      132 |     await expect(page.locator('#mag')).toHaveText(String(expectedMag));
+      133 |   };
+      134 |   for(let i=0;i<5;i++){
+        at fireRound (/tmp/claude-0/-home-user-COD-guerra/1e581609-5301-5005-855c-b268dac9f774/scratchpad/base/tests/browser/m01.spec.js:131:16)
+        at /tmp/claude-0/-home-user-COD-guerra/1e581609-5301-5005-855c-b268dac9f774/scratchpad/base/tests/browser/m01.spec.js:136:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[5/7] tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look
+  3) tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('#objective-status')
+    Expected substring: "atrás de si"
+    Received string:    "Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('#objective-status')
+        7 × locator resolved to <span id="objective-status">Metralhadora nos portões de Lisewo · 1081 m, em f…</span>
+          - unexpected value "Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura"
+
+
+      330 |     document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
+      331 |   },Math.atan2(Math.sin(aim+Math.PI-before.player.angle),Math.cos(aim+Math.PI-before.player.angle))/.0022);
+    > 332 |   await expect(page.locator('#objective-status')).toContainText('atrás de si');
+          |                                                   ^
+      333 |   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+      334 |   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
+      335 |   expect(errors).toEqual([]);expect(failed).toEqual([]);
+        at /tmp/claude-0/-home-user-COD-guerra/1e581609-5301-5005-855c-b268dac9f774/scratchpad/base/tests/browser/m01.spec.js:332:51
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[6/7] tests/browser/m01.spec.js:318:33 › adjustment salvo behind the truss restores its actual origin and follows mouse look
+[7/7] tests/browser/m01.spec.js:386:1 › German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state
+  4) tests/browser/m01.spec.js:386:1 › German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      397 |   }
+      398 |   expect(samples.some(s=>s.fx.muzzle>0)).toBe(true);expect(samples.some(s=>s.fx.puff>0)).toBe(true);
+    > 399 |   expect(samples.some(s=>s.pinned)&&samples.some(s=>!s.pinned)).toBe(true);
+          |                                                                 ^
+      400 |   // Os sapadores deitados aparecem na pose de quem está sob fogo, e o trabalho retoma depois.
+      401 |   expect(samples.some(s=>s.pinned&&s.poses>0)).toBe(true);expect(samples.at(-1).progress).toBeGreaterThan(samples[0].progress);
+      402 |   expect(samples.some(s=>s.animations.aiming>0)).toBe(true);
+        at /tmp/claude-0/-home-user-COD-guerra/1e581609-5301-5005-855c-b268dac9f774/scratchpad/base/tests/browser/m01.spec.js:399:65
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-German-fire-on-the-rep-7588e-ine-is-the-simulation-state/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-German-fire-on-the-rep-7588e-ine-is-the-simulation-state/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-German-fire-on-the-rep-7588e-ine-is-the-simulation-state/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-German-fire-on-the-rep-7588e-ine-is-the-simulation-state/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  Slow test file: tests/browser/m01-audio-production.spec.js (5.1m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  4 failed
+    tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops 
+    tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset 
+    tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look 
+    tests/browser/m01.spec.js:386:1 › German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state 
+  3 passed (9.3m)
+EXIT 1

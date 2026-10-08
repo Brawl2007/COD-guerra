@@ -4,6 +4,7 @@ import { mkdirSync, writeFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { Document, NodeIO } from '@gltf-transform/core';
 import { MeshoptSimplifier } from 'meshoptimizer';
+import { PNG } from 'pngjs';
 import { computeNormals } from '../m01-soldiers/src/meshops.mjs';
 import { bakeAtlas } from '../m01-soldiers/src/textures.mjs';
 import { buildJu87, PIVOTS, PAINTERS, JU87, MEASURES, sockets, BRAKE } from './src/ju87.mjs';
@@ -15,10 +16,24 @@ mkdirSync(OUT, { recursive: true });
 
 const parts = buildJu87();
 for (const p of parts) computeNormals(p);
-const atlas = bakeAtlas(parts, PAINTERS, { size: 2048, ormSize: 1024, normalSize: 16, extraSizes: [1024, 512], ormExtra: [512] });
+// Vidro da capota e disco da hélice têm materiais próprios (transparentes) e ficam fora do atlas.
+const OWN_MATERIAL = new Set(['canopy', 'propeller_disc']);
+const atlas = bakeAtlas(parts.filter(p => !OWN_MATERIAL.has(p.group)), PAINTERS, { size: 2048, ormSize: 1024, normalSize: 1024, extraSizes: [1024, 512], ormExtra: [512, 256], normalExtra: [512], normalStrength: 1.6, ormJPEG: 85, colorQuality: 85 });
+const DISC_PX = 128, disc = (() => {   // RGBA: anel ténue com três rastos de pá, mais denso perto das pontas
+  const png = new PNG({ width: DISC_PX, height: DISC_PX }), c = DISC_PX / 2, inner = 0.3 / (JU87.prop.radius + 0.02);
+  for (let y = 0; y < DISC_PX; y++) for (let x = 0; x < DISC_PX; x++) {
+    const dx = (x + 0.5 - c) / c, dy = (y + 0.5 - c) / c, r = Math.hypot(dx, dy), th = Math.atan2(dy, dx), k = (y * DISC_PX + x) * 4;
+    const ring = Math.max(0, Math.min(1, (r - inner - 0.02) / 0.12)) * Math.max(0, Math.min(1, (0.985 - r) / 0.04));
+    const a = ring * (0.09 + 0.1 * Math.max(0, Math.min(1, (r - 0.55) / 0.35)) + 0.04 * Math.cos(th * 3) ** 8);
+    png.data.set([41, 48, 38, Math.round(Math.max(0, Math.min(1, a)) * 255)], k);
+  }
+  return new Uint8Array(PNG.sync.write(png));
+})();
 const GROUPS = [
-  { name: 'fuselage', label: 'célula: fuselagem e capota do motor, radiador, escapes, capota envidraçada, MG 15, asas em gaivota, flaperons Junkers, trem carenado com sirenes, cauda escorada, roda de cauda, garfo da bomba' },
+  { name: 'fuselage', label: 'célula: fuselagem e capota do motor, radiador, escapes, armações da capota, cabine (painel, encosto blindado) e tripulação simplificada, MG 15, asas em gaivota com MG 17, tubo de Pitot, antena, flaperons Junkers, trem carenado com sirenes, cauda escorada, roda de cauda, garfo da bomba' },
+  { name: 'canopy', label: 'vidro da capota (material ju87_glass, translúcido)' },
   { name: 'propeller', label: 'cone e hélice tripá (roda em torno do seu Z local)' },
+  { name: 'propeller_disc', label: 'disco translúcido da hélice em rotação (material ju87_prop_disc; o jogo mostra-o com o motor a trabalhar)' },
   { name: 'dive_brake_r', label: 'freio de mergulho direito (roda em torno do seu X local, a dobradiça)' },
   { name: 'dive_brake_l', label: 'freio de mergulho esquerdo' },
   { name: 'bomb_sc250', label: 'bomba SC 250 no garfo ventral (o jogo esconde-a ao largar)' },
@@ -30,7 +45,7 @@ const merged = GROUPS.map(g => {
   for (const p of ps) {
     const base = out.positions.length / 3;
     for (let i = 0; i < p.positions.length; i += 3) { out.positions.push(...local(p.positions.slice(i, i + 3), true)); out.normals.push(...local(Array.from(p.normals.slice(i, i + 3)), false)); }
-    out.uvs.push(...p.atlasUV); out.indices.push(...p.indices.map(i => i + base));
+    out.uvs.push(...(p.atlasUV ?? p.uvs)); out.indices.push(...p.indices.map(i => i + base));
   }
   return out;
 });
@@ -52,9 +67,9 @@ async function simplify(mesh, ratio, { error = 0.02, flags = [] } = {}) {
 }
 
 const LODS = [
-  { id: 'lod0', ratio: 1, color: 'color', orm: 'orm', use: 'perto (< 150 m), capturas, mergulho sobre o jogador' },
-  { id: 'lod1', ratio: 0.35, error: 0.01, flags: ['Permissive'], color: 'color_1024', orm: 'orm_512', use: 'médio (150–600 m)' },
-  { id: 'lod2', ratio: 0.1, error: 0.05, flags: ['Permissive'], color: 'color_512', orm: null, use: 'longe (> 600 m); Chromebook' },
+  { id: 'lod0', ratio: 1, color: 'color', orm: 'orm', normal: 'normal', use: 'perto (< 150 m), capturas, mergulho sobre o jogador' },
+  { id: 'lod1', ratio: 0.35, error: 0.01, flags: ['Permissive'], color: 'color_1024', orm: 'orm_512', normal: 'normal_512', use: 'médio (150–600 m)' },
+  { id: 'lod2', ratio: 0.1, error: 0.05, flags: ['Permissive'], color: 'color_512', orm: 'orm_256', normal: null, use: 'longe (> 600 m); Chromebook' },
 ];
 const quat = (axis, a) => [axis[0] * Math.sin(a / 2), axis[1] * Math.sin(a / 2), axis[2] * Math.sin(a / 2), Math.cos(a / 2)];
 const qmul = (a, b) => [a[3] * b[0] + a[0] * b[3] + a[1] * b[2] - a[2] * b[1], a[3] * b[1] - a[0] * b[2] + a[1] * b[3] + a[2] * b[0], a[3] * b[2] + a[0] * b[1] - a[1] * b[0] + a[2] * b[3], a[3] * b[3] - a[0] * b[0] - a[1] * b[1] - a[2] * b[2]];
@@ -88,20 +103,26 @@ const manifest = {
     { name: 'propeller_spin', duration: 1, loop: true, node: 'propeller', note: 'uma volta por segundo em torno de −Z (sentido horário visto do piloto); no jogo usar timeScale = rpm/60 (~1500 rpm na hélice em cruzeiro: valor estimado)' },
     { name: 'dive_brakes_extend', duration: 1.2, loop: false, nodes: ['dive_brake_l', 'dive_brake_r'], note: '0 → 90° em torno da dobradiça; recolher = tocar ao contrário (timeScale −1)' },
   ],
-  textures: { atlas_px: atlas.size, density_px_per_m: Math.round(atlas.density), painters: Object.keys(PAINTERS), camouflage: 'RLM 70/71 em lascas por cima, RLM 65 por baixo (cores aproximadas em sRGB)' },
+  textures: { atlas_px: atlas.size, density_px_per_m: Math.round(atlas.density), painters: Object.keys(PAINTERS), camouflage: 'RLM 70/71 em lascas por cima, RLM 65 por baixo (cores aproximadas em sRGB)',
+    detail: 'juntas de painéis, folgas de leme/profundidade/ailerons e caixas de compensação em relevo (mapa de normais LOD0 1024², LOD1 512²); tom por painel, desbotamento por cima, passadiço na raiz da asa, lascas até ao alumínio (raiz, bordos de ataque, capota do motor, cabine, pontas das pás), fuligem do escape, óleo na barriga e poeira nas calças (ORM: rugosidade e metal)',
+    layout: 'juntas, divisão flap/aileron (x = ±3,65 m) e compensadores estimados por proporção; sem fonte primária' },
   files: {},
 };
 
 for (const L of LODS) {
   const doc = new Document(), buf = doc.createBuffer(), acc = (type, a) => doc.createAccessor().setType(type).setArray(a).setBuffer(buf);
   const img = k => k && doc.createTexture(k).setImage(atlas.images[k].data).setMimeType(atlas.images[k].mime);
-  const mat = doc.createMaterial('ju87_b1').setBaseColorTexture(img(L.color)).setRoughnessFactor(L.orm ? 1 : 0.72).setMetallicFactor(L.orm ? 1 : 0.05);
-  if (L.orm) mat.setMetallicRoughnessTexture(img(L.orm));
+  const mat = doc.createMaterial('ju87_b1').setBaseColorTexture(img(L.color)).setRoughnessFactor(1).setMetallicFactor(1).setMetallicRoughnessTexture(img(L.orm));
+  if (L.normal) mat.setNormalTexture(img(L.normal));
+  const glass = doc.createMaterial('ju87_glass').setBaseColorFactor([0.42, 0.5, 0.53, 0.3]).setAlphaMode('BLEND').setRoughnessFactor(0.06).setMetallicFactor(0);
+  const discMat = doc.createMaterial('ju87_prop_disc').setBaseColorTexture(doc.createTexture('prop_disc').setImage(disc).setMimeType('image/png'))
+    .setAlphaMode('BLEND').setDoubleSided(true).setRoughnessFactor(0.75).setMetallicFactor(0);
+  const materialOf = name => name === 'canopy' ? glass : name === 'propeller_disc' ? discMat : mat;
   const root = doc.createNode('ju87_b1').setExtras({ lod: L.id, variant: 'Ju 87 B-1', sockets: sockets(), dimensions_m: { length: JU87.length, span: JU87.span, height: JU87.height } });
   const nodes = {}, meshes = [];
   for (const m0 of merged) {
-    const m = await simplify(m0, m0.name === 'fuselage' ? L.ratio : Math.max(L.ratio, 0.25), { error: L.error, flags: L.flags ?? [] });
-    const prim = doc.createPrimitive().setMaterial(mat).setIndices(acc('SCALAR', Uint16Array.from(m.indices)))
+    const m = m0.name === 'propeller_disc' ? m0 : await simplify(m0, m0.name === 'fuselage' ? L.ratio : Math.max(L.ratio, 0.25), { error: L.error, flags: L.flags ?? [] });
+    const prim = doc.createPrimitive().setMaterial(materialOf(m0.name)).setIndices(acc('SCALAR', Uint16Array.from(m.indices)))
       .setAttribute('POSITION', acc('VEC3', Float32Array.from(m.positions))).setAttribute('NORMAL', acc('VEC3', Float32Array.from(m.normals))).setAttribute('TEXCOORD_0', acc('VEC2', Float32Array.from(m.uvs)));
     nodes[m0.name] = doc.createNode(m0.name).setTranslation(PIVOTS[m0.name].t).setRotation(nodeRot(m0.name)).setMesh(doc.createMesh(m0.name).addPrimitive(prim)).setExtras({ visible: true });
     root.addChild(nodes[m0.name]);
@@ -122,8 +143,9 @@ for (const L of LODS) {
   const file = `m01_ju87_b1_${L.id}.glb`, path = join(OUT, file);
   await new NodeIO().write(path, doc);
   const tris = meshes.reduce((s, m) => s + m.triangles, 0);
-  manifest.files[file] = { lod: L.id, use: L.use, bytes: statSync(path).size, triangles: tris, draw_calls: meshes.length, materials: ['ju87_b1'], meshes,
-    textures: { baseColor: `${atlas.images[L.color].mime} ${L.color === 'color' ? 2048 : L.color.split('_')[1]}²`, ...(L.orm ? { metallicRoughness: `${atlas.images[L.orm].mime} ${L.orm === 'orm' ? 1024 : L.orm.split('_')[1]}²` } : {}) } };
+  const px = (k, full) => `${atlas.images[k].mime} ${k.includes('_') ? k.split('_')[1] : full}²`;
+  manifest.files[file] = { lod: L.id, use: L.use, bytes: statSync(path).size, triangles: tris, draw_calls: meshes.length, materials: ['ju87_b1', 'ju87_glass', 'ju87_prop_disc'], meshes,
+    textures: { baseColor: px(L.color, 2048), metallicRoughness: px(L.orm, 1024), ...(L.normal ? { normal: px(L.normal, 1024) } : {}), prop_disc: `image/png ${DISC_PX}² RGBA` } };
   console.log(file, (manifest.files[file].bytes / 1e3).toFixed(0), 'kB;', tris, 'triângulos');
 }
 writeFileSync(join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');

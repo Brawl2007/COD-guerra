@@ -130,6 +130,40 @@
       "note": "grelhas sob as asas exteriores, rodam 90° na dobradiça dianteira"
     },
     {
+      "id": "mg17",
+      "value_m": 2.6,
+      "source": "conhecimento geral (sem fonte lida)",
+      "estimated": true,
+      "note": "duas MG 17 nas asas, por fora do trem; posição x = ±2,6 m estimada"
+    },
+    {
+      "id": "pitot",
+      "value_m": -5.7,
+      "source": "vistas genéricas",
+      "estimated": true,
+      "note": "tubo de Pitot sob o bordo de ataque da asa esquerda; posição estimada"
+    },
+    {
+      "id": "antenna",
+      "value_m": [
+        0.3,
+        5.55
+      ],
+      "source": "vistas genéricas",
+      "estimated": true,
+      "note": "mastro curto na espinha da secção fixa central da capota (z = 0,3) e fio até ao bordo de ataque da deriva (y = 1,5); disposição estimada"
+    },
+    {
+      "id": "canopy_frames",
+      "value_m": [
+        -1.86,
+        1.22
+      ],
+      "source": "proporção",
+      "estimated": true,
+      "note": "nove aros e três calhas; número e posição estimados"
+    },
+    {
       "id": "sc250",
       "value_m": [
         1.64,
@@ -149,7 +183,7 @@
         0
       ],
       "rotation_z_rad": 0,
-      "contents": "célula: fuselagem e capota do motor, radiador, escapes, capota envidraçada, MG 15, asas em gaivota, flaperons Junkers, trem carenado com sirenes, cauda escorada, roda de cauda, garfo da bomba",
+      "contents": "célula: fuselagem e capota do motor, radiador, escapes, armações da capota, cabine (painel, encosto blindado) e tripulação simplificada, MG 15, asas em gaivota com MG 17, tubo de Pitot, antena, flaperons Junkers, trem carenado com sirenes, cauda escorada, roda de cauda, garfo da bomba",
       "pieces": [
         "fuselage",
         "radiator",
@@ -166,13 +200,38 @@
         "exhaust_r4",
         "exhaust_r5",
         "supercharger_intake",
-        "canopy",
+        "canopy_frame_-1.86",
+        "canopy_frame_-1.62",
+        "canopy_frame_-1.2",
+        "canopy_frame_-0.72",
+        "canopy_frame_-0.28",
+        "canopy_frame_0.12",
+        "canopy_frame_0.48",
+        "canopy_frame_0.86",
+        "canopy_frame_1.22",
+        "canopy_rail_0.52",
+        "canopy_rail_2.62",
+        "canopy_rail_1.57",
+        "pilot_head",
+        "pilot_torso",
+        "gunner_head",
+        "gunner_torso",
+        "pilot_headrest",
+        "instrument_panel",
         "mg15_barrel",
         "mg15_body",
         "wing_r",
         "wing_l",
         "flaperon_r",
         "flaperon_l",
+        "mg17_r0",
+        "mg17_l0",
+        "mg17_r1",
+        "mg17_l1",
+        "pitot",
+        "pitot_mast",
+        "antenna_mast",
+        "antenna_wire",
         "gear_fairing_r",
         "gear_fairing_l",
         "wheel_r",
@@ -201,6 +260,19 @@
       ]
     },
     {
+      "node": "canopy",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_z_rad": 0,
+      "contents": "vidro da capota (material ju87_glass, translúcido)",
+      "pieces": [
+        "canopy"
+      ]
+    },
+    {
       "node": "propeller",
       "translation": [
         0,
@@ -214,6 +286,19 @@
         "blade_0",
         "blade_1",
         "blade_2"
+      ]
+    },
+    {
+      "node": "propeller_disc",
+      "translation": [
+        0,
+        0,
+        -4.35
+      ],
+      "rotation_z_rad": 0,
+      "contents": "disco translúcido da hélice em rotação (material ju87_prop_disc; o jogo mostra-o com o motor a trabalhar)",
+      "pieces": [
+        "propeller_disc"
       ]
     },
     {
@@ -353,36 +438,50 @@
   ],
   "textures": {
     "atlas_px": 2048,
-    "density_px_per_m": 125,
+    "density_px_per_m": 132,
     "painters": [
       "airframe",
-      "glass",
+      "frame",
+      "interior",
+      "crew",
       "exhaust",
       "tire",
       "propeller",
       "brake",
       "bomb"
     ],
-    "camouflage": "RLM 70/71 em lascas por cima, RLM 65 por baixo (cores aproximadas em sRGB)"
+    "camouflage": "RLM 70/71 em lascas por cima, RLM 65 por baixo (cores aproximadas em sRGB)",
+    "detail": "juntas de painéis, folgas de leme/profundidade/ailerons e caixas de compensação em relevo (mapa de normais LOD0 1024², LOD1 512²); tom por painel, desbotamento por cima, passadiço na raiz da asa, lascas até ao alumínio (raiz, bordos de ataque, capota do motor, cabine, pontas das pás), fuligem do escape, óleo na barriga e poeira nas calças (ORM: rugosidade e metal)",
+    "layout": "juntas, divisão flap/aileron (x = ±3,65 m) e compensadores estimados por proporção; sem fonte primária"
   },
   "files": {
     "m01_ju87_b1_lod0.glb": {
       "lod": "lod0",
       "use": "perto (< 150 m), capturas, mergulho sobre o jogador",
-      "bytes": 652028,
-      "triangles": 13102,
-      "draw_calls": 5,
+      "bytes": 922488,
+      "triangles": 14710,
+      "draw_calls": 7,
       "materials": [
-        "ju87_b1"
+        "ju87_b1",
+        "ju87_glass",
+        "ju87_prop_disc"
       ],
       "meshes": [
         {
           "name": "fuselage",
-          "triangles": 11016
+          "triangles": 12152
+        },
+        {
+          "name": "canopy",
+          "triangles": 392
         },
         {
           "name": "propeller",
           "triangles": 1656
+        },
+        {
+          "name": "propeller_disc",
+          "triangles": 80
         },
         {
           "name": "dive_brake_r",
@@ -399,26 +498,38 @@
       ],
       "textures": {
         "baseColor": "image/jpeg 2048²",
-        "metallicRoughness": "image/png 1024²"
+        "metallicRoughness": "image/jpeg 1024²",
+        "normal": "image/png 1024²",
+        "prop_disc": "image/png 128² RGBA"
       }
     },
     "m01_ju87_b1_lod1.glb": {
       "lod": "lod1",
       "use": "médio (150–600 m)",
-      "bytes": 247896,
-      "triangles": 4730,
-      "draw_calls": 5,
+      "bytes": 359356,
+      "triangles": 5357,
+      "draw_calls": 7,
       "materials": [
-        "ju87_b1"
+        "ju87_b1",
+        "ju87_glass",
+        "ju87_prop_disc"
       ],
       "meshes": [
         {
           "name": "fuselage",
-          "triangles": 3854
+          "triangles": 4251
+        },
+        {
+          "name": "canopy",
+          "triangles": 150
         },
         {
           "name": "propeller",
           "triangles": 578
+        },
+        {
+          "name": "propeller_disc",
+          "triangles": 80
         },
         {
           "name": "dive_brake_r",
@@ -435,26 +546,38 @@
       ],
       "textures": {
         "baseColor": "image/jpeg 1024²",
-        "metallicRoughness": "image/png 512²"
+        "metallicRoughness": "image/jpeg 512²",
+        "normal": "image/png 512²",
+        "prop_disc": "image/png 128² RGBA"
       }
     },
     "m01_ju87_b1_lod2.glb": {
       "lod": "lod2",
       "use": "longe (> 600 m); Chromebook",
-      "bytes": 95772,
-      "triangles": 1636,
-      "draw_calls": 5,
+      "bytes": 136460,
+      "triangles": 1929,
+      "draw_calls": 7,
       "materials": [
-        "ju87_b1"
+        "ju87_b1",
+        "ju87_glass",
+        "ju87_prop_disc"
       ],
       "meshes": [
         {
           "name": "fuselage",
-          "triangles": 1098
+          "triangles": 1213
+        },
+        {
+          "name": "canopy",
+          "triangles": 98
         },
         {
           "name": "propeller",
           "triangles": 414
+        },
+        {
+          "name": "propeller_disc",
+          "triangles": 80
         },
         {
           "name": "dive_brake_r",
@@ -470,7 +593,9 @@
         }
       ],
       "textures": {
-        "baseColor": "image/jpeg 512²"
+        "baseColor": "image/jpeg 512²",
+        "metallicRoughness": "image/jpeg 256²",
+        "prop_disc": "image/png 128² RGBA"
       }
     }
   }

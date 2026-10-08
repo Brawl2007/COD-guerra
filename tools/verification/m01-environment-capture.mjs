@@ -24,7 +24,7 @@ let browser;
 try{
  for(let i=0;i<100;i++){try{if((await fetch(`http://127.0.0.1:${port}/COD-guerra/`)).ok)break;}catch{}if(server.exitCode!==null)throw Error(serverLog);await new Promise(r=>setTimeout(r,100));}
  browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_EXECUTABLE,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
- for(const quality of ['medium','high','low']) for(const {name,snapshot} of fixtures.filter(f=>!process.env.VISUAL_SCENES||process.env.VISUAL_SCENES.split(',').includes(f.name))){
+ for(const quality of (process.env.VISUAL_QUALITIES?.split(',')??['medium','high','low'])) for(const {name,snapshot} of fixtures.filter(f=>!process.env.VISUAL_SCENES||process.env.VISUAL_SCENES.split(',').includes(f.name))){
   const context=await browser.newContext({viewport:{width:1280,height:720}}),page=await context.newPage(),errors=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
   await page.addInitScript(s=>localStorage.setItem('cod-guerra:checkpoint:m01:v2',JSON.stringify(s)),snapshot);

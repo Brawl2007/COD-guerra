@@ -1,0 +1,18 @@
+brick-portal {"marks":9,"byKind":{"brick":9},"residueTriangles":0,"debris":8,"embers":0,"draw":256,"results":["stone","stone","stone","stone","stone","stone","stone","stone","stone"]}
+stone-abutment {"marks":4,"byKind":{"stone":4},"residueTriangles":0,"debris":8,"embers":0,"draw":343,"results":["earth","earth","earth","earth"]}
+wood-hut {"marks":5,"byKind":{"wood":5},"residueTriangles":0,"debris":1,"embers":0,"draw":122,"results":["wood","wood","wood","wood","wood"]}
+tree-bark {"marks":3,"byKind":{"bark":3},"residueTriangles":0,"debris":1,"embers":0,"draw":229,"results":["wood","wood","wood"]}
+earth-slope {"marks":6,"byKind":{"earth":6},"residueTriangles":0,"debris":12,"embers":0,"draw":277,"results":["earth","earth","earth","earth","earth","earth"]}
+earth-cover {"marks":3,"byKind":{"earth":3},"residueTriangles":0,"debris":6,"embers":0,"draw":358,"results":["earth","earth","earth"]}
+railway {"marks":6,"byKind":{"rail":3,"sleeper":2,"ballast":1},"residueTriangles":0,"debris":3,"embers":0,"draw":288,"results":["earth","earth","earth","earth","earth","earth"]}
+road-deck {"marks":5,"byKind":{"road":4,"earth":1},"residueTriangles":0,"debris":6,"embers":0,"draw":321,"results":["earth","earth","earth","earth","earth"]}
+metal-joint {"marks":3,"byKind":{"metal":3},"residueTriangles":0,"debris":0,"embers":0,"draw":235,"results":["earth","earth","earth"]}
+grenade-terrain {"marks":0,"byKind":{},"residueTriangles":6,"debris":12,"embers":4,"draw":279,"results":[]}
+grenade-road-deck {"marks":0,"byKind":{},"residueTriangles":2,"debris":12,"embers":4,"draw":324,"results":[]}
+repair-crater {"marks":0,"byKind":{},"residueTriangles":42,"debris":21,"embers":9,"draw":385,"results":[]}
+repair-crater-track {"marks":0,"byKind":{},"residueTriangles":64,"debris":21,"embers":9,"draw":356,"results":[]}
+station-bomb {"marks":0,"byKind":{},"residueTriangles":25,"debris":7,"embers":0,"draw":120,"results":[]}
+west-demolition {"marks":0,"byKind":{},"residueTriangles":572,"debris":30,"embers":10,"draw":331,"results":[]}
+east-demolition {"marks":0,"byKind":{},"residueTriangles":506,"debris":30,"embers":10,"draw":133,"results":[]}
+east-demolition-deck-end {"marks":0,"byKind":{},"residueTriangles":506,"debris":30,"embers":1,"draw":161,"results":[]}
+atlas 1024 1536 checksum 726099253

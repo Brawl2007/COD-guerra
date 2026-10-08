@@ -1,0 +1,132 @@
+[
+  {
+    "file": "raid-low-t30.png",
+    "quality": "low",
+    "base": {
+      "pixels": 289,
+      "mean_rgb": [
+        56.3,
+        59.3,
+        57.8
+      ],
+      "median_luminance": 14.3,
+      "sky_median_luminance": 162.2,
+      "contrast": 147.9
+    },
+    "candidate": {
+      "pixels": 287,
+      "mean_rgb": [
+        96.1,
+        103.9,
+        100.0
+      ],
+      "median_luminance": 79.2,
+      "sky_median_luminance": 161.5,
+      "contrast": 82.2
+    }
+  },
+  {
+    "file": "raid-high-t30.png",
+    "quality": "high",
+    "base": {
+      "pixels": 282,
+      "mean_rgb": [
+        53.2,
+        56.2,
+        54.6
+      ],
+      "median_luminance": 14.3,
+      "sky_median_luminance": 161.5,
+      "contrast": 147.2
+    },
+    "candidate": {
+      "pixels": 288,
+      "mean_rgb": [
+        95.7,
+        103.6,
+        99.5
+      ],
+      "median_luminance": 79.8,
+      "sky_median_luminance": 161.5,
+      "contrast": 81.7
+    }
+  },
+  {
+    "file": "raid-low.png",
+    "quality": "low",
+    "base": {
+      "pixels": 217,
+      "mean_rgb": [
+        60.1,
+        63.5,
+        62.0
+      ],
+      "median_luminance": 14.6,
+      "sky_median_luminance": 171.9,
+      "contrast": 157.3
+    },
+    "candidate": {
+      "pixels": 214,
+      "mean_rgb": [
+        92.9,
+        101.4,
+        97.8
+      ],
+      "median_luminance": 79.3,
+      "sky_median_luminance": 170.9,
+      "contrast": 91.5
+    }
+  },
+  {
+    "file": "raid-medium.png",
+    "quality": "medium",
+    "base": {
+      "pixels": 225,
+      "mean_rgb": [
+        58.9,
+        62.7,
+        61.5
+      ],
+      "median_luminance": 14.9,
+      "sky_median_luminance": 170.9,
+      "contrast": 155.9
+    },
+    "candidate": {
+      "pixels": 214,
+      "mean_rgb": [
+        94.0,
+        102.5,
+        98.8
+      ],
+      "median_luminance": 76.8,
+      "sky_median_luminance": 171.9,
+      "contrast": 95.1
+    }
+  },
+  {
+    "file": "raid-high.png",
+    "quality": "high",
+    "base": {
+      "pixels": 229,
+      "mean_rgb": [
+        59.5,
+        63.3,
+        62.2
+      ],
+      "median_luminance": 15.5,
+      "sky_median_luminance": 171.8,
+      "contrast": 156.3
+    },
+    "candidate": {
+      "pixels": 213,
+      "mean_rgb": [
+        93.1,
+        101.4,
+        97.6
+      ],
+      "median_luminance": 76.2,
+      "sky_median_luminance": 171.8,
+      "contrast": 95.6
+    }
+  }
+]

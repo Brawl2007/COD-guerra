@@ -3,14 +3,15 @@ import { Input } from '../core/input.js';
 import { AudioSystem } from '../core/audio.js';
 import { Renderer } from '../render/three-renderer.js';
 import { Simulation } from './simulation.js';
-import { M01Simulation, clockText } from './m01-simulation.js';
+import { M01Simulation } from './m01-simulation.js';
+import { M01HudPresenter } from '../ui/m01-hud.js';
 
 const SAVE_KEY='cod-guerra:checkpoint:v1';
 
 export class Game {
   constructor(canvas,hud,onState=()=>{},missionId='m01_tczew'){
-    this.canvas=canvas;this.hud=hud;this.onState=onState;
-    this.input=new Input(canvas);this.audio=new AudioSystem();this.renderer=new Renderer(canvas);
+    this.canvas=canvas;this.hud=hud;this.onState=onState;this.m01Hud=new M01HudPresenter(hud);
+    this.input=new Input(canvas);this.audio=new AudioSystem();this.renderer=new Renderer(canvas);this.audio.setQuality(this.renderer.quality);
     this.sim=missionId==='m01_tczew'?new M01Simulation():new Simulation();this.started=false;this.paused=true;this.disposed=false;
     if(this.isM01)this.renderer.prepareM01();
     this.last=performance.now();this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;
@@ -39,6 +40,7 @@ export class Game {
     this.menu();this.sim=id==='m01_tczew'?new M01Simulation():new Simulation();this.pendingSounds=[];this.pendingM01HitFeedback=null;
     this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
     this.messageUntil=0;this.hitUntil=0;this.checkpointUntil=0;this.renderer.resetEffects();
+    this.m01Hud.clear();this.m01Hud.reset('new',this.sim.clock);
     if(this.isM01)this.renderer.prepareM01();this.onState('menu');
   }
   start({continueSaved=false}={}){
@@ -47,6 +49,7 @@ export class Game {
       let result;
       try{result=this.sim.loadCheckpoint(localStorage.getItem(this.saveKey));}catch(error){result={ok:false,error:error.message};}
       if(!result.ok){this.onState('save-error',result.error);return false;}
+      this.m01Hud.reset('continue',this.sim.clock);
     }
     this.started=true;this.rebuildSounds();
     if(this.sim.mission.complete){this.onState('complete');return true;}
@@ -63,14 +66,14 @@ export class Game {
     if(this.started&&!this.sim.mission.complete)this.onState('paused');
   }
   restartCheckpoint(){
-    this.sim.restoreCheckpoint();this.rebuildSounds();this.messageUntil=0;this.hitUntil=0;this.pendingM01HitFeedback=null;
+    this.sim.restoreCheckpoint();this.rebuildSounds();this.messageUntil=0;this.hitUntil=0;this.pendingM01HitFeedback=null;this.m01Hud.reset('restore',this.sim.clock);
     this.renderer.resetEffects();this.input.clear();
     if(this.sim.mission.complete)this.onState('complete');else this.resume();
   }
   restartMission(){
     this.sim.reset();this.started=true;this.paused=true;this.pendingSounds=[];this.pendingM01HitFeedback=null;
     this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
-    this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;
+    this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;this.m01Hud.reset('new',this.sim.clock);
     this.renderer.resetEffects();this.resume();
   }
   menu(){
@@ -102,15 +105,21 @@ export class Game {
       this.pendingSounds=this.pendingSounds.filter(sound=>sound.at>this.sim.clock);
       due.forEach(sound=>{
         if(sound.kind==='fire'){
-          if(sound.weapon==='mg34')this.audio.mg34Burst(sound.pan,sound.distance,sound.rounds,sound.interval,sound.key);
+          if(this.isM01)this.audio.weaponFire(sound.weapon??'kar98k',sound.pan,sound.distance,{rounds:sound.rounds,interval:sound.interval,key:sound.key,front:sound.front,source:sound.source});
+          else if(sound.weapon==='mg34')this.audio.mg34Burst(sound.pan,sound.distance,sound.rounds,sound.interval,sound.key);
           else this.audio.rifleShot(sound.pan,sound.distance,sound.weapon??'kar98k',sound.key);
           return;
         }
-        if(sound.kind==='blast')this.audio.explosion(sound.pan,sound.distance,{scale:sound.scale??'large',key:sound.key});
+        if(sound.kind==='blast'){
+          this.audio.explosion(sound.pan,sound.distance,{scale:sound.scale??'large',key:sound.key,front:sound.front});
+          // Ju 87 a sair da picada: só depois de um sopro aéreo real, vindo de cima do ponto de impacto.
+          if(sound.aerial&&this.isM01)this.audio.ju87PullOutNearest(this.sim.clock,point=>this.spatial(point),`${sound.key}:ju87`,this.sim.renderState.stukas);
+        }
         else this.audio.explosion(sound.pan,sound.distance*UNITS_PER_METRE);
         if(sound.shake&&this.isM01)this.renderer.m01.blast(this.sim.clock);
       });
-      if(this.isM01)this.audio.updateM01Presentation({clock:this.sim.clock,state:this.sim.renderState,spatial:point=>this.spatial(point)});
+      if(this.isM01)this.audio.updateM01Presentation({clock:this.sim.clock,state:this.sim.renderState,spatial:point=>this.spatial(point),
+        phase:this.sim.mission.phase,quality:this.renderer.quality});
     }
     if(this.isM01)this.renderer.renderMission(this.sim);
     else this.renderer.render(this.sim.world,this.sim.player,this.sim.combatants,this.sim.radio,
@@ -120,7 +129,9 @@ export class Game {
   spatial(point){
     const dx=point.x-(this.isM01?this.sim.player.x:this.sim.player.x/UNITS_PER_METRE),
       dz=point.z-(this.isM01?this.sim.player.z:this.sim.player.y/UNITS_PER_METRE);
-    return {distance:Math.hypot(dx,dz),pan:Math.sin(Math.atan2(dz,dx)-this.sim.player.angle)};
+    const relative=Math.atan2(dz,dx)-this.sim.player.angle,dy=this.isM01&&Number.isFinite(point.y)?point.y-this.sim.player.y:0;
+    // front = cos do ângulo relativo: o áudio escurece ligeiramente o que vem de trás. dy serve só a aviões (distância 3D).
+    return {distance:Math.hypot(dx,dz),pan:Math.sin(relative),front:Math.cos(relative),dy};
   }
   handleEvent(event){
     const now=this.sim.clock*1000;
@@ -158,11 +169,12 @@ export class Game {
     this.pendingSounds=[];this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);if(!this.isM01)return;
     for(const damage of this.sim.sectors.damage)if(damage.soundAt>this.sim.clock){
       const scale=damage.id?.startsWith('m01_grenade_')?'small':damage.id?.includes('demolition')?'demolition':'large';
-      this.pendingSounds.push({...this.spatial(damage),at:damage.soundAt,kind:'blast',scale,key:damage.id});
+      this.pendingSounds.push({...this.spatial(damage),at:damage.soundAt,kind:'blast',scale,key:damage.id,point:{x:damage.x,y:damage.y,z:damage.z}});
     }
   }
   handleM01Event(event){
     const now=this.sim.clock*1000;
+    if(event.type==='round-impact'||event.type==='player-shot')this.renderer.m01.surfaceDamage(event,this.sim); // renderer-only event
     if(event.type==='message')this.say(event.message,2600);
     if(event.type==='reload')this.audio.wz29Mechanism(this.sim.weapon.reloadMode);
     if(event.type==='player-shot'){
@@ -171,14 +183,16 @@ export class Game {
     }
     if(event.type==='npc-shot'){
       const s=this.spatial(event.point);
-      if(event.rounds>1)this.audio.rkmBurst(s.pan,s.distance,event.rounds,.11,`kowal:${this.sim.clock.toFixed(3)}`);
-      else this.audio.rifleShot(s.pan,s.distance,'ally-rifle',`ally:${this.sim.clock.toFixed(3)}`);
+      if(event.rounds>1)this.audio.rkmBurst(s.pan,s.distance,event.rounds,.11,`kowal:${this.sim.clock.toFixed(3)}`,s.front);
+      else this.audio.rifleShot(s.pan,s.distance,'ally-rifle',`ally:${this.sim.clock.toFixed(3)}`,undefined,s.front);
     }
     if(event.type==='distant-shot'){
-      const s=this.spatial(event.point);this.audio.distantBattle('rifle',s.pan,Math.max(500,s.distance),`scripted:${this.sim.clock.toFixed(3)}`);
+      const s=this.spatial(event.point);this.audio.distantBattle('rifle',s.pan,Math.max(500,s.distance),`scripted:${this.sim.clock.toFixed(3)}`,{rounds:3,front:s.front});
     }
     // Fogo alemão: o estampido chega com o atraso da distância (343 m/s); o impacto e o estalo de quem passa perto, à chegada do tiro.
-    if(event.type==='enemy-fire'){const s=this.spatial(event.origin);this.pendingSounds.push({...s,at:event.at+s.distance/343,kind:'fire',rounds:event.rounds,interval:event.interval,weapon:event.weapon,key:`${event.weapon}:${event.at.toFixed(3)}`});}
+    // source: arma que dispara (posição da boca arredondada), só para juntar os tiros da MG34 deitada numa rajada sonora.
+    if(event.type==='enemy-fire'){const s=this.spatial(event.origin),source=`${event.weapon}@${Math.round(event.origin.x)},${Math.round(event.origin.z)}`;
+      this.pendingSounds.push({...s,at:event.at+s.distance/343,kind:'fire',rounds:event.rounds,interval:event.interval,weapon:event.weapon,source,key:`${source}:${event.at.toFixed(3)}`});}
     if(event.type==='round-impact'){
       this.renderer.m01.impact(event.point,event.material,this.sim.clock);
       const s=this.spatial(event.point),key=`${event.by}:${this.sim.clock.toFixed(3)}`,shooter=this.sim.actor?.(event.by);
@@ -187,8 +201,9 @@ export class Game {
       if(this.pendingM01HitFeedback&&Math.abs(this.pendingM01HitFeedback.clock-this.sim.clock)<1e-6){
         this.renderer.m01.directionalHit(this.sim.clock,direction);this.pendingM01HitFeedback=null;
       }
-      if(event.crack)this.audio.crack(s.pan,Math.min(12,event.distance),key);
-      if(event.distance<120)this.audio.impact(event.material,s.pan,event.distance,key);
+      // Estalo supersónico só quando a simulação diz que o tiro passou a ≤6 m (o zumbido fica para ricochetes próximos).
+      if(event.crack)this.audio.crack(s.pan,Math.min(12,event.distance),key,s.front);
+      if(event.distance<120)this.audio.impact(event.material,s.pan,event.distance,key,s.front);
     }
     if(event.type==='player-hit'){
       this.audio.hit();this.hitUntil=now+170;this.pendingM01HitFeedback={clock:this.sim.clock};
@@ -198,16 +213,17 @@ export class Game {
       // O estrondo e a vibração chegam juntos (atraso = distância/343 m/s); o áudio só apresenta a autoridade já emitida.
       const s=this.spatial(event.point),damage=[...this.sim.sectors.damage].reverse().find(d=>d.soundAt===event.soundAt&&d.x===event.point.x&&d.z===event.point.z);
       const scale=damage?.id?.startsWith('m01_grenade_')?'small':damage?.id?.includes('demolition')?'demolition':'large';
-      this.pendingSounds.push({...s,at:event.soundAt,kind:'blast',scale,key:damage?.id??`blast:${event.soundAt.toFixed(3)}`,shake:s.distance<(event.aerial?500:1000)});
+      this.pendingSounds.push({...s,at:event.soundAt,kind:'blast',scale,key:damage?.id??`blast:${event.soundAt.toFixed(3)}`,shake:s.distance<(event.aerial?500:1000),
+        aerial:Boolean(event.aerial),point:{...event.point}});
       this.renderer.m01.explosionFeedback(this.sim.clock,s.distance,s.pan);
       this.renderer.m01.explosion(event.point,this.sim.clock,event.aerial);
     }
     if(event.type==='checkpoint'){
       this.checkpointUntil=now+2400;this.persistCheckpoint();
-      const label=this.sim.definition.checkpoints.find(c=>c.id===event.id).label;this.say(`${label} · progresso guardado`,1800);
+      const checkpoint=this.sim.definition.checkpoints.find(c=>c.id===event.id);this.m01Hud.checkpoint(`${checkpoint.label} · ${checkpoint.name}`,this.sim.clock);
     }
     if(event.type==='restored'){
-      this.rebuildSounds();this.pendingM01HitFeedback=null;this.renderer.resetEffects();this.input.clear();this.say('A retomar o último checkpoint');
+      this.rebuildSounds();this.pendingM01HitFeedback=null;this.renderer.resetEffects();this.input.clear();this.m01Hud.reset('restore',this.sim.clock);this.say('A retomar o último checkpoint');
     }
     if(event.type==='complete'){
       this.persistCheckpoint();this.pause();if(document.pointerLockElement===this.canvas)document.exitPointerLock();this.onState('complete');
@@ -220,29 +236,28 @@ export class Game {
   say(text,ms=1600){this.hud.message.textContent=text;this.messageUntil=this.sim.clock*1000+ms;}
   updateHud(){
     const now=this.sim.clock*1000,p=this.sim.player;
-    this.hud.health.textContent=Math.ceil(p.health);this.hud.healthBar.style.width=`${p.health}%`;
-    this.hud.grenades.textContent=`GRANADAS ×${this.sim.grenades.ammo}`;
-    this.hud.mag.textContent=this.sim.weapon.reloading?'—':this.sim.weapon.mag;this.hud.reserve.textContent=this.sim.weapon.reserve;
-    this.hud.objective.textContent=this.sim.mission.text;if(this.hud.objectiveStatus)this.hud.objectiveStatus.textContent=this.isM01?this.sim.mission.status??'':'';
-    this.hud.weaponName.textContent=this.isM01?'KARABINEK WZ.29':'M1 CARBINE';
-    this.hud.clock.textContent=this.isM01?clockText(this.sim.battleClock):'';
-    this.hud.weaponState.textContent=this.isM01?`${this.sim.weapon.sight} m · ${this.sim.weapon.boltCycling?'FERROLHO':this.sim.weapon.reloading?'A CARREGAR':'5 CARTUCHOS'}`:'';
-    this.hud.interaction.textContent=this.isM01?this.sim.interaction:'';
-    this.hud.subtitle.textContent=this.isM01&&this.sim.subtitle?`${this.sim.subtitle.speaker}: ${this.sim.subtitle.text}`:'';
-    this.hud.crosshair.classList.toggle('hidden',this.isM01&&(p.aiming||this.sim.scene?.id==='cs_m01_roll_call'));
     if(now>=this.messageUntil)this.hud.message.textContent='';
-    this.hud.checkpoint.classList.toggle('show',now<this.checkpointUntil);
+    this.hud.crosshair.classList.toggle('hidden',this.isM01&&(p.aiming||this.sim.scene?.id==='cs_m01_roll_call'));
     if(this.isM01){
+      // Apresentação de M01: textos, cartelas, fades e avisos lidos da simulação (src/ui/m01-hud.js).
+      this.m01Hud.update(this.sim);
       const feedback=this.renderer.m01.feedbackState(this.sim.clock),v=this.hud.vignette;
       v.classList.remove('hit');v.classList.add('combat-feedback');
       v.style.setProperty('--combat-edge',feedback.overlayAlpha.toFixed(3));
       v.style.setProperty('--combat-flash',feedback.exposureFlash.toFixed(3));
       v.style.setProperty('--combat-suppression',(feedback.suppressionVisual*.13).toFixed(3));
       v.style.setProperty('--combat-center',`${(50-feedback.direction*18).toFixed(1)}%`);
-    }else{
-      this.hud.vignette.classList.remove('combat-feedback');
-      this.hud.vignette.classList.toggle('hit',now<this.hitUntil);
+      return;
     }
+    this.hud.health.textContent=Math.ceil(p.health);this.hud.healthBar.style.width=`${p.health}%`;
+    this.hud.grenades.textContent=`GRANADAS ×${this.sim.grenades.ammo}`;
+    this.hud.mag.textContent=this.sim.weapon.reloading?'—':this.sim.weapon.mag;this.hud.reserve.textContent=this.sim.weapon.reserve;
+    this.hud.objective.textContent=this.sim.mission.text;if(this.hud.objectiveStatus)this.hud.objectiveStatus.textContent='';
+    this.hud.weaponName.textContent='M1 CARBINE';
+    this.hud.clock.textContent='';this.hud.weaponState.textContent='';this.hud.interaction.textContent='';this.hud.subtitle.textContent='';
+    this.hud.checkpoint.classList.toggle('show',now<this.checkpointUntil);
+    this.hud.vignette.classList.remove('combat-feedback');
+    this.hud.vignette.classList.toggle('hit',now<this.hitUntil);
   }
   get diagnostics(){return structuredClone({...this.renderer.diagnostics,audio:this.audio?.diagnostics??null,missionId:this.sim.missionId,clock:this.sim.clock,paused:this.paused,
     missionPhase:this.sim.mission.phase,complete:this.sim.mission.complete,
@@ -253,7 +268,7 @@ export class Game {
       checkpoints:[...this.sim.checkpointsReached],flags:{...this.sim.flags},scene:this.sim.scene?.id??null,gate:this.sim.gate,
       objectives:structuredClone(this.sim.objectives),parts:this.sim.renderState.parts,enemyAlive:this.sim.enemies.filter(a=>a.alive).length,
       threat:this.sim.threat,stationEvacuation:this.sim.stationEvacuation,animationPresentation:this.sim.animationPresentation,
-      hudStatus:this.hud?.objectiveStatus?.textContent??''}}:{})});}
+      hudStatus:this.hud?.objectiveStatus?.textContent??'',hudPresentation:this.m01Hud?.diagnostics??null}}:{})});}
   dispose(){
     if(this.disposed)return;this.disposed=true;cancelAnimationFrame(this.frame);
     this.listeners.forEach(remove=>remove());this.input.dispose();this.audio.dispose?.();this.renderer.dispose();

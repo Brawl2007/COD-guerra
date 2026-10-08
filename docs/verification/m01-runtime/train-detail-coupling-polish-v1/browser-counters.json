@@ -1,0 +1,708 @@
+{
+ "before": {
+  "wagon-near-high.png": {
+   "view": "wagon-near-high.png",
+   "drawCalls": 221,
+   "triangles": 508120,
+   "textures": 203,
+   "geometries": 305,
+   "lod": {
+    "0": 15,
+    "1": 31,
+    "2": 19
+   },
+   "batches": 24,
+   "active": {
+    "0": 69,
+    "1": 139,
+    "2": 85
+   },
+   "detail": null
+  },
+  "coupling-pair-high.png": {
+   "view": "coupling-pair-high.png",
+   "drawCalls": 210,
+   "triangles": 484827,
+   "textures": 201,
+   "geometries": 284,
+   "lod": {
+    "0": 17,
+    "1": 30,
+    "2": 18
+   },
+   "batches": 24,
+   "active": {
+    "0": 77,
+    "1": 136,
+    "2": 80
+   },
+   "detail": null
+  },
+  "underframe-high.png": {
+   "view": "underframe-high.png",
+   "drawCalls": 215,
+   "triangles": 484941,
+   "textures": 198,
+   "geometries": 272,
+   "lod": {
+    "0": 18,
+    "1": 31,
+    "2": 16
+   },
+   "batches": 24,
+   "active": {
+    "0": 82,
+    "1": 139,
+    "2": 72
+   },
+   "detail": null
+  },
+  "consist-medium-high.png": {
+   "view": "consist-medium-high.png",
+   "drawCalls": 216,
+   "triangles": 537770,
+   "textures": 206,
+   "geometries": 305,
+   "lod": {
+    "0": 14,
+    "1": 31,
+    "2": 20
+   },
+   "batches": 24,
+   "active": {
+    "0": 64,
+    "1": 139,
+    "2": 90
+   },
+   "detail": null
+  },
+  "consist-far-high.png": {
+   "view": "consist-far-high.png",
+   "drawCalls": 51,
+   "triangles": 444653,
+   "textures": 41,
+   "geometries": 239,
+   "lod": {
+    "0": 0,
+    "1": 49,
+    "2": 16
+   },
+   "batches": 16,
+   "active": {
+    "0": 0,
+    "1": 221,
+    "2": 72
+   },
+   "detail": null
+  },
+  "coupling-pair-low.png": {
+   "view": "coupling-pair-low.png",
+   "drawCalls": 157,
+   "triangles": 447299,
+   "textures": 141,
+   "geometries": 267,
+   "lod": {
+    "0": 9,
+    "1": 13,
+    "2": 43
+   },
+   "batches": 24,
+   "active": {
+    "0": 41,
+    "1": 59,
+    "2": 193
+   },
+   "detail": null
+  },
+  "consist-medium-low.png": {
+   "view": "consist-medium-low.png",
+   "drawCalls": 156,
+   "triangles": 441709,
+   "textures": 141,
+   "geometries": 266,
+   "lod": {
+    "0": 6,
+    "1": 13,
+    "2": 46
+   },
+   "batches": 24,
+   "active": {
+    "0": 28,
+    "1": 59,
+    "2": 206
+   },
+   "detail": null
+  },
+  "consist-daylight-high.png": {
+   "view": "consist-daylight-high.png",
+   "drawCalls": 306,
+   "triangles": 779763,
+   "textures": 207,
+   "geometries": 335,
+   "lod": {
+    "0": 16,
+    "1": 30,
+    "2": 19
+   },
+   "batches": 24,
+   "active": {
+    "0": 72,
+    "1": 136,
+    "2": 85
+   },
+   "detail": null
+  },
+  "locomotive-wagon1-high.png": {
+   "view": "locomotive-wagon1-high.png",
+   "drawCalls": 217,
+   "triangles": 571011,
+   "textures": 205,
+   "geometries": 304,
+   "lod": {
+    "0": 13,
+    "1": 30,
+    "2": 22
+   },
+   "batches": 24,
+   "active": {
+    "0": 59,
+    "1": 136,
+    "2": 98
+   },
+   "detail": null
+  }
+ },
+ "after": {
+  "wagon-near-high.png": {
+   "view": "wagon-near-high.png",
+   "drawCalls": 231,
+   "triangles": 562610,
+   "textures": 204,
+   "geometries": 314,
+   "lod": {
+    "0": 15,
+    "1": 31,
+    "2": 19
+   },
+   "batches": 24,
+   "active": {
+    "0": 69,
+    "1": 139,
+    "2": 85
+   },
+   "detail": {
+    "version": "m01-train-detail-coupling-polish-v1",
+    "quality": "high",
+    "wagons": 65,
+    "gaps": 64,
+    "instancesByTier": {
+     "near": 15,
+     "mid": 31,
+     "far": 19
+    },
+    "trackDetail": true,
+    "drawCalls": 11,
+    "triangles": 54950,
+    "shadowCasters": 0,
+    "instances": {
+     "nearFrame": 15,
+     "nearWear": 33,
+     "nearGap": 15,
+     "nearEnd": 1,
+     "midFrame": 31,
+     "midGap": 31,
+     "farBuffers": 10,
+     "shade": 46
+    },
+    "budget": {
+     "drawCalls": 12
+    },
+    "ownedGeometries": 10,
+    "ownedMaterials": 4,
+    "ownedTextures": 1,
+    "artOffsetY": -0.8325,
+    "track": {
+     "z": -2.5,
+     "railTop": -0.82,
+     "gauge": 1.435,
+     "from": 1062,
+     "to": 2000,
+     "sleepers": 1250,
+     "railSegments": 158
+    }
+   }
+  },
+  "coupling-pair-high.png": {
+   "view": "coupling-pair-high.png",
+   "drawCalls": 219,
+   "triangles": 541973,
+   "textures": 202,
+   "geometries": 292,
+   "lod": {
+    "0": 17,
+    "1": 30,
+    "2": 18
+   },
+   "batches": 24,
+   "active": {
+    "0": 77,
+    "1": 136,
+    "2": 80
+   },
+   "detail": {
+    "version": "m01-train-detail-coupling-polish-v1",
+    "quality": "high",
+    "wagons": 65,
+    "gaps": 64,
+    "instancesByTier": {
+     "near": 17,
+     "mid": 30,
+     "far": 18
+    },
+    "trackDetail": true,
+    "drawCalls": 11,
+    "triangles": 57966,
+    "shadowCasters": 0,
+    "instances": {
+     "nearFrame": 17,
+     "nearWear": 37,
+     "nearGap": 17,
+     "nearEnd": 1,
+     "midFrame": 30,
+     "midGap": 30,
+     "farBuffers": 10,
+     "shade": 47
+    },
+    "budget": {
+     "drawCalls": 12
+    },
+    "ownedGeometries": 10,
+    "ownedMaterials": 4,
+    "ownedTextures": 1,
+    "artOffsetY": -0.8325,
+    "track": {
+     "z": -2.5,
+     "railTop": -0.82,
+     "gauge": 1.435,
+     "from": 1062,
+     "to": 2000,
+     "sleepers": 1250,
+     "railSegments": 158
+    }
+   }
+  },
+  "underframe-high.png": {
+   "view": "underframe-high.png",
+   "drawCalls": 222,
+   "triangles": 537319,
+   "textures": 199,
+   "geometries": 278,
+   "lod": {
+    "0": 18,
+    "1": 31,
+    "2": 16
+   },
+   "batches": 24,
+   "active": {
+    "0": 82,
+    "1": 139,
+    "2": 72
+   },
+   "detail": {
+    "version": "m01-train-detail-coupling-polish-v1",
+    "quality": "high",
+    "wagons": 65,
+    "gaps": 64,
+    "instancesByTier": {
+     "near": 18,
+     "mid": 31,
+     "far": 16
+    },
+    "trackDetail": true,
+    "drawCalls": 11,
+    "triangles": 59822,
+    "shadowCasters": 0,
+    "instances": {
+     "nearFrame": 18,
+     "nearWear": 39,
+     "nearGap": 18,
+     "nearEnd": 1,
+     "midFrame": 31,
+     "midGap": 31,
+     "farBuffers": 8,
+     "shade": 49
+    },
+    "budget": {
+     "drawCalls": 12
+    },
+    "ownedGeometries": 10,
+    "ownedMaterials": 4,
+    "ownedTextures": 1,
+    "artOffsetY": -0.8325,
+    "track": {
+     "z": -2.5,
+     "railTop": -0.82,
+     "gauge": 1.435,
+     "from": 1062,
+     "to": 2000,
+     "sleepers": 1250,
+     "railSegments": 158
+    }
+   }
+  },
+  "consist-medium-high.png": {
+   "view": "consist-medium-high.png",
+   "drawCalls": 225,
+   "triangles": 590066,
+   "textures": 207,
+   "geometries": 314,
+   "lod": {
+    "0": 14,
+    "1": 31,
+    "2": 20
+   },
+   "batches": 24,
+   "active": {
+    "0": 64,
+    "1": 139,
+    "2": 90
+   },
+   "detail": {
+    "version": "m01-train-detail-coupling-polish-v1",
+    "quality": "high",
+    "wagons": 65,
+    "gaps": 64,
+    "instancesByTier": {
+     "near": 14,
+     "mid": 31,
+     "far": 20
+    },
+    "trackDetail": true,
+    "drawCalls": 11,
+    "triangles": 53278,
+    "shadowCasters": 0,
+    "instances": {
+     "nearFrame": 14,
+     "nearWear": 29,
+     "nearGap": 14,
+     "nearEnd": 1,
+     "midFrame": 31,
+     "midGap": 31,
+     "farBuffers": 10,
+     "shade": 45
+    },
+    "budget": {
+     "drawCalls": 12
+    },
+    "ownedGeometries": 10,
+    "ownedMaterials": 4,
+    "ownedTextures": 1,
+    "artOffsetY": -0.8325,
+    "track": {
+     "z": -2.5,
+     "railTop": -0.82,
+     "gauge": 1.435,
+     "from": 1062,
+     "to": 2000,
+     "sleepers": 1250,
+     "railSegments": 158
+    }
+   }
+  },
+  "consist-far-high.png": {
+   "view": "consist-far-high.png",
+   "drawCalls": 58,
+   "triangles": 479357,
+   "textures": 42,
+   "geometries": 245,
+   "lod": {
+    "0": 0,
+    "1": 49,
+    "2": 16
+   },
+   "batches": 16,
+   "active": {
+    "0": 0,
+    "1": 221,
+    "2": 72
+   },
+   "detail": {
+    "version": "m01-train-detail-coupling-polish-v1",
+    "quality": "high",
+    "wagons": 65,
+    "gaps": 64,
+    "instancesByTier": {
+     "near": 0,
+     "mid": 49,
+     "far": 16
+    },
+    "trackDetail": true,
+    "drawCalls": 7,
+    "triangles": 34702,
+    "shadowCasters": 0,
+    "instances": {
+     "nearFrame": 0,
+     "nearWear": 0,
+     "nearGap": 0,
+     "nearEnd": 0,
+     "midFrame": 49,
+     "midGap": 49,
+     "farBuffers": 8,
+     "shade": 49
+    },
+    "budget": {
+     "drawCalls": 12
+    },
+    "ownedGeometries": 10,
+    "ownedMaterials": 4,
+    "ownedTextures": 1,
+    "artOffsetY": -0.8325,
+    "track": {
+     "z": -2.5,
+     "railTop": -0.82,
+     "gauge": 1.435,
+     "from": 1062,
+     "to": 2000,
+     "sleepers": 1250,
+     "railSegments": 158
+    }
+   }
+  },
+  "coupling-pair-low.png": {
+   "view": "coupling-pair-low.png",
+   "drawCalls": 164,
+   "triangles": 471307,
+   "textures": 142,
+   "geometries": 273,
+   "lod": {
+    "0": 9,
+    "1": 13,
+    "2": 43
+   },
+   "batches": 24,
+   "active": {
+    "0": 41,
+    "1": 59,
+    "2": 193
+   },
+   "detail": {
+    "version": "m01-train-detail-coupling-polish-v1",
+    "quality": "low",
+    "wagons": 65,
+    "gaps": 64,
+    "instancesByTier": {
+     "near": 0,
+     "mid": 9,
+     "far": 56
+    },
+    "trackDetail": true,
+    "drawCalls": 7,
+    "triangles": 24006,
+    "shadowCasters": 0,
+    "instances": {
+     "nearFrame": 0,
+     "nearWear": 0,
+     "nearGap": 0,
+     "nearEnd": 0,
+     "midFrame": 9,
+     "midGap": 9,
+     "farBuffers": 22,
+     "shade": 9
+    },
+    "budget": {
+     "drawCalls": 12
+    },
+    "ownedGeometries": 10,
+    "ownedMaterials": 4,
+    "ownedTextures": 1,
+    "artOffsetY": -0.8325,
+    "track": {
+     "z": -2.5,
+     "railTop": -0.82,
+     "gauge": 1.435,
+     "from": 1062,
+     "to": 2000,
+     "sleepers": 1250,
+     "railSegments": 158
+    }
+   }
+  },
+  "consist-medium-low.png": {
+   "view": "consist-medium-low.png",
+   "drawCalls": 162,
+   "triangles": 464425,
+   "textures": 142,
+   "geometries": 272,
+   "lod": {
+    "0": 6,
+    "1": 13,
+    "2": 46
+   },
+   "batches": 24,
+   "active": {
+    "0": 28,
+    "1": 59,
+    "2": 206
+   },
+   "detail": {
+    "version": "m01-train-detail-coupling-polish-v1",
+    "quality": "low",
+    "wagons": 65,
+    "gaps": 64,
+    "instancesByTier": {
+     "near": 0,
+     "mid": 6,
+     "far": 59
+    },
+    "trackDetail": true,
+    "drawCalls": 7,
+    "triangles": 23238,
+    "shadowCasters": 0,
+    "instances": {
+     "nearFrame": 0,
+     "nearWear": 0,
+     "nearGap": 0,
+     "nearEnd": 0,
+     "midFrame": 6,
+     "midGap": 6,
+     "farBuffers": 24,
+     "shade": 6
+    },
+    "budget": {
+     "drawCalls": 12
+    },
+    "ownedGeometries": 10,
+    "ownedMaterials": 4,
+    "ownedTextures": 1,
+    "artOffsetY": -0.8325,
+    "track": {
+     "z": -2.5,
+     "railTop": -0.82,
+     "gauge": 1.435,
+     "from": 1062,
+     "to": 2000,
+     "sleepers": 1250,
+     "railSegments": 158
+    }
+   }
+  },
+  "consist-daylight-high.png": {
+   "view": "consist-daylight-high.png",
+   "drawCalls": 324,
+   "triangles": 871397,
+   "textures": 208,
+   "geometries": 344,
+   "lod": {
+    "0": 16,
+    "1": 30,
+    "2": 19
+   },
+   "batches": 24,
+   "active": {
+    "0": 72,
+    "1": 136,
+    "2": 85
+   },
+   "detail": {
+    "version": "m01-train-detail-coupling-polish-v1",
+    "quality": "high",
+    "wagons": 65,
+    "gaps": 64,
+    "instancesByTier": {
+     "near": 16,
+     "mid": 30,
+     "far": 19
+    },
+    "trackDetail": true,
+    "drawCalls": 11,
+    "triangles": 56318,
+    "shadowCasters": 0,
+    "instances": {
+     "nearFrame": 16,
+     "nearWear": 35,
+     "nearGap": 16,
+     "nearEnd": 1,
+     "midFrame": 30,
+     "midGap": 30,
+     "farBuffers": 10,
+     "shade": 46
+    },
+    "budget": {
+     "drawCalls": 12
+    },
+    "ownedGeometries": 10,
+    "ownedMaterials": 4,
+    "ownedTextures": 1,
+    "artOffsetY": -0.8325,
+    "track": {
+     "z": -2.5,
+     "railTop": -0.82,
+     "gauge": 1.435,
+     "from": 1062,
+     "to": 2000,
+     "sleepers": 1250,
+     "railSegments": 158
+    }
+   }
+  },
+  "locomotive-wagon1-high.png": {
+   "view": "locomotive-wagon1-high.png",
+   "drawCalls": 227,
+   "triangles": 622001,
+   "textures": 206,
+   "geometries": 313,
+   "lod": {
+    "0": 13,
+    "1": 30,
+    "2": 22
+   },
+   "batches": 24,
+   "active": {
+    "0": 59,
+    "1": 136,
+    "2": 98
+   },
+   "detail": {
+    "version": "m01-train-detail-coupling-polish-v1",
+    "quality": "high",
+    "wagons": 65,
+    "gaps": 64,
+    "instancesByTier": {
+     "near": 13,
+     "mid": 30,
+     "far": 22
+    },
+    "trackDetail": true,
+    "drawCalls": 11,
+    "triangles": 51422,
+    "shadowCasters": 0,
+    "instances": {
+     "nearFrame": 13,
+     "nearWear": 27,
+     "nearGap": 13,
+     "nearEnd": 1,
+     "midFrame": 30,
+     "midGap": 30,
+     "farBuffers": 12,
+     "shade": 43
+    },
+    "budget": {
+     "drawCalls": 12
+    },
+    "ownedGeometries": 10,
+    "ownedMaterials": 4,
+    "ownedTextures": 1,
+    "artOffsetY": -0.8325,
+    "track": {
+     "z": -2.5,
+     "railTop": -0.82,
+     "gauge": 1.435,
+     "from": 1062,
+     "to": 2000,
+     "sleepers": 1250,
+     "railSegments": 158
+    }
+   }
+  }
+ }
+}

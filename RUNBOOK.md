@@ -38,7 +38,7 @@ Ao capturar o rato, o input espera a confirmação de pointer lock e descarta a 
 
 Na bancada, checkpoint automático ao atingir C e chave `cod-guerra:checkpoint:v1`. Em M01, CP-A..D usam `cod-guerra:checkpoint:m01:v2`, com os dois relógios, estado real da arma, actores, eventos, flags, diálogos, sectores e destruição. CP-C é adiado até 05:34; CP-D usa posição/hora actuais. Reiniciar Checkpoint restaura o snapshot vivo; Continuar restaura após reload da página. Saves inválidos mostram erro e deixam iniciar de novo. Versões desconhecidas são rejeitadas.
 
-As pontes usam nove GLB de apresentação e colisores em JSON. Se um dos nove GLB obrigatórios das pontes falhar, o menu mostra erro e bloqueia início/continuação para não criar uma ponte invisível; a bancada francesa mantém o fallback próprio. Os GLB opcionais de soldados e aviões mantêm os proxies quando faltam. `gameDiagnostics().m01.requiredAssetFailures` distingue as pontes de `assetFailures`, que também regista o Ju 87. `m01.aircraft` mostra LODs carregados, nível seleccionado e transforms dos três aviões; a hélice usa o relógio da missão e conserva a pausa/restauro. `m01.wagons` mostra 65 vagões, passo 9,10 m, LOD2, tipos carregados e contagem de proxies. `m01.characters.actors` identifica `de_east_0/1` com MG34, `weaponLOD`, boca real e clip; `characters.failures` regista as falhas opcionais da arma/clips. As duas fontes ficam dentro do limite 18/24/28. A postura deitada e a dupla aguardam dados de simulação. Para verificar a exportação e repetir o percurso de simulação:
+As pontes usam nove GLB de apresentação e colisores em JSON. Se um dos nove GLB obrigatórios das pontes falhar, o menu mostra erro e bloqueia início/continuação para não criar uma ponte invisível; a bancada francesa mantém o fallback próprio. Os GLB opcionais de soldados e aviões mantêm os proxies quando faltam. `gameDiagnostics().m01.requiredAssetFailures` distingue as pontes de `assetFailures`, que também regista o Ju 87. `m01.aircraft` mostra LODs carregados, nível seleccionado, posição, atitude (`attitude`, só rotação de apresentação), `fade` e hélice dos três aviões; hélice, atitude e fade usam o relógio da missão e conservam a pausa/restauro. `m01.wagons` mostra 65 vagões, passo 9,10 m, LOD2, tipos carregados e contagem de proxies. `m01.characters.actors` identifica `de_east_0/1` com MG34, `weaponLOD`, boca real e clip; `characters.failures` regista as falhas opcionais da arma/clips. As duas fontes ficam dentro do limite 18/24/28. A postura deitada e a dupla aguardam dados de simulação. Para verificar a exportação e repetir o percurso de simulação:
 
 ```sh
 npm run assets:m01:colliders -- --check
@@ -94,6 +94,14 @@ CHROME_EXECUTABLE=/caminho/para/chromium node tools/verify-m01-poses.mjs --comba
 
 Os controlos de relógio desta galeria existem apenas na fixture de verificação. `gameDiagnostics().m01.actorAnimations` mostra as contagens renderizadas de mira, disparo, movimento e supressão; não é estado de gameplay. Provas e limites em `docs/verification/m01-runtime/combat-animation/`.
 
+Galeria de danos ambientais (marcas por material, crateras, queimados e resíduo das demolições), com o renderer real e uma `M01Simulation` descartável servidos pelo `vite` de desenvolvimento; impactos vêm de `traceShot`/`traceRound` e explosões de `consume()` reais:
+
+```sh
+CHROME_EXECUTABLE=/caminho/para/chromium node tools/verification/m01-damage-decals-gallery.mjs test-results/m01-damage-decals [brick-portal,railway,...]
+```
+
+`gameDiagnostics().m01.damageDecals` mostra marcas, resíduo, detritos, brasas e contadores; é apresentação, não entra no save. Provas e limites em `docs/verification/m01-runtime/environmental-damage-decal-pass-v1/`.
+
 Comparação do combate de cobertura, duas rotas completas da simulação com a mesma seed:
 
 ```sh
@@ -123,6 +131,17 @@ Se o ecrã falha, inspeccionar consola, rede e `#error`. Ausência de WebGL2 mos
 ## Publicação
 
 Há um único workflow `.github/workflows/pages.yml`. PRs executam validação; pushes para main/master ou workflow_dispatch validam e publicam somente dist. Deploy depende da validação e tem concorrência Pages própria. Esta alteração deve chegar por PR para main; não publicar directamente uma bancada como campanha concluída.
+
+## HUD e apresentação de M01
+
+`src/ui/m01-hud.js` apresenta objectivos, avisos, cartelas, fades, interacção, munição e saúde a partir do estado da simulação; não escreve nela. Os tempos usam o relógio da simulação (congelam na pausa). `gameDiagnostics().m01.hudPresentation` mostra aviso actual, fila, fade e cartelas (só apresentação). Capturas em seis resoluções, por snapshots da rota real e pausa real:
+
+```sh
+npm run build
+CHROME_EXECUTABLE=/caminho/chromium node tools/verification/m01-hud-capture.mjs test-results/m01-hud after
+```
+
+`HUD_VIEWPORTS=1280x720,800x600` e `HUD_SCENES=intro-card-place,cp-a-objective` restringem a execução. O relatório regista elementos fora do ecrã e sobreposições entre blocos do HUD. Não é playtest humano nem medição de FPS.
 
 ## Verificação visual de M01
 
