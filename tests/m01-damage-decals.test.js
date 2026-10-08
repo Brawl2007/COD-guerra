@@ -317,6 +317,23 @@ test('marks on a demolished span or a lowered cover are invalidated; marks elsew
   assert.equal(left.length,marks.length-high);assert.ok(left.every(m=>m.position.y<post.min.y+.45));
 });
 
+test('the first frame compiles the decal programs and draws every mesh once invisibly; later frames hide empty meshes',()=>{
+  const b=bench(),compiled=[],renderer={compile:(group,camera,scene)=>compiled.push([group,camera,scene])},view=new THREE.PerspectiveCamera();
+  const frame=()=>b.decals.update({state:b.sim.renderState,time:b.sim.clock,world:b.sim.world,trees:b.trees,quality:'high',renderer,view});
+  frame();
+  assert.equal(compiled.length,1);assert.equal(compiled[0][0],b.decals.group);assert.equal(compiled[0][2],b.decals.scene);
+  for(const mesh of [b.decals.marksMesh,b.decals.debrisMesh,b.decals.emberMesh]){
+    assert.equal(mesh.visible,true);assert.equal(mesh.count,1);
+    const m=new THREE.Matrix4();mesh.getMatrixAt(0,m);assert.equal(m.determinant(),0);   // zero-size instance: no pixels
+  }
+  assert.equal(b.decals.residueMesh.visible,true);assert.equal(b.decals.residueTriangles,0);
+  const p=b.decals.residueGeometry.attributes.position.array;assert.ok(p.length===9&&p.every(v=>v===0));   // degenerate triangle
+  frame();
+  assert.equal(compiled.length,1);
+  for(const mesh of [b.decals.marksMesh,b.decals.debrisMesh,b.decals.emberMesh,b.decals.residueMesh])assert.equal(mesh.visible,false);
+  assert.equal(b.decals.diagnostics.drawCalls,0);
+});
+
 test('the decal atlas is original, deterministic art with bounded size',()=>{
   const a=m01DecalAtlas(),b=m01DecalAtlas();
   assert.equal(a,b);assert.equal(a.width,512);assert.equal(a.height,256);assert.equal(a.color.length,512*256*4);assert.equal(a.heightMap.length,512*256);

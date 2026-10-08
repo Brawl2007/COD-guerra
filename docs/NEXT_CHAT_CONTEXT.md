@@ -1,3 +1,18 @@
+# Estado actual — danos ambientais M01 (2026-10-08)
+
+Esta secção prevalece sobre o histórico abaixo para a tarefa de danos ambientais. M01 continua **PROTÓTIPO JOGÁVEL**.
+
+- TASK_ID `M01-ENVIRONMENTAL-DAMAGE-DECAL-PASS-V1`; base `99309d9cb023cc94a07d41ff863e1362e4460570`; branches `codex/m01-environmental-damage-decal-pass-v1` e `claude/bold-cannon-rkvxjp` com o mesmo commit. Sem PR, merge ou deploy; nunca `main`.
+- Implementado em `src/render/m01-damage-decals.js` (módulo novo) com ganchos mínimos em `src/render/m01-view.js` e uma linha em `src/game/game.js`. Renderer consome eventos autoritativos; não decide acertos, dano, visibilidade nem eventos.
+- Marcas por material (pedra, tijolo, madeira, casca, travessa, metal, carril, terra, balastro, pavimento) apenas sobre geometria desenhada; resíduo persistente de granadas, bombas e demolições reconstruído de `sectors.damage`; detritos e brasas com limites fixos; limpeza determinística por relógio da missão, receptor destruído, restauro e `reset`.
+- Validação: 336/336 Node (12 novos), build PASS, browser focado 8/8 (decals, battlefield FX, combat feedback) e captura BEFORE 3/3; Reviewer e Verifier independentes antes do commit, achados corrigidos. Provas em `docs/verification/m01-runtime/environmental-damage-decal-pass-v1/`.
+- Workflow focado `.github/workflows/m01-environmental-damage-decal-pass-v1.yml` (push nas duas branches): invariância da autoridade, Node completo, build, captura BEFORE com os ganchos da base e browser AFTER.
+- Pendências: fuligem das janelas da estação quase invisível; queimados da demolição leste discretos ao nível do chão; sem marcas em personagens/vagões/treliças/água; Chromebook físico e playtest humano por fazer.
+
+---
+
+## Histórico anterior — não substitui a secção acima
+
 # Estado actual — auditoria de determinismo schema 2 (2026-10-03)
 
 Esta secção prevalece sobre o histórico abaixo para a tarefa actual. M01 continua **PROTÓTIPO JOGÁVEL**. Não recomeçar a MG34 aprovada nem Graphify.

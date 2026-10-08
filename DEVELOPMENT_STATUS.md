@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## Danos ambientais (decals) — 2026-10-08
+
+Branch `codex/m01-environmental-damage-decal-pass-v1` (espelho `claude/bold-cannon-rkvxjp`), base `99309d9`. Marcas de bala diferenciadas por material, crateras e queimados, detritos e brasas, resíduo das demolições e fuligem nas pontas dos tabuleiros. Só apresentação: consome `round-impact`, `player-shot` e `sectors.damage`; não grava estado nem acrescenta dados ao save. Simulação, mundo, missão, assets e configs iguais à base; `src/game/game.js` ganhou uma linha. Orçamento fixo (marcas 48/96/144, 4 draw calls, 2 texturas, 6000 triângulos de resíduo). Validação: 336/336 Node (12 novos), build PASS, browser focado 8/8 (decals, battlefield FX, combat feedback) e captura BEFORE 3/3; Reviewer e Verifier independentes antes do commit, achados corrigidos. Provas e limites em `docs/verification/m01-runtime/environmental-damage-decal-pass-v1/HANDOFF.md`.
+
 ## Auditoria schema 2 — 2026-10-03
 
 Candidato isolado em `codex/m01-schema2-determinism-audit`, base MG34 prone aprovada `fbaac1e4`. Comparação de futuros A/B por tick: 61.055 comparações em duas rotas completas e fixtures definidas, sem divergência depois das correções. Corrigido o destino de recuperação ao restaurar uma continuação; schema 2 recebe backup opcional plano, mantendo CP-A..D planos e legacy compatível. Saves corrompidos não podem sobrescrever métodos/perfil da arma; RNG uint32 e fases conhecidas validados.

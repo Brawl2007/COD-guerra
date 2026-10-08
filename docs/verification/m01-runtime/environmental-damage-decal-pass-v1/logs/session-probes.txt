@@ -1,0 +1,31 @@
+Diagnostic probes run during this task (outputs copied verbatim from the console; the temporary probe files were deleted after use).
+
+1) Frame probe — state of tests/browser/m01-battlefield-fx.spec.js "real in-flight round…" (cover_repair, rounds in flight), High,
+   production build, Chromium/SwiftShader, 8 s of requestAnimationFrame intervals, then one page.screenshot (not FPS; software WebGL).
+   Measured with the code of commit b084bba (before the first-frame warm-up draw was added). Temporary spec: tests/browser/zz-frame-probe.spec.js.
+AFTER {"frames":6,"medianMs":1316.7,"p90Ms":1666.6,"maxMs":1666.6,"screenshotMs":6168,"drawCalls":288,"triangles":517929,"decals":{"marks":7,"residue":110,"debris":66,"calls":3}}
+AFTER {"frames":6,"medianMs":1433.3,"p90Ms":1549.9,"maxMs":1549.9,"screenshotMs":7041,"drawCalls":288,"triangles":517889,"decals":{"marks":6,"residue":110,"debris":64,"calls":3}}
+BEFORE {"frames":7,"medianMs":1366.6,"p90Ms":1633.3,"maxMs":1633.3,"screenshotMs":5706,"drawCalls":285,"triangles":516495,"decals":null}
+BEFORE {"frames":6,"medianMs":1366.6,"p90Ms":1466.6,"maxMs":1466.6,"screenshotMs":5570,"drawCalls":285,"triangles":517015,"decals":null}
+   Frame medians are equal within noise; the screenshot took 9–23 % longer AFTER in these two samples each. Cause of the CI timeout not proven.
+
+2) CI run 37720348114 (branch codex/m01-environmental-damage-decal-pass-v1, commit b084bba), job "focused", step "Focused AFTER browser";
+   excerpt of the job log retrieved through the GitHub Actions API:
+  1) tests/browser/m01-battlefield-fx.spec.js:72:1 › real in-flight round produces bounded material impact FX without altering the saved simulation path
+    Test timeout of 90000ms exceeded.
+    TimeoutError: page.screenshot: Timeout 30000ms exceeded.
+  > 81 |   await page.screenshot({path:info.outputPath('AFTER-real-round-impact.png'),timeout:30000});
+  1 failed
+  7 passed (14.1m)
+   The same commit passed every step in run 37720345045 (branch claude/bold-cannon-rkvxjp).
+
+3) Atlas painting in slices vs synchronous painting (Node, same session, before the later brick/dust art changes):
+   synchronous m01DecalAtlas():          atlas ms 362, checksum 3673623301
+   sliced, 32 rows per slice (first):    slices 49, total ms 356, max slice ms 21.9, checksum 3673623301
+   sliced, 2048 px per slice (final):    slices 65, total ms 361, median 4.6 ms, max slice ms 26.4, checksum 3673623301
+   Both paths run the same generator; the final art (after the brick/dust changes) has a different checksum, reported in the gallery log.
+
+4) Atlas failure path: temporary copy of src/render/m01-damage-decals.js whose painter throws at the fourth cell
+   (src/render/zz-failcopy.mjs, deleted), constructed with a THREE.Scene in Node, 1.5 s later:
+{"constructed":true,"errors":1,"lastError":"probe: painter failure","atlasReady":false,"atlasError":"probe: painter failure","timerPending":false,"logged":1,"ready":"rejected: probe: painter failure","sync":"threw: probe: painter failure"}
+second instance after failure: 1 null

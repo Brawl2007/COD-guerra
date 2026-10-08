@@ -605,7 +605,7 @@ export function m01BlastResidue(world,damage){
     const faces=[['x',-1,damage.x-building.min.x],['x',1,building.max.x-damage.x],['z',-1,damage.z-building.min.z],['z',1,building.max.z-damage.z]].sort((a,b)=>a[2]-b[2]);
     const [axis,sign]=faces[0],other=axis==='x'?'z':'x',p={x:damage.x,z:damage.z};
     p[axis]=(sign<0?building.min[axis]:building.max[axis])+sign*1.6;p[other]=clamp(damage[other],building.min[other]+2.5,building.max[other]-2.5);
-    const top=m01SurfaceTop(world,p.x,p.z,blastY);anchors=top?[{x:p.x,z:p.z,r:3.4,y:top.y}]:[];
+    const top=m01SurfaceTop(world,p.x,p.z,blastY);anchors=top?[{x:p.x,z:p.z,r:4.5,y:top.y}]:[];
   }else anchors=[{x:damage.x,z:damage.z,r:P.radius,y:blastY}];
   const near=(y,ref)=>ref===null||ref===undefined||(y>ref-1.2&&y<ref+.9);
   anchors.forEach((a,ai)=>{
@@ -615,7 +615,7 @@ export function m01BlastResidue(world,damage){
       // A blast on a deck scorches that deck only; one on the ground never climbs onto a deck metres above it.
       // The drawn terrain itself is never filtered by height: an embankment slope is ground, not another surface.
       if(s.kind!=='terrain'&&!near(meanY,a.y)||s.poly.every(p=>insideBuilding(world,p.x,p.y,p.z)))continue;
-      polys.push({points:s.poly.map(p=>add(p,s.normal,s.lift)),uvs:s.poly.map(p=>uv(p.x,p.z)),normal:s.normal,color:building?[1,1,1,.7]:P.tint,start,kind:s.kind});
+      polys.push({points:s.poly.map(p=>add(p,s.normal,s.lift)),uvs:s.poly.map(p=>uv(p.x,p.z)),normal:s.normal,color:building?[1,1,1,.92]:P.tint,start,kind:s.kind});
     }
   });
   if(kind==='demolition'){
@@ -795,15 +795,16 @@ function paintBig(kind,u,v,s){
   }
   if(kind==='ash'){
     // Pale masonry and plaster dust with darker soot flecks: it has to read on dark soil and in the facade's shadow.
-    const edge=sstep(1,.3,r*(1+.25*(n-.5))),light=fbm(u*5,v*5,s+4,3);
-    return [...(light<.34?[74,70,64]:[146,138,126].map(x=>x*(.82+.3*n))),.74*edge*(.75+.25*ray),.48];
+    const edge=sstep(1,.5,r*(1+.25*(n-.5))),light=fbm(u*5,v*5,s+4,3);
+    return [...(light<.34?[74,70,64]:[150,142,130].map(x=>x*(.84+.3*n))),.8*edge*(.78+.22*ray),.48];
   }
   // Charred centre fading through burnt soil into soot spray; no hard outline.
   const R=.62*(.85+.3*ring(t,s,2.1)),core=sstep(.5,0,r),body=sstep(R*1.08,R*.7,r),k=clamp((r-R*.7)/(.97-R*.7),0,1);
   const ash=fine>.82&&r>.16&&r<R,color=ash?[96,92,86]:mix(mix([66,56,46],[26,22,19],ray*.6),mix([46,37,30],[11,9,8],clamp(core*1.1+.12*n,0,1)),body);
   return [...color,clamp(.96*body+(.26+.6*ray)*(1-k)**1.2*(.7+.3*n)*(1-body),0,.97),.5-.12*core];
 }
-let ATLAS=null,ATLAS_JOB=null,ATLAS_BUFFERS=null;
+let ATLAS=null,ATLAS_JOB=null,ATLAS_BUFFERS=null,ATLAS_ERROR=null,ATLAS_DONE=null,ATLAS_FAIL=null;
+const ATLAS_READY=new Promise((resolve,reject)=>{ATLAS_DONE=resolve;ATLAS_FAIL=reject;});ATLAS_READY.catch(()=>{});
 const ATLAS_W=512,ATLAS_H=256,ATLAS_SLICE=2048;   // pixels painted per slice
 /** The atlas pixel buffers (allocated once, transparent until painted); textures can wrap them before painting ends. */
 function atlasBuffers(){return ATLAS_BUFFERS??={width:ATLAS_W,height:ATLAS_H,color:new Uint8Array(ATLAS_W*ATLAS_H*4),heightMap:new Uint8Array(ATLAS_W*ATLAS_H)};}
@@ -834,23 +835,27 @@ function* atlasJob(){
     }
   }
   let checksum=0x811c9dc5;for(let i=0;i<color.length;i+=7)checksum=Math.imul(checksum^color[i],0x01000193)>>>0;
-  ATLAS=Object.freeze({width:W,height:ATLAS_H,color,heightMap:height,checksum});
+  ATLAS=Object.freeze({width:W,height:ATLAS_H,color,heightMap:height,checksum});ATLAS_DONE(ATLAS);
 }
-/** Advance the atlas painting by up to `slices` slices; true once it is complete. */
+/** Advance the atlas painting by up to `slices` slices; true once it has finished (or failed: see m01DecalAtlas). */
 export function m01DecalAtlasStep(slices=1){
-  if(ATLAS)return true;ATLAS_JOB??=atlasJob();
-  for(let i=0;i<slices&&!ATLAS;i++)ATLAS_JOB.next();
-  return Boolean(ATLAS);
+  if(ATLAS||ATLAS_ERROR)return true;ATLAS_JOB??=atlasJob();
+  try{for(let i=0;i<slices&&!ATLAS;i++)if(ATLAS_JOB.next().done&&!ATLAS)throw new Error('decal atlas painting ended without an atlas');}
+  catch(error){ATLAS_ERROR=error;ATLAS_FAIL(error);}   // a failed job is never resumed or rescheduled
+  return Boolean(ATLAS||ATLAS_ERROR);
 }
 /** 512×256 RGBA colour atlas + R8 height atlas (8×4 cells of 64 px; rows 2–3 hold four 128 px blast blocks). Completes synchronously. */
-export function m01DecalAtlas(){while(!m01DecalAtlasStep(128));return ATLAS;}
+export function m01DecalAtlas(){while(!m01DecalAtlasStep(128));if(ATLAS_ERROR)throw ATLAS_ERROR;return ATLAS;}
+/** Resolves with the atlas once painting has finished (verification fixtures wait for it before capturing). */
+export const m01DecalAtlasReady=()=>ATLAS_READY;
 
 // ——— Runtime (bounded pools) ———
 const MARK_FADE_IN=.05,MARK_FADE_OUT=.32,RANK_FADE=.12;
 // Empty residue with the full attribute layout (RGBA colour), so the warmed-up program is the one used later.
+// It holds one degenerate, fully transparent triangle: drawn only by the warm-up frame (no pixels), hidden otherwise.
 function emptyResidue(){
   const g=new THREE.BufferGeometry();
-  for(const [name,size] of [['position',3],['normal',3],['uv',2],['color',4],['residueStart',1]])g.setAttribute(name,new THREE.BufferAttribute(new Float32Array(0),size));
+  for(const [name,size] of [['position',3],['normal',3],['uv',2],['color',4],['residueStart',1]])g.setAttribute(name,new THREE.BufferAttribute(new Float32Array(3*size).fill(name==='residueStart'?1e9:0),size));
   return g;
 }
 // A rock rather than a die: each of the icosahedron's 12 corners moves in/out by a hash of its own position, so every
@@ -879,8 +884,8 @@ export class M01DamageDecals {
     this.heightMap=new THREE.DataTexture(atlas.heightMap,atlas.width,atlas.height,THREE.RedFormat);
     for(const t of [this.map,this.heightMap]){t.generateMipmaps=true;t.minFilter=THREE.LinearMipmapLinearFilter;t.magFilter=THREE.LinearFilter;t.anisotropy=4;t.needsUpdate=true;}
     this.atlasTimer=null;
-    const paint=()=>{this.atlasTimer=null;if(!m01DecalAtlasStep(1)){this.atlasTimer=setTimeout(paint,0);return;}this.map.needsUpdate=this.heightMap.needsUpdate=true;};
-    paint();
+    this.paintAtlas=()=>{this.atlasTimer=null;if(!m01DecalAtlasStep(1)){this.atlasTimer=setTimeout(this.paintAtlas,0);return;}
+      if(ATLAS_ERROR)this.fail(ATLAS_ERROR);else this.map.needsUpdate=this.heightMap.needsUpdate=true;};
     const decal=(extra={})=>new THREE.MeshStandardMaterial({map:this.map,bumpMap:this.heightMap,bumpScale:1.2,transparent:true,depthWrite:false,
       polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-4,roughness:.93,metalness:0,alphaTest:.012,...extra});
     this.markMaterial=decal();
@@ -929,7 +934,7 @@ export class M01DamageDecals {
     this.marksMesh.renderOrder=-2;this.residueMesh.renderOrder=-3;this.emberMesh.renderOrder=-1;   // before soft particles
     this.dummy=new THREE.Object3D();this.color=new THREE.Color();this.matrix=new THREE.Matrix4();this.basis=new THREE.Matrix4();
     this.treeList=null;this.treeIndex=new Map();this.compiled=false;
-    this.reset();
+    this.reset();this.paintAtlas();   // after reset(): a failed atlas is counted, never thrown from the constructor
   }
   reset(){
     this.marks=[];this.spall=[];this.sequence=0;this.residueKey=null;this.residue=[];this.world=null;this.revision=-1;this.receivers='';this.lastTime=0;this.lastError=null;
@@ -1005,7 +1010,7 @@ export class M01DamageDecals {
   /** Per rendered frame: persistent aftermath from saved damage, mark fades, bounded debris and embers. */
   update({state,time,world,trees=null,quality='medium',camera=null,renderer=null,view=null}){
     // Compile the four (still hidden) programs on the first frame, not on the first impact in combat.
-    if(renderer&&view&&!this.compiled){this.compiled=true;renderer.compile(this.group,view,this.scene);}
+    if(renderer&&view&&!this.compiled){this.compiled=true;this.warmFrame=true;renderer.compile(this.group,view,this.scene);}
     if(!world||!state)return;
     this.prune(time,world);this.lastTime=time;this.residueClock.value=time;
     const L=this.limits(quality),damage=(state.damage??[]).slice(-M01_DAMAGE_DECAL_LIMITS.blasts);
@@ -1013,7 +1018,17 @@ export class M01DamageDecals {
     if(key!==this.residueKey){this.buildResidue(world,damage,L);this.residueKey=key;}
     while(this.marks.length>L.marks){this.remove(this.marks[0]);this.counts.evicted++;}
     const spallCap=Math.floor(L.debris*(1-M01_DAMAGE_DECAL_LIMITS.residueDebrisShare));if(this.spall.length>spallCap)this.spall.splice(0,this.spall.length-spallCap);
-    this.writeMarks(time,L,trees);this.writeDebris(time,L);this.writeEmbers(time,L,camera);
+    this.writeMarks(time,L,trees);this.writeDebris(time,L);this.writeEmbers(time,L,camera);this.residueMesh.visible=this.residueTriangles>0;
+    if(this.warmFrame){this.warmFrame=false;this.warmUp();}
+  }
+  /** One invisible draw of each mesh (zero-size instances, the degenerate residue triangle) on the first frame, so drivers
+   *  that build their pipeline at first draw (ANGLE over Vulkan, SwiftShader) do it while loading, not on a first impact. */
+  warmUp(){
+    const zero=this.matrix.makeScale(0,0,0);
+    for(const mesh of [this.marksMesh,this.debrisMesh,this.emberMesh])if(!mesh.visible){mesh.setMatrixAt(0,zero);mesh.count=1;mesh.visible=true;mesh.instanceMatrix.needsUpdate=true;}
+    if(this.marksMesh.count===1&&!this.marks.length){this.opacityAttribute.setX(0,0);this.opacityAttribute.needsUpdate=true;}
+    if(this.emberMesh.count===1&&!(this.residueEmbers??[]).length){this.glowAttribute.setX(0,0);this.glowAttribute.needsUpdate=true;}
+    this.residueMesh.visible=true;
   }
   buildResidue(world,damage,L){
     let blasts=damage.map(d=>m01BlastResidue(world,d));
@@ -1029,9 +1044,9 @@ export class M01DamageDecals {
       }
       t++;
     }
-    this.residueGeometry.dispose();const g=new THREE.BufferGeometry();
-    g.setAttribute('position',new THREE.BufferAttribute(position,3));g.setAttribute('normal',new THREE.BufferAttribute(normal,3));g.setAttribute('uv',new THREE.BufferAttribute(uv,2));
-    g.setAttribute('color',new THREE.BufferAttribute(color,4));g.setAttribute('residueStart',new THREE.BufferAttribute(start,1));g.computeBoundingSphere();
+    this.residueGeometry.dispose();const g=count?new THREE.BufferGeometry():emptyResidue();
+    if(count){g.setAttribute('position',new THREE.BufferAttribute(position,3));g.setAttribute('normal',new THREE.BufferAttribute(normal,3));g.setAttribute('uv',new THREE.BufferAttribute(uv,2));
+      g.setAttribute('color',new THREE.BufferAttribute(color,4));g.setAttribute('residueStart',new THREE.BufferAttribute(start,1));g.computeBoundingSphere();}
     this.residueGeometry=g;this.residueMesh.geometry=g;this.residueMesh.visible=count>0;this.residueTriangles=count;
     this.residueDebris=blasts.flatMap(b=>b.debris.map(d=>({...d,start:damage.find(x=>x.id===b.id)?.started??0}))).slice(-Math.floor(L.debris*M01_DAMAGE_DECAL_LIMITS.residueDebrisShare));
     this.residueEmbers=L.embers?blasts.flatMap(b=>b.embers).slice(-L.embers):[];
@@ -1078,7 +1093,7 @@ export class M01DamageDecals {
       residueBlasts:this.residue.map(b=>({id:b.id,kind:b.kind,polygons:b.polys.length,debris:b.debris.length,embers:b.embers.length})),
       residueTriangles:this.residueTriangles,debris:this.debrisMesh.count,embers:this.emberMesh.count,
       drawCalls:[this.marksMesh,this.residueMesh,this.debrisMesh,this.emberMesh].filter(m=>m.visible).length,
-      counts:{...this.counts},lastError:this.lastError,limits:M01_DAMAGE_DECAL_LIMITS,atlasReady:Boolean(ATLAS),atlasChecksum:ATLAS?.checksum??null};
+      counts:{...this.counts},lastError:this.lastError,limits:M01_DAMAGE_DECAL_LIMITS,atlasReady:Boolean(ATLAS),atlasError:ATLAS_ERROR?String(ATLAS_ERROR.message??ATLAS_ERROR):null,atlasChecksum:ATLAS?.checksum??null};
   }
   dispose(){
     clearTimeout(this.atlasTimer);this.atlasTimer=null;

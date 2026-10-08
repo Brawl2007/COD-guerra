@@ -1,0 +1,26 @@
+# M01-ENVIRONMENTAL-DAMAGE-DECAL-PASS-V1 — ficheiros alterados em relação à base 99309d9
+# (A = novo, M = modificado; as evidências binárias da pasta estão em SHA256SUMS.txt)
+A	.github/workflows/m01-environmental-damage-decal-pass-v1.yml
+M	DEVELOPMENT_STATUS.md
+M	RUNBOOK.md
+M	docs/NEXT_CHAT_CONTEXT.md
+M	docs/verification/m01-runtime/README.md
+M	src/game/game.js
+A	src/render/m01-damage-decals.js
+M	src/render/m01-view.js
+A	tests/browser/m01-damage-decals.spec.js
+A	tests/m01-damage-decals.test.js
+A	tools/verification/m01-damage-decals-cpu.mjs
+A	tools/verification/m01-damage-decals-fixture.html
+A	tools/verification/m01-damage-decals-gallery.mjs
+
+# Documentação e evidências
+A	docs/verification/m01-runtime/environmental-damage-decal-pass-v1/BEFORE_AFTER.md
+A	docs/verification/m01-runtime/environmental-damage-decal-pass-v1/DESIGN.md
+A	docs/verification/m01-runtime/environmental-damage-decal-pass-v1/HANDOFF.md
+A	docs/verification/m01-runtime/environmental-damage-decal-pass-v1/PERFORMANCE.md
+A	docs/verification/m01-runtime/environmental-damage-decal-pass-v1/before/ (6 ficheiros)
+A	docs/verification/m01-runtime/environmental-damage-decal-pass-v1/after/ (6 ficheiros)
+A	docs/verification/m01-runtime/environmental-damage-decal-pass-v1/gallery/ (19 ficheiros)
+A	docs/verification/m01-runtime/environmental-damage-decal-pass-v1/logs/ (7 ficheiros)
+A	docs/verification/m01-runtime/environmental-damage-decal-pass-v1/perf/ (6 ficheiros)

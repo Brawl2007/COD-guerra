@@ -13,10 +13,10 @@ Objectivo: dar consequências visuais ao combate (marcas de bala por material, q
 | `sectors.damage` (`id`, `x/y/z`, `started`) via `renderState.damage` | explosões gravadas (granadas, bombas, demolições) | resíduo persistente + detritos + brasas |
 
 - `Game.handleM01Event` ganhou **uma linha**: `round-impact`/`player-shot` → `M01View.surfaceDamage(event, sim)`. O método só lê `sim.world`, `sim.player`, `sim.actor(by)` e `sim.clock`; o evento continua a seguir para os handlers existentes sem alteração (áudio, FX de impacto alemão, feedback de acerto).
-- `M01View.render` chama `damageDecals.update({state: sim.renderState, time: sim.clock, world, trees, quality, camera})` depois de `updateBattlefieldFx`.
+- `M01View.render` chama `damageDecals.update({state: sim.renderState, time: sim.clock, world, trees, quality, camera, renderer, view})` (as duas últimas só para o aquecimento do primeiro frame) depois de `updateBattlefieldFx`.
 - Variação visual: `m01DecalSeed` (FNV dos dados do evento, quantizados ao mm/ms) + `visualNoise` (hash de apresentação já usado pelos FX). Sem `Math.random`, sem `src/core/random`, sem RNG da simulação, sem relógio de parede.
 - Correcções puramente visuais do ponto (a simulação mantém o seu): (a) tiros do jogador no chão percorrem de volta o raio olho→ponto até ao solo **desenhado** (a marcha do terreno da simulação avança até 1,2 m e, na cabeça de ponte oeste, o encontro andável fica 0,35 m abaixo do aterro desenhado); (b) uma marca em tronco pode deslizar até 5 cm para dentro da faceta; (c) marcas em superfícies limitadas (faces, faixas do tabuleiro, travessas) são encaixadas dentro dos limites.
-- Prova: teste Node com a rota real até `hold_access` (355 `round-impact`, quatro bombas gravadas) com eventos congelados (`Object.freeze` profundo) — `snapshot(false)` idêntico com e sem decals; duas instâncias alimentadas com os mesmos eventos produzem marcas/resíduo/diagnóstico idênticos.
+- Prova: teste Node com a rota real até `hold_access`, com o piloto de apoio a disparar contra a MG (97 impactos autoritativos, dos quais 4 tiros do próprio jogador; quatro bombas gravadas), com eventos congelados (`Object.freeze` profundo) — `snapshot(false)` idêntico com e sem decals; duas instâncias alimentadas com os mesmos eventos produzem marcas/resíduo/diagnóstico idênticos.
 
 ## 2. Superfícies desenhadas (modelo analítico)
 
@@ -67,7 +67,7 @@ Atlas procedural original, gerado em código no arranque (determinístico, `atla
 
 - Superfície da explosão: a mais alta desenhada que não fique acima do ponto gravado + 0,9 m (o `forward_post` em quase-acerto fica gravado a y −10, o raid das 05:30 a y 0 sobre terreno a −3); uma explosão sob um tabuleiro mantém a sua janela de altura.
 - Polígonos recortados (Sutherland–Hodgman) sobre os receptores desenhados: triângulos exactos do terreno, faixas dos tabuleiros, travessas/carris, encontros danificados. Explosão num tabuleiro queima só esse tabuleiro; no chão nunca sobe para um tabuleiro metros acima.
-- Bomba dentro da estação: poeira clara de alvenaria (3,4 m) e entulho maior junto à fachada mais próxima, fora da caixa desenhada, e fuligem nas janelas da fachada norte mais próximas.
+- Bomba dentro da estação: poeira clara de alvenaria (4,5 m) e entulho maior junto à fachada mais próxima, fora da caixa desenhada, e fuligem nas janelas da fachada norte mais próximas.
 - Demolições: um disco largo por peça destruída (pilar, torre, encontro; tabuleiros e treliças caem com elas) e quatro discos menores logo fora da sua planta, porque o colapso desenhado cobre o centro; fuligem nos últimos 9 m dos tabuleiros que ficam de pé junto ao vão; nada sobre tabuleiros destruídos nem sobre água; detritos e brasas só à volta das âncoras em terra.
 - Persistência: reconstruído a partir de `renderState.damage` (últimas 16 explosões) quando mudam a lista, a qualidade ou aquilo sobre que o resíduo assenta (assinatura do mundo: superfícies andáveis, encontros danificados, edifícios/coberturas com as suas alturas). Cada evento consumido refresca o mundo; só os que mudam essa assinatura obrigam a reconstruir (7 reconstruções numa rota completa). Não há dados novos no save: carregar, restaurar ou recomeçar reproduz exactamente o mesmo resíduo. Começa 0,04 s depois de `started` e fica completo 0,59 s depois (uniforme = relógio da missão), por isso a pausa congela-o e um save carregado mostra-o de imediato.
 
@@ -89,7 +89,7 @@ Atlas procedural original, gerado em código no arranque (determinístico, `atla
 
 Global: 16 explosões; 6000 triângulos de resíduo — enquanto houver mais de uma explosão e o total passar disso, descarta-se a não-demolição mais antiga (ou, só com demolições, a mais antiga); uma explosão sozinha nunca é cortada (a maior, a demolição oeste, tem cerca de 600). **4 draw calls** (marcas, resíduo, detritos, brasas — todos instanced ou uma só malha), **2 texturas**. Pools instanced alocados uma vez para `high` (144/192/40) e nunca crescem; a geometria do resíduo é recriada só quando é reconstruído, com o tamanho exacto. Sem luzes, render targets, sombras projectadas novas ou colliders.
 
-Arranque: o atlas (cerca de 0,36 s de CPU em Node) é pintado em 64 fatias de 2048 píxeis por temporizador e enviado à GPU quando completo, em vez de bloquear o construtor; até lá as marcas ficam transparentes. Os quatro programas de shader são compilados (`renderer.compile`) no primeiro frame desenhado, não no primeiro impacto em combate.
+Arranque: o atlas (cerca de 0,36 s de CPU em Node) é pintado em 64 fatias de 2048 píxeis por temporizador a partir da criação da vista M01 e enviado à GPU quando completo, em vez de bloquear o construtor; até lá as marcas ficam transparentes. Se a pintura falhar, o erro conta em `counts.errors` e nada é reagendado. No primeiro frame desenhado os quatro programas são compilados (`renderer.compile`) e cada malha é desenhada uma vez sem píxeis (instância de tamanho zero, triângulo degenerado), para que drivers que só constroem o pipeline no primeiro desenho (ANGLE/Vulkan, SwiftShader) o façam no carregamento e não no primeiro impacto em combate.
 
 ## 8. Z-fighting e ordenação
 

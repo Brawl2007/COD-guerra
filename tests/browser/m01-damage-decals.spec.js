@@ -35,6 +35,11 @@ async function open(browser,snapshot,quality='high'){
   await page.addInitScript(({key,snapshot,quality})=>{localStorage.setItem(key,JSON.stringify(snapshot));localStorage.setItem('cod-guerra:visual-quality',quality);},{key,snapshot,quality});
   await page.goto('?debug=1');
   await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});
+  // The decal atlas is painted in timer slices; wait for it in the paused menu (cheap frames), not while the battle runs.
+  if(!baseline){
+    await page.waitForFunction(()=>{const d=window.gameDiagnostics().m01.damageDecals;return d.atlasReady||d.atlasError;},null,{timeout:120000});
+    expect((await page.evaluate(()=>window.gameDiagnostics())).m01.damageDecals.atlasError).toBe(null);
+  }
   await page.locator('#quality').selectOption(quality);await page.locator('#continue').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game',null,{timeout:120000});
   await page.waitForFunction(()=>window.gameDiagnostics().m01.renderedFrames>2,null,{timeout:120000});
@@ -100,7 +105,7 @@ test('saved blasts draw their persistent aftermath on load (frozen probes of gen
   test.setTimeout(process.env.CI?480000:240000);
   const probes=[
     {name:'repair-crater',snapshot:preWest,id:'repair_crater',x:-49,z:15.5,target:{x:-40,y:-4.2,z:10}},
-    {name:'station-facade',snapshot:preWest,id:'station_bomb',x:-392,z:16,target:{x:-401,y:-2.6,z:28}},
+    {name:'station-facade',snapshot:preWest,id:'station_bomb',x:-400,z:17.5,target:{x:-400,y:-4.3,z:26.4}},
     {name:'east-deck-end',snapshot:preWest,id:'east_demolition',x:650,z:40,target:{x:662,y:-4.2,z:40}},
     {name:'west-bridgehead',snapshot:postWest,id:'west_demolition',x:-30,z:2,target:{x:-12,y:-2.9,z:2}}
   ],samples={};

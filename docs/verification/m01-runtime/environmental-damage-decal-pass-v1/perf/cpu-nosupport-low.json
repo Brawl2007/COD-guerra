@@ -1,0 +1,46 @@
+{
+ "kind": "Node CPU timing of the presentation module on the real route; not FPS",
+ "route": "no-support",
+ "quality": "low",
+ "impact": {
+  "calls": 839,
+  "medianMs": 0.064,
+  "p95Ms": 0.2585,
+  "p99Ms": 0.4837,
+  "maxMs": 1.503
+ },
+ "update": {
+  "calls": 20969,
+  "medianMs": 0.0094,
+  "p95Ms": 0.0467,
+  "p99Ms": 0.084,
+  "maxMs": 2.031
+ },
+ "residueRebuild": {
+  "calls": 7,
+  "medianMs": 4.349,
+  "p95Ms": 17.3772,
+  "p99Ms": 17.3772,
+  "maxMs": 17.377
+ },
+ "peak": {
+  "marks": 48,
+  "spall": 19,
+  "debris": 63,
+  "embers": 0,
+  "residueTriangles": 1235
+ },
+ "counts": {
+  "spawned": 827,
+  "placed": 239,
+  "noSurface": 174,
+  "outOfRange": 413,
+  "dedup": 1,
+  "clustered": 31,
+  "evicted": 132,
+  "expired": 76,
+  "invalidated": 0,
+  "errors": 0
+ },
+ "node": "v22.22.0"
+}
