@@ -9,7 +9,7 @@ Cada frame é **redesenhado com a camada distante escondida** (mesmo relógio, m
 - **changed**: píxeis com diferença ≥ 8/255.
 - **strong**: píxeis com diferença ≥ 40/255.
 - **xray**: o mesmo frame redesenhado com o teste de profundidade da camada desligado, ou seja, o que ela acrescentaria se nada do mundo estivesse à frente. `changed` 0 com `xray` > 0 quer dizer que a camada está lá, mas tapada (aterro, edifícios, pontes). Não quer dizer que falta.
-- Em cada imagem, à direita fica a máscara: só os píxeis da camada, o resto escurecido. As composições são feitas com [`logs/sheets.py`](logs/sheets.py) (`layers`) a partir dos PNG da ferramenta.
+- Em cada imagem, à direita fica a máscara: só os píxeis da camada, o resto escurecido. As composições são feitas com [`logs/sheets.py`](logs/sheets.py) a partir dos PNG da ferramenta: `layers` para as folhas e `zoom` para os recortes 4× (probe-13: 560,320–780,400; eye-15: 520,320–700,400). Regenerados com `zoom`, os dois recortes saem idênticos byte a byte aos commitados.
 - Relatório completo (estado, poses, diagnóstico, diff, xray): [`CAPTURE-report.json`](CAPTURE-report.json), commit `5c5eed1` (runtime `6ffa820`).
 
 Tipos de frame:
@@ -19,7 +19,7 @@ Tipos de frame:
 
 Pontos de vista:
 - A madrugada (01–03) e o surto (09–10) estão no olho do jogador na **cabeça de ponte oeste**, entre os aterros ferroviário (z ≈ 0) e rodoviário (z ≈ 30–50). Não é o pátio da estação.
-- O norte (06–08, 14) está um pouco mais a norte, na mesma zona.
+- O norte (06–08, 14) está sobre o aterro rodoviário, ~12 m a leste e ~12 m a sul do olho do bolso (chão a −0,35 m, contra −3 m no bolso). É essa altura que deixa ver a frente norte por cima do aterro ferroviário.
 - A espera (15) está na ponte rodoviária.
 - Koźliny (11–12) está a oeste, junto à estação.
 
@@ -44,7 +44,8 @@ Pontos de vista:
 Leitura honesta:
 - A 70° de FOV a camada é **subtil**: pontos, traços e colunas finas no horizonte, como seria um combate a 1–3 km de madrugada.
 - As colunas de fumo e as nuvens de impacto do norte são o sinal mais visível. Os clarões de espingarda/MG e os traçantes a 1–2 km são pontos e traços de poucos píxeis.
-- A escaramuça de Lisewo fica além do raio de tiro (decisão da revisão) e é baixa (planície a y −5). Do bolso da cabeça de ponte entre os dois aterros fica tapada a nordeste e a sudeste (xray). Vê-se da ponte rodoviária, de pontos a norte do aterro ferroviário e da margem leste.
+- A escaramuça de Lisewo fica além do raio de tiro (decisão da revisão) e é baixa (planície a y −5). Do bolso da cabeça de ponte entre os dois aterros, o aterro ferroviário tapa-a a norte e nordeste (xray dos frames 02/03/09). Nas capturas vê-se da ponte rodoviária (eye-15) e de um ponto a norte do aterro ferroviário (probe-13).
+- Sem captura (inferência geométrica sobre o campo de alturas do gameplay, `traceTerrain`): do bolso, o aterro rodoviário tapa também a linha sul, e a frente norte só mostra a parte alta das colunas; da margem leste vê-se a linha sul a partir da planície e a linha norte só do tabuleiro da via férrea. Ver o HANDOFF.
 
 Histórico dos números:
 - **Cache dos eventos** (`bdfbab7`): nos 12 frames de então, eventos, instâncias e diff da camada são iguais aos de `3e0d8e7` ([`logs/CAPTURE-report-3e0d8e7.json`](logs/CAPTURE-report-3e0d8e7.json), [`logs/CAPTURE-report-bdfbab7.json`](logs/CAPTURE-report-bdfbab7.json)).

@@ -3,7 +3,7 @@
 TASK_ID: `M01-DISTANT-BATTLEFIELD-PRESENTATION-V1`  
 BASE: `99309d9cb023cc94a07d41ff863e1362e4460570`  
 BRANCH: `codex/m01-distant-battlefield-presentation-v1` (sem merge, sem PR, `main` intacta)  
-Runtime verificado: commit indicado em [`EVIDENCE.md`](EVIDENCE.md). Os commits seguintes só acrescentam um frame à ferramenta de captura e documentação/capturas.
+Runtime verificado: commit indicado em [`EVIDENCE.md`](EVIDENCE.md). Os commits seguintes acrescentam um frame à ferramenta de captura, documentação/capturas e, depois da segunda verificação, testes e comentários (`4763521`, bundle igual).
 
 M01 continua **PROTÓTIPO JOGÁVEL**. Esta camada é **apresentação**: não decide dano, estado da missão, visibilidade, IA nem objectivos.
 
@@ -22,7 +22,8 @@ O ritmo não é um loop: há minutos calmos e surtos, e cada sector tem fase pr�
 
 | Item | Distância |
 |---|---|
-| Obras de campo polacas a norte: tiros, impactos de morteiro e das peças | 854–1237 m |
+| Obras de campo polacas a norte: tiros e impactos das peças | 854–1237 m |
+| Impactos de morteiro (nas duas linhas da frente norte) | 854–1504 m |
 | Peça anticarro de Koźliny | ~1,03 km |
 | Atacantes do norte | 1199–1504 m |
 | Quinta em chamas | 1,3 km |
@@ -62,13 +63,13 @@ A qualidade só muda a densidade de fumo (Baixa 0,55, Média 0,78, Alta 1, os va
 | TRAÇANTES | Faixa orientada pela trajectória, largura mínima de 2,6 px, queda balística ligeira, a cada 3–5 cartuchos por rajada. |
 | TROCAS | A resposta sai da linha alvejada, apontada à origem da rajada, com espingardas (sem traçante). Começa 0,45–1,55 s depois do que acontecer mais tarde: o fim da rajada ou a chegada das primeiras balas (teste). |
 | ARTILHARIA / MORTEIRO | Clarão no horizonte e impacto depois do tempo de voo (~420 m/s), com poeira e fumo. 18 % dos tiros não mostram impacto (tiro longo). Dos morteiros só se vê a chegada. |
-| COLUNAS | Até 3 (limite 4): quinta a norte (+140 s após o contacto), coluna larga a 3,1 km (+240 s), viatura atingida em Koźliny (fumo negro). Escala legível a 1,3–3 km, com topo visível conforme a escala: quinta ~110–210 m, coluna longínqua ~200–400 m, viatura ~80–165 m; dezenas de metros de largura. Crescem em 60 s e inclinam com o vento em altitude. O fumo distante tem perspectiva aérea própria: névoa 11 % a 1 km, 46 % a 3 km, no máximo 80 % a partir de 4,9 km. O fumo próximo, pelo contrário, dissolve-se no céu aos 2,7 km. |
+| COLUNAS | Até 3 (limite 4): quinta a norte (+140 s após o contacto), coluna larga a 3,1 km (+240 s), viatura atingida em Koźliny (fumo negro). Escala legível a 1,3–3 km. Topo acima do chão, conforme a escala (máximo da fórmula do renderer com a coluna já crescida): quinta até ~210 m, coluna longínqua (só fumo) até ~400 m, viatura até ~165 m; dezenas de metros de largura. Crescem em 60 s e inclinam com o vento em altitude. O fumo distante tem perspectiva aérea própria: névoa 11 % a 1 km, 46 % a 3 km, no máximo 80 % a partir de 4,9 km. O fumo próximo, pelo contrário, dissolve-se no céu aos 2,7 km. |
 | SILHUETAS / MOVIMENTO | Grupos de 3–6 homens a ≥1250 m da área jogável (fora do alcance de 1200 m do tiro do jogador). Lanços com pose de pé/agachado; os carregadores de um ferido mantêm o mesmo ritmo, a 1,2 m um do outro. Sem névoa de cena: pontos escuros em movimento. A 70° de FOV ocupam ≤ 1 px, ~1,4 px em ADS. Lêem-se como movimento, não como forma. |
-| AVIÕES | Elementos de 1–3 aviões, 650–1750 m de altitude, a ≥2 km da área jogável por construção. Só aparecem depois de `evt_m01_planes_heard` (+30 s). O pool cabe todos os elementos sobrepostos, por isso nenhum avião aparece a meio do voo. |
+| AVIÕES | Elementos de 1–3 aviões, 650–1750 m de altitude, a ≥2 km da área jogável por construção (argumento no comentário do plano; o teste verifica cada avião a cada segundo durante duas horas). Só aparecem depois de `evt_m01_planes_heard` (+30 s). O pool cabe todos os elementos sobrepostos, por isso nenhum avião aparece a meio do voo. |
 | RITMO | Baldes de 0,25 s com chegadas tipo Poisson. Envelope de ruído com oitavas de 97 / 23,7 / 6,3 s (incomensuráveis). Níveis por fase: depois da demolição leste a actividade cai para 12 % durante 9 s, segue-se um surto e depois fogo esporádico; abranda depois da demolição oeste. |
-| SEGURANÇA | Planície de Lisewo e silhuetas a ≥1250 m: além do raio de 1200 m do tiro do jogador, para não competir com os atiradores autoritativos do dique S2 junto às pontes nem com o aviso «Salva do dique». A frente norte (tiros, impactos, trajectórias, peça anticarro, colunas) fica dentro de S4, a ≥800 m. Garantido pelas caixas dos sectores e verificado além desta rota (testes): <ul><li>todos os eventos de um em cada três baldes, durante duas horas, com todos os sectores activos;</li><li>figuras, viaturas, peça e colunas a cada 4 s, durante duas horas, nas duas fases da planície;</li><li>aviões a cada segundo.</li></ul> |
+| SEGURANÇA | Planície de Lisewo e silhuetas a ≥1250 m: além do raio de 1200 m do tiro do jogador, para não competir com os atiradores autoritativos do dique S2 junto às pontes nem com o aviso «Salva do dique». A frente norte (tiros, impactos, trajectórias, peça anticarro, colunas) fica a ≥800 m, o limite inferior de S4; as peças (2,5–3,6 km) e a coluna longínqua (3,1 km) ficam além de S4, no horizonte. Garantido pelas caixas dos sectores e verificado (testes): <ul><li>geometria exacta: a caixa que abrange as duas caixas de cada linha (atiradores, alvos, respostas, impactos e trajectórias) fica à distância mínima do sector;</li><li>todos os eventos de um em cada três baldes, durante duas horas, com todos os sectores activos;</li><li>figuras, viaturas, peça e colunas a cada 4 s, durante duas horas, nas duas fases da planície;</li><li>aviões a cada segundo.</li></ul> |
 | ORDEM DE DESENHO | Os transparentes distantes desenham antes dos próximos (`renderOrder` −3/−2/−1), por isso fumo e poeira próximos cobrem-nos. Silhuetas opacas na ordem normal (o céu é desenhado primeiro, sem escrita de profundidade). |
-| LIMITES | 96 eventos, 72 clarões, 48 traçantes, 224 puffs, 64 figuras, 21 aviões, 4 colunas. Pools de GPU fixos. Em JS, o plano cria por frame objectos pequenos (eventos/tiros), limitados pelo número de eventos activos. Nenhum pool satura (teste com contagens pedidas): <ul><li>a rota inteira em Alta a cada 0,25 s;</li><li>todas as frentes ao mesmo tempo durante uma hora, onde os puffs chegam a ~186.</li></ul> Aviões: o limite por construção (baldes sobrepostos × maior elemento ≤ 21) também é testado. |
+| LIMITES | 96 eventos, 72 clarões, 48 traçantes, 224 puffs, 64 figuras, 21 aviões, 4 colunas. Pools de GPU fixos. Em JS, o plano cria por frame objectos pequenos (eventos/tiros), limitados pelo número de eventos activos. Nenhum pool satura (teste com contagens pedidas): <ul><li>a rota inteira em Alta a cada 0,25 s;</li><li>todas as frentes ao mesmo tempo durante uma hora.</li></ul> Os picos pedidos ficam no log do teste: a rota chega a 145 puffs e todas as frentes a 183 (amostras a cada 0,5 s; 186 a cada 0,1 s). Aviões: o limite (baldes sobrepostos × maior elemento ≤ 21) é verificado com o voo mais longo e o maior elemento observados em duas horas (amostragem); as constantes do plano dão ≤117 s e ≤3 aviões, ou seja 7 × 3. |
 | CUSTO JS | Rejeição barata antes do envelope e cache dos eventos por balde (por assinatura de marcos, memória limitada), com o mesmo resultado (testado). Sobre os 20 976 ticks da rota, cada chamada do plano fica em 67–70 µs, contra 197–209 µs na primeira versão (Node relativo, não é FPS; [`logs/plan-cost.mjs`](logs/plan-cost.mjs), [`EVIDENCE.md`](EVIDENCE.md)). |
 | LOCAIS / HISTÓRIA | `GAMEPLAY_DRAMATIZATION` dos sectores de `MAP.md` §3 (S2 Lisewo, S4 perímetro norte, S5 céu). A hora 05:50 do contacto norte é dramatização do roteiro. O topónimo Koźliny e o tipo de viatura estão PARCIAIS em `SOURCE_CHECK.md`. Nenhuma unidade, número de aviões, calibre ou baixa é afirmado como histórico. |
 
@@ -110,12 +111,16 @@ Ver [`EVIDENCE.md`](EVIDENCE.md) e a revisão independente em [`REVIEW.md`](REVI
   - as faixas longas x −1100…−700 (y −3,75), x 270…1060 (y −5,05) e x 1300…2800 (y −1,05).
 
   Para x −700…25 e x 1060…1300 fora da malha, e para x < −1100, não há chão: vê-se a cor do céu/névoa. As posições da margem oeste de Lisewo ficam nessa zona e são desenhadas 1 m acima de `heightAt` (−3). Do olho do jogador é uma faixa de poucos píxeis no horizonte; em probes junto à borda é uma banda clara. A correcção pertence ao mundo/ambiente (faixas baixas de chão), não a esta camada.
-- **Linha de vista.** A planície de Lisewo é baixa (y −5). Do bolso da cabeça de ponte oeste, entre o aterro ferroviário e o rodoviário, fica tapada a nordeste e a sudeste: nas capturas, 0 píxeis visíveis contra 34–54 px no xray. Vê-se:
+- **Linha de vista.** A planície de Lisewo é baixa (y −5). Do bolso da cabeça de ponte oeste, entre o aterro ferroviário e o rodoviário, o aterro ferroviário tapa-a a norte e nordeste: nas capturas, 0 píxeis visíveis contra 34–54 px no xray (eye-02/03/09). Vê-se, nas capturas:
   - da ponte rodoviária (eye-15, posição genuína da rota);
-  - de pontos a norte do aterro ferroviário (probe-13);
-  - da margem leste.
+  - de pontos a norte do aterro ferroviário (probe-13).
 
-  A frente norte vê-se do olho do jogador (eye-06/07/14).
+  A frente norte vê-se do olho do jogador sobre o aterro rodoviário (eye-06/07/14: chão a −0,35 m, ~12 m a leste e a sul do bolso).
+
+  Sem captura, só inferência geométrica sobre o campo de alturas do gameplay (`traceTerrain`, que ignora edifícios):
+  - do bolso, o aterro rodoviário tapa a linha sul de Lisewo a 5–8 m;
+  - do bolso, a frente norte também fica tapada pelo aterro ferroviário (a 22–31 m). Só passam por cima as partes altas das colunas: acima de ~60–80 m a 1,4–1,6 km e de ~180 m a 3,2 km;
+  - da margem leste vê-se a linha sul a partir da planície; a linha norte só se vê do tabuleiro da via férrea.
 - Clarões a 1–2 km de dia têm pouco contraste contra céu encoberto claro, mesmo com o tamanho mínimo. Os traçantes são traços de poucos píxeis (um ponto quando voam quase na linha de vista). As silhuetas são pontos de ≤ 1–1,4 px.
 - O episódio de Koźliny é consumido junto da chamada final; numa rota normal vê-se pouco.
 - Sem acoplamento de áudio (acima). Sem playtest humano, sem medição em Chromebook, sem números de FPS.

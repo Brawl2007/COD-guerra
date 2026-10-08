@@ -1,0 +1,9 @@
+# Kernel log (dmesg -T, container clock UTC), only the OOM kill lines; cgroup paths left out. 2026-10-08.
+[Thu Oct  8 10:23:14 2026] Memory cgroup out of memory: Killed process 24321 (node) total-vm:14304484kB, anon-rss:13315792kB, file-rss:2592kB, shmem-rss:0kB,
+[Thu Oct  8 10:24:43 2026] Memory cgroup out of memory: Killed process 24551 (node) total-vm:13710296kB, anon-rss:12727196kB, file-rss:2552kB, shmem-rss:0kB,
+[Thu Oct  8 10:26:30 2026] Memory cgroup out of memory: Killed process 24657 (node) total-vm:14161276kB, anon-rss:13172508kB, file-rss:2436kB, shmem-rss:0kB,
+[Thu Oct  8 10:26:30 2026] Memory cgroup out of memory: Killed process 24979 (chrome) total-vm:1459667776kB, anon-rss:56684kB, file-rss:32740kB, shmem-rss:0kB,
+[Thu Oct  8 10:28:52 2026] Memory cgroup out of memory: Killed process 25059 (node) total-vm:14199540kB, anon-rss:13228056kB, file-rss:2656kB, shmem-rss:0kB,
+[Thu Oct  8 10:30:21 2026] Memory cgroup out of memory: Killed process 25360 (node) total-vm:13893640kB, anon-rss:12910332kB, file-rss:2672kB, shmem-rss:0kB,
+[Thu Oct  8 10:33:34 2026] Memory cgroup out of memory: Killed process 25968 (node) total-vm:13906776kB, anon-rss:12880736kB, file-rss:2608kB, shmem-rss:0kB,
+[Thu Oct  8 10:34:33 2026] Memory cgroup out of memory: Killed process 26076 (node) total-vm:13870320kB, anon-rss:12851676kB, file-rss:2256kB, shmem-rss:0kB,
