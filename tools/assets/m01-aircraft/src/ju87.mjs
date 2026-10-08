@@ -53,7 +53,7 @@ export const FUSE = table([   // z, centro y, largura, altura
   [3.6, 0.22, 0.62, 0.90], [4.8, 0.30, 0.44, 0.66], [5.8, 0.36, 0.28, 0.46], [6.5, 0.40, 0.10, 0.24]]);
 const fuseTop = z => { const [cy, , h] = FUSE(z); return cy + h / 2; };
 const fuseBottom = z => { const [cy, , h] = FUSE(z); return cy - h / 2; };
-const HALF_SPAN = 6.9, CRANK_X = 1.95, MG17_X = 2.6, PITOT_X = 5.7;
+const HALF_SPAN = 6.9, CRANK_X = 1.95, MG17_X = 2.6, PITOT_X = 5.7, ANTENNA_Z = 0.3, ANTENNA_FIN_Y = 1.5;
 /** Capota: [z, largura, altura acima do topo da fuselagem]; aros nas cotas CANOPY_FRAMES. */
 const CANOPY = [[-2.02, 0.6, 0.04], [-1.88, 0.72, 0.40], [-1.5, 0.76, 0.52], [0.4, 0.76, 0.52], [1.0, 0.72, 0.47], [1.35, 0.6, 0.3], [1.48, 0.38, 0.06]], CANOPY_E = 0.62;
 const CANOPY_FRAMES = [-1.86, -1.62, -1.2, -0.72, -0.28, 0.12, 0.48, 0.86, 1.22];
@@ -104,7 +104,7 @@ export const MEASURES = [
   { id: 'dive_brakes', value_m: [1.70, 0.24], source: 'proporção', estimated: true, note: 'grelhas sob as asas exteriores, rodam 90° na dobradiça dianteira' },
   { id: 'mg17', value_m: 2.6, source: 'conhecimento geral (sem fonte lida)', estimated: true, note: 'duas MG 17 nas asas, por fora do trem; posição x = ±2,6 m estimada' },
   { id: 'pitot', value_m: -5.7, source: 'vistas genéricas', estimated: true, note: 'tubo de Pitot sob o bordo de ataque da asa esquerda; posição estimada' },
-  { id: 'antenna', value_m: [1.42, 5.2], source: 'vistas genéricas', estimated: true, note: 'mastro curto atrás da capota e fio até à deriva; disposição estimada' },
+  { id: 'antenna', value_m: [0.3, 5.55], source: 'vistas genéricas', estimated: true, note: 'mastro curto na espinha da secção fixa central da capota (z = 0,3) e fio até ao bordo de ataque da deriva (y = 1,5); disposição estimada' },
   { id: 'canopy_frames', value_m: [-1.86, 1.22], source: 'proporção', estimated: true, note: 'nove aros e três calhas; número e posição estimados' },
   { id: 'sc250', value_m: [1.64, 0.368], source: 'conhecimento geral (sem fonte lida)', estimated: true, note: 'bomba SC 250 no garfo ventral; carga do raid de Tczew não documentada' },
 ];
@@ -156,9 +156,10 @@ export function buildJu87() {
     gun.forEach((p, i) => parts.push(tag(p, `mg17_r${i}`, 'exhaust'), tag(mirrored(p, `mg17_l${i}`), `mg17_l${i}`, 'exhaust'))); }
   { const w = wingAt(PITOT_X), c = [-PITOT_X, w.y - 0.03, w.le + 0.05];
     parts.push(tag(rod(c, v3.add(c, [0, 0, -0.42]), 0.011, 6), 'pitot', 'exhaust'), tag(rod(v3.add(c, [0, 0.03, 0.05]), v3.add(c, [0, 0, -0.05]), 0.02, 6), 'pitot_mast', 'exhaust')); }
-  // Antena: mastro curto atrás da capota e fio até ao topo da deriva.
-  { const base = [0, fuseTop(1.42) + 0.28, 1.42], top = v3.add(base, [0, 0.22, 0.12]);
-    parts.push(tag(rod(base, top, 0.014, 6), 'antenna_mast', 'frame'), tag(rod(top, [0, 1.55, 5.2], 0.006, 4), 'antenna_wire', 'exhaust')); }
+  // Antena: mastro curto assente na espinha da secção fixa central da capota e fio, por cima do atirador e da MG 15,
+  // até ao bordo de ataque da deriva (entra 2 cm na deriva).
+  { const base = canopyPoint(ANTENNA_Z, Math.PI / 2, 1.03, 0.012), top = v3.add(base, [0, 0.2, 0.06]), fin = [0, ANTENNA_FIN_Y, finAt(ANTENNA_FIN_Y)[1] + 0.02];
+    parts.push(tag(rod(v3.add(base, [0, -0.02, 0]), top, 0.014, 6), 'antenna_mast', 'frame'), tag(rod(top, fin, 0.006, 4), 'antenna_wire', 'exhaust')); }
   // Trem fixo carenado ("calças"), rodas e sirenes (Jericho-Trompete) à frente das carenagens.
   const spat = [[-0.8, -0.55, 0.30, 1.10], [-1.1, -0.62, 0.24, 0.80], [-1.5, -0.70, 0.22, 0.62], [-1.85, -0.78, 0.30, 0.95], [-2.2, -0.82, 0.34, 1.20], [-2.45, -0.84, 0.30, 1.05], [-2.58, -0.84, 0.14, 0.55]];
   const spatR = orientOutward(loft(spat.map(([y, cz, w, d]) => Array.from({ length: 20 }, (_, i) => { const a = i / 20 * Math.PI * 2, c = Math.cos(a), s = Math.sin(a); return [CRANK_X + Math.sign(c) * Math.abs(c) ** 0.8 * w / 2, y, cz + Math.sign(s) * Math.abs(s) ** 0.8 * d / 2 * (s > 0 ? 1.15 : 0.85)]; })), { caps: 'both' }), q => [CRANK_X, q[1], -0.75]);

@@ -69,6 +69,8 @@ test('the genuine first raid displays three Ju 87 GLBs with light LODs and freez
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
   const {errors,failed}=await open(page);await start(page,'#continue');
   await page.waitForFunction(()=>window.gameDiagnostics().m01.aircraft.loaded.length===3);
+  // The restored snapshot is the instant the planes are heard: wait for the presentation fade-in to finish.
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.aircraft.planes.every(p=>p.fade===1));
   const before=await page.evaluate(()=>window.gameDiagnostics()),planes=before.m01.aircraft.planes;
   expect(planes).toHaveLength(3);expect(planes.every(p=>p.visible&&p.lod===2&&p.propeller.every(Number.isFinite))).toBe(true);
   const target=planes[0].position,dx=target[0]-before.player.x,dz=target[2]-before.player.z;

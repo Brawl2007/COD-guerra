@@ -146,12 +146,12 @@
     {
       "id": "antenna",
       "value_m": [
-        1.42,
-        5.2
+        0.3,
+        5.55
       ],
       "source": "vistas genéricas",
       "estimated": true,
-      "note": "mastro curto atrás da capota e fio até à deriva; disposição estimada"
+      "note": "mastro curto na espinha da secção fixa central da capota (z = 0,3) e fio até ao bordo de ataque da deriva (y = 1,5); disposição estimada"
     },
     {
       "id": "canopy_frames",
@@ -458,7 +458,7 @@
     "m01_ju87_b1_lod0.glb": {
       "lod": "lod0",
       "use": "perto (< 150 m), capturas, mergulho sobre o jogador",
-      "bytes": 921712,
+      "bytes": 922488,
       "triangles": 14710,
       "draw_calls": 7,
       "materials": [
@@ -506,8 +506,8 @@
     "m01_ju87_b1_lod1.glb": {
       "lod": "lod1",
       "use": "médio (150–600 m)",
-      "bytes": 359364,
-      "triangles": 5356,
+      "bytes": 359356,
+      "triangles": 5357,
       "draw_calls": 7,
       "materials": [
         "ju87_b1",
@@ -517,7 +517,7 @@
       "meshes": [
         {
           "name": "fuselage",
-          "triangles": 4250
+          "triangles": 4251
         },
         {
           "name": "canopy",
@@ -554,7 +554,7 @@
     "m01_ju87_b1_lod2.glb": {
       "lod": "lod2",
       "use": "longe (> 600 m); Chromebook",
-      "bytes": 136348,
+      "bytes": 136460,
       "triangles": 1929,
       "draw_calls": 7,
       "materials": [

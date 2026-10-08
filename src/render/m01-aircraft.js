@@ -18,6 +18,9 @@ const variantOf=i=>JU87_VARIANTS[i%JU87_VARIANTS.length];
 export function ju87Attitude(time,i){
   return {pitch:.018*Math.sin(time*.47+i*1.7),bank:-.07*Math.cos(time*.02+i)+.03*Math.sin(time*.61+i*2.3)};
 }
+/** Saved mission-clock time of the event that makes the first raid visible (read-only; undefined before it). */
+export const JU87_HEARD_EVENT='evt_m01_planes_heard';
+export function ju87HeardAt(sim){return sim?.consumed?.[JU87_HEARD_EVENT];}
 /** Dithered visibility: fade in after the planes are heard and across the 90 s wrap of the existing path. */
 export function ju87Fade(time,heardAt){
   const cycle=((time%JU87_LOOP)+JU87_LOOP)%JU87_LOOP,wrap=Math.min(smooth(cycle/FADE_S),smooth((JU87_LOOP-cycle)/FADE_S));

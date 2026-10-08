@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import {M01View} from '../src/render/m01-view.js';
+import {ju87HeardAt,ju87Fade} from '../src/render/m01-aircraft.js';
+import {driver} from './helpers/m01-route.js';
 
 function fixture(fail=()=>false){
   const view=Object.create(M01View.prototype),sources=new Map();
@@ -92,7 +94,8 @@ test('Ju 87 fade hides the 90 s path wrap and eases in after the planes are hear
   const {view}=namedFixture();await view.loadAircraft();
   const state={stukas:true,secondRaid:false},player={x:0,y:0,z:0};view.owner.quality='high';
   const shown=time=>view.planes[0].levels.find(l=>l.object.visible);
-  view.updateAircraft(state,180.0,player);assert.equal(view.planes[0].userData.fade,0);assert.equal(shown(),undefined,'hidden exactly at the wrap');
+  view.updateAircraft(state,180.0,player);assert.equal(view.planes[0].userData.fade,0);
+  assert.ok(shown()?.object.userData.materials.every(m=>m.opacity===0),'fully dissolved exactly at the wrap (level kept, not culled)');
   assert.equal(view.planes[0].visible,true,'raid state is unchanged; only the rendering fades');
   view.updateAircraft(state,181.25,player);const half=view.planes[0].userData.fade,glass=shown().object.getObjectByName('canopy').material;
   assert.ok(half>.3&&half<.7);assert.ok(Math.abs(glass.opacity-.3*half)<1e-9,'translucent parts fade from their own opacity');
@@ -111,4 +114,26 @@ test('Ju 87 LOD keeps 10 % hysteresis at thresholds while the quality floor alwa
   assert.deepEqual([160,145,140,130,160,170,640,670,560,520].map(lod),[1,1,1,0,0,1,1,2,2,1]);
   view.owner.quality='low';assert.equal(lod(10),2,'low quality never shows LOD0/1');
   view.owner.quality='medium';assert.equal(lod(10),1);
+});
+
+test('at fade 0 the selected level (GLB or fallback proxy) stays visible and reported; opacity does the hiding',async()=>{
+  const state={stukas:true,secondRaid:false},player={x:0,y:0,z:0},time=146;
+  const proxy=fixture(()=>true).view;await proxy.loadAircraft();proxy.updateAircraft(state,time,player,time);
+  assert.ok(proxy.planes.every(p=>p.userData.fade===0&&p.levels.filter(l=>l.object.visible).length===1&&p.levels[p.userData.level].object.userData.lod==='proxy'));
+  const {view}=namedFixture();await view.loadAircraft();view.owner.quality='low';view.updateAircraft(state,time,player,time);
+  for(const plane of view.planes){
+    const shown=plane.levels.filter(l=>l.object.visible);assert.equal(shown.length,1);assert.equal(shown[0].object.userData.lod,2);
+    assert.ok(shown[0].object.userData.materials.every(m=>m.opacity===0),'fully dissolved, not culled');
+  }
+  view.resetEffects?.call({planes:view.planes,fireBatches:{},battlefieldFxBatches:{},combatFeedback:{reset(){}},battlefieldShards:{},explosionLight:{}});
+  assert.ok(view.planes.every(p=>p.userData.level===null),'checkpoint restore forgets LOD hysteresis');
+});
+
+test('the entry fade reads the saved planes_heard time of the real simulation',()=>{
+  const d=driver();d.step({skip:true});d.until(()=>d.sim.renderState.stukas,200);
+  const heard=ju87HeardAt(d.sim);
+  assert.equal(typeof heard,'number');assert.ok(heard>0&&heard<=d.sim.clock);
+  assert.equal(ju87Fade(heard,heard),0);assert.equal(ju87Fade(heard+3,heard),1);
+  const restored=structuredClone(d.sim.snapshot());assert.equal(restored.consumed.evt_m01_planes_heard,heard,'saved with the checkpoint');
+  assert.equal(ju87HeardAt({consumed:{}}),undefined);assert.equal(ju87HeardAt(undefined),undefined);
 });
