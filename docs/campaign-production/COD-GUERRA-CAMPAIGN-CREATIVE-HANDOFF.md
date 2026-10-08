@@ -187,12 +187,18 @@ docs/campaign-production/
 
 ## 6. Estado final da entrega (Fase 10)
 
-*(preenchido no fecho da sessão — ver secção 6 abaixo após a produção dos dossiês)*
+Preenchido no fecho da sessão (2026-10-08). Tudo o que está abaixo foi executado; o que não foi, está marcado como tal.
 
 ### 6.1 Inventário entregue
 
-Ver `README.md` (índice) e `CAMPAIGN-CRITICAL-REVIEW.md` (notas por missão). Resumo: 9 documentos de campanha + 29 dossiês de missão.
+| Grupo | Ficheiros | Tamanho |
+| --- | --- | --- |
+| Documentos de campanha (`README.md`, este handoff, MASTER-STORY-BIBLE, HISTORICAL-TIMELINE, CHARACTER-CONTINUITY, GAMEPLAY-VARIETY-MATRIX, ATMOSPHERE-ART-DIRECTION, AUDIO-DIRECTION, TECHNICAL-ROADMAP, CRITICAL-REVIEW) | 10 | 196238 bytes |
+| Dossiês de missão `missions/M02…M30-*-PRODUCTION-DOSSIER.md` (12 secções cada, incluindo a Matriz Narrativa-Gameplay e a revisão 0–10) | 29 | 1017358 bytes |
 
+Notas por missão e médias: `CAMPAIGN-CRITICAL-REVIEW.md` §5 (média global 8,0; critério 15 "integração técnica" 5,9 por nada estar implementado). Cronologia e pendências: `CAMPAIGN-HISTORICAL-TIMELINE.md` §1/§6. Elenco adicional proposto em M20–M30 e reatribuições de falas: `CAMPAIGN-CHARACTER-CONTINUITY.md` §11.
+
+**Fases do brief → onde estão:** 1 (preservação) §1 deste documento; 2 (auditoria) §2; 3 (visão) MASTER-STORY-BIBLE; 4 (variedade) GAMEPLAY-VARIETY-MATRIX + ART + AUDIO; 5 (produção) os 29 dossiês; 6–8 (revisões) CRITICAL-REVIEW §2–§4; 9 (roadmap) TECHNICAL-ROADMAP; 10 (handoff) §6 deste documento + CRITICAL-REVIEW §7.
 ### 6.2 O que ficou intacto
 
 1. `main`, deploy, Pages, workflows, todas as branches/PRs de outros agentes (#2–#57).
@@ -202,7 +208,7 @@ Ver `README.md` (índice) e `CAMPAIGN-CRITICAL-REVIEW.md` (notas por missão). R
 
 ### 6.3 Validação executada
 
-Registada em `CAMPAIGN-CRITICAL-REVIEW.md` §7 (comandos, resultados, o que não foi executado).
+Registada em `CAMPAIGN-CRITICAL-REVIEW.md` §7. Resumo: `npm test` 108/108 (16,7 s); `npm run build` ✓ 1,43 s (aviso pré-existente de chunk > 500 kB); **não executados**: `npm run test:browser`, playtest humano, medição de FPS, leitura integral de H01–H30 (WebFetch bloqueado; 28 verificações por WebSearch em TIMELINE §5). Nenhum ficheiro fora de `docs/campaign-production/` foi alterado.
 
 ### 6.4 Instruções para os agentes seguintes
 
