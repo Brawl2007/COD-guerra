@@ -18,6 +18,7 @@ import { M01Panzerzug } from './m01-panzerzug.js';
 import {soldierVisualVariant} from './m01-soldier-variation.js';
 import { M01CombatFeedback } from './m01-combat-feedback.js';
 import {M01BridgePortalPolish,bridgeMaterialSlot} from './m01-bridge-portal-polish.js';
+import {M01DamageDecals} from './m01-damage-decals.js';
 
 export const M01_BATTLEFIELD_FX_LIMITS=Object.freeze({bursts:16,flash:16,core:48,fire:96,smoke:128,dust:128,shards:96,lights:1});
 const FX_DENSITY={low:.55,medium:.78,high:1};
@@ -68,6 +69,7 @@ export class M01View {
     this.combatFeedback=new M01CombatFeedback();
     this.portalPolish=new M01BridgePortalPolish({stone:this.materials.bridgeStone});
     this.atmosphere=new M01Atmosphere(this.scene);
+    this.damageDecals=new M01DamageDecals(this.scene);
     this.createWeapon();this.createActors();this.createContactShadows();this.createFireEffects();this.createAircraft();this.createTrains();
     this.characters=new M01Characters(this.scene);this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture);
     this.ready=Promise.all([this.loadKit(),this.characters.load(this.owner.quality),this.loadAircraft(),
@@ -507,6 +509,8 @@ export class M01View {
     this.carryBody.position.y=this.carryCrate.position.y=bob*1.5;
     if(this.viewModel.update(sim,this.owner.quality,this.flashUntil)){this.weaponRoot.visible=false;this.carryBody.visible=false;}
     this.updateBattlefieldFx(state,time);
+    try{this.damageDecals.update({state,time,world:sim.world,trees:this.environment?.treeDescriptors,quality:this.owner.quality,camera:this.camera.position,renderer:this.engine,view:this.camera});}
+    catch(error){this.damageDecals.fail(error);}   // presentation only: never stops the frame
     this.engine.info.autoReset=false;this.engine.info.reset();this.engine.clear();this.engine.render(this.scene,this.camera);
     if(this.fx.muzzle>0){this.muzzlePresentation.frames++;this.muzzlePresentation.lastClock=time;this.muzzlePresentation.lastFrame=this.renderedFrames??0;}
     this.engine.clearDepth();this.engine.render(this.weaponScene,this.weaponCamera);this.engine.toneMappingExposure=1.15;
@@ -522,8 +526,22 @@ export class M01View {
   feedbackState(clock=this.lastClock){return this.combatFeedback.diagnostics(clock,this.owner.quality);}
   /** Layered visual-only blast. Scale is inferred later from the simulation-owned damage id. */
   explosion(point,clock,aerial){this.bursts.push({x:point.x,y:point.y??0,z:point.z,start:clock,aerial:Boolean(aerial),seed:fxSeed(point,clock)});if(this.bursts.length>M01_BATTLEFIELD_FX_LIMITS.bursts)this.bursts.shift();}
+  /** Authoritative round-impact / player-shot event → bounded surface mark; the player's own hit also gets the impact FX. */
+  surfaceDamage(event,sim){
+    const shooter=event.type==='round-impact'?sim.actor?.(event.by)??null:sim.player;
+    let result=null;
+    // Runs before Game's own handlers for this event: a decal failure is counted, never allowed to skip them.
+    try{result=this.damageDecals.impact(event,{world:sim.world,trees:this.environment?.treeDescriptors,player:sim.player,shooter,clock:sim.clock,quality:this.owner.quality});}
+    catch(error){this.damageDecals.fail(error);}
+    if(!result)return;
+    // The player's own shot had no impact FX: it gets the one matching the drawn surface (sparks off a rail the
+    // simulation calls 'earth'). German rounds keep Game's FX for the simulation material, plus that one if different.
+    if(event.type==='player-shot')this.impact(result.fxPoint,result.secondaryFx??event.material,sim.clock);
+    else if(result.secondaryFx)this.impact(result.fxPoint,result.secondaryFx,sim.clock);
+    this.lastFrame=null;
+  }
   resetEffects(){
-    this.lastFrame=null;this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.impacts=[];this.bursts=[];this.combatFeedback.reset();
+    this.lastFrame=null;this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.impacts=[];this.bursts=[];this.combatFeedback.reset();this.damageDecals.reset();
     for(const b of Object.values(this.fireBatches))b.count=0;for(const b of Object.values(this.battlefieldFxBatches))b.count=0;
     this.battlefieldShards.count=0;this.explosionLight.visible=false;this.explosionLight.intensity=0;
     this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};
@@ -535,12 +553,13 @@ export class M01View {
     aircraft:{loaded:[...this.aircraftSources.keys()].sort(),planes:this.planes.map(p=>{const model=p.levels.find(l=>l.object.visible)?.object,prop=model?.getObjectByName('propeller');return {visible:p.visible,lod:model?.userData.lod,position:p.position.toArray(),propeller:prop?.quaternion.toArray()};})},
     renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+(b.visible===false?0:b.count),0)??0,
     environmentProps:this.environment?.propDiagnostics,bridgePortalPolish:this.portalPolish?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
+    damageDecals:this.damageDecals.diagnostics,
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},
     combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),
     battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
     this.disposed=true;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}this.viewModel?.dispose();this.characters?.dispose();
-    this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
+    this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.damageDecals.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
     const textures=new Set();for(const m of Object.values(this.materials)){if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
     this.scene.traverse(n=>{if(n.isInstancedMesh)n.dispose();});this.scene.clear();this.weaponScene.clear();
   }

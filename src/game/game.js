@@ -163,6 +163,7 @@ export class Game {
   }
   handleM01Event(event){
     const now=this.sim.clock*1000;
+    if(event.type==='round-impact'||event.type==='player-shot')this.renderer.m01.surfaceDamage(event,this.sim);   // presentation only
     if(event.type==='message')this.say(event.message,2600);
     if(event.type==='reload')this.audio.wz29Mechanism(this.sim.weapon.reloadMode);
     if(event.type==='player-shot'){
