@@ -1,0 +1,3 @@
+{"ticks":20976,"lastClock":1048.8}
+{"label":"8c4367b","runs":[{"usPerCall":197.1,"events":117609},{"usPerCall":207.6,"events":117609},{"usPerCall":209.1,"events":117609}]}
+{"label":"current","runs":[{"usPerCall":69.8,"events":118060},{"usPerCall":67,"events":118060},{"usPerCall":69.3,"events":118060}]}

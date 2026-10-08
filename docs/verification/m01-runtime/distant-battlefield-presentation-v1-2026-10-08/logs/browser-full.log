@@ -1,0 +1,359 @@
+
+Running 63 tests using 1 worker
+
+  ✘   1 tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work (30.5s)
+  ✘   2 tests/browser/game.spec.js:68:1 › real keyboard movement reaches and stores checkpoint; restart and page reload restore it (2.1m)
+  ✓   3 tests/browser/game.spec.js:98:1 › corrupt checkpoint is explained and a new mission remains available (13.5s)
+  ✓   4 tests/browser/game.spec.js:106:1 › missing models are reported and procedural fallback keeps the area playable (16.1s)
+  ✘   5 tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops (48.7s)
+  ✓   6 tests/browser/m01-battlefield-fx.spec.js:23:1 › east demolition runs layered blast -> dust -> smoke, freezes on pause and cleans transient pools (1.5m)
+  ✘   7 tests/browser/m01-battlefield-fx.spec.js:72:1 › real in-flight round produces bounded material impact FX without altering the saved simulation path (44.5s)
+  ✓   8 tests/browser/m01-bridge-portal-polish.spec.js:38:1 › captures rail, road, oblique, bridge-context and post-demolition portal views (2.5m)
+M01_PORTAL_POLISH_COUNTERS {"low":{"drawCalls":155,"triangles":368091,"textures":27,"geometries":283,"quality":"low","attachments":["rail_portal_west","rail_portal_west","rail_portal_west","portal_lisewo_1912","road_portal_west","portal_lisewo_1912","portal_lisewo_1912","road_portal_west","road_portal_west"],"activeAttachments":["rail_portal_west","road_portal_west","portal_lisewo_1912"],"mediumDetails":42,"highDetails":48,"visibleDetails":0,"activeBatches":0,"totalBatches":27,"collidersAdded":0},"high":{"drawCalls":168,"triangles":387751,"textures":27,"geometries":290,"quality":"high","attachments":["rail_portal_west","rail_portal_west","rail_portal_west","road_portal_west","road_portal_west","portal_lisewo_1912","portal_lisewo_1912","portal_lisewo_1912","road_portal_west"],"activeAttachments":["rail_portal_west","road_portal_west","portal_lisewo_1912"],"mediumDetails":42,"highDetails":48,"visibleDetails":30,"activeBatches":9,"totalBatches":27,"collidersAdded":0}}
+  ✓   9 tests/browser/m01-bridge-portal-polish.spec.js:64:1 › Low keeps weathered portal material while High adds bounded microdetail (40.9s)
+  ✓  10 tests/browser/m01-combat-feedback.spec.js:51:1 › real enemy hit drives bounded directional M01 presentation and reset semantics (1.0m)
+  ✓  11 tests/browser/m01-combat-feedback.spec.js:87:1 › real crack and nearby impact register danger, accumulation caps and Low tier (1.0m)
+  ✓  12 tests/browser/m01-combat-feedback.spec.js:117:1 › real grenade detonation produces bounded nearby explosion feedback without moving the player (34.0s)
+  ✓  13 tests/browser/m01-distant-battlefield.spec.js:23:62 › distant battlefield (east, low): presentation + ambient layers render bounded, freeze on pause, leave gameplay untouched (49.5s)
+  ✓  14 tests/browser/m01-distant-battlefield.spec.js:23:62 › distant battlefield (north, high): presentation + ambient layers render bounded, freeze on pause, leave gameplay untouched (26.8s)
+  ✓  15 tests/browser/m01-environment-prop-density.spec.js:39:1 › captures contextual Station yard, railway, bridge and combat-area dressing (1.4m)
+M01_ENV_PROP_COUNTERS {"low":{"quality":"low","clusters":30,"totalAll":432,"visible":174,"byArea":{"station-yard":53,"railway-approach":48,"bridge-approach":40,"combat-area":33},"byCluster":{"station_south_01":6,"station_south_02":5,"station_south_03":5,"station_south_04":5,"station_south_05":6,"station_south_06":5,"station_south_07":5,"station_south_08":5,"station_north_01":6,"station_north_02":5,"rail_approach_01":6,"rail_approach_02":6,"rail_approach_03":6,"rail_approach_04":6,"rail_approach_05":6,"rail_approach_06":6,"rail_approach_07":6,"rail_approach_08":6,"bridge_rail_01":6,"bridge_rail_02":5,"bridge_mid_01":5,"bridge_mid_02":5,"bridge_mid_03":7,"bridge_road_01":5,"bridge_road_02":7,"combat_repair_01":7,"combat_road_01":7,"combat_road_02":7,"combat_road_03":5,"combat_portal_01":7},"batches":4,"totalBatches":11,"collidersAdded":0,"deterministicSeedDomain":"m01-environment-props","drawCalls":171,"triangles":370967,"textures":31,"geometries":294},"medium":{"quality":"medium","clusters":30,"totalAll":432,"visible":277,"byArea":{"station-yard":91,"railway-approach":80,"bridge-approach":61,"combat-area":45},"byCluster":{"station_south_01":10,"station_south_02":9,"station_south_03":8,"station_south_04":9,"station_south_05":10,"station_south_06":9,"station_south_07":8,"station_south_08":9,"station_north_01":10,"station_north_02":9,"rail_approach_01":10,"rail_approach_02":10,"rail_approach_03":10,"rail_approach_04":10,"rail_approach_05":10,"rail_approach_06":10,"rail_approach_07":10,"rail_approach_08":10,"bridge_rail_01":10,"bridge_rail_02":8,"bridge_mid_01":8,"bridge_mid_02":9,"bridge_mid_03":9,"bridge_road_01":8,"bridge_road_02":9,"combat_repair_01":9,"combat_road_01":9,"combat_road_02":9,"combat_road_03":9,"combat_portal_01":9},"batches":8,"totalBatches":11,"collidersAdded":0,"deterministicSeedDomain":"m01-environment-props","drawCalls":188,"triangles":390105,"textures":37,"geometries":304},"high":{"quality":"high","clusters":30,"totalAll":432,"visible":432,"byArea":{"station-yard":139,"railway-approach":128,"bridge-approach":96,"combat-area":69},"byCluster":{"station_south_01":16,"station_south_02":13,"station_south_03":13,"station_south_04":13,"station_south_05":16,"station_south_06":13,"station_south_07":13,"station_south_08":13,"station_north_01":16,"station_north_02":13,"rail_approach_01":16,"rail_approach_02":16,"rail_approach_03":16,"rail_approach_04":16,"rail_approach_05":16,"rail_approach_06":16,"rail_approach_07":16,"rail_approach_08":16,"bridge_rail_01":16,"bridge_rail_02":13,"bridge_mid_01":13,"bridge_mid_02":13,"bridge_mid_03":14,"bridge_road_01":13,"bridge_road_02":14,"combat_repair_01":14,"combat_road_01":14,"combat_road_02":14,"combat_road_03":13,"combat_portal_01":14},"batches":11,"totalBatches":11,"collidersAdded":0,"deterministicSeedDomain":"m01-environment-props","drawCalls":194,"triangles":403759,"textures":37,"geometries":305}}
+  ✓  16 tests/browser/m01-environment-prop-density.spec.js:59:1 › Low Medium High retain composition with bounded deterministic density (1.1m)
+  ✓  17 tests/browser/m01-environment-prop-density.spec.js:78:1 › checkpoint restart and page reload do not duplicate environment props (38.3s)
+  ✓  18 tests/browser/m01-environment-quality.spec.js:2:1 › explicit visual quality survives reload and the menu agrees with the renderer (23.4s)
+  ✓  19 tests/browser/m01-locomotive.spec.js:6:36 › locomotive 963 production GLBs load, far LOD, pause and restore (38.2s)
+  ✓  20 tests/browser/m01-locomotive.spec.js:6:36 › locomotive 963 production optional failure fallback (17.5s)
+  ✓  21 tests/browser/m01-mg34-prone.spec.js:24:28 › real MG34 prone save after shot 1: production continuation, real muzzle, pause and reload (40.3s)
+  ✓  22 tests/browser/m01-mg34-prone.spec.js:24:28 › real MG34 prone save after shot 4: production continuation, real muzzle, pause and reload (38.0s)
+  ✓  23 tests/browser/m01-mg34-prone.spec.js:24:28 › real MG34 prone save after shot 6: production continuation, real muzzle, pause and reload (36.8s)
+  ✓  24 tests/browser/m01-mg34-prone.spec.js:42:1 › missing optional prone GLB keeps real MG34 gameplay and procedural low posture (21.1s)
+  ✓  25 tests/browser/m01-panzerzug.spec.js:6:36 › Panzerzug production GLBs load, far LOD, pause and restore (39.5s)
+  ✓  26 tests/browser/m01-panzerzug.spec.js:6:36 › Panzerzug production optional failure fallback (20.0s)
+  ✓  27 tests/browser/m01-soldier-visual-variation.spec.js:9:1 › real character renderer: German/Polish faces, gear, roles, all LODs, pause and save/reload; matched BEFORE/AFTER (14.1s)
+  ✓  28 tests/browser/m01-soldier-visual-variation.spec.js:23:1 › production UI continuation and reload keep visual IDs stable with no gameplay fields added to schema 2 (32.0s)
+M01_VEGETATION_COUNTERS {"high":{"total":{"drawCalls":139,"triangles":403097,"textures":89,"geometries":261},"vegetation":{"treeCount":85,"solidTreeCount":17,"visualTreeCount":68,"lod":{"near":9,"mid":42,"far":34},"treeInstances":518,"treeDrawCalls":7,"treeTriangles":17812,"leafCards":18,"legacyLeafCardEstimate":1513,"alphaCardReductionApprox":0.9881031064111038,"grassInstances":5951,"materials":4,"textures":2,"tracked":{"m01_tree_0":"near","m01_tree_1":"mid","m01_tree_2":"near","m01_tree_3":"near","m01_tree_4":"near","m01_tree_5":"near","m01_tree_6":"near","m01_tree_7":"mid","m01_tree_8":"mid","m01_tree_9":"mid","m01_tree_10":"far","m01_tree_11":"near","m01_tree_12":"near","m01_tree_13":"near","m01_tree_14":"mid","m01_tree_15":"mid","m01_tree_16":"far"}}},"low":{"total":{"drawCalls":131,"triangles":354132,"textures":92,"geometries":283},"vegetation":{"treeCount":85,"solidTreeCount":17,"visualTreeCount":68,"lod":{"near":3,"mid":23,"far":59},"treeInstances":287,"treeDrawCalls":6,"treeTriangles":7564,"leafCards":0,"legacyLeafCardEstimate":1513,"alphaCardReductionApprox":1,"grassInstances":2975,"materials":4,"textures":2,"tracked":{"m01_tree_0":"mid","m01_tree_1":"mid","m01_tree_2":"mid","m01_tree_3":"near","m01_tree_4":"near","m01_tree_5":"near","m01_tree_6":"mid","m01_tree_7":"mid","m01_tree_8":"far","m01_tree_9":"far","m01_tree_10":"far","m01_tree_11":"mid","m01_tree_12":"mid","m01_tree_13":"mid","m01_tree_14":"mid","m01_tree_15":"far","m01_tree_16":"far"}}}}
+  ✓  29 tests/browser/m01-vegetation-lod.spec.js:43:1 › fixed rail camera shows volumetric grove in High and a cheaper intact silhouette in Low (20.8s)
+  ✓  30 tests/browser/m01-vegetation-lod.spec.js:68:1 › Medium keeps volumetric near and distant battlefield vegetation without changing gameplay state (29.6s)
+M01_WAGON_COUNTERS {"near":{"yard":{"loaded":["covered:burned:0","covered:burned:1","covered:burned:2","covered:intact:0","covered:intact:1","covered:intact:2","open:intact:0","open:intact:1","open:intact:2"],"pending":[],"wagons":[{"id":"yard_wagon_1","type":"covered","state":"intact","lod":0,"position":[-320,-0.13091553254588018,-6],"key":"covered:intact:0","cover":"cv_wagon_1","fire":false},{"id":"yard_wagon_2","type":"open","state":"intact","lod":0,"position":[-340,-3,8],"key":"open:intact:0","cover":"cv_wagon_2","fire":false},{"id":"yard_wagon_3","type":"covered","state":"intact","lod":0,"position":[-352,-3,8],"key":"covered:intact:0","cover":null,"fire":false}]},"train":{"wagons":65,"step":9.1,"lodDistribution":{"0":0,"1":0,"2":65},"loaded":["covered:0","covered:1","covered:2","open:0","open:1","open:2"],"proxies":0,"batches":8,"activeInstancesByLod":{"0":0,"1":0,"2":293},"visible":false,"first":[1090,0,-2.5],"last":[1672.4,0,-2.5]},"total":{"drawCalls":70,"triangles":380128,"textures":37,"geometries":233}},"mid":{"yard":{"loaded":["covered:burned:0","covered:burned:1","covered:burned:2","covered:intact:0","covered:intact:1","covered:intact:2","open:intact:0","open:intact:1","open:intact:2"],"pending":[],"wagons":[{"id":"yard_wagon_1","type":"covered","state":"intact","lod":1,"position":[-320,-0.13091553254588018,-6],"key":"covered:intact:1","cover":"cv_wagon_1","fire":false},{"id":"yard_wagon_2","type":"open","state":"intact","lod":1,"position":[-340,-3,8],"key":"open:intact:1","cover":"cv_wagon_2","fire":false},{"id":"yard_wagon_3","type":"covered","state":"intact","lod":1,"position":[-352,-3,8],"key":"covered:intact:1","cover":null,"fire":false}]}},"far":{"yard":{"loaded":["covered:burned:0","covered:burned:1","covered:burned:2","covered:intact:0","covered:intact:1","covered:intact:2","open:intact:0","open:intact:1","open:intact:2"],"pending":[],"wagons":[{"id":"yard_wagon_1","type":"covered","state":"intact","lod":2,"position":[-320,-0.13091553254588018,-6],"key":"covered:intact:2","cover":"cv_wagon_1","fire":false},{"id":"yard_wagon_2","type":"open","state":"intact","lod":2,"position":[-340,-3,8],"key":"open:intact:2","cover":"cv_wagon_2","fire":false},{"id":"yard_wagon_3","type":"covered","state":"intact","lod":2,"position":[-352,-3,8],"key":"covered:intact:2","cover":null,"fire":false}]}}}
+  ✓  31 tests/browser/m01-wagon-runtime-integration.spec.js:41:1 › yard wagon uses real LOD0/1/2 and authoritative burned state survives reload then obeys prior checkpoint (1.7m)
+  ✓  32 tests/browser/m01-wagon-runtime-integration.spec.js:66:1 › total wagon GLB failure keeps train and yard procedural fallbacks visible and semantic state burned (26.6s)
+  ✓  33 tests/browser/m01-wz29-viewmodel.spec.js:4:46 › Wz.29 production ADS, paused save reconstruction and actual sights on low (15.0s)
+  ✓  34 tests/browser/m01-wz29-viewmodel.spec.js:4:46 › Wz.29 production ADS, paused save reconstruction and actual sights on medium (16.4s)
+  ✓  35 tests/browser/m01-wz29-viewmodel.spec.js:4:46 › Wz.29 production ADS, paused save reconstruction and actual sights on high (17.1s)
+  ✓  36 tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A (1.7m)
+  ✓  37 tests/browser/m01.spec.js:66:1 › the genuine first raid displays three Ju 87 GLBs with light LODs and freezes the propellers on pause (21.0s)
+  ✓  38 tests/browser/m01.spec.js:89:1 › unavailable optional Ju 87 models retain all three raid silhouettes and the playable mission (19.6s)
+  ✘  39 tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset (3.1m)
+  ✓  40 tests/browser/m01.spec.js:155:1 › an optional character download failure preserves playable procedural actors without blocking bridge validation (20.4s)
+  ✓  41 tests/browser/m01.spec.js:163:1 › Kowal fires and changes the rkm magazine from actual combat state, preserving both poses in pause (41.2s)
+  ✓  42 tests/browser/m01.spec.js:192:1 › missing close-up LOD0 falls back to intact LOD1 hands while the light world actors remain available (20.0s)
+  ✓  43 tests/browser/m01.spec.js:200:1 › the station clip alone cannot enable a viewmodel when the required weapon animations fail to download (17.1s)
+  ✓  44 tests/browser/m01.spec.js:208:1 › the station evacuation restores its grounded drag, pauses with the mission and delivers the casualty (58.0s)
+  ✓  45 tests/browser/m01.spec.js:239:39 › the real station grab restores synchronized clips, pauses and keeps both roots fixed (17.8s)
+  ✓  46 tests/browser/m01.spec.js:239:39 › the real station release restores synchronized clips, pauses and keeps both roots fixed (17.9s)
+  ✓  47 tests/browser/m01.spec.js:278:1 › a missing optional station transition GLB keeps the grounded fallback and completes evacuation (26.1s)
+  ✓  48 tests/browser/m01.spec.js:292:1 › real keyboard movement traverses the approaches and E delivers the message at the rail bridge (2.8m)
+  ✘  49 tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look (29.9s)
+  ✘  50 tests/browser/m01.spec.js:318:33 › adjustment salvo behind the truss restores its actual origin and follows mouse look (40.4s)
+  ✘  51 tests/browser/m01.spec.js:337:1 › demolition inside the road truss shows the actual bearing while mouse look remains free (35.6s)
+  ✓  52 tests/browser/m01.spec.js:363:1 › a genuine CP-D reload keeps east destruction and casualties, including restart and page reload (54.7s)
+  ✓  53 tests/browser/m01.spec.js:376:1 › the actual outro state can be skipped through the UI into the enabled historical debrief (20.2s)
+  ✘  54 tests/browser/m01.spec.js:386:1 › German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state (38.2s)
+  ✓  55 tests/browser/m01.spec.js:408:1 › the genuine train 963 and both MG34 fire sources use optional GLBs, light instances and reproducible pause/restart (25.9s)
+  ✓  56 tests/browser/m01.spec.js:440:1 › schema-2 continuation keeps the older CP-A on the real Restart checkpoint button (15.2s)
+  ✓  57 tests/browser/m01.spec.js:458:1 › missing optional wagon models and MG34 clips preserve 65 proxies, both procedural supports and playable M01 (19.3s)
+  ✓  58 tests/browser/m01.spec.js:473:1 › the real roll-call snapshot renders seated actors and keeps their pose after page reload (46.9s)
+  ✓  59 tests/browser/m01.spec.js:485:1 › a real withdrawal continuation loses men only to rounds from the spans, keeps the twelve-survivor floor and shows the count in the HUD (53.7s)
+  ✓  60 tests/browser/m01.spec.js:507:1 › a failed M01 bridge load prevents an invisible bridge; the French sandbox remains selectable (12.0s)
+  ✓  61 tests/browser/m01.spec.js:516:1 › textured atmosphere survives checkpoint restart without duplicating resources; low quality reduces vegetation (45.6s)
+  ✓  62 tests/browser/m01.spec.js:542:1 › ckm west crew and weapon use actual saved abandon time, pause and fresh reload (57.2s)
+  ✓  63 tests/browser/m01.spec.js:561:1 › optional ckm kit failure retains the crew fallback and checkpoint restoration (19.2s)
+
+
+  1) tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('#mag')
+    Expected: [32m"15"[39m
+    Received: [31m"—"[39m
+    Timeout:  12000ms
+
+    Call log:
+    [2m  - Expect "toHaveText" with timeout 12000ms[22m
+    [2m  - waiting for locator('#mag')[22m
+    [2m    16 × locator resolved to <b id="mag">—</b>[22m
+    [2m       - unexpected value "—"[22m
+
+
+      57 |   await page.locator('#resume').click();
+      58 |   await page.waitForFunction(()=>document.pointerLockElement?.id==='game');
+    > 59 |   await expect(page.locator('#mag')).toHaveText('15',{timeout:12000});
+         |                                      ^
+      60 |   await expect(page.locator('#reserve')).toHaveText('59');
+      61 |   const resumedPlayer=await page.evaluate(()=>window.gameDiagnostics().player);
+      62 |   expect(resumedPlayer.angle).toBeCloseTo(pausedPlayer.angle,4);
+        at /home/user/COD-guerra-distant/tests/browser/game.spec.js:59:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/game-production-prefix-loa-a150d-oting-reload-and-pause-work/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/browser/game.spec.js:68:1 › real keyboard movement reaches and stores checkpoint; restart and page reload restore it 
+
+    TimeoutError: page.waitForFunction: Timeout 120000ms exceeded.
+
+      72 |   // Initial facing is east. Strafe south along the open western road to checkpoint.
+      73 |   await page.keyboard.down('KeyD');
+    > 74 |   await page.waitForFunction(()=>window.gameDiagnostics().player.y>=600,null,{timeout:process.env.CI?120000:20000});
+         |              ^
+      75 |   await page.keyboard.up('KeyD');
+      76 |   await page.keyboard.down('KeyW');
+      77 |   await page.waitForFunction(()=>window.gameDiagnostics().missionPhase===1,null,{timeout:process.env.CI?30000:10000});
+        at /home/user/COD-guerra-distant/tests/browser/game.spec.js:74:14
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/game-real-keyboard-movemen-11676--and-page-reload-restore-it/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/game-real-keyboard-movemen-11676--and-page-reload-restore-it/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops 
+
+    TimeoutError: page.waitForFunction: Timeout 20000ms exceeded.
+
+      44 |
+      45 |   // Real MG34 event: the fixture is the immediately preceding authoritative simulation snapshot.
+    > 46 |   await page.waitForFunction(()=>((window.gameDiagnostics().audio.eventCounts.mg34??0)>0),null,{timeout:20000});
+         |              ^
+      47 |   const afterMG=await page.evaluate(()=>window.gameDiagnostics());
+      48 |   expect(count(afterMG,'mg34')).toBeGreaterThan(0);
+      49 |
+        at /home/user/COD-guerra-distant/tests/browser/m01-audio-production.spec.js:46:14
+
+    Error Context: <results>/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) tests/browser/m01-battlefield-fx.spec.js:72:1 › real in-flight round produces bounded material impact FX without altering the saved simulation path 
+
+    TimeoutError: page.waitForFunction: Timeout 20000ms exceeded.
+
+      74 |   const {errors,failed}=await openFrom(page,preImpact,'high');
+      75 |   const before=await page.evaluate(()=>window.gameDiagnostics());
+    > 76 |   await page.waitForFunction(()=>{const f=window.gameDiagnostics().m01.fireEffects;return f.puff>0||f.spark>0||f.chip>0;},null,{timeout:20000});
+         |              ^
+      77 |   const impact=await page.evaluate(()=>window.gameDiagnostics());
+      78 |   expect(impact.m01.fireEffects.puff).toBeLessThanOrEqual(144);
+      79 |   expect(impact.m01.fireEffects.spark).toBeLessThanOrEqual(96);
+        at /home/user/COD-guerra-distant/tests/browser/m01-battlefield-fx.spec.js:76:14
+
+    Error Context: <results>/m01-battlefield-fx-real-in-1c1f5-g-the-saved-simulation-path/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/m01-battlefield-fx-real-in-1c1f5-g-the-saved-simulation-path/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/m01-battlefield-fx-real-in-1c1f5-g-the-saved-simulation-path/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset 
+
+    [31mTest timeout of 180000ms exceeded.[39m
+
+    Error: page.waitForFunction: Test timeout of 180000ms exceeded.
+
+      112 |     const view=await page.evaluate(()=>window.gameDiagnostics().player);
+      113 |     await page.evaluate(({angle,pitch})=>window.dispatchEvent(new MouseEvent('mousemove',{movementX:-angle/.0022,movementY:pitch/.0022})),view);
+    > 114 |     await page.waitForFunction(()=>Math.abs(window.gameDiagnostics().player.pitch)<.03);
+          |                ^
+      115 |   }
+      116 |   async function capture(name){
+      117 |     await page.evaluate(()=>document.exitPointerLock());
+        at horizontal (/home/user/COD-guerra-distant/tests/browser/m01.spec.js:114:16)
+        at /home/user/COD-guerra-distant/tests/browser/m01.spec.js:138:87
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('#objective-status')
+    Expected substring: [32m"atrás de si"[39m
+    Received string:    [31m"Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura"[39m
+    Timeout: 5000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 5000ms[22m
+    [2m  - waiting for locator('#objective-status')[22m
+    [2m    5 × locator resolved to <span id="objective-status">Metralhadora nos portões de Lisewo · 1081 m, em f…</span>[22m
+    [2m      - unexpected value "Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura"[22m
+
+
+      330 |     document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
+      331 |   },Math.atan2(Math.sin(aim+Math.PI-before.player.angle),Math.cos(aim+Math.PI-before.player.angle))/.0022);
+    > 332 |   await expect(page.locator('#objective-status')).toContainText('atrás de si');
+          |                                                   ^
+      333 |   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+      334 |   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
+      335 |   expect(errors).toEqual([]);expect(failed).toEqual([]);
+        at /home/user/COD-guerra-distant/tests/browser/m01.spec.js:332:51
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    <results>/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: <results>/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/m01-adjustment-salvo-at-th-0b383-igin-and-follows-mouse-look/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) tests/browser/m01.spec.js:318:33 › adjustment salvo behind the truss restores its actual origin and follows mouse look 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('#objective-status')
+    Expected substring: [32m"atrás de si"[39m
+    Received string:    [31m"Salva do dique norte · 1064 m, em frente · mude de cobertura"[39m
+    Timeout: 5000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 5000ms[22m
+    [2m  - waiting for locator('#objective-status')[22m
+    [2m    6 × locator resolved to <span id="objective-status">Salva do dique norte · 1064 m, em frente · mude d…</span>[22m
+    [2m      - unexpected value "Salva do dique norte · 1064 m, em frente · mude de cobertura"[22m
+
+
+      330 |     document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
+      331 |   },Math.atan2(Math.sin(aim+Math.PI-before.player.angle),Math.cos(aim+Math.PI-before.player.angle))/.0022);
+    > 332 |   await expect(page.locator('#objective-status')).toContainText('atrás de si');
+          |                                                   ^
+      333 |   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+      334 |   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
+      335 |   expect(errors).toEqual([]);expect(failed).toEqual([]);
+        at /home/user/COD-guerra-distant/tests/browser/m01.spec.js:332:51
+
+    Error Context: <results>/m01-adjustment-salvo-behin-454be-igin-and-follows-mouse-look/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/m01-adjustment-salvo-behin-454be-igin-and-follows-mouse-look/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/m01-adjustment-salvo-behin-454be-igin-and-follows-mouse-look/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8) tests/browser/m01.spec.js:337:1 › demolition inside the road truss shows the actual bearing while mouse look remains free 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('#objective-status')
+    Expected substring: [32m"atrás de si"[39m
+    Received string:    [31m"Demolição leste · 771 m, em frente · recue para o posto de disparo"[39m
+    Timeout: 5000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 5000ms[22m
+    [2m  - waiting for locator('#objective-status')[22m
+    [2m    5 × locator resolved to <span id="objective-status">Demolição leste · 771 m, em frente · recue para o…</span>[22m
+    [2m      - unexpected value "Demolição leste · 771 m, em frente · recue para o posto de disparo"[22m
+
+
+      349 |   },Math.atan2(Math.sin(angle),Math.cos(angle))/.0022);
+      350 |   await turn(aim+Math.PI-initial.player.angle);
+    > 351 |   await expect(page.locator('#objective-status')).toContainText('atrás de si');
+          |                                                   ^
+      352 |   const away=await page.evaluate(()=>window.gameDiagnostics());
+      353 |   await turn(aim-away.player.angle);
+      354 |   await expect(page.locator('#objective-status')).toContainText('em frente');
+        at /home/user/COD-guerra-distant/tests/browser/m01.spec.js:351:51
+
+    Error Context: <results>/m01-demolition-inside-the--ecd5c-ile-mouse-look-remains-free/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/m01-demolition-inside-the--ecd5c-ile-mouse-look-remains-free/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/m01-demolition-inside-the--ecd5c-ile-mouse-look-remains-free/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  9) tests/browser/m01.spec.js:386:1 › German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      397 |   }
+      398 |   expect(samples.some(s=>s.fx.muzzle>0)).toBe(true);expect(samples.some(s=>s.fx.puff>0)).toBe(true);
+    > 399 |   expect(samples.some(s=>s.pinned)&&samples.some(s=>!s.pinned)).toBe(true);
+          |                                                                 ^
+      400 |   // Os sapadores deitados aparecem na pose de quem está sob fogo, e o trabalho retoma depois.
+      401 |   expect(samples.some(s=>s.pinned&&s.poses>0)).toBe(true);expect(samples.at(-1).progress).toBeGreaterThan(samples[0].progress);
+      402 |   expect(samples.some(s=>s.animations.aiming>0)).toBe(true);
+        at /home/user/COD-guerra-distant/tests/browser/m01.spec.js:399:65
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    <results>/m01-German-fire-on-the-rep-7588e-ine-is-the-simulation-state/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: <results>/m01-German-fire-on-the-rep-7588e-ine-is-the-simulation-state/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/m01-German-fire-on-the-rep-7588e-ine-is-the-simulation-state/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/m01-German-fire-on-the-rep-7588e-ine-is-the-simulation-state/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  9 failed
+    tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work 
+    tests/browser/game.spec.js:68:1 › real keyboard movement reaches and stores checkpoint; restart and page reload restore it 
+    tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops 
+    tests/browser/m01-battlefield-fx.spec.js:72:1 › real in-flight round produces bounded material impact FX without altering the saved simulation path 
+    tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset 
+    tests/browser/m01.spec.js:318:33 › adjustment salvo at the gates restores its actual origin and follows mouse look 
+    tests/browser/m01.spec.js:318:33 › adjustment salvo behind the truss restores its actual origin and follows mouse look 
+    tests/browser/m01.spec.js:337:1 › demolition inside the road truss shows the actual bearing while mouse look remains free 
+    tests/browser/m01.spec.js:386:1 › German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state 
+  54 passed (47.7m)
+exit 1

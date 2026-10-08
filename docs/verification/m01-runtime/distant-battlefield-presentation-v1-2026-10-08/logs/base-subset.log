@@ -1,0 +1,40 @@
+
+Running 3 tests using 1 worker
+
+  ✓  1 tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work (26.7s)
+  ✓  2 tests/browser/m01.spec.js:38:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A (1.7m)
+  ✘  3 tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset (57.3s)
+
+
+  1) tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset 
+
+    TimeoutError: page.waitForFunction: Timeout 30000ms exceeded.
+
+      129 |     // consumed by Input without repositioning the locked cursor, then wait on authoritative weapon state.
+      130 |     await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});
+    > 131 |     await page.waitForFunction(expected=>window.gameDiagnostics().m01.weapon.mag===expected,expectedMag,{timeout:process.env.CI?30000:10000});
+          |                ^
+      132 |     await expect(page.locator('#mag')).toHaveText(String(expectedMag));
+      133 |   };
+      134 |   for(let i=0;i<5;i++){
+        at fireRound (<base-worktree>/tests/browser/m01.spec.js:131:16)
+        at <base-worktree>/tests/browser/m01.spec.js:136:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset 
+  2 passed (3.2m)
+exit 1

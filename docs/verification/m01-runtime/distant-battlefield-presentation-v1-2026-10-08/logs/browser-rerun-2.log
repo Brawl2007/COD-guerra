@@ -1,0 +1,126 @@
+== 5c5eed1
+
+Running 2 tests using 1 worker
+
+  ✘  1 tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops (46.0s)
+  ✘  2 tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset (58.9s)
+
+
+  1) tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops 
+
+    TimeoutError: page.waitForFunction: Timeout 20000ms exceeded.
+
+      44 |
+      45 |   // Real MG34 event: the fixture is the immediately preceding authoritative simulation snapshot.
+    > 46 |   await page.waitForFunction(()=>((window.gameDiagnostics().audio.eventCounts.mg34??0)>0),null,{timeout:20000});
+         |              ^
+      47 |   const afterMG=await page.evaluate(()=>window.gameDiagnostics());
+      48 |   expect(count(afterMG,'mg34')).toBeGreaterThan(0);
+      49 |
+        at /home/user/COD-guerra-distant/tests/browser/m01-audio-production.spec.js:46:14
+
+    Error Context: <results>/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset 
+
+    TimeoutError: page.waitForFunction: Timeout 30000ms exceeded.
+
+      129 |     // consumed by Input without repositioning the locked cursor, then wait on authoritative weapon state.
+      130 |     await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});
+    > 131 |     await page.waitForFunction(expected=>window.gameDiagnostics().m01.weapon.mag===expected,expectedMag,{timeout:process.env.CI?30000:10000});
+          |                ^
+      132 |     await expect(page.locator('#mag')).toHaveText(String(expectedMag));
+      133 |   };
+      134 |   for(let i=0;i<5;i++){
+        at fireRound (/home/user/COD-guerra-distant/tests/browser/m01.spec.js:131:16)
+        at /home/user/COD-guerra-distant/tests/browser/m01.spec.js:136:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops 
+    tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset 
+exit 1
+== 99309d9
+
+Running 2 tests using 1 worker
+
+  ✘  1 tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops (46.5s)
+  ✘  2 tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset (59.1s)
+
+
+  1) tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops 
+
+    TimeoutError: page.waitForFunction: Timeout 20000ms exceeded.
+
+      44 |
+      45 |   // Real MG34 event: the fixture is the immediately preceding authoritative simulation snapshot.
+    > 46 |   await page.waitForFunction(()=>((window.gameDiagnostics().audio.eventCounts.mg34??0)>0),null,{timeout:20000});
+         |              ^
+      47 |   const afterMG=await page.evaluate(()=>window.gameDiagnostics());
+      48 |   expect(count(afterMG,'mg34')).toBeGreaterThan(0);
+      49 |
+        at <scratch>/base/tests/browser/m01-audio-production.spec.js:46:14
+
+    Error Context: <results>/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset 
+
+    TimeoutError: page.waitForFunction: Timeout 30000ms exceeded.
+
+      129 |     // consumed by Input without repositioning the locked cursor, then wait on authoritative weapon state.
+      130 |     await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});
+    > 131 |     await page.waitForFunction(expected=>window.gameDiagnostics().m01.weapon.mag===expected,expectedMag,{timeout:process.env.CI?30000:10000});
+          |                ^
+      132 |     await expect(page.locator('#mag')).toHaveText(String(expectedMag));
+      133 |   };
+      134 |   for(let i=0;i<5;i++){
+        at fireRound (<scratch>/base/tests/browser/m01.spec.js:131:16)
+        at <scratch>/base/tests/browser/m01.spec.js:136:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/trace.zip
+    Usage:
+
+        npx playwright show-trace <results>/m01-licensed-character-rig-737ea-se-and-use-the-light-preset/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops 
+    tests/browser/m01.spec.js:99:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset 
+exit 1

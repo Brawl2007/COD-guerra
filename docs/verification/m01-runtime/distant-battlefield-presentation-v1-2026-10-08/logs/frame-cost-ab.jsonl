@@ -1,0 +1,4 @@
+{"label":"base","fixture":"north","quality":"low","wall":20.01,"framesPerWallSecond":0.8,"simSecondsPerWallSecond":0.189}
+{"label":"candidate-5c5eed1","fixture":"north","quality":"low","wall":20.01,"framesPerWallSecond":0.75,"simSecondsPerWallSecond":0.177}
+{"label":"base","fixture":"north","quality":"low","wall":20.01,"framesPerWallSecond":0.85,"simSecondsPerWallSecond":0.201}
+{"label":"candidate-5c5eed1","fixture":"north","quality":"low","wall":20.01,"framesPerWallSecond":0.85,"simSecondsPerWallSecond":0.201}

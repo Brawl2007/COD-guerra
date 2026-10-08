@@ -1,17 +1,17 @@
-# Files changed vs base 99309d9 (runtime commit 24d2ed7)
- src/render/m01-distant-battlefield-plan.js              | 276 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- src/render/m01-distant-battlefield.js                   | 229 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- src/render/m01-view.js                                  |   7 +++
- tests/browser/m01-distant-battlefield.spec.js           |  40 ++++++++++++++
- tests/m01-distant-battlefield.test.js                   | 211 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- tools/verification/m01-distant-battlefield-capture.mjs  |  89 +++++++++++++++++++++++++++++++
- tools/verification/m01-distant-battlefield-fixture.html |  54 +++++++++++++++++++
+# Files changed vs base 99309d9 (runtime commit 6ffa820; 5c5eed1 adds one capture frame)
+ src/render/m01-distant-battlefield-plan.js              | 283 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/render/m01-distant-battlefield.js                   | 231 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/render/m01-view.js                                  |   7 ++++
+ tests/browser/m01-distant-battlefield.spec.js           |  41 ++++++++++++++++++++
+ tests/m01-distant-battlefield.test.js                   | 262 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/verification/m01-distant-battlefield-capture.mjs  | 100 ++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/verification/m01-distant-battlefield-fixture.html |  62 ++++++++++++++++++++++++++++++
  tools/verification/vite.capture.config.mjs              |   4 ++
- 8 files changed, 910 insertions(+)
+ 8 files changed, 990 insertions(+)
 
 # Gameplay, world, core, assets, research, missions, build and CI paths vs base (empty = unchanged)
 $ git diff --stat 99309d9 HEAD -- src/game src/world src/core src/assets src/main.js src/config.js research missions package.json package-lock.json playwright.config.js vite.config.js .github
 (no output)
 
-# Files shared with the battlefield FX capture-timing branch (origin/codex/m01-battlefield-fx-polish-v3 @ e08755b)
-src/render/m01-view.js (both branches change it; trial merge clean, see EVIDENCE.md)
+# Files also changed by codex/m01-battlefield-fx-polish-v3 (e08755b) vs base
+src/render/m01-view.js

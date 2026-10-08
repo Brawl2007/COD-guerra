@@ -156,7 +156,11 @@ Campo de batalha distante (apresentação): `gameDiagnostics().m01.distantBattle
 CHROME_EXECUTABLE=/caminho/chromium node tools/verification/m01-distant-battlefield-capture.mjs test-results/distant-battlefield
 ```
 
-Não é playtest nem medida de FPS. Provas em `docs/verification/m01-runtime/distant-battlefield-presentation-v1-2026-10-08/`.
+Não é playtest nem medida de FPS. O relatório tem, por frame, `changed`/`strong` (o que a camada acrescenta) e `xray` (o mesmo com o teste de profundidade da camada desligado). `changed` 0 com `xray` > 0 quer dizer que a camada está tapada pelo mundo, não que falta. Provas em `docs/verification/m01-runtime/distant-battlefield-presentation-v1-2026-10-08/`. Custo JS relativo do plano sobre todos os ticks da rota (Node, não FPS):
+
+```sh
+node docs/verification/m01-runtime/distant-battlefield-presentation-v1-2026-10-08/logs/plan-cost.mjs
+```
 
 ## Auditoria de continuação schema 2
 

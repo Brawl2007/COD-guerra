@@ -1,0 +1,18 @@
+== 5c5eed1
+
+Running 2 tests using 1 worker
+
+  ✓  1 tests/browser/game.spec.js:68:1 › real keyboard movement reaches and stores checkpoint; restart and page reload restore it (36.5s)
+  ✓  2 tests/browser/m01-battlefield-fx.spec.js:72:1 › real in-flight round produces bounded material impact FX without altering the saved simulation path (50.0s)
+
+  2 passed (1.7m)
+exit 0
+== 99309d9
+
+Running 2 tests using 1 worker
+
+  ✓  1 tests/browser/game.spec.js:68:1 › real keyboard movement reaches and stores checkpoint; restart and page reload restore it (38.1s)
+  ✓  2 tests/browser/m01-battlefield-fx.spec.js:72:1 › real in-flight round produces bounded material impact FX without altering the saved simulation path (47.9s)
+
+  2 passed (1.7m)
+exit 0

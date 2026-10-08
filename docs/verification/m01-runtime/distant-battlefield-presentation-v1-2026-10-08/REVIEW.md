@@ -31,5 +31,7 @@ Não alterado: a luz do dia continua derivada de `skyLight.intensity` (cálculo 
 
 Alterações depois da revisão, verificadas pelos mesmos testes e capturas:
 - Cache dos eventos por balde (`bdfbab7`), com resultado igual ao recálculo (teste novo).
-- Colunas de fumo à escala de 1,5–3 km (`24d2ed7`). Do olho do jogador, o contributo da camada no frame das colunas passou de 87 para 389 píxeis.
-- As capturas antes/depois da cache são idênticas (eventos, instâncias e diff da camada nos 12 frames).
+- Colunas de fumo à escala de 1,5–3 km (`24d2ed7`). Do olho do jogador, o contributo da camada no frame das colunas passou de 87 para 389 píxeis ([`logs/CAPTURE-report-bdfbab7.json`](logs/CAPTURE-report-bdfbab7.json), [`logs/CAPTURE-report-24d2ed7.json`](logs/CAPTURE-report-24d2ed7.json)).
+- As capturas antes/depois da cache são idênticas (eventos, instâncias e diff da camada nos 12 frames; relatórios em [`logs/CAPTURE-report-3e0d8e7.json`](logs/CAPTURE-report-3e0d8e7.json) e [`logs/CAPTURE-report-bdfbab7.json`](logs/CAPTURE-report-bdfbab7.json)).
+
+A verificação independente seguinte e a sua resolução estão em [`VERIFICATION.md`](VERIFICATION.md).
