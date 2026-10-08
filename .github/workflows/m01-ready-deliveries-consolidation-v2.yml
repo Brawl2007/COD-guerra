@@ -1,0 +1,67 @@
+name: M01 ready deliveries consolidation V2
+
+on:
+  push:
+    branches:
+      - codex/m01-ready-deliveries-consolidation-v2
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-ready-deliveries-consolidation-v2
+  cancel-in-progress: true
+
+jobs:
+  node-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: All Node tests (combined content)
+        run: npm test
+      - name: Production build (combined content)
+        run: npm run build
+
+  focused-browser:
+    needs: node-build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Combined production browser tests
+        run: >-
+          npx playwright test
+          tests/browser/m01-bridge-structural.spec.js
+          tests/browser/m01-vegetation-lod.spec.js
+          tests/browser/m01-hud-presentation.spec.js
+          tests/browser/m01-battlefield-audio-runtime.spec.js
+          tests/browser/m01-train-consist-polish.spec.js
+          tests/browser/m01-weapon-presentation.spec.js
+          tests/browser/m01.spec.js
+          --workers=1
+      - name: Browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-ready-deliveries-v2-browser
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
