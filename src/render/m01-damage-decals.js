@@ -262,25 +262,37 @@ function pierSurface(box,p,dir){
 }
 const TRUNK_MATRIX=new THREE.Matrix4(),TRUNK_INVERSE=new THREE.Matrix4(),TRUNK_NORMAL=new THREE.Matrix3();
 const TRUNK_Q=new THREE.Quaternion(),TRUNK_E=new THREE.Euler(),TRUNK_V=new THREE.Vector3(),TRUNK_S=new THREE.Vector3();
-/** The near-LOD trunk of M01Environment.appendTrunk: CylinderGeometry(.58,1,1,10) scaled (r,.68h,r), leaned and yawed. */
+/** World-space polygonal surface of the actual foliage trunk.
+ * New foliage uses the instanced LatheGeometry profile and t.trunk matrix.
+ * Keep the legacy scalar fallback for historical fixture compatibility. */
 function trunkSurface(t,p){
-  TRUNK_E.set(t.leanZ,t.yaw,-t.leanX);TRUNK_Q.setFromEuler(TRUNK_E);
-  TRUNK_MATRIX.compose(TRUNK_V.set(t.x+t.leanX*t.height*.15,t.y+t.height*.34,t.z+t.leanZ*t.height*.15),TRUNK_Q,TRUNK_S.set(t.radius,t.height*.68,t.radius));
+  const current=t.trunk?.length===16;
+  if(current){
+    TRUNK_MATRIX.fromArray(t.trunk);
+    TRUNK_MATRIX.decompose(TRUNK_V,TRUNK_Q,TRUNK_S);
+  }else{
+    TRUNK_E.set(t.leanZ,t.yaw,-t.leanX);TRUNK_Q.setFromEuler(TRUNK_E);
+    TRUNK_MATRIX.compose(TRUNK_V.set(t.x+t.leanX*t.height*.15,t.y+t.height*.34,t.z+t.leanZ*t.height*.15),
+      TRUNK_Q,TRUNK_S.set(t.radius,t.height*.68,t.radius));
+  }
   TRUNK_INVERSE.copy(TRUNK_MATRIX).invert();
   const local=new THREE.Vector3(p.x,p.y,p.z).applyMatrix4(TRUNK_INVERSE);
-  if(local.y<-.47||local.y>.42)return null;   // keep clear of the root flare and the crown
-  // Local units are trunk radii: keep room for the widest bark mark (≤5 cm of slide towards the facet centre).
-  const radius=lerp(1,.58,local.y+.5),keep=Math.min(radius*Math.sin(Math.PI/TRUNK_SEGMENTS)*.9,M01_SURFACE_PROFILES.bark.size[1]*.55/t.radius);
+  if(local.y<-.36||local.y>.40)return null; // exclude flared roots, caps and canopy
+  const profile=current?[[-.5,1.42],[-.47,1.12],[-.38,.92],[-.2,.80],[.12,.70],[.5,.60]]:[[-.5,1],[.5,.58]];
+  let i=0;while(i<profile.length-2&&local.y>profile[i+1][0])i++;
+  const [y0,r0]=profile[i],[y1,r1]=profile[i+1],u=Math.max(0,Math.min(1,(local.y-y0)/(y1-y0)));
+  const radius=r0+(r1-r0)*u, taper=(r0-r1)/(y1-y0);
+  const scaleR=Math.min(TRUNK_S.x,TRUNK_S.z);
+  const keep=Math.min(radius*Math.sin(Math.PI/TRUNK_SEGMENTS)*.9,M01_SURFACE_PROFILES.bark.size[1]*.55/Math.max(.01,scaleR));
   const s=polygonSurface(v3(0,0,0),radius,TRUNK_SEGMENTS,{x:local.x,y:local.y,z:local.z},keep);
   const world=new THREE.Vector3(s.point.x,local.y,s.point.z).applyMatrix4(TRUNK_MATRIX);
   if(world.distanceTo(TRUNK_V.set(p.x,p.y,p.z))>.35)return null;
   TRUNK_NORMAL.getNormalMatrix(TRUNK_MATRIX);
-  const n=new THREE.Vector3(s.normal.x,.42,s.normal.z).applyMatrix3(TRUNK_NORMAL).normalize();   // cone side: radius falls .42 per unit height
+  const n=new THREE.Vector3(s.normal.x,taper,s.normal.z).applyMatrix3(TRUNK_NORMAL).normalize();
   const axis=new THREE.Vector3(0,1,0).applyQuaternion(TRUNK_Q);
   return {kind:'bark',point:v3(world.x,world.y,world.z),normal:v3(n.x,n.y,n.z),up:v3(axis.x,axis.y,axis.z),
-    halfU:s.halfU*t.radius,vRange:null,receiver:{type:'tree',id:t.id}};
+    halfU:s.halfU*scaleR,vRange:null,receiver:{type:'tree',id:t.id}};
 }
-
 /**
  * Where a mark can sit for an authoritative impact point: a drawn surface, its kind and frame, or null.
  * `dir` is the incoming direction (unit), `trees` the M01Environment tree descriptors. Pure: no state is written.

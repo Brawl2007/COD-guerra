@@ -16,7 +16,15 @@ import {M01DamageDecals,M01_DAMAGE_DECAL_LIMITS as LIMITS,M01_SURFACE_PROFILES,M
 const SEED=19390901;
 const source=path=>readFileSync(new URL(path,import.meta.url),'utf8');
 const deepFreeze=o=>{if(o&&typeof o==='object'&&!Object.isFrozen(o)){Object.freeze(o);for(const v of Object.values(o))deepFreeze(v);}return o;};
-const solidTrees=world=>world.trees.map((t,i)=>M01Environment.prototype.makeTreeDescriptor.call(null,{...t,solid:true,species:solidTreeSpecies(t),edge:0},i));
+const solidTrees=world=>{
+  // Use the integrated foliage's real matrix/colour builder, not the old scalar-only tree fixture.
+  const maker=Object.assign(Object.create(M01Environment.prototype),{
+    treeColor:new THREE.Color(),treeDummy:new THREE.Object3D(),
+    treeStart:new THREE.Vector3(),treeEnd:new THREE.Vector3(),
+    treeDirection:new THREE.Vector3(),treeUp:new THREE.Vector3(0,1,0)
+  });
+  return world.trees.map((t,i)=>({...maker.makeTreeDescriptor({...t,solid:true,species:solidTreeSpecies(t),edge:0},i),lod:'near'}));
+};
 const markData=m=>({sequence:m.sequence,key:m.key,kind:m.kind,cell:m.cell,flip:m.flip,position:m.position,normal:m.normal,axisU:m.axisU,axisV:m.axisV,
   sizeU:m.sizeU,sizeV:m.sizeV,start:m.start,life:m.life,tint:m.tint});
 const residueData=d=>{const g=d.residueGeometry;return ['position','normal','uv','color','residueStart'].map(k=>Array.from(g.attributes[k]?.array??[]));};
