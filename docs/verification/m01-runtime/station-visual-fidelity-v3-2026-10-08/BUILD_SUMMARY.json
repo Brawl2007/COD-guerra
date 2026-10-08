@@ -1,0 +1,9 @@
+{
+  "pass": true,
+  "productionSourceSha256": "cef1db17ec1e893f53c412a922b9c7a7e246c90111cfc9ef8cce4810752e6890",
+  "bundle": "dist/assets/index-lZa90zEl.js",
+  "bundleBytes": 1214498,
+  "bundleSha256": "e3337c612af04547a50085c72c7bb35df61a106b6820ed8db7597a5a5eb4252b",
+  "buildLog": "logs/build.log.gz",
+  "warning": "Pre-existing chunk >500 kB warning"
+}

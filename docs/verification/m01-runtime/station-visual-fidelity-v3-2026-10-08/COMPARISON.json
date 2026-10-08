@@ -1,0 +1,598 @@
+{
+  "pass": true,
+  "pairs": 34,
+  "images": 68,
+  "qualityPairs": {
+    "high": 14,
+    "medium": 6,
+    "low": 14
+  },
+  "sourceAfterSha256": "cef1db17ec1e893f53c412a922b9c7a7e246c90111cfc9ef8cce4810752e6890",
+  "fixtureHash": "1900278bb0b35d0a9b27cfaa8115766eb9c61442cd0c24ebbd352b34ab22286e",
+  "sameFrozenStateAllPairs": true,
+  "browserErrors": 0,
+  "requestFailures": 0,
+  "archivedBeforePairs": 22,
+  "newBeforePairs": 12,
+  "note": "String arrays of asynchronous asset-load IDs sorted for comparison; all numeric/structural values and state hashes exact. Global environment instance counter absent in 29 AFTER captures; Station own counter recorded in all.",
+  "checks": [
+    {
+      "name": "frontal",
+      "quality": "high",
+      "stateHash": "22b1cbcc7c4ff77ab4d0de2f66d2c359a6930c4bf2468a4e6e9df9a120f9e245",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "bb9e045937ad41c61eed7a1b74b60d8e4530a96d651dac5d87877f4899942d0a",
+      "afterImageSha256": "f83ab0d239fafdd76f84276f97be38af4b8622e1ce7095855e9138e538d262ee"
+    },
+    {
+      "name": "oblique",
+      "quality": "high",
+      "stateHash": "8e6d9eddbfbb7c8828a9f4ced547e3ea60e94fdf2e4236228ad7312b71945f4b",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "22e55617ca02af5c48e8dd5fde35fb5a45d8a063107c8e3ae9a328ec53f3ae7c",
+      "afterImageSha256": "ab1f63a52cb8990e2665d1bcd41aa39cfc57e6d5ef8d29e0a022c0ea6f97fc76"
+    },
+    {
+      "name": "roof",
+      "quality": "high",
+      "stateHash": "45a8e2db0168ab5cdc2ec25f37a1548f470f994b9e25cd162ae3417e51b96414",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "fa61c031e79b41c316f6f1661dda2df92468f33e5042474146d8c045560e645c",
+      "afterImageSha256": "9861a0cc73955abd2051f432799fc27b57ef59a5c3b4018d2bffba3673e96a91"
+    },
+    {
+      "name": "annexes",
+      "quality": "high",
+      "stateHash": "d568acc022c28fb5096c03d488607ec6245f77467170e0c38e42444f5df316d9",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "fcbfeb833e5440a117985e8cd54050167a2c0e2a1742ab509055f84f848247be",
+      "afterImageSha256": "ba60066f74a77bd6f67a5a1e2b47b6cb61fe901b638eb33a26841d1c8f8e2893"
+    },
+    {
+      "name": "yard",
+      "quality": "high",
+      "stateHash": "374843e7abb6a4e5a69dae2b5d6812b6a07db8908adce6779472730553acca62",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "822bcea64e65dc07a953aeb3cf23e9ff2ad6ba1770d00172b8da281196b4a734",
+      "afterImageSha256": "334800f19537504efb18dcc1b61de6378a1c5a2e3da53a327543ad01d60c76c4"
+    },
+    {
+      "name": "platform",
+      "quality": "high",
+      "stateHash": "9f01c825b85f2b53a87889df9dd1a0225389b1b0148d58146d6ea1bc6a94e477",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "26257d5961b664fa5c2d0ff805cc285f800de2fb4da45e5ddef4fc6644563dea",
+      "afterImageSha256": "230ce1112347176a01cf5dc8c91e7dc70b89677adde6763404ff4ec2eb40c17e"
+    },
+    {
+      "name": "window-door",
+      "quality": "high",
+      "stateHash": "ecefe0de805e40999cd46110870389b2cba3c0f2b5c6e55ff47015b64dd76c5e",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "86cf3ae17ff47d7f56e1f83d615b10161c4d88a463708c57c21c5c8099454690",
+      "afterImageSha256": "81eab08807743a2669296944d1e33af89b8fe1836996583f91072de2a864cb30"
+    },
+    {
+      "name": "window-upper",
+      "quality": "high",
+      "stateHash": "9a84e059d7db3397f358c4089a1f9458187f5106d1e1edc55e1ad1aaac859ef3",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "9d8289b8807f55b6fa3eaa1c9e310ebbe72ba7cbe3f1106a0e00b2f3a7a6fbdc",
+      "afterImageSha256": "593572f5eeff641bb574bcfefe53953737c817b97d5f5daadc896bed1c29c8d7"
+    },
+    {
+      "name": "roll-call",
+      "quality": "high",
+      "stateHash": "99bfbefb59971b8b4ed6db4387bf464373febac20728b035bd1ecf2f2bbfd15e",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "c9bba40a195e7e55ea6058c323fbeeee2dbf06512f25c8a0f7ad8465398bfd07",
+      "afterImageSha256": "badf9431d789b5e4881e0ea4689a32bd80620e71e8e62128822af201d88a3941"
+    },
+    {
+      "name": "evacuation",
+      "quality": "high",
+      "stateHash": "948d25321364b784b049dbedc46fe50e5fce0acf5581ead144ec840a4ad4ff75",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "4dff13c5615a910220831dcabfe61c3997221cf3e2b254876b26d23a926f2093",
+      "afterImageSha256": "1755d8ef5c177884881905d9bfef5238252762af2af78bee10c4a36d52e602eb"
+    },
+    {
+      "name": "frontal",
+      "quality": "low",
+      "stateHash": "22b1cbcc7c4ff77ab4d0de2f66d2c359a6930c4bf2468a4e6e9df9a120f9e245",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "471d16e5b46a943e880935f01965f6b1d956a455a61a429b519c60dbd0e645f1",
+      "afterImageSha256": "1621d79999b2fbc13034f279062697e152723563bfa4f8ece27fe1956b32c368"
+    },
+    {
+      "name": "oblique",
+      "quality": "low",
+      "stateHash": "8e6d9eddbfbb7c8828a9f4ced547e3ea60e94fdf2e4236228ad7312b71945f4b",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "4b71d3b418ac67ec3ab1de395dff2bcd3262c67bb2fbba81eb12b6531f76ffd8",
+      "afterImageSha256": "326e796885c7709f0b5e73f0ed60681666cc6776c4e42189667934991456d5a6"
+    },
+    {
+      "name": "roof",
+      "quality": "low",
+      "stateHash": "45a8e2db0168ab5cdc2ec25f37a1548f470f994b9e25cd162ae3417e51b96414",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "ead2009e1a3527b589ddfe7c46a6c41f8169dbfc734212d6355f75db5751c1f2",
+      "afterImageSha256": "051ec2843624c74021bf35683c390cfc6321a083d71775d367b22cd73e582f3d"
+    },
+    {
+      "name": "annexes",
+      "quality": "low",
+      "stateHash": "d568acc022c28fb5096c03d488607ec6245f77467170e0c38e42444f5df316d9",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "77635016502e3c9e9cfaa20b490ab23ceda07b078cea5105ce1d1cada33673bb",
+      "afterImageSha256": "4b43582b09c2368c286a5dadd27ac68024dfbea4b8c52fec05468058a58c43c9"
+    },
+    {
+      "name": "yard",
+      "quality": "low",
+      "stateHash": "374843e7abb6a4e5a69dae2b5d6812b6a07db8908adce6779472730553acca62",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "af90221f44fbdd5cb56017d52449821f056657a6d08894181f72c70bc660a9e8",
+      "afterImageSha256": "7b192d6097c3e86421e692fc167e71c77b0d98cc9befc9ddda72758fd289a46e"
+    },
+    {
+      "name": "platform",
+      "quality": "low",
+      "stateHash": "9f01c825b85f2b53a87889df9dd1a0225389b1b0148d58146d6ea1bc6a94e477",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "fbd4911c3d0d28e9814b88370253525c84a780e9a1901fedd0d3cdf6191796eb",
+      "afterImageSha256": "cbf2f5627d3aa7db2c9c06878d98a8abbddc137d0f9c5d1a2ea864e6a1393604"
+    },
+    {
+      "name": "window-door",
+      "quality": "low",
+      "stateHash": "ecefe0de805e40999cd46110870389b2cba3c0f2b5c6e55ff47015b64dd76c5e",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "7aa09268d32be2a2a77f46f911e0b5144f8d539859e0e9b0b534f4f30b49294c",
+      "afterImageSha256": "f24cab2c583d5150b82840c83369d8cac0342942d19a838b9fcd547a9c402c8e"
+    },
+    {
+      "name": "window-upper",
+      "quality": "low",
+      "stateHash": "9a84e059d7db3397f358c4089a1f9458187f5106d1e1edc55e1ad1aaac859ef3",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "a93d360aacb4b685586b2c37dcc90528a1837c875fcb74b7c7298f74b84c6902",
+      "afterImageSha256": "dfbcfb71f2d72e28be4b199846568b727a6c7d20704ec4217c2b1966ad564eaf"
+    },
+    {
+      "name": "roll-call",
+      "quality": "low",
+      "stateHash": "99bfbefb59971b8b4ed6db4387bf464373febac20728b035bd1ecf2f2bbfd15e",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "27d385bd9226f3263a292ab37178a3a5a369a0f74b9fc96f368d6582bce0ea5e",
+      "afterImageSha256": "4f278fc7acf7ac27150dacb30f2b24501cbf601356e4e98c6b98e70b69b1d63a"
+    },
+    {
+      "name": "evacuation",
+      "quality": "low",
+      "stateHash": "948d25321364b784b049dbedc46fe50e5fce0acf5581ead144ec840a4ad4ff75",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "1f4dbbedb3cbcd2af08cca8304eab8a6423e6965e27f73526b9b9646e5bcf4d3",
+      "afterImageSha256": "a214dcadf3370b3cb344df6bfcbd34cf3fa5042f0a7f2c136b3e3fd932c7c530"
+    },
+    {
+      "name": "frontal",
+      "quality": "medium",
+      "stateHash": "22b1cbcc7c4ff77ab4d0de2f66d2c359a6930c4bf2468a4e6e9df9a120f9e245",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "1a606d302cb46f06ffbf9ea2db9cb0c42d7b7ac31ba1efcde88396005578afaa",
+      "afterImageSha256": "c7d57534d86367e48cdc1c71bade10cb6b846bc75ca7dff9b5bbddefca515c84"
+    },
+    {
+      "name": "window-door",
+      "quality": "medium",
+      "stateHash": "ecefe0de805e40999cd46110870389b2cba3c0f2b5c6e55ff47015b64dd76c5e",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "ba7ef778a086325566a398121fa595db460789ee1fb831246397a45c95ea5bea",
+      "afterImageSha256": "d95c026f19b76f21a19abbe62e4562157c8dbc5cb732f6ca04d5998c5739f46a"
+    },
+    {
+      "name": "player-frontal",
+      "quality": "high",
+      "stateHash": "294e888340ee95278d2bf27f135c41fac5ef97d6643119603140af23f1a12186",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "b04c9bf9129c7201f9307d8a3fc922aa2950d0bd0c0986ad6b9182bbe3ac793d",
+      "afterImageSha256": "f04f6c2ee7cd7e2c371eeb7be1891b6566960b4b26c6e24be04e1c055ae9f23e"
+    },
+    {
+      "name": "player-oblique",
+      "quality": "high",
+      "stateHash": "d0f874439299c1dd6bf6f1fd0ea472e19cf7f373088627a03d4bb386372002b5",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "bc039224c35121e75cfa49f4dc0d18a072adb9e4380d495cb51835dfa2a93c07",
+      "afterImageSha256": "22ed94cc7db913bbcb77a80381051bb584a6ea644bf97b2aa8cb2ca5158a4c26"
+    },
+    {
+      "name": "roof-detail",
+      "quality": "high",
+      "stateHash": "5a22c7438bda16323b5e9a0c2b600182d9ef47b578e9c27be32bcb76ce4fb6bc",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "41ff0a119011c86d993786ff3bdaad08f462a838b8097a20676c2b0a08100b78",
+      "afterImageSha256": "f5791edd0bdf6dde12027b579c601126a91b43eab74431425a2443060033deb0"
+    },
+    {
+      "name": "player-oblique-later",
+      "quality": "high",
+      "stateHash": "6f8511fc4186d4571463623921f597eaa55b4248a2a220f92e816fd0e1d93e7f",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "6404249d6522bef9476e3626cdb5237a1ff33848918d816d23e584568b74ecfe",
+      "afterImageSha256": "eb5bbe8334c040913b1c30c38b6fbc155d0c2725daa3d6a50d1ae4dcf499488e"
+    },
+    {
+      "name": "player-frontal",
+      "quality": "low",
+      "stateHash": "294e888340ee95278d2bf27f135c41fac5ef97d6643119603140af23f1a12186",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "072f30b021b8b60cdf1a417ef8e65447183b13550a7f42d283c4d9dec3e1479f",
+      "afterImageSha256": "2657b0a4cb0be60eabe59e525db74f7e66b42916e50d5e6444ed2a2ec713e9b7"
+    },
+    {
+      "name": "player-oblique",
+      "quality": "low",
+      "stateHash": "d0f874439299c1dd6bf6f1fd0ea472e19cf7f373088627a03d4bb386372002b5",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "195dd0bd67b07a989c82d327c7c460eaff9ba83043253420372e93d52a219cab",
+      "afterImageSha256": "01bb4fec6513fd7ccb195922b2bc3d4c5c5795f72a850eec42e8c499e352452e"
+    },
+    {
+      "name": "roof-detail",
+      "quality": "low",
+      "stateHash": "5a22c7438bda16323b5e9a0c2b600182d9ef47b578e9c27be32bcb76ce4fb6bc",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "92b2edfd40b1f99fcfe409a401d942268ad60a202a256e8b1c4c313b300bd1af",
+      "afterImageSha256": "1287cfa2f7464e649b5fb8f96ed4ffcafb70d2f391797bd3da5b80a4f234f509"
+    },
+    {
+      "name": "player-oblique-later",
+      "quality": "low",
+      "stateHash": "6f8511fc4186d4571463623921f597eaa55b4248a2a220f92e816fd0e1d93e7f",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "d12555de9a35ff45fcf7657a564c00169c1d95425d0418a02c9fa4a921585de1",
+      "afterImageSha256": "07322b8fef8644e455dc2ad7870708a59e2c3df9f89f52264e7b129042981a7a"
+    },
+    {
+      "name": "oblique",
+      "quality": "medium",
+      "stateHash": "8e6d9eddbfbb7c8828a9f4ced547e3ea60e94fdf2e4236228ad7312b71945f4b",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "ed109de4197b3b88fe7173c8db71175f6f65081531055779947b10f5ce659445",
+      "afterImageSha256": "61be64ea303d838c8b1469765106ea7ba5ede90a9a5ec8568722aa74a3d88112"
+    },
+    {
+      "name": "platform",
+      "quality": "medium",
+      "stateHash": "9f01c825b85f2b53a87889df9dd1a0225389b1b0148d58146d6ea1bc6a94e477",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "ba96f1e6e0088f61d54efa2f6d5cdcd82f2f0f9fcaf40bbcf7a72c6a20040288",
+      "afterImageSha256": "2b1d466ec44822e01775682f4c2dc1684f0bb7bc50734797238b28690ff7c1e3"
+    },
+    {
+      "name": "player-frontal",
+      "quality": "medium",
+      "stateHash": "294e888340ee95278d2bf27f135c41fac5ef97d6643119603140af23f1a12186",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "c28c9e32bddb8f29aec582d2d52ad6f45ddd5395e97707323306077963d809f6",
+      "afterImageSha256": "e36f0dec601b1f3f55a812ffa3f430b01e1ccced43d16a587deab65a1ee70da3"
+    },
+    {
+      "name": "player-oblique",
+      "quality": "medium",
+      "stateHash": "d0f874439299c1dd6bf6f1fd0ea472e19cf7f373088627a03d4bb386372002b5",
+      "stateEqual": true,
+      "unaffectedDiagnosticsEqual": [
+        "environmentProps",
+        "stationEvacuation",
+        "wagons",
+        "models",
+        "bridgePortalPolish",
+        "locomotive",
+        "panzerzug"
+      ],
+      "beforeImageSha256": "2c514a0a5df82034c084f4b8e010b19028552899899d34008c6272be8682d302",
+      "afterImageSha256": "d8adccd21f8b571c466c9162959f1ddd4dbec23329131bedcf8398bc855271d2"
+    }
+  ]
+}

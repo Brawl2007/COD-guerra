@@ -1,0 +1,90 @@
+{
+  "selection": "Three focused cases; no complete browser suite",
+  "finalProductionSourceCommit": "2d608d8a1b52d319ff92ef0e9352733df91b59f7",
+  "productionSourceSha256": "cef1db17ec1e893f53c412a922b9c7a7e246c90111cfc9ef8cce4810752e6890",
+  "cases": [
+    {
+      "title": "missing optional soldier, aircraft and train GLBs preserve Station architecture and solid gameplay envelopes",
+      "status": "passed",
+      "durationMs": 20889,
+      "retry": 0,
+      "project": "",
+      "report": "logs/browser-final.json.gz"
+    },
+    {
+      "title": "the station evacuation restores its grounded drag, pauses with the mission and delivers the casualty",
+      "status": "passed",
+      "durationMs": 175150,
+      "retry": 0,
+      "project": "",
+      "report": "logs/browser-final.json.gz"
+    },
+    {
+      "title": "Station quality, checkpoint restart and page reload retain one architectural root and all prop clusters",
+      "status": "passed",
+      "durationMs": 143777,
+      "retry": 0,
+      "project": "",
+      "report": "logs/browser-final-quality.json.gz"
+    }
+  ],
+  "finalExecutionGroups": [
+    {
+      "report": "logs/browser-final.json.gz",
+      "stats": {
+        "startTime": "2026-10-08T08:16:48.921Z",
+        "duration": 395263.48699999996,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "title": "Station quality, checkpoint restart and page reload retain one architectural root and all prop clusters",
+          "status": "failed",
+          "durationMs": 135943,
+          "retry": 0,
+          "project": ""
+        },
+        {
+          "title": "missing optional soldier, aircraft and train GLBs preserve Station architecture and solid gameplay envelopes",
+          "status": "passed",
+          "durationMs": 20889,
+          "retry": 0,
+          "project": ""
+        },
+        {
+          "title": "the station evacuation restores its grounded drag, pauses with the mission and delivers the casualty",
+          "status": "passed",
+          "durationMs": 175150,
+          "retry": 0,
+          "project": ""
+        }
+      ]
+    },
+    {
+      "report": "logs/browser-final-quality.json.gz",
+      "stats": {
+        "startTime": "2026-10-08T08:26:39.240Z",
+        "duration": 167054.383,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "title": "Station quality, checkpoint restart and page reload retain one architectural root and all prop clusters",
+          "status": "passed",
+          "durationMs": 143777,
+          "retry": 0,
+          "project": ""
+        }
+      ]
+    }
+  ],
+  "priorFailuresRetained": true,
+  "fullSuiteExecuted": false,
+  "pass": true
+}

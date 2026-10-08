@@ -6,10 +6,11 @@ async function startFrozen(page){
   await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});
   await page.evaluate(()=>{const hold=e=>{if(document.pointerLockElement?.id==='game'){document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();document.exitPointerLock();}};document.addEventListener('pointerlockchange',hold,true);});
   await page.locator('#continue').click();
-  await page.waitForFunction(()=>window.gameDiagnostics().paused&&window.gameDiagnostics().m01.renderedFrames>0,null,{timeout:120000});
+  // Menu frames can predate the restored player; wait for the facade LOD to sync.
+  await page.waitForFunction(()=>{const d=window.gameDiagnostics(),s=d.m01.stationArchitecture;return d.paused&&d.m01.renderedFrames>0&&d.player.x===-325&&d.player.z===17&&s.quality===d.quality&&s.lod===({high:0,medium:1,low:2}[d.quality]);},null,{timeout:120000});
 }
 test('Station quality, checkpoint restart and page reload retain one architectural root and all prop clusters',async({page},info)=>{
-  test.setTimeout(180000);const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  test.setTimeout(180000);const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error'&&/shader|WebGLProgram/.test(m.text()))errors.push(m.text());});
   const snapshot=fixture();await page.addInitScript(({key,snapshot})=>{localStorage.setItem(key,JSON.stringify(snapshot));localStorage.setItem('cod-guerra:visual-quality','high');},{key,snapshot});
   await page.goto('?debug=1&visual-verify=1');await startFrozen(page);
   const samples=[];
@@ -19,6 +20,7 @@ test('Station quality, checkpoint restart and page reload retain one architectur
     await startFrozen(page);
     await page.waitForFunction(q=>window.gameDiagnostics().m01.stationArchitecture.quality===q,quality);
     const diag=await page.evaluate(()=>window.gameDiagnostics());samples.push(diag.m01.stationArchitecture);
+    expect(diag.m01.stationArchitecture.fidelity).toBe('v3');expect(diag.m01.stationArchitecture.textureBytes).toBe(1441792);expect(diag.m01.stationArchitecture.geometryBytes).toBeLessThan(11000000);
     expect(diag.m01.stationArchitecture.lod).toBe(lod);expect(diag.m01.stationArchitecture.openings).toBe(140);expect(diag.m01.stationArchitecture.drawCalls).toBe(7);
     expect(diag.m01.environmentProps.clusters).toBe(30);expect(diag.m01.stationArchitecture.collidersAdded).toBe(0);
   }

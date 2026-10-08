@@ -1,0 +1,50 @@
+{
+  "task": "M01-STATION-VISUAL-FIDELITY-PASS-V3",
+  "base": "090804776b18c8dc3200497388eb59e83b56205c",
+  "productionSourceCommit": "2d608d8a1b52d319ff92ef0e9352733df91b59f7",
+  "status": "READY_FOR_CAPTAIN_REVIEW",
+  "sessionRecovery": "Local unpublished files and in-memory blob manifest were lost during maintenance. Approved V2 was recovered; this branch reapplies the finish and revalidates it. No old V3 counts are presented as current evidence.",
+  "beforeArchive": "22 V2 captures copied without image edits from approved repository evidence. Original 10 fixtures compare byte-for-byte equal to the first 10 V3 fixtures. Canonical report keeps provenance.",
+  "captures": "Final tool freezes real save states, caps verification rendering at 10 Hz to avoid software renderer queue contention, checks clock/state invariance and writes a report after every shot. This cadence is not a performance measurement or production change.",
+  "initialNodeFailures": "Initial reconstruction exceeded the geometry budget; a subsequent 29/31 focused run found a sill 0.015 m below the envelope and a ridge cap too close to the central roof. All corrected; logs retained.",
+  "initialBrowserFailures": "Concurrent captures and focused tests produced two timeouts; isolated execution passed fallback and evacuation but found a reload assertion before the first Station LOD sync. Test waits for the restored camera LOD without relaxing assertions/timeouts. Logs retained.",
+  "omittedArtifacts": [
+    "Original lost V3 files and captures cannot be independently verified in this resumed workspace.",
+    "Preliminary REVIEW PNGs and interrupted full BEFORE/AFTER duplicate PNGs are not canonical; only logs/reports where available are retained.",
+    "Concurrent timeout traces/screenshots were overwritten by the following focused execution; raw JSON error/attachment path records are retained."
+  ],
+  "scope": "No complete browser suite, integration, main change, deployment, bridge structural merge or hardware FPS claim.",
+  "finalValidation": {
+    "node": "31/31 focused PASS",
+    "build": "PASS, existing >500 kB warning",
+    "browser": "Three focused cases PASS across isolated 2-pass group plus corrected quality 1-pass group; no retries/skips",
+    "visual": "34 pairs/68 originals, identical frozen state; all inspected",
+    "protectedFiles": 162,
+    "fullRouteEquivalence": true
+  },
+  "captureNavigationTimeout": "Initial AFTER loop completed 29 shots before page.goto 30 s timeout. Capture-only navigation timeout changed to 120 s; resumed just five missing shots. All 34 final shots are error-free.",
+  "globalInstanceCounterOmission": "29 initial captures omitted the global instance field; Station instance count was recorded in all 34. Five resumed Medium views additionally record global environment instances.",
+  "omittedPngNames": [
+    "BEFORE_EXTRA-player-oblique-later-low.png",
+    "AFTER_REMAIN-player-frontal-medium.png",
+    "REVIEW-player-oblique-high.png",
+    "AFTER_REMAIN-oblique-medium.png",
+    "AFTER_REMAIN-player-oblique-medium.png",
+    "REVIEW-window-door-high.png",
+    "REVIEW-frontal-high.png",
+    "BEFORE_EXTRA-player-frontal-low.png",
+    "AFTER_REMAIN-platform-medium.png",
+    "BEFORE_EXTRA-platform-medium.png",
+    "AFTER_REMAIN-window-door-medium.png",
+    "BEFORE_EXTRA-player-oblique-high.png",
+    "BEFORE_EXTRA-roof-detail-low.png",
+    "REVIEW-roof-detail-high.png",
+    "BEFORE_EXTRA-player-oblique-low.png",
+    "BEFORE_EXTRA-player-frontal-high.png",
+    "BEFORE_EXTRA-player-oblique-medium.png",
+    "BEFORE_EXTRA-oblique-medium.png",
+    "BEFORE_EXTRA-player-oblique-later-high.png",
+    "BEFORE_EXTRA-player-frontal-medium.png",
+    "BEFORE_EXTRA-roof-detail-high.png"
+  ]
+}

@@ -91,3 +91,44 @@ test('unexpected or missing Station anchors fail safely before attaching any rep
   assert.throws(()=>new M01StationArchitecture(scene,world),/approved anchors/);assert.equal(scene.children.length,0);
   assert.throws(()=>new M01StationArchitecture(scene,{buildings:[]}),/missing/);assert.equal(scene.children.length,0);
 });
+test('V3 preserves the V2 five-volume and 140-aperture contract and outward roof normals',()=>{
+  const contract={volumes:STATION_VOLUMES,openings:STATION_VOLUMES.flatMap(v=>['front','rear'].flatMap(side=>stationOpenings(v,side)))};
+  const approved='fbcf9d8e7de9e942e46e304296ac4cd9a9c0a5868c34d77f65396f43e3f4ebaa';
+  assert.equal(createHash('sha256').update(JSON.stringify(contract)).digest('hex'),approved);
+  const levels=[0,1,2].map(buildStationMeshes);
+  for(const {geometries}of levels){
+    const normal=geometries.roof.attributes.normal;
+    for(let i=0;i<normal.count;i++)assert.ok(normal.getY(i)>.8,'roof and canopy outward normals');
+    const p=geometries.metal.attributes.position;
+    for(const v of STATION_VOLUMES){
+      const z=(v.z0-.22+v.z1)/2,edgeY=v.ridge+.008,planeY=v.ridge-(v.ridge-v.eave)*.10/((v.z1-v.z0+.22)/2);
+      assert.ok(edgeY-planeY>.01,'ridge side edges clear the shallow roof');
+      let found=false;for(let i=0;i<p.count;i++)if(Math.abs(p.getY(i)-edgeY)<.0001&&Math.abs(Math.abs(p.getZ(i)-z)-.1)<.0001)found=true;
+      assert.ok(found);
+    }
+  }
+  free(levels);
+});
+test('V3 resource budget remains seven shared batches and ten maps across all quality levels',()=>{
+  const station=new M01StationArchitecture(new THREE.Scene(),new TczewWorld()),d=station.diagnostics;
+  assert.equal(d.fidelity,'v3');assert.equal(d.drawCalls,7);assert.equal(d.geometries,21);assert.equal(d.instances,0);assert.equal(d.textureBytes,1441792);
+  assert.ok(d.geometryBytes<11000000);
+  assert.ok(d.trianglesByLod[0]<35000&&d.trianglesByLod[1]<30500&&d.trianglesByLod[2]<17000);
+  for(const level of station.levels)for(const mesh of level.group.children)assert.equal(mesh.material,station.materials[mesh.name.split('_')[1]]);
+  station.dispose();
+});
+test('V3 varying panes, roughness and relief stay deterministic and Station shader scope stays private',()=>{
+  const station=new M01StationArchitecture(new THREE.Scene(),new TczewWorld());
+  const glass=station.levels[0].geometries.glass.attributes.color.array;
+  assert.ok(new Set(Array.from(glass).map(v=>v.toFixed(3))).size>30,'pane finish has location-dependent values');
+  for(const map of station.maps.filter((_,i)=>i%2===1)){
+    const a=map.image.data;let distinct=false;for(let i=0;i<a.length;i+=4)if(a[i]!==a[i+1]){distinct=true;break;}
+    assert.ok(distinct,'roughness and height are independent channels');
+  }
+  for(const [kind,m]of Object.entries(station.materials)){
+    const shader={vertexShader:'#include <common>\n#include <worldpos_vertex>',fragmentShader:'#include <common>\n#include <color_fragment>'};m.onBeforeCompile(shader);
+    assert.equal(m.customProgramCacheKey(),`m01-station-v3-${kind}`);
+    assert.match(shader.vertexShader,/vStationWorld/);assert.match(shader.fragmentShader,/stationNoise/);assert.doesNotMatch(shader.fragmentShader,/uniform.*time/i);
+  }
+  station.dispose();
+});
