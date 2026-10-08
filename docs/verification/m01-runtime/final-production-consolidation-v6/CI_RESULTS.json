@@ -1,0 +1,13 @@
+{
+  "head": "2a2a56734861b0801234d7ddf3cda66c0100f326",
+  "run": 37782266838,
+  "conclusion": "success",
+  "nodeJob": 113328053865,
+  "node": {"tests":460,"pass":460,"fail":0,"cancelled":0,"skipped":0,"durationMs":166803.246172},
+  "build":"PASS",
+  "browserJob":113329409388,
+  "criticalBrowser":{"pass":6,"fail":0,"retries":0,"groups":{"battlefieldFx":3,"station":2,"lifecycle":1},"reportedDuration":"7.5m"},
+  "artifact":{"id":11552374346,"bytes":9791056,"sha256":"0bd589c7cfc976cae92c2a2efdfa115eb03cb41d446877fdcdcf0ab5ba8aeec1","downloadedDigestVerified":true,"files":12},
+  "fullBrowser":"not part of this CI run; separate local certification required",
+  "interruptedLocalValidation":"Environment maintenance restored an older local snapshot and removed running sessions and incomplete final logs. No PASS claimed for those attempts. The remote CI of the exact persisted source HEAD completed independently."
+}
