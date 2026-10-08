@@ -1,0 +1,172 @@
+{
+  "quality": "high",
+  "drawCalls": 338,
+  "triangles": 992451,
+  "textures": 98,
+  "geometries": 314,
+  "clock": 741.3499999998735,
+  "battleClock": 22201.699999999997,
+  "fixture": {
+    "damageId": "east_demolition"
+  },
+  "probe": {
+    "frames": 1,
+    "first": 741.3499999998735,
+    "last": 741.3499999998735,
+    "max": {
+      "puff": 0,
+      "spark": 0,
+      "chip": 0,
+      "core": 4,
+      "fire": 3,
+      "dust": 2
+    },
+    "roundConsumed": false
+  },
+  "damageDecals": {
+    "version": "m01-environmental-damage-decal-pass-v1",
+    "marks": 0,
+    "visibleMarks": 0,
+    "byKind": {},
+    "spall": 0,
+    "residueBlasts": [
+      {
+        "id": "station_bomb",
+        "kind": "bomb",
+        "polygons": 14,
+        "debris": 10,
+        "embers": 0
+      },
+      {
+        "id": "forward_post",
+        "kind": "bomb",
+        "polygons": 30,
+        "debris": 30,
+        "embers": 9
+      },
+      {
+        "id": "repair_crater",
+        "kind": "bomb",
+        "polygons": 30,
+        "debris": 22,
+        "embers": 8
+      },
+      {
+        "id": "raid_0530",
+        "kind": "bomb",
+        "polygons": 30,
+        "debris": 30,
+        "embers": 9
+      },
+      {
+        "id": "east_demolition",
+        "kind": "demolition",
+        "polygons": 350,
+        "debris": 30,
+        "embers": 10
+      }
+    ],
+    "residueTriangles": 648,
+    "debris": 92,
+    "embers": 0,
+    "drawCalls": 2,
+    "counts": {
+      "spawned": 0,
+      "placed": 0,
+      "noSurface": 0,
+      "outOfRange": 0,
+      "dedup": 0,
+      "clustered": 0,
+      "evicted": 0,
+      "expired": 0,
+      "invalidated": 0,
+      "errors": 0
+    },
+    "lastError": null,
+    "limits": {
+      "quality": {
+        "low": {
+          "marks": 48,
+          "debris": 64,
+          "embers": 0,
+          "range": 55,
+          "cluster": 4
+        },
+        "medium": {
+          "marks": 96,
+          "debris": 128,
+          "embers": 24,
+          "range": 90,
+          "cluster": 5
+        },
+        "high": {
+          "marks": 144,
+          "debris": 192,
+          "embers": 40,
+          "range": 130,
+          "cluster": 6
+        }
+      },
+      "blasts": 16,
+      "residueTriangles": 6000,
+      "residueDebrisShare": 0.7,
+      "drawCalls": 4,
+      "textures": 2,
+      "pxRange": 450,
+      "clusterRadius": 0.6,
+      "earthClusterRadius": 1.1
+    },
+    "atlasReady": true,
+    "atlasChecksum": 3557344194
+  },
+  "fireEffects": {
+    "muzzle": 0,
+    "tracer": 0,
+    "puff": 0,
+    "spark": 0,
+    "smoke": 0,
+    "chip": 0
+  },
+  "battlefieldFx": {
+    "active": 1,
+    "counts": {
+      "flash": 0,
+      "core": 4,
+      "fire": 3,
+      "smoke": 0,
+      "dust": 2,
+      "shard": 7
+    },
+    "meta": {
+      "kinds": {
+        "small": 0,
+        "bombing": 0,
+        "demolition": 1
+      },
+      "bands": {
+        "near": 0,
+        "mid": 0,
+        "far": 1
+      }
+    },
+    "limits": {
+      "bursts": 16,
+      "flash": 16,
+      "core": 48,
+      "fire": 96,
+      "smoke": 128,
+      "dust": 128,
+      "shards": 96,
+      "lights": 1
+    },
+    "extraLights": 1,
+    "atmosphere": {
+      "puffs": 49,
+      "puffCapacity": 256,
+      "debris": 28,
+      "debrisCapacity": 64,
+      "puffBatches": 8
+    }
+  },
+  "smokePuffs": 49
+}
