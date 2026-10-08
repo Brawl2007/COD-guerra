@@ -2,7 +2,7 @@
 
 TASK_ID: `M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7`.
 
-**Estado: VALIDATION_IN_PROGRESS.** Este documento será fechado após a execução browser integral. M01 continua **PROTÓTIPO JOGÁVEL**; não há alegação de qualidade AAA ou de certificação no Chromebook.
+**Estado: VALIDATION_IN_PROGRESS.** A primeira execução browser integral terminou com quatro falhas demonstradas no harness; os cinco retestes focados passaram, aguardando agora uma nova execução integral sem filtros. M01 continua **PROTÓTIPO JOGÁVEL**; não há alegação de qualidade AAA ou de certificação no Chromebook.
 
 ## Identidade, recuperação e decisões
 
@@ -12,7 +12,7 @@ TASK_ID: `M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7`.
 | V6 protegida / HEAD inicial da V7 | `cbc7de5668a1b2e4bc646b86548196a5f4f1039a` |
 | Runtime combinado final, antes dos commits exclusivamente de CI/provas/docs | `8f7d1ea8f096472436c860e118a8c799e740e23f` |
 | Node completo/build | `a97a3152d4848517a267d80c0cbbdc24bf2ddaeb` |
-| Execução browser integral | `1b636303beeebf019aa2cd13819c6e0637f2b0bc` |
+| Primeira execução browser integral, FAIL 80/84 | `1b636303beeebf019aa2cd13819c6e0637f2b0bc` |
 | PR draft | [#59 — V7 → V6](https://github.com/Brawl2007/COD-guerra/pull/59) |
 | HEAD final publicado | O `head.sha` exato da PR #59, registrado na descrição final da PR; inclui este próprio handoff. `git rev-parse origin/codex/m01-final-production-consolidation-v7` reproduz esse SHA após fetch. |
 
@@ -57,7 +57,8 @@ Exclusões: os quatro commits de armas posteriores a `7dbc0a5` continuam com fal
 | Build V6 original isolada | **PASS**, hash original reproduzido | Não altera a branch V6 |
 | Browser focado Station/evacuação/assets/controlo/reload | **8/8 PASS**, retries 0 | `BROWSER_FOCUSED_CORE.json`, log; 5,4 min |
 | Browser focado armas/decals/FX | **8/8 PASS**, retries 0 | `BROWSER_FOCUSED_WEAPON_FX.json`, log; 6,8 min |
-| Browser integral combinado, 84 casos | **EM EXECUÇÃO**, uma invocação sem filtros, retries 0 | [Run 37833355993](https://github.com/Brawl2007/COD-guerra/actions/runs/37833355993) |
+| Browser integral combinado, primeira execução | **80 PASS / 4 FAIL**, 84 executados, zero skips/retries/erros globais | [Run 37833355993](https://github.com/Brawl2007/COD-guerra/actions/runs/37833355993); `BROWSER_FULL_FIRST.json.gz`, resumo/log originais e `BROWSER_FAILURE_DIAGNOSIS.json` |
+| Browser focado após correção do harness | **5/5 PASS**, Chromium 153, workers 1, retries/skips zero | `BROWSER_HARNESS_FOCUSED.json.gz`, resumo e log; prova de yaw/HUD, impacto pausado e muzzle real |
 | Autoridade e recuperação | **PASS** | 291 ficheiros protegidos, duas rotas completas e futuros dos quatro CPs; `INVARIANTS.json` e reteste corrigido abaixo |
 | Helper adicional de LOD, após correção de QA | **PASS** — Low/Medium/High/Low = 2/1/0/2 em V6 e V7 | `INVARIANTS_LOD_CORRECTED.json`, `logs/invariants-lod-corrected.log`; commit `158c30edea72869144cb0b0c875029dc3818adc2` |
 | Visual principal local e CI | **57/57 pares PASS para estado equivalente**, 114 frames | 12 boards inspecionadas; os 114 PNGs locais e CI têm hashes idênticos, `VISUAL_SUMMARY.json`; não é uma aprovação artística automática |
@@ -68,7 +69,7 @@ Exclusões: os quatro commits de armas posteriores a `7dbc0a5` continuam com fal
 
 Os grupos focados sobrepõem casos do Node completo e do browser integral; os seus números não são somados para fabricar um total. A referência V6 continua com o relatório histórico real 83/84 e retestes focados separados. A V7 pede um relatório integral próprio, sem união de resultados antigos.
 
-A revisão do relatório extra de invariantes identificou um erro no próprio helper: `sync` recebia qualidade e player invertidos, ficando sempre no LOD distante e registando um objeto no campo quality. **O relatório CI original foi conservado**, mas essa parte não serve como prova de cycling de qualidade. Corrigida a ordem para `sync(player, quality)` e acrescentadas asserções de qualidade, LOD e triângulos. O reteste do commit `158c30e` passou novamente todos os 291 hashes, duas rotas/CPs, recursos/dispose/recreate e a sequência **2/1/0/2** nas duas versões. Os testes Node da Station e os browsers já usavam a assinatura correta. Nenhum ficheiro do jogo ou teste browser mudou; a execução integral em curso continua válida.
+A revisão do relatório extra de invariantes identificou um erro no próprio helper: `sync` recebia qualidade e player invertidos, ficando sempre no LOD distante e registando um objeto no campo quality. **O relatório CI original foi conservado**, mas essa parte não serve como prova de cycling de qualidade. Corrigida a ordem para `sync(player, quality)` e acrescentadas asserções de qualidade, LOD e triângulos. O reteste do commit `158c30e` passou novamente todos os 291 hashes, duas rotas/CPs, recursos/dispose/recreate e a sequência **2/1/0/2** nas duas versões. Os testes Node da Station e os browsers já usavam a assinatura correta. Nenhum ficheiro do jogo mudou. Os dois testes browser corrigidos posteriormente são identificados separadamente, com a primeira execução integral preservada como FAIL.
 
 O bundle V6 tem SHA-256 `b9d9f57d83317dc2114561c7c8b7d443ebbfeb66c3ccdc5ab07bfd09dd8d035a` (`index-QzIf-9Lu.js`). O bundle V7 tem SHA-256 `258742274390e6ccac1d17da4a01c6f9a82a7f9506179b66614d42691c6e3d1a` (`index-lksc2ZVJ.js`). CSS permanece `199d38325c505021278bfaff8be2fe6f86a0f742bb82f9cf6a1909fdfa3b7e06`. Os commits posteriores de QA/docs não alteram esses bundles.
 
@@ -96,6 +97,16 @@ As referências continuam as documentadas na [Station V2](../station-architectur
 | Colliders novos | 0 | 0 |
 
 A redução progressiva dos três LODs permanece. Low cresce **26,5% no módulo Station**; não se oculta esse custo. O acréscimo estimado de buffers + mapas com cadeia de mipmaps é aproximadamente **1,91 MiB**; não é VRAM física medida. Na vista frontal local, a cena inteira mantém 48/53/56 calls em Low/Medium/High; triângulos passam de 384047/428618/484908 para 387593/428886/488312. O registo CI/JSON contém os contadores próprios de cada execução; não se misturam estados/hardware. Instâncias/props ficam preservados. Os contadores residentes variam com carregamento/LOD/warm; não provam FPS.
+
+## Diagnóstico e correção da primeira execução integral
+
+A primeira suíte completa não foi cancelada: 84 casos executados, **80 PASS / 4 FAIL**, retries/skips zero, em 96,63 min. O artifact 11579816373 foi baixado e verificado por SHA-256 e CRC do ZIP. Report e resumo completos comprimidos sem perdas, logs e excertos primários dos traces/attachments ficam neste diretório. Não se combina esse resultado com retestes para fabricar 84/84.
+
+- **Impacto real:** todos os limites de partículas passaram; falhou `page.screenshot` após 30 s, já depois de carregar as fontes. O teste agora congela um frame realmente quente via `requestAnimationFrame` e saída nativa de pointer lock, verifica clock/pools congelados e captura sem concorrer com frames animados.
+- **Orientação nos portões e na demolição:** o DOM ainda mostrava a direção anterior durante a asserção de 5 s. O attachment `afterEach` demonstra yaw e texto autoritativo corretos, depois apresentados no HUD. O helper exige erro angular <0,01, um novo frame e HUD exatamente igual ao status da simulação antes das mesmas asserções de direção; guarda prova de ambos os giros.
+- **Retirada:** o loop terminava na primeira baixa (17 homens, clock 749,6667, muzzle frames 5), antes do próximo clarão submetido. O attachment posterior observou muzzle frames 6 em 750,1667, somente 0,5 s simulados depois. O loop continua limitado a 300 amostras, mas espera pelas duas condições já exigidas: baixa real e novo frame de muzzle. Todos os checks de origem, piso de 12 sobreviventes e igualdade HUD/simulação permanecem. Captura com pausa nativa.
+
+Somente `tests/browser/m01.spec.js` e `m01-battlefield-fx.spec.js` mudam nesta correção. Nenhuma asserção original foi removida; nenhum evento, RNG, input, HUD de produção ou lifetime foi alterado. O build continua com o mesmo SHA. Os cinco cenários focados passaram em 2,4 min; isso autoriza uma nova execução integral após a correção, sem filtros e sem somar resultados históricos.
 
 ## Battlefield FX e infraestrutura
 

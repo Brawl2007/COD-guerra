@@ -1,6 +1,6 @@
 {
   "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
-  "observedAt": "2026-10-08T20:40:38.822Z",
+  "observedAt": "2026-10-08T22:01:47.971504+00:00",
   "runtimeHead": "8f7d1ea8f096472436c860e118a8c799e740e23f",
   "node": {
     "runId": 37831786923,
@@ -77,13 +77,10 @@
     ]
   },
   "fullBrowser": {
-    "runId": 37833355993,
-    "head": "1b636303beeebf019aa2cd13819c6e0637f2b0bc",
-    "status": "in_progress",
-    "retriesConfigured": 0,
-    "inventoryCases": 84,
-    "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37833355993",
-    "resultsNotYetAsserted": true
+    "status": "CORRECTED_FULL_EXECUTION_PENDING",
+    "execution": "A corrected full unfiltered invocation is required; 80 old passes plus focused retests will not be reported as 84/84.",
+    "productionUnchanged": true,
+    "originalFailureRetained": "BROWSER_FULL_FIRST.json.gz"
   },
   "fpsMeasured": false,
   "physicalGpuMemoryMeasured": false,
@@ -107,5 +104,90 @@
       2
     ],
     "runtimeOrBrowserTestChanged": false
+  },
+  "fullBrowserFirst": {
+    "runId": 37833355993,
+    "head": "1b636303beeebf019aa2cd13819c6e0637f2b0bc",
+    "status": "completed",
+    "retriesConfigured": 0,
+    "inventoryCases": 84,
+    "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37833355993",
+    "resultsNotYetAsserted": true,
+    "conclusion": "failure",
+    "executed": 84,
+    "passed": 80,
+    "failed": 4,
+    "skipped": 0,
+    "retries": 0,
+    "workers": 1,
+    "durationMs": 5798011.982,
+    "report": "BROWSER_FULL_FIRST.json.gz",
+    "summary": "BROWSER_FULL_FIRST_SUMMARY.json.gz",
+    "diagnosis": "BROWSER_FAILURE_DIAGNOSIS.json",
+    "artifact": {
+      "id": 11579816373,
+      "bytes": 111822856,
+      "sha256": "b9cf13c8667a15a883ea7e59383e3fee4660a60771607e5ab4f8928e447153ed",
+      "downloadAndZipCrcVerified": true
+    }
+  },
+  "browserHarnessFocused": {
+    "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
+    "status": "PASS",
+    "scope": "Four failed scenarios plus both parameterized adjustment salvos, not the full suite",
+    "baseHead": "29821eeedf574244814a1d6e21c7103121282524",
+    "localUncommittedHarnessCorrection": true,
+    "chromiumVersion": "153.0.8010.0",
+    "stats": {
+      "startTime": "2026-10-08T21:58:43.702Z",
+      "duration": 145550.59399999998,
+      "expected": 5,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "retries": 0,
+    "workers": 1,
+    "errors": [],
+    "reportSha256Uncompressed": "c55fc1a7d763aaa0cf14c8d82b6323afbae71a2edc9975d0dd95c0ce23131fbf",
+    "testFileSha256": {
+      "tests/browser/m01.spec.js": "c3ec7e24f34333ca43ffe84043d31a9d2dbc9227e01e45fa7b1c35130359acfa",
+      "tests/browser/m01-battlefield-fx.spec.js": "3fbead454e3486d86b1e209c878551633c05a258bee8542aa67fa563d5d22202"
+    },
+    "cases": [
+      {
+        "file": "m01-battlefield-fx.spec.js",
+        "title": "real in-flight round produces bounded material impact FX without altering the saved simulation path",
+        "status": "passed",
+        "durationMs": 26011
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "adjustment salvo at the gates restores its actual origin and follows mouse look",
+        "status": "passed",
+        "durationMs": 26964
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "adjustment salvo behind the truss restores its actual origin and follows mouse look",
+        "status": "passed",
+        "durationMs": 26955
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "demolition inside the road truss shows the actual bearing while mouse look remains free",
+        "status": "passed",
+        "durationMs": 30573
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "a real withdrawal continuation loses men only to rounds from the spans, keeps the twelve-survivor floor and shows the count in the HUD",
+        "status": "passed",
+        "durationMs": 25124
+      }
+    ]
   }
 }

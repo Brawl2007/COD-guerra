@@ -70,15 +70,30 @@ test('east demolition runs layered blast -> dust -> smoke, freezes on pause and 
 });
 
 test('real in-flight round produces bounded material impact FX without altering the saved simulation path',async({page},info)=>{
-  test.setTimeout(90000);
+  test.setTimeout(process.env.CI?180000:90000);
   const {errors,failed}=await openFrom(page,preImpact,'high');
   const before=await page.evaluate(()=>window.gameDiagnostics());
-  await page.waitForFunction(()=>{const f=window.gameDiagnostics().m01.fireEffects;return f.puff>0||f.spark>0||f.chip>0;},null,{timeout:20000});
-  const impact=await page.evaluate(()=>window.gameDiagnostics());
+  // Freeze the real hot frame, as in the demolition test above. The original full
+  // run passed the FX assertions but its live GPU readback exceeded 30 seconds.
+  // Native pointer-lock release stops the clock; no event/FX timing is injected.
+  await page.evaluate(()=>{
+    window.__m01ImpactFrame=null;
+    const tick=()=>{const d=window.gameDiagnostics(),f=d.m01.fireEffects;
+      if(f.puff>0||f.spark>0||f.chip>0){window.__m01ImpactFrame=d;document.exitPointerLock();return;}
+      requestAnimationFrame(tick);
+    };requestAnimationFrame(tick);
+  });
+  await page.waitForFunction(()=>window.__m01ImpactFrame,null,{timeout:20000});
+  await expect(page.locator('#pause')).toBeVisible();
+  const impact=await page.evaluate(()=>window.__m01ImpactFrame);
+  expect(impact.m01.fireEffects.puff+impact.m01.fireEffects.spark+impact.m01.fireEffects.chip).toBeGreaterThan(0);
   expect(impact.m01.fireEffects.puff).toBeLessThanOrEqual(144);
   expect(impact.m01.fireEffects.spark).toBeLessThanOrEqual(96);
   expect(impact.m01.fireEffects.chip).toBeLessThanOrEqual(128);
-  await page.screenshot({path:info.outputPath('AFTER-real-round-impact.png'),timeout:30000});
+  await page.screenshot({path:info.outputPath('AFTER-real-round-impact.png'),style:'#pause {visibility:hidden !important;}',timeout:120000});
+  await page.waitForTimeout(350);
+  const frozen=await page.evaluate(()=>window.gameDiagnostics());
+  expect(frozen.clock).toBe(impact.clock);expect(frozen.m01.fireEffects).toEqual(impact.m01.fireEffects);
   await info.attach('impact-counters',{body:JSON.stringify({before:before.m01.fireEffects,impact:impact.m01.fireEffects,drawCalls:impact.drawCalls,triangles:impact.triangles},null,2),contentType:'application/json'});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });

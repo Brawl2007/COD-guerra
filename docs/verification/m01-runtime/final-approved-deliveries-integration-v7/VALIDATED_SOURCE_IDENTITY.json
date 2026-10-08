@@ -41,5 +41,13 @@
       "sha256": "efb6d9f4b14f1e43131b72ac18fb300142e4f26e4f6e105ee305788079d8e981"
     }
   ],
-  "sourceAndTestsUnchangedAfterFullBrowserStart": true
+  "sourceAndTestsUnchangedAfterFullBrowserStart": false,
+  "productionUnchangedAfterFirstFullBrowserStart": true,
+  "browserHarnessCorrection": {
+    "files": [
+      "tests/browser/m01.spec.js",
+      "tests/browser/m01-battlefield-fx.spec.js"
+    ],
+    "reason": "Four failures in original 80/84 CI report diagnosed in traces; no original assertion removed, no simulation or effect timing changed."
+  }
 }
