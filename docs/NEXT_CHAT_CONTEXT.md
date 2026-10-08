@@ -1,3 +1,11 @@
+# Estado actual — roadmap técnico final de M01 (2026-10-07)
+
+- `docs/M01_FINAL_ROADMAP.md` (Claude Code): TOP 20 problemas por impacto, fichas, 52 tasks (T00–T52) em quatro ondas, ordem ideal com caminho crítico, definição de pronto, kit de verificação e decisões para o Captain (Anexo B). Evidência em `docs/verification/m01-runtime/final-roadmap-2026-10-07/`; harness em `tools/verification/m01-roadmap-captures.spec.js` + `playwright.roadmap.config.js` (não corre em `npm run test:browser`).
+- Mesma branch do handoff da composição do trem (`claude/m01-train-detail-coupling-polish-dws18u`, também `claude/m01-train-detail-coupling-polish-v1`). Sem código de produção alterado; sem merge, main ou deploy.
+- Próximo passo depende do Captain: responder ao Anexo B e abrir as tasks da onda 0 (T00–T14) nas lanes indicadas. Não iniciar as ondas 1/2 antes de integrar FX V3, Estação V3 e Variação V2. Não iniciar outra frente sem ordem.
+
+---
+
 # Estado actual — composição do trem 963 (2026-10-07)
 
 - TASK_ID `M01-TRAIN-DETAIL-COUPLING-POLISH-V1` (Claude). Base `codex/m01-bridge-portal-material-detail-polish-v1 @ 99309d9cb023cc94a07d41ff863e1362e4460570`. Branch `claude/m01-train-detail-coupling-polish-dws18u`, também publicada como `claude/m01-train-detail-coupling-polish-v1`. HEAD de código `09e5858`; os commits seguintes são só docs. Sem merge, main ou deploy.
