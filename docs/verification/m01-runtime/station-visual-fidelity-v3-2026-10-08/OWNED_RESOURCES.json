@@ -1,0 +1,98 @@
+{
+  "before": {
+    "ready": true,
+    "quality": "medium",
+    "lod": 1,
+    "anchor": {
+      "min": {
+        "x": -460,
+        "y": -3,
+        "z": 28
+      },
+      "max": {
+        "x": -338,
+        "y": 11,
+        "z": 55
+      }
+    },
+    "envelope": {
+      "min": [
+        -470,
+        -3,
+        20
+      ],
+      "max": [
+        -330,
+        15,
+        55
+      ]
+    },
+    "volumes": 5,
+    "openings": 140,
+    "triangles": 28707,
+    "trianglesByLod": [
+      30881,
+      28707,
+      13382
+    ],
+    "drawCalls": 7,
+    "geometries": 21,
+    "textures": 10,
+    "instances": 0,
+    "source": "original-mesh-no-external-asset-dependency",
+    "collidersAdded": 0,
+    "disposed": false,
+    "geometryBytes": 9632040,
+    "textureBytes": 655360,
+    "estimatedTextureMipmapBytes": 873813.3333333334
+  },
+  "after": {
+    "ready": true,
+    "fidelity": "v3",
+    "textureBytes": 1441792,
+    "geometryBytes": 10584816,
+    "quality": "medium",
+    "lod": 1,
+    "anchor": {
+      "min": {
+        "x": -460,
+        "y": -3,
+        "z": 28
+      },
+      "max": {
+        "x": -338,
+        "y": 11,
+        "z": 55
+      }
+    },
+    "envelope": {
+      "min": [
+        -470,
+        -3,
+        20
+      ],
+      "max": [
+        -330,
+        15,
+        55
+      ]
+    },
+    "volumes": 5,
+    "openings": 140,
+    "triangles": 28975,
+    "trianglesByLod": [
+      34285,
+      28975,
+      16928
+    ],
+    "drawCalls": 7,
+    "geometries": 21,
+    "textures": 10,
+    "instances": 0,
+    "source": "original-mesh-no-external-asset-dependency",
+    "collidersAdded": 0,
+    "disposed": false,
+    "estimatedTextureMipmapBytes": 1922389.3333333333
+  },
+  "note": "Typed attributes and raw texture bytes; mipmaps estimated, actual GPU VRAM/FPS unmeasured"
+}

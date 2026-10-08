@@ -1,3 +1,19 @@
+# Estado atual — Station Visual Fidelity V3 (2026-10-08)
+
+Esta secção prevalece para a tarefa atual; o conteúdo abaixo é histórico. M01 continua **PROTÓTIPO JOGÁVEL**.
+
+- TASK_ID `M01-STATION-VISUAL-FIDELITY-PASS-V3`; GPT-6.1 Sol HIGH, sem delegação. Base remota aprovada `codex/m01-station-architecture-production-v2` @ `090804776b18c8dc3200497388eb59e83b56205c`.
+- Branch `codex/m01-station-visual-fidelity-v3`; estado **READY_FOR_CAPTAIN_REVIEW**. Código final em `2d608d8a1b52d319ff92ef0e9352733df91b59f7`; o commit de evidências/test fixture/tool/docs seguinte é HEAD final no PR draft. Confirmar remoto antes de continuar.
+- Acabamento sobre a V2, sem reconstrução: perfis de vãos, portas, peitoris, juntas, normais, caleiras/rufos/cumeeiras/chaminés; materiais originais determinísticos e shader privado sem RNG/tempo/câmara. Cinco volumes e 140 vãos intocados.
+- Produção só em `src/render/m01-station-architecture.js`. `m01-environment.js`, `m01-view.js`, bridge/train/props, simulação/autoridades/12 objectives/25 events/clocks/saves/RNG/armas/colliders iguais à V2. 162 ficheiros protegidos; 30 clusters intactos; rota integral/checkpoints/snapshots/eventos/combate equivalentes.
+- 31/31 Node focados e build PASS. Três casos browser focados verdes em duas execuções finais: fallback/evacuação 2 PASS; qualidade/reload 1 PASS após fix da espera de LOD. Falhas anteriores preservadas. Sem retries/skips ou suíte browser integral nesta tarefa.
+- 34 pares/68 PNGs 1280×720 inspecionados: High 14, Low 14, Medium 6; mesmos hashes de estado. 22 baselines reutilizados sem edição da V2 aprovada e 12 novos nessa base. Vistas reais do jogador (olho 1,6 m), detalhe roof, CP-D real com luz posterior; frames congelados, sem playtest humano. Cadência de captura 10 Hz não mede FPS. Contador global de instâncias ausente nas primeiras 29 AFTER; zero instâncias próprias medido em todos.
+- Station própria: 7 lotes, 21 geometrias, 10 mapas partilhados, zero instâncias/colliders novos; LOD0/1/2 34.285/28.975/16.928 triângulos. Atributos 10.584.816 B; RGBA 1.441.792 B. Aumento estimado com mipmaps 1,91 MiB; hardware/FPS/VRAM real não medidos. Low cresce 26,5% mas fica abaixo de metade de High.
+- Evidência, limites e integração: `docs/verification/m01-runtime/station-visual-fidelity-v3-2026-10-08/HANDOFF.md`. Referências Poczt226/Poczt734 mantidas; perfis/materiais/desgaste estimados. Vidro opaco, tiling sintetizado e ritmo repetido continuam visíveis; P4/planta1939 pendentes.
+- Main `72bbcdd156603c9399801c95d43d9365ba50fc82`, V2 e branch da ponte preservadas. Sem deploy/merge/workflow_dispatch/Graphify. Combinar alterações da ponte no próximo checkpoint autorizado sem substituir ficheiros completos de integração. Parar após handoff.
+
+---
+
 # Estado atual — Station Architecture Production V2 (2026-10-07)
 
 Esta secção prevalece para a tarefa atual; o conteúdo abaixo é histórico. M01 continua **PROTÓTIPO JOGÁVEL**.

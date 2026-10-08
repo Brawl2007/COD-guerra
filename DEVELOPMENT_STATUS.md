@@ -1,5 +1,11 @@
 # Estado de desenvolvimento
 
+## Station Visual Fidelity V3 — 2026-10-08
+
+`M01-STATION-VISUAL-FIDELITY-PASS-V3`, base remota V2 `090804776b18c8dc3200497388eb59e83b56205c`, branch `codex/m01-station-visual-fidelity-v3`. **READY_FOR_CAPTAIN_REVIEW**. Refinamento da Station existente: caixilhos/perfis/peitoris/portas, normais corrigidas, remates de roof/caleiras/chaminés e materiais originais com roughness/height independentes e variação determinística. Cinco volumes, 140 vãos, três LODs, envelope, colliders e 30 clusters preservados; código de produção só em `m01-station-architecture.js`. Ficheiros de integração e restantes 162 ficheiros protegidos byte a byte iguais à V2.
+
+31/31 Node focados, build PASS, três casos browser focados verdes em duas execuções finais (2 + 1 após corrigir a espera de LOD da fixture). 34 pares/68 PNGs High/Medium/Low com estados congelados idênticos, inspecionados; erros e timeouts anteriores identificados nos logs. Rota integral equivalente. Sem suíte browser integral, main, deploy ou integração da ponte do Claude. Station: 7 lotes/21 geometrias/10 texturas/0 instâncias; LOD0/1/2 34.285/28.975/16.928 triângulos. Aumento estimado de memória de atributos + texturas com mipmaps: 1,91 MiB; nenhum FPS/VRAM real medido. Materiais sintetizados, ritmo repetido, vidro opaco e precisão histórica P4 continuam limitações. M01 permanece **PROTÓTIPO JOGÁVEL**. Handoff: `docs/verification/m01-runtime/station-visual-fidelity-v3-2026-10-08/HANDOFF.md`; HEAD final no PR.
+
 ## Station Architecture Production V2 — 2026-10-07
 
 `M01-STATION-ARCHITECTURE-PRODUCTION-V2`, base `99309d9`, branch `codex/m01-station-architecture-production-v2`. **READY_FOR_CAPTAIN_REVIEW**. Substituição visual do bloco da Station por cinco volumes, roof inclinado, marquise e 140 aberturas com recessos/shell fechado; malhas originais partilhadas por material, três LODs. Âncoras/colliders, gameplay, stationDrag, clocks/saves/RNG e 30 clusters de props preservados. 133 ficheiros protegidos byte a byte; rota integral equivalente à base.
