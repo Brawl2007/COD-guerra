@@ -1,0 +1,484 @@
+{
+  "taskId": "M01-FINAL-PRODUCTION-CONSOLIDATION-V6",
+  "base": {
+    "branch": "codex/m01-ready-deliveries-consolidation-v5",
+    "head": "d277b06937170aa433bc418ef5b83b2925c6d6de"
+  },
+  "productionEquivalentTo": "2a2a56734861b0801234d7ddf3cda66c0100f326",
+  "finalFixtureCommit": "edefda544c702962ad3e378d06fb1bd7e792254e",
+  "fullSuite": {
+    "status": "FAIL",
+    "head": "dd743de922f32b7391ce8e9e69a2ede2903eafb8",
+    "runId": 37802820440,
+    "jobId": 113399183974,
+    "startTime": "2026-10-08T15:42:01.430Z",
+    "duration": 3994039.777,
+    "expected": 83,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0,
+    "retries": 0,
+    "globalErrors": [],
+    "distinctCases": 84,
+    "soleFailure": "licensed character rigs first shot after Resume; pointer lock precondition missing",
+    "rawReportSha256": "0efb6c2e76f08baace0b8702cdcef3cfcd2a71975d99af9fdefa52d1d5734333",
+    "gzipSha256": "86ef69de782516620cd6e10007efde9d99408565917b014ed9d544e7a4961a22",
+    "artifactId": 11564978354,
+    "archiveBytes": 88181261,
+    "archiveSha256": "5fc478f3b9265f8082d5e12829b597799f79c0934bde337b90ae6d9717fa3df2",
+    "archiveDownloadedSha256AndCrcVerifiedLocally": true
+  },
+  "rig": {
+    "status": "PASS",
+    "runId": 37813098794,
+    "jobId": 113434712108,
+    "stats": {
+      "startTime": "2026-10-08T17:00:42.821Z",
+      "duration": 441485.58,
+      "expected": 3,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "independentAttempts": 3,
+    "retries": 0,
+    "nativeApiProof": "RIG_POINTER_LOCK_PROOF.json",
+    "artifactId": 11566471747,
+    "archiveSha256ProvidedByGitHub": "af63a32602177c2f9a4512f3aed25d279ab855111e9c3b45fb05e2f5a0df99a5",
+    "archiveDownloadedAndVerifiedLocally": false
+  },
+  "historicalCritical": {
+    "runId": 37812593960,
+    "head": "24cf351bfa7a560fdae9a8eeaff5e31577101d56",
+    "node": {
+      "jobId": 113432972874,
+      "tests": 460,
+      "pass": 460,
+      "fail": 0,
+      "durationMs": 312616.255515,
+      "build": "PASS"
+    },
+    "browser": {
+      "jobId": 113435412459,
+      "pass": 5,
+      "fail": 1,
+      "reason": "30 s smoke capture wait",
+      "artifactId": 11565584466,
+      "archiveSha256ProvidedByGitHub": "364348b8f7e83a4a2960b6826a4dd37007ee3e155775d41da7340c85c25914e4",
+      "archiveDownloadedAndVerifiedLocally": false
+    }
+  },
+  "smokeDiagnosis": {
+    "runId": 37816227926,
+    "jobId": 113445450346,
+    "pass": 1,
+    "fail": 2,
+    "smokePauseResetPassed": 3,
+    "causeOfTwoFailures": "Low sampled later in blast life than High, so transient dust count 3 was incorrectly compared to 2",
+    "observedControlToSmokeWallTimeMs": 26865.4,
+    "pageErrors": 0,
+    "httpFailures": 0,
+    "fixturesAssertionsUnchanged": true,
+    "source": "SMOKE_DIAGNOSIS.json"
+  },
+  "fxFollowup": {
+    "status": "PASS",
+    "runId": 37822021393,
+    "jobId": 113465190803,
+    "stats": {
+      "startTime": "2026-10-08T18:09:39.009Z",
+      "duration": 285748.884,
+      "expected": 2,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "independentAttempts": 2,
+    "retries": 0,
+    "qualityComparison": "High Low High; identical paused clock, camera and simulation snapshot",
+    "measured": {
+      "smoke": {
+        "low": 1,
+        "high": 4
+      },
+      "dust": {
+        "low": 5,
+        "high": 9
+      },
+      "light": 0
+    },
+    "artifact": {
+      "id": 11569169807,
+      "name": "m01-v6-fx-followup-9a9946450b0ba77e8c649d0b28def2542e188c4e",
+      "size_in_bytes": 6410899,
+      "url": "https://api.github.com/repos/Brawl2007/COD-guerra/actions/artifacts/11569169807",
+      "archive_download_url": "https://api.github.com/repos/Brawl2007/COD-guerra/actions/artifacts/11569169807/zip",
+      "expired": false,
+      "created_at": "2026-10-08T18:14:26Z",
+      "expires_at": "2027-01-06T18:08:50Z",
+      "updated_at": "2026-10-08T18:14:26Z",
+      "digest": "sha256:3dc85f4505eab1b39fa6b77ff23a66b7725c8f7cb6b4f26c90997ec96f908314",
+      "workflow_run": {
+        "id": 37822021393,
+        "repository_id": 1397655434,
+        "head_repository_id": 1397655434,
+        "head_branch": "codex/m01-final-production-consolidation-v6",
+        "head_sha": "9a9946450b0ba77e8c649d0b28def2542e188c4e"
+      }
+    },
+    "archiveDownloadedAndVerifiedLocally": false
+  },
+  "finalCi": {
+    "runId": 37821714679,
+    "head": "edefda544c702962ad3e378d06fb1bd7e792254e",
+    "node": {
+      "jobId": 113464126164,
+      "pass": 460,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "durationMs": 323346.198476,
+      "build": "PASS",
+      "rawLog": "logs/ci-node-build-final.log"
+    },
+    "browser": {
+      "jobId": 113467402055,
+      "status": "PASS",
+      "pass": 6,
+      "fail": 0,
+      "retries": 0,
+      "reportedDuration": "9.1m",
+      "rawLog": "logs/ci-critical-browser-final.log"
+    },
+    "jobs": [
+      {
+        "id": 113464126164,
+        "run_id": 37821714679,
+        "workflow_name": "M01 final production consolidation V6",
+        "head_branch": "codex/m01-final-production-consolidation-v6",
+        "run_url": "https://api.github.com/repos/Brawl2007/COD-guerra/actions/runs/37821714679",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOU06His8AAAAaav0q1A",
+        "head_sha": "edefda544c702962ad3e378d06fb1bd7e792254e",
+        "url": "https://api.github.com/repos/Brawl2007/COD-guerra/actions/jobs/113464126164",
+        "html_url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37821714679/job/113464126164",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-08T18:06:24Z",
+        "started_at": "2026-10-08T18:06:26Z",
+        "completed_at": "2026-10-08T18:13:53Z",
+        "name": "node-build",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-08T18:06:27Z",
+            "completed_at": "2026-10-08T18:06:28Z"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-08T18:06:28Z",
+            "completed_at": "2026-10-08T18:06:35Z"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-08T18:06:35Z",
+            "completed_at": "2026-10-08T18:06:37Z"
+          },
+          {
+            "name": "Run npm ci",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-08T18:06:37Z",
+            "completed_at": "2026-10-08T18:06:40Z"
+          },
+          {
+            "name": "Run node --test --test-concurrency=2 tests/*.test.js",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-08T18:06:40Z",
+            "completed_at": "2026-10-08T18:12:03Z"
+          },
+          {
+            "name": "Run npm run build",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-08T18:12:03Z",
+            "completed_at": "2026-10-08T18:12:04Z"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-10-08T18:12:04Z",
+            "completed_at": "2026-10-08T18:12:04Z"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-10-08T18:12:04Z",
+            "completed_at": "2026-10-08T18:12:04Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-10-08T18:12:04Z",
+            "completed_at": "2026-10-08T18:12:04Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/Brawl2007/COD-guerra/check-runs/113464126164",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000000450,
+        "runner_name": "GitHub Actions 1000000450",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      {
+        "id": 113467402055,
+        "run_id": 37821714679,
+        "workflow_name": "M01 final production consolidation V6",
+        "head_branch": "codex/m01-final-production-consolidation-v6",
+        "run_url": "https://api.github.com/repos/Brawl2007/COD-guerra/actions/runs/37821714679",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOU06His8AAAAaay8nRw",
+        "head_sha": "edefda544c702962ad3e378d06fb1bd7e792254e",
+        "url": "https://api.github.com/repos/Brawl2007/COD-guerra/actions/jobs/113467402055",
+        "html_url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37821714679/job/113467402055",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-08T18:13:54Z",
+        "started_at": "2026-10-08T18:13:56Z",
+        "completed_at": "2026-10-08T18:23:42Z",
+        "name": "critical-browser",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-08T18:13:57Z",
+            "completed_at": "2026-10-08T18:13:57Z"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-08T18:13:57Z",
+            "completed_at": "2026-10-08T18:14:06Z"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-08T18:14:06Z",
+            "completed_at": "2026-10-08T18:14:08Z"
+          },
+          {
+            "name": "Run npm ci",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-08T18:14:08Z",
+            "completed_at": "2026-10-08T18:14:10Z"
+          },
+          {
+            "name": "Run npx playwright install --with-deps chromium",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-08T18:14:10Z",
+            "completed_at": "2026-10-08T18:14:28Z"
+          },
+          {
+            "name": "Run npm run build",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-08T18:14:28Z",
+            "completed_at": "2026-10-08T18:14:29Z"
+          },
+          {
+            "name": "Run npx playwright test tests/browser/m01-battlefield-fx-polish-v3.spec.js tests/browser/m01-consolidation-lifecycle.spec.js tests/browser/m01-station-architecture.spec.js --workers=1",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-08T18:14:29Z",
+            "completed_at": "2026-10-08T18:23:37Z"
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-10-08T18:23:37Z",
+            "completed_at": "2026-10-08T18:23:39Z"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15,
+            "started_at": "2026-10-08T18:23:39Z",
+            "completed_at": "2026-10-08T18:23:39Z"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 16,
+            "started_at": "2026-10-08T18:23:39Z",
+            "completed_at": "2026-10-08T18:23:39Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 17,
+            "started_at": "2026-10-08T18:23:39Z",
+            "completed_at": "2026-10-08T18:23:39Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/Brawl2007/COD-guerra/check-runs/113467402055",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000000453,
+        "runner_name": "GitHub Actions 1000000453",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      }
+    ],
+    "artifacts": [
+      {
+        "id": 11569913035,
+        "name": "m01-v6-critical-browser-edefda544c702962ad3e378d06fb1bd7e792254e",
+        "size_in_bytes": 9791035,
+        "url": "https://api.github.com/repos/Brawl2007/COD-guerra/actions/artifacts/11569913035",
+        "archive_download_url": "https://api.github.com/repos/Brawl2007/COD-guerra/actions/artifacts/11569913035/zip",
+        "expired": false,
+        "created_at": "2026-10-08T18:23:39Z",
+        "expires_at": "2027-01-06T18:06:24Z",
+        "updated_at": "2026-10-08T18:23:39Z",
+        "digest": "sha256:844f0acdf2f2636ecf019d8bf47ad904a839bca601482827cabed622d8c76896",
+        "workflow_run": {
+          "id": 37821714679,
+          "repository_id": 1397655434,
+          "head_repository_id": 1397655434,
+          "head_branch": "codex/m01-final-production-consolidation-v6",
+          "head_sha": "edefda544c702962ad3e378d06fb1bd7e792254e"
+        }
+      }
+    ],
+    "artifactsDownloadedAndVerifiedLocally": false
+  },
+  "evidenceAudit": {
+    "runId": 37823137002,
+    "jobId": 113469022293,
+    "status": "PASS",
+    "check": {
+      "status": "PASS",
+      "protectedFilesEqualToV5": 264,
+      "productionEqualTo": "2a2a56734861b0801234d7ddf3cda66c0100f326",
+      "historicalFullReportIntegrityVerified": true,
+      "distinctPassingCases": 84,
+      "singleFullSuitePass": false,
+      "rigIndependentPasses": 3,
+      "fxIndependentPasses": 2,
+      "v5v6PixelIdenticalPairsRecomputed": 30,
+      "finalOriginalPngs": 8,
+      "finalQualityAttachments": 2,
+      "sourceHead": "27719a9733ff89d5af8ca9719bcc7d858c28951d"
+    },
+    "artifact": {
+      "id": 11570935297,
+      "name": "m01-v6-final-evidence-27719a9733ff89d5af8ca9719bcc7d858c28951d",
+      "size_in_bytes": 6879923,
+      "url": "https://api.github.com/repos/Brawl2007/COD-guerra/actions/artifacts/11570935297",
+      "archive_download_url": "https://api.github.com/repos/Brawl2007/COD-guerra/actions/artifacts/11570935297/zip",
+      "expired": false,
+      "created_at": "2026-10-08T18:18:06Z",
+      "expires_at": "2027-01-06T18:17:31Z",
+      "updated_at": "2026-10-08T18:18:06Z",
+      "digest": "sha256:56508f72efa117a9485deec33e6d91abd753996ceeef8b746a405a043d59d984",
+      "workflow_run": {
+        "id": 37823137002,
+        "repository_id": 1397655434,
+        "head_repository_id": 1397655434,
+        "head_branch": "codex/m01-final-production-consolidation-v6",
+        "head_sha": "27719a9733ff89d5af8ca9719bcc7d858c28951d"
+      }
+    },
+    "archiveDownloadedAndVerifiedLocally": false
+  },
+  "recoveryArchive": {
+    "runId": 37796261400,
+    "artifactId": 11559960166,
+    "archiveBytes": 54337529,
+    "archiveSha256": "029029f6ba3f05dbec8f4f9bf766a6a0970ad077844e452af9cdd2a010dd71ac",
+    "archiveDownloadedSha256AndCrcVerifiedLocally": true,
+    "filesComparedToPublishedGit": 99,
+    "visualPairsRecomputedPixelIdentical": 30,
+    "provenance": "Observed native verification in continuation before executor became inaccessible; latest CI independently recomputed all 30 pairs."
+  },
+  "localInfrastructure": {
+    "chromium": "SIGSEGV at launch before the game; not a gameplay assertion result",
+    "executor": "Subsequent pwd/patch calls did not return; orchestration terminated; continued on isolated GitHub CI",
+    "originalLocalGlobalReport": "Unavailable after transport disconnected following 81 observed passes; recovered with actual CI full report, not reconstructed."
+  },
+  "experiments": [
+    {
+      "runId": 37812801714,
+      "result": "FAIL before regression cases",
+      "reason": "Native control probe omitted Space to leave intro; corrected in cf4720fd"
+    },
+    {
+      "runId": 37821883384,
+      "result": "FAIL guard; browser SKIPPED",
+      "reason": "Proof predicate overmatched an existing control wait; corrected to exact five-line block"
+    },
+    {
+      "runId": 37823051382,
+      "result": "PASS evidence audit, ordering correction required",
+      "reason": "Board/file order needed alignment to repeat index; corrected and verified by run 37823137002"
+    }
+  ],
+  "build": {
+    "dist/assets/index-QzIf-9Lu.js": {
+      "bytes": 1408885,
+      "sha256": "b9d9f57d83317dc2114561c7c8b7d443ebbfeb66c3ccdc5ab07bfd09dd8d035a"
+    },
+    "dist/assets/index-DQURwQ3m.css": {
+      "bytes": 14890,
+      "sha256": "199d38325c505021278bfaff8be2fe6f86a0f742bb82f9cf6a1909fdfa3b7e06"
+    }
+  },
+  "noSingleFullSuite84of84Claim": true,
+  "limitations": [
+    "Unapproved Station V3 and later delivery deltas excluded",
+    "Animation Resolver absent",
+    "No Chromebook FPS or physical GPU/VRAM measurement",
+    "No human playtest or actual BFCache admission certification",
+    "Distant FX screenshots occluded/out of frame; not artistic proof"
+  ],
+  "state": "READY_FOR_CAPTAIN_REVIEW"
+}

@@ -1,0 +1,577 @@
+{
+  "schema_version": 1,
+  "audit": "M01-FINAL-PRODUCTION-CONSOLIDATION-V6 / independent FX evidence audit",
+  "audit_date": "2026-10-08",
+  "repository": "Brawl2007/COD-guerra",
+  "provenance": {
+    "collection": "Read-only GitHub plugin metadata, comments/reviews, checks, Actions logs and ZIP artifacts; authorized local source inspection.",
+    "artifact_inspection": "Existing ZIPs and nested Playwright traces decoded in memory. Digests below are GitHub artifact metadata/upload-log digests.",
+    "local_execution": {
+      "tests_run": 0,
+      "browser_sessions_launched": 0,
+      "workflows_dispatched": 0,
+      "workflows_rerun": 0
+    },
+    "scope": "These records document completed remote evidence. They do not certify the later V6 harness correction or a local/browser full-suite pass."
+  },
+  "categories": [
+    {
+      "id": 1,
+      "name": "simulation_event_missing",
+      "portuguese": "Evento de simulação não emitido",
+      "finding": "Não demonstrado para madeira, granada ou demolição leste. A fixture de terra seleciona kind=east, que não emite round-impact por contrato; isto é defeito de seleção do harness."
+    },
+    {
+      "id": 2,
+      "name": "effect_absent",
+      "portuguese": "FX ausente apesar do evento",
+      "finding": "Não demonstrado. Resíduos/feedback/FX sobreviventes confirmam produção; os frames iniciais de todas as partículas não foram capturados."
+    },
+    {
+      "id": 3,
+      "name": "effect_expired",
+      "portuguese": "FX emitido e expirado antes da observação",
+      "finding": "Diagnóstico principal sustentado por idades observadas e limites de vida do código para as três falhas da PR #53."
+    },
+    {
+      "id": 4,
+      "name": "playwright_harness_error",
+      "portuguese": "Erro de observação/assert/fixture do harness Playwright",
+      "finding": "Observador instalado depois de Continue e da espera de controlo; captura posterior à janela transitória. Waiter antigo aceita qualquer impacto. Fixture earth pode selecionar kind=east. Sem prova de SyntaxError/ReferenceError causador destas falhas."
+    },
+    {
+      "id": 5,
+      "name": "runner_cancellation",
+      "portuguese": "Cancelamento/interrupção do runner",
+      "finding": "Confirmado nos jobs históricos dos vagões e em runs V5 anteriores; distinto das falhas de browser concluídas nas HEADs auditadas."
+    }
+  ],
+  "pull_requests": [
+    {
+      "number": 53,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/53",
+      "head_branch": "codex/m01-fx-browser-evidence-harness-v1",
+      "head_sha": "a4dc9a8df5792df74cb6b7583f00819a380423d9",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "comments": 0,
+      "reviews": 0,
+      "base_branch": "codex/m01-ready-deliveries-consolidation-v5",
+      "base_sha_reported_by_pr_metadata": "ea6e912e36d1013bc8ca0bc60db182f5b6a60166",
+      "head_rechecked": true
+    },
+    {
+      "number": 52,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/52",
+      "head_branch": "codex/m01-ready-deliveries-consolidation-v5",
+      "head_sha": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "comments": 0,
+      "reviews": 0,
+      "head_rechecked": true
+    }
+  ],
+  "completed_diagnostics_patch": {
+    "source_pr": 53,
+    "head_sha": "a4dc9a8df5792df74cb6b7583f00819a380423d9",
+    "changed_files": 2,
+    "commits": 2,
+    "additions": 75,
+    "deletions": 6,
+    "files": [
+      {
+        "path": "tests/browser/m01-battlefield-fx-polish-v3.spec.js",
+        "blob_sha": "b5f6c2d006b737a04191dbf0c9ae33f07b07ac31",
+        "url": "https://github.com/Brawl2007/COD-guerra/blob/a4dc9a8df5792df74cb6b7583f00819a380423d9/tests/browser/m01-battlefield-fx-polish-v3.spec.js",
+        "changes": [
+          "Adds visual-verify read-only state access.",
+          "Collects first/last samples and maximum FX counts after Continue/unpause.",
+          "Attaches authoritative damage/consumed/objective state on timeout.",
+          "Requires the tested material's particle family rather than any impact; assertion thresholds retained."
+        ]
+      },
+      {
+        "path": ".github/workflows/m01-fx-browser-evidence-harness-v1.yml",
+        "url": "https://github.com/Brawl2007/COD-guerra/blob/a4dc9a8df5792df74cb6b7583f00819a380423d9/.github/workflows/m01-fx-browser-evidence-harness-v1.yml",
+        "changes": [
+          "Push trigger restricted to the diagnostic branch.",
+          "Runs FX Node contracts, build and focused Playwright FX tests.",
+          "Uploads traces/screenshots/results even on failure.",
+          "No workflow_dispatch and no deployment."
+        ]
+      }
+    ],
+    "production_changes": false,
+    "limitation": "The sampler is installed after the game resumes; the completed run proves the observation gap but does not record every early particle peak."
+  },
+  "runs": [
+    {
+      "run_id": 37755734696,
+      "job_id": 113239698090,
+      "name": "M01 FX browser evidence harness V1",
+      "event": "push",
+      "head_sha": "a4dc9a8df5792df74cb6b7583f00819a380423d9",
+      "status": "completed",
+      "conclusion": "failure",
+      "attempt": 1,
+      "created_at": "2026-10-08T09:18:28Z",
+      "job_started_at": "2026-10-08T09:18:32Z",
+      "job_completed_at": "2026-10-08T09:25:26Z",
+      "run_updated_at": "2026-10-08T09:25:27Z",
+      "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37755734696/job/113239698090",
+      "result": {
+        "focused_node": {
+          "tests": 8,
+          "passed": 8,
+          "failed": 0,
+          "cancelled": 0
+        },
+        "build": "success",
+        "focused_browser": {
+          "tests": 3,
+          "passed": 0,
+          "failed": 3
+        },
+        "runner_cancelled": false
+      },
+      "artifact": {
+        "id": 11540008886,
+        "name": "m01-fx-harness-probes",
+        "size_bytes": 35211052,
+        "digest": "sha256:92ed14e7d36d5a547ecec69c3d6bcf9deef40db81b86c66362e3d17e0a63b386",
+        "created_at": "2026-10-08T09:25:23Z",
+        "expires_at": "2027-01-06T09:18:28Z",
+        "expired_at_audit": false,
+        "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37755734696/artifacts/11540008886",
+        "inspected": true
+      }
+    },
+    {
+      "run_id": 37756029307,
+      "job_id": 113241388774,
+      "name": "M01 ready deliveries consolidation V5",
+      "event": "push",
+      "head_sha": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "status": "completed",
+      "conclusion": "failure",
+      "attempt": 1,
+      "created_at": "2026-10-08T09:21:03Z",
+      "job_started_at": "2026-10-08T09:22:56Z",
+      "job_completed_at": "2026-10-08T09:41:10Z",
+      "run_updated_at": "2026-10-08T09:41:11Z",
+      "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37756029307/job/113241388774",
+      "result": {
+        "focused_node": {
+          "jobs": 11,
+          "successful_jobs": 11,
+          "failed_jobs": 0,
+          "cancelled_jobs": 0
+        },
+        "build": "success",
+        "focused_browser": {
+          "tests": 9,
+          "passed": 7,
+          "failed": 2,
+          "failed_cases": [
+            "wood chip assertion: expected >0, received 0",
+            "Low east-demolition layered-blast waiter timeout"
+          ],
+          "layered_profile_case": "passed"
+        },
+        "runner_cancelled": false
+      },
+      "artifact": {
+        "id": 11540434478,
+        "name": "m01-v5-browser-diagnostics",
+        "size_bytes": 35804946,
+        "digest": "sha256:e68ccbeea21a3dca8ced3c397f28c8bb9cc67ae89ce1c45f70101122d3ad6b54",
+        "created_at": "2026-10-08T09:41:08Z",
+        "expires_at": "2027-01-06T09:21:03Z",
+        "expired_at_audit": false,
+        "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37756029307/artifacts/11540434478",
+        "inspected": true
+      }
+    }
+  ],
+  "failures": [
+    {
+      "name": "wood-round-impact-high.png",
+      "run_id": 37755734696,
+      "artifact_id": 11540008886,
+      "trace_zip": "test-results/m01-battlefield-fx-polish--49185-ep-distinct-visual-language/trace.zip",
+      "trace_stream": "2-trace.trace",
+      "fixture": {
+        "clock": 386.65000000005364,
+        "player": {
+          "x": -257.65,
+          "y": -3,
+          "z": 10.329368132873366
+        },
+        "pending_round_count": 1,
+        "round": {
+          "id": "m01_round_373",
+          "by": "de_east_11",
+          "kind": "player",
+          "weapon": "kar98k",
+          "firedAt": 385.1000000000533,
+          "arriveAt": 386.9927503943841,
+          "remaining": 0.3427503943304373
+        }
+      },
+      "first_observation": {
+        "clock": 388.216600000054,
+        "paused": false,
+        "age_since_scheduled_arrival_seconds": 1.2238496056698978,
+        "age_basis": "First probe clock minus scheduled round arriveAt; the exact round-impact emission timestamp is not recorded.",
+        "counts": {
+          "puff": 0,
+          "spark": 0,
+          "chip": 0
+        }
+      },
+      "observation": {
+        "samples": 15,
+        "last_clock": 391.11660000005463,
+        "max": {
+          "puff": 0,
+          "spark": 0,
+          "chip": 0
+        }
+      },
+      "effect_lifetime_seconds": 0.76,
+      "event_evidence": {
+        "wood_decal_marks": 1,
+        "wood_decal_spawned": 1,
+        "wood_decal_placed": 1,
+        "decal_errors": 0,
+        "near_impact_feedback_events": 1
+      },
+      "trace_timing": {
+        "basis": "Monotonic Playwright trace milliseconds, not UTC",
+        "continue": {
+          "call_id": "call@86",
+          "start": 102058.988,
+          "end": 102542.189
+        },
+        "unpause_wait": {
+          "call_id": "call@88",
+          "start": 102546.603,
+          "end": 119086.458
+        },
+        "install_probe": {
+          "call_id": "call@90",
+          "start": 119097.448,
+          "end": 134173.397
+        },
+        "effect_wait": {
+          "call_id": "call@92",
+          "start": 135633.011,
+          "end": 161043.983
+        }
+      },
+      "v5_corresponding_capture": {
+        "run_id": 37756029307,
+        "artifact_id": 11540434478,
+        "trace_stream": "2-trace.trace",
+        "clock": 388.283300000054,
+        "chip": 0,
+        "wood_decal_marks": 1,
+        "near_impact_feedback_events": 1
+      },
+      "categories": [
+        3,
+        4
+      ],
+      "diagnosis": "A real wood impact occurred; observation starts beyond the wood particle lifetime. Early chip frames were not directly captured; no production particle defect is demonstrated."
+    },
+    {
+      "name": "grenade-small-near-high.png",
+      "run_id": 37755734696,
+      "artifact_id": 11540008886,
+      "trace_zip": "test-results/m01-battlefield-fx-polish--ec2c9-w-distinct-layered-profiles/trace.zip",
+      "trace_stream": "0-trace.trace",
+      "event": {
+        "damage_id": "m01_grenade_0",
+        "started": 4.099999999999993
+      },
+      "first_observation": {
+        "clock": 5.300099999999996,
+        "paused": false,
+        "age_since_event_seconds": 1.2001000000000026,
+        "active": 1,
+        "counts": {
+          "core": 0,
+          "fire": 0,
+          "dust": 0,
+          "smoke": 5
+        }
+      },
+      "observation": {
+        "samples": 17,
+        "last_clock": 8.383499999999987,
+        "max": {
+          "active": 1,
+          "core": 0,
+          "fire": 0,
+          "dust": 0,
+          "smoke": 6
+        }
+      },
+      "effect_lifetimes_seconds": {
+        "core": 0.28,
+        "fire": 0.54,
+        "dust": 1.02,
+        "smoke": 2.95,
+        "burst": 3.25
+      },
+      "event_evidence": {
+        "authoritative_damage_record": true,
+        "smoke_observed": true,
+        "grenade_residue_record": true,
+        "explosion_feedback_events": 1
+      },
+      "trace_timing": {
+        "basis": "Monotonic Playwright trace milliseconds, not UTC",
+        "continue": {
+          "call_id": "call@16",
+          "start": 213431.451,
+          "end": 214371.588
+        },
+        "unpause_wait": {
+          "call_id": "call@18",
+          "start": 214379.704,
+          "end": 215122.491
+        },
+        "install_probe": {
+          "call_id": "call@20",
+          "start": 215722.567,
+          "end": 235442.241
+        },
+        "effect_wait": {
+          "call_id": "call@22",
+          "start": 238036.054,
+          "end": 268044.66
+        }
+      },
+      "categories": [
+        3,
+        4
+      ],
+      "diagnosis": "The grenade event and effect occurred; the first sample is already beyond core/fire/dust lifetimes and observes surviving smoke."
+    },
+    {
+      "name": "east-demolition-low.png",
+      "run_id": 37755734696,
+      "artifact_id": 11540008886,
+      "trace_zip": "test-results/m01-battlefield-fx-polish--6bcde-and-Low-High-remain-bounded/trace.zip",
+      "trace_stream": "0-trace.trace",
+      "fixture": {
+        "clock": 741.0999999998737,
+        "quality": "low",
+        "consumed_east_demolition": false,
+        "pending_round_count": 0
+      },
+      "event": {
+        "id": "evt_m01_east_demolition",
+        "damage_id": "east_demolition",
+        "started": 741.1499999998737,
+        "consumed": true
+      },
+      "first_observation": {
+        "clock": 742.5332999998725,
+        "paused": false,
+        "age_since_event_seconds": 1.383299999998826,
+        "active": 1,
+        "counts": {
+          "core": 0,
+          "fire": 0,
+          "dust": 5,
+          "shard": 5,
+          "smoke": 1
+        }
+      },
+      "observation": {
+        "samples": 21,
+        "last_clock": 747.3666999998683,
+        "max": {
+          "active": 1,
+          "core": 0,
+          "fire": 0,
+          "dust": 5,
+          "smoke": 5
+        }
+      },
+      "effect_lifetimes_seconds": {
+        "core": 0.48,
+        "fire": 1.18,
+        "dust": 1.95,
+        "smoke": 6.25,
+        "burst": 6.45
+      },
+      "event_evidence": {
+        "authoritative_damage_record": true,
+        "authoritative_consumed_event": true,
+        "dust_shards_smoke_observed": true
+      },
+      "categories": [
+        3,
+        4
+      ],
+      "diagnosis": "The demolition event and FX occurred; the first sample is beyond core/fire lifetimes while dust, shards and smoke remain.",
+      "v5_corresponding_failure": {
+        "run_id": 37756029307,
+        "artifact_id": 11540434478,
+        "trace_stream": "0-trace.trace",
+        "kind": "30-second layered-blast waiter timeout"
+      }
+    }
+  ],
+  "coverage_flaws": [
+    {
+      "name": "Earth fixture may select a deliberately non-impact round",
+      "fixture": {
+        "run_id": 37755734696,
+        "trace_zip": "test-results/m01-battlefield-fx-polish--49185-ep-distinct-visual-language/trace.zip",
+        "trace_stream": "0-trace.trace",
+        "clock": 259.55000000002474,
+        "round_id": "m01_round_12",
+        "kind": "east",
+        "arriveAt": 259.67468733571445,
+        "pending_round_count": 8
+      },
+      "contract": "src/game/m01-simulation.js:573 returns immediately for kind=east; those rounds intentionally provide only muzzle/audio presentation.",
+      "consequence": "An earth puff assertion can pass on an unrelated pending round. This is category 4, not a production event regression.",
+      "proposed_fix": "Exclude kind=east and correlate the selected real round/surface.",
+      "category": 4
+    },
+    {
+      "name": "Probe reads the wrong battleClock level",
+      "evidence": "Diagnostics battle clock is d.m01.battleClock, while the #53 row reads d.battleClock; serialized trace rows contain undefined.",
+      "consequence": "Diagnostic field omission; does not cause the demonstrated FX failures.",
+      "proposed_fix": "Read d.m01.battleClock.",
+      "category": 4
+    }
+  ],
+  "historical_runs": [
+    {
+      "run_id": 37755389302,
+      "head_sha": "05984f63ced11e38d57cba9a75170b38d54f7a13",
+      "conclusion": "cancelled",
+      "warning": "This run also contains a completed real motion-clips protected-base assertion failure; do not classify every historical failure as cancellation.",
+      "motion_clips": {
+        "job_id": 113238539366,
+        "passed": 11,
+        "failed": 1,
+        "cancelled": 0,
+        "error": "Protected gameplay/runtime/assets/deployment file comparison expected [] against an earlier approved base; actual integrated changes were nonempty.",
+        "superseded_by_exact_v5_success": true
+      },
+      "train": {
+        "job_id": 113238539631,
+        "job_conclusion": "failure",
+        "test_step_conclusion": "cancelled"
+      },
+      "browser": {
+        "job_id": 113238636713,
+        "conclusion": "cancelled"
+      }
+    },
+    {
+      "run_id": 37755679286,
+      "head_sha": "ea6e912e36d1013bc8ca0bc60db182f5b6a60166",
+      "conclusion": "cancelled",
+      "train": {
+        "job_id": 113239724350,
+        "job_conclusion": "failure",
+        "test_step_conclusion": "cancelled",
+        "node_pass": 0,
+        "node_fail": 0,
+        "node_cancelled": 1,
+        "shutdown_at": "2026-10-08T09:19:10.1876070Z",
+        "operation_cancelled_at": "2026-10-08T09:19:10.5250574Z",
+        "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37755679286/job/113239724350"
+      },
+      "browser": {
+        "job_id": 113239815140,
+        "conclusion": "cancelled"
+      }
+    },
+    {
+      "run_id": 37755906429,
+      "head_sha": "5b2a50b6b0c745b05be5493c3d40753d3fa62b73",
+      "conclusion": "cancelled",
+      "train": {
+        "job_id": 113240538470,
+        "conclusion": "success"
+      },
+      "browser": {
+        "job_id": 113240648119,
+        "conclusion": "cancelled"
+      }
+    },
+    {
+      "run_id": 37749772664,
+      "label": "V4 inherited evidence",
+      "train": {
+        "job_id": 113220234675,
+        "job_conclusion": "failure",
+        "test_step_conclusion": "cancelled",
+        "node_pass": 0,
+        "node_fail": 0,
+        "node_cancelled": 1,
+        "shutdown_at": "2026-10-08T08:27:23.3727138Z",
+        "operation_cancelled_at": "2026-10-08T08:27:24.1211060Z",
+        "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37749772664/job/113220234675"
+      },
+      "browser": {
+        "job_id": 113220347234,
+        "conclusion": "failure"
+      },
+      "category_for_train": 5
+    }
+  ],
+  "safe_fix_proposal": {
+    "status": "Proposal; implementation and validation belong to the parent task.",
+    "origin": "Retain PR #53 instrumentation/diagnosis in an isolated branch based on V5 d277b06937170aa433bc418ef5b83b2925c6d6de.",
+    "steps": [
+      "Arm a browser RAF observer before Continue.",
+      "Capture the matching material/layer diagnostic frame and synchronously pause through the existing Game blur handler in that callback.",
+      "Exclude deliberately non-impact kind=east rounds and correlate the selected round/material.",
+      "Preserve material-specific assertions, simultaneous blast-layer assertions, budgets, quality comparisons and pause/restore checks.",
+      "Correct probe battleClock to d.m01.battleClock."
+    ],
+    "production_changes_justified": false,
+    "reason": "The completed evidence demonstrates lost observation windows. No FX lifetime/count reduction or assertion relaxation is justified."
+  },
+  "sources": {
+    "heads": [
+      "https://api.github.com/repos/Brawl2007/COD-guerra/git/ref/heads/codex/m01-fx-browser-evidence-harness-v1",
+      "https://api.github.com/repos/Brawl2007/COD-guerra/git/ref/heads/codex/m01-ready-deliveries-consolidation-v5"
+    ],
+    "check_runs": [
+      "https://api.github.com/repos/Brawl2007/COD-guerra/commits/a4dc9a8df5792df74cb6b7583f00819a380423d9/check-runs?per_page=100",
+      "https://api.github.com/repos/Brawl2007/COD-guerra/commits/d277b06937170aa433bc418ef5b83b2925c6d6de/check-runs?per_page=100"
+    ],
+    "code": [
+      {
+        "path": "src/render/m01-battlefield-fx-profile.js",
+        "url": "https://github.com/Brawl2007/COD-guerra/blob/a4dc9a8df5792df74cb6b7583f00819a380423d9/src/render/m01-battlefield-fx-profile.js",
+        "locations": "5–21, 59"
+      },
+      {
+        "path": "src/render/m01-view.js",
+        "url": "https://github.com/Brawl2007/COD-guerra/blob/a4dc9a8df5792df74cb6b7583f00819a380423d9/src/render/m01-view.js",
+        "locations": "303–327, 350–395, 417, 623–635"
+      },
+      {
+        "path": "src/game/m01-simulation.js",
+        "url": "https://github.com/Brawl2007/COD-guerra/blob/a4dc9a8df5792df74cb6b7583f00819a380423d9/src/game/m01-simulation.js",
+        "locations": "566–604"
+      }
+    ],
+    "executive_handoff": "https://github.com/Brawl2007/COD-guerra/issues/55#issuecomment-6057373984"
+  }
+}

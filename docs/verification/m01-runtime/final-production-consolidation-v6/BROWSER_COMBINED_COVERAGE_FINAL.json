@@ -1,0 +1,600 @@
+{
+  "distinctPassingCases": 84,
+  "singleFullSuitePass": false,
+  "historicalCompleteRun": {
+    "pass": 83,
+    "fail": 1,
+    "runId": 37802820440
+  },
+  "fixtureDeltaProof": "TEST_DELTA_PROOF.json",
+  "cases": [
+    {
+      "file": "game.spec.js",
+      "title": "production prefix loads assets; real click captures mouse; shooting, reload and pause work",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "game.spec.js",
+      "title": "real keyboard movement reaches and stores checkpoint; restart and page reload restore it",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "game.spec.js",
+      "title": "corrupt checkpoint is explained and a new mission remains available",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "game.spec.js",
+      "title": "missing models are reported and procedural fallback keeps the area playable",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-animation-contract.spec.js",
+      "title": "schema-2 animation contract current 89: exact production restore, pause, reload and prior checkpoint",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-animation-contract.spec.js",
+      "title": "schema-2 animation contract legacy 86: exact production restore, pause, reload and prior checkpoint",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-audio-offline-render.spec.js",
+      "title": "offline render: each weapon, distance band, impact, blast, vehicle and fire has a measurable, distinct acoustic signature",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-audio-production.spec.js",
+      "title": "M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-battlefield-audio-runtime.spec.js",
+      "title": "live M01 combat: real MG34 fire raises intensity; front bed, reverb, buses and limits are live",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-battlefield-audio-runtime.spec.js",
+      "title": "live M01 east demolition: one authoritative blast becomes the layered bridge demolition with metal stress",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-battlefield-fx-polish-v3.spec.js",
+      "title": "real earth stone and wood round impacts keep distinct visual language",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-battlefield-fx-polish-v3.spec.js",
+      "title": "small bombing east and west demolition show distinct layered profiles",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-battlefield-fx-polish-v3.spec.js",
+      "title": "distance smoke lifecycle pause restore and Low High remain bounded",
+      "observed": "PASS",
+      "runId": 37822021393,
+      "source": "FX_FOLLOWUP.json"
+    },
+    {
+      "file": "m01-battlefield-fx.spec.js",
+      "title": "east demolition runs layered blast -> dust -> smoke, freezes on pause and cleans transient pools",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-battlefield-fx.spec.js",
+      "title": "real in-flight round produces bounded material impact FX without altering the saved simulation path",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-bridge-portal-polish.spec.js",
+      "title": "captures rail, road, oblique, bridge-context and post-demolition portal views",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-bridge-portal-polish.spec.js",
+      "title": "Low keeps weathered portal material while High adds bounded microdetail",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-bridge-structural.spec.js",
+      "title": "captures bridge structure at near, medium and long range",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-bridge-structural.spec.js",
+      "title": "captures demolished spans with the structural detail they inherit",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-combat-feedback.spec.js",
+      "title": "real enemy hit drives bounded directional M01 presentation and reset semantics",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-combat-feedback.spec.js",
+      "title": "real crack and nearby impact register danger, accumulation caps and Low tier",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-combat-feedback.spec.js",
+      "title": "real grenade detonation produces bounded nearby explosion feedback without moving the player",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-consolidation-lifecycle.spec.js",
+      "title": "menu Low quality controls first audio allocation; persisted pagehide pauses and remains resumable",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-damage-decals.spec.js",
+      "title": "player fire leaves bounded portal-brick marks; pause freezes them and a checkpoint restore clears them",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-damage-decals.spec.js",
+      "title": "player fire leaves bounded track-bed marks; pause freezes them and a checkpoint restore clears them",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-damage-decals.spec.js",
+      "title": "saved blasts draw their persistent aftermath on load (frozen probes of genuine route states)",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-environment-prop-density.spec.js",
+      "title": "captures contextual Station yard, railway, bridge and combat-area dressing",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-environment-prop-density.spec.js",
+      "title": "Low Medium High retain composition with bounded deterministic density",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-environment-prop-density.spec.js",
+      "title": "checkpoint restart and page reload do not duplicate environment props",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-environment-quality.spec.js",
+      "title": "explicit visual quality survives reload and the menu agrees with the renderer",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-hud-presentation.spec.js",
+      "title": "the intro is presented as black screen, typed title card and letterbox; skipping reveals the objective and checkpoint",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-hud-presentation.spec.js",
+      "title": "a continued save shows the place card and keyed interaction prompt; HUD fits common resolutions without overlap",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-locomotive.spec.js",
+      "title": "locomotive 963 production GLBs load, far LOD, pause and restore",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-locomotive.spec.js",
+      "title": "locomotive 963 production optional failure fallback",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-mg34-prone.spec.js",
+      "title": "real MG34 prone save after shot 1: production continuation, real muzzle, pause and reload",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-mg34-prone.spec.js",
+      "title": "real MG34 prone save after shot 4: production continuation, real muzzle, pause and reload",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-mg34-prone.spec.js",
+      "title": "real MG34 prone save after shot 6: production continuation, real muzzle, pause and reload",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-mg34-prone.spec.js",
+      "title": "missing optional prone GLB keeps real MG34 gameplay and procedural low posture",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-panzerzug.spec.js",
+      "title": "Panzerzug production GLBs load, far LOD, pause and restore",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-panzerzug.spec.js",
+      "title": "Panzerzug production optional failure fallback",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-soldier-visual-variation.spec.js",
+      "title": "real character renderer: German/Polish faces, gear, roles, all LODs, pause and save/reload; matched BEFORE/AFTER",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-soldier-visual-variation.spec.js",
+      "title": "production UI continuation and reload keep visual IDs stable with no gameplay fields added to schema 2",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-station-architecture.spec.js",
+      "title": "Station quality, checkpoint restart and page reload retain one architectural root and all prop clusters",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-station-architecture.spec.js",
+      "title": "missing optional soldier, aircraft and train GLBs preserve Station architecture and solid gameplay envelopes",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-train-consist-polish.spec.js",
+      "title": "captures wagon, coupling, underframe and consist views at High and Low",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-train-consist-polish.spec.js",
+      "title": "total wagon GLB failure keeps the 65 procedural proxies and adds no detail on them",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-vegetation-lod.spec.js",
+      "title": "fixed rail camera shows volumetric grove in High and a cheaper intact silhouette in Low",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-vegetation-lod.spec.js",
+      "title": "Medium keeps volumetric near and distant battlefield vegetation without changing gameplay state",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-wagon-runtime-integration.spec.js",
+      "title": "yard wagon uses real LOD0/1/2 and authoritative burned state survives reload then obeys prior checkpoint",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-wagon-runtime-integration.spec.js",
+      "title": "total wagon GLB failure keeps train and yard procedural fallbacks visible and semantic state burned",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-weapon-presentation.spec.js",
+      "title": "wz.29 ADS shot: layered flash on the socket, bolt stroke, one case into the world; gameplay state is the simulation's",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-weapon-presentation.spec.js",
+      "title": "wz.29 clip reload: the empty stripper clip leaves at the 2,45 s marker and lands in the world",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-weapon-presentation.spec.js",
+      "title": "bench M1 Carbine keeps its own semi-auto identity: flash, brass with the shot, smooth ADS",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-wz29-viewmodel.spec.js",
+      "title": "Wz.29 production ADS, paused save reconstruction and actual sights on low",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-wz29-viewmodel.spec.js",
+      "title": "Wz.29 production ADS, paused save reconstruction and actual sights on medium",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01-wz29-viewmodel.spec.js",
+      "title": "Wz.29 production ADS, paused save reconstruction and actual sights on high",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "the genuine first raid displays three Ju 87 GLBs with light LODs and freezes the propellers on pause",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "unavailable optional Ju 87 models retain all three raid silhouettes and the playable mission",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset",
+      "observed": "PASS",
+      "runId": 37813098794,
+      "source": "RIG_FOLLOWUP.json"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "an optional character download failure preserves playable procedural actors without blocking bridge validation",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "Kowal fires and changes the rkm magazine from actual combat state, preserving both poses in pause",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "missing close-up LOD0 falls back to intact LOD1 hands while the light world actors remain available",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "the station clip alone cannot enable a viewmodel when the required weapon animations fail to download",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "the station evacuation restores its grounded drag, pauses with the mission and delivers the casualty",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "the real station grab restores synchronized clips, pauses and keeps both roots fixed",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "the real station release restores synchronized clips, pauses and keeps both roots fixed",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "a missing optional station transition GLB keeps the grounded fallback and completes evacuation",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "real keyboard movement traverses the approaches and E delivers the message at the rail bridge",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "adjustment salvo at the gates restores its actual origin and follows mouse look",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "adjustment salvo behind the truss restores its actual origin and follows mouse look",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "demolition inside the road truss shows the actual bearing while mouse look remains free",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "a genuine CP-D reload keeps east destruction and casualties, including restart and page reload",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "the actual outro state can be skipped through the UI into the enabled historical debrief",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "the genuine train 963 and both MG34 fire sources use optional GLBs, light instances and reproducible pause/restart",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "schema-2 continuation keeps the older CP-A on the real Restart checkpoint button",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "missing optional wagon models and MG34 clips preserve 65 proxies, both procedural supports and playable M01",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "the real roll-call snapshot renders seated actors and keeps their pose after page reload",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "a real withdrawal continuation loses men only to rounds from the spans, keeps the twelve-survivor floor and shows the count in the HUD",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "a failed M01 bridge load prevents an invisible bridge; the French sandbox remains selectable",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "textured atmosphere survives checkpoint restart without duplicating resources; low quality reduces vegetation",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "ckm west crew and weapon use actual saved abandon time, pause and fresh reload",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    },
+    {
+      "file": "m01.spec.js",
+      "title": "optional ckm kit failure retains the crew fallback and checkpoint restoration",
+      "observed": "PASS",
+      "runId": 37802820440,
+      "source": "BROWSER_FULL_CI.json.gz"
+    }
+  ]
+}

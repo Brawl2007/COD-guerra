@@ -127,10 +127,15 @@ test('licensed character rigs and first-person hands follow real weapon state, p
   expect((await page.evaluate(()=>window.gameDiagnostics())).m01.viewModel).toEqual(frozen.m01.viewModel);
   await page.locator('#resume').click();
   const fireRound=async expectedMag=>{
+    // Resume requests pointer lock asynchronously; pointerlockchange clears Input.
+    // A READY weapon alone does not mean the browser has returned control yet.
+    await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
+    const before=await page.evaluate(()=>window.gameDiagnostics().m01.weapon.shotCount);
     // Pointer-lock native mouse movement can race the slow rendered frame. Dispatch the same window input
     // consumed by Input without repositioning the locked cursor, then wait on authoritative weapon state.
     await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});
     await page.waitForFunction(expected=>window.gameDiagnostics().m01.weapon.mag===expected,expectedMag,{timeout:process.env.CI?30000:10000});
+    expect((await page.evaluate(()=>window.gameDiagnostics())).m01.weapon.shotCount).toBe(before+1);
     await expect(page.locator('#mag')).toHaveText(String(expectedMag));
   };
   for(let i=0;i<5;i++){

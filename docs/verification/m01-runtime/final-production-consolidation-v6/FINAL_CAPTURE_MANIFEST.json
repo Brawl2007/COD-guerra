@@ -1,0 +1,112 @@
+[
+  {
+    "path": "fx-final/1-east-demolition-high.json",
+    "bytes": 3287,
+    "sha256": "a66391b08a3e843577db936dfa5c3da3c6bf2ebbcaf0091b80b93faee4e3422d"
+  },
+  {
+    "path": "fx-final/1-east-demolition-high.png",
+    "bytes": 823822,
+    "sha256": "afa0b1624cc8d1d5c1ec0f796b77828d10f6fef97f1e73c22b343d4a0ba729ae"
+  },
+  {
+    "path": "fx-final/1-east-demolition-low.json",
+    "bytes": 3286,
+    "sha256": "7152858bdb4c14f67a09423d8d66003d726a47bde638b7c67b1df88fcc77945a"
+  },
+  {
+    "path": "fx-final/1-east-demolition-low.png",
+    "bytes": 810998,
+    "sha256": "8528b5803ad2d2bf0271489ba0ae2db07cfd70fa2c44713e13dd726b5e071bf7"
+  },
+  {
+    "path": "fx-final/1-east-demolition-smoke-high.json",
+    "bytes": 3284,
+    "sha256": "789790972a7de40548caf101cec77a81d33ad8f45824ea48a39ddc405a83b8e5"
+  },
+  {
+    "path": "fx-final/1-east-demolition-smoke-high.png",
+    "bytes": 842279,
+    "sha256": "3101403acc3b40134db1e57d75f913493bb1eb2778b261d0023db36e178b3c9d"
+  },
+  {
+    "path": "fx-final/1-quality-counters.json",
+    "bytes": 1760,
+    "sha256": "1470e75065da81c40aaff20fe0e60848a43ec97d090b57966c32cc54d334218b"
+  },
+  {
+    "path": "fx-final/1-quality-same-clock.json",
+    "bytes": 1609,
+    "sha256": "51b3d5740466e11b6ff27cc85f4f1f0d818a94a174eb590a87274d48fbd28f06"
+  },
+  {
+    "path": "fx-final/1-raid-0530-medium-far.json",
+    "bytes": 3139,
+    "sha256": "7cd234a81ce13fd7283c47463ebd3d920b2bda204cbfb310922e663cb879a305"
+  },
+  {
+    "path": "fx-final/1-raid-0530-medium-far.png",
+    "bytes": 722837,
+    "sha256": "f628bd5f86176015fd2a44ded86bed87f8c163801ffb39c70875ce0cc21a83ca"
+  },
+  {
+    "path": "fx-final/2-east-demolition-high.json",
+    "bytes": 3287,
+    "sha256": "f0957621ef5d5aa309c43f6b6756db3c37ecac88375d182154385a3e28da2fdb"
+  },
+  {
+    "path": "fx-final/2-east-demolition-high.png",
+    "bytes": 823798,
+    "sha256": "69ac1c93bba2dae4f045d39d818cd577947913b4f1c0b7dcfed2356cfaca0b13"
+  },
+  {
+    "path": "fx-final/2-east-demolition-low.json",
+    "bytes": 3286,
+    "sha256": "1290b909db84c814dc1c79ffc159376daa36a361806edeb16bcfe02d067fcd14"
+  },
+  {
+    "path": "fx-final/2-east-demolition-low.png",
+    "bytes": 810998,
+    "sha256": "8528b5803ad2d2bf0271489ba0ae2db07cfd70fa2c44713e13dd726b5e071bf7"
+  },
+  {
+    "path": "fx-final/2-east-demolition-smoke-high.json",
+    "bytes": 3290,
+    "sha256": "7c23fc01bde018bc9eb06a630b376c839a0a70cb561464fd3c723620022a75ad"
+  },
+  {
+    "path": "fx-final/2-east-demolition-smoke-high.png",
+    "bytes": 839191,
+    "sha256": "f03b5257cf983d27d72c8609fae7ed669ea2e21df99e9fee568b3a2dda7c489b"
+  },
+  {
+    "path": "fx-final/2-quality-counters.json",
+    "bytes": 1760,
+    "sha256": "39f76d5c918b7318c0db11687a45b04637052130e8863b31606917d833b95394"
+  },
+  {
+    "path": "fx-final/2-quality-same-clock.json",
+    "bytes": 1609,
+    "sha256": "72945c51eb67593336fd171934db7b6fcd75edffe16df8dd71419c11a29f2ab0"
+  },
+  {
+    "path": "fx-final/2-raid-0530-medium-far.json",
+    "bytes": 3139,
+    "sha256": "7cd234a81ce13fd7283c47463ebd3d920b2bda204cbfb310922e663cb879a305"
+  },
+  {
+    "path": "fx-final/2-raid-0530-medium-far.png",
+    "bytes": 722969,
+    "sha256": "558a09f431e3a7f5bc25b75bd36151f51a5275726a9c662c1cf2a9b122f31de9"
+  },
+  {
+    "path": "fx-final/fx-followup-1.jpg",
+    "bytes": 235890,
+    "sha256": "c93f79e75e3503739700435a723d0c20b78ea56290275eb3f72363f63eddf235"
+  },
+  {
+    "path": "fx-final/fx-followup-2.jpg",
+    "bytes": 235648,
+    "sha256": "6ec16592066c70187e71e3c162ed031d094b6e1a8016a70f8316d0ce521b7b67"
+  }
+]

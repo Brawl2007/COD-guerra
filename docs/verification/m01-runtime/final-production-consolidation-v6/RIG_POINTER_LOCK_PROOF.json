@@ -1,0 +1,48 @@
+{
+  "browser": "145.0.7632.6",
+  "premature": {
+    "paused": true,
+    "locked": false,
+    "weapon": {
+      "id": "kb_wz29",
+      "mag": 5,
+      "reserve": 40,
+      "state": "READY",
+      "until": 0,
+      "started": 0,
+      "lastShot": -1000000000,
+      "shotCount": 0,
+      "received": 0,
+      "sight": 300,
+      "reloadMode": null
+    }
+  },
+  "lost": {
+    "id": "kb_wz29",
+    "mag": 5,
+    "reserve": 40,
+    "state": "READY",
+    "until": 0,
+    "started": 0,
+    "lastShot": -1000000000,
+    "shotCount": 0,
+    "received": 0,
+    "sight": 300,
+    "reloadMode": null
+  },
+  "accepted": {
+    "id": "kb_wz29",
+    "mag": 4,
+    "reserve": 40,
+    "state": "BOLT_CYCLE",
+    "until": 2199.900000000001,
+    "started": 1149.900000000001,
+    "lastShot": 1149.900000000001,
+    "shotCount": 1,
+    "received": 0,
+    "sight": 300,
+    "reloadMode": null
+  },
+  "errors": [],
+  "claim": "Controlled ordering of the native pointer-lock API reproduces the unsafe fixture. No simulation, weapon or clock injection."
+}

@@ -1,0 +1,93 @@
+name: M01 V6 smoke capture diagnosis
+on:
+  push:
+    branches: [codex/m01-final-production-consolidation-v6]
+    paths: [.github/workflows/m01-v6-smoke-diagnosis.yml]
+permissions:
+  contents: write
+  actions: read
+jobs:
+  smoke-diagnosis:
+    if: github.ref == 'refs/heads/codex/m01-final-production-consolidation-v6'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      EVIDENCE: docs/verification/m01-runtime/final-production-consolidation-v6
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0, ref: '${{ github.sha }}'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 37802820440
+          name: m01-v6-complete-browser-dd743de922f32b7391ce8e9e69a2ede2903eafb8
+          path: /tmp/m01-full-report
+      - name: Preserve full report and add observer diagnostics in the temporary test checkout
+        run: |
+          git diff --exit-code 2a2a56734861b0801234d7ddf3cda66c0100f326 HEAD -- src assets package.json package-lock.json playwright.config.js
+          python3 - <<'PY'
+          from pathlib import Path
+          import shutil
+          evidence=Path('docs/verification/m01-runtime/final-production-consolidation-v6')
+          src=Path('/tmp/m01-full-report')
+          for name in ['BROWSER_FULL_CI.json.gz','BROWSER_FULL_CI_SUMMARY.json','browser-full-ci.log']:
+              matches=list(src.rglob(name))
+              assert len(matches)==1,(name,matches)
+              target=evidence/('logs/'+name if name.endswith('.log') else name)
+              shutil.copy2(matches[0],target)
+          p=Path('tests/browser/helpers/fx-frame-capture.js')
+          s=p.read_text()
+          s=s.replace('window.__fxProbe=probe;window.__fxCapture=null;',"""window.__fxProbe=probe;window.__fxCapture=null;
+              probe.lifecycle=[];probe.observations=[];
+              for(const type of ['blur','focus','visibilitychange','pointerlockchange','pointerlockerror','error','unhandledrejection']){
+                const target=type.startsWith('pointer')||type==='visibilitychange'?document:window;
+                target.addEventListener(type,e=>{
+                  const d=window.gameDiagnostics?.();
+                  probe.lifecycle.push({type,trusted:e.isTrusted,time:performance.now(),paused:d?.paused,clock:d?.clock,hidden:document.hidden,focused:document.hasFocus(),locked:document.pointerLockElement?.id,
+                    message:e.message??e.reason?.message??null,stack:new Error().stack});
+                },true);
+              }""")
+          s=s.replace("const d=window.gameDiagnostics?.();if(!d||d.paused)return;","""const d=window.gameDiagnostics?.();if(!d)return;
+              const b0=d.m01.battlefieldFx;
+              if(probe.observations.length<1000)probe.observations.push({clock:d.clock,paused:d.paused,hidden:document.hidden,locked:document.pointerLockElement?.id,counts:b0.counts,active:b0.active,damage:d.m01.damage.filter(x=>x.id===options.damageId)});
+              if(d.paused)return;""")
+          p.write_text(s)
+          p=Path('tests/browser/m01-battlefield-fx-polish-v3.spec.js')
+          s=p.read_text()
+          needle="await page.waitForFunction(()=>window.__fxCapture,null,{timeout:wait==='impact'?25000:30000});"
+          assert needle in s
+          s=s.replace(needle,"""try{await page.waitForFunction(()=>window.__fxCapture,null,{timeout:wait==='impact'?25000:30000});}finally{
+              const diagnostic=await page.evaluate(()=>({probe:window.__fxProbe,capture:window.__fxCapture,diagnostics:window.gameDiagnostics()}));
+              console.log('M01_FX_CAPTURE_DIAG '+JSON.stringify({name,errors,failed,...diagnostic}));
+              await info.attach(name+'.diagnostic.json',{body:JSON.stringify({name,errors,failed,...diagnostic},null,2),contentType:'application/json'});
+            }""")
+          p.write_text(s)
+          PY
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Observe the unmodified smoke assertions three independent times
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: docs/verification/m01-runtime/final-production-consolidation-v6/SMOKE_DIAGNOSIS.json
+        run: |
+          set -o pipefail
+          npx playwright test tests/browser/m01-battlefield-fx-polish-v3.spec.js --grep 'distance smoke lifecycle' --repeat-each=3 --workers=1 --retries=0 --reporter=list,json | tee "$EVIDENCE/logs/smoke-diagnosis.log"
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-v6-smoke-diagnosis-${{ github.sha }}
+          path: |
+            docs/verification/m01-runtime/final-production-consolidation-v6/SMOKE_DIAGNOSIS.json
+            docs/verification/m01-runtime/final-production-consolidation-v6/logs/smoke-diagnosis.log
+            test-results/
+          if-no-files-found: error
+      - name: Preserve observed diagnostics and the original full report
+        if: always()
+        run: |
+          git config user.name "M01 V6 diagnosis evidence"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$EVIDENCE/SMOKE_DIAGNOSIS.json" "$EVIDENCE/logs/smoke-diagnosis.log" "$EVIDENCE/BROWSER_FULL_CI.json.gz" "$EVIDENCE/BROWSER_FULL_CI_SUMMARY.json" "$EVIDENCE/logs/browser-full-ci.log"
+          git commit -m "docs(m01): preserve complete suite report and smoke lifecycle observations"
+          git push origin HEAD:refs/heads/codex/m01-final-production-consolidation-v6

@@ -76,10 +76,10 @@ for(const phase of ['enter','idle','fire_burst','exit'])test(`rendered death dur
 
 function realFireEffects(s){
  const geometry=new THREE.BoxGeometry(),material=new THREE.MeshBasicMaterial();
- const view=Object.create(M01View.prototype);Object.assign(view,{camera:{position:new THREE.Vector3()},fireDummy:new THREE.Object3D(),characters:null,impacts:[],fireBatches:{}});
+ const view=Object.create(M01View.prototype);Object.assign(view,{camera:{position:new THREE.Vector3()},fireDummy:new THREE.Object3D(),fireColor:new THREE.Color(),characters:null,impacts:[],fireBatches:{}});
  for(const name of ['muzzle','tracer','puff','spark','smoke'])view.fireBatches[name]=new THREE.InstancedMesh(geometry,material,64);
  view.updateFire(s);const result={counts:structuredClone(view.fx),matrices:Array.from(view.fireBatches.muzzle.instanceMatrix.array)};
- geometry.dispose();material.dispose();return result;
+ Object.values(view.fireBatches).forEach(batch=>batch.dispose());geometry.dispose();material.dispose();return result;
 }
 for(const emitted of [1,4,6])test(`actual muzzle effect after shot ${emitted} has no extra flash in the .06/.075 gap or restore`,()=>{
  const s=firing();at(s,s.clock+(emitted-1)*.075+.02);const save=s.snapshot(),before=realFireEffects(s);

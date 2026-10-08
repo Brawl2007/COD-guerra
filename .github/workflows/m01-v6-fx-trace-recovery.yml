@@ -1,0 +1,72 @@
+name: M01 V6 recover critical FX trace
+on:
+  push:
+    branches: [codex/m01-final-production-consolidation-v6]
+    paths: [.github/workflows/m01-v6-fx-trace-recovery.yml]
+permissions:
+  contents: write
+  actions: read
+jobs:
+  recover-trace:
+    if: github.ref == 'refs/heads/codex/m01-final-production-consolidation-v6'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0, ref: '${{ github.sha }}'}
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 37812593960
+          name: m01-v6-critical-browser-24cf351bfa7a560fdae9a8eeaff5e31577101d56
+          path: /tmp/m01-critical-fx
+      - run: python3 -m pip install Pillow
+      - name: Preserve original failure context and trace event data
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,zipfile,gzip,shutil,hashlib
+          from PIL import Image,ImageDraw
+          src=Path('/tmp/m01-critical-fx')
+          dest=Path('docs/verification/m01-runtime/final-production-consolidation-v6/fx-critical-failure')
+          dest.mkdir(exist_ok=True)
+          errors=list(src.rglob('error-context.md'))
+          assert len(errors)==1,errors
+          shutil.copy2(errors[0],dest/'error-context.md')
+          trace=errors[0].parent/'trace.zip'
+          frames=[];events=[];stored=[]
+          def strings(x):
+              if isinstance(x,str): return [x]
+              if isinstance(x,list): return sum((strings(y) for y in x),[])
+              if isinstance(x,dict): return sum((strings(y) for y in x.values()),[])
+              return []
+          with zipfile.ZipFile(trace) as z:
+              for name in z.namelist():
+                  if not name.endswith(('.trace','.network')): continue
+                  raw=z.read(name);out=name.replace('/','_')+'.gz'
+                  (dest/out).write_bytes(gzip.compress(raw,mtime=0))
+                  stored.append({'entry':name,'savedFile':out,'rawBytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()})
+                  if name.endswith('.trace'):
+                      for line in raw.decode().splitlines():
+                          e=json.loads(line)
+                          if e.get('type')=='frame-snapshot':
+                              snap=e.get('snapshot',{})
+                              frames.append({'timestamp':snap.get('timestamp'),'pageId':snap.get('pageId'),'frameId':snap.get('frameId'),'snapshotName':snap.get('snapshotName'),'text':strings(snap.get('html',[]))})
+                          elif e.get('type') in ['before','after','event']:
+                              events.append(e)
+          (dest/'TRACE_DATA.json').write_text(json.dumps({'storedStreams':stored,'frames':frames,'events':events,'sourceArtifactId':11565584466,'sourceRunId':37812593960,'traceImagesAndBodiesOmitted':True},indent=2)+'\n')
+          pictures=sorted(src.rglob('test-failed-*.png'))
+          board=Image.new('RGB',(640,390*len(pictures)),'#18191b');draw=ImageDraw.Draw(board)
+          for i,p in enumerate(pictures):
+              im=Image.open(p).convert('RGB');im.thumbnail((640,360));board.paste(im,(0,i*390));draw.text((4,i*390+366),p.name,fill='white')
+          board.save(dest/'failure-frames.jpg',quality=91)
+          print(errors[0].read_text())
+          print('Last frame snapshots:',json.dumps(frames[-3:],ensure_ascii=False))
+          PY
+      - name: Publish recovered evidence to the owned branch only
+        run: |
+          git config user.name "M01 V6 trace evidence"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/verification/m01-runtime/final-production-consolidation-v6/fx-critical-failure
+          git commit -m "docs(m01): recover original FX timeout context and trace streams"
+          git push origin HEAD:refs/heads/codex/m01-final-production-consolidation-v6

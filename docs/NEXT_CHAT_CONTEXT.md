@@ -1,3 +1,17 @@
+# Continuação atual — consolidação M01 V6 (2026-10-08)
+
+Esta secção prevalece sobre o histórico. TASK_ID `M01-FINAL-PRODUCTION-CONSOLIDATION-V6`. **READY_FOR_CAPTAIN_REVIEW**, [PR draft #57](https://github.com/Brawl2007/COD-guerra/pull/57) contra V5 `d277b06937170aa433bc418ef5b83b2925c6d6de`, nunca main. Branch `codex/m01-final-production-consolidation-v6`; confirmar HEAD remoto. HEAD final de código/fixtures `edefda544c702962ad3e378d06fb1bd7e792254e`; produção igual ao executável validado `2a2a56734861b0801234d7ddf3cda66c0100f326`. O pacote posterior só acrescenta workflows/evidência/docs; HEAD exato na PR.
+
+CI final run **37821714679: 460/460 Node, build PASS, 6/6 browser crítico PASS**. O integral real run 37802820440 foi **83/84 PASS**, não foi cancelado; relatório bruto gzip e resumo estão em Git. Falha rig: Resume ainda não garantia pointer lock; corrigida com guarda de controlo e shotCount, prova nativa e **3/3 PASS** (37813098794). Falha FX posterior: timeout de smoke e comparação de contagens em idades distintas; orçamento smoke fundamentado no tempo observado, comparação High→Low→High no mesmo snapshot/clock pausados. **2/2 PASS** no follow-up 37822021393, mais os seis críticos verdes. **84 casos distintos com PASS entre runs; não existe single-full-suite 84/84 verde. Não repetir a suíte completa sem uma mudança relevante.**
+
+Auditoria final run 37823137002 confirma **264 ficheiros byte-idênticos à V5**, integridade do relatório integral, 30 pares/60 PNGs pixel-idênticos, oito capturas FX finais e duas comparações de qualidade. Fonte/RNG/Schema2/12 objetivos/CP-A..D/25 eventos/colliders/paths/assets/envelopes/30 clusters conservados. Capturas e limites visuais inspecionados; FX distantes ocultados pela treliça não são prova de qualidade artística.
+
+Ler HANDOFF, DELIVERY_MATRIX, CONTINUATION_RESULTS, FINAL_EVIDENCE_CHECK e BROWSER_COMBINED_COVERAGE_FINAL em `docs/verification/m01-runtime/final-production-consolidation-v6/`. #54 Station V3 ainda sem aprovação expressa (0 reviews/0 comentários), #56 e outros deltas excluídos; seis clips não são Animation Resolver. As quatro WIP não estão mapeadas. Main `72bbcdd...`, deploy `cb400355...` intocados; sem dispatch, force-push ou publicação. M01 permanece **PROTÓTIPO JOGÁVEL**.
+
+O executor local perdeu-se e um Chromium local falhou antes de lançar o jogo; a entrega remota é autoritativa. Checkouts/stashes antigos preservados: fazer fetch e fast-forward seguro quando regressarem; não aplicar o stash da fixture já publicada nem reset destrutivo.
+
+---
+
 # Contrato de apresentação das animações — 2026-10-08 UTC
 
 TASK_ID `M01-ANIM-CONTRACT-SIM-V1`; branch `codex/m01-anim-contract-sim-v1`, base remota confirmada `99309d9cb023cc94a07d41ff863e1362e4460570`. Confirmar o HEAD final remoto antes de continuar. Plano Claude `5583a4ab854a2e64dad85460bfd40031c3406ccc` e piloto `93aaa5c4a5651f22b4c696005501a2ac1014860a` lidos sem merge/cherry-pick.
