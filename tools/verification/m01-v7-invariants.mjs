@@ -47,7 +47,14 @@ function resource(Station,world){
   const parent=new THREE.Scene(),s=new Station(parent,world);
   const fingerprint=()=>hash(Buffer.concat([...s.maps.map(m=>Buffer.from(m.image.data)),...s.levels.flatMap(l=>Object.values(l.geometries).flatMap(g=>Object.values(g.attributes).map(a=>Buffer.from(a.array.buffer,a.array.byteOffset,a.array.byteLength))))]));
   const before=fingerprint(),qualities=[];
-  for(const q of ['low','medium','high','low']){s.sync(q,{x:-397,z:17});qualities.push({...s.diagnostics});assert.equal(fingerprint(),before);}
+  for(const q of ['low','medium','high','low']){
+    s.sync({x:-397,z:17},q);
+    const d={...s.diagnostics};
+    assert.equal(d.quality,q,'Pass player and quality in the production API order');
+    assert.equal(d.lod,{low:2,medium:1,high:0}[q],'Near Station uses the requested quality LOD');
+    assert.equal(d.triangles,d.trianglesByLod[d.lod]);
+    qualities.push(d);assert.equal(fingerprint(),before);
+  }
   const diag={...s.diagnostics},textureBytes=s.maps.reduce((n,m)=>n+m.image.data.byteLength,0),geometryBytes=s.levels.reduce((n,l)=>n+Object.values(l.geometries).reduce((r,g)=>r+Object.values(g.attributes).reduce((x,a)=>x+a.array.byteLength,0),0),0);
   s.dispose();s.dispose();assert.equal(parent.children.length,0);
   return {diag,textureBytes,geometryBytes,fingerprint:before,qualities};
