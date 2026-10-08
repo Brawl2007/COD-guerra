@@ -1,5 +1,16 @@
 # Estado de desenvolvimento
 
+## Contrato de apresentação das animações — 2026-10-08 UTC
+
+`M01-ANIM-CONTRACT-SIM-V1`, base `99309d9`, branch `codex/m01-anim-contract-sim-v1`: motion/odómetro/gait, bodyYaw independente de facing e timestamps reais opcionais persistidos no schema 2. Saves 86/89 e adaptadores existentes preservados. Gameplay byte-equivalente em 41.083 ticks contra a base; A/B com apresentação incluída: 61.055 comparações da auditoria existente + 1.760 novas. Build PASS e restore browser 2/2 PASS. Uma execução completa `npm test`: 343/344; única falha foi a guarda antiga do hash integral da simulação no viewmodel. Corrigida a guarda mantendo o hash da base imutável; os quatro ficheiros de testes afectados passaram 38/38 depois, sem mudar produção. A suíte completa não foi repetida, conforme o escopo. Handoff: `docs/verification/m01-runtime/anim-contract-sim-v1/HANDOFF.md`; estado formal `READY_FOR_CAPTAIN_REVIEW_WITH_KNOWN_FAILURES` pelo resultado vermelho dessa execução completa, sem regressão de runtime observada. M01 continua **PROTÓTIPO JOGÁVEL**; resolver/clips/visual ficam para a próxima tarefa. Main/deploy intocados.
+
+## Station Architecture Production V2 — 2026-10-07
+
+`M01-STATION-ARCHITECTURE-PRODUCTION-V2`, base `99309d9`, branch `codex/m01-station-architecture-production-v2`. **READY_FOR_CAPTAIN_REVIEW**. Substituição visual do bloco da Station por cinco volumes, roof inclinado, marquise e 140 aberturas com recessos/shell fechado; malhas originais partilhadas por material, três LODs. Âncoras/colliders, gameplay, stationDrag, clocks/saves/RNG e 30 clusters de props preservados. 133 ficheiros protegidos byte a byte; rota integral equivalente à base.
+
+28/28 Node focados, build PASS, três casos browser verdes (a fixture de qualidade foi corrigida após um timeout inicial; logs preservados), 22 pares de capturas finais com estado congelado igual, zero erros. Station: 7 lotes, LOD0/1/2 30.881/28.707/13.382 triângulos, 10 mapas 128². P4, precisão do levantamento de 1939 e performance em Chromebook continuam pendentes. M01 permanece **PROTÓTIPO JOGÁVEL**; sem integração da bridge structural do Claude, main ou deploy. Handoff e pontos exatos de integração em `docs/verification/m01-runtime/station-architecture-production-v2-2026-10-07/HANDOFF.md`.
+
+
 ## Auditoria schema 2 — 2026-10-03
 
 Candidato isolado em `codex/m01-schema2-determinism-audit`, base MG34 prone aprovada `fbaac1e4`. Comparação de futuros A/B por tick: 61.055 comparações em duas rotas completas e fixtures definidas, sem divergência depois das correções. Corrigido o destino de recuperação ao restaurar uma continuação; schema 2 recebe backup opcional plano, mantendo CP-A..D planos e legacy compatível. Saves corrompidos não podem sobrescrever métodos/perfil da arma; RNG uint32 e fases conhecidas validados.

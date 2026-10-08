@@ -1,5 +1,11 @@
 # M01 — contrato de integração revisto
 
+## Apresentação das animações — V1 (schema 2)
+
+Por NPC existente: `motion={speed,odometer,gait,gaitSince}`, `bodyYaw`, `posture/postureSince` e instantes opcionais `suppressedAt`, `hitAt/hitYaw`, `diedAt/deathYaw`. Motion mede o deslocamento efectivo de `updateActors`; passada futura deriva do odómetro. Body yaw persegue facing com limite determinístico, sem escrever facing, raízes, hitboxes ou tiro. Defaults legacy não inventam acontecimentos e não gastam RNG; saves 86/89 e backups CP-A..D mantêm os adaptadores. Validação atómica, enumerações fechadas e relógios finitos no tempo activo da missão. Diagnostics somente de leitura: `gameDiagnostics().m01.animationPresentation`.
+
+Contrato completo e desvios fundamentados do plano em `docs/architecture/M01_ANIMATION_PRESENTATION_CONTRACT.md`. Recargas/munição novas, prone genérico, velocidades de transporte, fases novas de Bąk, cover/vault e política de fogo ckm permanecem decisões/tarefas separadas. Nenhuma mudança de gameplay é autorizada por este contrato de apresentação.
+
 Dados revistos nos PRs #8 e #10; runtime em **PROTÓTIPO JOGÁVEL**, com evidências e limites em `QUALITY_REPORT.md`. O JSON descreve a implementação, mas não executa os seus textos de condições, efeitos e restauração. Usar handlers explícitos por ID, sem `eval` nem interpretação automática de prosa. Nunca reutilizar o mapa francês ou a M1 para M01.
 
 ## Tempo e eventos

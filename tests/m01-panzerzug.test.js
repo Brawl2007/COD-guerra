@@ -8,6 +8,8 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {M01Panzerzug,panzerzugLOD} from '../src/render/m01-panzerzug.js';
 import {M01Simulation} from '../src/game/m01-simulation.js';
 const integratedPresentation=new Set([
+ // Simulation presentation additions are checked against immutable per-tick gameplay traces in m01-animation-contract.test.js.
+ 'src/game/m01-simulation.js',
  'src/core/audio.js','src/game/game.js','src/main.js','src/styles.css',
  'src/render/m01-atmosphere.js','src/render/m01-characters.js','src/render/m01-environment.js','src/render/m01-surfaces.js',
  'src/render/m01-train-wagons.js','src/render/m01-view.js','src/render/m01-viewmodel.js','src/render/three-renderer.js'
@@ -42,7 +44,20 @@ test('late optional downloads cannot attach after disposal; asset cache owns sha
 });
 test('integration preserves gameplay, RNG, hitboxes/muzzle modules, missions and non-presentation base assets byte-identical',()=>{
  const paths=execFileSync('git',['ls-tree','-r','--name-only',base],{encoding:'utf8'}).trim().split('\n').filter(p=>p.startsWith('src/')||p.startsWith('missions/')||p.startsWith('assets/'));
- for(const p of paths){if(integratedPresentation.has(p))continue;assert.deepEqual(readFileSync(new URL('../'+p,import.meta.url)),execFileSync('git',['show',base+':'+p],{maxBuffer:32*1024*1024}),p);}
+ for(const p of paths){
+  if(integratedPresentation.has(p))continue;
+  const baseline=execFileSync('git',['show',base+':'+p],{maxBuffer:32*1024*1024});
+  const actual=readFileSync(new URL('../'+p,import.meta.url));
+  if(p==='missions/m01-tczew/ENGINE_CONTRACT.md'){
+    // PR #43 prepends a documentation-only animation contract. Lock the original gameplay contract byte-for-byte.
+    const oldBodyStart=baseline.indexOf(Buffer.from('Dados revistos nos PRs #8 e #10;'));
+    assert.ok(oldBodyStart>=0,'baseline engine contract marker');
+    assert.ok(actual.includes(baseline.subarray(oldBodyStart)),'the pre-existing M01 engine contract must remain unmodified');
+    assert.match(actual.toString('utf8'),/## Apresentação das animações — V1 \(schema 2\)/);
+  }else{
+    assert.deepEqual(actual,baseline,p);
+  }
+ }
 });
 test('pause/restore and repeated rendering never mutate a save or introduce train movement authority',async()=>{
  const sim=new M01Simulation(),saved=sim.snapshot(),source=await asset(2),f=fixture(async()=>source);try{await f.l.load();for(let i=0;i<20;i++){f.l.update(sim.player);assert.deepEqual(sim.snapshot(),saved);}const other=new M01Simulation();other.restoreSnapshot(saved);f.l.update(other.player);assert.deepEqual(other.snapshot(),saved);assert.deepEqual(f.l.root.position.toArray(),[1119,0,2.5]);}finally{f.close();}

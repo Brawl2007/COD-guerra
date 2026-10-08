@@ -33,9 +33,16 @@ test('measured real clips and asset socket metadata are locked; archived BASE is
     assert.equal(createHash('sha256').update(readFileSync(new URL('../tools/verification/fixtures/m01-wz29-base-viewmodel.mjs',import.meta.url))).digest('hex'),'6fd9cc2fc5831c7d22d2f3b774b17b1194152e2a7a73b6a41f7bf37679dd062a');
   }finally{c.dispose();}
 });
-test('integration keeps Wz29 gameplay, simulation, muzzle/hitboxes and RNG protected bytes unchanged',()=>{
+test('integration keeps Wz29/muzzle/hitboxes/RNG bytes and locks the approved simulation gameplay baseline',()=>{
   const hashes=JSON.parse(readFileSync(new URL('../tools/verification/fixtures/m01-wz29-protected-hashes.json',import.meta.url)));
-  for(const [path,hash]of Object.entries(hashes))assert.equal(createHash('sha256').update(readFileSync(new URL('../'+path,import.meta.url))).digest('hex'),hash,path);
+  for(const [path,hash]of Object.entries(hashes)){
+    if(path==='src/game/m01-simulation.js'){
+      // Optional presentation fields necessarily change source bytes. Keep the original source lock;
+      // m01-animation-contract.test.js compares all legacy state/checkpoint/event bytes on every route tick.
+      const baseline=JSON.parse(readFileSync(new URL('./fixtures/m01-anim-gameplay-baseline.json',import.meta.url)));
+      assert.equal(baseline.base,'99309d9cb023cc94a07d41ff863e1362e4460570');assert.equal(baseline.sourceSha256,hash,path);
+    }else assert.equal(createHash('sha256').update(readFileSync(new URL('../'+path,import.meta.url))).digest('hex'),hash,path);
+  }
 });
 for(const lod of [0,1])test(`ADS aligns actual rear/front with camera -Z on LOD${lod}, all qualities`,async()=>{
   const c=await viewModelFixture(lod),v=make(c),s=data();
