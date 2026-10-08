@@ -19,3 +19,9 @@
 - Source `codex/m01-hud-cinematic-presentation-pass-v1` at `4b0e883dd58988fbbcaf24c062f69285c46a1457`; all source assets and tests preserved.
 - Merged `src/game/game.js` semantically: keep Animation Contract diagnostic and add HUD state/scene presentation; preserve scene timers and gameplay. Historical status docs retained; task README and source parent preserve evidence.
 - Combined CI pending; no main/deploy changes.
+
+## Integrated — M01 vegetation and foliage production closeout V1
+
+- HEAD `21c1ae653836522e74c071c31e917a1609f5611a`; source code/tests/screenshots retained and merged.
+- Retain Station `dispose()` while adding foliage and ground-shadow cleanup. Retain bridge rail and Station imports; simulation/colliders unchanged.
+- Task source handoff retained; common status docs retained from checkpoint. Combined CI still required, main/deploy untouched.
