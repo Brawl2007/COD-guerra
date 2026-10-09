@@ -15,10 +15,38 @@ agent-teams). Itens marcados *não confirmado* não vêm dessas páginas.
 | Verifica e revê | `verifier`, `reviewer` | Sonnet, high |
 | Revisão crítica | `reviewer-critical` | Opus, max (só simulação, saves, integração, arquitetura) |
 | Encaminhamento consultivo | Jev (`.agent/tools/jev_*.py`) | regras locais primeiro, teto de 3 chamadas pagas |
-| Combinação explícita | `<modelo>-<esforço>` (20 agentes: haiku/sonnet/opus/fable × low/medium/high/xhigh/max) | a pedido do utilizador; `fable-*` só com pedido expresso |
+| Força de trabalho | 20 agentes `<modelo>-<esforço>` com função própria (tabela abaixo) | escolhidos pelo Captain por função |
 
-Os agentes de papel continuam a ser a escolha por defeito. Os 20 agentes de combinação são trabalhadores
-genéricos fixos num modelo e num esforço e passam sempre pelo Verifier e pelo Reviewer.
+## Funções dos 20 agentes de combinação
+
+O Captain escolhe pela função; a descrição de cada agente repete-a. Qualquer alteração de código passa
+sempre pelo `verifier` e pelo `reviewer`, seja quem for que a implementou.
+
+| Agente | Função no desenvolvimento do jogo | Escreve? |
+|---|---|---|
+| `haiku-low` | Inventário: ficheiros, símbolos, assets, eventos, testes ("onde está X") | não |
+| `haiku-medium` | Ler handoffs, relatórios, `mission.json`, manifests, `ASSET_CREDITS.md` | não |
+| `haiku-high` | Texto e dados: legendas, HUD, diálogos, tabelas de estado, fixtures JSON (sem lógica) | sim |
+| `haiku-xhigh` | Triagem de logs longos (testes, CI, Playwright); classificar queixas de playtest | não |
+| `haiku-max` | Auditoria de coerência: `mission.json` × `STORY_BIBLE` × dossiês × `SOURCE_CHECK` | não |
+| `sonnet-low` | Edições pequenas e seguras: constantes, afinação, correções de uma linha, fixtures | sim |
+| `sonnet-medium` | Funcionalidades normais: HUD, áudio, props, handlers de eventos, missão + testes Node | sim |
+| `sonnet-high` | Renderer (materiais, LOD, FX, viewmodel) e testes Playwright; verificações | sim |
+| `sonnet-xhigh` | Bugs difíceis: animação/rig, IA de caminhos, determinismo, testes instáveis, saves | sim |
+| `sonnet-max` | Mecânicas de combate e armas na simulação (ckm, IA inimiga, veículos), após desenho Opus | sim |
+| `opus-low` | Julgamento rápido: queixas → tarefas, Task Contracts, prioridades do backlog | não |
+| `opus-medium` | Desenho de sistemas (destruição, veículos, director, cobertura/IA); narrativa × gameplay | docs |
+| `opus-high` | Planos de arquitetura e integração (V7 → main, engine contract, refactors) | docs |
+| `opus-xhigh` | Desenho de simulação e determinismo: schema de saves, RNG/relógio/tick, migrações | sim |
+| `opus-max` | Revisão crítica pré-PR: simulação, saves, integração, segurança dos hooks | não |
+| `fable-low` | Segunda opinião curta sobre um plano ou decisão | não |
+| `fable-medium` | Revisão de campanha e missões (arco das 30, plausibilidade histórica, ritmo) | não |
+| `fable-high` | Desbloqueio após duas tentativas falhadas de `sonnet-xhigh`/Opus | sim |
+| `fable-xhigh` | Decisões estratégicas (Unreal vs web, refactors de motor, pipeline de assets) | docs |
+| `fable-max` | Último recurso: bugs entre execuções sem solução, auditoria de marco completa | sim |
+
+Escada: começar no agente mais barato cuja função sirva; subir só com evidência de dificuldade.
+`fable-*` só quando o utilizador pede expressamente um agente Fable nessa tarefa (pode gastar créditos de uso).
 
 Opus 5.5 como principal aceita o Fable 5.1 como advisor. Os subagentes herdam o advisor e aplicam a
 mesma regra de pares contra o seu próprio modelo.

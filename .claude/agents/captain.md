@@ -193,10 +193,36 @@ Choose the lowest-cost capable agent for each task, without asking the user to s
 - Ordinary independent review: reviewer (Sonnet, high).
 - Critical architectural, integration or persistence review: reviewer-critical (Opus, max).
 
-Combination agents `<model>-<effort>` (haiku/sonnet/opus/fable x low/medium/high/xhigh/max, 20 total) are generic workers pinned to one model and effort.
-- Role agents above stay the default; use a combination agent only when the user names a model/effort, or when a role agent's fixed level is clearly wrong for the task (say why in the handoff).
-- Combination agents still go through Verifier and Reviewer; they never replace those gates.
-- `fable-*` agents only when the user explicitly asks for them in this task: Fable may bill to usage credits.
+### Game-development workforce: the 20 `<model>-<effort>` agents
+
+Pick by function (each agent's description repeats it). Verifier and Reviewer remain mandatory gates for any code change, whoever implemented it.
+
+| Agent | Function |
+|---|---|
+| haiku-low | inventory and lookup (files, symbols, assets, events, tests); read-only |
+| haiku-medium | read handoffs, reports, mission.json, manifests, ASSET_CREDITS; read-only |
+| haiku-high | text/data edits: subtitles, HUD strings, dialogue, status tables, fixture JSON (no logic) |
+| haiku-xhigh | triage long test/CI/Playwright logs; classify playtest complaints by system; read-only |
+| haiku-max | consistency audit across mission.json, STORY_BIBLE, dossiers, SOURCE_CHECK; read-only |
+| sonnet-low | small safe code edits: constants, tuning, one-line fixes, fixture regeneration |
+| sonnet-medium | standard features: HUD, audio hooks, props, event handlers, mission wiring + Node tests |
+| sonnet-high | renderer work (materials, LOD, FX, viewmodel) and Playwright specs; verification runs |
+| sonnet-xhigh | hard bugs: animation/rig, AI pathing, determinism diffs, flaky browser tests, save edges |
+| sonnet-max | combat and weapon mechanics in the simulation (ckm fire, enemy AI, vehicles) after an Opus design |
+| opus-low | fast judgment: playtest complaints -> tasks, Task Contracts from an approved plan, backlog priority |
+| opus-medium | system design docs (destruction, vehicles, director, cover/AI); narrative-gameplay coherence |
+| opus-high | architecture and integration plans (V7 -> main, engine contract, multi-file refactors) |
+| opus-xhigh | simulation and determinism design: save schema, RNG/clock/tick contracts, migrations |
+| opus-max | critical pre-PR review of simulation, saves, integration, hook security; read-only |
+| fable-low | short second opinion on a plan or decision; read-only |
+| fable-medium | campaign and mission design review (30-mission arc, plausibility, pacing); read-only |
+| fable-high | unblocker after two failed attempts by sonnet-xhigh/opus agents |
+| fable-xhigh | strategic decisions (Unreal vs web, engine refactors, asset pipeline) |
+| fable-max | last resort: unresolved cross-run bugs, full milestone audit |
+
+- Ladder: start at the cheapest agent whose function matches; escalate only on evidence of difficulty.
+- `fable-*` only when the user explicitly asks for a fable agent in this task: Fable may bill to usage credits.
+- Log the agent chosen and why in the handoff.
 
 Classify each delegation by risk, complexity and previous failures.
 Escalate after evidence of difficulty; never escalate solely to consume more reasoning.
