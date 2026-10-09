@@ -7,7 +7,7 @@ import {
   planBridgeDemolition,planDistantArtillery,planDistantBattleSlot,JU87_ENGINE_HZ,planFireCrackle,planLocomotiveIdleTick,planJu87PullOut,
   aircraftLayerMix,dopplerFactor,BattleIntensity,intensityWeight,m01FireEmitters,presentationNoise,weaponProfileId,
 } from '../src/core/battlefield-audio.js';
-import {m01StukaPosition,m01RaidPlanePosition} from '../src/world/m01-aircraft-path.js';
+import {m01StukaPosition,m01StukaActive,m01RaidPlanePosition,M01_RAID_PASS,M01_RAID_PASS_SECONDS} from '../src/world/m01-aircraft-path.js';
 import {LOCOMOTIVE_PLACEMENT} from '../src/render/m01-locomotive.js';
 import {PANZERZUG_PLACEMENT} from '../src/render/m01-panzerzug.js';
 import {M01_YARD_WAGON_PLAN} from '../src/render/m01-yard-wagons.js';
@@ -142,9 +142,26 @@ test('distant battle is deterministic, aperiodic and never repeats the same sect
 });
 
 test('Ju 87 engine layers follow the rendered aircraft path; pull-out siren only on request after a real aerial blast',()=>{
-  for(let t=0;t<400;t+=13.7)for(let i=0;i<3;i++){const p=m01StukaPosition(t,i);
-    assert.deepEqual(p,{x:80+Math.sin(t*.02+i)*250,y:160+i*20,z:240-t%90*4+i*30});}
-  assert.deepEqual(m01RaidPlanePosition(10),{x:-700,y:1100,z:720});
+  // Both layers read the same pure path as the renderer (stukaPath anchored to the bombing; one high pass for the second raid).
+  assert.deepEqual(m01StukaPosition(0,0),m01StukaPosition(3.5,1));assert.notDeepEqual(m01StukaPosition(0,0),m01StukaPosition(90,0));
+  assert.deepEqual(m01RaidPlanePosition(10),{x:M01_RAID_PASS.x,y:1100,z:M01_RAID_PASS.fromZ-10*M01_RAID_PASS.speed});
+  {
+    const {audio}=makeAudio(),started=100,state={stukas:true,secondRaid:false,train963:false,damage:[{id:'station_bomb',started}]};
+    audio.resetPresentation(started,state);
+    for(const since of [-2,0,2.5,6]){
+      audio.updateM01Presentation({clock:started+since,state,spatial});
+      const nearest=Math.min(...[0,1,2].map(i=>{const p=m01StukaPosition(since,i),s=spatial(p);return Math.hypot(s.distance,s.dy);}));
+      assert.ok(Math.abs(audio.presentation.aircraft.aircraft-nearest)<1e-6,`engine placed on the nearest rendered plane at ${since}`);
+    }
+    const gone=[0,1,2].find(i=>!m01StukaActive(60,i));assert.equal(gone,0);
+    audio.updateM01Presentation({clock:started+60,state,spatial});assert.ok(!audio.diagnostics.loops.includes('aircraft'),'the formation has left: silent, no loop');
+    const raid={...state,stukas:false,secondRaid:true,damage:[{id:'raid_0530',started}]};
+    audio.dispose();
+    const high=makeAudio().audio;high.resetPresentation(started,raid);
+    high.updateM01Presentation({clock:started+10,state:raid,spatial});assert.ok(high.diagnostics.loops.includes('aircraft-high'));
+    high.updateM01Presentation({clock:started+M01_RAID_PASS_SECONDS+20,state:raid,spatial});assert.ok(!high.diagnostics.loops.includes('aircraft-high'),'the high plane crossed once');
+    high.dispose();
+  }
   const near=aircraftLayerMix(120),far=aircraftLayerMix(2500);assert.ok(near.rasp>far.rasp&&near.prop>far.prop&&far.rumble>near.rumble);
   assert.ok(dopplerFactor(-10,1)>1&&dopplerFactor(10,1)<1);assert.equal(dopplerFactor(5,0),1);
   assert.ok(layers(planJu87PullOut({key:'a'}),'siren').every(g=>g.freqEnd<g.freq),'siren falls as the plane pulls away');
@@ -275,12 +292,17 @@ test('overlapping ducks keep the deepest cut and the latest release; a near-miss
 
 test('Ju 87 pull-out comes from the nearest rendered Stuka and only while the formation is shown',()=>{
   const {audio}=makeAudio();assert.equal(audio.ju87PullOutNearest(30,spatial,'none',false),null);
+  // Anchor (and so the planes) come from the last presented state: bombing at 28, blast heard at 30 -> 2 s after the event.
+  const state={stukas:true,secondRaid:false,train963:false,damage:[{id:'station_bomb',started:28}]};
+  audio.resetPresentation(29,state);audio.updateM01Presentation({clock:29,state,spatial});
   audio.ju87PullOutNearest(30,spatial,'yes',true);const e=audio.history.at(-1);
-  const nearest=Math.min(...[0,1,2].map(i=>{const p=m01StukaPosition(30,i);return Math.hypot(p.x,p.z,p.y);}));
-  assert.equal(e.kind,'ju87-pullout');assert.ok(Math.abs(e.distance-nearest)<.01);audio.dispose();
+  const nearest=Math.min(...[0,1,2].map(i=>{const p=m01StukaPosition(2,i);return Math.hypot(p.x,p.z,p.y);}));
+  assert.equal(e.kind,'ju87-pullout');assert.ok(Math.abs(e.distance-nearest)<.01);
+  // Once the formation has left, no plane is left to pull out.
+  assert.equal(audio.ju87PullOutNearest(28+60,spatial,'gone',true),null);audio.dispose();
 });
 
-test('Stuka path wrap is not heard as a Doppler dip; INTRO/SETUP stay quiet; fire loop has hysteresis',()=>{
+test('No Doppler dip around the former 90 s path wrap; INTRO/SETUP stay quiet; fire loop has hysteresis',()=>{
   const {audio}=makeAudio(),state={stukas:true,secondRaid:false,train963:false};audio.resetPresentation(89.9,state);
   for(const c of [89.9,89.95,90.0,90.05])audio.updateM01Presentation({clock:c,state,spatial});
   const engine=audio.loops.get('aircraft').layers.get('engine');assert.ok(Math.abs(engine.source.frequency.value/JU87_ENGINE_HZ-1)<.02);audio.dispose();

@@ -6,7 +6,7 @@ import {
   planTrainArrival,planLocomotiveIdleTick,planJu87PullOut,planFireCrackle,planDistantBattleSlot,volleyOffsets,
   aircraftLayerMix,dopplerFactor,intensityWeight,m01FireEmitters,BattleIntensity,impactMaterial,
 } from './battlefield-audio.js';
-import { M01_STUKA_COUNT, m01StukaPosition, m01RaidPlanePosition } from '../world/m01-aircraft-path.js';
+import { M01_STUKA_COUNT, m01StukaPosition, m01StukaSince, m01StukaActive, m01RaidPlanePosition, m01RaidSince, m01RaidPlaneActive } from '../world/m01-aircraft-path.js';
 
 export { AUDIO_PRIORITY,audioHash,audioVariation,audioDistanceShape };
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
@@ -373,8 +373,10 @@ export class AudioManager {
   /** Saída de picada a partir do Ju 87 visível mais próximo (mesma trajectória do renderer), só com a formação em cena. */
   ju87PullOutNearest(clock,spatial,key='',stukas=true){
     if(!stukas)return null;let best=null;
-    for(let i=0;i<M01_STUKA_COUNT;i++){const p=m01StukaPosition(clock,i),s=spatial(p),d=Math.hypot(s.distance,s.dy??p.y);if(!best||d<best.d)best={s,d};}
-    return this.ju87PullOut(best.s.pan,best.d,key,best.s.front??1);
+    // Same path and anchor as the renderer: the last presented state carries the bombing anchor (game.js only passes the clock).
+    const since=m01StukaSince(clock,this.presentation.aircraftState);
+    for(let i=0;i<M01_STUKA_COUNT;i++){if(!m01StukaActive(since,i))continue;const p=m01StukaPosition(since,i),s=spatial(p),d=Math.hypot(s.distance,s.dy??p.y);if(!best||d<best.d)best={s,d};}
+    return best?this.ju87PullOut(best.s.pan,best.d,key,best.s.front??1):null;
   }
   railClank(pan=0,distance=0,key='train963'){
     this._record('train-arrival',{pan,distance,priority:AUDIO_PRIORITY.train,key});
@@ -445,7 +447,7 @@ export class AudioManager {
   _freshPresentation(clock,state){
     const c=Math.max(0,Number(clock)||0);
     return {initialized:Boolean(state),lastBattleSlot:Math.floor(c/DISTANT_SLOT_SEC),lastIdleSlot:Math.floor(c/LOCOMOTIVE_IDLE_SLOT_SEC),lastFireSlot:Math.floor(c/FIRE_SLOT_SEC),
-      lastLoopUpdate:-Infinity,train963:Boolean(state?.train963),panzerzug:Boolean(state?.panzerzug),aircraft:{},fires:[]};
+      lastLoopUpdate:-Infinity,train963:Boolean(state?.train963),panzerzug:Boolean(state?.panzerzug),aircraft:{},aircraftState:state,fires:[]};
   }
   resetPresentation(clock=0,state=null){
     this.stopAll();this.presentation=this._freshPresentation(clock,state);this.intensity.reset(clock);this.clock=Math.max(0,Number(clock)||0);
@@ -457,7 +459,7 @@ export class AudioManager {
   updateM01Presentation({clock=0,state={},spatial=()=>({pan:0,distance:900}),phase=null,fires=null,quality=null,emitters=M01_AUDIO_EMITTERS}={}){
     if(!this.ctx||this.disposed)return;
     if(quality)this.setQuality(quality);
-    this.clock=clock;const level=this.intensity.level(clock),pres=this.presentation,missionPhase=phase??'MAIN_COMBAT';
+    this.clock=clock;const level=this.intensity.level(clock),pres=this.presentation,missionPhase=phase??'MAIN_COMBAT';pres.aircraftState=state;
     if(!pres.initialized){Object.assign(pres,this._freshPresentation(clock,state));pres.initialized=true;}
     else{
       if(!pres.train963&&state.train963){const s=spatial(emitters.locomotive);this.railClank(s.pan,s.distance,'train963-arrival');}
@@ -477,8 +479,11 @@ export class AudioManager {
       if(!this.loops.has('battle-bed'))this._startLoop('battle-bed',{kind:'battle-bed',category:'distant',priority:AUDIO_PRIORITY.ambience,volume:bed,layers:BED_LAYERS});
       this._setLoop('battle-bed',{volume:bed*(.8+.4*presentationNoise('m01-front',clock,5.3)),layers:{crackle:.04+.12*level}});
       // Ju 87: formação de três (motor perto rasga, longe só ronca) e o avião alto do segundo raide.
-      if(state.stukas)this._updateAircraftLoop('aircraft',Array.from({length:M01_STUKA_COUNT},(_,i)=>m01StukaPosition(clock,i)),spatial,loopDt,.07);else this._stopLoop('aircraft');
-      if(state.secondRaid)this._updateAircraftLoop('aircraft-high',[m01RaidPlanePosition(clock)],spatial,loopDt,.06);else this._stopLoop('aircraft-high');
+      // Positions are pure functions of the bombing/raid anchors in the state (see m01-aircraft-path.js); planes that left are silent.
+      const since=m01StukaSince(clock,state),flying=Array.from({length:M01_STUKA_COUNT},(_,i)=>i).filter(i=>m01StukaActive(since,i));
+      if(state.stukas&&flying.length)this._updateAircraftLoop('aircraft',flying.map(i=>m01StukaPosition(since,i)),spatial,loopDt,.07);else this._stopLoop('aircraft');
+      const raidSince=m01RaidSince(clock,state);
+      if(state.secondRaid&&m01RaidPlaneActive(raidSince))this._updateAircraftLoop('aircraft-high',[m01RaidPlanePosition(raidSince)],spatial,loopDt,.06);else this._stopLoop('aircraft-high');
       // Comboios parados: vapor, ronco da caldeira.
       for(const [key,flag,heavy] of [['locomotive','train963',false],['panzerzug','panzerzug',true]]){
         if(!state[flag]){this._stopLoop(key);continue;}
