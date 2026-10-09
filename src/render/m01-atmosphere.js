@@ -72,6 +72,7 @@ export class M01Atmosphere {
     this.debrisGeometry=new THREE.TetrahedronGeometry(1);this.debrisMaterial=new THREE.MeshStandardMaterial({color:'#615846',roughness:1});
     this.debris=new THREE.InstancedMesh(this.debrisGeometry,this.debrisMaterial,64);this.debris.count=0;this.debris.frustumCulled=false;scene.add(this.debris);
     this.dummy=new THREE.Object3D();this.color=new THREE.Color();this.fade=this.puffs.geometry.attributes.puffOpacity;
+    this.demolitionDrawn={puffs:0,chips:0};   // set-piece particles drawn by the last update (diagnostics only)
   }
   /** Camera-facing soft particles share one material/texture; each bounded pool owns its opacity buffer. */
   billboardBatch(capacity,color,parent,style='smoke'){
@@ -100,7 +101,7 @@ export class M01Atmosphere {
     this.material.uniforms.fogColor.value.setRGB(...model.fog.color);this.dustMaterial.uniforms.fogColor.value.setRGB(...model.fog.color);
   }
   update(state,clock,quality,context={}){
-    let count=0,chips=0;const density=quality==='low'?.58:quality==='medium'?.80:1,max=quality==='low'?112:quality==='medium'?192:256;
+    let count=0,chips=0;this.demolitionDrawn={puffs:0,chips:0};const density=quality==='low'?.58:quality==='medium'?.80:1,max=quality==='low'?112:quality==='medium'?192:256;
     const damage=state.damage.filter(d=>d.smokeVisible).sort((a,b)=>Number(b.id.endsWith('_demolition'))-Number(a.id.endsWith('_demolition'))||b.started-a.started);
     // Demolition set-piece first (priority over generic blasts): river/ground impact debris and splashes, earth rain at the west
     // firing post, suspended dust. Bounded by M01_DEMOLITION_BUDGET inside the same pools and the same `count<max` / `chips<64` guards.
@@ -111,12 +112,12 @@ export class M01Atmosphere {
         if(count>=max)break;
         this.dummy.position.set(p.x,p.y,p.z);this.dummy.rotation.set(0,0,0);this.dummy.scale.set(p.sx,p.sy,1);this.dummy.updateMatrix();
         this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,p.seed,p.variant);
-        this.puffs.setColorAt(count,this.color.set(p.color));this.fade.setX(count++,p.opacity);
+        this.puffs.setColorAt(count,this.color.set(p.color));this.fade.setX(count++,p.opacity);this.demolitionDrawn.puffs++;
       }
       for(const c of fx.chips){
         if(chips>=64)break;
         this.dummy.position.set(c.x,c.y,c.z);this.dummy.rotation.set(c.rx,c.ry,c.rz);this.dummy.scale.set(c.sx,c.sy,c.sz);this.dummy.updateMatrix();
-        this.debris.setMatrixAt(chips++,this.dummy.matrix);
+        this.debris.setMatrixAt(chips++,this.dummy.matrix);this.demolitionDrawn.chips++;
       }
     }
     for(const d of damage){
@@ -173,7 +174,7 @@ export class M01Atmosphere {
     this.debris.count=chips;this.debris.instanceMatrix.needsUpdate=true;this.dummy.rotation.set(0,0,0);
     this.count=count;this.puffs.count=count;this.puffs.instanceMatrix.needsUpdate=true;this.puffs.instanceColor.needsUpdate=true;this.fade.needsUpdate=true;
   }
-  get diagnostics(){return {puffs:this.count,puffCapacity:this.capacity,debris:this.debris.count,debrisCapacity:this.debris.instanceMatrix.count,puffBatches:this.puffBatches.length};}
+  get diagnostics(){return {puffs:this.count,puffCapacity:this.capacity,debris:this.debris.count,debrisCapacity:this.debris.instanceMatrix.count,puffBatches:this.puffBatches.length,demolition:{...this.demolitionDrawn}};}
   dispose(){this.scene.remove(this.sky);this.debris.removeFromParent();this.debris.dispose();this.debrisGeometry.dispose();this.debrisMaterial.dispose();for(const batch of this.puffBatches){batch.removeFromParent();batch.dispose();batch.geometry.dispose();}this.puffBatches=[];
     this.quad.dispose();this.skyGeometry.dispose();this.skyMaterial.dispose();this.material.dispose();this.dustMaterial.dispose();this.texture.dispose();this.dustTexture.dispose();this.cloudTexture.dispose();}
 }

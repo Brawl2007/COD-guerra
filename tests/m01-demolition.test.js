@@ -268,6 +268,11 @@ test('M01Atmosphere draws the set-piece inside its existing pools, deterministic
       b.update(structuredClone(state),clock,quality,context);assert.deepEqual(read(b),frame,'restore replays the same frame');
     }
     a.update(state,2003.6,'high',context);const withFx=a.debris.count;
+    // The page reports how much of the set-piece the last update drew (browser spec asserts on it).
+    const drawn=a.diagnostics.demolition,budget=D.M01_DEMOLITION_BUDGET.high;
+    assert.ok(drawn.puffs>0&&drawn.puffs<=budget.puffs&&drawn.chips>0&&drawn.chips<=budget.debris,JSON.stringify(drawn));
+    a.update(state,1999,'high',context);assert.deepEqual(a.diagnostics.demolition,{puffs:0,chips:0},'nothing before the blast');
+    a.update(state,2003.6,'high',context);assert.deepEqual(a.diagnostics.demolition,drawn,'same clock, same report');
     a.update({damage:state.damage.map(d=>({...d,id:d.id.replace('west_demolition','x_west'),started:d.started}))},2003.6,'high',context);
     assert.ok(withFx>a.debris.count,'the set-piece adds debris at the fall points');
     a.update(state,2003.6,'high');assert.ok(a.count>0,'surfaceY context is optional');
