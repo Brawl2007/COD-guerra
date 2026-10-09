@@ -15,7 +15,8 @@ Formato: data · decisão · razão · reversível? Decisões de produto/jogabil
 | D8 | 2026-10-08 | Nenhuma worktree nova. Reutilizar esta, com checkout esparso. | Disco a 81 % (cerca de 1,3 GB livres) | Sim |
 | D9 | 2026-10-08 | Browser integral só no CI do GitHub. Localmente: Node + browser focado, quando estritamente necessário. | Chromebook; SwiftShader lento; disco | Sim |
 | D10 | 2026-10-09 | Base de desenvolvimento do M01: `claude/m01-dev-base` = V7 `4c6f7bebee27b68af3bea8ad086da1dffbca0084` (CI integral 84/84, run 37876099475) + infra Capitão V3 + Jev (cherry-pick -x). Resolve H1. | Instrução do utilizador após a certificação ("depois desenvolve M01") | Sim |
-
+| D11 | 2026-10-09 | No Chromebook (aarch64, Node 24.21) o `npm test` dá 467/474 na base: 7 falhas conhecidas em `m01-animation-contract.test.js` (2 hashes golden por tick + 5 em cascata). O CI x86_64 dá 474/474 no mesmo código; `m01-schema2-determinism` (A/B na mesma máquina) passa localmente. Prova de gameplay das tarefas M01 = CI x86 da branch (um workflow por branch); localmente exige-se exatamente este conjunto de 7. | Divergência de vírgula flutuante entre arquiteturas (hipótese, não investigada) | Sim |
+| D12 | 2026-10-09 | T19 `M01-PLAYER-SHOT-FEEDBACK-V1` ACEITE (`08d2e81`, CI 37890545910: Node 480/480, build, browser focado 1/1) e integrada por fast-forward em `claude/m01-dev-base`. | Ciclo implementer→verifier→reviewer completo | Sim |
 ## Pendentes de decisão humana
 
 - ~~**H1**~~ Resolvido em 2026-10-09 (D10): V7 `4c6f7be`, CI integral 84/84.
