@@ -33,7 +33,9 @@ const VIEWS=Object.freeze({
     water:[[60,WATER_Y,-5],[60,WATER_Y,-60],[225,WATER_Y,-5],[225,WATER_Y,-60]],
     wake:[[140.9,WATER_Y,-14],[140.9,WATER_Y,-34]],control:[[205,WATER_Y,-14],[205,WATER_Y,-34]]},
   view13:{x:30,z:20,aim:{x:110,y:-9.94,z:-300},lift:0,
-    water:[[45,WATER_Y,-70],[45,WATER_Y,-260],[200,WATER_Y,-70],[200,WATER_Y,-260]]}
+    water:[[45,WATER_Y,-70],[45,WATER_Y,-260],[200,WATER_Y,-70],[200,WATER_Y,-260]],
+    // the bank wall fills the left of this frame and the rifle the lower right: measure only the open water between them (below the horizon at y~357, above the weapon)
+    box:{x0:520,x1:1280,y0:366,y1:466}}
 });
 function place(snapshot,view){
   const s=structuredClone(snapshot),y=world.heightAt(view.x,view.z);
@@ -101,6 +103,7 @@ async function capture(browser,info,{clock,view,quality='high'}){
 async function measure(browser,info,c,view){
   const v=VIEWS[view],camera=c.camera;
   const regions={water:regionOf(camera,v.water)};
+  if(v.box)Object.assign(regions.water,v.box);
   if(v.wake){regions.wake=regionOf(camera,v.wake,[24,10]);regions.control=regionOf(camera,v.control,[24,10]);}
   const stats=await analyze(browser,{a:c.a,b:c.b,regions});
   const report={...c.summary,regions:Object.fromEntries(Object.entries(regions).map(([k,r])=>[k,{x0:r.x0,y0:r.y0,x1:r.x1,y1:r.y1,projected:r.projected}])),stats};
