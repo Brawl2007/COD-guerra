@@ -114,6 +114,8 @@ function cellTriangles(world,ix,iz){
   return [tri(a,b,d),tri(b,c,d)];
 }
 const underWater=(x,y)=>x>M01_TERRAIN_MESH.water.x0&&x<M01_TERRAIN_MESH.water.x1&&y<M01_TERRAIN_MESH.water.top+.03;
+/** True when the drawn terrain under `point` lies below the river surface and the impact is at or under it. */
+const overWater=(world,point)=>underWater(point.x,point.y)&&underWater(point.x,renderedTerrainHeight(world,point.x,point.z)??Infinity);
 
 // ——— Track beds ———
 const SEGMENTS=new WeakMap();
@@ -950,6 +952,9 @@ export class M01DamageDecals {
   impact(event,{world,trees=null,player=null,shooter=null,clock=0,quality='medium'}={}){
     if(!event||!world||!['round-impact','player-shot'].includes(event.type))return null;
     const material=event.material;if(!material||material==='character'||!event.point)return null;
+    // The simulation reports the river bed as 'earth' (below the drawn water): the player's shot there splashes on the surface.
+    if(event.type==='player-shot'&&material==='earth'&&overWater(world,event.point))
+      return {placed:false,kind:'water',fxPoint:v3(event.point.x,M01_TERRAIN_MESH.water.top,event.point.z),secondaryFx:'water',reason:'water'};
     this.counts.spawned++;this.prune(clock,world);
     const eye=player?eyePosition(player):null,origin=shooter?(shooter===player?eye:v3(shooter.x,(shooter.y??0)+1.35,shooter.z)):null;
     let point=v3(event.point.x,event.point.y,event.point.z);

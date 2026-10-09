@@ -4,7 +4,7 @@ import { AudioSystem } from '../core/audio.js';
 import { Renderer } from '../render/three-renderer.js';
 import { Simulation } from './simulation.js';
 import { M01Simulation } from './m01-simulation.js';
-import { M01HudPresenter } from '../ui/m01-hud.js';
+import { M01HudPresenter, playerImpactSoundPlan } from '../ui/m01-hud.js';
 
 const SAVE_KEY='cod-guerra:checkpoint:v1';
 // These are the four aerial impacts emitted by M01. Schema 2 stores their IDs,
@@ -114,6 +114,7 @@ export class Game {
           else this.audio.rifleShot(sound.pan,sound.distance,sound.weapon??'kar98k',sound.key);
           return;
         }
+        if(sound.kind==='impact'){this.audio.impact(sound.material,sound.pan,sound.distance,sound.key);return;}
         if(sound.kind==='blast'){
           this.audio.explosion(sound.pan,sound.distance,{scale:sound.scale??'large',key:sound.key,front:sound.front});
           // Ju 87 a sair da picada: só depois de um sopro aéreo real, vindo de cima do ponto de impacto.
@@ -184,7 +185,13 @@ export class Game {
     if(event.type==='reload')this.audio.wz29Mechanism(this.sim.weapon.reloadMode);
     if(event.type==='player-shot'){
       this.audio.wz29Shot();this.audio.wz29Mechanism('bolt');this.renderer.m01.muzzle(this.sim.clock);
-      if(event.material&&event.material!=='character'){const s=this.spatial(event.point);this.audio.impact(event.material,s.pan,s.distance,`player:${this.sim.weapon.shotCount}`);}
+      if(event.hit===true)this.m01Hud.hit(this.sim.clock);
+      if(event.material&&event.material!=='character'){
+        const s=this.spatial(event.point),key=`player:${this.sim.weapon.shotCount}`,material=this.renderer.m01.lastSurface?.kind==='water'?'water':event.material,plan=playerImpactSoundPlan(s.distance,this.sim.clock);
+        // Beyond 60 m the impact is heard after distance/343 s of mission clock (cleared by rebuildSounds on restore/restart).
+        if(plan.immediate)this.audio.impact(material,s.pan,s.distance,key);
+        else this.pendingSounds.push({...s,at:plan.at,kind:'impact',material,key});
+      }
     }
     if(event.type==='npc-shot'){
       const s=this.spatial(event.point);

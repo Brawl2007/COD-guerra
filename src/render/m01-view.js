@@ -635,10 +635,11 @@ export class M01View {
   /** Authoritative round-impact / player-shot event → bounded surface mark; the player's own hit also gets the impact FX. */
   surfaceDamage(event,sim){
     const shooter=event.type==='round-impact'?sim.actor?.(event.by)??null:sim.player;
-    let result=null;
+    let result=null;this.lastSurface=null;
     // Runs before Game's own handlers for this event: a decal failure is counted, never allowed to skip them.
     try{result=this.damageDecals.impact(event,{world:sim.world,trees:this.environment?.treeDescriptors,player:sim.player,shooter,clock:sim.clock,quality:this.owner.quality});}
     catch(error){this.damageDecals.fail(error);}
+    this.lastSurface=result;   // read by Game for the matching impact sound (water); presentation only
     if(!result)return;
     // The player's own shot had no impact FX: it gets the one matching the drawn surface (sparks off a rail the
     // simulation calls 'earth'). German rounds keep Game's FX for the simulation material, plus that one if different.

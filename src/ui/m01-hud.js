@@ -14,8 +14,22 @@ export const INTRO_CARDS=Object.freeze([
 export const HUD_TIMING=Object.freeze({
   introBlackUntil:11,introFade:2.4,outroFadeIn:3,outroCardUntil:5.5,outroFadeOut:[57,60],
   typeRate:40,lineDelay:.5,cardFade:.45,resumeFade:.8,resumeCard:4.5,checkpoint:3.2,
-  banner:{new:3.8,done:2.6,expired:3,current:2.6},bannerIn:.3,bannerOut:.6,fresh:4
+  banner:{new:3.8,done:2.6,expired:3,current:2.6},bannerIn:.3,bannerOut:.6,fresh:4,hitMarker:.15
 });
+
+/** Speed of sound used for every delayed M01 sound (m/s). */
+export const SOUND_SPEED=343;
+/** Impacts of the player's own shot closer than this are heard at once; farther ones arrive after distance/343 s. */
+export const PLAYER_IMPACT_DELAY_FROM=60;
+/** When the sound of the player's shot impact is heard: now (<= 60 m) or queued at clock + distance/343. Presentation only, no RNG. */
+export function playerImpactSoundPlan(distance,clock){
+  return distance>PLAYER_IMPACT_DELAY_FROM?{immediate:false,at:clock+distance/SOUND_SPEED}:{immediate:true,at:clock};
+}
+/** Opacity of the hit marker `age` mission-clock seconds after a confirmed hit: 1, easing slightly in the last stretch, 0 once expired. */
+export function hitMarkerOpacity(age){
+  const T=HUD_TIMING.hitMarker;
+  return age>=0&&age<T?1-.6*ramp(age,T*.55,T):0;
+}
 const LOCKED=new Set(['cs_m01_intro','cs_m01_roll_call']);
 export const isLockedScene=id=>LOCKED.has(id);
 
@@ -76,7 +90,10 @@ export class M01HudPresenter {
     this.kind=kind;this.baseline=kind==='new'?null:undefined;this.queue=[];this.banner=null;this.checkpointAt=-Infinity;this.checkpointName='';
     this.lastClock=clock;this.resumeAt=kind==='new'?-Infinity:clock;this.objectiveText=null;this.objectiveAt=-Infinity;this.lastHealth=null;
     this.announceCurrent=kind!=='new';this.resumeLines=null;
+    this.hitAt=-Infinity;this.opacity('hitMarker',0);
   }
+  /** Confirmed hit by the player's shot (player-shot hit:true) at mission clock `clock`. */
+  hit(clock){this.hitAt=clock;}
   checkpoint(name,clock){this.checkpointAt=clock;this.checkpointName=name;}
   /** Repõe o DOM neutro (troca para a bancada francesa). */
   clear(){
@@ -84,7 +101,7 @@ export class M01HudPresenter {
     e.root?.classList.remove('cinematic','m01');
     for(const k of ['interaction','subtitle','objective','objectiveStatus','titleCard','objectiveUpdate','resumeCard','checkpointName'])if(e[k])e[k].textContent='';
     e.ammo?.classList.remove('low','empty');e.objectivePanel?.classList.remove('fresh');e.interaction?.classList.remove('show');e.subtitle?.classList.remove('show');
-    for(const k of ['fade','lowHealth','titleCard','objectiveUpdate','resumeCard','checkpoint'])e[k]?.style.removeProperty('opacity');
+    for(const k of ['fade','lowHealth','titleCard','objectiveUpdate','resumeCard','checkpoint','hitMarker'])e[k]?.style.removeProperty('opacity');
     e.rounds?.classList.add('hidden');e.status?.classList.remove('health-full','health-low');
   }
   set(key,value,write){if(this.cache.get(key)===value)return false;this.cache.set(key,value);write(value);return true;}
@@ -110,6 +127,7 @@ export class M01HudPresenter {
     this.updateWeapon(sim);
     this.updateHealth(sim.player.health,clock);
     const at=this.checkpointAt,cp=Number.isFinite(at)?ramp(clock,at,at+.25)*(1-ramp(clock,at+HUD_TIMING.checkpoint-.6,at+HUD_TIMING.checkpoint)):0;
+    this.opacity('hitMarker',cine.locked?0:hitMarkerOpacity(clock-this.hitAt));
     this.opacity('checkpoint',cine.locked?0:cp);this.text('checkpointName',this.checkpointName);
   }
   updateObjectives(sim,defs,clock,locked){
