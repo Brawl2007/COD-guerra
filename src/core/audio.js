@@ -439,7 +439,7 @@ export class AudioManager {
     for(const point of points){const s=spatial(point),d3=Math.hypot(s.distance,s.dy??point.y??0),w=1/Math.max(30,d3);
       panSum+=(s.pan??0)*w;weight+=w;if(!best||d3<best.distance)best={distance:d3,front:s.front??1};}
     const pan=weight?panSum/weight:0,prev=this.presentation.aircraft[key],mix=aircraftLayerMix(best.distance);
-    // Saltos de trajectória (volta do circuito a cada 90 s, troca do avião mais próximo) não são velocidade: sem Doppler.
+    // Saltos de trajectória (troca do avião mais próximo; o circuito de 90 s já não existe) não são velocidade: sem Doppler.
     const dd=prev!=null&&dt>0?best.distance-prev:0,pitch=Math.abs(dd/(dt||1))>120?1:dopplerFactor(dd,dt);this.presentation.aircraft[key]=best.distance;
     if(!this.loops.has(key)&&!this._startLoop(key,{kind:'aircraft-engine',category:'aircraft',priority:AUDIO_PRIORITY.aircraft,volume,pan,distance:best.distance,front:best.front,layers:AIRCRAFT_LAYERS}))return;
     this._setLoop(key,{pan,distance:best.distance,front:best.front,volume,pitch,layers:{prop:mix.prop,engine:mix.engine,engine2:mix.engine*.8,rasp:mix.rasp,rumble:mix.rumble}});

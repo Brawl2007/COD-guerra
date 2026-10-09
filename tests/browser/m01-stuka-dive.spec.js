@@ -35,18 +35,25 @@ async function capture(browser,info,{name,snapshot,needBomb=false,expectDiagnost
   await page.addInitScript(({key,snapshot})=>{localStorage.setItem(key,JSON.stringify(snapshot));localStorage.setItem('cod-guerra:visual-quality','high');},{key,snapshot});
   try{
     await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:180000});
-    await page.locator('#quality').selectOption('high');await page.locator('#continue').click();
-    // Wait for the exact condition to be true in a live frame (and keep that diagnostics sample), then pause and photograph.
-    // needBomb: the 1.5 s flight is short, so the sample is the first running frame that draws a bomb (no second wait).
+    await page.locator('#quality').selectOption('high');
+    // The Ju 87 GLBs load asynchronously: wait for them while the mission clock is still frozen, so no flight time is spent loading.
+    await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.aircraft.loaded.length===3,null,{timeout:240000});
+    await page.locator('#continue').click();
+    // Wait for the exact condition to be true in a live frame, keep that diagnostics sample and release the pointer lock in the SAME
+    // callback (the game stops ticking at once because it also needs the lock), so the frozen frame is the one that was sampled.
+    // needBomb: the 1.5 s flight is short, so the sample is the first running frame that draws a bomb.
     const handle=await page.waitForFunction(({needBomb})=>{
       const d=window.gameDiagnostics?.();if(!d||d.paused||!d.m01||d.m01.renderedFrames<(needBomb?1:3))return false;
-      const a=d.m01.aircraft;if(!a.path||a.loaded.length!==3||(needBomb&&a.bombs.visible<1))return false;
-      return JSON.parse(JSON.stringify({clock:d.clock,aircraft:a,eventIds:d.eventIds,damage:d.m01.damage}));
+      const a=d.m01.aircraft;if(!a.path||(needBomb&&a.bombs.visible<1))return false;
+      const sample=JSON.parse(JSON.stringify({clock:d.clock,aircraft:a,eventIds:d.eventIds,damage:d.m01.damage}));
+      document.exitPointerLock();return sample;
     },{needBomb},{timeout:240000,polling:'raf'});
     const live=await handle.jsonValue();
     await expectDiagnostics?.(live,page);
-    await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+    await expect(page.locator('#pause')).toBeVisible();
     const paused=await page.evaluate(()=>window.gameDiagnostics());
+    // The lock is released asynchronously by the browser: at most a few frames (bounded) run between the sample and the pause.
+    expect(paused.clock-live.clock).toBeGreaterThanOrEqual(0);expect(paused.clock-live.clock).toBeLessThan(.75);
     await page.screenshot({path:info.outputPath(name+'.png'),style:'#pause,#hud,#menu{visibility:hidden!important}',timeout:120000});
     await info.attach(name+'.json',{body:JSON.stringify({live,pausedClock:paused.clock,pausedBombs:paused.m01.aircraft.bombs,pausedPath:paused.m01.aircraft.path},null,2),contentType:'application/json'});
     expect(errors).toEqual([]);expect(failed).toEqual([]);
@@ -92,7 +99,7 @@ test('bomb: the first bomb falls from the lead plane towards the station point, 
   // Face west and up: the bomb leaves the lead plane almost overhead and heads for the station (x = -400).
   const aimed=structuredClone(snapshot);aimed.player.angle=Math.PI;aimed.player.pitch=1;aimed.player.aiming=false;
   expect(lead.y).toBeGreaterThan(100);
-  const {live}=await capture(browser,info,{name:'m01-stuka-bomb',snapshot:aimed,needBomb:true,expectDiagnostics:sample=>{
+  const {live,paused}=await capture(browser,info,{name:'m01-stuka-bomb',snapshot:aimed,needBomb:true,expectDiagnostics:sample=>{
     const now=sample.aircraft;
     expect(now.bombs.pool).toBe(3);
     const flight=now.bombs.flights.find(f=>f.id==='station_bomb');expect(flight).toBeTruthy();
@@ -103,6 +110,7 @@ test('bomb: the first bomb falls from the lead plane towards the station point, 
     expect(now.path.since).toBeLessThan(1.5);
   }});
   expect(live.aircraft.planes.every(p=>p.visible)).toBe(true);
+  expect(paused.m01.aircraft.bombs.visible).toBeGreaterThanOrEqual(1);   // the screenshot shows the falling bomb
 });
 
 test('04:35 restore: the formation leaves east on the pure path anchored to the saved bombing',async({browser},info)=>{
