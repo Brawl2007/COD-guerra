@@ -11,6 +11,7 @@ import argparse
 import datetime
 import fcntl
 import json
+import math
 import os
 import stat
 import sys
@@ -22,6 +23,7 @@ PILOT_MAX_PAID_CALLS = 3
 PRICE_PER_MTOK_INPUT = 0.042
 DEFAULT_BASE = "https://api.typesafe.ai"
 TIMEOUT_S = 15
+DESC_MAX = 500
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_KEY_FILE = "~/.config/cod-guerra/typesafe.env"
 DEFAULT_LEDGER = "~/.local/state/cod-guerra/jev_pilot_ledger.json"
@@ -59,6 +61,7 @@ def normalize(req):
     cx = str(req.get("complexity") or "medium").lower()
     if risk not in LEVELS or cx not in LEVELS:
         raise ValueError("risk/complexity must be low|medium|high")
+    desc = str(req.get("description", ""))
     flags = req.get("critical_flags") or []
     if flags is True:
         flags = ["unspecified"]
@@ -70,7 +73,8 @@ def normalize(req):
         flags = [str(f).lower() for f in flags]
     return {
         "role": role,
-        "description": str(req.get("description", "")),
+        "description": desc[:DESC_MAX],
+        **({"description_truncated": True} if len(desc) > DESC_MAX else {}),
         "risk": risk,
         "complexity": cx,
         "fix_attempts": int(req.get("fix_attempts") or 0),
@@ -82,7 +86,7 @@ def normalize(req):
 def rule_decide(r):
     """Return (model, agent, ambiguous, rationale)."""
     role = r["role"]
-    if role == "explore" or r["read_only"]:
+    if role == "explore":
         return "haiku", "explorer", False, "read-only narrow exploration"
     if role == "verify":
         return "sonnet", "verifier", False, "independent verification"
@@ -148,14 +152,26 @@ def effective_limit(env=None, flag=None):
     return lim
 
 
+class LedgerUnreadable(Exception):
+    """Ledger exists but cannot be trusted; callers must fail closed."""
+
+
 def read_ledger(path):
+    """Only a missing file is an empty ledger; anything else unreadable raises."""
     try:
+        st = os.stat(str(path))
+        if not stat.S_ISREG(st.st_mode):
+            raise LedgerUnreadable("not_regular_file")
         data = json.loads(Path(path).read_text())
-        if isinstance(data.get("calls"), list):
-            return data
-    except (OSError, ValueError, AttributeError):
-        pass
-    return {"limit": PILOT_MAX_PAID_CALLS, "calls": []}
+    except FileNotFoundError:
+        return {"limit": PILOT_MAX_PAID_CALLS, "calls": []}
+    except LedgerUnreadable:
+        raise
+    except (OSError, ValueError) as exc:
+        raise LedgerUnreadable(type(exc).__name__)
+    if not isinstance(data, dict) or not isinstance(data.get("calls"), list):
+        raise LedgerUnreadable("bad_structure")
+    return data
 
 
 class Locked:
@@ -185,7 +201,7 @@ class Locked:
 def reserve(path, limit, run_id, request_id):
     """Atomically reserve a slot. Return index or None if refused."""
     with Locked(path) as lk:
-        data = read_ledger(path)
+        data = read_ledger(path)  # raises LedgerUnreadable: never rewrite
         if len(data["calls"]) >= limit:
             return None
         data["limit"] = limit
@@ -201,7 +217,10 @@ def reserve(path, limit, run_id, request_id):
 
 def finish(path, idx, **fields):
     with Locked(path) as lk:
-        data = read_ledger(path)
+        try:
+            data = read_ledger(path)
+        except LedgerUnreadable:
+            return False
         if idx < len(data["calls"]):
             data["calls"][idx].update(fields)
             lk.write(data)
@@ -212,10 +231,18 @@ def est_cost(tokens):
 
 
 # -------------------------------------------------------------- transport
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *a, **k):
+        return None  # never forward the Authorization header
+
+
+_OPENER = urllib.request.build_opener(_NoRedirect)
+
+
 def default_transport(url, headers, body, timeout):
     req = urllib.request.Request(url, data=body, headers=headers, method="POST")
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
+        with _OPENER.open(req, timeout=timeout) as resp:
             return resp.status, resp.read()
     except urllib.error.HTTPError as exc:
         return exc.code, exc.read()
@@ -279,7 +306,10 @@ def route(request, *, enable_jev=False, offline=False, dry_run=False,
     kstatus, key = load_key(e)
     if key is None:
         return fallback("insecure_key_file" if kstatus == "insecure_key_file" else "no_key")
-    used = len(read_ledger(lpath)["calls"])
+    try:
+        used = len(read_ledger(lpath)["calls"])
+    except LedgerUnreadable:
+        return fallback("ledger_unreadable")
     if used >= limit:
         return fallback("budget_exhausted", budget={"used": used, "limit": limit})
 
@@ -296,7 +326,10 @@ def route(request, *, enable_jev=False, offline=False, dry_run=False,
         return out
 
     request_id = "%s-%d" % (run_id or "norun", used + 1)
-    idx = reserve(lpath, limit, run_id, request_id)
+    try:
+        idx = reserve(lpath, limit, run_id, request_id)
+    except LedgerUnreadable:
+        return fallback("ledger_unreadable")
     if idx is None:
         return fallback("budget_exhausted", budget={"used": used, "limit": limit})
     headers = {"Authorization": "Bearer " + key, "Content-Type": "application/json"}
@@ -313,7 +346,12 @@ def route(request, *, enable_jev=False, offline=False, dry_run=False,
         resp = json.loads(raw)
         ans = resp["answers"]["model_choice"]
         choice = str(ans["choice"]).lower()
-        conf = float(ans["confidence"])
+        conf = ans["confidence"]
+        if isinstance(conf, bool) or not isinstance(conf, (int, float)):
+            raise ValueError("bad confidence")
+        conf = float(conf)
+        if not math.isfinite(conf) or not 0.0 <= conf <= 1.0:
+            raise ValueError("bad confidence")
         usage = resp.get("usage") or {}
         tin = int(usage.get("input_tokens", 0))
         tout = int(usage.get("output_tokens", 0))
@@ -340,7 +378,11 @@ def route(request, *, enable_jev=False, offline=False, dry_run=False,
 # -------------------------------------------------------------------- CLI
 def usage_summary(env=None):
     p = ledger_path(env)
-    calls = read_ledger(p)["calls"]
+    try:
+        calls = read_ledger(p)["calls"]
+    except LedgerUnreadable as exc:
+        return {"ledger": str(p), "ledger_status": "corrupt_or_unreadable",
+                "reason": str(exc), "limit": effective_limit(env)}
     lim = effective_limit(env)
     return {
         "ledger": str(p), "calls_used": len(calls), "limit": lim,
@@ -377,6 +419,13 @@ def main(argv=None):
 
     if a.cmd == "usage":
         u = usage_summary()
+        if u.get("ledger_status"):
+            if a.json:
+                print(json.dumps(u, indent=2))
+            else:
+                print("ledger CORRUPT or unreadable (%s): %s; budget unknown, paid calls refused" % (
+                    u["reason"], u["ledger"]))
+            return 2
         if a.json:
             print(json.dumps(u, indent=2))
         else:

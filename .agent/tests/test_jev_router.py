@@ -50,6 +50,8 @@ class Stub:
                         "usage": {"input_tokens": 318, "output_tokens": 34},
                     }).encode()
                 self.send_response(stub.status)
+                if stub.status == 302:
+                    self.send_header("Location", stub.url + "/redir")
                 self.send_header("Content-Length", str(len(data)))
                 self.end_headers()
                 self.wfile.write(data)
@@ -109,7 +111,10 @@ class RuleTests(Base):
     def test_obvious_cases_no_http(self):
         cases = [
             (["--role", "explore"], "haiku", "explorer"),
-            (["--role", "implement", "--read-only"], "haiku", "explorer"),
+            (["--role", "implement", "--read-only", "--risk", "low", "--complexity", "low"], "sonnet", "implementer"),
+            (["--role", "review", "--risk", "high", "--read-only"], "opus", "reviewer-critical"),
+            (["--role", "review", "--critical", "persistence", "--read-only"], "opus", "reviewer-critical"),
+            (["--role", "verify", "--read-only"], "sonnet", "verifier"),
             (["--role", "verify"], "sonnet", "verifier"),
             (["--role", "review", "--critical", "persistence"], "opus", "reviewer-critical"),
             (["--role", "review", "--risk", "high"], "opus", "reviewer-critical"),
@@ -308,6 +313,65 @@ class NoSendTests(Base):
     def test_enable_flag_without_env(self):
         o = self.route(*AMBIG, "--enable-jev", pilot=False)
         self.assertEqual(o["source"], "jev")
+
+
+class HardeningTests(Base):
+    BAD = [b"{garbage", b'{"calls": [{"outcome": "ok"', b'{"limit": 3}',
+           b'{"calls": {"a": 1}}', b'[]', b'"x"']
+
+    def test_corrupt_ledger_fails_closed(self):
+        self.ledger.parent.mkdir(parents=True)
+        for raw in self.BAD:
+            self.ledger.write_bytes(raw)
+            o = self.route(*AMBIG)
+            self.assertEqual((o["source"], o["reason"]), ("rule_fallback", "ledger_unreadable"), raw)
+            self.assertEqual(self.stub.hits, 0)
+            self.assertEqual(self.ledger.read_bytes(), raw)
+            with self.assertRaises(jev_router.LedgerUnreadable):
+                jev_router.reserve(self.ledger, 3, "r", "q")
+            jev_router.finish(self.ledger, 0, outcome="x")
+            self.assertEqual(self.ledger.read_bytes(), raw)
+            p = subprocess.run([sys.executable, str(TOOL), "usage"], env=self.env,
+                               capture_output=True, text=True)
+            self.assertNotEqual(p.returncode, 0)
+            self.assertIn("CORRUPT", p.stdout)
+            self.assertNotIn("calls 0/3", p.stdout)
+
+    def test_non_regular_ledger_fails_closed(self):
+        self.ledger.mkdir(parents=True)
+        o = self.route(*AMBIG)
+        self.assertEqual(o["reason"], "ledger_unreadable")
+        self.assertEqual(self.stub.hits, 0)
+
+    def test_reserved_slot_counts_as_used(self):
+        self.ledger.parent.mkdir(parents=True)
+        self.ledger.write_text(json.dumps({"calls": [{"outcome": "reserved"}] * 3}))
+        self.assertEqual(self.route(*AMBIG)["reason"], "budget_exhausted")
+        self.assertEqual(self.stub.hits, 0)
+
+    def test_description_truncated(self):
+        o = self.route(*AMBIG[:6], "--description", "x" * 900)
+        self.assertEqual(o["source"], "jev")
+        st = self.stub.bodies[0]["state"]
+        self.assertEqual(len(st["description"]), 500)
+        self.assertTrue(st["description_truncated"])
+        self.route(*AMBIG)
+        self.assertNotIn("description_truncated", self.stub.bodies[1]["state"])
+
+    def test_bad_confidence_is_parse_error(self):
+        for bad in ("high", 1.5, -0.1, float("nan"), float("inf"), None, True):
+            self.stub.confidence = bad
+            self.ledger.unlink() if self.ledger.exists() else None
+            o = self.route(*AMBIG)
+            self.assertEqual((o["source"], o["error"]), ("rule_fallback", "ParseError"), bad)
+            self.assertEqual(self.calls()[0]["outcome"].split(":")[0], "parse_error")
+
+    def test_redirect_not_followed(self):
+        self.stub.status = 302
+        o = self.route(*AMBIG)
+        self.assertEqual((o["source"], o["error"]), ("rule_fallback", "HTTP302"))
+        self.assertEqual(self.stub.hits, 1)
+        self.assertEqual(len(self.calls()), 1)
 
 
 class UsageTests(Base):
