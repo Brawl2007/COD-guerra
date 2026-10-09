@@ -9,6 +9,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { texturedSurface,weatheredBridgeSurface } from './m01-surfaces.js';
 import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';
 import { applyLighting, viewLightingDiagnostics, M01_FOG_RANGE } from './m01-lighting.js';
+import { M01Water } from './m01-water.js';
 import {battlefieldBlastKind,battlefieldProfile,fxLayerCount,staggeredLife,impactProfile,fxDistanceBand} from './m01-battlefield-fx-profile.js';
 import { M01Environment } from './m01-environment.js';
 import { M01Characters } from './m01-characters.js';
@@ -62,7 +63,7 @@ export class M01View {
       dark:new THREE.MeshStandardMaterial({color:'#202622',roughness:.8}),
       skin:texturedSurface('skin',{bump:.006}),
       brass:new THREE.MeshStandardMaterial({color:'#bfa66a',roughness:.55,metalness:.6}),
-      water:texturedSurface('water',{worldScale:.12,bump:.02}),
+      water:(this.water=new M01Water()).material,   // T42: lit river material (fresnel + T16 sky reflection, flow, pier foam, wet banks)
       cloth:texturedSurface('cloth',{bump:.018}),
       bridgeBrick:weatheredBridgeSurface('brick',{worldScale:.36,bump:.055,seed:1912}),
       bridgeStone:weatheredBridgeSurface('stone',{worldScale:.5,bump:.07,seed:1857}),
@@ -644,7 +645,7 @@ export class M01View {
     this.syncSolids(sim.world);this.portalPolish.sync(this.owner.quality);this.bridgeStructure.sync(this.owner.quality,this.camera.position,sim.world);const dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
     this.updateDemolition(state,time,sim);
-    this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.lighting(sim);
+    this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.lighting(sim);this.water.sync(this.lightingModel,sim.clock,this.owner.quality);
     this.train.visible=state.train963;this.panzerzug.visible=state.panzerzug;
     this.updateAircraft(state,time,sim.player,ju87HeardAt(sim));this.updateBombs(state,time,sim.player,sim.world);
     const player=sim.player,eye=eyePosition(player),dir=aimDirection(player.angle,player.pitch);
@@ -730,7 +731,7 @@ export class M01View {
   }
   get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,
     requiredAssetFailures:this.assets.failures.filter(f=>manifest.files.some(m=>typeof m.lod==='number'&&m.file===f.path)),
-    characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,weaponFx:this.weaponWorldFx.diagnostics,weaponLighting:this.weaponLighting.state,lighting:viewLightingDiagnostics(this),
+    characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,weaponFx:this.weaponWorldFx.diagnostics,weaponLighting:this.weaponLighting.state,lighting:viewLightingDiagnostics(this),water:this.water.diagnostics,
     locomotive:this.locomotive.diagnostics,panzerzug:this.panzerzugArt.diagnostics,wagons:this.wagons.diagnostics,yardWagons:this.yardWagons.diagnostics,
     aircraft:{loaded:[...this.aircraftSources.keys()].sort(),planes:this.planes.map(p=>{const model=(p.levels[p.userData.level]??p.levels.find(l=>l.object.visible))?.object,prop=model?.getObjectByName('propeller');return {visible:p.visible,lod:model?.userData.lod,position:p.position.toArray(),attitude:[p.rotation.x,p.rotation.y,p.rotation.z],fade:p.userData.fade,propeller:prop?.quaternion.toArray()};}),
       path:this.aircraftPath?{...this.aircraftPath,planeSeconds:[0,1,2].map(i=>m01StukaPathTime(this.aircraftPath.since,i))}:null,
