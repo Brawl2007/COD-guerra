@@ -88,6 +88,6 @@
       "tests/browser/m01-locomotive.spec.js"
     ],
     "reason": "Third 83/84 report: post-reload read at line 19 preceded the first rendered frame after restore (train visibility is applied in render()). Added the same visible&&loaded wait used before the first read (line 12); no assertion removed; production unchanged.",
-    "head": "PENDING_COMMIT"
+    "head": "29e26b7f5c5b90720463853c76b34aa3454090b1"
   }
 }
