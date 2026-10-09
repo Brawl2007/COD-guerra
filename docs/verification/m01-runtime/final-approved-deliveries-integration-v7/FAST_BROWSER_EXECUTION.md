@@ -1,27 +1,11 @@
-# Execução integral local em paralelo — V7
+# Tentativa local em paralelo — excluída da certificação
 
-Estado inicial: execução ainda não iniciada; não é um resultado PASS.
+**INFRASTRUCTURE_INCOMPLETE.** A invocação iniciou-se em 2026-10-09 00:24:48 UTC, HEAD `0bbffba78cbe96da9a4de24449ab3ac9470ba0db`, com os mesmos 84 casos, sem filtros, dois workers entre ficheiros, ordem serial dentro de cada ficheiro, viewport 1280×720, renderer SwiftShader, orçamentos CI e zero retries. O inventário foi comparado em ordem com o original: 84 títulos/ficheiros/projectos/estados esperados idênticos, zero erros.
 
-A alternativa usa o mesmo corpus integral de 84 casos, sem filtros, os mesmos testes e asserções, viewport 1280×720, renderer SwiftShader, orçamentos CI e zero retries. `playwright.config.js` continua intacto. A configuração adicional `tools/verification/m01-v7-browser-fast.config.mjs` altera somente:
+A sessão do executor ficou indisponível antes do relatório final. O log contém **19 casos PASS e nenhuma asserção FAIL reportada**; os restantes 65 não foram certificados. `write_stdin` devolveu `Unknown process id 11050`. Não existe JSON final do Playwright nem código de saída observado. Não há prova suficiente para atribuir a causa exata a OOM, timeout ou erro de M01. A observação de cgroup registou zero `oom`/`oom_kill`; não é uma medição do pico do processo perdido.
 
-- Dois workers entre ficheiros independentes; a ordem dentro de cada ficheiro continua serial (`fullyParallel:false`).
-- Trace de falha com acções/fontes, sem snapshots DOM nem filmstrip por chamada. Todas as capturas explícitas dos testes e capturas automáticas em falhas continuam activas.
-- Caminhos de teste e servidor relativos à raiz, para permitir a configuração adicional.
+O [config experimental exato](https://github.com/Brawl2007/COD-guerra/blob/0bbffba78cbe96da9a4de24449ab3ac9470ba0db/tools/verification/m01-v7-browser-fast.config.mjs) mantinha as asserções e capturas explícitas/falhas, retirando somente snapshots DOM/filmstrip do trace. Foi retirado da árvore final para não apresentar uma alternativa incompleta como executor validado. `playwright.config.js` sempre permaneceu intacto. O CI integral independente 37862528016 continua com o executor original, um worker e trace completo.
 
-Os inventários standard e adicional foram carregados com sucesso e comparados em ordem: mesmos 84 títulos/ficheiros/projectos/estados esperados, zero erros e retries 0. Uma primeira tentativa local de inventário encontrou apenas um JSON omitido pelo sparse checkout; o ficheiro original versionado foi recuperado, sem alterar os testes ou fixtures.
+`LOCAL_PARALLEL_ATTEMPT.json`, identidade, ambos os inventários comprimidos sem perdas e `logs/browser-local-parallel-incomplete.log` preservam a tentativa. Os seus 19 resultados **não são somados** ao CI nem aos focados. Chromium local 153.0.8010.0 difere do Chromium 145 do CI. Não é hardware Chromebook e não mede FPS.
 
-O executor local tem quota de oito CPUs e limite de memória de 8 GiB. Não é hardware Chromebook e esta execução não mede FPS. Chromium local 153.0.8010.0 difere do Chromium 145 do CI. O CI integral 37862528016 continua independente; os seus resultados não serão misturados com a execução local para fabricar um total verde.
-
-## Reprodução
-
-Executar a partir da raiz da V7, com Node 24, dependências fixadas e Chromium instalado:
-
-```sh
-npm ci
-npm run build
-CI=1 PLAYWRIGHT_JSON_OUTPUT_FILE=/tmp/m01-v7-full.json SOLDIER_EVIDENCE_DIR=/tmp/m01-v7-soldiers AUDIO_EVIDENCE_DIR=/tmp/m01-v7-audio npx playwright test --config=tools/verification/m01-v7-browser-fast.config.mjs --reporter=list,json --output=/tmp/m01-v7-full-results
-```
-
-Para usar um Chromium já instalado, definir `CHROME_EXECUTABLE` com o caminho absoluto. O próprio Playwright inicia o preview de produção. Não iniciar outro servidor na porta 4173.
-
-Aceitação: uma única invocação integral com 84 resultados esperados, 0 inesperados, 0 skips, 0 flaky, 0 erros globais e todos os índices de retry iguais a 0. Resultados focados e as duas execuções CI históricas vermelhas permanecem evidências separadas. O relatório final deve identificar o HEAD realmente executado, versão do navegador, inventário, fingerprints das fontes/build, duração e limitações de diagnóstico do trace reduzido.
+Uma tentativa inicial do inventário encontrou um JSON omitido pelo sparse checkout; foi recuperado o ficheiro original versionado, sem alterar testes ou fixtures. Isso foi resolvido antes de iniciar esta execução e não é a causa demonstrada da perda da sessão.

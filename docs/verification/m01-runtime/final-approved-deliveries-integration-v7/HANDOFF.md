@@ -2,7 +2,7 @@
 
 TASK_ID: `M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7`.
 
-**Estado: VALIDATION_IN_PROGRESS.** As execuções browser integrais terminaram 80/84 e 82/84. As quatro primeiras correções passaram na segunda execução; as duas falhas restantes têm provas preservadas e correções em validação focada, sem alterações de produção. A terceira execução integral sem filtros está em curso no run 37862528016; a certificação ainda está pendente. M01 continua **PROTÓTIPO JOGÁVEL**; não há alegação de qualidade AAA ou de certificação no Chromebook.
+**Estado: VALIDATION_IN_PROGRESS.** As execuções browser integrais terminaram 80/84 e 82/84. As quatro primeiras correções passaram na segunda execução; as duas falhas restantes têm provas preservadas e correções retestadas 4/4, sem alterações de produção. A terceira execução integral sem filtros está em curso no run 37862528016; a certificação ainda está pendente. M01 continua **PROTÓTIPO JOGÁVEL**; não há alegação de qualidade AAA ou de certificação no Chromebook.
 
 ## Identidade, recuperação e decisões
 
@@ -20,7 +20,7 @@ TASK_ID: `M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7`.
 | PR draft | [#59 — V7 → V6](https://github.com/Brawl2007/COD-guerra/pull/59) |
 | HEAD final publicado | O `head.sha` exato da PR #59, registrado na descrição final da PR; inclui este próprio handoff. `git rev-parse origin/codex/m01-final-production-consolidation-v7` reproduz esse SHA após fetch. |
 
-V6 e V7 foram confirmadas remotamente no mesmo SHA antes das alterações. A V6 é ancestral da V7. Todos os sistemas herdados permanecem; o delta de produção restringe-se a sete módulos de render. O checkout anterior, com trabalho V6 local antigo, não foi apagado nem reaplicado. O trabalho foi feito numa worktree isolada da V7 e numa referência V6 detached somente para leitura/build.
+V6 e V7 foram confirmadas remotamente no mesmo SHA antes das alterações. A V6 é ancestral da V7. Todos os sistemas herdados permanecem; o delta de produção restringe-se a sete módulos de render. O checkout anterior, com trabalho V6 local antigo, não foi apagado nem reaplicado. O trabalho foi feito num checkout isolado da V7 e numa referência V6 detached somente para leitura/build.
 
 [DELIVERY_MATRIX.md](DELIVERY_MATRIX.md), [REMOTE_INITIAL.json](REMOTE_INITIAL.json) e [BRANCH_DELTA_INVENTORY.json](BRANCH_DELTA_INVENTORY.json) mostram fontes, SHAs, checkpoints herdados, provas, dependências e decisões. [SOURCE_REVIEW_INDEX.json](SOURCE_REVIEW_INDEX.json) identifica sete documentos primários exatos das fontes, com Git blob SHA, SHA-256 e URLs; o conteúdo está preservado em `SOURCE_REVIEW.json.gz`. Foram inventariadas 117 branches e comparadas com as 113 da V6. A admissão usa a autorização técnica explícita desta tarefa; não se inventou aprovação anterior do Capitão.
 
@@ -66,6 +66,7 @@ Exclusões: os quatro commits de armas posteriores a `7dbc0a5` continuam com fal
 | Browser integral combinado, segunda execução | **82 PASS / 2 FAIL**, 84 executados, zero skips/retries/erros globais | [Run 37851294926](https://github.com/Brawl2007/COD-guerra/actions/runs/37851294926); `BROWSER_FULL_SECOND.json.gz`, resumo/log e `BROWSER_FULL_SECOND_DIAGNOSIS.json`; quatro correções anteriores passaram |
 | Browser focado após segunda correção | **4/4 PASS**, Chromium 153, workers 1, retries/skips zero | `BROWSER_SECOND_HARNESS_FOCUSED.json.gz`, resumo e log; fases reais FX e burned/reload/checkpoint/LOD/fallback |
 | Browser integral após segunda correção | **EM EXECUÇÃO**, uma invocação sem filtros, retries 0 | [Run 37862528016](https://github.com/Brawl2007/COD-guerra/actions/runs/37862528016), HEAD `9d9844e`; fonte/correções assinadas e build passaram |
+| Alternativa local integral em paralelo | **INCOMPLETA**, 19 casos PASS reportados; 65 não certificados | `LOCAL_PARALLEL_ATTEMPT.json`; sessão do executor indisponível sem relatório final, excluída da certificação |
 | Autoridade e recuperação | **PASS** | 291 ficheiros protegidos, duas rotas completas e futuros dos quatro CPs; `INVARIANTS.json` e reteste corrigido abaixo |
 | Helper adicional de LOD, após correção de QA | **PASS** — Low/Medium/High/Low = 2/1/0/2 em V6 e V7 | `INVARIANTS_LOD_CORRECTED.json`, `logs/invariants-lod-corrected.log`; commit `158c30edea72869144cb0b0c875029dc3818adc2` |
 | Visual principal local e CI | **57/57 pares PASS para estado equivalente**, 114 frames | 12 boards inspecionadas; os 114 PNGs locais e CI têm hashes idênticos, `VISUAL_SUMMARY.json`; não é uma aprovação artística automática |
@@ -123,6 +124,10 @@ A segunda suíte completa terminou **82 PASS / 2 FAIL**, 84 casos, sem retries, 
 - **FX da demolição leste:** o `waitForFunction` de 30 s expirou sob software WebGL/trace. A montagem do observador levou 14,22 s, após 11,19 s na confirmação de controlo; o trace acaba com a indicação real de demolição e pausa nativa às 06:10:02. O trace não inclui os contadores no instante da falha, portanto **não permite afirmar isoladamente** se a leitura atrasou ou se o callback perdeu a fase quente. Agora o observador é armado no menu pausado antes de Continuar, exige controlo nativo, evento real e core/fire+dust positivos; o orçamento de leitura é 60 s de parede. Smoke mantém seu predicado positivo; capturas pausadas usam o orçamento de readback de 120 s já usado pelos outros casos. Diagnóstico do estado/captura é anexado se voltar a falhar. Nenhum lifetime, timing, evento ou RNG foi alterado.
 
 O build da correção continua com o mesmo SHA-256. Os quatro casos focados (ambos os FX e ambos os cenários de vagões) passaram em 3,8 min, Chromium 153, sem retries/skips/erros globais. A certificação combinada permanece pendente até uma nova execução integral real; os resultados focados não substituem essa execução.
+
+## Tentativa de acelerar sem alterar asserções
+
+A invocação local do HEAD `0bbffba78cbe96da9a4de24449ab3ac9470ba0db` manteve os 84 testes originais, viewport, orçamentos CI, zero retries e capturas explícitas/falhas; dois workers entre ficheiros e menos instrumentação no trace. Ambos os inventários foram comparados em ordem e são idênticos. O executor perdeu a sessão após 19 casos PASS reportados, sem asserção FAIL no log e sem JSON final ou código de saída observado. `write_stdin` devolveu `Unknown process id 11050`. A causa exata da interrupção não é provada; não se atribui a OOM nem a regressão M01. Os 65 restantes não foram certificados. **Estes resultados parciais não são somados a nenhuma execução.** O config experimental foi retirado da árvore final; a CI 37862528016 usa o executor original intacto. [FAST_BROWSER_EXECUTION.md](FAST_BROWSER_EXECUTION.md) e os `LOCAL_PARALLEL_*` conservam a identidade, inventários, log e observações primárias.
 
 ## Battlefield FX e infraestrutura
 

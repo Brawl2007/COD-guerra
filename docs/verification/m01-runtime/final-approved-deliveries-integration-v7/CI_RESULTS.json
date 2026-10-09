@@ -1,6 +1,6 @@
 {
   "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
-  "observedAt": "2026-10-09T00:05:06.236Z",
+  "observedAt": "2026-10-09T00:52:56.058810+00:00",
   "runtimeHead": "8f7d1ea8f096472436c860e118a8c799e740e23f",
   "node": {
     "runId": 37831786923,
@@ -503,5 +503,23 @@
     ],
     "visualReview": "All seven real PNGs inspected. Near intact/burned meshes and unchanged Station visible; fallback boxes remain visibly simple and third wagon/fire can be occluded by nearer wagons. Hot/smoke FX at 771 m are largely occluded by the truss; positive event/layer counters prove phase capture, these are not beauty shots. Far LOD fixture is in water and proves only model LOD, not a gameplay route. Earlier 72 matched visual pairs remain the visual-quality evidence.",
     "correctionHead": "0a83942b41957e0b900b8a8fc704eb7860f84ba9"
+  },
+  "localParallelAttempt": {
+    "status": "INFRASTRUCTURE_INCOMPLETE",
+    "head": "0bbffba78cbe96da9a4de24449ab3ac9470ba0db",
+    "configuredInventory": 84,
+    "configuredWorkers": 2,
+    "configuredRetries": 0,
+    "passedCasesReported": 19,
+    "failedCasesReported": 0,
+    "uncertifiedCases": 65,
+    "finalReportExists": false,
+    "processExitCode": null,
+    "excludedFromCertification": true,
+    "countsCombinedWithAnyOtherRun": false,
+    "report": "LOCAL_PARALLEL_ATTEMPT.json",
+    "identity": "LOCAL_PARALLEL_EXECUTION_IDENTITY.json",
+    "log": "logs/browser-local-parallel-incomplete.log",
+    "experimentalConfigRemoved": true
   }
 }

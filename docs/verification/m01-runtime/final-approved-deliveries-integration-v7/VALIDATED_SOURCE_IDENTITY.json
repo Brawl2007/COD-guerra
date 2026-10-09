@@ -63,5 +63,11 @@
     "reason": "Second 82/84 report: stale menu-frame counter in wagon restore and software-WebGL phase-read wall timeout. Original positive effects/state assertions retained; production unchanged.",
     "head": "0a83942b41957e0b900b8a8fc704eb7860f84ba9"
   },
-  "sourceAndTestsUnchangedAfterThirdFullBrowserStart": true
+  "sourceAndTestsUnchangedAfterThirdFullBrowserStart": true,
+  "localParallelAttempt": {
+    "head": "0bbffba78cbe96da9a4de24449ab3ac9470ba0db",
+    "certificationExcluded": true,
+    "productionAndTestsChanged": false,
+    "experimentalQaConfigRemovedAfterAttempt": true
+  }
 }
