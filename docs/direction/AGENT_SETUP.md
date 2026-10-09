@@ -69,6 +69,23 @@ Dentro da sessão: `/status` (deve mostrar a conta Max, não uma chave de API), 
 Opcional em `~/.claude/settings.json`: `"modelSettings": {"claude-opus-5-5": {"effortLevel": "high"}}`
 (o `effortLevel` de topo nas definições do utilizador é ignorado pelo Opus 5.5).
 
+## Ver que modelo e esforço cada agente usou de facto
+
+O Claude Code grava em cada resposta o modelo servido (`message.model`), o pedido (`requestedModel`),
+o esforço (`effort`) e os tokens, em `~/.claude/projects/<pasta>/<sessão>.jsonl` (sessão principal) e
+`~/.claude/projects/<pasta>/<sessão>/subagents/agent-<id>.jsonl` (subagentes, com `attributionAgent`
+= nome do agente). O relatório lê só esses metadados, nunca o conteúdo:
+
+```bash
+python3 .agent/tools/agent_models_report.py            # últimas 24 h
+python3 .agent/tools/agent_models_report.py --hours 2  # só a sessão atual
+```
+
+Uma linha por transcrição: agente, modelo×respostas, esforço×respostas, tokens. Um agente certo mostra um
+só modelo e um só esforço, iguais ao seu ficheiro em `.claude/agents/`. Avisos no fim: transcrições que
+mudaram de modelo/esforço a meio (`/model` ou fallback) e respostas servidas por modelo diferente do pedido.
+Em tempo real, `/tasks` mostra o modelo de cada subagente a correr.
+
 ## Advisor: `Advisor unavailable (execution_time_exceeded)`
 
 Significa que a consulta ao Fable excedeu o tempo no servidor. A tarefa continua sem o conselho; não há
