@@ -53,4 +53,5 @@ Só depois da etapa 3 comprovada o piloto deixa de ser "não operacional".
 - Teto de 3 chamadas no piloto; timeout de 15 s.
 - O Jev funciona melhor em inglês; a descrição em português pode reduzir a confiança.
 - O alias `jev-latest` muda de versão; o modelo usado é registrado no ledger.
+- A descrição enviada ao Jev é truncada em 500 caracteres: nunca colocar segredos nem dados grandes em `--description`. A criticidade depende de o chamador passar `--critical`/`--risk high`; a ferramenta não a infere da descrição. Ledger corrompido/ilegível falha fechado (`ledger_unreadable`, nenhuma chamada paga, arquivo intocado); redirecionamentos HTTP não são seguidos.
 - Apenas consultivo; não substitui a política em `.claude/agents/captain.md`.
