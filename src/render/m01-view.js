@@ -63,7 +63,7 @@ export class M01View {
       dark:new THREE.MeshStandardMaterial({color:'#202622',roughness:.8}),
       skin:texturedSurface('skin',{bump:.006}),
       brass:new THREE.MeshStandardMaterial({color:'#bfa66a',roughness:.55,metalness:.6}),
-      water:(this.water=new M01Water(()=>{this.lastFrame=null;})).material,   // T42: lit river material (fresnel + T16 sky reflection, flow, pier foam, wet banks)
+      water:(this.water=new M01Water()).material,   // T42: lit river material (fresnel + T16 sky reflection, flow, pier foam, wet banks)
       cloth:texturedSurface('cloth',{bump:.018}),
       bridgeBrick:weatheredBridgeSurface('brick',{worldScale:.36,bump:.055,seed:1912}),
       bridgeStone:weatheredBridgeSurface('stone',{worldScale:.5,bump:.07,seed:1857}),
@@ -637,7 +637,7 @@ export class M01View {
     const canvas=this.owner.canvas,previous=this.lastFrame;
     const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
       width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,
-      wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision};
+      wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;

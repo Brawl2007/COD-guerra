@@ -119,8 +119,7 @@ float waterBankWet(float x){return 1.0-smoothstep(0.0,${BANK_WET_WIDTH.toFixed(1
 
 /** Owns the single river material. `sync` is the only per-frame call; `dispose` releases the material. */
 export class M01Water{
-  /** `invalidate` (optional): the view's paused-frame cache reset, so a debug toggle repaints while the sim clock is frozen. */
-  constructor(invalidate=null){
+  constructor(){
     this.material=new THREE.MeshStandardMaterial({color:'#ffffff',roughness:.28,metalness:0});
     this.uniforms={
       uWaterTint:{value:0},uWaterDetail:{value:1},uWaterTime:{value:0},uWaterFlow:{value:new THREE.Vector2()},uWaterReflect:{value:1},uWaterOctaves:{value:3},
@@ -174,7 +173,7 @@ export class M01Water{
     this.last=null;this.detail=1;
     // Test-only hook (opt-in with ?debug): toggles the foam and wet-bank terms of a live paused page for A/B captures. Presentation only.
     if(typeof window!=='undefined'&&typeof location!=='undefined'&&new URLSearchParams(location.search).has('debug'))
-      window.m01WaterDebug={setDetail:on=>{this.detail=on?1:0;this.uniforms.uWaterDetail.value=this.detail;invalidate?.();}};
+      window.m01WaterDebug={setDetail:on=>{this.detail=on?1:0;this.uniforms.uWaterDetail.value=this.detail;}};   // `detail` is part of the view paused-frame key, so the toggle repaints a frozen clock
   }
   /** Per-frame: lighting model (view.lightingModel), sim clock and quality in; uniforms out. No-op until a model exists. */
   sync(model,clock,quality){

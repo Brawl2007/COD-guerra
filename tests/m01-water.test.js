@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync,readdirSync,statSync} from 'node:fs';
 import {sunState,lightingModel,CLOUD_WIND} from '../src/render/m01-lighting.js';
 import {seconds} from '../src/game/m01-simulation.js';
-import {fresnel,skyReflection,flowOffset,pierFoamMask,bankWetness,waterQuality,waterUniforms,bankFoamFringe,bankFoamWidth,LOW_TINT,BANK_FOAM_WIDTH,PIERS,WATER_CHANNEL,FLOW_SPEED,F0} from '../src/render/m01-water.js';
+import {fresnel,skyReflection,flowOffset,pierFoamMask,bankWetness,waterQuality,waterUniforms,bankFoamFringe,bankFoamWidth,LOW_TINT,BANK_FOAM_WIDTH,PIERS,WATER_CHANNEL,FLOW_SPEED,F0,M01Water} from '../src/render/m01-water.js';
 
 const layout=JSON.parse(readFileSync(new URL('../missions/m01-tczew/map-layout.json',import.meta.url)));
 const manifest=JSON.parse(readFileSync(new URL('../assets/models/provisional/m01/bridges.manifest.json',import.meta.url)));
@@ -75,7 +75,7 @@ test('quality: Low has no reflection term; no planar reflection, render target o
 test('view wiring: only the river mesh uses the water material; game/world/core never import the module',()=>{
   const view=readFileSync(new URL('../src/render/m01-view.js',import.meta.url),'utf8');
   assert.match(view,/this\.mesh\('box','water',\[145,-9\.94,0\],\[240,\.08,6500\]\)/);
-  assert.match(view,/new M01Water\(\(\)=>\{this\.lastFrame=null;\}\)/);assert.match(view,/this\.water\.sync\(this\.lightingModel,sim\.clock,/);
+  assert.match(view,/new M01Water\(\)/);assert.match(view,/waterDetail:this\.water\.detail\}/);assert.match(view,/this\.water\.sync\(this\.lightingModel,sim\.clock,/);
   const walk=d=>readdirSync(d).flatMap(n=>{const p=d+'/'+n;return statSync(p).isDirectory()?walk(p):[p];});
   for(const dir of ['src/game','src/world','src/core'])for(const f of walk(new URL('../'+dir,import.meta.url).pathname))
     if(f.endsWith('.js'))assert.doesNotMatch(readFileSync(f,'utf8'),/m01-water/,f);
@@ -115,4 +115,18 @@ test('bank foam fringe: on the bank line at x 25 and 265, gone past the fringe, 
 test('test-only A/B hook is opt-in (?debug) and only toggles the foam/wet detail uniform',()=>{
   assert.match(source,/has\('debug'\)\)\s*\n?\s*window\.m01WaterDebug=\{setDetail/);
   assert.match(source,/uWaterDetail/);assert.doesNotMatch(source,/uWaterDetail\.value=[^;]*sim|fetch\(/);
+});
+test('?debug toggle flips the detail uniform and state; no hook without ?debug',()=>{
+  const had={w:Object.getOwnPropertyDescriptor(globalThis,'window'),l:Object.getOwnPropertyDescriptor(globalThis,'location')};
+  try{
+    const win={};Object.defineProperty(globalThis,'window',{value:win,configurable:true,writable:true});
+    Object.defineProperty(globalThis,'location',{value:{search:''},configurable:true,writable:true});
+    new M01Water();assert.equal(win.m01WaterDebug,undefined);
+    globalThis.location={search:'?debug=1'};
+    const w=new M01Water();assert.equal(w.detail,1);assert.equal(w.uniforms.uWaterDetail.value,1);
+    win.m01WaterDebug.setDetail(false);assert.equal(w.detail,0);assert.equal(w.diagnostics.detail,0);assert.equal(w.uniforms.uWaterDetail.value,0);
+    win.m01WaterDebug.setDetail(true);assert.equal(w.detail,1);assert.equal(w.uniforms.uWaterDetail.value,1);
+  }finally{
+    for(const [k,d] of [['window',had.w],['location',had.l]])d?Object.defineProperty(globalThis,k,d):delete globalThis[k];
+  }
 });

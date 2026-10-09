@@ -123,10 +123,13 @@ async function capture(browser,info,{clock,view,quality='high'}){
     const later=await page.evaluate(()=>window.gameDiagnostics()),b=await page.screenshot(shot);
     let off=null;
     if(VIEWS[view].detail&&!baseline){
-      // same paused page, same sim state: only the foam and wet-bank terms are switched off, then wait for fresh rendered frames
+      // same paused page, same sim state: only the foam and wet-bank terms are switched off. The water detail state is part of the
+      // view's paused-frame cache key, so exactly one fresh frame renders at the same sim clock; then let the compositor present it.
       const f0=later.m01.renderedFrames;
       await page.evaluate(()=>window.m01WaterDebug.setDetail(false));
-      await page.waitForFunction(f=>window.gameDiagnostics().m01.renderedFrames>=f+3,f0,{timeout:60000});
+      await page.waitForFunction(f=>window.gameDiagnostics().m01.renderedFrames>=f+1,f0,{timeout:60000});
+      await page.evaluate(()=>new Promise(done=>requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>done())))));
+      await page.waitForTimeout(500);
       const offDiag=await page.evaluate(()=>window.gameDiagnostics());
       expect(offDiag.m01.water.detail,'detail switched off').toBe(0);expect(offDiag.clock,'sim clock unchanged by the toggle').toBe(later.clock);
       off=await page.screenshot({...shot,path:info.outputPath(name+'-detail-off.png')});
