@@ -21,6 +21,9 @@ import jev_router as jr  # noqa: E402
 
 STR_MAX = 300
 LIST_MAX = 50
+HARD_MAX = 2000      # classification scans at most this many list items
+RAW_STR_MAX = 2000   # cap on text used by rules (pathological length only)
+PATH_MAX = 1000
 JEV_MIN_CONF = 0.6
 CAPABILITIES = ("priority", "bug", "branch", "risk", "verify", "cost")
 DEFAULT_MANDATORY = ("npm test", "npm run build", "npm run test:browser")
@@ -58,27 +61,53 @@ def _long_token(m):
     return s
 
 
-def clean_str(v, secrets=(), limit=STR_MAX):
+def clean_str(v, secrets=(), limit=STR_MAX, long=True):
+    """Redacted copy for `observed` and the Jev payload. Never feed it to rules."""
     s = _CTRL.sub(" ", str(v))
     for sec in secrets:
         if sec:
             s = s.replace(sec, "[REDACTED]")
     for rx in _REDACT:
         s = rx.sub("[REDACTED]", s)
-    s = _LONG.sub(_long_token, s)
+    # path-like entries (long=False) skip this: it would erase long file names. A path entry
+    # containing whitespace is free text, not a path, so it is still scanned.
+    if long or re.search(r"\s", s.strip()):
+        s = _LONG.sub(_long_token, s)
     return s.strip()[:limit]
 
 
-def clean_list(v, secrets=()):
+def raw_str(v, limit=RAW_STR_MAX):
+    """Raw-but-cleaned text for rule classification (control chars + length cap only)."""
+    return _CTRL.sub(" ", str(v)).strip()[:limit]
+
+
+def _items(v):
     if v is None or v == "":
         return []
     if isinstance(v, (str, int, float)) and not isinstance(v, bool):
         v = [v]
     if not isinstance(v, (list, tuple)):
         return []
-    out = [clean_str(x, secrets) for x in v[:LIST_MAX]
-           if isinstance(x, (str, int, float)) and not isinstance(x, bool)]
+    return [x for x in v if isinstance(x, (str, int, float)) and not isinstance(x, bool)]
+
+
+def raw_list(v, limit=PATH_MAX):
+    """(items, over_cap) for rule classification: full list up to HARD_MAX, no redaction."""
+    items = _items(v)
+    out = [raw_str(x, limit) for x in items[:HARD_MAX]]
+    return [x for x in out if x], len(items) > HARD_MAX
+
+
+def clean_list(v, secrets=(), path=False):
+    out = [clean_str(x, secrets, STR_MAX, long=not path) for x in _items(v)[:LIST_MAX]]
     return [x for x in out if x]
+
+
+def over_cap_review(out):
+    out["needs_review"] = "human"
+    out["reason"] += "; input list exceeds the scan cap (%d): human review, floor never lowered" % HARD_MAX
+    out["input_over_cap"] = True
+    return out
 
 
 def clean_enum(v, allowed, default=None):
@@ -385,14 +414,18 @@ def analyze_bug(data, secrets=()):
     d = data if isinstance(data, dict) else {}
     obs = {"title": clean_str(d.get("title", ""), secrets),
            "summary": clean_str(d.get("summary", ""), secrets),
-           "files": clean_list(d.get("files"), secrets),
+           "files": clean_list(d.get("files"), secrets, path=True),
            "symptoms": clean_list(d.get("symptoms"), secrets),
            "evidence": clean_list(d.get("evidence"), secrets)}
-    if not (obs["title"] or obs["summary"]) or not (obs["files"] or obs["symptoms"] or obs["evidence"]):
+    rfiles, over = raw_list(d.get("files"))
+    rsym, over_s = raw_list(d.get("symptoms"), RAW_STR_MAX)
+    over = over or over_s
+    obs["files_truncated"] = len(rfiles) > LIST_MAX
+    if not (obs["title"] or obs["summary"]) or not (rfiles or obs["symptoms"] or obs["evidence"]):
         return insufficient("bug", obs, "needs a title/summary plus files, symptoms or evidence",
                             status="unverified", fixed=False), None
-    text = " ".join([obs["title"], obs["summary"], *obs["symptoms"]]).lower()
-    paths = " ".join(obs["files"]).lower()
+    text = " ".join([raw_str(d.get("title", "")), raw_str(d.get("summary", "")), *rsym]).lower()
+    paths = " ".join(rfiles).lower()
     cats = []
     for cat, words in BUG_PATH_RULES:
         if _has(paths, words) or _has(text, words):
@@ -419,8 +452,9 @@ def analyze_bug(data, secrets=()):
     why = "category from path/keyword rules; severity from symptom keywords (default medium)"
     # a "trivial" wording in free text cannot lower severity below medium when the files touch a
     # critical area (contradictory input keeps the floor); Jev below may only raise it
-    sev_floor = "medium" if sev in ("low",) and critical_areas(obs["files"], "") else None
-    if sev_floor:
+    # the floor is independent of the rule severity (also holds on the ambiguous path)
+    sev_floor = "medium" if critical_areas(rfiles, "") else None
+    if sev_floor and SEVERITIES.index(sev) < SEVERITIES.index(sev_floor):
         sev = sev_floor
         why += "; severity floor medium (critical-area files)"
 
@@ -430,17 +464,19 @@ def analyze_bug(data, secrets=()):
     out = _result("bug", obs, build(cat, sev), why,
                   needs_review="human" if (cat_amb or sev_amb) else "none",
                   status="unverified", fixed=False)
+    if over:
+        return over_cap_review(out), None
     if not (cat_amb or sev_amb):
         return out, None
     questions = {}
     if cat_amb:
         questions["category"] = {
             "instructions": "Classify this bug report into exactly one area.",
-            "criteria": {c: None for c in BUG_CATEGORIES}}
+            "criteria": {c: "Bug area: " + c.replace("_", " ") for c in BUG_CATEGORIES}}
     if sev_amb:
         questions["severity"] = {
             "instructions": "Rate the bug severity.",
-            "criteria": {s: None for s in SEVERITIES}}
+            "criteria": {s: "Bug severity: " + s for s in SEVERITIES}}
 
     def apply(answers, o):
         c = answers.get("category", cat)
@@ -464,11 +500,13 @@ def analyze_branch(data, secrets=()):
            "head": clean_str(d.get("head", ""), secrets, 64),
            "tests": clean_enum(d.get("tests"), ("passed", "failed", "unknown"), "unknown"),
            "review": clean_enum(d.get("review"), ("approved", "rejected", "none"), "none"),
-           "files_changed": clean_list(d.get("files_changed"), secrets),
+           "files_changed": clean_list(d.get("files_changed"), secrets, path=True),
            "dependencies": clean_list(d.get("dependencies"), secrets),
            "known_conflicts": clean_list(d.get("known_conflicts"), secrets),
            "base_compat": clean_enum(d.get("base_compat"), ("compatible", "incompatible", "unknown"), "unknown"),
            "in_progress": d.get("in_progress") is True}
+    rfiles, over = raw_list(d.get("files_changed"))
+    obs["files_truncated"] = len(rfiles) > LIST_MAX
     extra = {"actions_forbidden": list(FORBIDDEN_ACTIONS)}
     if not obs["branch"] or not obs["head"]:
         return insufficient("branch", obs, "needs branch name and head", **extra), None
@@ -500,11 +538,15 @@ def analyze_branch(data, secrets=()):
     if contradictory:
         out["reason"] += "; metadata is contradictory"
         out["needs_review"] = "human"
+    if over:
+        return over_cap_review(out), None
     if not contradictory:
         return out, None
 
     def apply(answers, o):
         c = answers["branch_class"]
+        if obs["tests"] != "passed" and c in ("review_candidate", "eligible_for_integration_review"):
+            raise Reject("tests not passed: branch cannot be a review candidate")
         if c == "eligible_for_integration_review" and not eligible_ok(obs):
             raise Reject("eligibility needs tests passed, review approved, no conflicts, compatible base")
         if cls == "potential_conflict" and c != "potential_conflict":
@@ -516,7 +558,7 @@ def analyze_branch(data, secrets=()):
         "questions": {"branch_class": {
             "instructions": "Classify this branch for integration triage. Metadata may be contradictory; "
                             "be conservative. You can never authorize merge, push or PR approval.",
-            "criteria": {c: None for c in BRANCH_CLASSES}}},
+            "criteria": {c: "Branch class: " + c.replace("_", " ") for c in BRANCH_CLASSES}}},
         "apply": apply}
 
 
@@ -543,15 +585,18 @@ def _is_doc_or_test(f):
 
 def analyze_risk(data, secrets=()):
     d = data if isinstance(data, dict) else {}
-    obs = {"files_changed": clean_list(d.get("files_changed") or d.get("files"), secrets),
+    src = d.get("files_changed") or d.get("files")
+    obs = {"files_changed": clean_list(src, secrets, path=True),
            "change_type": clean_str(d.get("change_type", ""), secrets, 40).lower(),
            "summary": clean_str(d.get("summary", ""), secrets)}
+    rfiles, over = raw_list(src)
+    obs["files_truncated"] = len(rfiles) > LIST_MAX
     extra = {"mandatory_checks_preserved": True, "mandatory_checks": list(DEFAULT_MANDATORY)}
-    if not obs["files_changed"]:
+    if not rfiles:
         return insufficient("risk", obs, "needs the list of changed files", **extra), None
-    text = (obs["summary"] + " " + obs["change_type"]).lower()
-    areas = critical_areas(obs["files_changed"], text)
-    non_doc = [f for f in obs["files_changed"] if not _is_doc_or_test(f)]
+    text = (raw_str(d.get("summary", "")) + " " + raw_str(d.get("change_type", ""), 40)).lower()
+    areas = critical_areas(rfiles, text)
+    non_doc = [f for f in rfiles if not _is_doc_or_test(f)]
     # floor policy (documented): critical area in code -> high; in docs/tests-only or
     # historical/mission data files -> medium; Jev may raise but never lower below it.
     if areas:
@@ -570,6 +615,10 @@ def analyze_risk(data, secrets=()):
     out = _result("risk", obs, floor, why, needs_review="technical" if floor == "high" else "none", **extra)
     out["critical_areas"] = sorted(areas)
     out["rule_floor"] = floor
+    if over:
+        if floor != "high":
+            out["recommendation"] = floor = "high"  # unscanned tail may hold critical files
+        return over_cap_review(out), None
     if not ambiguous:
         return out, None
 
@@ -585,7 +634,8 @@ def analyze_risk(data, secrets=()):
         "questions": {"risk": {
             "instructions": "Rate the regression risk of this change. The rule floor is given; "
                             "do not go below it.",
-            "criteria": {"low": None, "medium": None, "high": None}}},
+            "criteria": {"low": "Low regression risk", "medium": "Medium regression risk",
+                         "high": "High regression risk"}}},
         "apply": apply}
 
 
@@ -624,12 +674,15 @@ def mandatory_for(files, ctype, sets, mandatory):
 
 def analyze_verify(data, secrets=(), mandatory=DEFAULT_MANDATORY):
     d = data if isinstance(data, dict) else {}
-    obs = {"files_changed": clean_list(d.get("files_changed") or d.get("files"), secrets),
+    src = d.get("files_changed") or d.get("files")
+    obs = {"files_changed": clean_list(src, secrets, path=True),
            "change_type": clean_str(d.get("change_type", ""), secrets, 40).lower()}
-    if not obs["files_changed"] and not obs["change_type"]:
+    rfiles, over = raw_list(src)
+    obs["files_truncated"] = len(rfiles) > LIST_MAX
+    if not rfiles and not obs["change_type"]:
         return insufficient("verify", obs, "needs files_changed or change_type",
                             mandatory_checks=list(mandatory)), None
-    sets = verify_sets(obs["files_changed"], obs["change_type"], "")
+    sets = verify_sets(rfiles, obs["change_type"], "")
 
     def rec(sets):
         tests = []
@@ -637,10 +690,12 @@ def analyze_verify(data, secrets=(), mandatory=DEFAULT_MANDATORY):
             tests += TEST_SETS[k]
         tests = sorted(set(tests))
         return {"test_sets": sorted(sets), "recommended_tests": tests,
-                "mandatory_checks": mandatory_for(obs["files_changed"], obs["change_type"], sets, mandatory)}
+                "mandatory_checks": mandatory_for(rfiles, obs["change_type"], sets, mandatory)}
 
     why = "test sets from path/change-type rules, always unioned with project mandatory checks"
     out = _result("verify", obs, rec(sets), why, mandatory_checks_preserved=True)
+    if over:
+        return over_cap_review(out), None
     if sets:
         return out, None
     out["needs_review"] = "human"
@@ -652,7 +707,7 @@ def analyze_verify(data, secrets=(), mandatory=DEFAULT_MANDATORY):
         if extra != "none":
             o["recommendation"] = rec({extra})
         o["recommendation"]["mandatory_checks"] = mandatory_for(
-            obs["files_changed"], obs["change_type"], {extra} - {"none"}, mandatory)
+            rfiles, obs["change_type"], {extra} - {"none"}, mandatory)
         o["mandatory_checks_preserved"] = True
 
     return out, {
@@ -660,7 +715,8 @@ def analyze_verify(data, secrets=(), mandatory=DEFAULT_MANDATORY):
         "questions": {"extra_set": {
             "instructions": "Pick the single extra verification set most worth adding for this change, "
                             "or none. Mandatory project checks always stay.",
-            "criteria": {"none": None, **{k: None for k in TEST_SETS}}}},
+            "criteria": {"none": "No extra verification set",
+                         **{k: "Add the %s verification set" % k for k in TEST_SETS}}}},
         "apply": apply}
 
 
@@ -674,7 +730,7 @@ def analyze_cost(data, secrets=()):
     try:
         req["fix_attempts"] = max(0, int(req["fix_attempts"]))
         norm = jr.normalize(req)
-    except (ValueError, TypeError) as exc:
+    except (ValueError, TypeError, OverflowError) as exc:
         return insufficient("cost", {"role": clean_str(d.get("role", ""), secrets, 40)},
                             "invalid or missing role/risk/complexity: " + clean_str(exc, secrets, 80)), None
     return norm, None
