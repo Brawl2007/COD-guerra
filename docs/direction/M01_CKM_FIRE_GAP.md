@@ -1,10 +1,10 @@
 # M01 — Lacuna de disparo da ckm wz.30
 
-Análise estática, só leitura. Verificada em HEAD `1b3a973` (branch `claude/gracious-franklin-u8kdin`).
+Análise estática, só leitura. Verificada contra `1b3a973` (branch `claude/gracious-franklin-u8kdin`); `src/`, `tests/`, `missions/` e `assets/` inalterados até ao commit em que este ficheiro entra.
 
 ## 1. Resumo
 
-- Na V7-line a ckm wz.30 tem guarnição, arma, três LODs, clips `aim`/`fire_burst`/`feed`, perfil de áudio e saves schema 2. Tudo existe excepto a decisão de disparo na simulação.
+- Na V7-line a ckm wz.30 tem guarnição, arma, três LODs, clips `aim`/`fire_burst`/`feed`, perfil de áudio e saves schema 2. Tudo existe excepto a decisão de disparo na simulação e o que depende dela (munição, evento, dano, clarão, validação de save).
 - No runtime só há `idle -> abandon -> retreat` (`src/game/m01-simulation.js:393-402`). Não há alvo, munição, cadência, rounds nem dano para a ckm.
 - Duas branches `codex/*` tentaram o disparo e ficaram BLOQUEADAS por geometria: não existe linha livre da boca (25, -2,36, 43) até alvos alemães (secção 4). Ligar o código sozinho não resolve.
 - Bloqueio estrutural a decidir primeiro: abertura/seteira da casamata e colliders das pontes. O `TASK_ID` proposto (secção 5) tem uma fase 0 para isso.
@@ -24,7 +24,7 @@ Análise estática, só leitura. Verificada em HEAD `1b3a973` (branch `claude/gr
 | Geometria do cano | `gun_muzzle_flash` cai em x=25, y=-2,36, z=43 (seteira mapeada) | `tests/m01-ckm-placement-migration.test.js:126-133` | o próprio teste |
 
 `ckmBurst` não tem nenhum chamador em `src/` (grep em `src`: só a definição, `audio.js:328`).
-`ENGINE_CONTRACT.md:7` e os REPORT/HANDOFF abaixo declaram o disparo como tarefa separada e pendente:
+`missions/m01-tczew/ENGINE_CONTRACT.md:7` e os REPORT/HANDOFF abaixo declaram o disparo como tarefa separada e pendente:
 `docs/verification/m01-runtime/ckm-crew-runtime-2026-10-03/REPORT.md:17`.
 
 ## 3. O que falta para disparar
@@ -32,16 +32,16 @@ Análise estática, só leitura. Verificada em HEAD `1b3a973` (branch `claude/gr
 Precedente MG34 = `src/game/m01-simulation.js` (linhas verificadas em HEAD).
 
 1. **Arco, alvo e decisão de disparo.** Falta tudo. Encaixe: ramo `grp_ckm_crew` em `:393-402` ou chamada análoga a `:704-710` (decisão MG34 do dique, `rounds:7`, `cooldown 6`). Pré-requisito: linha livre (secção 4). Não confirmado: que alvos existem no arco, dependem da geometria por resolver.
-2. **Estado de posto/postura.** MG34 tem `updateMG34Posture` (`:353-369`) com fases standing/enter/idle/aim/fire_burst/exit e `MG34_TRANSITION_SEC=1.9` (`:62`). A ckm só tem `idle/abandon/retreat`; precisaria de fases `aim`/`fire_burst` (e `feed`) em `a.ckm`.
+2. **Estado de posto/postura.** MG34 tem `updateMG34Posture` (`:353-370`) com fases standing/enter/idle/aim/fire_burst/exit e `MG34_TRANSITION_SEC=1.9` (`:62`). A ckm só tem `idle/abandon/retreat`; precisaria de fases `aim`/`fire_burst` (e `feed`) em `a.ckm`.
 3. **Munição e cinta.** Não existe para a ckm. Para o MG34 também não há contador de munição; o limite é a rajada (rounds 4-7, `:533`). Decisão de desenho: cinta finita ou cadência/cooldown apenas.
-4. **Cadência/cooldown.** MG34 usa `MG34_INTERVAL=.075` (`:62`) e `a.cooldown`. Perfil sonoro da ckm usa 0,1 s (`battlefield-audio.js:104`); manter um só valor autoritativo em simulação.
+4. **Cadência/cooldown.** MG34 usa `MG34_INTERVAL=.075` (`:62`) e `a.cooldown`. Perfil sonoro da ckm usa 0,1 s (`battlefield-audio.js:100`); manter um só valor autoritativo em simulação.
 5. **Emissão de rounds.** MG34: `burst()` (`:529-542`) planeia a dispersão e `emitMG34Rounds` (`:371-381`) emite eventos `enemy-fire`. A ckm é aliada; é preciso um evento/canal equivalente para fogo aliado contra alemães (não confirmado se `enemy-fire` serve; o nome sugere inimigo).
 6. **Dano/hit.** Decidido apenas na simulação. Não há caminho de dano para rounds da ckm. Reutilizar `lineOfSight`/`traceTerrain` da simulação (`:474` usa `this.world.lineOfSight`).
 7. **Clarão no mundo.** `m01-view.js:243,296` desenha clarão só para `pose.firing/aiming`, não para a ckm. Não encontrei sprite de clarão de mundo para o MG34 em `m01-characters.js` (não confirmado noutros ficheiros; os sprites de primeira pessoa estão em `src/render/first-person-weapon-fx.js:161-190`).
 8. **Áudio em jogo.** Ligar um chamador de `ckmBurst()` (`audio.js:328`) a partir do evento da simulação, não do renderer. Existem renders offline `docs/verification/m01-runtime/battlefield-audio-production-pass-v1-2026-10-07/audio/ckm-burst-30m.wav`.
 9. **Save schema 2.** `:951-956` rejeita chaves fora de `phase/startedAt/visible` e fases fora de `idle/abandon/retreat`; qualquer campo novo exige validação nova no estilo `:972-1000` (rajada MG34) e retrocompatibilidade com saves de 86 e 89 actores (`:912-915`).
 10. **Clips não ligados.** `aim`, `fire_burst`, `feed` existem nos GLB mas `hasCKM()` (`m01-characters.js:81-84`) e o selector (`:91-93`, `:249`) só usam idle/abandon. Precedente MG34: `m01-characters.js:89-90,126-128`, `m01-actor-pose.js:20,39`.
-11. **HUD/eventos de missão.** Não encontrei necessidade confirmada. `mission.json:740,985` só registam a saída da casamata. Fica "não confirmado" até haver desenho.
+11. **HUD/eventos de missão.** Não encontrei necessidade confirmada. `mission.json:740` regista a saída da casamata ("grp_ckm_crew saiu da casamata"); `:985` é o estado de checkpoint com a ckm ainda na casamata ("grp_ckm_crew na casamata"). Fica "não confirmado" até haver desenho.
 
 ## 4. Trabalho anterior nas branches excluídas
 
@@ -61,7 +61,7 @@ Ambas partem de `fbaac1e` (ancestral de HEAD). A matriz V6 marca as duas como "E
 - **Fase 0 (decisão, bloqueante):** re-correr o scanner das branches em HEAD. Se continuar 0 raios livres, o Captain escolhe: (a) abertura apoiada por mapa/história, (b) corrigir collider em `tools/assets/m01-bridges/` com regeneração, (c) outro posto documentado. Sem isto, parar e reportar.
 - **Âmbito:** decisão de disparo, estado `aim/fire_burst/feed`, rajada e cooldown na simulação; evento para áudio/clarão; ligar clips existentes; validação de save.
 - **Ficheiros permitidos:** `src/game/m01-simulation.js`, `src/render/m01-characters.js`, `src/render/m01-view.js` (clarão), chamador de áudio em `src/` (evento), `tests/m01-ckm-*.test.js` novos/estendidos, `tests/browser/m01.spec.js`, docs de evidência em `docs/verification/m01-runtime/`. Fase 0 pode tocar `tools/assets/m01-bridges/` e `missions/m01-tczew/map-layout.json` só com aprovação do Captain.
-- **Ficheiros proibidos:** assets GLB/manifest da ckm, `bridge-colliders.json` editado à mão, engine/build fora do âmbito, bancada francesa/aldeia (nunca renomear para Tczew), `ae_s2_ckm_east`.
+- **Ficheiros proibidos:** assets GLB/manifest da ckm (salvo aprovação do Captain na fase 0, opção (a)), `bridge-colliders.json` editado à mão, engine/build fora do âmbito, bancada francesa/aldeia (nunca renomear para Tczew), `ae_s2_ckm_east`.
 - **Critérios de aceitação:**
   1. Nenhum disparo sem linha livre da boca (25, -2,36, 43) via trace de produção.
   2. Dois runs A/B com a mesma semente e mesmos inputs dão eventos idênticos por tick.
@@ -75,10 +75,10 @@ Ambas partem de `fbaac1e` (ancestral de HEAD). A matriz V6 marca as duas como "E
 
 ## 6. O que muda no jogo / o que não muda (tarefa proposta)
 
-**Muda:** a ckm deixa de ser decorativa antes da demolição leste; passa a haver rajadas, som e clarão da casamata oeste; saves ganham estado de rajada.
+**Muda:** a ckm deixa de ser decorativa antes da demolição leste; passa a haver rajadas, som e clarão da casamata oeste; saves ganham estado de rajada. Builds anteriores não carregam saves novos: a whitelist (`m01-simulation.js:951-956`) rejeita chaves desconhecidas; decidir na fase 1 se há subida de schema ou chaves opcionais toleradas.
 
 **Não muda:** `idle -> abandon -> retreat`, posição `CKM_POSITION`, assets, `ae_s2_ckm_east`, MG34 alemã, mapa e bancada francesa. Nenhum FPS é afirmado.
 
 ## 7. Limitações desta análise
 
-Inspecção estática. Nenhum teste, build ou browser foi executado. Números de linha verificados em HEAD `1b3a973`. Resultados das branches `codex/*` são os que elas reportam em `git show`; não foram re-executados. Não relidos: `m01-soldier-visual-variation.test.js:103` e `m01-audio-offline-render.spec.js` (citados pelo explorador, não relidos).
+Inspecção estática. Nenhum teste, build ou browser foi executado. Números de linha verificados contra `1b3a973`. Resultados das branches `codex/*` são os que elas reportam em `git show`; não foram re-executados. Não relidos: `m01-soldier-visual-variation.test.js:103` e `m01-audio-offline-render.spec.js` (citados pelo explorador, não relidos).
