@@ -75,7 +75,7 @@ test('quality: Low has no reflection term; no planar reflection, render target o
 test('view wiring: only the river mesh uses the water material; game/world/core never import the module',()=>{
   const view=readFileSync(new URL('../src/render/m01-view.js',import.meta.url),'utf8');
   assert.match(view,/this\.mesh\('box','water',\[145,-9\.94,0\],\[240,\.08,6500\]\)/);
-  assert.match(view,/new M01Water\(\)/);assert.match(view,/this\.water\.sync\(this\.lightingModel,sim\.clock,/);
+  assert.match(view,/new M01Water\(\(\)=>\{this\.lastFrame=null;\}\)/);assert.match(view,/this\.water\.sync\(this\.lightingModel,sim\.clock,/);
   const walk=d=>readdirSync(d).flatMap(n=>{const p=d+'/'+n;return statSync(p).isDirectory()?walk(p):[p];});
   for(const dir of ['src/game','src/world','src/core'])for(const f of walk(new URL('../'+dir,import.meta.url).pathname))
     if(f.endsWith('.js'))assert.doesNotMatch(readFileSync(f,'utf8'),/m01-water/,f);

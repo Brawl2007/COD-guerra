@@ -63,7 +63,7 @@ export class M01View {
       dark:new THREE.MeshStandardMaterial({color:'#202622',roughness:.8}),
       skin:texturedSurface('skin',{bump:.006}),
       brass:new THREE.MeshStandardMaterial({color:'#bfa66a',roughness:.55,metalness:.6}),
-      water:(this.water=new M01Water()).material,   // T42: lit river material (fresnel + T16 sky reflection, flow, pier foam, wet banks)
+      water:(this.water=new M01Water(()=>{this.lastFrame=null;})).material,   // T42: lit river material (fresnel + T16 sky reflection, flow, pier foam, wet banks)
       cloth:texturedSurface('cloth',{bump:.018}),
       bridgeBrick:weatheredBridgeSurface('brick',{worldScale:.36,bump:.055,seed:1912}),
       bridgeStone:weatheredBridgeSurface('stone',{worldScale:.5,bump:.07,seed:1857}),
