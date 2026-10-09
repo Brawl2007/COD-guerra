@@ -69,6 +69,24 @@ Dentro da sessão: `/status` (deve mostrar a conta Max, não uma chave de API), 
 Opcional em `~/.claude/settings.json`: `"modelSettings": {"claude-opus-5-5": {"effortLevel": "high"}}`
 (o `effortLevel` de topo nas definições do utilizador é ignorado pelo Opus 5.5).
 
+## Agentes em todas as pastas e sessões da máquina
+
+Os agentes de projeto só existem nas pastas cuja branch tem `.claude/agents/`. Para os ter em qualquer
+worktree (`COD-guerra`, `COD-guerra-v7-cert`, ...) e em qualquer sessão nova do Claude Code:
+
+```bash
+.agent/tools/install-user-agents.sh          # copia os 29 para ~/.claude/agents
+.agent/tools/install-user-agents.sh --hook   # também instala o git-safety em ~/.claude (com cópia .bak do settings.json)
+.agent/tools/install-user-agents.sh --check  # confirma que estão iguais ao repositório
+```
+
+Regras do Claude Code: carrega os agentes no arranque da sessão (abrir sessão nova depois de instalar);
+se a pasta tiver um `.claude/agents/` próprio, os nomes repetidos aí têm prioridade sobre os de utilizador
+(ex.: numa branch do Codex, o `captain.md` dela ganha ao de utilizador, mas os 20 `<modelo>-<esforço>`
+vêm do utilizador). Depois de alterar agentes no repositório, repetir o instalador. O guarda `pre-push`
+é por clone e já cobre todos os worktrees; o relatório `agent_models_report.py` lê `~/.claude/projects`,
+logo cobre todas as pastas e sessões.
+
 ## Ver que modelo e esforço cada agente usou de facto
 
 O Claude Code grava em cada resposta o modelo servido (`message.model`), o pedido (`requestedModel`),
