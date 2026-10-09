@@ -17,8 +17,8 @@ import {route} from '../helpers/m01-route.js';
 //  pier-wake  22 m west of the downstream (north, -z) wake of rail_support_01, looking east along it
 //  bank       18 m east of the wet bank and waterline fringe at x 25, looking along it
 // Foam / wet-bank evidence is UNCONFOUNDED: the SAME paused page is screenshot with the foam and wet-bank terms on and then off (the
-// opt-in ?debug hook window.m01WaterDebug.setDetail, presentation only). Nothing else differs, so the control region (open water, no foam,
-// no wet blend) must be pixel-identical and the foam / bank regions must change.
+// opt-in ?debug hook window.m01WaterDebug.setDetail, presentation only). Nothing else differs, so the control quad (open water, no foam,
+// no wet blend) must be pixel-identical and the foam / bank quads must change. Both are the unpadded screen footprint of the declared world quads.
 // M01_WATER_BASELINE=1 only captures (png + diagnostics, '-before' suffix); it asserts nothing about the new module, so it can be
 // run on the base commit a1554f3 for the BEFORE images.
 const key='cod-guerra:checkpoint:m01:v2',baseline=process.env.M01_WATER_BASELINE==='1';
@@ -27,7 +27,7 @@ const clocks=['04:30','06:05'];
 // first T42 Low measured 7.5 (near-black, std 2.7). Low must not be darker than ~the old look (10 % slack) and never near-black.
 const BEFORE_LOW_MEAN=56,LOW_MEAN_FLOOR=50,NEAR_BLACK=20;
 // Foam / wet-bank ON vs OFF deltas (luminance 0..255 per pixel, |dL| >= CHANGED_DL counts as changed). Declared before the first CI measurement.
-const CHANGED_DL=16;
+const CHANGED_DL=16,MIN_QUAD_PIXELS=500;   // a quad must cover real pixels, so an empty or off-screen region cannot pass the pixel-identical test vacuously
 const DETAIL_MIN=Object.freeze({'pier-ring':{meanAbs:6,changed:.12},'pier-wake':{meanAbs:3,changed:.06},bank:{meanAbs:4,changed:.12}});
 const first={},free={};
 route(19390901,{support:true,onStep:({sim})=>{
@@ -77,6 +77,17 @@ function regionOf(camera,points,pad=[0,0]){
     y0:Math.max(0,Math.floor(Math.min(...ys)-pad[1])),y1:Math.min(camera.height,Math.ceil(Math.max(...ys)+pad[1])),
     projected:p.map(q=>({point:q.point,x:+q.x.toFixed(1),y:+q.y.toFixed(1)}))};
 }
+// Close-up detail / control regions are the EXACT screen footprint (convex hull, no padding) of the declared world quad. A padded axis-aligned
+// bounding box of a quad seen at a grazing angle (6-15 px tall) swallows horizon water, the far bank and the end of the pier wake, which are
+// legitimately changed by the foam / wet-bank terms (CI 37980952256: control maxDiff 22 / 9 / 29 only in that padding, 0 inside the quads).
+const cross=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);
+function hullOf(pts){
+  const s=[...pts].sort((a,b)=>a[0]-b[0]||a[1]-b[1]),lo=[],up=[];
+  for(const p of s){while(lo.length>=2&&cross(lo[lo.length-2],lo[lo.length-1],p)<=0)lo.pop();lo.push(p);}
+  for(const p of [...s].reverse()){while(up.length>=2&&cross(up[up.length-2],up[up.length-1],p)<=0)up.pop();up.push(p);}
+  return lo.slice(0,-1).concat(up.slice(0,-1));
+}
+function quadOf(camera,points){const r=regionOf(camera,points);r.hull=hullOf(r.projected.map(q=>[q.x,q.y]));return r;}
 /** Decodes PNGs in a blank page (no extra dependency): luminance statistics per region, rows split in thirds, and the A/B difference. */
 async function analyze(browser,{a,b,regions,dlMin=CHANGED_DL}){
   const page=await browser.newPage();
@@ -89,9 +100,12 @@ async function analyze(browser,{a,b,regions,dlMin=CHANGED_DL}){
       };
       const A=await decode(a),B=b?await decode(b):null,out={width:A.width,height:A.height};
       const lum=(d,i)=>.2126*d[i]+.7152*d[i+1]+.0722*d[i+2];
+      const inside=(h,x,y)=>{let sg=0;for(let i=0;i<h.length;i++){const a=h[i],b=h[(i+1)%h.length],c=(b[0]-a[0])*(y-a[1])-(b[1]-a[1])*(x-a[0]);if(c>0)sg|=1;else if(c<0)sg|=2;}return sg!==3;};
       for(const [name,r] of Object.entries(regions)){
-        const w=A.width,n=(r.x1-r.x0)*(r.y1-r.y0),thirds=[0,0,0],thirdN=[0,0,0],rgb=[0,0,0];let sum=0,sum2=0,maxDiff=0,bright=0,absSum=0,changed=0;
+        const w=A.width,thirds=[0,0,0],thirdN=[0,0,0],rgb=[0,0,0];let n=0,sum=0,sum2=0,maxDiff=0,bright=0,absSum=0,changed=0;
         for(let y=r.y0;y<r.y1;y++)for(let x=r.x0;x<r.x1;x++){
+          if(r.hull&&!inside(r.hull,x+.5,y+.5))continue;   // pixel centre inside the projected quad
+          n++;
           const i=(y*w+x)*4,l=lum(A.data,i),t=Math.min(2,Math.floor((y-r.y0)/(r.y1-r.y0)*3));
           sum+=l;sum2+=l*l;thirds[t]+=l;thirdN[t]++;for(let k=0;k<3;k++)rgb[k]+=A.data[i+k];if(l>120)bright++;
           if(B){
@@ -147,10 +161,10 @@ async function measure(browser,info,c,view){
   if(v.water)regions.water=regionOf(camera,v.water);
   if(v.box)Object.assign(regions.water,v.box);
   if(v.wake){regions.wake=regionOf(camera,v.wake,[24,10]);regions.control=regionOf(camera,v.control,[24,10]);}
-  if(v.detail){regions.detail=regionOf(camera,v.detail,[24,10]);regions.control=regionOf(camera,v.control,[24,10]);}
+  if(v.detail){regions.detail=quadOf(camera,v.detail);regions.control=quadOf(camera,v.control);}
   const stats=await analyze(browser,{a:c.a,b:c.b,regions});
   if(c.off)stats.detailAB=await analyze(browser,{a:c.a,b:c.off,regions});
-  const report={...c.summary,regions:Object.fromEntries(Object.entries(regions).map(([k,r])=>[k,{x0:r.x0,y0:r.y0,x1:r.x1,y1:r.y1,projected:r.projected}])),stats};
+  const report={...c.summary,regions:Object.fromEntries(Object.entries(regions).map(([k,r])=>[k,{x0:r.x0,y0:r.y0,x1:r.x1,y1:r.y1,projected:r.projected,hull:r.hull??null}])),stats};
   fs.writeFileSync(info.outputPath(c.name+'-diagnostics.json'),JSON.stringify(report,null,2));
   await info.attach(c.name+'.json',{body:JSON.stringify(report,null,2),contentType:'application/json'});
   return report;
@@ -188,6 +202,8 @@ for(const view of Object.keys(CLOSEUPS))test(`close-up ${view} 06:05: foam / wet
   if(baseline)return;
   expect(r.quality).toBe('high');expect(r.paused).toBe(true);expect(r.pausedLater).toBe(true);expect(r.water.detail).toBe(1);
   const ab=r.stats.detailAB,want=DETAIL_MIN[view];
+  expect(ab.control.pixels,`control quad has pixels (${JSON.stringify(ab.control)})`).toBeGreaterThanOrEqual(MIN_QUAD_PIXELS);
+  expect(ab.detail.pixels,`detail quad has pixels (${JSON.stringify(ab.detail)})`).toBeGreaterThanOrEqual(MIN_QUAD_PIXELS);
   expect(ab.control.maxDiff,`control water (no foam, no wet blend) is pixel-identical with the terms on and off (${JSON.stringify(ab.control)})`).toBe(0);
   expect(ab.detail.meanAbs,`foam/wet region changes (${JSON.stringify(ab.detail)})`).toBeGreaterThanOrEqual(want.meanAbs);
   expect(ab.detail.changed,`foam/wet region changed fraction (${JSON.stringify(ab.detail)})`).toBeGreaterThanOrEqual(want.changed);
