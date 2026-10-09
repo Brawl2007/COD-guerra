@@ -146,12 +146,16 @@ float figure(vec2 p){
 void main(){
   vec2 p=vec2((vUv.x-.5)*vShape.x,vUv.y);
   float px=max(fwidth(p.y),1e-5);
-  float d=figure(p);
+  // px = heights per pixel (1/3 at the 3 px floor). Below ~5 px the detailed parts (torso .17 h, legs .08 h, rifle .04 h) are sub-pixel and most fragment
+  // centres miss them: dilate the signed distance by ~0.7 px so the figure becomes a filled blob that still reads by posture (prone is 3.4x as wide as tall)
+  // and fades back to the exact silhouette as the figure grows (full detail from ~17 px, px < .06).
+  float dil=.7*px*smoothstep(.05,.18,px);
+  float d=figure(p)-dil;
   float a=clamp(.5-d/px,0.0,1.0);
   if(a<=0.003)discard;
   vec3 col=vInk;
   if(uRimStrength>0.0){
-    float inner=figure(p+vec2(uRimSide*max(.045,.5*px),0.0));   // at most half a pixel: a 2 px wide figure keeps its ink core (the rim must not cancel the contrast)
+    float inner=figure(p+vec2(uRimSide*max(.045,.5*px),0.0))-dil;   // at most half a pixel: a 2 px wide figure keeps its ink core (the rim must not cancel the contrast)
     float rim=a*clamp(.5+inner/px,0.0,1.0);
     col+=uRim*rim*uRimStrength;
   }
