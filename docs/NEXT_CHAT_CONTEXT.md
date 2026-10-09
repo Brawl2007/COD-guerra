@@ -1,4 +1,18 @@
-# Continuação atual — consolidação M01 V6 (2026-10-08)
+# Continuação atual — primeiro playtest humano da M01 (2026-10-09)
+
+Esta secção prevalece sobre as seguintes. Ficha completa: `docs/direction/PLAYTEST_M01.md`, secção 10 (itens 1 a 11). Branch `claude/gracious-franklin-u8kdin`: leva 1 em `2cc4f24`, leva 2 em `d1aef41`. Não está em `main`.
+
+- **Estado:** o utilizador jogou a M01 e enviou notas em texto e capturas, em duas levas. Estão registadas na ficha. Nenhuma correção de código foi feita por causa delas. M01 continua **PROTÓTIPO JOGÁVEL**; um playtest de uma pessoa não valida o marco nem mede FPS.
+- **Causas verificadas no código:** item 9, agachar sem suavização (`src/render/m01-actor-pose.js`); item 10, na qualidade baixa e média os soldados alemães carregam só `de:2` (`src/render/m01-characters.js`); item 11, nos estados normais só `standing_idle` e `crouched_idle` são escolhidos, e falta o resolvedor de animação.
+- **Lacuna conhecida, não bug novo:** itens 3, 4, 8 e 11. A V7 excluiu a locomoção dos soldados, e o M01 não usa a lógica de cobertura do motor base (`actors.js`). Decisão humana pendente: H6 em `docs/direction/DECISIONS.md`.
+- **Por confirmar pelo utilizador (H7):** branch e commit jogados (decidem se a água e as árvores, itens 1 e 2, são a versão nova); resposta 5 sobre a ckm; qualidade usada; causa da vida 92 da ponte; se a parede invisível (item 5) impediu o avanço; respostas 1 a 10.
+- **Classificação provisória:** central, 3, 4, 8 e 11. Pode bloquear, 5 (colisões), a confirmar. Incomoda, 1, 2, 7, 9 e 10. Detalhe, 6.
+- **Próximo passo proposto, à espera de ordem do utilizador:** 9 primeiro (correção pequena e verificada); depois investigar 5 e 7; depois o resolvedor simples para 3 e 11. Cobertura e reação (4 e 8) precisam de desenho antes de implementar.
+- **Regras:** não alterar as respostas do utilizador na ficha; não reportar FPS; toda a alteração de código passa por `verifier` e `reviewer` (ficha, secção 9); não tocar em `main`.
+
+---
+
+# Continuação anterior — consolidação M01 V6 (2026-10-08)
 
 Esta secção prevalece sobre o histórico. TASK_ID `M01-FINAL-PRODUCTION-CONSOLIDATION-V6`. **READY_FOR_CAPTAIN_REVIEW**, [PR draft #57](https://github.com/Brawl2007/COD-guerra/pull/57) contra V5 `d277b06937170aa433bc418ef5b83b2925c6d6de`, nunca main. Branch `codex/m01-final-production-consolidation-v6`; confirmar HEAD remoto. HEAD final de código/fixtures `edefda544c702962ad3e378d06fb1bd7e792254e`; produção igual ao executável validado `2a2a56734861b0801234d7ddf3cda66c0100f326`. O pacote posterior só acrescenta workflows/evidência/docs; HEAD exato na PR.
 

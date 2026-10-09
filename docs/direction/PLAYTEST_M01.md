@@ -1,6 +1,6 @@
 # Ficha do primeiro playtest humano da M01
 
-Estado: **por preencher**. Regista o primeiro playtest humano do projeto. Não é validação de marco, não mede FPS e não substitui os testes automáticos.
+Estado: **notas registadas do playtest 1 (2026-10-09)**; respostas 1 a 10 e commit jogado por confirmar. Regista o primeiro playtest humano do projeto. Não é validação de marco, não mede FPS e não substitui os testes automáticos.
 
 ## 1. Preparação (2 minutos)
 

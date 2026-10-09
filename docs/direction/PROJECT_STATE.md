@@ -36,7 +36,7 @@ usar a API (`gh api repos/Brawl2007/COD-guerra/compare/A...B`).
 
 - **ckm wz.30:** guarnição, idle/abandono e retirada na simulação. **Sem disparo nem munição.**
   Grep em todas as branches remotas, `src/game`: nenhuma implementação. Assets e clips existem.
-- Playtest humano: nunca feito. Só playthroughs automáticos.
+- Playtest humano: 1.º playtest registado em 2026-10-09 (notas em `docs/direction/PLAYTEST_M01.md`, secção 10; branch `claude/gracious-franklin-u8kdin`). Respostas e commit jogado por confirmar. Não mede FPS nem valida o marco.
 - FPS no Chromebook: nunca medido. Só SwiftShader.
 - Animation Resolver: ausente (pré-requisito transversal S17).
 

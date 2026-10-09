@@ -22,3 +22,5 @@ Formato: data · decisão · razão · reversível? Decisões de produto/jogabil
 - **H3** O destino das oito alterações por commitar na worktree original (manter, arquivar num commit WIP na própria branch, ou descartar).
 - **H4** Sessão no Chromebook de referência (T01) e playtest humano (T52): só uma pessoa os pode fazer.
 - **H5** Qualquer tarefa [D] da campanha (S1 flags de save, S2 relógio por segmentos, S8 bancadas de veículo).
+- **H6** (2026-10-09) Playtest 1, itens 3, 4, 8 e 11: escopo da animação e da IA dos soldados da M01. Proposta: primeiro um resolvedor simples que escolha o clip pelo estado, com os clips que já existem; a cobertura e a reação (itens 4 e 8) só depois de desenho. Decisão de jogabilidade: fica pendente até aprovação explícita.
+- **H7** (2026-10-09) Respostas do playtest 1: branch e commit jogados, resposta 5 sobre a ckm (decide a prioridade da geometria, fase 0), qualidade usada, causa da vida 92 da ponte, parede invisível (item 5) e respostas 1 a 10. Sem elas, os itens 1, 2 e 10 ficam por confirmar.

@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## Primeiro playtest humano da M01 — 2026-10-09
+
+Notas do utilizador registadas em `docs/direction/PLAYTEST_M01.md`, secção 10 (itens 1 a 11), na branch `claude/gracious-franklin-u8kdin` (commits `2cc4f24` e `d1aef41`). Causas verificadas para os itens 9, 10 e 11; nenhuma correção feita. Estado, perguntas pendentes e próximo passo em `docs/NEXT_CHAT_CONTEXT.md`. Um playtest de uma pessoa não valida o marco nem mede FPS.
+
 ## Consolidação final de produção M01 V6 — 2026-10-08 UTC
 
 `M01-FINAL-PRODUCTION-CONSOLIDATION-V6`, branch `codex/m01-final-production-consolidation-v6`, base V5 `d277b06937170aa433bc418ef5b83b2925c6d6de`, [PR draft #57](https://github.com/Brawl2007/COD-guerra/pull/57) contra V5. **READY_FOR_CAPTAIN_REVIEW**. HEAD final de código/fixtures `edefda544c702962ad3e378d06fb1bd7e792254e`; produção igual à CI `2a2a56734861b0801234d7ddf3cda66c0100f326`. HEAD exato do pacote final na descrição da PR. Correções de restore de blast, fallback muzzle, buffers dos portais, áudio Low e pagehide persistido preservadas.

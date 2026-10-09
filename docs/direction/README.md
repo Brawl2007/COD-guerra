@@ -42,7 +42,14 @@ Criar o Task Contract e um `RUN_ID`, e correr o skill `autonomous-task`
 Os agentes correm sequencialmente (Chromebook). O Explorer não tem Bash: com o checkout esparso, exportar
 primeiro para o scratchpad os documentos de `docs/` de que ele precisa.
 
-## Último handoff: 2026-10-08
+## Handoff mais recente: 2026-10-09 (playtest 1 da M01)
+
+- **Onde está:** `docs/direction/PLAYTEST_M01.md`, secção 10, na branch `claude/gracious-franklin-u8kdin` (commits `2cc4f24` e `d1aef41`). Esta branch não está em `main`.
+- **Para ver este estado:** `git fetch origin claude/gracious-franklin-u8kdin`, depois o bloco do topo de `docs/NEXT_CHAT_CONTEXT.md`.
+- **Estado:** aguarda as respostas do utilizador (H7 em `DECISIONS.md`) e uma ordem para avançar. Nenhuma alteração de código por causa do playtest.
+- **Decisão pendente:** escopo do resolvedor de animação e da cobertura dos soldados da M01 (H6 em `DECISIONS.md`).
+
+## Handoff anterior: 2026-10-08
 
 - **Estado:** PLANEAMENTO CONCLUÍDO; desenvolvimento **à espera do portão G-V7**.
 - **Branch:** `claude/captain-direction-v1` (local, sem push). Base: V7 `7a5800e` + infra `2645f3f` (cherry-pick).
