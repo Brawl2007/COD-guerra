@@ -2,7 +2,7 @@
 
 TASK_ID: `M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7`.
 
-**Estado: VALIDATION_IN_PROGRESS.** As execuções browser integrais terminaram 80/84 e 82/84. As quatro primeiras correções passaram na segunda execução; as duas falhas restantes têm provas preservadas e correções retestadas 4/4, sem alterações de produção. A terceira execução integral sem filtros está em curso no run 37862528016; a certificação ainda está pendente. M01 continua **PROTÓTIPO JOGÁVEL**; não há alegação de qualidade AAA ou de certificação no Chromebook.
+**Estado: VALIDATION_IN_PROGRESS.** As execuções browser integrais terminaram 80/84, 82/84 e 83/84. As quatro primeiras correções passaram na segunda execução; as duas falhas restantes têm provas preservadas e correções retestadas 4/4, sem alterações de produção. A terceira execução integral sem filtros (run 37862528016) terminou 83/84: a única falha é uma corrida do harness em `m01-locomotive.spec.js:6` (leitura após o reload antes do primeiro frame renderizado), com prova preservada; a correção está em retestagem focada e a certificação continua pendente. M01 continua **PROTÓTIPO JOGÁVEL**; não há alegação de qualidade AAA ou de certificação no Chromebook.
 
 ## Identidade, recuperação e decisões
 
@@ -16,7 +16,7 @@ TASK_ID: `M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7`.
 | Harness corrigido e retestado 5/5 | `91c7a844c7d5020a552969027a424aad1f13dcd4` |
 | Segunda execução browser integral, FAIL 82/84 | `13b14fe75cdffc4e6425dcff4cb7b1f5dbb75e24`, [run 37851294926](https://github.com/Brawl2007/COD-guerra/actions/runs/37851294926) |
 | Segunda correção do harness, retestada 4/4 | `0a83942b41957e0b900b8a8fc704eb7860f84ba9` |
-| Terceira execução integral, em curso | `9d9844e65701aeb80af854d8f9b7ed6dc9a351e8`, [run 37862528016](https://github.com/Brawl2007/COD-guerra/actions/runs/37862528016) |
+| Terceira execução integral, concluída 83/84 (falha) | `9d9844e65701aeb80af854d8f9b7ed6dc9a351e8`, [run 37862528016](https://github.com/Brawl2007/COD-guerra/actions/runs/37862528016) |
 | PR draft | [#59 — V7 → V6](https://github.com/Brawl2007/COD-guerra/pull/59) |
 | HEAD final publicado | O `head.sha` exato da PR #59, registrado na descrição final da PR; inclui este próprio handoff. `git rev-parse origin/codex/m01-final-production-consolidation-v7` reproduz esse SHA após fetch. |
 
@@ -65,7 +65,7 @@ Exclusões: os quatro commits de armas posteriores a `7dbc0a5` continuam com fal
 | Browser focado após correção do harness | **5/5 PASS**, Chromium 153, workers 1, retries/skips zero | `BROWSER_HARNESS_FOCUSED.json.gz`, resumo e log; prova de yaw/HUD, impacto pausado e muzzle real |
 | Browser integral combinado, segunda execução | **82 PASS / 2 FAIL**, 84 executados, zero skips/retries/erros globais | [Run 37851294926](https://github.com/Brawl2007/COD-guerra/actions/runs/37851294926); `BROWSER_FULL_SECOND.json.gz`, resumo/log e `BROWSER_FULL_SECOND_DIAGNOSIS.json`; quatro correções anteriores passaram |
 | Browser focado após segunda correção | **4/4 PASS**, Chromium 153, workers 1, retries/skips zero | `BROWSER_SECOND_HARNESS_FOCUSED.json.gz`, resumo e log; fases reais FX e burned/reload/checkpoint/LOD/fallback |
-| Browser integral após segunda correção | **EM EXECUÇÃO**, uma invocação sem filtros, retries 0 | [Run 37862528016](https://github.com/Brawl2007/COD-guerra/actions/runs/37862528016), HEAD `9d9844e`; fonte/correções assinadas e build passaram |
+| Browser integral após segunda correção | **FALHOU 83/84** (1 falha, 0 ignorados, 0 flaky), uma invocação sem filtros, retries 0 | [Run 37862528016](https://github.com/Brawl2007/COD-guerra/actions/runs/37862528016), HEAD `9d9844e`; falha única em `m01-locomotive.spec.js:6` (linha 19, `visible` true esperado, false recebido); diagnóstico em `BROWSER_FULL_THIRD_DIAGNOSIS.json`; resultado desta invocação apenas, sem união com execuções focadas |
 | Alternativa local integral em paralelo | **INCOMPLETA**, 19 casos PASS reportados; 65 não certificados | `LOCAL_PARALLEL_ATTEMPT.json`; sessão do executor indisponível sem relatório final, excluída da certificação |
 | Autoridade e recuperação | **PASS** | 291 ficheiros protegidos, duas rotas completas e futuros dos quatro CPs; `INVARIANTS.json` e reteste corrigido abaixo |
 | Helper adicional de LOD, após correção de QA | **PASS** — Low/Medium/High/Low = 2/1/0/2 em V6 e V7 | `INVARIANTS_LOD_CORRECTED.json`, `logs/invariants-lod-corrected.log`; commit `158c30edea72869144cb0b0c875029dc3818adc2` |

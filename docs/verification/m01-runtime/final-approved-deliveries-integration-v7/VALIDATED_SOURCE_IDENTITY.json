@@ -69,5 +69,18 @@
     "certificationExcluded": true,
     "productionAndTestsChanged": false,
     "experimentalQaConfigRemovedAfterAttempt": true
-  }
+  },
+  "browserThirdRun": {
+    "id": 37862528016,
+    "jobId": 113601388960,
+    "head": "9d9844e65701aeb80af854d8f9b7ed6dc9a351e8",
+    "status": "completed",
+    "conclusion": "failure",
+    "executed": 84,
+    "passed": 83,
+    "failed": 1,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "thirdBrowserHead": "9d9844e65701aeb80af854d8f9b7ed6dc9a351e8"
 }

@@ -1,0 +1,62 @@
+{
+  "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
+  "runId": 37862528016,
+  "jobId": 113601388960,
+  "head": "9d9844e65701aeb80af854d8f9b7ed6dc9a351e8",
+  "stats": {
+    "startTime": "2026-10-09T00:01:41.597Z",
+    "duration": 5785157.3610000005,
+    "expected": 83,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "executed": 84,
+  "errors": [],
+  "retries": 0,
+  "workers": 1,
+  "artifact": {
+    "id": 11590350851,
+    "name": "m01-v7-browser-full-9d9844e65701aeb80af854d8f9b7ed6dc9a351e8",
+    "bytes": 88161687,
+    "sha256": "2c6657b848d4829ce0ad6aaf2ad87daa9e94c7eb1f7eb36ae4f5fd452e4ddb49",
+    "downloadAndZipCrcVerified": true
+  },
+  "failures": [
+    {
+      "file": "m01-locomotive.spec.js",
+      "line": 6,
+      "title": "locomotive 963 production GLBs load, far LOD, pause and restore",
+      "errorLocation": {
+        "line": 19,
+        "column": 361
+      },
+      "error": "expect(received).toEqual(expected): locomotive diagnostics after page.reload() and Continue: expected visible true, received visible false; requestedLOD 2 and all other fields equal.",
+      "trace": "test-results/m01-locomotive-locomotive--7d812-d-far-LOD-pause-and-restore/trace.zip",
+      "traceSha256": "d7854962dd82d99ceaa3992a94bad6e76c54608077a163cd77a4ec3fab0484dd",
+      "errorContextSha256": "579db2b77cd0746a1ca58ff5b4060c66e372b358fd1ca1b46808200c0d1ba52c",
+      "traceNote": "Primary trace is in the downloaded CI artifact (not committed; sha256 recorded).",
+      "passedInEarlierRuns": [
+        {
+          "run": "first",
+          "head": "1b636303beeebf019aa2cd13819c6e0637f2b0bc",
+          "durationMs": 40800
+        },
+        {
+          "run": "second",
+          "head": "13b14fe75cdffc4e6425dcff4cb7b1f5dbb75e24",
+          "durationMs": 35600
+        }
+      ],
+      "waitAsymmetry": {
+        "beforeFirstRead": "line 12 waits for locomotive.visible && loaded.length===3",
+        "afterReload": "line 19 waits only for loaded.length===3 and !paused, then exitPointerLock and reads immediately"
+      },
+      "visibleSource": "locomotive.visible is this.root.parent.visible (train group); src/render/m01-view.js:576 assigns this.train.visible=state.train963 inside render(), so it reflects the last rendered frame.",
+      "demonstratedCause": "Harness race: the post-restore read happened before the first rendered frame after restore applied train visibility. Same class as the wagon stale-frame race corrected in 0a83942. No production defect demonstrated.",
+      "correction": "After the post-reload unpause wait, add a wait equivalent to line 12 (visible && loaded.length===3) before exitPointerLock. No assertion removed or weakened; no src change."
+    }
+  ],
+  "previousCorrectionsPassed": true,
+  "noUnion": "Results are of this single invocation only; no focused or historical result is combined; 84/84 is not claimed."
+}
