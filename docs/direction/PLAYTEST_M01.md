@@ -91,3 +91,21 @@ Cola no chat a tabela e as respostas 1 a 10, com a branch e o commit da linha 1.
 | detalhe | lista para depois |
 
 Toda a alteração de código passa pelo `verifier` e pelo `reviewer`.
+
+## 10. Resultados do playtest 1 (2026-10-09)
+
+Fonte: notas do utilizador e 4 capturas do Chromebook (tempos no HUD: 04:55, 05:00, cerca de 05:0x e 05:09:38).
+**Por confirmar pelo utilizador:** branch e commit (linha 1 da ficha), resposta 5 (metralhadora ckm) e respostas 1 a 10.
+A gravidade e o tipo são provisórios, decididos a partir das notas.
+
+| # | Queixa (palavras do utilizador) | Tipo | Gravidade (provisória) | Estado no projeto |
+|---|---|---|---|---|
+| 1 | Água com aspeto estranho | visual | incomoda | Tarefa da água (T42) em correção; a versão jogada pode ser anterior |
+| 2 | Árvores feitas de bolas, pouco realistas | visual | incomoda | A vegetação de produção já está na V7; confirmar se a árvore jogada é a nova |
+| 3 | Soldados parados, sem animação | animação | central | Animation Resolver ausente na V7 (lacuna conhecida); locomoção excluída da V7 |
+| 4 | Soldados não procuram cobertura, não reagem, não se deslocam | IA | central | O M01 não usa a lógica de cobertura do motor base (`actors.js`); só há deslocações do guião (retirada, evacuação, movimentos de grupo) |
+| 5 | Paredes invisíveis e atravessar qualquer parede | colisão | bloqueia, se impedir o avanço | Hipótese: os colisores exportados não batem com o visual; confirmar |
+| 6 | Capacetes dos soldados sem textura no interior | visual | detalhe | A confirmar |
+| 7 | Quedas instantâneas, sem gravidade | animação | incomoda | Provavelmente a mesma causa do item 3; confirmar se são soldados mortos |
+
+**Leitura:** os itens 3 e 4 são a queixa principal e não são um bug novo. A matriz de entregas da V7 excluiu a locomoção dos soldados, e o M01 não usa a cobertura do motor base. Corrigir isto é uma tarefa de escopo grande, com decisão do utilizador. Os itens 1, 2, 5, 6 e 7 são tarefas menores, uma a uma.
