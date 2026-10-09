@@ -1,7 +1,7 @@
 {
   "productionRuntimeHead": "8f7d1ea8f096472436c860e118a8c799e740e23f",
   "nodeHead": "a97a3152d4848517a267d80c0cbbdc24bf2ddaeb",
-  "browserHead": "13b14fe75cdffc4e6425dcff4cb7b1f5dbb75e24",
+  "browserHead": "9d9844e65701aeb80af854d8f9b7ed6dc9a351e8",
   "visualPreviewHead": "6e61aaa2efa98ff6a05f12f9ae5b0bf7190ba353",
   "ciEvidenceCommit": "93c2519d7647b58de3ea7f0a88c6237784aca00f",
   "runtimeFiles": [
@@ -61,6 +61,7 @@
       "tests/browser/m01-wagon-runtime-integration.spec.js"
     ],
     "reason": "Second 82/84 report: stale menu-frame counter in wagon restore and software-WebGL phase-read wall timeout. Original positive effects/state assertions retained; production unchanged.",
-    "head": null
-  }
+    "head": "0a83942b41957e0b900b8a8fc704eb7860f84ba9"
+  },
+  "sourceAndTestsUnchangedAfterThirdFullBrowserStart": true
 }

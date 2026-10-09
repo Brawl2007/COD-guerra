@@ -1,6 +1,6 @@
 {
   "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
-  "observedAt": "2026-10-08T23:55:00Z",
+  "observedAt": "2026-10-09T00:05:06.236Z",
   "runtimeHead": "8f7d1ea8f096472436c860e118a8c799e740e23f",
   "node": {
     "runId": 37831786923,
@@ -77,34 +77,21 @@
     ]
   },
   "fullBrowser": {
-    "runId": 37851294926,
-    "jobId": 113564557176,
-    "head": "13b14fe75cdffc4e6425dcff4cb7b1f5dbb75e24",
-    "status": "completed",
-    "conclusion": "failure",
-    "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37851294926",
-    "execution": "One corrected complete unfiltered invocation; no historical/focused result union",
+    "runId": 37862528016,
+    "jobId": 113601388960,
+    "head": "9d9844e65701aeb80af854d8f9b7ed6dc9a351e8",
+    "status": "in_progress",
+    "conclusion": null,
+    "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37862528016",
+    "execution": "Third complete unfiltered invocation after both trace-driven corrections; no historical/focused result union",
     "workers": 1,
     "retries": 0,
-    "inventory": 84,
+    "inventoryExpected": 84,
     "productionUnchanged": true,
-    "harnessCorrectionHead": "91c7a844c7d5020a552969027a424aad1f13dcd4",
-    "executed": 84,
-    "passed": 82,
-    "failed": 2,
-    "skipped": 0,
-    "flaky": 0,
-    "globalErrors": 0,
-    "durationMs": 5660748.135,
-    "report": "BROWSER_FULL_SECOND.json.gz",
-    "summary": "BROWSER_FULL_SECOND_SUMMARY.json.gz",
-    "diagnosis": "BROWSER_FULL_SECOND_DIAGNOSIS.json",
-    "artifact": {
-      "id": 11585538865,
-      "bytes": 96110429,
-      "sha256": "7ab1ecf84c461281554125965427cd533e83282611551ce90ca73afa7421a8f3",
-      "downloadAndZipCrcVerified": true
-    }
+    "harnessCorrectionHeads": [
+      "91c7a844c7d5020a552969027a424aad1f13dcd4",
+      "0a83942b41957e0b900b8a8fc704eb7860f84ba9"
+    ]
   },
   "fpsMeasured": false,
   "physicalGpuMemoryMeasured": false,
@@ -514,6 +501,7 @@
         "sha256": "386568e20859eceb198e22dae9fce8e97d1cf2470d4e45b002f99833be00e97c"
       }
     ],
-    "visualReview": "All seven real PNGs inspected. Near intact/burned meshes and unchanged Station visible; fallback boxes remain visibly simple and third wagon/fire can be occluded by nearer wagons. Hot/smoke FX at 771 m are largely occluded by the truss; positive event/layer counters prove phase capture, these are not beauty shots. Far LOD fixture is in water and proves only model LOD, not a gameplay route. Earlier 72 matched visual pairs remain the visual-quality evidence."
+    "visualReview": "All seven real PNGs inspected. Near intact/burned meshes and unchanged Station visible; fallback boxes remain visibly simple and third wagon/fire can be occluded by nearer wagons. Hot/smoke FX at 771 m are largely occluded by the truss; positive event/layer counters prove phase capture, these are not beauty shots. Far LOD fixture is in water and proves only model LOD, not a gameplay route. Earlier 72 matched visual pairs remain the visual-quality evidence.",
+    "correctionHead": "0a83942b41957e0b900b8a8fc704eb7860f84ba9"
   }
 }
