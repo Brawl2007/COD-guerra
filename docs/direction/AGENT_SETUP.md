@@ -86,6 +86,14 @@ só modelo e um só esforço, iguais ao seu ficheiro em `.claude/agents/`. Aviso
 mudaram de modelo/esforço a meio (`/model` ou fallback) e respostas servidas por modelo diferente do pedido.
 Em tempo real, `/tasks` mostra o modelo de cada subagente a correr.
 
+### Evidência: teste de fumo dos 20 agentes (2026-10-09, autorizado pelo utilizador)
+
+Cada agente `<modelo>-<esforço>` recebeu a mesma tarefa mínima só de leitura (identificar-se e listar 3
+ficheiros de `src/game`). Resultado em `agent_models_report.py --coverage`: **20/20 usados, cada um com
+exactamente o modelo e o esforço do seu ficheiro** (haiku/sonnet/opus/fable × low/medium/high/xhigh/max),
+sem fallback nem mudança a meio. Custo aproximado: 8–11 k tokens por agente. Os `fable-*` só correram
+porque o utilizador pediu expressamente.
+
 ## Advisor: `Advisor unavailable (execution_time_exceeded)`
 
 Significa que a consulta ao Fable excedeu o tempo no servidor. A tarefa continua sem o conselho; não há
