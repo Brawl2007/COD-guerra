@@ -7,7 +7,8 @@ import manifest from '../assets/models/provisional/m01/bridges.manifest.json' wi
 import layout from '../missions/m01-tczew/map-layout.json' with {type:'json'};
 import * as D from '../src/render/m01-demolition.js';
 import {M01CombatFeedback,M01_FEEDBACK_CAPS} from '../src/render/m01-combat-feedback.js';
-import {M01Atmosphere} from '../src/render/m01-atmosphere.js';
+import {M01Atmosphere,visualNoise} from '../src/render/m01-atmosphere.js';
+import {puffTexture} from '../src/render/m01-surfaces.js';
 import {M01_BATTLEFIELD_FX_LIMITS,M01View} from '../src/render/m01-view.js';
 import {M01_FX_PROFILES} from '../src/render/m01-battlefield-fx-profile.js';
 
@@ -318,4 +319,101 @@ test('presentation only: the simulation never imports the module, the module rea
   const body=view.slice(view.indexOf('  updateDemolition(state,time,sim){'),view.indexOf('  updateBattlefieldFx(state,time){'));
   assert.doesNotMatch(body,/performance|Date\.now|Math\.random|dt\b/);
   assert.doesNotMatch(body,/position\.add|position\.x\s*\+=|position\.y\s*\+=|quaternion\.multiply|rotateX|rotateY|rotateZ/,'no accumulation');
+});
+
+// ---------------------------------------------------------------------------------------------------------------------------------
+// Visibility of the far flash (verifier finding: no flash in the 762 m frame although the diagnostics reported scale 38 / .05 rad).
+
+test('projectToScreen matches a THREE.PerspectiveCamera for the camera the view reports',()=>{
+  const worldPoints=[[800,8,20],[70,25,20],[-290,-2,22],[10.4,3,0],[5000,100,-3000]];
+  for(const [pos,target] of [[[24,-1.4,20],[800,8,20]],[[610,-3.4,20],[800,8,20]],[[-292,-1.4,40],[70,8,20]],[[-235,2.9,50],[-290,10,22]],[[0,5,0],[1,5,-9]]]){
+    const camera=new THREE.PerspectiveCamera(70,1280/720,.05,7500);camera.position.set(...pos);camera.lookAt(...target);camera.rotateZ(.01);camera.updateMatrixWorld();
+    const view={position:camera.position.toArray(),quaternion:camera.quaternion.toArray(),fov:camera.fov,aspect:camera.aspect,near:camera.near,width:1280,height:720};
+    for(const [x,y,z] of worldPoints){
+      const mine=D.projectToScreen(view,{x,y,z}),v=new THREE.Vector3(x,y,z).applyMatrix4(camera.matrixWorldInverse),ndc=new THREE.Vector3(x,y,z).project(camera);
+      assert.equal(mine.behind,!(-v.z>camera.near),'behind');
+      if(!mine.behind){assert.ok(Math.abs(mine.x-(ndc.x*.5+.5)*1280)<1e-6&&Math.abs(mine.y-(-ndc.y*.5+.5)*720)<1e-6,`${pos} ${x},${y},${z}`);assert.ok(Math.abs(mine.depth+v.z)<1e-6);}
+    }
+  }
+  const camera={position:[0,0,0],quaternion:[0,0,0,1],fov:70,aspect:16/9,near:.05,width:1280,height:720};
+  assert.deepEqual([D.projectToScreen(camera,{x:0,y:0,z:-10}).x,D.projectToScreen(camera,{x:0,y:0,z:-10}).y],[640,360]);
+  assert.equal(D.projectToScreen(camera,{x:0,y:0,z:5}).behind,true);assert.equal(D.projectToScreen(camera,{x:0,y:0,z:5}).inside,false);
+  assert.equal(D.projectToScreen(camera,{x:1e4,y:0,z:-10}).inside,false,'in front of the camera but outside the viewport');
+});
+
+test('far demolition flash: warm colour, stacked billboards and the declared angular size reach beyond 300 m only',()=>{
+  const profile=M01_FX_PROFILES.demolition,args={scale:profile.scale,flashEnd:profile.flashEnd,lightRange:profile.lightDistance};
+  for(const d of [0,10,50,85]){const f=D.demolitionFlash(d,args);assert.equal(f.extraLayers,0,`${d} m`);assert.equal(f.color,D.M01_FLASH_NEAR_COLOR);}
+  for(const d of [300,362,762,1100]){const f=D.demolitionFlash(d,args);assert.equal(f.extraLayers,D.M01_FLASH_FAR_LAYERS,`${d} m`);assert.equal(f.color,D.M01_FLASH_FAR_COLOR);assert.ok(f.angular>=D.M01_FLASH_MIN_ANGULAR-1e-12,`${d} m: ${f.angular}`);}
+  let layers=0;for(let d=0;d<=2000;d+=5){const f=D.demolitionFlash(d,args);assert.ok(f.extraLayers>=layers);layers=f.extraLayers;assert.match(f.color,/^#[0-9a-f]{6}$/);}
+  // The stack plus the profile's own layers fit the flash pool (16) for every quality; the view applies the clamp itself.
+  assert.ok(profile.counts.flash+D.M01_FLASH_FAR_LAYERS<=M01_BATTLEFIELD_FX_LIMITS.flash);
+  const view=source('src/render/m01-view.js');
+  assert.match(view,/const flashN=Math\.min\(M01_BATTLEFIELD_FX_LIMITS\.flash,fxLayerCount\(profile\.counts\.flash,quality,distance\)\+\(demolition\?demolition\.extraLayers:0\)\)/);
+  assert.match(view,/kind==='small'\?'#fff1c7':demolition\?demolition\.color:'#fff0c0'/);
+  assert.match(view,/camera:\{position:this\.camera\.position\.toArray\(\),quaternion:this\.camera\.quaternion\.toArray\(\),fov:this\.camera\.fov/);
+  assert.equal(D.demolitionFlash(10,args).scale,profile.scale,'near field unchanged');
+});
+
+test('the far flash is visible over the horizon haze: footprint of the real puff texture, single old-style billboard vs the stack',()=>{
+  // The very puffTexture() the game uses: capture its pixels through a document stub.
+  const original=globalThis.document;let image=null;
+  globalThis.document={createElement:()=>({width:0,height:0,getContext:()=>({createImageData:(w,h)=>(image={width:w,height:h,data:new Uint8ClampedArray(w*h*4)}),putImageData(){}})})};
+  try{puffTexture();}finally{globalThis.document=original;}
+  assert.ok(image&&image.width===128);
+  const lin=c=>c<=.04045?c/12.92:((c+.055)/1.055)**2.4,enc=c=>c<=.0031308?c*12.92:1.055*c**(1/2.4)-.055,hex=h=>[1,3,5].map(i=>lin(parseInt(h.slice(i,i+2),16)/255));
+  const aces=rgb=>{   // three.js ACESFilmicToneMapping at exposure 1.1, then the sRGB encode the fragment shader ends with
+    const [r,g,b]=rgb.map(v=>v*1.1/.6),m=[.59719*r+.35458*g+.04823*b,.076*r+.90834*g+.01566*b,.0284*r+.13383*g+.83777*b].map(x=>(x*(x+.0245786)-.000090537)/(x*(.983729*x+.432951)+.238081));
+    return [1.60475*m[0]-.53108*m[1]-.07367*m[2],-.10208*m[0]+1.10813*m[1]-.00605*m[2],-.00327*m[0]-.07276*m[1]+1.07602*m[2]].map(x=>enc(Math.max(0,Math.min(1,x))));
+  };
+  const f=1280*0+(720/2)/Math.tan(35*Math.PI/180);
+  /** Pixels (of a 1280x720, 70 deg frame) whose sRGB differs from `bg` by >= 20/255 once the billboards are composited over it. */
+  function footprint({distance,instances,bg}){
+    const px=new Map(),get=k=>px.get(k)??bg.slice();
+    for(const ins of instances){
+      const pw=ins.w*f/distance,ph=ins.h*f/distance,cx=ins.dx*f/distance,cy=-ins.dy*f/distance,colour=hex(ins.color);
+      for(let y=Math.floor(cy-ph/2);y<=Math.ceil(cy+ph/2);y++)for(let x=Math.floor(cx-pw/2);x<=Math.ceil(cx+pw/2);x++){
+        const u=(x-cx)/pw+.5,v=(y-cy)/ph+.5;if(u<0||u>=1||v<0||v>=1)continue;
+        const tx=Math.min(127,Math.floor(u*128)),ty=Math.min(127,Math.floor(v*128)),at=(ty*128+tx)*4;
+        const t=lin(image.data[at]/255),alpha=image.data[at+3]/255*ins.opacity*.8,src=aces(colour.map(c=>c*t));
+        px.set(x+','+y,get(x+','+y).map((d,i)=>src[i]*alpha+d*(1-alpha)));
+      }
+    }
+    let n=0;for(const p of px.values())if(Math.max(...p.map((v,i)=>Math.abs(v-bg[i])))>=20/255)n++;return n;
+  }
+  const profile=M01_FX_PROFILES.demolition;
+  const stack=(distance,{layers,scale,color})=>Array.from({length:layers},(_,j)=>{
+    const t=.4,n=i=>visualNoise(777,i),s=scale*(.70+.34*t)*(.82+n(3+j*3)*.28)*1.12;
+    return {w:s,h:s*(.58+.18*n(5+j*3)),color,opacity:.94,dx:(n(2+j*3)-.5)*profile.scale*.08,dy:profile.scale*(.11+.08*t)};
+  });
+  // 06:10 'morning' fog/horizon colour (#a9b1af) and a clear blue sky as the two backgrounds a far flash is seen against.
+  const haze=[0xa9,0xb1,0xaf].map(v=>v/255),sky=[.38,.55,.74];
+  const args={scale:profile.scale,flashEnd:profile.flashEnd,lightRange:profile.lightDistance};
+  for(const distance of [362,776]){
+    const far=D.demolitionFlash(distance,args),oldStyle=stack(distance,{layers:1,scale:Math.min(profile.scale*2.2,Math.max(profile.scale,.05*distance)),color:'#fff0c0'});
+    const next=stack(distance,{layers:1+far.extraLayers,scale:far.scale,color:far.color});
+    for(const [name,bg] of [['haze',haze],['sky',sky]]){
+      const before=footprint({distance,instances:oldStyle,bg}),after=footprint({distance,instances:next,bg});
+      assert.ok(after>=200,`${distance} m over ${name}: ${after} px change by >= 20/255 (the old single flash: ${before})`);
+      assert.ok(after>=3*before,`${distance} m over ${name}: stack ${after} vs single ${before}`);
+    }
+    assert.ok(footprint({distance,instances:oldStyle,bg:haze})<=120,`${distance} m: the old single flash over the haze really is faint`);
+  }
+});
+
+test('earth rain and river splash are legible: bigger clods, more of them, denser puffs, all inside the preset budgets',()=>{
+  const at=(damage,t,quality='high')=>D.demolitionParticles({damage,clock:damage.started+t,quality,surfaceY:()=>-3});
+  const post=D.M01_WEST_FIRING_POST,over=c=>Math.hypot(c.x-post.x,c.z-post.z)<40&&c.y>post.y;
+  for(const quality of ['low','medium','high']){
+    let most=0,biggest=0;
+    for(let t=0;t<9;t+=.05)for(const c of at(west,t,quality).chips.filter(over)){most=Math.max(most,at(west,t,quality).chips.filter(over).length);biggest=Math.max(biggest,c.sx);}
+    assert.ok(most>=(quality==='low'?4:8),`${quality}: ${most} clods in the air at once`);assert.ok(biggest>=.4,`${quality}: clods up to ${biggest} m`);
+  }
+  // A frame in the 3.5..4.1 s capture window: clods in flight, splash on the water fall points, everything within the budget.
+  for(const t of [3.5,3.8,4.1]){
+    const r=at(west,t),budget=D.M01_DEMOLITION_BUDGET.high;
+    assert.ok(r.chips.filter(over).length>=4,`t=${t}`);assert.ok(r.puffs.some(p=>p.color==='#d7e1e3'&&p.opacity>=.2),`t=${t}: splash puffs`);
+    assert.ok(r.puffs.length<=budget.puffs&&r.chips.length<=budget.debris);
+    for(const p of r.puffs)assert.ok(p.opacity<=1);
+  }
 });

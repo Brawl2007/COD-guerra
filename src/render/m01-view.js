@@ -410,12 +410,13 @@ export class M01View {
       const demolition=kind==='demolition'?demolitionFlash(distance,{scale:profile.scale,flashEnd:profile.flashEnd,lightRange:profile.lightDistance}):null;
       const flashEnd=demolition?demolition.duration:profile.flashEnd,flashScale=demolition?demolition.scale:profile.scale;
       if(demolition)demolitionFlashState={id:match?.id??'',age,...demolition};
-      const flashN=fxLayerCount(profile.counts.flash,quality,distance);
+      // Far demolition viewers get stacked flash billboards (see M01_FLASH_FAR_LAYERS): one soft puff is too faint over the horizon haze.
+      const flashN=Math.min(M01_BATTLEFIELD_FX_LIMITS.flash,fxLayerCount(profile.counts.flash,quality,distance)+(demolition?demolition.extraLayers:0));
       for(let j=0;j<flashN;j++){
         const n0=visualNoise(b.seed,2+j*3),life=staggeredLife(age,0,flashEnd,n0,.08);if(!life.life)continue;
         const s=flashScale*(.70+.34*life.t)*(.82+visualNoise(b.seed,3+j*3)*.28)*farScale;
         put('flash',{x:b.x+(n0-.5)*profile.scale*.08,y:b.y+profile.scale*(.11+.08*life.t),z:b.z+(visualNoise(b.seed,4+j*3)-.5)*profile.scale*.08},
-          s,s*(.58+.18*visualNoise(b.seed,5+j*3)),.94*life.life,kind==='small'?'#fff1c7':'#fff0c0',b.seed,2+j);
+          s,s*(.58+.18*visualNoise(b.seed,5+j*3)),.94*life.life,kind==='small'?'#fff1c7':demolition?demolition.color:'#fff0c0',b.seed,2+j);
       }
       const coreN=fxLayerCount(profile.counts.core,quality,distance);
       for(let j=0;j<coreN;j++){
@@ -742,7 +743,10 @@ export class M01View {
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},
     combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),
     demolition:{clock:this.lastClock,collapseSeconds:M01_COLLAPSE_DURATION,budget:M01_DEMOLITION_BUDGET,entries:this.demolitionState.entries,pieces:this.demolitionState.pieces,flash:this.demolitionState.flash,
-      far:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality).farDemolitions},
+      far:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality).farDemolitions,
+      // The camera of the last drawn frame (read-only): lets the browser spec project a world point onto the screenshot.
+      camera:{position:this.camera.position.toArray(),quaternion:this.camera.quaternion.toArray(),fov:this.camera.fov,aspect:this.camera.aspect,
+        near:this.camera.near,far:this.camera.far,width:this.owner.canvas.width,height:this.owner.canvas.height}},
     battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},meta:structuredClone(this.battlefieldFxMeta),limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
     this.disposed=true;this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();

@@ -74,13 +74,21 @@ export function collapsePose({age,offset=[0,0,0],seed=0,duration=M01_COLLAPSE_DU
 // ---------------------------------------------------------------------------------------------------------------------
 // 2. Flash / light: minimum size and duration by distance
 
-export const M01_FLASH_MIN_ANGULAR=.05;        // rad (~2.9 deg, ~29 px of a 720 px / 70 deg view): smallest flash angular size beyond ~600 m
+export const M01_FLASH_MIN_ANGULAR=.08;        // rad (~4.6 deg, ~41 px of a 720 px / 70 deg view): smallest flash angular size beyond ~360 m
 export const M01_FLASH_MIN_DURATION=.45;       // s: flash lifetime from ~300 m outwards (the profile's 0.12 s is kept below 85 m)
-export const M01_FLASH_MAX_SCALE_FACTOR=2.2;   // the size floor never inflates the profile by more than this
+export const M01_FLASH_MAX_SCALE_FACTOR=3.2;   // the size floor never inflates the profile by more than this (93 m: keeps .08 rad out to ~1.15 km)
 export const M01_LIGHT_FAR_SECONDS=.9;         // s the explosion light lasts for a far viewer (profile: <= 0.34 s)
 export const M01_LIGHT_RANGE_GAIN=2.4;         // light range multiplier for a far viewer (profile 108 m -> ~260 m)
 export const M01_FLASH_NEAR_DISTANCE=85;       // same band edges as fxDistanceBand: near < 85 m, far >= 300 m
 export const M01_FLASH_FAR_DISTANCE=300;
+// One flash billboard is the shared soft puff: texture alpha <= .68 (centre ~.35) times the .94 peak, so a single far flash over the
+// pale horizon haze differs from it by ~30/255 at its centre only (measured with the real texture and tone mapping: 7..23 px beyond
+// +20/255) and vanishes. Stacking the same billboard raises the accumulated alpha; the colour warms with distance so the flash also
+// differs from the haze in hue (blue channel), not only in luminance. Near the viewer (< 85 m) nothing changes.
+export const M01_FLASH_FAR_LAYERS=5;           // extra stacked flash billboards at >= 300 m (the flash pool holds 16; the profile uses 2)
+export const M01_FLASH_NEAR_COLOR='#fff0c0';
+export const M01_FLASH_FAR_COLOR='#ffd27a';
+const mixHex=(a,b,t)=>'#'+[1,3,5].map(i=>Math.round(parseInt(a.slice(i,i+2),16)+(parseInt(b.slice(i,i+2),16)-parseInt(a.slice(i,i+2),16))*t).toString(16).padStart(2,'0')).join('');
 
 /**
  * Flash/light parameters for a viewer `distance` metres from the blast. Below 85 m this returns the profile values
@@ -90,9 +98,25 @@ export function demolitionFlash(distance,{scale=29,flashEnd=.12,lightRange=108,l
   const d=Math.max(0,Number(distance)||0),k=smooth((d-M01_FLASH_NEAR_DISTANCE)/(M01_FLASH_FAR_DISTANCE-M01_FLASH_NEAR_DISTANCE));
   const wanted=M01_FLASH_MIN_ANGULAR*d,flashScale=Math.min(scale*M01_FLASH_MAX_SCALE_FACTOR,Math.max(scale,wanted));
   return {distance:d,scale:flashScale,scaleFactor:flashScale/scale,angular:d>0?flashScale/d:Infinity,
+    extraLayers:Math.round(M01_FLASH_FAR_LAYERS*k),color:mixHex(M01_FLASH_NEAR_COLOR,M01_FLASH_FAR_COLOR,k),
     duration:flashEnd+(Math.max(flashEnd,M01_FLASH_MIN_DURATION)-flashEnd)*k,
     lightSeconds:lightSeconds+(Math.max(lightSeconds,M01_LIGHT_FAR_SECONDS)-lightSeconds)*k,
     lightRange:lightRange*(1+(M01_LIGHT_RANGE_GAIN-1)*k),lightDecay:2-k};
+}
+
+/**
+ * Screen position (CSS pixels, y down) of a world point for a camera described by the view diagnostics
+ * ({position:[x,y,z],quaternion:[x,y,z,w],fov (vertical, degrees),aspect,near,width,height}); the camera looks down its local -Z.
+ * `behind` is true when the point is not in front of the near plane; `inside` when it is also within the viewport.
+ */
+export function projectToScreen(camera,point){
+  const [qx,qy,qz,qw]=camera.quaternion,px=point.x-camera.position[0],py=point.y-camera.position[1],pz=point.z-camera.position[2];
+  // v' = conjugate(q) * v: t = 2 (u x v), v' = v + w t + u x t with u = -q.xyz
+  const ux=-qx,uy=-qy,uz=-qz,tx=2*(uy*pz-uz*py),ty=2*(uz*px-ux*pz),tz=2*(ux*py-uy*px);
+  const vx=px+qw*tx+(uy*tz-uz*ty),vy=py+qw*ty+(uz*tx-ux*tz),vz=pz+qw*tz+(ux*ty-uy*tx);
+  const depth=-vz,focal=1/Math.tan(camera.fov*Math.PI/360),behind=!(depth>(camera.near??.05));
+  const x=((vx*focal/(depth*camera.aspect))*.5+.5)*camera.width,y=((-vy*focal/depth)*.5+.5)*camera.height;
+  return {x,y,depth,behind,inside:!behind&&x>=0&&x<=camera.width&&y>=0&&y<=camera.height};
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -182,11 +206,11 @@ export function demolitionParticles({damage,clock,quality='medium',surfaceY=()=>
   points.forEach((point,i)=>{
     const a=age-(M01_SPLASH_DELAY+demolitionNoise(seed,10+i)*.35);if(a<0||a>M01_SPLASH_LIFE)return;
     const k=a/M01_SPLASH_LIFE,ground=point.surface==='water'?M01_WATER_Y:surfaceY(point.x,point.z),water=point.surface==='water';
-    for(let j=0,n=count(3,density);j<n;j++){
+    for(let j=0,n=count(4,density);j<n;j++){
       const n0=demolitionNoise(seed,100+i*8+j*2),n1=demolitionNoise(seed,101+i*8+j*2),angle=n0*Math.PI*2;
-      const width=(water?5+8*k:6+10*k)*(.7+n1*.6),r=water?(n1-.5)*7:k*5.5*(.5+n0);
+      const width=(water?7+11*k:6+10*k)*(.7+n1*.6),r=water?(n1-.5)*7:k*5.5*(.5+n0);
       puffs.push({x:point.x+Math.cos(angle)*r,y:ground+(water?(2+9*Math.sqrt(k))*(.6+n0*.8):1+a*2+n1),z:point.z+Math.sin(angle)*r,
-        sx:width,sy:width*(water?1.5:.7),opacity:(water?.55:.5)*(1-k)*Math.min(1,a/.15),color:water?'#d7e1e3':'#a08e72',seed:seed+i,variant:300+i*4+j});
+        sx:width,sy:width*(water?1.5:.7),opacity:(water?.85:.72)*(1-k)*Math.min(1,a/.15),color:water?'#d7e1e3':'#a08e72',seed:seed+i,variant:300+i*4+j});
     }
     for(let j=0,n=count(4,density);j<n;j++){
       const n0=demolitionNoise(seed,200+i*8+j*3),n1=demolitionNoise(seed,201+i*8+j*3),n2=demolitionNoise(seed,202+i*8+j*3),angle=n0*Math.PI*2;
@@ -198,16 +222,16 @@ export function demolitionParticles({damage,clock,quality='medium',surfaceY=()=>
   // Earth rain at the west firing post once the shock reaches it (distance / 343 s), each clod falling from M01_RAIN_HEIGHT.
   if(damage.id==='west_demolition'){
     const post=M01_WEST_FIRING_POST,arrive=tremorDelay(Math.hypot(damage.x-post.x,damage.z-post.z))+.3,fall=Math.sqrt(2*M01_RAIN_HEIGHT/9.8);
-    for(let j=0,n=count(10,density);j<n;j++){
+    for(let j=0,n=count(16,density);j<n;j++){
       const n0=demolitionNoise(seed,400+j*4),n1=demolitionNoise(seed,401+j*4),n2=demolitionNoise(seed,402+j*4),angle=n0*Math.PI*2,r=Math.sqrt(n1)*16;
       const a=age-(arrive+n2*2.9);if(a<0||a>fall+.6)continue;
       const x=post.x+Math.cos(angle)*r+a*.8,z=post.z+Math.sin(angle)*r,ground=surfaceY(x,z)??post.y;
       if(a<=fall){
-        const s=.12+n0*.2;
+        const s=.3+n0*.5;
         chips.push({x,y:ground+M01_RAIN_HEIGHT-4.9*a*a,z,rx:a*(2+n1*3),ry:angle,rz:a*(3+n2*4),sx:s,sy:s*.6,sz:s*.8});
       }else if(j%2===0){
         const k=(a-fall)/.6,w=(2.5+4*k)*(.7+n1*.6);
-        puffs.push({x,y:ground+.6+k*1.2,z,sx:w,sy:w*.55,opacity:.38*(1-k),color:'#8f7f66',seed:seed+j,variant:500+j});
+        puffs.push({x,y:ground+.6+k*1.2,z,sx:w,sy:w*.55,opacity:.55*(1-k),color:'#8f7f66',seed:seed+j,variant:500+j});
       }
     }
     if(age>arrive&&age<arrive+5){
@@ -215,7 +239,7 @@ export function demolitionParticles({damage,clock,quality='medium',surfaceY=()=>
       for(let j=0,n=count(3,density);j<n;j++){
         const n0=demolitionNoise(seed,450+j);
         puffs.push({x:post.x+(n0-.5)*18+age*.8,y:(surfaceY(post.x,post.z)??post.y)+7+n0*5,z:post.z+(demolitionNoise(seed,460+j)-.5)*18,sx:16,sy:9,
-          opacity:.3*Math.min(1,k*6)*(1-k),color:'#9a8a70',seed:seed+40+j,variant:520+j});
+          opacity:.45*Math.min(1,k*6)*(1-k),color:'#9a8a70',seed:seed+40+j,variant:520+j});
       }
     }
   }
@@ -228,7 +252,7 @@ export function demolitionParticles({damage,clock,quality='medium',surfaceY=()=>
         const n0=demolitionNoise(seed,600+i*4+j),n1=demolitionNoise(seed,601+i*4+j);
         const ground=point.surface==='water'?M01_WATER_Y:surfaceY(point.x,point.z),w=(22+hazeAge*1.4)*(.75+n0*.5);
         puffs.push({x:point.x+(n0-.5)*18+hazeAge*.9,y:ground+6+hazeAge*.5+n1*4,z:point.z+(n1-.5)*14,sx:w,sy:w*.45,
-          opacity:.26*Math.min(1,hazeAge/1.2)*(1-k)*(1-k*.4),color:point.surface==='water'?'#a9aca6':'#9e8d72',seed:seed+60+i*2+j,variant:640+i*3+j});
+          opacity:.34*Math.min(1,hazeAge/1.2)*(1-k)*(1-k*.4),color:point.surface==='water'?'#a9aca6':'#9e8d72',seed:seed+60+i*2+j,variant:640+i*3+j});
       }
     });
   }
