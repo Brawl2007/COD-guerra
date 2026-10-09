@@ -34,7 +34,12 @@ fi
 
 mkdir -p "$dst"
 cp "$src"/*.md "$dst"/
-echo "[OK] $(ls "$src"/*.md | wc -l) agentes copiados para $dst (sessões novas do Claude Code passam a vê-los em qualquer pasta)"
+# captain20: o mesmo Captain com outro nome, para pastas cujo .claude/agents/captain.md antigo (lista de
+# 6 agentes) teria prioridade sobre o de utilizador. Arranque: `claude --agent captain20`.
+sed -e 's/^name: captain$/name: captain20/' \
+    -e 's/^description: /description: (user-level copy with the 20 model x effort agents) /' \
+    "$src/captain.md" > "$dst/captain20.md"
+echo "[OK] $(ls "$src"/*.md | wc -l) agentes copiados para $dst, mais captain20 (sessões novas do Claude Code passam a vê-los em qualquer pasta)"
 
 if [ "${1:-}" = "--hook" ]; then
   mkdir -p "$(dirname "$hook_dst")"

@@ -91,6 +91,12 @@ Use tools instead of model judgment when possible: Git for branch/HEAD/diff; tes
 
 Do not use an agent to decide something a deterministic tool can prove.
 
+## Running in a checkout without the full toolkit
+
+If a tool this file names is absent in the current checkout (for example `.agent/tools/jev_router.py`,
+`task_discovery.py` or `claude_setup_check.py`), skip that step once, say so in the handoff, and use the
+routing table below directly. Never stop a task because an optional tool is missing.
+
 ## Startup: existing runs
 
 Before creating a new RUN_ID, run `python3 .agent/tools/task_discovery.py` (read-only). For a run matching the TASK_ID, inspect `python3 .agent/tools/task_discovery.py --run <RUN_ID>` and follow its `NEXT_ACTION`.

@@ -81,9 +81,12 @@ worktree (`COD-guerra`, `COD-guerra-v7-cert`, ...) e em qualquer sessão nova do
 ```
 
 Regras do Claude Code: carrega os agentes no arranque da sessão (abrir sessão nova depois de instalar);
-se a pasta tiver um `.claude/agents/` próprio, os nomes repetidos aí têm prioridade sobre os de utilizador
-(ex.: numa branch do Codex, o `captain.md` dela ganha ao de utilizador, mas os 20 `<modelo>-<esforço>`
-vêm do utilizador). Depois de alterar agentes no repositório, repetir o instalador. O guarda `pre-push`
+se a pasta tiver um `.claude/agents/` próprio, os nomes repetidos aí têm prioridade sobre os de utilizador.
+Por isso, numa pasta cuja branch ainda tem o `captain.md` antigo (lista de 6 agentes, que bloqueia os
+outros com `--agent captain`), arrancar com **`claude --agent captain20`**: é o mesmo Captain, instalado a
+nível de utilizador com a lista completa, e os 20 `<modelo>-<esforço>` vêm também do utilizador. As skills
+e o `.agent/` continuam a ser os da pasta; ferramentas em falta são saltadas com aviso no handoff.
+Depois de alterar agentes no repositório, repetir o instalador. O guarda `pre-push`
 é por clone e já cobre todos os worktrees; o relatório `agent_models_report.py` lê `~/.claude/projects`,
 logo cobre todas as pastas e sessões.
 

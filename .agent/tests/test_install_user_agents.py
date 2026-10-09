@@ -25,9 +25,13 @@ class InstallUserAgentsTest(unittest.TestCase):
 
             r = run(user_dir=str(user))
             self.assertEqual(r.returncode, 0, r.stderr)
-            expected = sorted(p.name for p in (REPO / ".claude" / "agents").glob("*.md"))
-            self.assertEqual(sorted(p.name for p in (user / "agents").glob("*.md")), expected)
-            self.assertGreaterEqual(len(expected), 29)
+            expected = sorted(p.name for p in (REPO / ".claude" / "agents").glob("*.md")) + ["captain20.md"]
+            self.assertEqual(sorted(p.name for p in (user / "agents").glob("*.md")), sorted(expected))
+            self.assertGreaterEqual(len(expected), 30)
+            c20 = (user / "agents" / "captain20.md").read_text()
+            self.assertIn("name: captain20\n", c20)
+            self.assertIn("Agent(implementer, verifier, reviewer, explorer, Explore, researcher, implementer-deep, reviewer-critical, haiku-low", c20)
+            self.assertIn("model: opus\n", c20)
             self.assertEqual(run("--check", user_dir=str(user)).returncode, 0)
 
             r = run("--hook", user_dir=str(user))
