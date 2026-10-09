@@ -24,6 +24,8 @@ import {M01BridgePortalPolish,bridgeMaterialSlot} from './m01-bridge-portal-poli
 import {M01DamageDecals} from './m01-damage-decals.js';
 import {WEAPON_PRESENTATION,WeaponViewFx,WeaponWorldFx,WeaponLighting,viewUp,prewarmWeaponFx} from './first-person-weapon-fx.js';
 import {M01BridgeStructure,M01_TRACK_CENTRES} from './m01-bridge-structure.js';
+import {isDemolitionDamage,collapseTwinName,collapseDamageId,collapseSeed,collapsePose,collapseProgress,demolitionFlash,demolitionFallPoints,demolitionSilenceWindow,
+  farFeedback,farFeedbackApplies,M01_COLLAPSE_DURATION,M01_BLAST_CHIP_MATERIALS,M01_DEMOLITION_BUDGET} from './m01-demolition.js';
 
 export const M01_BATTLEFIELD_FX_LIMITS=Object.freeze({bursts:16,flash:16,core:48,fire:96,smoke:128,dust:128,shards:96,lights:1});
 const FX_DENSITY={low:.55,medium:.78,high:1};
@@ -79,6 +81,7 @@ export class M01View {
     this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};
     this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
     this.combatFeedback=new M01CombatFeedback();
+    this.demolitionState={entries:[],pieces:[],flash:null};this.collapseTilt=new THREE.Quaternion();this.collapseEuler=new THREE.Euler();
     this.portalPolish=new M01BridgePortalPolish({stone:this.materials.bridgeStone});
     this.bridgeStructure=new M01BridgeStructure({steel:this.materials.bridgeSteel,rail:this.materials.metal,timber:this.materials.wood,stone:this.materials.bridgeStone});
     this.atmosphere=new M01Atmosphere(this.scene);
@@ -105,12 +108,25 @@ export class M01View {
           const slot=bridgeMaterialSlot(n.material?.name,portalAsset||/portal|tower/i.test(context));
           const replacement=slot==='metal'&&n.material?.name==='steel_painted'?'bridgeSteel':slot;if(replacement)n.material=this.materials[replacement];
         }});
-        const pieces=file.nodes.map(n=>({name:n.name,node:asset.scene.getObjectByName(n.name)})).filter(n=>n.node);
+        const pieces=file.nodes.map(n=>({name:n.name,node:asset.scene.getObjectByName(n.name),show:n.showAfterEvent??null})).filter(n=>n.node);
+        this.setupCollapse(pieces);
         for(const piece of pieces)this.portalPolish.attach(piece.node);
         this.bridgeStructure.attachKit(asset.scene,file);
         this.kit.push({file,root:asset.scene,pieces});this.scene.add(asset.scene);
       }catch(error){if(!this.disposed)console.warn(`Ponte M01: ${error.message}`);}
     }));
+  }
+  /**
+   * Demolition set-piece: every LOD's collapsed/rubble node caches its stored transform, so a per-frame SET (never an accumulation)
+   * can animate it from the intact pose and always land on exactly this pose. offset = intact node - stored node.
+   */
+  setupCollapse(pieces){
+    for(const piece of pieces){
+      const source=pieces.find(p=>p.name===collapseTwinName(piece.name)),damageId=collapseDamageId(piece.show);
+      if(!source||!damageId)continue;
+      piece.collapse={damageId,seed:collapseSeed(piece.name),applied:'base',base:{position:piece.node.position.clone(),quaternion:piece.node.quaternion.clone()},
+        offset:[source.node.position.x-piece.node.position.x,source.node.position.y-piece.node.position.y,source.node.position.z-piece.node.position.z]};
+    }
   }
   buildTerrain(world){
     this.world=world;
@@ -255,8 +271,9 @@ export class M01View {
     this.materials.tracer=new THREE.MeshBasicMaterial({color:'#ffb35a',toneMapped:false,fog:false});
     this.materials.puff=new THREE.MeshBasicMaterial({color:'#8c7c66',transparent:true,opacity:.62,depthWrite:false});
     this.materials.gunSmoke=new THREE.MeshBasicMaterial({color:'#b9b8ae',transparent:true,opacity:.55,depthWrite:false,fog:false});
-    this.materials.chip=new THREE.MeshStandardMaterial({color:'#ffffff',roughness:.88,vertexColors:true});
-    this.materials.blastShard=new THREE.MeshStandardMaterial({color:'#5c5142',roughness:1,vertexColors:true});
+    // Instance colours (setColorAt) tint these; vertexColors must stay off (no `color` attribute on the tetrahedra: it rendered black).
+    this.materials.chip=new THREE.MeshStandardMaterial(M01_BLAST_CHIP_MATERIALS.chip);
+    this.materials.blastShard=new THREE.MeshStandardMaterial(M01_BLAST_CHIP_MATERIALS.blastShard);
     this.fireBatches={};this.fireDummy=new THREE.Object3D();this.fireColor=new THREE.Color();
     for(const [name,material,capacity]of [['muzzle','flash',96],['tracer','tracer',48],['puff','puff',144],['spark','flash',96],['smoke','gunSmoke',64],['chip','chip',128]]){
       const soft=name==='smoke'||name==='puff',geometry=name==='chip'?this.atmosphere.debrisGeometry:this.sphere;
@@ -274,6 +291,7 @@ export class M01View {
     }
     this.battlefieldShards=new THREE.InstancedMesh(this.atmosphere.debrisGeometry,this.materials.blastShard,M01_BATTLEFIELD_FX_LIMITS.shards);
     this.battlefieldShards.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.battlefieldShards.count=0;this.battlefieldShards.frustumCulled=false;this.effects.add(this.battlefieldShards);
+    this.battlefieldShards.setColorAt(0,this.battlefieldColor.set('#665747'));   // allocate instance colours up front: stable shader variant
     this.explosionLight=new THREE.PointLight('#ff9e45',0,80,2);this.explosionLight.visible=false;this.explosionLight.castShadow=false;this.effects.add(this.explosionLight);
   }
   updateFire(sim){
@@ -344,11 +362,40 @@ export class M01View {
     }
     this.fx=counts;
   }
+  /**
+   * Demolition set-piece (presentation only). Every number is a pure function of `time - damage.started` (simulation clock, never
+   * wall time): the collapsed/rubble nodes are SET each frame from their cached stored transform plus the pose offset (never
+   * accumulated), exactly the stored transform before the blast and from M01_COLLAPSE_DURATION on. `renderState.parts` (which
+   * node is visible) is not touched. Far-field exposure/tremor is registered once per damage entry and replayed by age.
+   */
+  updateDemolition(state,time,sim){
+    const byId=new Map(),player=sim.player,entries=[];
+    for(const d of state.damage)if(isDemolitionDamage(d.id)&&(!byId.has(d.id)||d.started>=byId.get(d.id).started))byId.set(d.id,d);
+    for(const [id,d] of byId){
+      const age=time-d.started,distance=Math.hypot(d.x-player.x,d.z-player.z),silence=demolitionSilenceWindow(d);
+      this.combatFeedback.demolition({id,started:d.started,clock:time,distance});
+      entries.push({id,started:d.started,age,progress:collapseProgress(age),duration:M01_COLLAPSE_DURATION,distance,far:farFeedback(age,distance),
+        farActive:farFeedbackApplies(distance),silence:{...silence,active:time>=silence.from&&time<silence.to},fall:demolitionFallPoints(d)});
+    }
+    const euler=this.collapseEuler,tilt=this.collapseTilt,pieces=[];
+    for(const kit of this.kit)for(const piece of kit.pieces){
+      const c=piece.collapse;if(!c)continue;
+      const d=byId.get(c.damageId),age=d?time-d.started:NaN,pose=collapsePose({age,offset:c.offset,seed:c.seed}),node=piece.node;
+      if(pose.active){
+        node.position.set(c.base.position.x+pose.offset[0],c.base.position.y+pose.offset[1],c.base.position.z+pose.offset[2]);
+        node.quaternion.copy(c.base.quaternion).slerp(tilt.setFromEuler(euler.set(pose.tilt[0],pose.tilt[1],pose.tilt[2])),pose.remaining);
+        c.applied='animated';
+      }else if(c.applied!=='base'){node.position.copy(c.base.position);node.quaternion.copy(c.base.quaternion);c.applied='base';}
+      if(node.visible)pieces.push({name:piece.name,lod:kit.file.lod,damageId:c.damageId,phase:pose.active?'falling':pose.progress>=1?'settled':'idle',progress:pose.progress,
+        position:node.position.toArray(),basePosition:c.base.position.toArray(),quaternion:node.quaternion.toArray(),baseQuaternion:c.base.quaternion.toArray()});
+    }
+    this.demolitionState={entries,pieces,flash:this.demolitionState.flash};
+  }
   updateBattlefieldFx(state,time){
     const findDamage=b=>state.damage.find(d=>Math.abs(d.started-b.start)<.08&&Math.hypot(d.x-b.x,d.z-b.z)<2);
     this.bursts=this.bursts.filter(b=>{const d=findDamage(b),profile=battlefieldProfile(d?.id??'',b.aerial);return time>=b.start&&time-b.start<profile.duration;});
     const counts={flash:0,core:0,fire:0,smoke:0,dust:0},dummy=this.battlefieldDummy,quality=this.owner.quality,cam=this.camera.position;
-    const meta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};let shardCount=0,strongest=null;
+    const meta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};let shardCount=0,strongest=null,demolitionFlashState=null;
     const put=(name,p,sx,sy,opacity,color,seed,variant=0)=>{
       const batch=this.battlefieldFxBatches[name],index=counts[name];if(index>=batch.instanceMatrix.count||opacity<=.004)return;
       dummy.position.set(p.x,p.y,p.z);dummy.rotation.set(0,0,0);dummy.scale.set(sx,sy,1);dummy.updateMatrix();batch.setMatrixAt(index,dummy.matrix);
@@ -359,10 +406,14 @@ export class M01View {
       const age=time-b.start,match=findDamage(b),id=match?.id??'',kind=battlefieldBlastKind(id,b.aerial),profile=battlefieldProfile(id,b.aerial);
       const distance=Math.hypot(b.x-cam.x,b.y-cam.y,b.z-cam.z),band=fxDistanceBand(distance);meta.kinds[kind]++;meta.bands[band]++;
       const farScale=band==='far'?1.12:band==='mid'?1.04:1;
+      // Demolition only: minimum angular size/duration of the flash and reach of the light by viewer distance (identical below 85 m).
+      const demolition=kind==='demolition'?demolitionFlash(distance,{scale:profile.scale,flashEnd:profile.flashEnd,lightRange:profile.lightDistance}):null;
+      const flashEnd=demolition?demolition.duration:profile.flashEnd,flashScale=demolition?demolition.scale:profile.scale;
+      if(demolition)demolitionFlashState={id:match?.id??'',age,...demolition};
       const flashN=fxLayerCount(profile.counts.flash,quality,distance);
       for(let j=0;j<flashN;j++){
-        const n0=visualNoise(b.seed,2+j*3),life=staggeredLife(age,0,profile.flashEnd,n0,.08);if(!life.life)continue;
-        const s=profile.scale*(.70+.34*life.t)*(.82+visualNoise(b.seed,3+j*3)*.28)*farScale;
+        const n0=visualNoise(b.seed,2+j*3),life=staggeredLife(age,0,flashEnd,n0,.08);if(!life.life)continue;
+        const s=flashScale*(.70+.34*life.t)*(.82+visualNoise(b.seed,3+j*3)*.28)*farScale;
         put('flash',{x:b.x+(n0-.5)*profile.scale*.08,y:b.y+profile.scale*(.11+.08*life.t),z:b.z+(visualNoise(b.seed,4+j*3)-.5)*profile.scale*.08},
           s,s*(.58+.18*visualNoise(b.seed,5+j*3)),.94*life.life,kind==='small'?'#fff1c7':'#fff0c0',b.seed,2+j);
       }
@@ -409,9 +460,9 @@ export class M01View {
         dummy.scale.set(s*(.65+n1*.8),s*(.32+n0*.48),s*(.62+n2*.55));dummy.updateMatrix();this.battlefieldShards.setMatrixAt(shardCount,dummy.matrix);
         this.battlefieldShards.setColorAt(shardCount,this.battlefieldColor.set(j%4===0?'#88745c':j%2?'#51483d':'#665747'));shardCount++;
       }
-      const light=staggeredLife(age,0,Math.min(.34,profile.coreEnd),.08,.05);
+      const light=staggeredLife(age,0,demolition?demolition.lightSeconds:Math.min(.34,profile.coreEnd),.08,.05);
       if(light.life){
-        const intensity=profile.lightPeak*light.life;if(!strongest||intensity>strongest.intensity)strongest={b,intensity,distance:profile.lightDistance,kind};
+        const intensity=profile.lightPeak*light.life;if(!strongest||intensity>strongest.intensity)strongest={b,intensity,distance:demolition?demolition.lightRange:profile.lightDistance,decay:demolition?demolition.lightDecay:2,kind};
       }
     }
     for(const [name,batch]of Object.entries(this.battlefieldFxBatches)){
@@ -419,8 +470,8 @@ export class M01View {
       for(const attr of ['puffOpacity','puffSpin','puffShape'])if(batch.geometry.attributes[attr])batch.geometry.attributes[attr].needsUpdate=true;
     }
     this.battlefieldShards.count=shardCount;this.battlefieldShards.instanceMatrix.needsUpdate=true;if(this.battlefieldShards.instanceColor)this.battlefieldShards.instanceColor.needsUpdate=true;
-    this.explosionLight.visible=Boolean(strongest);if(strongest){this.explosionLight.position.set(strongest.b.x,strongest.b.y+3,strongest.b.z);this.explosionLight.intensity=Math.min(5,strongest.intensity);this.explosionLight.distance=strongest.distance;this.explosionLight.color.set(strongest.kind==='small'?'#ffb15a':'#ff9340');}
-    this.battlefieldFxCounts={...counts,shard:shardCount};this.battlefieldFxMeta=meta;
+    this.explosionLight.visible=Boolean(strongest);if(strongest){this.explosionLight.position.set(strongest.b.x,strongest.b.y+3,strongest.b.z);this.explosionLight.intensity=Math.min(5,strongest.intensity);this.explosionLight.distance=strongest.distance;this.explosionLight.decay=strongest.decay;this.explosionLight.color.set(strongest.kind==='small'?'#ffb15a':'#ff9340');}
+    this.battlefieldFxCounts={...counts,shard:shardCount};this.battlefieldFxMeta=meta;this.demolitionState.flash=demolitionFlashState;
   }
   /** Impacto de um tiro alemão (evento round-impact da simulação): poeira/faísca/chips conforme a superfície. */
   impact(point,material,clock){this.impacts.push({x:point.x,y:point.y,z:point.z,material:material??'earth',start:clock,seed:fxSeed(point,clock)});if(this.impacts.length>96)this.impacts.shift();}
@@ -563,7 +614,7 @@ export class M01View {
   }
   syncDamage(sim,state){
     const yardFire=yardWagonFireDamage(sim.destruction,sim.world);
-    this.atmosphere.update(yardFire?{...state,damage:[...state.damage,yardFire]}:state,sim.clock,this.owner.quality);
+    this.atmosphere.update(yardFire?{...state,damage:[...state.damage,yardFire]}:state,sim.clock,this.owner.quality,{surfaceY:(x,z)=>sim.world.terrainHeightAt(x,z)});
     const live=new Set(sim.grenades.active.map(g=>g.id));
     for(const g of sim.grenades.active){let m=this.grenadeViews.get(g.id);if(!m){m=this.mesh('sphere','metal',[0,0,0],[.07,.07,.07],this.effects);this.grenadeViews.set(g.id,m);}m.position.set(g.x,g.y,g.z);}
     for(const [id,m]of this.grenadeViews)if(!live.has(id)){this.effects.remove(m);this.grenadeViews.delete(id);}
@@ -591,6 +642,7 @@ export class M01View {
     for(const material of Object.values(this.materials))if(material.userData.m01Time)material.userData.m01Time.value=sim.clock;
     this.syncSolids(sim.world);this.portalPolish.sync(this.owner.quality);this.bridgeStructure.sync(this.owner.quality,this.camera.position,sim.world);const dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
+    this.updateDemolition(state,time,sim);
     this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.lighting(sim);
     this.train.visible=state.train963;this.panzerzug.visible=state.panzerzug;
     this.updateAircraft(state,time,sim.player,ju87HeardAt(sim));this.updateBombs(state,time,sim.player,sim.world);
@@ -672,6 +724,7 @@ export class M01View {
     this.lastFrame=null;this.flashUntil=0;this.fallbackShot=null;this.shakeUntil=0;this.lastClock=0;this.impacts=[];this.bursts=[];this.combatFeedback.reset();this.damageDecals.reset();
     for(const b of Object.values(this.fireBatches))b.count=0;for(const b of Object.values(this.battlefieldFxBatches))b.count=0;
     this.battlefieldShards.count=0;this.explosionLight.visible=false;this.explosionLight.intensity=0;
+    this.demolitionState={entries:[],pieces:[],flash:null};
     this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
   }
   get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,
@@ -688,6 +741,8 @@ export class M01View {
     damageDecals:this.damageDecals.diagnostics,
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},
     combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),
+    demolition:{clock:this.lastClock,collapseSeconds:M01_COLLAPSE_DURATION,budget:M01_DEMOLITION_BUDGET,entries:this.demolitionState.entries,pieces:this.demolitionState.pieces,flash:this.demolitionState.flash,
+      far:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality).farDemolitions},
     battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},meta:structuredClone(this.battlefieldFxMeta),limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
     this.disposed=true;this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();

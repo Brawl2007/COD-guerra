@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {puffTexture,cloudFieldTexture} from './m01-surfaces.js';
 import {dustPuffTexture} from './m01-fx-textures.js';
 import {CLOUD_WIND} from './m01-lighting.js';
+import {demolitionParticles} from './m01-demolition.js';
 
 // Presentation-only deterministic noise. It never consumes the simulation RNG.
 export function visualNoise(seed,index=0){
@@ -98,9 +99,26 @@ export class M01Atmosphere {
     u.skyGlow.value=sky.glow;u.discStrength.value=sky.discStrength;u.sunDirection.value.set(...sky.sunDir);
     this.material.uniforms.fogColor.value.setRGB(...model.fog.color);this.dustMaterial.uniforms.fogColor.value.setRGB(...model.fog.color);
   }
-  update(state,clock,quality){
-    let count=0;const density=quality==='low'?.58:quality==='medium'?.80:1,max=quality==='low'?112:quality==='medium'?192:256;
+  update(state,clock,quality,context={}){
+    let count=0,chips=0;const density=quality==='low'?.58:quality==='medium'?.80:1,max=quality==='low'?112:quality==='medium'?192:256;
     const damage=state.damage.filter(d=>d.smokeVisible).sort((a,b)=>Number(b.id.endsWith('_demolition'))-Number(a.id.endsWith('_demolition'))||b.started-a.started);
+    // Demolition set-piece first (priority over generic blasts): river/ground impact debris and splashes, earth rain at the west
+    // firing post, suspended dust. Bounded by M01_DEMOLITION_BUDGET inside the same pools and the same `count<max` / `chips<64` guards.
+    for(const d of damage){
+      if(d.id!=='east_demolition'&&d.id!=='west_demolition')continue;
+      const fx=demolitionParticles({damage:d,clock,quality,surfaceY:context.surfaceY});
+      for(const p of fx.puffs){
+        if(count>=max)break;
+        this.dummy.position.set(p.x,p.y,p.z);this.dummy.rotation.set(0,0,0);this.dummy.scale.set(p.sx,p.sy,1);this.dummy.updateMatrix();
+        this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,p.seed,p.variant);
+        this.puffs.setColorAt(count,this.color.set(p.color));this.fade.setX(count++,p.opacity);
+      }
+      for(const c of fx.chips){
+        if(chips>=64)break;
+        this.dummy.position.set(c.x,c.y,c.z);this.dummy.rotation.set(c.rx,c.ry,c.rz);this.dummy.scale.set(c.sx,c.sy,c.sz);this.dummy.updateMatrix();
+        this.debris.setMatrixAt(chips++,this.dummy.matrix);
+      }
+    }
     for(const d of damage){
       const demolition=d.id.endsWith('_demolition'),heavy=demolition||/bomb|raid/.test(d.id),age=Math.max(0,clock-d.started);
       const base=demolition?30:heavy?22:17,number=Math.max(6,Math.round(base*density));
@@ -131,7 +149,6 @@ export class M01Atmosphere {
         this.puffs.setColorAt(count,this.color.set(shade));this.fade.setX(count,opacity);count++;
       }
     }
-    let chips=0;
     for(const d of damage){
       const age=clock-d.started;if(age<0||age>3.2)continue;
       const heavy=d.id.endsWith('_demolition')||/bomb|raid/.test(d.id),seed=(Math.floor(d.started*1000)^Math.floor(d.x*97)^Math.floor(d.z*193))>>>0;
