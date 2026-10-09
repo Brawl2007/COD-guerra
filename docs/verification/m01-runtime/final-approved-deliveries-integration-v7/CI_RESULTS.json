@@ -77,16 +77,39 @@
     ]
   },
   "fullBrowser": {
-    "runId": null,
-    "jobId": null,
-    "head": null,
-    "status": "pending",
-    "conclusion": null,
-    "url": null,
-    "execution": "Fourth complete unfiltered invocation, not yet started; to be filled by the Captain after the run",
+    "runId": 37876099475,
+    "jobId": 113644942412,
+    "head": "e0bb04e2c85208b1d58d8bc44ac091bf16c66458",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37876099475",
+    "execution": "Fourth complete unfiltered invocation after three trace-driven harness corrections; one invocation, no historical/focused result union",
     "workers": 1,
     "retries": 0,
-    "inventoryExpected": 84
+    "inventory": 84,
+    "productionUnchanged": true,
+    "harnessCorrectionHeads": [
+      "91c7a844c7d5020a552969027a424aad1f13dcd4",
+      "0a83942b41957e0b900b8a8fc704eb7860f84ba9",
+      "29e26b7f5c5b90720463853c76b34aa3454090b1"
+    ],
+    "executed": 84,
+    "passed": 84,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "globalErrors": 0,
+    "durationMs": 5733758.757,
+    "startedAt": "2026-10-09T02:45:51Z",
+    "completedAt": "2026-10-09T04:22:34Z",
+    "report": "BROWSER_FULL_FOURTH.json.gz",
+    "summary": "BROWSER_FULL_FOURTH_SUMMARY.json.gz",
+    "artifact": {
+      "id": 11595565742,
+      "bytes": 80191367,
+      "sha256": "86b10b0e27656c06c0572222c03d610778babcdcce6c4833965a44baa4f8e294",
+      "downloadAndZipCrcVerified": true
+    }
   },
   "fpsMeasured": false,
   "physicalGpuMemoryMeasured": false,

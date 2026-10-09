@@ -1,13 +1,13 @@
 {
   "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
-  "observedAt": "2026-10-09T02:00:00Z",
-  "observedV7Head": "9d9844e65701aeb80af854d8f9b7ed6dc9a351e8",
+  "observedAt": "2026-10-09T04:25:39Z",
+  "observedV7Head": "e0bb04e2c85208b1d58d8bc44ac091bf16c66458",
   "branches": 117,
   "changesSincePriorClosureSnapshot": [
     {
       "branch": "codex/m01-final-production-consolidation-v7",
-      "previous": "93c2519d7647b58de3ea7f0a88c6237784aca00f",
-      "current": "9d9844e65701aeb80af854d8f9b7ed6dc9a351e8"
+      "previous": "9d9844e65701aeb80af854d8f9b7ed6dc9a351e8",
+      "current": "e0bb04e2c85208b1d58d8bc44ac091bf16c66458"
     }
   ],
   "sourcesAndProtectedUnchanged": true,
@@ -35,5 +35,18 @@
     "summary": "BROWSER_FULL_THIRD_SUMMARY.json.gz",
     "diagnosis": "BROWSER_FULL_THIRD_DIAGNOSIS.json"
   },
-  "decision": "Only this task's V7 advanced. All source and protected heads remain unchanged; no additional eligible delivery."
+  "decision": "Only this task's V7 advanced (third-run evidence, locomotive harness correction, workflow trigger). V6, main and deploy heads re-read remotely and unchanged.",
+  "browserFourthRun": {
+    "runId": 37876099475,
+    "jobId": 113644942412,
+    "head": "e0bb04e2c85208b1d58d8bc44ac091bf16c66458",
+    "status": "completed",
+    "conclusion": "success",
+    "executed": 84,
+    "passed": 84,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "summary": "BROWSER_FULL_FOURTH_SUMMARY.json.gz"
+  }
 }

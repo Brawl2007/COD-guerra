@@ -1,7 +1,7 @@
 {
   "productionRuntimeHead": "8f7d1ea8f096472436c860e118a8c799e740e23f",
   "nodeHead": "a97a3152d4848517a267d80c0cbbdc24bf2ddaeb",
-  "browserHead": "9d9844e65701aeb80af854d8f9b7ed6dc9a351e8",
+  "browserHead": "e0bb04e2c85208b1d58d8bc44ac091bf16c66458",
   "visualPreviewHead": "6e61aaa2efa98ff6a05f12f9ae5b0bf7190ba353",
   "ciEvidenceCommit": "93c2519d7647b58de3ea7f0a88c6237784aca00f",
   "runtimeFiles": [
@@ -89,5 +89,16 @@
     ],
     "reason": "Third 83/84 report: post-reload read at line 19 preceded the first rendered frame after restore (train visibility is applied in render()). Added the same visible&&loaded wait used before the first read (line 12); no assertion removed; production unchanged.",
     "head": "29e26b7f5c5b90720463853c76b34aa3454090b1"
+  },
+  "fourthBrowserHead": "e0bb04e2c85208b1d58d8bc44ac091bf16c66458",
+  "sourceAndTestsUnchangedAfterFourthFullBrowserStart": true,
+  "browserFourthRun": {
+    "id": 37876099475,
+    "jobId": 113644942412,
+    "head": "e0bb04e2c85208b1d58d8bc44ac091bf16c66458",
+    "status": "completed",
+    "conclusion": "success",
+    "executed": 84,
+    "passed": 84
   }
 }
