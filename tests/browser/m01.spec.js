@@ -35,6 +35,17 @@ async function freezeClick(page,button){
   });
   await page.locator(button).click();await expect(page.locator('#pause')).toBeVisible();
 }
+async function waitForBearingFrame(page,angle,bearing,minFrame){
+  // The failing full-suite traces had the correct simulated yaw/status after a slow
+  // software-rendered frame, while the five-second DOM assertion still saw the old HUD.
+  // Require the actual turn AND a new frame presenting its exact authoritative status.
+  await page.waitForFunction(({angle,bearing,minFrame})=>{
+    const d=window.gameDiagnostics(),hud=document.querySelector('#objective-status').textContent;
+    const error=Math.abs(Math.atan2(Math.sin(d.player.angle-angle),Math.cos(d.player.angle-angle)));
+    return error<.01&&d.m01.renderedFrames>minFrame&&hud===d.m01.threat.status&&hud.includes(bearing);
+  },{angle,bearing,minFrame},{timeout:process.env.CI?60000:30000});
+  return page.evaluate(()=>({data:window.gameDiagnostics(),hud:document.querySelector('#objective-status').textContent}));
+}
 test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A',async({page},info)=>{
   test.setTimeout(process.env.CI?180000:90000);
   const {errors,failed}=await open(page);await page.screenshot({path:info.outputPath('m01-menu.png')});await start(page);
@@ -336,7 +347,10 @@ for(const truss of [false,true])test(`adjustment salvo ${truss?'behind the truss
     document.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0,bubbles:true}));
     document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
   },Math.atan2(Math.sin(aim+Math.PI-before.player.angle),Math.cos(aim+Math.PI-before.player.angle))/.0022);
+  const turned=await waitForBearingFrame(page,aim+Math.PI,'atrás de si',before.m01.renderedFrames);
   await expect(page.locator('#objective-status')).toContainText('atrás de si');
+  expect(turned.hud).toBe(turned.data.m01.threat.status);
+  await info.attach('bearing-frame-proof',{body:JSON.stringify({before,turned}),contentType:'application/json'});
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
@@ -355,14 +369,17 @@ test('demolition inside the road truss shows the actual bearing while mouse look
     document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
   },Math.atan2(Math.sin(angle),Math.cos(angle))/.0022);
   await turn(aim+Math.PI-initial.player.angle);
+  const awayFrame=await waitForBearingFrame(page,aim+Math.PI,'atrás de si',initial.m01.renderedFrames);
   await expect(page.locator('#objective-status')).toContainText('atrás de si');
-  const away=await page.evaluate(()=>window.gameDiagnostics());
+  const away=awayFrame.data;
   await turn(aim-away.player.angle);
+  const facingFrame=await waitForBearingFrame(page,aim,'em frente',away.m01.renderedFrames);
   await expect(page.locator('#objective-status')).toContainText('em frente');
-  const facing=await page.evaluate(()=>window.gameDiagnostics());
+  const facing=facingFrame.data;
   expect(facing.m01.threat.status).toBe(await page.locator('#objective-status').textContent());
   expect(Math.abs(Math.atan2(Math.sin(facing.player.angle-aim),Math.cos(facing.player.angle-aim)))).toBeLessThan(.01);
   expect(facing.player.x).toBe(initial.player.x);expect(facing.player.z).toBe(initial.player.z);
+  await info.attach('bearing-frame-proof',{body:JSON.stringify({initial,away:awayFrame,facing:facingFrame}),contentType:'application/json'});
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
   await page.screenshot({path:info.outputPath('m01-demolition-inside-truss.png'),timeout:120000});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
@@ -497,7 +514,10 @@ test('a real withdrawal continuation loses men only to rounds from the spans, ke
   // Renderer telemetry is latched only after a world frame with a real muzzle batch was submitted.
   // Unlike polling fireEffects.muzzle, the count remains observable after the short visual flash disappears.
   const muzzleStart=await page.evaluate(()=>window.gameDiagnostics().m01.muzzlePresentation.frames),samples=[];
-  for(let i=0;i<300&&!(samples.length&&samples.at(-1).n<18);i++){
+  // A casualty can precede the next submitted muzzle frame. The full-run trace
+  // stopped here at 17 men; its afterEach observed the real flash only 0.5 sim s later.
+  // Wait for both original requirements instead of ending at the first casualty.
+  for(let i=0;i<300&&!(samples.length&&samples.at(-1).n<18&&samples.at(-1).muzzle.frames>muzzleStart);i++){
     await page.waitForTimeout(250);
     samples.push(await page.evaluate(()=>{const d=window.gameDiagnostics(),g=d.m01;return {clock:d.clock,frame:g.renderedFrames,
       n:g.flags['m01.east_platoon_survivors'],muzzle:{...g.muzzlePresentation},inFlight:g.threat.inFlight,
@@ -508,7 +528,8 @@ test('a real withdrawal continuation loses men only to rounds from the spans, ke
   expect(samples.some(s=>s.origins.some(id=>id.startsWith('de_spans_')))).toBe(true);
   expect(samples.some(s=>s.muzzle.frames>muzzleStart)).toBe(true);
   for(const s of samples){expect(s.hud).toBe(s.sim);expect(s.hud).toContain(`Pelotão leste: ${s.n} homens`);}
-  await page.screenshot({path:info.outputPath('m01-withdrawal-under-fire.png')});
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.screenshot({path:info.outputPath('m01-withdrawal-under-fire.png'),style:'#pause {visibility:hidden !important;}',timeout:120000});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 test('a failed M01 bridge load prevents an invisible bridge; the French sandbox remains selectable',async({page})=>{

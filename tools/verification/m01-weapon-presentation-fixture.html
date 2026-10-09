@@ -8,6 +8,7 @@ import {M01View} from '../../src/render/m01-view.js';
 import {Renderer} from '../../src/render/three-renderer.js';
 import {M01Simulation} from '../../src/game/m01-simulation.js';
 import {Simulation} from '../../src/game/simulation.js';
+import {ejectaPose} from '../../src/render/first-person-weapon-fx.js';
 import * as THREE from 'three';
 const canvas=document.querySelector('canvas');
 let mode=null,sim=null,view=null,bench=null,owner=null,engine=null;
@@ -46,9 +47,24 @@ window.wp={
   state(){
     const weapon=mode==='m01'?sim.weapon.snapshot():{mag:sim.weapon.mag,reserve:sim.weapon.reserve,shotCount:sim.weapon.shotCount,lastShot:sim.weapon.lastShot};
     const d=mode==='m01'?{viewModel:view.viewModel.stats,weaponFx:view.weaponWorldFx.diagnostics,lighting:view.weaponLighting.state}:bench.diagnostics.weaponFx;
-    return structuredClone({mode,clock:sim.clock,player:{x:sim.player.x,y:sim.player.y,z:sim.player.z,angle:sim.player.angle,pitch:sim.player.pitch,aiming:sim.player.aiming},weapon,presentation:d});
+    const info=(mode==='m01'?engine:bench.engine).info.render;
+    return structuredClone({mode,clock:sim.clock,player:{x:sim.player.x,y:sim.player.y,z:sim.player.z,angle:sim.player.angle,pitch:sim.player.pitch,aiming:sim.player.aiming},weapon,presentation:d,
+      render:{calls:info.calls,triangles:info.triangles}});
   },
   snapshot(){return mode==='m01'?sim.snapshot():null;},
+  /** Evidence probe (world pass only, recorded pose): look down at the brass and clip lying on the ground, then restore. */
+  probeEjecta(){
+    const items=view.weaponWorldFx.items;if(mode!=='m01'||!items.length)return null;
+    const poses=items.map(i=>({kind:i.kind,...ejectaPose(i,sim.clock-i.start)})),center=new THREE.Vector3();
+    for(const p of poses)center.add(p.position);center.multiplyScalar(1/poses.length);
+    const c=view.camera,saved={p:c.position.clone(),q:c.quaternion.clone(),fov:c.fov},eye=[center.x+1.1,center.y+1.3,center.z+1.1];
+    c.position.set(...eye);c.lookAt(center);c.fov=55;c.updateProjectionMatrix();c.updateMatrixWorld();engine.clear();engine.render(view.scene,c);
+    const ground=(x,z)=>sim.world.heightAt(x,z),round=v=>v.toArray().map(n=>+n.toFixed(4));
+    const result=poses.map(p=>({kind:p.kind,phase:p.phase,position:round(p.position),surface:+ground(p.position.x,p.position.z).toFixed(4),
+      axisY:round(new THREE.Vector3(0,1,0).applyQuaternion(p.quaternion)),axisZ:round(new THREE.Vector3(0,0,1).applyQuaternion(p.quaternion))}));
+    c.position.copy(saved.p);c.quaternion.copy(saved.q);c.fov=saved.fov;c.updateProjectionMatrix();
+    return {...this.state(),probe:{eye:eye.map(n=>+n.toFixed(3)),target:round(center),fov:55,items:result}};
+  },
 };
 window.wpReady=true;
 </script>

@@ -16,6 +16,6 @@ for(const fallback of [false,true])test(`locomotive 963 production ${fallback?'o
  if(!fallback){expect(l.loaded).toEqual([0,1,2]);expect(l.lod).toBe(2);expect(frozen.m01.assetFailures.filter(f=>f.path.includes('/locomotive/'))).toEqual([]);}
  else expect(frozen.m01.assetFailures.filter(f=>f.path.includes('/locomotive/'))).toHaveLength(3);
  await page.waitForTimeout(200);const paused=await page.evaluate(()=>window.gameDiagnostics());expect(paused.clock).toBe(frozen.clock);expect(paused.m01.locomotive).toEqual(l);
- if(!fallback){await page.reload();await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.locomotive.loaded.length===3);await page.locator('#continue').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused);await page.evaluate(()=>document.exitPointerLock());expect((await page.evaluate(()=>window.gameDiagnostics())).m01.locomotive).toEqual(l);}
+ if(!fallback){await page.reload();await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.locomotive.loaded.length===3);await page.locator('#continue').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused);await page.waitForFunction(()=>{const l=window.gameDiagnostics().m01.locomotive;return l.visible&&l.loaded.length===3;});await page.evaluate(()=>document.exitPointerLock());expect((await page.evaluate(()=>window.gameDiagnostics())).m01.locomotive).toEqual(l);}
  expect(errors).toEqual([]);
 });

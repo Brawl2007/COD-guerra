@@ -1,0 +1,20 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+[WebServer] (node:85) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+[WebServer] (node:98) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+(node:132) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:132) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/m01-battlefield-fx.spec.js:72:1 › real in-flight round produces bounded material impact FX without altering the saved simulation path (26.0s)
+  ✓  2 tests/browser/m01.spec.js:336:33 › adjustment salvo at the gates restores its actual origin and follows mouse look (27.0s)
+  ✓  3 tests/browser/m01.spec.js:336:33 › adjustment salvo behind the truss restores its actual origin and follows mouse look (27.0s)
+  ✓  4 tests/browser/m01.spec.js:358:1 › demolition inside the road truss shows the actual bearing while mouse look remains free (30.6s)
+  ✓  5 tests/browser/m01.spec.js:509:1 › a real withdrawal continuation loses men only to rounds from the spans, keeps the twelve-survivor floor and shows the count in the HUD (25.1s)
+
+  5 passed (2.4m)

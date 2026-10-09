@@ -1,0 +1,76 @@
+{
+  "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
+  "status": "PASS",
+  "observedAt": "2026-10-09T00:04:35.286840+00:00",
+  "testedHead": "9d9844e65701aeb80af854d8f9b7ed6dc9a351e8",
+  "protectedV6": "cbc7de5668a1b2e4bc646b86548196a5f4f1039a",
+  "protectedFiles": 291,
+  "mismatches": [],
+  "runtimeFilesMatched": [
+    {
+      "path": "src/render/m01-station-architecture.js",
+      "bytes": 25324,
+      "sha256": "cef1db17ec1e893f53c412a922b9c7a7e246c90111cfc9ef8cce4810752e6890"
+    },
+    {
+      "path": "src/render/m01-damage-decals.js",
+      "bytes": 84991,
+      "sha256": "5cedf11d8971528474ee8639c4db5e7b0a86279085b14f6ee56fcceae4ed78d1"
+    },
+    {
+      "path": "src/render/first-person-weapon-fx.js",
+      "bytes": 33609,
+      "sha256": "67fb62cbc825bb7d1ec413acb742def5fa957080fe3e48b357678d14229631f1"
+    },
+    {
+      "path": "src/render/m01-view.js",
+      "bytes": 58262,
+      "sha256": "c2d26de9785d407dc192373d54463a15a87e965422c6441945cf64dac547d121"
+    },
+    {
+      "path": "src/render/m01-viewmodel.js",
+      "bytes": 17626,
+      "sha256": "c1d0c7854c5eef9386228c05a6cfabb5d0eb8941a578eff1267f0ef56d857350"
+    },
+    {
+      "path": "src/render/m01-wz29-presentation.js",
+      "bytes": 7959,
+      "sha256": "b84484bfedc323041c9fa152541212510a22132c99fb0a0262d4aec02da452a7"
+    },
+    {
+      "path": "src/render/three-renderer.js",
+      "bytes": 25691,
+      "sha256": "efb6d9f4b14f1e43131b72ac18fb300142e4f26e4f6e105ee305788079d8e981"
+    }
+  ],
+  "nodeSourceAndTestsUnchangedSinceFull474Run": true,
+  "productionAndPreviewSourceUnchangedSinceRuntimeHead": true,
+  "browserTestsSha256": {
+    "tests/browser/game.spec.js": "b62a0f0b67f61ef531e2181d8be13a2f35705398764197ddbb02ce9ac5ca9f85",
+    "tests/browser/m01-animation-contract.spec.js": "e9e8b77623dccb86b6209197c824d0993a0ae03ff8345e03b42b644f871640f9",
+    "tests/browser/m01-audio-offline-render.spec.js": "726ec6a9a055cadeab3bc4ea2577868567fbf175e1f594ef53156d72877720d5",
+    "tests/browser/m01-audio-production.spec.js": "a8e711a0740c99f5423a4dfc42e3769d4a066cf2be96ddc26dc943e142c3aaf3",
+    "tests/browser/m01-battlefield-audio-runtime.spec.js": "4c83806ebbe9b1e134e3551e6854ce26a3c73061e55371eda06313e5a2b93f95",
+    "tests/browser/m01-battlefield-fx-polish-v3.spec.js": "2d42306dcdeec63e6c785e6e7ed17d879d00c40f5b2ef3f6ea1af836495390c7",
+    "tests/browser/m01-battlefield-fx.spec.js": "73a982c9348642cac88c37e7b731222686ee490960f13a7dd31a9b0573c04366",
+    "tests/browser/m01-bridge-portal-polish.spec.js": "a22d6316d3fb908f287f96c7da2be8d7bba91b38a5979c5ff60d242b90b94814",
+    "tests/browser/m01-bridge-structural.spec.js": "5cf41cfb79fd5f3ec155272e95107308b41a9e2ecae835a0f566cb6afa76969a",
+    "tests/browser/m01-combat-feedback.spec.js": "dc421795077381830b2d3d48d4f156fb4eb797bc3c50542e9dfc6640985f3124",
+    "tests/browser/m01-consolidation-lifecycle.spec.js": "7bb26d31984c69aa24de1944ddd0cb7a10bc44ca11bebfa43690b61475ab24af",
+    "tests/browser/m01-damage-decals.spec.js": "37d1b4368aa43dba040d2449ee18cc3cbfd612e45ffee1fba99fee2e48836ee5",
+    "tests/browser/m01-environment-prop-density.spec.js": "1425ead32a5e18368601b8396adc93986684a7e4b6a9860f32a7bea411cca8ac",
+    "tests/browser/m01-environment-quality.spec.js": "6729c6e6b76bbef699c7eefa0ece175ce892961b730d664dbf9fbf043cd4d29d",
+    "tests/browser/m01-hud-presentation.spec.js": "c703f955e041b60cb9c9e9d139c2a0ac6c8c54c1f877e44219ef7ff416f762de",
+    "tests/browser/m01-locomotive.spec.js": "a1bc98532b3f4df9f3f35dfecf13f3f7fb840d495f481316b079ebd959f391ec",
+    "tests/browser/m01-mg34-prone.spec.js": "975d3f8402e8d546a7ed714569d5cfc3f9805b8aabd07b552395f1775f8dae37",
+    "tests/browser/m01-panzerzug.spec.js": "09e2b3de9d1cfb428a14d783dd872f6ffcacd605cf71783d532b6ae53314f69c",
+    "tests/browser/m01-soldier-visual-variation.spec.js": "fcfe0f51dec6ab25acb6c9094bed15257259948e3d68a2fd3beaf8890cfae9b0",
+    "tests/browser/m01-station-architecture.spec.js": "ffbb46c8752ac7f792b1eee50c053f1ef0d46bfef844349057386b818a8b4e1c",
+    "tests/browser/m01-train-consist-polish.spec.js": "bd6ca2877005c70b683a8811950365e30ba408629ee67f7bdd7125eebe73afc0",
+    "tests/browser/m01-vegetation-lod.spec.js": "f6df16e6a30f7ee115b9417d96b87b91216833625a1e694415f1b3f5f875426c",
+    "tests/browser/m01-wagon-runtime-integration.spec.js": "6d560f567b59a67d2fc7421925e065b6c33df81c23baad8545e8395b4fb22b1c",
+    "tests/browser/m01-weapon-presentation.spec.js": "72d0c626a22afaf64caf79c71240cc10489ae51533141dfc502fb9ede1db4af9",
+    "tests/browser/m01-wz29-viewmodel.spec.js": "151fae4daee0532027e17b501291e16c3de80fb840fe49a0b54f8b06d45de7a3",
+    "tests/browser/m01.spec.js": "c3ec7e24f34333ca43ffe84043d31a9d2dbc9227e01e45fa7b1c35130359acfa"
+  }
+}

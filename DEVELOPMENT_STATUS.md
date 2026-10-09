@@ -1,5 +1,13 @@
 # Estado de desenvolvimento
 
+## Consolidação final de produção M01 V7 — 2026-10-09 UTC
+
+`M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7`, branch `codex/m01-final-production-consolidation-v7`, base V6 `cbc7de5668a1b2e4bc646b86548196a5f4f1039a`, [PR draft #59](https://github.com/Brawl2007/COD-guerra/pull/59) contra V6. **READY_FOR_CAPTAIN_REVIEW**. Integra os deltas admitidos de Station V3, armas no checkpoint validado `7dbc0a5` e decals, preservando a V6.
+
+Node completo **474/474 PASS** e build PASS. Browser integral combinado **84/84 PASS** numa única invocação sem filtros ([run 37876099475](https://github.com/Brawl2007/COD-guerra/actions/runs/37876099475), HEAD `e0bb04e2c85208b1d58d8bc44ac091bf16c66458`), workers 1, retries 0, zero skips/flaky/erros globais, 95,6 min; artifact verificado por SHA-256 e CRC. As execuções anteriores 80/84, 82/84 e 83/84 ficam preservadas e nunca são somadas; as três correções foram só de harness, com produção inalterada.
+
+M01 continua **PROTÓTIPO JOGÁVEL**. Sem alegação de FPS, VRAM física ou teste no Chromebook. Provas em `docs/verification/m01-runtime/final-approved-deliveries-integration-v7/HANDOFF.md`.
+
 ## Consolidação final de produção M01 V6 — 2026-10-08 UTC
 
 `M01-FINAL-PRODUCTION-CONSOLIDATION-V6`, branch `codex/m01-final-production-consolidation-v6`, base V5 `d277b06937170aa433bc418ef5b83b2925c6d6de`, [PR draft #57](https://github.com/Brawl2007/COD-guerra/pull/57) contra V5. **READY_FOR_CAPTAIN_REVIEW**. HEAD final de código/fixtures `edefda544c702962ad3e378d06fb1bd7e792254e`; produção igual à CI `2a2a56734861b0801234d7ddf3cda66c0100f326`. HEAD exato do pacote final na descrição da PR. Correções de restore de blast, fallback muzzle, buffers dos portais, áudio Low e pagehide persistido preservadas.

@@ -1,0 +1,62 @@
+{
+  "records": [
+    {
+      "candidate": "station",
+      "head": "271413f26efc1dbccefc39ac401f4495928a2493",
+      "path": "docs/verification/m01-runtime/station-visual-fidelity-v3-2026-10-08/HANDOFF.md",
+      "gitBlobSha": "4e0fe4d6bb7ba38671c9b880cb821852b0c8eb82",
+      "sha256": "fca08c8640fa93b7d53748cbb691f380fbd2421b7092b5961b4925ea2d8f2141",
+      "url": "https://github.com/Brawl2007/COD-guerra/blob/271413f26efc1dbccefc39ac401f4495928a2493/docs/verification/m01-runtime/station-visual-fidelity-v3-2026-10-08/HANDOFF.md"
+    },
+    {
+      "candidate": "weapons-selected",
+      "head": "7dbc0a5490c336db63bcf2704b8fca216353be88",
+      "path": "docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/HANDOFF.md",
+      "gitBlobSha": "9ab9144378163b2ba631af4585bbb2631032dcdf",
+      "sha256": "5eb663f8c880be3c43ba72e72f7191e9abf11eba6ea0767c717981c154bee364",
+      "url": "https://github.com/Brawl2007/COD-guerra/blob/7dbc0a5490c336db63bcf2704b8fca216353be88/docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/HANDOFF.md"
+    },
+    {
+      "candidate": "weapons-later",
+      "head": "eeff340736ea9ca3f1e71fc8666e6f0c548e54b2",
+      "path": "docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/EVIDENCE.md",
+      "gitBlobSha": "8f9fc28f574dd6f418b0555c6e01e651afe5312f",
+      "sha256": "b58b135b033b9c41cbeeede5493e4ef030536b9d19eccbad6dc417013064ca2d",
+      "url": "https://github.com/Brawl2007/COD-guerra/blob/eeff340736ea9ca3f1e71fc8666e6f0c548e54b2/docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/EVIDENCE.md"
+    },
+    {
+      "candidate": "decals",
+      "head": "12a70220ecdd0e2e3488a1c8a2e5f3cca0a78416",
+      "path": "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/HANDOFF.md",
+      "gitBlobSha": "c7a4cd83c40c5ce1b86085ae12e9affae3467a42",
+      "sha256": "46323d9d8c1e3e579d76e0f74e956321dbafc98bc635fa8ca619c315ad1f76ce",
+      "url": "https://github.com/Brawl2007/COD-guerra/blob/12a70220ecdd0e2e3488a1c8a2e5f3cca0a78416/docs/verification/m01-runtime/environmental-damage-decal-pass-v1/HANDOFF.md"
+    },
+    {
+      "candidate": "ju87-excluded",
+      "head": "e145027f82dcc73260c177f7efa8310f0206c47a",
+      "path": "docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/HANDOFF.md",
+      "gitBlobSha": "c67718115c3d9c38792d52decfdc5997938d0329",
+      "sha256": "3c76c2cb9eac677adf4b7928a29a9de738ca6b28f18366c255b65e23f10d0bed",
+      "url": "https://github.com/Brawl2007/COD-guerra/blob/e145027f82dcc73260c177f7efa8310f0206c47a/docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/HANDOFF.md"
+    },
+    {
+      "candidate": "distant-excluded",
+      "head": "6864872f016e62234b261c0db2eee4c339a91f5c",
+      "path": "docs/verification/m01-runtime/distant-battlefield-presentation-v1-2026-10-08/HANDOFF.md",
+      "gitBlobSha": "28c4862ec333dfa89d4497c18f93a5df418d35b3",
+      "sha256": "2714600a61c397fdb9705c63d45550f4b1ab51331645e044a01c60dd15e4e80a",
+      "url": "https://github.com/Brawl2007/COD-guerra/blob/6864872f016e62234b261c0db2eee4c339a91f5c/docs/verification/m01-runtime/distant-battlefield-presentation-v1-2026-10-08/HANDOFF.md"
+    },
+    {
+      "candidate": "distant-evidence",
+      "head": "6864872f016e62234b261c0db2eee4c339a91f5c",
+      "path": "docs/verification/m01-runtime/distant-battlefield-presentation-v1-2026-10-08/EVIDENCE.md",
+      "gitBlobSha": "bbe680517810ec5b2ee1766e2a1a92f87ed0f0e1",
+      "sha256": "bb2959fef6b622406fd7c53274b146b96cfe096054d4125d9e4b2ee0d6dabd87",
+      "url": "https://github.com/Brawl2007/COD-guerra/blob/6864872f016e62234b261c0db2eee4c339a91f5c/docs/verification/m01-runtime/distant-battlefield-presentation-v1-2026-10-08/EVIDENCE.md"
+    }
+  ],
+  "uncompressedBytes": 116737,
+  "uncompressedSha256": "e7ae2e3476705959ed116b2cb976d2f13176973e4a15a957ee05db2132435435"
+}

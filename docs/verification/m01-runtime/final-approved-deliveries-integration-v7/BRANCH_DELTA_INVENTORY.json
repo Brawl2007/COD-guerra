@@ -1,0 +1,1061 @@
+{
+  "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
+  "observedAt": "2026-10-08T19:06:19.811Z",
+  "branches": [
+    {
+      "branch": "claude/bold-cannon-rkvxjp",
+      "remoteHead": "12a70220ecdd0e2e3488a1c8a2e5f3cca0a78416",
+      "v6ObservedHead": "f7459527c6153fdef5ced2ce43e249bde5669db7",
+      "advancedSinceV6Inventory": true,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_later_decal_delta",
+      "v7Decision": "same_decal_delivery_alias_no_duplicate"
+    },
+    {
+      "branch": "claude/busy-edison-mokkrb",
+      "remoteHead": "ad0253e9e370c80b96163d01b061047750dd93df",
+      "v6ObservedHead": "ad0253e9e370c80b96163d01b061047750dd93df",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "claude/clever-goldberg-avn7dj",
+      "remoteHead": "1ffcf1325cdc0b553c619add4f5881586bebc820",
+      "v6ObservedHead": "1ffcf1325cdc0b553c619add4f5881586bebc820",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "claude/cool-euler-fkyo43",
+      "remoteHead": "21c1ae653836522e74c071c31e917a1609f5611a",
+      "v6ObservedHead": "21c1ae653836522e74c071c31e917a1609f5611a",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "claude/ecstatic-planck-jiy2k3",
+      "remoteHead": "4a85ff9663946d9202bf38a92c68b185712a9d04",
+      "v6ObservedHead": "4a85ff9663946d9202bf38a92c68b185712a9d04",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "claude/exciting-planck-5ylz7z",
+      "remoteHead": "5583a4ab854a2e64dad85460bfd40031c3406ccc",
+      "v6ObservedHead": "5583a4ab854a2e64dad85460bfd40031c3406ccc",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "claude/m01-bridge-models",
+      "remoteHead": "fdbb1860df31ce2b2a31a8ff09bfb4dbc4c74229",
+      "v6ObservedHead": "fdbb1860df31ce2b2a31a8ff09bfb4dbc4c74229",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "claude/m01-ckm-budget",
+      "remoteHead": "e65ce73f2def4e3e8433912280a978b078c9fdd6",
+      "v6ObservedHead": "e65ce73f2def4e3e8433912280a978b078c9fdd6",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "claude/m01-ckm-wz30",
+      "remoteHead": "4170eea6ca5ed5f882727f9678bd2a763927e5b1",
+      "v6ObservedHead": "4170eea6ca5ed5f882727f9678bd2a763927e5b1",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "claude/m01-continuous-playtest",
+      "remoteHead": "1ddb9e9bd038dbd2c9bf5ee267f62fcaa07079a2",
+      "v6ObservedHead": "1ddb9e9bd038dbd2c9bf5ee267f62fcaa07079a2",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "claude/m01-integration-prep",
+      "remoteHead": "3ba46d441f3189dc0bc241ca845a52760cf0b052",
+      "v6ObservedHead": "3ba46d441f3189dc0bc241ca845a52760cf0b052",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "claude/m01-ju87",
+      "remoteHead": "3fa1d0d4e62e5c48c300d1929ca5455ee6737563",
+      "v6ObservedHead": "3fa1d0d4e62e5c48c300d1929ca5455ee6737563",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "claude/m01-mg34-prone",
+      "remoteHead": "c6e5ed4d0981bffc4b62ae7e3663015270909a4a",
+      "v6ObservedHead": "c6e5ed4d0981bffc4b62ae7e3663015270909a4a",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "claude/m01-rkm-wz28",
+      "remoteHead": "afdbe9e50b6f841c108cf250b2eef851213322bb",
+      "v6ObservedHead": "afdbe9e50b6f841c108cf250b2eef851213322bb",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "claude/m01-soldiers-1939",
+      "remoteHead": "6134a46253ecbfcfce37eb528007783a513ae343",
+      "v6ObservedHead": "6134a46253ecbfcfce37eb528007783a513ae343",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "claude/m01-staging",
+      "remoteHead": "cf9b2ea7b6a43970989d9138f279f52c140fc26d",
+      "v6ObservedHead": "cf9b2ea7b6a43970989d9138f279f52c140fc26d",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "claude/m01-station-drag-transitions",
+      "remoteHead": "27353ef207c5d0d97102db5b60d1d4fd16943194",
+      "v6ObservedHead": "27353ef207c5d0d97102db5b60d1d4fd16943194",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "claude/m01-train-detail-coupling-polish-dws18u",
+      "remoteHead": "e588c0cda2bbe191f752792ec7e05f865fcff1a5",
+      "v6ObservedHead": "e588c0cda2bbe191f752792ec7e05f865fcff1a5",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "claude/m01-train-detail-coupling-polish-v1",
+      "remoteHead": "e588c0cda2bbe191f752792ec7e05f865fcff1a5",
+      "v6ObservedHead": "e588c0cda2bbe191f752792ec7e05f865fcff1a5",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "carry_existing_V5_checkpoint",
+      "v7Decision": "preserve_existing_checkpoint_no_duplicate"
+    },
+    {
+      "branch": "claude/m01-wagon-damage",
+      "remoteHead": "11554d91e70409ac6e8a18ab1717761d7f54d522",
+      "v6ObservedHead": "11554d91e70409ac6e8a18ab1717761d7f54d522",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "claude/m01-wagons",
+      "remoteHead": "0667af008549f15947c10ab09b814338d701bf2c",
+      "v6ObservedHead": "0667af008549f15947c10ab09b814338d701bf2c",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "claude/pensive-thompson-jc2y12",
+      "remoteHead": "36a04b33a6d1bc85a926b47dd2db5704dd3e265f",
+      "v6ObservedHead": "36a04b33a6d1bc85a926b47dd2db5704dd3e265f",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "claude/railway-production-pass-3c7fwx",
+      "remoteHead": "8ff9c6707c776c4096bc206d37ec99802af1f743",
+      "v6ObservedHead": "8ff9c6707c776c4096bc206d37ec99802af1f743",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "claude/upbeat-ptolemy-rzqu5g",
+      "remoteHead": "03b61a380c2624ba2b704299a789749a50dc6a93",
+      "v6ObservedHead": null,
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": true,
+      "v6HistoricalDecision": null,
+      "v7Decision": "exclude_creative_plan_no_runtime_delta"
+    },
+    {
+      "branch": "claude/zealous-ramanujan-2el38r",
+      "remoteHead": "8e4d2dde0e009dddccc322a53e6e6925fbbd517e",
+      "v6ObservedHead": "8e4d2dde0e009dddccc322a53e6e6925fbbd517e",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/agentic-engineering-v1",
+      "remoteHead": "e88d4f871465499f170e33d6614e2cf4b401dac4",
+      "v6ObservedHead": "e88d4f871465499f170e33d6614e2cf4b401dac4",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/campaign-cinematic-m02-m30",
+      "remoteHead": "49824083ff996ead3dfa1b00ea0cc30aa2f69d2d",
+      "v6ObservedHead": "49824083ff996ead3dfa1b00ea0cc30aa2f69d2d",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/campaign-script-polish-v2-30-missions",
+      "remoteHead": "3fc04b25e61c0dc0bacbe740fa3dab36f524c1d7",
+      "v6ObservedHead": "3fc04b25e61c0dc0bacbe740fa3dab36f524c1d7",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra",
+      "remoteHead": "94cdd3aa95b3f22ccce869880c43bc6b0a09e440",
+      "v6ObservedHead": "94cdd3aa95b3f22ccce869880c43bc6b0a09e440",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_foundation_not_new_delivery_candidate",
+      "v7Decision": "historical_base_not_replacement"
+    },
+    {
+      "branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-8d0uog",
+      "remoteHead": "3af7ea23179896048ee7f77cb9df5e570f3b822e",
+      "v6ObservedHead": "3af7ea23179896048ee7f77cb9df5e570f3b822e",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_foundation_not_new_delivery_candidate",
+      "v7Decision": "historical_base_not_replacement"
+    },
+    {
+      "branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-9pjnmy",
+      "remoteHead": "ef597a3937b54ae58e269128a8e4443d5a74fa26",
+      "v6ObservedHead": "ef597a3937b54ae58e269128a8e4443d5a74fa26",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_foundation_not_new_delivery_candidate",
+      "v7Decision": "historical_base_not_replacement"
+    },
+    {
+      "branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-bza8xt",
+      "remoteHead": "b5817cba7d28cd0824d35057ed2d55bccd33b64b",
+      "v6ObservedHead": "b5817cba7d28cd0824d35057ed2d55bccd33b64b",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_foundation_not_new_delivery_candidate",
+      "v7Decision": "historical_base_not_replacement"
+    },
+    {
+      "branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-gdherg",
+      "remoteHead": "3ddeed0eda3dd0b36d049435d373d5fb6e25ca72",
+      "v6ObservedHead": "3ddeed0eda3dd0b36d049435d373d5fb6e25ca72",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_foundation_not_new_delivery_candidate",
+      "v7Decision": "historical_base_not_replacement"
+    },
+    {
+      "branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-os0vaa",
+      "remoteHead": "b250a640de2bdd455a16c8ef5b44f78cd5ba5ee9",
+      "v6ObservedHead": "b250a640de2bdd455a16c8ef5b44f78cd5ba5ee9",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_foundation_not_new_delivery_candidate",
+      "v7Decision": "historical_base_not_replacement"
+    },
+    {
+      "branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-p5srg5",
+      "remoteHead": "76367561fbb741b83cae2906af62576f2f4938d0",
+      "v6ObservedHead": "76367561fbb741b83cae2906af62576f2f4938d0",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_foundation_not_new_delivery_candidate",
+      "v7Decision": "historical_base_not_replacement"
+    },
+    {
+      "branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-t54j0b",
+      "remoteHead": "f6f64fa4793bd9bc319593d6017d6525bf13018c",
+      "v6ObservedHead": "f6f64fa4793bd9bc319593d6017d6525bf13018c",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_foundation_not_new_delivery_candidate",
+      "v7Decision": "historical_base_not_replacement"
+    },
+    {
+      "branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-y4di6h",
+      "remoteHead": "f2c7a66590e75cf2feac8df2a6d04f566113aadb",
+      "v6ObservedHead": "f2c7a66590e75cf2feac8df2a6d04f566113aadb",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_foundation_not_new_delivery_candidate",
+      "v7Decision": "historical_base_not_replacement"
+    },
+    {
+      "branch": "codex/m01-anim-contract-sim-v1",
+      "remoteHead": "d070225d49840f5bd304a0825c0656651b82c26d",
+      "v6ObservedHead": "d070225d49840f5bd304a0825c0656651b82c26d",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "carry_existing_V5_checkpoint",
+      "v7Decision": "preserve_existing_checkpoint_no_duplicate"
+    },
+    {
+      "branch": "codex/m01-approved-consolidation-checkpoint-v1",
+      "remoteHead": "58c403cb93ca40d47e4ecb65061cdd8ff3280374",
+      "v6ObservedHead": "58c403cb93ca40d47e4ecb65061cdd8ff3280374",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_consolidation_not_replacement_base",
+      "v7Decision": "historical_base_not_replacement"
+    },
+    {
+      "branch": "codex/m01-assets-review",
+      "remoteHead": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+      "v6ObservedHead": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-authority-lease",
+      "remoteHead": "d12972fcfb4ec908be115c831392209560bbeba7",
+      "v6ObservedHead": "d12972fcfb4ec908be115c831392209560bbeba7",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-battlefield-audio-architecture",
+      "remoteHead": "7a0060cfd340cfcf51b6072ca25c5ab86117bd7a",
+      "v6ObservedHead": "7a0060cfd340cfcf51b6072ca25c5ab86117bd7a",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-battlefield-audio-production-pass",
+      "remoteHead": "91463ac1f9b99f4cda0934e43c2e83466a15a248",
+      "v6ObservedHead": "91463ac1f9b99f4cda0934e43c2e83466a15a248",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-battlefield-audio-production-pass-v1",
+      "remoteHead": "2d797a1f5988cc1d86f0f2260967c6b0a170eddd",
+      "v6ObservedHead": "2d797a1f5988cc1d86f0f2260967c6b0a170eddd",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "carry_existing_V5_checkpoint",
+      "v7Decision": "preserve_existing_checkpoint_no_duplicate"
+    },
+    {
+      "branch": "codex/m01-battlefield-fx-polish-v3",
+      "remoteHead": "e08755be169c8ae5ddf12978b9beb3cc25b4ba43",
+      "v6ObservedHead": "e08755be169c8ae5ddf12978b9beb3cc25b4ba43",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "carry_existing_V5_checkpoint",
+      "v7Decision": "preserve_existing_checkpoint_no_duplicate"
+    },
+    {
+      "branch": "codex/m01-battlefield-fx-visual-runtime-v2",
+      "remoteHead": "9050fbfbc748d2c84b5b3bdf1a0cca7bfad325aa",
+      "v6ObservedHead": "9050fbfbc748d2c84b5b3bdf1a0cca7bfad325aa",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-bridge-completion",
+      "remoteHead": "da7f8be1aae4dfa85b3bfa8073b5122078d0de95",
+      "v6ObservedHead": "da7f8be1aae4dfa85b3bfa8073b5122078d0de95",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-bridge-portal-material-detail-polish-v1",
+      "remoteHead": "99309d9cb023cc94a07d41ff863e1362e4460570",
+      "v6ObservedHead": "99309d9cb023cc94a07d41ff863e1362e4460570",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-bridge-structural-production-closeout-v2",
+      "remoteHead": "54c94fd97c9a282eb9dfe7dbd409449571938813",
+      "v6ObservedHead": "54c94fd97c9a282eb9dfe7dbd409449571938813",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "carry_existing_V5_checkpoint",
+      "v7Decision": "preserve_existing_checkpoint_no_duplicate"
+    },
+    {
+      "branch": "codex/m01-browser-harness-hardening",
+      "remoteHead": "894c6db7c3c37ef5f1285cb191bd09d7e9a37862",
+      "v6ObservedHead": "894c6db7c3c37ef5f1285cb191bd09d7e9a37862",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-character-integration",
+      "remoteHead": "82dd3f06e383dfca0277e5416a27c7bb302fd931",
+      "v6ObservedHead": "82dd3f06e383dfca0277e5416a27c7bb302fd931",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-chromebook-benchmark",
+      "remoteHead": "7edcdce5dc06ed438417c820d7294a9aaa2bd607",
+      "v6ObservedHead": "7edcdce5dc06ed438417c820d7294a9aaa2bd607",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-ci-capture-budget",
+      "remoteHead": "47a7090fda1da40bb1d9de7828421c1ffcd6c8b3",
+      "v6ObservedHead": "47a7090fda1da40bb1d9de7828421c1ffcd6c8b3",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-ckm-fire-arc-resolution",
+      "remoteHead": "b2422396a33c1e3802ba83061a6e2fde173270e5",
+      "v6ObservedHead": "b2422396a33c1e3802ba83061a6e2fde173270e5",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-ckm-fire-runtime",
+      "remoteHead": "876b1622b5ff2f47ada196aad6ba4f3c6707855b",
+      "v6ObservedHead": "876b1622b5ff2f47ada196aad6ba4f3c6707855b",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-ckm-placement-migration",
+      "remoteHead": "2cfa9520a09c68629e3d98d6e7f4dc0d8f9e6732",
+      "v6ObservedHead": "2cfa9520a09c68629e3d98d6e7f4dc0d8f9e6732",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-ckm-runtime",
+      "remoteHead": "f3be55aedc8b8a0f0342a711090ff8570eedfe3b",
+      "v6ObservedHead": "f3be55aedc8b8a0f0342a711090ff8570eedfe3b",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "Excluir",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-combat-ai-architecture",
+      "remoteHead": "3da1f1637167a3d90953d4f698ebcf5c4b16cf26",
+      "v6ObservedHead": "3da1f1637167a3d90953d4f698ebcf5c4b16cf26",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-combat-animation",
+      "remoteHead": "70607ca18cdcd768af9cc98eed31e033d9b73515",
+      "v6ObservedHead": "70607ca18cdcd768af9cc98eed31e033d9b73515",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-cover-fire-origin",
+      "remoteHead": "b6a2cdfaa8526a84e51b7254d2aefdd4fb8484cf",
+      "v6ObservedHead": "b6a2cdfaa8526a84e51b7254d2aefdd4fb8484cf",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-demolition-cue",
+      "remoteHead": "f612bba71754c346a7cd54ecfd756f65751f5360",
+      "v6ObservedHead": "f612bba71754c346a7cd54ecfd756f65751f5360",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-demolition-dust",
+      "remoteHead": "08b21b7c7877a6cbdda3520c41ce1e32d7180938",
+      "v6ObservedHead": "08b21b7c7877a6cbdda3520c41ce1e32d7180938",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-destruction-persistence",
+      "remoteHead": "e02b53a0abbce57c3bce175ca87d1084f62ec752",
+      "v6ObservedHead": "e02b53a0abbce57c3bce175ca87d1084f62ec752",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-distant-battle-sectors",
+      "remoteHead": "fe2d99f9f343aeb526a95eca048bb010b155ad75",
+      "v6ObservedHead": "fe2d99f9f343aeb526a95eca048bb010b155ad75",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-distant-battlefield-presentation-v1",
+      "remoteHead": "6864872f016e62234b261c0db2eee4c339a91f5c",
+      "v6ObservedHead": "16ba780b1d170b6ad88898fe5ffa5950eb468979",
+      "advancedSinceV6Inventory": true,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "Excluir",
+      "v7Decision": "exclude_additional_unsynchronized_presentation_outside_consolidation_scope"
+    },
+    {
+      "branch": "codex/m01-environment-prop-density-grounding-v1",
+      "remoteHead": "f5adc46af2a074bbb028368516afdce011b8620c",
+      "v6ObservedHead": "f5adc46af2a074bbb028368516afdce011b8620c",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "carry_existing_V5_checkpoint",
+      "v7Decision": "preserve_existing_checkpoint_no_duplicate"
+    },
+    {
+      "branch": "codex/m01-environment-visual-runtime-pass",
+      "remoteHead": "5325b7b3ef678079ef08b32f8172ed62934ffe1c",
+      "v6ObservedHead": "5325b7b3ef678079ef08b32f8172ed62934ffe1c",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-environmental-damage-decal-pass-v1",
+      "remoteHead": "12a70220ecdd0e2e3488a1c8a2e5f3cca0a78416",
+      "v6ObservedHead": "f7459527c6153fdef5ced2ce43e249bde5669db7",
+      "advancedSinceV6Inventory": true,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "Excluir delta posterior",
+      "v7Decision": "admit_final_decal_delta"
+    },
+    {
+      "branch": "codex/m01-final-production-consolidation-v6",
+      "remoteHead": "cbc7de5668a1b2e4bc646b86548196a5f4f1039a",
+      "v6ObservedHead": null,
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": true,
+      "v6HistoricalDecision": null,
+      "v7Decision": "protected_recovery_base"
+    },
+    {
+      "branch": "codex/m01-final-production-consolidation-v7",
+      "remoteHead": "cbc7de5668a1b2e4bc646b86548196a5f4f1039a",
+      "v6ObservedHead": null,
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": true,
+      "v6HistoricalDecision": null,
+      "v7Decision": "only_write_target"
+    },
+    {
+      "branch": "codex/m01-first-person-weapon-presentation-v1",
+      "remoteHead": "eeff340736ea9ca3f1e71fc8666e6f0c548e54b2",
+      "v6ObservedHead": "7dbc0a5490c336db63bcf2704b8fca216353be88",
+      "advancedSinceV6Inventory": true,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "Excluir delta posterior",
+      "v7Decision": "admit_only_validated_7dbc0a5_delta_exclude_later_four"
+    },
+    {
+      "branch": "codex/m01-fx-browser-evidence-harness-v1",
+      "remoteHead": "a4dc9a8df5792df74cb6b7583f00819a380423d9",
+      "v6ObservedHead": "a4dc9a8df5792df74cb6b7583f00819a380423d9",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "Preservar branch; usar evid\u00eancia; sem importa\u00e7\u00e3o de produ\u00e7\u00e3o",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-handoff-aircraft",
+      "remoteHead": "f758daab8817adf5382a6623b8be43d42f2e4321",
+      "v6ObservedHead": "f758daab8817adf5382a6623b8be43d42f2e4321",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-historical-soldier-equipment-audit",
+      "remoteHead": "adcd0a52c78f0ee648da94772a8ebc60b1834a46",
+      "v6ObservedHead": "adcd0a52c78f0ee648da94772a8ebc60b1834a46",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-hud-cinematic-presentation-pass-v1",
+      "remoteHead": "4b0e883dd58988fbbcaf24c062f69285c46a1457",
+      "v6ObservedHead": "4b0e883dd58988fbbcaf24c062f69285c46a1457",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "carry_existing_V5_checkpoint",
+      "v7Decision": "preserve_existing_checkpoint_no_duplicate"
+    },
+    {
+      "branch": "codex/m01-idle-render",
+      "remoteHead": "d683174c7f4b6fe88a1debcdaafd011c7a62b9cc",
+      "v6ObservedHead": "d683174c7f4b6fe88a1debcdaafd011c7a62b9cc",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-integrated-visual-placeholder-closeout-v2",
+      "remoteHead": "dfb7bd89c37fc9ddbe961d399474e8c57437a6f8",
+      "v6ObservedHead": "dfb7bd89c37fc9ddbe961d399474e8c57437a6f8",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "Refer\u00eancia apenas; n\u00e3o \u00e9 consolida\u00e7\u00e3o de produ\u00e7\u00e3o posterior",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-integration-browser-harness-stabilization-v2",
+      "remoteHead": "6bd69521aef18f00b2ab37ccd7ceeca6a4da3a2b",
+      "v6ObservedHead": "6bd69521aef18f00b2ab37ccd7ceeca6a4da3a2b",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-ju87-aircraft-production-closeout-v2",
+      "remoteHead": "e145027f82dcc73260c177f7efa8310f0206c47a",
+      "v6ObservedHead": "e145027f82dcc73260c177f7efa8310f0206c47a",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "Excluir delta posterior",
+      "v7Decision": "exclude_unresolved_six_browser_failures_keep_inherited_checkpoint"
+    },
+    {
+      "branch": "codex/m01-locomotive-963-production-asset-runtime",
+      "remoteHead": "6accc401e86a6523b0df26b50beff33aef4dd18a",
+      "v6ObservedHead": "6accc401e86a6523b0df26b50beff33aef4dd18a",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "carry_existing_V5_checkpoint",
+      "v7Decision": "preserve_existing_checkpoint_no_duplicate"
+    },
+    {
+      "branch": "codex/m01-mg34-prone-runtime",
+      "remoteHead": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+      "v6ObservedHead": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-near-far-authority-runtime-pilot",
+      "remoteHead": "f2741e53a85c582b4e0739e3a946f534fbe25dde",
+      "v6ObservedHead": "f2741e53a85c582b4e0739e3a946f534fbe25dde",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "Excluir",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-next-pendencies-audit",
+      "remoteHead": "29e2c3eb1c6f3c7cd82c0c46bb6a1a2a49b42b96",
+      "v6ObservedHead": "29e2c3eb1c6f3c7cd82c0c46bb6a1a2a49b42b96",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-panzerzug-production-asset-runtime",
+      "remoteHead": "8f2326514c0277c6af1c54a8be1c012db18615ff",
+      "v6ObservedHead": "8f2326514c0277c6af1c54a8be1c012db18615ff",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "carry_existing_V5_checkpoint",
+      "v7Decision": "preserve_existing_checkpoint_no_duplicate"
+    },
+    {
+      "branch": "codex/m01-per-formation-rng-architecture",
+      "remoteHead": "d81ddfa99f2a5c99d3a3fce30a87ff0cd5a43941",
+      "v6ObservedHead": "d81ddfa99f2a5c99d3a3fce30a87ff0cd5a43941",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "Excluir",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-player-hit-near-miss-feedback",
+      "remoteHead": "1934bed871297898278b1571b4f0fc003e76417e",
+      "v6ObservedHead": "1934bed871297898278b1571b4f0fc003e76417e",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-production-integration-checkpoint-1",
+      "remoteHead": "f9aa1add5705ead80ec378c3f423650f854b19a6",
+      "v6ObservedHead": "f9aa1add5705ead80ec378c3f423650f854b19a6",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_consolidation_not_replacement_base",
+      "v7Decision": "historical_base_not_replacement"
+    },
+    {
+      "branch": "codex/m01-ready-deliveries-consolidation-v2",
+      "remoteHead": "b16d56ceead467f2fd0d7380699c7dd35690e0bc",
+      "v6ObservedHead": "b16d56ceead467f2fd0d7380699c7dd35690e0bc",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_consolidation_not_replacement_base",
+      "v7Decision": "historical_base_not_replacement"
+    },
+    {
+      "branch": "codex/m01-ready-deliveries-consolidation-v3",
+      "remoteHead": "74645f3f4414f39a2420c80e3e2723170493e5c5",
+      "v6ObservedHead": "74645f3f4414f39a2420c80e3e2723170493e5c5",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_consolidation_not_replacement_base",
+      "v7Decision": "historical_base_not_replacement"
+    },
+    {
+      "branch": "codex/m01-ready-deliveries-consolidation-v4",
+      "remoteHead": "079ee53b48764272b1b2366a543fbbd0fbb9b3ae",
+      "v6ObservedHead": "079ee53b48764272b1b2366a543fbbd0fbb9b3ae",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_consolidation_not_replacement_base",
+      "v7Decision": "historical_base_not_replacement"
+    },
+    {
+      "branch": "codex/m01-ready-deliveries-consolidation-v5",
+      "remoteHead": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "v6ObservedHead": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "authorized_base",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-ready-deliveries-validation-v3",
+      "remoteHead": "17886b401189e77bb2d00a43a113cc83a1027eb4",
+      "v6ObservedHead": "17886b401189e77bb2d00a43a113cc83a1027eb4",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-rifleman-locomotion-runtime",
+      "remoteHead": "93aaa5c4a5651f22b4c696005501a2ac1014860a",
+      "v6ObservedHead": "93aaa5c4a5651f22b4c696005501a2ac1014860a",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "Excluir",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-runtime",
+      "remoteHead": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+      "v6ObservedHead": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-schema2-determinism-audit",
+      "remoteHead": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+      "v6ObservedHead": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-soldier-locomotion-animation",
+      "remoteHead": "cd91d65f0c022678ed24785eb44233bab137eb3c",
+      "v6ObservedHead": "cd91d65f0c022678ed24785eb44233bab137eb3c",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "Refer\u00eancia apenas; excluir importa\u00e7\u00e3o",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-soldier-motion-clips-production-v1",
+      "remoteHead": "075effaf72d3ceaf4dbda153f1221dc1541b8bef",
+      "v6ObservedHead": "075effaf72d3ceaf4dbda153f1221dc1541b8bef",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "carry_existing_V5_checkpoint",
+      "v7Decision": "preserve_existing_checkpoint_no_duplicate"
+    },
+    {
+      "branch": "codex/m01-soldier-visual-variation-pass",
+      "remoteHead": "63318225c015d7dc50390bed32897b0305237aa1",
+      "v6ObservedHead": "63318225c015d7dc50390bed32897b0305237aa1",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "carry_existing_V5_checkpoint",
+      "v7Decision": "preserve_existing_checkpoint_no_duplicate"
+    },
+    {
+      "branch": "codex/m01-station-architecture-production-v2",
+      "remoteHead": "090804776b18c8dc3200497388eb59e83b56205c",
+      "v6ObservedHead": "090804776b18c8dc3200497388eb59e83b56205c",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "carry_existing_V5_checkpoint",
+      "v7Decision": "preserve_existing_checkpoint_no_duplicate"
+    },
+    {
+      "branch": "codex/m01-station-visual-fidelity-v3",
+      "remoteHead": "271413f26efc1dbccefc39ac401f4495928a2493",
+      "v6ObservedHead": "271413f26efc1dbccefc39ac401f4495928a2493",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "Excluir at\u00e9 aprova\u00e7\u00e3o expressa",
+      "v7Decision": "admit_station_delta"
+    },
+    {
+      "branch": "codex/m01-station-wagon-state",
+      "remoteHead": "f15a2e51dbe329ae984a52c47ecf856eef8fbede",
+      "v6ObservedHead": "f15a2e51dbe329ae984a52c47ecf856eef8fbede",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "Excluir",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-station-wagon-validation",
+      "remoteHead": "e5d7c049e64ef7e2bf49766df10aa0b332633923",
+      "v6ObservedHead": "e5d7c049e64ef7e2bf49766df10aa0b332633923",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "Excluir",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-support-runtime",
+      "remoteHead": "8e8e74246ca72c3fe050f57d485fc3aaad7363f9",
+      "v6ObservedHead": "8e8e74246ca72c3fe050f57d485fc3aaad7363f9",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-v3-isolated-cancelled-tests",
+      "remoteHead": "269c3816aea27247fdeffda039ffe4f9ba7f4743",
+      "v6ObservedHead": "269c3816aea27247fdeffda039ffe4f9ba7f4743",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-vegetation-foliage-production-closeout-v1",
+      "remoteHead": "21c1ae653836522e74c071c31e917a1609f5611a",
+      "v6ObservedHead": "21c1ae653836522e74c071c31e917a1609f5611a",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "carry_existing_V5_checkpoint",
+      "v7Decision": "preserve_existing_checkpoint_no_duplicate"
+    },
+    {
+      "branch": "codex/m01-vegetation-mesh-lod-runtime-pass",
+      "remoteHead": "9d3f9fc898fd17a4919e2cc367ffacd591605360",
+      "v6ObservedHead": "9d3f9fc898fd17a4919e2cc367ffacd591605360",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-viewmodel-visual-v2",
+      "remoteHead": "3e879e7406109b4e03c1bb9d21631a11a6736f33",
+      "v6ObservedHead": "3e879e7406109b4e03c1bb9d21631a11a6736f33",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "Excluir",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-visual-placeholder-asset-audit",
+      "remoteHead": "e8813ac01555a77646cbecac991ddb04e90b27c7",
+      "v6ObservedHead": "e8813ac01555a77646cbecac991ddb04e90b27c7",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-visual-sprint",
+      "remoteHead": "7a965d809961d66d4ac19c94f852e09a294760f8",
+      "v6ObservedHead": "7a965d809961d66d4ac19c94f852e09a294760f8",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-wagon-lod-damage-runtime-integration",
+      "remoteHead": "1ac890d45650f8eb4f4c8e13a9e5be4265205f90",
+      "v6ObservedHead": "1ac890d45650f8eb4f4c8e13a9e5be4265205f90",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_ancestry_no_new_commit_delta",
+      "v7Decision": "historical_ancestry_no_new_delivery_delta"
+    },
+    {
+      "branch": "codex/m01-world-interactions",
+      "remoteHead": "5d11e91567fe7ff188a95ad1885c47da61da6f7c",
+      "v6ObservedHead": "5d11e91567fe7ff188a95ad1885c47da61da6f7c",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m01-wz29-viewmodel-visual-runtime",
+      "remoteHead": "cf9f8b0aaa02c9f26adc8c96745b2c2758753ed5",
+      "v6ObservedHead": "cf9f8b0aaa02c9f26adc8c96745b2c2758753ed5",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "carry_existing_V5_checkpoint",
+      "v7Decision": "preserve_existing_checkpoint_no_duplicate"
+    },
+    {
+      "branch": "codex/m01-yard-wagon-fit",
+      "remoteHead": "a3fab20ce9cb78d330869f85ad491e266374d5c0",
+      "v6ObservedHead": "a3fab20ce9cb78d330869f85ad491e266374d5c0",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "exclude_unapproved_divergent_branch",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "codex/m02-m30-full-creative-production-v1",
+      "remoteHead": "73a5837e12c3d2473f5c6bcf400329cc468e54df",
+      "v6ObservedHead": null,
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": true,
+      "v6HistoricalDecision": null,
+      "v7Decision": "exclude_other_missions_documentation"
+    },
+    {
+      "branch": "codex/three-foundation-checkpoints",
+      "remoteHead": "9e1961331bd870cf0db5d38c0364f24c2cea56f5",
+      "v6ObservedHead": "9e1961331bd870cf0db5d38c0364f24c2cea56f5",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "historical_foundation_not_new_delivery_candidate",
+      "v7Decision": "historical_base_not_replacement"
+    },
+    {
+      "branch": "deploy/m01-latest-playable",
+      "remoteHead": "cb400355c056955d1d6d0b22e92bd7be2443a10c",
+      "v6ObservedHead": "cb400355c056955d1d6d0b22e92bd7be2443a10c",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "protected_ref_do_not_modify",
+      "v7Decision": "unchanged_older_divergent_or_reference_branch_no_new_completion_evidence"
+    },
+    {
+      "branch": "main",
+      "remoteHead": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+      "v6ObservedHead": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+      "advancedSinceV6Inventory": false,
+      "newNameSinceV6Inventory": false,
+      "v6HistoricalDecision": "protected_ref_do_not_modify",
+      "v7Decision": "protected_ref_no_write"
+    }
+  ],
+  "v7TechnicalRule": "Concluded + validated + technically reviewed + compatible; no prior Captain approval fabricated",
+  "fourReportedWipIdentities": "Not established; no speculative integration"
+}

@@ -1,0 +1,1142 @@
+{
+  "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
+  "status": "FAIL_DIAGNOSED_HARNESS_FIX_UNDER_TEST",
+  "runId": 37833355993,
+  "jobId": 113504081269,
+  "testedHead": "1b636303beeebf019aa2cd13819c6e0637f2b0bc",
+  "execution": "One complete unfiltered invocation, not cancelled, no retry or skip",
+  "inventory": 84,
+  "executed": 84,
+  "passed": 80,
+  "failed": 4,
+  "stats": {
+    "startTime": "2026-10-08T19:38:36.316Z",
+    "duration": 5798011.982,
+    "expected": 80,
+    "skipped": 0,
+    "unexpected": 4,
+    "flaky": 0
+  },
+  "globalErrors": [],
+  "artifact": {
+    "id": 11579816373,
+    "sizeBytes": 111822856,
+    "sha256": "b9cf13c8667a15a883ea7e59383e3fee4660a60771607e5ab4f8928e447153ed",
+    "zipCrcVerified": true,
+    "expiresAt": "2026-11-07"
+  },
+  "rawReport": {
+    "path": "BROWSER_FULL_FIRST.json.gz",
+    "sha256Uncompressed": "7026f989177ec877cedea17f036c978283d10a52c0d7c54435e7ef719585cf9c",
+    "bytesUncompressed": 2544646
+  },
+  "causes": {
+    "impact": "FX checks succeeded; live page.screenshot timed out after 30 s following fonts loaded. Freeze an actual hot frame using native pointer-lock release before readback.",
+    "bearing": "Five-second DOM assertions saw an old HUD. afterEach proves yaw and authoritative threat status correctly changed. Require correct yaw, a new rendered frame and HUD equal to authoritative status.",
+    "withdrawal": "Loop ended immediately at first casualty, before a new submitted muzzle frame. afterEach observed frames 6 at clock 750.1667, 0.5 simulated seconds after final loop sample with frames 5."
+  },
+  "failures": [
+    {
+      "file": "m01-battlefield-fx.spec.js",
+      "line": 72,
+      "title": "real in-flight round produces bounded material impact FX without altering the saved simulation path",
+      "result": "failed",
+      "durationMs": 75720,
+      "error": "TimeoutError: page.screenshot: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n",
+      "traceCalls": [
+        {
+          "method": "expect",
+          "durationMs": 0.086,
+          "params": {
+            "expected": "144"
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 0.044,
+          "params": {
+            "expected": "96"
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 0.04,
+          "params": {
+            "expected": "128"
+          },
+          "error": null
+        },
+        {
+          "method": "screenshot",
+          "durationMs": 30002.376,
+          "params": {
+            "timeout": 30000,
+            "type": "png"
+          },
+          "error": {
+            "message": "Timeout 30000ms exceeded.",
+            "stack": "TimeoutError: Timeout 30000ms exceeded.\n    at ProgressController.run (/home/runner/work/COD-guerra/COD-guerra/node_modules/playwright-core/lib/server/progress.js:86:28)\n    at PageDispatcher._runCommand (/home/runner/work/COD-guerra/COD-guerra/node_modules/playwright-core/lib/server/dispatchers/dispatcher.js:91:31)\n    at DispatcherConnection.dispatch (/home/runner/work/COD-guerra/COD-guerra/node_modules/playwright-core/lib/server/dispatchers/dispatcher.js:325:39)",
+            "name": "TimeoutError"
+          }
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 325,
+      "title": "adjustment salvo at the gates restores its actual origin and follows mouse look",
+      "result": "failed",
+      "durationMs": 44551,
+      "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#objective-status')\nExpected substring: \u001b[32m\"atrás de si\"\u001b[39m\nReceived string:    \u001b[31m\"Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#objective-status')\u001b[22m\n\u001b[2m    5 × locator resolved to <span id=\"objective-status\">Metralhadora nos portões de Lisewo · 1081 m, em f…</span>\u001b[22m\n\u001b[2m      - unexpected value \"Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura\"\u001b[22m\n",
+      "traceCalls": [
+        {
+          "method": "expect",
+          "durationMs": 1973.504,
+          "params": {},
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 17.587,
+          "params": {},
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 148.363,
+          "params": {
+            "expected": "Metralhadora nos portões de Lisewo"
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 0.168,
+          "params": {
+            "expected": "de_east_0"
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 0.061,
+          "params": {
+            "expected": "1053.7314813329297"
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 0.085,
+          "params": {
+            "expected": "Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura"
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 7568.034,
+          "params": {
+            "expected": "atrás de si"
+          },
+          "error": {
+            "name": "",
+            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#objective-status')\nExpected substring: \u001b[32m\"atrás de si\"\u001b[39m\nReceived string:    \u001b[31m\"Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#objective-status')\u001b[22m\n\u001b[2m    5 × locator resolved to <span id=\"objective-status\">Metralhadora nos portões de Lisewo · 1081 m, em f…</span>\u001b[22m\n\u001b[2m      - unexpected value \"Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura\"\u001b[22m\n",
+            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#objective-status')\nExpected substring: \u001b[32m\"atrás de si\"\u001b[39m\nReceived string:    \u001b[31m\"Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#objective-status')\u001b[22m\n\u001b[2m    5 × locator resolved to <span id=\"objective-status\">Metralhadora nos portões de Lisewo · 1081 m, em f…</span>\u001b[22m\n\u001b[2m      - unexpected value \"Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura\"\u001b[22m\n\n    at /home/runner/work/COD-guerra/COD-guerra/tests/browser/m01.spec.js:339:51"
+          }
+        },
+        {
+          "method": "expect",
+          "durationMs": 1961.988,
+          "params": {
+            "selector": "#error",
+            "expression": "to.be.hidden",
+            "expectedValue": {
+              "value": {
+                "v": "undefined"
+              },
+              "handles": []
+            },
+            "isNot": false,
+            "timeout": 5000
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 11.083,
+          "params": {
+            "selector": "#start",
+            "expression": "to.be.enabled",
+            "expectedValue": {
+              "value": {
+                "v": "undefined"
+              },
+              "handles": []
+            },
+            "isNot": false,
+            "timeout": 5000
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 121.608,
+          "params": {
+            "selector": "#objective-status",
+            "expression": "to.have.text",
+            "expectedText": [
+              {
+                "string": "Metralhadora nos portões de Lisewo",
+                "matchSubstring": true,
+                "normalizeWhiteSpace": true
+              }
+            ],
+            "expectedValue": {
+              "value": {
+                "v": "undefined"
+              },
+              "handles": []
+            },
+            "isNot": false,
+            "timeout": 5000
+          },
+          "error": null
+        },
+        {
+          "method": "evaluateExpression",
+          "durationMs": 16.851,
+          "params": {
+            "expression": "delta => {\n    document.dispatchEvent(new MouseEvent('mousemove', {\n      movementX: 0,\n      movementY: 0,\n      bubbles: true\n    }));\n    document.dispatchEvent(new MouseEvent('mousemove', {\n      movementX: delta,\n      movementY: 0,\n      bubbles: true\n    }));\n  }",
+            "isFunction": true,
+            "arg": {
+              "value": {
+                "n": 1420.131154715627
+              },
+              "handles": []
+            }
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 5011.361,
+          "params": {
+            "selector": "#objective-status",
+            "expression": "to.have.text",
+            "expectedText": [
+              {
+                "string": "atrás de si",
+                "matchSubstring": true,
+                "normalizeWhiteSpace": true
+              }
+            ],
+            "expectedValue": {
+              "value": {
+                "v": "undefined"
+              },
+              "handles": []
+            },
+            "isNot": false,
+            "timeout": 5000
+          },
+          "error": {
+            "name": "Expect",
+            "message": "Expect failed"
+          }
+        }
+      ],
+      "afterEach": {
+        "clock": 528.1166000000678,
+        "player": {
+          "x": -27.53133592613605,
+          "y": -3,
+          "z": 27.978412532858382,
+          "angle": -3.1382568058864533,
+          "pitch": 0,
+          "health": 100,
+          "crouched": true,
+          "aiming": false
+        },
+        "frame": 23,
+        "simStatus": "Metralhadora nos portões de Lisewo · 1081 m, atrás de si · mude de cobertura",
+        "hudStatus": "Metralhadora nos portões de Lisewo · 1081 m, atrás de si · mude de cobertura",
+        "muzzle": {
+          "frames": 6,
+          "lastClock": 528.1166000000678,
+          "lastFrame": 23
+        },
+        "fireEffects": {
+          "muzzle": 1,
+          "tracer": 1,
+          "puff": 3,
+          "spark": 0,
+          "smoke": 8,
+          "chip": 1
+        }
+      }
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 344,
+      "title": "demolition inside the road truss shows the actual bearing while mouse look remains free",
+      "result": "failed",
+      "durationMs": 44699,
+      "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#objective-status')\nExpected substring: \u001b[32m\"em\u001b[7m frente\u001b[27m\"\u001b[39m\nReceived string:    \u001b[31m\"\u001b[7mD\u001b[27mem\u001b[7molição leste · 771 m, atrás de si · recue para o posto de disparo\u001b[27m\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#objective-status')\u001b[22m\n\u001b[2m    6 × locator resolved to <span id=\"objective-status\">Demolição leste · 771 m, atrás de si · recue para…</span>\u001b[22m\n\u001b[2m      - unexpected value \"Demolição leste · 771 m, atrás de si · recue para o posto de disparo\"\u001b[22m\n",
+      "traceCalls": [
+        {
+          "method": "expect",
+          "durationMs": 1513.581,
+          "params": {},
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 16.359,
+          "params": {},
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 0.466,
+          "params": {
+            "expected": "20"
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 0.125,
+          "params": {
+            "expected": "35"
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 0.223,
+          "params": {
+            "expected": "45"
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 0.34,
+          "params": {
+            "expected": "evt_m01_east_demolition"
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 520.842,
+          "params": {
+            "expected": "atrás de si"
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 6348.036,
+          "params": {
+            "expected": "em frente"
+          },
+          "error": {
+            "name": "",
+            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#objective-status')\nExpected substring: \u001b[32m\"em\u001b[7m frente\u001b[27m\"\u001b[39m\nReceived string:    \u001b[31m\"\u001b[7mD\u001b[27mem\u001b[7molição leste · 771 m, atrás de si · recue para o posto de disparo\u001b[27m\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#objective-status')\u001b[22m\n\u001b[2m    6 × locator resolved to <span id=\"objective-status\">Demolição leste · 771 m, atrás de si · recue para…</span>\u001b[22m\n\u001b[2m      - unexpected value \"Demolição leste · 771 m, atrás de si · recue para o posto de disparo\"\u001b[22m\n",
+            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#objective-status')\nExpected substring: \u001b[32m\"em\u001b[7m frente\u001b[27m\"\u001b[39m\nReceived string:    \u001b[31m\"\u001b[7mD\u001b[27mem\u001b[7molição leste · 771 m, atrás de si · recue para o posto de disparo\u001b[27m\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#objective-status')\u001b[22m\n\u001b[2m    6 × locator resolved to <span id=\"objective-status\">Demolição leste · 771 m, atrás de si · recue para…</span>\u001b[22m\n\u001b[2m      - unexpected value \"Demolição leste · 771 m, atrás de si · recue para o posto de disparo\"\u001b[22m\n\n    at /home/runner/work/COD-guerra/COD-guerra/tests/browser/m01.spec.js:361:51"
+          }
+        },
+        {
+          "method": "expect",
+          "durationMs": 1507.061,
+          "params": {
+            "selector": "#error",
+            "expression": "to.be.hidden",
+            "expectedValue": {
+              "value": {
+                "v": "undefined"
+              },
+              "handles": []
+            },
+            "isNot": false,
+            "timeout": 5000
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 11.619,
+          "params": {
+            "selector": "#start",
+            "expression": "to.be.enabled",
+            "expectedValue": {
+              "value": {
+                "v": "undefined"
+              },
+              "handles": []
+            },
+            "isNot": false,
+            "timeout": 5000
+          },
+          "error": null
+        },
+        {
+          "method": "evaluateExpression",
+          "durationMs": 65.465,
+          "params": {
+            "expression": "delta => {\n    document.dispatchEvent(new MouseEvent('mousemove', {\n      movementX: 0,\n      movementY: 0,\n      bubbles: true\n    }));\n    document.dispatchEvent(new MouseEvent('mousemove', {\n      movementX: delta,\n      movementY: 0,\n      bubbles: true\n    }));\n  }",
+            "isFunction": true,
+            "arg": {
+              "value": {
+                "n": 1403.2371958843432
+              },
+              "handles": []
+            }
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 517.194,
+          "params": {
+            "selector": "#objective-status",
+            "expression": "to.have.text",
+            "expectedText": [
+              {
+                "string": "atrás de si",
+                "matchSubstring": true,
+                "normalizeWhiteSpace": true
+              }
+            ],
+            "expectedValue": {
+              "value": {
+                "v": "undefined"
+              },
+              "handles": []
+            },
+            "isNot": false,
+            "timeout": 5000
+          },
+          "error": null
+        },
+        {
+          "method": "evaluateExpression",
+          "durationMs": 13.932,
+          "params": {
+            "expression": "delta => {\n    document.dispatchEvent(new MouseEvent('mousemove', {\n      movementX: 0,\n      movementY: 0,\n      bubbles: true\n    }));\n    document.dispatchEvent(new MouseEvent('mousemove', {\n      movementX: delta,\n      movementY: 0,\n      bubbles: true\n    }));\n  }",
+            "isFunction": true,
+            "arg": {
+              "value": {
+                "n": -1427.7594648382903
+              },
+              "handles": []
+            }
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 5004.128,
+          "params": {
+            "selector": "#objective-status",
+            "expression": "to.have.text",
+            "expectedText": [
+              {
+                "string": "em frente",
+                "matchSubstring": true,
+                "normalizeWhiteSpace": true
+              }
+            ],
+            "expectedValue": {
+              "value": {
+                "v": "undefined"
+              },
+              "handles": []
+            },
+            "isNot": false,
+            "timeout": 5000
+          },
+          "error": {
+            "name": "Expect",
+            "message": "Expect failed"
+          }
+        }
+      ],
+      "afterEach": {
+        "clock": 789.8332999998296,
+        "player": {
+          "x": 28.849398752978303,
+          "y": 0,
+          "z": 39.967102258363504,
+          "angle": -6.30740131112508,
+          "pitch": 0,
+          "health": 92,
+          "crouched": false,
+          "aiming": false
+        },
+        "frame": 23,
+        "simStatus": "Demolição leste · 771 m, em frente · recue para o posto de disparo",
+        "hudStatus": "Demolição leste · 771 m, em frente · recue para o posto de disparo",
+        "muzzle": {
+          "frames": 0,
+          "lastClock": null,
+          "lastFrame": null
+        },
+        "fireEffects": {
+          "muzzle": 0,
+          "tracer": 0,
+          "puff": 0,
+          "spark": 0,
+          "smoke": 0,
+          "chip": 0
+        }
+      }
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 492,
+      "title": "a real withdrawal continuation loses men only to rounds from the spans, keeps the twelve-survivor floor and shows the count in the HUD",
+      "result": "failed",
+      "durationMs": 54359,
+      "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+      "traceCalls": [
+        {
+          "method": "expect",
+          "durationMs": 2247.353,
+          "params": {},
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 6.951,
+          "params": {},
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 0.234,
+          "params": {
+            "expected": "18"
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 0.065,
+          "params": {
+            "expected": "true"
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 0.043,
+          "params": {
+            "expected": "true"
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 5.98,
+          "params": {
+            "expected": "true"
+          },
+          "error": {
+            "name": "",
+            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /home/runner/work/COD-guerra/COD-guerra/tests/browser/m01.spec.js:509:56"
+          }
+        },
+        {
+          "method": "expect",
+          "durationMs": 2237.22,
+          "params": {
+            "selector": "#error",
+            "expression": "to.be.hidden",
+            "expectedValue": {
+              "value": {
+                "v": "undefined"
+              },
+              "handles": []
+            },
+            "isNot": false,
+            "timeout": 5000
+          },
+          "error": null
+        },
+        {
+          "method": "expect",
+          "durationMs": 3.078,
+          "params": {
+            "selector": "#start",
+            "expression": "to.be.enabled",
+            "expectedValue": {
+              "value": {
+                "v": "undefined"
+              },
+              "handles": []
+            },
+            "isNot": false,
+            "timeout": 5000
+          },
+          "error": null
+        }
+      ],
+      "withdrawalSamples": {
+        "muzzleStart": 5,
+        "samples": [
+          {
+            "clock": 747.9166999998679,
+            "frame": 20,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 3,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_0",
+              "de_east_3",
+              "de_east_19",
+              "de_east_22",
+              "de_east_25",
+              "de_east_28"
+            ]
+          },
+          {
+            "clock": 747.9166999998679,
+            "frame": 20,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 3,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_0",
+              "de_east_3",
+              "de_east_19",
+              "de_east_22",
+              "de_east_25",
+              "de_east_28"
+            ]
+          },
+          {
+            "clock": 747.9166999998679,
+            "frame": 20,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 3,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_0",
+              "de_east_3",
+              "de_east_19",
+              "de_east_22",
+              "de_east_25",
+              "de_east_28"
+            ]
+          },
+          {
+            "clock": 748.4166999998674,
+            "frame": 22,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 0,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_0",
+              "de_east_3",
+              "de_east_25",
+              "de_east_28"
+            ]
+          },
+          {
+            "clock": 748.4166999998674,
+            "frame": 22,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 0,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_0",
+              "de_east_3",
+              "de_east_25",
+              "de_east_28"
+            ]
+          },
+          {
+            "clock": 748.4166999998674,
+            "frame": 22,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 0,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_0",
+              "de_east_3",
+              "de_east_25",
+              "de_east_28"
+            ]
+          },
+          {
+            "clock": 748.4166999998674,
+            "frame": 22,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 0,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_0",
+              "de_east_3",
+              "de_east_25",
+              "de_east_28"
+            ]
+          },
+          {
+            "clock": 748.6666999998672,
+            "frame": 23,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 0,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28"
+            ]
+          },
+          {
+            "clock": 748.6666999998672,
+            "frame": 23,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 0,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28"
+            ]
+          },
+          {
+            "clock": 748.6666999998672,
+            "frame": 23,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 0,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28"
+            ]
+          },
+          {
+            "clock": 748.6666999998672,
+            "frame": 23,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 0,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28"
+            ]
+          },
+          {
+            "clock": 748.6666999998672,
+            "frame": 23,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 0,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28"
+            ]
+          },
+          {
+            "clock": 748.6666999998672,
+            "frame": 23,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 0,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28"
+            ]
+          },
+          {
+            "clock": 748.916699999867,
+            "frame": 24,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 1,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28",
+              "de_spans_0"
+            ]
+          },
+          {
+            "clock": 748.916699999867,
+            "frame": 24,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 1,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28",
+              "de_spans_0"
+            ]
+          },
+          {
+            "clock": 748.916699999867,
+            "frame": 24,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 1,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28",
+              "de_spans_0"
+            ]
+          },
+          {
+            "clock": 748.916699999867,
+            "frame": 24,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 1,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28",
+              "de_spans_0"
+            ]
+          },
+          {
+            "clock": 749.1666999998668,
+            "frame": 25,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 0,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28",
+              "de_spans_0"
+            ]
+          },
+          {
+            "clock": 749.1666999998668,
+            "frame": 25,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 0,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28",
+              "de_spans_0"
+            ]
+          },
+          {
+            "clock": 749.1666999998668,
+            "frame": 25,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 0,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28",
+              "de_spans_0"
+            ]
+          },
+          {
+            "clock": 749.1666999998668,
+            "frame": 25,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 0,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28",
+              "de_spans_0"
+            ]
+          },
+          {
+            "clock": 749.1666999998668,
+            "frame": 25,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 0,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28",
+              "de_spans_0"
+            ]
+          },
+          {
+            "clock": 749.4166999998665,
+            "frame": 26,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 1,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28",
+              "de_spans_0"
+            ]
+          },
+          {
+            "clock": 749.4166999998665,
+            "frame": 26,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 1,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28",
+              "de_spans_0"
+            ]
+          },
+          {
+            "clock": 749.4166999998665,
+            "frame": 26,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 1,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28",
+              "de_spans_0"
+            ]
+          },
+          {
+            "clock": 749.4166999998665,
+            "frame": 26,
+            "n": 18,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 1,
+            "hud": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 18 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28",
+              "de_spans_0"
+            ]
+          },
+          {
+            "clock": 749.6666999998663,
+            "frame": 27,
+            "n": 17,
+            "muzzle": {
+              "frames": 5,
+              "lastClock": 747.9166999998679,
+              "lastFrame": 20
+            },
+            "inFlight": 1,
+            "hud": "Pelotão leste: 17 homens · alemães no tabuleiro a disparar sobre eles",
+            "sim": "Pelotão leste: 17 homens · alemães no tabuleiro a disparar sobre eles",
+            "origins": [
+              "de_east_3",
+              "de_east_25",
+              "de_east_28",
+              "de_spans_0",
+              "de_spans_1"
+            ]
+          }
+        ]
+      },
+      "afterEach": {
+        "clock": 750.1666999998658,
+        "player": {
+          "x": 28.849398752978303,
+          "y": 0,
+          "z": 39.967102258363504,
+          "angle": -6.25460131112508,
+          "pitch": 0,
+          "health": 92,
+          "crouched": false,
+          "aiming": false
+        },
+        "frame": 29,
+        "simStatus": "Pelotão leste: 17 homens · alemães no tabuleiro a disparar sobre eles",
+        "hudStatus": "Pelotão leste: 17 homens · alemães no tabuleiro a disparar sobre eles",
+        "muzzle": {
+          "frames": 6,
+          "lastClock": 750.1666999998658,
+          "lastFrame": 29
+        },
+        "fireEffects": {
+          "muzzle": 2,
+          "tracer": 0,
+          "puff": 3,
+          "spark": 0,
+          "smoke": 4,
+          "chip": 0
+        }
+      }
+    }
+  ],
+  "productionChangedByHarnessFix": false,
+  "assertionsRemoved": 0
+}

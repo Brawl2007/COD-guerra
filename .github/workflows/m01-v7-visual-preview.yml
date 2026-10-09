@@ -1,0 +1,91 @@
+name: M01 V7 matched visuals and playable Vite preview
+on:
+  push:
+    branches: [codex/m01-final-production-consolidation-v7]
+    paths: [.github/workflows/m01-v7-visual-preview.yml]
+permissions:
+  contents: write
+concurrency:
+  group: m01-v7-visual-preview-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  visual-preview:
+    if: github.ref == 'refs/heads/codex/m01-final-production-consolidation-v7'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      CI: '1'
+      EVIDENCE: docs/verification/m01-runtime/final-approved-deliveries-integration-v7
+      M01_V6_CHECKOUT: ${{ github.workspace }}/../m01-v6-protected-reference
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0, ref: '${{ github.sha }}'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Recover read-only V6 reference and verify unchanged authority
+        run: |
+          git merge-base --is-ancestor cbc7de5668a1b2e4bc646b86548196a5f4f1039a HEAD
+          git diff --exit-code cbc7de5668a1b2e4bc646b86548196a5f4f1039a HEAD -- src/game src/world src/core src/assets src/main.js src/ui assets missions research package.json package-lock.json playwright.config.js tools/assets
+          test "$(git ls-remote origin refs/heads/codex/m01-final-production-consolidation-v6 | cut -f1)" = cbc7de5668a1b2e4bc646b86548196a5f4f1039a
+          git worktree add --detach "$M01_V6_CHECKOUT" cbc7de5668a1b2e4bc646b86548196a5f4f1039a
+          ln -s "$GITHUB_WORKSPACE/node_modules" "$M01_V6_CHECKOUT/node_modules"
+          echo "CHROME_EXECUTABLE=$(node --input-type=module -e 'import {chromium} from "playwright";console.log(chromium.executablePath())')" >> "$GITHUB_ENV"
+      - name: Build both original V6 and integrated V7
+        run: |
+          mkdir -p "$EVIDENCE/logs"
+          set -o pipefail
+          (cd "$M01_V6_CHECKOUT" && npm run build) | tee "$EVIDENCE/logs/build-v6-reference-ci.log"
+          npm run build | tee "$EVIDENCE/logs/build-visual-v7-ci.log"
+          sha256sum "$M01_V6_CHECKOUT"/dist/assets/*.js dist/assets/*.js | tee "$EVIDENCE/logs/build-visual-sha256-ci.log"
+      - name: Prove immutable files, full routes, CP futures and visual determinism
+        run: node tools/verification/m01-v7-invariants.mjs | tee "$EVIDENCE/logs/invariants-ci.log"
+      - name: Verify ordinary Vite command and forwarded-host allowance
+        env:
+          __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS: m01-v7-verification-5173.app.github.dev
+          M01_V7_PREVIEW_URL: http://127.0.0.1:5173/COD-guerra/
+        run: |
+          set -e
+          npm run dev -- --host 0.0.0.0 --port 5173 --strictPort > "$EVIDENCE/logs/vite-playable-ci.log" 2>&1 &
+          m01_preview_pid=$!
+          trap 'kill "$m01_preview_pid" 2>/dev/null || true' EXIT
+          node tools/verification/m01-v7-playable-preview.mjs | tee "$EVIDENCE/logs/playable-preview-ci.log"
+          curl --fail --silent --show-error -H 'Host: m01-v7-verification-5173.app.github.dev' http://127.0.0.1:5173/COD-guerra/ > "$EVIDENCE/logs/forwarded-host-response.html"
+          grep -q 'type="module"' "$EVIDENCE/logs/forwarded-host-response.html"
+      - name: Match production-player cameras in Low Medium High
+        run: |
+          set -o pipefail
+          node tools/verification/m01-v7-production-visuals.mjs --start-servers | tee "$EVIDENCE/logs/production-visuals-ci.log"
+      - name: Match actual shot reload and blast states in Low Medium High
+        run: |
+          set -o pipefail
+          node tools/verification/m01-v7-transient-visuals.mjs | tee "$EVIDENCE/logs/transient-visuals-ci.log"
+      - name: Preserve full-resolution copies, boards and measured metrics
+        run: |
+          python3 -m venv /tmp/m01-v7-evidence-venv
+          /tmp/m01-v7-evidence-venv/bin/pip --disable-pip-version-check install Pillow
+          /tmp/m01-v7-evidence-venv/bin/python tools/verification/m01-v7-visual-report.py
+      - name: Retain lossless originals and every raw report without hosting
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-v7-visual-preview-${{ github.sha }}
+          retention-days: 90
+          if-no-files-found: error
+          path: docs/verification/m01-runtime/final-approved-deliveries-integration-v7/
+      - name: Commit only completed evidence to V7 by normal fast-forward push
+        run: |
+          set -e
+          test "$(git ls-remote origin refs/heads/codex/m01-final-production-consolidation-v7 | cut -f1)" = "$GITHUB_SHA"
+          git add "$EVIDENCE"/visual/*.jpg "$EVIDENCE"/boards/*.jpg "$EVIDENCE"/preview/v7-playing.png
+          git add "$EVIDENCE/INVARIANTS.json" "$EVIDENCE/PLAYABLE_PREVIEW.json" "$EVIDENCE/VISUAL_SUMMARY.json" "$EVIDENCE/VISUAL_COMPARISON.json.gz" "$EVIDENCE/TRANSIENT_COMPARISON.json.gz" "$EVIDENCE/logs/"
+          node --input-type=module <<'NODE'
+          import {execFileSync} from 'node:child_process';
+          const paths=execFileSync('git',['diff','--cached','--name-only'],{encoding:'utf8'}).trim().split('\n');
+          if(!paths.length||!paths.every(p=>p.startsWith(process.env.EVIDENCE+'/')))throw Error('Evidence-only publication guard failed');
+          NODE
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "test(m01): retain matched V6 V7 visual pairs and verified playable preview"
+          git push origin HEAD:refs/heads/codex/m01-final-production-consolidation-v7
