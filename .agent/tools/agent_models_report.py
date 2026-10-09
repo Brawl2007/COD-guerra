@@ -83,11 +83,51 @@ def fmt_counter(d):
     return ", ".join(f"{k}×{v}" for k, v in sorted(d.items(), key=lambda kv: -kv[1]))
 
 
+def defined_agents(agents_dir):
+    """name -> (model, effort) from the frontmatter of every .claude/agents/*.md."""
+    out = {}
+    for path in sorted(Path(agents_dir).glob("*.md")):
+        text = path.read_text(encoding="utf-8", errors="replace")
+        if not text.startswith("---"):
+            continue
+        fields = {}
+        for line in text.split("---", 2)[1].splitlines():
+            key, _, value = line.partition(":")
+            fields[key.strip()] = value.strip()
+        out[fields.get("name", path.stem)] = (fields.get("model", "-"), fields.get("effort", "-"))
+    return out
+
+
+def print_coverage(rows, agents_dir):
+    defined = defined_agents(agents_dir)
+    if not defined:
+        print(f"No agent definitions found in {agents_dir}.")
+        return
+    used = defaultdict(lambda: {"turns": 0, "models": Counter(), "efforts": Counter()})
+    for r in rows:
+        if r["agent"] in defined:
+            u = used[r["agent"]]
+            u["turns"] += r["turns"]
+            u["models"].update(r["models"])
+            u["efforts"].update(r["efforts"])
+    print(f"\nCoverage of {len(defined)} defined agents ({len(used)} used):")
+    print(f"{'agent':20} {'defined':16} {'used':>5}  {'served models / efforts'}")
+    for name, (model, effort) in defined.items():
+        u = used.get(name)
+        if u:
+            print(f"{name:20} {model + '/' + effort:16} {u['turns']:>5}  {fmt_counter(u['models'])} / {fmt_counter(u['efforts'])}")
+        else:
+            print(f"{name:20} {model + '/' + effort:16} {'never':>5}")
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--root", default=os.path.expanduser("~/.claude/projects"))
     ap.add_argument("--hours", type=float, default=24, help="only transcripts modified in the last N hours")
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--coverage", action="store_true",
+                    help="also list every agent defined in --agents-dir and whether it was used")
+    ap.add_argument("--agents-dir", default=str(Path(__file__).resolve().parents[2] / ".claude" / "agents"))
     args = ap.parse_args(argv)
 
     rows = [s for s in (summarise(p) for p in iter_transcripts(args.root, args.hours)) if s]
@@ -96,6 +136,8 @@ def main(argv=None):
         return 0
     if not rows:
         print(f"No transcripts with assistant turns under {args.root} in the last {args.hours:g} h.")
+        if args.coverage:
+            print_coverage(rows, args.agents_dir)
         return 0
     print(f"{'kind':9} {'agent':18} {'turns':>5}  {'models':34} {'efforts':22} {'in':>7} {'out':>6} {'cache':>8}  file")
     for r in rows:
@@ -110,6 +152,8 @@ def main(argv=None):
     fb = sum(r["fallbacks"] for r in rows)
     if fb:
         print(f"{fb} turn(s) were served by a different model than requested (server-side fallback).")
+    if args.coverage:
+        print_coverage(rows, args.agents_dir)
     return 0
 
 

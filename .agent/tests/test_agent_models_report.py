@@ -54,6 +54,17 @@ class AgentModelsReportTest(unittest.TestCase):
             old = subprocess.run([sys.executable, str(TOOL), "--root", d, "--hours", "0"], capture_output=True, text=True)
             self.assertIn("No transcripts", old.stdout)
 
+            agents = Path(d) / "agents"
+            agents.mkdir()
+            (agents / "haiku-low.md").write_text("---\nname: haiku-low\nmodel: haiku\neffort: low\n---\n")
+            (agents / "opus-max.md").write_text("---\nname: opus-max\nmodel: opus\neffort: max\n---\n")
+            cov = subprocess.run([sys.executable, str(TOOL), "--root", d, "--coverage", "--agents-dir", str(agents)],
+                                 capture_output=True, text=True)
+            self.assertEqual(cov.returncode, 0, cov.stderr)
+            self.assertIn("Coverage of 2 defined agents (1 used)", cov.stdout)
+            self.assertRegex(cov.stdout, r"haiku-low\s+haiku/low\s+3\s+claude-haiku-5-5")
+            self.assertRegex(cov.stdout, r"opus-max\s+opus/max\s+never")
+
 
 if __name__ == "__main__":
     unittest.main()
