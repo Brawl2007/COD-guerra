@@ -9,6 +9,7 @@ Ponto de entrada para qualquer sessão futura do Captain. Ordem de leitura:
 5. `CAMPAIGN_PLAN.md`: direção, escada de estado, sistemas globais, 30 missões, fases.
 6. `M01_TASK_STATUS.md`: estado de T00–T52 do roadmap do M01.
 7. `AGENT_SETUP.md`: modelos dos agentes, arranque, Advisor Fable e verificação local.
+8. `PLAYTEST_M01.md`: ficha do primeiro playtest humano (preencher no Chromebook e devolver no chat).
 
 ## Recuperação (no início de cada sessão)
 
