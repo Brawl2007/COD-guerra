@@ -14,6 +14,7 @@ if [ ! -f .claude/agents/captain.md ]; then
 fi
 
 python3 .agent/tools/claude_setup_check.py
+bash .agent/tools/install-git-guards.sh --check || true
 
 if [ "${1:-}" = "--check" ]; then
   exit 0

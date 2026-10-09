@@ -88,6 +88,24 @@ Se o `claude_setup_check.py` avisar `DISABLE_TELEMETRY`, `CLAUDE_CODE_DISABLE_NO
 Custo: no plano, o advisor conta para os limites de uso; um advisor Fable é cobrado em créditos de uso
 nos planos onde o Fable também é. Confirmar no `/usage`. Nunca aceitar créditos pagos sem autorização.
 
+## Proteção da `main`: três camadas
+
+1. **Hook do Claude Code** (`.claude/hooks/git-safety.py`, PreToolUse em Bash/Edit/Write): bloqueia push para
+   `main`/`master` em qualquer grafia (incluindo `git -C <pasta> push`), force push, `reset --hard`, `clean -f`,
+   `branch -D` e edições/commits com `main` em checkout. Falha fechado: um erro interno bloqueia.
+   Testes: `.agent/tests/test_git_safety_hook.py`.
+2. **Guarda `pre-push` do Git** (`.agent/tools/install-git-guards.sh`, instalado em `.git/hooks/pre-push` do clone,
+   partilhado por todos os worktrees): recusa qualquer push para `refs/heads/main|master`, venha de agente ou
+   de humano. Não depende do Claude Code. `captain.sh` avisa se faltar. Testes: `.agent/tests/test_git_guards.py`.
+3. **Proteção no GitHub** (Settings → Branches/Rulesets → `main`: exigir PR, proibir push direto): a única que
+   nenhum cliente consegue contornar. Ativar pelo utilizador.
+
+Observação 2026-10-09: num teste no Chromebook, um subagente correu `git push --dry-run origin main` sem
+ser bloqueado pela camada 1, embora o mesmo hook bloqueie comandos do Captain. A sessão tinha também o hook
+de utilizador `rtk hook claude` (reescreve comandos `git`/`npm` para poupar tokens). Hipótese em investigação:
+a reescrita do `rtk` passa à frente do hook do projeto nos comandos `git`. Até se provar o contrário, a
+camada 2 é obrigatória em cada clone.
+
 ## Revisão da configuração anterior (Codex V1 + Captain V3)
 
 - Correto: contratos de tarefa, grafo de estado, recuperação, hook `git-safety.py` (bloqueia push para
