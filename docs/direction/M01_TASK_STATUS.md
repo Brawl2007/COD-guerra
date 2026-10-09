@@ -27,7 +27,7 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 14 | Materiais das pontes V2 | PARCIAL | `tools/assets/m01-bridges`; regeneração de materiais por confirmar |
 | 15 | Portão FX V3 | DONE* | `m01-battlefield-fx-profile.js`, `m01-fx-textures.js` na V7; tabela fechado/aberto não verificada |
 | 16 | Luz da madrugada | DONE* | `claude/m01-lighting-dawn-v1` @ `3386fc2`, CI 37918399233 (490/490, spec 8/8); duas cascatas em Média/Alta |
-| 17 | Mergulho dos Stuka | PARCIAL | `m01-aircraft.js:26` ainda em **ciclo** (`time%JU87_LOOP`) |
+| 17 | Mergulho dos Stuka | DONE* | `claude/m01-stuka-dive-sequence-v1` @ `4c64beb`, CI 37930134740 (502/502, spec 5/5); sem ciclo, bombas visíveis, raid 05:30 numa passagem (D15) |
 | 18 | Set piece de demolição V2 | INCERTO | — |
 | 19 | Feedback do tiro do jogador | DONE* | `08d2e81`, CI 37890545910 (D12) |
 | 20 | Impostores da frente distante | AUSENTE | (Distant Battlefield foi excluído pela V7) |
