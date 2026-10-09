@@ -11,10 +11,15 @@ import {route} from '../helpers/m01-route.js';
 // lock and the SAME paused frame is screenshot twice, 1 s apart (pause-freeze proof), then once more with the impostors switched off through the
 // opt-in ?debug hook window.m01ImpostorDebug (presentation only; the toggle is part of the view's paused-frame key, so exactly one fresh frame
 // renders at the same sim clock). The A/B therefore differs ONLY in the impostors.
-//  view10  the route position at 06:05 (west bank, x 37) looking east along the bridge approach: the platoon at ~790 m, Germans at ~1.0-1.1 km
-//  view12  player moved to x 390 (inside the playable area; the out-of-bounds line is x 401) looking east: Germans at ~660-710 m, platoon ~440 m
+//  view10  west bank corridor between the two bridges (x 37, z 20, the water spec's standing place), looking east at the east approach: the Germans at ~1.0-1.07 km, the platoon on the
+//          road bridge at ~790 m
+//  view12  the same corridor moved to x 390 (inside the playable area; the out-of-bounds line is x 401): Germans at ~660-710 m
+// WHY NOT ON A BRIDGE (measured in CI run 38001119046 on 4bc9aac): the first version stood on the deck (route position / x 390, z 42) looking along it. Every
+// far figure then sat behind the converging truss portals: the A/B crops of the Low frame are identical to the eye (mean luminance 20 on, 18 off over the 319 px of
+// the rects, i.e. the dark ironwork), 12 px changed. A dark silhouette behind dark steel cannot be seen with or without an impostor, so that was not a fair proof of
+// legibility. The corridor between the bridges (rail deck z 0, road deck z 40, both +-5 m) has an unobstructed sightline to the east approach.
 // ("view 10 / view 12" of the roadmap card are not defined elsewhere in the repo; these are the declared definitions. The Germans at 06:05 hold
-//  the east approach, x 1047..1097, not the bridge deck: the 600-700 m view is therefore taken from the east end of the playable area.)
+//  the east approach, x 1047..1097, not the bridge deck.)
 // Pixel regions are the EXACT projected footprint of every impostor (floor/ceil of the foot-to-head, centre +- half width rectangle from the
 // instance diagnostics; no padding). The control regions are sky/ground bands containing no impostor and must be pixel-identical on/off.
 // M01_IMPOSTORS_BASELINE=1 only captures (png + diagnostics, '-before' suffix), asserts nothing about the new module and imports none of it,
@@ -37,8 +42,8 @@ if(!first[CLOCK])throw new Error('Missing route snapshot at '+CLOCK);
 const FOV=70,FOCAL=(720/2)/Math.tan(FOV*Math.PI/360);
 const world=new M01Simulation(19390901).world;
 const VIEWS=({
-  view10:{x:null,z:null,aim:{x:960,y:1,z:40}},   // x/z: the route position of the snapshot
-  view12:{x:390,z:42,aim:{x:900,y:1,z:40}}
+  view10:{x:37,z:20,aim:{x:1060,y:-1,z:22}},
+  view12:{x:390,z:20,aim:{x:1060,y:-1,z:22}}
 });
 function place(snapshot,view){
   const s=structuredClone(snapshot);

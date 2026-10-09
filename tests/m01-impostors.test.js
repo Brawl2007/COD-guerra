@@ -25,8 +25,12 @@ test('projected height is max(3 px, 1.7 m) for several distances, fovs and viewp
   assert.ok(Math.abs(focalPx(90,720)-360)<1e-9);
 });
 test('posture heights are distinct in metres and in pixels, and follow the existing pose state',()=>{
-  const px=['standing','crouched','prone'].map(p=>impostorSize(p,650,70,H).heightPx);
-  assert.ok(px[0]>px[1]&&px[1]>px[2],px.join());
+  const near=['standing','crouched','prone'].map(p=>impostorSize(p,100,70,H).heightPx);
+  assert.ok(near[0]>near[1]&&near[1]>near[2],'above the floor the pixel heights follow the posture heights: '+near.join());
+  // The 3 px floor applies to every posture (drawing-buffer pixels): beyond the floor distance the postures are told apart by width.
+  for(const d of [350,650,1100,2000])for(const p of ['standing','crouched','prone'])assert.ok(impostorSize(p,d,70,H).heightPx>=3-1e-9,`${p} ${d}`);
+  const far=['standing','crouched','prone'].map(p=>impostorSize(p,650,70,H));
+  assert.ok(far[2].widthPx>far[0].widthPx*2&&far[2].widthPx>far[1].widthPx*2,'prone is much wider than the others at 650 m: '+far.map(f=>f.widthPx).join());
   const m=['standing','crouched','prone'].map(p=>POSTURES[p].heightM);assert.equal(new Set(m).size,3);
   assert.equal(impostorPosture(actor('a'),0),'standing');
   assert.equal(impostorPosture(actor('a',{crouched:true}),0),'crouched');

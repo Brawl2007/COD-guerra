@@ -17,11 +17,12 @@ export const HANDOFF_M=350;
 /** Instance capacity of EACH nation's InstancedMesh, by quality preset. */
 export const IMPOSTOR_CAPACITY=Object.freeze({high:128,medium:96,low:64});
 export const IMPOSTOR_NATIONS=Object.freeze(['pl','de']);
-/** Posture silhouettes: world height (m), width/height aspect and the minimum on-screen height (px; the standing figure is 3 px). */
+/** Posture silhouettes: world height (m), width/height aspect and the minimum on-screen height in DRAWING-BUFFER pixels (canvas.height, what the screen shows): 3 px for EVERY posture, so no figure is ever sub-3-px.
+ * Beyond ~290 m all three therefore share 3 px height and are told apart by width (prone is ~3.4x as wide as tall) and shape. */
 export const POSTURES=Object.freeze({
   standing:Object.freeze({index:0,heightM:1.7,aspect:.34,minPx:3}),
-  crouched:Object.freeze({index:1,heightM:1.15,aspect:.55,minPx:2.1}),
-  prone:Object.freeze({index:2,heightM:.45,aspect:3.4,minPx:1.6})
+  crouched:Object.freeze({index:1,heightM:1.15,aspect:.55,minPx:3}),
+  prone:Object.freeze({index:2,heightM:.45,aspect:3.4,minPx:3})
 });
 /** A silhouette is never narrower than this many pixels (a 3 px tall man is 1 px wide otherwise and shimmers). */
 export const MIN_WIDTH_PX=2;
@@ -47,7 +48,7 @@ export const projectedHeightPx=(heightM,distance,fovDeg,viewportHeight)=>heightM
 export function impostorSize(posture,distance,fovDeg,viewportHeight){
   const p=POSTURES[posture];if(!p)throw new Error('unknown posture '+posture);
   const mpp=metresPerPixel(distance,fovDeg,viewportHeight);
-  const heightM=Math.max(p.heightM,p.minPx*mpp),widthM=Math.max(p.heightM*p.aspect,MIN_WIDTH_PX*mpp);
+  const heightM=Math.max(p.heightM,p.minPx*mpp),widthM=Math.max(heightM*p.aspect,MIN_WIDTH_PX*mpp);
   return {heightM,widthM,heightPx:heightM/mpp,widthPx:widthM/mpp,floored:heightM>p.heightM+1e-9,aspect:widthM/heightM};
 }
 
@@ -150,7 +151,7 @@ void main(){
   if(a<=0.003)discard;
   vec3 col=vInk;
   if(uRimStrength>0.0){
-    float inner=figure(p+vec2(uRimSide*max(.045,1.25*px),0.0));
+    float inner=figure(p+vec2(uRimSide*max(.045,.5*px),0.0));   // at most half a pixel: a 2 px wide figure keeps its ink core (the rim must not cancel the contrast)
     float rim=a*clamp(.5+inner/px,0.0,1.0);
     col+=uRim*rim*uRimStrength;
   }
