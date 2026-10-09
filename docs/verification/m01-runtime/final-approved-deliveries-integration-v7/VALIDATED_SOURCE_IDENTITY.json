@@ -63,7 +63,7 @@
     "reason": "Second 82/84 report: stale menu-frame counter in wagon restore and software-WebGL phase-read wall timeout. Original positive effects/state assertions retained; production unchanged.",
     "head": "0a83942b41957e0b900b8a8fc704eb7860f84ba9"
   },
-  "sourceAndTestsUnchangedAfterThirdFullBrowserStart": true,
+  "sourceAndTestsUnchangedAfterThirdFullBrowserStart": false,
   "localParallelAttempt": {
     "head": "0bbffba78cbe96da9a4de24449ab3ac9470ba0db",
     "certificationExcluded": true,
@@ -82,5 +82,12 @@
     "skipped": 0,
     "flaky": 0
   },
-  "thirdBrowserHead": "9d9844e65701aeb80af854d8f9b7ed6dc9a351e8"
+  "thirdBrowserHead": "9d9844e65701aeb80af854d8f9b7ed6dc9a351e8",
+  "thirdBrowserHarnessCorrection": {
+    "files": [
+      "tests/browser/m01-locomotive.spec.js"
+    ],
+    "reason": "Third 83/84 report: post-reload read at line 19 preceded the first rendered frame after restore (train visibility is applied in render()). Added the same visible&&loaded wait used before the first read (line 12); no assertion removed; production unchanged.",
+    "head": "PENDING_COMMIT"
+  }
 }

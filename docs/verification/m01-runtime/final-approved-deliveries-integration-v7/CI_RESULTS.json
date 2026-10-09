@@ -552,5 +552,25 @@
     },
     "failedTest": "tests/browser/m01-locomotive.spec.js:6 locomotive 963 production GLBs load, far LOD, pause and restore",
     "inventory": 84
+  },
+  "browserThirdHarnessFocused": {
+    "status": "PASS",
+    "kind": "focused, not certification; never united with full-run results",
+    "spec": "tests/browser/m01-locomotive.spec.js",
+    "repeatEach": 3,
+    "executed": 6,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "retries": 0,
+    "workers": 1,
+    "timeoutMs": 300000,
+    "timeoutReason": "local Chromebook page.reload exceeds default 45 s; unmodified test fails identically locally; config unchanged",
+    "durationMs": 975411.66,
+    "report": "BROWSER_THIRD_HARNESS_FOCUSED.json.gz",
+    "summary": "BROWSER_THIRD_HARNESS_FOCUSED_SUMMARY.json",
+    "log": "logs/browser-third-harness-focused.log",
+    "build": "logs/build-third-harness-fix.log"
   }
 }
