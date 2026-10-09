@@ -8,7 +8,7 @@ Status: **PILOTO — NÃO OPERACIONAL até a primeira chamada real comprovada.**
 
 ## O que as regras decidem localmente (sem rede)
 
-- explore / somente leitura: haiku (explorer)
+- explore: haiku (explorer). `--read-only` não altera o roteamento de implement/verify/review
 - verify: sonnet (verifier)
 - review com flag crítica (persistence, architecture, integration, simulation, save) ou risco alto: opus (reviewer-critical); review comum: sonnet (reviewer)
 - implement com `fix_attempts >= 2`: sonnet (implementer-deep)
@@ -32,8 +32,8 @@ A chave também pode vir de `TYPESAFE_API_KEY` ou de `COD_JEV_KEY_FILE`. O arqui
 ## Ativação (em ordem)
 
 1. Testes offline (stub local, nunca acessam a API real): `python3 -m unittest discover -s .agent/tests -p 'test_jev*.py' -v`
-2. Simulação: `COD_JEV_PILOT=1 python3 .agent/tools/jev_router.py route --role implement --description "..." --dry-run` (nada é enviado nem consumido).
-3. Uma chamada real: `COD_JEV_PILOT=1 python3 .agent/tools/jev_router.py route --role implement --description "..." --run-id <RUN_ID> --json`
+2. Simulação: `COD_JEV_PILOT=1 python3 .agent/tools/jev_router.py route --role implement --risk medium --complexity medium --description "..." --dry-run` (nada é enviado nem consumido).
+3. Uma chamada real: `COD_JEV_PILOT=1 python3 .agent/tools/jev_router.py route --role implement --risk medium --complexity medium --description "..." --run-id <RUN_ID> --json`
 4. Conferir: `python3 .agent/tools/jev_router.py usage`
 
 Só depois da etapa 3 comprovada o piloto deixa de ser "não operacional".
