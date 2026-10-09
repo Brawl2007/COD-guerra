@@ -15,6 +15,9 @@ fi
 
 python3 .agent/tools/claude_setup_check.py
 bash .agent/tools/install-git-guards.sh --check || true
+if [ -f .agent/tools/jev_router.py ]; then
+  echo "[INFO] Jev (piloto, chamadas pagas): $(python3 .agent/tools/jev_router.py usage 2>/dev/null | head -1 || true)"
+fi
 
 if [ "${1:-}" = "--check" ]; then
   exit 0

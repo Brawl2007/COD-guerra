@@ -90,6 +90,19 @@ Depois de alterar agentes no repositório, repetir o instalador. O guarda `pre-p
 é por clone e já cobre todos os worktrees; o relatório `agent_models_report.py` lê `~/.claude/projects`,
 logo cobre todas as pastas e sessões.
 
+## Política de custo: Haiku para ler, Jev para decidir (gratuito primeiro)
+
+- **Haiku primeiro para leitura.** Localizar, contar, listar, resumir documentos e triar logs começa sempre
+  num agente Haiku. Sonnet entra só quando há ficheiros a alterar; Opus só para decisões de arquitetura,
+  simulação ou saves. Um resultado do Haiku é evidência a verificar, não prova.
+- **Jev gratuito primeiro.** Antes de cada delegação e de cada decisão de integração, o Captain corre as
+  ferramentas locais sem chamada paga: `jev_router.py route` e `jev_decisions.py ... --offline`. Só um caso
+  ambíguo, com vaga disponível, usa uma chamada paga.
+- **Teto de chamadas pagas: decisão tua.** O piloto tem 3 chamadas (1 usada). Uma chamada típica custa cerca
+  de US$ 0,00002 de entrada, por isso o custo é desprezável; a limitação é de governação. Para subir o teto,
+  o Captain propõe o número e espera a tua resposta; nunca altera `PILOT_MAX_PAID_CALLS` nem o ledger.
+- O arranque (`.agent/tools/captain.sh`) mostra o uso atual do piloto.
+
 ## Ver que modelo e esforço cada agente usou de facto
 
 O Claude Code grava em cada resposta o modelo servido (`message.model`), o pedido (`requestedModel`),

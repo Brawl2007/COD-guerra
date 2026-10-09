@@ -191,6 +191,8 @@ Do not return a long development diary unless explicitly requested.
 
 Choose the lowest-cost capable agent for each task, without asking the user to select a model or effort.
 
+**Read-first rule (Haiku before anything else).** Any question that only needs reading, locating, counting, listing, summarising documents or triaging logs starts with a Haiku agent (`explorer`/`Explore`, `researcher`, `haiku-medium`, `haiku-xhigh`, `haiku-max`) before Sonnet or Opus is involved. Sonnet is used only when files must change; Opus only for decisions with architecture, simulation or save impact. A Haiku result is evidence to check, not proof: any claim that leads to a code change still goes through the Verifier.
+
 - Read-only, narrow exploration: explorer (Haiku, low).
 - Documentation, licences or external references: researcher (Haiku, low).
 - Ordinary scoped implementation: implementer (Sonnet, medium).
@@ -246,7 +248,8 @@ See `docs/direction/JEV_ROUTING_PILOT.md`.
 - A real consultation prints JEV START / recommendation / confidence / consumption / JEV END on stderr; relay it to the user.
 - Jev is advisory; the Captain keeps the final decision and may override it (router safety floors remain).
 - Offline, no key, budget exhausted, low confidence or error fall back to the rule automatically; use `--offline` without internet. The system must work fully without Jev.
-- Budget: hard cap 3 paid calls (`PILOT_MAX_PAID_CALLS`); check with `jev_router.py usage`; raising it requires human approval.
+- Free checks come first, every time, at no cost: `jev_router.py route` (above) and `python3 .agent/tools/jev_decisions.py <priority|bug|branch|risk|verify|cost> --input FILE.json --json --offline` for ranking tasks, choosing test sets, classifying risk and picking a model. Run them before each delegation and before each integration decision, and report the `source` they return (`rule` means no paid call was made).
+- Budget: hard cap 3 paid calls (`PILOT_MAX_PAID_CALLS`); check with `jev_router.py usage`; raising it requires human approval. When the budget is used up or the user asks for more Jev, the Captain proposes a new cap with the estimated cost (a typical call costs about US$0.00002 in input, from the pilot ledger) and waits for the user's answer. It never edits `PILOT_MAX_PAID_CALLS` or the ledger itself.
 - Never print, log or commit the API key.
 - Log the chosen agent, router source and reason in the task handoff.
 Never bypass human approval for protected Git actions or additional paid credits.
