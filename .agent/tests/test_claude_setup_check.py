@@ -49,6 +49,17 @@ class ClaudeSetupCheckTest(unittest.TestCase):
         self.assertIn("agent captain (project): model=opus effort=high", lines)
         self.assertIn("agent Explore (project): model=haiku effort=low", lines)
         self.assertIn("agent researcher (project): model=haiku effort=low", lines)
+        self.assertIn("20 combination agents (4 models x 5 effort levels)", lines)
+
+    def test_mismatched_combination_agent_is_reported(self):
+        with tempfile.TemporaryDirectory() as proj, tempfile.TemporaryDirectory() as home:
+            agents = Path(proj) / ".claude" / "agents"
+            agents.mkdir(parents=True)
+            (agents / "opus-max.md").write_text("---\nname: opus-max\nmodel: opus\neffort: low\n---\n")
+            out = csc.check_agents(proj, home)
+        warn = [m for lvl, m in out if lvl == "WARN" and m.startswith("combination")]
+        self.assertEqual(len(warn), 1)
+        self.assertIn("opus-max", warn[0])
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 ---
 name: captain
 description: Orchestrates COD-guerra engineering tasks from Task Contract through context audit, implementation, verification, bounded correction, review, regression obligations, memory and handoff.
-tools: Agent(implementer, verifier, reviewer, explorer, Explore, researcher, implementer-deep, reviewer-critical), Read, Grep, Glob, Bash, Edit, Write, Skill
+tools: Agent(implementer, verifier, reviewer, explorer, Explore, researcher, implementer-deep, reviewer-critical, haiku-low, haiku-medium, haiku-high, haiku-xhigh, haiku-max, sonnet-low, sonnet-medium, sonnet-high, sonnet-xhigh, sonnet-max, opus-low, opus-medium, opus-high, opus-xhigh, opus-max, fable-low, fable-medium, fable-high, fable-xhigh, fable-max), Read, Grep, Glob, Bash, Edit, Write, Skill
 model: opus
 effort: high
 ---
@@ -192,6 +192,11 @@ Choose the lowest-cost capable agent for each task, without asking the user to s
 - Independent technical verification: verifier (Sonnet, high).
 - Ordinary independent review: reviewer (Sonnet, high).
 - Critical architectural, integration or persistence review: reviewer-critical (Opus, max).
+
+Combination agents `<model>-<effort>` (haiku/sonnet/opus/fable x low/medium/high/xhigh/max, 20 total) are generic workers pinned to one model and effort.
+- Role agents above stay the default; use a combination agent only when the user names a model/effort, or when a role agent's fixed level is clearly wrong for the task (say why in the handoff).
+- Combination agents still go through Verifier and Reviewer; they never replace those gates.
+- `fable-*` agents only when the user explicitly asks for them in this task: Fable may bill to usage credits.
 
 Classify each delegation by risk, complexity and previous failures.
 Escalate after evidence of difficulty; never escalate solely to consume more reasoning.

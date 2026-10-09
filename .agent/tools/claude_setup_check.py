@@ -18,6 +18,8 @@ ADVISOR_MIN_FABLE = (2, 1, 257)
 HAIKU_55_MIN = (2, 1, 293)
 REQUIRED_AGENTS = ("captain", "explorer", "Explore", "researcher", "implementer",
                    "implementer-deep", "verifier", "reviewer", "reviewer-critical")
+COMBO_AGENTS = tuple(f"{m}-{e}" for m in ("haiku", "sonnet", "opus", "fable")
+                     for e in ("low", "medium", "high", "xhigh", "max"))
 
 # name -> (level, message) when the variable is set to a non-empty value
 ENV_RULES = {
@@ -116,6 +118,12 @@ def check_agents(project_dir, home):
             out.append(("OK", f"agent {name} ({label}): model={fm.get('model', '-')} effort={fm.get('effort', '-')}"))
         else:
             out.append(("WARN", f"agent {name} missing"))
+    bad = [n for n in COMBO_AGENTS
+           if n not in found or (found[n][1].get("model"), found[n][1].get("effort")) != tuple(n.split("-"))]
+    if bad:
+        out.append(("WARN", f"combination agents missing or mismatched: {', '.join(bad)}"))
+    else:
+        out.append(("OK", f"{len(COMBO_AGENTS)} combination agents (4 models x 5 effort levels)"))
     return out
 
 

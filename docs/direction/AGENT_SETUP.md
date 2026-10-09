@@ -15,6 +15,10 @@ agent-teams). Itens marcados *não confirmado* não vêm dessas páginas.
 | Verifica e revê | `verifier`, `reviewer` | Sonnet, high |
 | Revisão crítica | `reviewer-critical` | Opus, max (só simulação, saves, integração, arquitetura) |
 | Encaminhamento consultivo | Jev (`.agent/tools/jev_*.py`) | regras locais primeiro, teto de 3 chamadas pagas |
+| Combinação explícita | `<modelo>-<esforço>` (20 agentes: haiku/sonnet/opus/fable × low/medium/high/xhigh/max) | a pedido do utilizador; `fable-*` só com pedido expresso |
+
+Os agentes de papel continuam a ser a escolha por defeito. Os 20 agentes de combinação são trabalhadores
+genéricos fixos num modelo e num esforço e passam sempre pelo Verifier e pelo Reviewer.
 
 Opus 5.5 como principal aceita o Fable 5.1 como advisor. Os subagentes herdam o advisor e aplicam a
 mesma regra de pares contra o seu próprio modelo.
