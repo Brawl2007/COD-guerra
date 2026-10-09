@@ -73,7 +73,7 @@ const PIXEL=Object.freeze({
   flash:{changed:150,peak:40,meanAbs:.15},            // flash + cores over ~160 x 120 px around the projected blast point
   collapse:{changed:300,peak:60,meanAbs:.1},          // moved/rolled truss spans + rubble + smoke column
   fall:{changed:600,peak:60,meanAbs:.2},              // spans down 8..10 m + splash + dust + column
-  rain:{changed:60,peak:40,meanAbs:.05},              // clods in flight + dust at the firing post
+  rain:{changed:60,peak:40,meanAbs:.02},              // clods in flight + dust at the firing post
   restore:{changed:200,peak:60,meanAbs:.1}            // stored pose of the east spans and rubble + suspended dust
 });
 const ROI=Object.freeze({
@@ -81,7 +81,7 @@ const ROI=Object.freeze({
   westFlash:{points:[[70,8,20]],pad:[85,60]},
   eastCollapse:{points:[[800,0,20],[800,30,20],[690,5,0],[690,5,40],[837,4,0],[843,4,40]],pad:[80,40]},
   westFall:{points:[[10.4,3,0],[8.5,3,40],[142,0,0],[142,0,40],[70,6,20],[70,25,20]],pad:[30,30]},
-  westRain:{points:[[-290,24,22],[-290,-2,22],[-304,8,10],[-276,8,34]],pad:[110,20]},
+  westRain:{points:[[-290,24,22],[-290,6,22],[-304,10,10],[-276,10,34]],pad:[110,15]},   // the airborne part of the column: the wounded men behind the post stand below it
   eastRestore:{points:[[800,0,20],[800,30,20],[690,5,0],[690,5,40],[837,4,0],[843,4,40]],pad:[80,40]}
 });
 
