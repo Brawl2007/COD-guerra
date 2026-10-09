@@ -242,7 +242,7 @@ def critical_areas(files, text):
     hits = {}
     for area, words in CRITICAL_AREAS.items():
         for f in files:
-            fl = f.lower()
+            fl = "/" + f.lower().replace("\\", "/").lstrip("/")  # root-relative paths still match "/sim/"
             if _has(fl, words):
                 hits[area] = f
                 break
@@ -417,6 +417,12 @@ def analyze_bug(data, secrets=()):
     else:
         sev = "medium"
     why = "category from path/keyword rules; severity from symptom keywords (default medium)"
+    # a "trivial" wording in free text cannot lower severity below medium when the files touch a
+    # critical area (contradictory input keeps the floor); Jev below may only raise it
+    sev_floor = "medium" if sev in ("low",) and critical_areas(obs["files"], "") else None
+    if sev_floor:
+        sev = sev_floor
+        why += "; severity floor medium (critical-area files)"
 
     def build(cat, sev):
         return {"category": cat, "severity": sev, "route_to": {"area": cat, "agent": BUG_OWNER[cat]}}
@@ -441,6 +447,8 @@ def analyze_bug(data, secrets=()):
         s = answers.get("severity", sev)
         if crit and s != "critical":
             raise Reject("severity floor critical")
+        if sev_floor and SEVERITIES.index(s) < SEVERITIES.index(sev_floor):
+            raise Reject("severity floor medium")
         o["recommendation"] = build(c, s)
         o["status"], o["fixed"] = "unverified", False
 
@@ -517,9 +525,20 @@ def _is_code(f):
     return f.lower().endswith(CODE_EXT)
 
 
+TEST_DIRS = ("test", "tests", "__tests__", "spec")
+
+
+def _is_test_path(f):
+    """Test only by directory segment or basename pattern, never by substring."""
+    parts = f.lower().replace("\\", "/").split("/")
+    base = parts[-1]
+    return (any(p in TEST_DIRS for p in parts[:-1]) or ".test." in base or ".spec." in base
+            or "_test." in base or base.startswith("test_"))
+
+
 def _is_doc_or_test(f):
-    fl = f.lower()
-    return fl.endswith(DOC_EXT) or "test" in fl or fl.startswith("docs/") or "/docs/" in fl
+    fl = f.lower().replace("\\", "/")
+    return fl.endswith(DOC_EXT) or _is_test_path(fl) or fl.startswith("docs/") or "/docs/" in fl
 
 
 def analyze_risk(data, secrets=()):
@@ -680,7 +699,7 @@ def run_cost(data, *, enable_jev, offline, dry_run, min_confidence, transport, e
                  run_id=run_id, limit_flag=limit_flag)
     tier = tier_of(r["recommendation_model"], r["recommended_agent"])
     rec = {"model_tier": tier, "agent": r["recommended_agent"], "consult_jev": "yes" if amb else "no",
-           "consult_jev_reason": ("ambiguous: " + why) if amb else "local rule resolves (%s); do not consult Jev" % why,
+           "consult_jev_reason": (why if why.startswith("ambiguous") else "ambiguous: " + why) if amb else "local rule resolves (%s); do not consult Jev" % why,
            "keep_verifier_and_reviewer": True}
     out = _result("cost", norm, rec, r["rationale"], r["source"],
                   {"rule": "none", "jev": "technical"}.get(r["source"], "human"))
