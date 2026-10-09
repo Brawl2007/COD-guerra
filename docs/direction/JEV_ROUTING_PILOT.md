@@ -68,15 +68,15 @@ Não há banner para `rule`, `rule_fallback` sem resposta nem `--dry-run`.
 
 ## Orçamento e custo
 
-- Teto do piloto: **3 chamadas pagas** no total (constante `PILOT_MAX_PAID_CALLS`); `--limit` e `COD_JEV_LIMIT` só podem reduzir.
+- Teto do piloto: **100 chamadas pagas** no total (constante `PILOT_MAX_PAID_CALLS`, aprovada pelo utilizador em 2026-10-09; antes 3); `--limit` e `COD_JEV_LIMIT` só podem reduzir.
 - Ledger global fora do repositório: `~/.local/state/cod-guerra/jev_pilot_ledger.json` (`COD_JEV_LEDGER`), modo 0600. A vaga é reservada antes do envio; falhas (401/429/5xx, timeout) também contam. Sem retentativas.
 - Preço: US$ 0,042 por 1M tokens de entrada; saída grátis (uma chamada típica ≈ 300 tokens, frações de centavo).
 
 ## Limites
 
-- Teto de 3 chamadas no piloto; timeout de 15 s.
+- Teto de 100 chamadas no piloto (antes 3); timeout de 15 s.
 - O Jev funciona melhor em inglês; a descrição em português pode reduzir a confiança.
 - O alias `jev-latest` muda de versão; o modelo usado é registrado no ledger.
 - A descrição enviada ao Jev é truncada em 500 caracteres: nunca colocar segredos nem dados grandes em `--description`. A criticidade depende de o chamador passar `--critical`/`--risk high`; a ferramenta não a infere da descrição. Ledger corrompido/ilegível falha fechado (`ledger_unreadable`, nenhuma chamada paga, arquivo intocado); redirecionamentos HTTP não são seguidos.
 - Apenas consultivo; não substitui a política em `.claude/agents/captain.md`.
-- Suporte à decisão (prioridade, bugs, branches, risco, verificação, custo): ver `docs/direction/JEV_DECISION_SUPPORT.md` (mesmo ledger e teto de 3 chamadas).
+- Suporte à decisão (prioridade, bugs, branches, risco, verificação, custo): ver `docs/direction/JEV_DECISION_SUPPORT.md` (mesmo ledger e teto de 100 chamadas).

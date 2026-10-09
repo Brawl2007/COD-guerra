@@ -32,7 +32,7 @@ Flags: `--json --offline --dry-run --enable-jev --run-id ID --min-confidence 0.6
 
 ## Gate, orçamento e offline
 
-Jev só é chamado se: caso ambíguo pelas regras locais **e** (`--enable-jev` ou `COD_JEV_PILOT=1`) **e** chave **e** orçamento **e** sem `--offline`. Motivos de fallback idênticos ao `route()`: `disabled`, `offline`, `no_key`, `insecure_key_file`, `ledger_unreadable`, `budget_exhausted`, `low_confidence`, `error`; mais `unsafe_jev_output` (resposta válida, mas barrada por um filtro de segurança). Vários questions (choice) vão em UMA requisição = UMA chamada paga. O ledger e o teto de 3 chamadas são **compartilhados** com o `jev_router` (`PILOT_MAX_PAID_CALLS = 3`). Sem retry; timeout 15 s; sem redirecionamento. Tudo funciona 100% offline com as regras.
+Jev só é chamado se: caso ambíguo pelas regras locais **e** (`--enable-jev` ou `COD_JEV_PILOT=1`) **e** chave **e** orçamento **e** sem `--offline`. Motivos de fallback idênticos ao `route()`: `disabled`, `offline`, `no_key`, `insecure_key_file`, `ledger_unreadable`, `budget_exhausted`, `low_confidence`, `error`; mais `unsafe_jev_output` (resposta válida, mas barrada por um filtro de segurança). Vários questions (choice) vão em UMA requisição = UMA chamada paga. O ledger e o teto de 100 chamadas são **compartilhados** com o `jev_router` (`PILOT_MAX_PAID_CALLS = 100`). Sem retry; timeout 15 s; sem redirecionamento. Tudo funciona 100% offline com as regras.
 
 ## Segurança
 

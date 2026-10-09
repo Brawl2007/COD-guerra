@@ -14,7 +14,7 @@ agent-teams). Itens marcados *não confirmado* não vêm dessas páginas.
 | Implementa | `implementer` / `implementer-deep` | Sonnet, medium / xhigh |
 | Verifica e revê | `verifier`, `reviewer` | Sonnet, high |
 | Revisão crítica | `reviewer-critical` | Opus, max (só simulação, saves, integração, arquitetura) |
-| Encaminhamento consultivo | Jev (`.agent/tools/jev_*.py`) | regras locais primeiro, teto de 3 chamadas pagas |
+| Encaminhamento consultivo | Jev (`.agent/tools/jev_*.py`) | regras locais primeiro, teto de 100 chamadas pagas (aprovado pelo utilizador) |
 | Força de trabalho | 20 agentes `<modelo>-<esforço>` com função própria (tabela abaixo) | escolhidos pelo Captain por função |
 
 ## Funções dos 20 agentes de combinação
@@ -98,7 +98,7 @@ logo cobre todas as pastas e sessões.
 - **Jev gratuito primeiro.** Antes de cada delegação e de cada decisão de integração, o Captain corre as
   ferramentas locais sem chamada paga: `jev_router.py route` e `jev_decisions.py ... --offline`. Só um caso
   ambíguo, com vaga disponível, usa uma chamada paga.
-- **Teto de chamadas pagas: decisão tua.** O piloto tem 3 chamadas (1 usada). Uma chamada típica custa cerca
+- **Teto de chamadas pagas: 100, aprovado por ti em 2026-10-09** (era 3; 1 usada até então). Uma chamada típica custa cerca
   de US$ 0,00002 de entrada, por isso o custo é desprezável; a limitação é de governação. Para subir o teto,
   o Captain propõe o número e espera a tua resposta; nunca altera `PILOT_MAX_PAID_CALLS` nem o ledger.
 - O arranque (`.agent/tools/captain.sh`) mostra o uso atual do piloto.
