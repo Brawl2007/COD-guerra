@@ -1,0 +1,6 @@
+
+Running 15 tests using 1 worker
+···············
+  Slow test file: tests/browser/m01-demolition-setpiece.spec.js (9.2m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  15 passed (13.9m)

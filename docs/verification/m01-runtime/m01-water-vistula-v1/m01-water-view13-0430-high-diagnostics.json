@@ -1,0 +1,140 @@
+{
+  "name": "m01-water-view13-0430-high",
+  "clock": "04:30",
+  "view": "view13",
+  "quality": "high",
+  "battleClock": 16244.549999999992,
+  "paused": true,
+  "pausedLater": true,
+  "simClock": 0.5499999999999999,
+  "simClockLater": 0.5499999999999999,
+  "player": {
+    "x": 30,
+    "y": -10,
+    "z": 20,
+    "angle": -1.3258176636680326,
+    "pitch": -0.004790041959088956,
+    "health": 100,
+    "crouched": false,
+    "aiming": false
+  },
+  "water": {
+    "active": true,
+    "time": 0.5499999999999999,
+    "flow": [
+      0.13859999999999997,
+      -0.2464
+    ],
+    "reflect": 1,
+    "tint": 0,
+    "detail": 1,
+    "octaves": 3,
+    "piers": 2,
+    "renderTargets": 0,
+    "planar": false
+  },
+  "lighting": {
+    "phase": "blue-hour",
+    "battleClock": 16244.549999999992,
+    "sunAltDeg": -3.607,
+    "sunAzDeg": 70.186,
+    "keyElevDeg": 12.023,
+    "daylight": 0.043,
+    "exposure": 1.297,
+    "shadows": true,
+    "shadowsModel": true,
+    "shadowMap": true,
+    "cascades": 2,
+    "cascadeLayout": "1:wide65+near25",
+    "sunIntensity": 0.959,
+    "hemiIntensity": 1.304,
+    "sunColor": "#d8bccb",
+    "fogColor": "#708196",
+    "skyZenith": "#304569",
+    "skyHalo": "#da946e",
+    "glow": 0.514,
+    "discStrength": 0,
+    "cloudWind": {
+      "x": 0.00042,
+      "z": 0.00017
+    },
+    "fog": {
+      "near": 420,
+      "far": 2800
+    },
+    "updates": 10
+  },
+  "drawCalls": 341,
+  "triangles": 784293,
+  "snapshotScene": "gameplay",
+  "regions": {
+    "water": {
+      "x0": 520,
+      "y0": 366,
+      "x1": 1280,
+      "y1": 466,
+      "projected": [
+        {
+          "point": [
+            45,
+            -9.94,
+            -70
+          ],
+          "x": 598.9,
+          "y": 366.5
+        },
+        {
+          "point": [
+            45,
+            -9.94,
+            -260
+          ],
+          "x": 540.3,
+          "y": 360.5
+        },
+        {
+          "point": [
+            200,
+            -9.94,
+            -70
+          ],
+          "x": 1212.3,
+          "y": 363.9
+        },
+        {
+          "point": [
+            200,
+            -9.94,
+            -260
+          ],
+          "x": 799.4,
+          "y": 360.1
+        }
+      ],
+      "hull": null
+    }
+  },
+  "stats": {
+    "width": 1280,
+    "height": 720,
+    "water": {
+      "pixels": 76000,
+      "mean": 116.42548138684316,
+      "std": 39.4008715504127,
+      "rgb": [
+        110.77213157894737,
+        116.21932894736842,
+        135.11443421052633
+      ],
+      "thirds": [
+        138.79579304953623,
+        108.6448915948973,
+        101.15787128389512
+      ],
+      "brightFraction": 0.48260526315789476,
+      "maxDiff": 0,
+      "meanAbs": 0,
+      "changed": 0
+    }
+  }
+}

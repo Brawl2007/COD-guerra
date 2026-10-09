@@ -52,7 +52,7 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 39 | Sensação do viewmodel V2 | INCERTO | — |
 | 40 | Braços FP e transporte | AUSENTE | — |
 | 41 | Acabamento das pontes em runtime | PARCIAL | Portal polish existe |
-| 42 | Água do Vístula | AUSENTE | — |
+| 42 | Água do Vístula | DONE* | `claude/m01-water-vistula-v1` @ `71ad067`, CI 37988900379 (535/535, browser 15/15 incl. regressão T18); fresnel + céu de T16, fluxo para norte pelo relógio, espuma nos pilares, margem molhada, Low sem reflexo mas com tom (média 59→99) (D17) |
 | 43 | Política de LOD | AUSENTE | — |
 | 44 | Grading/pós-processamento | AUSENTE | T16 feita; já não espera por T01 (D13) |
 | 45 | Assets de áudio | AUSENTE | Exige licenças |

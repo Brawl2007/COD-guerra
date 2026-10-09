@@ -1,0 +1,232 @@
+{
+  "name": "m01-water-view12-0605-high",
+  "clock": "06:05",
+  "view": "view12",
+  "quality": "high",
+  "battleClock": 21904.000000007654,
+  "paused": true,
+  "pausedLater": true,
+  "simClock": 701.7499999999095,
+  "simClockLater": 701.7499999999095,
+  "player": {
+    "x": 24,
+    "y": -3,
+    "z": 20,
+    "angle": 0,
+    "pitch": -0.0605607741431773,
+    "health": 92,
+    "crouched": false,
+    "aiming": false
+  },
+  "water": {
+    "active": true,
+    "time": 701.7499999999095,
+    "flow": [
+      176.84099999997719,
+      -314.3839999999595
+    ],
+    "reflect": 1,
+    "tint": 0,
+    "detail": 1,
+    "octaves": 3,
+    "piers": 2,
+    "renderTargets": 0,
+    "planar": false
+  },
+  "lighting": {
+    "phase": "morning",
+    "battleClock": 21904.000000007654,
+    "sunAltDeg": 9.885,
+    "sunAzDeg": 89.013,
+    "keyElevDeg": 15.396,
+    "daylight": 0.631,
+    "exposure": 1.115,
+    "shadows": true,
+    "shadowsModel": true,
+    "shadowMap": true,
+    "cascades": 2,
+    "cascadeLayout": "1:wide65+near25",
+    "sunIntensity": 1.693,
+    "hemiIntensity": 1.678,
+    "sunColor": "#ffd09d",
+    "fogColor": "#a8afad",
+    "skyZenith": "#587aa4",
+    "skyHalo": "#f6c27d",
+    "glow": 0.825,
+    "discStrength": 0.938,
+    "cloudWind": {
+      "x": 0.00042,
+      "z": 0.00017
+    },
+    "fog": {
+      "near": 420,
+      "far": 2800
+    },
+    "updates": 10
+  },
+  "drawCalls": 447,
+  "triangles": 1210580,
+  "snapshotScene": "gameplay",
+  "regions": {
+    "water": {
+      "x0": 0,
+      "y0": 350,
+      "x1": 577,
+      "y1": 451,
+      "projected": [
+        {
+          "point": [
+            60,
+            -9.94,
+            -5
+          ],
+          "x": 287.4,
+          "y": 450.1
+        },
+        {
+          "point": [
+            60,
+            -9.94,
+            -60
+          ],
+          "x": -488.3,
+          "y": 450.1
+        },
+        {
+          "point": [
+            225,
+            -9.94,
+            -5
+          ],
+          "x": 576.1,
+          "y": 350.8
+        },
+        {
+          "point": [
+            225,
+            -9.94,
+            -60
+          ],
+          "x": 435.5,
+          "y": 350.8
+        }
+      ],
+      "hull": null
+    },
+    "wake": {
+      "x0": 379,
+      "y0": 356,
+      "x1": 515,
+      "y1": 377,
+      "projected": [
+        {
+          "point": [
+            140.9,
+            -9.94,
+            -14
+          ],
+          "x": 490.9,
+          "y": 366.5
+        },
+        {
+          "point": [
+            140.9,
+            -9.94,
+            -34
+          ],
+          "x": 403.1,
+          "y": 366.5
+        }
+      ],
+      "hull": null
+    },
+    "control": {
+      "x0": 462,
+      "y0": 343,
+      "x1": 568,
+      "y1": 364,
+      "projected": [
+        {
+          "point": [
+            205,
+            -9.94,
+            -14
+          ],
+          "x": 543.5,
+          "y": 353.2
+        },
+        {
+          "point": [
+            205,
+            -9.94,
+            -34
+          ],
+          "x": 486.8,
+          "y": 353.2
+        }
+      ],
+      "hull": null
+    }
+  },
+  "stats": {
+    "width": 1280,
+    "height": 720,
+    "water": {
+      "pixels": 58277,
+      "mean": 89.99108861815961,
+      "std": 73.86252612820132,
+      "rgb": [
+        88.70350223930538,
+        90.45472484856805,
+        89.18981759527773
+      ],
+      "thirds": [
+        93.09553216434296,
+        84.96191595473836,
+        91.97414286014475
+      ],
+      "brightFraction": 0.44669423614805154,
+      "maxDiff": 0,
+      "meanAbs": 0,
+      "changed": 0
+    },
+    "wake": {
+      "pixels": 2856,
+      "mean": 56.664859033614285,
+      "std": 73.31324739689019,
+      "rgb": [
+        55.59068627450981,
+        57.175070028011206,
+        54.773809523809526
+      ],
+      "thirds": [
+        64.57083676470589,
+        52.5112315126052,
+        52.91250882352955
+      ],
+      "brightFraction": 0.24824929971988796,
+      "maxDiff": 0,
+      "meanAbs": 0,
+      "changed": 0
+    },
+    "control": {
+      "pixels": 2226,
+      "mean": 35.655054357591794,
+      "std": 46.99390814379253,
+      "rgb": [
+        35.03953279424977,
+        36.202605570530096,
+        32.04357592093441
+      ],
+      "thirds": [
+        25.712108355795166,
+        34.62878787061995,
+        46.62426684636122
+      ],
+      "brightFraction": 0.0880503144654088,
+      "maxDiff": 0,
+      "meanAbs": 0,
+      "changed": 0
+    }
+  }
+}
