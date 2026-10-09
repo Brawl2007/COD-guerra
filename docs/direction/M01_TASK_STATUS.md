@@ -12,7 +12,7 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | T | Tarefa | Estado | Evidência / o que falta |
 |---|---|---|---|
 | 00 | Consolidação dos planos | INCERTO | Planos paralelos em PR #56/#58/#44 fora do trunk |
-| 01 | Baseline FPS no Chromebook | **HUMANO** | `tools/m01-chromebook-benchmark.mjs` ausente; exige aparelho |
+| 01 | Baseline FPS no Chromebook | ANULADA | D13: o Chromebook deixou de ser plataforma-alvo |
 | 02 | Continuidade roteiro/dados | AUSENTE | `west=p.x>-200` (:474) por mudar; re-timing de falas por fazer |
 | 03 | Explosões ancoradas ao terreno | AUSENTE | Fumo `<240` s (:894); granadas ainda a 240 s |
 | 04 | HUD cinemático | DONE* | `src/ui/m01-hud.js`, `tests/m01-hud-presentation.test.js`, spec browser |
@@ -26,10 +26,10 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 13 | Estruturas de campo | AUSENTE | — |
 | 14 | Materiais das pontes V2 | PARCIAL | `tools/assets/m01-bridges`; regeneração de materiais por confirmar |
 | 15 | Portão FX V3 | DONE* | `m01-battlefield-fx-profile.js`, `m01-fx-textures.js` na V7; tabela fechado/aberto não verificada |
-| 16 | Luz da madrugada | AUSENTE | Sem `m01-lighting.js` |
+| 16 | Luz da madrugada | DONE* | `claude/m01-lighting-dawn-v1` @ `3386fc2`, CI 37918399233 (490/490, spec 8/8); duas cascatas em Média/Alta |
 | 17 | Mergulho dos Stuka | PARCIAL | `m01-aircraft.js:26` ainda em **ciclo** (`time%JU87_LOOP`) |
 | 18 | Set piece de demolição V2 | INCERTO | — |
-| 19 | Feedback do tiro do jogador | AUSENTE | Sem hit marker |
+| 19 | Feedback do tiro do jogador | DONE* | `08d2e81`, CI 37890545910 (D12) |
 | 20 | Impostores da frente distante | AUSENTE | (Distant Battlefield foi excluído pela V7) |
 | 21 | Ambient director | AUSENTE | Depende de T22 |
 | 22 | Battle readout / display rounds | PARCIAL | `ROUND_KINDS` existe (`m01-fire.js:8`); sem `display` nem `battleReadout` |
@@ -54,12 +54,12 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 41 | Acabamento das pontes em runtime | PARCIAL | Portal polish existe |
 | 42 | Água do Vístula | AUSENTE | — |
 | 43 | Política de LOD | AUSENTE | — |
-| 44 | Grading/pós-processamento | AUSENTE | Depende de T16 |
+| 44 | Grading/pós-processamento | AUSENTE | T16 feita; já não espera por T01 (D13) |
 | 45 | Assets de áudio | AUSENTE | Exige licenças |
 | 46 | Mistura e opções de áudio | AUSENTE | — |
 | 47 | Guarnição do ckm (fogo) | AUSENTE | Sem fogo nem munição na simulação. Depende de T22 (display rounds) e T05. |
 | 48 | Retirada alemã | AUSENTE | Depende de T22/T35 |
-| 49 | Orçamento de performance | **HUMANO** | Depende de T01 |
+| 49 | Orçamento de performance | REVER | T01 anulada (D13); orçamento a definir para a plataforma-alvo nova |
 | 50 | Loading e bundle | INCERTO | Aviso >500 kB no build |
 | 51 | Fecho visual integrado | AUSENTE | Final |
 | 52 | Playtest humano | **HUMANO** | Final do Marco 2 |
