@@ -14,10 +14,11 @@ Formato: data · decisão · razão · reversível? Decisões de produto/jogabil
 | D7 | 2026-10-08 | As oito alterações por commitar em `~/projetos/COD-guerra` ficam intocadas, embora 5/8 sejam idênticas à V7 e as outras pareçam superadas. | Instrução do utilizador. Descartá-las é ação destrutiva e exige decisão humana. | — |
 | D8 | 2026-10-08 | Nenhuma worktree nova. Reutilizar esta, com checkout esparso. | Disco a 81 % (cerca de 1,3 GB livres) | Sim |
 | D9 | 2026-10-08 | Browser integral só no CI do GitHub. Localmente: Node + browser focado, quando estritamente necessário. | Chromebook; SwiftShader lento; disco | Sim |
+| D10 | 2026-10-09 | Base de desenvolvimento do M01: `claude/m01-dev-base` = V7 `4c6f7bebee27b68af3bea8ad086da1dffbca0084` (CI integral 84/84, run 37876099475) + infra Capitão V3 + Jev (cherry-pick -x). Resolve H1. | Instrução do utilizador após a certificação ("depois desenvolve M01") | Sim |
 
 ## Pendentes de decisão humana
 
-- **H1** Que HEAD da V7 está validado (CI integral verde + relatório fechado)? Desbloqueia `BASE`.
+- ~~**H1**~~ Resolvido em 2026-10-09 (D10): V7 `4c6f7be`, CI integral 84/84.
 - **H2** Adotar no trunk os PRs de documentação #58/#44/#56? Os três apontam para a `main`.
 - **H3** O destino das oito alterações por commitar na worktree original (manter, arquivar num commit WIP na própria branch, ou descartar).
 - **H4** Sessão no Chromebook de referência (T01) e playtest humano (T52): só uma pessoa os pode fazer.
