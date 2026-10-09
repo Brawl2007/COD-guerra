@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "task_id": "M01-WATER-VISTULA-V1",
+  "accepted_head": "71ad06762526075fd62bf11dc90cf3de850f4c60",
+  "status": "ACCEPTED",
+  "obligations": [
+    {
+      "id": "m01-water-model",
+      "kind": "test",
+      "check": "node --test tests/m01-water.test.js",
+      "reason": "Pins water uniforms as a pure function of the sim clock, fresnel/sky mix, flow toward -z, pier foam and bank masks, Low policy (no reflection, tint, no render target) and the unchanged water mesh line."
+    },
+    {
+      "id": "m01-water-vistula-browser",
+      "kind": "browser",
+      "check": "npx playwright test tests/browser/m01-water-vistula.spec.js --workers=1 --retries=0",
+      "reason": "Proves pause-freeze (maxDiff 0), Low water not darker than the old box (mean >= 50), sky-tinted grazing field and the foam/bank on-vs-off A/B with a zero-diff control; later grading/LOD passes must keep it."
+    }
+  ]
+}
