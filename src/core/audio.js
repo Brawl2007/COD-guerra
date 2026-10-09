@@ -14,7 +14,7 @@ const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 export const AUDIO_LIMITS=Object.freeze({maxVoices:32,maxLoops:8,eventHistory:40});
 const EVENT_NAME=Object.freeze({kar98k:'rifle',ally_rifle:'rifle',mg34:'mg34',rkm_wz28:'rkm',ckm_wz30:'ckm',kb_wz29:'wz29-shot'});
 const NOISE_SECONDS=Object.freeze({white:2.37,brown:6.83});
-const LOOP_UPDATE_SEC=.05;
+const LOOP_UPDATE_SEC=.05,AIRCRAFT_DOPPLER_MAX_MPS=500,AIRCRAFT_DOPPLER_MAX_DT=1;
 const layer=(name,src,o)=>Object.freeze({name,src,...o,filter:o.filter&&Object.freeze(o.filter)});
 const WIND_LAYERS=Object.freeze([layer('low','noise',{noise:'brown',rate:.8,filter:{type:'lowpass',freq:520,q:.5}}),
   layer('high','noise',{noise:'white',rate:.5,gain:.25,filter:{type:'bandpass',freq:1400,q:.6}})]);
@@ -439,8 +439,9 @@ export class AudioManager {
     for(const point of points){const s=spatial(point),d3=Math.hypot(s.distance,s.dy??point.y??0),w=1/Math.max(30,d3);
       panSum+=(s.pan??0)*w;weight+=w;if(!best||d3<best.distance)best={distance:d3,front:s.front??1};}
     const pan=weight?panSum/weight:0,prev=this.presentation.aircraft[key],mix=aircraftLayerMix(best.distance);
-    // Saltos de trajectória (troca do avião mais próximo; o circuito de 90 s já não existe) não são velocidade: sem Doppler.
-    const dd=prev!=null&&dt>0?best.distance-prev:0,pitch=Math.abs(dd/(dt||1))>120?1:dopplerFactor(dd,dt);this.presentation.aircraft[key]=best.distance;
+    // Saltos de trajectória (troca do avião mais próximo, relógio que salta no restauro) não são velocidade: sem Doppler.
+    // Os aviões voam a 140-390 m/s no stukaPath: o limite fica acima disso.
+    const dd=prev!=null&&dt>0?best.distance-prev:0,pitch=dt>AIRCRAFT_DOPPLER_MAX_DT||Math.abs(dd/(dt||1))>AIRCRAFT_DOPPLER_MAX_MPS?1:dopplerFactor(dd,dt);this.presentation.aircraft[key]=best.distance;
     if(!this.loops.has(key)&&!this._startLoop(key,{kind:'aircraft-engine',category:'aircraft',priority:AUDIO_PRIORITY.aircraft,volume,pan,distance:best.distance,front:best.front,layers:AIRCRAFT_LAYERS}))return;
     this._setLoop(key,{pan,distance:best.distance,front:best.front,volume,pitch,layers:{prop:mix.prop,engine:mix.engine,engine2:mix.engine*.8,rasp:mix.rasp,rumble:mix.rumble}});
   }

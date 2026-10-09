@@ -479,13 +479,14 @@ export class M01View {
       this.mesh('box','dark',[0,1,4],[.12,2,1.8],proxy);plane.addLevel(proxy,0);
       this.planes.push(plane);
     }
-    // Bounded pool (one bomb per carrier), hidden until a flight is due. Nose is -Z like the aircraft; SC 250-sized (~1.6 m).
+    // Bounded pool (one bomb per carrier), hidden until a flight is due. Nose is -Z like the aircraft; SC 500-class (~2 m).
     this.bombs=[];this.bombState={visible:0,flights:[]};
     for(let i=0;i<JU87_BOMB_POOL;i++){
       const bomb=new THREE.Group();bomb.visible=false;this.scene.add(bomb);
-      const body=this.mesh('cylinder','dark',[0,0,.05],[.18,1.2,.18],bomb);body.rotation.x=Math.PI/2;
-      this.mesh('sphere','dark',[0,0,-.62],[.18,.18,.28],bomb);
-      for(const rotation of [0,Math.PI/2]){const fin=this.mesh('box','dark',[0,0,.78],[.5,.025,.3],bomb);fin.rotation.z=rotation;}
+      // SC 500-class bomb (~2 m, 0.45 m across), dark with cruciform tail fins: body z -0.6..0.6, nose to -0.9, fins at z 0.65..1.1.
+      const body=this.mesh('cylinder','dark',[0,0,0],[.45,1.2,.45],bomb);body.rotation.x=Math.PI/2;
+      this.mesh('sphere','dark',[0,0,-.6],[.45,.45,.6],bomb);
+      for(const rotation of [0,Math.PI/2]){const fin=this.mesh('box','dark',[0,0,.88],[.95,.04,.44],bomb);fin.rotation.z=rotation;}
       this.bombs.push(bomb);
     }
     this.raidPlane=new THREE.Group();this.scene.add(this.raidPlane);

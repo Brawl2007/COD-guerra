@@ -302,6 +302,25 @@ test('Ju 87 pull-out comes from the nearest rendered Stuka and only while the fo
   assert.equal(audio.ju87PullOutNearest(28+60,spatial,'gone',true),null);audio.dispose();
 });
 
+test('Doppler acts on the Ju 87 engine during the dive; a restore jump does not glitch the pitch',()=>{
+  const {audio}=makeAudio(),started=100,state={stukas:true,secondRaid:false,train963:false,damage:[{id:'station_bomb',started}]};
+  audio.resetPresentation(started-40,state);let maxShift=0,shifted=0,sawDown=false,sawUp=false;
+  for(let c=started-40;c<=started+8;c=Math.round((c+.05)*100)/100){
+    audio.updateM01Presentation({clock:c,state,spatial});
+    const ratio=audio.loops.get('aircraft')?.layers.get('engine').source.frequency.value/JU87_ENGINE_HZ;
+    if(Number.isFinite(ratio)){maxShift=Math.max(maxShift,Math.abs(ratio-1));if(Math.abs(ratio-1)>.05)shifted++;sawDown||=ratio<.99;sawUp||=ratio>1.01;}
+  }
+  assert.ok(shifted>600&&maxShift>.03&&sawDown&&sawUp,`pitch shifts while the planes dive and pull out (max ${maxShift}, shifted samples ${shifted})`);
+  // Restoring a checkpoint mid-pass resets the presentation: the first updates after it keep the nominal pitch.
+  audio.resetPresentation(started+2,state);
+  for(const c of [started+2,started+2.05]){audio.updateM01Presentation({clock:c,state,spatial});}
+  const engine=audio.loops.get('aircraft').layers.get('engine');assert.ok(Math.abs(engine.source.frequency.value/JU87_ENGINE_HZ-1)<.02);
+  // A clock jump (no reset) is not a velocity either.
+  audio.updateM01Presentation({clock:started+30,state,spatial});
+  audio.updateM01Presentation({clock:started+2,state,spatial});
+  assert.ok(Math.abs(audio.loops.get('aircraft').layers.get('engine').source.frequency.value/JU87_ENGINE_HZ-1)<.02);audio.dispose();
+});
+
 test('No Doppler dip around the former 90 s path wrap; INTRO/SETUP stay quiet; fire loop has hysteresis',()=>{
   const {audio}=makeAudio(),state={stukas:true,secondRaid:false,train963:false};audio.resetPresentation(89.9,state);
   for(const c of [89.9,89.95,90.0,90.05])audio.updateM01Presentation({clock:c,state,spatial});

@@ -6,7 +6,7 @@ import layout from '../missions/m01-tczew/map-layout.json' with {type:'json'};
 import mission from '../missions/m01-tczew/mission.json' with {type:'json'};
 import {M01Simulation,seconds} from '../src/game/m01-simulation.js';
 import {M01View} from '../src/render/m01-view.js';
-import {ju87Attitude,ju87Fade,m01BombFlights,predictedBlastPoint,JU87_BOMB_RUN,JU87_BOMB_FALL_S} from '../src/render/m01-aircraft.js';
+import {ju87Attitude,ju87Heading,ju87Fade,m01BombFlights,predictedBlastPoint,JU87_BOMB_RUN,JU87_BOMB_FALL_S} from '../src/render/m01-aircraft.js';
 import {
   M01_STUKA_OFFSETS,M01_STUKA_PATH_AT_BOMBING,M01_STUKA_PATH_END,M01_STUKA_DEPARTURE_SECONDS,M01_BOMBING_BATTLE_SECONDS,
   M01_RAID_PASS,M01_RAID_PASS_SECONDS,stukaPathSample,m01StukaAnchor,m01StukaSince,m01StukaPathTime,m01StukaActive,
@@ -229,4 +229,19 @@ test('the view draws a bounded bomb pool from the flights and reports path/bomb 
   view.updateAircraft(raid,100,{x:0,y:0,z:0});assert.ok(view.raidPlane.visible);assert.equal(view.raidPlane.position.y,1100);assert.equal(view.raidPlane.position.z,M01_RAID_PASS.fromZ);
   view.updateAircraft(raid,100+M01_RAID_PASS_SECONDS+10,{x:0,y:0,z:0});assert.ok(!view.raidPlane.visible);
   assert.ok(view.planes.every(p=>!p.visible));
+});
+
+test('the presented Ju 87 yaw is a smooth pure function of time: bounded rate through the pull-out, no NaN, position untouched',()=>{
+  const dt=.02;
+  for(const i of [0,1,2]){
+    let prev=null,worst=0,at=0;
+    for(let since=-60;since<30;since+=dt){
+      const a=ju87Attitude(since,i);
+      assert.ok(Number.isFinite(a.yaw)&&Number.isFinite(a.pitch)&&Number.isFinite(a.bank),`finite attitude at ${since}`);
+      if(prev!==null){let d=a.yaw-prev;d=Math.atan2(Math.sin(d),Math.cos(d));const rate=Math.abs(d/dt)*180/Math.PI;if(rate>worst){worst=rate;at=since;}}
+      prev=a.yaw;
+    }
+    assert.ok(worst<=120,`plane ${i}: max yaw rate ${worst.toFixed(1)} deg/s at ${at}`);
+  }
+  assert.equal(ju87Heading(3,1),ju87Heading(3,1));
 });

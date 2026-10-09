@@ -19,12 +19,27 @@ const variantOf=i=>JU87_VARIANTS[i%JU87_VARIANTS.length];
  * Attitude from the path tangent (nose is -Z, 'YXZ' order): heading from the horizontal velocity, pitch from the climb angle
  * (negative while diving) and a coordinated bank from the heading rate. `since` is the time after evt_m01_bombing_0434.
  */
+export const JU87_HEADING_WINDOW_S=4,JU87_HEADING_TAPS=10;
+/**
+ * Presented heading (rad) at `since`: the path heading averaged (Gaussian weights, as angle offsets from the centre sample so the
+ * +-pi wrap never matters) over JU87_HEADING_WINDOW_S around that instant. The pull-out turns the horizontal velocity by ~180 degrees
+ * in ~0.3 s while the plane is nearly vertical; averaging keeps the visible yaw rate bounded. Pure function of time (no frame state);
+ * the position is never touched.
+ */
+export function ju87Heading(since,i){
+  const heading=t=>{const v=m01StukaVelocity(t,i);return Math.hypot(v.x,v.z)>1e-6?Math.atan2(-v.x,-v.z):0;};
+  const centre=heading(since);let sum=0,weight=0;
+  for(let k=-JU87_HEADING_TAPS;k<=JU87_HEADING_TAPS;k++){
+    const w=Math.exp(-.5*(2*k/JU87_HEADING_TAPS)**2),d=heading(since+k*JU87_HEADING_WINDOW_S/JU87_HEADING_TAPS)-centre;
+    sum+=w*Math.atan2(Math.sin(d),Math.cos(d));weight+=w;
+  }
+  return centre+sum/weight;
+}
 export function ju87Attitude(since,i){
   const v=m01StukaVelocity(since,i),horizontal=Math.hypot(v.x,v.z),speed=Math.hypot(v.x,v.y,v.z)||1;
-  const heading=w=>Math.atan2(-w.x,-w.z),earlier=m01StukaVelocity(since-.3,i),later=m01StukaVelocity(since+.3,i);
-  let turn=heading(later)-heading(earlier);turn=Math.atan2(Math.sin(turn),Math.cos(turn));
+  let turn=ju87Heading(since+.3,i)-ju87Heading(since-.3,i);turn=Math.atan2(Math.sin(turn),Math.cos(turn));
   const bank=Math.max(-.8,Math.min(.8,Math.atan(speed*(turn/.6)/9.81)*.6));
-  return {yaw:horizontal>1e-6?heading(v):0,pitch:Math.atan2(v.y,horizontal),bank};
+  return {yaw:ju87Heading(since,i),pitch:Math.atan2(v.y,horizontal),bank};
 }
 /** Saved mission-clock time of the event that makes the first raid visible (read-only; undefined before it). */
 export const JU87_HEARD_EVENT='evt_m01_planes_heard';
