@@ -85,7 +85,7 @@ export const M01_FLASH_FAR_DISTANCE=300;
 // pale horizon haze differs from it by ~30/255 at its centre only (measured with the real texture and tone mapping: 7..23 px beyond
 // +20/255) and vanishes. Stacking the same billboard raises the accumulated alpha; the colour warms with distance so the flash also
 // differs from the haze in hue (blue channel), not only in luminance. Near the viewer (< 85 m) nothing changes.
-export const M01_FLASH_FAR_LAYERS=5;           // extra stacked flash billboards at >= 300 m (the flash pool holds 16; the profile uses 2)
+export const M01_FLASH_FAR_LAYERS=7;           // extra stacked flash billboards at >= 300 m (the flash pool holds 16; the profile uses 2)
 export const M01_FLASH_NEAR_COLOR='#fff0c0';
 export const M01_FLASH_FAR_COLOR='#ffd27a';
 const mixHex=(a,b,t)=>'#'+[1,3,5].map(i=>Math.round(parseInt(a.slice(i,i+2),16)+(parseInt(b.slice(i,i+2),16)-parseInt(a.slice(i,i+2),16))*t).toString(16).padStart(2,'0')).join('');

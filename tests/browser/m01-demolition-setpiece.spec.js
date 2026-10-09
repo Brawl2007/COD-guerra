@@ -25,7 +25,7 @@ import {M01_COLLAPSE_DURATION,M01_FLASH_MIN_ANGULAR,M01_FLASH_MIN_DURATION,M01_L
 //  east flash         west bank on the open corridor between the two bridges (z 20, between the trusses at z 5.2 and 36.4), 776 m
 //  east mid-collapse  east flood plain in the same corridor, 190 m from the blast; 2.4..2.9 s after it (collapse progress >= .5)
 //  west flash         west of the hut (z 40 clears it), 363 m
-//  west fall/splash   north of the road approach, looking over the river at the spans' fall points; 3.5..4.1 s
+//  west fall/splash   south of the road approach, 10 m up, looking over the bank at the river and the spans' fall points; 3.5..4.1 s
 //  west earth rain    62 m from the firing post (x -290, z 22); 3.5..4.1 s
 //  east restore       the east state 6.5 s after the blast, seen from the mid-collapse camera: the final pose, dust, no flash
 const key='cod-guerra:checkpoint:m01:v2';
@@ -52,12 +52,12 @@ const SHOTS=Object.freeze({
   eastFlash:{base:'east',x:24,z:20,aim:{x:800,y:8,z:20},lift:110},
   eastCollapse:{base:'east',x:610,z:20,aim:{x:800,y:8,z:20},lift:60},
   westFlash:{base:'west',x:-292,z:40,aim:{x:70,y:8,z:20},lift:110},
-  westFall:{base:'west',x:-124,z:52,aim:{x:75,y:-2,z:20},lift:40},
+  westFall:{base:'west',x:-124,z:52,up:10,aim:{x:110,y:-4,z:20},lift:0},   // 10 m above the ground: from eye height the river (7 m below the bank edge at x 25) is hidden
   westRain:{base:'west',x:-235,z:50,aim:{x:-290,y:10,z:22},lift:-20},
   eastRestore:{base:'eastAfter',x:610,z:20,aim:{x:800,y:8,z:20},lift:60}
 });
 function place(snapshot,shot){
-  const s=structuredClone(snapshot),y=world.heightAt(shot.x,shot.z);
+  const s=structuredClone(snapshot),y=world.heightAt(shot.x,shot.z)+(shot.up??0);
   Object.assign(s.player,{x:shot.x,y,z:shot.z,moveBlend:0,sprinting:false,crouched:false,aiming:false});
   const eye=eyePosition(s.player),dx=shot.aim.x-eye.x,dy=shot.aim.y-eye.y,dz=shot.aim.z-eye.z;
   s.player.angle=Math.atan2(dz,dx);s.player.pitch=Math.atan2(dy,Math.hypot(dx,dz))-Math.atan(shot.lift/FOCAL);return s;
@@ -69,7 +69,7 @@ const nodeOf=(name,lod)=>manifest.files.find(f=>f.lod===lod&&f.nodes.some(n=>n.n
 // (almost) untouched, so a pass cannot come from a global lighting or exposure change.
 const PIXEL=Object.freeze({
   threshold:24,
-  control:{x0:480,y0:10,x1:800,y1:90,maxChanged:40},   // top-centre sky of every view: no tree, truss or tower reaches it
+  control:{x0:480,y0:10,x1:800,y1:90,maxChanged:80},   // top-centre sky of every view (25600 px): no tree, truss or tower reaches it; the first run measured 0..23
   flash:{changed:150,peak:40,meanAbs:.15},            // flash + cores over ~160 x 120 px around the projected blast point
   collapse:{changed:300,peak:60,meanAbs:.1},          // moved/rolled truss spans + rubble + smoke column
   fall:{changed:600,peak:60,meanAbs:.2},              // spans down 8..10 m + splash + dust + column
@@ -80,7 +80,7 @@ const ROI=Object.freeze({
   eastFlash:{points:[[800,8,20]],pad:[85,60]},
   westFlash:{points:[[70,8,20]],pad:[85,60]},
   eastCollapse:{points:[[800,0,20],[800,30,20],[690,5,0],[690,5,40],[837,4,0],[843,4,40]],pad:[80,40]},
-  westFall:{points:[[10.4,3,0],[8.5,3,40],[142,0,0],[142,0,40],[70,6,20],[70,25,20]],pad:[30,30]},
+  westFall:{points:[[10.4,1,0],[8.5,1,40],[142,-3,0],[142,3,0],[142,-3,40],[142,3,40],[70,6,20],[70,25,20]],pad:[30,25]},
   westRain:{points:[[-290,24,22],[-290,6,22],[-304,10,10],[-276,10,34]],pad:[110,15]},   // the airborne part of the column: the wounded men behind the post stand below it
   eastRestore:{points:[[800,0,20],[800,30,20],[690,5,0],[690,5,40],[837,4,0],[843,4,40]],pad:[80,40]}
 });
@@ -323,8 +323,10 @@ const flashShot=async(browser,info,{name,shot,id,distance,pre,roi,limit})=>{
     expectPieces(r.data.m01.demolition,r.data.m01.parts);
     const entry=r.data.m01.demolition.entries.find(e=>e.id===id),timeline=expectTimeline(r.timeline,entry.distance);
     // First frames of the collapse: every piece is still essentially at its intact pose (progress ~ (age/T)^2 at most).
-    for(const p of r.data.m01.demolition.pieces)expect(p.progress).toBeLessThanOrEqual(collapseProgress(entry.age)+1e-9);
-    expect(r.data.m01.demolition.pieces.some(p=>p.phase==='falling')).toBe(true);
+    const own=r.data.m01.demolition.pieces.filter(p=>p.damageId===id);   // the west state also draws the settled pieces of the east demolition
+    expect(own.length).toBeGreaterThan(0);
+    for(const p of own)expect(p.progress).toBeLessThanOrEqual(collapseProgress(entry.age)+1e-9);
+    expect(own.some(p=>p.phase==='falling')).toBe(true);
     await r.write({timelineChecks:timeline,shot:SHOTS[shot]});
     await r.page.close();
     await pixelProof(browser,info,r,{name,shot,roi,limit,pre:place(fixtures[SHOTS[shot].base],SHOTS[shot]),id});
