@@ -2,13 +2,13 @@ import * as THREE from 'three';
 import { AssetManager } from '../assets/asset-manager.js';
 import manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with {type:'json'};
 import { eyePosition, aimDirection } from '../world/spatial.js';
-import { seconds } from '../game/m01-simulation.js';
 import { roundPoint } from '../game/m01-fire.js';
 import { m01StukaPosition, m01RaidPlanePosition } from '../world/m01-aircraft-path.js';
 import { actorPose } from './m01-actor-pose.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { texturedSurface,weatheredBridgeSurface } from './m01-surfaces.js';
 import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';
+import { applyLighting, viewLightingDiagnostics, M01_FOG_RANGE } from './m01-lighting.js';
 import {battlefieldBlastKind,battlefieldProfile,fxLayerCount,staggeredLife,impactProfile,fxDistanceBand} from './m01-battlefield-fx-profile.js';
 import { M01Environment } from './m01-environment.js';
 import { M01Characters } from './m01-characters.js';
@@ -35,7 +35,7 @@ const fxCount=(n,quality)=>Math.max(1,Math.round(n*(FX_DENSITY[quality]??FX_DENS
 export class M01View {
   constructor(renderer){
     this.owner=renderer;this.engine=renderer.engine;this.assets=new AssetManager();this.disposed=false;
-    this.scene=new THREE.Scene();this.scene.fog=new THREE.Fog('#a0a7a8',420,2800);
+    this.scene=new THREE.Scene();this.scene.fog=new THREE.Fog('#a0a7a8',M01_FOG_RANGE.near,M01_FOG_RANGE.far);
     this.camera=new THREE.PerspectiveCamera(70,1,.05,7500);this.weaponCamera=new THREE.PerspectiveCamera(58,1,.03,6);
     this.weaponScene=new THREE.Scene();this.weaponRoot=new THREE.Group();this.weaponScene.add(this.weaponRoot);
     // Weapon-pass fill/key start from the old tuned values; every frame they follow the world's sky, sun and daylight
@@ -44,7 +44,10 @@ export class M01View {
     this.skyLight=new THREE.HemisphereLight('#bac9d5','#625846',1.25);this.scene.add(this.skyLight);
     this.sun=new THREE.DirectionalLight('#ffd6a0',.45);this.sun.castShadow=true;this.sun.shadow.mapSize.set(1024,1024);
     Object.assign(this.sun.shadow.camera,{left:-65,right:65,top:65,bottom:-65,near:.5,far:450});this.sun.shadow.bias=-.0003;this.sun.shadow.normalBias=.025;
-    this.scene.add(this.sun,this.sun.target);
+    // Near cascade (Medium/High): tight ±25 m shadow camera for contact shadows; hidden (no cost) on Low. Intensity is split in applyLighting.
+    this.sunNear=new THREE.DirectionalLight('#ffd6a0',0);this.sunNear.castShadow=true;this.sunNear.visible=false;this.sunNear.shadow.mapSize.set(1024,1024);
+    Object.assign(this.sunNear.shadow.camera,{left:-25,right:25,top:25,bottom:-25,near:.5,far:450});this.sunNear.shadow.bias=-.0002;this.sunNear.shadow.normalBias=.02;
+    this.scene.add(this.sun,this.sun.target,this.sunNear,this.sunNear.target);
     this.materials={
       ground:texturedSurface('soil',{worldScale:.42}),
       earth:texturedSurface('soil',{worldScale:.65}),
@@ -539,20 +542,9 @@ export class M01View {
     for(const [id,m]of this.grenadeViews)if(!live.has(id)){this.effects.remove(m);this.grenadeViews.delete(id);}
   }
   lighting(sim){
-    const keys=sim.world.layout.sun.keyframes,after=keys.findIndex(k=>seconds(k.clock)>sim.battleClock);
-    const a=keys[Math.max(0,after<0?keys.length-1:after-1)],b=keys[after<0?keys.length-1:after];
-    const t=Math.max(0,Math.min(1,(sim.battleClock-seconds(a.clock))/(seconds(b.clock)-seconds(a.clock)||1)));
-    const alt=THREE.MathUtils.degToRad(THREE.MathUtils.lerp(a.altitudeDeg,b.altitudeDeg,t));
-    const az=THREE.MathUtils.degToRad(THREE.MathUtils.lerp(a.azimuthDeg,b.azimuthDeg,t));
-    const p=sim.player;this.sun.target.position.set(p.x,p.y,p.z);
-    this.sun.position.set(p.x+Math.sin(az)*Math.cos(alt)*200,p.y+Math.sin(alt)*200,p.z-Math.cos(az)*Math.cos(alt)*200);
-    this.sun.intensity=Math.max(.09,Math.sin(alt)*5.8);this.sun.castShadow=alt>0;
-    const daylight=Math.max(0,Math.min(1,(alt+.08)/.4));this.skyLight.intensity=1.6+daylight*.22;this.daylight=daylight;
-    this.scene.background=new THREE.Color('#727f8c').lerp(new THREE.Color('#a8b2b0'),daylight);this.scene.fog.color.copy(this.scene.background);
-    this.engine.toneMappingExposure=1.08;
-    this.sun.color.set('#ffe0b0');this.skyLight.color.set('#b4c8df');this.skyLight.groundColor.set('#4b4435');
-    this.atmosphere.material.uniforms.fogColor.value.copy(this.scene.fog.color);
-    this.atmosphere.lighting(p,daylight,alt,az,sim.clock);this.environment?.sync(sim.world,this.owner.quality,sim.player,sim.clock);
+    // Sky, sun, hemisphere, fog and exposure come from the pure model in m01-lighting.js (twilight key, per-phase exposure).
+    applyLighting(this,sim);
+    this.environment?.sync(sim.world,this.owner.quality,sim.player,sim.clock);
   }
   render(sim){
     // Apply authoritative train/wagon state before pause-frame caching so restore cannot freeze constructor defaults.
@@ -598,7 +590,7 @@ export class M01View {
     this.loadingHand.position.set(-.055+Math.sin(reload*Math.PI)*.06,-.04+Math.sin(reload*Math.PI)*.16,-.2+Math.sin(reload*Math.PI)*.15);
     this.carryBody.visible=sim.player.carrying==='jozef_bak';this.carryCrate.visible=sim.player.carrying==='sapper_crate';
     this.carryBody.position.y=this.carryCrate.position.y=bob*1.5;
-    this.weaponLighting.sync({sky:this.skyLight,sun:this.sun,camera:this.camera,daylight:this.daylight??1,pitch:player.pitch});
+    this.weaponLighting.sync({sky:this.skyLight,sun:this.lightingModel?{position:this.sun.position,target:this.sun.target,color:this.sun.color,intensity:this.lightingModel.sun.intensity}:this.sun,camera:this.camera,daylight:this.daylight??1,pitch:player.pitch});
     if(this.viewModel.update(sim,this.owner.quality,this.flashUntil,{camera:this.camera,viewFov:this.weaponCamera.fov})){this.weaponRoot.visible=false;this.carryBody.visible=false;this.fallbackFx.hide(false);}
     else this.updateFallbackWeapon(sim);
     this.weaponWorldFx.update(time,sim.world);
@@ -656,7 +648,7 @@ export class M01View {
   }
   get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,
     requiredAssetFailures:this.assets.failures.filter(f=>manifest.files.some(m=>typeof m.lod==='number'&&m.file===f.path)),
-    characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,weaponFx:this.weaponWorldFx.diagnostics,weaponLighting:this.weaponLighting.state,
+    characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,weaponFx:this.weaponWorldFx.diagnostics,weaponLighting:this.weaponLighting.state,lighting:viewLightingDiagnostics(this),
     locomotive:this.locomotive.diagnostics,panzerzug:this.panzerzugArt.diagnostics,wagons:this.wagons.diagnostics,yardWagons:this.yardWagons.diagnostics,
     aircraft:{loaded:[...this.aircraftSources.keys()].sort(),planes:this.planes.map(p=>{const model=(p.levels[p.userData.level]??p.levels.find(l=>l.object.visible))?.object,prop=model?.getObjectByName('propeller');return {visible:p.visible,lod:model?.userData.lod,position:p.position.toArray(),attitude:[p.rotation.x,p.rotation.y,p.rotation.z],fade:p.userData.fade,propeller:prop?.quaternion.toArray()};})},
     renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+(b.visible===false?0:b.count),0)??0,

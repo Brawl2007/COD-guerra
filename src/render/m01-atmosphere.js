@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {puffTexture,cloudFieldTexture} from './m01-surfaces.js';
 import {dustPuffTexture} from './m01-fx-textures.js';
+import {CLOUD_WIND} from './m01-lighting.js';
 
 // Presentation-only deterministic noise. It never consumes the simulation RNG.
 export function visualNoise(seed,index=0){
@@ -15,19 +16,36 @@ export class M01Atmosphere {
     this.scene=scene;this.texture=puffTexture();this.capacity=256;this.count=0;
     this.skyGeometry=new THREE.SphereGeometry(5500,32,16);
     this.cloudTexture=cloudFieldTexture();
+    // Sky by solar altitude: every colour comes from m01-lighting's model. Clouds are projected from the view direction
+    // (xz / (y + k)) onto a plane, so there is no sphere-UV seam and no pinch at the zenith.
     this.skyMaterial=new THREE.ShaderMaterial({side:THREE.BackSide,depthWrite:false,fog:false,
-      uniforms:{clouds:{value:this.cloudTexture},day:{value:0},sunDirection:{value:new THREE.Vector3(1,-.1,0)},time:{value:0}},
-      vertexShader:'varying vec3 vDirection;varying vec2 vCloudUv;void main(){vDirection=normalize(position);vCloudUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
-      fragmentShader:`uniform sampler2D clouds;uniform float day;uniform float time;uniform vec3 sunDirection;varying vec3 vDirection;varying vec2 vCloudUv;
-        void main(){float h=clamp(vDirection.y,0.0,1.0);float c=texture2D(clouds,vCloudUv*vec2(2.0,1.0)+vec2(time*.000025,0.0)).r;
-          vec3 horizon=mix(vec3(.24,.28,.32),vec3(.53,.58,.60),day);
-          vec3 zenith=mix(vec3(.09,.15,.24),vec3(.22,.34,.47),day);
-          vec3 color=mix(horizon,zenith,pow(h,.55));
-          float cloud=smoothstep(.33,.68,c)*smoothstep(-.03,.15,vDirection.y);
-          vec3 cloudColor=mix(vec3(.30,.34,.37),vec3(.59,.63,.65),c)*(.72+day*.40);
+      uniforms:{clouds:{value:this.cloudTexture},time:{value:0},sunDirection:{value:new THREE.Vector3(1,-.1,0)},
+        skyZenith:{value:new THREE.Color('#2f4468')},skyHorizon:{value:new THREE.Color('#6f8096')},skyHalo:{value:new THREE.Color('#d9946e')},
+        skyDisc:{value:new THREE.Color('#ffc08a')},skyGlow:{value:.5},discStrength:{value:0},day:{value:0},cloudWind:{value:new THREE.Vector2(CLOUD_WIND.x,CLOUD_WIND.z)}},
+      vertexShader:'varying vec3 vDirection;void main(){vDirection=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
+      fragmentShader:`uniform sampler2D clouds;uniform float time;uniform float day;uniform float skyGlow;uniform float discStrength;uniform vec3 sunDirection;
+        uniform vec3 skyZenith;uniform vec3 skyHorizon;uniform vec3 skyHalo;uniform vec3 skyDisc;uniform vec2 cloudWind;varying vec3 vDirection;
+        void main(){
+          vec3 d=normalize(vDirection);vec3 sd=normalize(sunDirection);float h=clamp(d.y,0.0,1.0);
+          float toSun=max(0.0,dot(d,sd));
+          // Fog tint by view direction: the horizon band warms towards the sun's azimuth and stays the fog colour away from it.
+          vec2 viewAz=normalize(d.xz+vec2(1e-5,0.0)),sunAz=normalize(sd.xz+vec2(1e-5,0.0));
+          float towards=pow(dot(viewAz,sunAz)*.5+.5,3.0);
+          float band=exp(-h*9.0);
+          vec3 color=mix(skyHorizon,skyZenith,pow(h,.55));
+          color=mix(color,skyHalo,clamp(towards*band*skyGlow*.62,0.0,.85));
+          color+=skyHalo*pow(toSun,6.0)*skyGlow*.20*(1.0-h*.6);
+          float cloudShape=1.0/(max(d.y,0.0)+.32);
+          vec2 cuv=d.xz*cloudShape*.62+cloudWind*time;
+          float c=texture2D(clouds,cuv).r;
+          float cloud=smoothstep(.33,.68,c)*smoothstep(-.03,.15,d.y);
+          vec3 cloudShade=skyHorizon*.60+skyZenith*.12;
+          vec3 cloudLit=skyHorizon*1.12+vec3(.03)*day;
+          vec3 cloudColor=mix(cloudShade,cloudLit,c)*(.64+day*.36);
+          cloudColor+=skyHalo*pow(toSun,3.0)*skyGlow*.55*c;
           color=mix(color,cloudColor,cloud*.66);
-          float sun=pow(max(0.0,dot(vDirection,normalize(sunDirection))),24.0);
-          color+=vec3(.15,.075,.028)*sun*(1.0-h)*(.7+day*.3);
+          float disc=smoothstep(.99985,.99996,toSun);
+          color+=skyDisc*(disc*4.0+pow(toSun,60.0)*.9)*discStrength*(1.0-cloud*.75);
           gl_FragColor=vec4(color,1.0);
           #include <tonemapping_fragment>
           #include <colorspace_fragment>
@@ -71,9 +89,14 @@ export class M01Atmosphere {
     spin.setX(index,(visualNoise(seed,variant*3)-.5)*Math.PI*1.7);
     shape.setX(index,(visualNoise(seed,variant*3+1)*2-1)*(.45+.55*visualNoise(seed,variant*3+2)));
   }
-  lighting(player,day,alt,az,clock){
-    this.sky.position.set(player.x,player.y,player.z);this.skyMaterial.uniforms.day.value=day;this.skyMaterial.uniforms.time.value=clock;
-    this.skyMaterial.uniforms.sunDirection.value.set(Math.sin(az)*Math.cos(alt),Math.sin(alt),-Math.cos(az)*Math.cos(alt));
+  /** Sky uniforms from the lighting model (m01-lighting.js); the dome follows the player. */
+  lighting(player,model,clock){
+    const u=this.skyMaterial.uniforms,sky=model.sky;
+    this.sky.position.set(player.x,player.y,player.z);
+    u.day.value=model.daylight;u.time.value=clock;
+    u.skyZenith.value.setRGB(...sky.zenith);u.skyHorizon.value.setRGB(...sky.horizon);u.skyHalo.value.setRGB(...sky.halo);u.skyDisc.value.setRGB(...sky.disc);
+    u.skyGlow.value=sky.glow;u.discStrength.value=sky.discStrength;u.sunDirection.value.set(...sky.sunDir);
+    this.material.uniforms.fogColor.value.setRGB(...model.fog.color);this.dustMaterial.uniforms.fogColor.value.setRGB(...model.fog.color);
   }
   update(state,clock,quality){
     let count=0;const density=quality==='low'?.58:quality==='medium'?.80:1,max=quality==='low'?112:quality==='medium'?192:256;
