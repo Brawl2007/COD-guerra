@@ -105,7 +105,7 @@ test('class: one InstancedMesh per nation, capacity by quality, disabled => empt
 });
 test('wiring: only the view and the characters hand-off know the module; sim never imports it',()=>{
   const view=readFileSync(new URL('../src/render/m01-view.js',import.meta.url),'utf8');
-  assert.match(view,/impostored\.has\(a\.id\)/);assert.match(view,/impostors:this\.impostors\.enabled/);
+  assert.match(view,/impostored\.has\(a\.id\)/);assert.match(view,/impostors:this\.impostors\?\.enabled/);
   for(const dir of ['game','world','core']){
     for(const f of (jsFilesIn(dir)))assert.doesNotMatch(readFileSync(f,'utf8'),/m01-impostors/,f);
   }

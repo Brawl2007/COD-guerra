@@ -206,7 +206,7 @@ export class M01View {
   }
   updateActors(actors,time,player={x:0,z:0},battleClock){
     const skinned=this.characters?.update(actors,time,player,this.owner.quality,battleClock)??new Set();
-    const impostored=this.impostors.select(actors,skinned,player,this.owner.quality,time);   // hand-off: exactly one of {skinned body, impostor, procedural body}
+    const impostored=this.impostors?.select(actors,skinned,player,this.owner.quality,time)??new Set();   // hand-off: exactly one of {skinned body, impostor, procedural body}
     const counts={},dummy=new THREE.Object3D(),root=new THREE.Object3D(),matrix=new THREE.Matrix4();
     const up=new THREE.Vector3(0,1,0),direction=new THREE.Vector3(),tint=new THREE.Color();
     this.actorPoses={standing:0,crouched:0,pinned:0,seated:0,wounded:0,carried:0,fallen:0,prone:0};
@@ -640,7 +640,7 @@ export class M01View {
     const canvas=this.owner.canvas,previous=this.lastFrame;
     const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
       width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,
-      wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,waterDetail:this.water.detail,impostors:this.impostors.enabled};   // T42: the ?debug water A/B toggle is part of the paused-frame key
+      wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
@@ -663,7 +663,7 @@ export class M01View {
     const fov=player.aiming?48:70;
     this.camera.aspect=this.weaponCamera.aspect=aspect;this.camera.fov=THREE.MathUtils.lerp(this.camera.fov,fov,Math.min(1,dt*12));
     this.camera.updateProjectionMatrix();this.weaponCamera.updateProjectionMatrix();
-    this.impostors.sync({camera:this.camera,clock:time,battleClock:sim.battleClock,fog:this.lightingModel?.fog.color??[.63,.65,.65],sunColor:this.lightingModel?.sun.color,sunDir:this.lightingModel?.sky.sunDir,viewportHeight:this.owner.canvas.height});
+    this.impostors?.sync({camera:this.camera,clock:time,battleClock:sim.battleClock,fog:this.lightingModel?.fog.color??[.63,.65,.65],sunColor:this.lightingModel?.sun.color,sunDir:this.lightingModel?.sky.sunDir,viewportHeight:this.owner.canvas.height});
     const w=sim.weapon,reload=w.reloadProgress(time*1000),bolt=w.boltCycling?Math.min(1,(time*1000-w.started)/1050):0;
     this.weaponRoot.position.set(player.aiming?0:.20,player.aiming?-.11:-.24,-.60);
     this.weaponRoot.position.y+=Math.abs(bob)-Math.sin(reload*Math.PI)*.10;
@@ -735,7 +735,7 @@ export class M01View {
   }
   get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,
     requiredAssetFailures:this.assets.failures.filter(f=>manifest.files.some(m=>typeof m.lod==='number'&&m.file===f.path)),
-    characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,weaponFx:this.weaponWorldFx.diagnostics,weaponLighting:this.weaponLighting.state,lighting:viewLightingDiagnostics(this),water:this.water.diagnostics,impostors:this.impostors.diagnostics,
+    characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,weaponFx:this.weaponWorldFx.diagnostics,weaponLighting:this.weaponLighting.state,lighting:viewLightingDiagnostics(this),water:this.water.diagnostics,impostors:this.impostors?.diagnostics,
     locomotive:this.locomotive.diagnostics,panzerzug:this.panzerzugArt.diagnostics,wagons:this.wagons.diagnostics,yardWagons:this.yardWagons.diagnostics,
     aircraft:{loaded:[...this.aircraftSources.keys()].sort(),planes:this.planes.map(p=>{const model=(p.levels[p.userData.level]??p.levels.find(l=>l.object.visible))?.object,prop=model?.getObjectByName('propeller');return {visible:p.visible,lod:model?.userData.lod,position:p.position.toArray(),attitude:[p.rotation.x,p.rotation.y,p.rotation.z],fade:p.userData.fade,propeller:prop?.quaternion.toArray()};}),
       path:this.aircraftPath?{...this.aircraftPath,planeSeconds:[0,1,2].map(i=>m01StukaPathTime(this.aircraftPath.since,i))}:null,
