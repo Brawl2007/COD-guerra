@@ -10,6 +10,7 @@ import { texturedSurface,weatheredBridgeSurface } from './m01-surfaces.js';
 import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';
 import { applyLighting, viewLightingDiagnostics, M01_FOG_RANGE } from './m01-lighting.js';
 import { M01Water } from './m01-water.js';
+import { M01Grading } from './m01-grading.js';
 import {battlefieldBlastKind,battlefieldProfile,fxLayerCount,staggeredLife,impactProfile,fxDistanceBand} from './m01-battlefield-fx-profile.js';
 import { M01Environment } from './m01-environment.js';
 import { M01Characters } from './m01-characters.js';
@@ -38,7 +39,7 @@ const fxCount=(n,quality)=>Math.max(1,Math.round(n*(FX_DENSITY[quality]??FX_DENS
 // Original procedural art: textured environment and articulated humans; final scanned/rigged art remains pending.
 export class M01View {
   constructor(renderer){
-    this.owner=renderer;this.engine=renderer.engine;this.assets=new AssetManager();this.disposed=false;
+    this.owner=renderer;this.engine=renderer.engine;this.assets=new AssetManager();this.disposed=false;this.grading=new M01Grading();
     this.scene=new THREE.Scene();this.scene.fog=new THREE.Fog('#a0a7a8',M01_FOG_RANGE.near,M01_FOG_RANGE.far);
     this.camera=new THREE.PerspectiveCamera(70,1,.05,7500);this.weaponCamera=new THREE.PerspectiveCamera(58,1,.03,6);
     this.weaponScene=new THREE.Scene();this.weaponRoot=new THREE.Group();this.weaponScene.add(this.weaponRoot);
@@ -637,7 +638,7 @@ export class M01View {
     const canvas=this.owner.canvas,previous=this.lastFrame;
     const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
       width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,
-      wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key
+      wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
@@ -681,7 +682,11 @@ export class M01View {
     this.updateBattlefieldFx(state,time);
     try{this.damageDecals.update({state,time,world:sim.world,trees:this.environment?.treeDescriptors,quality:this.owner.quality,camera:this.camera.position,renderer:this.engine,view:this.camera,warm:[this.fireBatches.chip]});}
     catch(error){this.damageDecals.fail(error);}   // presentation only: never stops the frame
-    this.engine.info.autoReset=false;this.engine.info.reset();this.engine.clear();this.engine.render(this.scene,this.camera);
+    // T44: Medium/High draw the world into the grade's target and composite it once; Low (post===null) runs the exact statements it always ran.
+    const post=this.grading.begin(this.engine,this.owner.quality,this.lightingModel,this.camera);
+    this.engine.info.autoReset=false;this.engine.info.reset();
+    if(post)this.drawGraded(post);else this.engine.clear();
+    if(!post)this.engine.render(this.scene,this.camera);
     if(this.fx.muzzle>0){this.muzzlePresentation.frames++;this.muzzlePresentation.lastClock=time;this.muzzlePresentation.lastFrame=this.renderedFrames??0;}
     this.engine.clearDepth();this.engine.render(this.weaponScene,this.weaponCamera);this.engine.toneMappingExposure=1.15;
   }
@@ -729,9 +734,16 @@ export class M01View {
     this.demolitionState={entries:[],pieces:[],flash:null};
     this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
   }
+  /** T44 (Medium/High): the world goes into the grade's target, then ONE full-screen pass paints the canvas. The weapon scene is drawn afterwards, ungraded. */
+  drawGraded(post){
+    const e=this.engine;
+    try{e.setRenderTarget(post);e.clear();e.render(this.scene,this.camera);}
+    finally{e.setRenderTarget(null);}
+    this.grading.composite(e);
+  }
   get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,
     requiredAssetFailures:this.assets.failures.filter(f=>manifest.files.some(m=>typeof m.lod==='number'&&m.file===f.path)),
-    characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,weaponFx:this.weaponWorldFx.diagnostics,weaponLighting:this.weaponLighting.state,lighting:viewLightingDiagnostics(this),water:this.water.diagnostics,
+    characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,weaponFx:this.weaponWorldFx.diagnostics,weaponLighting:this.weaponLighting.state,lighting:viewLightingDiagnostics(this),water:this.water.diagnostics,grading:this.grading.diagnostics,
     locomotive:this.locomotive.diagnostics,panzerzug:this.panzerzugArt.diagnostics,wagons:this.wagons.diagnostics,yardWagons:this.yardWagons.diagnostics,
     aircraft:{loaded:[...this.aircraftSources.keys()].sort(),planes:this.planes.map(p=>{const model=(p.levels[p.userData.level]??p.levels.find(l=>l.object.visible))?.object,prop=model?.getObjectByName('propeller');return {visible:p.visible,lod:model?.userData.lod,position:p.position.toArray(),attitude:[p.rotation.x,p.rotation.y,p.rotation.z],fade:p.userData.fade,propeller:prop?.quaternion.toArray()};}),
       path:this.aircraftPath?{...this.aircraftPath,planeSeconds:[0,1,2].map(i=>m01StukaPathTime(this.aircraftPath.since,i))}:null,
@@ -750,7 +762,7 @@ export class M01View {
         near:this.camera.near,far:this.camera.far,width:this.owner.canvas.width,height:this.owner.canvas.height}},
     battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},meta:structuredClone(this.battlefieldFxMeta),limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
-    this.disposed=true;this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();
+    this.disposed=true;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();
     this.fallbackFx.dispose();this.weaponWorldFx.dispose();this.weaponLighting.dispose();
     this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
     const textures=new Set();for(const m of Object.values(this.materials)){if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
