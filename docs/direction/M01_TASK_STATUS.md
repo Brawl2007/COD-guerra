@@ -28,7 +28,7 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 15 | Portão FX V3 | DONE* | `m01-battlefield-fx-profile.js`, `m01-fx-textures.js` na V7; tabela fechado/aberto não verificada |
 | 16 | Luz da madrugada | DONE* | `claude/m01-lighting-dawn-v1` @ `3386fc2`, CI 37918399233 (490/490, spec 8/8); duas cascatas em Média/Alta |
 | 17 | Mergulho dos Stuka | DONE* | `claude/m01-stuka-dive-sequence-v1` @ `4c64beb`, CI 37930134740 (502/502, spec 5/5); sem ciclo, bombas visíveis, raid 05:30 numa passagem (D15) |
-| 18 | Set piece de demolição V2 | INCERTO | — |
+| 18 | Set piece de demolição V2 | DONE* | `claude/m01-demolition-setpiece-v2` @ `b296374`, CI 37959483518 (520/520, browser 9/9); colapso 3,2 s, clarão distante, tremor ao chegar o som, detritos/salpicos, chuva de terra (D16) |
 | 19 | Feedback do tiro do jogador | DONE* | `08d2e81`, CI 37890545910 (D12) |
 | 20 | Impostores da frente distante | AUSENTE | (Distant Battlefield foi excluído pela V7) |
 | 21 | Ambient director | AUSENTE | Depende de T22 |

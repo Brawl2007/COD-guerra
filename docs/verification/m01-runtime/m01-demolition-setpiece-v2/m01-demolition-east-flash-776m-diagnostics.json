@@ -1,0 +1,530 @@
+{
+  "name": "m01-demolition-east-flash-776m",
+  "quality": "high",
+  "clock": 741.3499999998735,
+  "battleClock": 22201.699999999997,
+  "player": {
+    "x": 24,
+    "y": -3,
+    "z": 20,
+    "angle": 0,
+    "pitch": -0.19871326729892302,
+    "health": 92,
+    "crouched": false,
+    "aiming": false
+  },
+  "demolition": {
+    "clock": 741.3499999998735,
+    "collapseSeconds": 3.2,
+    "budget": {
+      "low": {
+        "puffs": 24,
+        "debris": 18
+      },
+      "medium": {
+        "puffs": 36,
+        "debris": 28
+      },
+      "high": {
+        "puffs": 48,
+        "debris": 36
+      }
+    },
+    "entries": [
+      {
+        "id": "east_demolition",
+        "started": 741.1499999998737,
+        "age": 0.1999999999998181,
+        "progress": 0.0039062499999928946,
+        "duration": 3.2,
+        "distance": 776,
+        "far": {
+          "applies": true,
+          "exposure": 0.47870781893029013,
+          "tremor": 0,
+          "exposureAt": 0,
+          "tremorAt": 2.262390670553936
+        },
+        "farActive": true,
+        "silence": {
+          "id": "east_demolition",
+          "from": 741.1499999998737,
+          "to": 743.1499999998737,
+          "active": true
+        },
+        "fall": [
+          {
+            "x": 663.5,
+            "z": 0,
+            "surface": "earth"
+          },
+          {
+            "x": 795,
+            "z": 0,
+            "surface": "earth"
+          },
+          {
+            "x": 663.3,
+            "z": 40,
+            "surface": "earth"
+          },
+          {
+            "x": 808.6,
+            "z": 40,
+            "surface": "earth"
+          }
+        ]
+      }
+    ],
+    "pieces": [
+      {
+        "name": "rail_support_06_rubble",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "falling",
+        "progress": 0.0007468354423693881,
+        "position": [
+          793.8,
+          1.9985063291152612,
+          0
+        ],
+        "basePosition": [
+          793.8,
+          0,
+          0
+        ],
+        "quaternion": [
+          -0.00870635248328772,
+          0.0024584722518428883,
+          0.0058658879214624066,
+          0.9999418716603062
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "rail_portal_old_east_rubble",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "falling",
+        "progress": 0,
+        "position": [
+          793.8,
+          2,
+          0
+        ],
+        "basePosition": [
+          793.8,
+          0,
+          0
+        ],
+        "quaternion": [
+          0.007917992909595498,
+          0.0025950820478436824,
+          0.0010109769233236153,
+          0.9999647738111125
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "rail_span_06_collapsed",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "falling",
+        "progress": 0,
+        "position": [
+          663.5,
+          1.997833906484141,
+          0
+        ],
+        "basePosition": [
+          663.5270520423911,
+          -0.0021660935158588357,
+          0.059964006479444595
+        ],
+        "quaternion": [
+          -0.0031939474895943346,
+          -0.0016423496417260859,
+          -0.00816783084493391,
+          0.9999601931708965
+        ],
+        "baseQuaternion": [
+          0.02999274578134724,
+          -0.0004064884910973335,
+          -0.013545551241086147,
+          0.9994582472565711
+        ]
+      },
+      {
+        "name": "rail_span_07_collapsed",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "falling",
+        "progress": 0,
+        "position": [
+          795,
+          0,
+          0
+        ],
+        "basePosition": [
+          794.9577500287935,
+          -3.501693537492439,
+          -0.03998933418663416
+        ],
+        "quaternion": [
+          0.012187808125198719,
+          -0.0024862043911945074,
+          0.010094157239907125,
+          0.9998716838227016
+        ],
+        "baseQuaternion": [
+          -0.01999419469371582,
+          -0.00042290431638380803,
+          0.02114239638189532,
+          0.9995764364998405
+        ]
+      },
+      {
+        "name": "road_support_06_rubble",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "falling",
+        "progress": 0,
+        "position": [
+          807.5,
+          2,
+          0
+        ],
+        "basePosition": [
+          807.5,
+          0,
+          0
+        ],
+        "quaternion": [
+          0.011076181355992932,
+          0.003806193321303491,
+          0.007981864231700454,
+          0.9998995554266223
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "road_portal_old_east_rubble",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "falling",
+        "progress": 0,
+        "position": [
+          807.5,
+          2,
+          0
+        ],
+        "basePosition": [
+          807.5,
+          0,
+          0
+        ],
+        "quaternion": [
+          -0.003395789904634061,
+          -0.000010309762606713756,
+          0.0046399993247767625,
+          0.9999834693188175
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "road_span_06_collapsed",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "falling",
+        "progress": 0.0009000455433029502,
+        "position": [
+          663.3000219828629,
+          1.9961015964481044,
+          0.00005397033679040847
+        ],
+        "basePosition": [
+          663.3244241671775,
+          -0.0020983124652897978,
+          0.059964006479444595
+        ],
+        "quaternion": [
+          0.00837460617707318,
+          -0.004875292708414614,
+          0.002977353592865284,
+          0.9999486151087811
+        ],
+        "baseQuaternion": [
+          0.029993255021697248,
+          -0.00036699536965776794,
+          -0.012229508814679593,
+          0.9994752168421955
+        ]
+      },
+      {
+        "name": "road_span_07_collapsed",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "falling",
+        "progress": 0,
+        "position": [
+          808.7,
+          0,
+          0
+        ],
+        "basePosition": [
+          808.6494540829125,
+          -3.502079179785747,
+          -0.03998933418663416
+        ],
+        "quaternion": [
+          -0.009748059470170357,
+          -0.0045586141935672125,
+          -0.006321768628214062,
+          0.9999221117740178
+        ],
+        "baseQuaternion": [
+          -0.019992264542544987,
+          -0.0005059920670607598,
+          0.02529622998263334,
+          0.9994799418093163
+        ]
+      }
+    ],
+    "flash": {
+      "id": "east_demolition",
+      "age": 0.1999999999998181,
+      "distance": 776.0011917516622,
+      "scale": 62.08009534013298,
+      "scaleFactor": 2.140692942763206,
+      "angular": 0.08,
+      "extraLayers": 7,
+      "color": "#ffd27a",
+      "duration": 0.45,
+      "lightSeconds": 0.9000000000000001,
+      "lightRange": 259.2,
+      "lightDecay": 1
+    },
+    "far": [
+      {
+        "key": "east_demolition@741.1499999998737",
+        "id": "east_demolition",
+        "started": 741.1499999998737,
+        "distance": 776,
+        "applies": true,
+        "exposure": 0.47870781893029013,
+        "tremor": 0,
+        "exposureAt": 0,
+        "tremorAt": 2.262390670553936
+      }
+    ],
+    "camera": {
+      "position": [
+        24,
+        -1.36,
+        20
+      ],
+      "quaternion": [
+        -0.07014021536069778,
+        -0.703619464049393,
+        -0.07014021536069778,
+        0.7036194640493929
+      ],
+      "fov": 70,
+      "aspect": 1.7777777777777777,
+      "near": 0.05,
+      "far": 7500,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "combatFeedback": {
+    "suppressionVisual": 0,
+    "hitImpulse": 0,
+    "nearMissImpulse": 0,
+    "impactImpulse": 0,
+    "explosionImpulse": 0,
+    "direction": 0,
+    "cameraX": 0,
+    "cameraY": 0,
+    "roll": 0,
+    "shakeStrength": 0,
+    "overlayAlpha": 0,
+    "exposureFlash": 0.05687048888891847,
+    "activeOverlay": false,
+    "activeEvents": 0,
+    "farExposure": 0.47870781893029013,
+    "farTremor": 0,
+    "lastHitDirection": null,
+    "lastDirection": null,
+    "counts": {
+      "playerHit": 0,
+      "nearMiss": 0,
+      "nearImpact": 0,
+      "explosion": 0,
+      "directional": 0
+    },
+    "peaks": {
+      "suppressionVisual": 0,
+      "hitImpulse": 0,
+      "nearMissImpulse": 0,
+      "impactImpulse": 0,
+      "explosionImpulse": 0,
+      "overlayAlpha": 0,
+      "shakeStrength": 0
+    },
+    "caps": {
+      "suppressionVisual": 1,
+      "hitImpulse": 1,
+      "nearMissImpulse": 0.72,
+      "impactImpulse": 0.5,
+      "explosionImpulse": 1,
+      "cameraOffset": 0.02,
+      "cameraRoll": 0.012,
+      "overlayAlpha": 0.42
+    },
+    "quality": "high",
+    "farDemolitions": [
+      {
+        "key": "east_demolition@741.1499999998737",
+        "id": "east_demolition",
+        "started": 741.1499999998737,
+        "distance": 776,
+        "applies": true,
+        "exposure": 0.47870781893029013,
+        "tremor": 0,
+        "exposureAt": 0,
+        "tremorAt": 2.262390670553936
+      }
+    ]
+  },
+  "battlefieldFx": {
+    "active": 1,
+    "counts": {
+      "flash": 8,
+      "core": 4,
+      "fire": 3,
+      "smoke": 0,
+      "dust": 2,
+      "shard": 7
+    },
+    "meta": {
+      "kinds": {
+        "small": 0,
+        "bombing": 0,
+        "demolition": 1
+      },
+      "bands": {
+        "near": 0,
+        "mid": 0,
+        "far": 1
+      }
+    },
+    "limits": {
+      "bursts": 16,
+      "flash": 16,
+      "core": 48,
+      "fire": 96,
+      "smoke": 128,
+      "dust": 128,
+      "shards": 96,
+      "lights": 1
+    },
+    "extraLights": 1,
+    "atmosphere": {
+      "puffs": 49,
+      "puffCapacity": 256,
+      "debris": 28,
+      "debrisCapacity": 64,
+      "puffBatches": 8,
+      "demolition": {
+        "puffs": 0,
+        "chips": 0
+      }
+    }
+  },
+  "parts": {
+    "rail_support_06_rubble": {
+      "lod": 1,
+      "visible": true
+    },
+    "rail_portal_old_east_rubble": {
+      "lod": 1,
+      "visible": true
+    },
+    "rail_span_06_collapsed": {
+      "lod": 1,
+      "visible": true
+    },
+    "rail_span_07_collapsed": {
+      "lod": 1,
+      "visible": true
+    },
+    "road_support_06_rubble": {
+      "lod": 1,
+      "visible": true
+    },
+    "road_portal_old_east_rubble": {
+      "lod": 1,
+      "visible": true
+    },
+    "road_span_06_collapsed": {
+      "lod": 1,
+      "visible": true
+    },
+    "road_span_07_collapsed": {
+      "lod": 1,
+      "visible": true
+    }
+  },
+  "timeline": [
+    {
+      "age": 0.1999999999998181,
+      "clock": 741.3499999998735,
+      "farExposure": 0.47870781893029013,
+      "farTremor": 0,
+      "shakeStrength": 0,
+      "exposureFlash": 0.05687048888891847,
+      "explosionImpulse": 0,
+      "flash": true
+    }
+  ],
+  "drawCalls": 449,
+  "triangles": 1210820,
+  "timelineChecks": {
+    "tremorAt": 2.262390670553936,
+    "earlyFrames": 1,
+    "tremorFrames": 0,
+    "during": []
+  },
+  "shot": {
+    "base": "east",
+    "x": 24,
+    "z": 20,
+    "aim": {
+      "x": 800,
+      "y": 8,
+      "z": 20
+    },
+    "lift": 110
+  }
+}

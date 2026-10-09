@@ -1,0 +1,124 @@
+{
+  "name": "m01-demolition-west-earth-rain",
+  "shot": {
+    "base": "west",
+    "x": -235,
+    "z": 50,
+    "aim": {
+      "x": -290,
+      "y": 10,
+      "z": 22
+    },
+    "lift": -20,
+    "player": {
+      "x": -235,
+      "y": 1.2736403723664873,
+      "z": 50
+    }
+  },
+  "camera": {
+    "position": [
+      -235,
+      2.913640372366487,
+      50
+    ],
+    "quaternion": [
+      0.06524158301410131,
+      0.5211130716682902,
+      -0.03999557727441658,
+      0.8500500315750478
+    ],
+    "fov": 70,
+    "aspect": 1.7777777777777777,
+    "near": 0.05,
+    "far": 7500,
+    "width": 1280,
+    "height": 720
+  },
+  "projected": [
+    {
+      "point": [
+        -290,
+        24,
+        22
+      ],
+      "x": 640,
+      "y": 268.6,
+      "depth": 64.2
+    },
+    {
+      "point": [
+        -290,
+        6,
+        22
+      ],
+      "x": 640,
+      "y": 413.3,
+      "depth": 61.5
+    },
+    {
+      "point": [
+        -304,
+        10,
+        10
+      ],
+      "x": 668,
+      "y": 393.2,
+      "depth": 79.8
+    },
+    {
+      "point": [
+        -276,
+        10,
+        34
+      ],
+      "x": 589.7,
+      "y": 356.3,
+      "depth": 44.4
+    }
+  ],
+  "limit": {
+    "changed": 60,
+    "peak": 40,
+    "meanAbs": 0.02
+  },
+  "threshold": 24,
+  "stats": {
+    "roi": {
+      "box": [
+        479,
+        253,
+        778,
+        429
+      ],
+      "pixels": 52624,
+      "changed": 181,
+      "changedLoose": 975,
+      "peak": 192,
+      "meanAbs": 1.0748,
+      "meanLumaReference": 173.419,
+      "meanLumaLive": 172.577,
+      "centroid": [
+        685.1,
+        338.2
+      ]
+    },
+    "control": {
+      "box": [
+        480,
+        10,
+        800,
+        90
+      ],
+      "pixels": 25600,
+      "changed": 0,
+      "changedLoose": 0,
+      "peak": 0,
+      "meanAbs": 0,
+      "meanLumaReference": 175.215,
+      "meanLumaLive": 175.215,
+      "centroid": null
+    }
+  },
+  "changedInFrame": 181
+}

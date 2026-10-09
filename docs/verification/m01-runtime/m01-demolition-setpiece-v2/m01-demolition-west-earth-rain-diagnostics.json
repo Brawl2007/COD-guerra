@@ -1,0 +1,1340 @@
+{
+  "name": "m01-demolition-west-earth-rain",
+  "quality": "high",
+  "clock": 991.8998999996456,
+  "battleClock": 24303.649899999946,
+  "player": {
+    "x": -235,
+    "y": 1.2736403723664873,
+    "z": 50,
+    "angle": -2.67069879460909,
+    "pitch": 0.15320022893646787,
+    "health": 92,
+    "crouched": false,
+    "aiming": false
+  },
+  "demolition": {
+    "clock": 991.8998999996456,
+    "collapseSeconds": 3.2,
+    "budget": {
+      "low": {
+        "puffs": 24,
+        "debris": 18
+      },
+      "medium": {
+        "puffs": 36,
+        "debris": 28
+      },
+      "high": {
+        "puffs": 48,
+        "debris": 36
+      }
+    },
+    "entries": [
+      {
+        "id": "east_demolition",
+        "started": 741.1499999998737,
+        "age": 250.74989999977197,
+        "progress": 1,
+        "duration": 3.2,
+        "distance": 1035.4346913253391,
+        "far": {
+          "applies": true,
+          "exposure": 0,
+          "tremor": 0,
+          "exposureAt": 0,
+          "tremorAt": 3.0187600330184816
+        },
+        "farActive": true,
+        "silence": {
+          "id": "east_demolition",
+          "from": 741.1499999998737,
+          "to": 743.1499999998737,
+          "active": false
+        },
+        "fall": [
+          {
+            "x": 663.5,
+            "z": 0,
+            "surface": "earth"
+          },
+          {
+            "x": 795,
+            "z": 0,
+            "surface": "earth"
+          },
+          {
+            "x": 663.3,
+            "z": 40,
+            "surface": "earth"
+          },
+          {
+            "x": 808.6,
+            "z": 40,
+            "surface": "earth"
+          }
+        ]
+      },
+      {
+        "id": "west_demolition",
+        "started": 988.2499999996489,
+        "age": 3.6498999999967054,
+        "progress": 1,
+        "duration": 3.2,
+        "distance": 306.47185841443905,
+        "far": {
+          "applies": true,
+          "exposure": 0,
+          "tremor": 0,
+          "exposureAt": 0,
+          "tremorAt": 0.8935039603919506
+        },
+        "farActive": true,
+        "silence": {
+          "id": "west_demolition",
+          "from": 988.2499999996489,
+          "to": 990.2499999996489,
+          "active": false
+        },
+        "fall": [
+          {
+            "x": 10.4,
+            "z": 0,
+            "surface": "earth"
+          },
+          {
+            "x": 142.1,
+            "z": 0,
+            "surface": "water"
+          },
+          {
+            "x": 8.5,
+            "z": 40,
+            "surface": "earth"
+          },
+          {
+            "x": 142.1,
+            "z": 40,
+            "surface": "water"
+          }
+        ]
+      }
+    ],
+    "pieces": [
+      {
+        "name": "rail_support_00_damaged",
+        "lod": 0,
+        "damageId": "west_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "basePosition": [
+          0,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "rail_support_01_rubble",
+        "lod": 0,
+        "damageId": "west_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          140.9,
+          0,
+          0
+        ],
+        "basePosition": [
+          140.9,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "rail_span_01_collapsed",
+        "lod": 0,
+        "damageId": "west_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          10.41925302828514,
+          -8.004233377092849,
+          0.08987854919801104
+        ],
+        "basePosition": [
+          10.41925302828514,
+          -8.004233377092849,
+          0.08987854919801104
+        ],
+        "quaternion": [
+          0.04498271245097162,
+          -0.0004348270415642743,
+          -0.00965629985955469,
+          0.9989410004494857
+        ],
+        "baseQuaternion": [
+          0.04498271245097162,
+          -0.0004348270415642743,
+          -0.00965629985955469,
+          0.9989410004494857
+        ]
+      },
+      {
+        "name": "rail_span_02_collapsed",
+        "lod": 0,
+        "damageId": "west_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          142.02153951024619,
+          -10.004336385024237,
+          -0.04997916927067833
+        ],
+        "basePosition": [
+          142.02153951024619,
+          -10.004336385024237,
+          -0.04997916927067833
+        ],
+        "quaternion": [
+          -0.024978074786368886,
+          -0.0009826405667586594,
+          0.03929743365774177,
+          0.9989148321580766
+        ],
+        "baseQuaternion": [
+          -0.024978074786368886,
+          -0.0009826405667586594,
+          0.03929743365774177,
+          0.9989148321580766
+        ]
+      },
+      {
+        "name": "rail_support_06_rubble",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          793.8,
+          0,
+          0
+        ],
+        "basePosition": [
+          793.8,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "rail_portal_old_east_rubble",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          793.8,
+          0,
+          0
+        ],
+        "basePosition": [
+          793.8,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "rail_span_06_collapsed",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          663.5270520423911,
+          -0.0021660935158588357,
+          0.059964006479444595
+        ],
+        "basePosition": [
+          663.5270520423911,
+          -0.0021660935158588357,
+          0.059964006479444595
+        ],
+        "quaternion": [
+          0.02999274578134724,
+          -0.0004064884910973335,
+          -0.013545551241086147,
+          0.9994582472565711
+        ],
+        "baseQuaternion": [
+          0.02999274578134724,
+          -0.0004064884910973335,
+          -0.013545551241086147,
+          0.9994582472565711
+        ]
+      },
+      {
+        "name": "rail_span_07_collapsed",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          794.9577500287935,
+          -3.501693537492439,
+          -0.03998933418663416
+        ],
+        "basePosition": [
+          794.9577500287935,
+          -3.501693537492439,
+          -0.03998933418663416
+        ],
+        "quaternion": [
+          -0.01999419469371582,
+          -0.00042290431638380803,
+          0.02114239638189532,
+          0.9995764364998405
+        ],
+        "baseQuaternion": [
+          -0.01999419469371582,
+          -0.00042290431638380803,
+          0.02114239638189532,
+          0.9995764364998405
+        ]
+      },
+      {
+        "name": "road_support_06_rubble",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          807.5,
+          0,
+          0
+        ],
+        "basePosition": [
+          807.5,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "road_portal_old_east_rubble",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          807.5,
+          0,
+          0
+        ],
+        "basePosition": [
+          807.5,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "road_span_06_collapsed",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          663.3244241671775,
+          -0.0020983124652897978,
+          0.059964006479444595
+        ],
+        "basePosition": [
+          663.3244241671775,
+          -0.0020983124652897978,
+          0.059964006479444595
+        ],
+        "quaternion": [
+          0.029993255021697248,
+          -0.00036699536965776794,
+          -0.012229508814679593,
+          0.9994752168421955
+        ],
+        "baseQuaternion": [
+          0.029993255021697248,
+          -0.00036699536965776794,
+          -0.012229508814679593,
+          0.9994752168421955
+        ]
+      },
+      {
+        "name": "road_span_07_collapsed",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          808.6494540829125,
+          -3.502079179785747,
+          -0.03998933418663416
+        ],
+        "basePosition": [
+          808.6494540829125,
+          -3.502079179785747,
+          -0.03998933418663416
+        ],
+        "quaternion": [
+          -0.019992264542544987,
+          -0.0005059920670607598,
+          0.02529622998263334,
+          0.9994799418093163
+        ],
+        "baseQuaternion": [
+          -0.019992264542544987,
+          -0.0005059920670607598,
+          0.02529622998263334,
+          0.9994799418093163
+        ]
+      },
+      {
+        "name": "road_support_00_damaged",
+        "lod": 0,
+        "damageId": "west_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          2.4,
+          0,
+          0
+        ],
+        "basePosition": [
+          2.4,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "road_tower_01_n_rubble",
+        "lod": 0,
+        "damageId": "west_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          140.9,
+          0,
+          -6
+        ],
+        "basePosition": [
+          140.9,
+          0,
+          -6
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "road_tower_01_s_rubble",
+        "lod": 0,
+        "damageId": "west_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          140.9,
+          0,
+          6
+        ],
+        "basePosition": [
+          140.9,
+          0,
+          6
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "road_support_01_rubble",
+        "lod": 0,
+        "damageId": "west_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          140.9,
+          0,
+          0
+        ],
+        "basePosition": [
+          140.9,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "road_span_01_collapsed",
+        "lod": 0,
+        "damageId": "west_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          8.518974313506165,
+          -8.004228027196472,
+          0.08987854919801104
+        ],
+        "basePosition": [
+          8.518974313506165,
+          -8.004228027196472,
+          0.08987854919801104
+        ],
+        "quaternion": [
+          0.04498277286427435,
+          -0.0004285317304199761,
+          -0.00951649849876569,
+          0.998942342061002
+        ],
+        "baseQuaternion": [
+          0.04498277286427435,
+          -0.0004285317304199761,
+          -0.00951649849876569,
+          0.998942342061002
+        ]
+      },
+      {
+        "name": "road_span_02_collapsed",
+        "lod": 0,
+        "damageId": "west_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          142.0219673014578,
+          -10.004302766601596,
+          -0.04997916927067833
+        ],
+        "basePosition": [
+          142.0219673014578,
+          -10.004302766601596,
+          -0.04997916927067833
+        ],
+        "quaternion": [
+          -0.024978285304342776,
+          -0.0009772746654501026,
+          0.03908284232310699,
+          0.9989232511226426
+        ],
+        "baseQuaternion": [
+          -0.024978285304342776,
+          -0.0009772746654501026,
+          0.03908284232310699,
+          0.9989232511226426
+        ]
+      }
+    ],
+    "flash": {
+      "id": "west_demolition",
+      "age": 3.6498999999967054,
+      "distance": 306.4857081500204,
+      "scale": 29,
+      "scaleFactor": 1,
+      "angular": 0.09462105158197104,
+      "extraLayers": 7,
+      "color": "#ffd27a",
+      "duration": 0.45,
+      "lightSeconds": 0.9000000000000001,
+      "lightRange": 259.2,
+      "lightDecay": 1
+    },
+    "far": [
+      {
+        "key": "west_demolition@988.2499999996489",
+        "id": "west_demolition",
+        "started": 988.2499999996489,
+        "distance": 306.47185841443905,
+        "applies": true,
+        "exposure": 0,
+        "tremor": 0,
+        "exposureAt": 0,
+        "tremorAt": 0.8935039603919506
+      }
+    ],
+    "camera": {
+      "position": [
+        -235,
+        2.913640372366487,
+        50
+      ],
+      "quaternion": [
+        0.06524158301410131,
+        0.5211130716682902,
+        -0.03999557727441658,
+        0.8500500315750478
+      ],
+      "fov": 70,
+      "aspect": 1.7777777777777777,
+      "near": 0.05,
+      "far": 7500,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "combatFeedback": {
+    "suppressionVisual": 0,
+    "hitImpulse": 0,
+    "nearMissImpulse": 0,
+    "impactImpulse": 0,
+    "explosionImpulse": 0,
+    "direction": 0,
+    "cameraX": 0,
+    "cameraY": 0,
+    "roll": 0,
+    "shakeStrength": 0,
+    "overlayAlpha": 0,
+    "exposureFlash": 0,
+    "activeOverlay": false,
+    "activeEvents": 0,
+    "farExposure": 0,
+    "farTremor": 0,
+    "lastHitDirection": null,
+    "lastDirection": null,
+    "counts": {
+      "playerHit": 0,
+      "nearMiss": 0,
+      "nearImpact": 0,
+      "explosion": 0,
+      "directional": 0
+    },
+    "peaks": {
+      "suppressionVisual": 0,
+      "hitImpulse": 0,
+      "nearMissImpulse": 0,
+      "impactImpulse": 0,
+      "explosionImpulse": 0,
+      "overlayAlpha": 0.03067553969907248,
+      "shakeStrength": 0.009376297040093852
+    },
+    "caps": {
+      "suppressionVisual": 1,
+      "hitImpulse": 1,
+      "nearMissImpulse": 0.72,
+      "impactImpulse": 0.5,
+      "explosionImpulse": 1,
+      "cameraOffset": 0.02,
+      "cameraRoll": 0.012,
+      "overlayAlpha": 0.42
+    },
+    "quality": "high",
+    "farDemolitions": [
+      {
+        "key": "west_demolition@988.2499999996489",
+        "id": "west_demolition",
+        "started": 988.2499999996489,
+        "distance": 306.47185841443905,
+        "applies": true,
+        "exposure": 0,
+        "tremor": 0,
+        "exposureAt": 0,
+        "tremorAt": 0.8935039603919506
+      }
+    ]
+  },
+  "battlefieldFx": {
+    "active": 1,
+    "counts": {
+      "flash": 0,
+      "core": 0,
+      "fire": 0,
+      "smoke": 10,
+      "dust": 0,
+      "shard": 0
+    },
+    "meta": {
+      "kinds": {
+        "small": 0,
+        "bombing": 0,
+        "demolition": 1
+      },
+      "bands": {
+        "near": 0,
+        "mid": 0,
+        "far": 1
+      }
+    },
+    "limits": {
+      "bursts": 16,
+      "flash": 16,
+      "core": 48,
+      "fire": 96,
+      "smoke": 128,
+      "dust": 128,
+      "shards": 96,
+      "lights": 1
+    },
+    "extraLights": 0,
+    "atmosphere": {
+      "puffs": 91,
+      "puffCapacity": 256,
+      "debris": 28,
+      "debrisCapacity": 64,
+      "puffBatches": 8,
+      "demolition": {
+        "puffs": 27,
+        "chips": 28
+      }
+    }
+  },
+  "parts": {
+    "rail_support_00_damaged": {
+      "lod": 0,
+      "visible": true
+    },
+    "rail_support_01_rubble": {
+      "lod": 0,
+      "visible": true
+    },
+    "rail_span_01_collapsed": {
+      "lod": 0,
+      "visible": true
+    },
+    "rail_span_02_collapsed": {
+      "lod": 0,
+      "visible": true
+    },
+    "rail_support_06_rubble": {
+      "lod": 2,
+      "visible": true
+    },
+    "rail_portal_old_east_rubble": {
+      "lod": 2,
+      "visible": true
+    },
+    "rail_span_06_collapsed": {
+      "lod": 2,
+      "visible": true
+    },
+    "rail_span_07_collapsed": {
+      "lod": 2,
+      "visible": true
+    },
+    "road_support_06_rubble": {
+      "lod": 2,
+      "visible": true
+    },
+    "road_portal_old_east_rubble": {
+      "lod": 2,
+      "visible": true
+    },
+    "road_span_06_collapsed": {
+      "lod": 2,
+      "visible": true
+    },
+    "road_span_07_collapsed": {
+      "lod": 2,
+      "visible": true
+    },
+    "road_support_00_damaged": {
+      "lod": 0,
+      "visible": true
+    },
+    "road_tower_01_n_rubble": {
+      "lod": 0,
+      "visible": true
+    },
+    "road_tower_01_s_rubble": {
+      "lod": 0,
+      "visible": true
+    },
+    "road_support_01_rubble": {
+      "lod": 0,
+      "visible": true
+    },
+    "road_span_01_collapsed": {
+      "lod": 0,
+      "visible": true
+    },
+    "road_span_02_collapsed": {
+      "lod": 0,
+      "visible": true
+    }
+  },
+  "timeline": [
+    {
+      "age": 0.1999999999998181,
+      "clock": 988.4499999996488,
+      "farExposure": 0.573386333077222,
+      "farTremor": 0,
+      "shakeStrength": 0,
+      "exposureFlash": 0.06811829636957398,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 0.4499999999995907,
+      "clock": 988.6999999996485,
+      "farExposure": 0.23696067846589444,
+      "farTremor": 0,
+      "shakeStrength": 0,
+      "exposureFlash": 0.02815092860174826,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 0.6999999999993634,
+      "clock": 988.9499999996483,
+      "farExposure": 0.046807047598414246,
+      "farTremor": 0,
+      "shakeStrength": 0,
+      "exposureFlash": 0.005560677254691612,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 0.949999999999136,
+      "clock": 989.1999999996481,
+      "farExposure": 0,
+      "farTremor": 0.7234797098837848,
+      "shakeStrength": 0.009376297040093852,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 0.949999999999136,
+      "clock": 989.1999999996481,
+      "farExposure": 0,
+      "farTremor": 0.7234797098837848,
+      "shakeStrength": 0.009376297040093852,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 1.1999999999989086,
+      "clock": 989.4499999996478,
+      "farExposure": 0,
+      "farTremor": 0.5080967125422443,
+      "shakeStrength": 0.006584933394547487,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 1.1999999999989086,
+      "clock": 989.4499999996478,
+      "farExposure": 0,
+      "farTremor": 0.5080967125422443,
+      "shakeStrength": 0.006584933394547487,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 1.4499999999986812,
+      "clock": 989.6999999996476,
+      "farExposure": 0,
+      "farTremor": 0.33067324921597774,
+      "shakeStrength": 0.004285525309839071,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 1.4499999999986812,
+      "clock": 989.6999999996476,
+      "farExposure": 0,
+      "farTremor": 0.33067324921597774,
+      "shakeStrength": 0.004285525309839071,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 1.6499999999984993,
+      "clock": 989.8999999996474,
+      "farExposure": 0,
+      "farTremor": 0.21606534304596167,
+      "shakeStrength": 0.0028002068458756633,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 1.6499999999984993,
+      "clock": 989.8999999996474,
+      "farExposure": 0,
+      "farTremor": 0.21606534304596167,
+      "shakeStrength": 0.0028002068458756633,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 1.799999999998363,
+      "clock": 990.0499999996473,
+      "farExposure": 0,
+      "farTremor": 0.1460524177048647,
+      "shakeStrength": 0.0018928393334550469,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 1.799999999998363,
+      "clock": 990.0499999996473,
+      "farExposure": 0,
+      "farTremor": 0.1460524177048647,
+      "shakeStrength": 0.0018928393334550469,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 1.866599999998357,
+      "clock": 990.1165999996473,
+      "farExposure": 0,
+      "farTremor": 0.11934737913747187,
+      "shakeStrength": 0.0015467420336216357,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 1.866599999998357,
+      "clock": 990.1165999996473,
+      "farExposure": 0,
+      "farTremor": 0.11934737913747187,
+      "shakeStrength": 0.0015467420336216357,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 1.899899999998297,
+      "clock": 990.1498999996472,
+      "farExposure": 0,
+      "farTremor": 0.10700509059797834,
+      "shakeStrength": 0.0013867859741497994,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 1.899899999998297,
+      "clock": 990.1498999996472,
+      "farExposure": 0,
+      "farTremor": 0.10700509059797834,
+      "shakeStrength": 0.0013867859741497994,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 2.1498999999980697,
+      "clock": 990.399899999647,
+      "farExposure": 0,
+      "farTremor": 0.03585313870087647,
+      "shakeStrength": 0.0004646566775633591,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 2.1498999999980697,
+      "clock": 990.399899999647,
+      "farExposure": 0,
+      "farTremor": 0.03585313870087647,
+      "shakeStrength": 0.0004646566775633591,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 2.3998999999978423,
+      "clock": 990.6498999996468,
+      "farExposure": 0,
+      "farTremor": 0.0026607208190485387,
+      "shakeStrength": 0.00003448294181486907,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 2.3998999999978423,
+      "clock": 990.6498999996468,
+      "farExposure": 0,
+      "farTremor": 0.0026607208190485387,
+      "shakeStrength": 0.00003448294181486907,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 2.649899999997615,
+      "clock": 990.8998999996465,
+      "farExposure": 0,
+      "farTremor": 0,
+      "shakeStrength": 0,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 2.649899999997615,
+      "clock": 990.8998999996465,
+      "farExposure": 0,
+      "farTremor": 0,
+      "shakeStrength": 0,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 2.8998999999973876,
+      "clock": 991.1498999996463,
+      "farExposure": 0,
+      "farTremor": 0,
+      "shakeStrength": 0,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 2.8998999999973876,
+      "clock": 991.1498999996463,
+      "farExposure": 0,
+      "farTremor": 0,
+      "shakeStrength": 0,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 3.14989999999716,
+      "clock": 991.3998999996461,
+      "farExposure": 0,
+      "farTremor": 0,
+      "shakeStrength": 0,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 3.14989999999716,
+      "clock": 991.3998999996461,
+      "farExposure": 0,
+      "farTremor": 0,
+      "shakeStrength": 0,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 3.399899999996933,
+      "clock": 991.6498999996459,
+      "farExposure": 0,
+      "farTremor": 0,
+      "shakeStrength": 0,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 3.399899999996933,
+      "clock": 991.6498999996459,
+      "farExposure": 0,
+      "farTremor": 0,
+      "shakeStrength": 0,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    },
+    {
+      "age": 3.6498999999967054,
+      "clock": 991.8998999996456,
+      "farExposure": 0,
+      "farTremor": 0,
+      "shakeStrength": 0,
+      "exposureFlash": 0,
+      "explosionImpulse": 0,
+      "flash": true
+    }
+  ],
+  "drawCalls": 337,
+  "triangles": 1006723,
+  "timelineChecks": {
+    "tremorAt": 0.8935039603919506,
+    "earlyFrames": 3,
+    "tremorFrames": 14,
+    "during": [
+      {
+        "age": 1.1999999999989086,
+        "clock": 989.4499999996478,
+        "farExposure": 0,
+        "farTremor": 0.5080967125422443,
+        "shakeStrength": 0.006584933394547487,
+        "exposureFlash": 0,
+        "explosionImpulse": 0,
+        "flash": true
+      },
+      {
+        "age": 1.1999999999989086,
+        "clock": 989.4499999996478,
+        "farExposure": 0,
+        "farTremor": 0.5080967125422443,
+        "shakeStrength": 0.006584933394547487,
+        "exposureFlash": 0,
+        "explosionImpulse": 0,
+        "flash": true
+      },
+      {
+        "age": 1.4499999999986812,
+        "clock": 989.6999999996476,
+        "farExposure": 0,
+        "farTremor": 0.33067324921597774,
+        "shakeStrength": 0.004285525309839071,
+        "exposureFlash": 0,
+        "explosionImpulse": 0,
+        "flash": true
+      },
+      {
+        "age": 1.4499999999986812,
+        "clock": 989.6999999996476,
+        "farExposure": 0,
+        "farTremor": 0.33067324921597774,
+        "shakeStrength": 0.004285525309839071,
+        "exposureFlash": 0,
+        "explosionImpulse": 0,
+        "flash": true
+      },
+      {
+        "age": 1.6499999999984993,
+        "clock": 989.8999999996474,
+        "farExposure": 0,
+        "farTremor": 0.21606534304596167,
+        "shakeStrength": 0.0028002068458756633,
+        "exposureFlash": 0,
+        "explosionImpulse": 0,
+        "flash": true
+      },
+      {
+        "age": 1.6499999999984993,
+        "clock": 989.8999999996474,
+        "farExposure": 0,
+        "farTremor": 0.21606534304596167,
+        "shakeStrength": 0.0028002068458756633,
+        "exposureFlash": 0,
+        "explosionImpulse": 0,
+        "flash": true
+      },
+      {
+        "age": 1.799999999998363,
+        "clock": 990.0499999996473,
+        "farExposure": 0,
+        "farTremor": 0.1460524177048647,
+        "shakeStrength": 0.0018928393334550469,
+        "exposureFlash": 0,
+        "explosionImpulse": 0,
+        "flash": true
+      },
+      {
+        "age": 1.799999999998363,
+        "clock": 990.0499999996473,
+        "farExposure": 0,
+        "farTremor": 0.1460524177048647,
+        "shakeStrength": 0.0018928393334550469,
+        "exposureFlash": 0,
+        "explosionImpulse": 0,
+        "flash": true
+      },
+      {
+        "age": 1.866599999998357,
+        "clock": 990.1165999996473,
+        "farExposure": 0,
+        "farTremor": 0.11934737913747187,
+        "shakeStrength": 0.0015467420336216357,
+        "exposureFlash": 0,
+        "explosionImpulse": 0,
+        "flash": true
+      },
+      {
+        "age": 1.866599999998357,
+        "clock": 990.1165999996473,
+        "farExposure": 0,
+        "farTremor": 0.11934737913747187,
+        "shakeStrength": 0.0015467420336216357,
+        "exposureFlash": 0,
+        "explosionImpulse": 0,
+        "flash": true
+      },
+      {
+        "age": 1.899899999998297,
+        "clock": 990.1498999996472,
+        "farExposure": 0,
+        "farTremor": 0.10700509059797834,
+        "shakeStrength": 0.0013867859741497994,
+        "exposureFlash": 0,
+        "explosionImpulse": 0,
+        "flash": true
+      },
+      {
+        "age": 1.899899999998297,
+        "clock": 990.1498999996472,
+        "farExposure": 0,
+        "farTremor": 0.10700509059797834,
+        "shakeStrength": 0.0013867859741497994,
+        "exposureFlash": 0,
+        "explosionImpulse": 0,
+        "flash": true
+      },
+      {
+        "age": 2.1498999999980697,
+        "clock": 990.399899999647,
+        "farExposure": 0,
+        "farTremor": 0.03585313870087647,
+        "shakeStrength": 0.0004646566775633591,
+        "exposureFlash": 0,
+        "explosionImpulse": 0,
+        "flash": true
+      },
+      {
+        "age": 2.1498999999980697,
+        "clock": 990.399899999647,
+        "farExposure": 0,
+        "farTremor": 0.03585313870087647,
+        "shakeStrength": 0.0004646566775633591,
+        "exposureFlash": 0,
+        "explosionImpulse": 0,
+        "flash": true
+      }
+    ]
+  },
+  "shot": {
+    "base": "west",
+    "x": -235,
+    "z": 50,
+    "aim": {
+      "x": -290,
+      "y": 10,
+      "z": 22
+    },
+    "lift": -20
+  },
+  "model": {
+    "puffs": 27,
+    "chips": 28,
+    "clodsOverThePost": 12
+  }
+}

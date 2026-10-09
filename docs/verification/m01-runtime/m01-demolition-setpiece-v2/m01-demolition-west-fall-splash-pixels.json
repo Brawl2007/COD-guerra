@@ -1,0 +1,154 @@
+{
+  "name": "m01-demolition-west-fall-splash",
+  "shot": {
+    "base": "west",
+    "x": -120,
+    "z": 42,
+    "aim": {
+      "x": 110,
+      "y": -4,
+      "z": 20
+    },
+    "lift": 0,
+    "player": {
+      "x": -120,
+      "y": 0,
+      "z": 42
+    }
+  },
+  "camera": {
+    "position": [
+      -120,
+      1.64,
+      42
+    ],
+    "quaternion": [
+      -0.009029875051523889,
+      -0.672550258938849,
+      -0.008207362506836008,
+      0.7399508427987108
+    ],
+    "fov": 70,
+    "aspect": 1.7777777777777777,
+    "near": 0.05,
+    "far": 7500,
+    "width": 1280,
+    "height": 720
+  },
+  "projected": [
+    {
+      "point": [
+        142,
+        -3,
+        0
+      ],
+      "x": 607.3,
+      "y": 356.5,
+      "depth": 264.8
+    },
+    {
+      "point": [
+        142,
+        4,
+        0
+      ],
+      "x": 607.2,
+      "y": 342.9,
+      "depth": 264.7
+    },
+    {
+      "point": [
+        142,
+        4,
+        40
+      ],
+      "x": 685.2,
+      "y": 342.8,
+      "depth": 260.9
+    },
+    {
+      "point": [
+        142,
+        1,
+        40
+      ],
+      "x": 685.2,
+      "y": 348.7,
+      "depth": 260.9
+    },
+    {
+      "point": [
+        8.5,
+        1,
+        40
+      ],
+      "x": 681.1,
+      "y": 350,
+      "depth": 128.1
+    },
+    {
+      "point": [
+        70,
+        6,
+        20
+      ],
+      "x": 629.8,
+      "y": 335.7,
+      "depth": 191.1
+    },
+    {
+      "point": [
+        70,
+        22,
+        20
+      ],
+      "x": 629.7,
+      "y": 292.5,
+      "depth": 190.7
+    }
+  ],
+  "limit": {
+    "changed": 600,
+    "peak": 60,
+    "meanAbs": 0.2
+  },
+  "threshold": 24,
+  "stats": {
+    "roi": {
+      "box": [
+        577,
+        267,
+        716,
+        382
+      ],
+      "pixels": 15985,
+      "changed": 9083,
+      "changedLoose": 10052,
+      "peak": 214,
+      "meanAbs": 74.3534,
+      "meanLumaReference": 95.603,
+      "meanLumaLive": 149.012,
+      "centroid": [
+        650.9,
+        318.7
+      ]
+    },
+    "control": {
+      "box": [
+        480,
+        10,
+        800,
+        90
+      ],
+      "pixels": 25600,
+      "changed": 0,
+      "changedLoose": 0,
+      "peak": 0,
+      "meanAbs": 0,
+      "meanLumaReference": 190.464,
+      "meanLumaLive": 190.464,
+      "centroid": null
+    }
+  },
+  "changedInFrame": 20979
+}
