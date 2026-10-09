@@ -198,6 +198,17 @@ Use agents sequentially on the Chromebook.
 Preserve Task Contract, Context Packet, retry budgets and existing safety gates.
 Log the chosen agent and reason in the task handoff.
 If a model or effort is unavailable, report the limitation and choose a safe supported fallback.
-Optional advisory router (Jev pilot, not operational until a real call is proven): see `docs/direction/JEV_ROUTING_PILOT.md`.
+### Jev routing consultation (operational)
+
+See `docs/direction/JEV_ROUTING_PILOT.md`.
+- Before each delegation run `python3 .agent/tools/jev_router.py route --role <explore|implement|verify|review> --risk <..> --complexity <..> --fix-attempts <n> [--critical <flags>] --json` WITHOUT COD_JEV_PILOT/--enable-jev.
+- `source=rule`: obvious case; use the local rule. No network.
+- `source=rule_fallback` with `reason=disabled`: the router flags real ambiguity. Captain decides whether a paid slot is justified; only then rerun the same command with `--enable-jev` (and `--run-id <RUN_ID>`). Never call Jev for obvious cases or for demonstration.
+- A real consultation prints JEV START / recommendation / confidence / consumption / JEV END on stderr; relay it to the user.
+- Jev is advisory; the Captain keeps the final decision and may override it (router safety floors remain).
+- Offline, no key, budget exhausted, low confidence or error fall back to the rule automatically; use `--offline` without internet. The system must work fully without Jev.
+- Budget: hard cap 3 paid calls (`PILOT_MAX_PAID_CALLS`); check with `jev_router.py usage`; raising it requires human approval.
+- Never print, log or commit the API key.
+- Log the chosen agent, router source and reason in the task handoff.
 Never bypass human approval for protected Git actions or additional paid credits.
 Do not enable Ultracode or Fable Advisor without checking availability and resource implications.

@@ -129,6 +129,17 @@ class RuleTests(Base):
         self.assertEqual(self.stub.hits, 0)
         self.assertEqual(self.calls(), [])
 
+    def test_no_banner_for_rule_or_dry_run(self):
+        for args in (["route", "--role", "explore", "--json"],
+                     ["route", *AMBIG, "--dry-run"],
+                     ["route", *AMBIG, "--dry-run", "--json"]):
+            p = self.cli(*args)
+            self.assertNotIn("JEV", p.stderr)
+        self.assertEqual(self.stub.hits, 0)
+        self.assertEqual(self.calls(), [])
+        p = self.cli("route", *AMBIG, pilot=False)
+        self.assertNotIn("JEV START", p.stderr)
+
     def test_disabled_without_pilot(self):
         o = self.route(*AMBIG, pilot=False)
         self.assertEqual((o["source"], o["reason"]), ("rule_fallback", "disabled"))
@@ -154,6 +165,30 @@ class JevTests(Base):
                          (318, 34, "R1"))
         self.assertAlmostEqual(c[0]["est_cost_usd"], 318 * 0.042 / 1e6, places=9)
         self.assertEqual(oct(self.ledger.stat().st_mode & 0o777), "0o600")
+
+    def test_banner_on_real_jev_call(self):
+        for extra in ([], ["--json"]):
+            self.ledger.unlink(missing_ok=True)
+            p = self.cli("route", *AMBIG, *extra)
+            err = p.stderr.splitlines()
+            self.assertEqual(err[0], "JEV START")
+            self.assertEqual(err[-1], "JEV END")
+            self.assertIn("recommendation: sonnet -> implementer (source=jev, jev_choice=sonnet)", err)
+            self.assertIn("confidence: 0.90", err)
+            self.assertIn("consumption: input_tokens=318 output_tokens=34 "
+                          "est_cost_usd=0.000013 calls=1/3", err)
+            self.assertNotIn(SENTINEL, p.stderr + p.stdout)
+            if extra:
+                self.assertEqual(json.loads(p.stdout)["source"], "jev")
+            else:
+                self.assertNotIn("JEV START", p.stdout)
+
+    def test_banner_on_low_confidence_fallback(self):
+        self.stub.confidence = 0.3
+        p = self.cli("route", *AMBIG, "--json")
+        self.assertIn("JEV START", p.stderr)
+        self.assertIn("confidence: 0.30", p.stderr)
+        self.assertEqual(json.loads(p.stdout)["source"], "rule_fallback")
 
     def test_low_confidence_fallback(self):
         self.stub.confidence = 0.3
