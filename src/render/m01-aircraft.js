@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {m01StukaAnchor,m01StukaPosition,m01StukaVelocity,M01_STUKA_COUNT} from '../world/m01-aircraft-path.js';
 
 // Presentation only for the three Ju 87 of the first raid. Path, timings, events and damage stay with the
 // existing raid code and M01Simulation; everything here is a pure function of the saved clock (pause/restore safe).
@@ -10,21 +11,27 @@ export const JU87_VARIANTS=Object.freeze([
   Object.freeze({tint:[.95,.98,.94],roughness:.93,rps:24.6,phase:.37}),
   Object.freeze({tint:[1.04,1.03,.99],roughness:1.06,rps:25.4,phase:.71}),
 ]);
-const JU87_LOOP=90,FADE_S=2.5,ENTER_S=3,LOD_HYSTERESIS=.1;
-const smooth=x=>{const t=Math.min(1,Math.max(0,x));return t*t*(3-2*t);};
+const ENTER_S=3,LOD_HYSTERESIS=.1;
+const finite=Number.isFinite,smooth=x=>{const t=Math.min(1,Math.max(0,x));return t*t*(3-2*t);};
 const variantOf=i=>JU87_VARIANTS[i%JU87_VARIANTS.length];
 
-/** Bank into the existing lateral drift plus slight per-aircraft motion; heading (rotation.y) is unchanged. */
-export function ju87Attitude(time,i){
-  return {pitch:.018*Math.sin(time*.47+i*1.7),bank:-.07*Math.cos(time*.02+i)+.03*Math.sin(time*.61+i*2.3)};
+/**
+ * Attitude from the path tangent (nose is -Z, 'YXZ' order): heading from the horizontal velocity, pitch from the climb angle
+ * (negative while diving) and a coordinated bank from the heading rate. `since` is the time after evt_m01_bombing_0434.
+ */
+export function ju87Attitude(since,i){
+  const v=m01StukaVelocity(since,i),horizontal=Math.hypot(v.x,v.z),speed=Math.hypot(v.x,v.y,v.z)||1;
+  const heading=w=>Math.atan2(-w.x,-w.z),earlier=m01StukaVelocity(since-.3,i),later=m01StukaVelocity(since+.3,i);
+  let turn=heading(later)-heading(earlier);turn=Math.atan2(Math.sin(turn),Math.cos(turn));
+  const bank=Math.max(-.8,Math.min(.8,Math.atan(speed*(turn/.6)/9.81)*.6));
+  return {yaw:horizontal>1e-6?heading(v):0,pitch:Math.atan2(v.y,horizontal),bank};
 }
 /** Saved mission-clock time of the event that makes the first raid visible (read-only; undefined before it). */
 export const JU87_HEARD_EVENT='evt_m01_planes_heard';
 export function ju87HeardAt(sim){return sim?.consumed?.[JU87_HEARD_EVENT];}
-/** Dithered visibility: fade in after the planes are heard and across the 90 s wrap of the existing path. */
+/** Dithered entry: the formation fades in over a few seconds after the planes are heard (the path itself never loops). */
 export function ju87Fade(time,heardAt){
-  const cycle=((time%JU87_LOOP)+JU87_LOOP)%JU87_LOOP,wrap=Math.min(smooth(cycle/FADE_S),smooth((JU87_LOOP-cycle)/FADE_S));
-  return Number.isFinite(heardAt)?Math.min(wrap,smooth((time-heardAt)/ENTER_S)):wrap;
+  return Number.isFinite(heardAt)?smooth((time-heardAt)/ENTER_S):1;
 }
 /** Propeller clip time (one revolution = 1 s) at ~1500 rpm, each aircraft with its own rpm and phase. */
 export function ju87PropellerTime(time,i){const v=variantOf(i),t=(time*v.rps+v.phase)%1;return t<0?t+1:t;}
@@ -71,3 +78,66 @@ export function instanceJu87Materials(model,i,sky){
   return [...own.values()];
 }
 export function setJu87Fade(materials,fade){for(const m of materials)m.opacity=m.userData.baseOpacity*fade;}
+
+// ---- Visible bombs (presentation only) -------------------------------------------------------------------------------------
+// The three aerial blasts of evt_m01_bombing_0434, in the order the simulation emits them: the impact id, the plane that carries it
+// (formation order), the delay after the bombing event (evt_m01_forward_post_bombed 2.1 s, evt_m01_nowicki_lost 5.0 s; a test
+// compares them with mission.json) and the named point the simulation aims at. raid_0530 fires at the first instant of the high
+// raid, when its plane is not yet in the scene, so it has no carrier and no visible bomb.
+export const JU87_BOMB_FALL_S=1.5;
+export const JU87_BOMB_RUN=Object.freeze([
+  Object.freeze({id:'station_bomb',plane:0,delay:0,point:'tczew_station'}),
+  Object.freeze({id:'forward_post',plane:1,delay:2.1,point:'forward_post'}),
+  Object.freeze({id:'repair_crater',plane:2,delay:5,point:'repair_site_1'}),
+]);
+const ground=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
+/**
+ * Where the simulation will put an aerial impact, for the 1.5 s before it exists. It mirrors the two safety rules of
+ * M01Simulation (forward_post near miss, no impact closer than 30 m to the player); the authoritative damage point replaces it
+ * as soon as it is emitted, so a wrong guess can only move the last frames of the flight, never the blast.
+ */
+export function predictedBlastPoint(run,world,player){
+  const named=world.point(run.point);let point={x:named.x,y:named.y??0,z:named.z};
+  if(run.id==='forward_post'&&player&&ground(player,named)<=30)point={x:0,y:-10,z:-40};
+  if(player&&ground(point,player)<30){
+    const angle=Math.atan2(point.z-player.z,point.x-player.x);
+    point={x:player.x+Math.cos(angle)*40,y:point.y,z:player.z+Math.sin(angle)*40};
+  }
+  return point;
+}
+/** Cubic Bezier position and derivative (per second) over `duration` seconds. */
+function bezier(p0,p1,p2,p3,s,duration){
+  const u=1-s,out={position:{},velocity:{}};
+  for(const axis of ['x','y','z']){
+    out.position[axis]=u*u*u*p0[axis]+3*u*u*s*p1[axis]+3*u*s*s*p2[axis]+s*s*s*p3[axis];
+    out.velocity[axis]=3*(u*u*(p1[axis]-p0[axis])+2*u*s*(p2[axis]-p1[axis])+s*s*(p3[axis]-p2[axis]))/duration;
+  }
+  return out;
+}
+/**
+ * Bombs in flight at `clock`: a pure function of the clock, the saved damage list and the battle clock. A bomb leaves its
+ * carrier JU87_BOMB_FALL_S before the blast instant (damage `started` once emitted, otherwise anchor + delay), inherits the
+ * plane's velocity at that moment and reaches the blast point exactly at the blast instant (flight s=1); before and after it
+ * is not listed. `state`: renderState-like {damage, battleClock}; `world`: M01 world (named points); `player`: {x,z}.
+ */
+export function m01BombFlights({clock,state,world,player}){
+  const anchor=m01StukaAnchor(clock,state),flights=[];
+  for(const run of JU87_BOMB_RUN){
+    const hit=state?.damage?.find?.(d=>d.id===run.id),authoritative=finite(hit?.started);
+    const at=authoritative?hit.started:anchor+run.delay,releaseAt=at-JU87_BOMB_FALL_S,s=(clock-releaseAt)/JU87_BOMB_FALL_S;
+    // A predicted blast that is due but not emitted yet (s>=1) shows nothing: a bomb never waits at the target.
+    if(!(s>=-1e-9&&s<=(authoritative?1+1e-9:1-1e-9)))continue;
+    const target=hit&&finite(hit.x)&&finite(hit.z)?{x:hit.x,y:hit.y??0,z:hit.z}:predictedBlastPoint(run,world,player);
+    const sinceRelease=releaseAt-anchor,carrier=m01StukaPosition(sinceRelease,run.plane),v=m01StukaVelocity(sinceRelease,run.plane);
+    const from={x:carrier.x,y:carrier.y-1.2,z:carrier.z},chord={x:(target.x-from.x)/JU87_BOMB_FALL_S,y:(target.y-from.y)/JU87_BOMB_FALL_S,z:(target.z-from.z)/JU87_BOMB_FALL_S};
+    // Leaves with the plane's velocity and finishes steeper than the chord (gravity); the Bezier ends exactly on the target.
+    const D=JU87_BOMB_FALL_S,end={x:chord.x*1.05,y:chord.y*1.2-15,z:chord.z*1.05};
+    const c1={x:from.x+v.x*D/3,y:from.y+v.y*D/3,z:from.z+v.z*D/3},c2={x:target.x-end.x*D/3,y:target.y-end.y*D/3,z:target.z-end.z*D/3};
+    const sample=bezier(from,c1,c2,target,Math.min(1,Math.max(0,s)),D);
+    flights.push({id:run.id,plane:run.plane,s:Math.min(1,Math.max(0,s)),releaseAt,at,predicted:!authoritative,target,from,
+      position:sample.position,velocity:sample.velocity});
+  }
+  return flights;
+}
+/** Shared bounds for the bomb pool: one bomb per carrier. */
+export const JU87_BOMB_POOL=M01_STUKA_COUNT;
