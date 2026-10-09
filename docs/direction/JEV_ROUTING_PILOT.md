@@ -1,6 +1,6 @@
 # Piloto de roteamento Jev
 
-Status: **PILOTO — NÃO OPERACIONAL até a primeira chamada real comprovada.**
+Status: **OPERACIONAL** (desde 2026-10-09). Primeira chamada real comprovada; ver "Evidência de ativação".
 
 ## Propósito
 
@@ -36,7 +36,31 @@ A chave também pode vir de `TYPESAFE_API_KEY` ou de `COD_JEV_KEY_FILE`. O arqui
 3. Uma chamada real: `COD_JEV_PILOT=1 python3 .agent/tools/jev_router.py route --role implement --risk medium --complexity medium --description "..." --run-id <RUN_ID> --json`
 4. Conferir: `python3 .agent/tools/jev_router.py usage`
 
-Só depois da etapa 3 comprovada o piloto deixa de ser "não operacional".
+As etapas 1 a 4 foram concluídas; o piloto está operacional.
+
+## Evidência de ativação
+
+- Ledger ts: 2026-10-09T00:18:49+00:00; run_id: JEV-PILOT-TEST-01
+- HTTP 200, modelo jev-1.13.0
+- 503 tokens de entrada / 42 de saída; custo estimado US$ 0,000021
+- choice: sonnet; confidence: 0,95; outcome: ok
+- Orçamento: 1/3 usado (2 restantes)
+
+As 2 vagas restantes são conservadas: nenhuma chamada de demonstração. Aumentar o teto é decisão humana.
+
+## Banner de consulta real
+
+Quando uma resposta real do Jev é recebida (inclui o fallback por baixa confiança), `route` imprime em STDERR (stdout `--json` continua JSON puro):
+
+```
+JEV START
+recommendation: <modelo> -> <agente> (source=<source>[, jev_choice=<choice>])
+confidence: 0.00
+consumption: input_tokens=<n> output_tokens=<n> est_cost_usd=<6 casas> calls=<usadas>/<limite>
+JEV END
+```
+
+Não há banner para `rule`, `rule_fallback` sem resposta nem `--dry-run`.
 
 ## Desativar
 

@@ -392,6 +392,27 @@ def usage_summary(env=None):
     }
 
 
+def print_jev_banner(out, file=None):
+    """Banner on stderr for a real Jev consultation (response received and parsed)."""
+    u = out.get("usage")
+    if not u:
+        return
+    file = file or sys.stderr
+    s = usage_summary()
+    calls = "%s/%s" % (s.get("calls_used", "?"), s.get("limit", "?"))
+    src = "source=%s" % out.get("source")
+    if out.get("jev_choice"):
+        src += ", jev_choice=%s" % out["jev_choice"]
+    print("JEV START", file=file)
+    print("recommendation: %s -> %s (%s)" % (
+        out.get("recommendation_model"), out.get("recommended_agent"), src), file=file)
+    print("confidence: %.2f" % (out.get("confidence") or 0.0), file=file)
+    print("consumption: input_tokens=%s output_tokens=%s est_cost_usd=%.6f calls=%s" % (
+        u.get("input_tokens"), u.get("output_tokens"), u.get("est_cost_usd") or 0.0, calls),
+        file=file)
+    print("JEV END", file=file)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -459,6 +480,7 @@ def main(argv=None):
                     min_confidence=a.min_confidence, run_id=a.run_id, limit_flag=a.limit)
     except ValueError as exc:
         ap.error(str(exc))
+    print_jev_banner(out)
     if a.json:
         print(json.dumps(out, indent=2))
     else:
