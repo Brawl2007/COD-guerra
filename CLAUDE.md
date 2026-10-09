@@ -10,5 +10,5 @@
   e antes de declarar concluída uma tarefa longa. Fora disso, não chamar.
 - O Advisor lê a transcrição inteira: manter o contexto pequeno. Delegar leituras pesadas, não colar logs
   longos, usar `/compact` antes de decisões importantes.
-- Jev: só pelos scripts em `.agent/tools/`, teto de 3 chamadas pagas. Nunca comprar créditos, planos,
+- Jev: só pelos scripts em `.agent/tools/`, teto de 100 chamadas pagas (aprovado pelo utilizador em 2026-10-09; antes eram 3). Nunca comprar créditos, planos,
   assets ou serviços sem autorização expressa do utilizador.

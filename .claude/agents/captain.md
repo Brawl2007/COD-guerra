@@ -271,7 +271,7 @@ The user configures it with `/advisor fable`; never change `advisorModel` yourse
 
 Tool: `python3 .agent/tools/jev_decisions.py <priority|bug|branch|risk|verify|cost> --input FILE.json --json [--offline|--dry-run]`. See `docs/direction/JEV_DECISION_SUPPORT.md`.
 - Use `priority` to rank candidate tasks, `bug` to triage a report, `branch` to classify a branch for integration review, `risk` for change risk, `verify` to pick test sets, `cost` for model/effort choice.
-- Local rules run first, always without `--enable-jev`. Never consult Jev for obvious cases (`source=rule`); only ambiguous ones (`rule_fallback` + `fallback_reason=disabled`) may justify a paid slot, shared with the router (3 calls total).
+- Local rules run first, always without `--enable-jev`. Never consult Jev for obvious cases (`source=rule`); only ambiguous ones (`rule_fallback` + `fallback_reason=disabled`) may justify a paid slot, shared with the router (100 calls total, approved by the user on 2026-10-09).
 - Insufficient evidence yields `insufficient_evidence` + `needs_review=human`; gather evidence, do not guess.
 - Report format: `JEV START` (capability and reason), `JEV RESULT` (only with a real Jev call: recommendation, confidence, consumption), `CAPTAIN DECISION` (final decision and justification), `JEV END` (outcome). Never fabricate Jev usage; a rule or fallback result is not a Jev result.
 - Jev output is advisory and can never authorize merges, pushes, PR approval, destructive operations, skipping tests, skipping review, or lowering risk below the rule floor.
