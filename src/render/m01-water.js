@@ -19,9 +19,13 @@ export const FLOW_SPEED=.55;
 export const WIND_SURFACE_GAIN=600;
 /** Water body colour (linear): dark green-brown Vistula. */
 export const BODY_COLOR=Object.freeze([.018,.034,.027]);
-export const SHALLOW_COLOR=Object.freeze([.05,.058,.04]);   // wet bank blend: browner, a little lighter silt
+export const SHALLOW_COLOR=Object.freeze([.011,.015,.009]);   // wet bank blend: darker, browner wet silt
 export const FOAM_COLOR=Object.freeze([.62,.66,.62]);
 export const F0=.02;   // water, normal incidence
+/** Low quality body tint: fraction of the horizon colour mixed into the water (constant, no per-pixel reflection ray). Without it the
+ *  dark body colour alone read as an oil slick at dawn (mean luminance 7.5 against 56 on the previous material). */
+export const LOW_TINT=.26;
+export const BANK_FOAM_WIDTH=3;   // metres: mean width of the lapping foam fringe at the waterline (x 25 and 265)
 export const BANK_WET_WIDTH=14;   // metres from the bank edge over which the wet blend fades
 
 /**
@@ -52,8 +56,8 @@ export function flowOffset(clock){
 /** 0..1 foam envelope around one pier: a ring at its waterline plus a wake that widens and fades downstream (-z). */
 function pierFoam(p,x,z){
   const dx=(x-p.x)/p.hx,dz=(z-p.z)/p.hz,d=Math.hypot(dx,dz);
-  const ring=smoothstep(.85,1.0,d)*(1-smoothstep(1.0,1.9,d));
-  const down=p.z-z-p.hz*.6,wake=down>0?(1-smoothstep(0,45,down))*(1-smoothstep(0,p.hx*(1.2+down/22),Math.abs(x-p.x)))*.7:0;
+  const ring=smoothstep(.8,1.0,d)*(1-smoothstep(1.2,2.4,d));
+  const down=p.z-z-p.hz*.6,wake=down>0?(1-smoothstep(0,60,down))*(1-smoothstep(0,p.hx*(1.3+down/20),Math.abs(x-p.x)))*.9:0;
   return Math.max(ring,wake);
 }
 /** Foam envelope at (x,z): 0 mid-channel, >0 around the in-channel piers. */
@@ -61,6 +65,10 @@ export const pierFoamMask=(x,z)=>PIERS.reduce((m,p)=>Math.max(m,pierFoam(p,x,z))
 
 /** Wet bank blend at x: 1 on the bank line (x 25 and 265), 0 once BANK_WET_WIDTH metres into the channel. */
 export const bankWetness=x=>1-smoothstep(0,BANK_WET_WIDTH,Math.min(x-WATER_CHANNEL.x0,WATER_CHANNEL.x1-x));
+
+/** Lapping foam fringe at the waterline: width oscillates with the sim clock and z (deterministic). 1 on the bank line, 0 beyond the fringe. */
+export const bankFoamWidth=(clock,z)=>BANK_FOAM_WIDTH+.9*Math.sin(clock*.9+z*.11);
+export const bankFoamFringe=(x,z,clock)=>{const e=Math.min(x-WATER_CHANNEL.x0,WATER_CHANNEL.x1-x),w=bankFoamWidth(clock,z);return 1-smoothstep(w,w+1.8,e);};
 
 /** Quality policy. Low: one wave octave and no reflection term; Medium/High: reflection, 2/3 octaves. Never a render target. */
 export function waterQuality(quality){
@@ -73,7 +81,7 @@ export function waterQuality(quality){
 export function waterUniforms(model,clock,quality){
   const q=waterQuality(quality),flow=flowOffset(clock),sky=model.sky;
   return {
-    time:clock,flow:[flow.x,flow.z],reflect:q.reflection?1:0,octaves:q.octaves,
+    time:clock,flow:[flow.x,flow.z],reflect:q.reflection?1:0,tint:q.reflection?0:LOW_TINT,octaves:q.octaves,
     zenith:[...sky.zenith],horizon:[...sky.horizon],halo:[...sky.halo],glow:sky.glow,sunDir:[...sky.sunDir],
     body:[...BODY_COLOR],shallow:[...SHALLOW_COLOR],foam:[...FOAM_COLOR]
   };
@@ -82,7 +90,7 @@ export function waterUniforms(model,clock,quality){
 const pierGlsl=PIERS.map(p=>`vec4(${p.x.toFixed(2)},${p.z.toFixed(2)},${p.hx.toFixed(2)},${p.hz.toFixed(2)})`).join(',');
 const GLSL_HEAD=`
 varying vec3 vWaterPos;
-uniform float uWaterTime; uniform vec2 uWaterFlow; uniform float uWaterReflect; uniform float uWaterOctaves;
+uniform float uWaterTint; uniform float uWaterDetail; uniform float uWaterTime; uniform vec2 uWaterFlow; uniform float uWaterReflect; uniform float uWaterOctaves;
 uniform vec3 uWaterZenith; uniform vec3 uWaterHorizon; uniform vec3 uWaterHalo; uniform float uWaterGlow; uniform vec3 uWaterSunDir;
 uniform vec3 uWaterBody; uniform vec3 uWaterShallow; uniform vec3 uWaterFoam;
 float wHash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
@@ -99,9 +107,9 @@ float waterPierFoam(vec2 p){
   float m=0.0;
   for(int i=0;i<${PIERS.length};i++){
     vec4 s=WATER_PIERS[i];vec2 d=vec2((p.x-s.x)/s.z,(p.y-s.y)/s.w);float r=length(d);
-    float ring=smoothstep(.85,1.0,r)*(1.0-smoothstep(1.0,1.9,r));
+    float ring=smoothstep(.8,1.0,r)*(1.0-smoothstep(1.2,2.4,r));
     float down=s.y-p.y-s.w*.6;
-    float wake=down>0.0?(1.0-smoothstep(0.0,45.0,down))*(1.0-smoothstep(0.0,s.z*(1.2+down/22.0),abs(p.x-s.x)))*.7:0.0;
+    float wake=down>0.0?(1.0-smoothstep(0.0,60.0,down))*(1.0-smoothstep(0.0,s.z*(1.3+down/20.0),abs(p.x-s.x)))*.9:0.0;
     m=max(m,max(ring,wake));
   }
   return m;
@@ -114,7 +122,7 @@ export class M01Water{
   constructor(){
     this.material=new THREE.MeshStandardMaterial({color:'#ffffff',roughness:.28,metalness:0});
     this.uniforms={
-      uWaterTime:{value:0},uWaterFlow:{value:new THREE.Vector2()},uWaterReflect:{value:1},uWaterOctaves:{value:3},
+      uWaterTint:{value:0},uWaterDetail:{value:1},uWaterTime:{value:0},uWaterFlow:{value:new THREE.Vector2()},uWaterReflect:{value:1},uWaterOctaves:{value:3},
       uWaterZenith:{value:new THREE.Vector3()},uWaterHorizon:{value:new THREE.Vector3()},uWaterHalo:{value:new THREE.Vector3()},
       uWaterGlow:{value:0},uWaterSunDir:{value:new THREE.Vector3(0,1,0)},
       uWaterBody:{value:new THREE.Vector3(...BODY_COLOR)},uWaterShallow:{value:new THREE.Vector3(...SHALLOW_COLOR)},uWaterFoam:{value:new THREE.Vector3(...FOAM_COLOR)}
@@ -125,11 +133,16 @@ export class M01Water{
         vWaterPos=(modelMatrix*vec4(transformed,1.0)).xyz;`);
       shader.fragmentShader=GLSL_HEAD+shader.fragmentShader;
       shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
-        float wWet=waterBankWet(vWaterPos.x);
+        float wWet=waterBankWet(vWaterPos.x)*uWaterDetail;
         float wFoamMask=waterPierFoam(vWaterPos.xz);
         float wBreak=wNoise((vWaterPos.xz-uWaterFlow)*1.4)*.6+wNoise((vWaterPos.xz-uWaterFlow*1.3)*3.7)*.4;
-        float wFoam=clamp(wFoamMask*smoothstep(.34,.62,wBreak+wFoamMask*.38)+wWet*smoothstep(.72,.9,wBreak)*.35,0.0,1.0);
-        vec3 wBody=mix(uWaterBody,uWaterShallow,wWet*.8);
+        float wStreak=wNoise(vec2(vWaterPos.x*1.1,(vWaterPos.z-uWaterFlow.y)*.18));
+        float wPier=wFoamMask*smoothstep(.2,.48,mix(wBreak,wStreak,.5)+wFoamMask*.5);
+        float wEdge=min(vWaterPos.x-${WATER_CHANNEL.x0.toFixed(1)},${WATER_CHANNEL.x1.toFixed(1)}-vWaterPos.x);
+        float wLap=${BANK_FOAM_WIDTH.toFixed(2)}+.9*sin(uWaterTime*.9+vWaterPos.z*.11);
+        float wBank=(1.0-smoothstep(wLap,wLap+1.8,wEdge))*smoothstep(.18,.46,wBreak*.7+wStreak*.5);
+        float wFoam=clamp(max(wPier,wBank*.9),0.0,1.0)*uWaterDetail;
+        vec3 wBody=mix(uWaterBody,uWaterShallow,wWet*.85);
         diffuseColor.rgb=mix(wBody,uWaterFoam,wFoam);`);
       shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
         {
@@ -151,17 +164,22 @@ export class M01Water{
           vec3 wSky=mix(uWaterHorizon,uWaterZenith,wUp)+uWaterHalo*uWaterGlow*.5*pow(clamp(dot(wRay,normalize(uWaterSunDir)),0.0,1.0),8.0);
           float wMix=wF*uWaterReflect*(1.0-wWet*.5)*(1.0-wFoam);
           gl_FragColor.rgb=mix(gl_FragColor.rgb,wSky,wMix);
+          gl_FragColor.rgb=mix(gl_FragColor.rgb,uWaterHorizon,uWaterTint*(1.0-wFoam)*(1.0-wWet*.5));
+          gl_FragColor.rgb=mix(gl_FragColor.rgb,uWaterFoam*(.35+uWaterHorizon*1.2),wFoam*.8);
         }
         #include <tonemapping_fragment>`);
     };
     this.material.customProgramCacheKey=()=>'m01-water-vistula-v1';
-    this.last=null;
+    this.last=null;this.detail=1;
+    // Test-only hook (opt-in with ?debug): toggles the foam and wet-bank terms of a live paused page for A/B captures. Presentation only.
+    if(typeof window!=='undefined'&&typeof location!=='undefined'&&new URLSearchParams(location.search).has('debug'))
+      window.m01WaterDebug={setDetail:on=>{this.detail=on?1:0;this.uniforms.uWaterDetail.value=this.detail;}};
   }
   /** Per-frame: lighting model (view.lightingModel), sim clock and quality in; uniforms out. No-op until a model exists. */
   sync(model,clock,quality){
     if(!model)return null;
     const u=waterUniforms(model,clock,quality),v=this.uniforms;
-    v.uWaterTime.value=u.time;v.uWaterFlow.value.set(...u.flow);v.uWaterReflect.value=u.reflect;v.uWaterOctaves.value=u.octaves;
+    v.uWaterTime.value=u.time;v.uWaterFlow.value.set(...u.flow);v.uWaterReflect.value=u.reflect;v.uWaterTint.value=u.tint;v.uWaterOctaves.value=u.octaves;
     v.uWaterZenith.value.set(...u.zenith);v.uWaterHorizon.value.set(...u.horizon);v.uWaterHalo.value.set(...u.halo);
     v.uWaterGlow.value=u.glow;v.uWaterSunDir.value.set(...u.sunDir);
     this.last=u;return u;
@@ -169,7 +187,7 @@ export class M01Water{
   /** `gameDiagnostics().m01.water`: plain JSON, no per-frame allocation outside the call. */
   get diagnostics(){
     const u=this.last;
-    return {active:Boolean(u),time:u?.time??null,flow:u?.flow??null,reflect:u?.reflect??null,octaves:u?.octaves??null,piers:PIERS.length,renderTargets:0,planar:false};
+    return {active:Boolean(u),time:u?.time??null,flow:u?.flow??null,reflect:u?.reflect??null,tint:u?.tint??null,detail:this.detail,octaves:u?.octaves??null,piers:PIERS.length,renderTargets:0,planar:false};
   }
   dispose(){this.material.dispose();}
 }

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync,readdirSync,statSync} from 'node:fs';
 import {sunState,lightingModel,CLOUD_WIND} from '../src/render/m01-lighting.js';
 import {seconds} from '../src/game/m01-simulation.js';
-import {fresnel,skyReflection,flowOffset,pierFoamMask,bankWetness,waterQuality,waterUniforms,PIERS,WATER_CHANNEL,FLOW_SPEED,F0} from '../src/render/m01-water.js';
+import {fresnel,skyReflection,flowOffset,pierFoamMask,bankWetness,waterQuality,waterUniforms,bankFoamFringe,bankFoamWidth,LOW_TINT,BANK_FOAM_WIDTH,PIERS,WATER_CHANNEL,FLOW_SPEED,F0} from '../src/render/m01-water.js';
 
 const layout=JSON.parse(readFileSync(new URL('../missions/m01-tczew/map-layout.json',import.meta.url)));
 const manifest=JSON.parse(readFileSync(new URL('../assets/models/provisional/m01/bridges.manifest.json',import.meta.url)));
@@ -79,4 +79,40 @@ test('view wiring: only the river mesh uses the water material; game/world/core 
   const walk=d=>readdirSync(d).flatMap(n=>{const p=d+'/'+n;return statSync(p).isDirectory()?walk(p):[p];});
   for(const dir of ['src/game','src/world','src/core'])for(const f of walk(new URL('../'+dir,import.meta.url).pathname))
     if(f.endsWith('.js'))assert.doesNotMatch(readFileSync(f,'utf8'),/m01-water/,f);
+});
+
+test('Low body tint: a constant horizon-colour term replaces the reflection (no near-black oil slick), absent at Medium/High',()=>{
+  for(const c of ['04:30','05:30','06:05']){
+    const m=modelAt(c),low=waterUniforms(m,5,'low'),med=waterUniforms(m,5,'medium'),high=waterUniforms(m,5,'high');
+    assert.equal(low.reflect,0);assert.equal(low.tint,LOW_TINT);assert.equal(med.tint,0);assert.equal(high.tint,0);
+    // the tinted body (linear) lifts a dark 0.02 body well above itself: at least a quarter of the horizon luminance is added
+    const lum=v=>.2126*v[0]+.7152*v[1]+.0722*v[2],tinted=low.body.map((b,i)=>b+(low.horizon[i]-b)*low.tint);
+    assert.ok(lum(tinted)>=lum(low.body)+.2*lum(low.horizon),c);
+  }
+  assert.ok(LOW_TINT>=.2&&LOW_TINT<=.4);
+  assert.match(source,/uWaterHorizon,uWaterTint/);   // the shader mixes it in
+});
+test('foam readable: full-strength ring at each pier footprint, wake streaks downstream (-z) of rail_support_01 and road_support_01',()=>{
+  for(const p of PIERS){
+    assert.equal(pierFoamMask(p.x+p.hx,p.z),1,p.id+' ring at the waterline');
+    assert.ok(pierFoamMask(p.x,p.z-p.hz*1.4)>=.5,p.id+' ring at the nose');
+    for(const down of [12,25,40])assert.ok(pierFoamMask(p.x,p.z-p.hz-down)>0,p.id+' wake '+down+' m downstream');
+    assert.equal(pierFoamMask(p.x,p.z+p.hz+25),0,p.id+' nothing upstream (+z)');
+  }
+  assert.ok(pierFoamMask(PIERS[0].x,PIERS[0].z-PIERS[0].hz-12)>pierFoamMask(PIERS[0].x,PIERS[0].z-PIERS[0].hz-40),'wake fades downstream');
+});
+test('bank foam fringe: on the bank line at x 25 and 265, gone past the fringe, deterministic in the sim clock',()=>{
+  for(const clock of [0,3,17.5,300]){
+    for(const z of [-100,0,40,200]){
+      assert.equal(bankFoamFringe(25,z,clock),1);assert.equal(bankFoamFringe(265,z,clock),1);
+      assert.equal(bankFoamFringe(145,z,clock),0);assert.equal(bankFoamFringe(25+BANK_FOAM_WIDTH+2.9,z,clock),0);
+      assert.ok(bankFoamWidth(clock,z)>=2&&bankFoamWidth(clock,z)<=4);
+    }
+  }
+  assert.equal(bankFoamFringe(26,10,4),bankFoamFringe(26,10,4));
+  assert.notEqual(bankFoamWidth(0,0),bankFoamWidth(4,0));
+});
+test('test-only A/B hook is opt-in (?debug) and only toggles the foam/wet detail uniform',()=>{
+  assert.match(source,/has\('debug'\)\)\s*\n?\s*window\.m01WaterDebug=\{setDetail/);
+  assert.match(source,/uWaterDetail/);assert.doesNotMatch(source,/uWaterDetail\.value=[^;]*sim|fetch\(/);
 });
