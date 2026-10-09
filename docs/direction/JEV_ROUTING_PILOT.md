@@ -79,3 +79,4 @@ Não há banner para `rule`, `rule_fallback` sem resposta nem `--dry-run`.
 - O alias `jev-latest` muda de versão; o modelo usado é registrado no ledger.
 - A descrição enviada ao Jev é truncada em 500 caracteres: nunca colocar segredos nem dados grandes em `--description`. A criticidade depende de o chamador passar `--critical`/`--risk high`; a ferramenta não a infere da descrição. Ledger corrompido/ilegível falha fechado (`ledger_unreadable`, nenhuma chamada paga, arquivo intocado); redirecionamentos HTTP não são seguidos.
 - Apenas consultivo; não substitui a política em `.claude/agents/captain.md`.
+- Suporte à decisão (prioridade, bugs, branches, risco, verificação, custo): ver `docs/direction/JEV_DECISION_SUPPORT.md` (mesmo ledger e teto de 3 chamadas).
