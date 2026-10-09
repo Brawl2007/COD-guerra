@@ -1,0 +1,69 @@
+# Configuração do Claude Code e dos agentes (2026-10-09)
+
+Fonte: docs oficiais em code.claude.com (advisor, sub-agents, model-config, settings-reference,
+agent-teams). Itens marcados *não confirmado* não vêm dessas páginas.
+
+## Plano adotado
+
+| Papel | Agente | Modelo / esforço |
+|---|---|---|
+| Planeia, decide, integra | `captain` (sessão principal) | Opus 5.5, high |
+| Aconselha em 3 momentos | Advisor | Fable 5.1 (`/advisor fable`) |
+| Lê código | `explorer`, `Explore` (substitui o Explore de origem) | Haiku, low, só leitura |
+| Lê documentação e fontes | `researcher` | Haiku, low, só leitura + web |
+| Implementa | `implementer` / `implementer-deep` | Sonnet, medium / xhigh |
+| Verifica e revê | `verifier`, `reviewer` | Sonnet, high |
+| Revisão crítica | `reviewer-critical` | Opus, max (só simulação, saves, integração, arquitetura) |
+| Encaminhamento consultivo | Jev (`.agent/tools/jev_*.py`) | regras locais primeiro, teto de 3 chamadas pagas |
+
+Opus 5.5 como principal aceita o Fable 5.1 como advisor. Os subagentes herdam o advisor e aplicam a
+mesma regra de pares contra o seu próprio modelo.
+
+Não adotado: agent teams (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`). Cada colega é uma instância completa,
+gasta muito mais do plano, partilha a pasta de trabalho sem worktree automática e não é restaurado
+pelo `/resume`. Também não adotados: routers para outros fornecedores (claude-code-router, litellm),
+porque passam a faturação para chaves de API.
+
+## Arranque
+
+```bash
+claude update                 # Fable advisor >= 2.1.257; Haiku 5.5 >= 2.1.293
+cd <checkout com .claude/agents>
+python3 .agent/tools/claude_setup_check.py   # só leitura, nunca mostra segredos
+claude --agent captain
+```
+
+Dentro da sessão: `/status` (deve mostrar a conta Max, não uma chave de API), `/advisor fable`, `/usage`.
+Opcional em `~/.claude/settings.json`: `"modelSettings": {"claude-opus-5-5": {"effortLevel": "high"}}`
+(o `effortLevel` de topo nas definições do utilizador é ignorado pelo Opus 5.5).
+
+## Advisor: `Advisor unavailable (execution_time_exceeded)`
+
+Significa que a consulta ao Fable excedeu o tempo no servidor. A tarefa continua sem o conselho; não há
+definição no Claude Code para aumentar esse tempo. O que reduz a probabilidade:
+
+1. Versão >= 2.1.257 (`claude update`).
+2. Sessão principal em Opus 5.5 via `captain`, com leituras pesadas delegadas: o advisor relê a
+   transcrição inteira, sem cache, em cada chamada.
+3. `/compact` antes de decisões grandes; não colar logs longos no chat principal.
+4. Desligar no `/mcp` os conectores sem uso neste projeto. *Não confirmado:* relatos não oficiais ligam
+   falhas do advisor a sessões com muitas ferramentas MCP diferidas.
+5. Se persistir, `/feedback` com a linha do erro.
+
+Se o `claude_setup_check.py` avisar `DISABLE_TELEMETRY`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` ou
+`CLAUDE_CODE_DISABLE_ADVISOR_TOOL`, o advisor fica desligado (isso é outro sintoma, não o timeout).
+
+Custo: no plano, o advisor conta para os limites de uso; um advisor Fable é cobrado em créditos de uso
+nos planos onde o Fable também é. Confirmar no `/usage`. Nunca aceitar créditos pagos sem autorização.
+
+## Revisão da configuração anterior (Codex V1 + Captain V3)
+
+- Correto: contratos de tarefa, grafo de estado, recuperação, hook `git-safety.py` (bloqueia push para
+  main, `reset --hard` e force push; testado), separação implementer/verifier/reviewer, Jev com teto.
+- Corrigido: seis instruções mandavam ler `CLAUDE.md`, que não existia. Criado `CLAUDE.md` que importa
+  `AGENTS.md`.
+- Corrigido: `captain` com `model: inherit` corria no modelo que estivesse aberto (Fable incluído).
+  Agora `opus`/`high`.
+- Acrescentado: `researcher` e `Explore` (o Explore de origem corria no modelo principal).
+- Limitação conhecida: a lista `Agent(...)` do Captain só é aplicada com `claude --agent captain`;
+  chamado como subagente comum, a lista é ignorada.

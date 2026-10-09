@@ -8,6 +8,7 @@ Ponto de entrada para qualquer sessão futura do Captain. Ordem de leitura:
 4. `PROGRAM_GRAPH.json`: próximas tarefas, com dependências, agentes, critérios e provas.
 5. `CAMPAIGN_PLAN.md`: direção, escada de estado, sistemas globais, 30 missões, fases.
 6. `M01_TASK_STATUS.md`: estado de T00–T52 do roadmap do M01.
+7. `AGENT_SETUP.md`: modelos dos agentes, arranque, Advisor Fable e verificação local.
 
 ## Recuperação (no início de cada sessão)
 
@@ -29,7 +30,8 @@ Criar o Task Contract e um `RUN_ID`, e correr o skill `autonomous-task`
 
 | Trabalho | Agente |
 |---|---|
-| Leitura/descoberta estreita | `explorer` (Haiku) |
+| Leitura/descoberta estreita | `explorer` / `Explore` (Haiku) |
+| Documentação, licenças, fontes externas | `researcher` (Haiku) |
 | Implementação com âmbito fechado | `implementer` (Sonnet) |
 | Simulação/determinismo/falhas persistentes | `implementer-deep` |
 | Verificação independente | `verifier` (Sonnet, high) |
