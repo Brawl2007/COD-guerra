@@ -2,19 +2,19 @@
 
 Estado: **por preencher**. Regista o primeiro playtest humano do projeto. Não é validação de marco, não mede FPS e não substitui os testes automáticos.
 
-## 1. Preparação (5 minutos, sem instalar nada novo)
+## 1. Preparação (2 minutos)
 
 ```bash
-cd ~/projetos/COD-guerra-v7-cert
-git branch --show-current     # anota a branch: é a versão que vais testar
-git log --oneline -1          # anota o commit
-npm run build
-npm run preview               # abre http://127.0.0.1:4173/COD-guerra/
+cd ~/projetos/COD-guerra-agentes   # o repositório atualizado
+git pull
+.agent/tools/jogar.sh <branch-da-tarefa>
 ```
 
-- Se faltar `node_modules` ou o build der erro de módulos, para e avisa: aí é que o disco entra.
-- Esta é a versão de trabalho, não a pública. A versão pública do GitHub Pages sai só da `main` (`pages.yml`).
-- Fecha outros separadores do navegador.
+- O script mostra a branch e o commit: copia-os para a ficha.
+- Abre `http://127.0.0.1:4173/COD-guerra/`. Antes de correr, para o preview anterior com Ctrl+C, senão o porto 4173 está ocupado.
+- A versão de jogo fica numa pasta própria (`~/projetos/COD-guerra-jogar`). Não uses a pasta do Captain (`COD-guerra-v7-cert`).
+- Se o script disser que faltam dependências, cola-me a mensagem.
+- A versão pública do GitHub Pages sai só da `main`.
 
 ## 2. Controlos (confirmados no código e no README)
 

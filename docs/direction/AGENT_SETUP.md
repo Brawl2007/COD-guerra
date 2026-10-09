@@ -103,6 +103,18 @@ logo cobre todas as pastas e sessões.
   o Captain propõe o número e espera a tua resposta; nunca altera `PILOT_MAX_PAID_CALLS` nem o ledger.
 - O arranque (`.agent/tools/captain.sh`) mostra o uso atual do piloto.
 
+## Jogar uma tarefa concluída
+
+```bash
+.agent/tools/jogar.sh <branch>                # prepara e serve a versão numa pasta própria
+.agent/tools/jogar.sh <branch> --build-only   # só compila
+```
+
+Cria `~/projetos/COD-guerra-jogar` (ou o caminho de `JOGAR_DIR`), reaproveita as dependências
+(`JOGAR_NODE_MODULES`, por defeito o `node_modules` da pasta do Captain), recusa mexer numa pasta com
+alterações e não serve se o porto 4173 estiver ocupado. Não publica nada: a versão pública (Pages) só sai da `main`.
+Testes: `.agent/tests/test_jogar.py` (8 casos, remoto local temporário).
+
 ## Ver que modelo e esforço cada agente usou de facto
 
 O Claude Code grava em cada resposta o modelo servido (`message.model`), o pedido (`requestedModel`),

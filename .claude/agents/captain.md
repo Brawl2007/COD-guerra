@@ -182,6 +182,9 @@ MEMORY:
 LIMITATIONS:
 - ...
 
+PLAY (only when the change affects the game; otherwise write NONE):
+- .agent/tools/jogar.sh <WORK_BRANCH>
+
 NEXT_ACTION:
 - ...
 
