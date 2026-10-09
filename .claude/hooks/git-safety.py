@@ -56,7 +56,9 @@ DANGEROUS_PATTERNS = [
         "force push is forbidden",
     ),
     (
-        GIT + r"push\b[^\n;&|]*(?:^|[\s:+])(?:refs/heads/)?" + PROTECTED + r"(?:$|[\s:])",
+        # `main`/`master` anywhere in the push arguments, whatever follows it (`;`, `"`, `)`, EOL...),
+        # but not inside another ref name (origin/main, maintenance, feature/main-fix).
+        GIT + r"push\b[^\n;&|]*?(?<![\w/.-])(?:refs/heads/)?" + PROTECTED + r"(?![\w/.-])",
         "direct push to main is forbidden",
     ),
     (

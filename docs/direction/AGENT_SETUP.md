@@ -101,10 +101,11 @@ nos planos onde o Fable também é. Confirmar no `/usage`. Nunca aceitar crédit
    nenhum cliente consegue contornar. Ativar pelo utilizador.
 
 Observação 2026-10-09: num teste no Chromebook, um subagente correu `git push --dry-run origin main` sem
-ser bloqueado pela camada 1, embora o mesmo hook bloqueie comandos do Captain. A sessão tinha também o hook
-de utilizador `rtk hook claude` (reescreve comandos `git`/`npm` para poupar tokens). Hipótese em investigação:
-a reescrita do `rtk` passa à frente do hook do projeto nos comandos `git`. Até se provar o contrário, a
-camada 2 é obrigatória em cada clone.
+ser bloqueado pela camada 1. Causa encontrada e corrigida: a regra "push para main" só aceitava fim de linha,
+espaço ou `:` depois de `main`; com `;`, `"` ou `)` a seguir (ex.: `git push origin main; echo $?`) não casava.
+Os testes seguintes provaram que o hook corre nos subagentes (bloqueou o `sonnet-low` em
+`git push --dry-run origin HEAD:main`) e que o hook de utilizador `rtk hook claude` não interfere.
+A camada 2 continua obrigatória em cada clone: cobre `git push origin $BRANCH`, que nenhuma regex apanha.
 
 ## Revisão da configuração anterior (Codex V1 + Captain V3)
 

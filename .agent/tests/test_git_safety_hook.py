@@ -49,8 +49,15 @@ class GitSafetyHookTest(unittest.TestCase):
             f"git --no-pager pu" + f"sh origin {MAIN}",
             f"git -c core.x=y -C /x pu" + f"sh --dry-run origin {MAIN}",
             f"{PUSH} origin master",
+            f"{PUSH} origin {MAIN}; echo exit=$?",
+            f"{PUSH} --dry-run origin {MAIN};echo $?",
+            f"{PUSH} origin HEAD:{MAIN} && echo ok",
+            f"bash -c '{PUSH} origin {MAIN}'",
+            f"{PUSH} origin refs/heads/{MAIN}",
         ):
             self.assert_blocked(c, "push")
+        # Text that merely quotes the command is blocked too: a safe false positive.
+        self.assert_blocked(f'echo "{PUSH} origin {MAIN}"', "push")
 
     def test_other_dangerous_operations_blocked_with_global_options(self):
         self.assert_blocked("git reset --hard HEAD~1", "reset --hard")
@@ -68,6 +75,8 @@ class GitSafetyHookTest(unittest.TestCase):
             f"{PUSH} origin claude/feature", f"{PUSH} -u origin claude/feature",
             f"git -C /x pu" + "sh origin claude/feature", "git fetch origin main",
             f"git branch -d old-feature", "npm test", "echo main", "ls",
+            f"{PUSH} origin {MAIN}tenance", f"{PUSH} origin feature/{MAIN}-fix",
+            f"{PUSH} origin do{MAIN}", f"{PUSH} origin origin/{MAIN}:feature",
         ):
             self.assert_allowed(c)
 
