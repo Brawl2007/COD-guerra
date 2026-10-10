@@ -11,7 +11,8 @@ SCRIPT = REPO / ".agent" / "tools" / "install-user-agents.sh"
 
 def run(*args, user_dir):
     return subprocess.run(["bash", str(SCRIPT), *args], capture_output=True, text=True,
-                          env=dict(os.environ, CLAUDE_USER_DIR=user_dir))
+                          env=dict(os.environ, CLAUDE_USER_DIR=user_dir,
+                                   COD_JEV_HOME=str(Path(user_dir).parent / "jev")))
 
 
 class InstallUserAgentsTest(unittest.TestCase):
@@ -33,6 +34,14 @@ class InstallUserAgentsTest(unittest.TestCase):
             self.assertIn("Agent(implementer, verifier, reviewer, explorer, Explore, researcher, implementer-deep, reviewer-critical, haiku-low", c20)
             self.assertIn("model: opus\n", c20)
             self.assertEqual(run("--check", user_dir=str(user)).returncode, 0)
+            jev = Path(d) / "jev"
+            for name in ("jev_router.py", "jev_decisions.py"):
+                self.assertEqual((jev / name).read_bytes(), (REPO / ".agent" / "tools" / name).read_bytes())
+            self.assertIn("teto 100", r.stdout)
+            self.assertIn("~/.local/share/cod-guerra/jev/jev_router.py", c20)
+            (jev / "jev_router.py").write_text("PILOT_MAX_PAID_CALLS = 3\n")  # cópia antiga
+            self.assertEqual(run("--check", user_dir=str(user)).returncode, 1)
+            run(user_dir=str(user))
 
             r = run("--hook", user_dir=str(user))
             self.assertEqual(r.returncode, 0, r.stderr)

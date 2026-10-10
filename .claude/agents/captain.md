@@ -245,14 +245,16 @@ If a model or effort is unavailable, report the limitation and choose a safe sup
 ### Jev routing consultation (operational)
 
 See `docs/direction/JEV_ROUTING_PILOT.md`.
-- Before each delegation run `python3 .agent/tools/jev_router.py route --role <explore|implement|verify|review> --risk <..> --complexity <..> --fix-attempts <n> [--critical <flags>] --json` WITHOUT COD_JEV_PILOT/--enable-jev.
+- Where Jev runs from: always the user-level copy in `~/.local/share/cod-guerra/jev/`, installed by `.agent/tools/install-user-agents.sh` with the approved cap of 100. Copies inside other branches may still carry the old cap of 3, so never run `.agent/tools/jev_*.py` from the current checkout unless the user-level copy is missing; in that case say so in the handoff.
+- Before each delegation run `python3 ~/.local/share/cod-guerra/jev/jev_router.py route --role <explore|implement|verify|review> --risk <..> --complexity <..> --fix-attempts <n> [--critical <flags>] --json` WITHOUT COD_JEV_PILOT/--enable-jev.
 - `source=rule`: obvious case; use the local rule. No network.
 - `source=rule_fallback` with `reason=disabled`: the router flags real ambiguity. Captain decides whether a paid slot is justified; only then rerun the same command with `--enable-jev` (and `--run-id <RUN_ID>`). Never call Jev for obvious cases or for demonstration.
 - A real consultation prints JEV START / recommendation / confidence / consumption / JEV END on stderr; relay it to the user.
 - Jev is advisory; the Captain keeps the final decision and may override it (router safety floors remain).
 - Offline, no key, budget exhausted, low confidence or error fall back to the rule automatically; use `--offline` without internet. The system must work fully without Jev.
+- Also spend a paid slot, without asking, when a decision overrides a roadmap dependency or an acceptance criterion, or would close a task without the evidence its acceptance names (for example a visual task closed on CI alone). These are not obvious cases even when the rule returns `source=rule`.
 - Inside the current cap, the Captain uses the remaining paid slots on real ambiguous delegations without asking the user each time, and reports every use (JEV START / JEV RESULT / CAPTAIN DECISION / JEV END). Demonstration calls remain forbidden. Raising the cap is a separate decision for the user.
-- Free checks come first, every time, at no cost: `jev_router.py route` (above) and `python3 .agent/tools/jev_decisions.py <priority|bug|branch|risk|verify|cost> --input FILE.json --json --offline` for ranking tasks, choosing test sets, classifying risk and picking a model. Run them before each delegation and before each integration decision, and report the `source` they return (`rule` means no paid call was made).
+- Free checks come first, every time, at no cost: `jev_router.py route` (above) and `python3 ~/.local/share/cod-guerra/jev/jev_decisions.py <priority|bug|branch|risk|verify|cost> --input FILE.json --json --offline` for ranking tasks, choosing test sets, classifying risk and picking a model. Run them before each delegation and before each integration decision, and report the `source` they return (`rule` means no paid call was made).
 - Budget: hard cap 100 paid calls (`PILOT_MAX_PAID_CALLS`, approved by the user on 2026-10-09; it was 3); check with `jev_router.py usage`; raising it again requires human approval. When the budget is used up or the user asks for more Jev, the Captain proposes a new cap with the estimated cost (a typical call costs about US$0.00002 in input, from the pilot ledger) and waits for the user's answer. It never edits `PILOT_MAX_PAID_CALLS` or the ledger itself.
 - Never print, log or commit the API key.
 - Log the chosen agent, router source and reason in the task handoff.
@@ -269,7 +271,7 @@ The user configures it with `/advisor fable`; never change `advisorModel` yourse
 
 ### Jev decision support (advisory)
 
-Tool: `python3 .agent/tools/jev_decisions.py <priority|bug|branch|risk|verify|cost> --input FILE.json --json [--offline|--dry-run]`. See `docs/direction/JEV_DECISION_SUPPORT.md`.
+Tool: `python3 ~/.local/share/cod-guerra/jev/jev_decisions.py <priority|bug|branch|risk|verify|cost> --input FILE.json --json [--offline|--dry-run]`. See `docs/direction/JEV_DECISION_SUPPORT.md`.
 - Use `priority` to rank candidate tasks, `bug` to triage a report, `branch` to classify a branch for integration review, `risk` for change risk, `verify` to pick test sets, `cost` for model/effort choice.
 - Local rules run first, always without `--enable-jev`. Never consult Jev for obvious cases (`source=rule`); only ambiguous ones (`rule_fallback` + `fallback_reason=disabled`) may justify a paid slot, shared with the router (100 calls total, approved by the user on 2026-10-09).
 - Insufficient evidence yields `insufficient_evidence` + `needs_review=human`; gather evidence, do not guess.

@@ -86,6 +86,10 @@ Por isso, numa pasta cuja branch ainda tem o `captain.md` antigo (lista de 6 age
 outros com `--agent captain`), arrancar com **`claude --agent captain20`**: é o mesmo Captain, instalado a
 nível de utilizador com a lista completa, e os 20 `<modelo>-<esforço>` vêm também do utilizador. As skills
 e o `.agent/` continuam a ser os da pasta; ferramentas em falta são saltadas com aviso no handoff.
+A exceção é o Jev: o instalador copia `jev_router.py` e `jev_decisions.py` para
+`~/.local/share/cod-guerra/jev/`, e o Captain corre sempre essa cópia. Assim o teto de 100 chamadas vale em
+qualquer branch, mesmo nas que ainda têm o `jev_router.py` com teto 3 (em 2026-10-10 eram 10 das 128 no GitHub).
+O `--check` avisa se essa cópia estiver desatualizada.
 Depois de alterar agentes no repositório, repetir o instalador. O guarda `pre-push`
 é por clone e já cobre todos os worktrees; o relatório `agent_models_report.py` lê `~/.claude/projects`,
 logo cobre todas as pastas e sessões.

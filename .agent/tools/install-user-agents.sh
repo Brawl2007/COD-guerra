@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Copia os agentes deste repositório para ~/.claude/agents, onde o Claude Code os carrega em
 # qualquer pasta e sessão desta máquina (um .claude/agents/ do projeto, se existir, tem prioridade
-# para os nomes que repetir). Com --hook instala também o git-safety a nível de utilizador.
+# para os nomes que repetir). Copia também o Jev para ~/.local/share/cod-guerra/jev, para o Captain usar
+# sempre o teto aprovado, seja qual for a branch. Com --hook instala também o git-safety a nível de utilizador.
 # Uso: .agent/tools/install-user-agents.sh [--check | --hook]
 set -euo pipefail
 
@@ -11,6 +12,8 @@ dst="${CLAUDE_USER_DIR:-$HOME/.claude}/agents"
 hook_src="$root/.claude/hooks/git-safety.py"
 hook_dst="${CLAUDE_USER_DIR:-$HOME/.claude}/hooks/git-safety.py"
 settings="${CLAUDE_USER_DIR:-$HOME/.claude}/settings.json"
+jev_dst="${COD_JEV_HOME:-$HOME/.local/share/cod-guerra/jev}"
+jev_files="jev_router.py jev_decisions.py"
 
 if [ "${1:-}" = "--check" ]; then
   missing=0
@@ -23,6 +26,9 @@ if [ "${1:-}" = "--check" ]; then
   else
     echo "[WARN] $missing agente(s) em falta ou desatualizados em $dst: corre .agent/tools/install-user-agents.sh"
   fi
+  for j in $jev_files; do
+    if ! cmp -s "$root/.agent/tools/$j" "$jev_dst/$j"; then missing=$((missing + 1)); echo "[WARN] Jev desatualizado: $jev_dst/$j"; fi
+  done
   if [ -f "$hook_dst" ] && grep -q "git-safety.py" "$settings" 2>/dev/null; then
     echo "[OK] hook git-safety instalado a nível de utilizador"
   else
@@ -39,6 +45,9 @@ cp "$src"/*.md "$dst"/
 sed -e 's/^name: captain$/name: captain20/' \
     -e 's/^description: /description: (user-level copy with the 20 model x effort agents) /' \
     "$src/captain.md" > "$dst/captain20.md"
+mkdir -p "$jev_dst"
+for j in $jev_files; do cp "$root/.agent/tools/$j" "$jev_dst/$j"; done
+echo "[OK] Jev copiado para $jev_dst (teto $(grep -m1 -oE '^PILOT_MAX_PAID_CALLS = [0-9]+' "$jev_dst/jev_router.py" | grep -oE '[0-9]+$'))"
 echo "[OK] $(ls "$src"/*.md | wc -l) agentes copiados para $dst, mais captain20 (sessões novas do Claude Code passam a vê-los em qualquer pasta)"
 
 if [ "${1:-}" = "--hook" ]; then
