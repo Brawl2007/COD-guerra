@@ -49,6 +49,7 @@ impacto." Vale para as 30 missões. Detalhe, tarefas da M01 que a servem (T17, T
 (escala histórica por missão) em `DECISIONS.md`.
 Segundo pedido: dificuldade e perigo real, com fases difíceis em cada missão (H9).
 Terceiro pedido: gráficos, som e animação ao nível de COD: World at War, sem copiar nada do COD (H10).
+Quarto pedido: efeitos sonoros fortes e música sombria durante o jogo, com silêncios nos momentos certos (H11).
 
 ## Handoff mais recente: 2026-10-09 (playtest 1 da M01)
 

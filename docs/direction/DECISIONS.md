@@ -47,6 +47,11 @@ Terceiro pedido, no mesmo dia: chegar ao nível de **Call of Duty: World at War 
 animações. É uma referência de qualidade, não uma fonte: nada se copia do COD (modelos, sons, mapas, falas).
 Ver H10.
 
+Quarto pedido, no mesmo dia: efeitos sonoros fortes e **música sombria no meio do jogo**, como no WaW. Isto muda a
+direção sonora proposta no PR #58 (`CAMPAIGN-AUDIO-DIRECTION.md`, regra 4: "música quase nunca", só na cartela e
+no debrief). A especificação já tem o canal MUSIC e só proíbe música **heroica** sobre resgates e mortes
+(`docs/PROMPT_MESTRE.txt:1715`). Ver H11.
+
 ## Pendentes de decisão humana
 
 - **H1** Que HEAD da V7 está validado (CI integral verde + relatório fechado)? Desbloqueia `BASE`.
@@ -80,3 +85,11 @@ Ver H10.
   royalty-free) e modelos com autoria, escala e licença no manifesto, conforme `AGENTS.md`; (3) qualquer compra
   só com autorização expressa do utilizador. Avaliação por capturas e escuta no PC forte, não só por testes.
   Proposto ao utilizador; falta a ordem para começar.
+- **H11** (2026-10-10) Música sombria durante o jogo, pedida pelo utilizador. Proposta: (1) camadas de tensão
+  escuras (drones graves, cordas, percussão surda), nunca heroicas, que sobem nas fases de combate e descem com
+  ele, ligadas ao estado da batalha e não a um temporizador; (2) temas curtos nos grandes momentos (na M01: os
+  Stukas das 04:34, a retirada do pelotão leste, a explosão da ponte); (3) silêncios obrigatórios mantidos
+  (depois da explosão, a chamada, feridos e mortos); (4) volume próprio no menu (canal MUSIC). Fonte: música
+  original ou com licença verificada (CC0/CC-BY, biblioteca royalty-free ou composição encomendada); **nada da
+  banda sonora do COD**; nenhuma compra sem autorização. Substitui a regra 4 da direção sonora do PR #58 se
+  aprovada. Proposto ao utilizador; falta a ordem para começar.
