@@ -1,9 +1,0 @@
-M01-EAST-FRONT-VISIBLE-V1 (T23): tests/fixtures/m01-anim-gameplay-baseline.json is STALE on purpose.
-
-Gameplay changes by design (the east platoon holds the deck, six reserve men fall by attrition rounds), so the per-tick golden of
-tests/m01-animation-contract.test.js changes. It must be generated on x86, never on aarch64 (D11/D30): while this marker exists the workflow
-.github/workflows/m01-east-front-visible-v1.yml runs `node tests/helpers/m01-anim-baseline.mjs --write-golden` before `npm test`, prints the
-sha256 of the new fixture and uploads it as evidence/golden/m01-anim-gameplay-baseline.json in the artifact.
-
-To finish: commit that exact file as tests/fixtures/m01-anim-gameplay-baseline.json, `git rm tests/fixtures/.golden-stale`, push. The next run
-finds no marker and verifies the committed golden unmodified.
