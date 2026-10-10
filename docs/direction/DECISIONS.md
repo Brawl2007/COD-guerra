@@ -52,6 +52,12 @@ direção sonora proposta no PR #58 (`CAMPAIGN-AUDIO-DIRECTION.md`, regra 4: "m�
 no debrief). A especificação já tem o canal MUSIC e só proíbe música **heroica** sobre resgates e mortes
 (`docs/PROMPT_MESTRE.txt:1715`). Ver H11.
 
+Quinto ponto, no mesmo dia: **o Chromebook deixa de ser o computador de referência do jogo.** Palavras do
+utilizador: "chromebook não é problema, eu testo no outro pc, roda cod waw também". O alvo de desempenho e de
+qualidade passa a ser esse PC (x86_64, corre COD: World at War). O Chromebook continua a ser onde o utilizador
+corre o Claude Code e onde valem as regras de memória e disco dos agentes (D8, D9). Especificações exatas do PC
+por registar (H12).
+
 ## Pendentes de decisão humana
 
 - **H1** Que HEAD da V7 está validado (CI integral verde + relatório fechado)? Desbloqueia `BASE`.
@@ -63,7 +69,7 @@ no debrief). A especificação já tem o canal MUSIC e só proíbe música **her
 - **H7** (2026-10-09) Respostas do playtest 1: branch e commit jogados, resposta 5 sobre a ckm (decide a prioridade da geometria, fase 0), qualidade usada, causa da vida 92 da ponte, parede invisível (item 5) e respostas 1 a 10. Sem elas, os itens 1, 2 e 10 ficam por confirmar.
 - **H8** (2026-10-10) Tabela de escala histórica por missão (M01–M30): forças reais na batalha, forças reais no
   setor do jogador, soldados visíveis no jogo (perto / à volta / ao longe) e fonte com grau de certeza. Trabalho
-  de pesquisa e documentação, sem código; os números visíveis são medidos no Chromebook antes de aprovar.
+  de pesquisa e documentação, sem código; os números visíveis são medidos no PC de teste antes de aprovar.
   Exemplo M02 (fontes gerais, a confirmar): cerca de 225 000 polacos e 425 000 alemães no Bzura; no jogo,
   150–300 polacos visíveis em vagas e 30–60 alemães perto. Proposto ao utilizador; falta a ordem para começar.
 - **H9** (2026-10-10) Dificuldade e perigo em todas as missões, a pedido do utilizador: (1) níveis de
@@ -79,8 +85,8 @@ no debrief). A especificação já tem o canal MUSIC e só proíbe música **her
 - **H10** (2026-10-10) Meta de qualidade "nível COD WaW" em gráficos, som e animação, pedida pelo utilizador.
   Caminho já planeado em `docs/M01_FINAL_ROADMAP.md`: animação T07/T08/T35/T36/T37 (hoje os soldados deslizam e
   cortam entre poses); som T05/T06/T45/T46 (hoje 100 % sintetizado, sem `assets/audio`); materiais, terreno,
-  vegetação e FX nas ondas de ambiente. Para a meta, faltam: (1) **dois níveis de qualidade**, "Alto" (alvo WaW,
-  PC com placa gráfica) e "Chromebook" (mais simples, mesma jogabilidade e simulação); (2) **fontes com licença
+  vegetação e FX nas ondas de ambiente. Para a meta, faltam: (1) o alvo é o PC de teste do utilizador (H12), não o
+  Chromebook; um nível de qualidade baixo é opcional e não trava a meta; (2) **fontes com licença
   verificada**: animações de captura de movimento licenciadas, amostras de som reais (CC0/CC-BY ou pacotes
   royalty-free) e modelos com autoria, escala e licença no manifesto, conforme `AGENTS.md`; (3) qualquer compra
   só com autorização expressa do utilizador. Avaliação por capturas e escuta no PC forte, não só por testes.
@@ -93,3 +99,6 @@ no debrief). A especificação já tem o canal MUSIC e só proíbe música **her
   original ou com licença verificada (CC0/CC-BY, biblioteca royalty-free ou composição encomendada); **nada da
   banda sonora do COD**; nenhuma compra sem autorização. Substitui a regra 4 da direção sonora do PR #58 se
   aprovada. Proposto ao utilizador; falta a ordem para começar.
+- **H12** (2026-10-10) PC de teste de referência: processador, placa gráfica, RAM, sistema e navegador ainda
+  por registar. Substitui o "Chromebook de referência" de H4 e T01 para medir FPS e qualidade. Sem estes dados,
+  nenhum FPS é afirmado (regra do `AGENTS.md`).
