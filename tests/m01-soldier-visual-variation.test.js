@@ -11,6 +11,9 @@ import {actorHitboxes,muzzlePosition} from '../src/world/spatial.js';
 const integratedPresentation=new Set([
  // Simulation presentation additions are checked against immutable per-tick gameplay traces in m01-animation-contract.test.js.
  'src/game/m01-simulation.js',
+ // T23 (M01-EAST-FRONT-VISIBLE-V1): the east platoon holds the deck and six reserve men fall by attrition rounds. The mission data (hold, attrition,
+ // display profiles) and the round kinds (m01-fire.js) change by design; the per-tick gameplay golden was re-baselined on x86 for it.
+ 'missions/m01-tczew/mission.json','src/game/m01-fire.js',
  'src/core/audio.js','src/game/game.js','src/main.js','src/styles.css',
  'src/render/m01-atmosphere.js','src/render/m01-characters.js','src/render/m01-environment.js','src/render/m01-surfaces.js',
  'src/render/m01-train-wagons.js','src/render/m01-view.js','src/render/m01-viewmodel.js','src/render/three-renderer.js',

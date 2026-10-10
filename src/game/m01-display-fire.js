@@ -6,10 +6,12 @@ import { eyePosition } from '../world/spatial.js';
 // They live in their own list, outside enemyFire.rounds and outside every save: they never trace the world, suppress,
 // wound, emit an event or touch an actor, the player, the flags or the main RNG. validRound/ROUND_KINDS do not know them.
 // For difficulty (H9) this means by construction: not a telegraph, not an aim/cadence multiplier target, not a burst to cap.
-// Mission data supplies profiles in groups[].displayFire (none exist yet); a profile is, with every key but one target spec optional:
+// Mission data supplies profiles in groups[].displayFire (T23: the east front); a profile is, with every key but one target spec optional:
 //   {id, shooters:[actorId..] | origin:[x,y,z], weapon, rounds:[min,max], intervalSec:[min,max], interval, tracerEvery,
-//    bias:[mrad,mrad], cone:[mrad,mrad], targetGroup | targetIds:[..] | targetBox:[minX,maxX,minZ,maxZ], from, until}
+//    bias:[mrad,mrad], cone:[mrad,mrad], targetGroup | targetIds:[..] | targetBox:[minX,maxX,minZ,maxZ], from, until, classification, note}
 // `weapon` is a display label that may differ from the actor's gameplay weapon; `from`/`until` are event ids (consumed gates).
+// Unknown keys are rejected (a typo must not silently change the behaviour). A fixed origin (the Panzerzug) has no actor to flash: the latest shot
+// of each such profile is published in display.fixed[profileId] = {ox,oy,oz,ax,ay,az,weapon,firedAt,arriveAt} for the renderer.
 export const DISPLAY_CAP = 120;            // rounds in flight; a burst that does not fit is skipped whole, never truncated
 export const DISPLAY_TRACER_CAP = 24;      // tracer instances the renderer may spend, of its 48-instance batch (gameplay first)
 export const DISPLAY_FLASH_SEC = .15;      // muzzle flash window after display.firedAt[actor]
@@ -22,7 +24,7 @@ export const displaySeed = (rngState, clock) =>
   (clock === undefined ? rngState ^ DISPLAY_SEED_XOR : rngState ^ DISPLAY_SEED_XOR ^ Math.floor(clock * 20)) >>> 0;
 
 export const createDisplayFire = (seed, profiles = []) =>
-  ({ rounds: [], nextId: 0, firedAt: {}, cooldown: {}, skipped: 0, profiles, rng: new Random(seed) });
+  ({ rounds: [], nextId: 0, firedAt: {}, fixed: {}, cooldown: {}, skipped: 0, profiles, rng: new Random(seed) });
 
 const fail = (id, message) => { throw new Error(`displayFire ${id}: ${message}`); };
 const pair = (id, name, v, { integer = false, min = 0 } = {}) => {
@@ -32,8 +34,11 @@ const pair = (id, name, v, { integer = false, min = 0 } = {}) => {
 };
 const idList = (id, name, v) => {
   if (!Array.isArray(v) || !v.length || !v.every(s => typeof s === 'string' && s)) fail(id, `${name} must be a non-empty list of ids`);
+  if (new Set(v).size !== v.length) fail(id, `${name} lists an id twice`);
   return Object.freeze([...v]);
 };
+const KEYS = new Set(['id', 'shooters', 'origin', 'weapon', 'rounds', 'intervalSec', 'interval', 'tracerEvery', 'bias', 'cone', 'targetGroup', 'targetIds',
+  'targetBox', 'from', 'until', 'classification', 'note']);
 const numbers = (id, name, v, length, min = -Infinity) => {
   if (!Array.isArray(v) || v.length !== length || !v.every(n => Number.isFinite(n) && n >= min)) fail(id, `${name} must be ${length} finite numbers`);
   return Object.freeze([...v]);
@@ -43,6 +48,9 @@ const numbers = (id, name, v, length, min = -Infinity) => {
 export function normalizeDisplayProfile(p, { events } = {}) {
   const id = p?.id;
   if (typeof id !== 'string' || !id) fail('?', 'id must be a non-empty string');
+  const unknown = Object.keys(p).filter(k => p[k] !== undefined && !KEYS.has(k));
+  if (unknown.length) fail(id, `unknown key ${unknown.join(', ')}`);
+  for (const key of ['classification', 'note']) if (p[key] !== undefined && (typeof p[key] !== 'string' || !p[key])) fail(id, `${key} must be a non-empty string`);
   if ((p.shooters === undefined) === (p.origin === undefined)) fail(id, 'exactly one of shooters or origin');
   if (typeof p.weapon !== 'string' || !p.weapon) fail(id, 'weapon must be a string');
   if (['targetGroup', 'targetIds', 'targetBox'].filter(k => p[k] !== undefined).length !== 1) fail(id, 'exactly one of targetGroup, targetIds or targetBox');
@@ -58,18 +66,30 @@ export function normalizeDisplayProfile(p, { events } = {}) {
   return Object.freeze({
     id, weapon: p.weapon, rounds, intervalSec: pair(id, 'intervalSec', p.intervalSec, { min: .05 }), interval, tracerEvery,
     bias: numbers(id, 'bias', p.bias ?? [2, 1.4], 2, 0), cone: numbers(id, 'cone', p.cone ?? [.7, .5], 2, 0), from: p.from, until: p.until,
+    ...(p.classification !== undefined ? { classification: p.classification } : {}),
     ...(p.shooters ? { shooters: idList(id, 'shooters', p.shooters) } : { origin: numbers(id, 'origin', p.origin, 3) }),
     ...(p.targetGroup !== undefined ? { targetGroup: p.targetGroup } : {}), ...(p.targetIds !== undefined ? { targetIds: idList(id, 'targetIds', p.targetIds) } : {}),
     ...(box ? { targetBox: box } : {}),
   });
 }
 
-/** Every profile authored in the mission data (groups[].displayFire); an empty list while no data exists. */
-export function displayProfiles(definition) {
-  const events = new Set(definition.events.map(e => e.id)), seen = new Set(), profiles = [];
+/**
+ * Every profile authored in the mission data (groups[].displayFire). Event ids and target groups are checked against the mission data;
+ * with `actors` (the simulation roster: [{id, group}]) shooter ids, target ids and the target group's membership are checked too, so a typo
+ * in the data throws when the simulation is built instead of silently firing nothing. A fixed-origin profile id must not be an actor id.
+ */
+export function displayProfiles(definition, { actors } = {}) {
+  const events = new Set(definition.events.map(e => e.id)), groups = new Set(definition.groups.map(g => g.id)), seen = new Set(), profiles = [];
+  const ids = actors ? new Set(actors.map(a => a.id)) : null, memberGroups = actors ? new Set(actors.map(a => a.group).filter(Boolean)) : null;
   for (const group of definition.groups) for (const raw of group.displayFire ?? []) {
     const profile = normalizeDisplayProfile(raw, { events });
     if (seen.has(profile.id)) fail(profile.id, 'duplicate profile id');
+    if (profile.targetGroup !== undefined && !groups.has(profile.targetGroup)) fail(profile.id, `unknown target group ${profile.targetGroup}`);
+    if (ids) {
+      for (const who of [...(profile.shooters ?? []), ...(profile.targetIds ?? [])]) if (!ids.has(who)) fail(profile.id, `unknown actor ${who}`);
+      if (profile.targetGroup !== undefined && !memberGroups.has(profile.targetGroup)) fail(profile.id, `target group ${profile.targetGroup} has no actors`);
+      if (profile.origin && ids.has(profile.id)) fail(profile.id, 'a fixed-origin profile id must not be an actor id');
+    }
     seen.add(profile.id); profiles.push(profile);
   }
   return profiles;
@@ -110,11 +130,15 @@ function burst(display, view, p, who, actor, byId) {
 
 /**
  * Advances the display list by one simulation tick. `view` is read-only: {clock, actors, consumedEvent(id), heightAt(x,z)}.
- * Writes only display.* (rounds, firedAt, cooldown, nextId, skipped, rng); never an actor, `view` or the main RNG.
+ * Writes only display.* (rounds, firedAt, fixed, cooldown, nextId, skipped, rng); never an actor, `view` or the main RNG.
  */
 export function updateDisplayFire(display, view, dt) {
-  const now = view.clock;
-  const flash = r => { if (r.firedAt <= now && r.firedAt > (display.firedAt[r.by] ?? -Infinity)) display.firedAt[r.by] = r.firedAt; };
+  const now = view.clock, fixedOrigin = new Set(display.profiles.filter(p => p.origin).map(p => p.id));
+  const flash = r => {
+    if (r.firedAt > now || r.firedAt <= (display.firedAt[r.by] ?? -Infinity)) return;
+    display.firedAt[r.by] = r.firedAt;
+    if (fixedOrigin.has(r.by)) display.fixed[r.by] = { ox: r.ox, oy: r.oy, oz: r.oz, ax: r.ax, ay: r.ay, az: r.az, weapon: r.weapon, firedAt: r.firedAt, arriveAt: r.arriveAt };
+  };
   if (display.rounds.length) { display.rounds.forEach(flash); display.rounds = display.rounds.filter(r => r.arriveAt > now); }   // arrival: nothing happens
   let byId = null;
   for (const p of display.profiles) {
@@ -135,7 +159,8 @@ export function updateDisplayFire(display, view, dt) {
 
 /** Read-only copy for the renderer and the tests: the rounds are frozen at creation, the containers are fresh. */
 export const displayFireView = display =>
-  ({ rounds: [...display.rounds], firedAt: { ...display.firedAt }, skipped: display.skipped, nextId: display.nextId });
+  ({ rounds: [...display.rounds], firedAt: { ...display.firedAt }, fixed: Object.fromEntries(Object.entries(display.fixed).map(([id, shot]) => [id, { ...shot }])),
+    skipped: display.skipped, nextId: display.nextId });
 
 /**
  * Computed on every read (like `threat`), never stored. Sector membership comes from mission data (groups[].sector, and a group's

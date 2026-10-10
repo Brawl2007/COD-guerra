@@ -40,7 +40,7 @@ test('integration keeps Wz29/muzzle/hitboxes/RNG bytes and locks the approved si
       // Optional presentation fields necessarily change source bytes. Keep the original source lock;
       // m01-animation-contract.test.js compares all legacy state/checkpoint/event bytes on every route tick.
       const baseline=JSON.parse(readFileSync(new URL('./fixtures/m01-anim-gameplay-baseline.json',import.meta.url)));
-      assert.equal(baseline.base,'99309d9cb023cc94a07d41ff863e1362e4460570');assert.equal(baseline.sourceSha256,hash,path);
+      assert.equal(baseline.base,'61ecd77b099d5921bd025275eafd9c3157536bb7');assert.equal(baseline.sourceSha256,hash,path);
     }else assert.equal(createHash('sha256').update(readFileSync(new URL('../'+path,import.meta.url))).digest('hex'),hash,path);
   }
 });
