@@ -247,6 +247,9 @@ test('battleReadout is computed on every read from existing state, with the desi
   assert.equal(east().intensity,11/39);assert.equal(east().lastFireAt,s.clock-1);
   s.actor('de_east_21').firedAt=s.clock-READOUT_WINDOW_SEC-1;assert.equal(east().intensity,11/39,'older than the window is not recent');
   assert.equal(s.battleReadout.sectors.s4_north_perimeter.shooters,0);assert.equal(s.battleReadout.sectors.s4_north_perimeter.intensity,0);
+  // the yard's only mapped man is a civilian railway worker: not a shooter; a fallen one still counts as a casualty
+  const worker=s.actor('franciszek_lipski');assert.equal(worker.civilian,true);assert.equal(s.battleReadout.sectors.s3_station_yard.shooters,0);
+  Object.assign(worker,{alive:false,health:0,state:'DOWN'});assert.equal(s.battleReadout.sectors.s3_station_yard.casualties,1);
   s.impact('probe_blast',{x:0,y:0,z:0},false);
   assert.deepEqual(s.battleReadout.recentBlasts.map(b=>[b.id,b.age]),[['probe_blast',0]]);
   s.clock+=READOUT_WINDOW_SEC+1;assert.deepEqual(s.battleReadout.recentBlasts,[]);

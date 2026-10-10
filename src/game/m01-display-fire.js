@@ -139,7 +139,7 @@ export const displayFireView = display =>
 
 /**
  * Computed on every read (like `threat`), never stored. Sector membership comes from mission data (groups[].sector, and a group's
- * members). `shooters` = living active men of the sector, `casualties` = its fallen men, `lastFireAt` = latest gameplay or display
+ * members). `shooters` = living active armed men of the sector, `casualties` = its fallen men, `lastFireAt` = latest gameplay or display
  * shot (simulation clock), `intensity` = share of the sector's shooters that fired in the last READOUT_WINDOW_SEC seconds (0..1).
  * Shots are not logged anywhere, so intensity counts shooters that fired recently, not rounds.
  * `view` is the simulation read only: definition, clock, battleClock, actors, flags, mission, scene, sectors, consumedEvent.
@@ -153,7 +153,7 @@ export function computeBattleReadout(display, view) {
   for (const a of view.actors) {
     const sector = ofGroup.get(a.group) ?? ofMember.get(a.id), e = bySector[sector];
     if (!e) continue;
-    const live = a.alive && a.active;
+    const live = a.alive && a.active && !a.civilian && a.role !== 'MEDIC';   // armed men only (the renderer's `armed`)
     if (live) e.shooters++; else if (!a.alive) e.casualties++;
     const last = Math.max(Number.isFinite(a.firedAt) && a.firedAt > -1e8 ? a.firedAt : -Infinity, display.firedAt[a.id] ?? -Infinity);
     if (last > -Infinity) {
