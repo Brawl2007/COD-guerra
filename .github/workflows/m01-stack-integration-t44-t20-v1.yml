@@ -14,7 +14,7 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-24.04
-    timeout-minutes: 150
+    timeout-minutes: 240
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
@@ -35,7 +35,20 @@ jobs:
       - name: npm run build
         run: set -o pipefail; npm run build 2>&1 | tee evidence/build.log
       - run: npx playwright install --with-deps chromium
+      - name: BEFORE capture on b0020cf + T20 (stack without T44)
+        run: |
+          set -o pipefail
+          mkdir -p evidence/before/png
+          git worktree add ../base b0020cf
+          git -C ../base -c user.name=ci -c user.email=ci@invalid merge --no-ff --no-edit 7ade323
+          if git -C ../base merge-base --is-ancestor 3d202ca HEAD; then echo "BEFORE base contains T44 (3d202ca); identity would be meaningless" >&2; exit 1; fi
+          cp tests/browser/m01-postprocess-grading.spec.js ../base/tests/browser/
+          cd ../base && npm ci && npm run build
+          M01_GRADING_BASELINE=1 M01_GRADING_BEFORE_DIR="$GITHUB_WORKSPACE/evidence/before/png" npx playwright test tests/browser/m01-postprocess-grading.spec.js --workers=1 --retries=0 --output="$GITHUB_WORKSPACE/evidence/before/test-results" 2>&1 | tee "$GITHUB_WORKSPACE/evidence/before/browser-before.log"
       - name: Focused browser specs (T44 grading, T20 impostors, and the stack specs sharing m01-view.js)
+        if: always()
+        env:
+          M01_GRADING_BEFORE_DIR: ${{ github.workspace }}/evidence/before/png
         run: set -o pipefail; npx playwright test tests/browser/m01-postprocess-grading.spec.js tests/browser/m01-distant-front-impostors.spec.js tests/browser/m01-viewmodel-feel.spec.js tests/browser/m01-anim-resolver.spec.js tests/browser/m01-water-vistula.spec.js --workers=1 --retries=0 2>&1 | tee evidence/browser.log
       - if: always()
         uses: actions/upload-artifact@v4
