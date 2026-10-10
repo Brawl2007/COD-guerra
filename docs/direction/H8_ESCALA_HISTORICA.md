@@ -40,3 +40,23 @@ Notas:
 | M20 | Oosterbeek/Arnhem, 17–25/9/1944 | perímetro ~3 600 (~21/9); alemães 3:1 sem número | desconhecido | a definir | en.wikipedia.org/wiki/Battle_of_Arnhem | média (perímetro); baixa (DE) |
 
 Notas do lote 2: nenhuma linha chega a "alta" (só Wikipédia). Para subir a certeza: NPS/US Army CMH, NIMH/Instituto Polaco, museus do Dia D e de Arnhem.
+
+## Lote 3: M21–M30 (researcher, páginas lidas; títulos de `docs/PROMPT_MESTRE.txt` l.2349–2501)
+
+| Missão | Batalha/acção (data, local) | Forças reais na batalha | Forças reais no sector do jogador | Visíveis no jogo (proposta) | Fontes | Certeza |
+|---|---|---|---|---|---|---|
+| M21 | Vossenack, Hürtgen, 2/11/1944 | EUA: 28.ª Div. (112.º RI); DE desconhecido a 2/11 | desconhecido | a definir | en.wikipedia.org/wiki/Battle_of_the_Hürtgen_Forest | média (EUA); baixa (DE) |
+| M22 | Clervaux, 16–18/12/1944 | EUA: 110.º RCT + 707.º Bn Tanques + 630.º CT; DE: 1 reg. panzergrenadier + 1 reg. panzer (2.ª Pz) | desconhecido | a definir | en.wikipedia.org/wiki/Battle_of_Clervaux | média (EUA); baixa (DE) |
+| M23 | Bastogne 23–26/12/1944; Foy 13/1/1945 | 101.ª ~22 800 vs DE ~54 000 (infobox); Foy desconhecido | desconhecido | a definir | en.wikipedia.org/wiki/Siege_of_Bastogne | média (Bastogne) |
+| M24 | Iwo Jima, 19/2/1945 | EUA ~110 000 (30 000 em terra ao fim de 19/2); JP 20 933 | 28.º Marines: desconhecido | a definir | en.wikipedia.org/wiki/Battle_of_Iwo_Jima | média |
+| M25 | Ponte Ludendorff, Remagen, 7/3/1945 | EUA: TF Engeman (Co A 27.º AIB, 14.º Bn Tanques, 17 tanques à frente); DE ~1 000 (incl. ~500 Volkssturm dispersos) | a ponte; Co A 27.º AIB | a definir | en.wikipedia.org/wiki/Battle_of_Remagen | média |
+| M26 | Hagushi, Okinawa, 1/4/1945 | CMH: >16 000 na 1.ª hora, >60 000 em terra à noite; 32.º Ex. >100 000 incl. 20 000 Boeitai | desconhecido | a definir | ibiblio.org/hyperwar/USA/USA-P-Okinawa (CMH) | alta (CMH via espelho) |
+| M27 | Seelow, 16–19/4/1945 | URSS ~1 000 000 (incl. 78 556 polacos), 3 059 tanques; DE 9.º Ex. ~110–112 mil, 587 tanques | desconhecido | a definir | en.wikipedia.org/wiki/Battle_of_the_Seelow_Heights | média |
+| M28 | Berlim centro, 1–2/5/1945 | URSS 2 300 000 (3 frentes); defesa ~45 000 + polícia/JH + 40 000 Volkssturm | desconhecido | a definir | en.wikipedia.org/wiki/Battle_of_Berlin | baixa |
+| M29 | Shuri, Okinawa, 28–29/5/1945 | CMH: 62.ª Div. ~14 000, 24.ª ~15 000, 44.ª BMI ~5 000, Marinha ~10 000 (32.º Ex.) | desconhecido | a definir | ibiblio.org/hyperwar (CMH); en.wikipedia.org/wiki/Battle_of_Okinawa | baixa |
+| M30 | USS Missouri, Baía de Tóquio, 2/9/1945 | sem combate; ~263 navios aliados listados (sem total oficial) | tripulação: desconhecido | a definir | en.wikipedia.org/wiki/Surrender_of_Japan | baixa |
+
+Notas do lote 3: sites oficiais (history.army.mil, usmcu.edu, history.navy.mil) recusaram acesso; só Okinawa (CMH) foi lido em fonte oficial. M22: rendição do castelo a 18/12 (missão diz 16–17/12). M23: Foy 13/1 por confirmar.
+
+## Próximo passo da H8
+Subir a certeza com fontes oficiais/académicas e, para cada missão, decidir os visíveis no desenho da missão (medidos no jogo).
