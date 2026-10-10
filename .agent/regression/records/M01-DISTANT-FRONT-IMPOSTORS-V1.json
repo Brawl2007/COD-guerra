@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "task_id": "M01-DISTANT-FRONT-IMPOSTORS-V1",
+  "accepted_head": "676a4557fcaaad59711e8edcd2f0934f7ad681cf",
+  "status": "ACCEPTED",
+  "obligations": [
+    {
+      "id": "m01-impostors-model",
+      "kind": "test",
+      "check": "node --test tests/m01-impostors.test.js",
+      "reason": "Pins the distant-front impostor model: hand-off at 350 m (exactly one representation), per-nation capacity 128 High / 96 Medium / 64 Low with one draw call per nation, minimum 3 px / 1.7 m silhouettes, distinct postures, sim-clock step phase, minimum contrast against the backdrop, backlight only 05:30-06:40 facing the sun, one InstancedMesh per nation, and the wiring rule that the sim never imports the module."
+    },
+    {
+      "id": "m01-distant-front-impostors-browser",
+      "kind": "browser",
+      "check": "npx playwright test tests/browser/m01-distant-front-impostors.spec.js --workers=1 --retries=0",
+      "reason": "Proves in the built page that soldiers beyond about 350 m are drawn as impostors only on the sightline-free figures (12 Germans per view; the Polish platoon has no sightline from the test views), with the on/off A/B thresholds unchanged, pause freeze (maxDiff 0) and a zero-diff control; later LOD, lighting or water passes must keep it."
+    }
+  ]
+}
