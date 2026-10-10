@@ -1,0 +1,48 @@
+name: M01 Stack Integration T44+T20 V1
+
+on:
+  push:
+    branches: [claude/m01-stack-integration-t44-t20-v1]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-stack-integration-t44-t20-v1-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Authority and lineage check (integration only)
+        run: |
+          set -o pipefail
+          mkdir -p evidence
+          # Base: stack tip b0020cf (T16, T17, T18, T42, T35, T39). The integration must not touch simulation, world, core, missions, assets or build/test config.
+          git diff --exit-code b0020cf HEAD -- src/game src/world src/core missions assets package.json package-lock.json playwright.config.js 2>&1 | tee evidence/authority.log
+          echo "authority diff clean against b0020cf" | tee -a evidence/authority.log
+          # The accepted task heads must be ancestors (merge, not rewrite).
+          for h in b0020cf 3d202ca 7ade323; do git merge-base --is-ancestor $h HEAD; echo "$h is an ancestor of HEAD" | tee -a evidence/authority.log; done
+      - name: npm test (TAP evidence)
+        run: set -o pipefail; npm test -- --test-reporter=tap 2>&1 | tee evidence/npm-test.tap
+      - name: npm run build
+        run: set -o pipefail; npm run build 2>&1 | tee evidence/build.log
+      - run: npx playwright install --with-deps chromium
+      - name: Focused browser specs (T44 grading, T20 impostors, and the stack specs sharing m01-view.js)
+        run: set -o pipefail; npx playwright test tests/browser/m01-postprocess-grading.spec.js tests/browser/m01-distant-front-impostors.spec.js tests/browser/m01-viewmodel-feel.spec.js tests/browser/m01-anim-resolver.spec.js tests/browser/m01-water-vistula.spec.js --workers=1 --retries=0 2>&1 | tee evidence/browser.log
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-stack-integration-t44-t20-v1-${{ github.sha }}
+          path: |
+            evidence/
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
