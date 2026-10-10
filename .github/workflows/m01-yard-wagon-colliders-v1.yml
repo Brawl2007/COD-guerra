@@ -1,0 +1,47 @@
+name: M01 Yard Wagon Colliders V1
+
+on:
+  push:
+    branches: [claude/m01-yard-wagon-colliders-v1]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-yard-wagon-colliders-v1-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Authority check
+        run: |
+          set -o pipefail
+          mkdir -p evidence
+          # Base: 9c459f6. Only src/world, src/render, tests and docs may change; simulation, core, missions, assets and build/test config must not.
+          git diff --exit-code 9c459f6 HEAD -- src/game src/core missions assets package.json package-lock.json playwright.config.js tests/fixtures 2>&1 | tee evidence/authority.log
+          echo "authority diff clean against 9c459f6" | tee -a evidence/authority.log
+      - name: npm test (TAP evidence)
+        run: set -o pipefail; npm test -- --test-reporter=tap 2>&1 | tee evidence/npm-test.tap
+      - name: npm run build
+        run: set -o pipefail; npm run build 2>&1 | tee evidence/build.log
+      - run: npx playwright install --with-deps chromium
+      - name: Browser spec (wagon runtime integration)
+        if: always()
+        run: set -o pipefail; npx playwright test tests/browser/m01-wagon-runtime-integration.spec.js --workers=1 --retries=0 2>&1 | tee evidence/browser.log
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-yard-wagon-colliders-v1-${{ github.sha }}
+          path: |
+            evidence/
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore

@@ -2,6 +2,7 @@ import layout from '../../missions/m01-tczew/map-layout.json' with { type: 'json
 import kit from '../../assets/models/provisional/m01/bridge-colliders.json' with { type: 'json' };
 import { visible } from './spatial.js';
 import {M01_TREES} from './m01-decoration-layout.js';
+import {M01_YARD_WAGON_PLAN,yardWagonFootprint} from './m01-yard-wagon-layout.js';
 
 const xyz=a=>({x:a[0],y:a[1],z:a[2]});
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
@@ -52,7 +53,9 @@ export class TczewWorld {
       box('road_portal_top',[-6.5,8.6,37],[-1.5,12.5,43])];
     this.trees=M01_TREES.map(t=>({...t,y:this.terrainHeightAt(t.x,t.z)}));
     this.treeObstacles=this.trees.map(t=>box(t.id,[t.x-t.radius,t.y,t.z-t.radius],[t.x+t.radius,t.y+t.height*.78,t.z+t.radius],{material:'wood'}));
-    this.obstacles=[...this.colliders.filter(c=>c.collider==='solid'),...this.portals,...this.buildings,...this.covers,...this.treeObstacles];this.revision++;
+    // Drawn yard wagons are solid (movement, shots, LOS, grenades). Not covers: m01-environment draws a crate for every cover.
+    this.wagonObstacles=M01_YARD_WAGON_PLAN.map(w=>{const f=yardWagonFootprint(w,(x,z)=>this.heightAt(x,z));return box(f.id,[f.min.x,f.min.y,f.min.z],[f.max.x,f.max.y,f.max.z],{visual:true,material:'wood'});});
+    this.obstacles=[...this.colliders.filter(c=>c.collider==='solid'),...this.portals,...this.buildings,...this.covers,...this.treeObstacles,...this.wagonObstacles];this.revision++;
   }
   heightAt(x,z){
     let deck=-Infinity;

@@ -1,14 +1,11 @@
 import * as THREE from 'three';
+import {M01_YARD_WAGON_PLAN,M01_YARD_WAGON_SIZE} from '../world/m01-yard-wagon-layout.js';
 import wagonManifest from '../../assets/models/provisional/m01-wagons/manifest.json' with {type:'json'};
 
 const INTACT_BASE='assets/models/provisional/m01-wagons/';
 const DAMAGE_BASE='assets/models/provisional/m01-wagon-damage/';
 
-export const M01_YARD_WAGON_PLAN=Object.freeze([
-  Object.freeze({id:'yard_wagon_1',type:'covered',position:Object.freeze([-320,0,-6]),cover:'cv_wagon_1'}),
-  Object.freeze({id:'yard_wagon_2',type:'open',position:Object.freeze([-340,0,8]),cover:'cv_wagon_2'}),
-  Object.freeze({id:'yard_wagon_3',type:'covered',position:Object.freeze([-352,0,8]),damageKey:'station_wagon_fire'}),
-]);
+export {M01_YARD_WAGON_PLAN};
 
 export const M01_YARD_WAGON_LOD=Object.freeze({
   low:Object.freeze({near:35,mid:140,hysteresis:10}),
@@ -49,7 +46,7 @@ export class M01YardWagons{
     this.slots=M01_YARD_WAGON_PLAN.map(wagon=>{
       const root=new THREE.Group();root.name=wagon.id;root.position.set(...wagon.position);this.group.add(root);
       const fallback=new THREE.Group();fallback.name=`${wagon.id}_fallback`;root.add(fallback);
-      const body=new THREE.Mesh(box,wood);body.position.y=wagon.type==='open'?1.45:2;body.scale.set(2.8,wagon.type==='open'?1.7:3.2,7.86);body.castShadow=body.receiveShadow=true;fallback.add(body);
+      const body=new THREE.Mesh(box,wood);body.position.y=wagon.type==='open'?1.45:2;body.scale.set(M01_YARD_WAGON_SIZE[wagon.type].halfX*2-.1,wagon.type==='open'?1.7:3.2,M01_YARD_WAGON_SIZE[wagon.type].halfZ*2);body.castShadow=body.receiveShadow=true;fallback.add(body);
       for(const z of [-2,2]){const wheel=new THREE.Mesh(cylinder,metal);wheel.position.set(0,.5,z);wheel.rotation.z=Math.PI/2;wheel.scale.set(.5,1.55,.5);wheel.castShadow=wheel.receiveShadow=true;fallback.add(wheel);}
       const fire=new THREE.Sprite(this.fireMaterial);fire.name=`${wagon.id}_fire`;fire.visible=false;fire.scale.set(2.2,3.8,1);root.add(fire);
       return {wagon,root,fallback,model:null,key:null,state:'intact',lod:2,fire};
