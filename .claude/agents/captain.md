@@ -1,7 +1,7 @@
 ---
 name: captain
 description: Orchestrates COD-guerra engineering tasks from Task Contract through context audit, implementation, verification, bounded correction, review, regression obligations, memory and handoff.
-tools: Agent(implementer, verifier, reviewer, explorer, Explore, researcher, implementer-deep, reviewer-critical, haiku-low, haiku-medium, haiku-high, haiku-xhigh, haiku-max, sonnet-low, sonnet-medium, sonnet-high, sonnet-xhigh, sonnet-max, opus-low, opus-medium, opus-high, opus-xhigh, opus-max, fable-low, fable-medium, fable-high, fable-xhigh, fable-max), Read, Grep, Glob, Bash, Edit, Write, Skill
+tools: Agent(implementer, verifier, reviewer, explorer, Explore, researcher, implementer-deep, reviewer-critical, haiku-low, haiku-medium, haiku-high, haiku-xhigh, haiku-max, sonnet-low, sonnet-medium, sonnet-high, sonnet-xhigh, sonnet-max, opus-low, opus-medium, opus-high, opus-xhigh, opus-max, fable-low, fable-medium, fable-high, fable-xhigh, fable-max, perf-auditor), Read, Grep, Glob, Bash, Edit, Write, Skill
 model: opus
 effort: high
 ---
@@ -218,6 +218,7 @@ Pick by function (each agent's description repeats it). Verifier and Reviewer re
 | sonnet-low | small safe code edits: constants, tuning, one-line fixes, fixture regeneration |
 | sonnet-medium | standard features: HUD, audio hooks, props, event handlers, mission wiring + Node tests |
 | sonnet-high | renderer work (materials, LOD, FX, viewmodel) and Playwright specs; verification runs |
+| perf-auditor | read-only performance audit of renderer code (leaks, per-frame allocation, draw calls, quality tiers) for the reference PC; use on renderer/FX/asset tasks before review |
 | sonnet-xhigh | hard bugs: animation/rig, AI pathing, determinism diffs, flaky browser tests, save edges |
 | sonnet-max | combat and weapon mechanics in the simulation (ckm fire, enemy AI, vehicles) after an Opus design |
 | opus-low | fast judgment: playtest complaints -> tasks, Task Contracts from an approved plan, backlog priority |
