@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "task_id": "M01-POSTPROCESS-GRADING-V1",
+  "accepted_head": "4f27f90e265447e8a1cb67dc17310751a045b2e5",
+  "status": "ACCEPTED",
+  "obligations": [
+    {
+      "id": "m01-postprocess-grading-model",
+      "kind": "test",
+      "check": "node --test tests/m01-grading.test.js",
+      "reason": "Pins grade, vignette and AO parameters per phase (dawn), the single-pass composition on Medium/High and Low unchanged (no grade, vignette or AO)."
+    },
+    {
+      "id": "m01-postprocess-grading-browser",
+      "kind": "browser",
+      "check": "npx playwright test tests/browser/m01-postprocess-grading.spec.js --workers=1 --retries=0",
+      "reason": "Proves in the built page that the vignette leaves the centre identical, AO only darkens, mean luminance stays >= 85 % of BEFORE, there is no display-black crush (luma<3), and the same-frame A/B holds with the decal atlas ready (same checksum before/after); later passes must keep it."
+    }
+  ]
+}

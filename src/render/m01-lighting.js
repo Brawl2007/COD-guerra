@@ -67,6 +67,8 @@ function anchorsAt(altDeg){
   }
   const last=ANCHORS[ANCHORS.length-1];return [last,last,0];
 }
+/** Solar altitude (deg) of each phase anchor, by LIGHTING_PHASES id. Read by the colour grade (T44) so both curves turn on the same keys. */
+export const PHASE_ALTITUDES=Object.freeze(Object.fromEntries(ANCHORS.map(a=>[a.id,a.altDeg])));
 /** Nearest anchor by solar altitude. */
 export function phaseAt(altDeg){
   let best=ANCHORS[0];for(const a of ANCHORS)if(Math.abs(a.altDeg-altDeg)<Math.abs(best.altDeg-altDeg))best=a;return best.id;
