@@ -11,7 +11,7 @@ import {actorHitboxes,muzzlePosition} from '../src/world/spatial.js';
 const integratedPresentation=new Set([
  // Simulation presentation additions are checked against immutable per-tick gameplay traces in m01-animation-contract.test.js.
  'src/game/m01-simulation.js',
- // PT05 (D32): yard-wagon colliders change world collision only; gameplay stays locked by the same per-tick golden traces (animation-contract) and 13-route invariants.
+ // PT05 (D33): yard-wagon colliders change world collision only (4-line hunk); gameplay is locked by the per-tick golden traces (animation-contract) and tests/m01-yard-wagon-colliders.test.js.
  'src/world/tczew-world.js',
  'src/core/audio.js','src/game/game.js','src/main.js','src/styles.css',
  'src/render/m01-atmosphere.js','src/render/m01-characters.js','src/render/m01-environment.js','src/render/m01-surfaces.js',
