@@ -100,6 +100,32 @@ class GitSafetyHookTest(unittest.TestCase):
             self.assertEqual(push.returncode, 2)
             self.assertEqual(bash("git status", cwd=d).returncode, 0)
 
+    def test_generated_files_cannot_be_edited_by_hand(self):
+        def edit(tool, path):
+            return run_hook({"tool_name": tool, "tool_input": {"file_path": path}, "cwd": str(REPO)})
+        for tool in ("Edit", "Write", "MultiEdit"):
+            for path in (
+                str(REPO / "dist" / "index.html"),
+                "dist/assets/app.js",
+                str(REPO / "package-lock.json"),
+                "package-lock.json",
+                str(REPO / "node_modules" / "three" / "package.json"),
+                "/home/x/projetos/other/node_modules/vite/index.js",
+            ):
+                r = edit(tool, path)
+                self.assertEqual(r.returncode, 2, f"{tool} {path} should be blocked")
+                self.assertIn("generated file", r.stderr)
+        for path in (
+            str(REPO / "src" / "main.js"),
+            "src/render/dist-fog.js",
+            str(REPO / "docs" / "dist" / "notes.md"),
+            str(REPO / "package.json"),
+        ):
+            self.assertEqual(edit("Edit", path).returncode, 0, f"{path} should be allowed")
+        # npm itself still manages these files through Bash.
+        self.assert_allowed("npm ci")
+        self.assert_allowed("npm run build")
+
 
 if __name__ == "__main__":
     unittest.main()
