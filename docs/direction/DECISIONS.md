@@ -43,6 +43,10 @@ bombas a menos de 30 m e diz que a MG "suprime antes de matar". Fora isso, só s
 no Vístula. A especificação já pede dificuldade que mude comportamento, precisão e recursos de forma legível
 (`docs/PROMPT_MESTRE.txt:1831`). Ver H9.
 
+Terceiro pedido, no mesmo dia: chegar ao nível de **Call of Duty: World at War (2008)** em gráficos, som e
+animações. É uma referência de qualidade, não uma fonte: nada se copia do COD (modelos, sons, mapas, falas).
+Ver H10.
+
 ## Pendentes de decisão humana
 
 - **H1** Que HEAD da V7 está validado (CI integral verde + relatório fechado)? Desbloqueia `BASE`.
@@ -67,3 +71,12 @@ no Vístula. A especificação já pede dificuldade que mude comportamento, prec
   proteção do reparo (04:52–05:30), a mudança de cobertura sob fogo ajustado e o corredor das 06:10–06:45.
   Mudar o dano ou a IA é decisão de jogabilidade com impacto em simulação, saves e testes: precisa de desenho
   (`opus-medium`), comparação A/B e revisão crítica. Proposto ao utilizador; falta a ordem para começar.
+- **H10** (2026-10-10) Meta de qualidade "nível COD WaW" em gráficos, som e animação, pedida pelo utilizador.
+  Caminho já planeado em `docs/M01_FINAL_ROADMAP.md`: animação T07/T08/T35/T36/T37 (hoje os soldados deslizam e
+  cortam entre poses); som T05/T06/T45/T46 (hoje 100 % sintetizado, sem `assets/audio`); materiais, terreno,
+  vegetação e FX nas ondas de ambiente. Para a meta, faltam: (1) **dois níveis de qualidade**, "Alto" (alvo WaW,
+  PC com placa gráfica) e "Chromebook" (mais simples, mesma jogabilidade e simulação); (2) **fontes com licença
+  verificada**: animações de captura de movimento licenciadas, amostras de som reais (CC0/CC-BY ou pacotes
+  royalty-free) e modelos com autoria, escala e licença no manifesto, conforme `AGENTS.md`; (3) qualquer compra
+  só com autorização expressa do utilizador. Avaliação por capturas e escuta no PC forte, não só por testes.
+  Proposto ao utilizador; falta a ordem para começar.

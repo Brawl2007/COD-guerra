@@ -48,6 +48,7 @@ primeiro para o scratchpad os documentos de `docs/` de que ele precisa.
 impacto." Vale para as 30 missões. Detalhe, tarefas da M01 que a servem (T17, T20, T23, T25) e proposta H8
 (escala histórica por missão) em `DECISIONS.md`.
 Segundo pedido: dificuldade e perigo real, com fases difíceis em cada missão (H9).
+Terceiro pedido: gráficos, som e animação ao nível de COD: World at War, sem copiar nada do COD (H10).
 
 ## Handoff mais recente: 2026-10-09 (playtest 1 da M01)
 
