@@ -33,6 +33,16 @@ Consequências para todas as missões (M01–M30):
   T17 (mergulho, Stukas ainda em laço) e T25 (impactos do bombardeio das 05:30). Estas tarefas servem a visão
   e devem subir de prioridade.
 
+Segundo pedido do utilizador, no mesmo dia: "o jogo tem que ter dificuldades… o perigo de morrer a qualquer
+momento, tem que ter fases difíceis de passar, igual a todos os jogos de níveis".
+
+Estado verificado em `claude/m01-viewmodel-feel-v2` (`src/game/m01-simulation.js:585-587`): um tiro alemão que
+passa no jogador só fere com probabilidade 0,20 (0,06 em cobertura) e tira 8 de 100, ou seja, cerca de 13
+ferimentos para morrer. O comentário diz "afinação de protótipo". Não há níveis de dificuldade. O roteiro proíbe
+bombas a menos de 30 m e diz que a MG "suprime antes de matar". Fora isso, só se perde por sair do mapa ou cair
+no Vístula. A especificação já pede dificuldade que mude comportamento, precisão e recursos de forma legível
+(`docs/PROMPT_MESTRE.txt:1831`). Ver H9.
+
 ## Pendentes de decisão humana
 
 - **H1** Que HEAD da V7 está validado (CI integral verde + relatório fechado)? Desbloqueia `BASE`.
@@ -47,3 +57,13 @@ Consequências para todas as missões (M01–M30):
   de pesquisa e documentação, sem código; os números visíveis são medidos no Chromebook antes de aprovar.
   Exemplo M02 (fontes gerais, a confirmar): cerca de 225 000 polacos e 425 000 alemães no Bzura; no jogo,
   150–300 polacos visíveis em vagas e 30–60 alemães perto. Proposto ao utilizador; falta a ordem para começar.
+- **H9** (2026-10-10) Dificuldade e perigo em todas as missões, a pedido do utilizador: (1) níveis de
+  dificuldade (proposta: recruta, soldado, veterano) que mudam precisão, cadência, ferimento por tiro e recursos,
+  sem dar aos inimigos visão através de paredes; (2) perigo real em todo o lado: no nível normal, poucos tiros
+  matam quem fica exposto, e a cobertura e o movimento é que salvam; (3) em cada missão, pelo menos uma ou duas
+  fases difíceis de passar, com checkpoint antes delas; (4) morte justa: o perigo vê-se e ouve-se antes de matar
+  (traçantes, estalos, sirene, aviso do sargento). As regras atuais de justiça (bombas a 30 m ou mais, MG que
+  suprime primeiro) ficam só nos níveis fáceis, ou são revistas. Na M01, as fases candidatas a difíceis são a
+  proteção do reparo (04:52–05:30), a mudança de cobertura sob fogo ajustado e o corredor das 06:10–06:45.
+  Mudar o dano ou a IA é decisão de jogabilidade com impacto em simulação, saves e testes: precisa de desenho
+  (`opus-medium`), comparação A/B e revisão crítica. Proposto ao utilizador; falta a ordem para começar.
