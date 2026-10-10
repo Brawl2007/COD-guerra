@@ -41,13 +41,23 @@ async function loadSnapshot(page,snapshot,quality='high'){
 }
 const yard3=d=>d.m01.yardWagons.wagons.find(w=>w.id==='yard_wagon_3');
 
-test('yard wagon uses real LOD0/1/2 and authoritative burned state survives reload then obeys prior checkpoint',async({page},info)=>{
+// One test used to chain five snapshot loads, a reload, a checkpoint restart and three high-quality software-GL screenshots in one 180 s budget.
+// Nothing hung: on a slow CI runner (CI 38076694111, both attempts, npm test 1.5-2x slower than 38073355306) the cumulative
+// time simply passed 180 s while freezeButton/loadSnapshot were still making progress (the reported line 26 was the first
+// Playwright call to notice the dead deadline). The concerns below are independent (each loadSnapshot forces its own snapshot
+// into a fresh context), so each gets its own budget. Assertions, screenshots, quality and timeouts are unchanged.
+test('yard wagon intact near the player uses real LOD0',async({page},info)=>{
   test.setTimeout(180000);
   await installSnapshotOverride(page);
   const intact=await loadSnapshot(page,nearIntact,'high'),i3=yard3(intact);
   expect(i3).toMatchObject({state:'intact',lod:0,key:'covered:intact:0',fire:false});
   await page.screenshot({path:info.outputPath('BEFORE-yard-wagon-intact-lod0.png'),style:'#pause,#hud,#menu {visibility:hidden!important}',timeout:120000});
+  console.log('M01_WAGON_COUNTERS '+JSON.stringify({near:{yard:intact.m01.yardWagons,train:intact.m01.wagons,total:{drawCalls:intact.drawCalls,triangles:intact.triangles,textures:intact.textures,geometries:intact.geometries}}}));
+});
 
+test('authoritative burned yard wagon state survives reload then obeys prior checkpoint',async({page},info)=>{
+  test.setTimeout(180000);
+  await installSnapshotOverride(page);
   const burned=await loadSnapshot(page,nearBurnedWithIntactCheckpoint,'high'),b3=yard3(burned);
   expect(b3.state).toBe('burned');expect(b3.lod).toBe(0);expect(b3.key).toBe('covered:burned:0');expect(b3.fire).toBe(true);
   expect(burned.m01.smokePuffs).toBeGreaterThan(0);
@@ -58,12 +68,15 @@ test('yard wagon uses real LOD0/1/2 and authoritative burned state survives relo
 
   await freezeButton(page,'#restart-checkpoint');
   const restarted=await page.evaluate(()=>window.gameDiagnostics());expect(yard3(restarted)).toMatchObject({state:'intact',lod:0,fire:false});
+});
 
+test('yard wagon uses real LOD1 at mid distance and LOD2 far away',async({page},info)=>{
+  test.setTimeout(180000);
+  await installSnapshotOverride(page);
   const mid=await loadSnapshot(page,midIntact,'high');expect(yard3(mid).lod).toBe(1);
   const far=await loadSnapshot(page,farIntact,'high');expect(yard3(far).lod).toBe(2);
   await page.screenshot({path:info.outputPath('AFTER-yard-wagon-lod2-far.png'),style:'#pause,#hud,#menu {visibility:hidden!important}',timeout:120000});
-
-  console.log('M01_WAGON_COUNTERS '+JSON.stringify({near:{yard:intact.m01.yardWagons,train:intact.m01.wagons,total:{drawCalls:intact.drawCalls,triangles:intact.triangles,textures:intact.textures,geometries:intact.geometries}},mid:{yard:mid.m01.yardWagons},far:{yard:far.m01.yardWagons}}));
+  console.log('M01_WAGON_COUNTERS '+JSON.stringify({mid:{yard:mid.m01.yardWagons},far:{yard:far.m01.yardWagons}}));
 });
 
 test('total wagon GLB failure keeps train and yard procedural fallbacks visible and semantic state burned',async({page},info)=>{
