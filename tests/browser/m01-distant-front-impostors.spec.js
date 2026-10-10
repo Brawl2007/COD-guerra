@@ -1,7 +1,7 @@
 import {test,expect} from '@playwright/test';
 import fs from 'node:fs';
 import {M01Simulation,seconds} from '../../src/game/m01-simulation.js';
-import {eyePosition} from '../../src/world/spatial.js';
+import {eyePosition,rayBox} from '../../src/world/spatial.js';
 import {projectToScreen} from '../../src/render/m01-demolition.js';
 import {route} from '../helpers/m01-route.js';
 
@@ -19,11 +19,22 @@ import {route} from '../helpers/m01-route.js';
 //    rects, 12 px changed);
 //  - standing in the river (x 37, z 20, y -10) puts the eye at -8 m: the east-bank lip (-5 m at x >= 300) is higher than the head of a man at 1 km, so terrain depth-occludes every
 //    figure and the A/B difference is exactly 0 (correct rendering, not a fair proof).
-// A camera on the west bank at z 20 has a free sightline (each bridge is +-5 m about z 0 and z 40); node check of terrain vs head angle: 30/30 sample positions of the east approach visible.
+// A camera on the west bank at z 20 has a free sightline through the slot between the two bridges (each bridge is +-5 m about z 0 and z 40); the earlier
+// terrain-only node check (30/30 heads of the east approach above the terrain) did not model the bridges: see SIGHTLINE POPULATION below for the real count.
 // ("view 10 / view 12" of the roadmap card are not defined elsewhere in the repo; these are the declared definitions. The Germans at 06:05 hold
 //  the east approach, x 1047..1097, not the bridge deck.)
 // Pixel regions are the EXACT projected footprint of every impostor (floor/ceil of the foot-to-head, centre +- half width rectangle from the
 // instance diagnostics; no padding). The control regions are sky/ground bands containing no impostor and must be pixel-identical on/off.
+// SIGHTLINE POPULATION (CI 38006506690 on 455e325, same cameras): 54 of the 66 in-frame impostors have NO line of sight from either camera: the
+// platoon (pl_east, 18) stands on the road-bridge deck at z 38 inside the truss, the Germans on the spans (de_spans, 10) likewise, and the wings of
+// the east approach (de_east at z < 5 or z > 35) are behind the piers, decks and trusses of the two bridges. Those figures are depth-occluded by
+// the scene (correct rendering: their rects were pixel-identical on/off, maxDiff 0), so with ALL rects in the denominator the changed fraction is
+// capped at 52/300 = 0.17 (view10) and 80/400 = 0.20 (view12) even if every visible pixel changed; the measured 0.12 / 0.185 came from the 12 figures
+// with a free sightline, whose own rects changed 0.71 / 0.93 (mean |dL| 45 / 108, 12/12 rects hit). The pixel assertions (thresholds unchanged) are
+// therefore taken over the figures with a GEOMETRIC sightline from the capture camera, decided from the simulation geometry alone (no pixel is read):
+// the eye-to-figure segments (centre and head) must clear the terrain (world.traceTerrain, which includes the deck slabs), every world obstacle, every
+// bridge collider box and the solid hull between each truss pair. The fresh world (no demolition) is the maximal geometry, so the free set is
+// conservative (a figure seen through open truss members counts as blocked and is only reported). Blocked rects are reported, not asserted.
 // M01_IMPOSTORS_BASELINE=1 only captures (png + diagnostics, '-before' suffix), asserts nothing about the new module and imports none of it,
 // so it can run on the base commit 71ad067 for the BEFORE images.
 const key='cod-guerra:checkpoint:m01:v2',baseline=process.env.M01_IMPOSTORS_BASELINE==='1';
@@ -33,6 +44,8 @@ const CHANGED_DL=16;                    // |dL| (luminance 0..255) at which a pi
 const MIN_IN_VIEW=15,MIN_RECT_HIT=.8;   // impostors inside the frame; fraction of their rects with at least one changed pixel
 const MIN_UNION_CHANGED=.2,MIN_MEAN_ABS=8;   // changed fraction of the union of rects; mean |luminance difference| on vs off over the union (sign-agnostic: the ink is darker than a hazy backdrop and lighter than a dark one, by design)
 const HEIGHT_PX=3,HEIGHT_TOL=.8;        // projected foot-to-head height of an impostor beyond ~290 m
+// Declared from CI 38006506690 on 455e325 (12 figures with a free sightline in each view): the A/B is asserted over at least this many.
+const MIN_FREE_SIGHTLINE=10;
 const first={},free={};
 route(19390901,{support:true,onStep:({sim})=>{
   const at=seconds(CLOCK);
@@ -43,6 +56,29 @@ if(!first[CLOCK])throw new Error('Missing route snapshot at '+CLOCK);
 
 const FOV=70,FOCAL=(720/2)/Math.tan(FOV*Math.PI/360);
 const world=new M01Simulation(19390901).world;
+/** Everything the eye cannot see through: world obstacles (piers, towers, portals, buildings, covers, trees), every bridge collider box (deck slabs,
+ * abutments, truss walls) and the solid hull between each N/S truss pair (the lattice volume). Fresh world = maximal geometry (conservative). */
+function opaqueBoxes(world){
+  const boxes=[...world.obstacles,...world.colliders],pairs=new Map();
+  for(const c of world.colliders){const m=/^(rail|road)_collider_truss_[NS]_(span_\d+)$/.exec(c.id);if(!m)continue;const k=m[1]+'_'+m[2];pairs.set(k,[...(pairs.get(k)??[]),c]);}
+  for(const [k,[a,b]] of pairs)if(b)boxes.push({id:k+'_lattice',min:{x:Math.max(a.min.x,b.min.x),y:Math.min(a.min.y,b.min.y),z:Math.min(a.min.z,b.min.z)},max:{x:Math.min(a.max.x,b.max.x),y:Math.max(a.max.y,b.max.y),z:Math.max(a.max.z,b.max.z)}});
+  return boxes;
+}
+const OPAQUE=opaqueBoxes(world);
+/** First occluder {id,distance} on the segment eye -> target (stopping `margin` m short of the target), or null when the sightline is free. */
+function sightline(eye,target,margin=.5){
+  const d={x:target.x-eye.x,y:target.y-eye.y,z:target.z-eye.z},len=Math.hypot(d.x,d.y,d.z),dir={x:d.x/len,y:d.y/len,z:d.z/len},range=Math.max(0,len-margin);
+  let hit=null;
+  for(const b of OPAQUE){const t=rayBox(eye,dir,b.min,b.max,range);if(t!==null&&(!hit||t<hit.distance))hit={id:b.id,distance:+t.toFixed(1)};}
+  const terrain=world.traceTerrain(eye,dir,range);if(terrain&&(!hit||terrain.distance<hit.distance))hit={id:'terrain',distance:+terrain.distance.toFixed(1)};
+  return hit;
+}
+/** Sightline verdict of one impostor from the capture camera: free when both the centre and the head of the figure are unobstructed. */
+function sightlineOf(camera,item){
+  const eye={x:camera.position[0],y:camera.position[1],z:camera.position[2]},[x,y,z]=item.position;
+  const centre=sightline(eye,{x,y:y+item.heightM/2,z}),head=sightline(eye,{x,y:y+item.heightM,z}),foot=sightline(eye,{x,y:y+.05,z});
+  return {free:!centre&&!head,centre,head,foot};
+}
 const VIEWS=({
   view10:{x:-20,z:20,aim:{x:1060,y:-1.35,z:22}},
   view12:{x:390,z:20,aim:{x:1060,y:-3,z:22}}
@@ -147,11 +183,17 @@ async function measure(browser,info,c){
     player:c.data.player,drawCalls:c.data.drawCalls,triangles:c.data.triangles,lighting:c.data.m01.lighting??null,cropWindow:win,impostors:c.data.m01.impostors??null};
   fs.writeFileSync(info.outputPath(c.name+'-crop4x.png'),await crop4x(browser,c.a,win));
   if(!baseline){
-    const cam=c.camera,items=c.data.m01.impostors.items,rects=items.map(i=>rectOf(cam,i)).filter(Boolean).filter(r=>inFrame(cam,r));
+    const cam=c.camera,items=c.data.m01.impostors.items,byId=new Map(items.map(i=>[i.id,i]));
+    const rects=items.map(i=>rectOf(cam,i)).filter(Boolean).filter(r=>inFrame(cam,r)).map(r=>({...r,sightline:sightlineOf(cam,byId.get(r.id))}));
+    const sighted=rects.filter(r=>r.sightline.free),blocked=rects.filter(r=>!r.sightline.free);
     const top=Math.min(...rects.map(r=>r.y0)),bottom=Math.max(...rects.map(r=>r.y1));
     // Control bands: sky above every figure and a ground band below them (no impostor, no viewmodel at this height).
     const controls={sky:{x0:0,x1:cam.width,y0:0,y1:Math.max(8,top-12)},ground:{x0:0,x1:Math.floor(cam.width*.6),y0:bottom+10,y1:Math.min(cam.height,bottom+10+40)}};
     report.rects=rects;report.controls=controls;report.stats=await analyze(browser,{a:c.a,b:c.off,rects,controls});
+    // The asserted A/B: only the figures with a geometric sightline from this camera (see SIGHTLINE POPULATION above). Blocked ones are evidence only.
+    report.sightline={free:sighted.map(r=>r.id),blocked:blocked.map(r=>({id:r.id,by:(r.sightline.centre??r.sightline.head)?.id??null}))};
+    report.statsSighted=sighted.length?await analyze(browser,{a:c.a,b:c.off,rects:sighted,controls}):null;
+    report.statsBlocked=blocked.length?await analyze(browser,{a:c.a,b:c.off,rects:blocked,controls}):null;
     report.freeze=await analyze(browser,{a:c.a,b:c.b,rects,controls});
     report.drawCallsOff=c.offDiag.drawCalls;report.trianglesOff=c.offDiag.triangles;
     fs.writeFileSync(info.outputPath(c.name+'-impostors-off-crop4x.png'),await crop4x(browser,c.off,win));
@@ -185,12 +227,14 @@ for(const view of ['view10','view12'])test(`${view} ${CLOCK}: distant front silh
   expect(rects.length,`impostors inside the frame (${rects.length})`).toBeGreaterThanOrEqual(MIN_IN_VIEW);
   const heights=rects.map(q=>q.heightPx),mean=heights.reduce((x,y)=>x+y,0)/heights.length;
   expect(Math.abs(mean-HEIGHT_PX),`mean projected silhouette height ${mean.toFixed(2)} px (min ${Math.min(...heights)}, max ${Math.max(...heights)})`).toBeLessThanOrEqual(HEIGHT_TOL);
-  // Fair A/B: control bands identical, impostor rects changed.
+  // Fair A/B: control bands identical; the rects of the figures with a free sightline from this camera changed (blocked ones: evidence only).
   for(const [k,v] of Object.entries(s.control)){expect(v.pixels,`control ${k} has pixels`).toBeGreaterThan(500);expect(v.maxDiff,`control ${k} is pixel-identical with the impostors on and off (${JSON.stringify(v)})`).toBe(0);}
-  expect(s.union.changed,`changed fraction of the impostor rects (${JSON.stringify(s.union)})`).toBeGreaterThanOrEqual(MIN_UNION_CHANGED);
-  expect(s.union.meanAbs,`impostors change the rects by a mean |dL| of at least ${MIN_MEAN_ABS} (off ${s.union.meanB.toFixed(1)}, on ${s.union.meanA.toFixed(1)}; signed ${(s.union.meanB-s.union.meanA).toFixed(1)})`).toBeGreaterThanOrEqual(MIN_MEAN_ABS);
-  const hit=s.each.filter(e=>e.changedPixels>=1).length/s.each.length;
-  expect(hit,`${s.each.filter(e=>e.changedPixels>=1).length} of ${s.each.length} impostor rects changed`).toBeGreaterThanOrEqual(MIN_RECT_HIT);
+  expect(r.sightline.free.length,`impostors with a free sightline (${r.sightline.free.length} of ${rects.length} in frame; blocked by ${JSON.stringify([...new Set(r.sightline.blocked.map(b=>b.by))])})`).toBeGreaterThanOrEqual(MIN_FREE_SIGHTLINE);
+  const f=r.statsSighted;
+  expect(f.union.changed,`changed fraction of the sighted impostor rects (${JSON.stringify(f.union)}; all rects ${JSON.stringify(s.union)})`).toBeGreaterThanOrEqual(MIN_UNION_CHANGED);
+  expect(f.union.meanAbs,`impostors change the sighted rects by a mean |dL| of at least ${MIN_MEAN_ABS} (off ${f.union.meanB.toFixed(1)}, on ${f.union.meanA.toFixed(1)}; signed ${(f.union.meanB-f.union.meanA).toFixed(1)})`).toBeGreaterThanOrEqual(MIN_MEAN_ABS);
+  const hit=f.each.filter(e=>e.changedPixels>=1).length/f.each.length;
+  expect(hit,`${f.each.filter(e=>e.changedPixels>=1).length} of ${f.each.length} sighted impostor rects changed`).toBeGreaterThanOrEqual(MIN_RECT_HIT);
   // Cost: two extra meshes at most (the off side restores the procedural bodies of the same actors).
   expect(r.drawCalls-r.drawCallsOff,`draw calls on ${r.drawCalls} off ${r.drawCallsOff}`).toBeLessThanOrEqual(2);
 });
@@ -203,7 +247,8 @@ test('Low quality: capacity 64 per nation, still one draw call per nation',async
   expect(r.quality).toBe('low');expect(d.capacity).toBe(64);expect(d.drawCalls).toBe(2);expect(d.count.de).toBeLessThanOrEqual(64);expect(d.count.pl).toBeLessThanOrEqual(64);
   expect(d.total).toBeGreaterThan(20);
   expect(r.stats.control.sky.maxDiff).toBe(0);
-  expect(r.stats.union.changed,`Low: impostors visible (${JSON.stringify(r.stats.union)})`).toBeGreaterThanOrEqual(MIN_UNION_CHANGED);
+  expect(r.sightline.free.length,`Low: impostors with a free sightline (${r.sightline.free.length} of ${r.rects.length} in frame)`).toBeGreaterThanOrEqual(MIN_FREE_SIGHTLINE);
+  expect(r.statsSighted.union.changed,`Low: sighted impostors visible (${JSON.stringify(r.statsSighted.union)}; all rects ${JSON.stringify(r.stats.union)})`).toBeGreaterThanOrEqual(MIN_UNION_CHANGED);
 });
 
 test('summary',async({},info)=>{
