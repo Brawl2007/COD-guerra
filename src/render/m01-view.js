@@ -3,6 +3,7 @@ import { AssetManager } from '../assets/asset-manager.js';
 import manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with {type:'json'};
 import { eyePosition, aimDirection } from '../world/spatial.js';
 import { roundPoint } from '../game/m01-fire.js';
+import { DISPLAY_FLASH_SEC, DISPLAY_TRACER_CAP } from '../game/m01-display-fire.js';
 import { m01StukaPosition, m01StukaSince, m01StukaPathTime, m01StukaActive, m01RaidPlanePosition, m01RaidSince, m01RaidPlaneActive, M01_STUKA_DIVE_FROM, M01_STUKA_DIVE_TO } from '../world/m01-aircraft-path.js';
 import { actorPose } from './m01-actor-pose.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
@@ -32,6 +33,7 @@ import {isDemolitionDamage,collapseTwinName,collapseDamageId,collapseSeed,collap
 
 export const M01_BATTLEFIELD_FX_LIMITS=Object.freeze({bursts:16,flash:16,core:48,fire:96,smoke:128,dust:128,shards:96,lights:1});
 const FX_DENSITY={low:.55,medium:.78,high:1};
+const NO_DISPLAY_FIRE=Object.freeze({rounds:Object.freeze([]),firedAt:Object.freeze({})});
 const BOMB_NOSE=new THREE.Vector3(0,0,-1);
 const fxSeed=(p,clock)=>((Math.floor((p.x+2048)*73)^Math.floor(((p.y??0)+128)*151)^Math.floor((p.z+2048)*197)^Math.floor(clock*1000))>>>0);
 const fxCount=(n,quality)=>Math.max(1,Math.round(n*(FX_DENSITY[quality]??FX_DENSITY.low)));
@@ -327,11 +329,28 @@ export class M01View {
           Math.max(.22,d*.0065)*(.55+k*.95)*(1-k*k),null,.60*Math.pow(1-k,1.15),'#b9b8ae',seed,4);
       }
     }
-    for(const r of sim.enemyFire.rounds){
-      const t=(time-r.firedAt)/(r.arriveAt-r.firedAt);if(!r.tracer||t<0||t>1)continue;
+    // Display fire (T22) is visual only: the simulation never marks its shooters as firing, so the flash window comes from display.firedAt.
+    // A gameplay shot in the last 0.25 s (enemy flash above) already shows a flash at that muzzle, so it is not drawn twice.
+    const display=sim.displayFire??NO_DISPLAY_FIRE;
+    for(const a of sim.actors){
+      const at=display.firedAt[a.id],age=time-at;
+      if(at===undefined||!a.alive||!a.active||!(age>=0&&age<DISPLAY_FLASH_SEC)||a.team==='enemy'&&(a.shot>0||time-(a.firedAt??-1e9)<.25))continue;
+      const pose=actorPose(a,time);root.position.set(a.x,a.y+pose.root.offsetY,a.z);
+      root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
+      muzzle.fromArray(pose.rifle.muzzle);muzzle.y-=pose.root.pivotY;muzzle.applyMatrix4(root.matrix);
+      const skinnedMuzzle=this.characters?.muzzle(a.id);if(skinnedMuzzle)muzzle.copy(skinnedMuzzle);
+      const p={x:muzzle.x,y:muzzle.y,z:muzzle.z},d=far(p);
+      put('muzzle',p,Math.max(.12,d*.008)*(.8+.2*Math.sin(time*90)));
+    }
+    const tracer=r=>{
+      const t=(time-r.firedAt)/(r.arriveAt-r.firedAt);if(!r.tracer||t<0||t>1)return;
       const p=roundPoint(r,t),q=roundPoint(r,Math.min(1.02,t+.01)),len=Math.hypot(q.x-p.x,q.y-p.y,q.z-p.z)||1,d=far(p);
       put('tracer',p,[Math.max(.025,d*.0016),Math.max(.025,d*.0016),Math.max(.6,d*.012)],{x:(q.x-p.x)/len,y:(q.y-p.y)/len,z:(q.z-p.z)/len});
-    }
+    };
+    for(const r of sim.enemyFire.rounds)tracer(r);
+    // Second loop, after the gameplay tracers: they keep priority in the 48-instance batch and display fire takes at most DISPLAY_TRACER_CAP of what is left.
+    const gameplayTracers=counts.tracer;
+    for(const r of display.rounds){if(counts.tracer-gameplayTracers>=DISPLAY_TRACER_CAP)break;tracer(r);}
     this.impacts=this.impacts.filter(i=>{const p=impactProfile(i.material);return time>=i.start&&time-i.start<Math.max(1.15,p.life);});
     for(const i of this.impacts){
       const age=time-i.start,d=far(i),seed=i.seed,quality=this.owner.quality,profile=impactProfile(i.material);
