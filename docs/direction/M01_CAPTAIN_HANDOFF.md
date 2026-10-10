@@ -13,6 +13,12 @@
 - **T39 `M01-VIEWMODEL-FEEL-V2` ACCEPTED** at `29ba3cf` on `claude/m01-viewmodel-feel-v2` (stacked on 304b90f). CI 38045111352: npm test 574/574, browser 9/9. Follow-up: near-wall lowered pose shows big sleeve + hand through open sleeve (T40). Jev 3/100.
 - T44: fable-high attempt 4 = spec-only fix (decal atlas race; crushed-blacks metric <10 -> <3), in verification. T20 queued for fable-high. PT05 diagnosis saved at v7-cert .agent/runs/PT05-COLLIDERS-PREP/DIAGNOSIS.md (yard wagons without colliders = gameplay task, reviewer-critical).
 - Current stack tip: `claude/m01-viewmodel-feel-v2` (T39 docs commit on top of 29ba3cf). New tasks branch from that tip.
+- T44: attempt 4 (fable-high) spec-only fix committed `4f27f90`, verifier PASS, reviewer ACCEPT; CI 38045943911 pending at handoff time (check `gh run view 38045943911`). If green: docs closeout (evidence README, status ACEITE, D-entry, regression record) on branch `claude/m01-postprocess-grading-v1` (base 71ad067 = NOT on current stack; integrate later).
+- T20: attempt 4 (fable-high) spec-only fix committed `676a455` (sightline oracle; Polish platoon has no pixel proof from the declared views — limitation to state in evidence), verifier PASS, reviewer ACCEPT, Jev risk medium 0.72 (call 4/100); CI 38047289527 pending. If green: docs closeout on `claude/m01-distant-front-impostors-v1` (base 71ad067).
+- If either CI fails: attempt 5/5 is the last (budget raised by user); then BLOCKED -> PENDENTE HUMANO.
+- Next new task: PT05 yard-wagon colliders (gameplay; contract + opus design + reviewer-critical), branch from stack tip `3388c24` (`claude/m01-viewmodel-feel-v2`).
+- **T44 ACCEPTED** `4f27f90` (docs `3d202ca`), CI 38045943911 green. **T20 ACCEPTED** `676a455` (docs `7ade323`), CI 38047289527 green. Both branches are based on 71ad067 (OFF the stack) -> D25: integrate into the stack in a dedicated task (rebase/merge + CI). Recorded D23-D25 + status rows on stack tip.
+- Accepted this session: T35, T39, T44, T20. Jev 4/100.
 - Next after T39 (rule ranking, Captain decision): PT05 colliders (playtest item 5; diagnose first; if src/world → gameplay task with reviewer-critical), then T08 clip library (crouch_walk/sprint missing in GLB), T06, T27, T26, T10, PT10 German LOD, T43.
 
 ## 0. Instructions for Claude (read first)
