@@ -8,13 +8,14 @@ import {M01Simulation,seconds} from '../src/game/m01-simulation.js';
 import {M01View} from '../src/render/m01-view.js';
 import {validRound} from '../src/game/m01-fire.js';
 import {DISPLAY_CAP,DISPLAY_TRACER_CAP,DISPLAY_FLASH_SEC,DISPLAY_SEED_XOR,READOUT_WINDOW_SEC,createDisplayFire,displaySeed,displayProfiles,
-  normalizeDisplayProfile,updateDisplayFire} from '../src/game/m01-display-fire.js';
+  displayFireView,normalizeDisplayProfile,updateDisplayFire} from '../src/game/m01-display-fire.js';
 import {route,driver,toRepair} from './helpers/m01-route.js';
 import {compareContinuation,firstDifference,json} from './helpers/m01-determinism.js';
 
-// T22 M01-BATTLE-READOUT-DISPLAY-ROUNDS-V1. Display fire is plumbing: no mission data uses it yet, so every behaviour test injects a synthetic
-// profile (sim.display.profiles). The proofs that matter are isolation ones: with display fire running the main RNG stream, every actor,
-// the player, enemyFire, flags and events stay equal to a simulation without it. The golden fixture (m01-animation-contract) covers the default.
+// T22 M01-BATTLE-READOUT-DISPLAY-ROUNDS-V1, extended by T23 (the east front is visible: the mission data now carries the real profiles).
+// The behaviour tests inject synthetic profiles (sim.display.profiles) and compare with a simulation whose list is EMPTY (`profiledClass([])`), since
+// a plain simulation now carries the real profiles. The proofs that matter are isolation ones: with display fire running (real + synthetic profiles)
+// the main RNG stream, every actor, the player, enemyFire, flags and events stay equal to a simulation without it.
 // The twelve `route seed N` tests each run a full route (about 80 s on a slow aarch64 board). Environment switches:
 //   M01_DISPLAY_FIRE_SEEDS=19390901,1,2   run only these seeds (default: 19390901 and 1..11)
 //   M01_DISPLAY_FIRE_REPORT=<file>        write the per-seed sweep (RNG stream hashes, window and round counts) as JSON
@@ -40,15 +41,18 @@ const SYNTH=[
     targetBox:[995,1045,-5,45]},
   {id:'dp_test_train',origin:[1119,3.5,20],weapon:'pz7_75mm',rounds:[1,1],intervalSec:[6,12],tracerEvery:1,targetBox:[995,1045,-5,45],from:E('panzerzug_arrives')},
 ].map(norm);
-const OWNER=new Map(SYNTH.flatMap(p=>(p.shooters??[p.id]).map(who=>[who,p.id])));
+const REAL=displayProfiles(definition),ALL=[...REAL,...SYNTH];   // the mission's east-front profiles plus the adversarial synthetic ones, shooters distinct
+const OWNER=new Map(ALL.flatMap(p=>(p.shooters??[p.id]).map(who=>[who,p.id])));
 /** A simulation whose display list carries the given profiles (the data is assigned after reset, which is the injection seam). */
 const profiledClass=profiles=>class extends M01Simulation{reset(seed){super.reset(seed);this.display.profiles=profiles;}};
 
 // ---------------------------------------------------------------- data and validation
-test('mission data carries no display profiles yet, so the default simulation has none',()=>{
-  assert.deepEqual(displayProfiles(definition),[]);
-  assert.ok(!definition.groups.some(g=>g.displayFire!==undefined));
-  assert.deepEqual(new M01Simulation(1).display.profiles,[]);
+test('mission data carries the T23 east-front profiles; the simulation starts with them, validated against its own roster',()=>{
+  const sim=new M01Simulation(1),profiles=displayProfiles(definition,{actors:sim.actors});
+  assert.deepEqual(profiles.map(p=>p.id),['dp_east_pl_ckm','dp_east_pl_rifles','dp_east_de_mg','dp_east_panzerzug']);
+  assert.deepEqual(displayProfiles(definition).map(p=>p.id),profiles.map(p=>p.id),'the roster check only adds checks');
+  assert.deepEqual(sim.display.profiles,profiles);assert.ok(profiles.every(p=>Object.isFrozen(p)&&p.classification==='RECONSTRUCTED'));
+  assert.deepEqual(sim.displayFire,{rounds:[],firedAt:{},fixed:{},skipped:0,nextId:0});
 });
 
 test('profiles are validated, defaulted and frozen; malformed authoring data is rejected',()=>{
@@ -66,12 +70,28 @@ test('profiles are validated, defaulted and frozen; malformed authoring data is 
 });
 
 test('displayProfiles reads groups[].displayFire, checks event ids and rejects duplicate ids',()=>{
-  const withProfile=(...profiles)=>({...definition,groups:definition.groups.map(g=>g.id==='grp_de_east'?{...g,displayFire:profiles}:g)});
+  const withProfile=(...profiles)=>({...definition,groups:definition.groups.map(g=>({...g,displayFire:g.id==='grp_de_east'?profiles:undefined}))});
   const raw={id:'p1',shooters:['de_east_14'],weapon:'mg34',rounds:[4,7],intervalSec:[7,15],tracerEvery:1,targetGroup:'grp_east_platoon',from:E('train963_arrives'),until:E('east_platoon_withdraws')};
   const read=displayProfiles(withProfile(raw));
   assert.equal(read.length,1);assert.equal(read[0].id,'p1');assert.ok(Object.isFrozen(read[0]));
   assert.throws(()=>displayProfiles(withProfile({...raw,from:'evt_m01_typo'})),/displayFire/);
   assert.throws(()=>displayProfiles(withProfile(raw,raw)),/duplicate/);
+});
+
+test('displayProfiles checks shooter ids, target ids and target groups against the roster and the mission groups: a typo fails',()=>{
+  const sim=new M01Simulation(1),actors=sim.actors;
+  const withProfile=(...profiles)=>({...definition,groups:definition.groups.map(g=>({...g,displayFire:g.id==='grp_de_east'?profiles:undefined}))});
+  const raw={id:'p1',shooters:['de_east_16','pl_east_3'],weapon:'mg34',rounds:[4,7],intervalSec:[7,15],tracerEvery:1,targetGroup:'grp_east_platoon',from:E('train963_arrives')};
+  assert.equal(displayProfiles(withProfile(raw),{actors}).length,1);
+  const typos=[{shooters:['de_east_40']},{shooters:['pl_east_24']},{shooters:['de_east_x']},{shooters:['Marek_zielinski']},{shooters:['de_east_16','de_east_16']},
+    {targetGroup:'grp_east_platon'},{targetGroup:'grp_squad'},{targetGroup:undefined,targetIds:['pl_east_30']},{targetGroup:undefined,targetBox:[0,1,0,1],shooters:undefined,origin:[0,0,0],id:'de_east_5'}];
+  for(const t of typos)assert.throws(()=>displayProfiles(withProfile({...raw,...t}),{actors}),/displayFire/,JSON.stringify(t));
+  // the group typo is caught by the mission data alone; shooter and id typos need the roster the simulation passes in
+  assert.throws(()=>displayProfiles(withProfile({...raw,targetGroup:'grp_east_platon'})),/unknown target group/);
+  assert.equal(displayProfiles(withProfile({...raw,shooters:['de_east_40']})).length,1,'without a roster only the data is checked');
+  // unknown keys are rejected instead of being dropped silently (fire:'east_only' would have no effect)
+  for(const extra of [{fire:'east_only'},{targetgroup:'grp_east_platoon'},{classification:''},{note:7}])assert.throws(()=>norm({...raw,...extra}),/displayFire/,JSON.stringify(extra));
+  assert.equal(norm({...raw,classification:'RECONSTRUCTED',note:'x',fire:undefined}).classification,'RECONSTRUCTED');
 });
 
 test('the display RNG is a separate stream: construction mixes only the seed, restore also mixes the clock tick',()=>{
@@ -166,6 +186,18 @@ test('targets: living members of a group, listed ids or a box; no living target 
   assert.ok(Object.hasOwn(train.display.firedAt,'train'));
 });
 
+test('a fixed origin publishes its latest shot in display.fixed for the renderer; actor shooters publish nothing there',()=>{
+  const train={id:'train',origin:[1119,3,2.5],weapon:'pz7_75mm',rounds:[1,1],intervalSec:[1,2],targetBox:[1000,1040,0,40]};
+  const b=bench([train,{...MG,from:'evt_go'}]);b.events.add('evt_go');b.run(20);
+  const shot=b.display.fixed.train;assert.deepEqual(Object.keys(b.display.fixed),['train']);
+  assert.deepEqual(Object.keys(shot).sort(),['arriveAt','ax','ay','az','firedAt','ox','oy','oz','weapon']);
+  assert.deepEqual([shot.ox,shot.oy,shot.oz,shot.weapon],[1119,3,2.5,'pz7_75mm']);
+  assert.ok(shot.ax>=1000&&shot.ax<=1040&&shot.az>=0&&shot.az<=40&&shot.arriveAt>shot.firedAt&&shot.firedAt===b.display.firedAt.train);
+  const latest=[...b.seen.values()].filter(r=>r.by==='train').at(-1);assert.deepEqual([shot.ax,shot.ay,shot.az,shot.arriveAt],[latest.ax,latest.ay,latest.az,latest.arriveAt]);
+  const view=displayFireView(b.display);assert.deepEqual(view.fixed,b.display.fixed);view.fixed.train.ox=0;assert.equal(b.display.fixed.train.ox,1119,'a copy');
+  assert.deepEqual(displayFireView(bench([MG]).run(10).display).fixed,{},'no origin profile, nothing published');
+});
+
 test('the display stream is deterministic per seed, differs between seeds, and an empty profile list never draws',()=>{
   const run=seed=>JSON.stringify(bench([MG],{seed}).run(60).display.rounds);
   assert.equal(run(1234),run(1234));assert.notEqual(run(1234),run(4321));
@@ -202,8 +234,12 @@ test('the module cannot reach the main RNG, the world trace, events or the clock
 
 // ---------------------------------------------------------------- the simulation
 test('without profiles nothing is drawn and nothing is saved; the getters leave the simulation untouched',()=>{
-  const s=new M01Simulation(19390901);s.tick(.05,{skip:true});for(let i=0;i<300;i++)s.tick(.05,{});
-  assert.deepEqual(s.displayFire,{rounds:[],firedAt:{},skipped:0,nextId:0});
+  const s=new (profiledClass([]))(19390901);s.tick(.05,{skip:true});for(let i=0;i<300;i++)s.tick(.05,{});
+  assert.deepEqual(s.displayFire,{rounds:[],firedAt:{},fixed:{},skipped:0,nextId:0});
+  // the real profiles are closed before the train arrives: the default simulation draws nothing either, and never touches the display stream
+  const real=new M01Simulation(19390901);real.tick(.05,{skip:true});const stream=real.display.rng.state;for(let i=0;i<300;i++)real.tick(.05,{});
+  assert.equal(real.display.profiles.length,4);assert.deepEqual(real.displayFire,{rounds:[],firedAt:{},fixed:{},skipped:0,nextId:0});
+  assert.equal(real.display.rng.state,stream,'a closed profile draws nothing');
   const before=JSON.stringify(s.snapshot()),rng=s.rng.state,displayRng=s.display.rng.state;
   void s.displayFire;void s.battleReadout;
   assert.equal(JSON.stringify(s.snapshot()),before);assert.equal(s.rng.state,rng);assert.equal(s.display.rng.state,displayRng);
@@ -237,15 +273,15 @@ test('battleReadout is computed on every read from existing state, with the desi
   assert.equal(s.battleReadout.sectors.s2_east_bridgehead.shooters,0);assert.equal(s.battleReadout.flags.train963,false);
   s.consume(E('train963_arrives'));
   const east=()=>s.battleReadout.sectors.s2_east_bridgehead;
-  assert.equal(s.battleReadout.flags.train963,true);assert.equal(east().shooters,40);assert.equal(east().casualties,0);assert.equal(east().lastFireAt,null);assert.equal(east().intensity,0);
+  assert.equal(s.battleReadout.flags.train963,true);assert.equal(east().shooters,64,'40 Germans and, since T23, the 24 Poles who stand from the train\'s arrival');assert.equal(east().casualties,0);assert.equal(east().lastFireAt,null);assert.equal(east().intensity,0);
   Object.assign(s.actor('de_east_3'),{alive:false,health:0,state:'DOWN'});
-  assert.equal(east().shooters,39);assert.equal(east().casualties,1);
+  assert.equal(east().shooters,63);assert.equal(east().casualties,1);
   for(let i=4;i<14;i++)s.actor(`de_east_${i}`).firedAt=s.clock-5;   // gameplay shots 5 s ago
   s.actor('de_east_3').firedAt=s.clock-1;                            // the dead man's last shot still counts for lastFireAt, not for intensity
-  assert.equal(east().lastFireAt,s.clock-1);assert.equal(east().intensity,10/39);
+  assert.equal(east().lastFireAt,s.clock-1);assert.equal(east().intensity,10/63);
   s.display.firedAt.de_east_20=s.clock-2;s.display.firedAt.de_east_4=s.clock-3;   // a display shot adds a shooter, a second shot by a counted man does not
-  assert.equal(east().intensity,11/39);assert.equal(east().lastFireAt,s.clock-1);
-  s.actor('de_east_21').firedAt=s.clock-READOUT_WINDOW_SEC-1;assert.equal(east().intensity,11/39,'older than the window is not recent');
+  assert.equal(east().intensity,11/63);assert.equal(east().lastFireAt,s.clock-1);
+  s.actor('de_east_21').firedAt=s.clock-READOUT_WINDOW_SEC-1;assert.equal(east().intensity,11/63,'older than the window is not recent');
   assert.equal(s.battleReadout.sectors.s4_north_perimeter.shooters,0);assert.equal(s.battleReadout.sectors.s4_north_perimeter.intensity,0);
   // the yard's only mapped man is a civilian railway worker: not a shooter; a fallen one still counts as a casualty
   const worker=s.actor('franciszek_lipski');assert.equal(worker.civilian,true);assert.equal(s.battleReadout.sectors.s3_station_yard.shooters,0);
@@ -256,7 +292,7 @@ test('battleReadout is computed on every read from existing state, with the desi
 });
 
 test('a restore starts an empty display list re-seeded from the saved state; display fire never changes a save or its continuation',()=>{
-  const a=new (profiledClass(SYNTH))(19390901),plain=new M01Simulation(19390901);
+  const a=new (profiledClass(SYNTH))(19390901),plain=new (profiledClass([]))(19390901);
   for(const s of [a,plain])s.tick(.05,{skip:true});
   for(let i=0;i<800&&(i<600||a.display.rounds.length===0);i++)for(const s of [a,plain]){s.tick(.05,{});s.drainEvents();}
   assert.ok(a.display.nextId>0&&a.display.rounds.length>0,'rounds were in flight when the save was taken');
@@ -264,9 +300,10 @@ test('a restore starts an empty display list re-seeded from the saved state; dis
   assert.ok(!keysOf(save).some(k=>/display/i.test(k)));
   const r1=new M01Simulation(1),r2=new M01Simulation(2),r3=new M01Simulation(3);for(const r of [r1,r2,r3])r.restoreSnapshot(json(save));
   const seed=(save.rng^0x5bd1e995^Math.floor(save.clock*20))>>>0;
-  for(const r of [r1,r2,r3]){assert.equal(r.display.rng.state,seed);assert.deepEqual(r.displayFire,{rounds:[],firedAt:{},skipped:0,nextId:0});assert.equal(r.rng.state,save.rng);assert.deepEqual(r.display.profiles,[]);}
+  for(const r of [r1,r2,r3]){assert.equal(r.display.rng.state,seed);assert.deepEqual(r.displayFire,{rounds:[],firedAt:{},fixed:{},skipped:0,nextId:0});assert.equal(r.rng.state,save.rng);
+    assert.deepEqual(r.display.profiles,displayProfiles(definition,{actors:r.actors}),'a restore re-reads the mission profiles');}
   assert.notEqual(seed,displaySeed(save.rng));
-  r1.display.profiles=r2.display.profiles=SYNTH;
+  r1.display.profiles=r2.display.profiles=SYNTH;r3.display.profiles=[];
   for(let i=0;i<400;i++)for(const r of [r1,r2,r3]){r.tick(.05,{});r.drainEvents();}
   assert.ok(r1.display.nextId>0);assert.equal(JSON.stringify(r1.displayFire),JSON.stringify(r2.displayFire),'same save, same profile: same display stream');
   assert.equal(r1.display.rng.state,r2.display.rng.state);
@@ -280,7 +317,7 @@ test('a flood of display rounds, including rounds flying straight over the playe
     {id:'dp_flood_far',shooters:cast,weapon:'mg34',rounds:[7,7],intervalSec:[.05,.1],tracerEvery:2,targetBox:[1500,1600,0,40]},
     {id:'dp_over_player',shooters:['marek_zielinski'],weapon:'kar98k',rounds:[3,3],intervalSec:[.2,.4],tracerEvery:1,targetIds:['szymon_kowal','leon_dudek'],cone:[0,0],bias:[0,0]},
   ].map(norm);
-  const plain=new M01Simulation(19390901),flooded=new (profiledClass(flood))(19390901);let max=0,compared=0;
+  const plain=new (profiledClass([]))(19390901),flooded=new (profiledClass(flood))(19390901);let max=0,compared=0;
   for(let tick=0;tick<800;tick++){
     const controls=tick===0?{skip:true}:{forward:tick%300<80?1:0,lookX:tick%300===0?40:0,crouch:tick===500};
     plain.tick(.05,controls);flooded.tick(.05,json(controls));max=Math.max(max,flooded.display.rounds.length);
@@ -298,7 +335,7 @@ test('a flood of display rounds, including rounds flying straight over the playe
 test('positive control: the lockstep comparison detects a display round that leaks into the RNG, an actor or the events',()=>{
   // The same per-tick comparison as the route tests, run against deliberately leaking simulations. Without this the isolation proofs could be vacuous.
   const diverges=Leaky=>{
-    const plain=new M01Simulation(19390901),leaky=new Leaky(19390901);
+    const plain=new (profiledClass([]))(19390901),leaky=new Leaky(19390901);
     for(let tick=0;tick<900;tick++){
       const controls=tick===0?{skip:true}:{};plain.tick(.05,controls);leaky.tick(.05,controls);
       if(leaky.rng.state!==plain.rng.state)return `rng at tick ${tick}`;
@@ -321,7 +358,7 @@ test('compareContinuation at 04:47 passes, also with display fire running in the
   const d=toRepair(driver(19390901));d.until(()=>d.sim.battleClock>=seconds('04:47:00'),120);
   const save=d.sim.snapshot();
   const plain=new M01Simulation(1),shown=new M01Simulation(2);plain.restoreSnapshot(json(save));shown.restoreSnapshot(json(save));
-  shown.display.profiles=SYNTH;
+  plain.display.profiles=[];shown.display.profiles=SYNTH;   // a restored simulation carries the real profiles, which are open at 04:47
   const quiet=compareContinuation(plain,{label:'04:47 without display fire',ticks:200});
   const loud=compareContinuation(shown,{label:'04:47 with display fire in the original only',ticks:200});
   assert.equal(quiet.firstDivergence,null);assert.equal(loud.firstDivergence,null);
@@ -331,15 +368,15 @@ test('compareContinuation at 04:47 passes, also with display fire running in the
 });
 
 // ---------------------------------------------------------------- the whole route, 12 seeds
-for(const seed of SEEDS)test(`route seed ${seed}: main RNG, events and state equal a plain simulation every tick with display fire running`,()=>{
-  const shadow=new M01Simulation(seed),buf=Buffer.alloc(4),rngProfiled=createHash('sha256'),rngPlain=createHash('sha256'),game=createHash('sha256');
+for(const seed of SEEDS)test(`route seed ${seed}: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running`,()=>{
+  const shadow=new (profiledClass([]))(seed),buf=Buffer.alloc(4),rngProfiled=createHash('sha256'),rngPlain=createHash('sha256'),game=createHash('sha256');
   const stats={seed,ticks:0,windowStart:null,windowTicks:0,fullSnapshotCompares:0,maxInFlight:0,displayRounds:0,tracerRounds:0,skipped:0,byProfile:{}};
   let counted=0;
   const compare=(sim,label)=>{
     const a=JSON.stringify(sim.snapshot(false)),b=JSON.stringify(shadow.snapshot(false));stats.fullSnapshotCompares++;
     if(a!==b)assert.fail(JSON.stringify({label,seed,tick:stats.ticks,difference:firstDifference(JSON.parse(a),JSON.parse(b))}));
   };
-  const result=route(seed,{Simulation:profiledClass(SYNTH),onStep:({sim,controls,events,dt})=>{
+  const result=route(seed,{Simulation:profiledClass(ALL),onStep:({sim,controls,events,dt})=>{
     stats.ticks++;
     shadow.tick(dt,json(controls));const plainEvents=shadow.drainEvents();
     buf.writeUInt32LE(sim.rng.state>>>0);rngProfiled.update(buf);buf.writeUInt32LE(shadow.rng.state>>>0);rngPlain.update(buf);
@@ -366,7 +403,7 @@ for(const seed of SEEDS)test(`route seed ${seed}: main RNG, events and state equ
   // not vacuous: display fire ran from every profile, with tracers, flashes and a full 4000-tick comparison window under German fire
   stats.skipped=sim.display.skipped;
   assert.equal(stats.windowTicks,4000);assert.ok(stats.windowStart>0);assert.ok(stats.displayRounds>200&&stats.tracerRounds>50&&stats.maxInFlight>10,JSON.stringify(stats));
-  for(const p of SYNTH)assert.ok(stats.byProfile[p.id]>0,`${p.id} produced display rounds`);
+  for(const p of ALL)assert.ok(stats.byProfile[p.id]>0,`${p.id} produced display rounds`);
   assert.ok(Object.keys(sim.display.firedAt).length>=8);assert.equal(shadow.displayFire.nextId,0);
   assert.equal(sim.display.nextId,stats.displayRounds);
   report.routes.push({...stats,finalRng:sim.rng.state,finalClock:sim.clock,health:sim.player.health,rngStreamSha256:rngProfiled.digest('hex'),
