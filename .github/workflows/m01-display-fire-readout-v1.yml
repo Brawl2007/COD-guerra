@@ -1,0 +1,62 @@
+name: M01 Display Fire Readout V1
+
+on:
+  push:
+    branches: [claude/m01-display-fire-readout-v1]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-display-fire-readout-v1-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Authority check (golden-neutral plumbing)
+        run: |
+          set -o pipefail
+          mkdir -p evidence
+          # Base: 21a6f76. T22 adds a display list, two getters and a renderer loop. It must not touch the world, core, mission data, assets,
+          # build/test config, the approved gameplay golden, or the gameplay round model (validRound/ROUND_KINDS live in m01-fire.js).
+          git diff --exit-code 21a6f76 HEAD -- src/world src/core missions assets package.json package-lock.json playwright.config.js tests/fixtures/m01-anim-gameplay-baseline.json src/game/m01-fire.js 2>&1 | tee evidence/authority.log
+          echo "authority diff clean against 21a6f76" | tee -a evidence/authority.log
+          git merge-base --is-ancestor 21a6f76 HEAD
+          echo "21a6f76 is an ancestor of HEAD" | tee -a evidence/authority.log
+      - name: npm test (TAP evidence; the display-fire test also writes its 12-seed sweep)
+        env:
+          M01_DISPLAY_FIRE_REPORT: ${{ github.workspace }}/evidence/display-fire-sweep.json
+        run: set -o pipefail; npm test -- --test-reporter=tap 2>&1 | tee evidence/npm-test.tap
+      - name: Golden and 12-seed proof lines
+        run: |
+          set -o pipefail
+          grep -E "^\s*(not )?ok [0-9]+ - (all gameplay bytes hashed each tick against approved base|route seed [0-9]+:)" evidence/npm-test.tap | tee evidence/golden-and-seed-lines.txt
+          if grep -qE "^\s*not ok [0-9]+ - (all gameplay bytes hashed|route seed)" evidence/npm-test.tap; then echo "FAIL: golden or seed proof line not ok" | tee -a evidence/golden-and-seed-lines.txt; exit 1; fi
+          test "$(grep -cE "^\s*ok [0-9]+ - all gameplay bytes hashed each tick against approved base" evidence/npm-test.tap)" = 2
+          test "$(grep -cE "^\s*ok [0-9]+ - route seed [0-9]+:" evidence/npm-test.tap)" = 12
+          node -e "const r=JSON.parse(require('fs').readFileSync('evidence/display-fire-sweep.json','utf8')).routes;if(r.length!==12||r.some(x=>x.rngStreamSha256!==x.plainRngStreamSha256||x.windowTicks!==4000))process.exit(1);console.log('12 seeds: rng stream equal every tick, 4000-tick snapshot window each')" | tee -a evidence/golden-and-seed-lines.txt
+      - name: npm run build
+        run: set -o pipefail; npm run build 2>&1 | tee evidence/build.log
+      - run: npx playwright install --with-deps chromium
+      - name: Focused browser specs (updateFire consumers read the muzzle and tracer batches)
+        run: set -o pipefail; npx playwright test tests/browser/m01-player-shot-feedback.spec.js tests/browser/m01-mg34-prone.spec.js tests/browser/m01-battlefield-fx.spec.js --workers=1 --retries=0 2>&1 | tee evidence/browser.log
+      - name: Focused browser tests in m01.spec.js (German fire drawn from the gates, withdrawal muzzle presentation)
+        if: always()
+        run: set -o pipefail; npx playwright test tests/browser/m01.spec.js --grep "German fire on the repair|a real withdrawal continuation" --workers=1 --retries=0 2>&1 | tee evidence/browser-m01.log
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-display-fire-readout-v1-${{ github.sha }}
+          path: |
+            evidence/
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
