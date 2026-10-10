@@ -12,13 +12,16 @@
 - T39 implemented (uncommitted), in verification. Open gameplay question H8: when weapon is lowered near a wall in ADS, sim still fires with ADS accuracy (blocking fire = sim change) → PENDENTE HUMANO.
 - **T39 `M01-VIEWMODEL-FEEL-V2` ACCEPTED** at `29ba3cf` on `claude/m01-viewmodel-feel-v2` (stacked on 304b90f). CI 38045111352: npm test 574/574, browser 9/9. Follow-up: near-wall lowered pose shows big sleeve + hand through open sleeve (T40). Jev 3/100.
 - T44: fable-high attempt 4 = spec-only fix (decal atlas race; crushed-blacks metric <10 -> <3), in verification. T20 queued for fable-high. PT05 diagnosis saved at v7-cert .agent/runs/PT05-COLLIDERS-PREP/DIAGNOSIS.md (yard wagons without colliders = gameplay task, reviewer-critical).
-- Current stack tip: `claude/m01-viewmodel-feel-v2` (T39 docs commit on top of 29ba3cf). New tasks branch from that tip.
+- Current stack tip: `claude/m01-viewmodel-feel-v2` @ `4ed6e95`. New tasks branch from that tip.
 - T44: attempt 4 (fable-high) spec-only fix committed `4f27f90`, verifier PASS, reviewer ACCEPT; CI 38045943911 pending at handoff time (check `gh run view 38045943911`). If green: docs closeout (evidence README, status ACEITE, D-entry, regression record) on branch `claude/m01-postprocess-grading-v1` (base 71ad067 = NOT on current stack; integrate later).
 - T20: attempt 4 (fable-high) spec-only fix committed `676a455` (sightline oracle; Polish platoon has no pixel proof from the declared views — limitation to state in evidence), verifier PASS, reviewer ACCEPT, Jev risk medium 0.72 (call 4/100); CI 38047289527 pending. If green: docs closeout on `claude/m01-distant-front-impostors-v1` (base 71ad067).
 - If either CI fails: attempt 5/5 is the last (budget raised by user); then BLOCKED -> PENDENTE HUMANO.
-- Next new task: PT05 yard-wagon colliders (gameplay; contract + opus design + reviewer-critical), branch from stack tip `3388c24` (`claude/m01-viewmodel-feel-v2`).
+- Next new task: PT05 yard-wagon colliders (gameplay; contract + opus design + reviewer-critical), branch from stack tip `4ed6e95` (`claude/m01-viewmodel-feel-v2`).
 - **T44 ACCEPTED** `4f27f90` (docs `3d202ca`), CI 38045943911 green. **T20 ACCEPTED** `676a455` (docs `7ade323`), CI 38047289527 green. Both branches are based on 71ad067 (OFF the stack) -> D25: integrate into the stack in a dedicated task (rebase/merge + CI). Recorded D23-D25 + status rows on stack tip.
 - Accepted this session: T35, T39, T44, T20. Jev 4/100.
+- Q1 and Q2 RESOLVED (user said continue; approved T20/T44 extra attempts). Q3 (dev-base ff-merge) and Q4 (PR #59) still open — do not ask again unless needed.
+- Worktree `~/projetos/COD-guerra-t35` is removable (T35 closed; contains only untracked `.kilo/` of the user's tool) — use `git worktree remove` without --force only after confirming.
+- **NEXT_ACTION (new chat):** 1) integrate T44 into the stack: rebase `claude/m01-postprocess-grading-v1` onto `4ed6e95` (expect conflicts in src/render/m01-view.js), update its workflow authority base, push, CI, `reviewer-critical`; 2) same for T20 (also touches m01-characters.js lod path rewritten by T35); 3) then PT05 yard-wagon colliders (gameplay, opus design + reviewer-critical); 4) then T08 clip library.
 - Next after T39 (rule ranking, Captain decision): PT05 colliders (playtest item 5; diagnose first; if src/world → gameplay task with reviewer-critical), then T08 clip library (crouch_walk/sprint missing in GLB), T06, T27, T26, T10, PT10 German LOD, T43.
 
 ## 0. Instructions for Claude (read first)
@@ -55,7 +58,7 @@ You are continuing work from a previous chat. That chat is gone; this file is th
 1. "Never modify, commit to, merge into, or push directly to `main`." No force-push, no workflow_dispatch; never write to V6, deploy/Pages, source branches.
 2. "M01 — Tczew remains `PROTÓTIPO JOGÁVEL` until explicitly promoted."
 3. "Do not silently redesign gameplay, mission logic, persistence, timings, RNG, damage, objectives or historical structure to fit a visual or asset task."
-4. "Não fazer novas chamadas pagas só para demonstrar. Conserva as duas vagas restantes." / "Não aumentar nem reiniciar o limite de três chamadas."
+4. SUPERSEDED: Jev cap is 100 and the user said "usar jev à vontade" (2026-10-10). Still no demonstration calls; never edit the cap/ledger.
 5. "Nunca reveles nem copies a chave API para relatórios, logs ou Git."
 6. "Utiliza regras locais para decisões óbvias e Jev apenas quando existir ambiguidade real." "Mantém sempre a decisão final contigo."
 7. "Mostra JEV START, recomendação, confiança, consumo e JEV END quando houver consulta real." "Não inventar utilização do Jev."
@@ -124,7 +127,7 @@ You are continuing work from a previous chat. That chat is gone; this file is th
 - ❌ Disk cleanup proposals (output pasted by mistake).
 
 ## 8. Data & facts (exact)
-**Jev:** usage 1/3 (2 remaining), no calls. Ledger `~/.local/state/cod-guerra/jev_pilot_ledger.json`. Key `[secret removed: re-enter it]`.
+**Jev:** usage 4/100 (2026-10-10). Cap 100. Ledger `~/.local/state/cod-guerra/jev_pilot_ledger.json`. Key `[secret removed: re-enter it]`.
 
 **Protected heads:** main `72bbcdd156603c9399801c95d43d9365ba50fc82`; V6 `cbc7de5668a1b2e4bc646b86548196a5f4f1039a`; deploy/m01-latest-playable `cb400355c056955d1d6d0b22e92bd7be2443a10c`; PR #59 head `4c6f7bebee27b68af3bea8ad086da1dffbca0084`.
 
