@@ -36,6 +36,7 @@ Formato: data · decisão · razão · reversível? Decisões de produto/jogabil
 | D29 | 2026-10-10 | T17 (prioridade do utilizador): **sem defeito** na pilha 909bf43. Os Stukas não ficam parados nem em laço antes do mergulho (1530 amostras, 0 frames parados; `stukaPathSample` extrapola pela tangente). "Stukas ainda em laço" na visão era texto antigo. Run `M01-STUKA-PARKED-FIX-V1-20261010T131914Z` fechado sem push (commit só de teste `e1f2d81`, local; não retomar). Perguntar ao utilizador o que viu exactamente. | Prova determinística | Sim |
 | D30 | 2026-10-10 | Cadeias de simulação desenhadas (`.agent/runs/M01-SIM-CHAINS-DESIGN/DESIGN.md`): ramo A = T22 → T23 → T02-min; ramo B = T03-lite + T25; H9-D2 em série depois. O golden `tests/fixtures/m01-anim-gameplay-baseline.json` só pode ser regenerado em x86 (CI), nunca no Chromebook (D11). | Desenho `opus-medium`; actualiza D6 | Sim |
 | D31 | 2026-10-10 | T22 `M01-BATTLE-READOUT-DISPLAY-ROUNDS-V1` ACEITE (`1881df1`; correcção de workflow `cf7c2d7`; CI x86 38070927878: npm 628/628, golden 2/2, 12 sementes com RNG igual a uma simulação sem fogo de exibição, build, browser 7+2). Desvios aceites pelo reviewer-critical: `intensity` = fracção de atiradores que dispararam em 20 s; clarão do Panzerzug e puff 75 mm passam para T23. Jev 5/100 (sonnet 0,98). | Ciclo completo | Sim |
+| D32 | 2026-10-10 | O utilizador aprova **H8, H9, H10, H11 e H12** (texto de H10–H12 trazido da branch `claude/gracious-franklin-u8kdin`; as questões do Captain H10–H15 passam a H13–H18). Meta: sentir a guerra como só mais um soldado, qualidade nível COD WaW (gráficos, som, animação, música sombria, ambiente). Ordem M01: (1) desenho da dificuldade H9 — **implementar só depois de o utilizador aprovar o desenho** (D27 passa a proposta); (2) som real e música sombria T05/T06/T45/T46 + H11; (3) animação T07/T08/T35/T36/T37; (4) batalha visível T20/T23/T17/T25 + T44; (5) H8 em paralelo. Regras: PC de referência H12 (Intel HD 5500, 1366×768) com orçamento de desempenho, sem FPS inventados; tudo original ou com licença verificada no manifesto; nada do COD; nenhuma compra sem perguntar; nunca main/merge/force-push; um agente pesado de cada vez no Chromebook; Jev nas decisões grandes. No fim de cada tarefa: branch, commit, `bash ~/jogar.sh <branch>` e o que testar. | Instrução do utilizador | — |
 
 ## Visão do utilizador (2026-10-10)
 
@@ -74,7 +75,7 @@ no Vístula. A especificação já pede dificuldade que mude comportamento, prec
 - **H5** Qualquer tarefa [D] da campanha (S1 flags de save, S2 relógio por segmentos, S8 bancadas de veículo).
 - **H6** (2026-10-09) Playtest 1, itens 3, 4, 8 e 11: escopo da animação e da IA dos soldados da M01. Proposta: primeiro um resolvedor simples que escolha o clip pelo estado, com os clips que já existem; a cobertura e a reação (itens 4 e 8) só depois de desenho. Decisão de jogabilidade: fica pendente até aprovação explícita. Estado (2026-10-10): o resolvedor de T35 (D18) trata a parte de animação dos itens 7, 9 e 11; os itens 3, 4 e 8 (soldados parados, cobertura, reação) são IA/simulação e continuam **PENDENTE HUMANO**.
 - **H7** (2026-10-09) Respostas do playtest 1: branch e commit jogados, resposta 5 sobre a ckm (decide a prioridade da geometria, fase 0), qualidade usada, causa da vida 92 da ponte, parede invisível (item 5) e respostas 1 a 10. Sem elas, os itens 1, 2 e 10 ficam por confirmar.
-- **H10** (2026-10-10; era H8 na pilha, renumerada para não colidir com a H8 aprovada) Em ADS junto a uma parede, a arma baixa-se mas a simulação continua a disparar com precisão de ADS. Bloquear o disparo seria uma alteração à simulação (de T39) → **PENDENTE HUMANO**.
+- **H13** (2026-10-10; era H8 e depois H10 na pilha; renumerada para H13 para não colidir com as H8–H12 do utilizador) Em ADS junto a uma parede, a arma baixa-se mas a simulação continua a disparar com precisão de ADS. Bloquear o disparo seria uma alteração à simulação (de T39) → **PENDENTE HUMANO**.
 - **H8** (2026-10-10) Tabela de escala histórica por missão (M01–M30): forças reais na batalha, forças reais no
   setor do jogador, soldados visíveis no jogo (perto / à volta / ao longe) e fonte com grau de certeza. Trabalho
   de pesquisa e documentação, sem código; os números visíveis são medidos no Chromebook antes de aprovar.
@@ -90,8 +91,34 @@ no Vístula. A especificação já pede dificuldade que mude comportamento, prec
   proteção do reparo (04:52–05:30), a mudança de cobertura sob fogo ajustado e o corredor das 06:10–06:45.
   Mudar o dano ou a IA é decisão de jogabilidade com impacto em simulação, saves e testes: precisa de desenho
   (`opus-medium`), comparação A/B e revisão crítica. **APROVADA pelo utilizador em 2026-10-10 (D26).**
-- **H11** (2026-10-10, PT05) Mover as coberturas `cv_wagon_1/2` para o centro dos vagões (cobertura também do lado oeste) e criar `cv_wagon_3`? Recomendação: sim, numa tarefa à parte. **PENDENTE HUMANO**.
-- **H12** (2026-10-10, PT05) Assentar no chão o `yard_wagon_1`, que flutua ~2,4 m acima do talude numa ponta? Recomendação: sim. **PENDENTE HUMANO**.
-- **H13** (2026-10-10, cadeias) Horas dos impactos do raid e das baixas do pelotão: fixas ou variáveis por semente? Recomendação: fixas (o Captain segue-a até resposta). **PENDENTE HUMANO**.
-- **H14** (2026-10-10, cadeias) O Panzerzug pode matar homens do pelotão? Recomendação: não, só fogo de exibição (segue-a até resposta). **PENDENTE HUMANO**.
-- **H15** (2026-10-10, cadeias) Re-temporizar as falas 018/038/048/049/051 e beats com `t` negativo: recomendação T02b junto com T26 (segue-a até resposta). **PENDENTE HUMANO**.
+- **H14** (2026-10-10, PT05) Mover as coberturas `cv_wagon_1/2` para o centro dos vagões (cobertura também do lado oeste) e criar `cv_wagon_3`? Recomendação: sim, numa tarefa à parte. **PENDENTE HUMANO**.
+- **H15** (2026-10-10, PT05) Assentar no chão o `yard_wagon_1`, que flutua ~2,4 m acima do talude numa ponta? Recomendação: sim. **PENDENTE HUMANO**.
+- **H16** (2026-10-10, cadeias) Horas dos impactos do raid e das baixas do pelotão: fixas ou variáveis por semente? Recomendação: fixas (o Captain segue-a até resposta). **PENDENTE HUMANO**.
+- **H17** (2026-10-10, cadeias) O Panzerzug pode matar homens do pelotão? Recomendação: não, só fogo de exibição (segue-a até resposta). **PENDENTE HUMANO**.
+- **H18** (2026-10-10, cadeias) Re-temporizar as falas 018/038/048/049/051 e beats com `t` negativo: recomendação T02b junto com T26 (segue-a até resposta). **PENDENTE HUMANO**.
+- **H10** (2026-10-10) **APROVADA (D32).** Meta de qualidade "nível COD WaW" em gráficos, som e animação, pedida pelo utilizador.
+  Caminho já planeado em `docs/M01_FINAL_ROADMAP.md`: animação T07/T08/T35/T36/T37 (hoje os soldados deslizam e
+  cortam entre poses); som T05/T06/T45/T46 (hoje 100 % sintetizado, sem `assets/audio`); materiais, terreno,
+  vegetação e FX nas ondas de ambiente (incluindo o ambiente de guerra: fumo, fogo, crateras,
+  destroços e lama que se acumulam com a batalha, e cor do T44). Para a meta, faltam: (1) o alvo é o PC de teste do utilizador (H12), não o
+  Chromebook; um nível de qualidade baixo é opcional e não trava a meta; (2) **fontes com licença
+  verificada**: animações de captura de movimento licenciadas, amostras de som reais (CC0/CC-BY ou pacotes
+  royalty-free) e modelos com autoria, escala e licença no manifesto, conforme `AGENTS.md`; (3) qualquer compra
+  só com autorização expressa do utilizador. Avaliação por capturas e escuta no PC forte, não só por testes.
+  Proposto ao utilizador; falta a ordem para começar.
+- **H11** (2026-10-10) **APROVADA (D32).** Música sombria durante o jogo, pedida pelo utilizador. Proposta: (1) camadas de tensão
+  escuras (drones graves, cordas, percussão surda), nunca heroicas, que sobem nas fases de combate e descem com
+  ele, ligadas ao estado da batalha e não a um temporizador; (2) temas curtos nos grandes momentos (na M01: os
+  Stukas das 04:34, a retirada do pelotão leste, a explosão da ponte); (3) silêncios obrigatórios mantidos
+  (depois da explosão, a chamada, feridos e mortos); (4) volume próprio no menu (canal MUSIC). Fonte: música
+  original ou com licença verificada (CC0/CC-BY, biblioteca royalty-free ou composição encomendada); **nada da
+  banda sonora do COD**; nenhuma compra sem autorização. Substitui a regra 4 da direção sonora do PR #58 se
+  aprovada. Proposto ao utilizador; falta a ordem para começar.
+- **H12** (2026-10-10) **APROVADA (D32).** PC de teste de referência, confirmado por capturas do `dxdiag` enviadas pelo utilizador:
+  Acer TravelMate P645-S; Intel Core i5-5200U a 2,2 GHz (2 núcleos, 4 threads); 8 GB de RAM; **Intel HD Graphics
+  5500** integrada (512 MB dedicados, 4 GB partilhados; driver 20.19.15.4703 de 2017, DirectX 12, nível 11_1);
+  ecrã 1366×768 a 60 Hz; Windows 10 Pro 64 bits (19045); som Realtek HD. Navegadores instalados: Chrome, Edge,
+  Firefox, Opera GX. Consequências: o alvo de qualidade e desempenho é **1366×768 nesta gráfica integrada**;
+  orçamento de desempenho (soldados completos, partículas de fumo e fogo, sombras, pós-processamento) medido
+  neste PC, com escala de render ajustável; nenhum FPS é afirmado sem medição. Substitui o "Chromebook de
+  referência" de H4 e T01.
