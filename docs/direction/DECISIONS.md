@@ -101,6 +101,9 @@ por registar (H12).
   original ou com licença verificada (CC0/CC-BY, biblioteca royalty-free ou composição encomendada); **nada da
   banda sonora do COD**; nenhuma compra sem autorização. Substitui a regra 4 da direção sonora do PR #58 se
   aprovada. Proposto ao utilizador; falta a ordem para começar.
-- **H12** (2026-10-10) PC de teste de referência: processador, placa gráfica, RAM, sistema e navegador ainda
-  por registar. Substitui o "Chromebook de referência" de H4 e T01 para medir FPS e qualidade. Sem estes dados,
+- **H12** (2026-10-10) PC de teste de referência, dados do `dxdiag` dados pelo utilizador: Intel Core i5 "520U"
+  (por confirmar: i5-520UM de 2010 ou i5-5200U de 2015), 8 GB de RAM, Windows 10 Pro 64 bits, DirectX 12.
+  Placa gráfica e navegador ainda por registar; com um i5 de portátil, a gráfica deve ser a Intel HD integrada
+  (Ironlake ou HD 5500), o que torna a meta WaW exigente num navegador: orçamento de desempenho e resolução
+  (ex.: 720p) têm de ser medidos nesse PC. Substitui o "Chromebook de referência" de H4 e T01 para medir FPS e qualidade. Sem estes dados,
   nenhum FPS é afirmado (regra do `AGENTS.md`).
