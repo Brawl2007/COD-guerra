@@ -1,0 +1,60 @@
+name: M01 Anim Clip Library V2
+
+on:
+  push:
+    branches: [claude/m01-anim-clip-library-v2]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-anim-clip-library-v2-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Authority check (assets and tools only)
+        run: |
+          set -o pipefail
+          mkdir -p evidence
+          # Base: 11821bb. T08 adds an animation-only GLB next to the character files. Runtime, missions, build/test config and fixtures stay untouched,
+          # and every shipped character / animation GLB stays byte-identical (the new package lives in characters/clip-library-v2/).
+          git merge-base --is-ancestor 11821bb HEAD
+          git diff --exit-code 11821bb HEAD -- src missions package.json package-lock.json playwright.config.js tests/fixtures 2>&1 | tee evidence/authority.log
+          git diff --exit-code 11821bb HEAD -- ':(glob)assets/models/provisional/m01/characters/*.glb' assets/models/provisional/m01/characters/manifest.json assets/models/provisional/m01/characters/motion-clips-v1 assets/models/provisional/m01/characters/station-drag-transitions assets/models/provisional/m01/weapons 2>&1 | tee -a evidence/authority.log
+          echo "authority diff clean against 11821bb" | tee -a evidence/authority.log
+      - name: npm test (TAP evidence; includes tests/m01-soldiers-glb.test.js)
+        run: set -o pipefail; npm test -- --test-reporter=tap 2>&1 | tee evidence/npm-test.tap
+      - name: Clip library proof lines
+        if: ${{ !cancelled() }}
+        run: |
+          set -o pipefail
+          grep -E "^\s*(ok [0-9]+ - |not ok [0-9]+ - |✔ |✖ )(clip library V2|the shipped clips and every preserved file|sprint, crouch walk|clip extras are the 240 Hz|loops are continuous|runtime keys|the skinned LOD1|manifest sources)" evidence/npm-test.tap | tee evidence/clip-library-lines.txt
+          if grep -qE "^\s*(not ok [0-9]+ - |✖ )(clip library V2|the shipped clips|sprint, crouch walk|clip extras are the 240 Hz|loops are continuous|runtime keys|the skinned LOD1|manifest sources)" evidence/npm-test.tap; then echo "FAIL: a clip library proof line is not ok" | tee -a evidence/clip-library-lines.txt; exit 1; fi
+      - name: npm run build
+        id: build
+        if: ${{ !cancelled() }}
+        run: set -o pipefail; npm run build 2>&1 | tee evidence/build.log
+      - name: Install Playwright Chromium
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: npx playwright install --with-deps chromium
+      - name: Browser specs (resolver and animation contract unchanged with the new clip package in the tree)
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: set -o pipefail; npx playwright test tests/browser/m01-anim-resolver.spec.js tests/browser/m01-animation-contract.spec.js --workers=1 --retries=0 2>&1 | tee evidence/browser.log
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-anim-clip-library-v2-${{ github.sha }}
+          path: |
+            evidence/
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
