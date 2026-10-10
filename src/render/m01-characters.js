@@ -209,7 +209,7 @@ export class M01Characters {
       if(lod===3)continue;
       let weaponLOD=lod;
       if(mgGunner(a)){while(weaponLOD<3&&!this.sources.has(`mg34:${weaponLOD}`))weaponLOD++;if(weaponLOD===3)continue;}
-      const key=`${nation}:${lod}`,pose=actorPose(a,time),sample=this.describe(a,time,actors,pose,battleClock,this.anim.get(a.id)?.target),clip=this.clips.get(sample.clip);
+      const key=`${nation}:${lod}`,pose=actorPose(a,time),sample=this.describe(a,time,actors,pose,battleClock,(()=>{const pv=this.anim.get(a.id);return pv&&time>=pv.t&&time-pv.t<=GAP?pv.target:undefined;})()),clip=this.clips.get(sample.clip);
       if(!clip)continue;
       if(a.id==='szymon_kowal'&&!this.sources.get(key).scene.getObjectByName('rkm_wz28'))continue;
       // Missing or partial optional clips use the existing procedural batches, sampled from the same posture.

@@ -37,12 +37,20 @@ async function freezeClick(page,selector){
   });
   await page.locator(selector).click();await expect(page.locator('#pause')).toBeVisible();
 }
+// The menu keeps drawing the fresh mission (clock 0) behind it, so `characters.actors` is already populated before Continue loads
+// the save, and those poses/actors belong to another state. m01.demolition.clock is the sim clock of the last frame the view drew
+// (M01View.lastClock, set in the same synchronous render() that builds the actor list): wait until a frame was drawn at the loaded
+// clock, then every read of `characters.actors` is that frame. Nothing is filtered afterwards; the poses are compared whole.
+const drawnAt=(page,clock)=>page.waitForFunction(clock=>{
+  const g=window.gameDiagnostics?.();return g?.clock===clock&&g.m01?.demolition?.clock===clock;
+},clock);
 async function open(page){
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
   await page.goto('?debug=1');
   await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.characters?.loaded.includes('pl:2'));
   await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#continue')).toBeEnabled();
   await freezeClick(page,'#continue');
+  await drawnAt(page,snapshot.clock);
   await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.actors?.length>0);
 }
 const poses=d=>d.m01.characters.actors.map(({id,clip,clipTime,blend})=>({id,clip,clipTime,blend}));
@@ -53,7 +61,8 @@ test('production UI: every visible soldier carries a valid clip blend, and pause
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await open(page);
   const frozen=await page.evaluate(()=>window.gameDiagnostics()),first=poses(frozen);
-  expect(frozen.clock).toBe(snapshot.clock);expect(first.length).toBeGreaterThan(0);
+  expect(frozen.clock).toBe(snapshot.clock);expect(frozen.m01.demolition.clock,'actor list comes from a frame drawn at the saved clock, not a stale menu frame').toBe(snapshot.clock);
+  expect(first.length).toBeGreaterThan(0);
   for(const a of first){
     expect(Array.isArray(a.blend),a.id).toBe(true);expect(a.blend.length,a.id).toBeGreaterThanOrEqual(1);
     expect(Math.abs(sum(a.blend)-1),`${a.id} weights sum to one`).toBeLessThan(1e-6);
@@ -89,9 +98,11 @@ test('production UI: every visible soldier carries a valid clip blend, and pause
   await page.reload();
   await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.characters?.loaded.includes('pl:2'));
   await freezeClick(page,'#continue');
+  await drawnAt(page,snapshot.clock);
   await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.actors?.length>0);
   const reloaded=await page.evaluate(()=>window.gameDiagnostics());
-  expect(reloaded.clock).toBe(frozen.clock);expect(poses(reloaded)).toEqual(first);
+  expect(reloaded.clock).toBe(frozen.clock);expect(reloaded.m01.demolition.clock,'reloaded actor list comes from a frame drawn at the saved clock').toBe(snapshot.clock);
+  expect(poses(reloaded)).toEqual(first);
   expect(errors).toEqual([]);
   await info.attach('anim-resolver-pose',{body:JSON.stringify({kind:'production UI, paused at the saved clock; state determinism of the animation resolver (not a visual quality claim)',clock:frozen.clock,actors:first.length,blended:first.filter(a=>a.blend.length>1).length,poses:first}),contentType:'application/json'});
 });
@@ -202,6 +213,7 @@ test('production UI, cold load: the MG34 gunner death cross-fades into fallen fr
     await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.characters?.loaded.includes('pl:2'));
     await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#continue')).toBeEnabled();
     await freezeClick(page,'#continue');
+    await drawnAt(page,snap.clock); // not the menu frame of the fresh mission: the fade has to be read from the frame drawn at the save
     const rendered=await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.actors?.some(a=>a.id==='de_east_0'),null,{timeout:30000}).then(()=>true,()=>false);
     const d=await page.evaluate(()=>window.gameDiagnostics()),a=d.m01.characters.actors?.find(x=>x.id==='de_east_0');
     const age=snap.clock-scenes.diedAt,row={tick:i+1,clock:d.clock,saveClock:snap.clock,age,rendered,clip:a?.clip??null,blend:a?.blend??null,wallMs:Date.now()-start,
