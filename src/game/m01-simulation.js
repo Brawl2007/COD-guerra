@@ -5,6 +5,7 @@ import { Wz29 } from './wz29.js';
 import { Random } from '../core/random.js';
 import { eyePosition, aimDirection, muzzlePosition, traceShot, traceObstruction } from '../world/spatial.js';
 import { makeRound, traceRound, closestApproach, validRound, NEAR_MISS } from './m01-fire.js';
+import { createDisplayFire, displaySeed, displayProfiles, updateDisplayFire, displayFireView, computeBattleReadout } from './m01-display-fire.js';
 import { initializePresentation, updateMotion, updatePosture, updateBodyYaw, recordSuppression, recordHit, recordDeath,
   recordDamage, validatePresentation, presentationDiagnostics } from './m01-animation-presentation.js';
 
@@ -95,6 +96,7 @@ export class M01Simulation {
       ambient:0,nextCoverCall:40,guide:0,guideKey:null,guideAt:0,guideDist:0,guideShown:false,kowalRounds:30,lowAmmoHint:false,escort:false,escortSpoke:false,boundaryWarning:false,boundaryCountdown:0,holdAccessVisited:false,
       occupiedCover:null,coverExposure:0,coverCallIndex:0,repairPins:0,fireEase:false,calloutAt:-1e9,nextCombatCall:0};
     this.enemyFire={rounds:[],nextId:0};
+    this.display=createDisplayFire(displaySeed(this.rng.state),displayProfiles(definition));   // visual-only rounds: never saved, own RNG (m01-display-fire.js)
     this.sectors={sectors:definition.sectors.map(s=>({id:s.id,state:s.schedule[0].state,strength:100,morale:1,supply:1})),damage:[]};
     this.mission={phase:'INTRO',complete:false,text:phaseText.INTRO,status:''};
     this.consume(E('intro_card'));this.startScene('cs_m01_intro');this.checkpoint=this.snapshot(false);
@@ -468,6 +470,7 @@ export class M01Simulation {
       if(a.group==='grp_de_spans')this.spansFire(a,retreat);else this.eastFire(a,retreat,withdrawal);
     }
     this.kowalFire(dt);this.landRounds();
+    updateDisplayFire(this.display,{clock:this.clock,battleClock:this.battleClock,actors:this.actors,consumedEvent:id=>this.consumedEvent(id),heightAt:(x,z)=>this.world.heightAt(x,z)},dt);
   }
   /** grp_de_east no dique: MG34 sobre o reparo/jogador/secção; atiradores sobretudo sobre a cabeça de ponte leste até às 06:00. */
   eastFire(a,retreat,withdrawal){
@@ -870,6 +873,10 @@ export class M01Simulation {
       spansSuppressed:this.enemies.some(a=>a.group==='grp_de_spans'&&a.alive&&a.active&&a.suppressedUntil>this.clock),
       mgSuppressed:this.enemies.filter(a=>a.weapon==='mg34'&&a.alive&&a.suppressedUntil>this.clock).map(a=>a.id)};
   }
+  /** Read-only copy of the visual-only display rounds ({rounds, firedAt, skipped, nextId}); the renderer draws them after the gameplay tracers. */
+  get displayFire(){return displayFireView(this.display);}
+  /** Computed on every read, never stored or saved: clock, phase, scene, event flags, per-sector men and fire, recent blasts. */
+  get battleReadout(){return computeBattleReadout(this.display,this);}
   get interaction(){
     const p=this.player;
     if(this.scene&&definition.cutscenes.find(c=>c.id===this.scene.id).skippable)return 'Espaço · saltar cena';
@@ -925,6 +932,7 @@ export class M01Simulation {
       Object.assign(a,{active:false,alive:false,health:0,state:'DOWN'});
     for(const a of candidate.actors)initializePresentation(a,candidate.clock);
     candidate.weapon.restore(s.weapon);candidate.rng.state=s.rng;candidate.events=[];candidate.world.refresh(Object.keys(s.consumed),s.flags);
+    candidate.display=createDisplayFire(displaySeed(s.rng,s.clock),displayProfiles(definition));   // not saved: restarts empty, re-seeded from the saved state
     if(s.resumeCheckpoint!==undefined){
       const backup=new M01Simulation();backup.restoreSnapshot(s.resumeCheckpoint);candidate.checkpoint=backup.snapshot(false);
     }else candidate.checkpoint=candidate.snapshot(false);   // legacy schema 2 used the loaded state itself as CP
