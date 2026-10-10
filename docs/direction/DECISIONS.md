@@ -45,7 +45,8 @@ no Vístula. A especificação já pede dificuldade que mude comportamento, prec
 
 Terceiro pedido, no mesmo dia: chegar ao nível de **Call of Duty: World at War (2008)** em gráficos, som e
 animações. É uma referência de qualidade, não uma fonte: nada se copia do COD (modelos, sons, mapas, falas).
-Ver H10.
+Ver H10. O utilizador destaca também o **ambiente de guerra** do WaW (ruínas, fogo, fumo, crateras, lama,
+destroços, cor escura e suja): faz parte da mesma meta.
 
 Quarto pedido, no mesmo dia: efeitos sonoros fortes e **música sombria no meio do jogo**, como no WaW. Isto muda a
 direção sonora proposta no PR #58 (`CAMPAIGN-AUDIO-DIRECTION.md`, regra 4: "música quase nunca", só na cartela e
@@ -85,7 +86,8 @@ por registar (H12).
 - **H10** (2026-10-10) Meta de qualidade "nível COD WaW" em gráficos, som e animação, pedida pelo utilizador.
   Caminho já planeado em `docs/M01_FINAL_ROADMAP.md`: animação T07/T08/T35/T36/T37 (hoje os soldados deslizam e
   cortam entre poses); som T05/T06/T45/T46 (hoje 100 % sintetizado, sem `assets/audio`); materiais, terreno,
-  vegetação e FX nas ondas de ambiente. Para a meta, faltam: (1) o alvo é o PC de teste do utilizador (H12), não o
+  vegetação e FX nas ondas de ambiente (incluindo o ambiente de guerra: fumo, fogo, crateras,
+  destroços e lama que se acumulam com a batalha, e cor do T44). Para a meta, faltam: (1) o alvo é o PC de teste do utilizador (H12), não o
   Chromebook; um nível de qualidade baixo é opcional e não trava a meta; (2) **fontes com licença
   verificada**: animações de captura de movimento licenciadas, amostras de som reais (CC0/CC-BY ou pacotes
   royalty-free) e modelos com autoria, escala e licença no manifesto, conforme `AGENTS.md`; (3) qualquer compra
