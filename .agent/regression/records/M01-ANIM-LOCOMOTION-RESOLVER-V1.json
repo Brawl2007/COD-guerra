@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "task_id": "M01-ANIM-LOCOMOTION-RESOLVER-V1",
+  "accepted_head": "46b210f45b87608e0372d84922f8e9a15c41deae",
+  "status": "ACCEPTED",
+  "obligations": [
+    {
+      "id": "m01-animation-resolver-model",
+      "kind": "test",
+      "check": "node --test tests/m01-animation-resolver.test.js tests/m01-animation-player.test.js",
+      "reason": "Pins soldier blend weights as a pure function of sim time (sum 1, smoothstep fades, mid-fade continuity), full fallen clip from diedAt, odometer locomotion phase, pause freeze, identical bone matrices after LOD swap, and no stopAllAction/RNG/wall clock in pose modules."
+    },
+    {
+      "id": "m01-anim-resolver-browser",
+      "kind": "browser",
+      "check": "npx playwright test tests/browser/m01-anim-resolver.spec.js --workers=1 --retries=0",
+      "reason": "Proves in production UI that blends are valid, pause and reload keep poses identical, the live sapper crouch follows smoothstep over 0.3 s and the MG34 gunner death blends into fallen; later character/LOD/IK work (T36-T38, T43) must keep it."
+    }
+  ]
+}

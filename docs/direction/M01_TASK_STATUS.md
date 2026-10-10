@@ -45,7 +45,7 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 32 | Estruturas de campo em runtime | AUSENTE | Depende de T13 |
 | 33 | Props em runtime V2 | PARCIAL | `m01-environment-props.js`; kit T12 em falta |
 | 34 | Vida no pátio da estação | PARCIAL | Evacuação existe; tarefas novas por fazer |
-| 35 | Animation Resolver | AUSENTE | **Pré-requisito S17 da campanha** |
+| 35 | Animation Resolver | **ACEITE** | 46b210f, CI 38043817745 (559/559, build, browser 11/11); fades de postura, morte `fallen` a partir de `diedAt`, odómetro (D18). Itens 3, 4 e 8 do playtest seguem em H6. Pré-requisito S17 da campanha |
 | 36 | Guarnições/evacuação | PARCIAL | `carriedBy`; municiador MG34 e fases do ckm por fazer |
 | 37 | IK e orçamento | AUSENTE | — |
 | 38 | Posturas de combate | AUSENTE | — |

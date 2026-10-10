@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## T35 Animation Resolver aceite — 2026-10-10
+
+`M01-ANIM-LOCOMOTION-RESOLVER-V1` **ACEITE** no commit `46b210f` (branch `claude/m01-anim-resolver-v1`, base `5765aa5`). CI x86 [38043817745](https://github.com/Brawl2007/COD-guerra/actions/runs/38043817745): `npm test` 559/559, build OK, browser 11/11 com `--workers=1 --retries=0`. Trata os itens 7, 9 e 11 do playtest 1; os itens 3, 4 e 8 (IA/simulação) seguem em H6, pendente humano. Prova e limites em `docs/verification/m01-runtime/m01-anim-resolver-v1/README.md`. M01 continua **PROTÓTIPO JOGÁVEL**; sem alegação de FPS nem de teste no Chromebook.
+
 ## Consolidação final de produção M01 V7 — 2026-10-09 UTC
 
 `M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7`, branch `codex/m01-final-production-consolidation-v7`, base V6 `cbc7de5668a1b2e4bc646b86548196a5f4f1039a`, [PR draft #59](https://github.com/Brawl2007/COD-guerra/pull/59) contra V6. **READY_FOR_CAPTAIN_REVIEW**. Integra os deltas admitidos de Station V3, armas no checkpoint validado `7dbc0a5` e decals, preservando a V6.
