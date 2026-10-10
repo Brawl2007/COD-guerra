@@ -23,3 +23,20 @@ Notas:
 2. Nenhuma fonte deu efectivos por sector: a coluna "sector do jogador" fica quase toda por preencher.
 3. M01: as fontes T01–T26/H01/H02/H30 citadas em HISTORICAL_RESEARCH.md não foram consultadas; demolições 06:10 e 06:45 (H01) vs 06:40 (outras).
 4. A medição dos visíveis faz-se no jogo (contagem por distância), não no Chromebook (D13).
+
+## Lote 2: M11–M20 (researcher, páginas lidas; títulos de `docs/direction/CAMPAIGN_PLAN.md` l.108–117)
+
+| Missão | Batalha/acção (data, local) | Forças reais na batalha | Forças reais no sector do jogador | Visíveis no jogo (proposta) | Fontes | Certeza |
+|---|---|---|---|---|---|---|
+| M11 | El Alamein, 23/10/1942 | Commonwealth 195 000, 1 029 carros; Eixo 116 000, 547 carros | desconhecido (9.ª Div. Austr.) | a definir | en.wikipedia.org/wiki/Second_Battle_of_El_Alamein | média |
+| M12 | Kasserine, 20/2/1943 | infobox 30 000 e 22 000 sem lado atribuído | desconhecido (26.º e 18.º RCT) | a definir | en.wikipedia.org/wiki/Battle_of_Kasserine_Pass | baixa |
+| M13 | Prokhorovka, 12/7/1943 | URSS ~616 carros/AP (~500 atacaram); II SS-Pz 294; homens desconhecido | desconhecido | a definir (carros) | en.wikipedia.org/wiki/Battle_of_Prokhorovka | média (carros); baixa (homens) |
+| M14 | Gela–Niscemi, 14/7/1943 | Husky: Aliados 160 000 (467 000 pico); Eixo ~200 000 IT + 32 000 DE | desconhecido | a definir | en.wikipedia.org/wiki/Operation_Husky | média (Husky); baixa (Gela) |
+| M15 | Betio, Tarawa, 20/11/1943 | Marines ~5 000 desembarcados no 1.º dia; japoneses 2 636 / 4 500 / ~5 000 (conflito) | desconhecido | a definir | en.wikipedia.org/wiki/Battle_of_Tarawa | média (EUA); baixa (JP) |
+| M16 | Monte Cassino, 17–18/5/1944 | PL desconhecido; DE 140 000 (sem data) | desconhecido | a definir | en.wikipedia.org/wiki/Battle_of_Monte_Cassino | baixa |
+| M17 | Sainte-Mère-Église, 6/6/1944 madrugada | desconhecido | desconhecido | a definir | en.wikipedia.org/wiki/505th_Parachute_Infantry_Regiment | baixa |
+| M18 | Omaha, Fox Green, 6/6/1944 | EUA 34 000 desembarcados, 2 400 baixas; 352.ª Div. 12 020 (6 800 de combate) | desconhecido (Cia E, 16.º RI) | a definir | en.wikipedia.org/wiki/Omaha_Beach | média (totais) |
+| M19 | Caumont, 13/6/1944 | desconhecido | desconhecido | a definir | en.wikipedia.org/wiki/Operation_Perch | baixa |
+| M20 | Oosterbeek/Arnhem, 17–25/9/1944 | perímetro ~3 600 (~21/9); alemães 3:1 sem número | desconhecido | a definir | en.wikipedia.org/wiki/Battle_of_Arnhem | média (perímetro); baixa (DE) |
+
+Notas do lote 2: nenhuma linha chega a "alta" (só Wikipédia). Para subir a certeza: NPS/US Army CMH, NIMH/Instituto Polaco, museus do Dia D e de Arnhem.
