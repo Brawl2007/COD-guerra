@@ -19,7 +19,9 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-PILOT_MAX_PAID_CALLS = 3
+# Paid-call cap of the pilot: 100, approved by the user on 2026-10-09 (was 3).
+# Changing it is a human decision; COD_JEV_LIMIT and --limit can only lower it.
+PILOT_MAX_PAID_CALLS = 100
 PRICE_PER_MTOK_INPUT = 0.042
 DEFAULT_BASE = "https://api.typesafe.ai"
 TIMEOUT_S = 15

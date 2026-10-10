@@ -31,6 +31,50 @@ Formato: data · decisão · razão · reversível? Decisões de produto/jogabil
 | D24 | 2026-10-10 | T20 ACEITE em 676a455 (tentativa 4 de 5, `fable-high`): A/B mede só figuras com linha de vista (54/66 tapadas pelas pontes). Jev risco médio (0,72). Limitação: pelotão polaco sem prova de píxeis. | CI 38047289527 verde; verifier PASS; reviewer ACCEPT | Sim |
 | D25 | 2026-10-10 | T20 e T44 estão em branches baseadas em 71ad067, fora da pilha (ponta 4ed6e95). Integração na pilha fica para uma tarefa própria (rebase/merge com CI). | Evitar alterações concorrentes; integração exige CI | Sim |
 
+## Visão do utilizador (2026-10-10)
+
+Palavras do utilizador, depois do playtest da branch `claude/m01-viewmodel-feel-v2` (`b0020cf`):
+"o objetivo é ter que sentir a guerra, a sensação verdadeira, como se você fosse só mais 1 soldado no meio da
+grande guerra, sentindo o impacto".
+
+Consequências para todas as missões (M01–M30):
+
+- A escala da batalha tem de se sentir: muita gente a lutar à volta e ao longe (figuras simplificadas), o jogador
+  é um entre muitos, e a batalha continua quando ele não olha (`docs/PROMPT_MESTRE.txt`, §"densidade", linha 1965).
+- A densidade segue a batalha real. Nenhum dos dossiês M02–M30 (PR #58) diz hoje quantos soldados havia nem
+  quantos aparecem no jogo; ver H9.
+- No playtest, o utilizador estranhou na M01: só 10–13 polacos por perto, alemães quase invisíveis, um só
+  bombardeio visível. Parte é histórica (frente a ~1,2 km do outro lado do Vístula; um só mergulho às 04:34);
+  parte é trabalho em falta: T20 e T23 (frente leste visível, 26 dos 40 alemães nunca disparam para oeste),
+  T17 (mergulho, Stukas ainda em laço) e T25 (impactos do bombardeio das 05:30). Estas tarefas servem a visão
+  e devem subir de prioridade.
+
+Segundo pedido do utilizador, no mesmo dia: "o jogo tem que ter dificuldades… o perigo de morrer a qualquer
+momento, tem que ter fases difíceis de passar, igual a todos os jogos de níveis".
+
+Estado verificado em `claude/m01-viewmodel-feel-v2` (`src/game/m01-simulation.js:585-587`): um tiro alemão que
+passa no jogador só fere com probabilidade 0,20 (0,06 em cobertura) e tira 8 de 100, ou seja, cerca de 13
+ferimentos para morrer. O comentário diz "afinação de protótipo". Não há níveis de dificuldade. O roteiro proíbe
+bombas a menos de 30 m e diz que a MG "suprime antes de matar". Fora isso, só se perde por sair do mapa ou cair
+no Vístula. A especificação já pede dificuldade que mude comportamento, precisão e recursos de forma legível
+(`docs/PROMPT_MESTRE.txt:1831`). Ver H10.
+
+Terceiro pedido, no mesmo dia: chegar ao nível de **Call of Duty: World at War (2008)** em gráficos, som e
+animações. É uma referência de qualidade, não uma fonte: nada se copia do COD (modelos, sons, mapas, falas).
+Ver H11. O utilizador destaca também o **ambiente de guerra** do WaW (ruínas, fogo, fumo, crateras, lama,
+destroços, cor escura e suja): faz parte da mesma meta.
+
+Quarto pedido, no mesmo dia: efeitos sonoros fortes e **música sombria no meio do jogo**, como no WaW. Isto muda a
+direção sonora proposta no PR #58 (`CAMPAIGN-AUDIO-DIRECTION.md`, regra 4: "música quase nunca", só na cartela e
+no debrief). A especificação já tem o canal MUSIC e só proíbe música **heroica** sobre resgates e mortes
+(`docs/PROMPT_MESTRE.txt:1715`). Ver H12.
+
+Quinto ponto, no mesmo dia: **o Chromebook deixa de ser o computador de referência do jogo.** Palavras do
+utilizador: "chromebook não é problema, eu testo no outro pc, roda cod waw também". O alvo de desempenho e de
+qualidade passa a ser esse PC (x86_64, corre COD: World at War). O Chromebook continua a ser onde o utilizador
+corre o Claude Code e onde valem as regras de memória e disco dos agentes (D8, D9). Especificações exatas do PC
+por registar (H13).
+
 ## Pendentes de decisão humana
 
 - ~~**H1**~~ Resolvido em 2026-10-09 (D10): V7 `4c6f7be`, CI integral 84/84.
@@ -41,3 +85,44 @@ Formato: data · decisão · razão · reversível? Decisões de produto/jogabil
 - **H6** (2026-10-09) Playtest 1, itens 3, 4, 8 e 11: escopo da animação e da IA dos soldados da M01. Proposta: primeiro um resolvedor simples que escolha o clip pelo estado, com os clips que já existem; a cobertura e a reação (itens 4 e 8) só depois de desenho. Decisão de jogabilidade: fica pendente até aprovação explícita. Estado (2026-10-10): o resolvedor de T35 (D18) trata a parte de animação dos itens 7, 9 e 11; os itens 3, 4 e 8 (soldados parados, cobertura, reação) são IA/simulação e continuam **PENDENTE HUMANO**.
 - **H7** (2026-10-09) Respostas do playtest 1: branch e commit jogados, resposta 5 sobre a ckm (decide a prioridade da geometria, fase 0), qualidade usada, causa da vida 92 da ponte, parede invisível (item 5) e respostas 1 a 10. Sem elas, os itens 1, 2 e 10 ficam por confirmar.
 - **H8** (2026-10-10) Em ADS junto a uma parede, a arma baixa-se mas a simulação continua a disparar com precisão de ADS. Bloquear o disparo seria uma alteração à simulação (de T39) → **PENDENTE HUMANO**.
+- **H9** (2026-10-10) Tabela de escala histórica por missão (M01–M30): forças reais na batalha, forças reais no
+  setor do jogador, soldados visíveis no jogo (perto / à volta / ao longe) e fonte com grau de certeza. Trabalho
+  de pesquisa e documentação, sem código; os números visíveis são medidos no PC de teste antes de aprovar.
+  Exemplo M02 (fontes gerais, a confirmar): cerca de 225 000 polacos e 425 000 alemães no Bzura; no jogo,
+  150–300 polacos visíveis em vagas e 30–60 alemães perto. Proposto ao utilizador; falta a ordem para começar.
+- **H10** (2026-10-10) Dificuldade e perigo em todas as missões, a pedido do utilizador: (1) níveis de
+  dificuldade (proposta: recruta, soldado, veterano) que mudam precisão, cadência, ferimento por tiro e recursos,
+  sem dar aos inimigos visão através de paredes; (2) perigo real em todo o lado: no nível normal, poucos tiros
+  matam quem fica exposto, e a cobertura e o movimento é que salvam; (3) em cada missão, pelo menos uma ou duas
+  fases difíceis de passar, com checkpoint antes delas; (4) morte justa: o perigo vê-se e ouve-se antes de matar
+  (traçantes, estalos, sirene, aviso do sargento). As regras atuais de justiça (bombas a 30 m ou mais, MG que
+  suprime primeiro) ficam só nos níveis fáceis, ou são revistas. Na M01, as fases candidatas a difíceis são a
+  proteção do reparo (04:52–05:30), a mudança de cobertura sob fogo ajustado e o corredor das 06:10–06:45.
+  Mudar o dano ou a IA é decisão de jogabilidade com impacto em simulação, saves e testes: precisa de desenho
+  (`opus-medium`), comparação A/B e revisão crítica. Proposto ao utilizador; falta a ordem para começar.
+- **H11** (2026-10-10) Meta de qualidade "nível COD WaW" em gráficos, som e animação, pedida pelo utilizador.
+  Caminho já planeado em `docs/M01_FINAL_ROADMAP.md`: animação T07/T08/T35/T36/T37 (hoje os soldados deslizam e
+  cortam entre poses); som T05/T06/T45/T46 (hoje 100 % sintetizado, sem `assets/audio`); materiais, terreno,
+  vegetação e FX nas ondas de ambiente (incluindo o ambiente de guerra: fumo, fogo, crateras,
+  destroços e lama que se acumulam com a batalha, e cor do T44). Para a meta, faltam: (1) o alvo é o PC de teste do utilizador (H13), não o
+  Chromebook; um nível de qualidade baixo é opcional e não trava a meta; (2) **fontes com licença
+  verificada**: animações de captura de movimento licenciadas, amostras de som reais (CC0/CC-BY ou pacotes
+  royalty-free) e modelos com autoria, escala e licença no manifesto, conforme `AGENTS.md`; (3) qualquer compra
+  só com autorização expressa do utilizador. Avaliação por capturas e escuta no PC forte, não só por testes.
+  Proposto ao utilizador; falta a ordem para começar.
+- **H12** (2026-10-10) Música sombria durante o jogo, pedida pelo utilizador. Proposta: (1) camadas de tensão
+  escuras (drones graves, cordas, percussão surda), nunca heroicas, que sobem nas fases de combate e descem com
+  ele, ligadas ao estado da batalha e não a um temporizador; (2) temas curtos nos grandes momentos (na M01: os
+  Stukas das 04:34, a retirada do pelotão leste, a explosão da ponte); (3) silêncios obrigatórios mantidos
+  (depois da explosão, a chamada, feridos e mortos); (4) volume próprio no menu (canal MUSIC). Fonte: música
+  original ou com licença verificada (CC0/CC-BY, biblioteca royalty-free ou composição encomendada); **nada da
+  banda sonora do COD**; nenhuma compra sem autorização. Substitui a regra 4 da direção sonora do PR #58 se
+  aprovada. Proposto ao utilizador; falta a ordem para começar.
+- **H13** (2026-10-10) PC de teste de referência, confirmado por capturas do `dxdiag` enviadas pelo utilizador:
+  Acer TravelMate P645-S; Intel Core i5-5200U a 2,2 GHz (2 núcleos, 4 threads); 8 GB de RAM; **Intel HD Graphics
+  5500** integrada (512 MB dedicados, 4 GB partilhados; driver 20.19.15.4703 de 2017, DirectX 12, nível 11_1);
+  ecrã 1366×768 a 60 Hz; Windows 10 Pro 64 bits (19045); som Realtek HD. Navegadores instalados: Chrome, Edge,
+  Firefox, Opera GX. Consequências: o alvo de qualidade e desempenho é **1366×768 nesta gráfica integrada**;
+  orçamento de desempenho (soldados completos, partículas de fumo e fogo, sombras, pós-processamento) medido
+  neste PC, com escala de render ajustável; nenhum FPS é afirmado sem medição. Substitui o "Chromebook de
+  referência" de H4 e T01.

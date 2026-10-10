@@ -16,6 +16,8 @@ sys.path.insert(0, str(TOOLS))
 import jev_router  # noqa: E402
 
 SENTINEL = "SENTINEL-KEY-do-not-leak-9f3a"
+# Mechanics tests run at this environment cap (production is 100; the environment can only lower it).
+TEST_CAP = 3
 
 
 class Stub:
@@ -83,7 +85,8 @@ class Base(unittest.TestCase):
                     if not k.startswith(("TYPESAFE", "COD_JEV"))}
         self.env.update(HOME=str(self.tmp), COD_JEV_LEDGER=str(self.ledger),
                         COD_JEV_KEY_FILE=str(self.keyfile),
-                        TYPESAFE_BASE_URL=self.stub.url)
+                        TYPESAFE_BASE_URL=self.stub.url,
+                        COD_JEV_LIMIT=str(TEST_CAP))
 
     def write_key(self, path, mode=0o600):
         path.write_text("TYPESAFE_API_KEY=%s\n" % SENTINEL)
@@ -248,12 +251,12 @@ class BudgetTests(Base):
         self.assertEqual(len(self.calls()), 3)
 
     def test_limit_cannot_be_raised(self):
-        env = {"COD_JEV_LIMIT": "10"}
-        for _ in range(3):
-            self.route(*AMBIG, "--limit", "99", extra_env=env)
-        o = self.route(*AMBIG, "--limit", "99", extra_env=env)
+        # The environment cap is a ceiling: a flag asking for more cannot lift it.
+        for _ in range(TEST_CAP):
+            self.route(*AMBIG, "--limit", "99")
+        o = self.route(*AMBIG, "--limit", "99")
         self.assertEqual(o["reason"], "budget_exhausted")
-        self.assertEqual(self.stub.hits, 3)
+        self.assertEqual(self.stub.hits, TEST_CAP)
 
     def test_limit_can_be_lowered(self):
         self.route(*AMBIG, "--limit", "1")
@@ -407,6 +410,17 @@ class HardeningTests(Base):
         self.assertEqual((o["source"], o["error"]), ("rule_fallback", "HTTP302"))
         self.assertEqual(self.stub.hits, 1)
         self.assertEqual(len(self.calls()), 1)
+
+
+class ProductionCapTests(unittest.TestCase):
+    """The approved production cap is 100; environment and flags can only lower it."""
+
+    def test_production_cap_and_lower_only_rule(self):
+        self.assertEqual(jev_router.PILOT_MAX_PAID_CALLS, 100)
+        self.assertEqual(jev_router.effective_limit({}), 100)
+        self.assertEqual(jev_router.effective_limit({"COD_JEV_LIMIT": "500"}), 100)
+        self.assertEqual(jev_router.effective_limit({"COD_JEV_LIMIT": "3"}, flag="99"), 3)
+        self.assertEqual(jev_router.effective_limit({}, flag="1"), 1)
 
 
 class UsageTests(Base):
