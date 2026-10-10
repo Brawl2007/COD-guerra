@@ -20,7 +20,7 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 06 | Núcleo de áudio | PARCIAL | `src/core/battlefield-audio.js` + teste com FakeAudioContext; sem `src/core/audio/` nem director |
 | 07 | Contrato de animação | PARCIAL | `src/game/m01-animation-presentation.js` + `tests/m01-animation-contract.test.js`; hitboxes prone por confirmar |
 | 08 | Biblioteca de clips V2 | PARCIAL | Seis clips V5; conjunto do Anexo B incompleto |
-| 09 | Pipeline de texturas | AUSENTE | Sem `tools/assets/m01-materials` |
+| 09 | Pipeline de texturas | **EM CURSO** | `claude/m01-war-scars-v1` (2026-10-10, Captain nuvem; área 5 ambiente) |
 | 10 | Kit de vegetação | PARCIAL | Vegetação procedimental em runtime (`m01-vegetation-art.js`, `-layout.js`); sem kit GLB/LOD/impostores |
 | 12 | Kit de props | AUSENTE | — |
 | 13 | Estruturas de campo | AUSENTE | — |
@@ -38,7 +38,7 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 25 | Horário do raid das 05:30 | AUSENTE | Depende de T03 |
 | 26 | Beats de cena | PARCIAL | Letterbox no HUD; tabela de cues por fazer |
 | 27 | Relevo fora do envelope | AUSENTE | — |
-| 28 | Material macro do terreno | AUSENTE | Depende de T09 |
+| 28 | Material macro do terreno | **EM CURSO** | `claude/m01-war-scars-v1` (2026-10-10, a seguir a T09) |
 | 29 | Vegetação em runtime V2 | INCERTO | Depende de T10 |
 | 30 | Paisagem distante | AUSENTE | — |
 | 31 | Leito da via V2 | INCERTO | — |
