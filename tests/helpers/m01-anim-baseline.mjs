@@ -9,7 +9,9 @@ import {route} from './m01-route.js';
 import {gameplayFrame,GameplayDigest} from './m01-animation-contract.js';
 import {firstDifference} from './m01-determinism.js';
 
-const base='99309d9cb023cc94a07d41ff863e1362e4460570';
+// T23 (M01-EAST-FRONT-VISIBLE-V1) changes gameplay by design, so the approved source moves from 99309d9cb023cc94a07d41ff863e1362e4460570 to the T23
+// simulation commit. The fixture is regenerated ONLY on x86 in CI while tests/fixtures/.golden-stale exists (see the workflow); never from aarch64 (D11).
+const base='61ecd77b099d5921bd025275eafd9c3157536bb7';
 const temp=fileURLToPath(new URL('../../src/game/.m01-anim-approved-base.js',import.meta.url));
 const source=execFileSync('git',['show',base+':src/game/m01-simulation.js'],{encoding:'utf8'});
 writeFileSync(temp,source);
