@@ -47,6 +47,8 @@ Use `context-audit` before implementation. Use `project-memory` RETRIEVE only wh
 
 Use the `autonomous-task` skill as the canonical workflow. Create one stable RUN_ID for the execution.
 
+CI: `.github/workflows/ci.yml` already runs `npm test`, `.agent/tests` and the build on every `claude/**` and `codex/**` push. Add a task workflow only when the task needs focused browser specs or an authority check (`git diff --exit-code`) that `ci.yml` does not run; never copy the node/build steps into it.
+
 Initialize and use `.agent/templates/TASK_GRAPH.json` with `.agent/tools/task_state.py`.
 
 Runtime state belongs under `.agent/runs/<RUN_ID>/`; do not commit it.
