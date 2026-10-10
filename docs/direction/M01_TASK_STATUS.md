@@ -27,10 +27,10 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 14 | Materiais das pontes V2 | PARCIAL | `tools/assets/m01-bridges`; regeneração de materiais por confirmar |
 | 15 | Portão FX V3 | DONE* | `m01-battlefield-fx-profile.js`, `m01-fx-textures.js` na V7; tabela fechado/aberto não verificada |
 | 16 | Luz da madrugada | DONE* | `claude/m01-lighting-dawn-v1` @ `3386fc2`, CI 37918399233 (490/490, spec 8/8); duas cascatas em Média/Alta |
-| 17 | Mergulho dos Stuka | DONE* | `claude/m01-stuka-dive-sequence-v1` @ `4c64beb`, CI 37930134740 (502/502, spec 5/5); sem ciclo, bombas visíveis, raid 05:30 numa passagem (D15) |
+| 17 | Mergulho dos Stuka | DONE* (D29: sem defeito de laço/paragem em 909bf43) | `claude/m01-stuka-dive-sequence-v1` @ `4c64beb`, CI 37930134740 (502/502, spec 5/5); sem ciclo, bombas visíveis, raid 05:30 numa passagem (D15) |
 | 18 | Set piece de demolição V2 | DONE* | `claude/m01-demolition-setpiece-v2` @ `b296374`, CI 37959483518 (520/520, browser 9/9); colapso 3,2 s, clarão distante, tremor ao chegar o som, detritos/salpicos, chuva de terra (D16) |
 | 19 | Feedback do tiro do jogador | DONE* | `08d2e81`, CI 37890545910 (D12) |
-| 20 | Impostores da frente distante | **ACEITE** | 676a455 (branch `claude/m01-distant-front-impostors-v1`, base 71ad067, por integrar na pilha), CI 38047289527; pelotão polaco sem prova de píxeis nas vistas de teste |
+| 20 | Impostores da frente distante | **ACEITE** | 676a455 (integrado na pilha em `claude/m01-stack-integration-t44-t20-v1` @ 909bf43, CI 38054298392), CI 38047289527; pelotão polaco sem prova de píxeis nas vistas de teste |
 | 21 | Ambient director | AUSENTE | Depende de T22 |
 | 22 | Battle readout / display rounds | PARCIAL | `ROUND_KINDS` existe (`m01-fire.js:8`); sem `display` nem `battleReadout` |
 | 23 | Frente leste visível | AUSENTE | Depende de T22 |
@@ -54,7 +54,7 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 41 | Acabamento das pontes em runtime | PARCIAL | Portal polish existe |
 | 42 | Água do Vístula | DONE* | `claude/m01-water-vistula-v1` @ `71ad067`, CI 37988900379 (535/535, browser 15/15 incl. regressão T18); fresnel + céu de T16, fluxo para norte pelo relógio, espuma nos pilares, margem molhada, Low sem reflexo mas com tom (média 59→99) (D17) |
 | 43 | Política de LOD | AUSENTE | — |
-| 44 | Grading/pós-processamento | **ACEITE** | 4f27f90 (branch `claude/m01-postprocess-grading-v1`, base 71ad067, por integrar na pilha), CI 38045943911 |
+| 44 | Grading/pós-processamento | **ACEITE** | 4f27f90 (integrado na pilha em `claude/m01-stack-integration-t44-t20-v1` @ 909bf43, CI 38054298392), CI 38045943911 |
 | 45 | Assets de áudio | AUSENTE | Exige licenças |
 | 46 | Mistura e opções de áudio | AUSENTE | — |
 | 47 | Guarnição do ckm (fogo) | AUSENTE | Sem fogo nem munição na simulação. Depende de T22 (display rounds) e T05. |

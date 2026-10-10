@@ -2,6 +2,15 @@
 
 **Handoff #3** · 2026-10-10 · Lineage: #1 (2026-10-09): Jev activated + decision-support V2; V7 certified 84/84 (PR #59 draft); M01 dev base; T19 accepted. #2 (2026-10-09): T16 dawn lighting ACCEPTED; T17 verified; Chromebook dropped as target (D13); dev-base merge blocked → tasks stacked. #3 (2026-10-09/10): T17 ACCEPTED (D15), T18 ACCEPTED (D16), T42 ACCEPTED (D17); user gave night rules; T20 and T44 run in parallel worktrees ended BLOCKED (fix budget 3/3, CI red); T39 started then stopped by user; user installed 20 tiered agents.
 
+## UPDATE #5 (2026-10-10, sessão seguinte) — prevalece sobre linhas em conflito abaixo
+- User: "esta autorizado a tudo"; "continue ate terminar o M01". Aprovou **H8** (escala histórica) e **H9** (dificuldade); prioridade M01: **T20 → T23 → T17 → T25**, começando pelo desenho da dificuldade (D26). Defaults provisórios H9 em D27.
+- **Integração T44+T20 ACEITE**: `claude/m01-stack-integration-t44-t20-v1` @ `909bf43` (merges --no-ff de 3d202ca e 7ade323 sobre b0020cf), CI 38054298392 verde: npm 596/596, browser 30/30, ANTES 10/10. Esta branch é a **nova ponta da pilha** (com docs D26–D30, H8 rascunho M01–M30).
+- T17: sem defeito (D29); run `M01-STUKA-PARKED-FIX-V1-20261010T131914Z` em `COD-guerra-t35` fica PENDING de propósito: **não retomar**; commit só de teste `e1f2d81` local na branch `claude/m01-stuka-parked-fix-v1`, sem push. Perguntar ao user o que viu nos Stukas.
+- Desenhos prontos (Opus): H9 `.agent/runs/H9-DIFFICULTY-DESIGN/DESIGN.md` (D1–D5); cadeias `.agent/runs/M01-SIM-CHAINS-DESIGN/DESIGN.md` (ramo A T22→T23→T02-min; ramo B T03-lite+T25); PT05 `.agent/runs/PT05-COLLIDERS-PREP/DESIGN.md`. Pendentes humanos H10–H15 em DECISIONS.md.
+- **Em curso**: T22 `M01-BATTLE-READOUT-DISPLAY-ROUNDS-V1` em `~/projetos/COD-guerra-t35`, branch `claude/m01-display-fire-readout-v1` (base 21a6f76), run `...-20261010T132657Z`, implementer sonnet-max (Jev 5/100: sonnet 0.98).
+- Golden `tests/fixtures/m01-anim-gameplay-baseline.json`: só regenerar em x86 (CI), nunca local (D11/D30).
+- NEXT: T22 verify→review(-critical se tocar golden)→push→CI; T23; T02-min; T03-lite+T25; H9 D1–D5; PT05; T08.
+
 ## UPDATE #4 (2026-10-10, session gracious-franklin) — supersedes conflicting lines below
 - Jev cap is now **100** (user-approved 2026-10-09). User 2026-10-10: "usar jev à vontade" — consult Jev on every rule_fallback, priority ranking, CI failure triage, test-set choice. Usage 2/100 (call 2: priority ranking, conf 0.23 → low_confidence fallback to rules).
 - User 2026-10-10: Fable and Opus agents allowed freely (Claude Max; no credit concern). Max 2 agents at once; RAM ok (~700-900 MB after user cleaned /tmp).
