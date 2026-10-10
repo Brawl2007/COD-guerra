@@ -40,7 +40,7 @@ export function locomotionClips(R) {
   const verbatim = {
     sprint: { family: 'port', mask: 'full', pose: 'standing', semantic: 'armed sprint, rifle at port arms', interrupt: 'any' },
     crouch_walk: { family: 'low_ready', mask: 'full', pose: 'crouched', semantic: 'crouched advance, rifle low ready', interrupt: 'any' },
-    hit_front: { family: 'low_ready', mask: 'additive', pose: 'standing', semantic: 'chest impulse from the front', interrupt: 'none', reference: 'frame 0' },
+    hit_front: { family: 'low_ready', mask: 'additive', pose: 'standing', semantic: 'chest impulse from the front', interrupt: 'none', reference: 'frame 0', impact_from: 'front' },
     near_miss_duck: { family: 'low_ready', mask: 'additive', pose: 'standing', semantic: 'defensive duck as a round passes', interrupt: 'none', reference: 'frame 0' },
   };
   for (const [name, meta] of Object.entries(verbatim)) {

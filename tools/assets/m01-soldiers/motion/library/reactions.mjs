@@ -3,6 +3,7 @@
 // subtract frame 0). Direction naming follows the contract: `hit_<d>` / `death_<d>` = the impact arrives from <d>
 // relative to the body, so the body is pushed / falls away from that side. Deaths end still, flat on the ground,
 // with the rifle released next to the body.
+import { PRONE_FOOT, PRONE_ANKLE, PRONE_HIPS } from './posture.mjs';
 import { q, v3, N, TAU, mix, wave, bump, blend, clamp01, foot, standingBody, kneelBody, mixBody, readyPose, compose, holdRifle, lowReady, handOn, rifleAt, GRIP_R, GRIP_L, fingersRifle } from './common.mjs';
 
 const standingBase = (o = {}) => { const b = standingBody(0); return { ...b, ...o, hips: { ...b.hips, ...o.hips }, feet: { ...b.feet, ...o.feet } }; };
@@ -49,7 +50,7 @@ export function reactionClips(R) {
   const G = 0.075;
   const lyingFeet = {
     supine: { l: { pos: [-0.22, G, -0.78], rot: q.mul(q.axis([1, 0, 0], 90), q.axis([0, 1, 0], 25)), pole: [-0.4, 1, 0], toe: 0 }, r: { pos: [0.14, G, -0.8], rot: q.mul(q.axis([1, 0, 0], 85), q.axis([0, 1, 0], -30)), pole: [0.4, 1, 0], toe: 0 } },
-    prone: { l: { pos: [-0.2, 0.062, 1.05], rot: q.mul(q.axis([0, 1, 0], 22), q.axis([1, 0, 0], -112)), pole: N([-0.3, -1, 0]), toe: 0 }, r: { pos: [0.19, 0.062, 1.1], rot: q.mul(q.axis([0, 1, 0], -16), q.axis([1, 0, 0], -112)), pole: N([0.3, -1, 0]), toe: 0 } },
+    prone: { l: { pos: [-0.2, PRONE_ANKLE, 1.32], rot: q.mul(q.axis([0, 1, 0], 22), q.axis([1, 0, 0], PRONE_FOOT)), pole: N([-0.3, -1, 0]), toe: 0 }, r: { pos: [0.19, PRONE_ANKLE, 1.34], rot: q.mul(q.axis([0, 1, 0], -16), q.axis([1, 0, 0], PRONE_FOOT)), pole: N([0.3, -1, 0]), toe: 0 } },
   };
   /**
    * One death. `buckle`/`final` are body descriptors; `hands` are shoulder-relative flings and absolute ground marks;
@@ -71,7 +72,7 @@ export function reactionClips(R) {
         const flung = { pos: v3.add(sh, off), fdir: N([s === 'r' ? 0.3 : -0.3, -0.7, -0.4]), palm: N([s === 'r' ? -0.8 : 0.8, 0.2, 0.3]) };
         const ground = { pos: gnd, fdir: N(o.hands.dir[s]), palm: [0, -1, 0] };
         const free = { pos: mix(flung.pos, ground.pos, gd), fdir: N(mix(flung.fdir, ground.fdir, gd)), palm: N(mix(flung.palm, ground.palm, gd)) };
-        return { pos: mix(grip.pos, free.pos, fl), fdir: N(mix(grip.fdir, free.fdir, fl)), palm: N(mix(grip.palm, free.palm, fl)), pole: mix(s === 'r' ? [0.7, -0.6, 0.35] : [-0.35, -1, 0.1], s === 'r' ? [0.8, 0.2 + 0.8 * gd, 0.2] : [-0.8, 0.2 + 0.8 * gd, 0.2], fl) };
+        return { pos: mix(grip.pos, free.pos, fl), fdir: N(mix(grip.fdir, free.fdir, fl)), palm: N(mix(grip.palm, free.palm, fl)), pole: mix(s === 'r' ? [0.7, -0.6, 0.35] : [-0.35, -1, 0.1], s === 'r' ? [0.8, 0.2 + (o.hands.up ?? 0.8) * gd, 0.2] : [-0.8, 0.2 + (o.hands.up ?? 0.8) * gd, 0.2], fl) };
       };
       const curl = mix(0.7, 0.25, fl);
       return { weapon: w, hands: { r: hand('r'), l: hand('l') }, fingers: { l: { curl: mix(0.62, 0.3, fl), thumb: 0.3 }, r: { curl, index: mix(0.35, 0.2, fl), thumb: 0.3 } } };
@@ -95,10 +96,10 @@ export function reactionClips(R) {
     t: { b: [0.04, 0.32], f: [0.24, 0.70], r: 0.28, g: 0.72 },
     buckle: standingBase({ hips: { pos: [0, 0.80, -0.03], rot: { pitch: 18, roll: -3 } }, spine: [{ pitch: 12 }, { pitch: 14 }, { pitch: 8 }], neck: { pitch: -8 }, head: { pitch: -12, yaw: -5 },
       feet: { l: foot(-0.12, -0.10, { yaw: 8 }), r: foot(0.12, -0.06, { yaw: -10 }) } }),
-    final: { hips: { pos: [0, 0.128, 0.30], rot: { pitch: 88, roll: -3, yaw: -6 } }, spine: [{ pitch: -2 }, { pitch: -2 }, { pitch: -2 }], neck: { pitch: -4, yaw: 55 }, head: { pitch: -4, yaw: 30, roll: -8 }, jaw: 5,
+    final: { hips: { pos: [0, PRONE_HIPS, 0.30], rot: { pitch: 88, roll: -3, yaw: -6 } }, spine: [{ pitch: 3 }, { pitch: 3 }, { pitch: 3 }], neck: { pitch: -14, yaw: 55 }, head: { pitch: -10, yaw: 30, roll: -8 }, jaw: 5,
       clav: { l: { roll: 6 }, r: { roll: -6 } }, feet: lyingFeet.prone },
     hands: { fling: { l: [-0.22, -0.02, -0.34], r: [0.22, -0.02, -0.34] }, ground: { r: [0.40, 0.07, -0.34], l: [-0.36, 0.07, -0.22] }, dir: { r: [0.3, 0, -0.9], l: [-0.4, 0, -0.9] } },
-    rifle: { pos: [0.34, 0.04, -0.62], dir: N([0.05, 0, -1]), up: [0, 1, 0] } });
+    rifle: { pos: [0.34, 0.03, -0.62], dir: N([0.05, 0, -1]), up: [-1, 0, 0] } });
 
   // side falls: lying on the right (death_left, impact from the left) or the left side (death_right).
   const sideFall = (name, sgn, from, toward) => death(name, `hit from the ${from}: shoved away, legs fold, falls on the ${toward} side; rifle dropped`, {
@@ -106,11 +107,11 @@ export function reactionClips(R) {
     t: { b: [0.04, 0.30], f: [0.22, 0.72], r: 0.26, g: 0.74 },
     buckle: standingBase({ hips: { pos: [0.07 * sgn, 0.79, 0.05], rot: { roll: -14 * sgn, yaw: 6 * sgn } }, spine: [{ pitch: 2, roll: -10 * sgn }, { roll: -12 * sgn }, { pitch: 2, roll: -8 * sgn }], neck: { roll: -10 * sgn }, head: { roll: -14 * sgn, pitch: 6 },
       feet: { l: foot(-0.12, 0.0, { yaw: 8 }), r: foot(0.12, 0.02, { yaw: -10 }) } }),
-    final: { hips: { pos: [0.06 * sgn, 0.15, 0.06], rot: { roll: -90 * sgn, pitch: 12 } }, spine: [{ pitch: 4 }, { pitch: 6 }, { pitch: 4 }], neck: { pitch: 8, roll: 0 }, head: { pitch: 6, roll: -6 * sgn }, jaw: 4,
+    final: { hips: { pos: [0.06 * sgn, 0.19, 0.06], rot: { roll: -90 * sgn, pitch: 12 } }, spine: [{ pitch: 4 }, { pitch: 6 }, { pitch: 4 }], neck: { pitch: 8, roll: 0 }, head: { pitch: 6, roll: -6 * sgn }, jaw: 4,
       clav: { l: { roll: 3 }, r: { roll: -3 } },
       feet: { l: { pos: [-0.56 * sgn, sgn > 0 ? 0.19 : 0.10, 0.10], rot: q.axis([0, 0, 1], -90 * sgn), pole: N([-0.1, 0.1, -1]), toe: 0 }, r: { pos: [-0.60 * sgn, sgn > 0 ? 0.10 : 0.19, 0.20], rot: q.axis([0, 0, 1], -90 * sgn), pole: N([-0.1, 0.1, -1]), toe: 0 } } },
-    hands: { fling: { l: [-0.30 * sgn - 0.05, 0.04, -0.2], r: [0.30 * sgn + 0.05, 0.04, -0.2] }, ground: sgn > 0 ? { r: [0.50, 0.10, -0.38], l: [0.30, 0.30, -0.18] } : { l: [-0.50, 0.10, -0.38], r: [-0.30, 0.30, -0.18] }, dir: { r: [0.5, 0, -0.8], l: [-0.5, 0, -0.8] } },
-    rifle: { pos: [-0.25 * sgn, 0.04, -0.62], dir: N([0.1 * sgn, 0, -1]), up: [0, 1, 0] } });
+    hands: { up: 0.25, fling: { l: [-0.30 * sgn - 0.05, 0.04, -0.2], r: [0.30 * sgn + 0.05, 0.04, -0.2] }, ground: sgn > 0 ? { r: [0.50, 0.15, -0.38], l: [0.30, 0.24, -0.18] } : { l: [-0.50, 0.15, -0.38], r: [-0.30, 0.24, -0.18] }, dir: { r: [0.5, 0, -0.8], l: [-0.5, 0, -0.8] } },
+    rifle: { pos: [-0.25 * sgn, 0.03, -0.62], dir: N([0.1 * sgn, 0, -1]), up: [-1, 0, 0] } });
   sideFall('death_left', 1, 'left', 'right');
   sideFall('death_right', -1, 'right', 'left');
 
@@ -120,10 +121,10 @@ export function reactionClips(R) {
     t: { b: [0.04, 0.40], f: [0.34, 0.72], r: 0.30, g: 0.72 },
     buckle: { hips: { pos: [0.0, 0.52, 0.14], rot: { pitch: 24, roll: -4 } }, spine: [{ pitch: 16 }, { pitch: 18 }, { pitch: 10 }], neck: { pitch: 10 }, head: { pitch: 22, yaw: 8 }, clav: { l: { pitch: 6 }, r: { pitch: 6 } },
       feet: { l: foot(-0.14, -0.22, { yaw: 6 }), r: foot(0.14, 0.46, { yaw: -8, y: 0.11, pitch: 40, toe: 45 }) } },
-    final: { hips: { pos: [-0.04, 0.16, 0.10], rot: { roll: 90, pitch: 22 } }, spine: [{ pitch: 14 }, { pitch: 16 }, { pitch: 12 }], neck: { pitch: 16 }, head: { pitch: 14, roll: 6 }, jaw: 3,
+    final: { hips: { pos: [-0.04, 0.21, 0.10], rot: { roll: 90, pitch: 10 } }, spine: [{ pitch: 5 }, { pitch: 6 }, { pitch: 4 }], neck: { pitch: 4 }, head: { pitch: 2, roll: 6 }, jaw: 3,
       clav: { l: { roll: 4, pitch: 8 }, r: { roll: -4, pitch: 8 } },
       feet: { l: { pos: [0.02, 0.10, 0.36], rot: q.axis([0, 0, 1], 90), pole: N([0.1, 0.1, -1]), toe: 0 }, r: { pos: [0.10, 0.21, 0.30], rot: q.axis([0, 0, 1], 90), pole: N([0.1, 0.1, -1]), toe: 0 } } },
-    hands: { fling: { l: [-0.18, -0.1, -0.22], r: [0.18, -0.1, -0.22] }, ground: { l: [-0.50, 0.10, -0.36], r: [-0.28, 0.24, -0.30] }, dir: { r: [-0.5, 0, -0.8], l: [-0.6, 0, -0.7] } },
-    rifle: { pos: [0.35, 0.04, -0.20], dir: N([0.08, 0, -1]), up: [0, 1, 0] } });
+    hands: { up: 0.25, fling: { l: [-0.18, -0.1, -0.22], r: [0.18, -0.1, -0.22] }, ground: { l: [-0.50, 0.15, -0.36], r: [-0.28, 0.22, -0.30] }, dir: { r: [-0.5, 0, -0.8], l: [-0.6, 0, -0.7] } },
+    rifle: { pos: [0.35, 0.03, -0.20], dir: N([0.08, 0, -1]), up: [-1, 0, 0] } });
   return out;
 }
