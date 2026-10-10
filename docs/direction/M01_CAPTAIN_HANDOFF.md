@@ -10,6 +10,9 @@
 - **T35 `M01-ANIM-LOCOMOTION-RESOLVER-V1` ACCEPTED** at `46b210f` on `claude/m01-anim-resolver-v1` (stacked on 5765aa5). CI 38043817745: npm test 559/559, browser 11/11, build, authority OK. 1 fix (spec race with menu frame + stale-hint guard). Fixes playtest items 7/9/11 (blends, full fall clip, crouch fade); items 3/4/8 remain H6.
 - Worktrees now: v7-cert = `claude/m01-viewmodel-feel-v2` (T39, base 876b67c — must rebase onto 46b210f before commit), `COD-guerra-t35` = T35 branch (fix worktree), t44 = fable-high attempt 4 running, t20 = queued for fable-high.
 - T39 implemented (uncommitted), in verification. Open gameplay question H8: when weapon is lowered near a wall in ADS, sim still fires with ADS accuracy (blocking fire = sim change) → PENDENTE HUMANO.
+- **T39 `M01-VIEWMODEL-FEEL-V2` ACCEPTED** at `29ba3cf` on `claude/m01-viewmodel-feel-v2` (stacked on 304b90f). CI 38045111352: npm test 574/574, browser 9/9. Follow-up: near-wall lowered pose shows big sleeve + hand through open sleeve (T40). Jev 3/100.
+- T44: fable-high attempt 4 = spec-only fix (decal atlas race; crushed-blacks metric <10 -> <3), in verification. T20 queued for fable-high. PT05 diagnosis saved at v7-cert .agent/runs/PT05-COLLIDERS-PREP/DIAGNOSIS.md (yard wagons without colliders = gameplay task, reviewer-critical).
+- Current stack tip: `claude/m01-viewmodel-feel-v2` (T39 docs commit on top of 29ba3cf). New tasks branch from that tip.
 - Next after T39 (rule ranking, Captain decision): PT05 colliders (playtest item 5; diagnose first; if src/world → gameplay task with reviewer-critical), then T08 clip library (crouch_walk/sprint missing in GLB), T06, T27, T26, T10, PT10 German LOD, T43.
 
 ## 0. Instructions for Claude (read first)

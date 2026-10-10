@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "task_id": "M01-VIEWMODEL-FEEL-V2",
+  "accepted_head": "29ba3cf70479a8c2bd3c304af07d424cb2d4b9a3",
+  "status": "ACCEPTED",
+  "obligations": [
+    {
+      "id": "m01-viewmodel-feel-model",
+      "kind": "test",
+      "check": "node --test tests/m01-viewmodel-feel.test.js",
+      "reason": "Pins the first-person weapon feel: ADS progress linear in sim time (0.30 s in, 0.22 s out) with one smoothstep curve shared by the weapon pose and the camera FOV (70 to 48); breath and walk/run/crouch bob as closed-form functions of the sim clock; pause freezes the view; recoil unchanged per shot; wall/tree/cover lowering is a read-only probe; no RNG and no wall clock in the presentation modules."
+    },
+    {
+      "id": "m01-viewmodel-feel-browser",
+      "kind": "browser",
+      "check": "npx playwright test tests/browser/m01-viewmodel-feel.spec.js --workers=1 --retries=0",
+      "reason": "Proves in the production UI that ADS entry and exit take the specified time and curve, the FOV follows the same curve, the view freezes under pause, and the rifle lowers near an obstacle while raised in clear space; later viewmodel, arm and posture work (T40, T38) must keep it."
+    }
+  ]
+}

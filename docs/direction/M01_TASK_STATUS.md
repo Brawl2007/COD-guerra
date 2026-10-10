@@ -49,7 +49,7 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 36 | Guarnições/evacuação | PARCIAL | `carriedBy`; municiador MG34 e fases do ckm por fazer |
 | 37 | IK e orçamento | AUSENTE | — |
 | 38 | Posturas de combate | AUSENTE | — |
-| 39 | Sensação do viewmodel V2 | INCERTO | — |
+| 39 | Sensação do viewmodel V2 | **ACEITE** | 29ba3cf, CI 38045111352 (574/574, build, browser 9/9); mira 0,30/0,22 s com curva, FOV 70→48, respiração e bob pelo relógio da simulação, arma baixa perto de paredes (D22). Manga/mão junto a parede vai para T40; H8 pendente humano |
 | 40 | Braços FP e transporte | AUSENTE | — |
 | 41 | Acabamento das pontes em runtime | PARCIAL | Portal polish existe |
 | 42 | Água do Vístula | DONE* | `claude/m01-water-vistula-v1` @ `71ad067`, CI 37988900379 (535/535, browser 15/15 incl. regressão T18); fresnel + céu de T16, fluxo para norte pelo relógio, espuma nos pilares, margem molhada, Low sem reflexo mas com tom (média 59→99) (D17) |
