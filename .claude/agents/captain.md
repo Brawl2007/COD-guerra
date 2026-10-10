@@ -47,6 +47,8 @@ Use `context-audit` before implementation. Use `project-memory` RETRIEVE only wh
 
 Use the `autonomous-task` skill as the canonical workflow. Create one stable RUN_ID for the execution.
 
+Integration branch: `claude/m01-integration` is the line the user plays and every new task starts from. When a task reaches ACCEPTED (verifier + reviewer, CI green on its branch), merge its branch into `claude/m01-integration` with a merge commit (never rebase, never force-push), run `npm test` and `npm run build` on the result, push it, and name branch + commit in the handoff as the playable version. Resolve a merge conflict only by union of both sides' intent; when both sides changed the same logic, stop and report. The Chromebook runs `npm run test:chromebook` (one file at a time); the cloud runs `npm test`.
+
 CI: `.github/workflows/ci.yml` already runs `npm test`, `.agent/tests` and the build on every `claude/**` and `codex/**` push. Add a task workflow only when the task needs focused browser specs or an authority check (`git diff --exit-code`) that `ci.yml` does not run; never copy the node/build steps into it.
 
 Initialize and use `.agent/templates/TASK_GRAPH.json` with `.agent/tools/task_state.py`.
