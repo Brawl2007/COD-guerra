@@ -32,7 +32,7 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 19 | Feedback do tiro do jogador | DONE* | `08d2e81`, CI 37890545910 (D12) |
 | 20 | Impostores da frente distante | **ACEITE** | 676a455 (branch `claude/m01-distant-front-impostors-v1`, base 71ad067, por integrar na pilha), CI 38047289527; pelotão polaco sem prova de píxeis nas vistas de teste |
 | 21 | Ambient director | AUSENTE | Depende de T22 |
-| 22 | Battle readout / display rounds | PARCIAL | `ROUND_KINDS` existe (`m01-fire.js:8`); sem `display` nem `battleReadout` |
+| 22 | Battle readout / display rounds | **ACEITE** | `1881df1` (branch `claude/m01-display-fire-readout-v1`, workflow `cf7c2d7`), CI 38070927878 (628/628, golden ✔, 12 sementes, browser 7+2). Fogo de exibição separado e não guardado, RNG próprio; `battleReadout`; ainda sem perfis (T23). |
 | 23 | Frente leste visível | AUSENTE | Depende de T22 |
 | 24 | Chegada do comboio | PARCIAL | Módulos locomotiva/Panzerzug/vagões; chegada por `battleClock` em falta |
 | 25 | Horário do raid das 05:30 | AUSENTE | Depende de T03 |

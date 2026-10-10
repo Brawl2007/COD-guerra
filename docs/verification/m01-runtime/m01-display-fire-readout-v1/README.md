@@ -71,3 +71,9 @@ Byte-idêntico (`git diff 21a6f76 HEAD` vazio; sha256 `c775d6d46d8401c8284a93fca
 ## Ficheiros desta pasta
 
 `seed-sweep.json` (12 sementes), `pre-change-base-capture.jsonl` (captura da base, 13 corridas), `animation-contract-aarch64-{base,after,compare}.txt`, `golden-blocks-aarch64-{base,after}.json`, `scratch-*.mjs` (scripts usados para a captura da base, os blocos do golden e a comparação), `test-runs.txt` (comandos e contagens).
+
+## Aceitação (CI x86)
+
+- CI 38070488932 (código `1881df1`): npm test 628/628 com golden e 12 sementes verdes, mas o passo de prova procurava linhas TAP `ok N -` e o runner escreve `✔`: build e browser saltados. Defeito só do workflow.
+- Correcção 1/3 `cf7c2d7` (só workflow). CI **38070927878: success** — npm test 628/628, golden 2/2 ✔, 12 sementes ✔ + verificação do `seed-sweep`, build OK, browser focado 7/7, `m01.spec.js` (fogo alemão das portas, continuação da retirada) 2/2.
+- Verifier PASS; reviewer-critical ACCEPT sem correcções obrigatórias. **T22 ACEITE** em `1881df1` (workflow `cf7c2d7`).
