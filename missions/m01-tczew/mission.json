@@ -219,7 +219,33 @@
       "startSize": 24,
       "survivorsRange": [12, 18],
       "sector": "s2_east_bridgehead",
-      "note": "Pelotão histórico: 2.º pelotão da 1.ª companhia, comandado por Walenty Faterkowski, com metralhadoras pesadas (T26). Indivíduos do jogo são fictícios. Número de sobreviventes depende da cobertura dada pelo jogador e é persistido."
+      "note": "Pelotão histórico: 2.º pelotão da 1.ª companhia, comandado por Walenty Faterkowski, com metralhadoras pesadas (T26). Indivíduos do jogo são fictícios. Número de sobreviventes depende da cobertura dada pelo jogador e é persistido.",
+      "hold": {
+        "from": "evt_m01_train963_arrives",
+        "until": "evt_m01_east_platoon_withdraws",
+        "layout": { "columns": 6, "x0": 1033, "dx": 2, "z0": 38.2, "dz": 1.2 },
+        "classification": "RECONSTRUCTED",
+        "note": "T23: o pelotão está presente e parado no extremo leste do tabuleiro rodoviário (x 1033–1043, z 38,2–41,8, entre as treliças) desde a chegada do trem 963 até à retirada das 06:00, e só então corre para oeste. Os 24 lugares são de jogo: antes os homens partilhavam 4 pontos (6 por ponto) e uma baixa não se via. Saves anteriores guardam as suas posições e são postos em guarda na tick seguinte."
+      },
+      "attritionNote": "T23: as seis reservas (pl_east_18..23) caem à vista, em horas fixas (sem aleatoriedade), a tiros de atiradores de espingarda do dique ou dos portões, nunca das MG34. A baixa conta nos mortos do grupo mas NÃO em m01.east_platoon_survivors (que fica em 18 até às 06:00): a regra dos 20 s e dlg_m01_049 mantêm-se. Cada entrada abre às horas de `at` e fecha em `cutoff`, para a bala chegar antes das 06:00.",
+      "attrition": [
+        { "victim": "pl_east_23", "at": "04:53:00", "cutoff": "05:56:00", "classification": "RECONSTRUCTED" },
+        { "victim": "pl_east_22", "at": "05:04:00", "cutoff": "05:56:00", "classification": "RECONSTRUCTED" },
+        { "victim": "pl_east_21", "at": "05:16:00", "cutoff": "05:56:00", "classification": "RECONSTRUCTED" },
+        { "victim": "pl_east_20", "at": "05:27:00", "cutoff": "05:56:00", "classification": "RECONSTRUCTED" },
+        { "victim": "pl_east_19", "at": "05:38:00", "cutoff": "05:56:00", "classification": "RECONSTRUCTED" },
+        { "victim": "pl_east_18", "at": "05:49:00", "cutoff": "05:56:00", "classification": "RECONSTRUCTED" }
+      ],
+      "displayFire": [
+        { "id": "dp_east_pl_ckm", "shooters": ["pl_east_0", "pl_east_1"], "weapon": "ckm_wz30", "rounds": [5, 9], "intervalSec": [6, 14], "tracerEvery": 3,
+          "targetGroup": "grp_de_east", "from": "evt_m01_train963_arrives", "until": "evt_m01_east_platoon_withdraws", "classification": "RECONSTRUCTED",
+          "note": "Fogo só visual (T22): as duas metralhadoras pesadas do pelotão respondem aos alemães do dique. Não acerta, não suprime, não fere." },
+        { "id": "dp_east_pl_rifles", "shooters": ["pl_east_2", "pl_east_3", "pl_east_4", "pl_east_5", "pl_east_6", "pl_east_7", "pl_east_8", "pl_east_9", "pl_east_10", "pl_east_11",
+            "pl_east_12", "pl_east_13", "pl_east_14", "pl_east_15", "pl_east_16", "pl_east_17", "pl_east_18", "pl_east_19", "pl_east_20", "pl_east_21", "pl_east_22", "pl_east_23"],
+          "weapon": "kb_wz29", "rounds": [1, 1], "intervalSec": [8, 20], "tracerEvery": 0, "targetGroup": "grp_de_east",
+          "from": "evt_m01_train963_arrives", "until": "evt_m01_east_platoon_withdraws", "classification": "RECONSTRUCTED",
+          "note": "Fogo só visual: um tiro de espingarda por homem a cada 8–20 s, sem traçante." }
+      ]
     },
     {
       "id": "grp_de_east",
@@ -235,7 +261,15 @@
         { "id": "fp_m01_riflemen_gates", "actors": "de_east_2..de_east_13", "weapon": "kar98k", "line": { "x": [1053, 1057], "z": [9.5, 31.5] }, "classification": "GAMEPLAY_DRAMATIZATION", "note": "Atiradores na mesma faixa dos portões, visíveis da margem oeste. Metade do fogo vai para a cabeça de ponte leste até às 06:00 (evt_m01_panzerzug_arrives: fogo esporádico sobre a oeste)." },
         { "id": "fp_m01_riflemen_dike", "actors": "de_east_14..de_east_39", "weapon": "kar98k", "line": { "north": { "x": [1076, 1097], "z": [-80, -12] }, "south": { "x": [1076, 1094], "z": [52, 100] } }, "classification": "GAMEPLAY_DRAMATIZATION", "note": "Atiradores no dique, escondidos da margem oeste pelas treliças: só disparam sobre a cabeça de ponte leste e, a partir das 06:00, sobre o pelotão que recua. Sobre o jogador, só na salva de ajuste de obj_m01_hold_access (\"mude de cobertura\"): traçante e impactos à vista, origem atrás das treliças (pendente)." }
       ],
-      "fireModel": "Aproximação de jogo, não balística medida: cada tiro é uma recta da boca ao ponto visado com flecha parabólica h = 6e-6·R² (≈9 m a 1,2 km) e ~620 m/s de média (≈1,6 s a 1 km, dentro dos 1,5–2 s do perfil do wz.29). Dispersão em milésimos por rajada e por tiro. Tiros que passam a menos de 3 m de um sapador suprimem o reparo (obj_m01_cover_repair.mechanic)."
+      "fireModel": "Aproximação de jogo, não balística medida: cada tiro é uma recta da boca ao ponto visado com flecha parabólica h = 6e-6·R² (≈9 m a 1,2 km) e ~620 m/s de média (≈1,6 s a 1 km, dentro dos 1,5–2 s do perfil do wz.29). Dispersão em milésimos por rajada e por tiro. Tiros que passam a menos de 3 m de um sapador suprimem o reparo (obj_m01_cover_repair.mechanic).",
+      "displayFire": [
+        { "id": "dp_east_de_mg", "shooters": ["de_east_16", "de_east_17"], "weapon": "mg34", "rounds": [4, 7], "intervalSec": [7, 15], "tracerEvery": 2,
+          "targetGroup": "grp_east_platoon", "from": "evt_m01_train963_arrives", "until": "evt_m01_east_platoon_withdraws", "classification": "RECONSTRUCTED",
+          "note": "Fogo só visual (T22): dois homens do dique norte (não dos portões, não vêem a margem oeste) disparam rajadas de traçantes sobre o pelotão; `weapon` é só a etiqueta de exibição (a arma de jogo deles continua kar98k)." },
+        { "id": "dp_east_panzerzug", "origin": [1121, 3, 2.5], "weapon": "pz7_75mm", "rounds": [1, 1], "intervalSec": [60, 180], "targetBox": [995, 1045, -5, 45],
+          "from": "evt_m01_panzerzug_arrives", "until": "evt_m01_east_platoon_withdraws", "classification": "RECONSTRUCTED",
+          "note": "Fogo só visual: o Panzerzug 7 (parado em x 1111–1203, z 2,5; o modelo não tem boca de peça, a origem é a plataforma do tecto da primeira carruagem) dispara de vez em quando sobre a cabeça de ponte leste. Só leste: a caixa-alvo fica toda a mais de 550 m da área jogável. Clarão, fumo e baforada de chegada são só renderização." }
+      ]
     },
     {
       "id": "grp_de_spans",

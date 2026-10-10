@@ -33,7 +33,10 @@ import {isDemolitionDamage,collapseTwinName,collapseDamageId,collapseSeed,collap
 
 export const M01_BATTLEFIELD_FX_LIMITS=Object.freeze({bursts:16,flash:16,core:48,fire:96,smoke:128,dust:128,shards:96,lights:1});
 const FX_DENSITY={low:.55,medium:.78,high:1};
-const NO_DISPLAY_FIRE=Object.freeze({rounds:Object.freeze([]),firedAt:Object.freeze({})});
+const NO_DISPLAY_FIRE=Object.freeze({rounds:Object.freeze([]),firedAt:Object.freeze({}),fixed:Object.freeze({})});
+// A fixed-origin display shot (the Panzerzug's 75 mm gun, T23): muzzle smoke lasts GUN_SMOKE_SEC and the burst where the shell lands SHELL_PUFF_SEC,
+// SHELL_SCALE times the size of a rifle round's impact. Presentation only: no damage record, no decal, no sound.
+const GUN_SMOKE_SEC=3.2,SHELL_PUFF_SEC=2.4,SHELL_SCALE=3;
 const BOMB_NOSE=new THREE.Vector3(0,0,-1);
 const fxSeed=(p,clock)=>((Math.floor((p.x+2048)*73)^Math.floor(((p.y??0)+128)*151)^Math.floor((p.z+2048)*197)^Math.floor(clock*1000))>>>0);
 const fxCount=(n,quality)=>Math.max(1,Math.round(n*(FX_DENSITY[quality]??FX_DENSITY.low)));
@@ -341,6 +344,27 @@ export class M01View {
       const skinnedMuzzle=this.characters?.muzzle(a.id);if(skinnedMuzzle)muzzle.copy(skinnedMuzzle);
       const p={x:muzzle.x,y:muzzle.y,z:muzzle.z},d=far(p);
       put('muzzle',p,Math.max(.12,d*.008)*(.8+.2*Math.sin(time*90)));
+    }
+    // Fixed-origin display shots have no actor to flash: the simulation publishes origin, aim point and times in display.fixed, so the flash, the
+    // gun smoke and the arrival burst are pure functions of the clock (they survive a frame that never saw the round in flight).
+    for(const shot of Object.values(display.fixed??{})){
+      const origin={x:shot.ox,y:shot.oy,z:shot.oz},age=time-shot.firedAt,d=far(origin);
+      if(age>=0&&age<DISPLAY_FLASH_SEC)put('muzzle',origin,Math.max(.5,d*.018)*(.8+.2*Math.sin(time*90)));
+      if(age>=0&&age<GUN_SMOKE_SEC){
+        const k=age/GUN_SMOKE_SEC,seed=fxSeed(origin,shot.firedAt),n0=visualNoise(seed,1),n1=visualNoise(seed,2);
+        put('smoke',{x:origin.x+(n0-.5)*.8*k,y:origin.y+.4+k*(2.2+n1*.8),z:origin.z+(n1-.5)*.7*k},
+          Math.max(.7,d*.02)*(.55+k*.95)*(1-k*k),null,.60*Math.pow(1-k,1.15),'#b9b8ae',seed,4);
+      }
+      const landed=time-shot.arriveAt;
+      if(landed>=0&&landed<SHELL_PUFF_SEC){
+        const aim={x:shot.ax,y:shot.ay-1,z:shot.az},profile=impactProfile(aim.y<-3?'water':'earth'),seed=fxSeed(aim,shot.arriveAt),dd=far(aim);   // aim = ground + 1 m
+        const fadeIn=Math.min(1,landed/.08),life=fadeIn*Math.pow(Math.max(0,1-landed/SHELL_PUFF_SEC),1.18),n=fxCount(profile.dust+2,this.owner?.quality);
+        for(let j=0;j<n&&life>0;j++){
+          const n0=visualNoise(seed,30+j*4),n1=visualNoise(seed,31+j*4),n2=visualNoise(seed,32+j*4),a=n0*Math.PI*2,r=landed*profile.spread*SHELL_SCALE*(.45+n1*.75);
+          const sx=Math.max(.24,dd*.0028)*SHELL_SCALE*(.58+n2*.7)*(1+landed*.42),sy=sx*(.42+.24*n1);
+          put('puff',{x:aim.x+Math.cos(a)*r,y:aim.y+.06+landed*(profile.rise+.20*n2)*SHELL_SCALE,z:aim.z+Math.sin(a)*r},[sx,sy,1],null,.60*life,profile.color,seed,30+j);
+        }
+      }
     }
     const tracer=r=>{
       const t=(time-r.firedAt)/(r.arriveAt-r.firedAt);if(!r.tracer||t<0||t>1)return;

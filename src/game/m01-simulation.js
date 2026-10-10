@@ -4,7 +4,7 @@ import { TczewWorld } from '../world/tczew-world.js';
 import { Wz29 } from './wz29.js';
 import { Random } from '../core/random.js';
 import { eyePosition, aimDirection, muzzlePosition, traceShot, traceObstruction } from '../world/spatial.js';
-import { makeRound, traceRound, closestApproach, validRound, NEAR_MISS } from './m01-fire.js';
+import { makeRound, traceRound, closestApproach, validRound, NEAR_MISS, ATTRITION_VICTIM } from './m01-fire.js';
 import { createDisplayFire, displaySeed, displayProfiles, updateDisplayFire, displayFireView, computeBattleReadout } from './m01-display-fire.js';
 import { initializePresentation, updateMotion, updatePosture, updateBodyYaw, recordSuppression, recordHit, recordDeath,
   recordDamage, validatePresentation, presentationDiagnostics } from './m01-animation-presentation.js';
@@ -65,6 +65,27 @@ const proneGunner=a=>MG34_IDS.includes(a.id);
 const fixedMG34=a=>a.alive&&a.active&&!['ADVANCE','RETREAT','WOUNDED','DOWN','reached_safety'].includes(a.state)&&
   !(a.target&&dist(a,a.target)>=.8);
 const canMG34Fire=a=>!proneGunner(a)||(fixedMG34(a)&&['idle','aim'].includes(a.mg34Prone?.phase));
+// T23, the east front made visible (RECONSTRUCTED data in grp_east_platoon). From hold.from to hold.until the platoon stands on the end of the
+// road deck instead of staying off stage; six reserve men fall at the fixed battle-clock times of `attrition`, shot by a rifleman of the dike
+// or the gates. Validated when the module loads, so a typo in the data stops the game instead of changing it.
+export function eastFrontPlan(def=definition){
+  const fail=m=>{throw new Error(`M01 east front: ${m}`);},group=def.groups.find(g=>g.id==='grp_east_platoon'),hold=group?.hold,layout=hold?.layout,list=group?.attrition;
+  const at=id=>{const t=def.events.find(e=>e.id===id)?.trigger;if(t?.type!=='battleClock')fail(`${id} must be a battleClock event`);return seconds(t.at);};
+  if(!hold||at(hold.from)>=at(hold.until))fail('hold needs from before until');
+  if(!layout||!Number.isInteger(layout.columns)||layout.columns<1||![layout.x0,layout.dx,layout.z0,layout.dz].every(Number.isFinite)||layout.dx<=0||layout.dz<=0)fail('bad hold.layout');
+  if(!Array.isArray(list)||!list.length)fail('attrition must list the casualties');
+  const entries=list.map(e=>typeof e?.at==='string'&&typeof e.cutoff==='string'?{victim:e.victim,at:seconds(e.at),cutoff:seconds(e.cutoff)}:fail('attrition entry needs at and cutoff'));
+  entries.forEach((e,i)=>{
+    if(!ATTRITION_VICTIM.test(e.victim)||entries.findIndex(o=>o.victim===e.victim)!==i)fail(`victim ${e.victim}`);
+    // The cutoff leaves the flight time (3 s) before the withdrawal, so a round fired in time lands before the rule of 06:00 takes over.
+    if(!(e.at>=at(hold.from)&&e.at<e.cutoff&&e.cutoff<=at(hold.until)-3)||(i&&e.at<=entries[i-1].at))fail(`times of ${e.victim}`);
+  });
+  return {hold:{from:hold.from,until:hold.until},layout:{...layout},attrition:entries};
+}
+const EAST_FRONT=eastFrontPlan(),LAYOUT=EAST_FRONT.layout;
+const holdSlot=i=>({x:LAYOUT.x0+i%LAYOUT.columns*LAYOUT.dx,y:0,z:LAYOUT.z0+Math.floor(i/LAYOUT.columns)*LAYOUT.dz});
+// The block the east rifles aim at: the layout plus one metre in x and 0.2 m in z around it (two z bands of equal height).
+const BLOCK=(rows=>({x:LAYOUT.x0-1,w:(LAYOUT.columns-1)*LAYOUT.dx+2,z:LAYOUT.z0-.2,h:(rows-1)*LAYOUT.dz+.4}))(Math.ceil(24/LAYOUT.columns));
 
 export class M01Simulation {
   constructor(seed=19390901){this.reset(seed);}
@@ -88,7 +109,7 @@ export class M01Simulation {
     // Pela metade sul do tabuleiro; o pelotão recua em fila junto à treliça norte.
     for(let i=0;i<10;i++)this.actors.push(entity(`de_spans_${i}`,{x:1050+i*3,y:0,z:39.6+i%3*1.1},'enemy',
       {group:'grp_de_spans',weapon:'kar98k',active:false,firedAt:-1e9}));
-    for(let i=0;i<24;i++)this.actors.push(entity(`pl_east_${i}`,{x:1040+i%4*2,y:0,z:38+i%4*.65},'ally',
+    for(let i=0;i<24;i++)this.actors.push(entity(`pl_east_${i}`,holdSlot(i),'ally',
       {group:'grp_east_platoon',active:false,role:'RIFLEMAN'}));
     this.actors.push(...makeCKMCrew(this.world));
     for(const a of this.actors)initializePresentation(a,this.clock);
@@ -96,7 +117,7 @@ export class M01Simulation {
       ambient:0,nextCoverCall:40,guide:0,guideKey:null,guideAt:0,guideDist:0,guideShown:false,kowalRounds:30,lowAmmoHint:false,escort:false,escortSpoke:false,boundaryWarning:false,boundaryCountdown:0,holdAccessVisited:false,
       occupiedCover:null,coverExposure:0,coverCallIndex:0,repairPins:0,fireEase:false,calloutAt:-1e9,nextCombatCall:0};
     this.enemyFire={rounds:[],nextId:0};
-    this.display=createDisplayFire(displaySeed(this.rng.state),displayProfiles(definition));   // visual-only rounds: never saved, own RNG (m01-display-fire.js)
+    this.display=createDisplayFire(displaySeed(this.rng.state),displayProfiles(definition,{actors:this.actors}));   // visual-only rounds: never saved, own RNG (m01-display-fire.js)
     this.sectors={sectors:definition.sectors.map(s=>({id:s.id,state:s.schedule[0].state,strength:100,morale:1,supply:1})),damage:[]};
     this.mission={phase:'INTRO',complete:false,text:phaseText.INTRO,status:''};
     this.consume(E('intro_card'));this.startScene('cs_m01_intro');this.checkpoint=this.snapshot(false);
@@ -222,7 +243,7 @@ export class M01Simulation {
         break;
       }
       case E('second_air_pass'):this.emit({type:'distant-shot',point:{x:-550,y:20,z:60}});break;
-      case E('train963_arrives'):this.enemies.filter(a=>a.group==='grp_de_east').forEach(a=>{a.active=true;});line(25);line(28);break;
+      case E('train963_arrives'):this.enemies.filter(a=>a.group==='grp_de_east').forEach(a=>{a.active=true;});this.holdEastPlatoon();line(25);line(28);break;
       case E('panzerzug_arrives'):line(38);break;
       case E('repair_complete'):this.finish('cover_repair');this.destruction.push('ignition_line_repaired');line(31);line(32);break;
       case E('order_demolish'):this.activate('hold_access');this.pendingCheckpoint='cp_m01_c_engenheiros';this.startScene('cs_m01_order');this.mission.phase='MAIN_COMBAT';
@@ -386,7 +407,8 @@ export class M01Simulation {
     // Measure only this movement pass: scene staging/offscreen recovery are not footsteps.
     const motionBefore=this.actors.map(a=>({x:a.x,z:a.z}));
     this.interruptStationEvacuation();
-    const retreat=this.consumedEvent(E('east_demolition'));
+    const retreat=this.consumedEvent(E('east_demolition')),holding=this.holdingEast();
+    this.holdEastPlatoon();
     for(const a of this.actors){
       if(a.ckm)a.ckm.visible=!this.consumedEvent(E('west_demolition'));
       a.shot=Math.max(0,a.shot-dt);this.updateMG34Posture(a);if(!a.alive||!a.active)continue;
@@ -407,6 +429,7 @@ export class M01Simulation {
         continue;
       }
       if(a.group==='grp_east_platoon'){
+        if(holding)continue;   // T23: parado no tabuleiro até à retirada das 06:00 (hold.until); só então corre para oeste
         // Etapas do recuo: portal rodoviário, sul do barracão e passagem pelo posto de disparo até junto da estação.
         // Os limiares ficam aquém dos pontos (moveActor pára a 0,8 m), para nenhum soldado ficar preso numa etapa.
         // O pelotão recua a correr sob fogo (5,5 m/s): ~1,3 km até à estação dentro da fase do corredor.
@@ -469,7 +492,7 @@ export class M01Simulation {
       if(a.cooldown>0)continue;
       if(a.group==='grp_de_spans')this.spansFire(a,retreat);else this.eastFire(a,retreat,withdrawal);
     }
-    this.kowalFire(dt);this.landRounds();
+    this.attritionTick();this.kowalFire(dt);this.landRounds();
     updateDisplayFire(this.display,{clock:this.clock,battleClock:this.battleClock,actors:this.actors,consumedEvent:id=>this.consumedEvent(id),heightAt:(x,z)=>this.world.heightAt(x,z)},dt);
   }
   /** grp_de_east no dique: MG34 sobre o reparo/jogador/secção; atiradores sobretudo sobre a cabeça de ponte leste até às 06:00. */
@@ -521,11 +544,48 @@ export class M01Simulation {
     }
   }
   withdrawingPlatoon(){return this.actors.filter(a=>a.group==='grp_east_platoon'&&a.alive&&a.active);}
+  /** T23: true from hold.from (train 963) to hold.until (the withdrawal at 06:00). Read from the consumed events only, so a save needs no new key. */
+  holdingEast(){return this.consumedEvent(EAST_FRONT.hold.from)&&!this.consumedEvent(EAST_FRONT.hold.until);}
+  /** Puts every living platoon man on guard while the hold lasts. Also brings a save made inside that window by older code into line on its next tick. */
+  holdEastPlatoon(){
+    if(!this.holdingEast())return;
+    for(const a of this.actors)if(a.group==='grp_east_platoon'&&a.alive&&!a.active){a.active=true;a.state='GUARD';}
+  }
+  /**
+   * T23 attrition. At each fixed battle-clock time of the plan one reserve man (pl_east_18..23) is shot by the lowest-numbered rifleman who
+   * can hit him; a round that misses or finds a wall is simply retried on the next tick until the entry's cutoff. There is no timer key: what
+   * is done is read from the men themselves and from the rounds in flight (kept by the save), so a restore can neither skip nor repeat a casualty.
+   * Draws nothing from this.rng (the round is built without dispersion) and writes nothing on the shooter except his display flash, so his own
+   * eastFire cadence and Kowal's pick of the latest flash stay as they were. It is never aimed at the player: for H9 it is no telegraph.
+   */
+  attritionTick(){
+    if(!this.holdingEast())return;
+    for(const e of EAST_FRONT.attrition){
+      if(this.battleClock<e.at)return;   // in time order: nothing later is due either
+      const victim=this.actor(e.victim);
+      if(!victim.alive||!victim.active||this.battleClock>=e.cutoff)continue;   // already fallen, or too late to land before the withdrawal
+      if(this.enemyFire.rounds.some(r=>r.kind==='attrition'&&r.victim===e.victim))return;   // the round is in flight
+      this.shootAttrition(victim);return;
+    }
+  }
+  shootAttrition(victim){
+    const aim={x:victim.x,y:victim.y+(victim.crouched?.75:1.1),z:victim.z};
+    for(let i=2;i<40;i++){   // riflemen only: de_east_0 and de_east_1 are the MG34 gunners
+      const a=this.actor(`de_east_${i}`);
+      if(!a.alive||!a.active||this.clock<a.suppressedUntil)continue;
+      const r=makeRound({id:`m01_round_${this.enemyFire.nextId}`,by:a.id,weapon:'kar98k',kind:'attrition',origin:eyePosition(a),aim,firedAt:this.clock,
+        bias:[0,0],cone:[0,0],gauss:()=>0,tracer:true,victim:victim.id});
+      if(traceRound(this.world,r,[victim]).actor!==victim)continue;   // the very trace of the landing: a wall in the way tries the next man
+      this.enemyFire.nextId++;this.enemyFire.rounds.push(r);this.display.firedAt[a.id]=r.firedAt;return;   // the muzzle flash is display data (not saved)
+    }
+  }
   repairAim(){
     const sappers=this.actors.filter(a=>a.role==='ENGINEER'&&a.alive&&a.active);
     return sappers.length?sappers[Math.floor(this.rng.next()*sappers.length)]:this.world.point('repair_site_2');
   }
-  eastBridgeheadPoint(r){return r()<.5?{x:995+r()*45,y:.5,z:-3+r()*6}:{x:995+r()*45,y:.5,z:37.5+r()*5};}
+  // T23: the east rifles aim into the block where the platoon stands (two z bands over the layout), so their rounds fly at real men;
+  // still three draws per call (band, x, z), which keeps the main RNG stream exactly where it was.
+  eastBridgeheadPoint(r){return r()<.5?{x:BLOCK.x+r()*BLOCK.w,y:.5,z:BLOCK.z+r()*BLOCK.h/2}:{x:BLOCK.x+r()*BLOCK.w,y:.5,z:BLOCK.z+BLOCK.h/2+r()*BLOCK.h/2};}
   gauss(){let u=0;while(u<=1e-12)u=this.rng.next();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*this.rng.next());}
   /** Uma rajada (ou um tiro) com dispersão em milésimos; os tiros ficam em voo até à hora de chegada (enemyFire.rounds). */
   burst(a,target,kind,{rounds=1,interval=.075,bias=[0,0],cone=[0,0],tracer=false,victim=null}={}){
@@ -574,6 +634,7 @@ export class M01Simulation {
   /** Chegada de um tiro: impacto no mundo, ferimento possível no jogador, supressão de quem estiver a menos de 3 m da trajectória. */
   landRound(r){
     if(r.kind==='east')return;   // cabeça de ponte leste: só clarão e estampido para o jogador
+    if(r.kind==='attrition')return this.landAttrition(r);
     const p=this.player,victim=r.victim&&!this.consumedEvent(E('east_demolition'))?this.actor(r.victim):null;
     const hit=traceRound(this.world,r,victim?.alive?[p,victim]:[p]);
     let point=hit.point,material=hit.material??'earth';
@@ -605,6 +666,18 @@ export class M01Simulation {
     }
     this.emit({type:'round-impact',kind:r.kind,by:r.by,point,material,crack:closestApproach(r,hit.t,eyePosition(p))<=6,distance:dist(point,p),
       victim:casualty?victim.id:null,pinned:near});
+  }
+  /**
+   * T23: an attrition round traces against its victim only. A hit is the casualty: the man falls, with no write to m01.east_platoon_survivors
+   * (the rule of 06:00 and dlg_m01_049 keep counting 18), no combatCall, no wound roll on the player, no event, and it returns before the loop
+   * that pins allies near the path, so his neighbours are not suppressed. A miss or a wall does nothing; the tick retries until the cutoff.
+   */
+  landAttrition(r){
+    const victim=this.actor(r.victim);
+    if(!victim?.alive||!victim.active||this.consumedEvent(E('east_platoon_withdraws')))return;
+    if(traceRound(this.world,r,[victim]).actor!==victim)return;
+    victim.alive=false;victim.health=0;victim.state='DOWN';
+    recordHit(victim,this.clock,{x:r.ox,z:r.oz});recordDeath(victim,true,this.clock);
   }
   fire(){
     const p=this.player,now=this.clock*1000;if(p.carrying||!this.weapon.shoot(now))return;
@@ -932,7 +1005,7 @@ export class M01Simulation {
       Object.assign(a,{active:false,alive:false,health:0,state:'DOWN'});
     for(const a of candidate.actors)initializePresentation(a,candidate.clock);
     candidate.weapon.restore(s.weapon);candidate.rng.state=s.rng;candidate.events=[];candidate.world.refresh(Object.keys(s.consumed),s.flags);
-    candidate.display=createDisplayFire(displaySeed(s.rng,s.clock),displayProfiles(definition));   // not saved: restarts empty, re-seeded from the saved state
+    candidate.display=createDisplayFire(displaySeed(s.rng,s.clock),displayProfiles(definition,{actors:candidate.actors}));   // not saved: restarts empty, re-seeded from the saved state
     if(s.resumeCheckpoint!==undefined){
       const backup=new M01Simulation();backup.restoreSnapshot(s.resumeCheckpoint);candidate.checkpoint=backup.snapshot(false);
     }else candidate.checkpoint=candidate.snapshot(false);   // legacy schema 2 used the loaded state itself as CP
