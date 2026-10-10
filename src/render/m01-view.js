@@ -11,6 +11,7 @@ import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';
 import { applyLighting, viewLightingDiagnostics, M01_FOG_RANGE } from './m01-lighting.js';
 import { M01Water } from './m01-water.js';
 import { M01Grading } from './m01-grading.js';
+import { M01Impostors } from './m01-impostors.js';
 import {battlefieldBlastKind,battlefieldProfile,fxLayerCount,staggeredLife,impactProfile,fxDistanceBand} from './m01-battlefield-fx-profile.js';
 import { M01Environment } from './m01-environment.js';
 import { M01Characters } from './m01-characters.js';
@@ -92,6 +93,7 @@ export class M01View {
     this.weaponWorldFx=new WeaponWorldFx(this.effects);
     // One muzzle light in the weapon pass: the licensed rig drives the procedural fallback's light.
     this.characters=new M01Characters(this.scene);
+    this.impostors=new M01Impostors(this.scene);   // T20: camera-facing silhouettes beyond 350 m (one draw call per nation)
     this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture,this.weaponWorldFx,{muzzleLight:this.fallbackFx.light});
     this.ready=Promise.all([this.loadKit(),this.characters.load(this.owner.quality),this.loadAircraft(),
       this.wagons.load(),this.yardWagons.load(),this.locomotive.load(),this.panzerzugArt.load()]);
@@ -205,6 +207,7 @@ export class M01View {
   }
   updateActors(actors,time,player={x:0,z:0},battleClock){
     const skinned=this.characters?.update(actors,time,player,this.owner.quality,battleClock)??new Set();
+    const impostored=this.impostors?.select(actors,skinned,player,this.owner.quality,time)??new Set();   // hand-off: exactly one of {skinned body, impostor, procedural body}
     const counts={},dummy=new THREE.Object3D(),root=new THREE.Object3D(),matrix=new THREE.Matrix4();
     const up=new THREE.Vector3(0,1,0),direction=new THREE.Vector3(),tint=new THREE.Color();
     this.actorPoses={standing:0,crouched:0,pinned:0,seated:0,wounded:0,carried:0,fallen:0,prone:0};
@@ -226,7 +229,7 @@ export class M01View {
         dummy.position.set(a.x,a.y+.018,a.z);dummy.rotation.set(0,-a.facing,0);dummy.scale.set(pose.name==='fallen'||pose.name==='wounded'?1.8:.7,1,.8);dummy.updateMatrix();
         this.contactShadows.setMatrixAt(shadowCount++,dummy.matrix);
       }
-      if(skinned.has(a.id))continue;
+      if(skinned.has(a.id)||impostored.has(a.id))continue;
       root.position.set(a.x,a.y+pose.root.offsetY,a.z);
       root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
       const visual=!a.civilian&&this.characters?.visuals?soldierVisualVariant(a):null;
@@ -638,7 +641,7 @@ export class M01View {
     const canvas=this.owner.canvas,previous=this.lastFrame;
     const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
       width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,
-      wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles
+      wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,grading:this.grading.stateKey,impostors:this.impostors?.enabled,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles; T20: so is the impostor A/B toggle
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
@@ -661,6 +664,7 @@ export class M01View {
     const fov=player.aiming?48:70;
     this.camera.aspect=this.weaponCamera.aspect=aspect;this.camera.fov=THREE.MathUtils.lerp(this.camera.fov,fov,Math.min(1,dt*12));
     this.camera.updateProjectionMatrix();this.weaponCamera.updateProjectionMatrix();
+    this.impostors?.sync({camera:this.camera,clock:time,battleClock:sim.battleClock,fog:this.lightingModel?.fog.color??[.63,.65,.65],sunColor:this.lightingModel?.sun.color,sunDir:this.lightingModel?.sky.sunDir,viewportHeight:this.owner.canvas.height});
     const w=sim.weapon,reload=w.reloadProgress(time*1000),bolt=w.boltCycling?Math.min(1,(time*1000-w.started)/1050):0;
     this.weaponRoot.position.set(player.aiming?0:.20,player.aiming?-.11:-.24,-.60);
     this.weaponRoot.position.y+=Math.abs(bob)-Math.sin(reload*Math.PI)*.10;
@@ -743,7 +747,7 @@ export class M01View {
   }
   get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,
     requiredAssetFailures:this.assets.failures.filter(f=>manifest.files.some(m=>typeof m.lod==='number'&&m.file===f.path)),
-    characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,weaponFx:this.weaponWorldFx.diagnostics,weaponLighting:this.weaponLighting.state,lighting:viewLightingDiagnostics(this),water:this.water.diagnostics,grading:this.grading.diagnostics,
+    characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,weaponFx:this.weaponWorldFx.diagnostics,weaponLighting:this.weaponLighting.state,lighting:viewLightingDiagnostics(this),water:this.water.diagnostics,grading:this.grading.diagnostics,impostors:this.impostors?.diagnostics,
     locomotive:this.locomotive.diagnostics,panzerzug:this.panzerzugArt.diagnostics,wagons:this.wagons.diagnostics,yardWagons:this.yardWagons.diagnostics,
     aircraft:{loaded:[...this.aircraftSources.keys()].sort(),planes:this.planes.map(p=>{const model=(p.levels[p.userData.level]??p.levels.find(l=>l.object.visible))?.object,prop=model?.getObjectByName('propeller');return {visible:p.visible,lod:model?.userData.lod,position:p.position.toArray(),attitude:[p.rotation.x,p.rotation.y,p.rotation.z],fade:p.userData.fade,propeller:prop?.quaternion.toArray()};}),
       path:this.aircraftPath?{...this.aircraftPath,planeSeconds:[0,1,2].map(i=>m01StukaPathTime(this.aircraftPath.since,i))}:null,
@@ -762,7 +766,7 @@ export class M01View {
         near:this.camera.near,far:this.camera.far,width:this.owner.canvas.width,height:this.owner.canvas.height}},
     battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},meta:structuredClone(this.battlefieldFxMeta),limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
-    this.disposed=true;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();
+    this.disposed=true;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();this.impostors?.dispose();
     this.fallbackFx.dispose();this.weaponWorldFx.dispose();this.weaponLighting.dispose();
     this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
     const textures=new Set();for(const m of Object.values(this.materials)){if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
