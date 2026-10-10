@@ -641,7 +641,7 @@ export class M01View {
     const canvas=this.owner.canvas,previous=this.lastFrame;
     const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
       width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,
-      wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,grading:this.grading.stateKey,impostors:this.impostors?.enabled,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles; T20: so is the impostor A/B toggle
+      wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles; T20: so is the impostor A/B toggle
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
