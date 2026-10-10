@@ -16,6 +16,12 @@ import {route} from '../helpers/m01-route.js';
 //   AO off vs on         the sky strip (depth beyond the AO fade) must be maxDiff 0; no pixel may get brighter; the frame must change
 //   grade off vs on      mean luminance within a few percent (tint, not exposure); B/R tint is cool at 04:30 and warm at 05:30
 //   bypass vs on         the BEFORE-equivalent in the same frame: mean luminance >= 85 %, no clipped whites added, no crushed blacks
+// Capture precondition (CI 38003872703): the damage-decal atlas is painted in timer slices and uploaded on the first render AFTER it
+// finishes (m01-damage-decals.js, paintAtlas); the paused-frame cache does not repaint for it. The first capture of station 06:05 was
+// drawn before that upload and every later toggle frame after it: 160 px of the post-raid soot on the far facade (x 551-575, y 285-386)
+// differed from ALL later frames (the a/b freeze check had passed, the shader was innocent). So, like m01-damage-decals.spec.js, every
+// capture waits for atlasReady, then forces ONE repaint at the frozen clock through the T42 water-detail toggle (present in the base
+// commit too, so the BEFORE run follows the identical sequence) before the default frame is taken.
 // Frames are rendered at the snapshot clock (pointer lock is released the moment it is granted, as in m01-station-architecture.spec.js), so a
 // BEFORE capture of the base commit and this build show the SAME sim state: Low must then be pixel-identical (<= 1/255) to BEFORE.
 // M01_GRADING_BASELINE=1 only captures PNGs (+ json) into M01_GRADING_BEFORE_DIR; it imports and asserts nothing of the new module, so it runs
@@ -23,9 +29,16 @@ import {route} from '../helpers/m01-route.js';
 const key='cod-guerra:checkpoint:m01:v2',baseline=process.env.M01_GRADING_BASELINE==='1',beforeDir=process.env.M01_GRADING_BEFORE_DIR||'';
 const clocks=['04:30','05:30','06:05'];
 const ACES=4;   // THREE.ACESFilmicToneMapping
-// Declared before the first CI measurement.
+// Declared before the first CI measurement, except CRUSHED_BELOW / BLACKS_SLACK (see below).
 const MIN_LUMA_RATIO=.85,MAX_CORNER_DARKEN=.25,MIN_CORNER_DARKEN=.08,CORNER_TOLERANCE=.012,IDENTITY_MAX_DIFF=1,MIN_REGION_PIXELS=1500,AO_MIN_CHANGED_PIXELS=300,AO_CHANGED_DL=3;
-const TINT_COOL=1.015,TINT_WARM=.985,TINT_DISTINCT=.004,GRADE_LUMA_BAND=[.93,1.07],WHITES_SLACK=.005,BLACKS_SLACK=.01,FRAME_TIME_RATIO_MAX=3;
+const TINT_COOL=1.015,TINT_WARM=.985,TINT_DISTINCT=.004,GRADE_LUMA_BAND=[.93,1.07],WHITES_SLACK=.005,FRAME_TIME_RATIO_MAX=3;
+// Crushed blacks = shadow detail driven to display black (8-bit luma < 3), not "darker than before": the contract's own criterion is the
+// mean luminance >= 85 % above. The first CI measurement counted luma < 10 with 1 % slack and failed on the bridges view, where 17.5 % of the
+// BEFORE frame is already below 10 at the blue hour: the authored vignette (corner darkening 0.207, equal to the predicted factor and under
+// the 25 % limit) plus AO moved 1.43 % of the frame across that line with the grade OFF (noGrade 0.1894 vs bypass 0.1751), the grade itself
+// 0.44 %. The grade lifts true blacks: luma < 1 fell 0.0018 -> 0.0000 and luma < 3 fell 0.0157 -> 0.0152 (graded vs bypass, bridges 04:30).
+// The < 10 fraction stays in the report as `shade`.
+const CRUSHED_BELOW=3,BLACKS_SLACK=.005,SHADOW_BELOW=10;
 const first={},free={};
 route(19390901,{support:true,onStep:({sim})=>{
   for(const clock of clocks){
@@ -66,10 +79,10 @@ const STATES=Object.freeze({
 });
 
 /** Decodes PNGs in a blank page (no extra dependency). Per region: luminance means, rgb means, A/B differences, clipped / dark fractions, predicted vignette. */
-async function analyze(browser,{a,b,regions,vignette=null,dlMin=AO_CHANGED_DL}){
+async function analyze(browser,{a,b,regions,vignette=null,dlMin=AO_CHANGED_DL,crushed=CRUSHED_BELOW,shadow=SHADOW_BELOW}){
   const page=await browser.newPage();
   try{
-    return await page.evaluate(async({a,b,regions,vignette,dlMin})=>{
+    return await page.evaluate(async({a,b,regions,vignette,dlMin,crushed,shadow})=>{
       const decode=async b64=>{
         const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0)),bitmap=await createImageBitmap(new Blob([bytes],{type:'image/png'}),{colorSpaceConversion:'none'});
         const canvas=new OffscreenCanvas(bitmap.width,bitmap.height),ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(bitmap,0,0);
@@ -81,25 +94,26 @@ async function analyze(browser,{a,b,regions,vignette=null,dlMin=AO_CHANGED_DL}){
       const smooth=(e0,e1,x)=>{const t=Math.max(0,Math.min(1,(x-e0)/(e1-e0)));return t*t*(3-2*t);};
       for(const [name,r] of Object.entries(regions)){
         const w=A.width,h=A.height,x0=r.circle?0:r.x0,x1=r.circle?w:r.x1,y0=r.circle?0:r.y0,y1=r.circle?h:r.y1;
-        let n=0,sumA=0,sumB=0,maxDiff=0,absSum=0,changed=0,brighter=0,clipA=0,clipB=0,darkA=0,darkB=0,pred=0;const rgbA=[0,0,0],rgbB=[0,0,0];
+        let n=0,sumA=0,sumB=0,maxDiff=0,absSum=0,changed=0,brighter=0,clipA=0,clipB=0,darkA=0,darkB=0,shadeA=0,shadeB=0,pred=0;const rgbA=[0,0,0],rgbB=[0,0,0];
         for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){
           if(r.circle&&Math.hypot(x+.5-r.circle[0],y+.5-r.circle[1])>r.circle[2])continue;
-          n++;const i=(y*w+x)*4,la=lum(A.data,i);sumA+=la;
+          const i=(y*w+x)*4;
+          n++;const la=lum(A.data,i);sumA+=la;
           for(let k=0;k<3;k++)rgbA[k]+=A.data[i+k];
-          if(Math.min(A.data[i],A.data[i+1],A.data[i+2])>=250)clipA++;if(la<10)darkA++;
+          if(Math.min(A.data[i],A.data[i+1],A.data[i+2])>=250)clipA++;if(la<crushed)darkA++;if(la<shadow)shadeA++;
           if(!B)continue;
           const lb=lum(B.data,i);sumB+=lb;for(let k=0;k<3;k++){rgbB[k]+=B.data[i+k];maxDiff=Math.max(maxDiff,Math.abs(A.data[i+k]-B.data[i+k]));}
           if(A.data[i]>B.data[i]+1||A.data[i+1]>B.data[i+1]+1||A.data[i+2]>B.data[i+2]+1)brighter++;
           const dl=Math.abs(la-lb);absSum+=dl;if(dl>=dlMin)changed++;
-          if(Math.min(B.data[i],B.data[i+1],B.data[i+2])>=250)clipB++;if(lb<10)darkB++;
+          if(Math.min(B.data[i],B.data[i+1],B.data[i+2])>=250)clipB++;if(lb<crushed)darkB++;if(lb<shadow)shadeB++;
           if(vignette){const rr=2*Math.hypot(x+.5-w/2,y+.5-h/2)/Math.hypot(w,h);pred+=lb*(1-vignette.strength*smooth(vignette.inner,vignette.outer,rr));}
         }
-        out[name]={pixels:n,meanA:sumA/n,rgbA:rgbA.map(v=>v/n),clipA:clipA/n,darkA:darkA/n,
-          ...(B?{meanB:sumB/n,rgbB:rgbB.map(v=>v/n),maxDiff,meanAbs:absSum/n,changed,changedFraction:changed/n,brighter,clipB:clipB/n,darkB:darkB/n,
+        out[name]={pixels:n,meanA:sumA/n,rgbA:rgbA.map(v=>v/n),clipA:clipA/n,darkA:darkA/n,shadeA:shadeA/n,
+          ...(B?{meanB:sumB/n,rgbB:rgbB.map(v=>v/n),maxDiff,meanAbs:absSum/n,changed,changedFraction:changed/n,brighter,clipB:clipB/n,darkB:darkB/n,shadeB:shadeB/n,
             ratio:sumA/sumB,darkening:1-sumA/sumB,predictedDarkening:vignette?1-pred/sumB:null}:{})};
       }
       return out;
-    },{a:a.toString('base64'),b:b?b.toString('base64'):null,regions,vignette,dlMin});
+    },{a:a.toString('base64'),b:b?b.toString('base64'):null,regions,vignette,dlMin,crushed,shadow});
   }finally{await page.close();}
 }
 
@@ -110,13 +124,20 @@ async function settle(page){
   let last=-1,same=0;
   for(let i=0;i<120&&same<4;i++){const f=await frameCount(page);same=f===last?same+1:0;last=f;await page.waitForTimeout(500);}
 }
-// A toggle repaints exactly once at the frozen clock (the grade's state is part of the paused-frame key); then let the compositor present it.
-async function setGrading(page,state){
+// A toggle repaints exactly once at the frozen clock (its state is part of the paused-frame key); then let the compositor present it.
+async function repaint(page,toggle,arg){
   const f0=await frameCount(page);
-  await page.evaluate(s=>window.m01GradingDebug.set(s),state);
+  await page.evaluate(toggle,arg);
   await page.waitForFunction(f=>window.gameDiagnostics().m01.renderedFrames>=f+1,f0,{timeout:60000});
   await page.evaluate(()=>new Promise(done=>requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>done())))));
   await page.waitForTimeout(500);
+}
+const setGrading=(page,state)=>repaint(page,s=>window.m01GradingDebug.set(s),state);
+// Two repaints of the frozen clock through the T42 water-detail toggle (base commit too), ending in its default state (detail 1): the
+// frame then holds every texture flagged for upload since the paused frame was first drawn (the decal atlas, see the header).
+async function freshFrame(page){
+  await repaint(page,on=>window.m01WaterDebug.setDetail(on),false);
+  await repaint(page,on=>window.m01WaterDebug.setDetail(on),true);
 }
 function watch(page){
   const errors=[],failed=[];
@@ -125,7 +146,11 @@ function watch(page){
   page.on('response',r=>{if(r.status()>=400)failed.push(`${r.status()} ${r.url()}`);});
   return {errors,failed};
 }
-const results={};
+// A failing test restarts the Playwright worker (module state is lost), so the per-capture summaries read by the last test live in a file
+// under the run's output directory (Playwright empties it when the run starts).
+const resultsFile=info=>path.join(info.project.outputDir,'m01-grading-results.json');
+const readResults=info=>{try{return JSON.parse(fs.readFileSync(resultsFile(info),'utf8'));}catch{return {};}};
+const remember=(info,k,v)=>{fs.mkdirSync(info.project.outputDir,{recursive:true});fs.writeFileSync(resultsFile(info),JSON.stringify({...readResults(info),[k]:v}));};
 /** One frozen capture: the snapshot clock is rendered and never advances. */
 async function capture(browser,info,{view,clock,quality,states=[]}){
   const name=`m01-grading-${view}-${clock.replace(':','')}-${quality}`;
@@ -137,7 +162,10 @@ async function capture(browser,info,{view,clock,quality,states=[]}){
     await page.evaluate(()=>{const hold=e=>{if(document.pointerLockElement?.id==='game'){document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();document.exitPointerLock();}};document.addEventListener('pointerlockchange',hold,true);});
     await page.locator('#continue').click();
     await page.waitForFunction(x=>{const d=window.gameDiagnostics?.();return d&&d.paused&&d.m01.renderedFrames>0&&d.player.x===x;},snapshot.player.x,{timeout:240000});
+    // Capture precondition (header): the decal atlas must be painted AND drawn before the default frame is taken.
+    await page.waitForFunction(()=>{const d=window.gameDiagnostics().m01.damageDecals;return d.atlasReady||d.atlasError;},null,{timeout:120000});
     await settle(page);
+    await freshFrame(page);
     const data=await page.evaluate(()=>window.gameDiagnostics());
     const a=await page.screenshot({...shotOptions,path:info.outputPath(name+'.png')});
     await page.waitForTimeout(1000);
@@ -147,12 +175,17 @@ async function capture(browser,info,{view,clock,quality,states=[]}){
     const summary={name,view,clock,quality:data.quality,battleClock:data.m01.battleClock,snapshotBattleClock:snapshot.battleClock,simClock:data.clock,simClockLater:later.clock,
       paused:data.paused,pausedLater:later.paused,scene:data.scene,snapshotScene:Boolean(free[clock])?'gameplay':'first-step',player:data.player,
       camera:data.m01.demolition?.camera??null,grading:data.m01.grading??null,laterGrading:later.m01.grading??null,lighting:data.m01.lighting??null,
-      drawCalls:data.drawCalls,triangles:data.triangles};
+      decals:{atlasReady:data.m01.damageDecals?.atlasReady??null,atlasError:data.m01.damageDecals?.atlasError??null,atlasChecksum:data.m01.damageDecals?.atlasChecksum??null,
+        residueTriangles:data.m01.damageDecals?.residueTriangles??null,marks:data.m01.damageDecals?.visibleMarks??null},water:data.m01.water?.detail??null,
+      renderedFrames:data.m01.renderedFrames,drawCalls:data.drawCalls,triangles:data.triangles};
     if(baseline&&beforeDir){
       fs.mkdirSync(beforeDir,{recursive:true});
       fs.writeFileSync(path.join(beforeDir,name+'.png'),a);
-      fs.writeFileSync(path.join(beforeDir,name+'.json'),JSON.stringify({name,battleClock:summary.battleClock,simClock:summary.simClock,player:summary.player,quality:summary.quality,lighting:summary.lighting},null,2));
+      fs.writeFileSync(path.join(beforeDir,name+'.json'),JSON.stringify({name,battleClock:summary.battleClock,simClock:summary.simClock,player:summary.player,quality:summary.quality,lighting:summary.lighting,
+        decals:summary.decals,water:summary.water},null,2));
     }
+    expect(summary.decals.atlasReady,`decal atlas painted before the capture (${summary.decals.atlasError})`).toBe(true);
+    expect(summary.water,'water detail back to its default after the forced repaint').toBe(1);
     expect(seen.errors).toEqual([]);expect(seen.failed).toEqual([]);
     return {name,summary,a,b,shots,info};
   }finally{await page.close();}
@@ -168,6 +201,8 @@ const tintOf=s=>(s.rgbA[2]/s.rgbA[0])/(s.rgbB[2]/s.rgbB[0]);
 const sameSimState=(summary,b)=>{
   expect.soft(summary.simClock,'same sim clock as the BEFORE capture').toBe(b.meta.simClock);expect.soft(summary.battleClock,'same battle clock as the BEFORE capture').toBe(b.meta.battleClock);
   expect.soft(summary.player.x).toBe(b.meta.player.x);expect.soft(summary.player.z).toBe(b.meta.player.z);expect.soft(summary.player.angle).toBe(b.meta.player.angle);
+  expect.soft(b.meta.decals?.atlasReady,'the BEFORE capture was taken with the decal atlas painted too').toBe(true);
+  expect.soft(b.meta.decals?.atlasChecksum,'same decal atlas in BEFORE and AFTER').toBe(summary.decals.atlasChecksum);
 };
 function structural(g,quality,summary){
   const lighting=summary.lighting;
@@ -191,7 +226,7 @@ function structural(g,quality,summary){
 for(const view of ['bridges','station'])for(const clock of clocks)test(`${view} ${clock}: graded vs bypass vs BEFORE on Medium (same paused frame)`,async({browser},info)=>{
   test.setTimeout(process.env.CI?600000:420000);
   const c=await capture(browser,info,{view,clock,quality:'medium',states:['bypass','noVignette','noAo','noGrade']});
-  const s=c.summary;results[`${view}-${clock}-medium`]=s;
+  const s=c.summary;remember(info,`${view}-${clock}-medium`,s);
   if(baseline)return;
   expect(s.paused).toBe(true);expect(s.pausedLater).toBe(true);expect(s.simClockLater).toBe(s.simClock);expect(s.battleClock).toBe(s.snapshotBattleClock);
   structural(s.grading,'medium',s);
@@ -217,7 +252,7 @@ for(const view of ['bridges','station'])for(const clock of clocks)test(`${view} 
   expect.soft(ao.frame.changed,`AO changes the picture (${JSON.stringify(ao.frame)})`).toBeGreaterThanOrEqual(AO_MIN_CHANGED_PIXELS);
   // grade
   const gr=await analyze(browser,{a:c.a,b:c.shots.noGrade,regions:{scene:R.scene,frame:R.frame}});report.grade=gr;
-  report.tint=s.tint=tintOf(gr.scene);
+  report.tint=s.tint=tintOf(gr.scene);remember(info,`${view}-${clock}-medium`,s);
   expect.soft(gr.scene.ratio,'the grade tints, it does not change exposure').toBeGreaterThanOrEqual(GRADE_LUMA_BAND[0]);expect.soft(gr.scene.ratio).toBeLessThanOrEqual(GRADE_LUMA_BAND[1]);
   expect.soft(gr.frame.maxDiff,'the grade changes the picture').toBeGreaterThan(0);
   if(clock==='04:30')expect.soft(report.tint,'cool grade at 04:30 (B/R up)').toBeGreaterThanOrEqual(TINT_COOL);
@@ -245,7 +280,7 @@ for(const view of ['bridges','station'])for(const clock of clocks)test(`${view} 
 test('bridges 05:30: High keeps one pass and one target, 12 AO taps',async({browser},info)=>{
   test.setTimeout(process.env.CI?600000:420000);
   const c=await capture(browser,info,{view:'bridges',clock:'05:30',quality:'high',states:['bypass','noAo']});
-  const s=c.summary;results['bridges-05:30-high']=s;
+  const s=c.summary;remember(info,'bridges-05:30-high',s);
   if(baseline)return;
   structural(s.grading,'high',s);
   const report={...s},ao=await analyze(browser,{a:c.a,b:c.shots.noAo,regions:{sky:R.sky,frame:R.frame}});report.ao=ao;
@@ -261,7 +296,7 @@ test('bridges 05:30: High keeps one pass and one target, 12 AO taps',async({brow
 for(const [view,clock] of [['bridges','06:05'],['station','04:30']])test(`${view} ${clock}: Low is untouched (no pass, no target, pixel-identical to BEFORE)`,async({browser},info)=>{
   test.setTimeout(process.env.CI?600000:420000);
   const c=await capture(browser,info,{view,clock,quality:'low',states:['bypass']});
-  const s=c.summary;results[`${view}-${clock}-low`]=s;
+  const s=c.summary;remember(info,`${view}-${clock}-low`,s);
   if(baseline)return;
   expect(s.paused).toBe(true);expect(s.battleClock).toBe(s.snapshotBattleClock);
   structural(s.grading,'low',s);
@@ -332,7 +367,7 @@ test('indicative frame time: Medium graded vs bypass in the same live scene (alt
 });
 
 test('the grade follows the lighting phase: 04:30, 05:30 and 06:05 are distinct, cool then warm',async({},info)=>{
-  const get=(view,clock)=>results[`${view}-${clock}-medium`];
+  const results=readResults(info),get=(view,clock)=>results[`${view}-${clock}-medium`];
   await attach(info,'m01-grading-summary.json',results);
   if(baseline)return;
   for(const view of ['bridges','station']){
