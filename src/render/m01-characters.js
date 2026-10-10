@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { clone } from 'three/addons/utils/SkeletonUtils.js';
 import { AssetManager } from '../assets/asset-manager.js';
 import { actorPose } from './m01-actor-pose.js';
+import { AnimationPlayer } from './m01-animation-player.js';
+import { GAP, refineCandidate, resolveAnimation } from './m01-animation-resolver.js';
 import {SoldierVisualVariations,soldierVisualVariant} from './m01-soldier-variation.js';
 import { CKM_POSITION } from '../game/m01-simulation.js';
 import {mg34ProneSample,MG34_MUZZLE_SOCKET,eyePosition,actorHitboxes,muzzlePosition} from '../world/spatial.js';
@@ -26,6 +28,8 @@ export class M01Characters {
     this.visuals=visualVariation?new SoldierVisualVariations():null;
     this.scene=scene;this.assets=new AssetManager();this.sources=new Map();this.pending=new Set();
     this.instances=new Map();this.clips=new Map();this.revision=0;this.disposed=false;this.stats={};
+    // Cross-fade records by actor id (pure data from the resolver). They outlive LOD swaps; they never enter a save.
+    this.anim=new Map();
   }
   async load(quality='low'){
     await Promise.allSettled([
@@ -82,6 +86,16 @@ export class M01Characters {
     return this.clips.has('standing_idle')&&[0,1,2].some(l=>this.sources.has(`ckm:${l}`))&&['idle','abandon'].every(phase=>
       this.sources.get('ckm:2')?.animations.some(c=>c.name===`ckm_wz30_gun_${phase}`)&&
       ['gunner','loader'].every(role=>this.clips.has(`ckm_wz30_${role}_${phase}`)));
+  }
+  // Read-only clip metadata for the pure resolver: duration and the nominal ground speed stored in the GLB extras.
+  get clipView(){
+    return this._clipView??={has:n=>this.clips.has(n),info:n=>{const c=this.clips.get(n);
+      return c?{duration:c.duration,speed_mps:c.userData?.speed_mps,cycle_distance_m:c.userData?.cycle_distance_m}:undefined;}};
+  }
+  // sample() below (adapter precedence, unchanged) picks the clip; the resolver then adds rate, exactness, death clock and
+  // real-motion locomotion. `hint` is the previous target, used to keep a clip across a one-tick gait glitch.
+  describe(actor,time,actors,pose,battleClock,hint){
+    return refineCandidate(this.sample(actor,time,actors,pose,battleClock),{actor,pose,time,offset:(hash(actor.id)%1000)/250,clips:this.clipView,hint});
   }
   sample(actor,time,actors,pose,battleClock){
     const offset=(hash(actor.id)%1000)/250;
@@ -169,10 +183,11 @@ export class M01Characters {
     const profile=root.getObjectByName(`m01_soldier_${nation}`)?.userData;
     const v={root,key,meshes,visual,weapon,weaponRoot,weaponLOD,muzzle:weaponRoot?MG34_MUZZLE_SOCKET:profile?.weapons?.[weapon]?.muzzle??profile?.sockets?.muzzle??[0,.032,-.765],
       mixer:new THREE.AnimationMixer(root),action:null,clip:null};
+    v.player=new AnimationPlayer(v.mixer);
     this.instances.set(actor.id,v);return v;
   }
   release(v){
-    v.root.removeFromParent();v.mixer.stopAllAction();v.mixer.uncacheRoot(v.root);
+    v.root.removeFromParent();v.player.dispose();
     const skeletons=new Set(v.meshes.filter(n=>n.isSkinnedMesh).map(n=>n.skeleton));
     skeletons.forEach(s=>s.dispose());
     // Geometry, materials and atlases belong to the source cache, shared by all clones/LODs.
@@ -194,21 +209,23 @@ export class M01Characters {
       if(lod===3)continue;
       let weaponLOD=lod;
       if(mgGunner(a)){while(weaponLOD<3&&!this.sources.has(`mg34:${weaponLOD}`))weaponLOD++;if(weaponLOD===3)continue;}
-      const key=`${nation}:${lod}`,pose=actorPose(a,time),sample=this.sample(a,time,actors,pose,battleClock),clip=this.clips.get(sample.clip);
+      const key=`${nation}:${lod}`,pose=actorPose(a,time),sample=this.describe(a,time,actors,pose,battleClock,this.anim.get(a.id)?.target),clip=this.clips.get(sample.clip);
       if(!clip)continue;
       if(a.id==='szymon_kowal'&&!this.sources.get(key).scene.getObjectByName('rkm_wz28'))continue;
       // Missing or partial optional clips use the existing procedural batches, sampled from the same posture.
       if(mgGunner(a)&&a.alive&&a.mg34Prone&&a.mg34Prone.phase!=='standing'&&!this.hasProne())continue;
       let v=this.instances.get(a.id);
+      // A new LOD gets new actions but keeps the actor's blend record (this.anim), so a fade survives the swap.
       if(v&&(v.key!==key||mgGunner(a)&&v.weaponLOD!==weaponLOD)){this.release(v);this.instances.delete(a.id);v=null;}
       v??=this.create(a,key,weaponLOD);selected.add(a.id);
       // Always return a previously attached wounded actor to scene before sampling an updated carrier.
       this.scene.add(v.root);v.root.visible=true;v.root.position.set(a.x,a.y,a.z);v.root.rotation.set(0,-a.facing-Math.PI/2,0);
-      if(v.clip!==sample.clip){
-        v.mixer.stopAllAction();v.action=v.mixer.clipAction(clip);v.action.setLoop(THREE.LoopOnce,1);
-        v.action.clampWhenFinished=true;v.action.play();v.clip=sample.clip;
-      }
-      v.action.reset().play();v.mixer.setTime(sample.loop?sample.time%clip.duration:Math.min(sample.time,clip.duration));
+      // Pure resolver -> clip stack with weights (cross-fades from sim time); the player writes it to persistent actions.
+      const plan=resolveAnimation({actor:a,time,candidate:sample,prev:this.anim.get(a.id),
+        alt:patch=>{const b={...a,...patch},s=this.describe(b,time,actors,actorPose(b,time),battleClock);return this.clips.has(s.clip)?s:null;}});
+      this.anim.set(a.id,plan.state);
+      v.player.apply(plan.blend.flatMap(b=>{const c=this.clips.get(b.clip);return c?[{...b,clip:c}]:[];}));
+      v.action=v.player.target;v.clip=plan.clip;
       v.meshes.forEach(n=>{
         n.castShadow=quality!=='low'&&d<35;
         if(n.name==='mg34_bipod_open')n.visible=Boolean(a.alive&&a.mg34Prone&&a.mg34Prone.phase!=='standing'&&this.hasProne());
@@ -222,7 +239,7 @@ export class M01Characters {
       });
       if(v.weaponRoot)v.weaponRoot.visible=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy;
       v.root.updateMatrixWorld(true);clips[sample.clip]=(clips[sample.clip]??0)+1;
-      visible.push({...((mgGunner(a)&&a.mg34Prone)?{prone:{phase:a.mg34Prone.phase,startedAt:a.mg34Prone.startedAt,progress:a.mg34Prone.progress,rounds:a.mg34Prone.burst?.rounds??0,emitted:a.mg34Prone.burst?.emitted??0,shot:a.shot,firedAt:a.firedAt,eye:eyePosition(a),hitboxes:actorHitboxes(a),muzzle:muzzlePosition(a,time)}}:{}),id:a.id,lod,visual:v.visual,clip:sample.clip,clipTime:v.action.time,loop:sample.loop,weapon:v.weapon,weaponLOD:v.weaponLOD,muzzle:this.muzzle(a.id)?.toArray(),
+      visible.push({...((mgGunner(a)&&a.mg34Prone)?{prone:{phase:a.mg34Prone.phase,startedAt:a.mg34Prone.startedAt,progress:a.mg34Prone.progress,rounds:a.mg34Prone.burst?.rounds??0,emitted:a.mg34Prone.burst?.emitted??0,shot:a.shot,firedAt:a.firedAt,eye:eyePosition(a),hitboxes:actorHitboxes(a),muzzle:muzzlePosition(a,time)}}:{}),id:a.id,lod,visual:v.visual,clip:sample.clip,clipTime:v.action.time,loop:sample.loop,blend:plan.blend.map(({clip,weight,time})=>({clip,weight,time})),weapon:v.weapon,weaponLOD:v.weaponLOD,muzzle:this.muzzle(a.id)?.toArray(),
         weaponMeshes:v.meshes.filter(n=>weaponParts.has(n.name)&&n.visible||n.name.startsWith('mg34_')&&n.visible&&v.weaponRoot?.visible).map(n=>n.name)});
     }
     for(const {a}of candidates)if(selected.has(a.id)&&a.carriedBy&&a.task!=='station_wounded'&&selected.has(a.carriedBy)){
@@ -230,6 +247,8 @@ export class M01Characters {
       socket.add(v.root);v.root.position.set(0,0,0);v.root.rotation.set(0,0,0);v.root.updateMatrixWorld(true);
     }
     for(const [id,v]of this.instances)if(!selected.has(id)){this.release(v);this.instances.delete(id);}
+    // A record older than GAP (or from a later clock after a load) would be reset anyway: drop it.
+    for(const [id,r]of this.anim)if(!(time>=r.t&&time-r.t<=GAP))this.anim.delete(id);
     this.stats={active:selected.size,limit:limits.count,instances:this.instances.size,clips,actors:visible};
     return selected;
   }
@@ -258,5 +277,5 @@ export class M01Characters {
     v.root.updateMatrixWorld(true);return new THREE.Vector3().fromArray(v.muzzle).applyMatrix4(bone.matrixWorld);
   }
   get diagnostics(){return {...this.stats,visuals:this.visuals?.diagnostics??null,proneAvailable:this.hasProne(),ckm:this.ckm?{visible:this.ckm.root.visible,lod:this.ckm.lod,clip:this.ckm.clip,time:this.ckm.time,position:this.ckm.root.position.toArray()}:null,loaded:[...this.sources.keys()],failures:this.assets.failures};}
-  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.visuals?.dispose();this.assets.dispose();}
+  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.anim.clear();this.visuals?.dispose();this.assets.dispose();}
 }
