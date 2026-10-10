@@ -42,6 +42,12 @@ Criar o Task Contract e um `RUN_ID`, e correr o skill `autonomous-task`
 Os agentes correm sequencialmente (Chromebook). O Explorer não tem Bash: com o checkout esparso, exportar
 primeiro para o scratchpad os documentos de `docs/` de que ele precisa.
 
+## Visão do utilizador (2026-10-10)
+
+"Sentir a guerra, a sensação verdadeira, como se você fosse só mais 1 soldado no meio da grande guerra, sentindo o
+impacto." Vale para as 30 missões. Detalhe, tarefas da M01 que a servem (T17, T20, T23, T25) e proposta H8
+(escala histórica por missão) em `DECISIONS.md`.
+
 ## Handoff mais recente: 2026-10-09 (playtest 1 da M01)
 
 - **Onde está:** `docs/direction/PLAYTEST_M01.md`, secção 10, na branch `claude/gracious-franklin-u8kdin` (commits `2cc4f24` e `d1aef41`). Esta branch não está em `main`.
