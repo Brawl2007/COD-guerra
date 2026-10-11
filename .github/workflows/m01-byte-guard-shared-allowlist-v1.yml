@@ -1,0 +1,31 @@
+name: M01 Byte Guard Shared Allowlist V1
+
+on:
+  push:
+    branches: [claude/m01-byte-guard-shared-allowlist-v1]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-byte-guard-shared-allowlist-v1-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Byte-guard tests
+        run: node --test tests/m01-locomotive.test.js tests/m01-panzerzug.test.js tests/m01-soldier-visual-variation.test.js
+      - name: npm test
+        run: npm test
+      - name: npm run build
+        id: build
+        if: ${{ !cancelled() }}
+        run: npm run build
