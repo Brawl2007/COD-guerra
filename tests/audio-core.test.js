@@ -60,16 +60,33 @@ test('caps: 32 SFX voices (20 on low), VOICE 3, music outside the pool',()=>{
 test('SFX priority stealing at the cap: lowest priority (oldest first) goes, never an equal or higher one',()=>{
   for(const [quality,cap] of [['high',32],['low',20]]){
     const {audio}=make({quality});
+    // Fill the pool with category fx; probe with category `impact` (limit 6, empty) so only the SFX pool rule decides.
+    const impact=priority=>audio._voice({kind:'t',category:'impact',priority,volume:.1});
     for(let i=0;i<cap;i++)assert.ok(audio.channel(.1,0,0,50+i),`voice ${i} admitted`);
     assert.equal(audio.voices.size,cap);
-    assert.equal(audio.channel(.1,0,0,49)===null,true,'lower priority than everything playing is refused');
-    assert.equal(audio.channel(.1,0,0,50)===null,true,'equal priority does not steal');
+    assert.equal(impact(49)===null,true,'lower priority than everything playing is refused');
+    assert.equal(impact(50)===null,true,'equal priority does not steal');
     assert.equal(audio.dropped,2);assert.equal(audio.voices.size,cap);
     const lowest=[...audio.voices].find(v=>v.priority===50);
-    assert.ok(audio.channel(.1,0,0,200),'higher priority steals');
+    assert.ok(impact(200),'higher priority steals');
     assert.equal(audio.voices.size,cap);assert.equal(audio.evicted,1);assert.equal(audio.voices.has(lowest),false,'the lowest-priority voice was the victim');
-    assert.equal(audio.diagnostics.core.sfxStolen,1);audio.dispose();
+    assert.equal(audio.diagnostics.core.sfxStolen,1);assert.equal(audio.diagnostics.core.sfxRefused,2);audio.dispose();
   }
+});
+
+test('legacy per-category limits are unchanged: inside a full category an equal priority still replaces the oldest of that category',()=>{
+  // Pre-T06a rule (AudioManager._admit: `victim.priority > priority` refuses; equal replaces). `channel()` is category fx whose limit (32)
+  // equals the high-quality pool cap, so at high the category rule fires first. Kept as is: presentation-only, bench callers rely on it.
+  const {audio}=make({quality:'high'});
+  for(let i=0;i<32;i++)assert.ok(audio.channel(.1,0,0,50+i));
+  const oldest=[...audio.voices].find(v=>v.priority===50);
+  assert.equal(audio.channel(.1,0,0,49)===null,true,'strictly lower priority than the category minimum is refused');
+  assert.ok(audio.channel(.1,0,0,50),'equal priority replaces within a full category (legacy rule)');
+  assert.equal(audio.voices.has(oldest),false);assert.equal(audio.voices.size,32);
+  const low=make({quality:'low'}).audio;   // fx limit 32 > pool cap 20: the pool rule decides, equal is refused
+  for(let i=0;i<20;i++)low.channel(.1,0,0,50+i);
+  assert.equal(low.channel(.1,0,0,50)===null,true,'at low the SFX pool rule applies: equal priority does not steal');
+  audio.dispose();low.dispose();
 });
 
 test('shrinking to low evicts down to the new cap on the next higher-priority admission',()=>{
