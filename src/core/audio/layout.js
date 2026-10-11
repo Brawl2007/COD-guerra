@@ -84,12 +84,12 @@ const inside=(b,x,y,z)=>x>=b.minX&&x<=b.maxX&&y>=b.minY&&y<=b.maxY&&z>=b.minZ&&z
 /** Highest priority wins; equal priority: first declared wins (strict `>` while scanning in declaration order). */
 export function zoneAt(layout,x,y,z){
   let best=null;
-  for(const zone of layout.zones)if(inside(zone.box,x,y,z)&&(!best||zone.priority>best.priority))best=zone;
+  const list=layout.zones;for(let i=0;i<list.length;i++){const zone=list[i];if(inside(zone.box,x,y,z)&&(!best||zone.priority>best.priority))best=zone;}
   return best??layout.defaultZone;
 }
 export function surfaceAt(layout,x,y,z){
   let best=null;
-  for(const s of layout.surfaces)if(inside(s.box,x,y,z)&&(!best||s.priority>best.priority))best=s;
+  const list=layout.surfaces;for(let i=0;i<list.length;i++){const s=list[i];if(inside(s.box,x,y,z)&&(!best||s.priority>best.priority))best=s;}
   return best??layout.defaultSurface;
 }
 

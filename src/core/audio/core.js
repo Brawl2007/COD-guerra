@@ -3,6 +3,7 @@ import {VoicePool} from './pool.js';
 import {MixGraph} from './mix.js';
 import {BufferLoader} from './loader.js';
 import {FALLBACK_LAYOUT,parseAudioLayout,loadAudioLayout,zoneAt,surfaceAt} from './layout.js';
+import {NO_EMITTERS,parseAudioEmitters,loadAudioEmitters,activeEmitters} from './emitters.js';
 
 /** Priority bands for the VOICE pool (design §2): P0 story line > P1 callout > walla. */
 export const VOICE_PRIORITY=Object.freeze({walla:10,callout:50,story:100});
@@ -20,7 +21,7 @@ export class AudioCore{
     this.loader=new BufferLoader({fetchImpl,baseUrl,store});
     this.layout=FALLBACK_LAYOUT;this.zone=FALLBACK_LAYOUT.defaultZone;this.surface=FALLBACK_LAYOUT.defaultSurface;
     this.mix=null;this.ctx=null;this.music=new Map();this.maxVoices=maxVoices;this.disposed=false;this.layoutEpoch=0;
-    this.musicStarted=0;this.voicesStarted=0;this.untrack=null;
+    this.musicStarted=0;this.voicesStarted=0;this.untrack=null;this.emitters=NO_EMITTERS;this.emitterEpoch=0;
   }
   attach(ctx,{volume=.68,track=null,untrack=null}={}){
     if(this.disposed||this.mix)return this.mix;
@@ -49,10 +50,21 @@ export class AudioCore{
     if(zone!==this.zone){this.zone=zone;this.mix?.setZone(zone);}
     return zone;
   }
+  // ---- emitters (sectors[].audioEmitters of the mission) -------------------
+  /** Accepts the mission object, a sectors array or an emitter array; malformed input yields an empty list. Never throws. */
+  setEmitters(raw){this.emitterEpoch++;this.emitters=parseAudioEmitters(raw);return this.emitters;}
+  async loadEmitters(url,fetchImpl){
+    const epoch=++this.emitterEpoch,parsed=await loadAudioEmitters(url,fetchImpl?{fetchImpl}:{});
+    if(epoch===this.emitterEpoch&&!this.disposed)this.emitters=parsed;
+    return this.emitters;
+  }
+  /** Allocation-free when the caller reuses `out`: audible emitters at `clockSec` (casemate ckm gated on crew presence / s1 state). */
+  activeEmitters(clockSec,stateOf,out=[],crewOf=null){return this.disposed?(out.length=0,out):activeEmitters(this.emitters,clockSec,stateOf,out,crewOf);}
   // ---- loading ----------------------------------------------------------
   loadManifest(raw){return this.loader.setManifest(raw);}
   // ---- VOICE bus (cap 3, priority stealing) -----------------------------
-  playVoice(id,{priority=VOICE_PRIORITY.callout,volume=1}={}){
+  playVoice(id,opts){
+    const {priority=VOICE_PRIORITY.callout,volume=1}=opts??{};
     if(!this.mix||this.disposed)return false;
     const buffer=this.loader.get(id,{kind:'tone',durationSec:.6});if(!buffer)return false;
     if(!this.pool.admit('voice',priority,v=>this._stopEntry(v)))return false;
@@ -63,7 +75,8 @@ export class AudioCore{
     return true;
   }
   // ---- MUSIC bus (outside the SFX pool: 4 stems + 1 stinger) ------------
-  playMusic(slot,id,{loop=true,volume=1,fadeIn=0}={}){
+  playMusic(slot,id,opts){
+    const {loop=true,volume=1,fadeIn=0}=opts??{};
     if(!this.mix||this.disposed||!MUSIC_SLOTS.includes(slot))return false;
     const buffer=this.loader.get(id,{kind:'drone'});if(!buffer)return false;
     this.stopMusic(slot,.05);
@@ -104,10 +117,10 @@ export class AudioCore{
     return {quality:this.quality,sfxCap:this.pool.caps.sfx,voiceCap:this.pool.caps.voice,activeVoiceLines:this.pool.count('voice'),
       voiceStolen:this.pool.stolen.voice,voiceRefused:this.pool.refused.voice,sfxStolen:this.pool.stolen.sfx,sfxRefused:this.pool.refused.sfx,
       musicSlots:[...this.music.keys()].sort(),convolvers:this.mix?.convolverCount??0,zone:this.zone.id,surface:this.surface.id,
-      layoutOk:this.layout.ok,layoutIssues:this.layout.issues.length,loader:{...this.loader.stats,missing:this.loader.missing,entries:this.loader.entries.size}};
+      layoutOk:this.layout.ok,layoutIssues:this.layout.issues.length,emitters:this.emitters.emitters.length,emitterIssues:this.emitters.issues.length,loader:{...this.loader.stats,missing:this.loader.missing,entries:this.loader.entries.size}};
   }
   dispose(){
-    if(this.disposed)return 0;this.disposed=true;this.layoutEpoch++;
+    if(this.disposed)return 0;this.disposed=true;this.layoutEpoch++;this.emitterEpoch++;
     this.loader.dispose();this.pool.clear();this.music.clear();
     const n=this.mix?this.mix.dispose():0;this.mix=null;this.ctx=null;return n;
   }

@@ -5,11 +5,15 @@ import {AudioManager,AUDIO_PRIORITY} from '../src/core/audio.js';
 import {
   AudioCore,VOICE_PRIORITY,VoicePool,BufferLoader,parseManifest,generateImpulse,impulseSeconds,IR_MAX_SECONDS,MAX_CONVOLVERS,
   SFX_VOICE_CAP,VOICE_BUS_CAP,MUSIC_SLOTS,sfxVoiceCap,FALLBACK_LAYOUT,parseAudioLayout,loadAudioLayout,zoneAt,surfaceAt,
+  CREW_GONE_STATES,NO_EMITTERS,parseClock,parseAudioEmitters,isEmitterAudible,activeEmitters,loadAudioEmitters,
 } from '../src/core/audio/index.js';
 import {FakeAudioContext,MAX_FAKE_SAMPLES} from './helpers/fake-audio-context.js';
 
 const LAYOUT_URL=new URL('../missions/m01-tczew/audio-layout.json',import.meta.url);
 const realLayoutRaw=()=>JSON.parse(readFileSync(LAYOUT_URL,'utf8'));
+const MISSION_URL=new URL('../missions/m01-tczew/mission.json',import.meta.url);
+const realMissionRaw=()=>JSON.parse(readFileSync(MISSION_URL,'utf8'));
+const hms=(h,m,sec=0)=>h*3600+m*60+sec;
 class DecodeFailContext extends FakeAudioContext{async decodeAudioData(){throw new Error('EncodingError');}}
 class EmptyDecodeContext extends FakeAudioContext{async decodeAudioData(){return this.createBuffer(1,0,this.sampleRate);}}
 const okFetch=async()=>({ok:true,status:200,arrayBuffer:async()=>new ArrayBuffer(16)});
@@ -367,4 +371,103 @@ test('audio core never writes simulation state: sources read nothing but plain a
   const state=Object.freeze({clock:1,renderState:Object.freeze({stukas:false})});
   const {audio}=make();assert.doesNotThrow(()=>{audio.setListener(1,0,1);audio.updateM01Presentation({clock:2,state:{},spatial:()=>({pan:0,distance:900})});audio.explosion(0,30);});
   assert.equal(state.clock,1);assert.ok(AUDIO_PRIORITY.explosion>AUDIO_PRIORITY.rifle);audio.dispose();
+});
+
+test('emitters: the real mission data compiles; windows, sectors and the display-only casemate ckm are read',()=>{
+  const parsed=parseAudioEmitters(realMissionRaw());
+  assert.equal(parsed.ok,true,parsed.issues.join('; '));
+  assert.deepEqual(parsed.emitters.map(e=>e.id),['ae_s1_ckm_casemate','ae_s2_mg_dike','ae_s2_mg_train','ae_s2_ckm_east']);
+  const [casemate,dike,train,ckmEast]=parsed.emitters;
+  assert.equal(casemate.crewGated,true);assert.equal(casemate.displayOnly,true);assert.equal(casemate.sector,'s1_west_bridgehead');
+  assert.deepEqual([casemate.x,casemate.y,casemate.z],[25,-3,43]);assert.equal(casemate.from,hms(4,46));assert.equal(casemate.until,hms(6,45));
+  assert.equal(dike.crewGated,false);assert.equal(dike.until,Infinity,'no activeUntil -> until the end of the mission');
+  assert.equal(train.from,hms(4,52));assert.equal(ckmEast.until,hms(6,0));
+  assert.ok(Object.isFrozen(parsed)&&Object.isFrozen(parsed.emitters)&&Object.isFrozen(casemate));
+  // The same list from the sectors array or a flat array.
+  assert.equal(parseAudioEmitters(realMissionRaw().sectors).emitters.length,4);
+  assert.equal(parseAudioEmitters(JSON.stringify(realMissionRaw())).emitters.length,4);
+  assert.equal(parseAudioEmitters(parsed.emitters.map(e=>({id:e.id,weapon:e.weapon,position:[e.x,e.y,e.z]}))).emitters.length,4);
+  assert.equal(parseClock('04:46:00'),hms(4,46));assert.equal(parseClock('4:46'),null);assert.equal(parseClock('25:61:61'),null);assert.equal(parseClock(5),null);
+});
+
+test('emitters: casemate ckm is gated on crew presence / s1 state (the 06:45 window is only the outer bound)',()=>{
+  const {emitters}=parseAudioEmitters(realMissionRaw()),[casemate,dike,,ckmEast]=emitters;
+  assert.deepEqual([...CREW_GONE_STATES],['evacuating_bridgehead','west_blown']);
+  const states=['repair_under_fire','holding','withdrawal_cover','east_blown'];
+  for(const state of states)assert.equal(isEmitterAudible(casemate,hms(5,0),state),true,`crew still fires in ${state}`);
+  assert.equal(isEmitterAudible(casemate,hms(6,12),'evacuating_bridgehead'),false,'s1 evacuates from 06:12: silent although the window runs to 06:45');
+  assert.equal(isEmitterAudible(casemate,hms(6,30),'evacuating_bridgehead'),false);assert.equal(isEmitterAudible(casemate,hms(6,44,59),'west_blown'),false);
+  assert.equal(isEmitterAudible(casemate,hms(6,30),undefined,true),true,'an explicit crewPresent=true wins over the state');
+  assert.equal(isEmitterAudible(casemate,hms(5,0),'holding',false),false,'crewPresent=false silences it');
+  assert.equal(isEmitterAudible(casemate,hms(5,0)),false,'no information at all: dramatized fire stays silent');
+  assert.equal(isEmitterAudible(casemate,hms(4,45,59),'repair_under_fire'),false,'before activeFrom');assert.equal(isEmitterAudible(casemate,hms(4,46),'repair_under_fire'),true);
+  assert.equal(isEmitterAudible(casemate,hms(6,45),'holding',true),false,'activeUntil is exclusive');
+  // Other emitters follow their window only (no state needed).
+  assert.equal(isEmitterAudible(dike,hms(4,45,59)),false);assert.equal(isEmitterAudible(dike,hms(4,46)),true);assert.equal(isEmitterAudible(dike,hms(23,0)),true);
+  assert.equal(isEmitterAudible(ckmEast,hms(5,59,59)),true);assert.equal(isEmitterAudible(ckmEast,hms(6,0)),false);
+  for(const clock of [NaN,Infinity,undefined,'05:00:00'])assert.equal(isEmitterAudible(dike,clock),false,String(clock));
+  assert.equal(isEmitterAudible(null,hms(5,0)),false);
+});
+
+test('emitters: activeEmitters reuses the caller array (no per-frame allocation) and follows the s1 state',()=>{
+  const {audio}=make();audio.setEmitters(realMissionRaw());
+  const stateOf=id=>id==='s1_west_bridgehead'?state.s1:undefined,state={s1:'holding'},out=[];
+  assert.equal(audio.activeEmitters(hms(5,10),stateOf,out),out);
+  assert.deepEqual(out.map(e=>e.id),['ae_s1_ckm_casemate','ae_s2_mg_dike','ae_s2_mg_train','ae_s2_ckm_east']);
+  state.s1='evacuating_bridgehead';audio.activeEmitters(hms(6,20),stateOf,out);
+  assert.deepEqual(out.map(e=>e.id),['ae_s2_mg_dike','ae_s2_mg_train'],'ckm_east ended at 06:00, the casemate crew evacuated');
+  const first=out[0];for(let i=0;i<5000;i++)audio.activeEmitters(hms(6,20)+i*.01,stateOf,out);
+  assert.equal(out.length,2);assert.equal(out[0],first,'same frozen emitter objects every frame');
+  assert.equal(audio.activeEmitters(hms(5,0),stateOf,out,id=>id==='s1_west_bridgehead'?false:undefined)[0].id,'ae_s2_mg_dike','crewOf(false) silences the casemate');
+  assert.equal(audio.diagnostics.core.emitters,4);audio.dispose();
+  assert.deepEqual(audio.activeEmitters(hms(5,0),stateOf,[{}]),[],'inert after dispose');
+});
+
+test('emitters: malformed or missing data never throws and falls back to silence; bad entries drop alone',async()=>{
+  const bads=[null,undefined,0,'',' not json ','{}','[]',[],{},{sectors:'x'},{sectors:[null,5,'x',{id:'s',audioEmitters:7}]},[null],[[]]];
+  for(const bad of bads){
+    let parsed;assert.doesNotThrow(()=>{parsed=parseAudioEmitters(bad);},String(bad));
+    assert.equal(parsed.emitters.length,0,String(bad));assert.deepEqual(activeEmitters(parsed,hms(5,0),()=>'holding',[{}]),[]);
+  }
+  assert.equal(parseAudioEmitters({}).ok,false);assert.equal(parseAudioEmitters({sectors:[]}).ok,true,'a mission without emitters is fine');
+  const good={id:'a',weapon:'mg34',position:[1,2,3],activeFrom:'05:00:00'};
+  const partial=parseAudioEmitters({sectors:[{id:'s9',audioEmitters:[
+    good,{...good},{...good,id:'b',position:[1,2]},{...good,id:'c',position:[1,NaN,3]},{...good,id:'d',weapon:''},{...good,id:'e',activeFrom:'soon'},
+    {...good,id:'f',activeUntil:'04:00:00'},{...good,id:'g',activeUntil:5},{id:'h',weapon:'mg34',position:[0,0,0]},null,'x',{...good,id:'x'.repeat(65)},
+  ]}]});
+  assert.deepEqual(partial.emitters.map(e=>e.id),['a','h'],'only valid, unique entries survive');assert.equal(partial.ok,false);assert.ok(partial.issues.length>=9);
+  assert.equal(partial.emitters[1].from,0,'a missing activeFrom means from the start');assert.equal(partial.emitters[0].sector,'s9');
+  const many=parseAudioEmitters({sectors:[{id:'s',audioEmitters:Array.from({length:200},(_,i)=>({id:'e'+i,weapon:'mg34',position:[0,0,0]}))}]});
+  assert.equal(many.emitters.length,64,'bounded list');
+  assert.equal(await loadAudioEmitters('x',{fetchImpl:neverFetch}),NO_EMITTERS);assert.equal(await loadAudioEmitters('x',{fetchImpl:async()=>({ok:false})}),NO_EMITTERS);
+  assert.equal(await loadAudioEmitters('x',{fetchImpl:async()=>({ok:true,json:async()=>{throw new SyntaxError('bad');}})}),NO_EMITTERS);
+  assert.equal(await loadAudioEmitters('x',{fetchImpl:null}),NO_EMITTERS);
+  const {audio}=make();
+  assert.equal((await audio.loadEmitters('x',async()=>({ok:true,json:async()=>realMissionRaw()}))).emitters.length,4);
+  assert.equal(audio.setEmitters('}{').emitters.length,0);assert.equal(audio.core.emitters.ok,false);
+  const late=audio.loadEmitters('x',async()=>({ok:true,json:async()=>realMissionRaw()}));audio.setEmitters([]);   // a newer call wins
+  await late;assert.equal(audio.core.emitters.emitters.length,0,'a stale load cannot overwrite a newer setEmitters');
+  const pending=audio.loadEmitters('x',async()=>({ok:true,json:async()=>realMissionRaw()}));audio.dispose();await pending;
+  assert.equal(audio.core.emitters.emitters.length,0,'a load finishing after dispose is dropped');
+});
+
+test('hardening: invalid caps and options fall back instead of meaning unbounded or throwing',()=>{
+  for(const bad of [NaN,-1,Infinity,'x',undefined]){const pool=new VoicePool({sfx:bad,voice:bad});assert.deepEqual({...pool.caps},{sfx:32,voice:3},String(bad));}
+  assert.deepEqual({...new VoicePool({sfx:4.9,voice:0}).caps},{sfx:4,voice:0});
+  const {audio}=make();audio.loadManifest(manifest(['v']));
+  assert.doesNotThrow(()=>{audio.playVoice('v',null);audio.playMusic('stem0','m',null);assert.equal(audio.setBusVolume('music',NaN),false);assert.equal(audio.setBusVolume('music',{}),false);audio.setLayout(()=>{});audio.setEmitters(Symbol.iterator);});
+  assert.equal(audio.mix.music.gain.value>=0&&audio.mix.music.gain.value<=1,true);audio.dispose();
+});
+
+test('presentation only: the audio core modules import nothing from simulation, game, render or world code',()=>{
+  const dir=new URL('../src/core/audio/',import.meta.url);
+  let imports=0,external=[];
+  for(const file of ['constants','core','emitters','index','ir','layout','loader','mix','pool']){
+    const text=readFileSync(new URL(file+'.js',dir),'utf8').replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/.*$/gm,'');   // code only, comments may mention Math.random
+    for(const [, from] of text.matchAll(/(?:^|\n)\s*(?:import|export)\b[^'"]*?from\s*['"]([^'"]+)['"]/g))
+      {imports++;if(!from.startsWith('./'))external.push(from);assert.ok(from.startsWith('./')||from==='../battlefield-audio.js',`${file}.js imports ${from}`);}
+    assert.doesNotMatch(text,/\b(sim|simulation|snapshot)\.\w+\s*=[^=]/,`${file}.js assigns into simulation-looking state`);
+    assert.doesNotMatch(text,/Math\.random|\bsim\.rng\b/,`${file}.js is deterministic`);
+  }
+  assert.ok(imports>=12,`the import scan actually found the imports (${imports})`);assert.deepEqual(external,['../battlefield-audio.js'],'the only outside module is the pure acoustic table');
 });

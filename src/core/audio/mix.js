@@ -59,8 +59,9 @@ export class MixGraph{
     if(param.setTargetAtTime){param.cancelScheduledValues?.(this.ctx.currentTime);param.setTargetAtTime(value,this.ctx.currentTime,tau);}else param.value=value;
   }
   setBusVolume(name,value){
-    const node={master:this.master,sfx:this.sfx,voice:this.voice,music:this.music}[name];if(!node)return false;
-    node.gain.value=clamp(Number(value),0,1);return true;
+    const node={master:this.master,sfx:this.sfx,voice:this.voice,music:this.music}[name],v=Number(value);
+    if(!node||!Number.isFinite(v))return false;   // a NaN gain would throw on a real AudioParam
+    node.gain.value=clamp(v,0,1);return true;
   }
   /**
    * Zone change: reverb A/B return crossfade over ~300 ms (setTargetAtTime, tau = ramp/3 reaches ~95 % in `ZONE_RAMP_SEC`)

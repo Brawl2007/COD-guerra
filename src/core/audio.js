@@ -504,6 +504,11 @@ export class AudioManager {
   /** Runtime audio-layout.json (zones, surfaces); malformed data falls back to open/earth. Wiring from game.js is T06b. */
   setLayout(raw){return this.core.setLayout(raw);}
   loadLayout(url,fetchImpl){return this.core.loadLayout(url,fetchImpl);}
+  /** Runtime `sectors[].audioEmitters` (mission object, sectors array or emitter array); malformed input -> none, never throws. */
+  setEmitters(raw){return this.core.setEmitters(raw);}
+  loadEmitters(url,fetchImpl){return this.core.loadEmitters(url,fetchImpl);}
+  /** Audible emitters at `clockSec`; the casemate ckm needs crew presence / a non-evacuating s1 state. Reuse `out` per frame. */
+  activeEmitters(clockSec,stateOf,out,crewOf){return this.core.activeEmitters(clockSec,stateOf,out,crewOf);}
   /** Allocation-free listener update: picks the reverb zone and the surface under the listener (read-only inputs). */
   setListener(x,y,z){return this.core.update(x,y,z);}
   get zone(){return this.core.zone;}

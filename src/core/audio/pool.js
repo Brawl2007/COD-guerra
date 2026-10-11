@@ -9,7 +9,9 @@
  */
 export class VoicePool{
   constructor({sfx=32,voice=3}={}){
-    this.caps={sfx,voice};this.sets={sfx:new Set(),voice:new Set()};
+    // A non-finite or negative cap would silently mean "unbounded" (`size >= NaN` is false): fall back to the design caps instead.
+    const sane=(v,fallback)=>Number.isFinite(v)&&v>=0?Math.floor(v):fallback;
+    this.caps={sfx:sane(sfx,32),voice:sane(voice,3)};this.sets={sfx:new Set(),voice:new Set()};
     this.stolen={sfx:0,voice:0};this.refused={sfx:0,voice:0};this.serial=0;
   }
   setCap(bus,cap){if(bus in this.caps&&Number.isFinite(cap)&&cap>=0)this.caps[bus]=Math.floor(cap);}
