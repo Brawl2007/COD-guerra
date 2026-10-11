@@ -134,3 +134,7 @@ Para o LOD, trocar o GLB por distância e manter o mesmo `AnimationMixer`/clip; 
 - Os clips são procedurais (FK e IK de 2 ossos), com contacto aproximado das mãos e sem física de pano. Faltam animações de mãos em primeira pessoa (ViewModel) e transições/blends desenhados.
 - Nos LOD1/LOD2, o capacete não tem a cúpula interior; fica a orla interior.
 - Pormenores da rkm a confirmar (ver ficha): boca/tapa-chamas, bandoleira, bolsa do atirador. Não há recarga deitado; a troca é de joelho.
+
+## Biblioteca de clips V2 (T08)
+
+Pacote `assets/models/provisional/m01/characters/clip-library-v2/` (43 clips: sprint, agachado, viragem no lugar, transições de postura, deitado, mortes, reacções, idles e fidgets, cobertura, transporte e chamada). Tabela com duração, modo, contactos, deriva dos pés e costura dos loops: [`clip-library-v2.md`](clip-library-v2.md); folhas de contacto por clip em `clip-library-v2/<clip>.png` (rasterizador em software do LOD1, não são capturas do Chromium). Medições em `docs/verification/m01-runtime/m01-anim-clip-library-v2/`.
