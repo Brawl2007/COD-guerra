@@ -717,6 +717,14 @@ Convenções comuns a todas as tasks (não repetidas em cada ficha): branch pró
 - **Scope:** partida completa no Chromebook, guião de observação (os 20 problemas), registo de tempos por fase e de qualquer "isto parece protótipo".
 - **Modelo/esforço:** Captain. **Depende de:** T51.
 
+#### T53 · `M01-DESKTOP-APP-V1` — Empacotar como app de PC (D37)
+- **Objectivo:** transformar o build web da M01 numa app de PC instalável (D37), com os assets no disco local e sem os limites de tamanho do navegador; a stack web (Three.js/Vite) continua a ser o alvo de desenvolvimento.
+- **Scope:** escolher Electron ou Tauri **dentro da tarefa**, com uma comparação curta (tamanho de instalação, RAM no PC H12, auto-update, licença); assets locais empacotados com a app; ecrã inteiro; mesmas chaves de save do browser (`cod-guerra:checkpoint:m01:v2`, `cod-guerra:visual-quality`), para que os checkpoints continuem válidos; orçamento de tamanho por missão: alvo 100–250 MB carregados por missão; jogo completo (30 missões) **estimativa** 1–3 GB, a confirmar com os assets finais; instalador construído no CI.
+- **Ficheiros:** pasta nova de empacotamento (`desktop/` ou equivalente), `package.json`, `vite.config.js`, workflow de CI do instalador, `RUNBOOK.md`.
+- **Não alterar:** simulação, autoridade e dados da missão; o build web (`npm run build`/`preview`) tem de continuar a funcionar tal como está.
+- **Aceitação:** a app arranca em Windows 10 no PC H12 e a M01 joga do menu ao debrief (**passo humano**: o utilizador instala e joga); o CI constrói o instalador sem erros; tamanho do instalador e da M01 carregada registados contra o orçamento; saves do browser carregam na app.
+- **Modelo/esforço:** Claude Code · MEDIUM + utilizador (instalar e jogar no PC H12). **Depende de:** conteúdo da M01 completo (T51, T52).
+
 ---
 
 ## 7. Ordem ideal para concluir M01 depressa
@@ -741,7 +749,7 @@ Onda 2 (após Estação V3 + Variação V2)                                     
   acabamento:         T41 pontes ‖ T42 água ‖ T34 vida do pátio ──► T43 LOD ──► T44 grading (se T01 permitir)
                                                                                │
 Onda 3 (fecho)        T45 assets áudio ──► T46 mistura ‖ T47 ckm ‖ T48 recuo alemão ‖ T49 perf ◄─┘ ‖ T50 loading
-                      ──► T51 closeout V3 ──► T52 playtest humano ──► decisão de marco
+                      ──► T51 closeout V3 ──► T52 playtest humano ──► decisão de marco ──► T53 app de PC (D37)
 ```
 
 **Caminho crítico:** T15 → T16 → (T17, T18) → T27 → T30 → T35 → T49 → T51 → T52. Tudo o que não está nele deve correr em paralelo para não o atrasar.
