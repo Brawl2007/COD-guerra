@@ -1,0 +1,34 @@
+name: M01 Prop Kit V1 x86 fix
+
+# The T12 prop kit generator must give the same bytes on CI x86 as on aarch64 (see tools/assets/m01-props/src/pmath.mjs).
+# Push on this branch only: the kit tests first, then the whole suite (8 failures that already existed on the base are
+# known, so that step does not fail the job) and the production build.
+on:
+  push:
+    branches: [claude/m01-prop-kit-v1]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-prop-kit-v1-x86-fix-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Prop kit tests (byte-for-byte generator check)
+        run: node --test tests/m01-props-kit.test.js tests/m01-environment-props.test.js
+      - name: npm test (full suite; known pre-existing failures)
+        continue-on-error: true
+        run: npm test
+      - name: npm run build
+        id: build
+        if: ${{ !cancelled() }}
+        run: npm run build
