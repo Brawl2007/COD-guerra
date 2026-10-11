@@ -213,3 +213,129 @@ test('M01 debrief keeps unconfirmed paragraphs disabled until their checks pass'
     for (const id of paragraph.sources) assert.ok(readSources.has(id), `${paragraph.id}: ${id} ainda não lida`);
   }
 });
+
+// T05a (M01-AUDIO-DATA-FIELDS-V1): presentation-only audio data. Nothing in src/ reads these fields.
+const audioLayout = JSON.parse(read('missions/m01-tczew/audio-layout.json'));
+const CLOCK_RE = /^\d{2}:\d{2}:\d{2}$/;
+const isNum = v => typeof v === 'number' && Number.isFinite(v);
+const isBox = (b, y = false) => !!b && typeof b === 'object' && ['minX', 'maxX', 'minZ', 'maxZ'].every(k => isNum(b[k])) && b.minX < b.maxX && b.minZ < b.maxZ
+  && ['minY', 'maxY'].every(k => b[k] === undefined || (y && isNum(b[k]))) && (b.minY === undefined || b.maxY === undefined || b.minY < b.maxY);
+// Returns a list of problems (empty = valid). Exported shape is local to this test so the contract is checked without touching src/.
+function audioEmitterProblems(e, { weapons, lo, hi }) {
+  const p = [];
+  if (typeof e?.id !== 'string' || !/^ae_s\d_/.test(e.id)) p.push('id');
+  if (!weapons.includes(e?.weapon)) p.push('weapon');
+  if (!Array.isArray(e?.position) || e.position.length !== 3 || !e.position.every(isNum)) p.push('position');
+  if (typeof e?.activeFrom !== 'string' || !CLOCK_RE.test(e.activeFrom)) p.push('activeFrom');
+  else if (clockSeconds(e.activeFrom) < lo || clockSeconds(e.activeFrom) > hi) p.push('activeFrom range');
+  if (e?.activeUntil !== undefined) {
+    if (typeof e.activeUntil !== 'string' || !CLOCK_RE.test(e.activeUntil)) p.push('activeUntil');
+    else if (p.length === 0 && clockSeconds(e.activeUntil) <= clockSeconds(e.activeFrom)) p.push('activeUntil order');
+    else if (clockSeconds(e.activeUntil) > hi) p.push('activeUntil range');
+  }
+  if (e?.certainty !== undefined && !['DOCUMENTED', 'RECONSTRUCTED', 'GAMEPLAY_DRAMATIZATION'].includes(e.certainty)) p.push('certainty');
+  if (e?.displayOnly !== undefined && typeof e.displayOnly !== 'boolean') p.push('displayOnly');
+  return p;
+}
+function audioLayoutProblems(l) {
+  const p = [];
+  const reverbs = ['A', 'B'], materials = ['earth', 'wood', 'metal', 'stone', 'brick', 'water'];
+  if (l?.presentationOnly !== true) p.push('presentationOnly');
+  if (l?.missionId !== mission.id) p.push('missionId');
+  if (!Array.isArray(l?.zones) || !Array.isArray(l?.surfaces)) return [...p, 'zones/surfaces'];
+  const zoneIds = l.zones.map(z => z?.id);
+  if (new Set(zoneIds).size !== zoneIds.length || !['open', 'bridge', 'station'].every(id => zoneIds.includes(id))) p.push('zone ids');
+  for (const z of l.zones) {
+    if (!reverbs.includes(z?.reverb)) p.push(`${z?.id}: reverb`);
+    if (!Number.isInteger(z?.priority)) p.push(`${z?.id}: priority`);
+    if (z?.default === true ? z.box !== undefined : !isBox(z?.box)) p.push(`${z?.id}: box`);
+  }
+  if (l.zones.filter(z => z?.default === true).length !== 1) p.push('single default zone');
+  const surfaceIds = l.surfaces.map(s => s?.id);
+  if (new Set(surfaceIds).size !== surfaceIds.length) p.push('surface ids');
+  if (!materials.includes(l.defaultSurface)) p.push('defaultSurface');
+  for (const s of l.surfaces) {
+    if (!materials.includes(s?.material)) p.push(`${s?.id}: material`);
+    if (!Number.isInteger(s?.priority)) p.push(`${s?.id}: priority`);
+    if (!isBox(s?.box, true)) p.push(`${s?.id}: box`);
+  }
+  return p;
+}
+const emitters = mission.sectors.flatMap(s => (s.audioEmitters ?? []).map(e => ({ sector: s.id, ...e })));
+const emitterContext = { weapons: mission.allowedEquipment, lo: clockSeconds(mission.clock.start), hi: clockSeconds(mission.clock.end) };
+
+test('M01 audio emitters require activeFrom, keep valid windows and include the casemate ckm as display-only dramatization', () => {
+  assert.deepEqual(emitters.map(e => e.id).sort(), ['ae_s1_ckm_casemate', 'ae_s2_ckm_east', 'ae_s2_mg_dike', 'ae_s2_mg_train']);
+  for (const e of emitters) assert.deepEqual(audioEmitterProblems(e, emitterContext), [], e.id);
+  const casemate = emitters.find(e => e.id === 'ae_s1_ckm_casemate');
+  assert.equal(casemate.sector, 's1_west_bridgehead');
+  assert.equal(casemate.weapon, 'ckm_wz30');
+  assert.deepEqual(casemate.position, layout.features.find(f => f.id === 'casemates_west').embrasures[1], 'ckm na seteira sul da casamata');
+  assert.equal(casemate.certainty, 'GAMEPLAY_DRAMATIZATION');
+  assert.equal(casemate.displayOnly, true, 'Anexo B7: fogo de apresentação, nunca supressão');
+  assert.ok(clockSeconds(casemate.activeUntil) <= clockSeconds(eventById('evt_m01_west_demolition').trigger.at), 'tripulação sai antes da demolição oeste');
+  assert.equal(emitters.find(e => e.id === 'ae_s2_ckm_east').activeUntil, '06:00:00', 'valor anterior preservado');
+  const sectorEvents = id => mission.sectors.find(s => s.id === id).schedule.map(s => s.at);
+  assert.ok(sectorEvents('s2_east_bridgehead').includes(emitters.find(e => e.id === 'ae_s2_mg_train').activeFrom), 'ae_s2_mg_train começa num passo da agenda de s2');
+});
+
+test('M01 audio emitter validator rejects malformed entries', () => {
+  const good = emitters.find(e => e.id === 'ae_s2_ckm_east');
+  const bad = patch => audioEmitterProblems({ ...good, ...patch }, emitterContext);
+  const { activeFrom, ...noFrom } = good;
+  assert.deepEqual(audioEmitterProblems(noFrom, emitterContext), ['activeFrom']);
+  assert.deepEqual(bad({ activeFrom: '4:46' }), ['activeFrom']);
+  assert.deepEqual(bad({ activeFrom: '04:00:00' }), ['activeFrom range']);
+  assert.deepEqual(bad({ activeUntil: '04:45:00' }), ['activeUntil order']);
+  assert.deepEqual(bad({ activeUntil: '09:00:00' }), ['activeUntil range']);
+  assert.deepEqual(bad({ weapon: 'mg42' }), ['weapon']);
+  assert.deepEqual(bad({ position: [1, 2] }), ['position']);
+  assert.deepEqual(bad({ position: [1, 2, NaN] }), ['position']);
+  assert.deepEqual(bad({ id: 'x' }), ['id']);
+  assert.deepEqual(bad({ certainty: 'GUESS' }), ['certainty']);
+});
+
+test('M01 audio-layout.json declares the open, bridge and station zones and surfaces, and is not part of map-layout.json', () => {
+  assert.deepEqual(audioLayoutProblems(audioLayout), []);
+  assert.equal(layout.audioZones, undefined);
+  assert.equal(layout.surfaces, undefined);
+  const zone = id => audioLayout.zones.find(z => z.id === id);
+  assert.equal(zone('open').default, true);
+  assert.equal(zone('open').reverb, 'A');
+  assert.equal(zone('bridge').reverb, 'B');
+  assert.equal(zone('bridge').occlusion, null, 'ponte semiaberta: sem oclusão');
+  assert.equal(zone('station').reverb, 'B');
+  assert.ok(zone('station').priority > zone('bridge').priority && zone('bridge').priority > zone('open').priority);
+  const rail = layout.features.find(f => f.id === 'rail_bridge'), road = layout.features.find(f => f.id === 'road_bridge');
+  const b = zone('bridge').box;
+  assert.ok(b.minX <= rail.polyline[0][0] && b.maxX >= rail.polyline[1][0] && b.minZ < rail.polyline[0][2] && b.maxZ > road.polyline[0][2], 'zona bridge cobre as duas pontes');
+  const polyBox = poly => ({ minX: Math.min(...poly.map(p => p[0])), maxX: Math.max(...poly.map(p => p[0])), minZ: Math.min(...poly.map(p => p[1])), maxZ: Math.max(...poly.map(p => p[1])) });
+  const station = layout.features.find(f => f.id === 'tczew_station');
+  assert.deepEqual(zone('station').box, polyBox(station.polygon), 'zona station = polígono da estação');
+  assert.deepEqual(audioLayout.surfaces.find(s => s.id === 'tczew_station').box, polyBox(station.polygon));
+  assert.deepEqual(audioLayout.surfaces.find(s => s.id === 'rail_hut').box, polyBox(layout.features.find(f => f.id === 'rail_hut').polygon));
+  assert.deepEqual(new Set(audioLayout.surfaces.map(s => s.material)), new Set(['metal', 'water', 'stone', 'brick', 'wood']));
+  assert.equal(audioLayout.defaultSurface, 'earth');
+  for (const s of audioLayout.surfaces) assert.ok(s.material !== audioLayout.defaultSurface, s.id);
+});
+
+test('M01 audio-layout validator rejects malformed zones and surfaces', () => {
+  const clone = () => structuredClone(audioLayout);
+  const mutate = fn => { const l = clone(); fn(l); return audioLayoutProblems(l); };
+  assert.ok(mutate(l => { l.zones = l.zones.filter(z => z.id !== 'bridge'); }).includes('zone ids'));
+  assert.ok(mutate(l => { l.zones.push({ ...l.zones[1] }); }).includes('zone ids'));
+  assert.ok(mutate(l => { l.zones[1].reverb = 'C'; }).includes('bridge: reverb'));
+  assert.ok(mutate(l => { delete l.zones[2].box; }).includes('station: box'));
+  assert.ok(mutate(l => { l.zones[2].box = { minX: 5, maxX: 1, minZ: 0, maxZ: 1 }; }).includes('station: box'));
+  assert.ok(mutate(l => { l.zones[0].box = l.zones[1].box; }).includes('open: box'));
+  assert.ok(mutate(l => { l.zones[1].priority = 'hi'; }).includes('bridge: priority'));
+  assert.ok(mutate(l => { l.zones[1].default = true; }).includes('single default zone'));
+  assert.ok(mutate(l => { l.surfaces[0].material = 'glass'; }).includes('bridge_deck: material'));
+  assert.ok(mutate(l => { l.surfaces[0].box.minX = 'x'; }).includes('bridge_deck: box'));
+  assert.ok(mutate(l => { l.surfaces[1].box.minY = 3; l.surfaces[1].box.maxY = 1; }).includes('vistula_channel: box'));
+  assert.ok(mutate(l => { l.surfaces[1].id = l.surfaces[0].id; }).includes('surface ids'));
+  assert.ok(mutate(l => { l.defaultSurface = 'lava'; }).includes('defaultSurface'));
+  assert.ok(mutate(l => { l.presentationOnly = false; }).includes('presentationOnly'));
+  assert.ok(mutate(l => { l.missionId = 'm02'; }).includes('missionId'));
+  assert.deepEqual(audioLayoutProblems({}), ['presentationOnly', 'missionId', 'zones/surfaces']);
+});
