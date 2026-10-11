@@ -46,7 +46,7 @@ export function generate() {
     generator: 'tools/assets/m01-props/build.mjs',
     source: 'tools/assets/m01-props/',
     author: 'COD-guerra project, original procedural',
-    license: 'CC0-1.0',
+    license: 'Original do projecto; a licença global do repositório continua por decidir pelo proprietário (ASSET_CREDITS.md). Sem conteúdo de terceiros nem de jogos.',
     units: 'metres',
     axes: '+Y para cima; origem no contacto com o solo; troços longos ao longo de X; carroças e carrinho com a frente (varais) para −Z',
     scale: 'tamanho real em metros; ver size_m e files.*.bounds de cada prop',
