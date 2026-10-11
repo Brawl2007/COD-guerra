@@ -8,7 +8,7 @@ import { MusicConductor, createMusicInput, readoutIntensity, MUSIC_TUNING, isEmi
  * that fire, and the dark adaptive music (src/core/audio/music.js).
  *
  * PRESENTATION ONLY, and a one-way street: the director READS the simulation (clock, battleClock, consumed, mission.phase, scene, sectors,
- * player, definition, battleReadout) and never writes it. It never touches `sim.rng`, never draws from any random stream (variation is
+ * player, definition, battleReadout) and never writes it. It never touches the simulation's random generator, never draws from any random stream (variation is
  * hashed from stable keys, `audioHash`), and never reads the wall clock: every decision is a function of sim clocks and sim state, so two
  * identical runs produce identical audio calls. game.js keeps dispatching the sounds it always dispatched (a duplicate would break the
  * exact `bridge-demolition` count); the director adds only what was missing and is attached by optional-chained hook lines.

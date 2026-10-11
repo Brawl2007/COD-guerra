@@ -3,7 +3,7 @@ import {MUSIC_SLOTS,clamp} from './constants.js';
 /**
  * Dark adaptive music (T06b, AUDIO-DESIGN section 4). Presentation only: this module never sees a simulation object. The caller
  * (src/game/audio-director-m01.js) fills ONE reusable input record per frame from state it reads; every decision here is a pure
- * function of that record (sim clocks and consumed events, never ctx.currentTime / Date / performance.now / any RNG), so two identical
+ * function of that record (sim clocks and consumed events, never the audio context clock, the wall clock or any random generator), so two identical
  * runs take identical decisions. The audio context clock is used only to schedule the fades of the decisions already taken.
  *
  *   input = { clock, consumed, phase, scene, complete, restoredAt, intensity }
