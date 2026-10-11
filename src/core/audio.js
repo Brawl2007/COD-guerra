@@ -6,6 +6,7 @@ import {
   planTrainArrival,planLocomotiveIdleTick,planJu87PullOut,planFireCrackle,planDistantBattleSlot,volleyOffsets,
   aircraftLayerMix,dopplerFactor,intensityWeight,m01FireEmitters,BattleIntensity,impactMaterial,
 } from './battlefield-audio.js';
+import { AudioCore,sfxVoiceCap } from './audio/index.js';
 import { M01_STUKA_COUNT, m01StukaPosition, m01StukaSince, m01StukaActive, m01RaidPlanePosition, m01RaidSince, m01RaidPlaneActive } from '../world/m01-aircraft-path.js';
 
 export { AUDIO_PRIORITY,audioHash,audioVariation,audioDistanceShape };
@@ -43,16 +44,21 @@ const RELEASE_FADE=.008;           // libertação antecipada: rampa curta em ve
  * (lowpass) → compressor → master. Cada voz envia ainda para uma reverberação exterior procedural (casario/rio).
  */
 export class AudioManager {
-  constructor({contextFactory=null,maxVoices=AUDIO_LIMITS.maxVoices,quality='high'}={}){
-    this.contextFactory=contextFactory;this.maxVoices=maxVoices;this.quality=quality;
-    this.ctx=null;this.master=null;this.buses={};this.reverb=null;this.reverbReturn=null;this.compressor=null;this.concussion=null;
+  constructor({contextFactory=null,maxVoices=AUDIO_LIMITS.maxVoices,quality='high',fetchImpl,assetBaseUrl=''}={}){
+    this.contextFactory=contextFactory;this._maxVoices=maxVoices;this.quality=quality;
+    this.ctx=null;this.master=null;this.buses={};this.reverb=null;this.compressor=null;this.concussion=null;this.mix=null;
     this.buffers=new Map();this.volume=.68;this.disposed=false;
-    this.voices=new Set();this.loops=new Map();this.events=new Map();this.history=[];
+    // T06a core (src/core/audio/): mix graph, voice pools (SFX 32 / 20 on low, VOICE 3), loader + synth fallback, zone layout.
+    this.core=new AudioCore({quality,maxVoices,store:this.buffers,fetchImpl,baseUrl:assetBaseUrl});
+    this.voices=this.core.pool.sets.sfx;this.loops=new Map();this.events=new Map();this.history=[];
     this.peakVoices=0;this.dropped=0;this.evicted=0;this.loopRefused=0;this.categoryDropped={};this.nodesCreated=0;this.nodesDisposed=0;this.serial=0;this.noiseBuffers={};
     this.fading=new Set();this.liveSources=0;this.peakSources=0;this.budgetDropped=0;this.culledGrains=0;this.bursts=new Map();
     this.intensity=new BattleIntensity();this.clock=0;this.lastDuck=null;this.duck=null;
     this.presentation=this._freshPresentation(0,null);
   }
+  /** Effective SFX voice cap: the configured maximum, lowered to 20 on `low` quality (AUDIO-DESIGN §2). */
+  get maxVoices(){return Math.min(this._maxVoices,sfxVoiceCap(this.quality));}
+  set maxVoices(value){this._maxVoices=value;this.core.pool.setCap('sfx',this.maxVoices);}
   init(){
     if(this.disposed)return false;
     if(!this.ctx){
@@ -66,50 +72,23 @@ export class AudioManager {
   }
   _node(node){this.nodesCreated++;return node;}
   _buildGraph(){
-    const ctx=this.ctx;
-    this.master=this._node(ctx.createGain());this.master.gain.value=this.volume;this.master.connect(ctx.destination);
-    let out=this.master;
-    if(ctx.createDynamicsCompressor){
-      const c=this.compressor=this._node(ctx.createDynamicsCompressor());
-      for(const [k,v] of Object.entries({threshold:-14,knee:12,ratio:4,attack:.003,release:.25}))if(c[k])c[k].value=v;
-      c.connect(out);out=c;
-    }
-    this.concussion=this._node(ctx.createBiquadFilter());this.concussion.type='lowpass';this.concussion.frequency.value=20000;this.concussion.connect(out);
-    for(const name of MIX_BUSES){const bus=this._node(ctx.createGain());bus.gain.value=1;bus.connect(this.concussion);this.buses[name]=bus;}
-    if(ctx.createConvolver){
-      try{
-        this.reverb=this._node(ctx.createConvolver());this.reverb.buffer=this._impulse();
-        this.reverbReturn=this._node(ctx.createGain());this.reverbReturn.gain.value=.55;this.reverb.connect(this.reverbReturn);this.reverbReturn.connect(this.concussion);
-      }catch{this.reverb=null;}
-    }
-  }
-  /** Resposta procedural de exterior: reflexões precoces (casas, aterro, margem) e cauda difusa escura. */
-  _impulse(){
-    const rate=this.ctx.sampleRate,seconds=this.quality==='low'?1.2:2.4,length=Math.max(1,Math.floor(rate*seconds)),buffer=this.ctx.createBuffer(2,length,rate);
-    const taps=[.019,.033,.051,.074,.098,.137,.181,.26,.37];
-    for(let ch=0;ch<2;ch++){
-      const data=buffer.getChannelData(ch);let x=(0x9e3779b9^(ch*0x85ebca6b))>>>0,lp=0;
-      for(let i=0;i<length;i++){
-        x^=x<<13;x^=x>>>17;x^=x<<5;const n=((x>>>0)/0xffffffff*2-1),t=i/rate;
-        const k=clamp(.25+t*.9,.25,.97);lp=lp*k+n*(1-k);   // escurece com o tempo (ar e vegetação)
-        data[i]=t<.012?0:lp*Math.exp(-t/.62)*.9;
-      }
-      taps.forEach((tap,i)=>{const at=Math.floor((tap+(ch?.0037*(i%3):0))*rate);if(at<length)data[at]+=(i%2===ch?.75:.5)/(1+i*.45);});
-    }
-    return buffer;
+    // Mix graph (buses -> limiter -> master -> destination), zone reverb and the SFX group buses now live in src/core/audio/mix.js.
+    const mix=this.mix=this.core.attach(this.ctx,{volume:this.volume,track:()=>this.nodesCreated++,untrack:n=>{this.nodesDisposed+=n;}});
+    this.master=mix.master;this.compressor=mix.limiter;this.concussion=mix.concussion;this.reverb=mix.reverbIn;
+    for(const name of MIX_BUSES){const bus=this._node(this.ctx.createGain());bus.gain.value=1;bus.connect(mix.sfx);this.buses[name]=bus;}
   }
   setVolume(value){this.volume=clamp(Number(value),0,1);if(this.master)this.master.gain.value=this.volume;}
   /** A qualidade escolhe a resposta da reverberação ao criar o grafo (init); depois só muda envios e detalhe dos planos. */
-  setQuality(quality){if(['low','medium','high'].includes(quality))this.quality=quality;}
+  setQuality(quality){if(['low','medium','high'].includes(quality)){this.quality=quality;this.core.setQuality(quality);}}
   suspend(){if(this.ctx&&this.ctx.state==='running')Promise.resolve(this.ctx.suspend?.()).catch(()=>{});}
   resume(){return this.init();}
   dispose(){
     if(this.disposed)return;this.disposed=true;this.stopAll(false);
     for(const voice of [...this.fading])this._disconnectVoice(voice,true);
     this.buffers.clear();this.noiseBuffers={};
-    for(const node of [this.reverb,this.reverbReturn,...Object.values(this.buses),this.concussion,this.compressor,this.master])
-      if(node){try{node.disconnect();}catch{}this.nodesDisposed++;}
-    this.master=this.reverb=this.reverbReturn=this.concussion=this.compressor=null;this.buses={};
+    for(const node of Object.values(this.buses)){try{node.disconnect();}catch{}this.nodesDisposed++;}
+    this.nodesDisposed+=this.core.dispose();
+    this.master=this.reverb=this.concussion=this.compressor=this.mix=null;this.buses={};
     if(this.ctx)Promise.resolve(this.ctx.close?.()).catch(()=>{});this.ctx=null;
   }
   async load(name,url){
@@ -140,11 +119,8 @@ export class AudioManager {
     return this._evict(priority);
   }
   _evict(priority){
-    if(this.voices.size<this.maxVoices)return true;
-    let victim=null;
-    for(const voice of this.voices)if(!voice.loop&&(!victim||voice.priority<victim.priority||(voice.priority===victim.priority&&voice.serial<victim.serial)))victim=voice;
-    if(!victim||victim.priority>=priority){this.dropped++;return false;}
-    this._release(victim,true);this.evicted++;return true;
+    const before=this.core.pool.stolen.sfx,ok=this.core.pool.admit('sfx',priority,victim=>this._release(victim,true));
+    this.evicted+=this.core.pool.stolen.sfx-before;if(!ok)this.dropped++;return ok;
   }
   _voice({kind='fx',category='fx',priority=AUDIO_PRIORITY.impact,volume=.1,pan=0,distance=0,front=1,filter=null,loop=false}={}){
     if(!this.ctx||!this.master||this.disposed)return null;
@@ -251,9 +227,8 @@ export class AudioManager {
       p.cancelScheduledValues?.(now);p.setTargetAtTime?p.setTargetAtTime(target,now,.03):(p.value=target);
       p.setTargetAtTime?.(1,releaseAt,rec/3);
     }
-    // Concussão: lowpass exponencial até ~0,9 kHz, nunca reaberto a meio de uma concussão mais funda.
-    if(cut>0&&this.concussion){const f=this.concussion.frequency,low=20000*Math.pow(650/20000,clamp(cut,0,1));
-      f.cancelScheduledValues?.(now);f.setTargetAtTime?f.setTargetAtTime(low,now,.01):(f.value=low);f.setTargetAtTime?.(20000,releaseAt,rec/2.5);}
+    // Concussão (só caminho SFX; VOICE só acima de 0,6; MUSIC nunca): lowpass exponencial, nunca reaberto a meio de uma mais funda.
+    if(cut>0&&this.mix)this.mix.concussionTo(cut,now,releaseAt,rec);
     this.duck={amount:depth,releaseAt,recover:rec,concussion:cut};
     this.lastDuck={clock:this.clock,amount:Number(depth.toFixed(3)),concussion:Number(cut.toFixed(3))};
   }
@@ -522,10 +497,25 @@ export class AudioManager {
     if(slot>pres.lastBattleSlot){pres.lastBattleSlot=slot;const event=planDistantBattleSlot(slot,{phase:missionPhase,intensity:level});
       if(event){const s=spatial(event.point);this.distantBattle(event.kind,s.pan,Math.max(550,s.distance),event.key,{rounds:event.rounds,salvo:event.salvo,front:s.front??1});}}
   }
+  // ------------------------------------------------------------ T06a: núcleo (loader, camadas VOICE/MUSIC, zonas)
+  /** Manifest-driven loader: ids missing or undecodable fall back to synthesis; never rejects. */
+  loadManifest(raw){return this.core.loadManifest(raw);}
+  loadAsset(id){return this.core.loader.load(id);}
+  /** Runtime audio-layout.json (zones, surfaces); malformed data falls back to open/earth. Wiring from game.js is T06b. */
+  setLayout(raw){return this.core.setLayout(raw);}
+  loadLayout(url,fetchImpl){return this.core.loadLayout(url,fetchImpl);}
+  /** Allocation-free listener update: picks the reverb zone and the surface under the listener (read-only inputs). */
+  setListener(x,y,z){return this.core.update(x,y,z);}
+  get zone(){return this.core.zone;}
+  get surface(){return this.core.surface;}
+  playVoice(id,opts){return this.core.playVoice(id,opts);}
+  playMusic(slot,id,opts){return this.core.playMusic(slot,id,opts);}
+  stopMusic(slot,fade){return this.core.stopMusic(slot,fade);}
+  setBusVolume(name,value){return this.mix?this.mix.setBusVolume(name,value):false;}
   get diagnostics(){
     let bytes=0;for(const b of this.buffers.values())bytes+=(b.length??0)*(b.numberOfChannels??1)*4;
     for(const b of Object.values(this.noiseBuffers))bytes+=(b.length??0)*(b.numberOfChannels??1)*4;
-    const reverbBytes=this.reverb?.buffer?(this.reverb.buffer.length??0)*(this.reverb.buffer.numberOfChannels??1)*4:0;
+    let reverbBytes=0;for(const c of this.mix?.convolvers??[])if(c.buffer)reverbBytes+=(c.buffer.length??0)*(c.buffer.numberOfChannels??1)*4;
     const categories={};for(const v of this.voices)if(!v.loop)categories[v.category]=(categories[v.category]??0)+1;
     return {state:this.ctx?.state??'uninitialized',activeVoices:this.voices.size,maxVoices:this.maxVoices,peakVoices:this.peakVoices,droppedVoices:this.dropped,
       evictedVoices:this.evicted,loopRefused:this.loopRefused,fadingVoices:this.fading.size,liveSources:this.liveSources,peakSources:this.peakSources,
@@ -534,7 +524,7 @@ export class AudioManager {
       loops:[...this.loops.keys()].sort(),permanentLoops:this.loops.size,buffers:this.buffers.size,proceduralBuffers:Object.keys(this.noiseBuffers).length,
       estimatedBufferBytes:bytes+reverbBytes,reverb:Boolean(this.reverb),compressor:Boolean(this.compressor),buses:Object.keys(this.buses),
       intensity:Number(this.intensity.level(this.clock).toFixed(4)),quality:this.quality,lastDuck:this.lastDuck?{...this.lastDuck}:null,
-      nodesCreated:this.nodesCreated,nodesDisposed:this.nodesDisposed,eventCounts:Object.fromEntries([...this.events.entries()].sort()),lastEvents:this.history.slice(-12)};
+      core:this.core.diagnostics,nodesCreated:this.nodesCreated,nodesDisposed:this.nodesDisposed,eventCounts:Object.fromEntries([...this.events.entries()].sort()),lastEvents:this.history.slice(-12)};
   }
 }
 
