@@ -1,0 +1,1479 @@
+{
+  "version": 1,
+  "asset": "Kit de props de guerra e ferrovia de M01 Tczew (Setembro de 1939) — LOD0/LOD1",
+  "status": "PROVISÓRIO VERIFICADO (M01 continua PROTÓTIPO JOGÁVEL); ainda não ligado ao jogo (ligação = T33)",
+  "generator": "tools/assets/m01-props/build.mjs",
+  "source": "tools/assets/m01-props/",
+  "author": "COD-guerra project, original procedural",
+  "license": "Original do projecto; a licença global do repositório continua por decidir pelo proprietário (ASSET_CREDITS.md). Sem conteúdo de terceiros nem de jogos.",
+  "units": "metres",
+  "axes": "+Y para cima; origem no contacto com o solo; troços longos ao longo de X; carroças e carrinho com a frente (varais) para −Z",
+  "scale": "tamanho real em metros; ver size_m e files.*.bounds de cada prop",
+  "colour": "cor de vértice (COLOR_0, linear) com envelhecimento procedural (lama junto ao chão, pó, sombras de baixo); sem texturas; baseColorFactor branco",
+  "third_party": "nenhum: geometria, cores e materiais criados por código neste repositório; nada extraído de jogos; sem dependências npm",
+  "budgets": {
+    "lod0_triangles_max": 1500,
+    "lod1_triangles_max": 300
+  },
+  "materials": {
+    "wood": {
+      "roughness": 0.92,
+      "metallic": 0
+    },
+    "wood_painted": {
+      "roughness": 0.8,
+      "metallic": 0
+    },
+    "steel": {
+      "roughness": 0.6,
+      "metallic": 0.45
+    },
+    "steel_painted": {
+      "roughness": 0.75,
+      "metallic": 0.15
+    },
+    "iron_cast": {
+      "roughness": 0.8,
+      "metallic": 0.35
+    },
+    "rust": {
+      "roughness": 0.9,
+      "metallic": 0.2
+    },
+    "cloth": {
+      "roughness": 1,
+      "metallic": 0
+    },
+    "rope": {
+      "roughness": 1,
+      "metallic": 0
+    },
+    "porcelain": {
+      "roughness": 0.35,
+      "metallic": 0
+    },
+    "glass": {
+      "roughness": 0.25,
+      "metallic": 0
+    },
+    "coal": {
+      "roughness": 0.65,
+      "metallic": 0.05
+    },
+    "earth": {
+      "roughness": 1,
+      "metallic": 0
+    },
+    "leather": {
+      "roughness": 0.85,
+      "metallic": 0
+    },
+    "wire": {
+      "roughness": 0.55,
+      "metallic": 0.5,
+      "doubleSided": true
+    },
+    "brass": {
+      "roughness": 0.5,
+      "metallic": 0.5
+    }
+  },
+  "props": [
+    {
+      "id": "ammo_crate_wood",
+      "name": "Caixa de munição de madeira",
+      "category": "crates",
+      "description": "Caixa de munição de madeira verde-oliva gasta, tampa com cintas de aço e pegas de corda nas cabeceiras.",
+      "reference": "Caixas de munição e de mantimentos de madeira com cintas, de tipo corrente nos exércitos polaco e alemão em 1939; proporções de memória do tipo, sem cópia de peças reais.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_ammo_crate_wood_lod0.glb",
+          "bytes": 28008,
+          "sha256": "662dedddb19efb5cb3f6046fe82a476f487bf8a85331a8c5759bf3b2a861547c",
+          "triangles": 468,
+          "vertices": 568,
+          "materials": [
+            "wood_painted",
+            "wood",
+            "cloth",
+            "steel_painted",
+            "rope"
+          ],
+          "bounds": {
+            "min": [
+              -0.4609,
+              -0.0008,
+              -0.217
+            ],
+            "max": [
+              0.4609,
+              0.346,
+              0.217
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_ammo_crate_wood_lod1.glb",
+          "bytes": 5932,
+          "sha256": "e05b0f23882b63646709d3031b58dca392855feba11e91e5823c6e2b5b75b001",
+          "triangles": 48,
+          "vertices": 96,
+          "materials": [
+            "wood_painted",
+            "steel_painted"
+          ],
+          "bounds": {
+            "min": [
+              -0.4,
+              0,
+              -0.213
+            ],
+            "max": [
+              0.4,
+              0.346,
+              0.213
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 0.9219,
+        "y": 0.3468,
+        "z": 0.434
+      }
+    },
+    {
+      "id": "supply_crate_planked",
+      "name": "Caixa de mantimentos de tábuas",
+      "category": "crates",
+      "description": "Caixa de tábuas com prumos de canto, uma tábua partida e uma da tampa levantada.",
+      "reference": "Caixas de munição e de mantimentos de madeira com cintas, de tipo corrente nos exércitos polaco e alemão em 1939; proporções de memória do tipo, sem cópia de peças reais.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_supply_crate_planked_lod0.glb",
+          "bytes": 44212,
+          "sha256": "9a68a2e1c8b5c8ad9ce3682a3a675854e4bc2983a01c6ec86213356558b7a708",
+          "triangles": 712,
+          "vertices": 1048,
+          "materials": [
+            "wood",
+            "cloth"
+          ],
+          "bounds": {
+            "min": [
+              -0.45,
+              0,
+              -0.26
+            ],
+            "max": [
+              0.45,
+              0.5493,
+              0.26
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_supply_crate_planked_lod1.glb",
+          "bytes": 20084,
+          "sha256": "b8e4521910cc0b15094eb08e854104475af1e02f8dc7c79363d1818afc4cbb22",
+          "triangles": 240,
+          "vertices": 480,
+          "materials": [
+            "wood"
+          ],
+          "bounds": {
+            "min": [
+              -0.45,
+              0,
+              -0.26
+            ],
+            "max": [
+              0.45,
+              0.52,
+              0.26
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 0.9,
+        "y": 0.5493,
+        "z": 0.52
+      }
+    },
+    {
+      "id": "ammo_tin_box",
+      "name": "Caixa metálica de munição",
+      "category": "crates",
+      "description": "Caixa de chapa de aço cinzento-campanha com tampa, pega, dois fechos e ferrugem.",
+      "reference": "Caixas de munição e de mantimentos de madeira com cintas, de tipo corrente nos exércitos polaco e alemão em 1939; proporções de memória do tipo, sem cópia de peças reais.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_ammo_tin_box_lod0.glb",
+          "bytes": 14536,
+          "sha256": "b96b1a611d4a038b9d493a8fcc11756e5b68c4b617482cc125006a9b12114a13",
+          "triangles": 236,
+          "vertices": 304,
+          "materials": [
+            "steel_painted",
+            "steel"
+          ],
+          "bounds": {
+            "min": [
+              -0.208,
+              0,
+              -0.121
+            ],
+            "max": [
+              0.208,
+              0.2618,
+              0.13
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_ammo_tin_box_lod1.glb",
+          "bytes": 4988,
+          "sha256": "cd9f2cb17cc3b0ca034648a18287f47d3e9b1d105eb8e8e0d268b5344c548c30",
+          "triangles": 36,
+          "vertices": 72,
+          "materials": [
+            "steel_painted",
+            "steel"
+          ],
+          "bounds": {
+            "min": [
+              -0.206,
+              0,
+              -0.121
+            ],
+            "max": [
+              0.206,
+              0.212,
+              0.121
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 0.416,
+        "y": 0.2618,
+        "z": 0.251
+      }
+    },
+    {
+      "id": "sandbag_run",
+      "name": "Sacos de areia: troço recto",
+      "category": "sandbags",
+      "description": "Parapeito recto de quatro fiadas, dois sacos de espessura, ligação em quincôncio (cada saco 0,6 × 0,3 × 0,15 m).",
+      "reference": "Parapeitos de sacos de areia improvisados em postos de 1939; sacos de serapilheira atados nas pontas.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_sandbag_run_lod0.glb",
+          "bytes": 42796,
+          "sha256": "df9dc964c8fffe492cbda7ef3045380f00eb2b12ccf05874a2958d3ceb662850",
+          "triangles": 1152,
+          "vertices": 960,
+          "materials": [
+            "cloth"
+          ],
+          "bounds": {
+            "min": [
+              -1.0498,
+              0,
+              -0.31
+            ],
+            "max": [
+              1.0539,
+              0.585,
+              0.3093
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_sandbag_run_lod1.glb",
+          "bytes": 7368,
+          "sha256": "42aa6c69a913020b485b3dd1f72f3433e716a24cc02da53265419d83c681e176",
+          "triangles": 144,
+          "vertices": 144,
+          "materials": [
+            "cloth"
+          ],
+          "bounds": {
+            "min": [
+              -0.8599,
+              0,
+              -0.2486
+            ],
+            "max": [
+              1.0107,
+              0.44,
+              0.2474
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 2.1037,
+        "y": 0.585,
+        "z": 0.6193
+      }
+    },
+    {
+      "id": "sandbag_corner",
+      "name": "Sacos de areia: canto em L",
+      "category": "sandbags",
+      "description": "Canto em L de três fiadas com duas pernas de 1,2 m e dois sacos de espessura.",
+      "reference": "Parapeitos de sacos de areia improvisados em postos de 1939.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_sandbag_corner_lod0.glb",
+          "bytes": 42816,
+          "sha256": "f2360f42d8f2c24bfbbfff20dd42dc34572f0b7da1d3d368e90d8c06a23f2aec",
+          "triangles": 1152,
+          "vertices": 960,
+          "materials": [
+            "cloth"
+          ],
+          "bounds": {
+            "min": [
+              -0.0066,
+              0,
+              -0.0035
+            ],
+            "max": [
+              1.501,
+              0.44,
+              1.8046
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_sandbag_corner_lod1.glb",
+          "bytes": 7376,
+          "sha256": "f32563f7a2bfbcd6b780ae6018018862d3e56711bfe536df87ea9c0a5fe09c14",
+          "triangles": 144,
+          "vertices": 144,
+          "materials": [
+            "cloth"
+          ],
+          "bounds": {
+            "min": [
+              0.0512,
+              0,
+              0.0648
+            ],
+            "max": [
+              1.45,
+              0.44,
+              1.7513
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 1.5076,
+        "y": 0.44,
+        "z": 1.8082
+      }
+    },
+    {
+      "id": "sandbag_burst",
+      "name": "Sacos de areia: rebentado",
+      "category": "sandbags",
+      "description": "Parapeito desfeito: fiadas incompletas, sacos caídos, um saco rasgado e areia derramada.",
+      "reference": "Danos de explosão sobre sacos de areia.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_sandbag_burst_lod0.glb",
+          "bytes": 28256,
+          "sha256": "8001e1fe336728e6423c8feb1694bf625ae73f7e2e7f811881bdf244810d714f",
+          "triangles": 557,
+          "vertices": 631,
+          "materials": [
+            "cloth",
+            "earth"
+          ],
+          "bounds": {
+            "min": [
+              -1.0352,
+              -0.009,
+              -0.1773
+            ],
+            "max": [
+              1.2071,
+              0.295,
+              1.4711
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_sandbag_burst_lod1.glb",
+          "bytes": 12304,
+          "sha256": "acac3c36127f438c0b3d731c101d5f52d8b1c81e731536583e7b761e06c43e8a",
+          "triangles": 210,
+          "vertices": 246,
+          "materials": [
+            "cloth",
+            "earth"
+          ],
+          "bounds": {
+            "min": [
+              -1.0111,
+              -0.0024,
+              -0.135
+            ],
+            "max": [
+              1.1921,
+              0.295,
+              1.3908
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 2.2424,
+        "y": 0.304,
+        "z": 1.6483
+      }
+    },
+    {
+      "id": "barrel_wood",
+      "name": "Barril de madeira",
+      "category": "barrels",
+      "description": "Barril de aduelas com quatro arcos de ferro; aduelas de tons diferentes.",
+      "reference": "Barril de tanoaria comum (água, conservas), ø ≈ 0,58 m.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_barrel_wood_lod0.glb",
+          "bytes": 19564,
+          "sha256": "722075ce3cf926c47a57452ffac5c8545194915b39ef87e82d419ff81982667a",
+          "triangles": 400,
+          "vertices": 416,
+          "materials": [
+            "wood",
+            "steel_painted"
+          ],
+          "bounds": {
+            "min": [
+              -0.29,
+              0,
+              -0.29
+            ],
+            "max": [
+              0.29,
+              0.89,
+              0.29
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_barrel_wood_lod1.glb",
+          "bytes": 8988,
+          "sha256": "8b3cf46d0bc007404e8ad0b471c8518d679af9687b61d4431e60ddf7b396fb92",
+          "triangles": 80,
+          "vertices": 176,
+          "materials": [
+            "wood",
+            "steel_painted"
+          ],
+          "bounds": {
+            "min": [
+              -0.29,
+              0,
+              -0.29
+            ],
+            "max": [
+              0.29,
+              0.88,
+              0.29
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 0.58,
+        "y": 0.89,
+        "z": 0.58
+      }
+    },
+    {
+      "id": "drum_fuel_200l",
+      "name": "Bidão de combustível de 200 l",
+      "category": "barrels",
+      "description": "Bidão de chapa de 200 l com duas nervuras de reforço, dois bujões e tinta verde-oliva gasta com ferrugem.",
+      "reference": "Bidão de chapa de 200 litros de uso militar e civil da época (ø ≈ 0,585 m).",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_drum_fuel_200l_lod0.glb",
+          "bytes": 27688,
+          "sha256": "2965603e2e8756d734e21da61e3a4e0bd2c9b9b3c8f12f4c1bc4d2202d3f2426",
+          "triangles": 768,
+          "vertices": 580,
+          "materials": [
+            "steel_painted",
+            "iron_cast"
+          ],
+          "bounds": {
+            "min": [
+              -0.2984,
+              0,
+              -0.2984
+            ],
+            "max": [
+              0.2984,
+              0.909,
+              0.2984
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_drum_fuel_200l_lod1.glb",
+          "bytes": 6864,
+          "sha256": "bf4d60e9e6dc3e3c51467635c9b80f0b55bea57cc5e3af978402538c4e6ba387",
+          "triangles": 140,
+          "vertices": 130,
+          "materials": [
+            "steel_painted"
+          ],
+          "bounds": {
+            "min": [
+              -0.2984,
+              0,
+              -0.2837
+            ],
+            "max": [
+              0.2984,
+              0.88,
+              0.2837
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 0.5967,
+        "y": 0.909,
+        "z": 0.5967
+      }
+    },
+    {
+      "id": "jerrycans",
+      "name": "Jerricans (grupo)",
+      "category": "barrels",
+      "description": "Três jerricans de 20 l de pé e um deitado, em tons de aço cinzento e ferrugem.",
+      "reference": "Wehrmachtskanister de 20 l (introduzido em 1937–1939), 0,34 × 0,16 × 0,46 m.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_jerrycans_lod0.glb",
+          "bytes": 35232,
+          "sha256": "2c80a2a6ab5323f8ce096c6f63c0244e5013cc52f77b8206d9f70fa0d6178e1a",
+          "triangles": 564,
+          "vertices": 824,
+          "materials": [
+            "steel_painted",
+            "steel"
+          ],
+          "bounds": {
+            "min": [
+              -0.57,
+              -0.0005,
+              -0.121
+            ],
+            "max": [
+              0.57,
+              0.5,
+              0.6662
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_jerrycans_lod1.glb",
+          "bytes": 7876,
+          "sha256": "69e8b5bdd928bf10f1a1dd8af3b889a93709bfecbce7d5bf3450d6b728ab0c59",
+          "triangles": 84,
+          "vertices": 168,
+          "materials": [
+            "steel_painted"
+          ],
+          "bounds": {
+            "min": [
+              -0.57,
+              0,
+              -0.12
+            ],
+            "max": [
+              0.57,
+              0.46,
+              0.6662
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 1.14,
+        "y": 0.5005,
+        "z": 0.7872
+      }
+    },
+    {
+      "id": "telegraph_pole",
+      "name": "Poste de telégrafo",
+      "category": "line",
+      "description": "Poste de madeira de 7 m, base creosotada, dois braços com escoras e seis isoladores de porcelana; âncoras de fio nos sockets.",
+      "reference": "Equipamento de via das ferrovias do Estado polaco (PKP) e alemãs (Reichsbahn) de 1939: material fundido ou de madeira creosotada pintado de forma utilitária.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_telegraph_pole_lod0.glb",
+          "bytes": 47288,
+          "sha256": "7683fb053b830c2ff49b1706e97756ab81d6af91f969508dab1f5b96aa4aafcc",
+          "triangles": 670,
+          "vertices": 1068,
+          "materials": [
+            "wood",
+            "iron_cast",
+            "steel_painted",
+            "steel",
+            "porcelain"
+          ],
+          "bounds": {
+            "min": [
+              -0.1602,
+              0,
+              -0.8
+            ],
+            "max": [
+              0.1602,
+              7,
+              0.8
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_telegraph_pole_lod1.glb",
+          "bytes": 15164,
+          "sha256": "26d7b74965d056381b3d790aece0b00421b60f0412a22349bc3f3a5bbdbf155d",
+          "triangles": 174,
+          "vertices": 330,
+          "materials": [
+            "wood",
+            "porcelain"
+          ],
+          "bounds": {
+            "min": [
+              -0.125,
+              0,
+              -0.8
+            ],
+            "max": [
+              0.125,
+              7,
+              0.8
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 0.3203,
+        "y": 7,
+        "z": 1.6
+      },
+      "sockets": {
+        "wire_anchors": [
+          [
+            0,
+            6.85,
+            0.62
+          ],
+          [
+            0,
+            6.85,
+            0.25
+          ],
+          [
+            0,
+            6.85,
+            -0.25
+          ],
+          [
+            0,
+            6.85,
+            -0.62
+          ],
+          [
+            0,
+            6.33,
+            0.4
+          ],
+          [
+            0,
+            6.33,
+            -0.4
+          ]
+        ]
+      }
+    },
+    {
+      "id": "telegraph_wire_span",
+      "name": "Vão de fio de telégrafo",
+      "category": "line",
+      "description": "Seis fios de 12 m com flecha de 0,28 m entre as âncoras de dois postes iguais (x=0 e x=12); repetir por vão.",
+      "reference": "Equipamento de via das ferrovias do Estado polaco (PKP) e alemãs (Reichsbahn) de 1939: material fundido ou de madeira creosotada pintado de forma utilitária.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_telegraph_wire_span_lod0.glb",
+          "bytes": 9164,
+          "sha256": "b0a406234f21d662d78cfee38c11112b25549d32c773dc8636c1de45a320b392",
+          "triangles": 288,
+          "vertices": 162,
+          "materials": [
+            "wire"
+          ],
+          "bounds": {
+            "min": [
+              -0.0002,
+              6.047,
+              -0.6252
+            ],
+            "max": [
+              12.0002,
+              6.856,
+              0.6252
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_telegraph_wire_span_lod1.glb",
+          "bytes": 5704,
+          "sha256": "1d4fb1dbcd0ed3640ceef4957f7fcc395067f7aa3ebda2c0558780abe7e4f202",
+          "triangles": 144,
+          "vertices": 90,
+          "materials": [
+            "wire"
+          ],
+          "bounds": {
+            "min": [
+              -0.0002,
+              6.047,
+              -0.6252
+            ],
+            "max": [
+              12.0002,
+              6.856,
+              0.6252
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 12.0005,
+        "y": 0.809,
+        "z": 1.2504
+      },
+      "sockets": {
+        "span_end_anchors": [
+          [
+            12,
+            6.85,
+            0.62
+          ],
+          [
+            12,
+            6.85,
+            0.25
+          ],
+          [
+            12,
+            6.85,
+            -0.25
+          ],
+          [
+            12,
+            6.85,
+            -0.62
+          ],
+          [
+            12,
+            6.33,
+            0.4
+          ],
+          [
+            12,
+            6.33,
+            -0.4
+          ]
+        ],
+        "start_anchors": [
+          [
+            0,
+            6.85,
+            0.62
+          ],
+          [
+            0,
+            6.85,
+            0.25
+          ],
+          [
+            0,
+            6.85,
+            -0.25
+          ],
+          [
+            0,
+            6.85,
+            -0.62
+          ],
+          [
+            0,
+            6.33,
+            0.4
+          ],
+          [
+            0,
+            6.33,
+            -0.4
+          ]
+        ]
+      }
+    },
+    {
+      "id": "fence_wood",
+      "name": "Cerca de ripas de madeira",
+      "category": "fences",
+      "description": "Secção de 3 m com três postes, duas travessas e ripas pontiagudas, algumas em falta ou tortas.",
+      "reference": "Cerca rural de ripas de aldeia europeia.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_fence_wood_lod0.glb",
+          "bytes": 50688,
+          "sha256": "b27f8697d9e29828b4b26bb5834b8a3fb113f7a4bdae24c5daa6870ad3c2d9a6",
+          "triangles": 692,
+          "vertices": 1256,
+          "materials": [
+            "wood"
+          ],
+          "bounds": {
+            "min": [
+              -1.5,
+              -0.0009,
+              -0.126
+            ],
+            "max": [
+              1.5,
+              1.1509,
+              0.05
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_fence_wood_lod1.glb",
+          "bytes": 13476,
+          "sha256": "96e18b23417c987a790ae7e7cc352a8a3cf55326c81b264a2f2da49d1d765ee3",
+          "triangles": 156,
+          "vertices": 312,
+          "materials": [
+            "wood"
+          ],
+          "bounds": {
+            "min": [
+              -1.5,
+              -0.0009,
+              -0.126
+            ],
+            "max": [
+              1.5,
+              1.1509,
+              0.05
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 3,
+        "y": 1.1518,
+        "z": 0.176
+      }
+    },
+    {
+      "id": "fence_barbed",
+      "name": "Cerca de arame farpado",
+      "category": "fences",
+      "description": "Secção de 3 m com três estacas inclinadas, cinco fios com flecha e farpas, e um rolo caído.",
+      "reference": "Cerca de arame farpado de campo.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_fence_barbed_lod0.glb",
+          "bytes": 22696,
+          "sha256": "2161257df05a3e93a6a51e1471385388c5a4e620aad03ea3e5548c938f0683a1",
+          "triangles": 551,
+          "vertices": 477,
+          "materials": [
+            "wood",
+            "wire"
+          ],
+          "bounds": {
+            "min": [
+              -1.545,
+              -0.004,
+              -0.0487
+            ],
+            "max": [
+              1.5498,
+              1.3001,
+              0.5845
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_fence_barbed_lod1.glb",
+          "bytes": 11228,
+          "sha256": "f70c8474e7e83bba905aa4cdc4516325bf56e2c906b49fafcbf3d8d624882ad5",
+          "triangles": 189,
+          "vertices": 219,
+          "materials": [
+            "wood",
+            "wire"
+          ],
+          "bounds": {
+            "min": [
+              -1.5404,
+              -0.0036,
+              -0.0476
+            ],
+            "max": [
+              1.5498,
+              1.3,
+              0.4952
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 3.0948,
+        "y": 1.3042,
+        "z": 0.6332
+      }
+    },
+    {
+      "id": "railway_lantern",
+      "name": "Lanterna ferroviária de mão",
+      "category": "rail",
+      "description": "Lanterna de petróleo de chapa escura com vidro sujo, grelha e alça.",
+      "reference": "Lanterna de mão de ferroviário, tipo de furacão.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_railway_lantern_lod0.glb",
+          "bytes": 22408,
+          "sha256": "03e993a5a2e854a4ebc9c515ba8615a7366ecd57597453c029bd0e4e2509f719",
+          "triangles": 338,
+          "vertices": 481,
+          "materials": [
+            "steel_painted",
+            "glass",
+            "steel"
+          ],
+          "bounds": {
+            "min": [
+              -0.0744,
+              0,
+              -0.07
+            ],
+            "max": [
+              0.0744,
+              0.3644,
+              0.07
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_railway_lantern_lod1.glb",
+          "bytes": 12816,
+          "sha256": "626a405a2b0601ac556c61b66eb7cbd70c50cd9cc5dc3686b433f88c08110139",
+          "triangles": 164,
+          "vertices": 244,
+          "materials": [
+            "steel_painted",
+            "glass",
+            "steel"
+          ],
+          "bounds": {
+            "min": [
+              -0.0727,
+              0,
+              -0.07
+            ],
+            "max": [
+              0.0727,
+              0.3528,
+              0.07
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 0.1489,
+        "y": 0.3644,
+        "z": 0.14
+      }
+    },
+    {
+      "id": "hand_cart",
+      "name": "Carrinho de mão de estação",
+      "category": "carts",
+      "description": "Carrinho de duas rodas de raios com aro de ferro, plataforma de tábuas e varais para −Z, com dois sacos.",
+      "reference": "Carrinho de bagagem e carga de estação.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_hand_cart_lod0.glb",
+          "bytes": 48328,
+          "sha256": "114318a576b13dc6761e587f81a622491a6790adc71347a559e3e083ca693928",
+          "triangles": 924,
+          "vertices": 1104,
+          "materials": [
+            "wood",
+            "iron_cast",
+            "cloth"
+          ],
+          "bounds": {
+            "min": [
+              -0.585,
+              -0.008,
+              -1.5225
+            ],
+            "max": [
+              0.585,
+              0.978,
+              1.15
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_hand_cart_lod1.glb",
+          "bytes": 13640,
+          "sha256": "4e46da3cf5e39c651a9565abe4cc4b6a530f0a5b7c25707fd73e6157ae72bc8b",
+          "triangles": 218,
+          "vertices": 282,
+          "materials": [
+            "wood",
+            "iron_cast"
+          ],
+          "bounds": {
+            "min": [
+              -0.58,
+              0.01,
+              -1.5225
+            ],
+            "max": [
+              0.58,
+              0.96,
+              1.15
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 1.17,
+        "y": 0.986,
+        "z": 2.6725
+      }
+    },
+    {
+      "id": "horse_cart",
+      "name": "Carroça de cavalo (silhueta)",
+      "category": "carts",
+      "description": "Carroça de escadas de quatro rodas com banco, timão e balança para −Z; sem cavalo.",
+      "reference": "Carroça agrícola de escadas polaca (wóz drabiniasty).",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_horse_cart_lod0.glb",
+          "bytes": 83356,
+          "sha256": "1b64d58dd2e21f676b7daee2797628f93139d5d675a11e351509c16454863342",
+          "triangles": 1440,
+          "vertices": 1992,
+          "materials": [
+            "wood",
+            "earth",
+            "cloth"
+          ],
+          "bounds": {
+            "min": [
+              -0.725,
+              0,
+              -2.75
+            ],
+            "max": [
+              0.725,
+              1.375,
+              1.825
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_horse_cart_lod1.glb",
+          "bytes": 15652,
+          "sha256": "8701d907cf6da1be800441e67005439de2c3b61a1f8bb718c5af16de23578902",
+          "triangles": 276,
+          "vertices": 352,
+          "materials": [
+            "wood"
+          ],
+          "bounds": {
+            "min": [
+              -0.72,
+              0,
+              -2.6994
+            ],
+            "max": [
+              0.72,
+              1.375,
+              1.7773
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 1.45,
+        "y": 1.375,
+        "z": 4.575
+      }
+    },
+    {
+      "id": "point_lever",
+      "name": "Alavanca de agulha",
+      "category": "rail",
+      "description": "Alavanca de mão de agulha com alvo de duas faces, lanterna, braço com contrapeso e tirante para a via (−Z→+Z).",
+      "reference": "Equipamento de via das ferrovias do Estado polaco (PKP) e alemãs (Reichsbahn) de 1939: material fundido ou de madeira creosotada pintado de forma utilitária.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_point_lever_lod0.glb",
+          "bytes": 28940,
+          "sha256": "5d28bd883cf53b80e93b0b49e34e9886001d980cf6f4906ae8179186e7790404",
+          "triangles": 412,
+          "vertices": 580,
+          "materials": [
+            "earth",
+            "iron_cast",
+            "steel",
+            "steel_painted",
+            "glass",
+            "leather"
+          ],
+          "bounds": {
+            "min": [
+              -0.28,
+              0,
+              -0.3802
+            ],
+            "max": [
+              0.65,
+              1.28,
+              1.07
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_point_lever_lod1.glb",
+          "bytes": 18412,
+          "sha256": "1dba9b92e8c2ab76eb52a1397439a152cdb1fe85078552e20c3ba5115a4bd0e4",
+          "triangles": 194,
+          "vertices": 324,
+          "materials": [
+            "earth",
+            "iron_cast",
+            "steel",
+            "steel_painted",
+            "glass",
+            "leather"
+          ],
+          "bounds": {
+            "min": [
+              -0.28,
+              0,
+              -0.3749
+            ],
+            "max": [
+              0.65,
+              1.28,
+              1.07
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 0.93,
+        "y": 1.28,
+        "z": 1.4502
+      }
+    },
+    {
+      "id": "semaphore_signal",
+      "name": "Semáforo mecânico",
+      "category": "rail",
+      "description": "Mastro tubular de 5,5 m com escada, braço horizontal (parar) a +X, lanterna de espectáculo e fio de transmissão.",
+      "reference": "Equipamento de via das ferrovias do Estado polaco (PKP) e alemãs (Reichsbahn) de 1939: material fundido ou de madeira creosotada pintado de forma utilitária.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_semaphore_signal_lod0.glb",
+          "bytes": 59180,
+          "sha256": "f823b483bcce8aedd6621ff26253457eff76b4b3ef3c7f0191a742aff9fed448",
+          "triangles": 862,
+          "vertices": 1342,
+          "materials": [
+            "earth",
+            "iron_cast",
+            "steel_painted",
+            "wood_painted",
+            "glass",
+            "steel"
+          ],
+          "bounds": {
+            "min": [
+              -0.3766,
+              0,
+              -0.28
+            ],
+            "max": [
+              1.405,
+              5.67,
+              0.28
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_semaphore_signal_lod1.glb",
+          "bytes": 21392,
+          "sha256": "a85eba01b5ee308a3662e4b5d33008fcfa238390daa4649bab16fec52e018700",
+          "triangles": 240,
+          "vertices": 420,
+          "materials": [
+            "earth",
+            "iron_cast",
+            "steel_painted",
+            "wood_painted",
+            "glass"
+          ],
+          "bounds": {
+            "min": [
+              -0.3706,
+              0,
+              -0.28
+            ],
+            "max": [
+              1.405,
+              5.67,
+              0.28
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 1.7816,
+        "y": 5.67,
+        "z": 0.56
+      },
+      "sockets": {
+        "arm_pivot": [
+          0,
+          4.75,
+          0.1
+        ],
+        "lamp_lens": [
+          0,
+          4.25,
+          0.11
+        ],
+        "arm_direction": "arm_vertical_axis_is_Z; arm points +X (stop)"
+      }
+    },
+    {
+      "id": "water_crane",
+      "name": "Grua de água",
+      "category": "rail",
+      "description": "Coluna de ferro fundido de 4,6 m, braço em pescoço de cisne para +X, manga de lona, roda de válvula e braseiro anti-gelo.",
+      "reference": "Equipamento de via das ferrovias do Estado polaco (PKP) e alemãs (Reichsbahn) de 1939: material fundido ou de madeira creosotada pintado de forma utilitária.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_water_crane_lod0.glb",
+          "bytes": 56692,
+          "sha256": "7c91ae9a9f1e283e55f3ecaa0578587fe50315e458606e28f5acb956e0ca3782",
+          "triangles": 1210,
+          "vertices": 1240,
+          "materials": [
+            "earth",
+            "iron_cast",
+            "cloth",
+            "rust",
+            "coal"
+          ],
+          "bounds": {
+            "min": [
+              -0.42,
+              0,
+              -0.42
+            ],
+            "max": [
+              2.8231,
+              4.6672,
+              0.42
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_water_crane_lod1.glb",
+          "bytes": 17636,
+          "sha256": "10f1bb6535cbdbc8b7cbbbc36ff2dbc0553c4bc7e6ae14b4b9089e69c2029071",
+          "triangles": 235,
+          "vertices": 365,
+          "materials": [
+            "earth",
+            "iron_cast",
+            "cloth"
+          ],
+          "bounds": {
+            "min": [
+              -0.42,
+              0,
+              -0.3637
+            ],
+            "max": [
+              2.82,
+              4.6672,
+              0.3637
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 3.2431,
+        "y": 4.6672,
+        "z": 0.84
+      },
+      "sockets": {
+        "spout_tip": [
+          2.7,
+          2,
+          0
+        ],
+        "swing": "arm swings about the vertical column axis"
+      }
+    },
+    {
+      "id": "coal_pile",
+      "name": "Monte de carvão",
+      "category": "rail",
+      "description": "Monte facetado de carvão com pedaços soltos e uma pá cravada.",
+      "reference": "Depósito de carvão de tender de estação.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_coal_pile_lod0.glb",
+          "bytes": 51836,
+          "sha256": "0ee3d9b0c64959434428c33341d606d5fd7780bd40545fdacff0cc702fe9e747",
+          "triangles": 576,
+          "vertices": 1260,
+          "materials": [
+            "coal",
+            "iron_cast",
+            "wood"
+          ],
+          "bounds": {
+            "min": [
+              -1.6105,
+              0,
+              -1.2306
+            ],
+            "max": [
+              1.7547,
+              1.2044,
+              1.3053
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_coal_pile_lod1.glb",
+          "bytes": 9292,
+          "sha256": "bede9e4fe158ecf8c1cee067e246631b73c451a0554e6613a2f2498c423c3f8f",
+          "triangles": 70,
+          "vertices": 210,
+          "materials": [
+            "coal"
+          ],
+          "bounds": {
+            "min": [
+              -1.6008,
+              0,
+              -1.2164
+            ],
+            "max": [
+              1.5586,
+              1.1562,
+              1.1695
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 3.3652,
+        "y": 1.2044,
+        "z": 2.5359
+      }
+    },
+    {
+      "id": "sleeper_stack",
+      "name": "Pilha de travessas",
+      "category": "rail",
+      "description": "Oito fiadas de quatro travessas de 2,6 m, calços em cruz e uma travessa caída.",
+      "reference": "Travessas de via de madeira creosotada, 2,6 × 0,26 × 0,15 m.",
+      "files": {
+        "lod0": {
+          "file": "m01_prop_sleeper_stack_lod0.glb",
+          "bytes": 69964,
+          "sha256": "a76ba9bc908a14e7a35eebbc1d0ca1154f5363ea67c9e9e251186f90d8720848",
+          "triangles": 1264,
+          "vertices": 1696,
+          "materials": [
+            "wood"
+          ],
+          "bounds": {
+            "min": [
+              -1.3595,
+              0,
+              -0.5404
+            ],
+            "max": [
+              1.6499,
+              1.5,
+              1.2357
+            ]
+          }
+        },
+        "lod1": {
+          "file": "m01_prop_sleeper_stack_lod1.glb",
+          "bytes": 12632,
+          "sha256": "4d17dc0241ed44a32a5821bf7f5eefc0c0ec4a1a441f68f4b2bf656eb689aac0",
+          "triangles": 156,
+          "vertices": 288,
+          "materials": [
+            "wood"
+          ],
+          "bounds": {
+            "min": [
+              -1.3,
+              0,
+              -0.54
+            ],
+            "max": [
+              1.6499,
+              1.35,
+              1.2357
+            ]
+          }
+        }
+      },
+      "size_m": {
+        "x": 3.0094,
+        "y": 1.5,
+        "z": 1.7761
+      }
+    }
+  ]
+}
