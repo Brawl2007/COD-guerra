@@ -146,6 +146,8 @@ async function capture(browser,info,{view,quality='high'}){
     await page.locator('#quality').selectOption(quality);await page.locator('#continue').click();
     await page.waitForFunction(()=>{const d=window.gameDiagnostics?.();return d&&!d.paused&&d.m01.renderedFrames>=4;},null,{timeout:240000});
     await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+    // The gate above is already true from menu-clock frames (pointerlockchange is a plain task, not frame-bound): wait for a frame at the loaded checkpoint clock to have synced the impostors. Baseline builds have no impostors block, so only the paused state applies there.
+    await page.waitForFunction(()=>{const d=window.gameDiagnostics?.();if(!d||!d.paused)return false;const imp=d.m01.impostors;return !imp||imp.clock===d.clock;},null,{timeout:240000});
     const data=await page.evaluate(()=>window.gameDiagnostics());
     const name=`m01-impostors-${view}-${quality}${baseline?'-before':''}`,shot={path:undefined,style:'#pause,#hud,#menu{visibility:hidden!important}',timeout:120000};
     const a=await page.screenshot({...shot,path:info.outputPath(name+'.png')});
