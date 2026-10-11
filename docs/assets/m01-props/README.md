@@ -1,6 +1,6 @@
 # Kit de props de M01 (T12, `M01-PROP-KIT-V1`)
 
-Props originais de guerra e ferrovia para o campo de batalha de Tczew (Setembro de 1939), para substituir caixas e fios do protótipo. **Provisório verificado; ainda não ligado ao jogo** (a ligação é a tarefa T33; nada em `src/` foi alterado). Geometria, cores e materiais são criados por código neste repositório (autor "COD-guerra project, original procedural", licença CC0-1.0, como os assets de produção da locomotiva e do Panzerzug). Nenhum modelo, textura ou fotografia de terceiros, nada extraído de jogos, sem dependências npm.
+Props originais de guerra e ferrovia para o campo de batalha de Tczew (Setembro de 1939), para substituir caixas e fios do protótipo. **Provisório verificado; ainda não ligado ao jogo** (a ligação é a tarefa T33; nada em `src/` foi alterado). Geometria, cores e materiais são criados por código neste repositório (autor "COD-guerra project, original procedural", licença ainda por decidir pelo proprietário, como os outros assets provisórios (ASSET_CREDITS.md)). Nenhum modelo, textura ou fotografia de terceiros, nada extraído de jogos, sem dependências npm.
 
 - Ficheiros: `assets/models/provisional/m01/props/` (21 props × LOD0/LOD1 = 42 GLB + `manifest.json` com bytes, sha256, triângulos, vértices, materiais e bounds por ficheiro).
 - Gerador: `tools/assets/m01-props/` (`node tools/assets/m01-props/build.mjs`, `--check` compara com o disco). Determinístico: voltar a correr dá os mesmos bytes.
