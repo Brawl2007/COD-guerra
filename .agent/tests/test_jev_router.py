@@ -82,7 +82,7 @@ class Base(unittest.TestCase):
         self.keyfile = self.tmp / "key.env"
         self.write_key(self.keyfile)
         self.env = {k: v for k, v in os.environ.items()
-                    if not k.startswith(("TYPESAFE", "COD_JEV"))}
+                    if not k.startswith(("TYPESAFE", "COD_JEV")) and k != "CLAUDE_CODE_REMOTE"}
         self.env.update(HOME=str(self.tmp), COD_JEV_LEDGER=str(self.ledger),
                         COD_JEV_KEY_FILE=str(self.keyfile),
                         TYPESAFE_BASE_URL=self.stub.url,
@@ -292,6 +292,32 @@ class KeyTests(Base):
         self.assertEqual((o["source"], o["reason"]), ("rule_fallback", "no_key"))
         self.assertEqual(self.stub.hits, 0)
         self.assertIn("missing", self.cli("check-key").stdout)
+
+    def test_proxy_auth_without_key(self):
+        # Cloud: no key anywhere, the proxy injects Authorization. The call goes out without a header.
+        self.keyfile.unlink()
+        o = self.route(*AMBIG, extra_env={"CLAUDE_CODE_REMOTE": "true"})
+        self.assertEqual(o["source"], "jev")
+        self.assertEqual(self.stub.auth, [None])
+        self.assertNotIn(SENTINEL, self.last.stdout + self.last.stderr)
+        # Explicit opt-out keeps the old behaviour.
+        o = self.route(*AMBIG, extra_env={"CLAUDE_CODE_REMOTE": "true", "COD_JEV_PROXY_AUTH": "0"})
+        self.assertEqual((o["source"], o["reason"]), ("rule_fallback", "no_key"))
+        self.assertEqual(self.stub.hits, 1)
+        # A local key still wins over the proxy mode.
+        self.write_key(self.keyfile)
+        self.route(*AMBIG, extra_env={"CLAUDE_CODE_REMOTE": "true"})
+        self.assertEqual(self.stub.auth[-1], "Bearer " + SENTINEL)
+
+    def test_proxy_auth_stops_after_unauthorized(self):
+        self.keyfile.unlink()
+        env = {"COD_JEV_PROXY_AUTH": "1"}
+        self.stub.status = 401
+        o = self.route(*AMBIG, extra_env=env)
+        self.assertEqual((o["source"], o["reason"], o["error"]), ("rule_fallback", "error", "HTTP401"))
+        o = self.route(*AMBIG, extra_env=env)
+        self.assertEqual((o["source"], o["reason"]), ("rule_fallback", "proxy_unauthorized"))
+        self.assertEqual(self.stub.hits, 1)   # no second slot spent
 
     def test_insecure_mode(self):
         os.chmod(self.keyfile, 0o644)
