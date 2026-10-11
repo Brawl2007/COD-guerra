@@ -193,3 +193,13 @@ A camada 2 continua obrigatória em cada clone: cobre `git push origin $BRANCH`,
 - Acrescentado: `researcher` e `Explore` (o Explore de origem corria no modelo principal).
 - Limitação conhecida: a lista `Agent(...)` do Captain só é aplicada com `claude --agent captain`;
   chamado como subagente comum, a lista é ignorada.
+
+
+## Jev na nuvem (claude.ai/code) — 2026-10-11
+
+Na nuvem a chave do TypeSafe é um **segredo de rede** do ambiente (`TYPESAFE_API_KEY`, tipo Bearer, site
+`api.typesafe.ai`): o proxy injeta o cabeçalho `Authorization` nos pedidos a esse site e nenhum agente vê a chave.
+`jev_router.py` deteta isto (`CLAUDE_CODE_REMOTE=true` sem chave local → modo proxy, pedido sem cabeçalho;
+`COD_JEV_PROXY_AUTH=0` desliga) e, se o proxy não injetar uma chave válida (401/403), deixa de gastar slots
+(`proxy_unauthorized`). O contador do teto vive em cada máquina, por isso o ambiente define `COD_JEV_LIMIT=10`:
+cada sessão gasta no máximo 10 das 100 chamadas aprovadas. No Chromebook nada muda (chave em ficheiro, teto 100).
