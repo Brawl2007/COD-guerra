@@ -22,7 +22,7 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 08 | Biblioteca de clips V2 | PARCIAL | Seis clips V5; conjunto do Anexo B incompleto |
 | 09 | Pipeline de texturas | AUSENTE | Sem `tools/assets/m01-materials` |
 | 10 | Kit de vegetação | PARCIAL | Vegetação procedimental em runtime (`m01-vegetation-art.js`, `-layout.js`); sem kit GLB/LOD/impostores |
-| 12 | Kit de props | **EM CURSO** | `claude/m01-prop-kit-v1` (2026-10-10, Captain nuvem; área 5 ambiente) |
+| 12 | Kit de props | **ACEITE** | `claude/m01-prop-kit-v1` @ `7564b6f`: 21 props procedurais LOD0/LOD1 (≤1440/≤276 tris), manifesto, `tests/m01-props-kit.test.js`, capturas em `docs/assets/m01-props/`; licença provisória; ligação ao jogo é T33 |
 | 13 | Estruturas de campo | AUSENTE | — |
 | 14 | Materiais das pontes V2 | PARCIAL | `tools/assets/m01-bridges`; regeneração de materiais por confirmar |
 | 15 | Portão FX V3 | DONE* | `m01-battlefield-fx-profile.js`, `m01-fx-textures.js` na V7; tabela fechado/aberto não verificada |
