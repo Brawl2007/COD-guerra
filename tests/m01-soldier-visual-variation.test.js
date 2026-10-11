@@ -8,20 +8,7 @@ import {soldierVisualVariant, SoldierVisualVariations} from '../src/render/m01-s
 import {nodeCharacterAssets} from '../tools/verification/m01-soldier-variation-assets.mjs';
 import {M01Simulation} from '../src/game/m01-simulation.js';
 import {actorHitboxes,muzzlePosition} from '../src/world/spatial.js';
-const integratedPresentation=new Set([
- // Simulation presentation additions are checked against immutable per-tick gameplay traces in m01-animation-contract.test.js.
- 'src/game/m01-simulation.js',
- // T23 (M01-EAST-FRONT-VISIBLE-V1): the east platoon holds the deck and six reserve men fall by attrition rounds. The mission data (hold, attrition,
- // display profiles) and the round kinds (m01-fire.js) change by design; the per-tick gameplay golden was re-baselined on x86 for it.
- 'missions/m01-tczew/mission.json','src/game/m01-fire.js',
- // PT05 (D33): yard-wagon colliders change world collision only (4-line hunk); gameplay is locked by the per-tick golden traces (animation-contract) and tests/m01-yard-wagon-colliders.test.js.
- 'src/world/tczew-world.js',
- 'src/core/audio.js','src/game/game.js','src/main.js','src/styles.css',
- 'src/render/m01-atmosphere.js','src/render/m01-characters.js','src/render/m01-environment.js','src/render/m01-surfaces.js',
- 'src/render/m01-train-wagons.js','src/render/m01-view.js','src/render/m01-viewmodel.js','src/render/three-renderer.js',
- // Ju 87 production closeout: the raid's presentation-only aircraft art was regenerated (path/events unchanged).
- ...[0,1,2].map(lod=>`assets/models/provisional/m01-aircraft/m01_ju87_b1_lod${lod}.glb`),'assets/models/provisional/m01-aircraft/manifest.json'
-]);
+import {integratedPresentation} from './helpers/m01-byte-guard-allowlist.js';
 import {driver,toRepair} from './helpers/m01-route.js';
 const assets=await nodeCharacterAssets();
 function characters(on=true){const c=new M01Characters(new THREE.Scene(),{visualVariation:on});c.sources=assets.sources;c.clips=assets.clips;return c;}

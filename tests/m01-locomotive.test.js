@@ -7,20 +7,7 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {M01Locomotive,locomotiveLOD} from '../src/render/m01-locomotive.js';
 import {M01Simulation} from '../src/game/m01-simulation.js';
-const integratedPresentation=new Set([
- // Simulation presentation additions are checked against immutable per-tick gameplay traces in m01-animation-contract.test.js.
- 'src/game/m01-simulation.js',
- // T23 (M01-EAST-FRONT-VISIBLE-V1): the east platoon holds the deck and six reserve men fall by attrition rounds. The mission data (hold, attrition,
- // display profiles) and the round kinds (m01-fire.js) change by design; the per-tick gameplay golden was re-baselined on x86 for it.
- 'missions/m01-tczew/mission.json','src/game/m01-fire.js',
- // PT05 (D33): yard-wagon colliders change world collision only (4-line hunk); gameplay is locked by the per-tick golden traces (animation-contract) and tests/m01-yard-wagon-colliders.test.js.
- 'src/world/tczew-world.js',
- 'src/core/audio.js','src/game/game.js','src/main.js','src/styles.css',
- 'src/render/m01-atmosphere.js','src/render/m01-characters.js','src/render/m01-environment.js','src/render/m01-surfaces.js',
- 'src/render/m01-train-wagons.js','src/render/m01-view.js','src/render/m01-viewmodel.js','src/render/three-renderer.js',
- // Ju 87 production closeout: the raid's presentation-only aircraft art was regenerated (path/events unchanged).
- ...[0,1,2].map(lod=>`assets/models/provisional/m01-aircraft/m01_ju87_b1_lod${lod}.glb`),'assets/models/provisional/m01-aircraft/manifest.json'
-]);
+import {integratedPresentation} from './helpers/m01-byte-guard-allowlist.js';
 const base='5f3cc34f53c61beec52255d67f8babd7194c9f7f',dir=new URL('../assets/models/production/m01/locomotive/',import.meta.url);
 const manifest=JSON.parse(readFileSync(new URL('manifest.json',dir)));
 const data=lod=>{const b=readFileSync(new URL(manifest.files[lod].file,dir)),n=b.readUInt32LE(12);return {b,j:JSON.parse(b.subarray(20,20+n)),bin:b.subarray(28+n)};};
