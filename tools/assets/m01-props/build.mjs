@@ -1,12 +1,13 @@
 // Gera o kit de props de M01: assets/models/provisional/m01/props/*.glb (LOD0/LOD1) e manifest.json.
 // Uso: node tools/assets/m01-props/build.mjs [--check]   (sem dependências; determinístico)
-// --check compara com o disco e falha se algum ficheiro mudaria.
+// --check compara estritamente, salvo resíduos NORMAL Float32 <1e-12 (só na comparação).
 import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { Model, weather, MATERIALS } from './src/mesh.mjs';
 import { encodeGlb } from './src/glb.mjs';
 import { PROPS } from './src/registry.mjs';
+import { glbReproductionEqual, canonicalManifestForReproduction } from './src/reproducibility.mjs';
 
 const ROOT = new URL('../../../', import.meta.url).pathname;
 export const OUT = join(ROOT, 'assets/models/provisional/m01/props');
@@ -66,9 +67,15 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const { files, manifest } = generate();
   files.set('manifest.json', Buffer.from(json(manifest)));
   if (check) {
-    const diff = [...files].filter(([n, b]) => !existsSync(join(OUT, n)) || !readFileSync(join(OUT, n)).equals(b)).map(([n]) => n);
+    const disk = new Map([...files.keys()].filter(n => existsSync(join(OUT, n))).map(n => [n, readFileSync(join(OUT, n))]));
+    const diff = [...files].filter(([n, b]) => n !== 'manifest.json' && (!disk.has(n) || !glbReproductionEqual(disk.get(n), b))).map(([n]) => n);
+    try {
+      const generatedManifest = canonicalManifestForReproduction(manifest, files);
+      const diskManifest = canonicalManifestForReproduction(JSON.parse(disk.get('manifest.json').toString('utf8')), disk);
+      if (json(generatedManifest) !== json(diskManifest)) diff.push('manifest.json');
+    } catch { diff.push('manifest.json'); }
     if (diff.length) { console.error('Diferem do disco:', diff.join(', ')); process.exit(1); }
-    console.log(`OK: ${files.size} ficheiros iguais ao disco`);
+    console.log(`OK: ${files.size} ficheiros reproduzidos (comparação NORMAL <1e-12)`);
   } else {
     mkdirSync(OUT, { recursive: true });
     for (const [n, b] of files) writeFileSync(join(OUT, n), b);
