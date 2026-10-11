@@ -1,5 +1,11 @@
 # active-memory handoff: COD-guerra — Captain (M01 development)
 
+## UPDATE T09/T28 — 2026-10-11
+
+T09 pipeline de materiais e T28 terreno macro **ACEITES** em `codex/m01-t09-t28-materials-closeout-v1` @ `c739b08`, base integração `6edc3d6`. Verifier PASS e reviewer ACCEPT; CI38174455690 verde (639/639 Node, 173 tooling, build) e CI38174455699 verde (terreno9/9, atlas3/3, regeneração e autoridade). 16 materiais originais PBR High/Low; terreno com encostas, caminhos, balastro e margens húmidas; Low macro-only; modelos/mesh/simulação preservados. Prova: `docs/verification/m01-runtime/m01-t09-t28-closeout-v1/HANDOFF.md`. Regressão e memória específicas registadas. Sem FPS/VRAM medidos; M01 continua PROTÓTIPO JOGÁVEL.
+
+NEXT_ACTION desta entrega: integração autorizada em `claude/m01-integration`, testar a junção e publicar. O pedido desta sessão abrange estas duas tarefas.
+
 **Handoff #3** · 2026-10-10 · Lineage: #1 (2026-10-09): Jev activated + decision-support V2; V7 certified 84/84 (PR #59 draft); M01 dev base; T19 accepted. #2 (2026-10-09): T16 dawn lighting ACCEPTED; T17 verified; Chromebook dropped as target (D13); dev-base merge blocked → tasks stacked. #3 (2026-10-09/10): T17 ACCEPTED (D15), T18 ACCEPTED (D16), T42 ACCEPTED (D17); user gave night rules; T20 and T44 run in parallel worktrees ended BLOCKED (fix budget 3/3, CI red); T39 started then stopped by user; user installed 20 tiered agents.
 
 ## UPDATE #4 (2026-10-10, session gracious-franklin) — supersedes conflicting lines below

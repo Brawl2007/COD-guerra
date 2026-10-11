@@ -1,0 +1,115 @@
+{
+  "tiers": [
+    {
+      "tier": "low",
+      "globalTextures": 102,
+      "terrain": {
+        "material": "m01-terrain-macro-v1",
+        "textures": 1,
+        "gpuBytes": 1747612,
+        "quality": "low",
+        "tier": "low",
+        "lowDetail": 1,
+        "files": [],
+        "mask": {
+          "width": 1024,
+          "height": 320
+        },
+        "samplers": 1,
+        "failures": []
+      }
+    },
+    {
+      "tier": "medium",
+      "globalTextures": 118,
+      "terrain": {
+        "material": "m01-terrain-macro-v1",
+        "textures": 5,
+        "gpuBytes": 7340012,
+        "quality": "medium",
+        "tier": "medium",
+        "lowDetail": 0,
+        "files": [
+          "terrain-detail-a-512.png",
+          "terrain-detail-b-512.png",
+          "terrain-normal-a-512.png",
+          "terrain-normal-b-512.png"
+        ],
+        "mask": {
+          "width": 1024,
+          "height": 320
+        },
+        "samplers": 5,
+        "failures": []
+      }
+    },
+    {
+      "tier": "high",
+      "globalTextures": 132,
+      "terrain": {
+        "material": "m01-terrain-macro-v1",
+        "textures": 5,
+        "gpuBytes": 20971500,
+        "quality": "high",
+        "tier": "high",
+        "lowDetail": 0,
+        "files": [
+          "terrain-detail-a-1024.png",
+          "terrain-detail-b-512.png",
+          "terrain-normal-a-1024.png",
+          "terrain-normal-b-512.png"
+        ],
+        "mask": {
+          "width": 2048,
+          "height": 640
+        },
+        "samplers": 5,
+        "failures": []
+      }
+    },
+    {
+      "tier": "low",
+      "globalTextures": 102,
+      "terrain": {
+        "material": "m01-terrain-macro-v1",
+        "textures": 1,
+        "gpuBytes": 1747612,
+        "quality": "low",
+        "tier": "low",
+        "lowDetail": 1,
+        "files": [],
+        "mask": {
+          "width": 1024,
+          "height": 320
+        },
+        "samplers": 1,
+        "failures": []
+      }
+    },
+    {
+      "tier": "high",
+      "globalTextures": 132,
+      "terrain": {
+        "material": "m01-terrain-macro-v1",
+        "textures": 5,
+        "gpuBytes": 20971500,
+        "quality": "high",
+        "tier": "high",
+        "lowDetail": 0,
+        "files": [
+          "terrain-detail-a-1024.png",
+          "terrain-detail-b-512.png",
+          "terrain-normal-a-1024.png",
+          "terrain-normal-b-512.png"
+        ],
+        "mask": {
+          "width": 2048,
+          "height": 640
+        },
+        "samplers": 5,
+        "failures": []
+      }
+    }
+  ],
+  "clock": 0.7500000000000001
+}

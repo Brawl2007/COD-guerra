@@ -1,0 +1,263 @@
+{
+  "config": {
+    "configFile": "/workspace/COD-guerra/tools/verification/playwright.m01-materials.config.js",
+    "rootDir": "/workspace/COD-guerra/tests/browser",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/COD-guerra/test-results/material-atlas",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/workspace/COD-guerra/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "m01-material-atlas.spec.js"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run dev -- --port 5182",
+      "url": "http://127.0.0.1:5182/COD-guerra/",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "m01-material-atlas.spec.js",
+      "file": "m01-material-atlas.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "high: original albedo/normal/ORM materials at 1, 5 and 20 metres",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 17435,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 404 (Not Found)\",\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 404 (Not Found)\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at /workspace/COD-guerra/tests/browser/m01-material-atlas.spec.js:38:18",
+                    "location": {
+                      "file": "/workspace/COD-guerra/tests/browser/m01-material-atlas.spec.js",
+                      "column": 18,
+                      "line": 38
+                    },
+                    "snippet": "  36 |     }\n  37 |   }\n> 38 |   expect(errors).toEqual([]);\n     |                  ^\n  39 |   expect(failed).toEqual([]);\n  40 |   await info.attach(`atlas-${tier}.json`, { body: JSON.stringify(results, null, 2), contentType: 'application/json' });\n  41 |   if (save) writeFileSync(path.join(EVIDENCE, `atlas-${tier}.json`), JSON.stringify(results, null, 2) + '\\n');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/COD-guerra/tests/browser/m01-material-atlas.spec.js",
+                        "column": 18,
+                        "line": 38
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 404 (Not Found)\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  36 |     }\n  37 |   }\n> 38 |   expect(errors).toEqual([]);\n     |                  ^\n  39 |   expect(failed).toEqual([]);\n  40 |   await info.attach(`atlas-${tier}.json`, { body: JSON.stringify(results, null, 2), contentType: 'application/json' });\n  41 |   if (save) writeFileSync(path.join(EVIDENCE, `atlas-${tier}.json`), JSON.stringify(results, null, 2) + '\\n');\n    at /workspace/COD-guerra/tests/browser/m01-material-atlas.spec.js:38:18"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T20:55:52.633Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/workspace/COD-guerra/test-results/material-atlas/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/COD-guerra/test-results/material-atlas/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/workspace/COD-guerra/test-results/material-atlas/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/COD-guerra/tests/browser/m01-material-atlas.spec.js",
+                    "column": 18,
+                    "line": 38
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "119d516b34f00ea22b64-b2df34deec876f10c359",
+          "file": "m01-material-atlas.spec.js",
+          "line": 9,
+          "column": 37
+        },
+        {
+          "title": "low: original albedo/normal/ORM materials at 1, 5 and 20 metres",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 17657,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 404 (Not Found)\",\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 404 (Not Found)\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at /workspace/COD-guerra/tests/browser/m01-material-atlas.spec.js:38:18",
+                    "location": {
+                      "file": "/workspace/COD-guerra/tests/browser/m01-material-atlas.spec.js",
+                      "column": 18,
+                      "line": 38
+                    },
+                    "snippet": "  36 |     }\n  37 |   }\n> 38 |   expect(errors).toEqual([]);\n     |                  ^\n  39 |   expect(failed).toEqual([]);\n  40 |   await info.attach(`atlas-${tier}.json`, { body: JSON.stringify(results, null, 2), contentType: 'application/json' });\n  41 |   if (save) writeFileSync(path.join(EVIDENCE, `atlas-${tier}.json`), JSON.stringify(results, null, 2) + '\\n');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/COD-guerra/tests/browser/m01-material-atlas.spec.js",
+                        "column": 18,
+                        "line": 38
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 404 (Not Found)\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  36 |     }\n  37 |   }\n> 38 |   expect(errors).toEqual([]);\n     |                  ^\n  39 |   expect(failed).toEqual([]);\n  40 |   await info.attach(`atlas-${tier}.json`, { body: JSON.stringify(results, null, 2), contentType: 'application/json' });\n  41 |   if (save) writeFileSync(path.join(EVIDENCE, `atlas-${tier}.json`), JSON.stringify(results, null, 2) + '\\n');\n    at /workspace/COD-guerra/tests/browser/m01-material-atlas.spec.js:38:18"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T20:56:11.588Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/workspace/COD-guerra/test-results/material-atlas/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/COD-guerra/test-results/material-atlas/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/workspace/COD-guerra/test-results/material-atlas/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/COD-guerra/tests/browser/m01-material-atlas.spec.js",
+                    "column": 18,
+                    "line": 38
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "119d516b34f00ea22b64-0e43c5913821b1a08d03",
+          "file": "m01-material-atlas.spec.js",
+          "line": 9,
+          "column": 37
+        },
+        {
+          "title": "atlas High→Low→High releases replaced resources and preserves distance and family",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3364,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T20:56:30.575Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "119d516b34f00ea22b64-a4313cbaff1e9a2a49f8",
+          "file": "m01-material-atlas.spec.js",
+          "line": 44,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-11T20:55:50.992Z",
+    "duration": 43245.439,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}
