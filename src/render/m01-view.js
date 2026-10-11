@@ -7,6 +7,7 @@ import { m01StukaPosition, m01StukaSince, m01StukaPathTime, m01StukaActive, m01R
 import { actorPose } from './m01-actor-pose.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { texturedSurface,weatheredBridgeSurface } from './m01-surfaces.js';
+import { M01TerrainMaterial } from './m01-terrain-material.js';
 import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';
 import { applyLighting, viewLightingDiagnostics, M01_FOG_RANGE } from './m01-lighting.js';
 import { M01Water } from './m01-water.js';
@@ -54,8 +55,12 @@ export class M01View {
     this.sunNear=new THREE.DirectionalLight('#ffd6a0',0);this.sunNear.castShadow=true;this.sunNear.visible=false;this.sunNear.shadow.mapSize.set(1024,1024);
     Object.assign(this.sunNear.shadow.camera,{left:-25,right:25,top:25,bottom:-25,near:.5,far:450});this.sunNear.shadow.bias=-.0002;this.sunNear.shadow.normalBias=.02;
     this.scene.add(this.sun,this.sun.target,this.sunNear,this.sunNear.target);
+    // T09/T28: layered terrain material on the ground slot. `?terrain=legacy` (presentation only) restores the single tiled soil for A/B captures.
+    this.legacyTerrain=typeof location!=='undefined'&&new URLSearchParams(location.search).get('terrain')==='legacy';
+    this.terrainMeshes=[];this.terrainEnabled=!this.legacyTerrain;
+    this.terrain=this.legacyTerrain?null:new M01TerrainMaterial({quality:this.owner.quality,onUpdate:()=>{this.lastFrame=null;}});
     this.materials={
-      ground:texturedSurface('soil',{worldScale:.42}),
+      ground:this.terrain?.material??texturedSurface('soil',{worldScale:.42}),
       earth:texturedSurface('soil',{worldScale:.65}),
       stone:texturedSurface('stone',{worldScale:.5}),
       brick:texturedSurface('brick',{worldScale:1.4}),
@@ -95,12 +100,20 @@ export class M01View {
     this.characters=new M01Characters(this.scene);
     this.impostors=new M01Impostors(this.scene);   // T20: camera-facing silhouettes beyond 350 m (one draw call per nation)
     this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture,this.weaponWorldFx,{muzzleLight:this.fallbackFx.light});
+    if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')&&this.terrain){
+      this.terrainLegacyMaterial=texturedSurface('soil',{worldScale:.42});
+      this.terrainDebug={setEnabled:on=>{
+        if(this.disposed)return;this.terrainEnabled=Boolean(on);
+        for(const mesh of this.terrainMeshes)mesh.material=this.terrainEnabled?this.terrain.material:this.terrainLegacyMaterial;
+        this.lastFrame=null;return this.terrainEnabled;
+      },get:()=>this.terrainEnabled};window.m01TerrainDebug=this.terrainDebug;
+    }
     this.ready=Promise.all([this.loadKit(),this.characters.load(this.owner.quality),this.loadAircraft(),
-      this.wagons.load(),this.yardWagons.load(),this.locomotive.load(),this.panzerzugArt.load()]);
+      this.wagons.load(),this.yardWagons.load(),this.locomotive.load(),this.panzerzugArt.load(),this.terrain?.ready]);
   }
   mesh(shape,material,p,size,parent=this.scene){
     const m=new THREE.Mesh(this[shape],this.materials[material]);m.position.set(...p);m.scale.set(...size);
-    m.castShadow=m.receiveShadow=true;parent.add(m);return m;
+    m.castShadow=m.receiveShadow=true;parent.add(m);if(material==='ground')this.terrainMeshes.push(m);return m;
   }
   async loadKit(){
     await Promise.allSettled(manifest.files.filter(f=>typeof f.lod==='number').map(async(file)=>{
@@ -133,12 +146,12 @@ export class M01View {
     }
   }
   buildTerrain(world){
-    this.world=world;
+    this.world=world;this.terrain?.setWorld(world);   // read-only: bakes the macro mask from the layout
     const geometry=new THREE.PlaneGeometry(2000,650,400,130);geometry.rotateX(-Math.PI/2);geometry.translate(300,0,40);
     const pos=geometry.attributes.position;
     for(let i=0;i<pos.count;i++)pos.setY(i,world.terrainHeightAt(pos.getX(i),pos.getZ(i)));
     geometry.computeVertexNormals();this.geometry.push(geometry);
-    const terrain=new THREE.Mesh(geometry,this.materials.ground);terrain.receiveShadow=true;this.scene.add(terrain);
+    const terrain=new THREE.Mesh(geometry,this.materials.ground);terrain.receiveShadow=true;this.scene.add(terrain);this.terrainMeshes.push(terrain);
     this.environment=new M01Environment(this.scene,world,this.materials);
     this.mesh('box','ground',[-900,-4,0],[400,.5,6500]);
     this.mesh('box','ground',[2050,-1.3,0],[1500,.5,6500]);
@@ -171,7 +184,7 @@ export class M01View {
     this.mesh('box','stone',[-256,-2.5,71],[1,3,9]);
   }
   syncSolids(world){
-    if(this.world!==world){if(!this.world)this.buildTerrain(world);else this.world=world;}
+    if(this.world!==world){if(!this.world)this.buildTerrain(world);else{this.world=world;this.terrain?.setWorld(world);}}
     if(this.revision===world.revision&&this.solidWorld===world)return;
     this.revision=world.revision;this.solidWorld=world;
     for(const m of this.solidGroup.children)if(m.isInstancedMesh)m.dispose();this.solidGroup.clear();
@@ -641,11 +654,12 @@ export class M01View {
     const canvas=this.owner.canvas,previous=this.lastFrame;
     const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
       width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,
-      wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles
+      wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
     for(const material of Object.values(this.materials))if(material.userData.m01Time)material.userData.m01Time.value=sim.clock;
+    this.terrain?.sync(this.owner.quality);
     this.syncSolids(sim.world);this.portalPolish.sync(this.owner.quality);this.bridgeStructure.sync(this.owner.quality,this.camera.position,sim.world);const dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
     this.updateDemolition(state,time,sim);
@@ -757,6 +771,7 @@ export class M01View {
     stationArchitecture:this.environment?.station?.diagnostics??{ready:false,failure:this.environment?.stationFailure??null},
     environmentProps:this.environment?.propDiagnostics,bridgePortalPolish:this.portalPolish?.diagnostics,bridgeStructure:this.bridgeStructure?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
     damageDecals:this.damageDecals.diagnostics,
+    terrain:this.terrain?this.terrain.diagnostics:{material:'legacy-soil',textures:1,gpuBytes:0,quality:this.owner.quality},
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},
     combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),
     demolition:{clock:this.lastClock,collapseSeconds:M01_COLLAPSE_DURATION,budget:M01_DEMOLITION_BUDGET,entries:this.demolitionState.entries,pieces:this.demolitionState.pieces,flash:this.demolitionState.flash,
@@ -766,10 +781,11 @@ export class M01View {
         near:this.camera.near,far:this.camera.far,width:this.owner.canvas.width,height:this.owner.canvas.height}},
     battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},meta:structuredClone(this.battlefieldFxMeta),limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
-    this.disposed=true;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();this.impostors?.dispose();
+    if(this.disposed)return;
+    this.disposed=true;if(typeof window!=='undefined'&&window.m01TerrainDebug===this.terrainDebug)delete window.m01TerrainDebug;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();this.impostors?.dispose();
     this.fallbackFx.dispose();this.weaponWorldFx.dispose();this.weaponLighting.dispose();
-    this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
-    const textures=new Set();for(const m of Object.values(this.materials)){if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
+    this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.assets.dispose();this.environment?.dispose();this.terrain?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
+    const textures=new Set();for(const m of new Set([...Object.values(this.materials),this.terrainLegacyMaterial].filter(Boolean))){if(m===this.terrain?.material)continue;if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
     this.scene.traverse(n=>{if(n.isInstancedMesh)n.dispose();});this.scene.clear();this.weaponScene.clear();
   }
 }

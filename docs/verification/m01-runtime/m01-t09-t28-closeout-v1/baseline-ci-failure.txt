@@ -1,0 +1,5 @@
+2026-10-11T20:09:09.8337581Z ℹ tests 606
+2026-10-11T20:09:09.8337997Z ℹ pass 605
+2026-10-11T20:09:09.8338203Z ℹ fail 1
+2026-10-11T20:09:09.8339650Z test at tests/m01-props-kit.test.js:62:1
+2026-10-11T20:09:09.8340956Z   AssertionError [ERR_ASSERTION]: m01_prop_hand_cart_lod0.glb difere do gerador

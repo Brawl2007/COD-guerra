@@ -1,0 +1,27 @@
+{
+  "near-1m": {
+    "changedFraction": 0.9997575757575757,
+    "new": "test-results/material-terrain/m01-terrain-war-ground-nea-ef72f--legacy-single-soil-texture/m01-terrain-near-1m-high.png",
+    "before": "test-results/material-terrain/m01-terrain-war-ground-nea-ef72f--legacy-single-soil-texture/m01-terrain-near-1m-high-legacy.png"
+  },
+  "mid-5m": {
+    "changedFraction": 0.9965178571428571,
+    "new": "test-results/material-terrain/m01-terrain-war-ground-mid-c9e9d--legacy-single-soil-texture/m01-terrain-mid-5m-high.png",
+    "before": "test-results/material-terrain/m01-terrain-war-ground-mid-c9e9d--legacy-single-soil-texture/m01-terrain-mid-5m-high-legacy.png"
+  },
+  "far-50m": {
+    "changedFraction": 0.6333024691358025,
+    "new": "test-results/material-terrain/m01-terrain-war-ground-far-23026--legacy-single-soil-texture/m01-terrain-far-50m-high.png",
+    "before": "test-results/material-terrain/m01-terrain-war-ground-far-23026--legacy-single-soil-texture/m01-terrain-far-50m-high-legacy.png"
+  },
+  "rail-5m": {
+    "changedFraction": 0.43240625,
+    "new": "test-results/material-terrain/m01-terrain-war-ground-rai-ab8a1--legacy-single-soil-texture/m01-terrain-rail-5m-high.png",
+    "before": "test-results/material-terrain/m01-terrain-war-ground-rai-ab8a1--legacy-single-soil-texture/m01-terrain-rail-5m-high-legacy.png"
+  },
+  "road-5m": {
+    "changedFraction": 0.9945178571428571,
+    "new": "test-results/material-terrain/m01-terrain-war-ground-roa-d5ff9--legacy-single-soil-texture/m01-terrain-road-5m-high.png",
+    "before": "test-results/material-terrain/m01-terrain-war-ground-roa-d5ff9--legacy-single-soil-texture/m01-terrain-road-5m-high-legacy.png"
+  }
+}

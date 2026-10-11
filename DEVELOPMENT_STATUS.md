@@ -4,7 +4,7 @@
 
 `M01-PROP-KIT-V1` **ACEITE** (branch `claude/m01-prop-kit-v1` @ `fe7982f`; verifier PASS, reviewer ACCEPT) e juntado em `claude/m01-integration` @ `443f74d` (npm test 606/606, build OK, `.agent/tests` OK). 21 props originais procedurais LOD0/LOD1 (≤1440/≤276 tris) em `assets/models/provisional/m01/props/`, gerador `tools/assets/m01-props/`, teste `tests/m01-props-kit.test.js`, capturas em `docs/assets/m01-props/`. Licença provisória (por decidir pelo proprietário). Ainda não ligados ao jogo (T33). Sem alteração de `src/`; sem FPS medido.
 
-T09+T28 (terreno de guerra) **PARADA** a pedido do utilizador: WIP não verificado em `claude/m01-war-scars-v1` @ `7010f0f`, fora da integração.
+T09+T28 **ACEITES** em `codex/m01-t09-t28-materials-closeout-v1` @ `c739b08`, retomadas selectivamente do WIP `7010f0f`: biblioteca de 16 materiais originais High/Low (albedo/normal/ORM) e terreno macro com caminhos, balastro, margens húmidas e projecção triplanar. Verifier PASS, reviewer ACCEPT; CI [38174455690](https://github.com/Brawl2007/COD-guerra/actions/runs/38174455690) (639/639 Node, 173 tooling, build) e [38174455699](https://github.com/Brawl2007/COD-guerra/actions/runs/38174455699) (9/9 terreno, 3/3 atlas). Provas em `docs/verification/m01-runtime/m01-t09-t28-closeout-v1/`; 27 MiB High descodificados, sem FPS/VRAM medidos. Integração em `claude/m01-integration` a publicar após os testes do resultado da junção.
 
 ## T39 Sensação do viewmodel V2 aceite — 2026-10-10
 
