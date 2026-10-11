@@ -1,5 +1,11 @@
 # Estado de desenvolvimento
 
+## T12 Kit de props aceite e integrado — 2026-10-11
+
+`M01-PROP-KIT-V1` **ACEITE** (branch `claude/m01-prop-kit-v1` @ `fe7982f`; verifier PASS, reviewer ACCEPT) e juntado em `claude/m01-integration` @ `443f74d` (npm test 606/606, build OK, `.agent/tests` OK). 21 props originais procedurais LOD0/LOD1 (≤1440/≤276 tris) em `assets/models/provisional/m01/props/`, gerador `tools/assets/m01-props/`, teste `tests/m01-props-kit.test.js`, capturas em `docs/assets/m01-props/`. Licença provisória (por decidir pelo proprietário). Ainda não ligados ao jogo (T33). Sem alteração de `src/`; sem FPS medido.
+
+T09+T28 (terreno de guerra) **PARADA** a pedido do utilizador: WIP não verificado em `claude/m01-war-scars-v1` @ `7010f0f`, fora da integração.
+
 ## T39 Sensação do viewmodel V2 aceite — 2026-10-10
 
 `M01-VIEWMODEL-FEEL-V2` **ACEITE** no commit `29ba3cf` (branch `claude/m01-viewmodel-feel-v2`, base `304b90f`, T35 aceite mais documentação). CI x86 [38045111352](https://github.com/Brawl2007/COD-guerra/actions/runs/38045111352): autoridade OK, `npm test` 574/574, build OK, browser 9/9 com `--workers=1 --retries=0`. A mira demora 0,30 s a entrar e 0,22 s a sair, com a câmara a passar de FOV 70 para 48 na mesma curva; respiração e bob seguem o relógio da simulação; a arma baixa-se perto de paredes, árvores e cobertura. Trata a sensação da arma e da câmara, não a manga nem a mão junto a parede (T40). A disparar com a arma baixada, a precisão de ADS mantém-se (H8, pendente humano). Prova e limites em `docs/verification/m01-runtime/m01-viewmodel-feel-v2/README.md`. M01 continua **PROTÓTIPO JOGÁVEL**; sem alegação de FPS.

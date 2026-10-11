@@ -1,3 +1,14 @@
+# Continuação atual — Captain nuvem, área 5 (2026-10-11)
+
+Esta secção prevalece sobre as seguintes.
+- **Versão jogável:** `claude/m01-integration` @ `443f74d` (inclui T12 e o fix de CI `d668298`).
+- **T12 ACEITE e integrado:** kit de 21 props procedurais (ver `DEVELOPMENT_STATUS.md`). Ligação ao jogo = T33.
+- **T09+T28 PARADA:** WIP do terreno (máscara macro, material, texturas, spec) em `claude/m01-war-scars-v1` @ `7010f0f`, **não verificado**. Retomar: verifier → reviewer → merge. Contrato em `.agent/runs/RUN-T28-20261010/contract.md` (local, não versionado; regra principal: só `src/render`, `git diff --exit-code f51c9c1 -- src/game src/world src/core missions` vazio, capturas a 1/5/50 m, orçamento ≤24 MB High).
+- Branch `claude/m01-ci-fetch-depth-v1` ficou redundante (o mesmo fix entrou como `d668298`); pode apagar-se.
+- Por ordem do utilizador, esta sessão parou; cada tarefa nova corre numa sessão pequena criada pela rotina.
+
+---
+
 # Continuação atual — primeiro playtest humano da M01 (2026-10-09)
 
 Esta secção prevalece sobre as seguintes. Ficha completa: `docs/direction/PLAYTEST_M01.md`, secção 10 (itens 1 a 11). Branch `claude/gracious-franklin-u8kdin`: leva 1 em `2cc4f24`, leva 2 em `d1aef41`. Não está em `main`.
