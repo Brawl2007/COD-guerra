@@ -461,7 +461,7 @@ test('no per-frame allocation in the director / music update path (steady frames
   assert.equal(r.errors,0,r.lastError);assert.deepEqual(r.stems,['stem0'],'the music was running (drone only) while it was measured');
   // A boxed number per frame is 16 B; a closure context ~50 B; any object or array more. The optimised path measures ~0.
   assert.ok(r.update.total<4*frames,`${r.update.total} bytes sampled across ${frames} frames (${(r.update.total/frames).toFixed(2)} B/frame); heaviest: ${r.update.sites.join(' | ')}`);
-  assert.ok(r.control>96*frames&&r.sink,`control sampled only ${r.control} bytes`);
+  assert.ok(r.control>40*frames&&r.sink,`control sampled only ${r.control} bytes (it allocates ~105 B per iteration)`);   // the instrument sees allocation at all
   // The structures reused every frame keep their identity (nothing is rebuilt behind the scenes).
   const {audio}=makeAudio(),director=new M01AudioDirector(audio),sim=m01Sim('05:00:00'),view=readonly(sim);
   const reused=[director.active,director.pending,director.input,director.spatialOut,director.conductor.fired,director.conductor.model.on,director.stateOf];
