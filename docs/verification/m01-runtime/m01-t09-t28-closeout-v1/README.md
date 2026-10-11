@@ -1,6 +1,6 @@
 # T09 / T28 — biblioteca de materiais e terreno macro
 
-TASK_ID: `M01-T09-T28-MATERIALS-CLOSEOUT-V1`. Base: `claude/m01-integration` em `6edc3d6f90ea5e12b4d0f554555bac8499423acc`. Código aceite: `codex/m01-t09-t28-materials-closeout-v1` em `c739b08549d5f08963984eb644b40bebcb91cfd8`. Estado: **ACEITE** (verifier PASS, reviewer ACCEPT, ambos os CI verdes). Publicação da integração depende dos testes do resultado da junção.
+TASK_ID: `M01-T09-T28-MATERIALS-CLOSEOUT-V1`. Base: `claude/m01-integration` em `6edc3d6f90ea5e12b4d0f554555bac8499423acc`. Código aceite: `codex/m01-t09-t28-materials-closeout-v1` em `c739b08549d5f08963984eb644b40bebcb91cfd8`. Estado: **ACEITE** (verifier PASS, reviewer ACCEPT, ambos os CI verdes). Integrada em `claude/m01-integration` @ `3bdcd994ab791547fb081a5ebff325f1563c33e7`, sem conflitos; `integration-node.log` confirma 639/639 e `integration-build.log` confirma build PASS. A publicação inclui o registo final de evidência, conservando esta árvore de código.
 
 Retomada selectiva do WIP parado `7010f0f`: preserva o kit de props aceite e as restantes entregas da integração. T09 fornece 16 materiais originais, albedo/normal/ORM partilhados, High 1024² e Low 512², gutters periódicos, manifesto SHA/licença e galeria a 1/5/20 m. T28 aplica a máscara macro, caminhos, balastro, lama, margens húmidas e projecção triplanar nas encostas. Low usa só a máscara; High e Média usam quatro mapas de detalhe. O conjunto High ocupa 27 MiB RGBA8 descodificados, sem contar mipmaps.
 
