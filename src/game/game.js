@@ -5,6 +5,7 @@ import { Renderer } from '../render/three-renderer.js';
 import { Simulation } from './simulation.js';
 import { M01Simulation } from './m01-simulation.js';
 import { M01HudPresenter, playerImpactSoundPlan } from '../ui/m01-hud.js';
+import { M01AudioDirector } from './audio-director-m01.js';
 
 const SAVE_KEY='cod-guerra:checkpoint:v1';
 // These are the four aerial impacts emitted by M01. Schema 2 stores their IDs,
@@ -17,6 +18,7 @@ export class Game {
     this.canvas=canvas;this.hud=hud;this.onState=onState;this.m01Hud=new M01HudPresenter(hud);
     this.input=new Input(canvas);this.audio=new AudioSystem();this.renderer=new Renderer(canvas);this.audio.setQuality(this.renderer.quality);
     this.sim=missionId==='m01_tczew'?new M01Simulation():new Simulation();this.started=false;this.paused=true;this.disposed=false;
+    this.audioDirector=new M01AudioDirector(this.audio);   // presentation only: reads the sim, hooked below by optional-chained lines
     if(this.isM01)this.renderer.prepareM01();
     this.last=performance.now();this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;
     this.pendingSounds=[];this.pendingM01HitFeedback=null;this.frame=null;this.listeners=[];
@@ -43,6 +45,7 @@ export class Game {
   selectMission(id){
     this.menu();this.sim=id==='m01_tczew'?new M01Simulation():new Simulation();this.pendingSounds=[];this.pendingM01HitFeedback=null;
     this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
+    this.audioDirector?.reset(this.sim);
     this.messageUntil=0;this.hitUntil=0;this.checkpointUntil=0;this.renderer.resetEffects();
     this.m01Hud.clear();this.m01Hud.reset('new',this.sim.clock);
     if(this.isM01)this.renderer.prepareM01();this.onState('menu');
@@ -77,6 +80,7 @@ export class Game {
   restartMission(){
     this.sim.reset();this.started=true;this.paused=true;this.pendingSounds=[];this.pendingM01HitFeedback=null;
     this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
+    this.audioDirector?.reset(this.sim);
     this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;this.m01Hud.reset('new',this.sim.clock);
     this.renderer.resetEffects();this.resume();
   }
@@ -125,6 +129,7 @@ export class Game {
       });
       if(this.isM01)this.audio.updateM01Presentation({clock:this.sim.clock,state:this.sim.renderState,spatial:point=>this.spatial(point),
         phase:this.sim.mission.phase,quality:this.renderer.quality});
+      if(this.isM01)this.audioDirector?.update(this.sim);
     }
     if(this.isM01)this.renderer.renderMission(this.sim);
     else this.renderer.render(this.sim.world,this.sim.player,this.sim.combatants,this.sim.radio,
@@ -172,6 +177,7 @@ export class Game {
   }
   rebuildSounds(){
     this.pendingSounds=[];this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);if(!this.isM01)return;
+    this.audioDirector?.reset(this.sim);
     for(const damage of this.sim.sectors.damage)if(damage.soundAt>this.sim.clock){
       const s=this.spatial(damage),aerial=AERIAL_BLAST_IDS.has(damage.id);
       this.pendingSounds.push({...s,at:damage.soundAt,kind:'blast',scale:blastScale(damage.id),key:damage.id,
@@ -240,6 +246,7 @@ export class Game {
     if(event.type==='complete'){
       this.persistCheckpoint();this.pause();if(document.pointerLockElement===this.canvas)document.exitPointerLock();this.onState('complete');
     }
+    this.audioDirector?.handleEvent(event,this.sim);   // after game.js has dispatched its own sounds; reads only
   }
   persistCheckpoint(){
     try{localStorage.setItem(this.saveKey,JSON.stringify(this.sim.checkpoint));}
@@ -283,6 +290,7 @@ export class Game {
       hudStatus:this.hud?.objectiveStatus?.textContent??'',hudPresentation:this.m01Hud?.diagnostics??null}}:{})});}
   dispose(){
     if(this.disposed)return;this.disposed=true;cancelAnimationFrame(this.frame);
+    this.audioDirector?.dispose();
     this.listeners.forEach(remove=>remove());this.input.dispose();this.audio.dispose?.();this.renderer.dispose();
   }
 }

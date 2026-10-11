@@ -54,6 +54,7 @@ export class AudioManager {
     this.peakVoices=0;this.dropped=0;this.evicted=0;this.loopRefused=0;this.categoryDropped={};this.nodesCreated=0;this.nodesDisposed=0;this.serial=0;this.noiseBuffers={};
     this.fading=new Set();this.liveSources=0;this.peakSources=0;this.budgetDropped=0;this.culledGrains=0;this.bursts=new Map();
     this.intensity=new BattleIntensity();this.clock=0;this.lastDuck=null;this.duck=null;
+    this.occlusion=null;this.directorProbe=null;   // T06b hooks: zone occlusion for the voices the director creates, and its diagnostics
     this.presentation=this._freshPresentation(0,null);
   }
   /** Effective SFX voice cap: the configured maximum, lowered to 20 on `low` quality (AUDIO-DESIGN §2). */
@@ -129,7 +130,8 @@ export class AudioManager {
     if(loop?this.voices.size>=this.maxVoices:!this._admit(category,priority)){if(loop)this.loopRefused++;return null;}
     const shape=acousticShape(distance,{category,front}),ctx=this.ctx;
     const gain=this._node(ctx.createGain()),low=this._node(ctx.createBiquadFilter()),panner=this._node(ctx.createStereoPanner());
-    gain.gain.value=volume*shape.gain;low.type='lowpass';low.frequency.value=filter??shape.filter;panner.pan.value=clamp(pan,-1,1);
+    const occ=this.occlusion;   // {hz,gain} while the director plays a source outside the listener's interior zone; null otherwise (unchanged path)
+    gain.gain.value=volume*shape.gain*(occ?occ.gain:1);low.type='lowpass';low.frequency.value=occ?Math.min(filter??shape.filter,occ.hz):filter??shape.filter;panner.pan.value=clamp(pan,-1,1);
     low.connect(panner);panner.connect(gain);gain.connect(this.buses[CATEGORY_BUS[category]??'weapons']??this.master);
     let send=null;const sendLevel=shape.send*(this.quality==='low'?.5:1);
     if(this.reverb&&sendLevel>0){send=this._node(ctx.createGain());send.gain.value=sendLevel;gain.connect(send);send.connect(this.reverb);}
@@ -511,6 +513,10 @@ export class AudioManager {
   activeEmitters(clockSec,stateOf,out,crewOf){return this.core.activeEmitters(clockSec,stateOf,out,crewOf);}
   /** Allocation-free listener update: picks the reverb zone and the surface under the listener (read-only inputs). */
   setListener(x,y,z){return this.core.update(x,y,z);}
+  /** T06b: occlusion ({hz,gain} or null) applied to the voices created while it is set; the director sets and clears it around one synchronous call. */
+  setOcclusion(occlusion){this.occlusion=occlusion??null;}
+  /** T06b: the director registers a probe so gameDiagnostics().audio.director reports its state (plain data only). */
+  setDirectorProbe(probe){this.directorProbe=typeof probe==='function'?probe:null;}
   get zone(){return this.core.zone;}
   get surface(){return this.core.surface;}
   playVoice(id,opts){return this.core.playVoice(id,opts);}
@@ -529,7 +535,7 @@ export class AudioManager {
       loops:[...this.loops.keys()].sort(),permanentLoops:this.loops.size,buffers:this.buffers.size,proceduralBuffers:Object.keys(this.noiseBuffers).length,
       estimatedBufferBytes:bytes+reverbBytes,reverb:Boolean(this.reverb),compressor:Boolean(this.compressor),buses:Object.keys(this.buses),
       intensity:Number(this.intensity.level(this.clock).toFixed(4)),quality:this.quality,lastDuck:this.lastDuck?{...this.lastDuck}:null,
-      core:this.core.diagnostics,nodesCreated:this.nodesCreated,nodesDisposed:this.nodesDisposed,eventCounts:Object.fromEntries([...this.events.entries()].sort()),lastEvents:this.history.slice(-12)};
+      core:this.core.diagnostics,director:this.directorProbe?.()??null,nodesCreated:this.nodesCreated,nodesDisposed:this.nodesDisposed,eventCounts:Object.fromEntries([...this.events.entries()].sort()),lastEvents:this.history.slice(-12)};
   }
 }
 
