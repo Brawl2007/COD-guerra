@@ -8,6 +8,7 @@ import {
   CREW_GONE_STATES,NO_EMITTERS,parseClock,parseAudioEmitters,isEmitterAudible,activeEmitters,loadAudioEmitters,
 } from '../src/core/audio/index.js';
 import {FakeAudioContext,MAX_FAKE_SAMPLES} from './helpers/fake-audio-context.js';
+import {MusicConductor,createMusicInput,MUSIC_STEM_IDS,MUSIC_STINGERS,GATE_OFF} from '../src/core/audio/index.js';   // T06b
 
 const LAYOUT_URL=new URL('../missions/m01-tczew/audio-layout.json',import.meta.url);
 const realLayoutRaw=()=>JSON.parse(readFileSync(LAYOUT_URL,'utf8'));
@@ -470,4 +471,47 @@ test('presentation only: the audio core modules import nothing from simulation, 
     assert.doesNotMatch(text,/Math\.random|\bsim\.rng\b/,`${file}.js is deterministic`);
   }
   assert.ok(imports>=12,`the import scan actually found the imports (${imports})`);assert.deepEqual(external,['../battlefield-audio.js'],'the only outside module is the pure acoustic table');
+});
+
+// ---------------------------------------------------------------- T06b hooks (music module, occlusion, director probe)
+test('music (T06b): with no music files nothing starts, no synth drone is requested and nothing throws; a real buffer in the store plays',()=>{
+  const {audio,ctx}=make(),core=audio.core,conductor=new MusicConductor(core),input=createMusicInput();
+  assert.equal(core.loader.entries.size,0,'the game loads no manifest yet');
+  const nodes=ctx.nodes.length;
+  input.phase='MAIN_COMBAT';input.intensity=.95;input.consumed={'evt_m01_planes_heard':1};
+  for(let t=0;t<30;t+=.05){input.clock=t;assert.doesNotThrow(()=>conductor.update(input));}
+  assert.equal(core.musicStarted,0);assert.equal(core.music.size,0);assert.equal(ctx.nodes.length,nodes,'no source, no gain');
+  assert.equal(core.loader.stats.synthUnlisted,0,'the loader was never asked for a procedural stand-in');
+  assert.equal(conductor.diagnostics.stingerFired,1,'the decision was taken, silently');
+  // a decoded buffer in the loader store (what a manifest + decode would leave there) is what makes a stem real
+  audio.buffers.set(MUSIC_STEM_IDS[0],ctx.createBuffer(1,2000,ctx.sampleRate));
+  input.clock=40;conductor.update(input);
+  assert.deepEqual([...core.music.keys()],['stem0']);assert.equal(core.musicStarted,1);
+  for(const id of MUSIC_STEM_IDS.slice(1))assert.equal(core.loader.isReal(id),false);
+  conductor.dispose();assert.equal(core.music.size,0);audio.dispose();
+});
+test('music (T06b): the module is presentation-only (imports constants only) and the gate constants are exported from the package index',()=>{
+  const text=readFileSync(new URL('../src/core/audio/music.js',import.meta.url),'utf8').replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/.*$/gm,'');
+  const imports=[...text.matchAll(/(?:^|\n)\s*import\b[^'"]*?from\s*['"]([^'"]+)['"]/g)].map(m=>m[1]);
+  assert.deepEqual(imports,['./constants.js']);
+  assert.doesNotMatch(text,/Math\.random|\bsim\.rng\b|Date\.now|performance\.now/);
+  assert.equal(GATE_OFF,'off');assert.equal(MUSIC_STINGERS.length,4);
+});
+test('occlusion hook (T06b): voices created while it is set are lowpassed and attenuated; null restores the normal path',()=>{
+  const {audio}=make();
+  audio.rifleShot(0,50,'kar98k','free');
+  audio.setOcclusion({hz:700,gain:.25});audio.rifleShot(0,50,'kar98k','occluded');audio.setOcclusion(null);
+  audio.rifleShot(0,50,'kar98k','free-again');
+  const [free,occluded,again]=[...audio.voices];
+  assert.ok(occluded.filter.frequency.value<=700,`lowpass ${occluded.filter.frequency.value}`);assert.ok(free.filter.frequency.value>700);
+  assert.ok(Math.abs(occluded.gain.gain.value-free.gain.gain.value*.25)<1e-9,'-12 dB');
+  assert.equal(again.gain.gain.value,free.gain.gain.value);assert.equal(again.filter.frequency.value,free.filter.frequency.value);
+  assert.equal(audio.occlusion,null);audio.setOcclusion(undefined);assert.equal(audio.occlusion,null);
+});
+test('director probe (T06b): diagnostics.director is null until a probe is registered, plain data when it is, and null again afterwards',()=>{
+  const {audio}=make();
+  assert.equal(audio.diagnostics.director,null);
+  audio.setDirectorProbe(()=>({zone:'open',emitters:{played:2}}));
+  assert.deepEqual(audio.diagnostics.director,{zone:'open',emitters:{played:2}});assert.doesNotThrow(()=>structuredClone(audio.diagnostics));
+  audio.setDirectorProbe('not a function');assert.equal(audio.diagnostics.director,null);
 });

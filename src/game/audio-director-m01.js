@@ -124,8 +124,8 @@ export class M01AudioDirector {
       this.lastClock = clock;
       const p = sim.player;
       audio.setListener?.(p.x, p.y, p.z);   // zone + surface under the listener (reverb A/B and interior lowpass on change only)
-      this._emitters(sim, clock);
-      this._music(sim, clock);
+      this._emitters(sim);   // sim, not numbers: a number argument across a non-inlined call is boxed on every frame
+      this._music(sim);
       return true;
     } catch (error) { this._fail(error); return false; }
   }
@@ -133,15 +133,16 @@ export class M01AudioDirector {
   _fail(error) { this.errors++; this.lastError = String(error?.message ?? error); }
 
   // ---------------------------------------------------------------- emitters
-  _emitters(sim, clock) {
-    const slot = Math.floor(clock / EMITTER_SLOT_SEC);
+  _emitters(sim) {
+    const slot = Math.floor(sim.clock / EMITTER_SLOT_SEC);
     if (slot !== this.emitterSlot) {
       this.emitterSlot = slot; this.stats.slots++;
+      const clock = sim.clock;
       // Real sector states drive the gate: the casemate ckm sounds 04:46..06:12 and falls silent at s1 `evacuating_bridgehead`.
       const list = this.audio.activeEmitters(sim.battleClock, this.stateOf, this.active, null);
       for (let i = 0; i < list.length; i++) this._schedule(list[i], slot, clock, sim.player);
     }
-    this._dispatch(clock, sim.battleClock);
+    this._dispatch(sim);
   }
   _schedule(e, slot, clock, player) {
     const density = DENSITY[e.weapon] ?? DEFAULT_DENSITY, key = `${e.id}:${slot}`;
@@ -157,14 +158,14 @@ export class M01AudioDirector {
     free.at = clock + audioVariation(`${key}:at`, 0, EMITTER_SLOT_SEC * .8) + s.distance / SPEED_OF_SOUND;   // the shot is heard after distance/343
     this.stats.scheduled++;
   }
-  _dispatch(clock, battleClock) {
+  _dispatch(sim) {
     for (let i = 0; i < this.pending.length; i++) {
       const p = this.pending[i];
-      if (!p.used || p.at > clock) continue;
+      if (!p.used || p.at > sim.clock) continue;
       p.used = false;
       const e = p.emitter; p.emitter = null;
       // The gate is re-checked at the moment of the shot: a burst scheduled just before the evacuation does not sound after it.
-      if (!isEmitterAudible(e, battleClock, this.stateOf(e.sector), undefined)) { this.stats.suppressed++; continue; }
+      if (!isEmitterAudible(e, sim.battleClock, this.stateOf(e.sector), undefined)) { this.stats.suppressed++; continue; }
       this._play(e, p);
     }
   }
@@ -184,13 +185,13 @@ export class M01AudioDirector {
   }
 
   // ---------------------------------------------------------------- music
-  _music(sim, clock) {
+  _music(sim) {
     const c = this.conductor;
     if (!c) return;
-    const inp = this.input;
+    const inp = this.input, clock = sim.clock;
     inp.clock = clock; inp.consumed = sim.consumed; inp.phase = sim.mission.phase; inp.scene = sim.scene ? sim.scene.id : null;
     inp.complete = sim.mission.complete === true; inp.restoredAt = this.restoredAt;
-    if (c.due(clock)) inp.intensity = this._intensity(sim, clock);   // 4 Hz: the T22 readout allocates, so it is never read per frame
+    if (c.due(inp)) inp.intensity = this._intensity(sim, clock);   // 4 Hz: the T22 readout allocates, so it is never read per frame
     c.update(inp);
   }
   /** I = max(readoutI, heardI). Without battleReadout (T22 absent or throwing) the heard intensity and the phase cap carry the music. */

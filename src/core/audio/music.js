@@ -61,20 +61,22 @@ export const createMusicInput=()=>({clock:0,consumed:{},phase:null,scene:null,co
  */
 export function musicGate(input){
   const clock=input.clock,consumed=input.consumed,scene=input.scene,T=MUSIC_TUNING;
-  if(input.complete===true||scene==='cs_m01_roll_call'||consumed[EVT.rollCall]!==undefined||consumed[EVT.debrief]!==undefined)return GATE_OFF;
+  if(input.complete===true||scene==='cs_m01_roll_call'||Object.hasOwn(consumed,EVT.rollCall)||Object.hasOwn(consumed,EVT.debrief))return GATE_OFF;
   const restored=input.restoredAt;
   if(clock>=restored&&clock-restored<T.afterRestoredSec)return GATE_OFF;
-  let hit=false;
+  let hit=false,silence=false;
   for(let i=0;i<2;i++){
-    const at=consumed[i===0?EVT.east:EVT.west];
-    if(at===undefined||!(clock>=at))continue;
+    const key=i===0?EVT.east:EVT.west;
+    if(!Object.hasOwn(consumed,key))continue;   // hasOwn first: reading the stored double would box a number every frame
+    const at=consumed[key];
+    if(!(clock>=at))continue;
     const age=clock-at;
-    if(age<T.stingerWindowSec)hit=true;else if(age<T.afterDemolitionSec)return GATE_OFF;
+    if(age<T.stingerWindowSec)hit=true;else if(age<T.afterDemolitionSec)silence=true;
   }
-  if(hit)return GATE_STINGER_ONLY;
-  const dragged=consumed[EVT.dragged];
-  if(dragged!==undefined&&clock>=dragged&&clock-dragged<T.woundedDraggedSec)return GATE_OFF;
-  if(consumed[EVT.bakWounded]!==undefined&&consumed[EVT.bakRetrieved]===undefined)return GATE_OFF;
+  if(hit)return GATE_STINGER_ONLY;   // a second hit may start inside the first silence
+  if(silence)return GATE_OFF;
+  if(Object.hasOwn(consumed,EVT.dragged)){const at=consumed[EVT.dragged];if(clock>=at&&clock-at<T.woundedDraggedSec)return GATE_OFF;}
+  if(Object.hasOwn(consumed,EVT.bakWounded)&&!Object.hasOwn(consumed,EVT.bakRetrieved))return GATE_OFF;
   if(scene===BLAST_SCENES[0]||scene===BLAST_SCENES[1])return GATE_OFF;
   return GATE_LAYERS;
 }
@@ -100,17 +102,18 @@ export function readoutIntensity(readout,px,pz){
 
 /**
  * Layer hysteresis. L0 is always on while the gate is open. Layer i (1..3) turns on above on[i-1] and off below off[i-1], never before
- * `dwellSec` has passed since its own last change, only on top of the layer below, and only up to the phase cap (a cap or a lower
- * layer going off drops the layers above immediately). Pure and deterministic.
+ * `dwellSec` has passed since its own last change, only on top of the layer below, and (to keep the stack contiguous without breaking its
+ * dwell) only while no layer above it is on. The phase cap is the one structural exception: it drops every layer above the cap at once.
+ * Pure and deterministic.
  */
 export class LayerModel{
   constructor(tuning=MUSIC_TUNING){this.tuning=tuning;this.on=[true,false,false,false];this.changedAt=[-Infinity,-Infinity,-Infinity,-Infinity];this.changes=0;}
   clear(){this.on[0]=true;for(let i=1;i<4;i++){this.on[i]=false;this.changedAt[i]=-Infinity;}}
   step(clock,intensity,cap=3){
     const on=this.on,at=this.changedAt,T=this.tuning;
-    for(let i=1;i<4;i++){
+    for(let i=3;i>=1;i--){
       if(!on[i])continue;
-      if(i>cap||!on[i-1]||(intensity<T.off[i-1]&&clock-at[i]>=T.dwellSec)){on[i]=false;at[i]=clock;this.changes++;}
+      if(i>cap||(!(i<3&&on[i+1])&&intensity<T.off[i-1]&&clock-at[i]>=T.dwellSec)){on[i]=false;at[i]=clock;this.changes++;}
     }
     for(let i=1;i<4;i++){
       if(on[i]||i>cap||!on[i-1])continue;
@@ -133,14 +136,14 @@ export class MusicConductor{
     this.opts={loop:true,volume:1,fadeIn:0};
     this.stats={stingerFired:0,stingerSkipped:0,stingerPlayed:0,stingerSilent:0,stemStarts:0,gateChanges:0,rewinds:0};
   }
-  /** True when this clock opens a new 4 Hz decision slot: the caller computes `input.intensity` only then (the readout allocates). */
-  due(clock){return Math.floor(clock*this.tuning.decisionHz)!==this.slot;}
+  /** True when `input.clock` opens a new 4 Hz decision slot: the caller computes `input.intensity` only then (the readout allocates). Takes the record, not a number (a number argument is boxed per call). */
+  due(input){return Math.floor(input.clock*this.tuning.decisionHz)!==this.slot;}
   /** Near blast heard at `heardAt` (sim clock): -4 dB for 1.5 s. The caller decides what counts as near. */
   noteBlast(heardAt){this.blastFrom=heardAt;this.blastUntil=heardAt+this.tuning.blastDuckSec;}
   /** New mission / continue / checkpoint restart: stop everything, reopen the gate, and mark stingers whose events are already consumed as fired. */
   reset(consumed){
     if(this.disposed)return;
-    this._stopStems(.2);this._safe(()=>this.core.stopMusic(STINGER_SLOT,.2));
+    this._stopStems(.2);this._stop(STINGER_SLOT,.2);
     this.model.clear();this.slot=NaN;this.lastClock=-Infinity;this.blastFrom=Infinity;this.blastUntil=-Infinity;
     if(!this.gateOpen){this.gateOpen=true;this._setGate(true,.05);}
     this.gate=GATE_LAYERS;
@@ -159,16 +162,20 @@ export class MusicConductor{
     const gate=musicGate(input);
     this._stingers(input,gate);
     this._applyGate(gate);
-    const slot=Math.floor(clock*this.tuning.decisionHz),due=slot!==this.slot;this.slot=slot;
-    if(gate===GATE_LAYERS&&due){
-      this.model.step(clock,clamp(Number.isFinite(input.intensity)?input.intensity:0,0,1),PHASE_LAYER_CAP[input.phase]??3);
-      this._syncStems();
+    const slot=Math.floor(clock*this.tuning.decisionHz);
+    if(slot!==this.slot){   // a new 4 Hz decision slot (stored only on change: a per-frame store of a number would box it)
+      this.slot=slot;
+      if(gate===GATE_LAYERS){
+        this.model.step(clock,clamp(Number.isFinite(input.intensity)?input.intensity:0,0,1),PHASE_LAYER_CAP[input.phase]??3);
+        this._syncStems();
+      }
     }
-    this._ducks(clock);
+    this._ducks(input);
     return gate;
   }
+  // hasOwn, not `consumed[id]!==undefined`: reading the stored double would box a number on every frame (the common case is "not consumed").
   _triggered(def,consumed){
-    for(let k=0;k<def.triggers.length;k++)if(consumed[def.triggers[k]]!==undefined)return true;
+    for(let k=0;k<def.triggers.length;k++)if(Object.hasOwn(consumed,def.triggers[k]))return true;
     return false;
   }
   _stingers(input,gate){
@@ -180,7 +187,7 @@ export class MusicConductor{
       if(gate===GATE_OFF){this.stats.stingerSkipped++;continue;}   // a silence cuts the theme: do not start it
       if(!this._real(def.id)){this.stats.stingerSilent++;continue;}
       const o=this.opts;o.loop=false;o.volume=1;o.fadeIn=0;
-      if(this._safe(()=>this.core.playMusic(STINGER_SLOT,def.id,o)))this.stats.stingerPlayed++;
+      if(this._play(STINGER_SLOT,def.id,o))this.stats.stingerPlayed++;
     }
   }
   _applyGate(gate){
@@ -188,7 +195,7 @@ export class MusicConductor{
     this.gate=gate;this.stats.gateChanges++;
     const open=gate!==GATE_OFF,T=this.tuning;
     if(gate!==GATE_LAYERS){this.model.clear();this._stopStems(gate===GATE_OFF?T.gateFadeSec:T.fadeOutSec);}
-    if(gate===GATE_OFF)this._safe(()=>this.core.stopMusic(STINGER_SLOT,T.gateFadeSec));
+    if(gate===GATE_OFF)this._stop(STINGER_SLOT,T.gateFadeSec);
     if(open!==this.gateOpen){this.gateOpen=open;this._setGate(open,T.gateFadeSec);}
   }
   _syncStems(){
@@ -198,15 +205,15 @@ export class MusicConductor{
       if(on[i]&&!playing){
         if(!this._real(MUSIC_STEM_IDS[i]))continue;
         const o=this.opts;o.loop=true;o.volume=this.ducked?this.tuning.stemDuck:1;o.fadeIn=this.tuning.fadeInSec;
-        if(this._safe(()=>this.core.playMusic(slot,MUSIC_STEM_IDS[i],o)))this.stats.stemStarts++;
-      }else if(!on[i]&&playing)this._safe(()=>this.core.stopMusic(slot,this.tuning.fadeOutSec));
+        if(this._play(slot,MUSIC_STEM_IDS[i],o))this.stats.stemStarts++;
+      }else if(!on[i]&&playing)this._stop(slot,this.tuning.fadeOutSec);
     }
   }
   _stopStems(fade){
-    for(let i=0;i<4;i++)if(this.core.music.has(MUSIC_SLOTS[i]))this._safe(()=>this.core.stopMusic(MUSIC_SLOTS[i],fade));
+    for(let i=0;i<4;i++)if(this.core.music.has(MUSIC_SLOTS[i]))this._stop(MUSIC_SLOTS[i],fade);
   }
-  _ducks(clock){
-    const T=this.tuning,stingerOn=this.core.music.has(STINGER_SLOT);
+  _ducks(input){
+    const clock=input.clock,T=this.tuning,stingerOn=this.core.music.has(STINGER_SLOT);
     if(stingerOn!==this.ducked){this.ducked=stingerOn;this._duckStems(stingerOn?T.stemDuck:1);}
     let level=1;
     if(this.core.pool.count('voice')>0)level=Math.min(level,T.voiceDuck);
@@ -214,18 +221,14 @@ export class MusicConductor{
     if(level!==this.busDuck){this.busDuck=level;this._setBusDuck(level);}
   }
   _duckStems(level){
-    const ctx=this.core.ctx;if(!ctx)return;
-    for(let i=0;i<4;i++){
-      const entry=this.core.music.get(MUSIC_SLOTS[i]),p=entry?.gain?.gain;
-      if(!p)continue;
-      this._safe(()=>{p.cancelScheduledValues?.(ctx.currentTime);if(p.setTargetAtTime)p.setTargetAtTime(level,ctx.currentTime,.15);else p.value=level;});
-    }
+    for(let i=0;i<4;i++)this._ramp(this.core.music.get(MUSIC_SLOTS[i])?.gain?.gain,level,.15);
   }
-  _setBusDuck(level){
-    const ctx=this.core.ctx,p=this.core.mix?.musicDuck?.gain;if(!ctx||!p)return;
-    this._safe(()=>{p.cancelScheduledValues?.(ctx.currentTime);if(p.setTargetAtTime)p.setTargetAtTime(level,ctx.currentTime,level<1?.05:.4);else p.value=level;});
+  _setBusDuck(level){this._ramp(this.core.mix?.musicDuck?.gain,level,level<1?.05:.4);}
+  _ramp(param,level,tau){
+    const ctx=this.core.ctx;if(!ctx||!param)return;
+    try{param.cancelScheduledValues?.(ctx.currentTime);if(param.setTargetAtTime)param.setTargetAtTime(level,ctx.currentTime,tau);else param.value=level;}catch{}
   }
-  _setGate(open,fade){const mix=this.core.mix;if(mix)this._safe(()=>mix.setMusicGate(open,fade));}
+  _setGate(open,fade){const mix=this.core.mix;if(mix){try{mix.setMusicGate(open,fade);}catch{}}}
   /** Preload only what the manifest lists; with no manifest nothing is requested (no 404s, no synth). */
   _prime(){
     const core=this.core;if(!core.mix||!core.loader)return;
@@ -234,14 +237,16 @@ export class MusicConductor{
     for(const s of MUSIC_STINGERS)if(core.loader.entries.has(s.id))core.loader.load(s.id);
   }
   _real(id){const core=this.core;return Boolean(core.mix&&!core.disposed&&core.loader?.isReal(id));}
-  _safe(fn){try{return fn();}catch{return false;}}
+  // No closures anywhere on the per-frame path: a closure that captures a loop variable allocates a context object per iteration, every frame.
+  _play(slot,id,opts){try{return this.core.playMusic(slot,id,opts);}catch{return false;}}
+  _stop(slot,fade){try{return this.core.stopMusic(slot,fade);}catch{return false;}}
   get diagnostics(){
     return {gate:this.gate,gateOpen:this.gateOpen,layers:[...this.model.on],layerChanges:this.model.changes,fired:[...this.fired],ducked:this.ducked,busDuck:this.busDuck,
       playing:[...this.core.music.keys()].sort(),primed:this.primed,...this.stats};
   }
   dispose(){
     if(this.disposed)return;
-    this._stopStems(.05);this._safe(()=>this.core.stopMusic(STINGER_SLOT,.05));
+    this._stopStems(.05);this._stop(STINGER_SLOT,.05);
     this.disposed=true;
   }
 }
