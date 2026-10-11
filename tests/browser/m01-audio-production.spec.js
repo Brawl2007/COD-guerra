@@ -40,7 +40,7 @@ test('M01 battlefield audio follows real rifle/MG/impact/blast events and surviv
   await page.goto('?debug=1');await waitMenu(page);await startSaved(page);
 
   const initial=await page.evaluate(()=>window.gameDiagnostics());
-  expect(initial.audio.maxVoices).toBe(32);expect(initial.audio.loops).toContain('wind');expect(initial.audio.activeVoices).toBeLessThanOrEqual(32);
+  expect(initial.audio.maxVoices).toBe(initial.audio.quality==='low'?20:32);expect(initial.audio.loops).toContain('wind');expect(initial.audio.activeVoices).toBeLessThanOrEqual(32);
 
   // Real MG34 event: the fixture is the immediately preceding authoritative simulation snapshot.
   await page.waitForFunction(()=>((window.gameDiagnostics().audio.eventCounts.mg34??0)>0),null,{timeout:20000});

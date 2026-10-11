@@ -34,7 +34,7 @@ jobs:
       - name: Scope check (only the files T06a may change)
         run: |
           set -o pipefail
-          bad="$(grep -vE '^(src/core/audio\.js|src/core/audio/[a-z-]+\.js|tests/audio-core\.test\.js|tests/helpers/fake-audio-context\.js|\.github/workflows/m01-audio-core-v1\.yml)$' evidence/changed-files.txt || true)"
+          bad="$(grep -vE '^(src/core/audio\.js|src/core/audio/[a-z-]+\.js|tests/audio-core\.test\.js|tests/helpers/fake-audio-context\.js|tests/browser/m01-audio-production\.spec\.js|tests/browser/m01-battlefield-audio-runtime\.spec\.js|\.github/workflows/m01-audio-core-v1\.yml)$' evidence/changed-files.txt || true)"
           if [ -n "$bad" ]; then echo "files outside the T06a scope:"; echo "$bad"; exit 1; fi
           echo "all changed files are inside the T06a scope" | tee evidence/scope.log
       - name: Audio core tests (bounded: a runaway allocation must fail fast, not eat the runner)
@@ -57,6 +57,12 @@ jobs:
         id: build
         if: ${{ !cancelled() }}
         run: set -o pipefail; npm run build 2>&1 | tee evidence/build.log
+      - name: Install Playwright Chromium
+        if: always() && steps.build.outcome == 'success'
+        run: npx playwright install --with-deps chromium
+      - name: Audio browser specs (offline render, production, battlefield runtime)
+        if: always() && steps.build.outcome == 'success'
+        run: set -o pipefail; npx playwright test tests/browser/m01-audio-offline-render.spec.js tests/browser/m01-audio-production.spec.js tests/browser/m01-battlefield-audio-runtime.spec.js --workers=1 --retries=0 2>&1 | tee evidence/browser.log
       - if: always()
         uses: actions/upload-artifact@v4
         with:
