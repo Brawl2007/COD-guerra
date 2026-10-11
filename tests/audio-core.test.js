@@ -6,7 +6,7 @@ import {
   AudioCore,VOICE_PRIORITY,VoicePool,BufferLoader,parseManifest,generateImpulse,impulseSeconds,IR_MAX_SECONDS,MAX_CONVOLVERS,
   SFX_VOICE_CAP,VOICE_BUS_CAP,MUSIC_SLOTS,sfxVoiceCap,FALLBACK_LAYOUT,parseAudioLayout,loadAudioLayout,zoneAt,surfaceAt,
 } from '../src/core/audio/index.js';
-import {FakeAudioContext} from './helpers/fake-audio-context.js';
+import {FakeAudioContext,MAX_FAKE_SAMPLES} from './helpers/fake-audio-context.js';
 
 const LAYOUT_URL=new URL('../missions/m01-tczew/audio-layout.json',import.meta.url);
 const realLayoutRaw=()=>JSON.parse(readFileSync(LAYOUT_URL,'utf8'));
@@ -62,8 +62,8 @@ test('SFX priority stealing at the cap: lowest priority (oldest first) goes, nev
     const {audio}=make({quality});
     for(let i=0;i<cap;i++)assert.ok(audio.channel(.1,0,0,50+i),`voice ${i} admitted`);
     assert.equal(audio.voices.size,cap);
-    assert.equal(audio.channel(.1,0,0,49),null,'lower priority than everything playing is refused');
-    assert.equal(audio.channel(.1,0,0,50),null,'equal priority does not steal');
+    assert.equal(audio.channel(.1,0,0,49)===null,true,'lower priority than everything playing is refused');
+    assert.equal(audio.channel(.1,0,0,50)===null,true,'equal priority does not steal');
     assert.equal(audio.dropped,2);assert.equal(audio.voices.size,cap);
     const lowest=[...audio.voices].find(v=>v.priority===50);
     assert.ok(audio.channel(.1,0,0,200),'higher priority steals');
@@ -198,7 +198,7 @@ test('at most 2 ConvolverNodes with procedural impulses within the design length
     for(let i=0;i<40;i++)audio.weaponFire('kar98k',0,300,{key:'k'+i});audio.explosion(0,30);
     assert.ok(convolvers(ctx).length<=2,'never more than two, after zone switches and many voices');
     const [a,b]=audio.mix.convolvers;
-    assert.ok(a.buffer.length<=3.2*48000&&b.buffer.length<=.9*48000,`${quality}: IR lengths A=${(a.buffer.length/48000).toFixed(2)}s B=${(b.buffer.length/48000).toFixed(2)}s`);
+    assert.ok(a.buffer.length<=Math.floor(48000*IR_MAX_SECONDS.A)&&b.buffer.length<=Math.floor(48000*IR_MAX_SECONDS.B),`${quality}: IR lengths A=${(a.buffer.length/48000).toFixed(2)}s B=${(b.buffer.length/48000).toFixed(2)}s`);
     assert.ok(b.buffer.length<a.buffer.length);audio.dispose();
   }
   assert.ok(impulseSeconds('A','high')<=IR_MAX_SECONDS.A&&impulseSeconds('B','high')<=IR_MAX_SECONDS.B);
@@ -214,6 +214,34 @@ test('impulse responses are generated from a seed: deterministic, finite, decayi
     const rms=(from,to)=>Math.sqrt(d.slice(from,to).reduce((s,v)=>s+v*v,0)/(to-from));
     assert.ok(rms(0,d.length>>2)>rms(d.length>>1,d.length)*2,'energy decays');}
   assert.equal(generateImpulse(ctx,'zzz','nonsense').numberOfChannels,2,'unknown kind/quality falls back to a valid IR');
+});
+
+test('allocation is bounded: IR length <= rate * max seconds for any rate or quality, and the fake refuses runaway buffers',()=>{
+  for(const rate of [2000,8000,44100,48000,96000])for(const kind of ['A','B','zzz'])for(const quality of ['low','medium','high','nonsense',undefined]){
+    const ctx=new FakeAudioContext();ctx.sampleRate=rate;const buf=generateImpulse(ctx,kind,quality);
+    const max=Math.floor(rate*(kind==='B'?IR_MAX_SECONDS.B:IR_MAX_SECONDS.A));
+    assert.ok(buf.length>=1&&buf.length<=max,`rate ${rate} kind ${kind} quality ${quality}: ${buf.length} samples vs bound ${max}`);
+    assert.ok(buf.length*buf.numberOfChannels<=MAX_FAKE_SAMPLES);
+  }
+  assert.ok(impulseSeconds('A','high')<=IR_MAX_SECONDS.A&&impulseSeconds('B','high')<=IR_MAX_SECONDS.B);
+  assert.throws(()=>new FakeAudioContext().createBuffer(2,1e9,48000),RangeError,'the fake allocation guard trips before RAM does');
+  // The whole graph (mix + reverb + 32 voices) stays far below the guard: nothing in init or play scales with anything unbounded.
+  const {audio,ctx}=make({sampleRate:48000});for(let i=0;i<40;i++)audio.weaponFire('kar98k',0,300,{key:'k'+i});audio.explosion(0,30);
+  let samples=0;for(const buffer of audio.mix.convolvers.map(c=>c.buffer))samples+=buffer.length*buffer.numberOfChannels;
+  assert.ok(samples<=2*Math.floor(48000*(IR_MAX_SECONDS.A+IR_MAX_SECONDS.B)),'both IRs together stay within their design bound');
+  assert.ok(ctx.nodes.length<2000,`node count stays bounded (${ctx.nodes.length})`);audio.dispose();
+});
+
+test('regression: a failing assertion on a graph node produces a small message (it once grew past 2 GB)',()=>{
+  // node:assert inspects the actual value with depth 1000; enumerable ctx/connections back-edges made that combinatorial.
+  const {audio}=make();for(let i=0;i<20;i++)audio.weaponFire('kar98k',0,300,{key:'m'+i});
+  const node=audio.mix.sfx,failures=[];
+  for(const attempt of [()=>assert.equal(node,null),()=>assert.deepEqual(node,{}),()=>assert.equal(audio.mix.limiter,null)]){
+    try{attempt();failures.push(null);}catch(error){failures.push(error.message.length);}
+  }
+  assert.ok(failures.every(n=>n!==null&&n<4000),`assertion messages stay small: ${failures.join(', ')}`);
+  assert.equal(Object.keys(node).includes('connections'),false);assert.ok(Array.isArray(node.connections),'connections stay readable for the topology walkers');
+  audio.dispose();
 });
 
 test('zone changes crossfade reverb A/B and apply the interior lowpass only inside the station',()=>{
