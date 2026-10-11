@@ -68,6 +68,50 @@ test('o gerador reproduz byte a byte os GLB e o manifesto em disco', () => {
   for (const [name, buf] of files) assert.ok(again.files.get(name).equals(buf), `${name} não é determinístico`);
 });
 
+// Os GLB têm de ser iguais bit a bit em qualquer CPU/Node (CI x86 vs aarch64). Math.sin/cos/pow/exp/atan2/hypot...
+// dão resultados que diferem no último bit conforme o libm do V8 (ruído de ~1e-18 em normais que deviam ser 0);
+// por isso o gerador só usa aritmética exacta (src/pmath.mjs) e arredonda tudo a uma grelha fixa (QUANT).
+const GEN_DIR = new URL('../tools/assets/m01-props/', import.meta.url);
+const NON_PORTABLE = ['sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'pow', 'exp', 'expm1', 'log', 'log2', 'log10', 'log1p', 'hypot', 'cbrt', 'random'];
+
+test('gerador portável: sem Math.sin/cos/pow/exp/atan2/hypot/... nem operador ** no código (só src/pmath.mjs)', () => {
+  const srcDir = new URL('src/', GEN_DIR), files = ['build.mjs', ...fs.readdirSync(srcDir).map(f => `src/${f}`)].filter(f => f.endsWith('.mjs'));
+  assert.ok(files.length >= 10 && files.includes('src/pmath.mjs'), 'ficheiros do gerador');
+  const bad = [];
+  for (const f of files) {
+    const code = fs.readFileSync(new URL(f, GEN_DIR), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+    for (const n of NON_PORTABLE) if (new RegExp(`\\bMath\\s*\\.\\s*${n}\\b|\\bMath\\s*\\[`).test(code)) bad.push(`${f}: Math.${n}`);
+    if (/\*\*/.test(code)) bad.push(`${f}: operador **`);
+  }
+  assert.deepEqual(bad, [], 'funções não portáveis no gerador');
+});
+
+test('gerador portável: ruído de 1 ulp em Math.* (outro libm/arquitectura) não muda nenhum byte', () => {
+  const { files } = generate(), names = ['sin', 'cos', 'atan2', 'asin', 'exp', 'log', 'pow', 'hypot'], orig = Object.fromEntries(names.map(n => [n, Math[n]]));
+  let calls = 0;
+  try {
+    for (const n of names) Math[n] = (...x) => { calls++; return orig[n](...x) * (calls % 3 === 0 ? 1 + 2 ** -52 : calls % 3 === 1 ? 1 : 1 - 2 ** -52); };
+    const noisy = generate();
+    assert.equal(calls, 0, 'o gerador não pode chamar estas funções');
+    for (const [name, buf] of files) assert.ok(noisy.files.get(name).equals(buf), `${name} depende do libm`);
+  } finally { for (const n of names) Math[n] = orig[n]; }
+});
+
+test('gerador portável: posições, normais e cores estão na grelha de arredondamento (QUANT) e sem −0', async () => {
+  const { QUANT } = await import('../tools/assets/m01-props/src/glb.mjs');
+  assert.deepEqual(QUANT, { position: 1e5, normal: 1e4, color: 1e4 });
+  const grid = { POSITION: QUANT.position, NORMAL: QUANT.normal, COLOR_0: QUANT.color };
+  for (const p of manifest.props) for (const lod of ['lod0', 'lod1']) {
+    const { g } = stats(read(DIR + p.files[lod].file));
+    for (const prim of g.json.meshes[0].primitives) for (const [attr, scale] of Object.entries(grid)) {
+      for (const v of g.floats(prim.attributes[attr])) {
+        assert.ok(Math.fround(Math.round(v * scale) / scale) === v, `${p.files[lod].file} ${attr}: ${v} fora da grelha 1/${scale}`);
+        assert.ok(!Object.is(v, -0), `${p.files[lod].file} ${attr}: −0`);
+      }
+    }
+  }
+});
+
 test('manifesto: autor, licença, unidades, lista completa e ficheiros iguais (bytes, sha256, triângulos)', () => {
   for (const k of ['author', 'license', 'units', 'generator']) assert.ok(typeof manifest[k] === 'string' && manifest[k].trim(), k);
   assert.equal(manifest.units, 'metres');

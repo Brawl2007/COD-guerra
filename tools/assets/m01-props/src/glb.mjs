@@ -1,8 +1,13 @@
 // Escritor GLB mínimo e determinístico (sem dependências): um nó, uma malha, uma primitiva por material,
 // POSITION/NORMAL/COLOR_0 (linear, float) e índices. Sem texturas: a cor está nos vértices.
 import { MATERIALS } from './mesh.mjs';
+import * as pm from './pmath.mjs';
 
-const toLinear = c => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+const toLinear = c => (c <= 0.04045 ? c / 12.92 : pm.pow((c + 0.055) / 1.055, 2.4));
+// Rede de segurança contra ruído de ulp (ver pmath.mjs): tudo é arredondado a uma grelha fixa antes de virar Float32,
+// de modo que valores que deviam ser 0 (1e-18) ficam exactamente 0. Posições a 0,01 mm, normais e cores a 1e-4.
+export const QUANT = { position: 1e5, normal: 1e4, color: 1e4 };
+export const quantize = (v, scale) => Math.round(v * scale) / scale + 0;   // "+ 0" troca −0 por +0
 const pad4 = (n) => (n + 3) & ~3;
 
 /** Escreve o modelo num Buffer GLB e devolve {buffer, triangles, vertices, bounds, materials}. */
@@ -28,7 +33,8 @@ export function encodeGlb(model, extras = {}) {
   for (const [name, P] of model.parts) {
     const n = P.pos.length / 3;
     if (!n || !P.idx.length) continue;
-    const pos = Float32Array.from(P.pos), nrm = Float32Array.from(P.nrm), col = Float32Array.from(P.col, toLinear);
+    const pos = Float32Array.from(P.pos, v => quantize(v, QUANT.position)), nrm = Float32Array.from(P.nrm, v => quantize(v, QUANT.normal)),
+      col = Float32Array.from(P.col, v => quantize(toLinear(v), QUANT.color));
     const pmin = [Infinity, Infinity, Infinity], pmax = [-Infinity, -Infinity, -Infinity];
     for (let i = 0; i < n; i++) for (let k = 0; k < 3; k++) { pmin[k] = Math.min(pmin[k], pos[i * 3 + k]); pmax[k] = Math.max(pmax[k], pos[i * 3 + k]); }
     for (let k = 0; k < 3; k++) { min[k] = Math.min(min[k], pmin[k]); max[k] = Math.max(max[k], pmax[k]); }

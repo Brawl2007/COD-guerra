@@ -2,12 +2,13 @@
 // Eixos: rodas ao longo de X; a frente (varais/timão) aponta para −Z.
 import { mix } from './mesh.mjs';
 import { P } from './palette.mjs';
+import * as pm from './pmath.mjs';
 import { rng } from './util.mjs';
 
 /** Roda de raios de madeira com aro de ferro, no plano YZ, centro (x, cy, cz). */
 function wheel(m, { x, cy, cz = 0, r, spokes, segs, hi, seed, width = 0.05, tyre = true }) {
   const rim = [];
-  for (let i = 0; i < segs; i++) { const a = (i / segs) * Math.PI * 2; rim.push([x, cy + Math.cos(a) * r, cz + Math.sin(a) * r]); }
+  for (let i = 0; i < segs; i++) { const a = (i / segs) * Math.PI * 2; rim.push([x, cy + pm.cos(a) * r, cz + pm.sin(a) * r]); }
   m.tube('wood', rim, { r: width / 2, sides: hi ? 4 : 3, closed: true, color: P.woodOld, variance: 0.14, seed });
   if (hi && tyre) m.tube('iron_cast', rim.map(p => [p[0], cy + (p[1] - cy) * (1 + 0.012 / r), cz + (p[2] - cz) * (1 + 0.012 / r)]), { r: width / 2 + 0.006, sides: 3, closed: true, color: mix(P.steelDark, P.rust, 0.35), variance: 0.2, seed: seed + 1 });
   if (hi) {
@@ -15,7 +16,7 @@ function wheel(m, { x, cy, cz = 0, r, spokes, segs, hi, seed, width = 0.05, tyre
   }
   for (let i = 0; i < spokes; i++) {
     const a = (i / spokes) * Math.PI * (hi ? 2 : 1) + 0.2, hubR = 0.06, len = r - hubR;
-    if (hi) m.box('wood', { size: [0.03, len, 0.03], at: [x, cy + Math.cos(a) * (hubR + len / 2), cz + Math.sin(a) * (hubR + len / 2)], rot: [a, 0, 0], color: P.woodMid, grain: 1, seed: seed + 5 + i, variance: 0.12 });
+    if (hi) m.box('wood', { size: [0.03, len, 0.03], at: [x, cy + pm.cos(a) * (hubR + len / 2), cz + pm.sin(a) * (hubR + len / 2)], rot: [a, 0, 0], color: P.woodMid, grain: 1, seed: seed + 5 + i, variance: 0.12 });
     else m.box('wood', { size: [0.03, 2 * r - 0.03, 0.03], at: [x, cy, cz], rot: [a, 0, 0], skip: ['+y', '-y', '+z', '-z'], color: P.woodMid, grain: 1, seed: seed + 5 + i, variance: 0.12 });
   }
 }
