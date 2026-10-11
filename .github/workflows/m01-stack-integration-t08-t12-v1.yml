@@ -37,7 +37,8 @@ jobs:
           git diff --exit-code 1990a58 HEAD -- src missions package.json package-lock.json playwright.config.js tests/fixtures tests/helpers/m01-anim-baseline.mjs 2>&1 | tee -a evidence/authority.log
           echo "src, missions, build config, golden and baseline helper untouched since 1990a58" | tee -a evidence/authority.log
           test -z "$(git diff --name-status --diff-filter=DMRT 1990a58 HEAD -- assets)"
-          ! git diff --name-only --diff-filter=A 1990a58 HEAD -- assets | grep -vE '^assets/models/provisional/m01/(props|characters/clip-library-v2)/'
+          bad="$(git diff --name-only --diff-filter=A 1990a58 HEAD -- assets | grep -vE '^assets/models/provisional/m01/(props|characters/clip-library-v2)/' || true)"
+          if [ -n "$bad" ]; then echo "$bad"; exit 1; fi
           echo "assets: additions only in props/ and characters/clip-library-v2/" | tee -a evidence/authority.log
           test ! -f tests/fixtures/.golden-stale
           echo "no golden marker: the committed x86 golden is verified, never regenerated" | tee -a evidence/authority.log
