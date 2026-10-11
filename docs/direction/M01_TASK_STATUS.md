@@ -19,10 +19,10 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 05 | Campos de dados do áudio | PARCIAL | Sem `activeFrom`, `audioZones` nem `surfaces` |
 | 06 | Núcleo de áudio | PARCIAL | `src/core/battlefield-audio.js` + teste com FakeAudioContext; sem `src/core/audio/` nem director |
 | 07 | Contrato de animação | PARCIAL | `src/game/m01-animation-presentation.js` + `tests/m01-animation-contract.test.js`; hitboxes prone por confirmar |
-| 08 | Biblioteca de clips V2 | PARCIAL | Seis clips V5; conjunto do Anexo B incompleto |
+| 08 | Biblioteca de clips V2 | **ACEITE** | `claude/m01-anim-clip-library-v2` @ 0579302, CI 38115976563; integrado na pilha `claude/m01-stack-integration-t08-t12-v1` (merge --no-ff) |
 | 09 | Pipeline de texturas | AUSENTE | Sem `tools/assets/m01-materials` |
 | 10 | Kit de vegetação | PARCIAL | Vegetação procedimental em runtime (`m01-vegetation-art.js`, `-layout.js`); sem kit GLB/LOD/impostores |
-| 12 | Kit de props | AUSENTE | — |
+| 12 | Kit de props | **ACEITE** | CI 38104348154 (x86) + triagem 0 NEW; integrado por cherry-pick -x de 5ee62a8, 7564b6f, b4e5fd6 (D36); ainda não ligado ao jogo (T33) |
 | 13 | Estruturas de campo | AUSENTE | — |
 | 14 | Materiais das pontes V2 | PARCIAL | `tools/assets/m01-bridges`; regeneração de materiais por confirmar |
 | 15 | Portão FX V3 | DONE* | `m01-battlefield-fx-profile.js`, `m01-fx-textures.js` na V7; tabela fechado/aberto não verificada |
@@ -33,7 +33,7 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 20 | Impostores da frente distante | **ACEITE** | 676a455 (integrado na pilha em `claude/m01-stack-integration-t44-t20-v1` @ 909bf43, CI 38054298392), CI 38047289527; pelotão polaco sem prova de píxeis nas vistas de teste |
 | 21 | Ambient director | AUSENTE | Depende de T22 |
 | 22 | Battle readout / display rounds | **ACEITE** | `1881df1` (branch `claude/m01-display-fire-readout-v1`, workflow `cf7c2d7`), CI 38070927878 (628/628, golden ✔, 12 sementes, browser 7+2). Fogo de exibição separado e não guardado, RNG próprio; `battleReadout`; ainda sem perfis (T23). |
-| 23 | Frente leste visível | AUSENTE | Depende de T22 |
+| 23 | Frente leste visível | **ACEITE** | b9c6c6b, integrado em `claude/m01-stack-integration-t23-pt05-v1` @ 1990a58. PT05 (vagões no pátio, 6ef1027): ACEITE, integrado no mesmo ramo |
 | 24 | Chegada do comboio | PARCIAL | Módulos locomotiva/Panzerzug/vagões; chegada por `battleClock` em falta |
 | 25 | Horário do raid das 05:30 | AUSENTE | Depende de T03 |
 | 26 | Beats de cena | PARCIAL | Letterbox no HUD; tabela de cues por fazer |
@@ -65,3 +65,5 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 52 | Playtest humano | **HUMANO** | Final do Marco 2 |
 
 \* DONE só significa que o entregável existe e está integrado. A execução na base final não foi verificada.
+
+Nota (2026-10-11): a lista de exceções das 3 guardas byte-a-byte passou a um helper partilhado (`tests/helpers/m01-byte-guard-allowlist.js`, fb9968b, CI 38114823680); a corrida do spec de impostores foi corrigida em 1990a58 (espera por um frame renderizado no relógio carregado).
