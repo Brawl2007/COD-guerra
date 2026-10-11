@@ -1,0 +1,33 @@
+{
+  "terrain": {
+    "material": "m01-terrain-macro-v1",
+    "textures": 5,
+    "gpuBytes": 20971500,
+    "quality": "high",
+    "tier": "high",
+    "lowDetail": 0,
+    "files": [
+      "terrain-detail-a-1024.png",
+      "terrain-detail-b-512.png",
+      "terrain-normal-a-1024.png",
+      "terrain-normal-b-512.png"
+    ],
+    "mask": {
+      "width": 2048,
+      "height": 640
+    },
+    "samplers": 5,
+    "failures": []
+  },
+  "drawCalls": 352,
+  "triangles": 814937,
+  "stats": {
+    "pixels": 192000,
+    "mean": 23.393707981255954,
+    "std": 18.69661089478267,
+    "localStd": 6.496124231218529
+  },
+  "legacyStats": null,
+  "legacyTerrain": null,
+  "legacyDrawCalls": null
+}

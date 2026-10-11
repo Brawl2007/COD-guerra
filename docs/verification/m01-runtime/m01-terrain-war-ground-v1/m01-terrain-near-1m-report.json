@@ -1,0 +1,43 @@
+{
+  "terrain": {
+    "material": "m01-terrain-macro-v1",
+    "textures": 5,
+    "gpuBytes": 20971500,
+    "quality": "high",
+    "tier": "high",
+    "lowDetail": 0,
+    "files": [
+      "terrain-detail-a-1024.png",
+      "terrain-detail-b-512.png",
+      "terrain-normal-a-1024.png",
+      "terrain-normal-b-512.png"
+    ],
+    "mask": {
+      "width": 2048,
+      "height": 640
+    },
+    "samplers": 5,
+    "failures": []
+  },
+  "drawCalls": 351,
+  "triangles": 828400,
+  "stats": {
+    "pixels": 264000,
+    "mean": 46.057236763625426,
+    "std": 13.30316799244187,
+    "localStd": 5.3810220220463565
+  },
+  "legacyStats": {
+    "pixels": 264000,
+    "mean": 26.72315932654319,
+    "std": 6.167341310874787,
+    "localStd": 2.744571223853038
+  },
+  "legacyTerrain": {
+    "material": "legacy-soil",
+    "textures": 1,
+    "gpuBytes": 0,
+    "quality": "high"
+  },
+  "legacyDrawCalls": 351
+}
