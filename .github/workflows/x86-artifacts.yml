@@ -1,0 +1,43 @@
+name: x86-artifacts
+on:
+  push:
+    branches: ['x86-artifacts/**']
+permissions:
+  contents: read
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Run generator
+        run: |
+          set -euo pipefail
+          bash -c "$(jq -r .cmd .x86-artifacts.json)"
+      - name: Collect
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          mapfile -t PATHS < <(jq -r '.paths[]' .x86-artifacts.json)
+          git add -A -- "${PATHS[@]}"
+          git diff --cached --stat HEAD -- "${PATHS[@]}"
+          git diff --cached --binary HEAD -- "${PATHS[@]}" > x86.patch
+          git diff --cached --name-only --diff-filter=AMR HEAD -- "${PATHS[@]}" | while IFS= read -r f; do
+            mkdir -p "out/$(dirname "$f")"; cp -p "$f" "out/$f"
+          done
+          { echo "arch=$(uname -m)"; echo "node=$(node --version)"; echo "commit=$(git rev-parse HEAD)"; } > env.txt
+          cat env.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: x86-artifacts
+          path: |
+            x86.patch
+            out/
+            env.txt
