@@ -3,6 +3,14 @@ name: M01 T09 T28 materials and terrain
 on:
   push:
     branches: [codex/m01-t09-t28-materials-closeout-v1]
+    paths:
+      - .github/workflows/m01-t09-t28-materials.yml
+      - src/render/**
+      - assets/textures/m01/**
+      - tools/assets/m01-materials/**
+      - tools/assets/m01-props/**
+      - tools/verification/*materials*
+      - tests/**
 
 permissions:
   contents: read
