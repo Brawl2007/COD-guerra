@@ -2,6 +2,7 @@ import definition from '../../missions/m01-tczew/mission.json' with { type: 'jso
 import manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with { type: 'json' };
 import { TczewWorld } from '../world/tczew-world.js';
 import { Wz29 } from './wz29.js';
+import { M01_DIFFICULTY_IDS, M01_DIFFICULTY_SIM_DEFAULT } from './m01-difficulty.js';
 import { Random } from '../core/random.js';
 import { eyePosition, aimDirection, muzzlePosition, traceShot, traceObstruction } from '../world/spatial.js';
 import { makeRound, traceRound, closestApproach, validRound, NEAR_MISS, ATTRITION_VICTIM } from './m01-fire.js';
@@ -88,7 +89,11 @@ const holdSlot=i=>({x:LAYOUT.x0+i%LAYOUT.columns*LAYOUT.dx,y:0,z:LAYOUT.z0+Math.
 const BLOCK=(rows=>({x:LAYOUT.x0-1,w:(LAYOUT.columns-1)*LAYOUT.dx+2,z:LAYOUT.z0-.2,h:(rows-1)*LAYOUT.dz+.4}))(Math.ceil(24/LAYOUT.columns));
 
 export class M01Simulation {
-  constructor(seed=19390901){this.reset(seed);}
+  // H9 D1: the level is stored before reset() because reset() ends with a snapshot. Nothing reads it yet; reset() keeps whatever level the instance has.
+  constructor(seed=19390901,{difficulty=M01_DIFFICULTY_SIM_DEFAULT}={}){
+    if(!M01_DIFFICULTY_IDS.includes(difficulty))throw new RangeError('Dificuldade M01 desconhecida: '+String(difficulty));
+    this.difficulty=difficulty;this.reset(seed);
+  }
   reset(seed=19390901){
     this.missionId=definition.id;this.definition=definition;this.rng=new Random(seed);this.world=new TczewWorld();
     this.clock=0;this.battleClock=seconds(definition.clock.start);this.events=[];this.consumed={};this.objectives={};
@@ -977,14 +982,16 @@ export class M01Simulation {
     player:this.player,weapon:this.weapon.snapshot(),actors:this.actors,consumed:this.consumed,objectives:this.objectives,flags:this.flags,
     destruction:this.destruction,dialogueConsumed:this.dialogueConsumed,dialogueQueue:this.dialogueQueue,subtitle:this.subtitle,
     scene:this.scene,sceneDone:this.sceneDone,checkpointsReached:this.checkpointsReached,pendingCheckpoint:this.pendingCheckpoint,
-    gate:this.gate,recoveries:this.recoveries,timers:this.timers,sectors:this.sectors,grenades:this.grenades,mission:this.mission,enemyFire:this.enemyFire});
+    gate:this.gate,recoveries:this.recoveries,timers:this.timers,sectors:this.sectors,grenades:this.grenades,mission:this.mission,enemyFire:this.enemyFire,
+    // H9 D1: omitted for recruta so recruta saves (and the committed golden) stay byte-identical; legacy saves restore as recruta.
+    ...(this.difficulty!==M01_DIFFICULTY_SIM_DEFAULT?{difficulty:this.difficulty}:{})});
     // A continuation save must preserve the previous respawn point, not promote the current tick to a CP.
     // Actual CP-A..D remain flat schema-2 saves; omit the backup when it already equals this state.
     if(includeCheckpoint&&this.checkpoint&&JSON.stringify(s)!==JSON.stringify(this.checkpoint))s.resumeCheckpoint=clone(this.checkpoint);
     return s;}
   get animationPresentation(){return presentationDiagnostics(this.actors);}
   restoreSnapshot(raw){
-    const s=clone(raw);validateM01Snapshot(s);const candidate=new M01Simulation(s.rng);
+    const s=clone(raw);validateM01Snapshot(s);const difficulty=s.difficulty??M01_DIFFICULTY_SIM_DEFAULT,candidate=new M01Simulation(s.rng,{difficulty});
     for(const key of ['clock','battleClock','player','actors','consumed','objectives','flags','destruction','dialogueConsumed','dialogueQueue','subtitle',
       'scene','sceneDone','checkpointsReached','pendingCheckpoint','gate','recoveries','timers','sectors','grenades','mission'])candidate[key]=s[key];
     // Schema 2 legacy saves contain the exact old roster. Add only the absent complete group,
@@ -1007,7 +1014,7 @@ export class M01Simulation {
     candidate.weapon.restore(s.weapon);candidate.rng.state=s.rng;candidate.events=[];candidate.world.refresh(Object.keys(s.consumed),s.flags);
     candidate.display=createDisplayFire(displaySeed(s.rng,s.clock),displayProfiles(definition,{actors:candidate.actors}));   // not saved: restarts empty, re-seeded from the saved state
     if(s.resumeCheckpoint!==undefined){
-      const backup=new M01Simulation();backup.restoreSnapshot(s.resumeCheckpoint);candidate.checkpoint=backup.snapshot(false);
+      const backup=new M01Simulation(undefined,{difficulty});backup.restoreSnapshot(s.resumeCheckpoint);candidate.checkpoint=backup.snapshot(false);
     }else candidate.checkpoint=candidate.snapshot(false);   // legacy schema 2 used the loaded state itself as CP
     Object.assign(this,candidate);return true;
   }
@@ -1018,6 +1025,7 @@ export class M01Simulation {
 export function validateM01Snapshot(s){
   const reject=message=>{throw new Error('Checkpoint M01 inválido: '+message);};
   if(!s||s.schema!==2||s.missionId!==definition.id)reject('versão ou missão');
+  if(s.difficulty!==undefined&&!M01_DIFFICULTY_IDS.includes(s.difficulty))reject('dificuldade');   // H9 D1: absent (legacy = recruta) or one of the three levels
   const scan=(v,depth=0)=>{if(depth>14)reject('estrutura');if(typeof v==='number'&&!Number.isFinite(v))reject('número');
     if(v&&typeof v==='object')for(const [k,item]of Object.entries(v)){if(['__proto__','constructor','prototype','isObject3D','matrixWorld'].includes(k))reject('campo');scan(item,depth+1);}};scan(s);
   if(!Number.isFinite(s.clock)||s.clock<0||!Number.isFinite(s.battleClock)||s.battleClock<seconds('04:30:00')||s.battleClock>seconds('07:05:00')||!Number.isInteger(s.rng)||s.rng<0||s.rng>0xffffffff)reject('relógios');
@@ -1138,6 +1146,7 @@ export function validateM01Snapshot(s){
     const cp=s.resumeCheckpoint;
     if(!cp||Object.hasOwn(cp,'resumeCheckpoint')||cp.clock>s.clock||cp.battleClock>s.battleClock)reject('checkpoint de retoma');
     validateM01Snapshot(cp);
+    if((cp.difficulty??M01_DIFFICULTY_SIM_DEFAULT)!==(s.difficulty??M01_DIFFICULTY_SIM_DEFAULT))reject('dificuldade do checkpoint de retoma');
     if(cp.checkpointsReached.some((id,i)=>id!==s.checkpointsReached[i]))reject('checkpoint de retoma');
   }
   return s;
