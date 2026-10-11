@@ -719,10 +719,10 @@ Convenções comuns a todas as tasks (não repetidas em cada ficha): branch pró
 
 #### T53 · `M01-DESKTOP-APP-V1` — Empacotar como app de PC (D37)
 - **Objectivo:** transformar o build web da M01 numa app de PC instalável (D37), com os assets no disco local e sem os limites de tamanho do navegador; a stack web (Three.js/Vite) continua a ser o alvo de desenvolvimento.
-- **Scope:** escolher Electron ou Tauri **dentro da tarefa**, com uma comparação curta (tamanho de instalação, RAM no PC H12, auto-update, licença); assets locais empacotados com a app; ecrã inteiro; mesmas chaves de save do browser (`cod-guerra:checkpoint:m01:v2`, `cod-guerra:visual-quality`), para que os checkpoints continuem válidos; orçamento de tamanho por missão: alvo 100–250 MB carregados por missão; jogo completo (30 missões) **estimativa** 1–3 GB, a confirmar com os assets finais; instalador construído no CI.
+- **Scope:** escolher Electron ou Tauri **dentro da tarefa**, com uma comparação curta (tamanho de instalação, RAM no PC H12, auto-update, licença); assets locais empacotados com a app; ecrã inteiro; mesmo formato e mesmas chaves de checkpoint (`cod-guerra:checkpoint:m01:v2`, `cod-guerra:visual-quality`); a migração de saves do browser não é automática (perfis de armazenamento diferentes) e fica fora de scope; orçamento de tamanho por missão: alvo 100–250 MB carregados por missão; jogo completo (30 missões) **estimativa** 1–3 GB (com assets partilhados entre missões), a confirmar com os assets finais; instalador construído no CI.
 - **Ficheiros:** pasta nova de empacotamento (`desktop/` ou equivalente), `package.json`, `vite.config.js`, workflow de CI do instalador, `RUNBOOK.md`.
 - **Não alterar:** simulação, autoridade e dados da missão; o build web (`npm run build`/`preview`) tem de continuar a funcionar tal como está.
-- **Aceitação:** a app arranca em Windows 10 no PC H12 e a M01 joga do menu ao debrief (**passo humano**: o utilizador instala e joga); o CI constrói o instalador sem erros; tamanho do instalador e da M01 carregada registados contra o orçamento; saves do browser carregam na app.
+- **Aceitação:** a app arranca em Windows 10 no PC H12 e a M01 joga do menu ao debrief (**passo humano**: o utilizador instala e joga); o CI constrói o instalador sem erros; tamanho do instalador e da M01 carregada registados contra o orçamento; um checkpoint gravado na app recarrega na app.
 - **Modelo/esforço:** Claude Code · MEDIUM + utilizador (instalar e jogar no PC H12). **Depende de:** conteúdo da M01 completo (T51, T52).
 
 ---
