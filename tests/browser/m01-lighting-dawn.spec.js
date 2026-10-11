@@ -51,6 +51,8 @@ async function capture(browser,info,{clock,quality,view='sun'}){
     // Do not wait on a particular cutscene/gameplay state: the game runs once the pointer lock is granted and frames render.
     await page.waitForFunction(()=>{const d=window.gameDiagnostics?.();return d&&!d.paused&&d.m01.renderedFrames>=4;},null,{timeout:240000});
     await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+    // The gate above is already true from menu-clock frames (pointerlockchange is a plain task, not frame-bound): wait for a frame at the loaded checkpoint clock before reading diagnostics / screenshotting. impostors.sync stores the sim clock on every real rendered frame (not quality- or flag-gated); builds without an impostors block (baseline) only need the paused state.
+    await page.waitForFunction(()=>{const d=window.gameDiagnostics?.();if(!d||!d.paused)return false;const imp=d.m01.impostors;return !imp||imp.clock===d.clock;},null,{timeout:240000});
     const data=await page.evaluate(()=>window.gameDiagnostics());
     const name=`m01-lighting-${clock.replace(':','')}-${quality}${view==='sun'?'':'-'+view}${baseline?'-before':''}.png`;
     await page.screenshot({path:info.outputPath(name),style:'#pause,#hud,#menu{visibility:hidden!important}',timeout:120000});
