@@ -16,8 +16,8 @@ export const RAIL_PROP_VIEWS=[
  {name:'close-yard-crane-coal',snapshot:flow.combatSnapshots.repairThreat,x:-411,z:-16,target:{x:-414,z:-23,y:1}},
  {name:'close-sleeper-stack-lantern',snapshot:start,x:-454,z:23,target:{x:-452,z:18,y:-1}},
  {name:'close-west-join-5m',snapshot:start,x:-5,z:5,target:{x:0,z:2,y:-.17},feature:'track'},
- {name:'close-east-join-5m',snapshot:start,x:1044,z:5,target:{x:1049,z:2,y:.012},feature:'track'},
- {name:'close-train-join-5m',snapshot:start,x:1057,z:-7,target:{x:1062,z:-2.5,y:-.82},feature:'track'},
+ {name:'close-east-join-5m',snapshot:flow.combatSnapshots.repairThreat,x:1044,z:0,target:{x:1049,z:2,y:.012},feature:'track'},
+ {name:'close-train-join-5m',snapshot:flow.combatSnapshots.repairThreat,x:1067,z:-2.5,target:{x:1062,z:-2.5,y:-.82},feature:'track'},
  {name:'close-station-switch-5m',snapshot:start,x:-449,z:-31,target:{x:-449,z:-25,y:.33},feature:'track'}
 ];
 export function railPropSnapshot(v){const s=structuredClone(v.snapshot),sim=new M01Simulation();sim.restoreSnapshot(s);const y=sim.world.heightAt(v.x,v.z),dx=v.target.x-v.x,dz=v.target.z-v.z;Object.assign(s.player,{x:v.x,y,z:v.z,angle:Math.atan2(dz,dx),pitch:Math.atan2(v.target.y-y-1.6,Math.hypot(dx,dz)),moveBlend:0,sprinting:false,crouched:false,aiming:false});return s;}
