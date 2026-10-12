@@ -1,0 +1,95 @@
+schema_version: 2
+
+task:
+  id: ""
+  type: ""
+  role: ""
+  objective: ""
+
+git:
+  base_branch: ""
+  base_head: ""
+  work_branch: ""
+  starting_head: ""
+
+policy:
+  gameplay_change_allowed: false
+  visual_change_allowed: false
+  persistence_change_allowed: false
+  architecture_change_allowed: false
+
+scope:
+  allowed_files: []
+  forbidden_files: []
+  allowed_systems: []
+  forbidden_systems: []
+
+  read_areas: []
+  write_areas: []
+  exclusive_resources: []
+
+dependencies:
+  tasks: []
+  branches: []
+
+risk:
+  level: "medium"
+  complexity: "medium"
+
+acceptance:
+  criteria: []
+  evidence_required: []
+
+verification:
+  required_tests: []
+  build_requirement: "required"
+  browser_requirement: "focused"
+  regression_obligations: []
+
+execution:
+  max_fix_attempts: 3
+  max_review_rejections: 2
+  production_mode: "focused"
+
+routing:
+  policy: "auto"
+  preferred_class: "standard"
+  escalation_class: "advanced"
+
+human:
+  approval_points: []
+
+context:
+  required_memory_topics: []
+  mutable_claims_to_verify: []
+
+integration:
+  target_branch: ""
+  auto_integrate: false
+
+escalation:
+  conditions:
+    - "contradictory requirements"
+    - "significant gameplay change"
+    - "major architecture change outside scope"
+    - "destructive operation required"
+    - "main branch modification required"
+    - "unsafe integration conflict"
+    - "required file outside allowed scope"
+    - "retry budget exhausted"
+    - "review budget exhausted"
+    - "required evidence cannot be obtained"
+
+state:
+  status: "PLANNED"
+  current_node: ""
+  current_owner: ""
+  next_action: ""
+
+result:
+  final_head: ""
+  tests: []
+  build: ""
+  runtime: ""
+  review: ""
+  final_status: ""
