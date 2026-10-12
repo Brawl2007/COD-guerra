@@ -1,6 +1,6 @@
 # T31 / T33 — leito da via e props reais
 
-Estado: **ACEITE**; verifier PASS e reviewer ACCEPT independentes no código `6878d01e895787342d5f43b98524d47d53475943`. Branch `codex/m01-t31-t33-rail-props-v1`; base `02f2145cd71ce17a6af84ef611823a0c0f1ddac5`. Integração e testes do resultado pendentes.
+Estado: **ACEITE**; verifier PASS e reviewer ACCEPT independentes no código `6878d01e895787342d5f43b98524d47d53475943`. Branch `codex/m01-t31-t33-rail-props-v1`; base `02f2145cd71ce17a6af84ef611823a0c0f1ddac5`. Integrada em `claude/m01-integration` @ `096a393fff3b33e221a0c586f58101b2025f9eac`; resultado da junção Node661/661 e build89 PASS (`integration-node.log`, `integration-build.log`).
 
 T31 substitui os caminhos duplicados por quatro batches reais: perfil de carril, travessas, balastro e talas. Travessas0,63m High/Medium e1,26m Low, talas15m, agulha da estação e via própria do trem com um único dono. Metadados reais do GLB determinam os encontros: vão final1044,7; apoio1049,2; conector plano seguido da transição até1062 a−0,82m. Posições/arte dos trens e modelos originais preservados. A transição curta de aproximadamente6,5% é reconstrução visual do protótipo, sem afirmação histórica.
 
