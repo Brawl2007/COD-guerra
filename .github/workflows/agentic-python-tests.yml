@@ -1,0 +1,54 @@
+name: Validar agentes Python
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.agent/**'
+      - '.claude/**'
+      - '.github/workflows/agentic-python-tests.yml'
+      - 'CLAUDE.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agentic-python-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  agentic-tests:
+    name: Testes Python dos agentes (sem IA)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONUNBUFFERED: '1'
+      ANTHROPIC_API_KEY: ''
+      TYPESAFE_API_KEY: ''
+      COD_JEV_PILOT: '0'
+    steps:
+      - name: Checkout sem credenciais persistentes
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Verificar estrutura e versao
+        run: |
+          python --version
+          git --version
+          test -f .claude/agents/captain.md
+          test -f .agent/templates/TASK_GRAPH.json
+          test -f .agent/tools/task_state.py
+          test -f .agent/tools/task_recovery.py
+          test -f .agent/tools/jev_router.py
+          test -f .agent/tools/jev_decisions.py
+
+      - name: Executar testes Python agentic
+        run: python -m unittest discover -s .agent/tests -p 'test_*.py' -v
