@@ -23,7 +23,7 @@ const VIEWS=[
 ];
 function relocated(v){const s=structuredClone(v.snapshot),world=new M01Simulation();world.restoreSnapshot(s);const y=world.world.heightAt(v.x,v.z),dx=v.target.x-v.x,dz=v.target.z-v.z;Object.assign(s.player,{x:v.x,y,z:v.z,angle:Math.atan2(dz,dx),pitch:Math.atan2(v.target.y-y-1.6,Math.hypot(dx,dz)),moveBlend:0,sprinting:false,crouched:false,aiming:false});return s;}
 async function open(page,v,{quality='high',ready=true}={}){
- const snapshot=relocated(v);await page.addInitScript(({snapshot,KEY,quality})=>{localStorage.setItem(KEY,JSON.stringify(snapshot));localStorage.setItem('cod-guerra:visual-quality',quality);},{snapshot,KEY,quality});await page.goto('?debug=1&visual-verify=1');
+ const snapshot=relocated(v);await page.addInitScript(({snapshot,KEY,quality})=>{localStorage.setItem(KEY,JSON.stringify(snapshot));localStorage.setItem('cod-guerra:visual-quality',quality);},{snapshot,KEY,quality});await page.goto(new URL('?debug=1&visual-verify=1',test.info().project.use.baseURL).href);
  await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9&&window.gameDiagnostics().m01.damageDecals.atlasReady,null,{timeout:180000});
  // Exit at pointer acquisition before live ticks; then wait for the restored camera and exact drawn clock.
  await page.evaluate(()=>{const hold=e=>{if(document.pointerLockElement?.id==='game'){document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();document.exitPointerLock();}};document.addEventListener('pointerlockchange',hold,true);});
