@@ -4,7 +4,7 @@
 
 T13 kit e T32 runtime **ACEITES** em `codex/m01-t13-t32-field-structures-v1` @ `cbbe0d7`, base `a1dd76b`. Verifier PASS/reviewer ACCEPT; CI38225594014 verde (648 Node, 173 tooling, build) e CI38225594010 verde (4/4 browser/galeria, reprodução e autoridade). 4 estruturas originais, 15 GLBs/3 LODs, 20 imagens de galeria, 11 pares runtime A/B; entradas/colisores/rotas/estação e modelos prévios preservados. Memória e obrigações de regressão específicas registadas. Prova: `docs/verification/m01-runtime/m01-t13-t32-field-structures-v1/HANDOFF.md`.
 
-NEXT_ACTION desta entrega: buscar integração actual, juntar sem rebase/force-push, validar `npm test`/build e publicar `claude/m01-integration`. O pedido desta sessão abrange T13 e T32; as branches concorrentes publicadas do Claude são áudio/documentação e foram preservadas.
+PLAY desta entrega: `claude/m01-integration` @ `80b04746db66a0e848c5c168292bd5bf003b878e`, merge sem conflitos; junção Node648/648 e build PASS. NEXT_ACTION: nenhuma nesta entrega; T13 e T32 concluídas e integradas. Branches concorrentes do Claude preservadas.
 
 ## UPDATE T09/T28 — 2026-10-11
 

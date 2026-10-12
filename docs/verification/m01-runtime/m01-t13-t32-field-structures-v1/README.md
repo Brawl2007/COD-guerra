@@ -1,6 +1,6 @@
 # T13 / T32 — estruturas de campo
 
-TASK_ID: `M01-T13-T32-FIELD-STRUCTURES-V1`. Estado: **ACEITE** (verifier PASS, reviewer ACCEPT). Código aceite: `cbbe0d7624d39e444f02ac0bd200037a71b3cf8e`, branch `codex/m01-t13-t32-field-structures-v1`; base integração `a1dd76b8fd30467f9bb335411cf8f589a4fd829a`. Integração a publicar após validar a junção.
+TASK_ID: `M01-T13-T32-FIELD-STRUCTURES-V1`. Estado: **ACEITE** (verifier PASS, reviewer ACCEPT). Código aceite: `cbbe0d7624d39e444f02ac0bd200037a71b3cf8e`, branch `codex/m01-t13-t32-field-structures-v1`; base integração `a1dd76b8fd30467f9bb335411cf8f589a4fd829a`. Integrada em `claude/m01-integration` @ `80b0474`; resultado da junção Node648/648 e build PASS.
 
 Quatro estruturas originais: barracão ferroviário com telhado/chaminé/janela/bancada/entrada oeste aberta, abrigo com retorno em L e interior revestido, parapeito de terra/madeira intacto ou destruído, casamata com seteiras e capa de terra. Quinze GLBs, 3 LODs, 370768 bytes totais, CC0-1.0 e SHA; máximos reais por LOD 1248/208/144 triângulos (limites5000/1500/300). Bounds das superfícies que correspondem a colisores comparados com `TczewWorld`; envelopes de telhados/interiores/feature decorativa explicitamente separados, sem novos sólidos.
 
