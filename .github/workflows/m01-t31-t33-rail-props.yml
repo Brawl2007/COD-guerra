@@ -1,0 +1,50 @@
+name: M01 T31 T33 rail props browser and authority
+on:
+  push:
+    branches: [codex/m01-t31-t33-rail-props-v1]
+    paths:
+      - .github/workflows/m01-t31-t33-rail-props.yml
+      - src/render/**
+      - tests/*track-bed*.test.js
+      - tests/*props-runtime*.test.js
+      - tests/browser/*rail-props*.spec.js
+      - tools/verification/*rail-props*
+  pull_request:
+    branches: [main]
+    paths:
+      - src/render/m01-track-bed.js
+      - src/render/m01-props-runtime.js
+      - tests/browser/*rail-props*.spec.js
+permissions:
+  contents: read
+concurrency:
+  group: m01-t31-t33-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  browser-authority:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Preserve simulation, mission, immutable kits, structures and renderer configuration
+        run: git diff --exit-code 02f2145cd71ce17a6af84ef611823a0c0f1ddac5 HEAD -- src/game src/core src/world/tczew-world.js missions assets tools/assets src/render/m01-station-architecture.js src/render/m01-field-structures.js src/render/m01-bridge-structure.js package.json package-lock.json playwright.config.js vite.config.js
+      - name: Check collider and route identity
+        run: |
+          npm run assets:m01:colliders -- --check
+          node tools/verify-m01-route.mjs
+      - run: npx playwright install --with-deps chromium
+      - name: Frozen renderer views, optional failure and restore plateau
+        env: {M01_RAIL_EVIDENCE: '1'}
+        run: npx playwright test --config tools/verification/playwright.m01-rail-props.config.js --workers=1 --retries=0 --output=test-results/rail-props-ci
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-t31-t33-${{ github.sha }}
+          path: |
+            test-results/
+            docs/verification/m01-runtime/m01-t31-t33-rail-props-v1/captures/
+          if-no-files-found: error

@@ -204,7 +204,8 @@ export class M01TrainConsistDetail{
       shade:mesh('train_detail_contact_shade',g.shade,this.shadeMaterial,65),
     };
     this.meshes.shade.receiveShadow=false;this.meshes.shade.renderOrder=1;
-    this.track=this.buildTrack(box,wood);
+    this.externalTrackOwner=parent.parent?.userData.m01ExternalTrack??null;
+    this.track=this.externalTrackOwner?null:this.buildTrack(box,wood);
     this.lastSummary=null;
   }
   buildTrack(box,wood){
@@ -249,8 +250,8 @@ export class M01TrainConsistDetail{
     const first=entries[0],last=entries.at(-1);
     if(tiers[0]===0)put('nearEnd',gapMatrix(first.wagon.x-4.55,true));
     if(tiers.at(-1)===0)put('nearEnd',gapMatrix(last.wagon.x+4.55,false));
-    const trackNear=entries.some(e=>(e.desired??e.lod??2)<=1);this.track.rails.visible=this.track.sleepers.visible=trackNear;
-    let drawCalls=trackNear?3:1,triangles=this.trackTriangles,shadowCasters=0;
+    const trackNear=entries.some(e=>(e.desired??e.lod??2)<=1);if(this.track)this.track.rails.visible=this.track.sleepers.visible=trackNear;
+    let drawCalls=this.track?(trackNear?3:1):0,triangles=this.trackTriangles,shadowCasters=0;
     for(const [key,mesh] of Object.entries(this.meshes)){
       mesh.count=n[key];mesh.visible=n[key]>0;mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;
       if(mesh.visible){mesh.computeBoundingSphere();drawCalls++;triangles+=mesh.count*mesh.geometry.index.count/3;if(mesh.castShadow)shadowCasters++;}
@@ -258,16 +259,16 @@ export class M01TrainConsistDetail{
     this.lastSummary={quality,wagons:entries.length,gaps:Math.max(0,entries.length-1),instancesByTier:instances,trackDetail:trackNear,drawCalls,triangles,shadowCasters,
       instances:Object.fromEntries(Object.entries(this.meshes).map(([k,mesh])=>[k,mesh.count]))};
   }
-  get trackTriangles(){const {ballast,rails,sleepers}=this.track;let t=ballast.geometry.index.count/3;for(const m of [rails,sleepers])if(m.visible)t+=m.count*m.geometry.index.count/3;return t;}
+  get trackTriangles(){if(!this.track)return 0;const {ballast,rails,sleepers}=this.track;let t=ballast.geometry.index.count/3;for(const m of [rails,sleepers])if(m.visible)t+=m.count*m.geometry.index.count/3;return t;}
   get diagnostics(){
     const s=this.lastSummary??{quality:null,wagons:0,gaps:0,instancesByTier:{near:0,mid:0,far:0},trackDetail:true,drawCalls:3,triangles:this.trackTriangles,shadowCasters:0,instances:{}};
     return {version:M01_TRAIN_DETAIL_VERSION,...s,budget:M01_TRAIN_DETAIL_BUDGET,ownedGeometries:Object.keys(this.geometries).length,
-      ownedMaterials:4,ownedTextures:1,artOffsetY:M01_TRAIN_ART_OFFSET_Y,track:{z:M01_TRAIN_TRACK.z,railTop:M01_TRAIN_TRACK.railTop,
-        gauge:+(2*M01_TRAIN_TRACK.railCentre-M01_TRAIN_TRACK.headWidth).toFixed(4),from:M01_TRAIN_TRACK.from,to:M01_TRAIN_TRACK.to,sleepers:this.track.sleepers.count,railSegments:this.track.rails.count}};
+      ownedMaterials:4,ownedTextures:1,artOffsetY:M01_TRAIN_ART_OFFSET_Y,trackOwner:this.externalTrackOwner??'standalone-consist',track:{z:M01_TRAIN_TRACK.z,railTop:M01_TRAIN_TRACK.railTop,
+        gauge:+(2*M01_TRAIN_TRACK.railCentre-M01_TRAIN_TRACK.headWidth).toFixed(4),from:M01_TRAIN_TRACK.from,to:M01_TRAIN_TRACK.to,sleepers:this.track?.sleepers.count??0,railSegments:this.track?.rails.count??0}};
   }
   dispose(){
     if(this.disposed)return;this.disposed=true;
-    for(const mesh of [...Object.values(this.meshes),this.track.rails,this.track.sleepers])mesh.dispose();
+    for(const mesh of [...Object.values(this.meshes),...this.track?[this.track.rails,this.track.sleepers]:[]])mesh.dispose();
     for(const g of Object.values(this.geometries))g.dispose();
     for(const material of [this.material,this.wearMaterial,this.ballastMaterial,this.shadeMaterial])material.dispose();
     this.gravel.dispose();this.group.removeFromParent();

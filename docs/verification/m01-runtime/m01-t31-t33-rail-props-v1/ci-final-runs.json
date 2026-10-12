@@ -1,0 +1,17 @@
+{
+  "head": "6878d01e895787342d5f43b98524d47d53475943",
+  "normal": {
+    "run": 38279380748,
+    "job": 114912642743,
+    "conclusion": "success",
+    "tests": 661,
+    "tooling": 173,
+    "buildModules": 89
+  },
+  "focused": {
+    "run": 38279380744,
+    "job": 114912641972,
+    "conclusion": "success",
+    "browserPassed": 3
+  }
+}
