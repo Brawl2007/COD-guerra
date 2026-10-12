@@ -1,0 +1,165 @@
+[1A[2K[2m[WebServer] [22m(node:12587) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 3 tests using 1 worker
+
+[1A[2K(node:12606) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:12606) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/3] tests/browser/m01-rail-props.spec.js:16:1 › actual renderer frozen views 01/02/03/07/10/16 and 5m model/rail joins
+[1A[2K  1) tests/browser/m01-rail-props.spec.js:16:1 › actual renderer frozen views 01/02/03/07/10/16 and 5m model/rail joins 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeGreaterThan[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: > [32m20[39m
+    Received:   [31m3[39m
+
+      14 | async function difference(browser,before,after){const p=await browser.newPage();try{return await p.evaluate(async({before,after})=>{const decode=async s=>createImageBitmap(new Blob([Uint8Array.from(atob(s),c=>c.charCodeAt(0))],{type:'image/png'})),[a,b]=await Promise.all([decode(before),decode(after)]),c=new OffscreenCanvas(a.width,a.height),ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(a,0,0);const old=ctx.getImageData(0,0,c.width,c.height).data;ctx.drawImage(b,0,0);const cur=ctx.getImageData(0,0,c.width,c.height).data;let changed=0,controlMaxDiff=0;for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++){const i=(y*c.width+x)*4,d=Math.max(Math.abs(old[i]-cur[i]),Math.abs(old[i+1]-cur[i+1]),Math.abs(old[i+2]-cur[i+2]));if(d>2)changed++;if(x<32&&y<24)controlMaxDiff=Math.max(controlMaxDiff,d);}a.close();b.close();return {changed,controlMaxDiff,control:{x:0,y:0,width:32,height:24}};},{before:before.toString('base64'),after:after.toString('base64')});}finally{await p.close();}}
+      15 | function ownership(d){const p=d.m01.environmentProps.runtime;expect(p.ready).toBe(true);expect(p.loadedFiles).toBe(42);expect(p.types).toBe(21);expect(p.drawCalls).toBeLessThanOrEqual(8);expect(p.source).toBe('accepted-T12-GLB');expect(p.actualTriangles).toBeGreaterThan(0);expect(p.submittedTriangles).toBeGreaterThanOrEqual(p.actualTriangles);expect(d.m01.environmentProps.proxyBatches).toBe(0);expect(d.m01.trackBed.drawCalls).toBe(4);expect(d.m01.wagons.detail.trackOwner).toBe('m01-track-bed');expect(d.m01.wagons.detail.track.sleepers).toBe(0);expect(p.collidersAdded).toBe(0);}
+    > 16 | test('actual renderer frozen views 01/02/03/07/10/16 and 5m model/rail joins',async({browser},info)=>{test.setTimeout(1800000);const report=[];for(const v of VIEWS){const page=await browser.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error'&&!m.text().includes('ERR_FAILED'))errors.push(m.text());});try{let d=await open(page,v);if(BASELINE){await capture(page,v.name+'-legacy',info);report.push({name:v.name,snapshot:railPropSnapshot(v),diagnostics:d});continue;}ownership(d);const state=await page.evaluate(()=>window.gameVerificationState());await toggle(page,v.feature??'props',false);const before=await capture(page,v.name+'-off',info),off=await page.evaluate(()=>window.gameDiagnostics());if(v.feature!=='track')expect(off.m01.environmentProps.proxyBatches).toBeGreaterThan(0);await toggle(page,v.feature??'props',true);const after=await capture(page,v.name+'-on',info);d=await page.evaluate(()=>window.gameDiagnostics());ownership(d);expect(d.clock).toBe(off.clock);expect(await page.evaluate(()=>window.gameVerificationState())).toEqual(state);const pixels=await difference(browser,before,after);expect(pixels.changed).toBeGreaterThan(20);expect(pixels.controlMaxDiff).toBe(0);expect(errors).toEqual([]);report.push({name:v.name,snapshot:railPropSnapshot(v),clock:d.clock,drawnClock:d.m01.demolition.clock,pixels,diagnostics:d});}finally{await page.close();}}mkdirSync(OUT,{recursive:true});writeFileSync(`${OUT}/same-paused-views.json`,JSON.stringify(report,null,2)+'\n');});
+         |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ^
+      17 | test('Low/High retain real kit at bounded submissions; identical checkpoint restores plateau',async({page},info)=>{test.skip(BASELINE,'legacy capture mode');test.setTimeout(420000);const v=RAIL_PROP_VIEWS.find(v=>v.name==='close-station-yard');let d=await open(page,v),clock=d.clock;ownership(d);const state=await page.evaluate(()=>window.gameVerificationState());for(const q of ['low','high','low','high']){await page.locator('#quality').selectOption(q,{force:true});await page.waitForFunction(q=>{const d=window.gameDiagnostics();return d.quality===q&&d.m01.terrain.tier===q&&d.m01.environmentProps.runtime.quality===q&&d.m01.trackBed.quality===q&&d.m01.demolition.clock===d.clock;},q);await settled(page);d=await page.evaluate(()=>window.gameDiagnostics());ownership(d);expect(d.clock).toBe(clock);expect(d.m01.trackBed.sleeperStep).toBe(q==='low'?1.26:.63);if(q==='low')expect(d.m01.environmentProps.runtime.batches.filter(b=>b.lod===0).every(b=>b.count===0)).toBe(true);await capture(page,'station-quality-'+q,info);}expect(await page.evaluate(()=>window.gameVerificationState())).toEqual(state);
+      18 |  const samples=[];for(let i=0;i<4;i++){await freezeOnPointer(page);await page.locator('#restart-checkpoint').click();await frozen(page,v);await settled(page);await toggle(page,'props',false);await toggle(page,'props',true);d=await page.evaluate(()=>window.gameDiagnostics());ownership(d);samples.push({clock:d.clock,drawnClock:d.m01.demolition.clock,geometries:d.geometries,textures:d.textures,props:d.m01.environmentProps.runtime,track:d.m01.trackBed});if(i>0){expect(d.geometries).toBe(samples[0].geometries);expect(d.textures).toBe(samples[0].textures);expect(d.clock).toBe(samples[0].clock);}}mkdirSync(OUT,{recursive:true});writeFileSync(OUT+'/restore-plateau.json',JSON.stringify(samples,null,2)+'\n');await page.reload();await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.environmentProps?.runtime.ready,null,{timeout:180000});await freezeOnPointer(page);await page.locator('#continue').click();await frozen(page,v);await settled(page);ownership(await page.evaluate(()=>window.gameDiagnostics()));});
+      19 | test('optional rejection retains proxies; late GLB residency invalidates paused frames without clock advance',async({browser},info)=>{test.skip(BASELINE,'legacy capture mode');test.setTimeout(420000);const page=await browser.newPage();try{const v=RAIL_PROP_VIEWS.find(v=>v.name==='close-station-yard');await page.route('**/props/*.glb',r=>r.abort('failed'));await open(page,v,{ready:false});await page.waitForFunction(()=>window.gameDiagnostics().m01.environmentProps.runtime.failure);const failed=await page.evaluate(()=>window.gameDiagnostics());expect(failed.m01.environmentProps.runtime.ready).toBe(false);expect(failed.m01.environmentProps.proxyBatches).toBeGreaterThan(0);expect(failed.m01.requiredAssetFailures).toEqual([]);await capture(page,'optional-failure-proxies',info);await page.unroute('**/props/*.glb');let release;const gate=new Promise(resolve=>{release=resolve;});await page.route('**/props/*horse_cart_lod0.glb',async r=>{await gate;await r.continue();});await page.reload();await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:180000});await freezeOnPointer(page);await page.locator('#continue').click();await frozen(page,v);const waiting=await page.evaluate(()=>window.gameDiagnostics()),state=await page.evaluate(()=>window.gameVerificationState());expect(waiting.m01.environmentProps.runtime.ready).toBe(false);expect(waiting.m01.environmentProps.proxyBatches).toBeGreaterThan(0);release();await settled(page);const loaded=await page.evaluate(()=>window.gameDiagnostics());ownership(loaded);expect(loaded.clock).toBe(waiting.clock);expect(loaded.m01.renderedFrames).toBeGreaterThan(waiting.m01.renderedFrames);expect(await page.evaluate(()=>window.gameVerificationState())).toEqual(state);await capture(page,'optional-resident-paused',info);}finally{await page.close();}});
+        at /workspace/COD-guerra/tests/browser/m01-rail-props.spec.js:16:1188
+
+    attachment #29: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #30: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-2.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #31: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-3.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #32: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-4.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #33: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-5.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #34: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-6.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #35: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-7.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #36: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-8.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #37: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-9.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #38: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-10.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #39: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-11.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #40: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-12.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #41: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-13.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #42: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-14.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #43: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-15.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #44: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-16.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #45: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-17.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #46: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-18.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #47: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-19.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #48: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-20.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #49: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-21.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #50: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-22.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #51: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-23.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #52: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-24.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #53: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-25.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #54: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-26.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #55: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-27.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #56: screenshot (image/png) ─────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/test-failed-28.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #57: trace (application/zip) ────────────────────────────────────────────────────────
+    test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/rail-props-final/m01-rail-props-actual-rend-c36c2--16-and-5m-model-rail-joins/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:14071) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:14071) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[2/3] tests/browser/m01-rail-props.spec.js:17:1 › Low/High retain real kit at bounded submissions; identical checkpoint restores plateau
+[1A[2K[3/3] tests/browser/m01-rail-props.spec.js:19:1 › optional rejection retains proxies; late GLB residency invalidates paused frames without clock advance
+[1A[2K  1 failed
+    tests/browser/m01-rail-props.spec.js:16:1 › actual renderer frozen views 01/02/03/07/10/16 and 5m model/rail joins 
+  2 passed (13.7m)

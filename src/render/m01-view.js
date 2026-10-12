@@ -27,7 +27,7 @@ import { M01CombatFeedback } from './m01-combat-feedback.js';
 import {M01BridgePortalPolish,bridgeMaterialSlot} from './m01-bridge-portal-polish.js';
 import {M01DamageDecals} from './m01-damage-decals.js';
 import {WEAPON_PRESENTATION,WeaponViewFx,WeaponWorldFx,WeaponLighting,viewUp,prewarmWeaponFx} from './first-person-weapon-fx.js';
-import {M01BridgeStructure,M01_TRACK_CENTRES} from './m01-bridge-structure.js';
+import {M01BridgeStructure} from './m01-bridge-structure.js';
 import {isDemolitionDamage,collapseTwinName,collapseDamageId,collapseSeed,collapsePose,collapseProgress,demolitionFlash,demolitionFallPoints,demolitionSilenceWindow,
   farFeedback,farFeedbackApplies,M01_COLLAPSE_DURATION,M01_BLAST_CHIP_MATERIALS,M01_DEMOLITION_BUDGET} from './m01-demolition.js';
 
@@ -152,31 +152,17 @@ export class M01View {
     for(let i=0;i<pos.count;i++)pos.setY(i,world.terrainHeightAt(pos.getX(i),pos.getZ(i)));
     geometry.computeVertexNormals();this.geometry.push(geometry);
     const terrain=new THREE.Mesh(geometry,this.materials.ground);terrain.receiveShadow=true;this.scene.add(terrain);this.terrainMeshes.push(terrain);
-    this.environment=new M01Environment(this.scene,world,this.materials);
+    this.environment=new M01Environment(this.scene,world,this.materials,{propVertexTextures:this.engine.capabilities.maxVertexTextures>0});
+    this.environment.trackBed.installContactReveal(this.materials.ground);this.environment.trackBed.installContactReveal(this.terrainLegacyMaterial);
     this.fieldProxyMeshes=[];
     if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')){
       this.fieldStructuresDebug={setEnabled:value=>this.environment?.fieldStructures.setEnabled(value),get:()=>this.environment?.fieldStructures.enabled};window.m01FieldStructuresDebug=this.fieldStructuresDebug;
+      this.railPropsDebug={setPropsEnabled:value=>this.environment?.propsRuntime.setEnabled(value),setTrackEnabled:value=>this.environment?.trackBed.setEnabled(value)};window.m01RailPropsDebug=this.railPropsDebug;
     }
     this.mesh('box','ground',[-900,-4,0],[400,.5,6500]);
     this.mesh('box','ground',[2050,-1.3,0],[1500,.5,6500]);
     this.mesh('box','ground',[665,-5.3,0],[790,.5,6500]);
     this.mesh('box','water',[145,-9.94,0],[240,.08,6500]);
-    // Carris assentes no terreno, em troços de ~10 m numa só instância. A linha sudoeste não tem aterro no mapa:
-    // desenhada à cota da polilinha, flutuava até 3 m acima da encosta e passava à altura dos olhos junto aos sapadores.
-    const pieces=[];
-    for(const name of ['rail_embankment_west','rail_line_southwest','rail_line_east']){const points=world.features.get(name).polyline;
-      for(let i=1;i<points.length;i++){
-        const a=points[i-1],b=points[i],dx=b[0]-a[0],dz=b[2]-a[2],length=Math.hypot(dx,dz);if(length>1800)continue;
-        const n=Math.ceil(length/10);
-        for(let k=0;k<n;k++)for(const centre of M01_TRACK_CENTRES[name])for(const offset of [centre-.72,centre+.72]){
-          const x=a[0]+dx*(k+.5)/n-dz/length*offset,z=a[2]+dz*(k+.5)/n+dx/length*offset;
-          pieces.push({x,y:world.heightAt(x,z)+.12,z,length:length/n+.05,angle:-Math.atan2(dz,dx)});
-        }
-      }
-    }
-    const tracks=new THREE.InstancedMesh(this.box,this.materials.metal,pieces.length),dummy=new THREE.Object3D();
-    pieces.forEach((t,i)=>{dummy.position.set(t.x,t.y,t.z);dummy.rotation.set(0,t.angle,0);dummy.scale.set(t.length,.12,.08);dummy.updateMatrix();tracks.setMatrixAt(i,dummy.matrix);});
-    tracks.receiveShadow=true;tracks.computeBoundingSphere();this.scene.add(tracks);
     // Station openings and their closed visual shells belong to M01Environment.
     {const proxy=this.mesh('box','dark',[-262,.57,20],[21,.18,13]);proxy.userData.m01FieldProxy='rail_shed';this.fieldProxyMeshes.push(proxy);}
     // Signals identify the barracão, sapper station and shelter without minimap arrows.
@@ -634,6 +620,7 @@ export class M01View {
   }
   createTrains(){
     this.train=new THREE.Group();this.panzerzug=new THREE.Group();this.scene.add(this.train,this.panzerzug);
+    this.train.userData.m01ExternalTrack='m01-track-bed';
     this.locomotive=new M01Locomotive(this.train,this.assets,this.box,this.cylinder,this.materials.dark,this.materials.metal);
     this.wagons=new M01TrainWagons(this.train,this.assets,this.box,this.cylinder,this.materials.wood,this.materials.metal);
     this.yardWagons=new M01YardWagons(this.scene,this.assets,this.box,this.cylinder,this.materials.wood,this.materials.metal,this.atmosphere.texture);
@@ -659,17 +646,17 @@ export class M01View {
     this.locomotive.update(sim.player);this.panzerzugArt.update(sim.player);
     // Retain the last canvas frame while the mission clock is frozen (menu/pause).
     // Assets, world restore, quality and resizing still invalidate it.
-    this.environment?.fieldStructures.sync(sim.world,this.owner.quality,sim.player);
+    this.environment?.fieldStructures.sync(sim.world,this.owner.quality,sim.player);this.environment?.syncRailProps(sim.world,this.owner.quality,sim.player);this.environment?.trackBed.bindBridgeKits(this.kit,this.bridgeStructure);
     const canvas=this.owner.canvas,previous=this.lastFrame;
     const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
       width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,
-      fieldStructures:this.environment?.fieldStructures.revision,wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles
+      propsRuntime:this.environment?.propsRuntime.revision,trackBed:this.environment?.trackBed.revision,fieldStructures:this.environment?.fieldStructures.revision,wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
     for(const material of Object.values(this.materials))if(material.userData.m01Time)material.userData.m01Time.value=sim.clock;
     this.terrain?.sync(this.owner.quality);
-    this.syncSolids(sim.world);this.portalPolish.sync(this.owner.quality);this.bridgeStructure.sync(this.owner.quality,this.camera.position,sim.world);const dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
+    this.syncSolids(sim.world);this.portalPolish.sync(this.owner.quality);this.bridgeStructure.sync(this.owner.quality,this.camera.position,sim.world);this.environment?.trackBed.applyLegacyVisibility();const dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
     this.updateDemolition(state,time,sim);
     this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.lighting(sim);this.water.sync(this.lightingModel,sim.clock,this.owner.quality);
@@ -779,7 +766,7 @@ export class M01View {
     renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+(b.visible===false?0:b.count),0)??0,
     fieldStructures:this.environment?{...this.environment.fieldStructures.diagnostics,proxyColliderIds:this.solidGroup.children.flatMap(b=>b.userData.m01ProxyColliderIds??[]),environmentProxies:this.environment.fieldProxyBatches.map(b=>({id:b.userData.m01FieldProxy,visible:b.visible})),viewProxies:this.fieldProxyMeshes.map(b=>({id:b.userData.m01FieldProxy,visible:b.visible}))}:null,
     stationArchitecture:this.environment?.station?.diagnostics??{ready:false,failure:this.environment?.stationFailure??null},
-    environmentProps:this.environment?.propDiagnostics,bridgePortalPolish:this.portalPolish?.diagnostics,bridgeStructure:this.bridgeStructure?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
+    environmentProps:this.environment?.propDiagnostics,trackBed:this.environment?.trackBed.diagnostics,bridgePortalPolish:this.portalPolish?.diagnostics,bridgeStructure:this.bridgeStructure?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
     damageDecals:this.damageDecals.diagnostics,
     terrain:this.terrain?this.terrain.diagnostics:{material:'legacy-soil',textures:1,gpuBytes:0,quality:this.owner.quality},
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},
@@ -792,9 +779,9 @@ export class M01View {
     battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},meta:structuredClone(this.battlefieldFxMeta),limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
     if(this.disposed)return;
-    this.disposed=true;if(typeof window!=='undefined'&&window.m01FieldStructuresDebug===this.fieldStructuresDebug)delete window.m01FieldStructuresDebug;if(typeof window!=='undefined'&&window.m01TerrainDebug===this.terrainDebug)delete window.m01TerrainDebug;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();this.impostors?.dispose();
+    this.disposed=true;if(typeof window!=='undefined'&&window.m01RailPropsDebug===this.railPropsDebug)delete window.m01RailPropsDebug;if(typeof window!=='undefined'&&window.m01FieldStructuresDebug===this.fieldStructuresDebug)delete window.m01FieldStructuresDebug;if(typeof window!=='undefined'&&window.m01TerrainDebug===this.terrainDebug)delete window.m01TerrainDebug;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();this.impostors?.dispose();
     this.fallbackFx.dispose();this.weaponWorldFx.dispose();this.weaponLighting.dispose();
-    this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.assets.dispose();this.environment?.dispose();this.terrain?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
+    this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.environment?.dispose();this.assets.dispose();this.terrain?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
     const textures=new Set();for(const m of new Set([...Object.values(this.materials),this.terrainLegacyMaterial].filter(Boolean))){if(m===this.terrain?.material)continue;if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
     this.scene.traverse(n=>{if(n.isInstancedMesh)n.dispose();});this.scene.clear();this.weaponScene.clear();
   }

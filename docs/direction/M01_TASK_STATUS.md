@@ -37,13 +37,13 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 24 | Chegada do comboio | PARCIAL | Módulos locomotiva/Panzerzug/vagões; chegada por `battleClock` em falta |
 | 25 | Horário do raid das 05:30 | AUSENTE | Depende de T03 |
 | 26 | Beats de cena | PARCIAL | Letterbox no HUD; tabela de cues por fazer |
-| 27 | Relevo fora do envelope | **EM CURSO** | `codex/m01-t27-t30-relief-horizon-v1`, reservado em 2026-10-12; execução após integração T31/T33; relevo visual fora do envelope, física preservada. |
+| 27 | Relevo fora do envelope | **EM CURSO** | `codex/m01-t27-t30-relief-horizon-v1`, reservado em 2026-10-12; base actualizada com T31/T33 integradas; relevo visual fora do envelope, física preservada. |
 | 28 | Material macro do terreno | **ACEITE** | `c739b08`, branch T09/T28; caminhos, balastro, lama/margem húmida, detalhe e projecção triplanar nas encostas; Low macro-only; geometria/colisores/simulação preservados. CI 38174455699 terreno 9/9 a 1/5/50 m + churn pausado; conjunto High 27 MiB descodificados. Integrada em `claude/m01-integration` @ `3bdcd99`; junção Node 639/639 e build PASS. |
 | 29 | Vegetação em runtime V2 | INCERTO | Depende de T10 |
-| 30 | Paisagem distante | **EM CURSO** | `codex/m01-t27-t30-relief-horizon-v1`, reservado em 2026-10-12; execução após integração T31/T33; horizonte Tczew/Lisewo (depende T27). |
-| 31 | Leito da via V2 | INCERTO | — |
+| 30 | Paisagem distante | **EM CURSO** | `codex/m01-t27-t30-relief-horizon-v1`, reservado em 2026-10-12; base actualizada com T31/T33 integradas; horizonte Tczew/Lisewo (depende T27). |
+| 31 | Leito da via V2 | **ACEITE** | `codex/m01-t31-t33-rail-props-v1` @ `6878d01`, 2026-10-12; 4 batches, travessas0,63/1,26m, talas15m, agulha, encontros medidos nos GLBs e via única dos trens. Verifier PASS/reviewer ACCEPT; CI38279380748 Node661/tooling173/build e CI38279380744 browser3/3;15 vistas pausadas. Integrada em `claude/m01-integration` @ `096a393`; junção Node661/661 e build PASS. |
 | 32 | Estruturas de campo em runtime | **ACEITE** | `cbbe0d7`, branch T13/T32; modelos opcionais substituem proxies, LOD/estado/destruição, ready em pausa e ownership parcial/stale; 11 pares A/B, Low/High/falha/reload, 3 restauros com plateau343. Colisores83 e rota26eventos/4CP/saúde92 iguais; produção3/3 e CI4/4 PASS. Integrada em `claude/m01-integration` @ `80b0474`; resultado da junção Node648/648 e build PASS. |
-| 33 | Props em runtime V2 | PARCIAL | `m01-environment-props.js`; kit T12 em falta |
+| 33 | Props em runtime V2 | **ACEITE** | `codex/m01-t31-t33-rail-props-v1` @ `6878d01`, 2026-10-12;42 GLBs/21 tiposT12 reais em3 batches, quality/fallback/partial-stale/paused restore seguros, recurso plateau. Verifier PASS/reviewer ACCEPT, CI verde; licençaT12 preservada. Integrada em `claude/m01-integration` @ `096a393`; junção Node661/661 e build PASS. |
 | 34 | Vida no pátio da estação | PARCIAL | Evacuação existe; tarefas novas por fazer |
 | 35 | Animation Resolver | **ACEITE** | 46b210f, CI 38043817745 (559/559, build, browser 11/11); fades de postura, morte `fallen` a partir de `diedAt`, odómetro (D18). Itens 3, 4 e 8 do playtest seguem em H6. Pré-requisito S17 da campanha |
 | 36 | Guarnições/evacuação | PARCIAL | `carriedBy`; municiador MG34 e fases do ckm por fazer |

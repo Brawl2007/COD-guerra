@@ -1,0 +1,19 @@
+✔ 42 actual accepted GLBs retain all indexed source vertices, per-face PBR, finite colours; four actual instanced draw batches (294.995999ms)
+✔ all 21 kit types placed at metre scale, poles/wires and fences persist Low; authored sag/crossbars remain actual GLB geometry (4.306345ms)
+✔ first rejection immediately drains fulfilled assets even with a hung sibling; late assets release exactly once (1.12185ms)
+✔ dispose while sibling pending releases fulfilled now and stale results later; unsupported APIs keep fallback (0.46205ms)
+✔ GLB scene transforms and nonuniform normal transforms survive atlas flattening (0.93778ms)
+✔ terrain approaches, siding switch, train extension share exactly four actual submissions; quality steps use prepared instances (195.383716ms)
+✔ actual descriptor endpoints match immutable bridge support profiles and existing train heads; gradual gauge/top transition (85.782174ms)
+✔ fishplates repeat at 15 metres and sleepers at .63 in High; continuous ballast reaches the east approach slope (43.736365ms)
+✔ restored world with same revision replaces prepared terrain geometry once; disposal is idempotent (172.409622ms)
+✔ production train ownership skips duplicate track allocations while standalone detail retains its existing API (70.198132ms)
+✔ contact reveal wraps existing macro hooks and cache keys, clips only ballast footprint, never changes terrain geometry/world heights (57.665112ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1551.508213

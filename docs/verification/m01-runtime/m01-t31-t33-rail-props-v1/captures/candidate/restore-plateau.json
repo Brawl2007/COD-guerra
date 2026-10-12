@@ -1,0 +1,610 @@
+[
+  {
+    "clock": 0.05,
+    "drawnClock": 0.05,
+    "geometries": 374,
+    "textures": 74,
+    "props": {
+      "enabled": true,
+      "ready": true,
+      "failure": null,
+      "revision": 14,
+      "quality": "high",
+      "source": "accepted-T12-GLB",
+      "types": 21,
+      "loadedFiles": 42,
+      "placements": 326,
+      "drawCalls": 3,
+      "drawBudget": 8,
+      "actualTriangles": 108346,
+      "submittedTriangles": 156016,
+      "atlasBytes": 3899392,
+      "batches": [
+        {
+          "lod": 0,
+          "bucket": 0,
+          "count": 86,
+          "paddedVertices": 2076,
+          "actualTriangles": 45074
+        },
+        {
+          "lod": 0,
+          "bucket": 1,
+          "count": 26,
+          "paddedVertices": 4320,
+          "actualTriangles": 27836
+        },
+        {
+          "lod": 1,
+          "bucket": 0,
+          "count": 214,
+          "paddedVertices": 828,
+          "actualTriangles": 35436
+        }
+      ],
+      "proxyReplaced": true,
+      "collidersAdded": 0
+    },
+    "track": {
+      "owner": "m01-track-bed",
+      "bridgeOwner": "m01-bridge-structure",
+      "trainTrackOwner": "m01-track-bed",
+      "enabled": true,
+      "revision": 14,
+      "quality": "high",
+      "drawCalls": 4,
+      "drawBudget": 4,
+      "contactReveal": {
+        "x0": -15,
+        "x1": 8,
+        "bridgeBallastTop": -0.27,
+        "halfWidth": 1.66,
+        "ballastHalfWidth": 1.7,
+        "centres": [
+          -2,
+          2
+        ],
+        "centrelineSlope": 0.007142857142857143,
+        "enabled": true,
+        "materials": 2
+      },
+      "eastContact": {
+        "supportX": 1049.2,
+        "spanEnd": 1044.7,
+        "bridgeApproachEnd": 1058.2,
+        "floorEnd": 1067.2,
+        "trainJoin": 1062,
+        "topW": 0.012,
+        "topE": -0.82,
+        "halfWidth": 1.66,
+        "materials": 4,
+        "legacyBatches": 2,
+        "legacyVisible": 0,
+        "authority": {
+          "supportsX": [
+            0,
+            140.9,
+            270.2,
+            401.1,
+            531.7,
+            662.3,
+            793.8,
+            878.9,
+            961.7,
+            1049.2
+          ],
+          "spanPivot": 962.9000000000001,
+          "spanLength": 81.8,
+          "spanEnd": 1044.7,
+          "supportX": 1049.2,
+          "bridgeApproachEnd": 1058.2,
+          "floorEnd": 1067.2
+        },
+        "gradePercent": 6.500000000000023
+      },
+      "sleeperStep": 0.63,
+      "fishplateStep": 15,
+      "counts": {
+        "rails": 11169,
+        "sleepers": 5867,
+        "ballast": 1855,
+        "fishplates": 960
+      },
+      "joins": [
+        {
+          "x": 0,
+          "top": -0.17,
+          "centres": [
+            -2,
+            2
+          ],
+          "innerGauge": 1.365
+        },
+        {
+          "x": 1044.7,
+          "top": 0.012,
+          "centres": [
+            -2,
+            2
+          ],
+          "innerGauge": 1.365
+        },
+        {
+          "x": 1049.2,
+          "top": 0.012,
+          "centres": [
+            -2,
+            2
+          ],
+          "innerGauge": 1.365
+        },
+        {
+          "x": 1062,
+          "top": -0.82,
+          "centres": [
+            -2.5,
+            2.5
+          ],
+          "innerGauge": 1.435
+        }
+      ],
+      "collidersAdded": 0
+    }
+  },
+  {
+    "clock": 0.05,
+    "drawnClock": 0.05,
+    "geometries": 374,
+    "textures": 74,
+    "props": {
+      "enabled": true,
+      "ready": true,
+      "failure": null,
+      "revision": 18,
+      "quality": "high",
+      "source": "accepted-T12-GLB",
+      "types": 21,
+      "loadedFiles": 42,
+      "placements": 326,
+      "drawCalls": 3,
+      "drawBudget": 8,
+      "actualTriangles": 108346,
+      "submittedTriangles": 156016,
+      "atlasBytes": 3899392,
+      "batches": [
+        {
+          "lod": 0,
+          "bucket": 0,
+          "count": 86,
+          "paddedVertices": 2076,
+          "actualTriangles": 45074
+        },
+        {
+          "lod": 0,
+          "bucket": 1,
+          "count": 26,
+          "paddedVertices": 4320,
+          "actualTriangles": 27836
+        },
+        {
+          "lod": 1,
+          "bucket": 0,
+          "count": 214,
+          "paddedVertices": 828,
+          "actualTriangles": 35436
+        }
+      ],
+      "proxyReplaced": true,
+      "collidersAdded": 0
+    },
+    "track": {
+      "owner": "m01-track-bed",
+      "bridgeOwner": "m01-bridge-structure",
+      "trainTrackOwner": "m01-track-bed",
+      "enabled": true,
+      "revision": 15,
+      "quality": "high",
+      "drawCalls": 4,
+      "drawBudget": 4,
+      "contactReveal": {
+        "x0": -15,
+        "x1": 8,
+        "bridgeBallastTop": -0.27,
+        "halfWidth": 1.66,
+        "ballastHalfWidth": 1.7,
+        "centres": [
+          -2,
+          2
+        ],
+        "centrelineSlope": 0.007142857142857143,
+        "enabled": true,
+        "materials": 2
+      },
+      "eastContact": {
+        "supportX": 1049.2,
+        "spanEnd": 1044.7,
+        "bridgeApproachEnd": 1058.2,
+        "floorEnd": 1067.2,
+        "trainJoin": 1062,
+        "topW": 0.012,
+        "topE": -0.82,
+        "halfWidth": 1.66,
+        "materials": 4,
+        "legacyBatches": 2,
+        "legacyVisible": 0,
+        "authority": {
+          "supportsX": [
+            0,
+            140.9,
+            270.2,
+            401.1,
+            531.7,
+            662.3,
+            793.8,
+            878.9,
+            961.7,
+            1049.2
+          ],
+          "spanPivot": 962.9000000000001,
+          "spanLength": 81.8,
+          "spanEnd": 1044.7,
+          "supportX": 1049.2,
+          "bridgeApproachEnd": 1058.2,
+          "floorEnd": 1067.2
+        },
+        "gradePercent": 6.500000000000023
+      },
+      "sleeperStep": 0.63,
+      "fishplateStep": 15,
+      "counts": {
+        "rails": 11169,
+        "sleepers": 5867,
+        "ballast": 1855,
+        "fishplates": 960
+      },
+      "joins": [
+        {
+          "x": 0,
+          "top": -0.17,
+          "centres": [
+            -2,
+            2
+          ],
+          "innerGauge": 1.365
+        },
+        {
+          "x": 1044.7,
+          "top": 0.012,
+          "centres": [
+            -2,
+            2
+          ],
+          "innerGauge": 1.365
+        },
+        {
+          "x": 1049.2,
+          "top": 0.012,
+          "centres": [
+            -2,
+            2
+          ],
+          "innerGauge": 1.365
+        },
+        {
+          "x": 1062,
+          "top": -0.82,
+          "centres": [
+            -2.5,
+            2.5
+          ],
+          "innerGauge": 1.435
+        }
+      ],
+      "collidersAdded": 0
+    }
+  },
+  {
+    "clock": 0.05,
+    "drawnClock": 0.05,
+    "geometries": 374,
+    "textures": 74,
+    "props": {
+      "enabled": true,
+      "ready": true,
+      "failure": null,
+      "revision": 22,
+      "quality": "high",
+      "source": "accepted-T12-GLB",
+      "types": 21,
+      "loadedFiles": 42,
+      "placements": 326,
+      "drawCalls": 3,
+      "drawBudget": 8,
+      "actualTriangles": 108346,
+      "submittedTriangles": 156016,
+      "atlasBytes": 3899392,
+      "batches": [
+        {
+          "lod": 0,
+          "bucket": 0,
+          "count": 86,
+          "paddedVertices": 2076,
+          "actualTriangles": 45074
+        },
+        {
+          "lod": 0,
+          "bucket": 1,
+          "count": 26,
+          "paddedVertices": 4320,
+          "actualTriangles": 27836
+        },
+        {
+          "lod": 1,
+          "bucket": 0,
+          "count": 214,
+          "paddedVertices": 828,
+          "actualTriangles": 35436
+        }
+      ],
+      "proxyReplaced": true,
+      "collidersAdded": 0
+    },
+    "track": {
+      "owner": "m01-track-bed",
+      "bridgeOwner": "m01-bridge-structure",
+      "trainTrackOwner": "m01-track-bed",
+      "enabled": true,
+      "revision": 16,
+      "quality": "high",
+      "drawCalls": 4,
+      "drawBudget": 4,
+      "contactReveal": {
+        "x0": -15,
+        "x1": 8,
+        "bridgeBallastTop": -0.27,
+        "halfWidth": 1.66,
+        "ballastHalfWidth": 1.7,
+        "centres": [
+          -2,
+          2
+        ],
+        "centrelineSlope": 0.007142857142857143,
+        "enabled": true,
+        "materials": 2
+      },
+      "eastContact": {
+        "supportX": 1049.2,
+        "spanEnd": 1044.7,
+        "bridgeApproachEnd": 1058.2,
+        "floorEnd": 1067.2,
+        "trainJoin": 1062,
+        "topW": 0.012,
+        "topE": -0.82,
+        "halfWidth": 1.66,
+        "materials": 4,
+        "legacyBatches": 2,
+        "legacyVisible": 0,
+        "authority": {
+          "supportsX": [
+            0,
+            140.9,
+            270.2,
+            401.1,
+            531.7,
+            662.3,
+            793.8,
+            878.9,
+            961.7,
+            1049.2
+          ],
+          "spanPivot": 962.9000000000001,
+          "spanLength": 81.8,
+          "spanEnd": 1044.7,
+          "supportX": 1049.2,
+          "bridgeApproachEnd": 1058.2,
+          "floorEnd": 1067.2
+        },
+        "gradePercent": 6.500000000000023
+      },
+      "sleeperStep": 0.63,
+      "fishplateStep": 15,
+      "counts": {
+        "rails": 11169,
+        "sleepers": 5867,
+        "ballast": 1855,
+        "fishplates": 960
+      },
+      "joins": [
+        {
+          "x": 0,
+          "top": -0.17,
+          "centres": [
+            -2,
+            2
+          ],
+          "innerGauge": 1.365
+        },
+        {
+          "x": 1044.7,
+          "top": 0.012,
+          "centres": [
+            -2,
+            2
+          ],
+          "innerGauge": 1.365
+        },
+        {
+          "x": 1049.2,
+          "top": 0.012,
+          "centres": [
+            -2,
+            2
+          ],
+          "innerGauge": 1.365
+        },
+        {
+          "x": 1062,
+          "top": -0.82,
+          "centres": [
+            -2.5,
+            2.5
+          ],
+          "innerGauge": 1.435
+        }
+      ],
+      "collidersAdded": 0
+    }
+  },
+  {
+    "clock": 0.05,
+    "drawnClock": 0.05,
+    "geometries": 374,
+    "textures": 74,
+    "props": {
+      "enabled": true,
+      "ready": true,
+      "failure": null,
+      "revision": 26,
+      "quality": "high",
+      "source": "accepted-T12-GLB",
+      "types": 21,
+      "loadedFiles": 42,
+      "placements": 326,
+      "drawCalls": 3,
+      "drawBudget": 8,
+      "actualTriangles": 108346,
+      "submittedTriangles": 156016,
+      "atlasBytes": 3899392,
+      "batches": [
+        {
+          "lod": 0,
+          "bucket": 0,
+          "count": 86,
+          "paddedVertices": 2076,
+          "actualTriangles": 45074
+        },
+        {
+          "lod": 0,
+          "bucket": 1,
+          "count": 26,
+          "paddedVertices": 4320,
+          "actualTriangles": 27836
+        },
+        {
+          "lod": 1,
+          "bucket": 0,
+          "count": 214,
+          "paddedVertices": 828,
+          "actualTriangles": 35436
+        }
+      ],
+      "proxyReplaced": true,
+      "collidersAdded": 0
+    },
+    "track": {
+      "owner": "m01-track-bed",
+      "bridgeOwner": "m01-bridge-structure",
+      "trainTrackOwner": "m01-track-bed",
+      "enabled": true,
+      "revision": 17,
+      "quality": "high",
+      "drawCalls": 4,
+      "drawBudget": 4,
+      "contactReveal": {
+        "x0": -15,
+        "x1": 8,
+        "bridgeBallastTop": -0.27,
+        "halfWidth": 1.66,
+        "ballastHalfWidth": 1.7,
+        "centres": [
+          -2,
+          2
+        ],
+        "centrelineSlope": 0.007142857142857143,
+        "enabled": true,
+        "materials": 2
+      },
+      "eastContact": {
+        "supportX": 1049.2,
+        "spanEnd": 1044.7,
+        "bridgeApproachEnd": 1058.2,
+        "floorEnd": 1067.2,
+        "trainJoin": 1062,
+        "topW": 0.012,
+        "topE": -0.82,
+        "halfWidth": 1.66,
+        "materials": 4,
+        "legacyBatches": 2,
+        "legacyVisible": 0,
+        "authority": {
+          "supportsX": [
+            0,
+            140.9,
+            270.2,
+            401.1,
+            531.7,
+            662.3,
+            793.8,
+            878.9,
+            961.7,
+            1049.2
+          ],
+          "spanPivot": 962.9000000000001,
+          "spanLength": 81.8,
+          "spanEnd": 1044.7,
+          "supportX": 1049.2,
+          "bridgeApproachEnd": 1058.2,
+          "floorEnd": 1067.2
+        },
+        "gradePercent": 6.500000000000023
+      },
+      "sleeperStep": 0.63,
+      "fishplateStep": 15,
+      "counts": {
+        "rails": 11169,
+        "sleepers": 5867,
+        "ballast": 1855,
+        "fishplates": 960
+      },
+      "joins": [
+        {
+          "x": 0,
+          "top": -0.17,
+          "centres": [
+            -2,
+            2
+          ],
+          "innerGauge": 1.365
+        },
+        {
+          "x": 1044.7,
+          "top": 0.012,
+          "centres": [
+            -2,
+            2
+          ],
+          "innerGauge": 1.365
+        },
+        {
+          "x": 1049.2,
+          "top": 0.012,
+          "centres": [
+            -2,
+            2
+          ],
+          "innerGauge": 1.365
+        },
+        {
+          "x": 1062,
+          "top": -0.82,
+          "centres": [
+            -2.5,
+            2.5
+          ],
+          "innerGauge": 1.435
+        }
+      ],
+      "collidersAdded": 0
+    }
+  }
+]
