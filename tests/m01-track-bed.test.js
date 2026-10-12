@@ -1,0 +1,37 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import * as THREE from 'three';
+import {TczewWorld} from '../src/world/tczew-world.js';
+import {M01TrackBed,buildTrackBedDescriptors,trackBedPaths,trackBedSample} from '../src/render/m01-track-bed.js';
+import {supportStructureDescriptors} from '../src/render/m01-bridge-structure.js';
+import {M01TrainConsistDetail,M01_TRAIN_ART_OFFSET_Y} from '../src/render/m01-train-consist-detail.js';
+const near=(a,b,epsilon=1e-5)=>assert.ok(Math.abs(a-b)<epsilon,`${a} versus ${b}`);
+function fixture(){const world=new TczewWorld(),parent=new THREE.Group(),materials={wood:new THREE.MeshStandardMaterial(),metal:new THREE.MeshStandardMaterial(),stone:new THREE.MeshStandardMaterial()},bed=new M01TrackBed(parent,world,materials);return {world,parent,bed,close(){bed.dispose();Object.values(materials).forEach(m=>m.dispose());}};}
+test('terrain approaches, siding switch, train extension share exactly four actual submissions; quality steps use prepared instances',()=>{
+ const f=fixture();try{const high=f.bed.batches.sleepers;f.bed.sync(f.world,'high');const count=high.count,resources=Object.values(f.bed.batches),before=f.bed.revision,matrices=high.instanceMatrix;for(let i=0;i<100;i++)f.bed.sync(f.world,'high');assert.equal(f.bed.revision,before);assert.equal(high.instanceMatrix,matrices);assert.equal(f.parent.children[0].children.filter(m=>m.isInstancedMesh&&m.visible).length,4);f.bed.sync(f.world,'low');assert.ok(Math.abs(high.count-count/2)<10);assert.equal(f.bed.diagnostics.sleeperStep,1.26);assert.deepEqual(Object.values(f.bed.batches),resources);f.bed.sync(f.world,'medium');assert.equal(high.count,count);
+ const paths=trackBedPaths(f.world);assert.ok(paths.some(p=>p.id==='station-siding'));assert.ok(paths.some(p=>p.id==='train-extension'));assert.equal(f.bed.descriptors.rails.filter(p=>p.width===.038).length,3,'actual switch tongues and frog');
+ }finally{f.close();}
+});
+test('actual descriptor endpoints match immutable bridge support profiles and existing train heads; gradual gauge/top transition',()=>{
+ const w=new TczewWorld(),desc=buildTrackBedDescriptors(w),supports=[0,155,270,400,530,660,790,915,1040],west=supportStructureDescriptors({prefix:'rail',supportIndex:0,supportsX:supports,lod:0}),east=supportStructureDescriptors({prefix:'rail',supportIndex:8,supportsX:supports,lod:0});
+ const head=items=>items.medium.filter(p=>p.kind==='rail'&&Math.abs(p.s[1]-.045)<1e-5);
+ for(const item of head(west))near(item.p[1]+item.s[1]/2,-.079); // midpoint of the measured -.17 → .012 ramp
+ for(const item of head(east))near(item.p[1]+item.s[1]/2,.012);
+ for(const path of trackBedPaths(w).filter(p=>p.id.startsWith('east-join:'))){const start=trackBedSample(w,path,path.points[0],path.points[1],0),end=trackBedSample(w,path,path.points[1],path.points[2],1);near(start.top,.012);near(start.z,path.sign*2);near(start.halfGauge,.7175);near(end.top,-.82);near(end.z,path.sign*2.5);near(end.halfGauge,.7525);}
+ const ends=desc.rails.filter(p=>p.width===.07).flatMap(p=>[p.a,p.b]);
+ for(const centre of [-2,2])for(const side of [-1,1]){assert.ok(ends.some(p=>Math.abs(p[0]-1049)<1e-5&&Math.abs(p[1]+.0105)<1e-5&&Math.abs(p[2]-centre-side*.7175)<1e-5));assert.ok(ends.some(p=>Math.abs(p[0])<1e-5&&Math.abs(p[1]+.1925)<1e-5&&Math.abs(p[2]-centre-side*.7175)<1e-3));}
+ for(const side of [-1,1])assert.ok(ends.some(p=>Math.abs(p[0]-1062)<1e-5&&Math.abs(p[1]+.84)<1e-5&&Math.abs(p[2]+2.5-side*.7525)<1e-5));
+ const train=desc.rails.filter(p=>p.height===.04&&p.a[0]>=1062&&p.b[0]<=2000&&Math.abs(p.a[1]+.84)<1e-5&&Math.abs(p.b[1]+.84)<1e-5&&Math.abs((p.a[2]+p.b[2])/2+2.5)<1);
+ near(Math.min(...train.map(p=>p.a[0])),1062);near(Math.max(...train.map(p=>p.b[0])),2000);near(M01_TRAIN_ART_OFFSET_Y,-.8325);
+});
+test('fishplates repeat at 15 metres and sleepers at .63 in High; continuous ballast reaches the east approach slope',()=>{
+ const w=new TczewWorld(),d=buildTrackBedDescriptors(w),ties=d.sleepers.filter(p=>p.p[0]>=1062&&p.p[0]<=2000&&Math.abs(p.p[2]+2.5)<1e-6);for(let i=1;i<ties.length;i++)near(ties[i].p[0]-ties[i-1].p[0],.63);
+ const plates=d.fishplates.filter(p=>p.p[0]>1062&&p.p[0]<2000&&Math.abs(p.p[2]-(-2.5-.7525-.022))<1e-6);for(let i=1;i<plates.length;i++)near(plates[i].p[0]-plates[i-1].p[0],15);
+ assert.ok(d.ballast.filter(p=>p.a[0]>=1049&&p.b[0]<=1062).some(p=>p.height>1),'deep continuous ballast supports renderer transition');
+});
+test('restored world with same revision replaces prepared terrain geometry once; disposal is idempotent',()=>{const f=fixture();const previous=f.bed.batches.rails,rev=f.bed.revision,w=new TczewWorld();w.revision=f.world.revision;f.bed.sync(w,'medium');assert.notEqual(f.bed.batches.rails,previous);assert.ok(f.bed.revision>rev);f.bed.dispose();f.bed.dispose();assert.equal(f.parent.children.length,0);f.close();});
+test('production train ownership skips duplicate track allocations while standalone detail retains its existing API',()=>{const train=new THREE.Group(),group=new THREE.Group();train.userData.m01ExternalTrack='m01-track-bed';train.add(group);const box=new THREE.BoxGeometry(),wood=new THREE.MeshStandardMaterial(),detail=new M01TrainConsistDetail(group,box,wood);try{assert.equal(detail.track,null);detail.sync([],'high');assert.equal(detail.diagnostics.trackOwner,'m01-track-bed');assert.equal(detail.trackTriangles,0);assert.equal(detail.group.children.filter(m=>m.name.includes('train_track')).length,0);}finally{detail.dispose();box.dispose();wood.dispose();}});
+test('contact reveal wraps existing macro hooks and cache keys, clips only ballast footprint, never changes terrain geometry/world heights',()=>{
+ const f=fixture(),geometry=new THREE.PlaneGeometry(30,15,10,5),bytes=Float32Array.from(geometry.attributes.position.array),material=new THREE.MeshStandardMaterial();let tier='high',compiled=0;const compile=shader=>{compiled++;shader.uniforms.originalMacro={value:7};shader.vertexShader='// original macro\n'+shader.vertexShader;},key=()=>`terrain-${tier}`;material.onBeforeCompile=compile;material.customProgramCacheKey=key;const before=[f.world.heightAt(-5,2),f.world.terrainHeightAt(-5,2)],descriptors=f.bed.descriptors;
+ f.bed.installContactReveal(material);f.bed.installContactReveal(material);assert.equal(f.bed.contactMaterials.length,1);const shader={uniforms:{},vertexShader:'#include <project_vertex>',fragmentShader:'#include <clipping_planes_fragment>'};material.onBeforeCompile(shader);assert.equal(compiled,1);assert.equal(shader.uniforms.originalMacro.value,7);assert.equal(shader.uniforms.m01RailContact.value,1);assert.match(shader.fragmentShader,/x>=-15\.0&&vM01RailContact\.x<=0\.0/);assert.match(shader.fragmentShader,/abs\(railOffset-2\.0\)<1\.66/);assert.match(shader.vertexShader,/original macro/);assert.equal(material.customProgramCacheKey(),'terrain-high-m01-rail-contact-v1');tier='low';assert.equal(material.customProgramCacheKey(),'terrain-low-m01-rail-contact-v1');f.bed.setEnabled(false);assert.equal(shader.uniforms.m01RailContact.value,0);f.bed.setEnabled(true);assert.equal(shader.uniforms.m01RailContact.value,1);assert.deepEqual(geometry.attributes.position.array,bytes);assert.deepEqual([f.world.heightAt(-5,2),f.world.terrainHeightAt(-5,2)],before);assert.equal(f.bed.descriptors,descriptors);f.bed.dispose();assert.equal(material.onBeforeCompile,compile);assert.equal(material.customProgramCacheKey,key);geometry.dispose();material.dispose();f.close();
+});

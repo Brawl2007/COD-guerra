@@ -137,3 +137,17 @@ export function propCountsForQuality(items,quality='medium'){
   for(const p of visible){byArea[p.area]=(byArea[p.area]??0)+1;byCluster[p.cluster]=(byCluster[p.cluster]??0)+1;}
   return {total:visible.length,byArea,byCluster};
 }
+
+// Original T12 kit placements are collider-free; cluster anchors and all gameplay geometry stay authoritative.
+export function buildM01AcceptedPropPlacements(world){
+ const items=[],add=(type,x,z,yaw=0,quality='low',lift=0,scale=[1,1,1],area='railway-approach',cluster='rail-infrastructure')=>items.push({id:`t12_${items.length}`,type,x,z,y:world.terrainHeightAt(x,z)+lift,yaw,quality,scale,area,cluster});
+ for(const c of M01_PROP_CLUSTERS){const types=c.style==='rail'?['sleeper_stack','point_lever','railway_lantern','ammo_tin_box']:c.style==='freight'?['supply_crate_planked','barrel_wood','hand_cart','horse_cart']:c.style==='maintenance'?['sleeper_stack','drum_fuel_200l','jerrycans','ammo_tin_box']:['ammo_crate_wood','sandbag_burst','sandbag_run','sandbag_corner'];
+  for(let i=0;i<types.length;i++){const p=rotate(c,(i%2)*2.8-1.2,Math.floor(i/2)*2.5-.3);add(types[i],p.x,p.z,c.yaw,i<2||types[i]==='railway_lantern'?'low':i===2?'medium':'high',0,[1,1,1],c.area,c.id);}
+ }
+ // Wires retain the kit's authored sag and crossbar spacing; pole bases follow the embankment-side terrain.
+ for(let x=-520;x<=-64;x+=12){const z=-46+(x+520)*.068;add('telegraph_pole',x,z);if(x<-64){const nextZ=z+12*.068,dy=world.terrainHeightAt(x+12,nextZ)-world.terrainHeightAt(x,z);add('telegraph_wire_span',x,z,-Math.atan2(nextZ-z,12),'low',0,[Math.hypot(12,nextZ-z)/12,1,1]);items.at(-1).rise=dy;}}
+ for(let x=-318;x<-42;x+=3)add('fence_barbed',x,66,0,'low',0,[1,1,1],'combat-area');
+ for(let x=-450;x<-354;x+=3)add('fence_wood',x,61,0,'medium',0,[1,1,1],'station-yard');
+ for(const [type,x,z,yaw]of [['water_crane',-415,-23,0],['coal_pile',-402,-24,0],['semaphore_signal',-345,-22,0],['semaphore_signal',-60,-9,Math.PI],['point_lever',-438,-24,.25]])add(type,x,z,yaw,'low',0,[1,1,1],'station-yard');
+ return items;
+}
