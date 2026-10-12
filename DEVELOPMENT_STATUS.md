@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## T13/T32 estruturas de campo aceites — 2026-10-12
+
+T13+T32 **ACEITES** em `codex/m01-t13-t32-field-structures-v1` @ `cbbe0d7` (verifier PASS, reviewer ACCEPT): barracão, abrigo com entrada em L, posto intacto/destruído e casamata, 15 GLBs originais CC0 com 3 LODs e manifesto SHA. Runtime opcional com LOD, proxies de fallback e ownership seguro, incluindo cargas parciais/stale e restauro em pausa. Colisores/rotas, estação, simulação e modelos anteriores preservados. CI [38225594014](https://github.com/Brawl2007/COD-guerra/actions/runs/38225594014): 648/648 Node, 173 tooling, build; CI [38225594010](https://github.com/Brawl2007/COD-guerra/actions/runs/38225594010): 4/4 browser/galeria/autoridade. Produção local3/3, 11 pares A/B e 20 imagens de galeria; prova em `docs/verification/m01-runtime/m01-t13-t32-field-structures-v1/`. Integração a publicar após validar a junção. Arquitectura artística reconstruída; sem FPS/VRAM medidos; M01 continua PROTÓTIPO JOGÁVEL.
+
 ## T12 Kit de props aceite e integrado — 2026-10-11
 
 `M01-PROP-KIT-V1` **ACEITE** (branch `claude/m01-prop-kit-v1` @ `fe7982f`; verifier PASS, reviewer ACCEPT) e juntado em `claude/m01-integration` @ `443f74d` (npm test 606/606, build OK, `.agent/tests` OK). 21 props originais procedurais LOD0/LOD1 (≤1440/≤276 tris) em `assets/models/provisional/m01/props/`, gerador `tools/assets/m01-props/`, teste `tests/m01-props-kit.test.js`, capturas em `docs/assets/m01-props/`. Licença provisória (por decidir pelo proprietário). Ainda não ligados ao jogo (T33). Sem alteração de `src/`; sem FPS medido.

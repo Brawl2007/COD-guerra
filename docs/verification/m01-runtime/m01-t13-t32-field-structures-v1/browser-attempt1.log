@@ -1,0 +1,59 @@
+[1A[2K[2m[WebServer] [22m(node:3305) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 3 tests using 1 worker
+
+[1A[2K(node:3329) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:3329) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/3] tests/browser/m01-field-structures.spec.js:38:1 › actual renderer: same paused frame A/B for 03/04/15/16 and all four closeups, including destroyed
+[1A[2K[2/3] tests/browser/m01-field-structures.spec.js:47:1 › Low/High quality, checkpoint world replacement, reload and toggle churn keep bounded roots and one visible model
+[1A[2K  1) tests/browser/m01-field-structures.spec.js:47:1 › Low/High quality, checkpoint world replacement, reload and toggle churn keep bounded roots and one visible model 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeLessThanOrEqual[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: <= [32m318[39m
+    Received:    [31m343[39m
+
+      50 |  for(let i=0;i<6;i++){await toggle(page,false);await toggle(page,true);}expect(await page.evaluate(()=>window.gameVerificationState())).toEqual(state);const geometries=await page.evaluate(()=>window.gameDiagnostics().geometries);
+      51 |  // Restart replaces authoritative world while the same controller/assets remain resident.
+    > 52 |  await page.evaluate(()=>{const hold=e=>{if(document.pointerLockElement){document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();document.exitPointerLock();}};document.addEventListener('pointerlockchange',hold,true);});await page.locator('#restart-checkpoint').click();await page.waitForFunction(()=>{const d=window.gameDiagnostics();return d.paused&&d.m01.demolition.clock===d.clock&&d.m01.fieldStructures.ready;});noDuplicateProxies(await page.evaluate(()=>window.gameDiagnostics()));expect(await page.evaluate(()=>window.gameDiagnostics().geometries)).toBeLessThanOrEqual(geometries+2);
+         |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ^
+      53 |  await page.reload();await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.fieldStructures?.ready,null,{timeout:120000});await page.evaluate(()=>{const hold=e=>{if(document.pointerLockElement){document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();document.exitPointerLock();}};document.addEventListener('pointerlockchange',hold,true);});await page.locator('#continue').click();await page.waitForFunction(()=>{const d=window.gameDiagnostics();return d.paused&&d.m01.fieldStructures.viewProxies.every(p=>!p.visible)&&d.m01.demolition.clock===d.clock;});noDuplicateProxies(await page.evaluate(()=>window.gameDiagnostics()));expect(errors).toEqual([]);
+      54 | });
+      55 | test('failed optional kit retains exact proxies; reload restores; async ready redraws a paused frame',async({browser},info)=>{
+        at /workspace/COD-guerra/tests/browser/m01-field-structures.spec.js:52:589
+
+    attachment #5: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-field-structures-Low-H-f9275-roots-and-one-visible-model/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-field-structures-Low-H-f9275-roots-and-one-visible-model/error-context.md
+
+    attachment #7: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-field-structures-Low-H-f9275-roots-and-one-visible-model/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-field-structures-Low-H-f9275-roots-and-one-visible-model/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:4376) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:4376) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[3/3] tests/browser/m01-field-structures.spec.js:55:1 › failed optional kit retains exact proxies; reload restores; async ready redraws a paused frame
+[1A[2K  1 failed
+    tests/browser/m01-field-structures.spec.js:47:1 › Low/High quality, checkpoint world replacement, reload and toggle churn keep bounded roots and one visible model 
+  2 passed (8.3m)

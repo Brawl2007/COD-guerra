@@ -1,5 +1,11 @@
 # active-memory handoff: COD-guerra — Captain (M01 development)
 
+## UPDATE T13/T32 — 2026-10-12
+
+T13 kit e T32 runtime **ACEITES** em `codex/m01-t13-t32-field-structures-v1` @ `cbbe0d7`, base `a1dd76b`. Verifier PASS/reviewer ACCEPT; CI38225594014 verde (648 Node, 173 tooling, build) e CI38225594010 verde (4/4 browser/galeria, reprodução e autoridade). 4 estruturas originais, 15 GLBs/3 LODs, 20 imagens de galeria, 11 pares runtime A/B; entradas/colisores/rotas/estação e modelos prévios preservados. Memória e obrigações de regressão específicas registadas. Prova: `docs/verification/m01-runtime/m01-t13-t32-field-structures-v1/HANDOFF.md`.
+
+NEXT_ACTION desta entrega: buscar integração actual, juntar sem rebase/force-push, validar `npm test`/build e publicar `claude/m01-integration`. O pedido desta sessão abrange T13 e T32; as branches concorrentes publicadas do Claude são áudio/documentação e foram preservadas.
+
 ## UPDATE T09/T28 — 2026-10-11
 
 T09 pipeline de materiais e T28 terreno macro **ACEITES** em `codex/m01-t09-t28-materials-closeout-v1` @ `c739b08`, base integração `6edc3d6`. Verifier PASS e reviewer ACCEPT; CI38174455690 verde (639/639 Node, 173 tooling, build) e CI38174455699 verde (terreno9/9, atlas3/3, regeneração e autoridade). 16 materiais originais PBR High/Low; terreno com encostas, caminhos, balastro e margens húmidas; Low macro-only; modelos/mesh/simulação preservados. Prova: `docs/verification/m01-runtime/m01-t09-t28-closeout-v1/HANDOFF.md`. Regressão e memória específicas registadas. Sem FPS/VRAM medidos; M01 continua PROTÓTIPO JOGÁVEL.

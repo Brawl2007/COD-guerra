@@ -1,0 +1,101 @@
+{
+  "kind": "Authoring gallery camera only, actual original GLBs; real mouse orbit/zoom controls",
+  "report": [
+    {
+      "id": "shelter",
+      "name": "shelter-north-entry",
+      "dx": 0.265,
+      "dy": -0.065,
+      "wheel": -500,
+      "canvas": {
+        "x": 0,
+        "y": 74,
+        "width": 1280,
+        "height": 547.1875
+      },
+      "asset": {
+        "id": "shelter",
+        "lod": 0,
+        "variant": "intact",
+        "triangles": 528
+      }
+    },
+    {
+      "id": "shelter",
+      "name": "shelter-interior",
+      "dx": 0.265,
+      "dy": -0.065,
+      "wheel": -1850,
+      "canvas": {
+        "x": 0,
+        "y": 74,
+        "width": 1280,
+        "height": 547.1875
+      },
+      "asset": {
+        "id": "shelter",
+        "lod": 0,
+        "variant": "intact",
+        "triangles": 528
+      }
+    },
+    {
+      "id": "rail_shed",
+      "name": "shed-east-window",
+      "dx": -0.38,
+      "dy": -0.06,
+      "wheel": -250,
+      "canvas": {
+        "x": 0,
+        "y": 74,
+        "width": 1280,
+        "height": 547.1875
+      },
+      "asset": {
+        "id": "rail_shed",
+        "lod": 0,
+        "variant": "intact",
+        "triangles": 1120
+      }
+    },
+    {
+      "id": "rail_shed",
+      "name": "shed-west-entry-bench",
+      "dx": 0.132,
+      "dy": -0.079,
+      "wheel": -2400,
+      "canvas": {
+        "x": 0,
+        "y": 74,
+        "width": 1280,
+        "height": 547.1875
+      },
+      "asset": {
+        "id": "rail_shed",
+        "lod": 0,
+        "variant": "intact",
+        "triangles": 1120
+      }
+    },
+    {
+      "id": "casemate",
+      "name": "casemate-east-embrasures",
+      "dx": -0.38,
+      "dy": -0.06,
+      "wheel": -250,
+      "canvas": {
+        "x": 0,
+        "y": 74,
+        "width": 1280,
+        "height": 547.1875
+      },
+      "asset": {
+        "id": "casemate",
+        "lod": 0,
+        "variant": "intact",
+        "triangles": 828
+      }
+    }
+  ],
+  "errors": []
+}
