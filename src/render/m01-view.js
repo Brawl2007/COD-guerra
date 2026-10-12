@@ -8,6 +8,8 @@ import { actorPose } from './m01-actor-pose.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { texturedSurface,weatheredBridgeSurface } from './m01-surfaces.js';
 import { M01TerrainMaterial } from './m01-terrain-material.js';
+import {M01TerrainRelief} from './m01-terrain-relief.js';
+import {M01FarLandscape} from './m01-far-landscape.js';
 import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';
 import { applyLighting, viewLightingDiagnostics, M01_FOG_RANGE } from './m01-lighting.js';
 import { M01Water } from './m01-water.js';
@@ -147,21 +149,18 @@ export class M01View {
   }
   buildTerrain(world){
     this.world=world;this.terrain?.setWorld(world);   // read-only: bakes the macro mask from the layout
-    const geometry=new THREE.PlaneGeometry(2000,650,400,130);geometry.rotateX(-Math.PI/2);geometry.translate(300,0,40);
-    const pos=geometry.attributes.position;
-    for(let i=0;i<pos.count;i++)pos.setY(i,world.terrainHeightAt(pos.getX(i),pos.getZ(i)));
-    geometry.computeVertexNormals();this.geometry.push(geometry);
-    const terrain=new THREE.Mesh(geometry,this.materials.ground);terrain.receiveShadow=true;this.scene.add(terrain);this.terrainMeshes.push(terrain);
+    this.terrainRelief=new M01TerrainRelief(this.scene,world,this.materials.ground,{terrainMeshes:this.terrainMeshes,onUpdate:()=>{this.lastFrame=null;}});
+    this.farLandscape=new M01FarLandscape(this.scene,world,{onUpdate:()=>{this.lastFrame=null;}});
     this.environment=new M01Environment(this.scene,world,this.materials,{propVertexTextures:this.engine.capabilities.maxVertexTextures>0});
     this.environment.trackBed.installContactReveal(this.materials.ground);this.environment.trackBed.installContactReveal(this.terrainLegacyMaterial);
+    this.terrainFillers=[this.mesh('box','ground',[-900,-4,0],[400,.5,6500]),this.mesh('box','ground',[2050,-1.3,0],[1500,.5,6500]),this.mesh('box','ground',[665,-5.3,0],[790,.5,6500])];
+    for(const mesh of this.terrainFillers){mesh.visible=false;this.terrainRelief.trackAuxiliaryGround(mesh);}
     this.fieldProxyMeshes=[];
     if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')){
       this.fieldStructuresDebug={setEnabled:value=>this.environment?.fieldStructures.setEnabled(value),get:()=>this.environment?.fieldStructures.enabled};window.m01FieldStructuresDebug=this.fieldStructuresDebug;
       this.railPropsDebug={setPropsEnabled:value=>this.environment?.propsRuntime.setEnabled(value),setTrackEnabled:value=>this.environment?.trackBed.setEnabled(value)};window.m01RailPropsDebug=this.railPropsDebug;
+      this.reliefHorizonDebug={setReliefEnabled:value=>{const enabled=this.terrainRelief.setEnabled(value);for(const mesh of this.terrainFillers)mesh.visible=!enabled;return enabled;},setFarEnabled:value=>this.farLandscape.setEnabled(value),get:()=>({relief:this.terrainRelief.enabled,far:this.farLandscape.enabled})};window.m01ReliefHorizonDebug=this.reliefHorizonDebug;
     }
-    this.mesh('box','ground',[-900,-4,0],[400,.5,6500]);
-    this.mesh('box','ground',[2050,-1.3,0],[1500,.5,6500]);
-    this.mesh('box','ground',[665,-5.3,0],[790,.5,6500]);
     this.mesh('box','water',[145,-9.94,0],[240,.08,6500]);
     // Station openings and their closed visual shells belong to M01Environment.
     {const proxy=this.mesh('box','dark',[-262,.57,20],[21,.18,13]);proxy.userData.m01FieldProxy='rail_shed';this.fieldProxyMeshes.push(proxy);}
@@ -175,6 +174,7 @@ export class M01View {
   }
   syncSolids(world){
     if(this.world!==world){if(!this.world)this.buildTerrain(world);else{this.world=world;this.terrain?.setWorld(world);}}
+    this.terrainRelief?.sync(world,this.owner?.quality);
     const fieldRevision=this.environment?.fieldStructures.revision??0;
     for(const proxy of this.fieldProxyMeshes??[])proxy.visible=!this.environment.fieldStructures.replaces(proxy.userData.m01FieldProxy);
     if(this.revision===world.revision&&this.solidWorld===world&&this.solidFieldRevision===fieldRevision)return;
@@ -650,7 +650,7 @@ export class M01View {
     const canvas=this.owner.canvas,previous=this.lastFrame;
     const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
       width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,
-      propsRuntime:this.environment?.propsRuntime.revision,trackBed:this.environment?.trackBed.revision,fieldStructures:this.environment?.fieldStructures.revision,wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles
+      reliefRevision:this.terrainRelief?.revision,farRevision:this.farLandscape?.revision,propsRuntime:this.environment?.propsRuntime.revision,trackBed:this.environment?.trackBed.revision,fieldStructures:this.environment?.fieldStructures.revision,wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
@@ -674,6 +674,7 @@ export class M01View {
     const fov=player.aiming?48:70;
     this.camera.aspect=this.weaponCamera.aspect=aspect;this.camera.fov=THREE.MathUtils.lerp(this.camera.fov,fov,Math.min(1,dt*12));
     this.camera.updateProjectionMatrix();this.weaponCamera.updateProjectionMatrix();
+    this.terrainRelief?.beginFrame(this.camera,time);this.farLandscape?.beginFrame(this.camera);this.farLandscape?.sync(sim.world,this.owner.quality,time,this.lightingModel);
     this.impostors?.sync({camera:this.camera,clock:time,battleClock:sim.battleClock,fog:this.lightingModel?.fog.color??[.63,.65,.65],sunColor:this.lightingModel?.sun.color,sunDir:this.lightingModel?.sky.sunDir,viewportHeight:this.owner.canvas.height});
     const w=sim.weapon,reload=w.reloadProgress(time*1000),bolt=w.boltCycling?Math.min(1,(time*1000-w.started)/1050):0;
     this.weaponRoot.position.set(player.aiming?0:.20,player.aiming?-.11:-.24,-.60);
@@ -769,6 +770,7 @@ export class M01View {
     environmentProps:this.environment?.propDiagnostics,trackBed:this.environment?.trackBed.diagnostics,bridgePortalPolish:this.portalPolish?.diagnostics,bridgeStructure:this.bridgeStructure?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
     damageDecals:this.damageDecals.diagnostics,
     terrain:this.terrain?this.terrain.diagnostics:{material:'legacy-soil',textures:1,gpuBytes:0,quality:this.owner.quality},
+    terrainRelief:this.terrainRelief?.diagnostics,farLandscape:this.farLandscape?.diagnostics,
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},
     combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),
     demolition:{clock:this.lastClock,collapseSeconds:M01_COLLAPSE_DURATION,budget:M01_DEMOLITION_BUDGET,entries:this.demolitionState.entries,pieces:this.demolitionState.pieces,flash:this.demolitionState.flash,
@@ -781,6 +783,7 @@ export class M01View {
     if(this.disposed)return;
     this.disposed=true;if(typeof window!=='undefined'&&window.m01RailPropsDebug===this.railPropsDebug)delete window.m01RailPropsDebug;if(typeof window!=='undefined'&&window.m01FieldStructuresDebug===this.fieldStructuresDebug)delete window.m01FieldStructuresDebug;if(typeof window!=='undefined'&&window.m01TerrainDebug===this.terrainDebug)delete window.m01TerrainDebug;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();this.impostors?.dispose();
     this.fallbackFx.dispose();this.weaponWorldFx.dispose();this.weaponLighting.dispose();
+    if(typeof window!=='undefined'&&window.m01ReliefHorizonDebug===this.reliefHorizonDebug)delete window.m01ReliefHorizonDebug;this.terrainRelief?.dispose();this.farLandscape?.dispose();
     this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.environment?.dispose();this.assets.dispose();this.terrain?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
     const textures=new Set();for(const m of new Set([...Object.values(this.materials),this.terrainLegacyMaterial].filter(Boolean))){if(m===this.terrain?.material)continue;if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
     this.scene.traverse(n=>{if(n.isInstancedMesh)n.dispose();});this.scene.clear();this.weaponScene.clear();
