@@ -153,6 +153,10 @@ export class M01View {
     geometry.computeVertexNormals();this.geometry.push(geometry);
     const terrain=new THREE.Mesh(geometry,this.materials.ground);terrain.receiveShadow=true;this.scene.add(terrain);this.terrainMeshes.push(terrain);
     this.environment=new M01Environment(this.scene,world,this.materials);
+    this.fieldProxyMeshes=[];
+    if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')){
+      this.fieldStructuresDebug={setEnabled:value=>this.environment?.fieldStructures.setEnabled(value),get:()=>this.environment?.fieldStructures.enabled};window.m01FieldStructuresDebug=this.fieldStructuresDebug;
+    }
     this.mesh('box','ground',[-900,-4,0],[400,.5,6500]);
     this.mesh('box','ground',[2050,-1.3,0],[1500,.5,6500]);
     this.mesh('box','ground',[665,-5.3,0],[790,.5,6500]);
@@ -174,22 +178,26 @@ export class M01View {
     pieces.forEach((t,i)=>{dummy.position.set(t.x,t.y,t.z);dummy.rotation.set(0,t.angle,0);dummy.scale.set(t.length,.12,.08);dummy.updateMatrix();tracks.setMatrixAt(i,dummy.matrix);});
     tracks.receiveShadow=true;tracks.computeBoundingSphere();this.scene.add(tracks);
     // Station openings and their closed visual shells belong to M01Environment.
-    this.mesh('box','dark',[-262,.57,20],[21,.18,13]);
+    {const proxy=this.mesh('box','dark',[-262,.57,20],[21,.18,13]);proxy.userData.m01FieldProxy='rail_shed';this.fieldProxyMeshes.push(proxy);}
     // Signals identify the barracão, sapper station and shelter without minimap arrows.
-    this.mesh('box','wood',[-263,-2.5,22],[1.2,1,.8]);
+    {const proxy=this.mesh('box','wood',[-263,-2.5,22],[1.2,1,.8]);proxy.userData.m01FieldProxy='rail_shed';this.fieldProxyMeshes.push(proxy);}
     this.mesh('box','metal',[-120,-2.65,9],[1.4,.7,.8]);
-    this.mesh('box','ground',[-260,-4.5,70],[8,.4,9]);
-    this.mesh('box','stone',[-260,-1.8,75],[10,.8,3]);
-    this.mesh('box','stone',[-264,-2.5,71],[1,3,9]);
-    this.mesh('box','stone',[-256,-2.5,71],[1,3,9]);
+    {const proxy=this.mesh('box','ground',[-260,-4.5,70],[8,.4,9]);proxy.userData.m01FieldProxy='shelter';this.fieldProxyMeshes.push(proxy);}
+    {const proxy=this.mesh('box','stone',[-260,-1.8,75],[10,.8,3]);proxy.userData.m01FieldProxy='shelter';this.fieldProxyMeshes.push(proxy);}
+    {const proxy=this.mesh('box','stone',[-264,-2.5,71],[1,3,9]);proxy.userData.m01FieldProxy='shelter';this.fieldProxyMeshes.push(proxy);}
+    {const proxy=this.mesh('box','stone',[-256,-2.5,71],[1,3,9]);proxy.userData.m01FieldProxy='shelter';this.fieldProxyMeshes.push(proxy);}
   }
   syncSolids(world){
     if(this.world!==world){if(!this.world)this.buildTerrain(world);else{this.world=world;this.terrain?.setWorld(world);}}
-    if(this.revision===world.revision&&this.solidWorld===world)return;
+    const fieldRevision=this.environment?.fieldStructures.revision??0;
+    for(const proxy of this.fieldProxyMeshes??[])proxy.visible=!this.environment.fieldStructures.replaces(proxy.userData.m01FieldProxy);
+    if(this.revision===world.revision&&this.solidWorld===world&&this.solidFieldRevision===fieldRevision)return;
+    this.solidFieldRevision=fieldRevision;
     this.revision=world.revision;this.solidWorld=world;
     for(const m of this.solidGroup.children)if(m.isInstancedMesh)m.dispose();this.solidGroup.clear();
     const byMaterial=new Map();
     for(const b of [...world.buildings,...world.covers,...world.joints]){
+      if(this.environment?.fieldStructures.replaces(b.id))continue;
       if(b.id==='station'&&this.environment?.station?.ready)continue; // Visual replacement; collider remains in world.
       const key=b.material??'stone';if(!byMaterial.has(key))byMaterial.set(key,[]);byMaterial.get(key).push(b);
     }
@@ -197,7 +205,7 @@ export class M01View {
       const batch=new THREE.InstancedMesh(this.box,this.materials[material]??this.materials.stone,boxes.length),dummy=new THREE.Object3D();
       boxes.forEach((b,i)=>{dummy.position.set((b.min.x+b.max.x)/2,(b.min.y+b.max.y)/2,(b.min.z+b.max.z)/2);
         dummy.scale.set(b.max.x-b.min.x,b.max.y-b.min.y,b.max.z-b.min.z);dummy.updateMatrix();batch.setMatrixAt(i,dummy.matrix);});
-      batch.castShadow=batch.receiveShadow=true;batch.computeBoundingSphere();this.solidGroup.add(batch);
+      batch.userData.m01ProxyColliderIds=boxes.map(b=>b.id);batch.castShadow=batch.receiveShadow=true;batch.computeBoundingSphere();this.solidGroup.add(batch);
     }
   }
   createActors(){
@@ -651,10 +659,11 @@ export class M01View {
     this.locomotive.update(sim.player);this.panzerzugArt.update(sim.player);
     // Retain the last canvas frame while the mission clock is frozen (menu/pause).
     // Assets, world restore, quality and resizing still invalidate it.
+    this.environment?.fieldStructures.sync(sim.world,this.owner.quality,sim.player);
     const canvas=this.owner.canvas,previous=this.lastFrame;
     const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
       width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,
-      wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles
+      fieldStructures:this.environment?.fieldStructures.revision,wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
@@ -768,6 +777,7 @@ export class M01View {
       bombs:{visible:this.bombState?.visible??0,pool:this.bombs?.length??0,flights:this.bombState?.flights??[]},
       raid:{visible:this.raidPlane.visible,position:this.raidPlane.position.toArray()}},
     renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+(b.visible===false?0:b.count),0)??0,
+    fieldStructures:this.environment?{...this.environment.fieldStructures.diagnostics,proxyColliderIds:this.solidGroup.children.flatMap(b=>b.userData.m01ProxyColliderIds??[]),environmentProxies:this.environment.fieldProxyBatches.map(b=>({id:b.userData.m01FieldProxy,visible:b.visible})),viewProxies:this.fieldProxyMeshes.map(b=>({id:b.userData.m01FieldProxy,visible:b.visible}))}:null,
     stationArchitecture:this.environment?.station?.diagnostics??{ready:false,failure:this.environment?.stationFailure??null},
     environmentProps:this.environment?.propDiagnostics,bridgePortalPolish:this.portalPolish?.diagnostics,bridgeStructure:this.bridgeStructure?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
     damageDecals:this.damageDecals.diagnostics,
@@ -782,7 +792,7 @@ export class M01View {
     battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},meta:structuredClone(this.battlefieldFxMeta),limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
     if(this.disposed)return;
-    this.disposed=true;if(typeof window!=='undefined'&&window.m01TerrainDebug===this.terrainDebug)delete window.m01TerrainDebug;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();this.impostors?.dispose();
+    this.disposed=true;if(typeof window!=='undefined'&&window.m01FieldStructuresDebug===this.fieldStructuresDebug)delete window.m01FieldStructuresDebug;if(typeof window!=='undefined'&&window.m01TerrainDebug===this.terrainDebug)delete window.m01TerrainDebug;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();this.impostors?.dispose();
     this.fallbackFx.dispose();this.weaponWorldFx.dispose();this.weaponLighting.dispose();
     this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.assets.dispose();this.environment?.dispose();this.terrain?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
     const textures=new Set();for(const m of new Set([...Object.values(this.materials),this.terrainLegacyMaterial].filter(Boolean))){if(m===this.terrain?.material)continue;if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "task_id": "M01-T13-T32-FIELD-STRUCTURES-V1",
+  "accepted_head": "cbbe0d7624d39e444f02ac0bd200037a71b3cf8e",
+  "status": "ACCEPTED",
+  "obligations": [
+    {
+      "id": "m01-field-kit-world-bounds",
+      "kind": "test",
+      "check": "node --test tests/m01-field-structures.test.js; node tools/assets/m01-field-structures/build.mjs --check",
+      "reason": "Actual binary collision-backed surfaces must match current world boxes, preserve open entry, bounded decreasing LODs and original licence/raw SHA. Decorative envelopes remain explicitly separate."
+    },
+    {
+      "id": "m01-field-partial-stale-ownership",
+      "kind": "test",
+      "check": "node --test tests/m01-field-structures.test.js",
+      "reason": "Release fulfilled partial assets immediately on failure/dispose even when sibling hangs; late completion releases once, world replacement and destruction preserve controller residency."
+    },
+    {
+      "id": "m01-field-paused-runtime-and-restore",
+      "kind": "browser",
+      "check": "npx playwright test tests/browser/m01-field-structures.spec.js",
+      "reason": "Real models must visibly replace both proxy paths in paused frame without changing authoritative state; optional failure keeps proxies, quality/world restore keep one visible LOD and warmed identical restores plateau."
+    },
+    {
+      "id": "m01-field-gallery-feature-visibility",
+      "kind": "browser",
+      "check": "npx playwright test -c tools/verification/playwright.m01-field-structures.config.js tools/verification/m01-field-structures-gallery.spec.js",
+      "reason": "All original field types, LODs and destroyed variant must remain renderable and within declared triangle budgets. Runtime post views and supplemental authoring angles make otherwise occluded details reviewable."
+    }
+  ]
+}

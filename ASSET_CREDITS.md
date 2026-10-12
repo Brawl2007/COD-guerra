@@ -40,3 +40,7 @@ Historical references: internal T24; MBP Tczew collection Poczt226 (front, 1900�
 ## Atlas e terreno M01 · T09 / T28
 
 `assets/textures/m01/atlas/` e `assets/textures/m01/terrain/`: PNG originais procedurais do projecto, autoria `COD-guerra project, original procedural`, licença **CC0-1.0**; gerador gratuito e reproduzível em `tools/assets/m01-materials/`. Ruído periódico, Worley, carimbos e pintura de albedo/normais/ORM com sementes fixas; sem imagens, modelos ou conteúdo de jogos de terceiros. Os manifestos registam licença, SHA-256, tamanho PNG e tamanho descodificado. Escalas e paletas são estimativas artísticas e não comprovam precisão histórica. A licença dos restantes assets e a licença global do projecto não são redefinidas por esta entrada.
+
+## Estruturas de campanha M01 · T13 / T32
+
+`assets/models/provisional/m01/structures/`: quatro estruturas originais procedurais (barracão ferroviário, abrigo revestido de madeira, parapeito com variante destruída e casamata sob o tabuleiro), três LODs e cores de vértice, autoria **COD-guerra project**, licença **CC0-1.0**. Gerador em `tools/assets/m01-field-structures/`, manifesto com SHA-256, escala em metros, limites visuais e superfícies associadas às caixas de colisão existentes. Sem modelos/texturas de terceiros ou conteúdo extraído de jogos. Abrigo/casamata, telhados, interiores e detalhes são reconstrução artística; não se declara levantamento exacto de 1939. A licença global e os assets anteriores não são redefinidos. Relatório em `docs/assets/m01-field-structures/README.md`.

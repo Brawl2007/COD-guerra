@@ -1,0 +1,3933 @@
+{
+  "buildings": [
+    {
+      "visual": true,
+      "material": "wood",
+      "id": "hut_north",
+      "min": {
+        "x": -270,
+        "y": -3,
+        "z": 14
+      },
+      "max": {
+        "x": -250,
+        "y": 0.5,
+        "z": 14.35
+      }
+    },
+    {
+      "visual": true,
+      "material": "wood",
+      "id": "hut_east",
+      "min": {
+        "x": -250,
+        "y": -3,
+        "z": 14
+      },
+      "max": {
+        "x": -249.65,
+        "y": 0.5,
+        "z": 26
+      }
+    },
+    {
+      "visual": true,
+      "material": "wood",
+      "id": "hut_south",
+      "min": {
+        "x": -270,
+        "y": -3,
+        "z": 25.65
+      },
+      "max": {
+        "x": -250,
+        "y": 0.5,
+        "z": 26
+      }
+    },
+    {
+      "visual": true,
+      "material": "wood",
+      "id": "hut_west_n",
+      "min": {
+        "x": -270,
+        "y": -3,
+        "z": 14
+      },
+      "max": {
+        "x": -269.65,
+        "y": 0.5,
+        "z": 18
+      }
+    },
+    {
+      "visual": true,
+      "material": "wood",
+      "id": "hut_west_s",
+      "min": {
+        "x": -270,
+        "y": -3,
+        "z": 24
+      },
+      "max": {
+        "x": -269.65,
+        "y": 0.5,
+        "z": 26
+      }
+    },
+    {
+      "visual": true,
+      "material": "brick",
+      "id": "station",
+      "min": {
+        "x": -460,
+        "y": -3,
+        "z": 28
+      },
+      "max": {
+        "x": -338,
+        "y": 11,
+        "z": 55
+      }
+    }
+  ],
+  "covers": [
+    {
+      "visual": true,
+      "material": "earth",
+      "id": "cv_forward_post",
+      "min": {
+        "x": 17.55,
+        "y": 0,
+        "z": 1.5
+      },
+      "max": {
+        "x": 18.45,
+        "y": 1.1,
+        "z": 4.5
+      }
+    },
+    {
+      "visual": true,
+      "material": "earth",
+      "id": "cv_sandbag_mid_1",
+      "min": {
+        "x": -25.45,
+        "y": -3,
+        "z": 16.5
+      },
+      "max": {
+        "x": -24.55,
+        "y": -2,
+        "z": 19.5
+      }
+    },
+    {
+      "visual": true,
+      "material": "earth",
+      "id": "cv_sandbag_mid_2",
+      "min": {
+        "x": -25.45,
+        "y": -3,
+        "z": 26.5
+      },
+      "max": {
+        "x": -24.55,
+        "y": -2,
+        "z": 29.5
+      }
+    },
+    {
+      "visual": true,
+      "material": "earth",
+      "id": "cv_trench_1",
+      "min": {
+        "x": -45.45,
+        "y": -4,
+        "z": 13.5
+      },
+      "max": {
+        "x": -44.55,
+        "y": -2.7,
+        "z": 16.5
+      }
+    },
+    {
+      "visual": true,
+      "material": "earth",
+      "id": "cv_trench_2",
+      "min": {
+        "x": -60.45,
+        "y": -4,
+        "z": 20.5
+      },
+      "max": {
+        "x": -59.55,
+        "y": -2.7,
+        "z": 23.5
+      }
+    },
+    {
+      "visual": true,
+      "material": "earth",
+      "id": "cv_squad_post",
+      "min": {
+        "x": -70.45,
+        "y": -3,
+        "z": 20.5
+      },
+      "max": {
+        "x": -69.55,
+        "y": -1.9,
+        "z": 23.5
+      }
+    },
+    {
+      "visual": true,
+      "material": "wood",
+      "id": "cv_firing_point",
+      "min": {
+        "x": -286.45,
+        "y": -3,
+        "z": 20.5
+      },
+      "max": {
+        "x": -285.55,
+        "y": -1,
+        "z": 23.5
+      }
+    },
+    {
+      "visual": true,
+      "material": "wood",
+      "id": "cv_shelter_entrance",
+      "min": {
+        "x": -258.45,
+        "y": -4,
+        "z": 64.5
+      },
+      "max": {
+        "x": -257.55,
+        "y": -1.7999999999999998,
+        "z": 67.5
+      }
+    }
+  ],
+  "coverNodes": [
+    {
+      "id": "cv_portal_rail_n",
+      "type": "WALL_CORNER",
+      "position": [
+        -2,
+        0,
+        -7
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 3,
+      "peek": [
+        "right"
+      ]
+    },
+    {
+      "id": "cv_portal_rail_s",
+      "type": "WALL_CORNER",
+      "position": [
+        -2,
+        0,
+        7
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 3,
+      "peek": [
+        "left"
+      ]
+    },
+    {
+      "id": "cv_portal_road_n",
+      "type": "WALL_CORNER",
+      "position": [
+        -2,
+        0,
+        33
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 3,
+      "peek": [
+        "right"
+      ]
+    },
+    {
+      "id": "cv_portal_road_s",
+      "type": "WALL_CORNER",
+      "position": [
+        -2,
+        0,
+        47
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 3,
+      "peek": [
+        "left"
+      ]
+    },
+    {
+      "id": "cv_forward_post",
+      "type": "SANDBAG",
+      "position": [
+        18,
+        0,
+        3
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 1.1,
+      "peek": [
+        "over"
+      ],
+      "destroyedBy": "evt_m01_bombing_0434",
+      "afterDestructionType": "LOW_COVER"
+    },
+    {
+      "id": "cv_casemate_emb_n",
+      "type": "WINDOW",
+      "position": [
+        24,
+        -3,
+        37
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 1.4,
+      "peek": [
+        "over"
+      ],
+      "activeUntil": "evt_m01_west_demolition"
+    },
+    {
+      "id": "cv_casemate_emb_s",
+      "type": "WINDOW",
+      "position": [
+        24,
+        -3,
+        43
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 1.4,
+      "peek": [
+        "over"
+      ],
+      "reservedFor": "ckm_crew",
+      "activeUntil": "evt_m01_west_demolition"
+    },
+    {
+      "id": "cv_sandbag_mid_1",
+      "type": "SANDBAG",
+      "position": [
+        -25,
+        -3,
+        18
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 1,
+      "peek": [
+        "over",
+        "left"
+      ]
+    },
+    {
+      "id": "cv_sandbag_mid_2",
+      "type": "SANDBAG",
+      "position": [
+        -25,
+        -3,
+        28
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 1,
+      "peek": [
+        "over",
+        "right"
+      ]
+    },
+    {
+      "id": "cv_trench_1",
+      "type": "TRENCH",
+      "position": [
+        -45,
+        -4,
+        15
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 1.3,
+      "peek": [
+        "over"
+      ]
+    },
+    {
+      "id": "cv_trench_2",
+      "type": "TRENCH",
+      "position": [
+        -60,
+        -4,
+        22
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 1.3,
+      "peek": [
+        "over"
+      ]
+    },
+    {
+      "id": "cv_squad_post",
+      "type": "SANDBAG",
+      "position": [
+        -70,
+        -3,
+        22
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 1.1,
+      "peek": [
+        "over"
+      ]
+    },
+    {
+      "id": "cv_firing_point",
+      "type": "HIGH_COVER",
+      "position": [
+        -286,
+        -3,
+        22
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 2,
+      "peek": [
+        "left"
+      ]
+    },
+    {
+      "id": "cv_rail_hut",
+      "type": "BUILDING_CORNER",
+      "position": [
+        -249,
+        -3,
+        14
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 3.5,
+      "peek": [
+        "right"
+      ]
+    },
+    {
+      "id": "cv_wagon_1",
+      "type": "VEHICLE",
+      "position": [
+        -318,
+        0,
+        -3
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 2.5,
+      "peek": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "cv_wagon_2",
+      "type": "VEHICLE",
+      "position": [
+        -338,
+        0,
+        11
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 2.5,
+      "peek": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "cv_shelter_entrance",
+      "type": "HIGH_COVER",
+      "position": [
+        -258,
+        -4,
+        66
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 2.2,
+      "peek": []
+    },
+    {
+      "id": "cv_road_truss_1",
+      "type": "LOW_COVER",
+      "position": [
+        40,
+        0,
+        37
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 1,
+      "partial": true,
+      "peek": [
+        "over"
+      ],
+      "notes": "Treliça: cobertura parcial; balas podem passar pelas aberturas conforme regra de obstrução."
+    },
+    {
+      "id": "cv_road_truss_2",
+      "type": "LOW_COVER",
+      "position": [
+        40,
+        0,
+        43
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 1,
+      "partial": true,
+      "peek": [
+        "over"
+      ]
+    },
+    {
+      "id": "cv_road_truss_3",
+      "type": "LOW_COVER",
+      "position": [
+        100,
+        0,
+        37
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 1,
+      "partial": true,
+      "peek": [
+        "over"
+      ]
+    },
+    {
+      "id": "cv_road_truss_4",
+      "type": "LOW_COVER",
+      "position": [
+        100,
+        0,
+        43
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 1,
+      "partial": true,
+      "peek": [
+        "over"
+      ]
+    },
+    {
+      "id": "cv_tower_p1_n",
+      "type": "WALL_CORNER",
+      "position": [
+        138,
+        0,
+        34
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 23,
+      "peek": [
+        "right"
+      ]
+    },
+    {
+      "id": "cv_tower_p1_s",
+      "type": "WALL_CORNER",
+      "position": [
+        138,
+        0,
+        46
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 23,
+      "peek": [
+        "left"
+      ]
+    },
+    {
+      "id": "cv_rail_deck_1",
+      "type": "LOW_COVER",
+      "position": [
+        60,
+        0,
+        -3
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "heightM": 1,
+      "partial": true,
+      "peek": [
+        "over"
+      ]
+    }
+  ],
+  "colliders": [
+    {
+      "id": "rail_collider_deck_span_01",
+      "min": {
+        "x": 10.399998664855957,
+        "y": -0.5,
+        "z": -4.599999904632568
+      },
+      "max": {
+        "x": 139.6999969482422,
+        "y": 0,
+        "z": 4.599999904632568
+      },
+      "collider": "walkable",
+      "of": "rail_span_01",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "rail_collider_deck_span_01",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_truss_N_span_01",
+      "min": {
+        "x": 10.399998664855957,
+        "y": 0,
+        "z": -5.199999809265137
+      },
+      "max": {
+        "x": 139.6999969482422,
+        "y": 10,
+        "z": -4.400000095367432
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_01",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "rail_collider_truss_N_span_01",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_truss_S_span_01",
+      "min": {
+        "x": 10.399998664855957,
+        "y": 0,
+        "z": 4.400000095367432
+      },
+      "max": {
+        "x": 139.6999969482422,
+        "y": 10,
+        "z": 5.199999809265137
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_01",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "rail_collider_truss_S_span_01",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_deck_span_02",
+      "min": {
+        "x": 142.10000610351562,
+        "y": -0.5,
+        "z": -4.599999904632568
+      },
+      "max": {
+        "x": 269,
+        "y": 0,
+        "z": 4.599999904632568
+      },
+      "collider": "walkable",
+      "of": "rail_span_02",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "rail_collider_deck_span_02",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_truss_N_span_02",
+      "min": {
+        "x": 142.10000610351562,
+        "y": 0,
+        "z": -5.199999809265137
+      },
+      "max": {
+        "x": 269,
+        "y": 10,
+        "z": -4.400000095367432
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_02",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "rail_collider_truss_N_span_02",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_truss_S_span_02",
+      "min": {
+        "x": 142.10000610351562,
+        "y": 0,
+        "z": 4.400000095367432
+      },
+      "max": {
+        "x": 269,
+        "y": 10,
+        "z": 5.199999809265137
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_02",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "rail_collider_truss_S_span_02",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_deck_span_03",
+      "min": {
+        "x": 271.3999938964844,
+        "y": -0.5,
+        "z": -4.599999904632568
+      },
+      "max": {
+        "x": 399.8999938964844,
+        "y": 0,
+        "z": 4.599999904632568
+      },
+      "collider": "walkable",
+      "of": "rail_span_03",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_deck_span_03",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_truss_N_span_03",
+      "min": {
+        "x": 271.3999938964844,
+        "y": 0,
+        "z": -5.199999809265137
+      },
+      "max": {
+        "x": 399.8999938964844,
+        "y": 10,
+        "z": -4.400000095367432
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_03",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_N_span_03",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_truss_S_span_03",
+      "min": {
+        "x": 271.3999938964844,
+        "y": 0,
+        "z": 4.400000095367432
+      },
+      "max": {
+        "x": 399.8999938964844,
+        "y": 10,
+        "z": 5.199999809265137
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_03",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_S_span_03",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_deck_span_04",
+      "min": {
+        "x": 402.29998779296875,
+        "y": -0.5,
+        "z": -4.599999904632568
+      },
+      "max": {
+        "x": 530.5,
+        "y": 0,
+        "z": 4.599999904632568
+      },
+      "collider": "walkable",
+      "of": "rail_span_04",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_deck_span_04",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_truss_N_span_04",
+      "min": {
+        "x": 402.29998779296875,
+        "y": 0,
+        "z": -5.199999809265137
+      },
+      "max": {
+        "x": 530.5,
+        "y": 10,
+        "z": -4.400000095367432
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_04",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_N_span_04",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_truss_S_span_04",
+      "min": {
+        "x": 402.29998779296875,
+        "y": 0,
+        "z": 4.400000095367432
+      },
+      "max": {
+        "x": 530.5,
+        "y": 10,
+        "z": 5.199999809265137
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_04",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_S_span_04",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_deck_span_05",
+      "min": {
+        "x": 532.9000244140625,
+        "y": -0.5,
+        "z": -4.599999904632568
+      },
+      "max": {
+        "x": 661.0999755859375,
+        "y": 0,
+        "z": 4.599999904632568
+      },
+      "collider": "walkable",
+      "of": "rail_span_05",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_deck_span_05",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_truss_N_span_05",
+      "min": {
+        "x": 532.9000244140625,
+        "y": 0,
+        "z": -5.199999809265137
+      },
+      "max": {
+        "x": 661.0999755859375,
+        "y": 10,
+        "z": -4.400000095367432
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_05",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_N_span_05",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_truss_S_span_05",
+      "min": {
+        "x": 532.9000244140625,
+        "y": 0,
+        "z": 4.400000095367432
+      },
+      "max": {
+        "x": 661.0999755859375,
+        "y": 10,
+        "z": 5.199999809265137
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_05",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_S_span_05",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_deck_span_06",
+      "min": {
+        "x": 663.5,
+        "y": -0.5,
+        "z": -4.599999904632568
+      },
+      "max": {
+        "x": 792.5999755859375,
+        "y": 0,
+        "z": 4.599999904632568
+      },
+      "collider": "walkable",
+      "of": "rail_span_06",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "rail_collider_deck_span_06",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_truss_N_span_06",
+      "min": {
+        "x": 663.5,
+        "y": 0,
+        "z": -5.199999809265137
+      },
+      "max": {
+        "x": 792.5999755859375,
+        "y": 10,
+        "z": -4.400000095367432
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_06",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "rail_collider_truss_N_span_06",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_truss_S_span_06",
+      "min": {
+        "x": 663.5,
+        "y": 0,
+        "z": 4.400000095367432
+      },
+      "max": {
+        "x": 792.5999755859375,
+        "y": 10,
+        "z": 5.199999809265137
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_06",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "rail_collider_truss_S_span_06",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_deck_span_07",
+      "min": {
+        "x": 795,
+        "y": -0.5,
+        "z": -4.599999904632568
+      },
+      "max": {
+        "x": 877.7000122070312,
+        "y": 0,
+        "z": 4.599999904632568
+      },
+      "collider": "walkable",
+      "of": "rail_span_07",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "rail_collider_deck_span_07",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_truss_N_span_07",
+      "min": {
+        "x": 795,
+        "y": 0,
+        "z": -5.199999809265137
+      },
+      "max": {
+        "x": 877.7000122070312,
+        "y": 8,
+        "z": -4.400000095367432
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_07",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "rail_collider_truss_N_span_07",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_truss_S_span_07",
+      "min": {
+        "x": 795,
+        "y": 0,
+        "z": 4.400000095367432
+      },
+      "max": {
+        "x": 877.7000122070312,
+        "y": 8,
+        "z": 5.199999809265137
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_07",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "rail_collider_truss_S_span_07",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_deck_span_08",
+      "min": {
+        "x": 880.0999755859375,
+        "y": -0.5,
+        "z": -4.599999904632568
+      },
+      "max": {
+        "x": 960.5,
+        "y": 0,
+        "z": 4.599999904632568
+      },
+      "collider": "walkable",
+      "of": "rail_span_08",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_deck_span_08",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_truss_N_span_08",
+      "min": {
+        "x": 880.0999755859375,
+        "y": 0,
+        "z": -5.199999809265137
+      },
+      "max": {
+        "x": 960.5,
+        "y": 8,
+        "z": -4.400000095367432
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_08",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_N_span_08",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_truss_S_span_08",
+      "min": {
+        "x": 880.0999755859375,
+        "y": 0,
+        "z": 4.400000095367432
+      },
+      "max": {
+        "x": 960.5,
+        "y": 8,
+        "z": 5.199999809265137
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_08",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_S_span_08",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_deck_span_09",
+      "min": {
+        "x": 962.9000244140625,
+        "y": -0.5,
+        "z": -4.599999904632568
+      },
+      "max": {
+        "x": 1044.699951171875,
+        "y": 0,
+        "z": 4.599999904632568
+      },
+      "collider": "walkable",
+      "of": "rail_span_09",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_deck_span_09",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_truss_N_span_09",
+      "min": {
+        "x": 962.9000244140625,
+        "y": 0,
+        "z": -5.199999809265137
+      },
+      "max": {
+        "x": 1044.699951171875,
+        "y": 8,
+        "z": -4.400000095367432
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_09",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_N_span_09",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_truss_S_span_09",
+      "min": {
+        "x": 962.9000244140625,
+        "y": 0,
+        "z": 4.400000095367432
+      },
+      "max": {
+        "x": 1044.699951171875,
+        "y": 8,
+        "z": 5.199999809265137
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "rail_span_09",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_truss_S_span_09",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_abutment_west",
+      "min": {
+        "x": -20.100000381469727,
+        "y": -12,
+        "z": -9.5
+      },
+      "max": {
+        "x": 11.899999618530273,
+        "y": -0.35000020265579224,
+        "z": 9.5
+      },
+      "collider": "walkable",
+      "of": "rail_support_00",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "rail_collider_abutment_west",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_pier_01",
+      "min": {
+        "x": 137.89999389648438,
+        "y": -16,
+        "z": -7.5
+      },
+      "max": {
+        "x": 143.89999389648438,
+        "y": -1.1999999284744263,
+        "z": 7.5
+      },
+      "collider": "solid",
+      "of": "rail_support_01",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "rail_collider_pier_01",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_pier_02",
+      "min": {
+        "x": 267.20001220703125,
+        "y": -16,
+        "z": -7.5
+      },
+      "max": {
+        "x": 273.20001220703125,
+        "y": -1.1999999284744263,
+        "z": 7.5
+      },
+      "collider": "solid",
+      "of": "rail_support_02",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_pier_02",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_pier_03",
+      "min": {
+        "x": 398.1000061035156,
+        "y": -8,
+        "z": -7.5
+      },
+      "max": {
+        "x": 404.1000061035156,
+        "y": -1.1999999284744263,
+        "z": 7.5
+      },
+      "collider": "solid",
+      "of": "rail_support_03",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_pier_03",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_pier_04",
+      "min": {
+        "x": 528.7000122070312,
+        "y": -8,
+        "z": -7.5
+      },
+      "max": {
+        "x": 534.7000122070312,
+        "y": -1.1999999284744263,
+        "z": 7.5
+      },
+      "collider": "solid",
+      "of": "rail_support_04",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_pier_04",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_pier_05",
+      "min": {
+        "x": 659.2999877929688,
+        "y": -8,
+        "z": -7.5
+      },
+      "max": {
+        "x": 665.2999877929688,
+        "y": -1.1999999284744263,
+        "z": 7.5
+      },
+      "collider": "solid",
+      "of": "rail_support_05",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_pier_05",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_pier_06",
+      "min": {
+        "x": 786.7999877929688,
+        "y": -8,
+        "z": -7.5
+      },
+      "max": {
+        "x": 800.7999877929688,
+        "y": -1.1999999284744263,
+        "z": 7.5
+      },
+      "collider": "solid",
+      "of": "rail_support_06",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "rail_collider_pier_06",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_pier_07",
+      "min": {
+        "x": 876.4000244140625,
+        "y": -8,
+        "z": -7.5
+      },
+      "max": {
+        "x": 881.4000244140625,
+        "y": -1.1999999284744263,
+        "z": 7.5
+      },
+      "collider": "solid",
+      "of": "rail_support_07",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_pier_07",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_pier_08",
+      "min": {
+        "x": 959.2000122070312,
+        "y": -8,
+        "z": -7.5
+      },
+      "max": {
+        "x": 964.2000122070312,
+        "y": -1.1999999284744263,
+        "z": 7.5
+      },
+      "collider": "solid",
+      "of": "rail_support_08",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_pier_08",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_01_n",
+      "min": {
+        "x": 138.24999990463257,
+        "y": -1.2,
+        "z": 31.34999990463257
+      },
+      "max": {
+        "x": 143.55000009536744,
+        "y": 21.8,
+        "z": 36.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_01_n",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_tower_01_n",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        140.9,
+        -1.2,
+        -6
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_01_s",
+      "min": {
+        "x": 138.24999990463257,
+        "y": -1.2,
+        "z": 43.34999990463257
+      },
+      "max": {
+        "x": 143.55000009536744,
+        "y": 21.8,
+        "z": 48.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_01_s",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_tower_01_s",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        140.9,
+        -1.2,
+        6
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_02_n",
+      "min": {
+        "x": 268.24999990463255,
+        "y": -1.2,
+        "z": 31.34999990463257
+      },
+      "max": {
+        "x": 273.5500000953674,
+        "y": 21.8,
+        "z": 36.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_02_n",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_02_n",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        270.9,
+        -1.2,
+        -6
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_02_s",
+      "min": {
+        "x": 268.24999990463255,
+        "y": -1.2,
+        "z": 43.34999990463257
+      },
+      "max": {
+        "x": 273.5500000953674,
+        "y": 21.8,
+        "z": 48.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_02_s",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_02_s",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        270.9,
+        -1.2,
+        6
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_03_n",
+      "min": {
+        "x": 398.24999990463255,
+        "y": -1.2,
+        "z": 31.34999990463257
+      },
+      "max": {
+        "x": 403.5500000953674,
+        "y": 21.8,
+        "z": 36.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_03_n",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_03_n",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        400.9,
+        -1.2,
+        -6
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_03_s",
+      "min": {
+        "x": 398.24999990463255,
+        "y": -1.2,
+        "z": 43.34999990463257
+      },
+      "max": {
+        "x": 403.5500000953674,
+        "y": 21.8,
+        "z": 48.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_03_s",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_03_s",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        400.9,
+        -1.2,
+        6
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_04_n",
+      "min": {
+        "x": 529.0499999046326,
+        "y": -1.2,
+        "z": 31.34999990463257
+      },
+      "max": {
+        "x": 534.3500000953675,
+        "y": 21.8,
+        "z": 36.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_04_n",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_04_n",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        531.7,
+        -1.2,
+        -6
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_04_s",
+      "min": {
+        "x": 529.0499999046326,
+        "y": -1.2,
+        "z": 43.34999990463257
+      },
+      "max": {
+        "x": 534.3500000953675,
+        "y": 21.8,
+        "z": 48.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_04_s",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_04_s",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        531.7,
+        -1.2,
+        6
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_05_n",
+      "min": {
+        "x": 659.4499999046326,
+        "y": -1.2,
+        "z": 31.34999990463257
+      },
+      "max": {
+        "x": 664.7500000953675,
+        "y": 21.8,
+        "z": 36.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_05_n",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_05_n",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        662.1,
+        -1.2,
+        -6
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_05_s",
+      "min": {
+        "x": 659.4499999046326,
+        "y": -1.2,
+        "z": 43.34999990463257
+      },
+      "max": {
+        "x": 664.7500000953675,
+        "y": 21.8,
+        "z": 48.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_05_s",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_05_s",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        662.1,
+        -1.2,
+        6
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_deck_span_01",
+      "min": {
+        "x": 8.500001907348633,
+        "y": -0.5,
+        "z": 37.234999895095825
+      },
+      "max": {
+        "x": 139.6999969482422,
+        "y": 0,
+        "z": 42.765000104904175
+      },
+      "collider": "walkable",
+      "of": "road_span_01",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_deck_span_01",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_truss_N_span_01",
+      "min": {
+        "x": 8.500001907348633,
+        "y": -1.5258788721439487e-7,
+        "z": 36.38499999046326
+      },
+      "max": {
+        "x": 139.6999969482422,
+        "y": 8.680000305175781,
+        "z": 37.18499994277954
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_01",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_truss_N_span_01",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_truss_S_span_01",
+      "min": {
+        "x": 8.500001907348633,
+        "y": -1.5258788721439487e-7,
+        "z": 42.81500005722046
+      },
+      "max": {
+        "x": 139.6999969482422,
+        "y": 8.680000305175781,
+        "z": 43.61500000953674
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_01",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_truss_S_span_01",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_deck_span_02",
+      "min": {
+        "x": 142.10000610351562,
+        "y": -0.5,
+        "z": 37.234999895095825
+      },
+      "max": {
+        "x": 269.70001220703125,
+        "y": 0,
+        "z": 42.765000104904175
+      },
+      "collider": "walkable",
+      "of": "road_span_02",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_deck_span_02",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_truss_N_span_02",
+      "min": {
+        "x": 142.10000610351562,
+        "y": -1.5258788721439487e-7,
+        "z": 36.38499999046326
+      },
+      "max": {
+        "x": 269.70001220703125,
+        "y": 8.680000305175781,
+        "z": 37.18499994277954
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_02",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_truss_N_span_02",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_truss_S_span_02",
+      "min": {
+        "x": 142.10000610351562,
+        "y": -1.5258788721439487e-7,
+        "z": 42.81500005722046
+      },
+      "max": {
+        "x": 269.70001220703125,
+        "y": 8.680000305175781,
+        "z": 43.61500000953674
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_02",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_truss_S_span_02",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_deck_span_03",
+      "min": {
+        "x": 272.1000061035156,
+        "y": -0.5,
+        "z": 37.234999895095825
+      },
+      "max": {
+        "x": 399.70001220703125,
+        "y": 0,
+        "z": 42.765000104904175
+      },
+      "collider": "walkable",
+      "of": "road_span_03",
+      "destroyedBy": null,
+      "logicalId": "road_collider_deck_span_03",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_truss_N_span_03",
+      "min": {
+        "x": 272.1000061035156,
+        "y": -1.5258788721439487e-7,
+        "z": 36.38499999046326
+      },
+      "max": {
+        "x": 399.70001220703125,
+        "y": 8.680000305175781,
+        "z": 37.18499994277954
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_03",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_N_span_03",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_truss_S_span_03",
+      "min": {
+        "x": 272.1000061035156,
+        "y": -1.5258788721439487e-7,
+        "z": 42.81500005722046
+      },
+      "max": {
+        "x": 399.70001220703125,
+        "y": 8.680000305175781,
+        "z": 43.61500000953674
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_03",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_S_span_03",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_deck_span_04",
+      "min": {
+        "x": 402.1000061035156,
+        "y": -0.5,
+        "z": 37.234999895095825
+      },
+      "max": {
+        "x": 530.5,
+        "y": 0,
+        "z": 42.765000104904175
+      },
+      "collider": "walkable",
+      "of": "road_span_04",
+      "destroyedBy": null,
+      "logicalId": "road_collider_deck_span_04",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_truss_N_span_04",
+      "min": {
+        "x": 402.1000061035156,
+        "y": -1.5258788721439487e-7,
+        "z": 36.38499999046326
+      },
+      "max": {
+        "x": 530.5,
+        "y": 8.680000305175781,
+        "z": 37.18499994277954
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_04",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_N_span_04",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_truss_S_span_04",
+      "min": {
+        "x": 402.1000061035156,
+        "y": -1.5258788721439487e-7,
+        "z": 42.81500005722046
+      },
+      "max": {
+        "x": 530.5,
+        "y": 8.680000305175781,
+        "z": 43.61500000953674
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_04",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_S_span_04",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_deck_span_05",
+      "min": {
+        "x": 532.9000244140625,
+        "y": -0.5,
+        "z": 37.234999895095825
+      },
+      "max": {
+        "x": 660.9000244140625,
+        "y": 0,
+        "z": 42.765000104904175
+      },
+      "collider": "walkable",
+      "of": "road_span_05",
+      "destroyedBy": null,
+      "logicalId": "road_collider_deck_span_05",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_truss_N_span_05",
+      "min": {
+        "x": 532.9000244140625,
+        "y": -1.5258788721439487e-7,
+        "z": 36.38499999046326
+      },
+      "max": {
+        "x": 660.9000244140625,
+        "y": 8.680000305175781,
+        "z": 37.18499994277954
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_05",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_N_span_05",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_truss_S_span_05",
+      "min": {
+        "x": 532.9000244140625,
+        "y": -1.5258788721439487e-7,
+        "z": 42.81500005722046
+      },
+      "max": {
+        "x": 660.9000244140625,
+        "y": 8.680000305175781,
+        "z": 43.61500000953674
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_05",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_S_span_05",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_deck_span_06",
+      "min": {
+        "x": 663.2999877929688,
+        "y": -0.5,
+        "z": 37.234999895095825
+      },
+      "max": {
+        "x": 806.2999877929688,
+        "y": 0,
+        "z": 42.765000104904175
+      },
+      "collider": "walkable",
+      "of": "road_span_06",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "road_collider_deck_span_06",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_truss_N_span_06",
+      "min": {
+        "x": 663.2999877929688,
+        "y": -1.5258788721439487e-7,
+        "z": 36.38499999046326
+      },
+      "max": {
+        "x": 806.2999877929688,
+        "y": 8.680000305175781,
+        "z": 37.18499994277954
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_06",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "road_collider_truss_N_span_06",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_truss_S_span_06",
+      "min": {
+        "x": 663.2999877929688,
+        "y": -1.5258788721439487e-7,
+        "z": 42.81500005722046
+      },
+      "max": {
+        "x": 806.2999877929688,
+        "y": 8.680000305175781,
+        "z": 43.61500000953674
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_06",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "road_collider_truss_S_span_06",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_deck_span_07",
+      "min": {
+        "x": 808.7000122070312,
+        "y": -0.5,
+        "z": 37.234999895095825
+      },
+      "max": {
+        "x": 877.7999877929688,
+        "y": 0,
+        "z": 42.765000104904175
+      },
+      "collider": "walkable",
+      "of": "road_span_07",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "road_collider_deck_span_07",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_truss_N_span_07",
+      "min": {
+        "x": 808.7000122070312,
+        "y": 0,
+        "z": 36.38499999046326
+      },
+      "max": {
+        "x": 877.7999877929688,
+        "y": 8,
+        "z": 37.18499994277954
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_07",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "road_collider_truss_N_span_07",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_truss_S_span_07",
+      "min": {
+        "x": 808.7000122070312,
+        "y": 0,
+        "z": 42.81500005722046
+      },
+      "max": {
+        "x": 877.7999877929688,
+        "y": 8,
+        "z": 43.61500000953674
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_07",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "road_collider_truss_S_span_07",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_deck_span_08",
+      "min": {
+        "x": 880.2000122070312,
+        "y": -0.5,
+        "z": 37.234999895095825
+      },
+      "max": {
+        "x": 960.7999877929688,
+        "y": 0,
+        "z": 42.765000104904175
+      },
+      "collider": "walkable",
+      "of": "road_span_08",
+      "destroyedBy": null,
+      "logicalId": "road_collider_deck_span_08",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_truss_N_span_08",
+      "min": {
+        "x": 880.2000122070312,
+        "y": 0,
+        "z": 36.38499999046326
+      },
+      "max": {
+        "x": 960.7999877929688,
+        "y": 8,
+        "z": 37.18499994277954
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_08",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_N_span_08",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_truss_S_span_08",
+      "min": {
+        "x": 880.2000122070312,
+        "y": 0,
+        "z": 42.81500005722046
+      },
+      "max": {
+        "x": 960.7999877929688,
+        "y": 8,
+        "z": 43.61500000953674
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_08",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_S_span_08",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_deck_span_09",
+      "min": {
+        "x": 963.2000122070312,
+        "y": -0.5,
+        "z": 37.234999895095825
+      },
+      "max": {
+        "x": 1044.5999755859375,
+        "y": 0,
+        "z": 42.765000104904175
+      },
+      "collider": "walkable",
+      "of": "road_span_09",
+      "destroyedBy": null,
+      "logicalId": "road_collider_deck_span_09",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_truss_N_span_09",
+      "min": {
+        "x": 963.2000122070312,
+        "y": 0,
+        "z": 36.38499999046326
+      },
+      "max": {
+        "x": 1044.5999755859375,
+        "y": 8,
+        "z": 37.18499994277954
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_09",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_N_span_09",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_truss_S_span_09",
+      "min": {
+        "x": 963.2000122070312,
+        "y": 0,
+        "z": 42.81500005722046
+      },
+      "max": {
+        "x": 1044.5999755859375,
+        "y": 8,
+        "z": 43.61500000953674
+      },
+      "collider": "partialCover",
+      "bulletPenetrable": true,
+      "coverType": "TRUSS_PARTIAL",
+      "of": "road_span_09",
+      "destroyedBy": null,
+      "logicalId": "road_collider_truss_S_span_09",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_abutment_west",
+      "min": {
+        "x": -22,
+        "y": -12,
+        "z": 29.5
+      },
+      "max": {
+        "x": 10,
+        "y": -0.35000020265579224,
+        "z": 50.5
+      },
+      "collider": "walkable",
+      "of": "road_support_00",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_abutment_west",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_pier_01",
+      "min": {
+        "x": 137.39999389648438,
+        "y": -16,
+        "z": 31
+      },
+      "max": {
+        "x": 144.39999389648438,
+        "y": -1.1999999284744263,
+        "z": 49
+      },
+      "collider": "solid",
+      "of": "road_support_01",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_pier_01",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_pier_02",
+      "min": {
+        "x": 267.3999938964844,
+        "y": -16,
+        "z": 31
+      },
+      "max": {
+        "x": 274.3999938964844,
+        "y": -1.1999999284744263,
+        "z": 49
+      },
+      "collider": "solid",
+      "of": "road_support_02",
+      "destroyedBy": null,
+      "logicalId": "road_collider_pier_02",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_pier_03",
+      "min": {
+        "x": 397.3999938964844,
+        "y": -8,
+        "z": 31
+      },
+      "max": {
+        "x": 404.3999938964844,
+        "y": -1.1999999284744263,
+        "z": 49
+      },
+      "collider": "solid",
+      "of": "road_support_03",
+      "destroyedBy": null,
+      "logicalId": "road_collider_pier_03",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_pier_04",
+      "min": {
+        "x": 528.2000122070312,
+        "y": -8,
+        "z": 31
+      },
+      "max": {
+        "x": 535.2000122070312,
+        "y": -1.1999999284744263,
+        "z": 49
+      },
+      "collider": "solid",
+      "of": "road_support_04",
+      "destroyedBy": null,
+      "logicalId": "road_collider_pier_04",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_pier_05",
+      "min": {
+        "x": 658.5999755859375,
+        "y": -8,
+        "z": 31
+      },
+      "max": {
+        "x": 665.5999755859375,
+        "y": -1.1999999284744263,
+        "z": 49
+      },
+      "collider": "solid",
+      "of": "road_support_05",
+      "destroyedBy": null,
+      "logicalId": "road_collider_pier_05",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_pier_06",
+      "min": {
+        "x": 800.5,
+        "y": -8,
+        "z": 31
+      },
+      "max": {
+        "x": 814.5,
+        "y": -1.1999999284744263,
+        "z": 49
+      },
+      "collider": "solid",
+      "of": "road_support_06",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "road_collider_pier_06",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_pier_07",
+      "min": {
+        "x": 876.5,
+        "y": -8,
+        "z": 31
+      },
+      "max": {
+        "x": 881.5,
+        "y": -1.1999999284744263,
+        "z": 49
+      },
+      "collider": "solid",
+      "of": "road_support_07",
+      "destroyedBy": null,
+      "logicalId": "road_collider_pier_07",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_pier_08",
+      "min": {
+        "x": 959.5,
+        "y": -8,
+        "z": 31
+      },
+      "max": {
+        "x": 964.5,
+        "y": -1.1999999284744263,
+        "z": 49
+      },
+      "collider": "solid",
+      "of": "road_support_08",
+      "destroyedBy": null,
+      "logicalId": "road_collider_pier_08",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "COL_portal_lisewo_1912",
+      "min": {
+        "x": 1058.7,
+        "y": -1,
+        "z": -8
+      },
+      "max": {
+        "x": 1067.7,
+        "y": 13,
+        "z": 48
+      },
+      "collider": "solid",
+      "notes": "Bloco simples; as passagens estão fechadas pelos portões.",
+      "material": "stone"
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "rail_collider_pier_01",
+      "min": {
+        "x": 137.89999389648438,
+        "y": -16,
+        "z": -7.5
+      },
+      "max": {
+        "x": 143.89999389648438,
+        "y": -1.1999999284744263,
+        "z": 7.5
+      },
+      "collider": "solid",
+      "of": "rail_support_01",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "rail_collider_pier_01",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_pier_02",
+      "min": {
+        "x": 267.20001220703125,
+        "y": -16,
+        "z": -7.5
+      },
+      "max": {
+        "x": 273.20001220703125,
+        "y": -1.1999999284744263,
+        "z": 7.5
+      },
+      "collider": "solid",
+      "of": "rail_support_02",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_pier_02",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_pier_03",
+      "min": {
+        "x": 398.1000061035156,
+        "y": -8,
+        "z": -7.5
+      },
+      "max": {
+        "x": 404.1000061035156,
+        "y": -1.1999999284744263,
+        "z": 7.5
+      },
+      "collider": "solid",
+      "of": "rail_support_03",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_pier_03",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_pier_04",
+      "min": {
+        "x": 528.7000122070312,
+        "y": -8,
+        "z": -7.5
+      },
+      "max": {
+        "x": 534.7000122070312,
+        "y": -1.1999999284744263,
+        "z": 7.5
+      },
+      "collider": "solid",
+      "of": "rail_support_04",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_pier_04",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_pier_05",
+      "min": {
+        "x": 659.2999877929688,
+        "y": -8,
+        "z": -7.5
+      },
+      "max": {
+        "x": 665.2999877929688,
+        "y": -1.1999999284744263,
+        "z": 7.5
+      },
+      "collider": "solid",
+      "of": "rail_support_05",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_pier_05",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_pier_06",
+      "min": {
+        "x": 786.7999877929688,
+        "y": -8,
+        "z": -7.5
+      },
+      "max": {
+        "x": 800.7999877929688,
+        "y": -1.1999999284744263,
+        "z": 7.5
+      },
+      "collider": "solid",
+      "of": "rail_support_06",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "rail_collider_pier_06",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_pier_07",
+      "min": {
+        "x": 876.4000244140625,
+        "y": -8,
+        "z": -7.5
+      },
+      "max": {
+        "x": 881.4000244140625,
+        "y": -1.1999999284744263,
+        "z": 7.5
+      },
+      "collider": "solid",
+      "of": "rail_support_07",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_pier_07",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "rail_collider_pier_08",
+      "min": {
+        "x": 959.2000122070312,
+        "y": -8,
+        "z": -7.5
+      },
+      "max": {
+        "x": 964.2000122070312,
+        "y": -1.1999999284744263,
+        "z": 7.5
+      },
+      "collider": "solid",
+      "of": "rail_support_08",
+      "destroyedBy": null,
+      "logicalId": "rail_collider_pier_08",
+      "mapFeatureId": "rail_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_01_n",
+      "min": {
+        "x": 138.24999990463257,
+        "y": -1.2,
+        "z": 31.34999990463257
+      },
+      "max": {
+        "x": 143.55000009536744,
+        "y": 21.8,
+        "z": 36.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_01_n",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_tower_01_n",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        140.9,
+        -1.2,
+        -6
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_01_s",
+      "min": {
+        "x": 138.24999990463257,
+        "y": -1.2,
+        "z": 43.34999990463257
+      },
+      "max": {
+        "x": 143.55000009536744,
+        "y": 21.8,
+        "z": 48.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_01_s",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_tower_01_s",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        140.9,
+        -1.2,
+        6
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_02_n",
+      "min": {
+        "x": 268.24999990463255,
+        "y": -1.2,
+        "z": 31.34999990463257
+      },
+      "max": {
+        "x": 273.5500000953674,
+        "y": 21.8,
+        "z": 36.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_02_n",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_02_n",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        270.9,
+        -1.2,
+        -6
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_02_s",
+      "min": {
+        "x": 268.24999990463255,
+        "y": -1.2,
+        "z": 43.34999990463257
+      },
+      "max": {
+        "x": 273.5500000953674,
+        "y": 21.8,
+        "z": 48.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_02_s",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_02_s",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        270.9,
+        -1.2,
+        6
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_03_n",
+      "min": {
+        "x": 398.24999990463255,
+        "y": -1.2,
+        "z": 31.34999990463257
+      },
+      "max": {
+        "x": 403.5500000953674,
+        "y": 21.8,
+        "z": 36.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_03_n",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_03_n",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        400.9,
+        -1.2,
+        -6
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_03_s",
+      "min": {
+        "x": 398.24999990463255,
+        "y": -1.2,
+        "z": 43.34999990463257
+      },
+      "max": {
+        "x": 403.5500000953674,
+        "y": 21.8,
+        "z": 48.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_03_s",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_03_s",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        400.9,
+        -1.2,
+        6
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_04_n",
+      "min": {
+        "x": 529.0499999046326,
+        "y": -1.2,
+        "z": 31.34999990463257
+      },
+      "max": {
+        "x": 534.3500000953675,
+        "y": 21.8,
+        "z": 36.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_04_n",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_04_n",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        531.7,
+        -1.2,
+        -6
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_04_s",
+      "min": {
+        "x": 529.0499999046326,
+        "y": -1.2,
+        "z": 43.34999990463257
+      },
+      "max": {
+        "x": 534.3500000953675,
+        "y": 21.8,
+        "z": 48.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_04_s",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_04_s",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        531.7,
+        -1.2,
+        6
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_05_n",
+      "min": {
+        "x": 659.4499999046326,
+        "y": -1.2,
+        "z": 31.34999990463257
+      },
+      "max": {
+        "x": 664.7500000953675,
+        "y": 21.8,
+        "z": 36.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_05_n",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_05_n",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        662.1,
+        -1.2,
+        -6
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_tower_05_s",
+      "min": {
+        "x": 659.4499999046326,
+        "y": -1.2,
+        "z": 43.34999990463257
+      },
+      "max": {
+        "x": 664.7500000953675,
+        "y": 21.8,
+        "z": 48.65000009536743
+      },
+      "collider": "solid",
+      "of": "road_tower_05_s",
+      "destroyedBy": null,
+      "logicalId": "road_collider_tower_05_s",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        662.1,
+        -1.2,
+        6
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_pier_01",
+      "min": {
+        "x": 137.39999389648438,
+        "y": -16,
+        "z": 31
+      },
+      "max": {
+        "x": 144.39999389648438,
+        "y": -1.1999999284744263,
+        "z": 49
+      },
+      "collider": "solid",
+      "of": "road_support_01",
+      "destroyedBy": "evt_m01_west_demolition",
+      "logicalId": "road_collider_pier_01",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_pier_02",
+      "min": {
+        "x": 267.3999938964844,
+        "y": -16,
+        "z": 31
+      },
+      "max": {
+        "x": 274.3999938964844,
+        "y": -1.1999999284744263,
+        "z": 49
+      },
+      "collider": "solid",
+      "of": "road_support_02",
+      "destroyedBy": null,
+      "logicalId": "road_collider_pier_02",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_pier_03",
+      "min": {
+        "x": 397.3999938964844,
+        "y": -8,
+        "z": 31
+      },
+      "max": {
+        "x": 404.3999938964844,
+        "y": -1.1999999284744263,
+        "z": 49
+      },
+      "collider": "solid",
+      "of": "road_support_03",
+      "destroyedBy": null,
+      "logicalId": "road_collider_pier_03",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_pier_04",
+      "min": {
+        "x": 528.2000122070312,
+        "y": -8,
+        "z": 31
+      },
+      "max": {
+        "x": 535.2000122070312,
+        "y": -1.1999999284744263,
+        "z": 49
+      },
+      "collider": "solid",
+      "of": "road_support_04",
+      "destroyedBy": null,
+      "logicalId": "road_collider_pier_04",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_pier_05",
+      "min": {
+        "x": 658.5999755859375,
+        "y": -8,
+        "z": 31
+      },
+      "max": {
+        "x": 665.5999755859375,
+        "y": -1.1999999284744263,
+        "z": 49
+      },
+      "collider": "solid",
+      "of": "road_support_05",
+      "destroyedBy": null,
+      "logicalId": "road_collider_pier_05",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_pier_06",
+      "min": {
+        "x": 800.5,
+        "y": -8,
+        "z": 31
+      },
+      "max": {
+        "x": 814.5,
+        "y": -1.1999999284744263,
+        "z": 49
+      },
+      "collider": "solid",
+      "of": "road_support_06",
+      "destroyedBy": "evt_m01_east_demolition",
+      "logicalId": "road_collider_pier_06",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "damageCertainty": "GAMEPLAY_PLACEHOLDER",
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_pier_07",
+      "min": {
+        "x": 876.5,
+        "y": -8,
+        "z": 31
+      },
+      "max": {
+        "x": 881.5,
+        "y": -1.1999999284744263,
+        "z": 49
+      },
+      "collider": "solid",
+      "of": "road_support_07",
+      "destroyedBy": null,
+      "logicalId": "road_collider_pier_07",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "road_collider_pier_08",
+      "min": {
+        "x": 959.5,
+        "y": -8,
+        "z": 31
+      },
+      "max": {
+        "x": 964.5,
+        "y": -1.1999999284744263,
+        "z": 49
+      },
+      "collider": "solid",
+      "of": "road_support_08",
+      "destroyedBy": null,
+      "logicalId": "road_collider_pier_08",
+      "mapFeatureId": "road_bridge",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "COL_portal_lisewo_1912",
+      "min": {
+        "x": 1058.7,
+        "y": -1,
+        "z": -8
+      },
+      "max": {
+        "x": 1067.7,
+        "y": 13,
+        "z": 48
+      },
+      "collider": "solid",
+      "notes": "Bloco simples; as passagens estão fechadas pelos portões.",
+      "material": "stone"
+    },
+    {
+      "id": "rail_portal_n",
+      "min": {
+        "x": -6.5,
+        "y": -1,
+        "z": -11.9
+      },
+      "max": {
+        "x": -1.5,
+        "y": 14,
+        "z": -4.2
+      },
+      "material": "stone"
+    },
+    {
+      "id": "rail_portal_s",
+      "min": {
+        "x": -6.5,
+        "y": -1,
+        "z": 4.2
+      },
+      "max": {
+        "x": -1.5,
+        "y": 14,
+        "z": 11.9
+      },
+      "material": "stone"
+    },
+    {
+      "id": "rail_portal_top",
+      "min": {
+        "x": -6.5,
+        "y": 8.4,
+        "z": -4.2
+      },
+      "max": {
+        "x": -1.5,
+        "y": 11.5,
+        "z": 4.2
+      },
+      "material": "stone"
+    },
+    {
+      "id": "road_portal_n",
+      "min": {
+        "x": -7,
+        "y": -1,
+        "z": 29.9
+      },
+      "max": {
+        "x": -1,
+        "y": 14,
+        "z": 37
+      },
+      "material": "stone"
+    },
+    {
+      "id": "road_portal_s",
+      "min": {
+        "x": -7,
+        "y": -1,
+        "z": 43
+      },
+      "max": {
+        "x": -1,
+        "y": 14,
+        "z": 50.1
+      },
+      "material": "stone"
+    },
+    {
+      "id": "road_portal_top",
+      "min": {
+        "x": -6.5,
+        "y": 8.6,
+        "z": 37
+      },
+      "max": {
+        "x": -1.5,
+        "y": 12.5,
+        "z": 43
+      },
+      "material": "stone"
+    },
+    {
+      "visual": true,
+      "material": "wood",
+      "id": "hut_north",
+      "min": {
+        "x": -270,
+        "y": -3,
+        "z": 14
+      },
+      "max": {
+        "x": -250,
+        "y": 0.5,
+        "z": 14.35
+      }
+    },
+    {
+      "visual": true,
+      "material": "wood",
+      "id": "hut_east",
+      "min": {
+        "x": -250,
+        "y": -3,
+        "z": 14
+      },
+      "max": {
+        "x": -249.65,
+        "y": 0.5,
+        "z": 26
+      }
+    },
+    {
+      "visual": true,
+      "material": "wood",
+      "id": "hut_south",
+      "min": {
+        "x": -270,
+        "y": -3,
+        "z": 25.65
+      },
+      "max": {
+        "x": -250,
+        "y": 0.5,
+        "z": 26
+      }
+    },
+    {
+      "visual": true,
+      "material": "wood",
+      "id": "hut_west_n",
+      "min": {
+        "x": -270,
+        "y": -3,
+        "z": 14
+      },
+      "max": {
+        "x": -269.65,
+        "y": 0.5,
+        "z": 18
+      }
+    },
+    {
+      "visual": true,
+      "material": "wood",
+      "id": "hut_west_s",
+      "min": {
+        "x": -270,
+        "y": -3,
+        "z": 24
+      },
+      "max": {
+        "x": -269.65,
+        "y": 0.5,
+        "z": 26
+      }
+    },
+    {
+      "visual": true,
+      "material": "brick",
+      "id": "station",
+      "min": {
+        "x": -460,
+        "y": -3,
+        "z": 28
+      },
+      "max": {
+        "x": -338,
+        "y": 11,
+        "z": 55
+      }
+    },
+    {
+      "visual": true,
+      "material": "earth",
+      "id": "cv_forward_post",
+      "min": {
+        "x": 17.55,
+        "y": 0,
+        "z": 1.5
+      },
+      "max": {
+        "x": 18.45,
+        "y": 1.1,
+        "z": 4.5
+      }
+    },
+    {
+      "visual": true,
+      "material": "earth",
+      "id": "cv_sandbag_mid_1",
+      "min": {
+        "x": -25.45,
+        "y": -3,
+        "z": 16.5
+      },
+      "max": {
+        "x": -24.55,
+        "y": -2,
+        "z": 19.5
+      }
+    },
+    {
+      "visual": true,
+      "material": "earth",
+      "id": "cv_sandbag_mid_2",
+      "min": {
+        "x": -25.45,
+        "y": -3,
+        "z": 26.5
+      },
+      "max": {
+        "x": -24.55,
+        "y": -2,
+        "z": 29.5
+      }
+    },
+    {
+      "visual": true,
+      "material": "earth",
+      "id": "cv_trench_1",
+      "min": {
+        "x": -45.45,
+        "y": -4,
+        "z": 13.5
+      },
+      "max": {
+        "x": -44.55,
+        "y": -2.7,
+        "z": 16.5
+      }
+    },
+    {
+      "visual": true,
+      "material": "earth",
+      "id": "cv_trench_2",
+      "min": {
+        "x": -60.45,
+        "y": -4,
+        "z": 20.5
+      },
+      "max": {
+        "x": -59.55,
+        "y": -2.7,
+        "z": 23.5
+      }
+    },
+    {
+      "visual": true,
+      "material": "earth",
+      "id": "cv_squad_post",
+      "min": {
+        "x": -70.45,
+        "y": -3,
+        "z": 20.5
+      },
+      "max": {
+        "x": -69.55,
+        "y": -1.9,
+        "z": 23.5
+      }
+    },
+    {
+      "visual": true,
+      "material": "wood",
+      "id": "cv_firing_point",
+      "min": {
+        "x": -286.45,
+        "y": -3,
+        "z": 20.5
+      },
+      "max": {
+        "x": -285.55,
+        "y": -1,
+        "z": 23.5
+      }
+    },
+    {
+      "visual": true,
+      "material": "wood",
+      "id": "cv_shelter_entrance",
+      "min": {
+        "x": -258.45,
+        "y": -4,
+        "z": 64.5
+      },
+      "max": {
+        "x": -257.55,
+        "y": -1.7999999999999998,
+        "z": 67.5
+      }
+    },
+    {
+      "material": "wood",
+      "id": "m01_tree_0",
+      "min": {
+        "x": -36.25,
+        "y": -1.3713170596605997,
+        "z": -9.25
+      },
+      "max": {
+        "x": -35.75,
+        "y": 7.9886829403394,
+        "z": -8.75
+      }
+    },
+    {
+      "material": "wood",
+      "id": "m01_tree_1",
+      "min": {
+        "x": -8.295,
+        "y": -3,
+        "z": 62.705
+      },
+      "max": {
+        "x": -7.705,
+        "y": 8.700000000000001,
+        "z": 63.295
+      }
+    },
+    {
+      "material": "wood",
+      "id": "m01_tree_2",
+      "min": {
+        "x": -40.34,
+        "y": -3,
+        "z": -24.34
+      },
+      "max": {
+        "x": -39.66,
+        "y": 9.48,
+        "z": -23.66
+      }
+    },
+    {
+      "material": "wood",
+      "id": "m01_tree_3",
+      "min": {
+        "x": -79.25,
+        "y": -3,
+        "z": -22.25
+      },
+      "max": {
+        "x": -78.75,
+        "y": 11.040000000000001,
+        "z": -21.75
+      }
+    },
+    {
+      "material": "wood",
+      "id": "m01_tree_4",
+      "min": {
+        "x": -122.295,
+        "y": -3,
+        "z": -28.295
+      },
+      "max": {
+        "x": -121.705,
+        "y": 10.26,
+        "z": -27.705
+      }
+    },
+    {
+      "material": "wood",
+      "id": "m01_tree_5",
+      "min": {
+        "x": -169.34,
+        "y": -3,
+        "z": -23.34
+      },
+      "max": {
+        "x": -168.66,
+        "y": 7.92,
+        "z": -22.66
+      }
+    },
+    {
+      "material": "wood",
+      "id": "m01_tree_6",
+      "min": {
+        "x": -215.25,
+        "y": -3,
+        "z": -29.25
+      },
+      "max": {
+        "x": -214.75,
+        "y": 9.48,
+        "z": -28.75
+      }
+    },
+    {
+      "material": "wood",
+      "id": "m01_tree_7",
+      "min": {
+        "x": -265.295,
+        "y": -3,
+        "z": -24.295
+      },
+      "max": {
+        "x": -264.705,
+        "y": 11.040000000000001,
+        "z": -23.705
+      }
+    },
+    {
+      "material": "wood",
+      "id": "m01_tree_8",
+      "min": {
+        "x": -319.34,
+        "y": -3,
+        "z": -30.34
+      },
+      "max": {
+        "x": -318.66,
+        "y": 8.700000000000001,
+        "z": -29.66
+      }
+    },
+    {
+      "material": "wood",
+      "id": "m01_tree_9",
+      "min": {
+        "x": -365.25,
+        "y": 0,
+        "z": -21.25
+      },
+      "max": {
+        "x": -364.75,
+        "y": 13.26,
+        "z": -20.75
+      }
+    },
+    {
+      "material": "wood",
+      "id": "m01_tree_10",
+      "min": {
+        "x": -411.295,
+        "y": 0,
+        "z": -27.295
+      },
+      "max": {
+        "x": -410.705,
+        "y": 11.700000000000001,
+        "z": -26.705
+      }
+    },
+    {
+      "material": "wood",
+      "id": "m01_tree_11",
+      "min": {
+        "x": -49.34,
+        "y": -3,
+        "z": 76.66
+      },
+      "max": {
+        "x": -48.66,
+        "y": 9.48,
+        "z": 77.34
+      }
+    },
+    {
+      "material": "wood",
+      "id": "m01_tree_12",
+      "min": {
+        "x": -103.25,
+        "y": -3,
+        "z": 68.75
+      },
+      "max": {
+        "x": -102.75,
+        "y": 11.040000000000001,
+        "z": 69.25
+      }
+    },
+    {
+      "material": "wood",
+      "id": "m01_tree_13",
+      "min": {
+        "x": -159.295,
+        "y": -3,
+        "z": 72.705
+      },
+      "max": {
+        "x": -158.705,
+        "y": 8.700000000000001,
+        "z": 73.295
+      }
+    },
+    {
+      "material": "wood",
+      "id": "m01_tree_14",
+      "min": {
+        "x": -207.34,
+        "y": -3,
+        "z": 87.66
+      },
+      "max": {
+        "x": -206.66,
+        "y": 10.26,
+        "z": 88.34
+      }
+    },
+    {
+      "material": "wood",
+      "id": "m01_tree_15",
+      "min": {
+        "x": -349.25,
+        "y": -3,
+        "z": 81.75
+      },
+      "max": {
+        "x": -348.75,
+        "y": 11.040000000000001,
+        "z": 82.25
+      }
+    },
+    {
+      "material": "wood",
+      "id": "m01_tree_16",
+      "min": {
+        "x": -406.295,
+        "y": 4.6523076923076925,
+        "z": 73.705
+      },
+      "max": {
+        "x": -405.705,
+        "y": 15.572307692307692,
+        "z": 74.295
+      }
+    }
+  ]
+}

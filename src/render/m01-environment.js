@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {leafTexture,texturedSurface} from './m01-surfaces.js';
+import {M01FieldStructures} from './m01-field-structures.js';
 import {M01StationArchitecture} from './m01-station-architecture.js';
 import {buildM01EnvironmentProps,M01_PROP_QUALITY_RANK,propCountsForQuality} from './m01-environment-props.js';
 import {vegetationNoise,buildM01VegetationLayout,interleaveForDensity,M01_TREE_SPECIES} from './m01-vegetation-layout.js';
@@ -41,7 +42,8 @@ const GRASS_GEOMETRY=Object.freeze({meadow:'tuft',dry:'tuft',tall:'seed',weed:'l
 // This is art direction around measured infrastructure, not a historical survey.
 export class M01Environment {
   constructor(scene,world,materials){
-    this.group=new THREE.Group();scene.add(this.group);this.world=world;this.materials=materials;
+    this.group=new THREE.Group();scene.add(this.group);this.world=world;this.materials=materials;this.fieldProxyBatches=[];
+    this.fieldStructures=new M01FieldStructures(this.group);this.fieldStructures.ready=this.fieldStructures.load();
     this.geometry={box:new THREE.BoxGeometry(1,1,1),rock:new THREE.DodecahedronGeometry(1,0),gravel:new THREE.TetrahedronGeometry(1),
       trunk:new THREE.CylinderGeometry(.72,1,1,9),leaf:new THREE.PlaneGeometry(1,1),bag:new THREE.CapsuleGeometry(.5,.4,3,7),
       treeWoodNear:trunkGeometry(9),treeWoodMid:new THREE.CylinderGeometry(.62,1,1,6),treeWoodFar:new THREE.CylinderGeometry(.68,1,1,4),
@@ -65,8 +67,8 @@ export class M01Environment {
     this.buildTreeBatches();this.buildGroundCover();this.buildGroundShadows();this.updateVegetationLod({x:0,z:0},'medium',true);
   }
   put(kind,material,p,size,rotation=[0,0,0],color=null,parentId=null,meta=null){
-    const propQuality=meta?.propQuality??null,key=`${kind}:${material}:${parentId??'static'}:${propQuality??'base'}`;
-    if(!this.lists.has(key))this.lists.set(key,{kind,material,parentId,propQuality,items:[]});
+    const propQuality=meta?.propQuality??null,fieldProxy=meta?.fieldProxy??null,key=`${kind}:${material}:${parentId??'static'}:${propQuality??'base'}:${fieldProxy??''}`;
+    if(!this.lists.has(key))this.lists.set(key,{kind,material,parentId,propQuality,fieldProxy,items:[]});
     this.lists.get(key).items.push({p,size,rotation,color});
   }
   flush(){
@@ -78,6 +80,7 @@ export class M01Environment {
       list.items.forEach((o,i)=>{dummy.position.set(...o.p);dummy.scale.set(...o.size);dummy.rotation.set(...o.rotation);dummy.updateMatrix();batch.setMatrixAt(i,dummy.matrix);if(o.color)batch.setColorAt(i,new THREE.Color(o.color));});
       batch.computeBoundingSphere();batch.castShadow=['box','trunk','bag','leaf'].includes(list.kind);batch.receiveShadow=true;
       this.group.add(batch);this.resources.push(batch);
+      if(list.fieldProxy){batch.userData.m01FieldProxy=list.fieldProxy;this.fieldProxyBatches.push(batch);}
       if(list.propQuality){batch.userData.m01PropQuality=list.propQuality;this.propBatches.push(batch);}
       if(list.parentId)this.dynamic.push({batch,id:list.parentId,height:this.world.covers.find(c=>c.id===list.parentId)?.max.y-this.world.covers.find(c=>c.id===list.parentId)?.min.y});
     }
@@ -359,13 +362,14 @@ export class M01Environment {
     // Station replaces presentation only. Original solid box survives if construction fails.
     try{this.station=new M01StationArchitecture(this.group,this.world);}
     catch(error){this.stationFailure=error.message;console.warn(`Station M01: ${error.message}`);}
-    for(let x=-269;x<-250;x+=1.6)this.put('box','wood',[x,-1.25,13.78],[.12,3.5,.14]);
-    for(let z=15;z<26;z+=1.5)this.put('box','wood',[-249.5,-1.25,z],[.14,3.5,.12]);
-    this.put('box','metal',[-260,.8,20],[21,.15,13]);
+    const proxy=(kind,mat,p,size)=>this.put(kind,mat,p,size,[0,0,0],null,null,{fieldProxy:'rail_shed'});
+    for(let x=-269;x<-250;x+=1.6)proxy('box','wood',[x,-1.25,13.78],[.12,3.5,.14]);
+    for(let z=15;z<26;z+=1.5)proxy('box','wood',[-249.5,-1.25,z],[.14,3.5,.12]);
+    proxy('box','metal',[-260,.8,20],[21,.15,13]);
     // Roof seams, barrels and sandbag courses improve scale without adding invented streets.
-    for(let x=-270;x<-250;x+=1.3)this.put('box','metal',[x,.91,20],[.045,.05,13]);
+    for(let x=-270;x<-250;x+=1.3)proxy('box','metal',[x,.91,20],[.045,.05,13]);
     for(const x of [-272,-274])this.put('trunk','metal',[x,-2.45,14],[.35,1.1,.35]);
-    this.put('box','stone',[-260,-2.25,76.6],[10,.15,.2]);
+    this.put('box','stone',[-260,-2.25,76.6],[10,.15,.2],[0,0,0],null,null,{fieldProxy:'shelter'});
   }
   buildCovers(){
     for(const c of this.world.covers){
@@ -377,7 +381,9 @@ export class M01Environment {
     }
   }
   sync(world,quality,player={x:0,z:0},clock=0){
-    for(const {id,batch,height}of this.dynamic){const cover=world.covers.find(c=>c.id===id);batch.visible=Boolean(cover);if(cover)batch.scale.y=(cover.max.y-cover.min.y)/height;}
+    this.fieldStructures.sync(world,quality,player);
+    for(const batch of this.fieldProxyBatches)batch.visible=!this.fieldStructures.replaces(batch.userData.m01FieldProxy);
+    for(const {id,batch,height}of this.dynamic){const cover=world.covers.find(c=>c.id===id);batch.visible=Boolean(cover)&&!this.fieldStructures.replaces(id);if(cover)batch.scale.y=(cover.max.y-cover.min.y)/height;}
     // Density changes are presentation-only. Prop batches are authored once and toggled by minimum quality.
     const q=M01_VEGETATION_LOD[quality]??M01_VEGETATION_LOD.medium,grass=this.grassMaterial.userData.m01Grass;
     grass.m01Time.value=clock;grass.m01Fade.value.set(q.grassFade[0],q.grassFade[1]);
@@ -407,7 +413,7 @@ export class M01Environment {
       tracked:Object.fromEntries(this.treeDescriptors.filter(t=>t.solid).map(t=>[t.id,t.lod]))};
   }
   dispose(){
-    this.station?.dispose();
+    this.fieldStructures.dispose();this.station?.dispose();
     this.group.removeFromParent();this.resources.forEach(b=>b.dispose());Object.values(this.geometry).forEach(g=>g.dispose());Object.values(this.grassGeometry).forEach(g=>g.dispose());
     this.foliage.dispose();this.canopyMaterial.dispose();this.leafMap.dispose();this.bark.map.dispose();this.bark.dispose();this.grassMaterial.dispose();
     this.groundShadowMaterial.dispose();this.shadowMap.dispose();this.canopyLeafMap.dispose();
