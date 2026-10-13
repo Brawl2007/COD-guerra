@@ -62,6 +62,11 @@ export class M01Environment {
   get treeDescriptors(){return this.vegetation.treeDescriptors;}
   get shrubDescriptors(){return this.vegetation.shrubDescriptors;}
   get layout(){return this.vegetation.layout;}
+  // Keep the established descriptor facade, including lightweight material/impact callers.
+  makeTreeDescriptor(...args){return M01VegetationRuntime.prototype.makeTreeDescriptor.apply(this.vegetation??this,args);}
+  partMatrix(...args){return M01VegetationRuntime.prototype.partMatrix.apply(this.vegetation??this,args);}
+  rodMatrix(...args){return M01VegetationRuntime.prototype.rodMatrix.apply(this.vegetation??this,args);}
+  hsl(...args){return M01VegetationRuntime.prototype.hsl.apply(this.vegetation??this,args);}
   syncVegetation(world,quality,player,clock,surfaceRevision){this.vegetation.sync(world,quality,player,clock,surfaceRevision);}
   buildClutter(){
     const r=this.random;
