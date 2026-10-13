@@ -56,3 +56,12 @@ Workflow de agentes: `.github/workflows/agentic-python-tests.yml`.
 Workflow de jogo: `.github/workflows/pages.yml`.
 Para qualquer alegacao de testes passados, citar o ID e o SHA da execucao
 correspondente; o historico nao substitui os checks do HEAD atual.
+
+## Ligacoes de validacao
+
+- PR: https://github.com/Brawl2007/COD-guerra/pull/60
+- CI Python: https://github.com/Brawl2007/COD-guerra/actions/workflows/agentic-python-tests.yml
+- CI jogo: https://github.com/Brawl2007/COD-guerra/actions/workflows/pages.yml
+
+A revisao da descricao do PR deve refletir os checks reais, nao apenas este
+documento. O primeiro diagnostico Claude Cloud continua pendente.
