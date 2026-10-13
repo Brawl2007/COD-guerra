@@ -42,6 +42,8 @@ jobs:
         run: |
           npx vite build
           M01_VEGETATION_OUTPUT_DIR=test-results/vegetation-runtime npx playwright test --config tools/verification/m01-vegetation-v2-runtime.config.mjs --output=test-results/vegetation-runtime-browser
+      - name: Existing vegetation LOD regression with real Medium and High/Low rail saves
+        run: npx playwright test tests/browser/m01-vegetation-lod.spec.js --config playwright.config.js --workers=1 --retries=0 --output=test-results/vegetation-legacy-lod-browser
       - name: Exact frozen base/current save, camera, clock and pixels
         run: node tools/verification/m01-vegetation-v2-compare.mjs test-results/vegetation-baseline-captures test-results/vegetation-runtime test-results/m01-vegetation-v2-pixels.json
       - name: Preserve accepted coupled terrain, horizon, rail, props and material browser obligations
