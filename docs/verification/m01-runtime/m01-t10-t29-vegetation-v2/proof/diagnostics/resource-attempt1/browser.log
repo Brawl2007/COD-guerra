@@ -1,0 +1,45 @@
+[1A[2K[2m[WebServer] [22m(node:17232) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 2 tests using 1 worker
+
+[1A[2K(node:17251) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:17251) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/2] tests/browser/m01-vegetation-runtime-v2.spec.js:27:1 › owner ready revision invalidates paused cache; failure and late paused completion use real network loading
+[1A[2K  1) tests/browser/m01-vegetation-runtime-v2.spec.js:27:1 › owner ready revision invalidates paused cache; failure and late paused completion use real network loading 
+
+    [31mTest timeout of 240000ms exceeded.[39m
+
+    Error: page.waitForFunction: Test ended.
+
+      25 | function budgets(d){const v=d.m01.vegetation;if(!baseline){expect(v.ready).toBe(true);expect(v.drawCalls).toBeGreaterThan(0);expect(v.drawCalls).toBe(v.submitted.reduce((n,s)=>n+s.passes,0));expect(v.triangles).toBe(v.submitted.reduce((n,s)=>n+s.triangles,0));expect(v.drawCalls).toBeLessThanOrEqual(v.budget.maxDrawCalls);expect(v.triangles).toBeLessThanOrEqual(v.budget.maxTriangles);expect(v.atlasTextures).toBe(1);expect(v.atlasDecodedRGBA8).toBe(1048576);expect(v.shadowCasters).toBeLessThanOrEqual(3);expect(v.submitted.every(s=>s.paddingIncluded)).toBe(true);expect(v.easternTrees).toBe(34);expect(v.groundCoverTotal).toBe(23038);expect(v.physicalReceiver.kitWoodSkipped).toBe(true);}expect(v.treeCount).toBe(212);expect(v.solidTreeCount).toBe(17);expect(v.shrubCount).toBe(716);}
+      26 | test('actual frozen canonical production and native bank/near/120m captures',async({browser})=>{test.setTimeout(900000);const results=[];for(const f of fixtures()){const {page,errors,http}=await open(browser,f);const d=await capture(page,f.name);budgets(d);if(!baseline&&f.name==='transition-116')expect(d.m01.vegetation.tracked.m01_tree_0).toBe('mid');if(!baseline&&f.name==='transition-120')expect(d.m01.vegetation.tracked.m01_tree_0).toBe('far');expect(d.player.x).toBe(f.state.player.x);expect(d.player.z).toBe(f.state.player.z);expect(d.player.angle).toBe(f.state.player.angle);expect(d.m01.vegetation.clock??f.state.clock).toBe(f.state.clock);expect(errors).toEqual([]);expect(http).toEqual([]);const actual=await verification(page);expect(actual.snapshot.clock).toBe(f.state.clock);expect(actual.snapshot.player).toEqual(f.state.player);results.push({name:f.name,state:f.state,actual,camera:d.m01.demolition.camera,diagnostics:d,errors,http});fs.writeFileSync(path.join(out,'frozen-canonical-raw.json'),JSON.stringify(results,null,2));await page.close();}fs.writeFileSync(path.join(out,'frozen-canonical-raw.json'),JSON.stringify(results,null,2));});
+    > 27 | test('owner ready revision invalidates paused cache; failure and late paused completion use real network loading',async({browser})=>{test.skip(baseline);const f=fixtures()[0];let release,arrived;const requestArrived=new Promise(r=>arrived=r);const late=await open(browser,f,{resident:false,intercept:async page=>page.route('**/vegetation-kit.glb',async route=>{const response=await route.fetch();arrived();await new Promise(r=>release=r);await route.fulfill({response});})});await requestArrived;expect(await late.page.evaluate(()=>window.gameDiagnostics().m01.vegetation.ready)).toBe(false);const before=await capture(late.page,'late-before');release();await late.page.waitForFunction(()=>window.gameDiagnostics().m01.vegetation.ready);await late.page.waitForFunction(n=>window.gameDiagnostics().m01.renderedFrames>n,before.m01.renderedFrames);const after=await capture(late.page,'late-after');budgets(after);expect(after.m01.vegetation.clock).toBe(before.m01.vegetation.clock);expect(after.player).toEqual(before.player);expect(late.errors).toEqual([]);await late.page.close();const fail=await open(browser,f,{resident:false,intercept:async page=>page.route('**/vegetation-kit.glb',r=>r.fulfill({status:503,body:'intentional vegetation failure'}))});await fail.page.waitForFunction(()=>window.gameDiagnostics().m01.vegetation.failure);const failed=await capture(fail.page,'load-failed');expect(failed.m01.vegetation.ready).toBe(false);expect(failed.m01.vegetation.atlasTextures).toBe(0);expect(failed.m01.vegetation.treeCount).toBe(212);fs.writeFileSync(path.join(out,'loading-raw.json'),JSON.stringify({before,after,failed,expectedFailure:fail.http},null,2));await fail.page.close();});
+         |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ^
+      28 | test('Low/High churn, four real checkpoint restores, equally warmed reload and frozen wind pixels',async({browser})=>{test.skip(baseline);test.setTimeout(480000);const f=fixtures().find(f=>f.name==='near-foliage'),opened=await open(browser,f);const page=opened.page,history=[];const pixels=await import('../../tools/verification/m01-vegetation-v2-pixels.mjs');
+      29 |  const shot=async name=>{const d=await capture(page,name);budgets(d);return {d,p:pixels.pngPixels(fs.readFileSync(path.join(out,name+'.png')))};};
+      30 |  const warmup=[];for(const q of ['low','medium','high']){await quality(page,q);warmup.push((await shot('warmup-'+q)).d);}const initial=await shot('churn-high-start'),initialState=await verification(page);const ids=initial.d.m01.vegetation.residency;await page.waitForTimeout(250);const frozen=await shot('wind-frozen');const freezeDelta=pixels.pixelDelta(initial.p,frozen.p);expect(freezeDelta.pixels).toBe(0);
+        at /workspace/COD-guerra/tests/browser/m01-vegetation-runtime-v2.spec.js:27:671
+
+    Error Context: tools/verification/.agent/runs/M01-T10-T29-20261013/runtime/resource-attempt1/playwright/m01-vegetation-runtime-v2--30775-on-use-real-network-loading/error-context.md
+
+
+[1A[2K(node:17515) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:17515) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[2/2] tests/browser/m01-vegetation-runtime-v2.spec.js:28:1 › Low/High churn, four real checkpoint restores, equally warmed reload and frozen wind pixels
+[1A[2K  1 failed
+    tests/browser/m01-vegetation-runtime-v2.spec.js:27:1 › owner ready revision invalidates paused cache; failure and late paused completion use real network loading 
+  1 passed (6.2m)

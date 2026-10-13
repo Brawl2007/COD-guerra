@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "baseHead": "b2430fac3504aa6d0ce7d0ad664076c26f90d6f7",
+  "gitHead": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+  "branch": "codex/m01-t10-t29-vegetation-v2",
+  "sourceSHA256": "8363ea61d93bb09c0c14215ef6818066c7bdfd4688db284e4da0f780100a2b70",
+  "files": {
+    ".github/workflows/m01-t10-t29-vegetation.yml": {
+      "sha256": "472ea38eaed495f8309620bac73dcbf002f0ee331040d259082c25bbbb7bf82c",
+      "bytes": 5393
+    },
+    "assets/models/provisional/m01/vegetation/LICENSE.md": {
+      "sha256": "cc0a987cdcc7c059f817a29987e66d7f05423a017f742fcc020dde76c26a459c",
+      "bytes": 1088
+    },
+    "assets/models/provisional/m01/vegetation/foliage-alpha.png": {
+      "sha256": "bb8422aace0bd3f7274302eda7956bb62fb457d2de1fd0a92cc753052da5e0a5",
+      "bytes": 29082
+    },
+    "assets/models/provisional/m01/vegetation/manifest.json": {
+      "sha256": "b6163412b6493aa16f555a2258fb2cdb924faabf301109843590aa730afbe8b1",
+      "bytes": 19931
+    },
+    "assets/models/provisional/m01/vegetation/vegetation-kit.glb": {
+      "sha256": "ce03b8ad0e384a009b40599bdf67b575d142c64b85fce9c61446bb72185170af",
+      "bytes": 546120
+    },
+    "src/render/m01-environment.js": {
+      "sha256": "dcd4bfb5b169fb789863b86c8e523bd435e29067fe56db4717084bbb1b49cbac",
+      "bytes": 10758
+    },
+    "src/render/m01-vegetation-art.js": {
+      "sha256": "5153e7cbfb6351d88567526baacc4dab1505f33cf7385e3c5423f3bafddbc92e",
+      "bytes": 8900
+    },
+    "src/render/m01-vegetation-material.js": {
+      "sha256": "a10bf7c637d098c262268e3b77cca1f93f8ddb8a690d647072a3829c8b404024",
+      "bytes": 1590
+    },
+    "src/render/m01-vegetation-runtime.js": {
+      "sha256": "0018743429d8cb25cf0039134d58f77c8d3d288706d993619198c810bf6d87ac",
+      "bytes": 31094
+    },
+    "src/render/m01-view.js": {
+      "sha256": "12da01a141aa301b0467c484eb94baca7e447c5a8afec1073b278100359e5075",
+      "bytes": 73696
+    },
+    "tests/browser/m01-vegetation-kit.spec.js": {
+      "sha256": "f3b1c49877745d5634bf76bbc2f2e2293bd091ed34b67b08f5ec8fa3c120996e",
+      "bytes": 1151
+    },
+    "tests/browser/m01-vegetation-lod.spec.js": {
+      "sha256": "c50a32d61f1e7f557c0b297ef391818e43fc24837dbdbab83bcdf855346eb8ba",
+      "bytes": 9698
+    },
+    "tests/browser/m01-vegetation-runtime-v2.spec.js": {
+      "sha256": "97b9f5173a6353b5f9bf78b880dd07842c0370f3e7d289ac57768b4d5da687d7",
+      "bytes": 15512
+    },
+    "tests/m01-vegetation-glb.test.js": {
+      "sha256": "b79a30882236f38a325d2b9649b091af2595f867366bdc72b686f7ffab463479",
+      "bytes": 3457
+    },
+    "tests/m01-vegetation-layout.test.js": {
+      "sha256": "6f037e66e6c070d0ab9a087d40ae0958231e7b5a0091c4d5370b107ae4205a7c",
+      "bytes": 6845
+    },
+    "tests/m01-vegetation-lod.test.js": {
+      "sha256": "3aa6df94f5b9ff3dabd86478ec915f63d3070e7ede3445a8a51790480b3bf6fd",
+      "bytes": 3702
+    },
+    "tests/m01-vegetation-runtime.test.js": {
+      "sha256": "437891c3e8ba1115ea09125fb611b5accef579d4ead7c7a548f5e35de8bb57f5",
+      "bytes": 6893
+    },
+    "tools/assets/m01-vegetation/build.mjs": {
+      "sha256": "74fb2c67f9809e46f74d1892dc9bdf6bbc70cda4581b476f33c17bd286619c75",
+      "bytes": 12310
+    },
+    "tools/assets/m01-vegetation/viewer-config.mjs": {
+      "sha256": "66717b8d03550b626e08ba46f87323d144dee2ba13ad99aea0e81b47d949d3d0",
+      "bytes": 341
+    },
+    "tools/assets/m01-vegetation/viewer.html": {
+      "sha256": "62ba30ee6e80fb1377d1e4a40876cbcee5d6f993aacca76375b51389609e3fbb",
+      "bytes": 381
+    },
+    "tools/assets/m01-vegetation/viewer.mjs": {
+      "sha256": "13add00bd6de5b097da1e289d145f40d6d6c5bed84580f64a0ae56b9b62ce260",
+      "bytes": 2856
+    },
+    "tools/verification/m01-vegetation-v2-compare.mjs": {
+      "sha256": "073ebce1243b909e9bcf454cb7c9549035f8ef19a4ae906cb90d720311ee586d",
+      "bytes": 1900
+    },
+    "tools/verification/m01-vegetation-v2-future-batch.mjs": {
+      "sha256": "1fa0d3ada8305c70a067cac061b1df50fb66772841ae244f09c7609cda3062f8",
+      "bytes": 3638
+    },
+    "tools/verification/m01-vegetation-v2-futures.mjs": {
+      "sha256": "b5c9b93a924704f606493020568f2f9c5dbefb37156e5fd51757ef8ff9299b95",
+      "bytes": 6171
+    },
+    "tools/verification/m01-vegetation-v2-kit.config.mjs": {
+      "sha256": "54fa4549af424e37f80baec8e89fd8eb8b4065d35e38984cda0b2be897d904fe",
+      "bytes": 700
+    },
+    "tools/verification/m01-vegetation-v2-node-asset.mjs": {
+      "sha256": "92df38c7b5bcdbb5b3753fb55b122526327085e3d8ec39bc017282e72106361e",
+      "bytes": 1692
+    },
+    "tools/verification/m01-vegetation-v2-pixels.mjs": {
+      "sha256": "124da102b7d069a3d08ee4d66c7565167198b883538aa884ffa4fe422d706f9e",
+      "bytes": 1760
+    },
+    "tools/verification/m01-vegetation-v2-runtime.config.mjs": {
+      "sha256": "c43ce5708c87746553af9f62f43d3ac03ca8a8d4315dd4ed9807805376c7d702",
+      "bytes": 917
+    },
+    "tools/verification/m01-vegetation-v2-source.mjs": {
+      "sha256": "c18cbf307576b34514b4c7f3eab0405ffed1c69a53d4d9a324c150bc1fa628fa",
+      "bytes": 2054
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "fixAttempts": 3,
+  "maxFixAttempts": 3,
+  "reviewRejections": 0,
+  "sourceHead": "8aa1549f7eef58aec92ec4421aa84266ffce18ea",
+  "failure": "Updated legacy Medium browser test expected near>0 at default start where no tree is within new Medium35m threshold. High/Low test passed; Medium failed near0.",
+  "evidence": [
+    "legacy-lod-browser.log",
+    "legacy-lod-browser/report.json",
+    "legacy-lod-browser/artifacts"
+  ],
+  "correction": "Use existing real rail checkpoint already tested in High/Low case for Medium; retain positive near/mid/far and real look controls, add both legacy cases to focused CI; no runtime/threshold/layout/canonical changes.",
+  "at": "2026-10-13T16:22:09.627738+00:00"
+}

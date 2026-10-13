@@ -1,0 +1,445 @@
+{
+  "config": {
+    "configFile": "/workspace/COD-guerra/.agent/runs/M01-T10-T29-20261013/runtime/verifier/terrain-current/config.mjs",
+    "rootDir": "/workspace/COD-guerra/tests/browser",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/COD-guerra/.agent/runs/M01-T10-T29-20261013/runtime/verifier/terrain-current/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/workspace/COD-guerra/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "m01-terrain-war-ground.spec.js"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/workspace/COD-guerra/.agent/runs/M01-T10-T29-20261013/runtime/verifier/terrain-current/report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run preview -- --port 4187",
+      "url": "http://127.0.0.1:4187/COD-guerra/",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "m01-terrain-war-ground.spec.js",
+      "file": "m01-terrain-war-ground.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "near-1m: war ground (high) vs the legacy single soil texture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 46657,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T20:50:24.559Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "near-1m.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJ0ZXJyYWluIjogewogICAgIm1hdGVyaWFsIjogIm0wMS10ZXJyYWluLW1hY3JvLXYxIiwKICAgICJ0ZXh0dXJlcyI6IDUsCiAgICAiZ3B1Qnl0ZXMiOiAyMDk3MTUwMCwKICAgICJxdWFsaXR5IjogImhpZ2giLAogICAgInRpZXIiOiAiaGlnaCIsCiAgICAibG93RGV0YWlsIjogMCwKICAgICJmaWxlcyI6IFsKICAgICAgInRlcnJhaW4tZGV0YWlsLWEtMTAyNC5wbmciLAogICAgICAidGVycmFpbi1kZXRhaWwtYi01MTIucG5nIiwKICAgICAgInRlcnJhaW4tbm9ybWFsLWEtMTAyNC5wbmciLAogICAgICAidGVycmFpbi1ub3JtYWwtYi01MTIucG5nIgogICAgXSwKICAgICJtYXNrIjogewogICAgICAid2lkdGgiOiAyMDQ4LAogICAgICAiaGVpZ2h0IjogNjQwCiAgICB9LAogICAgInNhbXBsZXJzIjogNSwKICAgICJmYWlsdXJlcyI6IFtdCiAgfSwKICAiZHJhd0NhbGxzIjogMzIyLAogICJ0cmlhbmdsZXMiOiA4NDAyNjIsCiAgInN0YXRzIjogewogICAgInBpeGVscyI6IDI2NDAwMCwKICAgICJtZWFuIjogNDYuMzE1NjQ2MjU1Mjg4NTMsCiAgICAic3RkIjogMTMuMTQ0MDE3MjQ3NjQzMTUsCiAgICAibG9jYWxTdGQiOiA1LjI0NDIxMjcyNjc5MjI2NywKICAgICJjaGFuZ2VkRnJhY3Rpb24iOiAwLjk5OTc1NzU3NTc1NzU3NTcsCiAgICAibWF4RGlmZiI6IDg5CiAgfSwKICAiY29udHJvbCI6IG51bGwsCiAgImxlZ2FjeVN0YXRzIjogewogICAgInBpeGVscyI6IDI2NDAwMCwKICAgICJtZWFuIjogMjYuOTA5OTYwNDQ2MjQ5OSwKICAgICJzdGQiOiA2LjE5NjMwNDc5MzMxODAyMywKICAgICJsb2NhbFN0ZCI6IDIuNzU4OTYxMzE5NDU3MDI3MwogIH0sCiAgImxlZ2FjeVRlcnJhaW4iOiB7CiAgICAibWF0ZXJpYWwiOiAibTAxLXRlcnJhaW4tbWFjcm8tdjEiLAogICAgInRleHR1cmVzIjogNSwKICAgICJncHVCeXRlcyI6IDIwOTcxNTAwLAogICAgInF1YWxpdHkiOiAiaGlnaCIsCiAgICAidGllciI6ICJoaWdoIiwKICAgICJsb3dEZXRhaWwiOiAwLAogICAgImZpbGVzIjogWwogICAgICAidGVycmFpbi1kZXRhaWwtYS0xMDI0LnBuZyIsCiAgICAgICJ0ZXJyYWluLWRldGFpbC1iLTUxMi5wbmciLAogICAgICAidGVycmFpbi1ub3JtYWwtYS0xMDI0LnBuZyIsCiAgICAgICJ0ZXJyYWluLW5vcm1hbC1iLTUxMi5wbmciCiAgICBdLAogICAgIm1hc2siOiB7CiAgICAgICJ3aWR0aCI6IDIwNDgsCiAgICAgICJoZWlnaHQiOiA2NDAKICAgIH0sCiAgICAic2FtcGxlcnMiOiA1LAogICAgImZhaWx1cmVzIjogW10KICB9LAogICJsZWdhY3lEcmF3Q2FsbHMiOiAzMjIKfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "92e789105155f9d11e64-baf451e8cc744ef133e9",
+          "file": "m01-terrain-war-ground.spec.js",
+          "line": 161,
+          "column": 80
+        },
+        {
+          "title": "mid-5m: war ground (high) vs the legacy single soil texture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 60764,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T20:51:11.560Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "mid-5m.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJ0ZXJyYWluIjogewogICAgIm1hdGVyaWFsIjogIm0wMS10ZXJyYWluLW1hY3JvLXYxIiwKICAgICJ0ZXh0dXJlcyI6IDUsCiAgICAiZ3B1Qnl0ZXMiOiAyMDk3MTUwMCwKICAgICJxdWFsaXR5IjogImhpZ2giLAogICAgInRpZXIiOiAiaGlnaCIsCiAgICAibG93RGV0YWlsIjogMCwKICAgICJmaWxlcyI6IFsKICAgICAgInRlcnJhaW4tZGV0YWlsLWEtMTAyNC5wbmciLAogICAgICAidGVycmFpbi1kZXRhaWwtYi01MTIucG5nIiwKICAgICAgInRlcnJhaW4tbm9ybWFsLWEtMTAyNC5wbmciLAogICAgICAidGVycmFpbi1ub3JtYWwtYi01MTIucG5nIgogICAgXSwKICAgICJtYXNrIjogewogICAgICAid2lkdGgiOiAyMDQ4LAogICAgICAiaGVpZ2h0IjogNjQwCiAgICB9LAogICAgInNhbXBsZXJzIjogNSwKICAgICJmYWlsdXJlcyI6IFtdCiAgfSwKICAiZHJhd0NhbGxzIjogNjI1LAogICJ0cmlhbmdsZXMiOiA5OTc0NjYsCiAgInN0YXRzIjogewogICAgInBpeGVscyI6IDE2ODAwMCwKICAgICJtZWFuIjogNDYuNjg1MDU5MTUzNTUzMjksCiAgICAic3RkIjogMTQuOTU2MTMzMjY3NzY5OTM0LAogICAgImxvY2FsU3RkIjogOC4zNDQ0NTgxNjYyMDYwMSwKICAgICJjaGFuZ2VkRnJhY3Rpb24iOiAwLjk5NjUxMTkwNDc2MTkwNDgsCiAgICAibWF4RGlmZiI6IDEwMwogIH0sCiAgImNvbnRyb2wiOiBudWxsLAogICJsZWdhY3lTdGF0cyI6IHsKICAgICJwaXhlbHMiOiAxNjgwMDAsCiAgICAibWVhbiI6IDI1Ljg5OTIwMDA5MDQ5MjYwNiwKICAgICJzdGQiOiA1LjczOTAwODcwNzE3ODM3NiwKICAgICJsb2NhbFN0ZCI6IDMuMTYyODU4MzQyNDE5NDE2OAogIH0sCiAgImxlZ2FjeVRlcnJhaW4iOiB7CiAgICAibWF0ZXJpYWwiOiAibTAxLXRlcnJhaW4tbWFjcm8tdjEiLAogICAgInRleHR1cmVzIjogNSwKICAgICJncHVCeXRlcyI6IDIwOTcxNTAwLAogICAgInF1YWxpdHkiOiAiaGlnaCIsCiAgICAidGllciI6ICJoaWdoIiwKICAgICJsb3dEZXRhaWwiOiAwLAogICAgImZpbGVzIjogWwogICAgICAidGVycmFpbi1kZXRhaWwtYS0xMDI0LnBuZyIsCiAgICAgICJ0ZXJyYWluLWRldGFpbC1iLTUxMi5wbmciLAogICAgICAidGVycmFpbi1ub3JtYWwtYS0xMDI0LnBuZyIsCiAgICAgICJ0ZXJyYWluLW5vcm1hbC1iLTUxMi5wbmciCiAgICBdLAogICAgIm1hc2siOiB7CiAgICAgICJ3aWR0aCI6IDIwNDgsCiAgICAgICJoZWlnaHQiOiA2NDAKICAgIH0sCiAgICAic2FtcGxlcnMiOiA1LAogICAgImZhaWx1cmVzIjogW10KICB9LAogICJsZWdhY3lEcmF3Q2FsbHMiOiA2MjUKfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "92e789105155f9d11e64-e3da4e147c0544a9fc0a",
+          "file": "m01-terrain-war-ground.spec.js",
+          "line": 161,
+          "column": 80
+        },
+        {
+          "title": "far-50m: war ground (high) vs the legacy single soil texture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 52695,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T20:52:12.348Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "far-50m.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJ0ZXJyYWluIjogewogICAgIm1hdGVyaWFsIjogIm0wMS10ZXJyYWluLW1hY3JvLXYxIiwKICAgICJ0ZXh0dXJlcyI6IDUsCiAgICAiZ3B1Qnl0ZXMiOiAyMDk3MTUwMCwKICAgICJxdWFsaXR5IjogImhpZ2giLAogICAgInRpZXIiOiAiaGlnaCIsCiAgICAibG93RGV0YWlsIjogMCwKICAgICJmaWxlcyI6IFsKICAgICAgInRlcnJhaW4tZGV0YWlsLWEtMTAyNC5wbmciLAogICAgICAidGVycmFpbi1kZXRhaWwtYi01MTIucG5nIiwKICAgICAgInRlcnJhaW4tbm9ybWFsLWEtMTAyNC5wbmciLAogICAgICAidGVycmFpbi1ub3JtYWwtYi01MTIucG5nIgogICAgXSwKICAgICJtYXNrIjogewogICAgICAid2lkdGgiOiAyMDQ4LAogICAgICAiaGVpZ2h0IjogNjQwCiAgICB9LAogICAgInNhbXBsZXJzIjogNSwKICAgICJmYWlsdXJlcyI6IFtdCiAgfSwKICAiZHJhd0NhbGxzIjogNDg5LAogICJ0cmlhbmdsZXMiOiA4MDk5MTIsCiAgInN0YXRzIjogewogICAgInBpeGVscyI6IDE2MjAwMCwKICAgICJtZWFuIjogNDMuNDE1MDM3ODYyOTY1OTc0LAogICAgInN0ZCI6IDE4Ljg0MzkwMDY1ODA3NjA3MywKICAgICJsb2NhbFN0ZCI6IDguMDg4ODkxNDY3NzA3MzExLAogICAgImNoYW5nZWRGcmFjdGlvbiI6IDAuNjM5ODU4MDI0NjkxMzU4LAogICAgIm1heERpZmYiOiAxMDIKICB9LAogICJjb250cm9sIjogbnVsbCwKICAibGVnYWN5U3RhdHMiOiB7CiAgICAicGl4ZWxzIjogMTYyMDAwLAogICAgIm1lYW4iOiAyOS4yMTQwOTYzNDkzOTM5MzcsCiAgICAic3RkIjogMTIuMzk2NTU3ODIxNTQ0OTU4LAogICAgImxvY2FsU3RkIjogMy4yNjU5MjU2MTIwOTU1MTE0CiAgfSwKICAibGVnYWN5VGVycmFpbiI6IHsKICAgICJtYXRlcmlhbCI6ICJtMDEtdGVycmFpbi1tYWNyby12MSIsCiAgICAidGV4dHVyZXMiOiA1LAogICAgImdwdUJ5dGVzIjogMjA5NzE1MDAsCiAgICAicXVhbGl0eSI6ICJoaWdoIiwKICAgICJ0aWVyIjogImhpZ2giLAogICAgImxvd0RldGFpbCI6IDAsCiAgICAiZmlsZXMiOiBbCiAgICAgICJ0ZXJyYWluLWRldGFpbC1hLTEwMjQucG5nIiwKICAgICAgInRlcnJhaW4tZGV0YWlsLWItNTEyLnBuZyIsCiAgICAgICJ0ZXJyYWluLW5vcm1hbC1hLTEwMjQucG5nIiwKICAgICAgInRlcnJhaW4tbm9ybWFsLWItNTEyLnBuZyIKICAgIF0sCiAgICAibWFzayI6IHsKICAgICAgIndpZHRoIjogMjA0OCwKICAgICAgImhlaWdodCI6IDY0MAogICAgfSwKICAgICJzYW1wbGVycyI6IDUsCiAgICAiZmFpbHVyZXMiOiBbXQogIH0sCiAgImxlZ2FjeURyYXdDYWxscyI6IDQ4OQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "92e789105155f9d11e64-5000c2cbcf41ea13db49",
+          "file": "m01-terrain-war-ground.spec.js",
+          "line": 161,
+          "column": 80
+        },
+        {
+          "title": "rail-5m: war ground (high) vs the legacy single soil texture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 57608,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T20:53:05.076Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "rail-5m.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJ0ZXJyYWluIjogewogICAgIm1hdGVyaWFsIjogIm0wMS10ZXJyYWluLW1hY3JvLXYxIiwKICAgICJ0ZXh0dXJlcyI6IDUsCiAgICAiZ3B1Qnl0ZXMiOiAyMDk3MTUwMCwKICAgICJxdWFsaXR5IjogImhpZ2giLAogICAgInRpZXIiOiAiaGlnaCIsCiAgICAibG93RGV0YWlsIjogMCwKICAgICJmaWxlcyI6IFsKICAgICAgInRlcnJhaW4tZGV0YWlsLWEtMTAyNC5wbmciLAogICAgICAidGVycmFpbi1kZXRhaWwtYi01MTIucG5nIiwKICAgICAgInRlcnJhaW4tbm9ybWFsLWEtMTAyNC5wbmciLAogICAgICAidGVycmFpbi1ub3JtYWwtYi01MTIucG5nIgogICAgXSwKICAgICJtYXNrIjogewogICAgICAid2lkdGgiOiAyMDQ4LAogICAgICAiaGVpZ2h0IjogNjQwCiAgICB9LAogICAgInNhbXBsZXJzIjogNSwKICAgICJmYWlsdXJlcyI6IFtdCiAgfSwKICAiZHJhd0NhbGxzIjogMzg5LAogICJ0cmlhbmdsZXMiOiA4NTUwNTMsCiAgInN0YXRzIjogewogICAgInBpeGVscyI6IDE5MjAwMCwKICAgICJtZWFuIjogMzAuMzI3MTMwMDUwMDA5ODQ2LAogICAgInN0ZCI6IDE2LjAzMjY0NTA3NDMxNDE3LAogICAgImxvY2FsU3RkIjogNC44MjEyOTE5MTgwNDc4NjgsCiAgICAiY2hhbmdlZEZyYWN0aW9uIjogMC4xNjk3MjkxNjY2NjY2NjY2NSwKICAgICJtYXhEaWZmIjogODIKICB9LAogICJjb250cm9sIjogbnVsbCwKICAibGVnYWN5U3RhdHMiOiB7CiAgICAicGl4ZWxzIjogMTkyMDAwLAogICAgIm1lYW4iOiAzMC4wNzc4MzMxMzg1NDgzNCwKICAgICJzdGQiOiAxNS4wOTQ1NjU4NzE2NTM1ODQsCiAgICAibG9jYWxTdGQiOiAzLjc2NDc2NTIyNDY2NjQ1NAogIH0sCiAgImxlZ2FjeVRlcnJhaW4iOiB7CiAgICAibWF0ZXJpYWwiOiAibTAxLXRlcnJhaW4tbWFjcm8tdjEiLAogICAgInRleHR1cmVzIjogNSwKICAgICJncHVCeXRlcyI6IDIwOTcxNTAwLAogICAgInF1YWxpdHkiOiAiaGlnaCIsCiAgICAidGllciI6ICJoaWdoIiwKICAgICJsb3dEZXRhaWwiOiAwLAogICAgImZpbGVzIjogWwogICAgICAidGVycmFpbi1kZXRhaWwtYS0xMDI0LnBuZyIsCiAgICAgICJ0ZXJyYWluLWRldGFpbC1iLTUxMi5wbmciLAogICAgICAidGVycmFpbi1ub3JtYWwtYS0xMDI0LnBuZyIsCiAgICAgICJ0ZXJyYWluLW5vcm1hbC1iLTUxMi5wbmciCiAgICBdLAogICAgIm1hc2siOiB7CiAgICAgICJ3aWR0aCI6IDIwNDgsCiAgICAgICJoZWlnaHQiOiA2NDAKICAgIH0sCiAgICAic2FtcGxlcnMiOiA1LAogICAgImZhaWx1cmVzIjogW10KICB9LAogICJsZWdhY3lEcmF3Q2FsbHMiOiAzODkKfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "92e789105155f9d11e64-cd9482891e1dfe9b32a8",
+          "file": "m01-terrain-war-ground.spec.js",
+          "line": 161,
+          "column": 80
+        },
+        {
+          "title": "road-5m: war ground (high) vs the legacy single soil texture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 53876,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T20:54:02.708Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "road-5m.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJ0ZXJyYWluIjogewogICAgIm1hdGVyaWFsIjogIm0wMS10ZXJyYWluLW1hY3JvLXYxIiwKICAgICJ0ZXh0dXJlcyI6IDUsCiAgICAiZ3B1Qnl0ZXMiOiAyMDk3MTUwMCwKICAgICJxdWFsaXR5IjogImhpZ2giLAogICAgInRpZXIiOiAiaGlnaCIsCiAgICAibG93RGV0YWlsIjogMCwKICAgICJmaWxlcyI6IFsKICAgICAgInRlcnJhaW4tZGV0YWlsLWEtMTAyNC5wbmciLAogICAgICAidGVycmFpbi1kZXRhaWwtYi01MTIucG5nIiwKICAgICAgInRlcnJhaW4tbm9ybWFsLWEtMTAyNC5wbmciLAogICAgICAidGVycmFpbi1ub3JtYWwtYi01MTIucG5nIgogICAgXSwKICAgICJtYXNrIjogewogICAgICAid2lkdGgiOiAyMDQ4LAogICAgICAiaGVpZ2h0IjogNjQwCiAgICB9LAogICAgInNhbXBsZXJzIjogNSwKICAgICJmYWlsdXJlcyI6IFtdCiAgfSwKICAiZHJhd0NhbGxzIjogNjI5LAogICJ0cmlhbmdsZXMiOiA5NzY4NzYsCiAgInN0YXRzIjogewogICAgInBpeGVscyI6IDE2ODAwMCwKICAgICJtZWFuIjogNTQuMzc1MzkzNjYxOTAwNTQ2LAogICAgInN0ZCI6IDE1LjY1NTgxNTk1NDk1NDg2NiwKICAgICJsb2NhbFN0ZCI6IDkuNzIyMDk5NjQwNjI2NzksCiAgICAiY2hhbmdlZEZyYWN0aW9uIjogMC45OTQ1MjM4MDk1MjM4MDk1LAogICAgIm1heERpZmYiOiAxMDAKICB9LAogICJjb250cm9sIjogbnVsbCwKICAibGVnYWN5U3RhdHMiOiB7CiAgICAicGl4ZWxzIjogMTY4MDAwLAogICAgIm1lYW4iOiAzMC41OTczMDE2Nzk3NTc4NSwKICAgICJzdGQiOiA4LjUzNDkxNTA3MzQ5MjYzOCwKICAgICJsb2NhbFN0ZCI6IDMuNjI5OTMyNzQ5MjAwNzE4NQogIH0sCiAgImxlZ2FjeVRlcnJhaW4iOiB7CiAgICAibWF0ZXJpYWwiOiAibTAxLXRlcnJhaW4tbWFjcm8tdjEiLAogICAgInRleHR1cmVzIjogNSwKICAgICJncHVCeXRlcyI6IDIwOTcxNTAwLAogICAgInF1YWxpdHkiOiAiaGlnaCIsCiAgICAidGllciI6ICJoaWdoIiwKICAgICJsb3dEZXRhaWwiOiAwLAogICAgImZpbGVzIjogWwogICAgICAidGVycmFpbi1kZXRhaWwtYS0xMDI0LnBuZyIsCiAgICAgICJ0ZXJyYWluLWRldGFpbC1iLTUxMi5wbmciLAogICAgICAidGVycmFpbi1ub3JtYWwtYS0xMDI0LnBuZyIsCiAgICAgICJ0ZXJyYWluLW5vcm1hbC1iLTUxMi5wbmciCiAgICBdLAogICAgIm1hc2siOiB7CiAgICAgICJ3aWR0aCI6IDIwNDgsCiAgICAgICJoZWlnaHQiOiA2NDAKICAgIH0sCiAgICAic2FtcGxlcnMiOiA1LAogICAgImZhaWx1cmVzIjogW10KICB9LAogICJsZWdhY3lEcmF3Q2FsbHMiOiA2MjkKfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "92e789105155f9d11e64-6120cb3c086bd6fc95b4",
+          "file": "m01-terrain-war-ground.spec.js",
+          "line": 161,
+          "column": 80
+        },
+        {
+          "title": "bank-5m: war ground (high) vs the legacy single soil texture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 65968,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T20:54:56.605Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "bank-5m.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJ0ZXJyYWluIjogewogICAgIm1hdGVyaWFsIjogIm0wMS10ZXJyYWluLW1hY3JvLXYxIiwKICAgICJ0ZXh0dXJlcyI6IDUsCiAgICAiZ3B1Qnl0ZXMiOiAyMDk3MTUwMCwKICAgICJxdWFsaXR5IjogImhpZ2giLAogICAgInRpZXIiOiAiaGlnaCIsCiAgICAibG93RGV0YWlsIjogMCwKICAgICJmaWxlcyI6IFsKICAgICAgInRlcnJhaW4tZGV0YWlsLWEtMTAyNC5wbmciLAogICAgICAidGVycmFpbi1kZXRhaWwtYi01MTIucG5nIiwKICAgICAgInRlcnJhaW4tbm9ybWFsLWEtMTAyNC5wbmciLAogICAgICAidGVycmFpbi1ub3JtYWwtYi01MTIucG5nIgogICAgXSwKICAgICJtYXNrIjogewogICAgICAid2lkdGgiOiAyMDQ4LAogICAgICAiaGVpZ2h0IjogNjQwCiAgICB9LAogICAgInNhbXBsZXJzIjogNSwKICAgICJmYWlsdXJlcyI6IFtdCiAgfSwKICAiZHJhd0NhbGxzIjogNTU4LAogICJ0cmlhbmdsZXMiOiA3NDQ5OTksCiAgInN0YXRzIjogewogICAgInBpeGVscyI6IDE5MjAwMCwKICAgICJtZWFuIjogMjYuOTgzODc4NDU3Mjk5MDUsCiAgICAic3RkIjogOS42NDMyODI4NTAwODMwOTYsCiAgICAibG9jYWxTdGQiOiAyLjcwMTU0MDE1MjI1ODcwNTMsCiAgICAiY2hhbmdlZEZyYWN0aW9uIjogMC45NzYwOTM3NSwKICAgICJtYXhEaWZmIjogOTMKICB9LAogICJjb250cm9sIjogewogICAgInBpeGVscyI6IDY0MDAsCiAgICAibWVhbiI6IDE0NC4zMTQzODU3MTg3NDkwNywKICAgICJzdGQiOiA0LjI5NzAyNjA5MDM5NDYyMiwKICAgICJsb2NhbFN0ZCI6IDAuNTgyMTgyNTAyNTA1ODgzOCwKICAgICJjaGFuZ2VkRnJhY3Rpb24iOiAwLAogICAgIm1heERpZmYiOiAwCiAgfSwKICAibGVnYWN5U3RhdHMiOiB7CiAgICAicGl4ZWxzIjogMTkyMDAwLAogICAgIm1lYW4iOiAyMy4wOTMyNTcyOTA2MzYxMiwKICAgICJzdGQiOiA3LjYzNDkxMzQ5NDA2NDM3MzUsCiAgICAibG9jYWxTdGQiOiAzLjcxMTQxNzc5ODQ1MzY3NwogIH0sCiAgImxlZ2FjeVRlcnJhaW4iOiB7CiAgICAibWF0ZXJpYWwiOiAibTAxLXRlcnJhaW4tbWFjcm8tdjEiLAogICAgInRleHR1cmVzIjogNSwKICAgICJncHVCeXRlcyI6IDIwOTcxNTAwLAogICAgInF1YWxpdHkiOiAiaGlnaCIsCiAgICAidGllciI6ICJoaWdoIiwKICAgICJsb3dEZXRhaWwiOiAwLAogICAgImZpbGVzIjogWwogICAgICAidGVycmFpbi1kZXRhaWwtYS0xMDI0LnBuZyIsCiAgICAgICJ0ZXJyYWluLWRldGFpbC1iLTUxMi5wbmciLAogICAgICAidGVycmFpbi1ub3JtYWwtYS0xMDI0LnBuZyIsCiAgICAgICJ0ZXJyYWluLW5vcm1hbC1iLTUxMi5wbmciCiAgICBdLAogICAgIm1hc2siOiB7CiAgICAgICJ3aWR0aCI6IDIwNDgsCiAgICAgICJoZWlnaHQiOiA2NDAKICAgIH0sCiAgICAic2FtcGxlcnMiOiA1LAogICAgImZhaWx1cmVzIjogW10KICB9LAogICJsZWdhY3lEcmF3Q2FsbHMiOiA1NTgKfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "92e789105155f9d11e64-680072908a52eb2c6ce4",
+          "file": "m01-terrain-war-ground.spec.js",
+          "line": 161,
+          "column": 80
+        },
+        {
+          "title": "medium: tier texture set, budget and look at 5 m",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 58324,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T20:56:02.593Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "mid-5m-medium.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJ0ZXJyYWluIjogewogICAgIm1hdGVyaWFsIjogIm0wMS10ZXJyYWluLW1hY3JvLXYxIiwKICAgICJ0ZXh0dXJlcyI6IDUsCiAgICAiZ3B1Qnl0ZXMiOiA3MzQwMDEyLAogICAgInF1YWxpdHkiOiAibWVkaXVtIiwKICAgICJ0aWVyIjogIm1lZGl1bSIsCiAgICAibG93RGV0YWlsIjogMCwKICAgICJmaWxlcyI6IFsKICAgICAgInRlcnJhaW4tZGV0YWlsLWEtNTEyLnBuZyIsCiAgICAgICJ0ZXJyYWluLWRldGFpbC1iLTUxMi5wbmciLAogICAgICAidGVycmFpbi1ub3JtYWwtYS01MTIucG5nIiwKICAgICAgInRlcnJhaW4tbm9ybWFsLWItNTEyLnBuZyIKICAgIF0sCiAgICAibWFzayI6IHsKICAgICAgIndpZHRoIjogMTAyNCwKICAgICAgImhlaWdodCI6IDMyMAogICAgfSwKICAgICJzYW1wbGVycyI6IDUsCiAgICAiZmFpbHVyZXMiOiBbXQogIH0sCiAgImRyYXdDYWxscyI6IDU4OCwKICAidHJpYW5nbGVzIjogODg5OTAwLAogICJzdGF0cyI6IHsKICAgICJwaXhlbHMiOiAxNjgwMDAsCiAgICAibWVhbiI6IDQ3LjM2MTEyMDgxNzg0MzMsCiAgICAic3RkIjogMTUuOTU2Nzg2NzA5MDMzODIsCiAgICAibG9jYWxTdGQiOiA4LjMwMTA1NDMzODM3NzM3NgogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "92e789105155f9d11e64-a5151440fac1800485b2",
+          "file": "m01-terrain-war-ground.spec.js",
+          "line": 185,
+          "column": 39
+        },
+        {
+          "title": "low: tier texture set, budget and look at 5 m",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 30954,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T20:57:00.934Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "mid-5m-low.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJ0ZXJyYWluIjogewogICAgIm1hdGVyaWFsIjogIm0wMS10ZXJyYWluLW1hY3JvLXYxIiwKICAgICJ0ZXh0dXJlcyI6IDEsCiAgICAiZ3B1Qnl0ZXMiOiAxNzQ3NjEyLAogICAgInF1YWxpdHkiOiAibG93IiwKICAgICJ0aWVyIjogImxvdyIsCiAgICAibG93RGV0YWlsIjogMSwKICAgICJmaWxlcyI6IFtdLAogICAgIm1hc2siOiB7CiAgICAgICJ3aWR0aCI6IDEwMjQsCiAgICAgICJoZWlnaHQiOiAzMjAKICAgIH0sCiAgICAic2FtcGxlcnMiOiAxLAogICAgImZhaWx1cmVzIjogW10KICB9LAogICJkcmF3Q2FsbHMiOiAzNjcsCiAgInRyaWFuZ2xlcyI6IDQ5MTk3OSwKICAic3RhdHMiOiB7CiAgICAicGl4ZWxzIjogMTY4MDAwLAogICAgIm1lYW4iOiA1MC4wNTI0MTE5MjQ5ODI5LAogICAgInN0ZCI6IDYuMzMxMTU2Nzk2MTg5NTksCiAgICAibG9jYWxTdGQiOiAwLjIxNzU3ODc3OTExOTMzNjQ5CiAgfQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "92e789105155f9d11e64-dbc21c2cd1b69cb9fa16",
+          "file": "m01-terrain-war-ground.spec.js",
+          "line": 185,
+          "column": 39
+        },
+        {
+          "title": "paused High→Low→Medium→High churn preserves save state and reclaims textures",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 126588,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T20:57:31.902Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "quality-lifecycle.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJ0aWVycyI6IFsKICAgIHsKICAgICAgInRpZXIiOiAibG93IiwKICAgICAgImdsb2JhbFRleHR1cmVzIjogMTA0LAogICAgICAidGVycmFpbiI6IHsKICAgICAgICAibWF0ZXJpYWwiOiAibTAxLXRlcnJhaW4tbWFjcm8tdjEiLAogICAgICAgICJ0ZXh0dXJlcyI6IDEsCiAgICAgICAgImdwdUJ5dGVzIjogMTc0NzYxMiwKICAgICAgICAicXVhbGl0eSI6ICJsb3ciLAogICAgICAgICJ0aWVyIjogImxvdyIsCiAgICAgICAgImxvd0RldGFpbCI6IDEsCiAgICAgICAgImZpbGVzIjogW10sCiAgICAgICAgIm1hc2siOiB7CiAgICAgICAgICAid2lkdGgiOiAxMDI0LAogICAgICAgICAgImhlaWdodCI6IDMyMAogICAgICAgIH0sCiAgICAgICAgInNhbXBsZXJzIjogMSwKICAgICAgICAiZmFpbHVyZXMiOiBbXQogICAgICB9CiAgICB9LAogICAgewogICAgICAidGllciI6ICJtZWRpdW0iLAogICAgICAiZ2xvYmFsVGV4dHVyZXMiOiAxMjAsCiAgICAgICJ0ZXJyYWluIjogewogICAgICAgICJtYXRlcmlhbCI6ICJtMDEtdGVycmFpbi1tYWNyby12MSIsCiAgICAgICAgInRleHR1cmVzIjogNSwKICAgICAgICAiZ3B1Qnl0ZXMiOiA3MzQwMDEyLAogICAgICAgICJxdWFsaXR5IjogIm1lZGl1bSIsCiAgICAgICAgInRpZXIiOiAibWVkaXVtIiwKICAgICAgICAibG93RGV0YWlsIjogMCwKICAgICAgICAiZmlsZXMiOiBbCiAgICAgICAgICAidGVycmFpbi1kZXRhaWwtYS01MTIucG5nIiwKICAgICAgICAgICJ0ZXJyYWluLWRldGFpbC1iLTUxMi5wbmciLAogICAgICAgICAgInRlcnJhaW4tbm9ybWFsLWEtNTEyLnBuZyIsCiAgICAgICAgICAidGVycmFpbi1ub3JtYWwtYi01MTIucG5nIgogICAgICAgIF0sCiAgICAgICAgIm1hc2siOiB7CiAgICAgICAgICAid2lkdGgiOiAxMDI0LAogICAgICAgICAgImhlaWdodCI6IDMyMAogICAgICAgIH0sCiAgICAgICAgInNhbXBsZXJzIjogNSwKICAgICAgICAiZmFpbHVyZXMiOiBbXQogICAgICB9CiAgICB9LAogICAgewogICAgICAidGllciI6ICJoaWdoIiwKICAgICAgImdsb2JhbFRleHR1cmVzIjogMTM0LAogICAgICAidGVycmFpbiI6IHsKICAgICAgICAibWF0ZXJpYWwiOiAibTAxLXRlcnJhaW4tbWFjcm8tdjEiLAogICAgICAgICJ0ZXh0dXJlcyI6IDUsCiAgICAgICAgImdwdUJ5dGVzIjogMjA5NzE1MDAsCiAgICAgICAgInF1YWxpdHkiOiAiaGlnaCIsCiAgICAgICAgInRpZXIiOiAiaGlnaCIsCiAgICAgICAgImxvd0RldGFpbCI6IDAsCiAgICAgICAgImZpbGVzIjogWwogICAgICAgICAgInRlcnJhaW4tZGV0YWlsLWEtMTAyNC5wbmciLAogICAgICAgICAgInRlcnJhaW4tZGV0YWlsLWItNTEyLnBuZyIsCiAgICAgICAgICAidGVycmFpbi1ub3JtYWwtYS0xMDI0LnBuZyIsCiAgICAgICAgICAidGVycmFpbi1ub3JtYWwtYi01MTIucG5nIgogICAgICAgIF0sCiAgICAgICAgIm1hc2siOiB7CiAgICAgICAgICAid2lkdGgiOiAyMDQ4LAogICAgICAgICAgImhlaWdodCI6IDY0MAogICAgICAgIH0sCiAgICAgICAgInNhbXBsZXJzIjogNSwKICAgICAgICAiZmFpbHVyZXMiOiBbXQogICAgICB9CiAgICB9LAogICAgewogICAgICAidGllciI6ICJsb3ciLAogICAgICAiZ2xvYmFsVGV4dHVyZXMiOiAxMDQsCiAgICAgICJ0ZXJyYWluIjogewogICAgICAgICJtYXRlcmlhbCI6ICJtMDEtdGVycmFpbi1tYWNyby12MSIsCiAgICAgICAgInRleHR1cmVzIjogMSwKICAgICAgICAiZ3B1Qnl0ZXMiOiAxNzQ3NjEyLAogICAgICAgICJxdWFsaXR5IjogImxvdyIsCiAgICAgICAgInRpZXIiOiAibG93IiwKICAgICAgICAibG93RGV0YWlsIjogMSwKICAgICAgICAiZmlsZXMiOiBbXSwKICAgICAgICAibWFzayI6IHsKICAgICAgICAgICJ3aWR0aCI6IDEwMjQsCiAgICAgICAgICAiaGVpZ2h0IjogMzIwCiAgICAgICAgfSwKICAgICAgICAic2FtcGxlcnMiOiAxLAogICAgICAgICJmYWlsdXJlcyI6IFtdCiAgICAgIH0KICAgIH0sCiAgICB7CiAgICAgICJ0aWVyIjogImhpZ2giLAogICAgICAiZ2xvYmFsVGV4dHVyZXMiOiAxMzQsCiAgICAgICJ0ZXJyYWluIjogewogICAgICAgICJtYXRlcmlhbCI6ICJtMDEtdGVycmFpbi1tYWNyby12MSIsCiAgICAgICAgInRleHR1cmVzIjogNSwKICAgICAgICAiZ3B1Qnl0ZXMiOiAyMDk3MTUwMCwKICAgICAgICAicXVhbGl0eSI6ICJoaWdoIiwKICAgICAgICAidGllciI6ICJoaWdoIiwKICAgICAgICAibG93RGV0YWlsIjogMCwKICAgICAgICAiZmlsZXMiOiBbCiAgICAgICAgICAidGVycmFpbi1kZXRhaWwtYS0xMDI0LnBuZyIsCiAgICAgICAgICAidGVycmFpbi1kZXRhaWwtYi01MTIucG5nIiwKICAgICAgICAgICJ0ZXJyYWluLW5vcm1hbC1hLTEwMjQucG5nIiwKICAgICAgICAgICJ0ZXJyYWluLW5vcm1hbC1iLTUxMi5wbmciCiAgICAgICAgXSwKICAgICAgICAibWFzayI6IHsKICAgICAgICAgICJ3aWR0aCI6IDIwNDgsCiAgICAgICAgICAiaGVpZ2h0IjogNjQwCiAgICAgICAgfSwKICAgICAgICAic2FtcGxlcnMiOiA1LAogICAgICAgICJmYWlsdXJlcyI6IFtdCiAgICAgIH0KICAgIH0KICBdLAogICJjbG9jayI6IDAuNgp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "92e789105155f9d11e64-68f577eed6c9b6030a1f",
+          "file": "m01-terrain-war-ground.spec.js",
+          "line": 199,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-13T20:50:22.965Z",
+    "duration": 555700.926,
+    "expected": 9,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
