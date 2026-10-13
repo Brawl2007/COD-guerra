@@ -1,0 +1,34 @@
+{
+  "capability": "verify",
+  "observed": {
+    "files_changed": [
+      "src/render/m01-terrain-relief.js",
+      "src/render/m01-far-landscape.js",
+      "src/render/m01-view.js"
+    ],
+    "change_type": "integration",
+    "files_truncated": false
+  },
+  "recommendation": {
+    "test_sets": [
+      "integration",
+      "visual"
+    ],
+    "recommended_tests": [
+      "combined tests",
+      "focused tests",
+      "regression tests",
+      "visual comparison"
+    ],
+    "mandatory_checks": [
+      "npm test",
+      "npm run build"
+    ]
+  },
+  "confidence": null,
+  "reason": "test sets from path/change-type rules, always unioned with project mandatory checks",
+  "source": "rule",
+  "needs_review": "none",
+  "advisory": true,
+  "mandatory_checks_preserved": true
+}

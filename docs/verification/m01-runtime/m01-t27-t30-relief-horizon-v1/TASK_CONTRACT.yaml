@@ -164,6 +164,9 @@
     "status": "ACCEPTED",
     "accepted_head": "4e5389b314f3e02b3197139cca953b79a5464d8f",
     "fix_attempts": 1,
-    "review_rejections": 0
+    "review_rejections": 0,
+    "integration_head": "14d37c5b9d69b88be9e30837e0bd92dba337413b",
+    "integration_tests": "669/669 PASS",
+    "integration_build": "PASS"
   }
 }

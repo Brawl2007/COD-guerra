@@ -114,4 +114,6 @@ under `test-results/m01-relief-horizon/` unless `M01_RELIEF_OUT` selects a durab
 Node/tooling/build validation. The focused workflow compiles a production preview solely as a browser prerequisite
 because normal CI does not publish a build artifact; it adds browser and frozen-owner authority checks.
 
-Archived `implementer-final-*` and `verifier-final-*` probe scripts retain their original runtime imports and output paths as raw provenance. To rerun them, restore the files and `authority-baseline.json` under `.agent/runs/M01-T27-T30-20261012/`, recreate the detached exact-base checkout there, and run from repository root. The maintained focused tests/harnesses above are the normal reproduction entry points.
+Archived `implementer-final-*` and `verifier-final-*` scripts retain original runtime paths and frozen-head/evidence assumptions as raw provenance. Do not execute them directly from the documentation folder. The maintained focused tests/harnesses above are the current reproduction entry points; original geometric probes require the recorded source/base checkouts and their runtime inputs/manifests.
+
+Integration: metadata branch `faf4be8` normal CI38381491544/job115242755884 passes669 Node/173 tooling/build92. Accepted executable source remains unchanged. No-ff playable merge `14d37c5b9d69b88be9e30837e0bd92dba337413b` passes full local669/669 Node and production build92; see raw integration logs/result. The following publication record changes documentation only.

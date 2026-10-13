@@ -6,8 +6,8 @@ BASE_BRANCH: claude/m01-integration
 BASE_HEAD: 293a4f116b9b28818b7ff3bda4d83cc49b01014f
 WORK_BRANCH: codex/m01-t27-t30-relief-horizon-v1
 ACCEPTED_HEAD: 4e5389b314f3e02b3197139cca953b79a5464d8f
-FINAL_HEAD: accepted source above; metadata commit recorded by Git history
-INTEGRATION_HEAD: pending integration; source acceptance does not assert a merge has happened
+FINAL_HEAD: 14d37c5b9d69b88be9e30837e0bd92dba337413b (playable merge; following record commit is documentation only)
+INTEGRATION_HEAD: 14d37c5b9d69b88be9e30837e0bd92dba337413b
 
 FILES_CHANGED: three new renderer owners; minimal m01-view integration; three focused Node tests; authorized m01-material-authority assertion replacement; focused browser/futures/view harnesses and browser-authority workflow; task evidence/status, memory and regression record. Game/core/world/missions/assets, package/config and previous renderer owners remain byte-identical to base. 621 original protected paths verified, with the authorized obsolete source-location test excluded.
 
@@ -23,7 +23,7 @@ RUNTIME_OR_VISUAL_EVIDENCE: source focused CI38376693616/job1152267526052/2 PASS
 
 REVIEW: independent VERIFIER.md PASS/EVIDENCE_SUFFICIENT YES; REVIEW.md ACCEPT. FIX_ATTEMPTS:1/3. REVIEW_REJECTIONS:0/2. Original source49a1886 failedCI logs and prior futures remain labelled historical underattempt1, not relabelled corrected. Graph implementation attempts3 includes an interruption/recovery and is not actualfix count.
 
-REGRESSION: .agent/regression/records/M01-T27-T30-RELIEF-HORIZON-V1.json; preserves complete envelope/geometry/future identity, actual view budgets/pixels, ownership/seating, paused quality/restore and rail contact. Ledger union validation required before metadata publication.
+REGRESSION: .agent/regression/records/M01-T27-T30-RELIEF-HORIZON-V1.json; preserves complete envelope/geometry/future identity, actual view budgets/pixels, ownership/seating, paused quality/restore and rail contact. Ledger union validation PASS:10 records/27 obligations.
 
 MEMORY: .agent/memory/m01/terrain-envelope-and-far-seating.md (accepted source and proof; original triangle seating, complete union, canonical cameras, warming history and limits).
 
@@ -32,5 +32,7 @@ ROUTING: required independent implementer/verifier/reviewer used supported inher
 KNOWN_LIMITATIONS: M01 remains PROTÓTIPO JOGÁVEL. Relief and original towns are artistic presentation estimates, not surveyed1939 reconstruction. Combined prepared relief displacement−4.113..+29.883m, so20m/12m components are not combined maximum. Tiny30pixel canonical10 skyline and65pixel09 relief remain behind immutable portals/rail crest. Fullowner59512tri is not per-view; higher terrain draw submissions and mist/shadow/fill cost prevent FPS inference from reduced triangles. No FPS, physicalVRAM, reference-PC/Chromebook performance or human playtest measurement. Protected physics/visual-sampler equality outside old Plane does not prove old filler/void rendered geometry was identical. T12 provisional license and prior track grade/gauge limits remain unchanged.
 
 BLOCKERS: NONE
-NEXT_ACTION: integrate accepted branch into claude/m01-integration without rebase/force, run full npm test and npm run build on merge result, publish merge/proofs. Main untouched. Fresh Claude/Codex refs were fetched; existing unaccepted audio/decision branches remain separate because they diverge and overlap renderer/history. Only the independently accepted T27/T30 branch is integrated.
-PLAY: .agent/tools/jogar.sh claude/m01-integration (after integration verification below)
+INTEGRATION_VERIFICATION: source13 hashes unchanged. Metadata branch faf4be8 normal CI38381491544/job115242755884:669 Node/173 tooling/build92 PASS; focused did not trigger for documentation-only delta. Fresh target293a4f1, no-ff merge 14d37c5b9d69b88be9e30837e0bd92dba337413b, full local npm test669/669 PASS and production build92modules PASS; actual raw logs/result are archived. Source focused2/2 proof remains tied to4e5389b, with all13 executable/test/harness/workflow files unchanged.
+
+NEXT_ACTION: play or continue remaining roadmap tasks from claude/m01-integration. Main untouched. Fresh Claude/Codex refs were fetched; existing unaccepted audio/decision branches remain separate because they diverge and overlap renderer/history. Only the independently accepted T27/T30 branch is integrated.
+PLAY: .agent/tools/jogar.sh claude/m01-integration
