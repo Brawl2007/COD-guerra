@@ -30,7 +30,7 @@ jobs:
         run: |
           git worktree add --detach test-results/vegetation-baseline b2430fac3504aa6d0ce7d0ad664076c26f90d6f7
           ln -s "$GITHUB_WORKSPACE/node_modules" test-results/vegetation-baseline/node_modules
-          node tools/verification/m01-vegetation-v2-futures.mjs --baseline test-results/vegetation-baseline --out test-results/m01-vegetation-v2-futures.json
+          node tools/verification/m01-vegetation-v2-future-batch.mjs --baseline test-results/vegetation-baseline --out test-results/m01-vegetation-v2-futures.json
           (cd test-results/vegetation-baseline && npx vite build)
           M01_VEGETATION_BASELINE_MODE=1 M01_VEGETATION_BASELINE_ROOT="$GITHUB_WORKSPACE/test-results/vegetation-baseline" M01_VEGETATION_OUTPUT_DIR=test-results/vegetation-baseline-captures npx playwright test --config tools/verification/m01-vegetation-v2-runtime.config.mjs --grep 'actual frozen' --output=test-results/vegetation-baseline-browser
       - name: Actual original kit gallery
@@ -59,7 +59,7 @@ jobs:
             test-results/vegetation-kit/
             test-results/vegetation-runtime/
             test-results/vegetation-prior-*/
-            test-results/m01-vegetation-v2-futures.json
+            test-results/m01-vegetation-v2-futures*.json
             test-results/m01-vegetation-v2-pixels.json
             test-results/m01-relief-horizon/
             test-results/m01-rail-props/
