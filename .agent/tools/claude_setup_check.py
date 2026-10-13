@@ -31,7 +31,7 @@ ENV_RULES = {
     "CLAUDE_CODE_SUBAGENT_MODEL": ("INFO", "overrides subagents without a model field"),
     "CLAUDE_CODE_EFFORT_LEVEL": ("WARN", "overrides the effort set in every agent"),
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": ("WARN", "agent teams on: named subagents launch as full teammates and use much more of the plan"),
-    "TYPESAFE_API_KEY": ("INFO", "Jev key present (paid calls capped at 3 by jev_router)"),
+    "TYPESAFE_API_KEY": ("INFO", "Jev key present (unlimited calls authorized; actual calls still require activation)"),
 }
 
 

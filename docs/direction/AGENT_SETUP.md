@@ -14,7 +14,7 @@ agent-teams). Itens marcados *não confirmado* não vêm dessas páginas.
 | Implementa | `implementer` / `implementer-deep` | Sonnet, medium / xhigh |
 | Verifica e revê | `verifier`, `reviewer` | Sonnet, high |
 | Revisão crítica | `reviewer-critical` | Opus, max (só simulação, saves, integração, arquitetura) |
-| Encaminhamento consultivo | Jev (`.agent/tools/jev_*.py`) | regras locais primeiro, teto de 100 chamadas pagas (aprovado pelo utilizador) |
+| Encaminhamento consultivo | Jev (`.agent/tools/jev_*.py`) | regras locais primeiro, sem teto de chamadas (autorizado em 2026-10-13) |
 | Força de trabalho | 20 agentes `<modelo>-<esforço>` com função própria (tabela abaixo) | escolhidos pelo Captain por função |
 
 ## Funções dos 20 agentes de combinação
@@ -87,7 +87,7 @@ outros com `--agent captain`), arrancar com **`claude --agent captain20`**: é o
 nível de utilizador com a lista completa, e os 20 `<modelo>-<esforço>` vêm também do utilizador. As skills
 e o `.agent/` continuam a ser os da pasta; ferramentas em falta são saltadas com aviso no handoff.
 A exceção é o Jev: o instalador copia `jev_router.py` e `jev_decisions.py` para
-`~/.local/share/cod-guerra/jev/`, e o Captain corre sempre essa cópia. Assim o teto de 100 chamadas vale em
+`~/.local/share/cod-guerra/jev/`, e o Captain corre sempre essa cópia. Assim a politica Jev atualizada vale em
 qualquer branch, mesmo nas que ainda têm o `jev_router.py` com teto 3 (em 2026-10-10 eram 10 das 128 no GitHub).
 O `--check` avisa se essa cópia estiver desatualizada.
 Depois de alterar agentes no repositório, repetir o instalador. O guarda `pre-push`
@@ -102,9 +102,7 @@ logo cobre todas as pastas e sessões.
 - **Jev gratuito primeiro.** Antes de cada delegação e de cada decisão de integração, o Captain corre as
   ferramentas locais sem chamada paga: `jev_router.py route` e `jev_decisions.py ... --offline`. Só um caso
   ambíguo, com vaga disponível, usa uma chamada paga.
-- **Teto de chamadas pagas: 100, aprovado por ti em 2026-10-09** (era 3; 1 usada até então). Uma chamada típica custa cerca
-  de US$ 0,00002 de entrada, por isso o custo é desprezável; a limitação é de governação. Para subir o teto,
-  o Captain propõe o número e espera a tua resposta; nunca altera `PILOT_MAX_PAID_CALLS` nem o ledger.
+- **Jev sem limite predefinido de chamadas ou gastos**: autorizado expressamente pelo utilizador em 2026-10-13. Limites opcionais locais (`COD_JEV_LIMIT`, `--limit`) podem reduzir; o provedor pode impor limites externos. Continuar a medir custo estimado e evitar chamadas sem valor. Fable e outros fornecedores nao estao abrangidos.
 - O arranque (`.agent/tools/captain.sh`) mostra o uso atual do piloto.
 
 ## Jogar uma tarefa concluída

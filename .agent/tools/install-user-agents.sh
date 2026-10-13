@@ -2,7 +2,7 @@
 # Copia os agentes deste repositório para ~/.claude/agents, onde o Claude Code os carrega em
 # qualquer pasta e sessão desta máquina (um .claude/agents/ do projeto, se existir, tem prioridade
 # para os nomes que repetir). Copia também o Jev para ~/.local/share/cod-guerra/jev, para o Captain usar
-# sempre o teto aprovado, seja qual for a branch. Com --hook instala também o git-safety a nível de utilizador.
+# sempre a politica autorizada, seja qual for a branch. Com --hook instala também o git-safety a nível de utilizador.
 # Uso: .agent/tools/install-user-agents.sh [--check | --hook]
 set -euo pipefail
 
@@ -47,7 +47,7 @@ sed -e 's/^name: captain$/name: captain20/' \
     "$src/captain.md" > "$dst/captain20.md"
 mkdir -p "$jev_dst"
 for j in $jev_files; do cp "$root/.agent/tools/$j" "$jev_dst/$j"; done
-echo "[OK] Jev copiado para $jev_dst (teto $(grep -m1 -oE '^PILOT_MAX_PAID_CALLS = [0-9]+' "$jev_dst/jev_router.py" | grep -oE '[0-9]+$'))"
+echo "[OK] Jev copiado para $jev_dst (sem teto predefinido de chamadas pagas)"
 echo "[OK] $(ls "$src"/*.md | wc -l) agentes copiados para $dst, mais captain20 (sessões novas do Claude Code passam a vê-los em qualquer pasta)"
 
 if [ "${1:-}" = "--hook" ]; then

@@ -4,7 +4,7 @@
 Six capabilities (priority, bug, branch, risk, verify, cost) share ONE engine:
 deterministic local rules first; Jev (TypeSafe choice questions, several per
 request, one paid call) only for ambiguous cases and only when the pilot is
-enabled, a key exists, the shared ledger has budget and --offline is not set.
+enabled, a key exists, any optional limit permits calls, and --offline is not set.
 Jev output is untrusted: it is validated and then clipped by safety
 post-filters. Nothing here merges, pushes, approves or marks anything fixed.
 Python stdlib only. The API key is never printed, logged or written.
@@ -184,7 +184,7 @@ def consult(out, spec, *, enable_jev, offline, dry_run, min_confidence,
         used = len(jr.read_ledger(lpath)["calls"])
     except jr.LedgerUnreadable:
         return fallback("ledger_unreadable")
-    if used >= limit:
+    if limit is not None and used >= limit:
         return fallback("budget_exhausted", budget={"used": used, "limit": limit})
 
     url = (e.get("TYPESAFE_BASE_URL") or jr.DEFAULT_BASE).rstrip("/") + "/v1/systemone"
@@ -831,7 +831,7 @@ def main(argv=None):
         p.add_argument("--offline", action="store_true")
         p.add_argument("--dry-run", action="store_true")
         p.add_argument("--min-confidence", type=float, default=JEV_MIN_CONF)
-        p.add_argument("--limit", type=int, help="can only lower the cap of %d" % jr.PILOT_MAX_PAID_CALLS)
+        p.add_argument("--limit", type=int, help="optional cap on calls; default is unlimited")
         p.add_argument("--mandatory", help="comma list replacing default mandatory checks (verify)")
     sub.add_parser("usage")
     for p in sub.choices.values():

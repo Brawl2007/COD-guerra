@@ -295,7 +295,7 @@ class Generic(Base):
         srcs = [self.d("priority", CASES["priority"]["amb"])["source"] for _ in range(5)]
         self.assertEqual(srcs, ["jev"] * 3 + ["rule_fallback"] * 2)
         self.assertEqual(self.stub.hits, 3)
-        self.assertEqual(jr.PILOT_MAX_PAID_CALLS, 100)
+        self.assertIsNone(jr.PILOT_MAX_PAID_CALLS)
         self.assertEqual(jd.decide("risk", CASES["risk"]["amb"], env=self.env, enable_jev=True,
                                    limit_flag=99)["fallback_reason"], "budget_exhausted")
 

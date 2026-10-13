@@ -16,7 +16,7 @@ sys.path.insert(0, str(TOOLS))
 import jev_router  # noqa: E402
 
 SENTINEL = "SENTINEL-KEY-do-not-leak-9f3a"
-# Mechanics tests run at this environment cap (production is 100; the environment can only lower it).
+# Mechanics tests use a finite environment cap; production is unrestricted by default.
 TEST_CAP = 3
 
 
@@ -413,14 +413,22 @@ class HardeningTests(Base):
 
 
 class ProductionCapTests(unittest.TestCase):
-    """The approved production cap is 100; environment and flags can only lower it."""
+    """Unlimited by default; optional limits and audit ledger remain."""
 
-    def test_production_cap_and_lower_only_rule(self):
-        self.assertEqual(jev_router.PILOT_MAX_PAID_CALLS, 100)
-        self.assertEqual(jev_router.effective_limit({}), 100)
-        self.assertEqual(jev_router.effective_limit({"COD_JEV_LIMIT": "500"}), 100)
+    def test_default_unlimited_and_optional_restrictions(self):
+        self.assertIsNone(jev_router.PILOT_MAX_PAID_CALLS)
+        self.assertIsNone(jev_router.effective_limit({}))
+        self.assertEqual(jev_router.effective_limit({"COD_JEV_LIMIT": "500"}), 500)
         self.assertEqual(jev_router.effective_limit({"COD_JEV_LIMIT": "3"}, flag="99"), 3)
         self.assertEqual(jev_router.effective_limit({}, flag="1"), 1)
+
+    def test_unrestricted_ledger_accepts_over_100_mock_reservations(self):
+        with tempfile.TemporaryDirectory() as d:
+            ledger = Path(d) / "ledger.json"
+            for i in range(105):
+                self.assertEqual(jev_router.reserve(ledger, None, "test", "mock-%d" % i), i)
+            self.assertEqual(len(jev_router.read_ledger(ledger)["calls"]), 105)
+            self.assertIsNone(jev_router.read_ledger(ledger)["limit"])
 
 
 class UsageTests(Base):

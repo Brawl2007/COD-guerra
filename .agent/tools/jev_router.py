@@ -3,7 +3,7 @@
 
 Local rules decide obvious cases with zero network. Only ambiguous cases may
 consult TypeSafe Jev, and only when the pilot is explicitly enabled, a key is
-available, the global paid-call budget has room and --offline is not set.
+available, any optional user-defined call limit permits it and --offline is not set.
 The tool never spawns agents; the Captain keeps the final decision.
 Python stdlib only. The API key is never printed, logged or written.
 """
@@ -19,9 +19,10 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-# Paid-call cap of the pilot: 100, approved by the user on 2026-10-09 (was 3).
-# Changing it is a human decision; COD_JEV_LIMIT and --limit can only lower it.
-PILOT_MAX_PAID_CALLS = 100
+# Explicit user authorization (2026-10-13): paid Jev calls without a project cap.
+# Optional COD_JEV_LIMIT / --limit may lower this to a finite number.
+# The provider may enforce credit/billing limits; those are not bypassed.
+PILOT_MAX_PAID_CALLS = None
 PRICE_PER_MTOK_INPUT = 0.042
 DEFAULT_BASE = "https://api.typesafe.ai"
 TIMEOUT_S = 15
@@ -144,12 +145,14 @@ def ledger_path(env=None):
 
 
 def effective_limit(env=None, flag=None):
+    """None = no project call cap; optional settings can impose a finite cap."""
     lim = PILOT_MAX_PAID_CALLS
     for v in (_env(env).get("COD_JEV_LIMIT"), flag):
         if v not in (None, ""):
             try:
-                lim = min(lim, max(0, int(v)))
-            except ValueError:
+                chosen = max(0, int(v))
+                lim = chosen if lim is None else min(lim, chosen)
+            except (ValueError, TypeError):
                 pass
     return lim
 
@@ -204,7 +207,7 @@ def reserve(path, limit, run_id, request_id):
     """Atomically reserve a slot. Return index or None if refused."""
     with Locked(path) as lk:
         data = read_ledger(path)  # raises LedgerUnreadable: never rewrite
-        if len(data["calls"]) >= limit:
+        if limit is not None and len(data["calls"]) >= limit:
             return None
         data["limit"] = limit
         data["calls"].append({
@@ -312,7 +315,7 @@ def route(request, *, enable_jev=False, offline=False, dry_run=False,
         used = len(read_ledger(lpath)["calls"])
     except LedgerUnreadable:
         return fallback("ledger_unreadable")
-    if used >= limit:
+    if limit is not None and used >= limit:
         return fallback("budget_exhausted", budget={"used": used, "limit": limit})
 
     base = (e.get("TYPESAFE_BASE_URL") or DEFAULT_BASE).rstrip("/")
@@ -401,7 +404,7 @@ def print_jev_banner(out, file=None):
         return
     file = file or sys.stderr
     s = usage_summary()
-    calls = "%s/%s" % (s.get("calls_used", "?"), s.get("limit", "?"))
+    calls = "%s/%s" % (s.get("calls_used", "?"), "unlimited" if s.get("limit") is None else s["limit"])
     src = "source=%s" % out.get("source")
     if out.get("jev_choice"):
         src += ", jev_choice=%s" % out["jev_choice"]
@@ -431,7 +434,7 @@ def main(argv=None):
     r.add_argument("--offline", action="store_true")
     r.add_argument("--dry-run", action="store_true")
     r.add_argument("--min-confidence", type=float, default=0.6)
-    r.add_argument("--limit", type=int, help="can only lower the cap of %d" % PILOT_MAX_PAID_CALLS)
+    r.add_argument("--limit", type=int, help="optional cap on calls; default is unlimited")
     r.add_argument("--request-json", help="JSON file with request fields (CLI flags override)")
     for n in ("usage", "check-key"):
         s = sub.add_parser(n)
@@ -452,8 +455,9 @@ def main(argv=None):
         if a.json:
             print(json.dumps(u, indent=2))
         else:
-            print("calls %d/%d  input_tokens %d  est_cost_usd %.6f" % (
-                u["calls_used"], u["limit"], u["input_tokens"], u["est_cost_usd"]))
+            print("calls %d/%s  input_tokens %d  est_cost_usd %.6f" % (
+                u["calls_used"], "unlimited" if u["limit"] is None else u["limit"],
+                u["input_tokens"], u["est_cost_usd"]))
             for c in u["calls"]:
                 print("  %s %s %s tokens=%s choice=%s conf=%s outcome=%s" % (
                     c.get("ts"), c.get("run_id"), c.get("model"), c.get("input_tokens"),

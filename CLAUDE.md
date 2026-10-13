@@ -10,15 +10,14 @@
   e antes de declarar concluída uma tarefa longa. Fora disso, não chamar.
 - O Advisor lê a transcrição inteira: manter o contexto pequeno. Delegar leituras pesadas, não colar logs
   longos, usar `/compact` antes de decisões importantes.
-- Jev: só pelos scripts em `.agent/tools/`, teto de 100 chamadas pagas (aprovado pelo utilizador em 2026-10-09; antes eram 3). Nunca comprar créditos, planos,
-  assets ou serviços sem autorização expressa do utilizador.
+- Jev: chamadas pagas via TypeSafe sem limite de quantidade/gastos, autorizadas expressamente em 2026-10-13. Manter registo de utilizacao e segurança; nao autorizar custos de outros fornecedores, planos ou assets.
 
 ## Execucao cloud com Claude Max 5x
 
 - Nas Routines, confirmar a branch, HEAD e a disponibilidade dos agentes e skills antes de desenvolver.
 - O Captain (Opus) coordena e delega; nao duplicar investigacao ou fazer toda a implementacao no modelo principal.
 - Contexto minimo, testes deterministas e verificacao/revisao proporcionais ao risco.
-- Nenhuma chamada a API paga adicional, Jev pago, Fable pago ou uso extra sem autorizacao expressa especifica para essa despesa, mesmo que exista um piloto local anterior.
+- Excecao: Jev pago autorizado sem teto de gastos. Fable pago, outras APIs e despesas adicionais exigem autorizacao especifica.
 - O filesystem remoto nao e o Chromebook. Nao assumir ~/.claude, memoria, caches ou runs locais na cloud.
 - .agent/runs/ e estado efemero. A continuidade entre execucoes exige handoffs duraveis e referencia a commits/branches reais.
 - Nunca editar/push diretamente main, dar merge ou fazer deploy automatico durante a sincronizacao inicial.

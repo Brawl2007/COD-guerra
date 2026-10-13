@@ -16,7 +16,7 @@ Status: **OPERACIONAL** (desde 2026-10-09). Primeira chamada real comprovada; ve
 
 ## Quando o Jev é consultado
 
-Apenas nos casos ambíguos (implement com risco/complexidade médios ou altos, `fix_attempts == 1`; review com risco médio e complexidade alta) e somente se TODAS as condições valem: `COD_JEV_PILOT=1` (ou `--enable-jev`), chave disponível, orçamento restante e sem `--offline`. Caso contrário usa-se o padrão das regras (`source=rule_fallback`, com `reason`: disabled, no_key, insecure_key_file, budget_exhausted, offline, low_confidence, error).
+Apenas nos casos ambíguos (implement com risco/complexidade médios ou altos, `fix_attempts == 1`; review com risco médio e complexidade alta) e somente se TODAS as condições valem: `COD_JEV_PILOT=1` (ou `--enable-jev`), chave disponível, limite opcional nao excedido e sem `--offline`. Caso contrário usa-se o padrão das regras (`source=rule_fallback`, com `reason`: disabled, no_key, insecure_key_file, budget_exhausted, offline, low_confidence, error).
 
 Salvaguardas: nunca haiku para implement/verify/review (piso sonnet); confiança abaixo de 0,6 (`--min-confidence`) cai para a regra; opus em implement vira implementer-deep com o aviso `opus_suggested_escalate_to_captain`; qualquer erro cai para a regra, sem retentativa.
 
@@ -46,7 +46,7 @@ As etapas 1 a 4 foram concluídas; o piloto está operacional.
 - choice: sonnet; confidence: 0,95; outcome: ok
 - Orçamento: 1/3 usado (2 restantes)
 
-As 2 vagas restantes são conservadas: nenhuma chamada de demonstração. Aumentar o teto é decisão humana.
+Registo histórico do piloto inicial; desde 2026-10-13 o utilizador autorizou Jev pago sem teto de gastos. Continuam proibidas chamadas de demonstração sem valor.
 
 ## Banner de consulta real
 
@@ -68,15 +68,15 @@ Não há banner para `rule`, `rule_fallback` sem resposta nem `--dry-run`.
 
 ## Orçamento e custo
 
-- Teto do piloto: **100 chamadas pagas** no total (constante `PILOT_MAX_PAID_CALLS`, aprovada pelo utilizador em 2026-10-09; antes 3); `--limit` e `COD_JEV_LIMIT` só podem reduzir.
-- Ledger global fora do repositório: `~/.local/state/cod-guerra/jev_pilot_ledger.json` (`COD_JEV_LEDGER`), modo 0600. A vaga é reservada antes do envio; falhas (401/429/5xx, timeout) também contam. Sem retentativas.
-- Preço: US$ 0,042 por 1M tokens de entrada; saída grátis (uma chamada típica ≈ 300 tokens, frações de centavo).
+- Sem teto predefinido de chamadas pagas Jev desde 2026-10-13, com autorizacao expressa para despesas Jev sem limite. Limites opcionais `--limit` e `COD_JEV_LIMIT` continuam disponiveis.
+- Ledger global local: `~/.local/state/cod-guerra/jev_pilot_ledger.json`; regista consumo e estimativa, nao substitui a faturacao real do provedor. O historico do piloto inicial tinha limite de 100.
+- O provedor pode impor limites externos; nao tentar contorna-los. Jev nao autoriza despesas com Fable ou outros servicos.
 
 ## Limites
 
-- Teto de 100 chamadas no piloto (antes 3); timeout de 15 s.
+- Sem teto de chamadas do projeto; timeout de 15 s.
 - O Jev funciona melhor em inglês; a descrição em português pode reduzir a confiança.
 - O alias `jev-latest` muda de versão; o modelo usado é registrado no ledger.
 - A descrição enviada ao Jev é truncada em 500 caracteres: nunca colocar segredos nem dados grandes em `--description`. A criticidade depende de o chamador passar `--critical`/`--risk high`; a ferramenta não a infere da descrição. Ledger corrompido/ilegível falha fechado (`ledger_unreadable`, nenhuma chamada paga, arquivo intocado); redirecionamentos HTTP não são seguidos.
 - Apenas consultivo; não substitui a política em `.claude/agents/captain.md`.
-- Suporte à decisão (prioridade, bugs, branches, risco, verificação, custo): ver `docs/direction/JEV_DECISION_SUPPORT.md` (mesmo ledger e teto de 100 chamadas).
+- Suporte à decisão (prioridade, bugs, branches, risco, verificação, custo): ver `docs/direction/JEV_DECISION_SUPPORT.md` (mesmo ledger, agora sem teto predefinido).
