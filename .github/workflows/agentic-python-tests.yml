@@ -22,7 +22,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: agentic-python-${{ github.workflow }}-${{ github.ref }}
+  group: agentic-python-${{ github.workflow }}-${{ github.event.pull_request.head.sha || github.sha }}
   cancel-in-progress: true
 
 jobs:

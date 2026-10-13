@@ -279,7 +279,7 @@ The user configures it with `/advisor fable`; never change `advisorModel` yourse
 
 ### Jev decision support (advisory)
 
-Tool: `python3 ~/.local/share/cod-guerra/jev/jev_decisions.py <priority|bug|branch|risk|verify|cost> --input FILE.json --json [--offline|--dry-run]`. See `docs/direction/JEV_DECISION_SUPPORT.md`.
+Tool: `python3 .agent/tools/jev_decisions.py <priority|bug|branch|risk|verify|cost> --input FILE.json --json [--offline|--dry-run]` (em checkout cloud com toolkit). See `docs/direction/JEV_DECISION_SUPPORT.md`.
 - Use `priority` to rank candidate tasks, `bug` to triage a report, `branch` to classify a branch for integration review, `risk` for change risk, `verify` to pick test sets, `cost` for model/effort choice.
 - Local rules run first, always without `--enable-jev`. Never consult Jev for obvious cases (`source=rule`); prefer ambiguous decisions while keeping requests useful and proportional; no project-imposed call ceiling is in force (authorized 2026-10-13).
 - Insufficient evidence yields `insufficient_evidence` + `needs_review=human`; gather evidence, do not guess.

@@ -38,7 +38,7 @@ class InstallUserAgentsTest(unittest.TestCase):
             for name in ("jev_router.py", "jev_decisions.py"):
                 self.assertEqual((jev / name).read_bytes(), (REPO / ".agent" / "tools" / name).read_bytes())
             self.assertIn("sem teto predefinido de chamadas pagas", r.stdout)
-            self.assertIn("~/.local/share/cod-guerra/jev/jev_router.py", c20)
+            self.assertIn(".agent/tools/jev_router.py", c20)
             (jev / "jev_router.py").write_text("PILOT_MAX_PAID_CALLS = 3\n")  # cópia antiga
             self.assertEqual(run("--check", user_dir=str(user)).returncode, 1)
             run(user_dir=str(user))

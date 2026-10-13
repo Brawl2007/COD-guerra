@@ -129,6 +129,9 @@ def read_record(remote, task):
 
 
 def publish(remote, filename, init):
+    current = git("branch", "--show-current")
+    if not current or current in {"main", "master", "cod-guerra/cloud-state"}:
+        raise Failure("Publish requires an ordinary work branch, never main or detached HEAD")
     path = Path(filename)
     if not path.is_file() or path.stat().st_size > 8192:
         raise Failure("Input must be JSON <= 8 KiB")

@@ -129,6 +129,16 @@ class CloudCheckpointTests(unittest.TestCase):
         self.assertEqual(result["reason"], "work_head_changed_or_missing")
         self.publish(ok=False)
 
+    def test_cannot_publish_from_main_even_with_valid_remote_work_branch(self):
+        self.git("switch", "-q", "main")
+        self.publish(init=True, ok=False)
+        self.assertFalse(self.control_head())
+
+    def test_cannot_publish_from_detached_head(self):
+        self.git("checkout", "-q", "--detach", self.main_before)
+        self.publish(init=True, ok=False)
+        self.assertFalse(self.control_head())
+
     def test_invalid_and_protected_branches_do_not_publish(self):
         for branch in ("main", "master", "cod-guerra/cloud-state", "-bad"):
             with self.subTest(branch=branch):
