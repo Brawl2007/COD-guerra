@@ -37,7 +37,8 @@ test('vegetation stays inside the browser budget and keeps Low cheaper',()=>{
   const ground=layout.ground.filter(g=>g.type!=='reed'),reeds=layout.ground.filter(g=>g.type==='reed');
   assert.ok(ground.length<=M01_VEGETATION_BUDGET.groundCover&&reeds.length<=M01_VEGETATION_BUDGET.reeds);
   const {low,medium,high}=M01_VEGETATION_LOD;
-  assert.ok(low.grassFade[1]<medium.grassFade[1]&&medium.grassFade[1]<high.grassFade[1]);
+  assert.deepEqual([low.grassFade[1],medium.grassFade[1],high.grassFade[1]],[40,40,40]);
+  assert.ok(low.densityStep>medium.densityStep&&medium.densityStep>high.densityStep);
   assert.ok(low.shrubMid<medium.shrubMid&&medium.shrubMid<high.shrubMid);
   assert.equal(chooseShrubLod(low.shrubNear-1,'low'),'near');assert.equal(chooseShrubLod(low.shrubMid+1,'low'),'culled');
   assert.equal(chooseShrubLod(medium.shrubNear+1,'medium'),'mid');
