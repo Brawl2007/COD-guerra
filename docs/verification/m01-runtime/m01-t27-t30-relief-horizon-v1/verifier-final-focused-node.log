@@ -1,0 +1,31 @@
+✔ actual far meshes are single LOD, original city bands outside full envelope, five submissions including mist (56.868901ms)
+✔ clock-driven altitude mist, quality/world replacement, immutable resources and once-only teardown (25.649308ms)
+✔ production far bodies seat on actual relief triangles, including the skirt ridge beyond the old rectangle (329.0776ms)
+✔ T09 registry preserves the original sandbox surface generator byte-for-byte (8.549914ms)
+✔ terrain rollout preserves the original sampled ground geometry and colliders (1995.325383ms)
+✔ 42 actual accepted GLBs retain all indexed source vertices, per-face PBR, finite colours; four actual instanced draw batches (123.609337ms)
+✔ all 21 kit types placed at metre scale, poles/wires and fences persist Low; authored sag/crossbars remain actual GLB geometry (0.818373ms)
+✔ first rejection immediately drains fulfilled assets even with a hung sibling; late assets release exactly once (1.332107ms)
+✔ dispose while sibling pending releases fulfilled now and stale results later; unsupported APIs keep fallback (0.52406ms)
+✔ GLB scene transforms and nonuniform normal transforms survive atlas flattening (0.820776ms)
+✔ envelope derives authored fire ranges, all covers and phase destination families with the complete margin (8.420212ms)
+✔ actual reconstructed source buffers match independently recorded integration ground (72.01633ms)
+✔ every protected and crossing source triangle, its surface, exact normals and rounded UVs survives extraction (719.344556ms)
+✔ complete 1m protected union: physics/visual height delta zero, fixed-seed outside fields and river retained (6848.408073ms)
+✔ camera-culled actual buffers satisfy canonical ground budgets, steady sync and borrowed-resource lifetime (240.075043ms)
+✔ terrain approaches, siding switch, train extension share exactly four actual submissions; quality steps use prepared instances (97.792038ms)
+✔ actual descriptor endpoints match immutable bridge support profiles and existing train heads; gradual gauge/top transition (37.100771ms)
+✔ fishplates repeat at 15 metres and sleepers at .63 in High; continuous ballast reaches the east approach slope (29.494558ms)
+✔ restored world with same revision replaces prepared terrain geometry once; disposal is idempotent (100.285076ms)
+✔ production train ownership skips duplicate track allocations while standalone detail retains its existing API (22.671184ms)
+✔ contact reveal wraps existing macro hooks and cache keys, clips only ballast footprint, never changes terrain geometry/world heights (53.850117ms)
+✔ actual production terrain triangles cannot bury the four receiving bridge heads; positive reveal stays under existing ballast and preserves vertices (625.103329ms)
+✔ real bridge metadata and floor raycasts establish east contact ownership; cloned materials retain borrowed textures and restore on off/dispose (136.06354ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12133.655372
