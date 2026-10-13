@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "taskId": "M01-T10-T29-VEGETATION-V2",
+  "status": "ACCEPTED_SOURCE; metadata CI and actual integration pending",
+  "sourceHead": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+  "baselineHead": "b2430fac3504aa6d0ce7d0ad664076c26f90d6f7",
+  "sourceSHA256": "8363ea61d93bb09c0c14215ef6818066c7bdfd4688db284e4da0f780100a2b70",
+  "sourceFiles": 29,
+  "protectedFiles": 533,
+  "normalCI": {
+    "runId": 38432707375,
+    "jobId": 115418724532,
+    "status": "success",
+    "nodeTests": 677,
+    "toolingTests": 173,
+    "buildModules": 95
+  },
+  "focusedCI": {
+    "runId": 38432707503,
+    "jobId": 115418724968,
+    "status": "success",
+    "baseCaptureCases": 1,
+    "kitCases": 1,
+    "runtimeCases": 3,
+    "legacyLODCases": 2,
+    "reliefCases": 2,
+    "candidateRailCases": 3,
+    "nestedDuplicateRailCases": 3,
+    "atlasCases": 3,
+    "terrainCases": {
+      "runner": "independent local exact-source cc3",
+      "passed": 9,
+      "retries": 0,
+      "skipped": 0,
+      "workers": 1
+    }
+  },
+  "futures": {
+    "routes": 24,
+    "ticks": 490051,
+    "actorSamples": 44104590,
+    "checkpointPairs": 120,
+    "processExits": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "allPairsEqual": true
+  },
+  "nativePresetCounters": [
+    {
+      "quality": "low",
+      "drawCalls": 10,
+      "triangles": 22188,
+      "shadowDrawCalls": 0,
+      "shadowTriangles": 0,
+      "atlasDecodedRGBA8": 1048576,
+      "atlasMipRGBA8": 349524
+    },
+    {
+      "quality": "medium",
+      "drawCalls": 10,
+      "triangles": 46314,
+      "shadowDrawCalls": 2,
+      "shadowTriangles": 3060,
+      "atlasDecodedRGBA8": 1048576,
+      "atlasMipRGBA8": 349524
+    },
+    {
+      "quality": "high",
+      "drawCalls": 12,
+      "triangles": 74484,
+      "shadowDrawCalls": 6,
+      "shadowTriangles": 7700,
+      "atlasDecodedRGBA8": 1048576,
+      "atlasMipRGBA8": 349524
+    }
+  ],
+  "fixAttempts": 3,
+  "maxFixAttempts": 3,
+  "reviewRejections": 0,
+  "limitations": [
+    "No FPS/VRAM/reference-PC/human-playtest claim.",
+    "FocusedCI rail raw JSON/PNG not uploaded due preexisting path mismatch; candidate3 casesPASS in raw job log.",
+    "M01 remains a playable prototype."
+  ],
+  "verifier": "PASS / EVIDENCE_SUFFICIENT YES",
+  "review": "ACCEPT",
+  "metadataHead": null,
+  "mergeHead": null,
+  "publicationHead": null,
+  "regression": {
+    "records": 11,
+    "obligations": 32,
+    "status": "PASS"
+  },
+  "memory": "One CURRENT note; accepted source cc3f459"
+}

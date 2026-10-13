@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+const args=process.argv.slice(2),check=args.includes('--check'),output=args.find(a=>a!=='--check')||'test-results/m01-vegetation-v2-source.json';
+const paths=['src/render/m01-vegetation-runtime.js','src/render/m01-vegetation-material.js','src/render/m01-environment.js','src/render/m01-view.js','src/render/m01-vegetation-art.js','.github/workflows/m01-t10-t29-vegetation.yml'];
+const walk=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(`${dir}/${e.name}`):[`${dir}/${e.name}`]);
+paths.push(...walk('tools/assets/m01-vegetation'),...walk('assets/models/provisional/m01/vegetation'),...fs.readdirSync('tests').filter(n=>/^m01-vegetation.*\.test\.js$/.test(n)).map(n=>'tests/'+n),...fs.readdirSync('tests/browser').filter(n=>/^m01-vegetation.*\.spec\.js$/.test(n)).map(n=>'tests/browser/'+n),...fs.readdirSync('tools/verification').filter(n=>n.includes('vegetation-v2')&&/\.(mjs|js)$/.test(n)).map(n=>'tools/verification/'+n));
+const digest=b=>crypto.createHash('sha256').update(b).digest('hex'),files=Object.fromEntries([...new Set(paths)].sort().map(p=>{const bytes=fs.readFileSync(p);return [p,{sha256:digest(bytes),bytes:bytes.length}];})),sourceSHA256=digest(JSON.stringify(files));
+if(check){const old=JSON.parse(fs.readFileSync(output));if(old.sourceSHA256!==sourceSHA256)throw Error('Vegetation source changed after freeze');console.log(`PASS frozen vegetation source ${sourceSHA256} (${Object.keys(files).length} files)`);}else{const report={schema:1,baseHead:'b2430fac3504aa6d0ce7d0ad664076c26f90d6f7',gitHead:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),branch:execFileSync('git',['branch','--show-current'],{encoding:'utf8'}).trim(),sourceSHA256,files};fs.mkdirSync(path.dirname(output),{recursive:true});fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');console.log(`FROZEN ${sourceSHA256} (${Object.keys(files).length} files): ${output}`);}

@@ -1,0 +1,22 @@
+[2m[WebServer] [22m(node:24948) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 9 tests using 1 worker
+
+(node:24967) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24967) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/m01-terrain-war-ground.spec.js:161:80 › near-1m: war ground (high) vs the legacy single soil texture (46.7s)
+  ✓  2 tests/browser/m01-terrain-war-ground.spec.js:161:80 › mid-5m: war ground (high) vs the legacy single soil texture (1.0m)
+  ✓  3 tests/browser/m01-terrain-war-ground.spec.js:161:80 › far-50m: war ground (high) vs the legacy single soil texture (52.7s)
+  ✓  4 tests/browser/m01-terrain-war-ground.spec.js:161:80 › rail-5m: war ground (high) vs the legacy single soil texture (57.6s)
+  ✓  5 tests/browser/m01-terrain-war-ground.spec.js:161:80 › road-5m: war ground (high) vs the legacy single soil texture (53.9s)
+  ✓  6 tests/browser/m01-terrain-war-ground.spec.js:161:80 › bank-5m: war ground (high) vs the legacy single soil texture (1.1m)
+  ✓  7 tests/browser/m01-terrain-war-ground.spec.js:185:39 › medium: tier texture set, budget and look at 5 m (58.3s)
+  ✓  8 tests/browser/m01-terrain-war-ground.spec.js:185:39 › low: tier texture set, budget and look at 5 m (31.0s)
+  ✓  9 tests/browser/m01-terrain-war-ground.spec.js:199:1 › paused High→Low→Medium→High churn preserves save state and reclaims textures (2.1m)
+
+  Slow test file: tests/browser/m01-terrain-war-ground.spec.js (9.2m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  9 passed (9.3m)

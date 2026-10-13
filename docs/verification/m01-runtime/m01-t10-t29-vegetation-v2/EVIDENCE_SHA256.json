@@ -1,0 +1,1221 @@
+{
+  "sourceHead": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+  "files": {
+    "FINAL_GATES.json": {
+      "sha256": "d1ca6ef55a8d88371b8c9d4b7adb85fdfaf15f9f1d2621c9c22f8e6e80ec234a",
+      "bytes": 2486
+    },
+    "HANDOFF.md": {
+      "sha256": "29245803922b8f3de989d7d1aa0036c11a695e9d31d5e994765e371433f0cd1b",
+      "bytes": 2273
+    },
+    "PERF.md": {
+      "sha256": "3ad64b8aed609942b3a3d433de428eef7d847e72cdaaf6061be61e0405253a93",
+      "bytes": 2936
+    },
+    "PROVENANCE.md": {
+      "sha256": "8fa4cef88f6da46169fa78e7cf362c2a77c77c03a745fa0dbd6bece9c42ff721",
+      "bytes": 3618
+    },
+    "README.md": {
+      "sha256": "5cc6bc8f040c45c9721d573e5111463f3615eee5a31de6de822b9299d5aeaa15",
+      "bytes": 4906
+    },
+    "REVIEW.md": {
+      "sha256": "5ade4ad40e2255d7529fca3c00d77954d298e8022ec0f7e575d11a14104fba53",
+      "bytes": 4953
+    },
+    "VERIFIER.md": {
+      "sha256": "89011073f4d3a431a4dd4942b869b649e9ff77ebb8bc99e31cfd2133cd0b3a21",
+      "bytes": 5635
+    },
+    "control-patch.md": {
+      "sha256": "bc4756f79d6ddf53819a4ec3cf696f7ce0916d2d36c6d99b90498bdf00127f23",
+      "bytes": 2448
+    },
+    "physical-trunk-baseline.json": {
+      "sha256": "76fed212bb5929b00b7a0a03a5bd65ada144aa3d941cae0b6904eb594127edad",
+      "bytes": 14658
+    },
+    "proof/IMPLEMENTER.json": {
+      "sha256": "588f93b78af761d39c649ffbccdd457cb2968a5248f9b3c9bf82e046bbf62ffd",
+      "bytes": 7910
+    },
+    "proof/IMPLEMENTER.md": {
+      "sha256": "8ed886377edc9351cc22187f024697f196b443d4029c4d53be031e0719e646e8",
+      "bytes": 2310
+    },
+    "proof/authority-baseline.json": {
+      "sha256": "8775ef43de07d030ab282ce0f9c2855d7b903b76218d126f227d619b21931d3e",
+      "bytes": 91732
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/01-start-section-close-far-off.png": {
+      "sha256": "9caf8d1a4f5a11954427e3ecf0d95fadf247dcfbd5e0687f52f42b3437cff45f",
+      "bytes": 852082
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/01-start-section-close-far-on.png": {
+      "sha256": "39e1e6bd44a08ae5a29d5a6faa64557ec09fdd8d4dbf98a4689a3c16ca838261",
+      "bytes": 852239
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/01-start-section-close-relief-off.png": {
+      "sha256": "9b11f5c2ec9d05167a0edbc9f778ea895ada2ebb24057e771e87e0198c55201e",
+      "bytes": 847409
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/01-start-section-close-relief-on.png": {
+      "sha256": "39e1e6bd44a08ae5a29d5a6faa64557ec09fdd8d4dbf98a4689a3c16ca838261",
+      "bytes": 852239
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/09-repair-sappers-relief-off.png": {
+      "sha256": "b2c9367cfcbbe844d3474e656d390db2cdbc1504ec44c24be3656a830962300c",
+      "bytes": 902814
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/09-repair-sappers-relief-on.png": {
+      "sha256": "ba3abc7b5476d89a96afd8047a0712e1d049faa07bab8639a9a94d250cebfdfa",
+      "bytes": 902932
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/10-repair-threat-lisewo-far-far-off.png": {
+      "sha256": "f857768b66995d9db9ef454bb472fa25ed22c1c1595fa01b143b8c21d4f34373",
+      "bytes": 975665
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/10-repair-threat-lisewo-far-far-on.png": {
+      "sha256": "11b81762984cfeb6206629e2aa40427c345b32a48200de23a94272cd502b9570",
+      "bytes": 975718
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/17-panzerzug-daylight-far-off.png": {
+      "sha256": "883506ed4519de928414b0dfef373baf24f66331d12796ef0db404eefe96b5b5",
+      "bytes": 753508
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/17-panzerzug-daylight-far-on.png": {
+      "sha256": "b872b3267e4081d933b423bb7cc5709b047c01a02476cfdf97e300d7a084ae8a",
+      "bytes": 758418
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/17-panzerzug-daylight-relief-off.png": {
+      "sha256": "c2ee702f6ecc0ea3047699a47d98aa0e8cf0f15e7cebf0cb2082aca8bed6f211",
+      "bytes": 758520
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/17-panzerzug-daylight-relief-on.png": {
+      "sha256": "b872b3267e4081d933b423bb7cc5709b047c01a02476cfdf97e300d7a084ae8a",
+      "bytes": 758418
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/pixel-samples.json": {
+      "sha256": "cb291e12445e1c530f8dc05925fae8817264e7adae500943d0ad9db8922c7612",
+      "bytes": 1482930
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/quality-high.png": {
+      "sha256": "a7cedf191ee3234cf6a6a66bb99891f0cd4793d4f7447fe75292165d3bf1cdbc",
+      "bytes": 850037
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/quality-low.png": {
+      "sha256": "b413161e992a7efee7ea172ccc34e68b11cdf4d576394c5934096271938f4a75",
+      "bytes": 398357
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/resources-initial.json": {
+      "sha256": "565ff113de6a8195a29a74f9455b24d453542f420cfccf72eb9d6bc1ccef9877",
+      "bytes": 19461
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/resources-reload.json": {
+      "sha256": "e32411459432e9720afe4a613385f0444ce7b925a17a58cbfd70d5256124e353",
+      "bytes": 19461
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/restore-plateau.json": {
+      "sha256": "ef375b1b45b991677d9463712bf8e18c3226fa0318a6b0232aa75c9ab6d3c419",
+      "bytes": 52118
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/same-paused-views.json": {
+      "sha256": "feff967712e6b11df4bdcc0edea71ef29c49d09bc541c410f237e06316bacb86",
+      "bytes": 1828634
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/supplement-east-banks-far-off.png": {
+      "sha256": "c2e02001471f486feb1da7fdf1c1f6d7edc614dfcc46ce1b1cb9b8ec7543411d",
+      "bytes": 760112
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/supplement-east-banks-far-on.png": {
+      "sha256": "e1cc3911973eb3a2f4959772a41dd91da579ad67347105db8c545fbfd2ceda0f",
+      "bytes": 764859
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/supplement-east-banks-relief-off.png": {
+      "sha256": "a07ab315fa3f3a5c9bc988f173c0955f11d9dc70c983af85a90206075bc45c3a",
+      "bytes": 764813
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/supplement-east-banks-relief-on.png": {
+      "sha256": "e1cc3911973eb3a2f4959772a41dd91da579ad67347105db8c545fbfd2ceda0f",
+      "bytes": 764859
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/supplement-west-banks-far-off.png": {
+      "sha256": "60859d6383e1fe58f6d178521a544e7052ffe6eeaaee3bd3ae50f0cf50143b93",
+      "bytes": 900388
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/supplement-west-banks-far-on.png": {
+      "sha256": "8518a82f5b6d1cf1499867fd29dc59fa832bdcfc4e02309cb1b4da9246603cae",
+      "bytes": 899862
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/supplement-west-banks-relief-off.png": {
+      "sha256": "21fd41458da2e62c949a680b51e466e236267d12638f6771c70ab9815878e37f",
+      "bytes": 899168
+    },
+    "proof/ci-source/artifact/m01-relief-horizon/candidate/supplement-west-banks-relief-on.png": {
+      "sha256": "8518a82f5b6d1cf1499867fd29dc59fa832bdcfc4e02309cb1b4da9246603cae",
+      "bytes": 899862
+    },
+    "proof/ci-source/artifact/m01-vegetation-v2-futures-part-1.json": {
+      "sha256": "6956febb096bfbcdca1ea19aa1c85d0b339181e6298a7c0245978b95f4ac1fb1",
+      "bytes": 19747
+    },
+    "proof/ci-source/artifact/m01-vegetation-v2-futures-part-2.json": {
+      "sha256": "a0d1eba9e5ae7d991cc578eee30cfc5aa04598ac9743e213ab3839eb0c4f9cc3",
+      "bytes": 19731
+    },
+    "proof/ci-source/artifact/m01-vegetation-v2-futures-part-3.json": {
+      "sha256": "d47216a9b0ae8485d056e8ee03e30651896c239923406148032d9b2c4730f363",
+      "bytes": 19735
+    },
+    "proof/ci-source/artifact/m01-vegetation-v2-futures-part-4.json": {
+      "sha256": "e8580dd327f6986853af7f978392a75d47805e139b442975aec7380cc67cccf7",
+      "bytes": 19770
+    },
+    "proof/ci-source/artifact/m01-vegetation-v2-futures-processes.json": {
+      "sha256": "c39974db765e9ba50a7879b1955658e89c853e2efdcf947cb1d38812ef2de9b7",
+      "bytes": 901
+    },
+    "proof/ci-source/artifact/m01-vegetation-v2-futures.json": {
+      "sha256": "0a05c9b2085e9046b3c88ba43097d2185315612df1722afb9f92b4c7fc4ba8be",
+      "bytes": 75305
+    },
+    "proof/ci-source/artifact/m01-vegetation-v2-pixels.json": {
+      "sha256": "e17b0a41f91f587b32044eb870ed568dd7550abadac1a8be159c810d4fb01b04",
+      "bytes": 4119
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/01-start-section-close-raw.json": {
+      "sha256": "b944be3751981461d029b8615ef56e8938cad514a8cef859547d445ae7a1a9ce",
+      "bytes": 238079
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/01-start-section-close.png": {
+      "sha256": "b4d4e741e5fca77fa2608b1f3d953c5bb4b50fda67701ae1eebad123a6cca7c4",
+      "bytes": 848559
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/04-start-west-portal-bridge-raw.json": {
+      "sha256": "a9973d3682b570b3d21be408b53d422537c4c9fcee26a553e45242d87b0f4dab",
+      "bytes": 238143
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/04-start-west-portal-bridge.png": {
+      "sha256": "8da03050a857c76a012b2b047f728838737ed180c4827defba6d6331151f0bc5",
+      "bytes": 749621
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/09-repair-sappers-raw.json": {
+      "sha256": "c222e5050370ce1e00a79de808836fd5f87f8af30ee4a1751f796d8bf9ab90b2",
+      "bytes": 324819
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/09-repair-sappers.png": {
+      "sha256": "45fd8f9dd0f433ab40c8c95e7df8be84db0a5726ec848d493dbcd178e9b61b32",
+      "bytes": 903138
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/15-west-demolition-raw.json": {
+      "sha256": "358f65ba47aec6ea9d483e68278c2297d699233e5b0b9fb9b3ba34f12f968357",
+      "bytes": 430010
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/15-west-demolition.png": {
+      "sha256": "3a6991aadb78ca1f791fb3b493e96861b2e9b879573b8b0ffe075cd6467e23b0",
+      "bytes": 826832
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/16-roll-call-raw.json": {
+      "sha256": "9655a7b361a2dae224c4439fbb4e51f2ab438db35e300c38c8e5b118c3f40bde",
+      "bytes": 427747
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/16-roll-call.png": {
+      "sha256": "9f090ad0e3500b4987414b395a603e4d8059d36409814bb3aa17a59ed42d8659",
+      "bytes": 870551
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/east-bank-raw.json": {
+      "sha256": "d8d040165a07be813f543e024fa7333de8de36d4e635bda1cc2f25ad578c25d9",
+      "bytes": 418205
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/east-bank.png": {
+      "sha256": "617b88ff5dba84757111d772f833507b02b30f2c6020c2298aeaae7e19ad81db",
+      "bytes": 761705
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/frozen-canonical-raw.json": {
+      "sha256": "c6d438f6483fbc8710ab029900896b707b17524ed34a964b924e34d81fbf0c5f",
+      "bytes": 4105394
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/near-foliage-raw.json": {
+      "sha256": "73e9eda59688e91b97b69cb6dea5e29cc381d87b030ef336d58edaa6f3b63d9c",
+      "bytes": 238058
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/near-foliage.png": {
+      "sha256": "e04dd4bc79eddbaefaa00508237f9922d253755999ff388a125d5e6c21e1749e",
+      "bytes": 678827
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/transition-116-raw.json": {
+      "sha256": "e02c002b7b8394a23b3a77298b33ca8d19a643dbd7f4b895f90b5ba5e9ea9adf",
+      "bytes": 234769
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/transition-116.png": {
+      "sha256": "ae21e7fb10839108430a659fd562240695c6125c227b519f38206c8e57953c5c",
+      "bytes": 804369
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/transition-120-raw.json": {
+      "sha256": "8e4ef0c228879cc76d321edfbe91b9ca01e5db2bbe2036ebf12199aafa6a1388",
+      "bytes": 234768
+    },
+    "proof/ci-source/artifact/vegetation-baseline-captures/transition-120.png": {
+      "sha256": "cdf42dea26b8a03061155aed0731b9972e61310a661e4aaec163e6c3f46ff173",
+      "bytes": 811375
+    },
+    "proof/ci-source/artifact/vegetation-kit/actual-kit-counters.json": {
+      "sha256": "de0aa669130d4d21a5e7af73eaa140fef06a9cdecfcb87d5e65bd3c2d512c4b5",
+      "bytes": 3010
+    },
+    "proof/ci-source/artifact/vegetation-kit/birch-actual-kit.png": {
+      "sha256": "08f5cb75264ec2edcbe68f4fb8066ba74987befde25e39dc78973f06a3101a4f",
+      "bytes": 96077
+    },
+    "proof/ci-source/artifact/vegetation-kit/ground-actual-kit.png": {
+      "sha256": "bcd5523112d25aeeb8b0c4a098ec42305ef269914d78011c54b357d5e533f1ac",
+      "bytes": 33152
+    },
+    "proof/ci-source/artifact/vegetation-kit/lime-actual-kit.png": {
+      "sha256": "6c9ef388c1914eabbd091f1e2abc5fd7d0077fe22ce1763f1a1f0261fd828ed3",
+      "bytes": 109000
+    },
+    "proof/ci-source/artifact/vegetation-kit/oak-actual-kit.png": {
+      "sha256": "de386094b48677ae7e96825b7241a2c10fc8fccc32798066e2a6db158dab4407",
+      "bytes": 116341
+    },
+    "proof/ci-source/artifact/vegetation-kit/pine-actual-kit.png": {
+      "sha256": "4fe0f3f9981ce184c4637c3c8bd9e0c88be5563ce2bf4e357fff8117b59c2f19",
+      "bytes": 99252
+    },
+    "proof/ci-source/artifact/vegetation-kit/pollard-actual-kit.png": {
+      "sha256": "1314137b8cb1090f4950a55425c64a0e966b0a5f721b16430fd9e0f60d269cec",
+      "bytes": 93616
+    },
+    "proof/ci-source/artifact/vegetation-kit/poplar-actual-kit.png": {
+      "sha256": "c4fbcd6e8b13059f4db6e3aed4c991ba4dfa97849098184a9c8bd095ba917906",
+      "bytes": 65572
+    },
+    "proof/ci-source/artifact/vegetation-kit/shrubs-actual-kit.png": {
+      "sha256": "4836a14ffc88e8502af49d20f973d0f67217a2853d1aed44e492d6ab5ba2b914",
+      "bytes": 69532
+    },
+    "proof/ci-source/artifact/vegetation-kit/snag-actual-kit.png": {
+      "sha256": "a6c4204cf15e88c30ccb83035885f9545bb776e618521ec4797400e4cb28be42",
+      "bytes": 31151
+    },
+    "proof/ci-source/artifact/vegetation-kit/willow-actual-kit.png": {
+      "sha256": "b48939e7490ba233091afd262d38d4367ee05df1fa8daf438a9868a7a0f59582",
+      "bytes": 114012
+    },
+    "proof/ci-source/artifact/vegetation-legacy-lod-browser/m01-vegetation-lod-Medium--b32d4-out-changing-gameplay-state/AFTER-battlefield-far-medium.png": {
+      "sha256": "88864844224fde13a2fc786e169aca4dcccd9fe6eea87ac790069a0dba50819f",
+      "bytes": 783126
+    },
+    "proof/ci-source/artifact/vegetation-legacy-lod-browser/m01-vegetation-lod-Medium--b32d4-out-changing-gameplay-state/AFTER-near-tree-medium.png": {
+      "sha256": "e6508cef053dd0e782f1eec1bb6961e9007b6e4c6cdbfdb2aa5215532804ec1b",
+      "bytes": 705941
+    },
+    "proof/ci-source/artifact/vegetation-legacy-lod-browser/m01-vegetation-lod-fixed-r-43d1e-er-intact-silhouette-in-Low/CANDIDATE-B-rail-sappers-high.png": {
+      "sha256": "c20561e8b96564bedeaab73563109154e998d5118d651d99f8a5299192000ec9",
+      "bytes": 820569
+    },
+    "proof/ci-source/artifact/vegetation-legacy-lod-browser/m01-vegetation-lod-fixed-r-43d1e-er-intact-silhouette-in-Low/CANDIDATE-B-rail-sappers-low.png": {
+      "sha256": "eb7ce750a2915abcbec6133da3e95935fbe391048f0500be4b008b7620cc29c5",
+      "bytes": 560151
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-asphalt-high-1m.jpg": {
+      "sha256": "b5938ca76dd17cb2375fc7f51a79863962a8edce1a03d1e82851d05748b55a91",
+      "bytes": 92634
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-asphalt-high-20m.jpg": {
+      "sha256": "accc47c860662de48ce674d05e1be626abc36b61cd71ce48542c57bd85b1256b",
+      "bytes": 9428
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-asphalt-high-5m.jpg": {
+      "sha256": "fe99e652ed99b868ba0bafbf0e7f11c9fc3503137852e83f0138b53e453ec923",
+      "bytes": 133248
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-ballast-high-1m.jpg": {
+      "sha256": "fe3a18bdd7aecdf091244bb54f600989ab12a5779a30434189e68a1f3e106a5d",
+      "bytes": 156035
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-ballast-high-20m.jpg": {
+      "sha256": "4b453242f83ef8828826939e9430bba3706cec0f3abdf774799a05adc3de9e73",
+      "bytes": 17798
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-ballast-high-5m.jpg": {
+      "sha256": "74d55677b213bf3febb3c9a6cc3fbfa222c55eccb3b11137c716ba926d8ddad4",
+      "bytes": 189080
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-brick-high-1m.jpg": {
+      "sha256": "a44fda72774cd90d57b7199d76152cdfdbf1512092dd4b9d4c5471e9ede8f1d7",
+      "bytes": 84491
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-brick-high-20m.jpg": {
+      "sha256": "a54d3dc40e19367c60f86d12d102b9530655a8e403d03fd046417341ab7c4a5a",
+      "bytes": 13383
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-brick-high-5m.jpg": {
+      "sha256": "a9e1f45658ff2148e5f190082089ddf259dbd247d8465d34502ae056a96deafe",
+      "bytes": 77351
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-canvas-high-1m.jpg": {
+      "sha256": "4992e9a9d36f683b892cfd0ae0df1640538aaacc021a02ac9957093682b5ac92",
+      "bytes": 131777
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-canvas-high-20m.jpg": {
+      "sha256": "caaab8f94016bb0e668a2bf031c5dd8a66722ce59353afbe6b3d26fe42c63e07",
+      "bytes": 9980
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-canvas-high-5m.jpg": {
+      "sha256": "0f56de388b61f994094b484ced9bb70ecff27ba78bd6b99655d5d55f26da49c5",
+      "bytes": 75174
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-field-high-1m.jpg": {
+      "sha256": "ec5af3b8622f92fe37a89352a327626c42d1eac3a60f8fbfdd9a2bdcd6ffb6ce",
+      "bytes": 48226
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-field-high-20m.jpg": {
+      "sha256": "61d2bcd8a2f92b7b49168c6e7f7e2754c2c248d9efb83220a472227bb931b274",
+      "bytes": 14118
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-field-high-5m.jpg": {
+      "sha256": "f9732bb81f1ee6173e97ba684430872caecd9542132336553615cc5ec8a5e203",
+      "bytes": 75180
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-meadow-high-1m.jpg": {
+      "sha256": "3af3def041ffc9ff87ecb28d1719a954a8117eff0875ef365a3f7e70f404c929",
+      "bytes": 77573
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-meadow-high-20m.jpg": {
+      "sha256": "de14bd7edea4e93fcd81e2fcf13bbebca2bf5dc0ba61cf2853de3f619683967c",
+      "bytes": 17037
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-meadow-high-5m.jpg": {
+      "sha256": "59225e447b9f79edb654b73b0ebc6d1d99fd1987a002cc6ae039110fa03b0205",
+      "bytes": 111089
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-mortar-high-1m.jpg": {
+      "sha256": "c1492d5fb354c16d0ea9a408aebf74f1c41695794653b58c64feb2073e034152",
+      "bytes": 76148
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-mortar-high-20m.jpg": {
+      "sha256": "46061d98ceba5c4484158b13e562c09ddfd616c94cea6d6d1ec1f1872e07ce9b",
+      "bytes": 9820
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-mortar-high-5m.jpg": {
+      "sha256": "38455d217f3b49c07265449336f4d63434de408e3aa0b160dbd1354a1981f8e4",
+      "bytes": 45443
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-mud-high-1m.jpg": {
+      "sha256": "0c0e51bc1c148b96eba32a0ef0345c75f25915d5737e4ba2b2c863660132278a",
+      "bytes": 23632
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-mud-high-20m.jpg": {
+      "sha256": "10bb473abc3f43ad058af6034dd15266f24ebd5d5d61313b33b29f129599c3d3",
+      "bytes": 11012
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-mud-high-5m.jpg": {
+      "sha256": "42ef5b684c18fff280717e39de5d41741201e506959f3e5fcfe027b1c4c98437",
+      "bytes": 44109
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-painted-steel-high-1m.jpg": {
+      "sha256": "56d42d418fa7f391352729be816c4fc5aab57258245e2b5e0fb4490ff87f0f4b",
+      "bytes": 32905
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-painted-steel-high-20m.jpg": {
+      "sha256": "b7ce69ca2aa65a15c6d8589b34dc13ee2e83228d1c72a7b59d18cd3d2572157f",
+      "bytes": 10404
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-painted-steel-high-5m.jpg": {
+      "sha256": "daaec5fdbb2d0462eb0308ad8bd33391073700d756163b926f83269031cd15e4",
+      "bytes": 43541
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-plaster-high-1m.jpg": {
+      "sha256": "a0b6976ddf0de2b6f18735bc78806617ef6dd7fc9bbd405306ff5cb4bee687ae",
+      "bytes": 49126
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-plaster-high-20m.jpg": {
+      "sha256": "1d7b8eff0b40272f0d9d8de1b25e040d6e9321fd7140f57fd52e802a5d6dbe98",
+      "bytes": 8892
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-plaster-high-5m.jpg": {
+      "sha256": "7458091eec4c86374c42444d686b8f08ad884464e581d250e5f58481efc99ff4",
+      "bytes": 56272
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-roof-tile-high-1m.jpg": {
+      "sha256": "7b0b34a1e1f9d94d37a7c67df23ea699d35d79f88888268e11871aecfec88c62",
+      "bytes": 63070
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-roof-tile-high-20m.jpg": {
+      "sha256": "66590956b1618bf362abd4eb25e601f65b0cdfbd68f70f8f8beaf464dacd6148",
+      "bytes": 11424
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-roof-tile-high-5m.jpg": {
+      "sha256": "a4d14bbca5550721f6648494960375b88cae9b133fd985af06db949ae644fd80",
+      "bytes": 61688
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-rusted-steel-high-1m.jpg": {
+      "sha256": "bfa9a594673269f584d37ea98354609f286b30f846a3ecf33a09f947df0c653a",
+      "bytes": 39431
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-rusted-steel-high-20m.jpg": {
+      "sha256": "d7f3ef6b62a8ce4ff66d7bbf9131d712d0d67c56ce4df7559d7338b6de6c3b7d",
+      "bytes": 10133
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-rusted-steel-high-5m.jpg": {
+      "sha256": "3a87b1ecf571ac24e1291b6b34cff7cf6a3e94c0c4c19ba856f1b9f7e2f3febf",
+      "bytes": 47511
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-stone-high-1m.jpg": {
+      "sha256": "354a037d4dbdd42a9d42addf67ba0869a9ad5f05cb472a0ddbce01d3c5990be3",
+      "bytes": 54939
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-stone-high-20m.jpg": {
+      "sha256": "b5cc3f09c52f2ff78a738d0733a5d0cf8854ccea3b15f698948f174ecee57f1e",
+      "bytes": 11388
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-stone-high-5m.jpg": {
+      "sha256": "a2df07250ba775b09f6d4f1fde2abce38f00a550ec7b52c69d42a0d18c086d3f",
+      "bytes": 67629
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-track-high-1m.jpg": {
+      "sha256": "838deeb57fb3a63aaf4c68238938cec7af5038edcfc713fde7ac36f18b2656ef",
+      "bytes": 77755
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-track-high-20m.jpg": {
+      "sha256": "e1f4e980df2d8c6c6b4b92c0ff865704617dfbb373b89f348bd3845193a20f85",
+      "bytes": 10836
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-track-high-5m.jpg": {
+      "sha256": "b68ca3aa7a044062d3c3f635ffb18e53a23f3a0ab1f76a12ac3ca9e26ab3afac",
+      "bytes": 93314
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-wetbank-high-1m.jpg": {
+      "sha256": "4ef36642f779cfbabdd1ad7e7f6f868695beb608ba65519235776be3f08b740e",
+      "bytes": 25381
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-wetbank-high-20m.jpg": {
+      "sha256": "64b293a6b06072ef23324afafaa1010921078ffb04dd828a069b583e2054ddc0",
+      "bytes": 10198
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-wetbank-high-5m.jpg": {
+      "sha256": "5f35313607013c2ea48a9fac69aef01ef22b30c12768151d6090a0d9033c114c",
+      "bytes": 45219
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-wood-high-1m.jpg": {
+      "sha256": "c9c3ceb8a29a6e48fe7755acc6cefe246aa4a9360bec0ac6783da492df01538e",
+      "bytes": 50747
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-wood-high-20m.jpg": {
+      "sha256": "c4ad3df39adcbdfc0a7092cb5932bdb15fbea34bd22462b3f31517c80bc5555c",
+      "bytes": 11231
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-high-or-60ec8-erials-at-1-5-and-20-metres/atlas-wood-high-5m.jpg": {
+      "sha256": "9b7419bece1c198a606cff09711e4fe7a61c6bed428b6bab0bae527bfcffa856",
+      "bytes": 66165
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-asphalt-low-1m.jpg": {
+      "sha256": "365158ef43545cb5c5c2f8ec6eaf271080c9eae1e321df017a53412c9e956fa8",
+      "bytes": 46201
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-asphalt-low-20m.jpg": {
+      "sha256": "ae91c3a76df73ef93a48a62544b551587772dff4e4c68e59fa5cd0ea2e78d9c0",
+      "bytes": 9590
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-asphalt-low-5m.jpg": {
+      "sha256": "53033425086ec6dcf7ba53d5bd231bf6014bcad4a8430426431251fbcb7b5d5b",
+      "bytes": 64141
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-ballast-low-1m.jpg": {
+      "sha256": "7e7ea9e9284f83a5855790319d558327617d9c9b323c433d1a9024f5fe481bee",
+      "bytes": 106267
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-ballast-low-20m.jpg": {
+      "sha256": "3e6107b2da5484a83773298a7c984a368d7b43c8066afdee8d07e43d3e4becb5",
+      "bytes": 17713
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-ballast-low-5m.jpg": {
+      "sha256": "8c15c6216104113029f4e72430219de11ab2c56a02d7997af061e9f313a03fc0",
+      "bytes": 154874
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-brick-low-1m.jpg": {
+      "sha256": "66481aab8fdefbe27ce10a8176e0618f70004b929c0e648c2522b09e0c8b31f5",
+      "bytes": 50714
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-brick-low-20m.jpg": {
+      "sha256": "9d4e35b768370549504602a2284e714a1cb3ecec5685a14d7ac157bf46d5d1b0",
+      "bytes": 13385
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-brick-low-5m.jpg": {
+      "sha256": "01b6c1fe623da7447b2e0ad7f63adeea00a93518fab39a376ceca5439a36dddb",
+      "bytes": 75676
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-canvas-low-1m.jpg": {
+      "sha256": "0214e326fe3a7d0834221a6cddaba63f27fef979598f1dcf8fcfe0de053bb555",
+      "bytes": 84952
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-canvas-low-20m.jpg": {
+      "sha256": "1cbe47ef4dc62cc0a1531a79e905be1133433a8e7743dfe3ac4a0044d0ffe18a",
+      "bytes": 9991
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-canvas-low-5m.jpg": {
+      "sha256": "4cb4796f3915adb1006d28480ce7615dba31be25f42c59ab8f8547a81227c480",
+      "bytes": 75110
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-field-low-1m.jpg": {
+      "sha256": "96e69b4decfefd0e80b772fccd2fcd657edb5d83947697ee393f24cfc6e02453",
+      "bytes": 32008
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-field-low-20m.jpg": {
+      "sha256": "c71ec4df4ba6e4b579f83166c4bd240c1ff77adadc6ddb1b14559e8ac29b6856",
+      "bytes": 14120
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-field-low-5m.jpg": {
+      "sha256": "2065fd4e4d15061d624ba17c3c393d738868abb6347ca588cd202b12583b97e8",
+      "bytes": 54785
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-meadow-low-1m.jpg": {
+      "sha256": "2505a083c2b6f849c4de83b3d6c5a112aaf9328387ed213a4a92b42e5051dcce",
+      "bytes": 46168
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-meadow-low-20m.jpg": {
+      "sha256": "896569bac59445c7b32ea3e6d0662985295d75292dd4e8b53d075d550b589d48",
+      "bytes": 16930
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-meadow-low-5m.jpg": {
+      "sha256": "fa3c6fa7b915bc685926474151a6b7404c4581d3a52decd61e6ca675d456ae27",
+      "bytes": 71358
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-mortar-low-1m.jpg": {
+      "sha256": "f2a7a84658a696c771abd9d55e84cb474a4dab045a77820cd68265e0366f662a",
+      "bytes": 35935
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-mortar-low-20m.jpg": {
+      "sha256": "847286182e5492b0fcce148840f5af438b5325a49dc3f5ecd34deeaff8f831b6",
+      "bytes": 9815
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-mortar-low-5m.jpg": {
+      "sha256": "7107fc115b927940b91d974f8755acf8b9384bbee2ba02a25da3ff0f52b7f34a",
+      "bytes": 45415
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-mud-low-1m.jpg": {
+      "sha256": "384ca71cad145130afadb4868f95e96b8a31aec05d4d0ded82737145c28064a9",
+      "bytes": 19243
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-mud-low-20m.jpg": {
+      "sha256": "c41b0f4ed22f18a97bef042bd9eb82ddeb59f1e54463d0831d3edfcd0ea9f1d7",
+      "bytes": 11011
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-mud-low-5m.jpg": {
+      "sha256": "9968b78dd078b5fe88a6b18b87af4ea5ad7f0444695447afee5349743c46161f",
+      "bytes": 35641
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-painted-steel-low-1m.jpg": {
+      "sha256": "a48b307540427d5e41f6ede498bda9644fd2640deb6af3594f6f3348feff5839",
+      "bytes": 18432
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-painted-steel-low-20m.jpg": {
+      "sha256": "facc97ae62039f1dabef8d9fb730ca2857e694f2f9889702d1f4d4580fdf4b0b",
+      "bytes": 10405
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-painted-steel-low-5m.jpg": {
+      "sha256": "9b52365e982e3b5201d66d0afae9201c21f44f872a14c15eb219671898676b88",
+      "bytes": 34421
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-plaster-low-1m.jpg": {
+      "sha256": "f2942ee25d5f368a926510fcc875438f779382f9bfcc1c74c17ecb9e7bfe185f",
+      "bytes": 21658
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-plaster-low-20m.jpg": {
+      "sha256": "530af4d503a410744a8251eead0849b7ad5fd9a246fa501bdba5b1704c1f6816",
+      "bytes": 8890
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-plaster-low-5m.jpg": {
+      "sha256": "277a2b37ea1a99692650952db362ae6e3f0840ac6e4f70a5cab54f837f07344d",
+      "bytes": 35395
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-roof-tile-low-1m.jpg": {
+      "sha256": "1a5e526cac75b041de0fcbbd5c49504f8e68c58885b95b2bea501bc2645da1da",
+      "bytes": 36251
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-roof-tile-low-20m.jpg": {
+      "sha256": "06f58d5249a29c8e5237ab248895a6f17c174ef25a05fd6c6e78bee21f86f586",
+      "bytes": 11439
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-roof-tile-low-5m.jpg": {
+      "sha256": "ed86368ec962a247467be1dc7803a8817638ba479ba876fc2638b5f91721849a",
+      "bytes": 56275
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-rusted-steel-low-1m.jpg": {
+      "sha256": "fcdc3962947b21f1a4debf3c631f59b06d1447ce3e58c1b51d67bc8b1a7b9d57",
+      "bytes": 21401
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-rusted-steel-low-20m.jpg": {
+      "sha256": "a669f3040dc5cf3dc861316f77b2398166bf6f40b5c38f54be02eb1ff907fb26",
+      "bytes": 10125
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-rusted-steel-low-5m.jpg": {
+      "sha256": "98196c9aae695f971ead3887cef3e0ca3f01b90de4964ba87fa436a7298c44e6",
+      "bytes": 36452
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-stone-low-1m.jpg": {
+      "sha256": "e2bc311c4047ad7b99b8a4187bc1f6aa21a4cbb9b78e68653f6b009c8a547cba",
+      "bytes": 29619
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-stone-low-20m.jpg": {
+      "sha256": "382bc43bebff3801a4aee991bad93e9c508b9b6a454cf82b0de87df9ba66a70c",
+      "bytes": 11391
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-stone-low-5m.jpg": {
+      "sha256": "fa95dc73582f9221eff2a4431fad0591ac2bfdc6a119703ba1e36aa3b8e56afb",
+      "bytes": 47302
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-track-low-1m.jpg": {
+      "sha256": "4674f7e38cd8f4e14e574326a31294512cf356342fc23d0aced62784a9e203e7",
+      "bytes": 52739
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-track-low-20m.jpg": {
+      "sha256": "316bcf73c63325b6d902e9923c24888370cc8e681df80088b2868c5c6172c969",
+      "bytes": 10807
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-track-low-5m.jpg": {
+      "sha256": "71133432840838deeb30eda799574e7c6ce64300bc52e8d3e46c26281a3dd8c7",
+      "bytes": 79048
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-wetbank-low-1m.jpg": {
+      "sha256": "bab2cb4e77413fc909e6648855688b8a138667c8980011ad5bec83a2b7d94e6b",
+      "bytes": 18480
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-wetbank-low-20m.jpg": {
+      "sha256": "68c51bbb3786cf0779329056e4125834493492d774c2638876373a2fafc20d8e",
+      "bytes": 10195
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-wetbank-low-5m.jpg": {
+      "sha256": "f319c833ad3519849cd448e19f5299799c22354f68dbc387fe894bfc7a2b315d",
+      "bytes": 34170
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-wood-low-1m.jpg": {
+      "sha256": "6b3f53045a86000e0fa68769b349f8d7cf5f4c8d07e3adffb08b854184e9b077",
+      "bytes": 29892
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-wood-low-20m.jpg": {
+      "sha256": "6dcec4bb35f0579d7210057a6f91f09c1c6e15c1f1736c4ab1c1ecae080f66d2",
+      "bytes": 11224
+    },
+    "proof/ci-source/artifact/vegetation-prior-materials/m01-material-atlas-low-ori-482a7-erials-at-1-5-and-20-metres/atlas-wood-low-5m.jpg": {
+      "sha256": "395fb8e952522f09b13f39a547f4c6c51b2692e263a4a0ba0ce1cd67cf9af0f9",
+      "bytes": 50294
+    },
+    "proof/ci-source/artifact/vegetation-runtime/01-start-section-close-raw.json": {
+      "sha256": "ba1f718bc3bb128795c27dc9218ff8e8a0ea625278dc3d6f29723414410afe52",
+      "bytes": 273256
+    },
+    "proof/ci-source/artifact/vegetation-runtime/01-start-section-close.png": {
+      "sha256": "39e1e6bd44a08ae5a29d5a6faa64557ec09fdd8d4dbf98a4689a3c16ca838261",
+      "bytes": 852239
+    },
+    "proof/ci-source/artifact/vegetation-runtime/04-start-west-portal-bridge-raw.json": {
+      "sha256": "45ef0d75505a8c554eaa7a37e12c62622f5c99e220292c11cd0098be4703fd32",
+      "bytes": 267392
+    },
+    "proof/ci-source/artifact/vegetation-runtime/04-start-west-portal-bridge.png": {
+      "sha256": "4a00ecf697379c2c44348712d7ab027b196c8d25f1958bdccdac87c78866322e",
+      "bytes": 790273
+    },
+    "proof/ci-source/artifact/vegetation-runtime/09-repair-sappers-raw.json": {
+      "sha256": "fadc307cdb94c2eb2caf5ec3c86ca5a5154e34cfe2a5bd39eec81d9f0ca2e895",
+      "bytes": 360001
+    },
+    "proof/ci-source/artifact/vegetation-runtime/09-repair-sappers.png": {
+      "sha256": "b26e9774a4e45d02c2c3ed2ce202b67dda535a69d10d35a248967293639fac61",
+      "bytes": 902931
+    },
+    "proof/ci-source/artifact/vegetation-runtime/15-west-demolition-raw.json": {
+      "sha256": "7291ddd34a744d035be702bf3997a401ede8bb15489d0adfc0498be327d00b58",
+      "bytes": 459203
+    },
+    "proof/ci-source/artifact/vegetation-runtime/15-west-demolition.png": {
+      "sha256": "e429916cff28f34c274872ec961fd9e0842b3b3ba3beb9c04c9678482d7b6f02",
+      "bytes": 822260
+    },
+    "proof/ci-source/artifact/vegetation-runtime/16-roll-call-raw.json": {
+      "sha256": "90259232b3613187559f671b036fab6086fcbec33bce271b16a73b5b929dc544",
+      "bytes": 456977
+    },
+    "proof/ci-source/artifact/vegetation-runtime/16-roll-call.png": {
+      "sha256": "3a731f92a1a2abd0617ef674c347d80e35f8dfc07101300b2035d4ba19533472",
+      "bytes": 910584
+    },
+    "proof/ci-source/artifact/vegetation-runtime/checkpoint-restore-1-raw.json": {
+      "sha256": "3a2c1ae13bf3959b866381f3fc6b31125a44a3b7e80e18672efa461178aa243f",
+      "bytes": 261034
+    },
+    "proof/ci-source/artifact/vegetation-runtime/checkpoint-restore-1.png": {
+      "sha256": "33bfc32d705f319385e021cba9582283b29b9cafcbdb404ced5afd001f27c54d",
+      "bytes": 343057
+    },
+    "proof/ci-source/artifact/vegetation-runtime/checkpoint-restore-2-raw.json": {
+      "sha256": "974fb995341c56c973a878ef814b30aafa325cbc664d3179b3c4a0a11742a5e1",
+      "bytes": 273154
+    },
+    "proof/ci-source/artifact/vegetation-runtime/checkpoint-restore-2.png": {
+      "sha256": "91c097bb20b5e3943f3cd20a54bf28f9bd2b3b253ea2e626fc826b1969e2b01d",
+      "bytes": 680628
+    },
+    "proof/ci-source/artifact/vegetation-runtime/checkpoint-restore-3-raw.json": {
+      "sha256": "6f36720a3900a604e447b67181f775accb3ce768295f3a6b48713bbaf9d03b0c",
+      "bytes": 261036
+    },
+    "proof/ci-source/artifact/vegetation-runtime/checkpoint-restore-3.png": {
+      "sha256": "33bfc32d705f319385e021cba9582283b29b9cafcbdb404ced5afd001f27c54d",
+      "bytes": 343057
+    },
+    "proof/ci-source/artifact/vegetation-runtime/checkpoint-restore-4-raw.json": {
+      "sha256": "827401d79810ee989af074c92f657614f49b108ea09e40aeda323696ab53ed6c",
+      "bytes": 273154
+    },
+    "proof/ci-source/artifact/vegetation-runtime/checkpoint-restore-4.png": {
+      "sha256": "91c097bb20b5e3943f3cd20a54bf28f9bd2b3b253ea2e626fc826b1969e2b01d",
+      "bytes": 680628
+    },
+    "proof/ci-source/artifact/vegetation-runtime/churn-high-start-raw.json": {
+      "sha256": "1ac403e24fe61e5fcc97512c88c16f06d65a8dcf9cc008ea20f80c7101b496f8",
+      "bytes": 273236
+    },
+    "proof/ci-source/artifact/vegetation-runtime/churn-high-start.png": {
+      "sha256": "91c097bb20b5e3943f3cd20a54bf28f9bd2b3b253ea2e626fc826b1969e2b01d",
+      "bytes": 680628
+    },
+    "proof/ci-source/artifact/vegetation-runtime/churn-wind-raw.json": {
+      "sha256": "3159282ba7794408f09ff068658d1d2ba6767300281e07114a6630c37c4692f9",
+      "bytes": 1904091
+    },
+    "proof/ci-source/artifact/vegetation-runtime/east-bank-raw.json": {
+      "sha256": "f707b2f8f4233da093fe316d1e621d47806e3ca8e9272d3ae7d98c47e9be71ad",
+      "bytes": 434289
+    },
+    "proof/ci-source/artifact/vegetation-runtime/east-bank.png": {
+      "sha256": "741a37c211b73e33077a47a93691ffdbc17d007164720597dd4729cb7aaaa013",
+      "bytes": 773614
+    },
+    "proof/ci-source/artifact/vegetation-runtime/equally-warmed-before-reload-raw.json": {
+      "sha256": "827401d79810ee989af074c92f657614f49b108ea09e40aeda323696ab53ed6c",
+      "bytes": 273154
+    },
+    "proof/ci-source/artifact/vegetation-runtime/equally-warmed-before-reload.png": {
+      "sha256": "91c097bb20b5e3943f3cd20a54bf28f9bd2b3b253ea2e626fc826b1969e2b01d",
+      "bytes": 680628
+    },
+    "proof/ci-source/artifact/vegetation-runtime/equally-warmed-reload-raw.json": {
+      "sha256": "b1bfdca5457a50e986c93c5f00d31c8ad453ee592343be66c58ccc03535782ce",
+      "bytes": 273236
+    },
+    "proof/ci-source/artifact/vegetation-runtime/equally-warmed-reload.png": {
+      "sha256": "91c097bb20b5e3943f3cd20a54bf28f9bd2b3b253ea2e626fc826b1969e2b01d",
+      "bytes": 680628
+    },
+    "proof/ci-source/artifact/vegetation-runtime/frozen-canonical-raw.json": {
+      "sha256": "1cbf4678b740e369e8add4b5f494a9cd694ba472843e15f6dd7c45f0008445e8",
+      "bytes": 4404478
+    },
+    "proof/ci-source/artifact/vegetation-runtime/late-after-raw.json": {
+      "sha256": "fe8473f5fa3757b02db174a0789d9a3eceeb27b2fcd605b812e0090abfecda33",
+      "bytes": 273256
+    },
+    "proof/ci-source/artifact/vegetation-runtime/late-after.png": {
+      "sha256": "39e1e6bd44a08ae5a29d5a6faa64557ec09fdd8d4dbf98a4689a3c16ca838261",
+      "bytes": 852239
+    },
+    "proof/ci-source/artifact/vegetation-runtime/late-before-raw.json": {
+      "sha256": "b0f5f6e5a14530f248b14f1c0c87869cbfc22f02025c43448e688959da301ea4",
+      "bytes": 242328
+    },
+    "proof/ci-source/artifact/vegetation-runtime/late-before.png": {
+      "sha256": "13c2c2d32ad3d3c4b96c5f9b9de3652f8ea57f19da52f7be2e4163b668a83aba",
+      "bytes": 828866
+    },
+    "proof/ci-source/artifact/vegetation-runtime/load-failed-raw.json": {
+      "sha256": "5954e8339190f31f4e2df2afcf8f39e986d905411faa5da3a2ce31f59c01d4eb",
+      "bytes": 242472
+    },
+    "proof/ci-source/artifact/vegetation-runtime/load-failed.png": {
+      "sha256": "13c2c2d32ad3d3c4b96c5f9b9de3652f8ea57f19da52f7be2e4163b668a83aba",
+      "bytes": 828866
+    },
+    "proof/ci-source/artifact/vegetation-runtime/loading-raw.json": {
+      "sha256": "560f72af00a502d65e35d5f036dc0965a46174f0eb72ee588298800cb1c65739",
+      "bytes": 307573
+    },
+    "proof/ci-source/artifact/vegetation-runtime/near-foliage-raw.json": {
+      "sha256": "23177889e066a25afe1d112256016dce397168b3f2ea4bb5f881f88b052e16a3",
+      "bytes": 273237
+    },
+    "proof/ci-source/artifact/vegetation-runtime/near-foliage.png": {
+      "sha256": "91c097bb20b5e3943f3cd20a54bf28f9bd2b3b253ea2e626fc826b1969e2b01d",
+      "bytes": 680628
+    },
+    "proof/ci-source/artifact/vegetation-runtime/owner-disabled-raw.json": {
+      "sha256": "b1a612a3a6d5e609b4d897021802c0e67eb1cd529c59c0714df185cc0062b0ce",
+      "bytes": 244874
+    },
+    "proof/ci-source/artifact/vegetation-runtime/owner-disabled.png": {
+      "sha256": "2c6b2447125faf430170c4b6e16e7813d9d62fe02038306081d33a622529e1ea",
+      "bytes": 654300
+    },
+    "proof/ci-source/artifact/vegetation-runtime/owner-enabled-raw.json": {
+      "sha256": "b1bfdca5457a50e986c93c5f00d31c8ad453ee592343be66c58ccc03535782ce",
+      "bytes": 273236
+    },
+    "proof/ci-source/artifact/vegetation-runtime/owner-enabled.png": {
+      "sha256": "91c097bb20b5e3943f3cd20a54bf28f9bd2b3b253ea2e626fc826b1969e2b01d",
+      "bytes": 680628
+    },
+    "proof/ci-source/artifact/vegetation-runtime/owner-restored-raw.json": {
+      "sha256": "3dd1c5f1f15ea0b56054799dd85441df61b156cb8220384612f7fefcb76085e6",
+      "bytes": 273236
+    },
+    "proof/ci-source/artifact/vegetation-runtime/owner-restored.png": {
+      "sha256": "91c097bb20b5e3943f3cd20a54bf28f9bd2b3b253ea2e626fc826b1969e2b01d",
+      "bytes": 680628
+    },
+    "proof/ci-source/artifact/vegetation-runtime/reload-warmup-high-raw.json": {
+      "sha256": "68750d0613bcd957d71a9f56675be97e98c85c7464483cd67e1c289bde6d6ffe",
+      "bytes": 273073
+    },
+    "proof/ci-source/artifact/vegetation-runtime/reload-warmup-high.png": {
+      "sha256": "91c097bb20b5e3943f3cd20a54bf28f9bd2b3b253ea2e626fc826b1969e2b01d",
+      "bytes": 680628
+    },
+    "proof/ci-source/artifact/vegetation-runtime/reload-warmup-low-raw.json": {
+      "sha256": "48b9fdf47996ed7f4ac295d2c554da7773ab79c62a47c00343910ce354108e5f",
+      "bytes": 261118
+    },
+    "proof/ci-source/artifact/vegetation-runtime/reload-warmup-low.png": {
+      "sha256": "33bfc32d705f319385e021cba9582283b29b9cafcbdb404ced5afd001f27c54d",
+      "bytes": 343057
+    },
+    "proof/ci-source/artifact/vegetation-runtime/reload-warmup-medium-raw.json": {
+      "sha256": "b1fa4423a3e35d2773ffdf122fdb6bea44b7e51be2b4b33e7612101a643ed642",
+      "bytes": 267084
+    },
+    "proof/ci-source/artifact/vegetation-runtime/reload-warmup-medium.png": {
+      "sha256": "a023a9dcac96e7f9a6965d0edba4b5868ec9b08bdd2dff6775b6b80e0e3764b8",
+      "bytes": 678066
+    },
+    "proof/ci-source/artifact/vegetation-runtime/transition-116-raw.json": {
+      "sha256": "bc2bb260bbc36bc966a943a5c6b38a8e4b2715f68f1c4b088f4025fae15eac54",
+      "bytes": 269955
+    },
+    "proof/ci-source/artifact/vegetation-runtime/transition-116.png": {
+      "sha256": "eaa26e3c0b544d4da83c01940da9760880d78c2a6c4a443f4a05a685bde11fc1",
+      "bytes": 799798
+    },
+    "proof/ci-source/artifact/vegetation-runtime/transition-120-raw.json": {
+      "sha256": "b758bdb7760f69cdcfd78fe721f595fb455780ce7a31a8692680fd24b7da3db6",
+      "bytes": 269956
+    },
+    "proof/ci-source/artifact/vegetation-runtime/transition-120.png": {
+      "sha256": "bba83a5134eb71f8d5bd83e70a927442cd77bc49864a6ff03b8286c833a429bc",
+      "bytes": 806135
+    },
+    "proof/ci-source/artifact/vegetation-runtime/warmup-high-raw.json": {
+      "sha256": "d87c726600eecaab394b83b34580b35f66ca16d313a91964a6c219a1a11439d3",
+      "bytes": 273073
+    },
+    "proof/ci-source/artifact/vegetation-runtime/warmup-high.png": {
+      "sha256": "91c097bb20b5e3943f3cd20a54bf28f9bd2b3b253ea2e626fc826b1969e2b01d",
+      "bytes": 680628
+    },
+    "proof/ci-source/artifact/vegetation-runtime/warmup-low-raw.json": {
+      "sha256": "782dc047f42b94013e1c95f8ed198d24b37811ef337b4417331db23a100bcee7",
+      "bytes": 261118
+    },
+    "proof/ci-source/artifact/vegetation-runtime/warmup-low.png": {
+      "sha256": "33bfc32d705f319385e021cba9582283b29b9cafcbdb404ced5afd001f27c54d",
+      "bytes": 343057
+    },
+    "proof/ci-source/artifact/vegetation-runtime/warmup-medium-raw.json": {
+      "sha256": "987daa77fffe6d4c14fb3eeec2ef4d315423f761a1daff2599f0c05d7f26e871",
+      "bytes": 267084
+    },
+    "proof/ci-source/artifact/vegetation-runtime/warmup-medium.png": {
+      "sha256": "a023a9dcac96e7f9a6965d0edba4b5868ec9b08bdd2dff6775b6b80e0e3764b8",
+      "bytes": 678066
+    },
+    "proof/ci-source/artifact/vegetation-runtime/wind-frozen-raw.json": {
+      "sha256": "1ac403e24fe61e5fcc97512c88c16f06d65a8dcf9cc008ea20f80c7101b496f8",
+      "bytes": 273236
+    },
+    "proof/ci-source/artifact/vegetation-runtime/wind-frozen.png": {
+      "sha256": "91c097bb20b5e3943f3cd20a54bf28f9bd2b3b253ea2e626fc826b1969e2b01d",
+      "bytes": 680628
+    },
+    "proof/ci-source/artifact/vegetation-runtime/wind-resumed-raw.json": {
+      "sha256": "9fd01beb69754e801bcc027f7ce8efffd7829b86f8f84734da67b6012752d63d",
+      "bytes": 354368
+    },
+    "proof/ci-source/artifact/vegetation-runtime/wind-resumed.png": {
+      "sha256": "a3aa29e0c706c3d56bc9e0435eb4c19111c3af8f773b746606c0fafda6353ec2",
+      "bytes": 680579
+    },
+    "proof/ci-source/artifact-integrity.json": {
+      "sha256": "b9b076757849d34b657c835c84078eaa9ec32f0e07a6d4e44e4aab7db6599341",
+      "bytes": 285
+    },
+    "proof/ci-source/browser.log": {
+      "sha256": "f5cb36071844a2810b4d424771d80055cf0238bdccf8408ae5ed7e8dfb0c3df7",
+      "bytes": 174473
+    },
+    "proof/ci-source/ci-history.json": {
+      "sha256": "7d438ad9587dc7faeaa1cb804bc367c4f0e7143fe10e57fa4d7b4a7f28ef9b7a",
+      "bytes": 2899
+    },
+    "proof/ci-source/node.log": {
+      "sha256": "114e5895249393a56aa96536ef9b3c3bb02f968e20d5b83d332ecceefd044976",
+      "bytes": 135363
+    },
+    "proof/ci-source/runs.json": {
+      "sha256": "f585b571364fc0f488e65c8ffba00519601228b1bd1a42c8ae6d53104b6d7b81",
+      "bytes": 8649
+    },
+    "proof/diagnostics/base-current-attempt1-all-pixels-diagnostic.json": {
+      "sha256": "b4cdc9558887ea27e1e895896d0924112e549921df00ae08facda86a8e75979e",
+      "bytes": 5106
+    },
+    "proof/diagnostics/base-current-attempt1-pixels.json": {
+      "sha256": "0c0ed1f1ae7f180f5bc3afb150c923d2819f66e210b4dfa681f06bb26e680532",
+      "bytes": 928
+    },
+    "proof/diagnostics/ci-final-source-node.log": {
+      "sha256": "891577b216694a70c20613c05d6da052c370f20ddf00f245633935b18c9d70ce",
+      "bytes": 135438
+    },
+    "proof/diagnostics/ci-source-acd-node.log": {
+      "sha256": "072c9dc6716e6a21367a8c4f47d4516922ce5b65ff7daa56427d4d9314a8faf1",
+      "bytes": 135441
+    },
+    "proof/diagnostics/ci-source-attempt1-focused-cancelled.log": {
+      "sha256": "804cdd377274606368744760e7dd181cedf847e7855ea2d957fd7c2491cbd971",
+      "bytes": 80317
+    },
+    "proof/diagnostics/ci-source-attempt1-node-failure.log": {
+      "sha256": "cbb754092e6996499e17007d55079d73331c929a45e1c177988801681ae0666f",
+      "bytes": 144198
+    },
+    "proof/diagnostics/final-browser-attempt1/browser.log": {
+      "sha256": "c4a9ab8dcd9811cda58c5faef08755b4501d6a27e5bc86909e89512db48031de",
+      "bytes": 1278
+    },
+    "proof/diagnostics/fix1/build.log": {
+      "sha256": "cf56a2f1abbccf33c638a45306382ccac2fcde5027aa0af3904319db17139c56",
+      "bytes": 767
+    },
+    "proof/diagnostics/fix1/generator.log": {
+      "sha256": "836a975ff1169cd49441c1004c03e2512acbaba586bfb1a262106317f513f361",
+      "bytes": 69
+    },
+    "proof/diagnostics/fix1/node.log": {
+      "sha256": "b8b3e6d6379ee3102364cbcdad5470b6ae9ad52c196dc72e940f7a6dac05137b",
+      "bytes": 3320
+    },
+    "proof/diagnostics/fix1-zero-instance-submission.json": {
+      "sha256": "458832bf2bb8a166381b257eda145606fa51c9e137879e3df4f067437cc9cc1e",
+      "bytes": 12415
+    },
+    "proof/diagnostics/fix2-frozen-control-and-east-fixtures.json": {
+      "sha256": "76db8c9ef7c81bcd73119e01d64c06aafee86940367f1c28703788fa35a309ce",
+      "bytes": 6756
+    },
+    "proof/diagnostics/fix3/component-source-equivalence.json": {
+      "sha256": "e16df8b3980c77edde6dec32c4fde4651f09227057d38b01e96759414db0ad9a",
+      "bytes": 1937
+    },
+    "proof/diagnostics/fix3/legacy-lod-browser-attempt2/browser.log": {
+      "sha256": "28d53aacf79bf66469d4be66e7e066a36103bf69e9ee3e9f5dfcc925fadc020c",
+      "bytes": 36222
+    },
+    "proof/diagnostics/fix3/legacy-lod-browser-attempt3/browser.log": {
+      "sha256": "0302bca62061150089001fd3d52f1b79e11cc5856e2c53b9757a16f871ace8a1",
+      "bytes": 33024
+    },
+    "proof/diagnostics/fix3-legacy-medium-fixture.json": {
+      "sha256": "8b8a98d8adcfd88608308861ef495ee0aae48705d70bc7d378277a8408997829",
+      "bytes": 709
+    },
+    "proof/diagnostics/legacy-lod-browser.log": {
+      "sha256": "136c46408629fae60ad947cf4c00cb63098bd9562b3101b73ea0e24d81c57958",
+      "bytes": 36090
+    },
+    "proof/diagnostics/partial-baseline-readback-diagnostic.json": {
+      "sha256": "14372567dd6d1d76bfcac9d4978656e76fcf9ec4e2815b8668677e4b11e216f8",
+      "bytes": 689
+    },
+    "proof/diagnostics/resource-attempt1/browser.log": {
+      "sha256": "e436a69199556c197d39f5991298b5067933f8009783ef6021a569b20d3f7ca7",
+      "bytes": 7347
+    },
+    "proof/diagnostics/resource-attempt1/report.json": {
+      "sha256": "f80e12de666a9b08e9d81b667d444238e8998cb1c7345d5d6441363fa0f7546d",
+      "bytes": 10626
+    },
+    "proof/independent/base-receiver.json": {
+      "sha256": "4453375d69fcabaabb6141366feb89be6a236e134c9ca86af42650e33ddf3e9c",
+      "bytes": 2565
+    },
+    "proof/independent/base-receiver.mjs": {
+      "sha256": "bd8baf15cae9c1d2749d1e6cf4e6b0edad02627dcb7ad5f10cdad8f684e4e8c8",
+      "bytes": 1848
+    },
+    "proof/independent/ci-artifact-audit.json": {
+      "sha256": "5c24882465a8e7f854cf2311fa3e9ec241385908bb787eb94a43ffaa6f472bb6",
+      "bytes": 1313
+    },
+    "proof/independent/ci-audit.py": {
+      "sha256": "3a2f03d3f095313318a65cac77a0707d019426e00ad3d97c22a7a6c5348f57e0",
+      "bytes": 5380
+    },
+    "proof/independent/ci-base-current-pixels.json": {
+      "sha256": "e17b0a41f91f587b32044eb870ed568dd7550abadac1a8be159c810d4fb01b04",
+      "bytes": 4119
+    },
+    "proof/independent/ci-coupled-audit.json": {
+      "sha256": "c21535e5d163ffbd060211f15dc26e494fd8b7410962915e4333cb4c105ffa68",
+      "bytes": 1709
+    },
+    "proof/independent/ci-owner-mask.json": {
+      "sha256": "9dfe2f04bd7191ea7df7af0364fad2850161571d9ec0669553980f6874621103",
+      "bytes": 501
+    },
+    "proof/independent/ci-owner-mask.mjs": {
+      "sha256": "706d44b906ea0b49c7a49a0f9db132a3bda502754b98ae3347e7bbe4114c7b25",
+      "bytes": 1793
+    },
+    "proof/independent/focused-node.log": {
+      "sha256": "40e3d4c9b8200d56753bb7b6f50e9d4d34c3310b9512dfeea5c3504bfd0ea7a6",
+      "bytes": 3315
+    },
+    "proof/independent/independent-assets.json": {
+      "sha256": "76b36310fa929aa0af5697dc85779de291120d0b559404e8190bfdae323f912e",
+      "bytes": 11458
+    },
+    "proof/independent/independent_assets.py": {
+      "sha256": "8b60e97a9018b0d55a9f3277b2886eb9cf68fdfb1bff4797452f4591ccb1b836",
+      "bytes": 3818
+    },
+    "proof/independent/owner-mask-cc3-root.json": {
+      "sha256": "946150eae4b20a2b915599758c9d876dfb3f0db4c8e8d0aad79aba36d332b4f1",
+      "bytes": 493
+    },
+    "proof/independent/owner-mask-cc3-root.mjs": {
+      "sha256": "80ed942994648c1635ac83171bf8bba5044cd9a0212c05d5e7a54a41581e0005",
+      "bytes": 1775
+    },
+    "proof/independent/owner-mask.json": {
+      "sha256": "978bc0332cb5b445ea02c07597b23d56e91543f6ef431be58d3babfb7eeb9e1e",
+      "bytes": 488
+    },
+    "proof/independent/owner-mask.mjs": {
+      "sha256": "3574dcc73b7ad4673b37a5994800c73f2028475ebaa32ac34c59aab532c1ff33",
+      "bytes": 1749
+    },
+    "proof/independent/runtime-probe.json": {
+      "sha256": "1f4f82f852dba39e14ddeed56accf608f1e1db69a5bf012de111d72a25e0fb90",
+      "bytes": 1202
+    },
+    "proof/independent/runtime-probe.mjs": {
+      "sha256": "0f27375fe53cde9b2daa22162c8bdde2daeb40edd5779c5cc7a3888337580c07",
+      "bytes": 5803
+    },
+    "proof/independent/terrain-current/PROVENANCE.json": {
+      "sha256": "9cd694d2c270802df83dbf2e66e55fb18c6a5b600fa5732b74721cdcec3d4773",
+      "bytes": 1159
+    },
+    "proof/independent/terrain-current/artifacts/.last-run.json": {
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+      "bytes": 45
+    },
+    "proof/independent/terrain-current/artifacts/m01-terrain-war-ground-ban-13ba4--legacy-single-soil-texture/m01-terrain-bank-5m-high-legacy.png": {
+      "sha256": "fd060ed0dd26a90c6181641607b1895c4c76f0d6650ffaa76f27a7c4eddd78e7",
+      "bytes": 998609
+    },
+    "proof/independent/terrain-current/artifacts/m01-terrain-war-ground-ban-13ba4--legacy-single-soil-texture/m01-terrain-bank-5m-high.png": {
+      "sha256": "8812ff8f59369a6d886bf45ddcba233d9e760d7c1fdac060316a5d67cfd18720",
+      "bytes": 890015
+    },
+    "proof/independent/terrain-current/artifacts/m01-terrain-war-ground-far-23026--legacy-single-soil-texture/m01-terrain-far-50m-high-legacy.png": {
+      "sha256": "3b85ca6409eb2aebf356499ae9c0abf05817af89905a4ce9a64599e116270ba0",
+      "bytes": 702381
+    },
+    "proof/independent/terrain-current/artifacts/m01-terrain-war-ground-far-23026--legacy-single-soil-texture/m01-terrain-far-50m-high.png": {
+      "sha256": "5965e3091d65911f4bf10dfe59c6910adc28bfe77c2afb628f05a73135890bba",
+      "bytes": 864199
+    },
+    "proof/independent/terrain-current/artifacts/m01-terrain-war-ground-low-aa853--set-budget-and-look-at-5-m/m01-terrain-mid-5m-low.png": {
+      "sha256": "87f464bb5840b18389019e7e61ff82951999fbb2b1f061f2a69ad3b327182616",
+      "bytes": 409393
+    },
+    "proof/independent/terrain-current/artifacts/m01-terrain-war-ground-med-b5ae9--set-budget-and-look-at-5-m/m01-terrain-mid-5m-medium.png": {
+      "sha256": "b3547e6fc257149e9a8428f9b1fe5c0f08e85691c10b77b953aa120685634d71",
+      "bytes": 1023011
+    },
+    "proof/independent/terrain-current/artifacts/m01-terrain-war-ground-mid-c9e9d--legacy-single-soil-texture/m01-terrain-mid-5m-high-legacy.png": {
+      "sha256": "8d6d2ad72013655cb5c10bf6ca7712cacc1dda3d78a551f417f70b338ef18767",
+      "bytes": 842062
+    },
+    "proof/independent/terrain-current/artifacts/m01-terrain-war-ground-mid-c9e9d--legacy-single-soil-texture/m01-terrain-mid-5m-high.png": {
+      "sha256": "94e946a47aba07112f0d89992a1345472bc0c4ffca427790ddceb50375594e06",
+      "bytes": 1043092
+    },
+    "proof/independent/terrain-current/artifacts/m01-terrain-war-ground-nea-ef72f--legacy-single-soil-texture/m01-terrain-near-1m-high-legacy.png": {
+      "sha256": "51fd8d42fa638097c54a9703cb225164f510309255f8f433806a6455f3e9d72a",
+      "bytes": 882320
+    },
+    "proof/independent/terrain-current/artifacts/m01-terrain-war-ground-nea-ef72f--legacy-single-soil-texture/m01-terrain-near-1m-high.png": {
+      "sha256": "c7c5b18aa0cdac43788fe02d2adcba10ddfeedfb25bbd2e2525e4a8a2ed65a80",
+      "bytes": 1044631
+    },
+    "proof/independent/terrain-current/artifacts/m01-terrain-war-ground-rai-ab8a1--legacy-single-soil-texture/m01-terrain-rail-5m-high-legacy.png": {
+      "sha256": "b5bf76409d773ccf9698850d5c2de00e85121a04cb9d5cb40cd0a976589147a3",
+      "bytes": 798838
+    },
+    "proof/independent/terrain-current/artifacts/m01-terrain-war-ground-rai-ab8a1--legacy-single-soil-texture/m01-terrain-rail-5m-high.png": {
+      "sha256": "85fdd89e06cfb4161cbbd5b63932418c15e09ec15cea61a69ff26aefc3914fb5",
+      "bytes": 836340
+    },
+    "proof/independent/terrain-current/artifacts/m01-terrain-war-ground-roa-d5ff9--legacy-single-soil-texture/m01-terrain-road-5m-high-legacy.png": {
+      "sha256": "dc00b0b0ad4460bdb82d37223823694b13b8d0d18670f8a448ad06f3c0da0c0e",
+      "bytes": 813138
+    },
+    "proof/independent/terrain-current/artifacts/m01-terrain-war-ground-roa-d5ff9--legacy-single-soil-texture/m01-terrain-road-5m-high.png": {
+      "sha256": "b848d439105aedd398b1687bc9591f5d14156c1dde78a555d7c8704e51ff944e",
+      "bytes": 972534
+    },
+    "proof/independent/terrain-current/browser.log": {
+      "sha256": "63982d0afd19ef6481d3117b379eadc0b854c15a24108707645a4a75338759f0",
+      "bytes": 1953
+    },
+    "proof/independent/terrain-current/build.log": {
+      "sha256": "2bbe21adba9e4116656c71d9b2d2d1d05656bb4d0d0f3a8153e604f0522b762c",
+      "bytes": 767
+    },
+    "proof/independent/terrain-current/config.mjs": {
+      "sha256": "beaf7d9d9081ba66d2abea43cb60933ba1e7013e4958dc6dad11c889c63153a7",
+      "bytes": 683
+    },
+    "proof/independent/terrain-current/report.json": {
+      "sha256": "a07d5cfa6f508c6cabc31e8456051c793a3803bc68589cd7ec82a6ab456faa07",
+      "bytes": 28783
+    },
+    "proof/independent/tool-error-503.json": {
+      "sha256": "8371c4842dbdd01f6dd46af9f14845598cb0cd7e1c9401647808b1c263f8f7b4",
+      "bytes": 441
+    },
+    "proof/regression-union.json": {
+      "sha256": "77824c97dad0235ba790ae232dfb5dd633bf4304590c85e9009859801ab212dd",
+      "bytes": 25626
+    },
+    "proof/source-manifest.json": {
+      "sha256": "055b76c1fd2811382671e6eacdc618c0057173a4c880b6d9cd58a85090832fa1",
+      "bytes": 5040
+    }
+  }
+}

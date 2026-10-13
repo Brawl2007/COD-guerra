@@ -1,0 +1,397 @@
+{
+  "baseline": "/home/runner/work/COD-guerra/COD-guerra/test-results/vegetation-baseline",
+  "baselineHead": "b2430fac3504aa6d0ce7d0ad664076c26f90d6f7",
+  "candidateHead": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+  "sourceHashes": {
+    "src/render/m01-vegetation-runtime.js": "0018743429d8cb25cf0039134d58f77c8d3d288706d993619198c810bf6d87ac",
+    "src/render/m01-vegetation-material.js": "a10bf7c637d098c262268e3b77cca1f93f8ddb8a690d647072a3829c8b404024",
+    "assets/models/provisional/m01/vegetation/vegetation-kit.glb": "ce03b8ad0e384a009b40599bdf67b575d142c64b85fce9c61446bb72185170af",
+    "assets/models/provisional/m01/vegetation/manifest.json": "b6163412b6493aa16f555a2258fb2cdb924faabf301109843590aa730afbe8b1",
+    "src/render/m01-terrain-envelope.js": "8f5678bbc5ed5382aa2c5219bdaa3ad37ec6f35983090bd0726038e726731200",
+    "src/render/m01-terrain-relief.js": "ed61262ce4b0faa65aaebecba139278fafaa9f6018b67642bc3fe4f39bd2ac69",
+    "src/render/m01-far-landscape.js": "bd8e8dbfc0092343f538c657ce2680800c1705a2da5ff528fbeb741bc6a022fb",
+    "src/render/m01-view.js": "12da01a141aa301b0467c484eb94baca7e447c5a8afec1073b278100359e5075",
+    "src/game/m01-simulation.js": "ffc198c1089da201d580b703b44d1a80f1536c3923cca7d7ca6fab9602362f14",
+    "src/world/tczew-world.js": "716c9b3fb3bca8c8d07a690caf1ef67288a416a043a94b47e98d8e58c4f95a22"
+  },
+  "seeds": [
+    1234,
+    1945,
+    4294967295
+  ],
+  "routes": [
+    {
+      "seed": 1234,
+      "support": false,
+      "ticks": 20687,
+      "actorSamples": 1861830,
+      "fullStateStreamSha256": "286fdee2dca91db99d8e3f6e7128fa144ed59757f642cfc7a174ae39a27f1343",
+      "eventStreamSha256": "d6d9e96d9d5c103c75256c4356be120a382eacd584cd208a56cf22b956df34a8",
+      "controlStreamSha256": "aa346d91e5198b5e683182b30733ef279ed9be5af8cb301cce95eecc91b76fc3",
+      "finalSha256": "285af87d510e9e44a11c5611db74ecf6778c89f7bda4eeadd36e03ed62442ab2",
+      "baselineFinalSha256": "285af87d510e9e44a11c5611db74ecf6778c89f7bda4eeadd36e03ed62442ab2",
+      "checkpoints": {
+        "cp_m01_a_orientacao": "5130788bb43a3443c989cdcedc75bf753e2f94de75c99b89f5c0812d02471345",
+        "cp_m01_b_reorganizacao": "19e402ab27f6215a3ae069334d9151b85353b775397afa57f67efe290b76c300",
+        "cp_m01_c_engenheiros": "24b57d12deb25138a487386cfd980c2589b1bb2f171630626ac07c3cccccfe6b",
+        "cp_m01_d_retirada": "3c092360b1d83ac640d615ff24c356ce9d45ec3c20c530c85982432a38233122"
+      },
+      "checkpointPairs": [
+        {
+          "tick": 0,
+          "id": "cp_m01_a_orientacao",
+          "candidateSha256": "5130788bb43a3443c989cdcedc75bf753e2f94de75c99b89f5c0812d02471345",
+          "baselineSha256": "5130788bb43a3443c989cdcedc75bf753e2f94de75c99b89f5c0812d02471345"
+        },
+        {
+          "tick": 1954,
+          "id": "cp_m01_b_reorganizacao",
+          "candidateSha256": "19e402ab27f6215a3ae069334d9151b85353b775397afa57f67efe290b76c300",
+          "baselineSha256": "19e402ab27f6215a3ae069334d9151b85353b775397afa57f67efe290b76c300"
+        },
+        {
+          "tick": 9996,
+          "id": "cp_m01_c_engenheiros",
+          "candidateSha256": "24b57d12deb25138a487386cfd980c2589b1bb2f171630626ac07c3cccccfe6b",
+          "baselineSha256": "24b57d12deb25138a487386cfd980c2589b1bb2f171630626ac07c3cccccfe6b"
+        },
+        {
+          "tick": 15606,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "3c092360b1d83ac640d615ff24c356ce9d45ec3c20c530c85982432a38233122",
+          "baselineSha256": "3c092360b1d83ac640d615ff24c356ce9d45ec3c20c530c85982432a38233122"
+        },
+        {
+          "tick": 20686,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "caccf762c885e115e69721e5edb5956188d553cbd4922bd3afdb9e8db200e6a9",
+          "baselineSha256": "caccf762c885e115e69721e5edb5956188d553cbd4922bd3afdb9e8db200e6a9"
+        }
+      ],
+      "finalCheckpointSha256": "caccf762c885e115e69721e5edb5956188d553cbd4922bd3afdb9e8db200e6a9",
+      "baselineFinalCheckpointSha256": "caccf762c885e115e69721e5edb5956188d553cbd4922bd3afdb9e8db200e6a9",
+      "vegetation": {
+        "ready": true,
+        "source": "actual-original-GLB-accessor-bytes",
+        "assetSHA256": "ce03b8ad0e384a009b40599bdf67b575d142c64b85fce9c61446bb72185170af",
+        "worldBound": true,
+        "clock": 1034.349999999607,
+        "structuralDrawCalls": 8,
+        "structuralTriangles": 26844
+      },
+      "complete": true,
+      "battleClock": 25500
+    },
+    {
+      "seed": 1234,
+      "support": true,
+      "ticks": 19960,
+      "actorSamples": 1796400,
+      "fullStateStreamSha256": "5d13f1131217285db3b27f00a55251c4e18fe65fb0b340471ed905f4750f7887",
+      "eventStreamSha256": "0597cb9c1469ac0ccaba8189a8a232ad2f8173db8d2f7724e1698884a82df525",
+      "controlStreamSha256": "34bdfd20e83e95ea5c71760f2c3d759d483d7c34de053ad36a1c0bcb48e1625f",
+      "finalSha256": "f7575bb9466cc65bc2ec66e410d6014fa1c9b439f6fe2bb7e584f249d127465f",
+      "baselineFinalSha256": "f7575bb9466cc65bc2ec66e410d6014fa1c9b439f6fe2bb7e584f249d127465f",
+      "checkpoints": {
+        "cp_m01_a_orientacao": "5130788bb43a3443c989cdcedc75bf753e2f94de75c99b89f5c0812d02471345",
+        "cp_m01_b_reorganizacao": "19e402ab27f6215a3ae069334d9151b85353b775397afa57f67efe290b76c300",
+        "cp_m01_c_engenheiros": "fb169d5968e733f3c4e6a7e37284bc80d806c04032eb2bb7ac3c9e43bd0ca3e5",
+        "cp_m01_d_retirada": "0147a2846fc4b85b0fad25fd971711609a416a3ee9164b405fe13d2c4fcbcf68"
+      },
+      "checkpointPairs": [
+        {
+          "tick": 0,
+          "id": "cp_m01_a_orientacao",
+          "candidateSha256": "5130788bb43a3443c989cdcedc75bf753e2f94de75c99b89f5c0812d02471345",
+          "baselineSha256": "5130788bb43a3443c989cdcedc75bf753e2f94de75c99b89f5c0812d02471345"
+        },
+        {
+          "tick": 1954,
+          "id": "cp_m01_b_reorganizacao",
+          "candidateSha256": "19e402ab27f6215a3ae069334d9151b85353b775397afa57f67efe290b76c300",
+          "baselineSha256": "19e402ab27f6215a3ae069334d9151b85353b775397afa57f67efe290b76c300"
+        },
+        {
+          "tick": 9269,
+          "id": "cp_m01_c_engenheiros",
+          "candidateSha256": "fb169d5968e733f3c4e6a7e37284bc80d806c04032eb2bb7ac3c9e43bd0ca3e5",
+          "baselineSha256": "fb169d5968e733f3c4e6a7e37284bc80d806c04032eb2bb7ac3c9e43bd0ca3e5"
+        },
+        {
+          "tick": 14906,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "0147a2846fc4b85b0fad25fd971711609a416a3ee9164b405fe13d2c4fcbcf68",
+          "baselineSha256": "0147a2846fc4b85b0fad25fd971711609a416a3ee9164b405fe13d2c4fcbcf68"
+        },
+        {
+          "tick": 19959,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "6f25cba4b2db4f471d4cd1a00dbe7f7e26216ca0f27023e22714c68a07766ef9",
+          "baselineSha256": "6f25cba4b2db4f471d4cd1a00dbe7f7e26216ca0f27023e22714c68a07766ef9"
+        }
+      ],
+      "finalCheckpointSha256": "6f25cba4b2db4f471d4cd1a00dbe7f7e26216ca0f27023e22714c68a07766ef9",
+      "baselineFinalCheckpointSha256": "6f25cba4b2db4f471d4cd1a00dbe7f7e26216ca0f27023e22714c68a07766ef9",
+      "vegetation": {
+        "ready": true,
+        "source": "actual-original-GLB-accessor-bytes",
+        "assetSHA256": "ce03b8ad0e384a009b40599bdf67b575d142c64b85fce9c61446bb72185170af",
+        "worldBound": true,
+        "clock": 997.9999999996401,
+        "structuralDrawCalls": 10,
+        "structuralTriangles": 74594
+      },
+      "complete": true,
+      "battleClock": 25500
+    },
+    {
+      "seed": 1945,
+      "support": false,
+      "ticks": 20470,
+      "actorSamples": 1842300,
+      "fullStateStreamSha256": "38ca4874275fdcb80bea4a89eb3734d4e80aee9bfd1dca4b85d43baef9a06c6a",
+      "eventStreamSha256": "e32227b82a9ef146586dca857980482160ca70eb79e4b4fa1529248f7574845c",
+      "controlStreamSha256": "1072e2b2941f40688d48bc6597121f014055db31ae5b8d728e35cabeb5262b68",
+      "finalSha256": "d1e4f4da4aa5515fa8d220f12413a7dca558199e562319b06d68b060710f60ce",
+      "baselineFinalSha256": "d1e4f4da4aa5515fa8d220f12413a7dca558199e562319b06d68b060710f60ce",
+      "checkpoints": {
+        "cp_m01_a_orientacao": "8145fa3a3034bce371cbabcb47889012f0ba62f70ef005b4f4b391a605dd4ff3",
+        "cp_m01_b_reorganizacao": "47c2d642d47b0dc14b38b94bc84591572bbced564ae841d10913eb9e220dec3b",
+        "cp_m01_c_engenheiros": "e0dd824f564a878f5e9b897aa588e64e6afad141eb8c2ef1d9452e384f8f538e",
+        "cp_m01_d_retirada": "ac3a3213b8b16050e82c84c72745601085f1b15762c3dcee6c2ffc1b87dae844"
+      },
+      "checkpointPairs": [
+        {
+          "tick": 0,
+          "id": "cp_m01_a_orientacao",
+          "candidateSha256": "8145fa3a3034bce371cbabcb47889012f0ba62f70ef005b4f4b391a605dd4ff3",
+          "baselineSha256": "8145fa3a3034bce371cbabcb47889012f0ba62f70ef005b4f4b391a605dd4ff3"
+        },
+        {
+          "tick": 1954,
+          "id": "cp_m01_b_reorganizacao",
+          "candidateSha256": "47c2d642d47b0dc14b38b94bc84591572bbced564ae841d10913eb9e220dec3b",
+          "baselineSha256": "47c2d642d47b0dc14b38b94bc84591572bbced564ae841d10913eb9e220dec3b"
+        },
+        {
+          "tick": 9779,
+          "id": "cp_m01_c_engenheiros",
+          "candidateSha256": "e0dd824f564a878f5e9b897aa588e64e6afad141eb8c2ef1d9452e384f8f538e",
+          "baselineSha256": "e0dd824f564a878f5e9b897aa588e64e6afad141eb8c2ef1d9452e384f8f538e"
+        },
+        {
+          "tick": 15389,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "ac3a3213b8b16050e82c84c72745601085f1b15762c3dcee6c2ffc1b87dae844",
+          "baselineSha256": "ac3a3213b8b16050e82c84c72745601085f1b15762c3dcee6c2ffc1b87dae844"
+        },
+        {
+          "tick": 20469,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "dfa59a4cceae4b8d2d8580fcd2b1a70b96eca1ac4673b3c5fc5b1005c983638a",
+          "baselineSha256": "dfa59a4cceae4b8d2d8580fcd2b1a70b96eca1ac4673b3c5fc5b1005c983638a"
+        }
+      ],
+      "finalCheckpointSha256": "dfa59a4cceae4b8d2d8580fcd2b1a70b96eca1ac4673b3c5fc5b1005c983638a",
+      "baselineFinalCheckpointSha256": "dfa59a4cceae4b8d2d8580fcd2b1a70b96eca1ac4673b3c5fc5b1005c983638a",
+      "vegetation": {
+        "ready": true,
+        "source": "actual-original-GLB-accessor-bytes",
+        "assetSHA256": "ce03b8ad0e384a009b40599bdf67b575d142c64b85fce9c61446bb72185170af",
+        "worldBound": true,
+        "clock": 1023.4999999996169,
+        "structuralDrawCalls": 8,
+        "structuralTriangles": 26844
+      },
+      "complete": true,
+      "battleClock": 25500
+    },
+    {
+      "seed": 1945,
+      "support": true,
+      "ticks": 20093,
+      "actorSamples": 1808370,
+      "fullStateStreamSha256": "cdccae2749eefa45765a53ef1f5a7749a277afc3abf1e5099c243e22fa0767ea",
+      "eventStreamSha256": "7fd1fc73a4c94b9b63670880ed876e61e54db42ea2b82f9075e9d399ab5d6dad",
+      "controlStreamSha256": "d6a3a2c0006e020f31ab82d4a460a6b74c24fb2ccd392cdaa1f961c8e1c45379",
+      "finalSha256": "93d7aea8cc373c4cb322c0056c1d634b88057edecd6f9e9699930b219164c67e",
+      "baselineFinalSha256": "93d7aea8cc373c4cb322c0056c1d634b88057edecd6f9e9699930b219164c67e",
+      "checkpoints": {
+        "cp_m01_a_orientacao": "8145fa3a3034bce371cbabcb47889012f0ba62f70ef005b4f4b391a605dd4ff3",
+        "cp_m01_b_reorganizacao": "47c2d642d47b0dc14b38b94bc84591572bbced564ae841d10913eb9e220dec3b",
+        "cp_m01_c_engenheiros": "a9505b682683bf893186a894be4491836aad3b8c557d37fa90d8c077b65e49ff",
+        "cp_m01_d_retirada": "e1a5a0484293c4bfcc67ebc97f152c4b535484252eeb649abe3efc86cc0b818f"
+      },
+      "checkpointPairs": [
+        {
+          "tick": 0,
+          "id": "cp_m01_a_orientacao",
+          "candidateSha256": "8145fa3a3034bce371cbabcb47889012f0ba62f70ef005b4f4b391a605dd4ff3",
+          "baselineSha256": "8145fa3a3034bce371cbabcb47889012f0ba62f70ef005b4f4b391a605dd4ff3"
+        },
+        {
+          "tick": 1954,
+          "id": "cp_m01_b_reorganizacao",
+          "candidateSha256": "47c2d642d47b0dc14b38b94bc84591572bbced564ae841d10913eb9e220dec3b",
+          "baselineSha256": "47c2d642d47b0dc14b38b94bc84591572bbced564ae841d10913eb9e220dec3b"
+        },
+        {
+          "tick": 9402,
+          "id": "cp_m01_c_engenheiros",
+          "candidateSha256": "a9505b682683bf893186a894be4491836aad3b8c557d37fa90d8c077b65e49ff",
+          "baselineSha256": "a9505b682683bf893186a894be4491836aad3b8c557d37fa90d8c077b65e49ff"
+        },
+        {
+          "tick": 15039,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "e1a5a0484293c4bfcc67ebc97f152c4b535484252eeb649abe3efc86cc0b818f",
+          "baselineSha256": "e1a5a0484293c4bfcc67ebc97f152c4b535484252eeb649abe3efc86cc0b818f"
+        },
+        {
+          "tick": 20092,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "55a2b35e2e76c2a6e22110e3adec10c0ad251aacdb7503b96e5bb7643366eee6",
+          "baselineSha256": "55a2b35e2e76c2a6e22110e3adec10c0ad251aacdb7503b96e5bb7643366eee6"
+        }
+      ],
+      "finalCheckpointSha256": "55a2b35e2e76c2a6e22110e3adec10c0ad251aacdb7503b96e5bb7643366eee6",
+      "baselineFinalCheckpointSha256": "55a2b35e2e76c2a6e22110e3adec10c0ad251aacdb7503b96e5bb7643366eee6",
+      "vegetation": {
+        "ready": true,
+        "source": "actual-original-GLB-accessor-bytes",
+        "assetSHA256": "ce03b8ad0e384a009b40599bdf67b575d142c64b85fce9c61446bb72185170af",
+        "worldBound": true,
+        "clock": 1004.649999999634,
+        "structuralDrawCalls": 10,
+        "structuralTriangles": 74594
+      },
+      "complete": true,
+      "battleClock": 25500
+    },
+    {
+      "seed": 4294967295,
+      "support": false,
+      "ticks": 20874,
+      "actorSamples": 1878660,
+      "fullStateStreamSha256": "dd45c6e120e69c89065603f4a99ab885c1904b3aa3e1f49e3cc9e313d7663e4d",
+      "eventStreamSha256": "da5dbfa482ef4c4d8828f527fc72446c8a9a0929e0a3d6c023ac9d2062ae465c",
+      "controlStreamSha256": "806de83883a984d2e4ee6ea950d01f71ac6c236248fde4673f4e272e0db28d3b",
+      "finalSha256": "76fb041bc2b2afdb6c01526a3b6f6e23356bd3c9304b3301eee9c9643d9f4c74",
+      "baselineFinalSha256": "76fb041bc2b2afdb6c01526a3b6f6e23356bd3c9304b3301eee9c9643d9f4c74",
+      "checkpoints": {
+        "cp_m01_a_orientacao": "daa03bc9b5a9efc973388eaa91fd33a6510f613fc652e62fd05f422b808e5358",
+        "cp_m01_b_reorganizacao": "f6f68e5614d28e54a71cf50c88decf9be0eb1abfa7a65fd8ee26b39aa835713c",
+        "cp_m01_c_engenheiros": "77fe2ed5e8bcea53868749006163527aa124c1fffe6a435f8af8cc62af1549aa",
+        "cp_m01_d_retirada": "05eec0403b4d150b31c148c5fb5446246154314ca05a6d58c62dc054d8cb18bf"
+      },
+      "checkpointPairs": [
+        {
+          "tick": 0,
+          "id": "cp_m01_a_orientacao",
+          "candidateSha256": "daa03bc9b5a9efc973388eaa91fd33a6510f613fc652e62fd05f422b808e5358",
+          "baselineSha256": "daa03bc9b5a9efc973388eaa91fd33a6510f613fc652e62fd05f422b808e5358"
+        },
+        {
+          "tick": 1954,
+          "id": "cp_m01_b_reorganizacao",
+          "candidateSha256": "f6f68e5614d28e54a71cf50c88decf9be0eb1abfa7a65fd8ee26b39aa835713c",
+          "baselineSha256": "f6f68e5614d28e54a71cf50c88decf9be0eb1abfa7a65fd8ee26b39aa835713c"
+        },
+        {
+          "tick": 10183,
+          "id": "cp_m01_c_engenheiros",
+          "candidateSha256": "77fe2ed5e8bcea53868749006163527aa124c1fffe6a435f8af8cc62af1549aa",
+          "baselineSha256": "77fe2ed5e8bcea53868749006163527aa124c1fffe6a435f8af8cc62af1549aa"
+        },
+        {
+          "tick": 15793,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "05eec0403b4d150b31c148c5fb5446246154314ca05a6d58c62dc054d8cb18bf",
+          "baselineSha256": "05eec0403b4d150b31c148c5fb5446246154314ca05a6d58c62dc054d8cb18bf"
+        },
+        {
+          "tick": 20873,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "fdd1e0395babcec3eeff29ce6c09720f2ea9e3bcf032cb9bf6f3050e202385b9",
+          "baselineSha256": "fdd1e0395babcec3eeff29ce6c09720f2ea9e3bcf032cb9bf6f3050e202385b9"
+        }
+      ],
+      "finalCheckpointSha256": "fdd1e0395babcec3eeff29ce6c09720f2ea9e3bcf032cb9bf6f3050e202385b9",
+      "baselineFinalCheckpointSha256": "fdd1e0395babcec3eeff29ce6c09720f2ea9e3bcf032cb9bf6f3050e202385b9",
+      "vegetation": {
+        "ready": true,
+        "source": "actual-original-GLB-accessor-bytes",
+        "assetSHA256": "ce03b8ad0e384a009b40599bdf67b575d142c64b85fce9c61446bb72185170af",
+        "worldBound": true,
+        "clock": 1043.6999999995985,
+        "structuralDrawCalls": 8,
+        "structuralTriangles": 26844
+      },
+      "complete": true,
+      "battleClock": 25500
+    },
+    {
+      "seed": 4294967295,
+      "support": true,
+      "ticks": 20102,
+      "actorSamples": 1809180,
+      "fullStateStreamSha256": "5182ae2252267a4410b2c2675d7d458d8f517551c864143f8784eccc380fd8b2",
+      "eventStreamSha256": "46256df3da11d9b898d91353410c28c2efcf0c168760f55f63d98d6abd085c2b",
+      "controlStreamSha256": "d949f9b86e59312c9c984621fe70b6f8abea6d9ea32da7186fccd204cf895be7",
+      "finalSha256": "98b1abd3c5f16fca49835f8391ec6272fe672fc2bcebc7159671caa7152ea5e2",
+      "baselineFinalSha256": "98b1abd3c5f16fca49835f8391ec6272fe672fc2bcebc7159671caa7152ea5e2",
+      "checkpoints": {
+        "cp_m01_a_orientacao": "daa03bc9b5a9efc973388eaa91fd33a6510f613fc652e62fd05f422b808e5358",
+        "cp_m01_b_reorganizacao": "f6f68e5614d28e54a71cf50c88decf9be0eb1abfa7a65fd8ee26b39aa835713c",
+        "cp_m01_c_engenheiros": "c2e05f3391c0bd188baf1748ec2ad587bea5d1947745cb9de7c062d83d0096a0",
+        "cp_m01_d_retirada": "3f9d8ae30e61a9c92ed77fa9b17f9f88b6453bbeda9244e426d82e3ef79d13c7"
+      },
+      "checkpointPairs": [
+        {
+          "tick": 0,
+          "id": "cp_m01_a_orientacao",
+          "candidateSha256": "daa03bc9b5a9efc973388eaa91fd33a6510f613fc652e62fd05f422b808e5358",
+          "baselineSha256": "daa03bc9b5a9efc973388eaa91fd33a6510f613fc652e62fd05f422b808e5358"
+        },
+        {
+          "tick": 1954,
+          "id": "cp_m01_b_reorganizacao",
+          "candidateSha256": "f6f68e5614d28e54a71cf50c88decf9be0eb1abfa7a65fd8ee26b39aa835713c",
+          "baselineSha256": "f6f68e5614d28e54a71cf50c88decf9be0eb1abfa7a65fd8ee26b39aa835713c"
+        },
+        {
+          "tick": 9411,
+          "id": "cp_m01_c_engenheiros",
+          "candidateSha256": "c2e05f3391c0bd188baf1748ec2ad587bea5d1947745cb9de7c062d83d0096a0",
+          "baselineSha256": "c2e05f3391c0bd188baf1748ec2ad587bea5d1947745cb9de7c062d83d0096a0"
+        },
+        {
+          "tick": 15048,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "3f9d8ae30e61a9c92ed77fa9b17f9f88b6453bbeda9244e426d82e3ef79d13c7",
+          "baselineSha256": "3f9d8ae30e61a9c92ed77fa9b17f9f88b6453bbeda9244e426d82e3ef79d13c7"
+        },
+        {
+          "tick": 20101,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "a3cf634e694364d5a9abc7c578fcbe2e89d42dd6446a553870cc89cd0d6fb03c",
+          "baselineSha256": "a3cf634e694364d5a9abc7c578fcbe2e89d42dd6446a553870cc89cd0d6fb03c"
+        }
+      ],
+      "finalCheckpointSha256": "a3cf634e694364d5a9abc7c578fcbe2e89d42dd6446a553870cc89cd0d6fb03c",
+      "baselineFinalCheckpointSha256": "a3cf634e694364d5a9abc7c578fcbe2e89d42dd6446a553870cc89cd0d6fb03c",
+      "vegetation": {
+        "ready": true,
+        "source": "actual-original-GLB-accessor-bytes",
+        "assetSHA256": "ce03b8ad0e384a009b40599bdf67b575d142c64b85fce9c61446bb72185170af",
+        "worldBound": true,
+        "clock": 1005.0999999996336,
+        "structuralDrawCalls": 10,
+        "structuralTriangles": 74594
+      },
+      "complete": true,
+      "battleClock": 25500
+    }
+  ],
+  "kind": "real-control full tick futures, actual original GLB vegetation owner ready/active and terrain/far owners active; PNG decoding/GPU are browser evidence; not a browser playtest"
+}

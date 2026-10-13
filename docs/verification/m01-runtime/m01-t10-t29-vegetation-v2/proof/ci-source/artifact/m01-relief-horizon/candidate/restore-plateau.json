@@ -1,0 +1,2254 @@
+{
+  "initialWarmup": [
+    {
+      "label": "cold-high-default",
+      "clock": 0.05,
+      "geometries": 473,
+      "textures": 133,
+      "ground": {
+        "enabled": true,
+        "revision": 3,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 3,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "quality-low",
+      "clock": 0.05,
+      "geometries": 486,
+      "textures": 127,
+      "ground": {
+        "enabled": true,
+        "revision": 4,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "low",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 4,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "low",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "quality-high",
+      "clock": 0.05,
+      "geometries": 491,
+      "textures": 133,
+      "ground": {
+        "enabled": true,
+        "revision": 5,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 5,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "quality-low",
+      "clock": 0.05,
+      "geometries": 491,
+      "textures": 127,
+      "ground": {
+        "enabled": true,
+        "revision": 6,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "low",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 6,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "low",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "quality-high",
+      "clock": 0.05,
+      "geometries": 491,
+      "textures": 133,
+      "ground": {
+        "enabled": true,
+        "revision": 7,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 7,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "relief-off",
+      "clock": 0.05,
+      "geometries": 538,
+      "textures": 133,
+      "ground": {
+        "enabled": false,
+        "revision": 8,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 50,
+        "triangles": 14404,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 7,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "relief-on",
+      "clock": 0.05,
+      "geometries": 538,
+      "textures": 133,
+      "ground": {
+        "enabled": true,
+        "revision": 9,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 7,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "far-off",
+      "clock": 0.05,
+      "geometries": 538,
+      "textures": 133,
+      "ground": {
+        "enabled": true,
+        "revision": 9,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": false,
+        "revision": 8,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 0,
+        "triangles": 0,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "far-on",
+      "clock": 0.05,
+      "geometries": 538,
+      "textures": 133,
+      "ground": {
+        "enabled": true,
+        "revision": 9,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 9,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "samples": [
+    {
+      "clock": 0.05,
+      "geometries": 538,
+      "textures": 133,
+      "ground": {
+        "enabled": true,
+        "revision": 12,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 12,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "clock": 0.05,
+      "geometries": 538,
+      "textures": 133,
+      "ground": {
+        "enabled": true,
+        "revision": 15,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 15,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "clock": 0.05,
+      "geometries": 538,
+      "textures": 133,
+      "ground": {
+        "enabled": true,
+        "revision": 18,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 18,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "clock": 0.05,
+      "geometries": 538,
+      "textures": 133,
+      "ground": {
+        "enabled": true,
+        "revision": 21,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 21,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "reload": true,
+      "clock": 0.05,
+      "geometries": 538,
+      "textures": 133
+    }
+  ],
+  "reloadWarmup": [
+    {
+      "label": "cold-high-default",
+      "clock": 0.05,
+      "geometries": 473,
+      "textures": 133,
+      "ground": {
+        "enabled": true,
+        "revision": 3,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 3,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "quality-low",
+      "clock": 0.05,
+      "geometries": 486,
+      "textures": 127,
+      "ground": {
+        "enabled": true,
+        "revision": 4,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "low",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 4,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "low",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "quality-high",
+      "clock": 0.05,
+      "geometries": 491,
+      "textures": 129,
+      "ground": {
+        "enabled": true,
+        "revision": 5,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 5,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "quality-low",
+      "clock": 0.05,
+      "geometries": 491,
+      "textures": 127,
+      "ground": {
+        "enabled": true,
+        "revision": 6,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "low",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 6,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "low",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "quality-high",
+      "clock": 0.05,
+      "geometries": 491,
+      "textures": 129,
+      "ground": {
+        "enabled": true,
+        "revision": 7,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 7,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "relief-off",
+      "clock": 0.05,
+      "geometries": 538,
+      "textures": 133,
+      "ground": {
+        "enabled": false,
+        "revision": 8,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 50,
+        "triangles": 14404,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 7,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "relief-on",
+      "clock": 0.05,
+      "geometries": 538,
+      "textures": 133,
+      "ground": {
+        "enabled": true,
+        "revision": 9,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 7,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "far-off",
+      "clock": 0.05,
+      "geometries": 538,
+      "textures": 133,
+      "ground": {
+        "enabled": true,
+        "revision": 9,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": false,
+        "revision": 8,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 0,
+        "triangles": 0,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "far-on",
+      "clock": 0.05,
+      "geometries": 538,
+      "textures": 133,
+      "ground": {
+        "enabled": true,
+        "revision": 9,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "seed": 19390901,
+        "chunks": 239,
+        "draws": 47,
+        "triangles": 14368,
+        "baselineTriangles": 104000,
+        "ceiling": 52000,
+        "fogFar": 2800,
+        "skirtOwner": "terrain-relief",
+        "envelope": {
+          "margin": 20,
+          "regions": 61,
+          "extent": {
+            "id": "extent",
+            "minX": -624,
+            "maxX": 1735,
+            "minZ": -1320,
+            "maxZ": 228
+          }
+        },
+        "geometries": 478
+      },
+      "far": {
+        "enabled": true,
+        "revision": 9,
+        "builds": 1,
+        "worldRevision": 3,
+        "quality": "high",
+        "clock": 0.05,
+        "lod": "single",
+        "draws": 5,
+        "triangles": 3232,
+        "drawCeiling": 10,
+        "meshes": 5,
+        "geometry": [
+          {
+            "kind": "bodies",
+            "triangles": 864
+          },
+          {
+            "kind": "roofs",
+            "triangles": 480
+          },
+          {
+            "kind": "towers",
+            "triangles": 264
+          },
+          {
+            "kind": "trees",
+            "triangles": 1600
+          },
+          {
+            "kind": "mist",
+            "triangles": 24
+          }
+        ],
+        "mistDensity": 0.13731863796215987,
+        "skirtOwner": "terrain-relief",
+        "anchors": [
+          {
+            "id": "anchor_elblag",
+            "bearingDeg": 80,
+            "distanceKm": 39.7,
+            "direction": [
+              0.984807753012208,
+              0,
+              -0.17364817766693041
+            ]
+          },
+          {
+            "id": "anchor_malbork",
+            "bearingDeg": 113,
+            "distanceKm": 15.8,
+            "direction": [
+              0.9205048534524404,
+              0,
+              0.3907311284892736
+            ]
+          },
+          {
+            "id": "anchor_westerplatte",
+            "bearingDeg": 346,
+            "distanceKm": 36.1,
+            "direction": [
+              -0.24192189559966787,
+              0,
+              -0.9702957262759965
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

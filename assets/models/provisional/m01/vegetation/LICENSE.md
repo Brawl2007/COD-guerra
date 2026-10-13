@@ -1,0 +1,5 @@
+# Original M01 vegetation kit
+
+Copyright 2026 COD-guerra contributors. Dedicated to the public domain under CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/). The procedural meshes, raster foliage alpha atlas and generator were authored for this repository; no commercial game assets, external images or fonts are used.
+
+Run `node tools/assets/m01-vegetation/build.mjs` or `--check`. The exact manifest records SHA-256, byte size, metres, +Y-up axes, root origin, independently testable bounds and indexed triangle counts. The GLB embeds one 512² RGBA8 alpha atlas (1,048,576 decoded bytes; full mip chain adds 349,524 bytes). The standalone PNG is a reproducibility artifact, not an additional production texture. Each card has explicit `_WIND` root-zero anchored weights. Tree LOD3 has four crossed quads, eight actual triangles; alpha silhouettes are authored separately from the near leaf tile. Eight distinct tree shapes and six distinct shrub shapes preserve the existing runtime identities. Grass native heights match the immutable layout height-cap factors.
