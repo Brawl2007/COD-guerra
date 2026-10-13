@@ -22,4 +22,3 @@
 - NEXT_ACTION: nenhuma nesta entrega; executar T27/T30 já reservadas como pedido adicional do utilizador.
 
 Agentes independentes sequenciais com modelo suportado herdado; presets Claude indisponíveis. Jev user-level ausente, fallback local `no_key`, zero consultas pagas. Interrupção de capacidade do reviewer resolvida ao retomar; não foi rejeição de código. Runtime `.agent/runs/` não versionado.
-

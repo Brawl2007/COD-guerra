@@ -21,4 +21,3 @@ T33 carrega os42 GLBs imutáveis/21 tipos do kitT12, preservando geometria index
 Uma tentativa formal de correcção; zero rejeições de revisão. `attempts/attempt1/` conserva browser/CI falhados e imagens da fonteab85. Suposições24,5/1130 e pedido inicial de portão aberto foram substituídos por medição dos modelos reais. As duas câmaras finais mostram cada encontro antes do portão fechado; o trecho oculto é apoiado por geometria/raycast.
 
 O reveal restrito do piso usa quatro materiais clonados; preserva fundação/masonry fora das duas faixas e abaixo da coroa, bytes/vertices originais, alturas físicas e texturas emprestadas. Detalhes suplementares antigos junto à cabana são removidos sem substituição nos mesmos pontos; os30 clusters de produção mantêm âncoras numa nova composição. Padding degenerado dos atlas é contado separadamente dos triângulos reais. Licença provisória doT12 intacta. Sem FPS/VRAM medidos ou playtest humano novo; M01 continua PROTÓTIPO JOGÁVEL.
-

@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## T27/T30 relevo e horizonte aceites — 2026-10-13
+
+T27+T30 **ACEITES** em `codex/m01-t27-t30-relief-horizon-v1` @ `4e5389b` (verifier PASS, reviewer ACCEPT).61 hulls de participantes+20m protegem física e geometria original; relevo exterior/chunks e horizonte Tczew/Lisewo original em cinco submissões. CI38376693678:669/669 Node,173 tooling/build92; CI38376693616:browser2/2/autoridade PASS. Produção local2/2, seis vistas e dez comparações/controlos0, quatro restauros/reload plateau536/134.24 futuros contra base293a4f1:490051 ticks,120 backups de checkpoint e24 finais iguais; simulação, colisores83, missões e owners anteriores preservados. Ground máximo37288<=52000 por vista; Far5<=10. Provas em `docs/verification/m01-runtime/m01-t27-t30-relief-horizon-v1/`. Junção na branch jogável pendente. Relevo/horizonte artísticos; vista10 skyline discreto30pixels; sem FPS/VRAM medidos. M01 continua PROTÓTIPO JOGÁVEL.
+
 ## T31/T33 via e props aceites — 2026-10-12
 
 T31+T33 **ACEITES** em `codex/m01-t31-t33-rail-props-v1` @ `6878d01` (verifier PASS, reviewer ACCEPT): via contínua com quatro batches, travessas0,63/1,26m, talas/agulha e encontros medidos nos modelos originais;42 GLBs/21 tiposT12 reais em três batches com residency/fallback e ownership seguro. CI38279380748:661/661 Node,173 tooling e build; CI38279380744:3/3 browser/autoridade. Local3/3 e15 vistas/controlos iguais à base,4 restauros plateau374/74. Simulação, colisores, missões, estação e modelos/trens anteriores preservados. Provas em `docs/verification/m01-runtime/m01-t31-t33-rail-props-v1/`. Integrada em `claude/m01-integration` @ `096a393`; resultado Node661/661 e build PASS. Transição curta~6,5% é reconstrução visual; licençaT12 provisória intacta; sem FPS/VRAM medidos. M01 continua PROTÓTIPO JOGÁVEL.

@@ -29,4 +29,3 @@ All42 T12 GLBs/21 types feed three actual heterogeneous atlas batches. Padding i
 Independent verifier PASS and reviewer ACCEPT, 661 Node,173 tooling, build89, both browser runs3/3. Fifteen paused view snapshots match real immutable-base captures; controls0. Restore plateau374 geometries/74 textures. Actual gate bounds1058.45..1058.75; two-sided endpoint views preserve the closed gate. Reports live in docs/verification/m01-runtime/m01-t31-t33-rail-props-v1/.
 
 For future terrain work, retain these contact hooks, protected train/bridge bytes and regression obligations. Do not assume nominal metadata, replace real model geometry with proxy estimates, or infer FPS/VRAM from resource counts.
-
