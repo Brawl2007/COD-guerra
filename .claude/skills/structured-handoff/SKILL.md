@@ -79,6 +79,10 @@ Do not repeat:
 
 Preserve important invariants, decisions and unresolved risks.
 
+## Indice cloud de continuidade
+
+Em Routines, incluir CLOUD_CHECKPOINT (READ_ONLY, NOT_WRITTEN, UNAVAILABLE ou PUBLISHED — este ultimo somente com prova do push), TASK_ID, WORK_BRANCH, WORK_HEAD, STATUS, operation class, NEXT_ACTION e evidencias curtas. `cloud_checkpoint.py list/get` so consultam o indice Git; nunca assumem PASS de Task Graph. `publish` e `--init` precisam de aprovacao especifica e confirmacao das permissoes cloud. Se HEAD divergir, escalar em vez de repetir operacoes arriscadas.
+
 ## Git continuity
 
 Always record:

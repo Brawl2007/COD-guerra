@@ -22,3 +22,11 @@
 - O filesystem remoto nao e o Chromebook. Nao assumir ~/.claude, memoria, caches ou runs locais na cloud.
 - .agent/runs/ e estado efemero. A continuidade entre execucoes exige handoffs duraveis e referencia a commits/branches reais.
 - Nunca editar/push diretamente main, dar merge ou fazer deploy automatico durante a sincronizacao inicial.
+
+### Continuidade cloud com checkpoints
+
+- O Captain consulta `python3 .agent/tools/cloud_checkpoint.py list` e, com TASK_ID conhecido, `get --task-id <TASK_ID>` antes de iniciar um novo RUN_ID na cloud.
+- Checkpoints sao indices de HEAD/branch, nao restauracao de Task Graph; revalidar codigo, testes e contratos.
+- Diagnostico inicial somente leitura: `publish`/`--init` requerem autorizacao separada e permissoes cloud verificadas.
+- Nunca repetir push, commit, merge ou deploy baseado apenas num checkpoint. Sem escrita em main.
+- Instrucoes: `.agent/cloud-state/README.md`.

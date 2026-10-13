@@ -93,6 +93,24 @@ class CloudCheckpointTests(unittest.TestCase):
         self.assertEqual(result["checkpoint"]["work_head"], self.work_head)
         self.assertEqual(result["checkpoint"]["next_action"], self.record()["next_action"])
 
+    def test_new_cloud_checkout_reads_remote_checkpoint(self):
+        self.publish(init=True)
+        fresh = self.base / "fresh-session"
+        cloned = subprocess.run(
+            ["git", "clone", "-q", "--branch", "feature/cloud-01",
+             str(self.remote), str(fresh)], capture_output=True, text=True
+        )
+        self.assertEqual(cloned.returncode, 0, cloned.stderr)
+        self.assertFalse((fresh / ".agent" / "runs").exists())
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "get", "--task-id", "M01-CLOUD-01"],
+            cwd=fresh, capture_output=True, text=True
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        recovered = json.loads(result.stdout)
+        self.assertTrue(recovered["resume_allowed"])
+        self.assertEqual(recovered["checkpoint"]["work_head"], self.work_head)
+
     def test_running_or_irreversible_is_not_auto_resumed(self):
         self.publish(self.record(status="RUNNING"), init=True)
         self.assertEqual(self.run_tool("get", "--task-id", "M01-CLOUD-01")["reason"],

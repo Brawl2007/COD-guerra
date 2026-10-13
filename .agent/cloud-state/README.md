@@ -60,3 +60,7 @@ Do not run publish from the first, read-only diagnostic Routine.
 The workflow agentic-python-tests.yml runs the tests without paid model
 calls. Green offline tests alone do not prove live Claude Code cloud
 capability, runtime permissions, or that Routine scheduling is continuous.
+
+## Integracao com Captain
+
+`.claude/agents/captain.md` e as skills autonomous-task e structured-handoff agora orientam consulta `list/get` no inicio e handoff verificavel no fim de cada Routine. Nao ha publicacao automatica. O comando `publish` permanece desativado nas instrucoes cloud ate aprovacao explicita para uso e teste real de permissoes de escrita. Um indice nao restaura Task Graph, nao prova execucao completa e nao garante paralelismo.

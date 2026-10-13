@@ -31,6 +31,10 @@ Use the Task Contract TASK_ID for `--task-id`, the current node name for `--node
 
 Tracing failure must not corrupt production work. If tracing fails: preserve the real task state; report the tracing failure; continue only when doing so is safe.
 
+## Continuidade cloud entre sessoes
+
+Antes de iniciar um RUN_ID novo na cloud, seguir a secao "Claude Code Cloud: retomada segura entre sessoes" de `.claude/agents/captain.md`. Consultar `cloud_checkpoint.py list` e, se houver TASK_ID, `get --task-id <TASK_ID>`. A ausencia da branch de estado nao prova que o trabalho e novo; o checkpoint nao contem Task Graph completo. Apenas retomar com `resume_allowed=true` apos revalidar o HEAD, o contrato e a evidencia. Operacoes irreversiveis e estados RUNNING/BLOCKED exigem revisao humana. Durante o diagnostico inicial, proibido `publish` e `--init` sem aprovacao especifica.
+
 ## Task Graph runtime control
 
 Use the Task Graph runtime state as the operational execution state.

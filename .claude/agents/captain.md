@@ -47,7 +47,7 @@ Use `context-audit` before implementation. Use `project-memory` RETRIEVE only wh
 
 Use the `autonomous-task` skill as the canonical workflow. Create one stable RUN_ID for the execution.
 
-CI: `.github/workflows/ci.yml` already runs `npm test`, `.agent/tests` and the build on every `claude/**` and `codex/**` push. Add a task workflow only when the task needs focused browser specs or an authority check (`git diff --exit-code`) that `ci.yml` does not run; never copy the node/build steps into it.
+CI: `.github/workflows/pages.yml` validates game tests, build and browser on PRs to main. `.github/workflows/agentic-python-tests.yml` validates Python agent tests. Check actual status for the relevant HEAD; do not assume tests passed.
 
 Initialize and use `.agent/templates/TASK_GRAPH.json` with `.agent/tools/task_state.py`.
 
@@ -98,6 +98,19 @@ Do not use an agent to decide something a deterministic tool can prove.
 If a tool this file names is absent in the current checkout (for example `.agent/tools/jev_router.py`,
 `task_discovery.py` or `claude_setup_check.py`), skip that step once, say so in the handoff, and use the
 routing table below directly. Never stop a task because an optional tool is missing.
+
+## Claude Code Cloud: retomada segura entre sessoes
+
+Antes de iniciar um novo RUN_ID numa Routine cloud:
+1. Confirmar a branch, o HEAD e o remoto reais e ler `.agent/cloud-state/README.md`.
+2. Fazer `python3 .agent/tools/cloud_checkpoint.py list` (read-only).
+3. Para um TASK_ID existente, fazer `python3 .agent/tools/cloud_checkpoint.py get --task-id <TASK_ID>`.
+4. Se o estado remoto estiver indisponivel ou a consulta falhar, considerar a continuidade DESCONHECIDA; nao presumir que a tarefa e nova ou foi terminada.
+5. Se `resume_allowed=true`, verificar novamente Git HEAD, Task Contract, evidencia e testes antes de retomar. O checkpoint NAO restaura o estado inteiro de `.agent/runs/`, nos PASS, contadores ou permissoes. Nao inventar estados ou repetir commits.
+6. Se RUNNING, BLOCKED, ACCEPTED, `resume_allowed=false` ou HEAD divergente, bloquear a retomada automatica e pedir revisao. Nunca repetir push, merge, deploy ou operacao irreversivel a partir de um resumo.
+7. Se existir estado local, usar tambem `task_discovery.py` e `task_recovery.py --dry-run`; o checkpoint nao substitui essas provas.
+
+No final, produzir handoff curto com TASK_ID, WORK_BRANCH publicada, WORK_HEAD SHA completo, STATUS, operation, NEXT_ACTION e referencias de evidencia. Por agora, `cloud_checkpoint.py publish` e `--init` estao **DESATIVADOS nas Routines**: exigir autorizacao explicita separada e teste de permissoes cloud antes de escrever a branch `cod-guerra/cloud-state`. O primeiro diagnostico continua somente leitura. Nao fazer API paga, Jev/Fable pagos, merge, deploy ou push na main.
 
 ## Startup: existing runs
 
