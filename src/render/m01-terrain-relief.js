@@ -13,10 +13,16 @@ export function reliefOffset(envelope,x,z,seed=M01_RELIEF_SEED){
   const fields=2.8*Math.sin(x*.008+phase)*Math.cos(z*.009-phase)+1.4*Math.sin(x*.021+z*.013+phase);
   const bank=4.5*Math.exp(-(((x-1075)/68)**2))*(1+.22*Math.sin(z*.023));
   const berm=2.2*Math.exp(-(((z+240+35*Math.sin(x*.003))/32)**2));
+  // Estimated northern field ridge: a broad 20 m crest bends south into its eastern field shoulder.
+  // Production rays from the rail cut see that shoulder; the original straight crest stayed behind
+  // the protected approach. The 20 m ridge and 12 m shoulder amplitudes retain a modest field profile.
+  const ridgeZ=-245+110*Math.exp(-(((x-560)/160)**2));
+  const northRidge=20*Math.exp(-(((z-ridgeZ)/55)**2));
+  const northShoulder=12*Math.exp(-(((x-550)/110)**2)-(((z+145)/55)**2));
   // The extracted legacy perimeter and the coarser skirt meet on the same analytic flat/ramp surface.
   // A 30 m transition brings relief to zero there, so different outside tessellations cannot open a crack.
   const edgeDistance=x>=-700&&x<=1300&&z>=-285&&z<=365?Math.min(x+700,1300-x,z+285,365-z):Math.hypot(Math.max(-700-x,0,x-1300),Math.max(-285-z,0,z-365));
-  return fade*smooth(edgeDistance/30)*(fields+bank+berm);
+  return fade*smooth(edgeDistance/30)*(fields+bank+berm+northRidge+northShoulder);
 }
 
 export function createLegacyGround(world){
@@ -65,6 +71,8 @@ const axis=(lo,from,to,hi)=>{const values=[lo,from,to,hi];for(let v=Math.ceil(lo
 function skirtChunks(world,envelope,enabled,seed){
   // Authored fog 2800 m, measured from either bank's playable cameras. Extent exceeds its far range.
   const xs=axis(-3500,-700,1300,4500),zs=axis(-3200,-285,365,3200);xs.push(25,30,260,265,1035,1050,1055);xs.sort((a,b)=>a-b);
+  // Preserve the field profile outside the legacy rectangle too; the old two central skirt rows skipped it.
+  for(let z=-260;z<365;z+=25)zs.push(z);zs.sort((a,b)=>a-b);
   const blocked=new Set();
   for(let j=0;j<zs.length-1;j++)for(let i=0;i<xs.length-1;i++)if(intersects(envelope,xs[i],xs[i+1],zs[j],zs[j+1]))for(const [a,b]of [[i,j],[i+1,j],[i,j+1],[i+1,j+1]])blocked.add(b*xs.length+a);
   const chunks=[];
@@ -93,6 +101,8 @@ export class M01TerrainRelief {
   trackAuxiliaryGround(mesh){mesh.onBeforeRender=(_renderer,_scene,camera,g)=>{if(camera!==this.camera)return;this.draws++;this.triangles+=(g.index?.count??g.attributes.position.count)/3;};}
   sync(world,quality){if(this.disposed)return;if(this.world!==world||this.worldRevision!==world.revision||this.quality!==quality){this.world=world;this.worldRevision=world.revision;this.quality=quality;this.revision++;}}
   beginFrame(camera,clock){this.camera=camera;this.clock=clock;this.draws=0;this.triangles=0;}
+  /** Constructor-time seating of far art on the actual submitted terrain triangles, not an analytic approximation. */
+  surfaceHeightAt(x,z){this.surfaceRay??=new THREE.Raycaster();this.surfaceOrigin??=new THREE.Vector3();this.surfaceDown??=new THREE.Vector3(0,-1,0);this.surfaceOrigin.set(x,100,z);this.surfaceRay.set(this.surfaceOrigin,this.surfaceDown);return this.surfaceRay.intersectObjects(this.meshes,false)[0]?.point.y??this.world.terrainHeightAt(x,z);}
   visualHeightAt(x,z){return this.envelope.contains(x,z)?this.world.heightAt(x,z):this.world.terrainHeightAt(x,z)+(this.enabled?reliefOffset(this.envelope,x,z,this.seed):0);}
   get diagnostics(){return {enabled:this.enabled,revision:this.revision,builds:this.builds,worldRevision:this.worldRevision,quality:this.quality,seed:this.seed,chunks:this.meshes.length,draws:this.draws,triangles:this.triangles,baselineTriangles:M01_LEGACY_GROUND.triangles,ceiling:M01_LEGACY_GROUND.triangles/2,fogFar:M01_FOG_RANGE.far,skirtOwner:'terrain-relief',envelope:{margin:this.envelope.margin,regions:this.envelope.regions.length,extent:this.envelope.extent},geometries:this.geometries.length};}
   dispose(){if(this.disposed)return;this.disposed=true;this.group.removeFromParent();for(const g of this.geometries)g.dispose();for(const mesh of this.meshes){const i=this.terrainMeshes.indexOf(mesh);if(i>=0)this.terrainMeshes.splice(i,1);}this.group.clear();this.meshes.length=0;this.geometries.length=0;}

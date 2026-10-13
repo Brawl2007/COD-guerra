@@ -150,7 +150,7 @@ export class M01View {
   buildTerrain(world){
     this.world=world;this.terrain?.setWorld(world);   // read-only: bakes the macro mask from the layout
     this.terrainRelief=new M01TerrainRelief(this.scene,world,this.materials.ground,{terrainMeshes:this.terrainMeshes,onUpdate:()=>{this.lastFrame=null;}});
-    this.farLandscape=new M01FarLandscape(this.scene,world,{onUpdate:()=>{this.lastFrame=null;}});
+    this.farLandscape=new M01FarLandscape(this.scene,world,{surfaceY:(x,z)=>this.terrainRelief.surfaceHeightAt(x,z),onUpdate:()=>{this.lastFrame=null;}});
     this.environment=new M01Environment(this.scene,world,this.materials,{propVertexTextures:this.engine.capabilities.maxVertexTextures>0});
     this.environment.trackBed.installContactReveal(this.materials.ground);this.environment.trackBed.installContactReveal(this.terrainLegacyMaterial);
     this.terrainFillers=[this.mesh('box','ground',[-900,-4,0],[400,.5,6500]),this.mesh('box','ground',[2050,-1.3,0],[1500,.5,6500]),this.mesh('box','ground',[665,-5.3,0],[790,.5,6500])];
