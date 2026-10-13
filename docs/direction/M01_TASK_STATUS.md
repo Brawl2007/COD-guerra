@@ -24,7 +24,7 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 10 | Kit de vegetação | **ACEITE** | `codex/m01-t10-t29-vegetation-v2` @ `cc3f459`, 2026-10-13; 43 modelos originais GLB/LOD/impostores e atlas CC0; verifier PASS/reviewer ACCEPT; provas em `docs/verification/m01-runtime/m01-t10-t29-vegetation-v2/`. Integrada em `claude/m01-integration` @ `403c748`; junção Node677/677 e build PASS. |
 | 12 | Kit de props | **ACEITE** | `claude/m01-prop-kit-v1` @ `fe7982f`, integrado em `claude/m01-integration` @ `443f74d`: 21 props procedurais LOD0/LOD1 (≤1440/≤276 tris), manifesto, `tests/m01-props-kit.test.js`, capturas em `docs/assets/m01-props/`; licença provisória; ligação ao jogo é T33 |
 | 13 | Estruturas de campo | **ACEITE** | `codex/m01-t13-t32-field-structures-v1` @ `cbbe0d7`, 2026-10-12; 4 tipos, 15 GLBs (3 LODs e posto destruído), CC0/SHA, bounds físicos verificados e envelopes decorativos explícitos, 15 capturas + 5 ângulos de detalhe. Verifier PASS/reviewer ACCEPT; CI38225594014 Node648/tooling173/build, CI38225594010 4/4. Integrada em `claude/m01-integration` @ `80b0474`; resultado da junção Node648/648 e build PASS. |
-| 14 | Materiais das pontes V2 | PARCIAL | `tools/assets/m01-bridges`; regeneração de materiais por confirmar |
+| 14 | Materiais das pontes V2 | **EM CURSO** | `codex/m01-t14-t41-bridge-finish-v2`, reservado em 2026-10-13; base `8a0c362`; materiais originais aço/ferrugem, tijolo/pedra/fuligem e tabuleiro, preservando geometria e colisores aceites. |
 | 15 | Portão FX V3 | DONE* | `m01-battlefield-fx-profile.js`, `m01-fx-textures.js` na V7; tabela fechado/aberto não verificada |
 | 16 | Luz da madrugada | DONE* | `claude/m01-lighting-dawn-v1` @ `3386fc2`, CI 37918399233 (490/490, spec 8/8); duas cascatas em Média/Alta |
 | 17 | Mergulho dos Stuka | DONE* | `claude/m01-stuka-dive-sequence-v1` @ `4c64beb`, CI 37930134740 (502/502, spec 5/5); sem ciclo, bombas visíveis, raid 05:30 numa passagem (D15) |
@@ -51,7 +51,7 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 38 | Posturas de combate | AUSENTE | — |
 | 39 | Sensação do viewmodel V2 | **ACEITE** | 29ba3cf, CI 38045111352 (574/574, build, browser 9/9); mira 0,30/0,22 s com curva, FOV 70→48, respiração e bob pelo relógio da simulação, arma baixa perto de paredes (D22). Manga/mão junto a parede vai para T40; H8 pendente humano |
 | 40 | Braços FP e transporte | AUSENTE | — |
-| 41 | Acabamento das pontes em runtime | PARCIAL | Portal polish existe |
+| 41 | Acabamento das pontes em runtime | **EM CURSO** | `codex/m01-t14-t41-bridge-finish-v2`, reservado em 2026-10-13; base `8a0c362`; consumo T14, impostor >800m e histerese; guardas/trilhos/estrutura existentes preservados, sem mutar renderState.parts. |
 | 42 | Água do Vístula | DONE* | `claude/m01-water-vistula-v1` @ `71ad067`, CI 37988900379 (535/535, browser 15/15 incl. regressão T18); fresnel + céu de T16, fluxo para norte pelo relógio, espuma nos pilares, margem molhada, Low sem reflexo mas com tom (média 59→99) (D17) |
 | 43 | Política de LOD | AUSENTE | — |
 | 44 | Grading/pós-processamento | **ACEITE** | 4f27f90 (branch `claude/m01-postprocess-grading-v1`, base 71ad067, por integrar na pilha), CI 38045943911 |
