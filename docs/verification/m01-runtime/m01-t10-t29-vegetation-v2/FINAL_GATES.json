@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "taskId": "M01-T10-T29-VEGETATION-V2",
-  "status": "ACCEPTED_SOURCE; metadata CI and actual integration pending",
+  "status": "ACCEPTED_AND_ACTUAL_MERGE_VERIFIED",
   "sourceHead": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
   "baselineHead": "b2430fac3504aa6d0ce7d0ad664076c26f90d6f7",
   "sourceSHA256": "8363ea61d93bb09c0c14215ef6818066c7bdfd4688db284e4da0f780100a2b70",
@@ -87,13 +87,42 @@
   ],
   "verifier": "PASS / EVIDENCE_SUFFICIENT YES",
   "review": "ACCEPT",
-  "metadataHead": null,
-  "mergeHead": null,
-  "publicationHead": null,
+  "metadataHead": "cd8e7023cbe80ce44d8f2ece9040e459977c6911",
+  "mergeHead": "403c7489cd3171ae5ee3eefff948ba0dddb2a844",
   "regression": {
     "records": 11,
     "obligations": 32,
     "status": "PASS"
   },
-  "memory": "One CURRENT note; accepted source cc3f459"
+  "memory": "One CURRENT note; accepted source cc3f459",
+  "metadataCI": {
+    "runId": 38468300586,
+    "jobId": 115540572628,
+    "status": "success",
+    "nodeTests": 677,
+    "toolingTests": 173,
+    "buildModules": 95
+  },
+  "mergeVerification": {
+    "status": "PASS",
+    "node": {
+      "tests": 677,
+      "pass": 677,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "buildModules": 95,
+    "protectedFiles": 533,
+    "parents": [
+      "b2430fac3504aa6d0ce7d0ad664076c26f90d6f7",
+      "cd8e7023cbe80ce44d8f2ece9040e459977c6911"
+    ],
+    "proof": "proof/actual-merge/verification.json"
+  },
+  "publication": {
+    "branch": "claude/m01-integration",
+    "policy": "Publish a documentation-only descendant of the verified merge; final remote tip is confirmed in stable RUN and final user handoff."
+  }
 }

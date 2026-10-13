@@ -1,0 +1,11 @@
+{
+  "id": 38468300586,
+  "name": "CI (Node + build)",
+  "head_sha": "cd8e7023cbe80ce44d8f2ece9040e459977c6911",
+  "head_branch": "codex/m01-t10-t29-vegetation-v2",
+  "status": "completed",
+  "conclusion": "success",
+  "created_at": "2026-10-13T21:08:21Z",
+  "updated_at": "2026-10-13T21:16:51Z",
+  "html_url": "https://github.com/Brawl2007/COD-guerra/actions/runs/38468300586"
+}

@@ -15,3 +15,5 @@ Failures and superseded diagnostics are retained in `diagnostics/`:
 - acd's obsolete serial workflow was cancelled;8aa's successful local runs have final-component equality but do not replace exactcc3 source CI. The first local baseline was eight unchanged cameras plus a separately recaptured east camera, explicitly labelled. Final CI removes that assembly caveat.
 
 Production fixes used3/3 and review rejections0/2. A transient external verifier-tool503 and a blocked CLI artifact redirect were transport failures; application download succeeded and hash/CRC verified. All formal acceptance and actual merge gates remain distinct from these diagnostics.
+
+Metadata cd8e702 normal CI38468300586/job115540572628 passed677 Node/173 tooling/build95. Actual no-ff merge `403c7489cd3171ae5ee3eefff948ba0dddb2a844` has parents b2430fa and cd8e702. Its full npm test passed677/677 with zero failed/cancelled/skipped/todo (458.161s); build95 passed. Raw command logs/durations/hashes and protected533-file check are retained under `proof/actual-merge/`. Final publication is a documentation-only descendant; runtime terminal record and final handoff pin its actual remote tip.

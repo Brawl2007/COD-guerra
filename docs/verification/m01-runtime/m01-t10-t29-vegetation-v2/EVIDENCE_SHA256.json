@@ -1,21 +1,22 @@
 {
   "sourceHead": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+  "testedMergeHead": "403c7489cd3171ae5ee3eefff948ba0dddb2a844",
   "files": {
     "FINAL_GATES.json": {
-      "sha256": "d1ca6ef55a8d88371b8c9d4b7adb85fdfaf15f9f1d2621c9c22f8e6e80ec234a",
-      "bytes": 2486
+      "sha256": "78630c98d7c9bc24013da004589fa332421ca3f78f90f36fbd1cc3daac6b1224",
+      "bytes": 3305
     },
     "HANDOFF.md": {
-      "sha256": "29245803922b8f3de989d7d1aa0036c11a695e9d31d5e994765e371433f0cd1b",
-      "bytes": 2273
+      "sha256": "9bd46bb63498b666f95c8d0b883988552cd51ab9b6ef803d95c5317cd0dc5822",
+      "bytes": 2451
     },
     "PERF.md": {
       "sha256": "3ad64b8aed609942b3a3d433de428eef7d847e72cdaaf6061be61e0405253a93",
       "bytes": 2936
     },
     "PROVENANCE.md": {
-      "sha256": "8fa4cef88f6da46169fa78e7cf362c2a77c77c03a745fa0dbd6bece9c42ff721",
-      "bytes": 3618
+      "sha256": "4783fcbc0313af5c1a37feb82b7941a3b829dc4a64c0d993a58d86aec67d532a",
+      "bytes": 4131
     },
     "README.md": {
       "sha256": "5cc6bc8f040c45c9721d573e5111463f3615eee5a31de6de822b9299d5aeaa15",
@@ -45,9 +46,37 @@
       "sha256": "8ed886377edc9351cc22187f024697f196b443d4029c4d53be031e0719e646e8",
       "bytes": 2310
     },
+    "proof/actual-merge/build.log": {
+      "sha256": "354a915afaf0b3c6925fd1f83989effed9dd3ee32ff2202355d2ebc75bf97a11",
+      "bytes": 767
+    },
+    "proof/actual-merge/node.log": {
+      "sha256": "0e55651b67dcd2004f4e4a2f628b73436cc35b781cb41fa581b6e97ef2b54c66",
+      "bytes": 76116
+    },
+    "proof/actual-merge/protected-source.json": {
+      "sha256": "d982e7d4a1d1d8593e60d15d45e1f2447cf3fe92fc23f33354d13f0cc2e6b975",
+      "bytes": 164
+    },
+    "proof/actual-merge/source.log": {
+      "sha256": "5036e15225d1f1bde86620a7e5445ac1d36c248c00d1b32c6aaf37777be52bc2",
+      "bytes": 106
+    },
+    "proof/actual-merge/verification.json": {
+      "sha256": "0cb24028adf18a62529c311abc70a64eaa00ec654dc9aec9e02f046c0555253b",
+      "bytes": 1534
+    },
     "proof/authority-baseline.json": {
       "sha256": "8775ef43de07d030ab282ce0f9c2855d7b903b76218d126f227d619b21931d3e",
       "bytes": 91732
+    },
+    "proof/ci-metadata/node.log": {
+      "sha256": "09454ab12cbdf9782f8b690eea688c207a63d488d198ea7aa9ef5f633041746f",
+      "bytes": 134992
+    },
+    "proof/ci-metadata/run.json": {
+      "sha256": "2b26cde98a2c961ac174bffb779ffe3f2d279f0aec9179e3e15a441d76f73e16",
+      "bytes": 379
     },
     "proof/ci-source/artifact/m01-relief-horizon/candidate/01-start-section-close-far-off.png": {
       "sha256": "9caf8d1a4f5a11954427e3ecf0d95fadf247dcfbd5e0687f52f42b3437cff45f",
@@ -1208,6 +1237,10 @@
     "proof/independent/tool-error-503.json": {
       "sha256": "8371c4842dbdd01f6dd46af9f14845598cb0cd7e1c9401647808b1c263f8f7b4",
       "bytes": 441
+    },
+    "proof/integration-decision.json": {
+      "sha256": "d6b09e5d308029ee7719a75963efc2700c1c9b10229a64f3eafe3b01213131ae",
+      "bytes": 5500
     },
     "proof/regression-union.json": {
       "sha256": "77824c97dad0235ba790ae232dfb5dd633bf4304590c85e9009859801ab212dd",
