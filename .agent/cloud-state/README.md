@@ -64,3 +64,18 @@ capability, runtime permissions, or that Routine scheduling is continuous.
 ## Integracao com Captain
 
 `.claude/agents/captain.md` e as skills autonomous-task e structured-handoff agora orientam consulta `list/get` no inicio e handoff verificavel no fim de cada Routine. Nao ha publicacao automatica. O comando `publish` permanece desativado nas instrucoes cloud ate aprovacao explicita para uso e teste real de permissoes de escrita. Um indice nao restaura Task Graph, nao prova execucao completa e nao garante paralelismo.
+
+## Diagnostico e dependencias
+
+O Hook SessionStart em `.claude/hooks/session-start.sh` nao instala nada no
+primeiro arranque da cloud. A instalacao `npm ci` so ocorre quando
+`CLAUDE_CODE_REMOTE=true` e `COD_GUERRA_AUTOINSTALL_DEPS=1`.
+Assim e possivel executar diagnosticos read-only sem efeitos de npm. Se for
+necessario testar o jogo numa Routine futura, configurar conscientemente esse
+opt-in; os testes no GitHub Actions fazem `npm ci` na sua maquina isolada.
+
+O workflow `.github/workflows/agentic-python-tests.yml` verifica PRs de
+agentes e pushes para as branches `chore/claude-cloud-agent-sync-*`.
+Nao executa agentes Claude ou chamadas Jev pagas. O workflow do jogo em
+`.github/workflows/pages.yml` pode ser validado separadamente; nao publicar
+nada em PRs.

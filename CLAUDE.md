@@ -29,3 +29,11 @@
 - Diagnostico inicial somente leitura: `publish`/`--init` requerem autorizacao separada e permissoes cloud verificadas.
 - Nunca repetir push, commit, merge ou deploy baseado apenas num checkpoint. Sem escrita em main.
 - Instrucoes: `.agent/cloud-state/README.md`.
+
+### Hooks cloud sem efeitos laterais no diagnostico
+
+- O `SessionStart` e read-only por padrao; nao instala pacotes.
+- Para uma futura sessao de desenvolvimento com Node, pode-se definir
+  `COD_GUERRA_AUTOINSTALL_DEPS=1` conscientemente; so age em ambiente cloud.
+- CI do sistema agentic valida testes Python e scripts no PR e pushes da branch
+  de preparacao. Nenhum workflow usa Claude nem Jev pago.

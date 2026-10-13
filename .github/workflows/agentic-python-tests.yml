@@ -1,6 +1,14 @@
 name: Validar agentes Python
 
 on:
+  push:
+    branches:
+      - 'chore/claude-cloud-agent-sync-*'
+    paths:
+      - '.agent/**'
+      - '.claude/**'
+      - '.github/workflows/agentic-python-tests.yml'
+      - 'CLAUDE.md'
   pull_request:
     branches: [main]
     paths:
@@ -49,6 +57,19 @@ jobs:
           test -f .agent/tools/task_recovery.py
           test -f .agent/tools/jev_router.py
           test -f .agent/tools/jev_decisions.py
+
+      - name: Validar scripts e sintaxe sem instalar pacotes
+        run: |
+          bash -n .claude/hooks/session-start.sh
+          bash -n .agent/tools/install-user-agents.sh
+          python -m json.tool .claude/settings.json > /dev/null
+          python -m json.tool .agent/templates/TASK_GRAPH.json > /dev/null
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+          for path in [*Path(".agent/tools").glob("*.py"), *Path(".claude/hooks").glob("*.py")]:
+              ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+          PY
 
       - name: Executar testes Python agentic
         run: python -m unittest discover -s .agent/tests -p 'test_*.py' -v
