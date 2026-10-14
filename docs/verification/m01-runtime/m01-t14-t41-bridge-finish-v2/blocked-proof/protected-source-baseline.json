@@ -1,0 +1,2760 @@
+{
+  "schemaVersion": 1,
+  "task": "M01-T14-T41-BRIDGE-FINISH-V2",
+  "baseHead": "8a0c3622f5375f2c5b5e847db71f4f6e8352ae39",
+  "claimHead": "c00670786e85dc9c2671bc5234b828eb07b434bb",
+  "kind": "original tracked bytes only; new files intentionally excluded; mutable source exclusions independently captured",
+  "protected": [
+    {
+      "path": ".github/workflows-archive/README.md",
+      "gitBlob": "5f5895a492f3760a411c8cf01efeaa8782339e5d",
+      "sha256": "16a317ea695fe12af56e3bb1e4e5a0d4bcda271e34ad9adcf334eb7f19c52486",
+      "bytes": 753
+    },
+    {
+      "path": ".github/workflows-archive/m01-anim-resolver-v1.yml",
+      "gitBlob": "fbaafbe45ef972422cd2084e41568103ba5d48b2",
+      "sha256": "dd5388e0837169aa1b03bed57bb5029828e0102017206fe223bb1eb153a0fd15",
+      "bytes": 3013
+    },
+    {
+      "path": ".github/workflows-archive/m01-approved-consolidation-checkpoint-v1.yml",
+      "gitBlob": "9f48887d44313ac163d1a140dabfe8c45ced5240",
+      "sha256": "6c8f837bd2f5c15dfcf0f9e98cd3d15fe31801bd07000b5231babf795a6f712f",
+      "bytes": 2007
+    },
+    {
+      "path": ".github/workflows-archive/m01-battlefield-fx-polish-v3.yml",
+      "gitBlob": "704eee45f1bd5c493d8b27d152b13e082a371b81",
+      "sha256": "6940b0c5e6bd8b83c2eb7a8a32bd10e7373987e6a9b652ed9676ad2c47b61277",
+      "bytes": 2938
+    },
+    {
+      "path": ".github/workflows-archive/m01-bridge-portal-material-detail-polish-v1.yml",
+      "gitBlob": "79b12712b2616fbcc528014c1703ec98dce71c7b",
+      "sha256": "8c965859e10276f56a4f3a4a0fe5fb858f89b368772d95ae5cd62daffae77804",
+      "bytes": 2975
+    },
+    {
+      "path": ".github/workflows-archive/m01-bridge-structural-production-closeout-v2.yml",
+      "gitBlob": "3e783698d855333b693eb0a1653beb3c726132a5",
+      "sha256": "554fe30d73e4c4e7f0c95588c5a450d8da40ae3415daea734347804b8b3aea2c",
+      "bytes": 1979
+    },
+    {
+      "path": ".github/workflows-archive/m01-demolition-setpiece-v2.yml",
+      "gitBlob": "edc2ef908a3bdfc6e5e914059d81f6ab1f886c21",
+      "sha256": "203e0572cd13d18815c6b1c248c3d19c3172a8ed78daf98d648bc71108ecc795",
+      "bytes": 2359
+    },
+    {
+      "path": ".github/workflows-archive/m01-environment-prop-density-grounding-v1.yml",
+      "gitBlob": "e39268773582771cd0db0888f1f74b73a99e072b",
+      "sha256": "35357739e2e258d542a36b12c12a3c8a21bdb9664bfc263d35019faa52dea939",
+      "bytes": 2563
+    },
+    {
+      "path": ".github/workflows-archive/m01-environmental-damage-decal-pass-v1.yml",
+      "gitBlob": "1a6bf3cb3a4f841d0b3688e8770e653f20b87625",
+      "sha256": "266f79388f56a71ef5e070767b8a75fac48975f5058d769ca11233e545c08a6a",
+      "bytes": 3154
+    },
+    {
+      "path": ".github/workflows-archive/m01-final-production-consolidation-v6.yml",
+      "gitBlob": "dc50738a0c2ea60ba61df5818a05d2628a6e696e",
+      "sha256": "33c51d705b576b5f8f5345bd0958b526b1837dce19dcf4f01b5270c132447002",
+      "bytes": 1860
+    },
+    {
+      "path": ".github/workflows-archive/m01-fx-focused.yml",
+      "gitBlob": "289c47800f9ce3e5e622a0e8e56dce3ca37af176",
+      "sha256": "6a5eae1cdbc3b14aaa343a81b99e36e007514098b2b2f56b363733781abd4f49",
+      "bytes": 1127
+    },
+    {
+      "path": ".github/workflows-archive/m01-integration-browser-harness-stabilization-v2.yml",
+      "gitBlob": "31b0a312907bc0c7db63889c5c797bab35b6890e",
+      "sha256": "84903236d69d1749727adc2f6e47a62a0229118d386332412164e3e8dda8f046",
+      "bytes": 1678
+    },
+    {
+      "path": ".github/workflows-archive/m01-integration-checkpoint-1.yml",
+      "gitBlob": "2dc2d67cf42baf4eb7434c691eae4deab3c7189b",
+      "sha256": "853168cdbb8cc3c86c63bfad03008105eecaccc0a55800be15da3b7bc7f4ee3e",
+      "bytes": 2297
+    },
+    {
+      "path": ".github/workflows-archive/m01-lighting-dawn-v1.yml",
+      "gitBlob": "5f4c7a07aae4f9a03f47c0e973cd5f455754a629",
+      "sha256": "2dab2e4ea64b1b3262c0aa9f99af3282dc4bdaf1b008ed1b06b3167422315cd2",
+      "bytes": 1561
+    },
+    {
+      "path": ".github/workflows-archive/m01-player-shot-feedback-v1.yml",
+      "gitBlob": "0c4beb35c2ee31aefc5b005a9f6f2ef692927172",
+      "sha256": "25010dad0280fb045905a0b100f5e1623074999897a34286442b0051cc704ed8",
+      "bytes": 1675
+    },
+    {
+      "path": ".github/workflows-archive/m01-production-integration-checkpoint-1.yml",
+      "gitBlob": "d3d7b53d9928779994e5d37fa8ba62dab9fa4091",
+      "sha256": "990fc41f833b204fd2f9195c533f4c5d3929f15ca23dba03dcc350b873c16869",
+      "bytes": 1867
+    },
+    {
+      "path": ".github/workflows-archive/m01-ready-deliveries-consolidation-v2.yml",
+      "gitBlob": "53f38e71c738b5de06deb68144233851d6406e97",
+      "sha256": "0402f068295c3bdaf3fa8cf76b41858d2964f311a59dbd505829246cc073a0c2",
+      "bytes": 1775
+    },
+    {
+      "path": ".github/workflows-archive/m01-ready-deliveries-consolidation-v3.yml",
+      "gitBlob": "58ae7b0cbf54e8f47f4eeeeca3e7eea10a884fc9",
+      "sha256": "85e9f1101aaff6de0a74215ec1297e52feb722a97705c64c33bc279a839908cc",
+      "bytes": 1989
+    },
+    {
+      "path": ".github/workflows-archive/m01-ready-deliveries-consolidation-v4.yml",
+      "gitBlob": "648dda926049b9e7332c44bfa00fe1d5e2c2b626",
+      "sha256": "6e52dda5543799e66203b7cdabaeb8f99e191e4d4aa8335873e8b6183a57e2c2",
+      "bytes": 2129
+    },
+    {
+      "path": ".github/workflows-archive/m01-ready-deliveries-consolidation-v5.yml",
+      "gitBlob": "e07beaf71aa8426c58002c9852034008cc528da7",
+      "sha256": "728f878ba5b0c494361c32e267dc4b6d6892e97a6ebbfdca01d833d6f710d0b9",
+      "bytes": 2271
+    },
+    {
+      "path": ".github/workflows-archive/m01-stuka-dive-sequence-v1.yml",
+      "gitBlob": "60639665b37dc9f5265182b44b98767e2ce1544e",
+      "sha256": "7b10d7a6c8ca380981bc639fc5067c0cc8f34f0eabd565d09b8ace99dcf4678e",
+      "bytes": 2572
+    },
+    {
+      "path": ".github/workflows-archive/m01-train-detail-coupling-polish-v1.yml",
+      "gitBlob": "9335f003f2c4247ea72731a32c95892273fa41c5",
+      "sha256": "3587cea763dc6df78923aac71ad5ae12e809fef02dcdaaf0c92aa9c7b8cba51f",
+      "bytes": 3252
+    },
+    {
+      "path": ".github/workflows-archive/m01-v6-browser-certification.yml",
+      "gitBlob": "7c79b06aed94e72df00bff19b35f9d83584cad17",
+      "sha256": "100a01f4945fab78f7c5647b02c4b081f1b10d128f1158899532e27d9e0c4d21",
+      "bytes": 5359
+    },
+    {
+      "path": ".github/workflows-archive/m01-v6-evidence-recovery.yml",
+      "gitBlob": "0c0552bb0e700dff245692294f79629a4cc6a741",
+      "sha256": "f4979d760f9ddcea8f6a5c30b0a2543a0946c6ca286bf4630e38c82bd4a4c28c",
+      "bytes": 5635
+    },
+    {
+      "path": ".github/workflows-archive/m01-v6-final-evidence-audit.yml",
+      "gitBlob": "aee119ea82b5505a1a75eff58015400ddd7bc76e",
+      "sha256": "5d188c28a2b061425ed8a08e9123a774e3d62ceea97f1e10e4cbb937ee1d8725",
+      "bytes": 8016
+    },
+    {
+      "path": ".github/workflows-archive/m01-v6-fx-followup.yml",
+      "gitBlob": "bfb9363406547baf46d3a874212cf955b8969316",
+      "sha256": "7c3c196746b79017ea06ce2ff2c7ba1f90897c1c22dcf571aa59e1e9f533c6ca",
+      "bytes": 5775
+    },
+    {
+      "path": ".github/workflows-archive/m01-v6-fx-trace-recovery.yml",
+      "gitBlob": "0378349ecc412fc16a33616731f27097c75b7c28",
+      "sha256": "2dabe31c7ca0e39594a23576903f2e984629db179e6ceab62fc98dcad2f01e3b",
+      "bytes": 3969
+    },
+    {
+      "path": ".github/workflows-archive/m01-v6-rig-followup.yml",
+      "gitBlob": "130f94c7fc3e90f8d408d7eee4617f1c5eb7a559",
+      "sha256": "7c9698fcb038375bd3b807fe731462792bcbd93a4c698b86c6e3d68b0b8a3759",
+      "bytes": 7059
+    },
+    {
+      "path": ".github/workflows-archive/m01-v6-smoke-diagnosis.yml",
+      "gitBlob": "25ce0533b61703916595d4b2cd076db2b59302b7",
+      "sha256": "45379a1890043fa0367fb76aad95e9cf60840a6ebe0dcdbb83fb0eb791964cdf",
+      "bytes": 5628
+    },
+    {
+      "path": ".github/workflows-archive/m01-v7-browser-certification.yml",
+      "gitBlob": "9cd609f51945f6f2da28d60911328cd01298fa74",
+      "sha256": "d1fc6f66fa8acce923ef0c4205378f74e4d785df52cf594ec7959c5c3a503df2",
+      "bytes": 5278
+    },
+    {
+      "path": ".github/workflows-archive/m01-v7-node-build.yml",
+      "gitBlob": "89f8a06de62cca0b0fdc41b4d7850003b765287d",
+      "sha256": "33442315fa89c76ce826c555c25b5a2d35f43813badeb5a06c7c2d863db562c6",
+      "bytes": 2022
+    },
+    {
+      "path": ".github/workflows-archive/m01-v7-visual-preview.yml",
+      "gitBlob": "5121a9e9952714a77f59168d96dc9ceb6229b68b",
+      "sha256": "da52e5af42f18d86e1b68a0e5e5dd555929e126a2cbe0812d6470e53b5e081bf",
+      "bytes": 5636
+    },
+    {
+      "path": ".github/workflows-archive/m01-viewmodel-feel-v2.yml",
+      "gitBlob": "eb9521ed4faa38fc27c03dc9cce88191fe3ce17a",
+      "sha256": "998f4cf0a43ddd15f1d94a7fe422f42e96d2db226386d8a496b263adfa9cd755",
+      "bytes": 3485
+    },
+    {
+      "path": ".github/workflows-archive/m01-water-vistula-v1.yml",
+      "gitBlob": "b5fd330f0c7b9b7ddb237a41c2d893bfa754f116",
+      "sha256": "5e85fbdea122d36d4628682d463577c767debe67d2a7656d4d84c64bd769ce06",
+      "bytes": 3013
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "gitBlob": "9894afe6ee62397f335342000661027e295cc256",
+      "sha256": "5da32223c3e437a4645f0ad9213e8523a3acf61fd711cb738dc23ca687539e3b",
+      "bytes": 1837
+    },
+    {
+      "path": ".github/workflows/m01-distant-front-impostors-v1.yml",
+      "gitBlob": "d006e160002fe2184c5045b2577c11e859dbd726",
+      "sha256": "9b62e66d35f0beb222427e922f3da4a9536d82026ddf6d3ffcfa38c5628ad3b1",
+      "bytes": 3115
+    },
+    {
+      "path": ".github/workflows/m01-postprocess-grading-v1.yml",
+      "gitBlob": "68c0b6b1ad4122b4bb320e0f6057b17d182ef9fb",
+      "sha256": "dd1fc0758882d4abccadae839d19aebb89b8e460ab3b87abdf4806e70c2dea1d",
+      "bytes": 3503
+    },
+    {
+      "path": ".github/workflows/m01-t09-t28-materials.yml",
+      "gitBlob": "2419b42ddb873217bc9b0ecf236a3d2d4c25cf9b",
+      "sha256": "fac5e76bc56d70a472262bf45c07876cf32c62333adf41efb5231aca98b300d7",
+      "bytes": 2287
+    },
+    {
+      "path": ".github/workflows/m01-t10-t29-vegetation.yml",
+      "gitBlob": "a10a940e14dd0122a83800ad31a48bb70c3a7d00",
+      "sha256": "472ea38eaed495f8309620bac73dcbf002f0ee331040d259082c25bbbb7bf82c",
+      "bytes": 5393
+    },
+    {
+      "path": ".github/workflows/m01-t13-t32-field-structures.yml",
+      "gitBlob": "4c6050ac37e8ed87490d3c61d06c21d140721b1c",
+      "sha256": "117915e5fb1541d087fdd76ff90af153d051478d946dc7b7b7c8673571d26234",
+      "bytes": 2375
+    },
+    {
+      "path": ".github/workflows/m01-t27-t30-relief-horizon.yml",
+      "gitBlob": "7eba91d68c94b63b0c15d648e66aa4002d17fa59",
+      "sha256": "ff2f306a37699e8e903895530d11dbb173f3303a61d30e644639473985ed3274",
+      "bytes": 2091
+    },
+    {
+      "path": ".github/workflows/m01-t31-t33-rail-props.yml",
+      "gitBlob": "fa1b4d496675abbbea9c5758271e901bedef8a70",
+      "sha256": "6da5b9d085ae6e33d483362868a3bb3bf9c819483905cd73628b9ba034e1dc62",
+      "bytes": 2074
+    },
+    {
+      "path": ".github/workflows/pages.yml",
+      "gitBlob": "4bc6d8a1304e3da35f47b24a92c311e01353c845",
+      "sha256": "19a277cc9eb110d1b388b6602ecb639d01109200b152e03ea9063bec1a13e2ee",
+      "bytes": 1535
+    },
+    {
+      "path": "AGENTS.md",
+      "gitBlob": "3fd68ac49f010df1ab8128f1d45db2fb68e99887",
+      "sha256": "84191647df07adb98f47eb9bbaa9c1af8d4e84d446fd2e2b1e381833449b5e9b",
+      "bytes": 1322
+    },
+    {
+      "path": "CLAUDE.md",
+      "gitBlob": "5dd05f943f5d21ad70b880c446fbdb8ae51a5e91",
+      "sha256": "b64e4a80ad9263426807cb5dd834bc25e78708ed1223392e3f0a9ccd9918757f",
+      "bytes": 1023
+    },
+    {
+      "path": "assets/licenses/MakeHuman-CC0.md",
+      "gitBlob": "f3ede1fc3318f8d794e2cb51924186c62f02f71a",
+      "sha256": "f6089cba01cb570a24712b41ab8a586ccd3cc5ef53dc266ca50b95c288956d2c",
+      "bytes": 6962
+    },
+    {
+      "path": "assets/models/allied-rifleman.mtl",
+      "gitBlob": "696e5bf8183c9400cf779e4f13a741dd1e5ae476",
+      "sha256": "bfb1903f8102062e68e89a8273d8ed679788b58dcbcd0bbc406ed933aa992f09",
+      "bytes": 228
+    },
+    {
+      "path": "assets/models/allied-rifleman.obj",
+      "gitBlob": "b8ed08c63c298dde373ddc7af613b05fcb66e0c8",
+      "sha256": "198b8a0327317d29c3e272947e6831174c45da68075bc057b4dc68b204eabce5",
+      "bytes": 144268
+    },
+    {
+      "path": "assets/models/axis-rifleman.mtl",
+      "gitBlob": "a51bac8c02c3db6427059b95718b119cb6b70752",
+      "sha256": "5b37b2fcd90436ec942a6476320965f2e0e5066bf40990a8f90d8d812f518979",
+      "bytes": 229
+    },
+    {
+      "path": "assets/models/axis-rifleman.obj",
+      "gitBlob": "993b00fbf628ab10656d73f99e63302c01c292f3",
+      "sha256": "e8261973f9547897c798d0fbcb0b01cc524039aa4fb7694b8d777a97fc5772cc",
+      "bytes": 146862
+    },
+    {
+      "path": "assets/models/m1-carbine.mtl",
+      "gitBlob": "48fb640e83ab7fffad0de2a1e057ef3bbc5a29c9",
+      "sha256": "d0c7992df4ad20373b2500dab016b7193ae654b8d6d3b716da64b925407d8ea1",
+      "bytes": 183
+    },
+    {
+      "path": "assets/models/m1-carbine.obj",
+      "gitBlob": "9cdbcf83671f7edc73dcda041b0cde179922f7c5",
+      "sha256": "393b6539bb3c0b4492530962c7dc3fa7726fc766cfb3a4c4435c687b86243042",
+      "bytes": 30486
+    },
+    {
+      "path": "assets/models/production/m01/locomotive/LICENSE.txt",
+      "gitBlob": "e2b98d071205482560539a131d55f3caf243682e",
+      "sha256": "bffdd6984faafcd4476819038131ed2d9e7140526846c368e333370a93297c23",
+      "bytes": 440
+    },
+    {
+      "path": "assets/models/production/m01/locomotive/m01_locomotive_freight_lod0.glb",
+      "gitBlob": "9b14990b86f5fe79ada83282739a836655ed3d24",
+      "sha256": "46faab0661f43689bf3e2ce647889a314acea5aa9044b65aee9abff82e35f471",
+      "bytes": 1142356
+    },
+    {
+      "path": "assets/models/production/m01/locomotive/m01_locomotive_freight_lod1.glb",
+      "gitBlob": "c80b3647127f03608bea7116054867a88f9df5a2",
+      "sha256": "0c058431d483d4c1c9869283e688e1fda5e724feee6446354861a2fc32f2dd42",
+      "bytes": 680920
+    },
+    {
+      "path": "assets/models/production/m01/locomotive/m01_locomotive_freight_lod2.glb",
+      "gitBlob": "268eb21b901544386eabd198f4fc91751834ebfb",
+      "sha256": "60d18026fea48429790103386b081875679bff289cdd74573b260869ad78120b",
+      "bytes": 347852
+    },
+    {
+      "path": "assets/models/production/m01/locomotive/manifest.json",
+      "gitBlob": "3af504ef20d0ce3b5296dbc3a38983645f85de29",
+      "sha256": "2ad7be4a56396fc02413e5e904523e7cf97c54d1d96fae6e09b099da6d9e3ede",
+      "bytes": 4158
+    },
+    {
+      "path": "assets/models/production/m01/locomotive/weathered-metal.png",
+      "gitBlob": "26947118cf8732f14b1c799a73b75b0e4c690bbc",
+      "sha256": "5728ea712db9f5ec37836918d86e93f8defd4a8d650a1144a8e8f31772405c9a",
+      "bytes": 61339
+    },
+    {
+      "path": "assets/models/production/m01/panzerzug/LICENSE.md",
+      "gitBlob": "ccadfedfcdc091312f344b2a6e8346dbb03f8ee9",
+      "sha256": "8c325c71e62a6de17feadf82a76433eaaaa1e5270ddd93e06d2401bc7fc13f71",
+      "bytes": 244
+    },
+    {
+      "path": "assets/models/production/m01/panzerzug/armour-paint.png",
+      "gitBlob": "26947118cf8732f14b1c799a73b75b0e4c690bbc",
+      "sha256": "5728ea712db9f5ec37836918d86e93f8defd4a8d650a1144a8e8f31772405c9a",
+      "bytes": 61339
+    },
+    {
+      "path": "assets/models/production/m01/panzerzug/m01_panzerzug_visual_lod0.glb",
+      "gitBlob": "a2e1411185e7150cc3358ac863f5a073a417bd75",
+      "sha256": "5f1747c82754ea054a00715fbe7fad9d044314e5732843bc708664fba86e192c",
+      "bytes": 1441116
+    },
+    {
+      "path": "assets/models/production/m01/panzerzug/m01_panzerzug_visual_lod1.glb",
+      "gitBlob": "329cd49154e5e27ca0a1500cd415c2c532690e6e",
+      "sha256": "3803dd376c9280c6e43d5bbab1ad043e3aa288a8d2624631468025e5805a924f",
+      "bytes": 1069980
+    },
+    {
+      "path": "assets/models/production/m01/panzerzug/m01_panzerzug_visual_lod2.glb",
+      "gitBlob": "bffca8b262dbaa894e6fa6f91037309f3d198714",
+      "sha256": "6f5bc68a2f37a7a4e25eccfdef37efc56a7bed45a32174b1791d46e7566bd89d",
+      "bytes": 465632
+    },
+    {
+      "path": "assets/models/production/m01/panzerzug/manifest.json",
+      "gitBlob": "011b544e953240b9ab52b133c13bade4ede06c5f",
+      "sha256": "009bba63ca9e113b649070fa7b7e924f2cb95b8fcdb887675862c24a035dfbbe",
+      "bytes": 4613
+    },
+    {
+      "path": "assets/models/provisional/m01-aircraft/m01_ju87_b1_lod0.glb",
+      "gitBlob": "32f908b58e9c9a36371725ead09def2bc5178716",
+      "sha256": "47cd82a53ac5a047d32faff8d66c2b9e8c7041ad193b43c8d23f9e7359e0b893",
+      "bytes": 922488
+    },
+    {
+      "path": "assets/models/provisional/m01-aircraft/m01_ju87_b1_lod1.glb",
+      "gitBlob": "0885139b029488b4d633cea9b53f9dece185718a",
+      "sha256": "c3d0354b65bc87ff4badeb597a223ffded4ebd6ab8d25358a5caa6602ecb3d70",
+      "bytes": 359356
+    },
+    {
+      "path": "assets/models/provisional/m01-aircraft/m01_ju87_b1_lod2.glb",
+      "gitBlob": "ef8bac63cc5d434927214cb3f7623bc605dedbc7",
+      "sha256": "eb5252eabfc43c31b25504fee0087a07089b07e4ed00c0e28681c18d59bcb1d7",
+      "bytes": 136460
+    },
+    {
+      "path": "assets/models/provisional/m01-aircraft/manifest.json",
+      "gitBlob": "f823fae851b927f840cf1083642bcc603836c833",
+      "sha256": "ce4e61c6666bce6498da2013ba460596f0ba38c803395a0ef0f7f80e9a5b0ddd",
+      "bytes": 15276
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_burned_lod0.glb",
+      "gitBlob": "c2df699a70a85892d5f3f789a5f51e95b33c154f",
+      "sha256": "9ddc22ef1635cd4f708c46127950d76695081e251fbfaaadcd1bcd760bda848b",
+      "bytes": 337284
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_burned_lod1.glb",
+      "gitBlob": "cadfa956600d108bef4d1de914203bbac3b9784c",
+      "sha256": "baab5b6b63d6f3c550585d6abf924cde6c366ca3109904f65909c5b7249b0b44",
+      "bytes": 139188
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_burned_lod2.glb",
+      "gitBlob": "ebe9179ec17f9d90f90b46eae61344bca5780de3",
+      "sha256": "5be4191578f3c28f0eebbfac35d67cc1f5ef9b167403683227b7929965b641a5",
+      "bytes": 57264
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_damaged_lod0.glb",
+      "gitBlob": "2b89983b111468090f2837df67c772c13b0bcb17",
+      "sha256": "232517ead15255ac57c10440c43e56a51bf0f06cdab20592c68ebb27dc0dba29",
+      "bytes": 337772
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_damaged_lod1.glb",
+      "gitBlob": "224cba422a7253e902419c3534051f80f2594d83",
+      "sha256": "42a17730056103e8fbc8cb7b7c95951dfddd1c03b552a8cff4c7f5db823f37cc",
+      "bytes": 132360
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_damaged_lod2.glb",
+      "gitBlob": "c29f238ad4651339e00eac897a40352c443a8695",
+      "sha256": "6b7e03ddc01017b225776737d6248aa978a9b2ddc4e130af29560e7e8f8cfb3c",
+      "bytes": 56092
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_burned_lod0.glb",
+      "gitBlob": "e9d7f7705205c21643e506bb73100a7a6c70574a",
+      "sha256": "7abe2b0ea4a2c0a72400c14e931424312bd7eecbd537ea7dc772c81eed22e103",
+      "bytes": 319500
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_burned_lod1.glb",
+      "gitBlob": "f3f33b74bc7aa4219715d075477841c2d42a9197",
+      "sha256": "878fb80bbc5575c5232269b49a54428b320390d5df5edbedabd65d91b3e30e11",
+      "bytes": 127484
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_burned_lod2.glb",
+      "gitBlob": "a5f7c7b41ac62b158bc9a06c769556b3278c9005",
+      "sha256": "fcb97bd311981ce10b2ec6ebf89e348b71ccddf8789193b81914ff3eba137381",
+      "bytes": 52304
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_damaged_lod0.glb",
+      "gitBlob": "d21789385a00da3ea42e18bea66f5fa80ea38dcf",
+      "sha256": "6f8ddbd089ed0a1cc98533e63ceb916e182bf23424ffa96cef4148ece862b1b3",
+      "bytes": 292252
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_damaged_lod1.glb",
+      "gitBlob": "41bfff3dfb0b51e50dc06ca966d0b17bb55575ad",
+      "sha256": "9e3bbdac0d56ce9be1e0e7be20f7f2e44d27105ac76783415763b01a16afe3fd",
+      "bytes": 110716
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_damaged_lod2.glb",
+      "gitBlob": "5e528114f17e1cb014f2515b550275a148b86948",
+      "sha256": "9abb14d756208ca0e9bdc3cafce2395ca885161818e9b4f14495066413d0bd58",
+      "bytes": 42288
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/manifest.json",
+      "gitBlob": "4cbcc86cf6698a8454ac9dc68668aebf646366bc",
+      "sha256": "1361f0e91187d8b0a285bcc767786d4191c9e04e8594a9878d641a8285599673",
+      "bytes": 43590
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_covered_lod0.glb",
+      "gitBlob": "65e44ed0da0fede1b39e94a5988975561208da59",
+      "sha256": "081157e1bccd9b184e14bce03cffd4821738818a354811fa6ba2f53e2bed974f",
+      "bytes": 301200
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_covered_lod1.glb",
+      "gitBlob": "f063aa0e6b74a4e1559a110112f915174c8f54ae",
+      "sha256": "452b005d6efa9d510cb421a5eeeeb533e32dae4c30b9b1a247e8800f42a44e87",
+      "bytes": 121320
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_covered_lod2.glb",
+      "gitBlob": "b2293e6d99441db0267762ce882998cec0253ad0",
+      "sha256": "0eb03cada40c0e0279d81f83c95963d2de39523735e33fb9fd3810dd2a502413",
+      "bytes": 50980
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_open_lod0.glb",
+      "gitBlob": "037ff21e9cbc756f93ee2146855a28a98d9eae72",
+      "sha256": "7806337ee9413b6dc2c2505980032868b14cd8969bc99362273ca80534d46b50",
+      "bytes": 266496
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_open_lod1.glb",
+      "gitBlob": "d5ba412b111972a4bba824a3a7d6fbf867184887",
+      "sha256": "4994884b89a2c0e51317e0056ea5cafdb9c447b33641459481a329ec3097b6b3",
+      "bytes": 97088
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_open_lod2.glb",
+      "gitBlob": "8f1bb8afc11719ceb6edfe58197d42be9ff46971",
+      "sha256": "78c7c6afcbb9ff3b9e1942d7729d79e82acbafe95302aeda08ee35f2ac19adb1",
+      "bytes": 37748
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/manifest.json",
+      "gitBlob": "d724cdf572fc8fa1bf6f7766d27e81c85575ce22",
+      "sha256": "cbea08196bc4d11105d61d42cef3098eeabc1fb8d225d0c515b630bcc3d6a09b",
+      "bytes": 18231
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge-colliders.json",
+      "gitBlob": "df8f3b19df6dbbd379935c13987eefacc015a55c",
+      "sha256": "4abe3556c34f80d046dcd78f6d2c4697b66fafab948f9d812ff45c13456e326d",
+      "bytes": 43146
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_rail_1891_1912.colliders.glb",
+      "gitBlob": "00b92dfd87682f243f748d7f2d9f0851030a674b",
+      "sha256": "d842571caf72e69567552838167fdd1dc757fdfaf09e607675c9522b8014714f",
+      "bytes": 64080
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+      "gitBlob": "089e40610cf90106063eb4785a47c166c5d10ab4",
+      "sha256": "6bc61f88caba3a5efb8a5435081413d629ce0547b1b22d13b3f497538fd270dd",
+      "bytes": 1642496
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_rail_1891_1912.lod1.glb",
+      "gitBlob": "bd4027ac60637194708091c130e3b9f8bf9c2f79",
+      "sha256": "b57496e46c8f72244c64477aa576ef102a9436406a02112325c23f7898e4547b",
+      "bytes": 931464
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_rail_1891_1912.lod2.glb",
+      "gitBlob": "e189b0d5dca5aa0bdafcd2b8cb8ac3fd9ed78746",
+      "sha256": "73a40ed8dc0bcb1926175b52e3a12f5356a868eec71cc6529dcee1fe391c3af3",
+      "bytes": 349304
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.colliders.glb",
+      "gitBlob": "91dc21c0bf8f4510e3f882e01ccea5d486eb319f",
+      "sha256": "2a4b0d7715d36c21a71cd54fc3e742e763605d032f31a3ef04fb625244d65ffc",
+      "bytes": 82080
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+      "gitBlob": "b35be1c664eb7abee7d223f3274e2c794cf818e6",
+      "sha256": "e022cdd1454bca6dc908d31c542ab05f864096bef0ea40c39d5ae27ef3913404",
+      "bytes": 3092296
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod1.glb",
+      "gitBlob": "20f3ac29aa00be21df25eb47359da20e08d84e67",
+      "sha256": "51aab198331165fe968b9b5e2883dda7583c2590b26233a634f4e0c02c8e60a4",
+      "bytes": 654632
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod2.glb",
+      "gitBlob": "b1045b5a671d931b415363a4fd86e689d2313b97",
+      "sha256": "80251700525fe134c4c3771a58635951461f7d2e5223e09e6bccc3ed60ee379c",
+      "bytes": 304504
+    },
+    {
+      "path": "assets/models/provisional/m01/bridges.manifest.json",
+      "gitBlob": "6faf49694923a6e8cf036185793347fa0cface87",
+      "sha256": "176fcbb31a3329443086dff88a05772996a3be6cb59ccd310147887c15454313",
+      "bytes": 129333
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_animations.glb",
+      "gitBlob": "ad0b80999c210355326102c650dcc4c0dd126b9c",
+      "sha256": "481d6114f4481ae0f99e162a4bbfdbe8e1d74cffc2460836a2b525bf93b0202d",
+      "bytes": 876612
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_de_lod0.glb",
+      "gitBlob": "40178458b7988f35aebf6e0d3cea5c7ac6f243d2",
+      "sha256": "15082783b5a18ed93934e6eb47b9b07632d91e13478d9d7a450a7af2a9eb5b54",
+      "bytes": 1718132
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_de_lod1.glb",
+      "gitBlob": "1bd9cb025455fb6bdc9d84f26e6b04f555cfc606",
+      "sha256": "5c7294586cd75d0cd96eb757452854a5d8d19a93349fdf9d00d80d52d640a29f",
+      "bytes": 604600
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_de_lod2.glb",
+      "gitBlob": "b7d24d705a2671d88cf9e7329361082458f5887f",
+      "sha256": "6e04d5a34ee64ad8f142ada447e565314b45f4da8b2f123fa3ffeff6fd6c66d4",
+      "bytes": 187880
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_pl_lod0.glb",
+      "gitBlob": "c7e8bcf5fdfb70e48979f427b8f5841ff0e3fb76",
+      "sha256": "9c98adb2eace9e4ac0558146b7cdc85a37374809a090208c0b51f42b4c87ae4d",
+      "bytes": 2602908
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_pl_lod1.glb",
+      "gitBlob": "cc338957ee04568c1f7ca8ac4ef5a9ec77397918",
+      "sha256": "d4e7565b92c6e266487a43af3c5a739b9f0a98328656662940ed0fe9fa361d8f",
+      "bytes": 1041440
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_pl_lod2.glb",
+      "gitBlob": "12acfda7c309fc4b950901c71c7ee09ee23f1e94",
+      "sha256": "d1a59032549e07973684942aeac993d72c7427811db5061bba57c0bcf3fa15de",
+      "bytes": 321668
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_station_animations.glb",
+      "gitBlob": "a10760538bf2dd5f1c8b20b2542de2b516536b1d",
+      "sha256": "504d4d84859149e3557da345e9572279a360d471e6c55c8550625ea5415ca9e5",
+      "bytes": 96720
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/manifest.json",
+      "gitBlob": "d87184c45b8692cba9669a79e58e569d1d8898e9",
+      "sha256": "2f8e29ccf8894d40b7746abb4540105323650f4dbd9feab3d41908099c96eda6",
+      "bytes": 15722
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/motion-clips-v1/m01_soldier_motion_clips.glb",
+      "gitBlob": "0470b1ce78a2a64bd876ff28a973dddee891f753",
+      "sha256": "dbcb3e56015c1902d691c9fdb1783997e86c0a69e7c2abc29135ea773611031c",
+      "bytes": 415724
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/motion-clips-v1/manifest.json",
+      "gitBlob": "2c13340472cb6e354ceaeff448c29babb41a76a6",
+      "sha256": "1269ec5fdb115f69af111beb23c32427954250b8be36d3eb4e69535808e6a78c",
+      "bytes": 12213
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/station-animations.manifest.json",
+      "gitBlob": "e4860c7a95779937f9b5c61295f8ad1cf409d5c8",
+      "sha256": "05e132bfa87f1626359fe3577e5cbc6eb4da67bc0756ac65ff8dab76af360a87",
+      "bytes": 707
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/station-drag-transitions/m01_station_drag_transitions.glb",
+      "gitBlob": "d8f0a8156e344a63b0e39f264225690410ac03d5",
+      "sha256": "5b59af9c0410f7747bed478a3c009ae54e916d7c38053530769f38a1d2c9eb6c",
+      "bytes": 408488
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/station-drag-transitions/manifest.json",
+      "gitBlob": "20baf4058f5a42f8f17d5ff913cdc17001ec4f02",
+      "sha256": "9dbbed8028b9828de0b6e487622c385774be863e5ac7157f74ccf57721a57017",
+      "bytes": 10143
+    },
+    {
+      "path": "assets/models/provisional/m01/portal_lisewo_1912.colliders.glb",
+      "gitBlob": "c509768900e4a214cec8d48676aa91a4191fb35a",
+      "sha256": "14fd8776cde3822b7b42a230854af543a611c8f95e89e0eec68166ef3ef90ac9",
+      "bytes": 2592
+    },
+    {
+      "path": "assets/models/provisional/m01/portal_lisewo_1912.glb",
+      "gitBlob": "84c66b7cd542ad3b608d97a6f5adf86af82b7da9",
+      "sha256": "9db340f3127076b41c4d9261eedef64b2816f204c87f267faaa406d68b98a933",
+      "bytes": 114820
+    },
+    {
+      "path": "assets/models/provisional/m01/portal_lisewo_1912.lod1.glb",
+      "gitBlob": "7b94f99362aaf8d448fe2bddddce33c0aac56aa2",
+      "sha256": "3283065ab78ca79231338cf780591944c548fc963ed0dab42216cd7432f95094",
+      "bytes": 40960
+    },
+    {
+      "path": "assets/models/provisional/m01/portal_lisewo_1912.lod2.glb",
+      "gitBlob": "bb1f9acbc94ae7e2b6d50b38ac0ee6d72a987005",
+      "sha256": "84ee83e8b096b3c9dc6bfe4320c1e617a7780af36e9ad408f8243fce08831f9f",
+      "bytes": 31840
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_ammo_crate_wood_lod0.glb",
+      "gitBlob": "1797217220105a7b4b9edd5557f3911e9fabf578",
+      "sha256": "662dedddb19efb5cb3f6046fe82a476f487bf8a85331a8c5759bf3b2a861547c",
+      "bytes": 28008
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_ammo_crate_wood_lod1.glb",
+      "gitBlob": "7c93db7af067bb984517bc2f2a8ded3b6bb12a6f",
+      "sha256": "e05b0f23882b63646709d3031b58dca392855feba11e91e5823c6e2b5b75b001",
+      "bytes": 5932
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_ammo_tin_box_lod0.glb",
+      "gitBlob": "47087bb69078a01a70fa61dc86debce0b6813da2",
+      "sha256": "b96b1a611d4a038b9d493a8fcc11756e5b68c4b617482cc125006a9b12114a13",
+      "bytes": 14536
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_ammo_tin_box_lod1.glb",
+      "gitBlob": "25d78447901e1ba5a5797e30c6320903c086ad46",
+      "sha256": "cd9f2cb17cc3b0ca034648a18287f47d3e9b1d105eb8e8e0d268b5344c548c30",
+      "bytes": 4988
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_barrel_wood_lod0.glb",
+      "gitBlob": "282cb74d8e3890255f0dad5b43aaaff54cdd040b",
+      "sha256": "722075ce3cf926c47a57452ffac5c8545194915b39ef87e82d419ff81982667a",
+      "bytes": 19564
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_barrel_wood_lod1.glb",
+      "gitBlob": "af03b546ece63ac40ede1fe08cd61207fdd03b0b",
+      "sha256": "8b3cf46d0bc007404e8ad0b471c8518d679af9687b61d4431e60ddf7b396fb92",
+      "bytes": 8988
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_coal_pile_lod0.glb",
+      "gitBlob": "bead54838664c27c7b1d47fdf5c07207efacab92",
+      "sha256": "0ee3d9b0c64959434428c33341d606d5fd7780bd40545fdacff0cc702fe9e747",
+      "bytes": 51836
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_coal_pile_lod1.glb",
+      "gitBlob": "b2368005fa1821abe2a8adeba92debd226910a33",
+      "sha256": "bede9e4fe158ecf8c1cee067e246631b73c451a0554e6613a2f2498c423c3f8f",
+      "bytes": 9292
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_drum_fuel_200l_lod0.glb",
+      "gitBlob": "e0fee976e3783b8234623c9998c59e0c1b1998b2",
+      "sha256": "2965603e2e8756d734e21da61e3a4e0bd2c9b9b3c8f12f4c1bc4d2202d3f2426",
+      "bytes": 27688
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_drum_fuel_200l_lod1.glb",
+      "gitBlob": "f16ee2619fedc807bf4ddd62d47614eb6c6da48f",
+      "sha256": "bf4d60e9e6dc3e3c51467635c9b80f0b55bea57cc5e3af978402538c4e6ba387",
+      "bytes": 6864
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_fence_barbed_lod0.glb",
+      "gitBlob": "05b8a0cf68446ff24e8fc246d167b0184c888360",
+      "sha256": "2161257df05a3e93a6a51e1471385388c5a4e620aad03ea3e5548c938f0683a1",
+      "bytes": 22696
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_fence_barbed_lod1.glb",
+      "gitBlob": "192accacce6f39537f7a8ccae712e4133cac3f25",
+      "sha256": "f70c8474e7e83bba905aa4cdc4516325bf56e2c906b49fafcbf3d8d624882ad5",
+      "bytes": 11228
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_fence_wood_lod0.glb",
+      "gitBlob": "d9f117c0b16975e3e6fc60a1933a93d2a1f8820c",
+      "sha256": "b27f8697d9e29828b4b26bb5834b8a3fb113f7a4bdae24c5daa6870ad3c2d9a6",
+      "bytes": 50688
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_fence_wood_lod1.glb",
+      "gitBlob": "61a118f1bb6da2752b9deba62faaf160d956d5e7",
+      "sha256": "96e18b23417c987a790ae7e7cc352a8a3cf55326c81b264a2f2da49d1d765ee3",
+      "bytes": 13476
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_hand_cart_lod0.glb",
+      "gitBlob": "0805a4d99136f75191c3cfd0ac6a97bd08dbc121",
+      "sha256": "114318a576b13dc6761e587f81a622491a6790adc71347a559e3e083ca693928",
+      "bytes": 48328
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_hand_cart_lod1.glb",
+      "gitBlob": "0fa320b9e99658dbcaa1015494787293bb0b3d63",
+      "sha256": "4e46da3cf5e39c651a9565abe4cc4b6a530f0a5b7c25707fd73e6157ae72bc8b",
+      "bytes": 13640
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_horse_cart_lod0.glb",
+      "gitBlob": "1e9adc22b7097769ef98365064e6e728a4dad095",
+      "sha256": "1b64d58dd2e21f676b7daee2797628f93139d5d675a11e351509c16454863342",
+      "bytes": 83356
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_horse_cart_lod1.glb",
+      "gitBlob": "5ffd9b4396f485917d0d1dc42c1e89e090d68103",
+      "sha256": "8701d907cf6da1be800441e67005439de2c3b61a1f8bb718c5af16de23578902",
+      "bytes": 15652
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_jerrycans_lod0.glb",
+      "gitBlob": "df37c0bbdfab0a9b27477f52d380c9ef937c1c87",
+      "sha256": "2c80a2a6ab5323f8ce096c6f63c0244e5013cc52f77b8206d9f70fa0d6178e1a",
+      "bytes": 35232
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_jerrycans_lod1.glb",
+      "gitBlob": "1137ccae8708b748739c17863740daf4f24cc2cd",
+      "sha256": "69e8b5bdd928bf10f1a1dd8af3b889a93709bfecbce7d5bf3450d6b728ab0c59",
+      "bytes": 7876
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_point_lever_lod0.glb",
+      "gitBlob": "27302dfb3a09c56cf33411446d1895d9d2cdb567",
+      "sha256": "5d28bd883cf53b80e93b0b49e34e9886001d980cf6f4906ae8179186e7790404",
+      "bytes": 28940
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_point_lever_lod1.glb",
+      "gitBlob": "d752b0e3bdb71d57daed4f06039f421d46c05c88",
+      "sha256": "1dba9b92e8c2ab76eb52a1397439a152cdb1fe85078552e20c3ba5115a4bd0e4",
+      "bytes": 18412
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_railway_lantern_lod0.glb",
+      "gitBlob": "94354e8689de50bc610cef025c6d339dca04567d",
+      "sha256": "03e993a5a2e854a4ebc9c515ba8615a7366ecd57597453c029bd0e4e2509f719",
+      "bytes": 22408
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_railway_lantern_lod1.glb",
+      "gitBlob": "78871fce543341bd8e50bfa52fde3d3a0775eb5c",
+      "sha256": "626a405a2b0601ac556c61b66eb7cbd70c50cd9cc5dc3686b433f88c08110139",
+      "bytes": 12816
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_sandbag_burst_lod0.glb",
+      "gitBlob": "ce7f99f4e92738021ed9bf8f484650ab1e73f6b9",
+      "sha256": "8001e1fe336728e6423c8feb1694bf625ae73f7e2e7f811881bdf244810d714f",
+      "bytes": 28256
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_sandbag_burst_lod1.glb",
+      "gitBlob": "b0cc8de418ec9ba4d45ee3b69f472ddd4f533363",
+      "sha256": "acac3c36127f438c0b3d731c101d5f52d8b1c81e731536583e7b761e06c43e8a",
+      "bytes": 12304
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_sandbag_corner_lod0.glb",
+      "gitBlob": "0cf73466d0b8d5002c136b47e28dedd94ba23ab1",
+      "sha256": "f2360f42d8f2c24bfbbfff20dd42dc34572f0b7da1d3d368e90d8c06a23f2aec",
+      "bytes": 42816
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_sandbag_corner_lod1.glb",
+      "gitBlob": "7b79214bb6e0399c8b0ee3d04dfa76d21a35a76d",
+      "sha256": "f32563f7a2bfbcd6b780ae6018018862d3e56711bfe536df87ea9c0a5fe09c14",
+      "bytes": 7376
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_sandbag_run_lod0.glb",
+      "gitBlob": "7b22ae6889c181c004b9b248b6f763ecce38781d",
+      "sha256": "df9dc964c8fffe492cbda7ef3045380f00eb2b12ccf05874a2958d3ceb662850",
+      "bytes": 42796
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_sandbag_run_lod1.glb",
+      "gitBlob": "d348c6d00a8a4447fb4d3dc54db318cbe02e8e33",
+      "sha256": "42aa6c69a913020b485b3dd1f72f3433e716a24cc02da53265419d83c681e176",
+      "bytes": 7368
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_semaphore_signal_lod0.glb",
+      "gitBlob": "3ff4f56de2909b8a1a2313d7e17419d831ca990c",
+      "sha256": "f823b483bcce8aedd6621ff26253457eff76b4b3ef3c7f0191a742aff9fed448",
+      "bytes": 59180
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_semaphore_signal_lod1.glb",
+      "gitBlob": "eceb818c11bff75e081284c3df09a64f65b977fd",
+      "sha256": "a85eba01b5ee308a3662e4b5d33008fcfa238390daa4649bab16fec52e018700",
+      "bytes": 21392
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_sleeper_stack_lod0.glb",
+      "gitBlob": "39768ae67c9f1fc5271ba001d5c9cece866f22f9",
+      "sha256": "a76ba9bc908a14e7a35eebbc1d0ca1154f5363ea67c9e9e251186f90d8720848",
+      "bytes": 69964
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_sleeper_stack_lod1.glb",
+      "gitBlob": "bee5aa9c855249a93ba27bbb2863fa35ba4cd2c8",
+      "sha256": "4d17dc0241ed44a32a5821bf7f5eefc0c0ec4a1a441f68f4b2bf656eb689aac0",
+      "bytes": 12632
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_supply_crate_planked_lod0.glb",
+      "gitBlob": "047598709bbcafcf0b6801ef19b8f95f1de402f0",
+      "sha256": "9a68a2e1c8b5c8ad9ce3682a3a675854e4bc2983a01c6ec86213356558b7a708",
+      "bytes": 44212
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_supply_crate_planked_lod1.glb",
+      "gitBlob": "2a5cecc401fc66ee62b033025a39457f9f58012e",
+      "sha256": "b8e4521910cc0b15094eb08e854104475af1e02f8dc7c79363d1818afc4cbb22",
+      "bytes": 20084
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_telegraph_pole_lod0.glb",
+      "gitBlob": "867764e079711ccbe122a3a5e98e5b705f33326c",
+      "sha256": "7683fb053b830c2ff49b1706e97756ab81d6af91f969508dab1f5b96aa4aafcc",
+      "bytes": 47288
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_telegraph_pole_lod1.glb",
+      "gitBlob": "548b8deaae350fd1e2da24eb34d1f79d7ccb9ce3",
+      "sha256": "26d7b74965d056381b3d790aece0b00421b60f0412a22349bc3f3a5bbdbf155d",
+      "bytes": 15164
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_telegraph_wire_span_lod0.glb",
+      "gitBlob": "a6bd717720b1738b28829434cb36e76964a84eb8",
+      "sha256": "b0a406234f21d662d78cfee38c11112b25549d32c773dc8636c1de45a320b392",
+      "bytes": 9164
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_telegraph_wire_span_lod1.glb",
+      "gitBlob": "377bc9405ba9beddcf5a0dfb242fd0d70ba950e4",
+      "sha256": "1d4fb1dbcd0ed3640ceef4957f7fcc395067f7aa3ebda2c0558780abe7e4f202",
+      "bytes": 5704
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_water_crane_lod0.glb",
+      "gitBlob": "c64fb6a35be45a9fb34a8d757a608cdeb179d27a",
+      "sha256": "7c91ae9a9f1e283e55f3ecaa0578587fe50315e458606e28f5acb956e0ca3782",
+      "bytes": 56692
+    },
+    {
+      "path": "assets/models/provisional/m01/props/m01_prop_water_crane_lod1.glb",
+      "gitBlob": "cc30bfcc14d3c4c968606050a227144276042376",
+      "sha256": "10f1bb6535cbdbc8b7cbbbc36ff2dbc0553c4bc7e6ae14b4b9089e69c2029071",
+      "bytes": 17636
+    },
+    {
+      "path": "assets/models/provisional/m01/props/manifest.json",
+      "gitBlob": "a12818205b640e2ad87a9eade7812bb7ae49a179",
+      "sha256": "52ebed5e9aaa088b50f2ded6d7b0775fc3f9fa0d0643b6ae93046e580865c75f",
+      "bytes": 37887
+    },
+    {
+      "path": "assets/models/provisional/m01/structures/m01_casemate_intact_lod0.glb",
+      "gitBlob": "195b9bd17cb8711f56a54f412886cd6276810afa",
+      "sha256": "a013f6c5447cbc6d27afcbd4ce75b4a80049069e09f193a592dc2ead2daabc95",
+      "bytes": 51464
+    },
+    {
+      "path": "assets/models/provisional/m01/structures/m01_casemate_intact_lod1.glb",
+      "gitBlob": "a928246a3cd341f6086d63c91c4c3e87513c8575",
+      "sha256": "6d886b0f4502b18c835289f7c6c7e8e1bcb0b708fc435962d62a6960d901b07e",
+      "bytes": 17040
+    },
+    {
+      "path": "assets/models/provisional/m01/structures/m01_casemate_intact_lod2.glb",
+      "gitBlob": "9191b1936cccffce3faf0f9128dfd73f16c43a40",
+      "sha256": "411bac276fd2d2637bb98624f95a61865086f453666665f93f24619e2c0c1d7c",
+      "bytes": 12644
+    },
+    {
+      "path": "assets/models/provisional/m01/structures/m01_forward_post_destroyed_lod0.glb",
+      "gitBlob": "745b66f154c04e1785c21368aedf23e66f984f81",
+      "sha256": "fe83db0e0950bf6a5cfe1de35540647a57a0d36a3da06e07d89fb10f25bd8cb7",
+      "bytes": 21012
+    },
+    {
+      "path": "assets/models/provisional/m01/structures/m01_forward_post_destroyed_lod1.glb",
+      "gitBlob": "4c61533d30727978c1865513c628b0a78ce9b688",
+      "sha256": "67b7e4615e7c322f779a26273ea7851f9dce17cc67c9cc6e02ae1405e4d7b093",
+      "bytes": 9808
+    },
+    {
+      "path": "assets/models/provisional/m01/structures/m01_forward_post_destroyed_lod2.glb",
+      "gitBlob": "942237f5fa6d21448c98ea0649227cc5532bf86e",
+      "sha256": "128d0acf89b41cbc377909a97b247d4c8f1a1d33e12dad8f19d0d835cb7d053f",
+      "bytes": 2424
+    },
+    {
+      "path": "assets/models/provisional/m01/structures/m01_forward_post_intact_lod0.glb",
+      "gitBlob": "d1de958b7eef36f5fbabd4e6b25dacf610516fa2",
+      "sha256": "cdd782c70736f071e1d859fffa3c964d11c3aeb9c31e31e88fe878762be09890",
+      "bytes": 52132
+    },
+    {
+      "path": "assets/models/provisional/m01/structures/m01_forward_post_intact_lod1.glb",
+      "gitBlob": "b49079719af1b9606eaf9d1965e9dff180a62c95",
+      "sha256": "e6296a79407a8144edc526b474f21e0f237103d0dbe9f27661159d3fe45ce707",
+      "bytes": 9804
+    },
+    {
+      "path": "assets/models/provisional/m01/structures/m01_forward_post_intact_lod2.glb",
+      "gitBlob": "0358255b61b9d775d1062221573d330fffa437dd",
+      "sha256": "fc868590ef448be9380bfa9b6841bcfdc11e0513d5bdcdfb871e2b0b0b2e2002",
+      "bytes": 2420
+    },
+    {
+      "path": "assets/models/provisional/m01/structures/m01_rail_shed_intact_lod0.glb",
+      "gitBlob": "550ac79f083dc2bbeece58392c5daa992f4ec04b",
+      "sha256": "79b486febf30f8b30806a06bd8e228acaff7349b07a96c8a909274674aacb281",
+      "bytes": 92288
+    },
+    {
+      "path": "assets/models/provisional/m01/structures/m01_rail_shed_intact_lod1.glb",
+      "gitBlob": "89d3c54034b108d0c27cdee5397703f39804f7da",
+      "sha256": "39f831fd071a76a95f8e05b3657d5fc026be4a9ed6a94110ac9aa3c8bbbfb476",
+      "bytes": 20300
+    },
+    {
+      "path": "assets/models/provisional/m01/structures/m01_rail_shed_intact_lod2.glb",
+      "gitBlob": "08c4d5e877f7167aa2a8913c8c8823d3f66f473d",
+      "sha256": "4644c421c34a9fa4bdbe07aea4bc262cd9385348dd336e3d4d11944e0cfac009",
+      "bytes": 12800
+    },
+    {
+      "path": "assets/models/provisional/m01/structures/m01_shelter_intact_lod0.glb",
+      "gitBlob": "5032657f3096171547ba6586a0dd4ef1de19a47b",
+      "sha256": "1a8fd56408af52d9faf09537150f2a8b7aee88a07e70a081f1e1413fa6646088",
+      "bytes": 43436
+    },
+    {
+      "path": "assets/models/provisional/m01/structures/m01_shelter_intact_lod1.glb",
+      "gitBlob": "8d94d747c289fd35968e7cce9d491a84ab07c927",
+      "sha256": "ad00c11e254b1b3ea7c259cc6113bb382a571c8d6077af0e0018855d9a373baa",
+      "bytes": 14408
+    },
+    {
+      "path": "assets/models/provisional/m01/structures/m01_shelter_intact_lod2.glb",
+      "gitBlob": "791343b9c902899f117de16904ef5d8df05ba692",
+      "sha256": "1d5a773241be943e7c26ace2afe7d350d17b1019e0c9cc90fe0f2f982e36c9ea",
+      "bytes": 8788
+    },
+    {
+      "path": "assets/models/provisional/m01/structures/manifest.json",
+      "gitBlob": "93734383cceba6b19d56f3d4fa472c71c96051fc",
+      "sha256": "c38275f8deb4dc2b960dfb4a0957e11a3224a0286d9c0df691bbe7ee0d7dda06",
+      "bytes": 20672
+    },
+    {
+      "path": "assets/models/provisional/m01/vegetation/LICENSE.md",
+      "gitBlob": "1add4bb1e87b3c2f373c5fcc92c88b379758f2c1",
+      "sha256": "cc0a987cdcc7c059f817a29987e66d7f05423a017f742fcc020dde76c26a459c",
+      "bytes": 1088
+    },
+    {
+      "path": "assets/models/provisional/m01/vegetation/foliage-alpha.png",
+      "gitBlob": "512ad69bab3bd320b4df517d6aa0edf2d2251d4c",
+      "sha256": "bb8422aace0bd3f7274302eda7956bb62fb457d2de1fd0a92cc753052da5e0a5",
+      "bytes": 29082
+    },
+    {
+      "path": "assets/models/provisional/m01/vegetation/manifest.json",
+      "gitBlob": "35ced99b94e257896f2163929022af30bb4fbd18",
+      "sha256": "b6163412b6493aa16f555a2258fb2cdb924faabf301109843590aa730afbe8b1",
+      "bytes": 19931
+    },
+    {
+      "path": "assets/models/provisional/m01/vegetation/vegetation-kit.glb",
+      "gitBlob": "9f00ca6051f9ad5b4f958303ebce4007bdde6e49",
+      "sha256": "ce03b8ad0e384a009b40599bdf67b575d142c64b85fce9c61446bb72185170af",
+      "bytes": 546120
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_animations.glb",
+      "gitBlob": "f7b119383e78963be1f69485de7cf38259c2c8be",
+      "sha256": "dda588e9163da7aa0bfe9b3f7189d96c84a9e4788b9707ffbee7b70dfe936865",
+      "bytes": 891712
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_lod0.glb",
+      "gitBlob": "075a4de6cd372e2e4402e5105f7bf62ba2630440",
+      "sha256": "64ee37e3f4ad5882c97bcebfa47195b6ae84abbc33eb1faff99cd37c931165b9",
+      "bytes": 364660
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_lod1.glb",
+      "gitBlob": "79441fd4fd13e39a5ba845b954caa460aff6b3d3",
+      "sha256": "30fa7424df859c7c4c5be6b347955cf636284041c9eccfc1e30f1063f1fd0168",
+      "bytes": 194356
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_lod2.glb",
+      "gitBlob": "95d021fb7f4728d56bb7a03dc27d65c85da5e3f5",
+      "sha256": "a00f9a301b11523d3398c360a3c7bf8a15c5c0481abec56ec48efe80f9c5f875",
+      "bytes": 84208
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/manifest.json",
+      "gitBlob": "08e1af7c2b081bca2c3756647d3211829aa32db7",
+      "sha256": "81acc3147bbfaf965c2985deab3dd0d47330a7b4b4f080379088f060f8a4a3da",
+      "bytes": 28842
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34-prone/m01_mg34_prone_animations.glb",
+      "gitBlob": "9afc059217ac1a0ea767fadf961b76b2568e56ce",
+      "sha256": "79a405dd9c3c2d4bdc113b367d96de631ff62fa88be62e93e79952d353ca4d3c",
+      "bytes": 858508
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34-prone/manifest.json",
+      "gitBlob": "294bcf7fe33780c9dbb49d58755ca1b28da6707d",
+      "sha256": "61cf1f31717a5071e96911c84a44824fc010690fee94240a656d86718ebcf352",
+      "bytes": 16074
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_animations.glb",
+      "gitBlob": "c6ca01dec1ce02d55ba9954784aca33fdfaa6cea",
+      "sha256": "2245c4ac88f59b2a17a73436e14b62fa2f0abff2303fa19bb2b16913f82ad74b",
+      "bytes": 256984
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod0.glb",
+      "gitBlob": "9dcf5bda91ed1a701e3a07c510792b896c33cbff",
+      "sha256": "a65ac6a4eb8a350646a209383a5e2d7c76667774f9af2453279af99f8a071298",
+      "bytes": 331304
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod1.glb",
+      "gitBlob": "9ba46524c865dd4c007692e41c1d0371eea5ccb3",
+      "sha256": "6aa44e8c9c6152301a9ac2d31d1c88e174705f778922459a2c2f2d2d6fa0fc7a",
+      "bytes": 124380
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod2.glb",
+      "gitBlob": "fa15c308b3c84e34164940a474106b3067304095",
+      "sha256": "657e2ab1784f6755d7a429081210db6b7252496ede55e8c068ded112d8edcc65",
+      "bytes": 37144
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/manifest.json",
+      "gitBlob": "ce8a857a2599b61804af52604d50c24c0d5f2e0b",
+      "sha256": "61040eebb6e09abf93a567efbcde5b2009f2805b997d83952abca169f4961b8b",
+      "bytes": 16043
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_animations.glb",
+      "gitBlob": "7b9634af9e1203c7004b232ecaead0ab56ccc2d6",
+      "sha256": "23ecb6fb0429d5b38ee70492e3bb63d7853c1d86d85402693a5d67e23535c804",
+      "bytes": 218776
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_lod0.glb",
+      "gitBlob": "6d76e988202f95dd8a5b6440ecaa1673985b9e13",
+      "sha256": "ade802f370828734bec7b8e9d810a4d76974b38be285ec30ab4be2f9ee0b323b",
+      "bytes": 260444
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_lod1.glb",
+      "gitBlob": "a9b04aea6a72276bca591ca308c7b695d748f47c",
+      "sha256": "ac9381fdcd3989fb50739f2b8a9d7cdf2e05e1a2d5f77faaeb16f33e78f135d9",
+      "bytes": 96288
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_lod2.glb",
+      "gitBlob": "3aff246ca4637971e3531fa8c20df699c16be599",
+      "sha256": "2816fe42517469a5577575c04c45ed679b80b6a04b974a586ea912a280839744",
+      "bytes": 26736
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/manifest.json",
+      "gitBlob": "5a19a9b0b26570ecc79eec2c28780035861da153",
+      "sha256": "cd26ea6deeb568479bb6f9bb3992ad86db3f29d1ae7d76de876d6e72c324d451",
+      "bytes": 11118
+    },
+    {
+      "path": "assets/textures/m01/atlas/materials-albedo-1024.png",
+      "gitBlob": "42662a03e6fa9d84a2cf0a251a9576a240930164",
+      "sha256": "1c0da223fd9aecd5a4433e31e2bbf5475223788185367cfe616ec2b369dcd306",
+      "bytes": 1441702
+    },
+    {
+      "path": "assets/textures/m01/atlas/materials-albedo-512.png",
+      "gitBlob": "f4a87a1579ac79d772830a29d0fe963de3f6a75f",
+      "sha256": "38c49be8c6faa71c7364bde546553164b2fdcbf0b71536df035224e4fabbe79c",
+      "bytes": 360750
+    },
+    {
+      "path": "assets/textures/m01/atlas/materials-normal-1024.png",
+      "gitBlob": "16653addfaad7274ea45e440a16e9ac12973098b",
+      "sha256": "62fb0a64d763537bf2bac27774fe9472b37b3844c7cb4a2f1ae66dbed583273c",
+      "bytes": 1233039
+    },
+    {
+      "path": "assets/textures/m01/atlas/materials-normal-512.png",
+      "gitBlob": "a188fc8eecd970f4b2c035a98fba0d85577b0319",
+      "sha256": "487aba00a696a158adb922058b26e629698a84b814175c8497f7a0b552e60b89",
+      "bytes": 346215
+    },
+    {
+      "path": "assets/textures/m01/atlas/materials-orm-1024.png",
+      "gitBlob": "1928eac0044eca2ba04dca8c09477abaf69ea5ef",
+      "sha256": "fb35d668041d969ef4f88ec1c81019b8047bf6f40d8cd7dbead6c29b005870a3",
+      "bytes": 349042
+    },
+    {
+      "path": "assets/textures/m01/atlas/materials-orm-512.png",
+      "gitBlob": "2b9193f3e0e34547a0892ce368a6fc9466cd4da5",
+      "sha256": "4c208e73bd5bdcd218644061fefee4f49a30ad3fb3562fe35fc4eeac0cea0c02",
+      "bytes": 114755
+    },
+    {
+      "path": "assets/textures/m01/atlas/materials.manifest.json",
+      "gitBlob": "1bb211c45c70f29b75b2e43c805d8d67d211a6f5",
+      "sha256": "c18708d22e00a385ba0b7a9b21e13ef1ea7b7ce467a73d50481516de57fc0667",
+      "bytes": 7952
+    },
+    {
+      "path": "assets/textures/m01/terrain/terrain-detail-a-1024.png",
+      "gitBlob": "c8498fa4fa9863170d1d31815a4db772ee15786c",
+      "sha256": "8fed579aa2cab3da1939e10165d335441c8730ed82aba177ac616cd686f37aa2",
+      "bytes": 2288674
+    },
+    {
+      "path": "assets/textures/m01/terrain/terrain-detail-a-512.png",
+      "gitBlob": "2373c217b9aa38b17c7859af5fd57c1f222f7078",
+      "sha256": "8ff60f32285d2b1c9ddedbbfe9be18e1246cbd8e07260db60d16ce49582232da",
+      "bytes": 702821
+    },
+    {
+      "path": "assets/textures/m01/terrain/terrain-detail-b-512.png",
+      "gitBlob": "cc3e5c03c1dfc848fcadf806093074a863caf99e",
+      "sha256": "860cbe9898ff99a3978802a17609971613cb528b45746f5258dfe9f209bd65af",
+      "bytes": 524285
+    },
+    {
+      "path": "assets/textures/m01/terrain/terrain-normal-a-1024.png",
+      "gitBlob": "4d5f8d57d324ed8e511c3ed0461de6fca1379b7b",
+      "sha256": "6790a714e85ae71df568a8ca44119fdbb39a3d741460063fd402be4dc4ae9705",
+      "bytes": 2641816
+    },
+    {
+      "path": "assets/textures/m01/terrain/terrain-normal-a-512.png",
+      "gitBlob": "2469ee1efbb2816bf1f51a7e3f9e1903c3dc4d20",
+      "sha256": "df859b12e67708692fca901d9e7ca1d1353778600737433e76993496e5531843",
+      "bytes": 775262
+    },
+    {
+      "path": "assets/textures/m01/terrain/terrain-normal-b-512.png",
+      "gitBlob": "1f31d8235ed2e64df2eaf07370fd9bedcf372967",
+      "sha256": "ce02639c664f74c2cf428b90a98907da586473c448b9bfefc6893ae77a091851",
+      "bytes": 787987
+    },
+    {
+      "path": "assets/textures/m01/terrain/terrain.manifest.json",
+      "gitBlob": "8b2d7b75a0790b8d86799f558180352bc4a76db3",
+      "sha256": "6fa09aeba152bcfc01338777a68338d82d7600277147c869d25e6713c1dcffdb",
+      "bytes": 3602
+    },
+    {
+      "path": "missions/campaign-plan.json",
+      "gitBlob": "d6a2583065b78727e7440fa48b6b732652d736a3",
+      "sha256": "9c9109fa1005a183676f32fb5001765113cdc63948f14816780549c3387a7fa0",
+      "bytes": 5945
+    },
+    {
+      "path": "missions/m01-tczew/ASSETS.md",
+      "gitBlob": "ef5f1f34300ff9ba8e94ac161730e918f3d6e0e2",
+      "sha256": "86838ed2ac201eb14aa80cdf773ffa224c742da8228dd7002270b6b720061321",
+      "bytes": 8721
+    },
+    {
+      "path": "missions/m01-tczew/BRIDGE_ASSET_REPORT.md",
+      "gitBlob": "434ffa63ebf48e931287b00d265d7d9b5103e6cf",
+      "sha256": "49235d8902415124c58a858709bc4f9bf2b54c6449ab9d3f270d5870dfa8136b",
+      "bytes": 11500
+    },
+    {
+      "path": "missions/m01-tczew/CLAUDE_BRIDGE_TASK.md",
+      "gitBlob": "12ec57df41621e99f1bdaab853dcb1c64fe61e21",
+      "sha256": "8099f12362ff63e1ae62316e91ae0b5ef6e55482233d3bda64775fe04b62bda2",
+      "bytes": 4747
+    },
+    {
+      "path": "missions/m01-tczew/ENGINE_CONTRACT.md",
+      "gitBlob": "c7ae1f7f9c21dc93d6e5b0347ac097865bccc682",
+      "sha256": "d2651e7d0f8f067de55fb030a5f7ff7a1c7d9618822ec770bc3c57f0ea8de242",
+      "bytes": 13575
+    },
+    {
+      "path": "missions/m01-tczew/HISTORICAL_RESEARCH.md",
+      "gitBlob": "f14f4387c076a7f9c328505824aaec3034970943",
+      "sha256": "16e7431104f180c74c8607399c618147d6083a447fb5f4141770374b4bd031fc",
+      "bytes": 23759
+    },
+    {
+      "path": "missions/m01-tczew/MAP.md",
+      "gitBlob": "cc4a5831af6f3ba0e2b9cc6bb9a1391dc6faaeb4",
+      "sha256": "a05d24fbd0cb96b989a9415ea5c55097fd142418cc51cdaeb82be79f6d64cd4d",
+      "bytes": 10874
+    },
+    {
+      "path": "missions/m01-tczew/MEASUREMENTS.md",
+      "gitBlob": "0f8092bb9e287e601c1b959ec9f4f31ed046288e",
+      "sha256": "297ad7daa0761fcf5bb23126186c74ebd050aa76f643f87d8f4f134f83effd20",
+      "bytes": 6181
+    },
+    {
+      "path": "missions/m01-tczew/README.md",
+      "gitBlob": "90a919baae9bd3cb4f4abaa4a4a36e604bfd7039",
+      "sha256": "5cf8ee8c551315c33a92ad1ad9994878c8c138e9cb3eed6c8ff7db56494a46d7",
+      "bytes": 6511
+    },
+    {
+      "path": "missions/m01-tczew/SCRIPT.md",
+      "gitBlob": "eac4268b03a892574cd77b06cd4625f768e621cb",
+      "sha256": "1586fe28ef65796e62d070fcf111fce66b7e4e123322e321517dadc6b3d279e2",
+      "bytes": 29932
+    },
+    {
+      "path": "missions/m01-tczew/SOURCE_CHECK.md",
+      "gitBlob": "5cd8927ff1f2f179a7c77e4a949fa980796ff2a0",
+      "sha256": "e9aefe26533e720a1123399d6b05fc0118ffd8915f7b39881c46eda824943112",
+      "bytes": 7874
+    },
+    {
+      "path": "missions/m01-tczew/assets-m01.json",
+      "gitBlob": "fc1b8c1288513bc9ec227498a739bdd9d4df7392",
+      "sha256": "f2595de67c19d8519edd18736d3bb49330e4e868afe1795bbe2604fd434de4ac",
+      "bytes": 20683
+    },
+    {
+      "path": "missions/m01-tczew/map-layout.json",
+      "gitBlob": "188c2857294d0aee368a5c94eea67bd6bd2b468a",
+      "sha256": "50b8e90a69804bffa94a84acfd6680247e0c6abd356efab75d00b835c6a075d7",
+      "bytes": 25756
+    },
+    {
+      "path": "missions/m01-tczew/map-layout.svg",
+      "gitBlob": "f7c34b82af65e2879c6ae6684eb726321d73aedb",
+      "sha256": "e334b7c50862082f5da4659aab9e8569713e3e8c5d9bf3e091026dcf998c5b38",
+      "bytes": 28981
+    },
+    {
+      "path": "missions/m01-tczew/measurements.json",
+      "gitBlob": "f77e78977e0830e27e8f8b6bfd40f6862237a1e6",
+      "sha256": "48c90ab38b957a2b973f84a2dd302a2c49d165a3b81dc548c6b708aea5504a76",
+      "bytes": 3665
+    },
+    {
+      "path": "missions/m01-tczew/mission.json",
+      "gitBlob": "6e7b41906e9b3d7a8c9ebbbd07cc920693f34c2b",
+      "sha256": "1af2b926493b5df8c75fdd34702f9f869c642bb005b423fcbb6c9b49f493a69e",
+      "bytes": 73292
+    },
+    {
+      "path": "missions/m01-tczew/tools/.gitignore",
+      "gitBlob": "0b6aefaafdda635792476145bd542294c65b5daa",
+      "sha256": "046032151fe6113c18a8d7d9971c557e81129ca1ba244e5263d54b7e0e6f9643",
+      "bytes": 21
+    },
+    {
+      "path": "missions/m01-tczew/tools/measure_osm_overture.py",
+      "gitBlob": "38e76c860b4831309f20dbe96e26f57d814e62f8",
+      "sha256": "8f2787518d391bc388bdc36d9218dea805ac5b0c0be710a3094ecd2da3f18df6",
+      "bytes": 12453
+    },
+    {
+      "path": "missions/m01-tczew/tools/render-map-svg.mjs",
+      "gitBlob": "01f16419e5b8f23e77335db0373f69bc2e7e72ad",
+      "sha256": "f7c7f272a05cb9ec89f3e315674e9bee7438c681908eb00a992beeebd8d097ec",
+      "bytes": 9358
+    },
+    {
+      "path": "package-lock.json",
+      "gitBlob": "42e770e6689d20ea2c6490f0242c4a26d2c8d05b",
+      "sha256": "7dc6046b961e916f3e8d8de4513a582cdd1138a943305bfd975b5ce61b3d8ac3",
+      "bytes": 27406
+    },
+    {
+      "path": "package.json",
+      "gitBlob": "bf118e39a905c788a5977e7f28e346b1561eac74",
+      "sha256": "4c9c6dd123b6e5a66a63071b8e0e873397613f9026fcd8c963b4a11e3dacd5c9",
+      "bytes": 679
+    },
+    {
+      "path": "playwright.config.js",
+      "gitBlob": "eb0a64a0522804eaa4c280a9c929d9d68da0f695",
+      "sha256": "73963bc356cd785f09065534d3a520afc9a740fe946434293d78bea8887c45f1",
+      "bytes": 868
+    },
+    {
+      "path": "src/assets/asset-manager.js",
+      "gitBlob": "1b725ac7062b1db70908ad49df15f317aff1e98b",
+      "sha256": "f0366f743ac499f66c3f312bd6c78da70e7ffa869f1b5286107bf40397e4db39",
+      "bytes": 3476
+    },
+    {
+      "path": "src/assets/gltf-loader.js",
+      "gitBlob": "250531540a9c10b70c149bfba8bc6dd6f1fbdb85",
+      "sha256": "f29cda15e0eb6c5e1b2f44cba612aa67d9a8aa158ac065864dcb0fc09f61beef",
+      "bytes": 220
+    },
+    {
+      "path": "src/assets/mesh-repair.js",
+      "gitBlob": "f9e01dc0091b48e4b7438fd56bd6aa304ab55485",
+      "sha256": "b9d1917ea1a050d4afbf3bd33a4e353e2f2c393e349edece8d6e5eac97def2a8",
+      "bytes": 686
+    },
+    {
+      "path": "src/assets/obj-loader.js",
+      "gitBlob": "eab7658805c8d2f4f5201af1a539b4db8344ee40",
+      "sha256": "69da9101eba7fab0ab17500190acfb5c6f7f857c37a04767cb27b1605d8ba04a",
+      "bytes": 2298
+    },
+    {
+      "path": "src/config.js",
+      "gitBlob": "deaa2c72974efff6f7dd1ab041de1c189e27b054",
+      "sha256": "020a19feaab671f5e7777a81e76e8d4b2a9b1bd3eb360c8d81903f0adb55bf80",
+      "bytes": 1025
+    },
+    {
+      "path": "src/core/audio.js",
+      "gitBlob": "daafa616f9d36d99544272f54fb602026432ec0b",
+      "sha256": "b4c5470bf85c0dd5566bcd8bdfe3859fd07c619ff4803ae1c14bba21209bbf17",
+      "bytes": 44818
+    },
+    {
+      "path": "src/core/battlefield-audio.js",
+      "gitBlob": "04b22f4d124de72d7eee0f778f12afe5761418ed",
+      "sha256": "c658c92e82c82c4af75fb2e6b36ff493fbb363234827fbaabeab60067a3e33d7",
+      "bytes": 31438
+    },
+    {
+      "path": "src/core/input.js",
+      "gitBlob": "dbb7e59697d4c8a271392060de6f76994dc192cb",
+      "sha256": "71b9f99f864ae52f78a8b53f45c6beff582771760c7062df149979e4c4b83f15",
+      "bytes": 2751
+    },
+    {
+      "path": "src/core/math.js",
+      "gitBlob": "bf29d0ea6c887e7b02f800d514dfc006b5a94f6a",
+      "sha256": "e765d656e54a34c18d82dae0d1a4997e0e787617dbfd1c46e4bfe87af61fb9fc",
+      "bytes": 500
+    },
+    {
+      "path": "src/core/random.js",
+      "gitBlob": "bd120059854b48e89f969dc48232f1c5531a64d8",
+      "sha256": "c7fe17d39b70b37adeab22bfdb488029476b489a8e940d43db06558251b273e1",
+      "bytes": 210
+    },
+    {
+      "path": "src/game/actors.js",
+      "gitBlob": "ade8443a83783182eb41589868ba1d4d43a9a44f",
+      "sha256": "dda82e4f83120e1c832c7c73c617c012efdb2426cf227773d04e55593d8bd408",
+      "bytes": 5625
+    },
+    {
+      "path": "src/game/battle-director.js",
+      "gitBlob": "4b78512e04ada550a45b524d8c232dc968e96819",
+      "sha256": "c3d2d7ad26cc8b4b19ee2014aadfaaadbdc0142c5c480462e724d9c07f7a67aa",
+      "bytes": 1805
+    },
+    {
+      "path": "src/game/game.js",
+      "gitBlob": "02fa3cba4f07f76c86941b667117659f4901b98c",
+      "sha256": "04a1350034cb081b14b2335685d7b3575d655e7673d9f23d203fb5ff8db22389",
+      "bytes": 19951
+    },
+    {
+      "path": "src/game/grenade.js",
+      "gitBlob": "928a1ea44784d23d61c65b7468f39d27a4770079",
+      "sha256": "8b588b862e5ffe0b7144412807ae89df14553bd55b6bc1187b0d9bd3813c846d",
+      "bytes": 2872
+    },
+    {
+      "path": "src/game/m01-animation-presentation.js",
+      "gitBlob": "6ab521b0f50b7aec993583f0a935a8f7b6861d23",
+      "sha256": "f7f5d2290a670d2fdd20a68cf28ed938b103741aa0ee122e16a10d2efe5d5268",
+      "bytes": 4056
+    },
+    {
+      "path": "src/game/m01-fire.js",
+      "gitBlob": "9203fd59d42a8a19cf4603f3393d59b0376a9d26",
+      "sha256": "f5962ee028e5a6d101793ba3fe6896ccba9350c2e22de7bab60666ef9f53aa1e",
+      "bytes": 3178
+    },
+    {
+      "path": "src/game/m01-simulation.js",
+      "gitBlob": "0f8a334a6670d2df64d14ad339c78a7fea6e68d7",
+      "sha256": "ffc198c1089da201d580b703b44d1a80f1536c3923cca7d7ca6fab9602362f14",
+      "bytes": 87542
+    },
+    {
+      "path": "src/game/mission.js",
+      "gitBlob": "b5c7af2c8055cf8758c5b878cca621a9f09fd915",
+      "sha256": "877957aed04fb27b8aafdbbdaa989e9e275d3d1248a340402be9e404f5bc70c2",
+      "bytes": 666
+    },
+    {
+      "path": "src/game/sector-battle.js",
+      "gitBlob": "7f9f20a184448e2c1e10b48bc00cec9f6262d994",
+      "sha256": "abeabe90329f80103a5838e6d80b44c860a7d4ffa146a1e119c885357907cb3c",
+      "bytes": 3457
+    },
+    {
+      "path": "src/game/simulation.js",
+      "gitBlob": "dc9d45e06d20619e06f7126897755f95bd30bb38",
+      "sha256": "59b206413ab76abf9c93d6d76e48831f13c7358cb1caade409e2a759238c34f3",
+      "bytes": 11379
+    },
+    {
+      "path": "src/game/weapon.js",
+      "gitBlob": "aebad6bd70755d2e7e39df24971affd63820a527",
+      "sha256": "4b4e7bf93653509189f4d2d28ade314b7488d15ede69e217f1d98b6eae9a9fda",
+      "bytes": 2210
+    },
+    {
+      "path": "src/game/wz29.js",
+      "gitBlob": "dd7c40641cfd9ba308729e9e42718b0226fe67ea",
+      "sha256": "3bd376bf1d1d6d4978871a4a35e4067779a1c9afda0adde155aba27b10636be5",
+      "bytes": 3071
+    },
+    {
+      "path": "src/main.js",
+      "gitBlob": "764cbd84325aa5fe52e3269a0197eb780b0a8f5b",
+      "sha256": "3f15dbb9e8dea499e11c8372df5237bbe34236732af2f1feba9eadc35788c24c",
+      "bytes": 6308
+    },
+    {
+      "path": "src/render/first-person-weapon-fx.js",
+      "gitBlob": "b3095105668d253836f1bee3360ef6833f661d20",
+      "sha256": "67fb62cbc825bb7d1ec413acb742def5fa957080fe3e48b357678d14229631f1",
+      "bytes": 33609
+    },
+    {
+      "path": "src/render/m01-actor-pose.js",
+      "gitBlob": "50aacb0bf3271da1b8644913faba860bbc71d3b5",
+      "sha256": "94f412d84e0b78159c4c766044880b1642bb310d3a21ab5cc26b2cdbcb4fab8d",
+      "bytes": 5364
+    },
+    {
+      "path": "src/render/m01-aircraft.js",
+      "gitBlob": "7d12949be428c17a981d0eb2c8e62d118985ac0d",
+      "sha256": "7cfb8350f9d7445bd9643b298ef107fc9b40e6b6a7b8554a0900d48abac17f4b",
+      "bytes": 10444
+    },
+    {
+      "path": "src/render/m01-animation-player.js",
+      "gitBlob": "564c9d7a42f2b3e69ab10bdcb552a9865b2dc701",
+      "sha256": "725e90a9053de9eb9f55c689a552abc2e7081ae46ad901bdd07b91b085ca3444",
+      "bytes": 2192
+    },
+    {
+      "path": "src/render/m01-animation-resolver.js",
+      "gitBlob": "867dd6e63a845b62327a97f304d217b663993236",
+      "sha256": "3093a55e19531dbf8caa49013a8649e4a4b1056fa8988deaf25cca77d62c843c",
+      "bytes": 13491
+    },
+    {
+      "path": "src/render/m01-atmosphere.js",
+      "gitBlob": "da4a17af19f808366616eee954772d2eb01c4586",
+      "sha256": "bc4a6c8116181c399952212e5c5c59e70b067face5d4e75c3d61dfe7712a09ce",
+      "bytes": 14601
+    },
+    {
+      "path": "src/render/m01-battlefield-fx-profile.js",
+      "gitBlob": "603d090771ec22c04ce344cb1ed26dccb9cb2bd5",
+      "sha256": "33c6d5581dec7b872b277110e9d10b8a59fcbdd5f5a834118c410686d176e6c6",
+      "bytes": 3594
+    },
+    {
+      "path": "src/render/m01-characters.js",
+      "gitBlob": "116c68f2dcef0eca79cbfb8cdc228574a468cb6e",
+      "sha256": "192292c164751182defbd959fb103648f59606bf0336ffd43df83f144402f673",
+      "bytes": 21113
+    },
+    {
+      "path": "src/render/m01-combat-feedback.js",
+      "gitBlob": "7fdc0fc237e53cd57247ba89caf9db22ae9619ca",
+      "sha256": "6363f48aaeaf858a2565d074926f68102695de2b21b9139527f75454a0e34b4f",
+      "bytes": 7257
+    },
+    {
+      "path": "src/render/m01-damage-decals.js",
+      "gitBlob": "5b309cd9eb6792ead3918d6eeca80b3b25248430",
+      "sha256": "b32245eeb0eac94141aee09358088032b4d73d4cd1d721a7550ebd4e564e7368",
+      "bytes": 85597
+    },
+    {
+      "path": "src/render/m01-demolition.js",
+      "gitBlob": "5cce02054a34780e5d6768b68955dcc3ad049e61",
+      "sha256": "e1938243749cac06ba7d8ded8ba5eeb165f9f737eddf324c2b841ff426b78991",
+      "bytes": 18548
+    },
+    {
+      "path": "src/render/m01-environment-props.js",
+      "gitBlob": "6a06d489aba46a4b4d6481442a8999bb50482a50",
+      "sha256": "43321f1d1cf44d1f7625d1d1a35f497641c1c6c640b647ea27960612b6239737",
+      "bytes": 11351
+    },
+    {
+      "path": "src/render/m01-environment.js",
+      "gitBlob": "b4746db9568d7f83a4616feffeff2ee2697029da",
+      "sha256": "dcd4bfb5b169fb789863b86c8e523bd435e29067fe56db4717084bbb1b49cbac",
+      "bytes": 10758
+    },
+    {
+      "path": "src/render/m01-far-landscape.js",
+      "gitBlob": "9a7b7b290812787498fda10a75e1a4891ce164f8",
+      "sha256": "bd8e8dbfc0092343f538c657ce2680800c1705a2da5ff528fbeb741bc6a022fb",
+      "bytes": 6743
+    },
+    {
+      "path": "src/render/m01-field-structures.js",
+      "gitBlob": "9fc6d3340c9ee7b33a87f2ce3cf52ea28e4dc70b",
+      "sha256": "17191864ca88f4a7c5cb0a9918572e52a41534fac0e9fa35b3b80ecd73d7370a",
+      "bytes": 5221
+    },
+    {
+      "path": "src/render/m01-fx-textures.js",
+      "gitBlob": "3998f93250ffa79ac4354a9c43afaedcb3fb0768",
+      "sha256": "5ac03cdf1b99ca21c8163ced80cbe5414dbd510d6d388aa8d4201e9d70fe21b9",
+      "bytes": 1469
+    },
+    {
+      "path": "src/render/m01-grading.js",
+      "gitBlob": "16e75839fbde481b5fba5812d6dd28579b391b5b",
+      "sha256": "8f1f887465e29fab318390b4326deda5dd4337ae69e487f4783a88dc4313f485",
+      "bytes": 16761
+    },
+    {
+      "path": "src/render/m01-impostors.js",
+      "gitBlob": "217e5e7ab430a490d1807e6be13675c17ca7fc5f",
+      "sha256": "65ad9ab0f6dafa8ddac85e1cf2f70bf00c295b73bb785a83276034773b128002",
+      "bytes": 16107
+    },
+    {
+      "path": "src/render/m01-lighting.js",
+      "gitBlob": "58ebeadb4609bfcf26993aa9de7512de69e3078a",
+      "sha256": "a6363f536cdeea9b17c402695912111c385cb264dfb6c9ba60df74970eb8ba1d",
+      "bytes": 11326
+    },
+    {
+      "path": "src/render/m01-locomotive.js",
+      "gitBlob": "b05ea0ea6d5260e8857d286400c154c41acca21e",
+      "sha256": "620d9f7979a8e235feb46b92af197887d33176592817942229ef16537a3110fa",
+      "bytes": 3069
+    },
+    {
+      "path": "src/render/m01-panzerzug.js",
+      "gitBlob": "c4541e2a591c356ee22a28fec2ec6df1527adaf7",
+      "sha256": "bcfaecfadc9470ab803a983512784d932dc5746639f07cb54bedf6743e769db4",
+      "bytes": 3080
+    },
+    {
+      "path": "src/render/m01-props-runtime.js",
+      "gitBlob": "10de57f958295dac060f244beb9b1a29d02c3ed0",
+      "sha256": "308ef34df2941c7295983a3325e8a4c602afd832d33236848650808be125eb5c",
+      "bytes": 10846
+    },
+    {
+      "path": "src/render/m01-soldier-variation.js",
+      "gitBlob": "c6d56fc8efebbaf2c710193cda3dbb005f8134ed",
+      "sha256": "9543e46d80ff271e1029cd26172e19f030183b4e07abbb480f6827c2cf7d440e",
+      "bytes": 9209
+    },
+    {
+      "path": "src/render/m01-station-architecture.js",
+      "gitBlob": "4b45d603c899c9c6aa2b0c0482f96005d0e0c726",
+      "sha256": "cef1db17ec1e893f53c412a922b9c7a7e246c90111cfc9ef8cce4810752e6890",
+      "bytes": 25324
+    },
+    {
+      "path": "src/render/m01-surfaces.js",
+      "gitBlob": "8074fb78f5d6dbb059d8f6adb71d557f9a372921",
+      "sha256": "caa85c88cee2b85808e04b2b7d6505e7a99bc04c9066934f2a1ff355a42df7cf",
+      "bytes": 12824
+    },
+    {
+      "path": "src/render/m01-terrain-envelope.js",
+      "gitBlob": "1d19ca584877184361e5c91906999e56bc5a3370",
+      "sha256": "8f5678bbc5ed5382aa2c5219bdaa3ad37ec6f35983090bd0726038e726731200",
+      "bytes": 4405
+    },
+    {
+      "path": "src/render/m01-terrain-mask.js",
+      "gitBlob": "c5298bfdb219ef7a0121e9fb405f1cac7ebb9a9b",
+      "sha256": "e448e0ce91a375a98a897bdf982045ca55b4e4ab619265dcec84c314223418fa",
+      "bytes": 7257
+    },
+    {
+      "path": "src/render/m01-terrain-material.js",
+      "gitBlob": "c0259d29f672d2320a1f9faed1594afb17c8d486",
+      "sha256": "0962e17bda7597495afb1ac46bb7687ca7e3bb3cb7dc9577e6cd169bcc181756",
+      "bytes": 18809
+    },
+    {
+      "path": "src/render/m01-terrain-relief.js",
+      "gitBlob": "491e1696bd4f519161bc34ec2d23f32ec11c4802",
+      "sha256": "ed61262ce4b0faa65aaebecba139278fafaa9f6018b67642bc3fe4f39bd2ac69",
+      "bytes": 11170
+    },
+    {
+      "path": "src/render/m01-track-bed.js",
+      "gitBlob": "c7d80485418d04c1e3bd8126c78ed1dfe00da3e3",
+      "sha256": "a90070d5ac92d3a0bb3052c7d1aa0a75c21f6a06345bcfdfd9b241a935e86b8c",
+      "bytes": 16867
+    },
+    {
+      "path": "src/render/m01-train-consist-detail.js",
+      "gitBlob": "6c984ee784a3ea409705be962aad8bc2463a9d70",
+      "sha256": "9e922fd1adec18b0ceb4cfb57ef6d5a070dd0b3bd62b8e83900041d3f2eec3b2",
+      "bytes": 23344
+    },
+    {
+      "path": "src/render/m01-train-wagons.js",
+      "gitBlob": "0718a8fc6ec687e19efbb8d217cdfb8841e6dbfc",
+      "sha256": "5e01a239e2c0c89684fd6b67d877a5ff4acaeb5422361f8c591ff022a2cfa695",
+      "bytes": 6164
+    },
+    {
+      "path": "src/render/m01-vegetation-art.js",
+      "gitBlob": "09a866a14322c16a587bb7569bb233d1c56b051c",
+      "sha256": "5153e7cbfb6351d88567526baacc4dab1505f33cf7385e3c5423f3bafddbc92e",
+      "bytes": 8900
+    },
+    {
+      "path": "src/render/m01-vegetation-layout.js",
+      "gitBlob": "bedf03fa7d8a42151ad5bfdd25b048fb6a1624e1",
+      "sha256": "bfa9d89c226f8f122d6171342decadab538365011dc5411c85e9a3b735ff2798",
+      "bytes": 19204
+    },
+    {
+      "path": "src/render/m01-vegetation-material.js",
+      "gitBlob": "294db1d769d5b15b3fddc814b967408a41228e5d",
+      "sha256": "a10bf7c637d098c262268e3b77cca1f93f8ddb8a690d647072a3829c8b404024",
+      "bytes": 1590
+    },
+    {
+      "path": "src/render/m01-vegetation-runtime.js",
+      "gitBlob": "9c6c521362153997b858284652640aecf9af9cf3",
+      "sha256": "0018743429d8cb25cf0039134d58f77c8d3d288706d993619198c810bf6d87ac",
+      "bytes": 31094
+    },
+    {
+      "path": "src/render/m01-viewmodel.js",
+      "gitBlob": "7f64eeebf9f806710c49f4948a96feb47840d6d0",
+      "sha256": "2485a48b749dec72b090664f5914c47d94ba7c35d0770186de634e59d1871f50",
+      "bytes": 20350
+    },
+    {
+      "path": "src/render/m01-water.js",
+      "gitBlob": "25a2e1e265bdaa12760d235a1ea22308fb2f6090",
+      "sha256": "c9e073424695ebe2a8f70b458ee0bfed696ba413ec9778d5415c773af065450c",
+      "bytes": 12807
+    },
+    {
+      "path": "src/render/m01-wz29-presentation.js",
+      "gitBlob": "a9a595a78829e49f4a8a1a95ecf5cf8cabe3c7ad",
+      "sha256": "b85d81219c1d84c4b415f1fd84bc42d46e6c903457ae2578fd7e510a6834d559",
+      "bytes": 13884
+    },
+    {
+      "path": "src/render/m01-yard-wagons.js",
+      "gitBlob": "3fac3214b40d710b7e40d8d04669cbcf9d61a5e7",
+      "sha256": "f09a2cb963c21f8af64c5ebf1ec9342c9e986521eeb3f2ac6b8642d416810c0b",
+      "bytes": 6877
+    },
+    {
+      "path": "src/render/materials.js",
+      "gitBlob": "01b275f5345389191ca9b222ce058774d11f6633",
+      "sha256": "16f3def103e3c8e674cfaa2b875a0c61ad0b21fd846a16ec61456ccc4d2851ec",
+      "bytes": 6423
+    },
+    {
+      "path": "src/render/math3d.js",
+      "gitBlob": "4b9d513b6d57aa24eeb9ec132fadd000c7bc9df0",
+      "sha256": "392c01dcb8b799d408403c54c205c1b69931bd4591809076e7230026b3d1d5ec",
+      "bytes": 1299
+    },
+    {
+      "path": "src/render/renderer.js",
+      "gitBlob": "6c238c4cc6b821e355f619384fca2b3af14d37b3",
+      "sha256": "a7905fa72ffa0754ce4c1509e9acb408d48f55be08f10ef9f7bf94503005fa8b",
+      "bytes": 18169
+    },
+    {
+      "path": "src/render/three-renderer.js",
+      "gitBlob": "47481b3c220ecb24104addcafe235092c36ad357",
+      "sha256": "efb6d9f4b14f1e43131b72ac18fb300142e4f26e4f6e105ee305788079d8e981",
+      "bytes": 25691
+    },
+    {
+      "path": "src/styles.css",
+      "gitBlob": "0c4efbaa6cdfbf3cb20f9846baa58f863b91e3fb",
+      "sha256": "c9e1f68ca2ddeb732653dad5be4c9ba941fdf700b68ebc40aa9a5da327e8aeb4",
+      "bytes": 16778
+    },
+    {
+      "path": "src/ui/m01-hud.js",
+      "gitBlob": "234974cfd7709a65c6d6fc010de1261c8e224d05",
+      "sha256": "e47930526be39a54a1ebf69534119ea28debbc66f51cfacf4bbdede5ad602aa3",
+      "bytes": 15654
+    },
+    {
+      "path": "src/world/m01-aircraft-path.js",
+      "gitBlob": "65b312474c2231beb97b52dd5dd89c0ac0858d64",
+      "sha256": "c2669b7c5ad34492cc04aa7d64ddb69bf5c43096aefb95c0a6e634ad38e18adc",
+      "bytes": 5906
+    },
+    {
+      "path": "src/world/m01-decoration-layout.js",
+      "gitBlob": "3942beb2c204b03b382f32204bac9efd1f383cfa",
+      "sha256": "d1000fd485fb6bcbd1de08edc7593b26f199fe139170358564ce9885339e2b96",
+      "bytes": 523
+    },
+    {
+      "path": "src/world/m01-mg34-prone-geometry.json",
+      "gitBlob": "c18d50db85e6f3307972e2f05b8e041e181985c5",
+      "sha256": "05bbe5806ed017ddc215352634519524d70d749c08d4c68f3f0d459094f02fbb",
+      "bytes": 58245
+    },
+    {
+      "path": "src/world/spatial.js",
+      "gitBlob": "a1a02fd341d1f1fcf0077136508f3a6733516887",
+      "sha256": "49409541cf8b9c8542aba5cdaf79a46227e973932fa795743969a0f893551dcb",
+      "bytes": 7551
+    },
+    {
+      "path": "src/world/tczew-world.js",
+      "gitBlob": "82d7e6aacf453e69384c8acd647db74b868cdaa5",
+      "sha256": "716c9b3fb3bca8c8d07a690caf1ef67288a416a043a94b47e98d8e58c4f95a22",
+      "bytes": 6495
+    },
+    {
+      "path": "src/world/world.js",
+      "gitBlob": "d5a1df53ac4e053bf037b51e7b23a6c6d2b0c7e5",
+      "sha256": "bdbe2212e50a04b2a20ac2db1cb3062827ac3f0ffb8c779a76b56d1832fccc7e",
+      "bytes": 4849
+    },
+    {
+      "path": "tests/assets-manifests.test.js",
+      "gitBlob": "f94b0d2e1ae06f68117c529308b6c09d90a71a24",
+      "sha256": "40d7150f3b8355f9a64d426e8e70f5e36291a183adf04061c8f40dee5abf89bb",
+      "bytes": 3076
+    },
+    {
+      "path": "tests/browser/game.spec.js",
+      "gitBlob": "80854678e5da96eafa94ea7ffc5fdd4e112404be",
+      "sha256": "b62a0f0b67f61ef531e2181d8be13a2f35705398764197ddbb02ce9ac5ca9f85",
+      "bytes": 6685
+    },
+    {
+      "path": "tests/browser/helpers/fx-frame-capture.js",
+      "gitBlob": "73fdc914c9d2063255060b41fc89ce96bbc0939f",
+      "sha256": "cadee659ef94fa2908a50750cb50493d7c6a11cf5ff7508402cf2f4a5580098b",
+      "bytes": 1917
+    },
+    {
+      "path": "tests/browser/m01-anim-resolver.spec.js",
+      "gitBlob": "70e41809fdbea9ae4cb9fcfe7aeef94cef70c9d5",
+      "sha256": "ce9f7b36b7b5653a94e90f1a50d3c6f4d9c73c39d14c5a0d413322386ce7a47f",
+      "bytes": 19187
+    },
+    {
+      "path": "tests/browser/m01-animation-contract.spec.js",
+      "gitBlob": "ca087d386ce8c317b55470fcb5bf8075bd728337",
+      "sha256": "e9e8b77623dccb86b6209197c824d0993a0ae03ff8345e03b42b644f871640f9",
+      "bytes": 3378
+    },
+    {
+      "path": "tests/browser/m01-audio-offline-render.spec.js",
+      "gitBlob": "05a14bbfa6ebe88954cc74ada3c1d6b23f2e2b99",
+      "sha256": "726ec6a9a055cadeab3bc4ea2577868567fbf175e1f594ef53156d72877720d5",
+      "bytes": 13859
+    },
+    {
+      "path": "tests/browser/m01-audio-production.spec.js",
+      "gitBlob": "bb346ff5e1338c1efc873e82991d102b82ec7c63",
+      "sha256": "a8e711a0740c99f5423a4dfc42e3769d4a066cf2be96ddc26dc943e142c3aaf3",
+      "bytes": 7310
+    },
+    {
+      "path": "tests/browser/m01-battlefield-audio-runtime.spec.js",
+      "gitBlob": "05b4998e4d3c25b850f427de4b34839c87d203e1",
+      "sha256": "4c83806ebbe9b1e134e3551e6854ce26a3c73061e55371eda06313e5a2b93f95",
+      "bytes": 4253
+    },
+    {
+      "path": "tests/browser/m01-battlefield-fx-polish-v3.spec.js",
+      "gitBlob": "f3ed4e48615371a4af61ef193fc56b6aabe18007",
+      "sha256": "2d42306dcdeec63e6c785e6e7ed17d879d00c40f5b2ef3f6ea1af836495390c7",
+      "bytes": 11371
+    },
+    {
+      "path": "tests/browser/m01-battlefield-fx.spec.js",
+      "gitBlob": "40d704fc493ddabd0daffca09726390e24fb2add",
+      "sha256": "73a982c9348642cac88c37e7b731222686ee490960f13a7dd31a9b0573c04366",
+      "bytes": 8640
+    },
+    {
+      "path": "tests/browser/m01-bridge-portal-polish.spec.js",
+      "gitBlob": "b46128947f82e8885da32fd1566d8d3e29e719d4",
+      "sha256": "a22d6316d3fb908f287f96c7da2be8d7bba91b38a5979c5ff60d242b90b94814",
+      "bytes": 4909
+    },
+    {
+      "path": "tests/browser/m01-bridge-structural.spec.js",
+      "gitBlob": "0fadbd3850c93b5bd039d6636520e8630af2648f",
+      "sha256": "5cf41cfb79fd5f3ec155272e95107308b41a9e2ecae835a0f566cb6afa76969a",
+      "bytes": 7085
+    },
+    {
+      "path": "tests/browser/m01-combat-feedback.spec.js",
+      "gitBlob": "70b3852bed146201ad5c88ecdcab7aed624e3971",
+      "sha256": "dc421795077381830b2d3d48d4f156fb4eb797bc3c50542e9dfc6640985f3124",
+      "bytes": 8110
+    },
+    {
+      "path": "tests/browser/m01-consolidation-lifecycle.spec.js",
+      "gitBlob": "1e13d8dd628e3bf64d97d30c8bf6ff42f12774b8",
+      "sha256": "7bb26d31984c69aa24de1944ddd0cb7a10bc44ca11bebfa43690b61475ab24af",
+      "bytes": 2629
+    },
+    {
+      "path": "tests/browser/m01-damage-decals.spec.js",
+      "gitBlob": "f433a27f638e41d9cfe1919d32d7aa734dab854c",
+      "sha256": "37d1b4368aa43dba040d2449ee18cc3cbfd612e45ffee1fba99fee2e48836ee5",
+      "bytes": 11816
+    },
+    {
+      "path": "tests/browser/m01-demolition-setpiece.spec.js",
+      "gitBlob": "4dd6c651a8f8a50897c54b354630fc193aa2a87f",
+      "sha256": "a85b6d5c198a178f0014237316b77dfff650706163bc950243c2e1baa4a8daf9",
+      "bytes": 36889
+    },
+    {
+      "path": "tests/browser/m01-distant-front-impostors.spec.js",
+      "gitBlob": "6ba0128b07a40e5564f3d2be0842cb439e76004f",
+      "sha256": "6d3787b4241f1ba55f9a936f5b21c00624811e6749ed96557301cb07368cea78",
+      "bytes": 22649
+    },
+    {
+      "path": "tests/browser/m01-environment-prop-density.spec.js",
+      "gitBlob": "3aa913587938a8189560bdc1b966bbe01065b4a4",
+      "sha256": "1425ead32a5e18368601b8396adc93986684a7e4b6a9860f32a7bea411cca8ac",
+      "bytes": 6295
+    },
+    {
+      "path": "tests/browser/m01-environment-quality.spec.js",
+      "gitBlob": "a037fd6364ab0a594380ddca605b6ff39d54ce25",
+      "sha256": "6729c6e6b76bbef699c7eefa0ece175ce892961b730d664dbf9fbf043cd4d29d",
+      "bytes": 892
+    },
+    {
+      "path": "tests/browser/m01-field-structures.spec.js",
+      "gitBlob": "124ecd37ce5e61c90e324dea74db1934870e68a2",
+      "sha256": "9e922b8dc4331c5648f24f2dafa7c02b4419343e2bfe48734dcd1cde2aa3e3a7",
+      "bytes": 14665
+    },
+    {
+      "path": "tests/browser/m01-hud-presentation.spec.js",
+      "gitBlob": "2e792109ec454cdb574f36b1aa6008a025513465",
+      "sha256": "c703f955e041b60cb9c9e9d139c2a0ac6c8c54c1f877e44219ef7ff416f762de",
+      "bytes": 7051
+    },
+    {
+      "path": "tests/browser/m01-lighting-dawn.spec.js",
+      "gitBlob": "9d1355f2e1f0bd829f7c7b3701701ed6f83c7e25",
+      "sha256": "74ea88fa8fe6fc712264aaf650d660074e2a010c0b8f7c688e72e37f3377629d",
+      "bytes": 8220
+    },
+    {
+      "path": "tests/browser/m01-locomotive.spec.js",
+      "gitBlob": "5f22e49ce28fada4a0ac691d8f3ff9e60684d346",
+      "sha256": "d445055b049569aebde6804079ac97a07e8aa81669f4cb73e8a2e677c6c562f2",
+      "bytes": 2413
+    },
+    {
+      "path": "tests/browser/m01-material-atlas.spec.js",
+      "gitBlob": "de1185f47e3f5b939ee8e8cdbeaf85a9e8beb629",
+      "sha256": "fd08a9376d22e43365eb6bc67b97f4c4442dd612655a787b86e8bf30a68bdd4a",
+      "bytes": 3236
+    },
+    {
+      "path": "tests/browser/m01-mg34-prone.spec.js",
+      "gitBlob": "732e665fcb18d453a28cfb515326b731006f665e",
+      "sha256": "975d3f8402e8d546a7ed714569d5cfc3f9805b8aabd07b552395f1775f8dae37",
+      "bytes": 5399
+    },
+    {
+      "path": "tests/browser/m01-panzerzug.spec.js",
+      "gitBlob": "62524931b2f6c4be797ee66a738be70a2f6a7cfd",
+      "sha256": "09e2b3de9d1cfb428a14d783dd872f6ffcacd605cf71783d532b6ae53314f69c",
+      "bytes": 2278
+    },
+    {
+      "path": "tests/browser/m01-player-shot-feedback.spec.js",
+      "gitBlob": "3e429dba557450b30aa8fea29a0d80a45c5d5865",
+      "sha256": "521266b1cc614e4011a888e018e1b5a8f25eb3f514a6201519df961aa8941b79",
+      "bytes": 3075
+    },
+    {
+      "path": "tests/browser/m01-postprocess-grading.spec.js",
+      "gitBlob": "cfe7ad42c68f0288155cf7f80f8c2abf4557c0fe",
+      "sha256": "62ca9b96ed6ab84901bc4c1fcce02042ee990ab5e5e93821ee3b511192d18fcb",
+      "bytes": 31248
+    },
+    {
+      "path": "tests/browser/m01-rail-props.spec.js",
+      "gitBlob": "a3f427265d858d2953eb6f2358c940cb48dd7435",
+      "sha256": "aed2182bd9269a9ab28250292b492e4cda2f0d888e77f1a2ee8ebd32f5c222af",
+      "bytes": 10219
+    },
+    {
+      "path": "tests/browser/m01-relief-horizon.spec.js",
+      "gitBlob": "9a2a5cac477c373c4169505c1082d8c236c2bad7",
+      "sha256": "e363257a1d327a3341f000a34627c813511d9c9548529c65699bd8c96dc8e83a",
+      "bytes": 10406
+    },
+    {
+      "path": "tests/browser/m01-soldier-visual-variation.spec.js",
+      "gitBlob": "2452585cd692a53ba9285d22f3f28b9205c0a758",
+      "sha256": "fcfe0f51dec6ab25acb6c9094bed15257259948e3d68a2fd3beaf8890cfae9b0",
+      "bytes": 5601
+    },
+    {
+      "path": "tests/browser/m01-station-architecture.spec.js",
+      "gitBlob": "32e398d0cb7bbe083af55b35386a3891a4edafe6",
+      "sha256": "ffbb46c8752ac7f792b1eee50c053f1ef0d46bfef844349057386b818a8b4e1c",
+      "bytes": 4929
+    },
+    {
+      "path": "tests/browser/m01-stuka-dive.spec.js",
+      "gitBlob": "1e11f10ca6cea868f872f62c291aa1ab4d0291df",
+      "sha256": "21f4dfc77e8a7819dac3b9b0ba54053051f67d18315646e307b8739aacc3ace1",
+      "bytes": 16950
+    },
+    {
+      "path": "tests/browser/m01-terrain-war-ground.spec.js",
+      "gitBlob": "99917af12918022eeee9b7e667caa7ba832b6802",
+      "sha256": "bb0cf8a414597443f076ac09207ee997f6e8d35ccd005588e88e52306e9d0ba8",
+      "bytes": 15683
+    },
+    {
+      "path": "tests/browser/m01-train-consist-polish.spec.js",
+      "gitBlob": "b633dd618599f9aa16ff568122e90cdf3321a971",
+      "sha256": "bd6ca2877005c70b683a8811950365e30ba408629ee67f7bdd7125eebe73afc0",
+      "bytes": 8796
+    },
+    {
+      "path": "tests/browser/m01-vegetation-kit.spec.js",
+      "gitBlob": "7dee0ef729c547aae53063cf64cac7bd02325a1d",
+      "sha256": "f3b1c49877745d5634bf76bbc2f2e2293bd091ed34b67b08f5ec8fa3c120996e",
+      "bytes": 1151
+    },
+    {
+      "path": "tests/browser/m01-vegetation-lod.spec.js",
+      "gitBlob": "e0752f7805e3f62a4db4ccd9afb285e51d82936b",
+      "sha256": "c50a32d61f1e7f557c0b297ef391818e43fc24837dbdbab83bcdf855346eb8ba",
+      "bytes": 9698
+    },
+    {
+      "path": "tests/browser/m01-vegetation-runtime-v2.spec.js",
+      "gitBlob": "daa93bf95b3bfb28a03e2e8f3a2c159f06570a87",
+      "sha256": "97b9f5173a6353b5f9bf78b880dd07842c0370f3e7d289ac57768b4d5da687d7",
+      "bytes": 15512
+    },
+    {
+      "path": "tests/browser/m01-viewmodel-feel.spec.js",
+      "gitBlob": "2012c6d4cf2a4ccea3a9198303101684bfb0645b",
+      "sha256": "d9031bc278ee4a7ba220b985d06bc45b99a3714a24ccdec948c01c6b3d74493a",
+      "bytes": 12647
+    },
+    {
+      "path": "tests/browser/m01-wagon-runtime-integration.spec.js",
+      "gitBlob": "0ac5e3fa8852bbc9dc8809bfaacc38ea59e93c94",
+      "sha256": "6d560f567b59a67d2fc7421925e065b6c33df81c23baad8545e8395b4fb22b1c",
+      "bytes": 5568
+    },
+    {
+      "path": "tests/browser/m01-water-vistula.spec.js",
+      "gitBlob": "422f3ca2891c7bb2ef513577878c9fa852d47b69",
+      "sha256": "0eac51b9e6878123722bab33a63ed96f0ca38f66ef235a24c5aae091ed94081e",
+      "bytes": 17232
+    },
+    {
+      "path": "tests/browser/m01-weapon-presentation.spec.js",
+      "gitBlob": "b8b224f5f0cd4dd204fd05f46a43e5fdca41c669",
+      "sha256": "72d0c626a22afaf64caf79c71240cc10489ae51533141dfc502fb9ede1db4af9",
+      "bytes": 7320
+    },
+    {
+      "path": "tests/browser/m01-wz29-viewmodel.spec.js",
+      "gitBlob": "b3efbf2b4716ed0ede6f733d4e6fec6c560d737c",
+      "sha256": "151fae4daee0532027e17b501291e16c3de80fb840fe49a0b54f8b06d45de7a3",
+      "bytes": 2587
+    },
+    {
+      "path": "tests/browser/m01.spec.js",
+      "gitBlob": "23372b787811629b772235a5997b7e9ab36607ed",
+      "sha256": "c3ec7e24f34333ca43ffe84043d31a9d2dbc9227e01e45fa7b1c35130359acfa",
+      "bytes": 51731
+    },
+    {
+      "path": "tests/fixtures/m01-anim-gameplay-baseline.json",
+      "gitBlob": "7d53b0e10dc9b32b7783c6a47b7554a65a6ff050",
+      "sha256": "c775d6d46d8401c8284a93fca290fbdae1cb34966a9e8d32743829fb6e40e3c8",
+      "bytes": 11102
+    },
+    {
+      "path": "tests/foundation.test.js",
+      "gitBlob": "8acd36cb3807877264abf8edae79296d833bf38e",
+      "sha256": "522f8b1cc72594379a9ec774a5d6f58886e75cf079eebb289e6ba1b702cd7dd2",
+      "bytes": 6503
+    },
+    {
+      "path": "tests/game.test.js",
+      "gitBlob": "93dff6adae07b04e851677d739fba6788a152483",
+      "sha256": "205d94d80e07aea81758a9ee6eac6904f50048367257e46879874630279eaf92",
+      "bytes": 4394
+    },
+    {
+      "path": "tests/helpers/fake-audio-context.js",
+      "gitBlob": "b6160eecaf73f073e4886f17db0240e02e79ef2f",
+      "sha256": "0f22f1fa4fed216fd3fa5cfd166a7c9ebc3e1ee178f3e73bd43b356932669fe6",
+      "bytes": 2858
+    },
+    {
+      "path": "tests/helpers/m01-anim-baseline.mjs",
+      "gitBlob": "2b5051d59094b8772a142c04cce0b4e2e9da7473",
+      "sha256": "ba4a492af3505e65699efd9701d356fa16cadd1e4a97f0a6535c2a2efcc928e9",
+      "bytes": 2840
+    },
+    {
+      "path": "tests/helpers/m01-animation-contract.js",
+      "gitBlob": "4c1a177dd3c38f207c8c1043f5ab6e4f412ff180",
+      "sha256": "f400cdc1d98fa66165c0dd8d9dd626a3a4686ead4a89b6ec682543e1f4111a6e",
+      "bytes": 1061
+    },
+    {
+      "path": "tests/helpers/m01-cover.js",
+      "gitBlob": "2b3098d3dc4317a8fcb1acae09bcc7db4b8ce66a",
+      "sha256": "5c9530c044fccbfc6505a2ef07890d577593c21c58a68898c147741e764f01fd",
+      "bytes": 4972
+    },
+    {
+      "path": "tests/helpers/m01-determinism.js",
+      "gitBlob": "1320197e696fa214fcaac73a3e2089bc7d94aee7",
+      "sha256": "96556c66e75ee02d3782662772d4585e46b843eca970d0ccbfb3200f4c9ad3c8",
+      "bytes": 2370
+    },
+    {
+      "path": "tests/helpers/m01-route.js",
+      "gitBlob": "8ec20245b0ceb25475f44ba6bce7342d319e13e6",
+      "sha256": "1fc075cbf677e864221466f1819a927b6b057417d0cdbed8be2655c869a53b92",
+      "bytes": 6794
+    },
+    {
+      "path": "tests/helpers/m01-viewmodel-fixture.js",
+      "gitBlob": "e8ffa861434c4e63dc0b4de544f5cd23e2b13d27",
+      "sha256": "701f0281f1767fe8136c68acf6e7612c1dc48c8f915affee487dd174d379efc3",
+      "bytes": 3453
+    },
+    {
+      "path": "tests/input.test.js",
+      "gitBlob": "75a6dc0927f3798811199a050aba3f9f20594e3b",
+      "sha256": "b853b9b6abb5f2bfac88ecc15659fc3811d3392cd634185eea011d39f683d396",
+      "bytes": 2393
+    },
+    {
+      "path": "tests/m01-aircraft-runtime.test.js",
+      "gitBlob": "9479fe73b0b95332af619a089309bfc8fbc14640",
+      "sha256": "19c6cceb9c49aa9dc8e37abe20d19b47a0a90c44324ceddcbeac66365882c0b6",
+      "bytes": 11775
+    },
+    {
+      "path": "tests/m01-aircraft.test.js",
+      "gitBlob": "b5b93e6f4e810bb65e7fee8b27e32eca5b1f72e1",
+      "sha256": "cf58ea5576a86b7155028b6e54267e7c65fa5a921b3e2b3304325e8daeedeeed",
+      "bytes": 19630
+    },
+    {
+      "path": "tests/m01-animation-contract.test.js",
+      "gitBlob": "41ee72d9f11011d35b0dd212cde7abb172870de7",
+      "sha256": "4515bba905b8b3bd2ea201a2776f7bce00d54d3cdcab639b4d10e45ac8c9f6fc",
+      "bytes": 13836
+    },
+    {
+      "path": "tests/m01-animation-player.test.js",
+      "gitBlob": "3656e223d4e60d6f94e79001a31c9283e185eedf",
+      "sha256": "d7f3f669b03038db16ca74c8b29ae16256e86513d2e7ae2d75c52f2910f566c8",
+      "bytes": 15463
+    },
+    {
+      "path": "tests/m01-animation-resolver.test.js",
+      "gitBlob": "b3d06300c1f26828bb274228915402fb4c58d999",
+      "sha256": "c8169ff0137b535651a185f82ee9485a6fe0c3ca990044211a5722a9aa1558da",
+      "bytes": 21242
+    },
+    {
+      "path": "tests/m01-atmosphere-runtime.test.js",
+      "gitBlob": "01a928512d92899efa87293f26344a734a15ee54",
+      "sha256": "4536c4633b3cc42dd72c27dff5cbb9ea16eb4d1b8688463042253bd0d108fd06",
+      "bytes": 1499
+    },
+    {
+      "path": "tests/m01-audio-production.test.js",
+      "gitBlob": "eca0595fed3de9e84410f282c257699def9b732d",
+      "sha256": "46ff27aaa66e058cb9a20b6245f0a9bf307d9c0f7970c1f4c2dbf26ea5a1f7b3",
+      "bytes": 10529
+    },
+    {
+      "path": "tests/m01-battlefield-audio.test.js",
+      "gitBlob": "4790999df844c2e40e264fcef7db91d682341e34",
+      "sha256": "499883c2b72a1396f852278ee89fea8f8baa5e0c2882dab6dcd65994418a7425",
+      "bytes": 31789
+    },
+    {
+      "path": "tests/m01-battlefield-fx-polish-v3.test.js",
+      "gitBlob": "bd2485293b610d177ec1970655e30cdba3a103fe",
+      "sha256": "23901e280a580f045d2af14306bd3782a4488804c19dd9721a7f789da70e7334",
+      "bytes": 5646
+    },
+    {
+      "path": "tests/m01-battlefield-fx.test.js",
+      "gitBlob": "b8dd264e356bdb20cd450ba3cff1a8f7248f4e24",
+      "sha256": "2e399b9ca9754178ccd59e963cc357eaff7e0964d2c7eeab9f56d20d552e1176",
+      "bytes": 2632
+    },
+    {
+      "path": "tests/m01-bridge-portal-polish.test.js",
+      "gitBlob": "e02b00dca16c6f2336b7d756951ddbcfda4a598c",
+      "sha256": "d129454b8b3f3723f225d8362298b69d982692142b431063a6145ba780462b52",
+      "bytes": 5247
+    },
+    {
+      "path": "tests/m01-bridge-structure.test.js",
+      "gitBlob": "ded5b9fab7971afdab222cb1e44a7c8299a2bbb0",
+      "sha256": "6ef3ba2ba38cf5b95ca86a83ba7954323781a1643ec29eaf3d5da723161b2cd1",
+      "bytes": 13712
+    },
+    {
+      "path": "tests/m01-bridges-glb.test.js",
+      "gitBlob": "0dffd71cbc4e53f3c3c7cb2143cdca526a6302b3",
+      "sha256": "c01b17c2e673e2b31c4fd03a1bbde41e79cde6196c3602f387b918ca0970a1c9",
+      "bytes": 8539
+    },
+    {
+      "path": "tests/m01-character-assets.test.js",
+      "gitBlob": "ff28caa6e3903496addbfda5d7a151c54a01a71f",
+      "sha256": "ce292c25f20014fca47d876960f5a1ba12ccfeb6013e7d2d6b84aa34cb137f95",
+      "bytes": 18184
+    },
+    {
+      "path": "tests/m01-ckm-placement-migration.test.js",
+      "gitBlob": "23db1399bc2026824babc7bc24e75b6007245291",
+      "sha256": "5f903fff63b91242de4f9dc2102182d91a723e962c75ce2a7ac1fd8c0515fe6f",
+      "bytes": 7726
+    },
+    {
+      "path": "tests/m01-ckm-runtime.test.js",
+      "gitBlob": "86ea830d0ab92647934d5a0f1c1403048785b84a",
+      "sha256": "f86a4e8093e9e49f75e44011bcfdfbe46cd8287e097d34eb811af256a4b76d3c",
+      "bytes": 5275
+    },
+    {
+      "path": "tests/m01-ckm-wz30-glb.test.js",
+      "gitBlob": "22b58543b29cdc5a9fde9a1dc7c6ce9efa3fe2d4",
+      "sha256": "72f2c1dcaa87def6a8061a1e08803602a0f6c28e5034876d3e153925cbfc6f65",
+      "bytes": 14503
+    },
+    {
+      "path": "tests/m01-combat-feedback.test.js",
+      "gitBlob": "4aadb3fb31bcf8db2fea4aa533d7f15f59c39185",
+      "sha256": "cd04ae85fa5db6d74c813a40552272b1641ca7848b6dcee8152fc35b99b0fc41",
+      "bytes": 5939
+    },
+    {
+      "path": "tests/m01-consolidation-lifecycle.test.js",
+      "gitBlob": "35368a9e7331e957bb6713a559fe97fc50a6ba88",
+      "sha256": "a53d4da98d46d1049067290e2a7da8a22f3a7bfcbe63974ff77e586450379e7d",
+      "bytes": 4931
+    },
+    {
+      "path": "tests/m01-continuous-fixes.test.js",
+      "gitBlob": "9d4d3f07b9fda96e0f4083f61b991d75f46dda77",
+      "sha256": "5adcb599646116e2597937282a1d16fbf24cdf8affa7d5841d9a193958ab1e9b",
+      "bytes": 12600
+    },
+    {
+      "path": "tests/m01-cover-combat.test.js",
+      "gitBlob": "c7380bdbfd6ae8d43effdff1312a0e5cad5b6b4f",
+      "sha256": "765a4b1ad924b416b36039ef4b01f16c415e2cbf1ab4d3312af677b660b2f248",
+      "bytes": 5861
+    },
+    {
+      "path": "tests/m01-cover-origin.test.js",
+      "gitBlob": "03d789b697c46d756f5538d3d5b129c2aa7009d5",
+      "sha256": "0efe8850343d6a2f5873b3b55be2ff0e7bf337270ca698fd6419a696da22890f",
+      "bytes": 3185
+    },
+    {
+      "path": "tests/m01-cover-threat.test.js",
+      "gitBlob": "e9f8a251058a71b43f3f4eae18c4b640e2598c46",
+      "sha256": "bc33b6dc352f01dbe2f6b3dd8f9ef39bd5084bc948b41b3bf71db7914c42297b",
+      "bytes": 11242
+    },
+    {
+      "path": "tests/m01-damage-decals.test.js",
+      "gitBlob": "8c26b08c305ae1947f116418344448cc1034c648",
+      "sha256": "941c3edae36f4bdae94f25a8dac7a0da1c637c1574ec0874b933b4839cdde782",
+      "bytes": 30504
+    },
+    {
+      "path": "tests/m01-demolition-cue.test.js",
+      "gitBlob": "0c25cad429ac7b21e657e15ffb9a13e1a064de93",
+      "sha256": "b9e2637c6a9ebe83e2024ef01395fc95f1fc6cd0d8727db59d1313d745d8797a",
+      "bytes": 2423
+    },
+    {
+      "path": "tests/m01-demolition.test.js",
+      "gitBlob": "d65f7a30c9771995388db49f1610067f6cc2bea4",
+      "sha256": "222ae3935c082876a141d746869ae8b51458eb86b5fb05ed065495b9b43ae702",
+      "bytes": 36330
+    },
+    {
+      "path": "tests/m01-environment-props.test.js",
+      "gitBlob": "e43d770b31e60d978c1597973926a9983329f06e",
+      "sha256": "6897d6641ab3c9843eae0a6cd63eda66396c5b0983b3839d0fbc063c5ed6b905",
+      "bytes": 3869
+    },
+    {
+      "path": "tests/m01-environment-quality.test.js",
+      "gitBlob": "be1d9ed780fb002d023e2975703cabed07d77875",
+      "sha256": "9ad1b17e65cc7f09fb47918bf9ef5d3d8ec703638ca49fe1a5d429334c46faa0",
+      "bytes": 715
+    },
+    {
+      "path": "tests/m01-environment.test.js",
+      "gitBlob": "67adf04965bcf554360f4506de90603bec73b6ec",
+      "sha256": "b43aae4ae36243e85014325c0db9b579790705536f1ce2b99a5c000bfc4909a5",
+      "bytes": 985
+    },
+    {
+      "path": "tests/m01-far-landscape.test.js",
+      "gitBlob": "0c5d1132e01ace6ccc9b4a829f66e7d67e94da8a",
+      "sha256": "2ad9b8fa14a9a5c53a3144cd5028c8c23554279f8b5e8b6bd3c6afb5a7f4677c",
+      "bytes": 3547
+    },
+    {
+      "path": "tests/m01-field-structures.test.js",
+      "gitBlob": "eb1114e20a22e10dee4c1cd1d34ec969ecf13cdb",
+      "sha256": "ed40119271a702a50c45046d8674de9d62457aebc1ca12200c8f235eaa81ae0a",
+      "bytes": 9835
+    },
+    {
+      "path": "tests/m01-grading.test.js",
+      "gitBlob": "2e3baad3f7523c2e2cbaa65eaf41d149e779effb",
+      "sha256": "db73e8e467ff6c0d99e87c1bb2369e38569edd40555dd397ed4699aeac0afbb4",
+      "bytes": 18196
+    },
+    {
+      "path": "tests/m01-hud-presentation.test.js",
+      "gitBlob": "42ed913c709ea58e1296a674fd36421c03138727",
+      "sha256": "e3a7e7c612e01a632091142b45c86411bda7e41b05ad7d7fc657deb8e6c7e0c2",
+      "bytes": 9506
+    },
+    {
+      "path": "tests/m01-impostors.test.js",
+      "gitBlob": "8f9267574e79fa8567fd4c7124754ef81103fabb",
+      "sha256": "13680cfabac490f8ce25982eaa3fb3bae57271d728eab4c6f40ec4bc04de02aa",
+      "bytes": 9855
+    },
+    {
+      "path": "tests/m01-ju87-glb.test.js",
+      "gitBlob": "2455860a0c5768934b86dca48d316b550154e118",
+      "sha256": "657d37deb0d50bbaf63e8685cc17252d582acedc4773eadffc9ab32a2e8eca9f",
+      "bytes": 6469
+    },
+    {
+      "path": "tests/m01-lighting.test.js",
+      "gitBlob": "94b28ebe443200154043006497fcdbdeed3f8c69",
+      "sha256": "90d99b943309bf698b7d2f764a2c446b2ed975f4c9e2ed87ed1a8197fd95c025",
+      "bytes": 16988
+    },
+    {
+      "path": "tests/m01-locomotive.test.js",
+      "gitBlob": "13167346033d80bb793f4ec2c0ddb653378ce2e4",
+      "sha256": "884d92bce48cd13232640173eac0b18b0c37c103874ffc4599a04200ec219f31",
+      "bytes": 7711
+    },
+    {
+      "path": "tests/m01-material-atlas.test.js",
+      "gitBlob": "7127a0dce38ac547117fbc11d303b21898548423",
+      "sha256": "f7289f3f72778439426029cef3213f66cd5a8e2fc82de8ca03f08fd54c027b31",
+      "bytes": 6349
+    },
+    {
+      "path": "tests/m01-material-authority.test.js",
+      "gitBlob": "3e45f5a2aa6265a1633f41deef2cde79280f200e",
+      "sha256": "d90a1b24a3a4300924c8a5a3fa148eb07387d3e16a316aa40111ad21290ef65f",
+      "bytes": 4185
+    },
+    {
+      "path": "tests/m01-mg34-glb.test.js",
+      "gitBlob": "5d1a8b7820f39a7323411285ad7eacd706fee115",
+      "sha256": "f5ce5d41e0ee7dfb2ae6603b579d53d354020e272274bc227d2b599834987112",
+      "bytes": 7882
+    },
+    {
+      "path": "tests/m01-mg34-prone-glb.test.js",
+      "gitBlob": "8caabdbc1b4f588dd37f9f97383e4c7a03158e84",
+      "sha256": "ead5fea75100ad10f9b63c1b54c69b018e2cd922f62a40e3da8a325055642b3f",
+      "bytes": 15341
+    },
+    {
+      "path": "tests/m01-mg34-prone-presentation.test.js",
+      "gitBlob": "8f887361f59609a1ec68abdaae2cbd7f4f19bba9",
+      "sha256": "7e325a6bf52cd52aba7b4db984e2b8a5bc25f4d5fc1f8abd27b4ed1b9dccc1b0",
+      "bytes": 7582
+    },
+    {
+      "path": "tests/m01-mg34-prone-runtime.test.js",
+      "gitBlob": "985aa2778dddc0ca41e1fd8fdf438503112444f5",
+      "sha256": "74595c468a20641e34c1e60cc96d23a834044bb3395c0fdcce4ece4ca66e6e2e",
+      "bytes": 12448
+    },
+    {
+      "path": "tests/m01-mg34-prone-spatial.test.js",
+      "gitBlob": "c5eb80fc6168ff76bfbba5632bce47f5bb2f261e",
+      "sha256": "f5709476db6eb2e7e404fbfc74d9de5f2c94fe98b6dbdf257a1c03345b66adcb",
+      "bytes": 4917
+    },
+    {
+      "path": "tests/m01-panzerzug.test.js",
+      "gitBlob": "61a76c9386037c62fab84e68af0c634fed89c5a6",
+      "sha256": "c177526760b242a0e5a135300436bb54e2f1aea714925ae166304534d5451c1b",
+      "bytes": 7696
+    },
+    {
+      "path": "tests/m01-player-shot-feedback.test.js",
+      "gitBlob": "5ec8ebf6cb8b212cd7e987c3aa8c7cd9d5898e12",
+      "sha256": "7f24922ddd4eb4e76f96fd1928d73ed31dc664bce3943f677489da19e6ac28eb",
+      "bytes": 8985
+    },
+    {
+      "path": "tests/m01-poses.test.js",
+      "gitBlob": "22382afc30056879fadb1884b0ac9913d5b87338",
+      "sha256": "5240b00f363dcc9c374d82275a98768b5621ff3a97a3d80e92f9dec59f54e27d",
+      "bytes": 10434
+    },
+    {
+      "path": "tests/m01-props-kit.test.js",
+      "gitBlob": "09b3ab3eb6c471eb5595ed8814346812a2b39846",
+      "sha256": "3d47b66deb65ebe94c8d2f8327aa24be4760ce91f1bbf04db0a15029aecc13b6",
+      "bytes": 14686
+    },
+    {
+      "path": "tests/m01-props-runtime.test.js",
+      "gitBlob": "c42a0a047e690abc5acc034280966e2cbd37dffa",
+      "sha256": "cad6e28a012d0bf51668110705e9ec4a61a366a8f0b9bd86aa762d231370c676",
+      "bytes": 7085
+    },
+    {
+      "path": "tests/m01-rkm-wz28-glb.test.js",
+      "gitBlob": "c4e301ccf83dfc2c4bc5eb280ec408d1655b1ebe",
+      "sha256": "564bec00265e396106e33be9948f0e27e80e37e34f034ab44ad96fb1e04a10cc",
+      "bytes": 4687
+    },
+    {
+      "path": "tests/m01-runtime.test.js",
+      "gitBlob": "290a6ab0ee67cf7ab7939c2ca1aa5ddf25a08796",
+      "sha256": "5029c55889a53f84dd2752de03a6836b828e8c3091682ef2eca4a85402b4b5a4",
+      "bytes": 13109
+    },
+    {
+      "path": "tests/m01-schema2-determinism.test.js",
+      "gitBlob": "f00c36d3d21ca53a602e8d7d3ce901c5bae67124",
+      "sha256": "2c5973ad28722dd9f27ebf56cf5358b4ec510b8042d7bc8f2499114a7cf5de3e",
+      "bytes": 12594
+    },
+    {
+      "path": "tests/m01-simulation-boundary.test.js",
+      "gitBlob": "b3fe3e898135756bedb027b9ee41b595f044808f",
+      "sha256": "a9e21a173605ff903be4451ed736b5797d67f9cddb91a3d8c1a921698f2242c0",
+      "bytes": 2692
+    },
+    {
+      "path": "tests/m01-soldier-motion-clips.test.js",
+      "gitBlob": "870a577939713ac52c3d9313bc2f60f9c2dd3ecb",
+      "sha256": "44b4b78a64c3f543cc1f5d9171b71f5406e697d18e43af10553e946e91c13aa1",
+      "bytes": 10783
+    },
+    {
+      "path": "tests/m01-soldier-visual-variation.test.js",
+      "gitBlob": "ba6675bb1ace7b5f15bb9033d4085cc4794cc1fc",
+      "sha256": "fc7deadef99c88ce19f60e027652e1378a3ac5e655365cea6420b390bbb65cfb",
+      "bytes": 11903
+    },
+    {
+      "path": "tests/m01-soldiers-glb.test.js",
+      "gitBlob": "78500e0bc094e44260a2284d147a7477ce3a6b9a",
+      "sha256": "b198fa166cbc78c627c8fccb569f3320ac83ed2459e90cb98b73d50659681188",
+      "bytes": 9625
+    },
+    {
+      "path": "tests/m01-station-architecture.test.js",
+      "gitBlob": "230ffb464b0e6a3b2f38feac1e3845bcce9464db",
+      "sha256": "fd1cec00be385fbb5960f9a54927039ca2cd0f242550f6847892f462482dc05a",
+      "bytes": 10318
+    },
+    {
+      "path": "tests/m01-station-drag-runtime.test.js",
+      "gitBlob": "7a32ddfc2e116ebcda41be197d7e098959abfcb2",
+      "sha256": "cebdd18d71a60f752be2ef272553d420faf3f5139a2480f23a41875bd6d3c64a",
+      "bytes": 5594
+    },
+    {
+      "path": "tests/m01-station-drag-transitions-glb.test.js",
+      "gitBlob": "748f73e9f7af88cf3660d225da9b075b47805b35",
+      "sha256": "c3573ca95a94e0a92e9328fb111a5a266da45825182109201d6a75514d29b698",
+      "bytes": 12578
+    },
+    {
+      "path": "tests/m01-station-evacuation.test.js",
+      "gitBlob": "85e3db41f021f51316e88835bc11933c075a50cb",
+      "sha256": "421386b33a2f941e128d7026f92b7f58b6de171d8cbee39b17be7fcee756e437",
+      "bytes": 9566
+    },
+    {
+      "path": "tests/m01-support-runtime.test.js",
+      "gitBlob": "81cc6b8b2964e3aa8e073f3501c729ccbc71ddd4",
+      "sha256": "26165ae4f762051d3e159e3dcdb780eed77bcfc8a03257f1b7a0d8840220d676",
+      "bytes": 10138
+    },
+    {
+      "path": "tests/m01-tczew-data.test.js",
+      "gitBlob": "10fd84a8a437f5708714e2ff89ebcdaee02a3faa",
+      "sha256": "e12c6457065ea336ff6e078d502bd3ee47256a3353e10e21054e7402022864ca",
+      "bytes": 16711
+    },
+    {
+      "path": "tests/m01-terrain-envelope.test.js",
+      "gitBlob": "305b1ee27a06c1ae55107d11468b70842b0cd0c2",
+      "sha256": "1d12251f29875eda144fa737160f49d4d1ee7ae2d342204da16ba5a3aa5aa2ca",
+      "bytes": 1376
+    },
+    {
+      "path": "tests/m01-terrain-mask.test.js",
+      "gitBlob": "66b770d9cf71905b87ec8069ec38e93bc9e3dce1",
+      "sha256": "a6631d7d7b4f87c058b9b02018b2565319a496ff8024ca279d342e7b4f9a5fa4",
+      "bytes": 5661
+    },
+    {
+      "path": "tests/m01-terrain-material.test.js",
+      "gitBlob": "82813a3a4320d73b4f93d01c506f4692b7611de0",
+      "sha256": "4a7d7bd2bddc9536203ff8da3082b38cae70f41f4794eae87e386f817d959d88",
+      "bytes": 12871
+    },
+    {
+      "path": "tests/m01-terrain-relief.test.js",
+      "gitBlob": "d79ec02377efc8e4d79dc2d82b2edde3cef17678",
+      "sha256": "debc586343cd9dda65f41e260999261b755c3f6cce3df0ab7e161ed14426cf88",
+      "bytes": 5245
+    },
+    {
+      "path": "tests/m01-terrain-textures.test.js",
+      "gitBlob": "4a714420390b0a49e1ad58a3c3a108012dee4c87",
+      "sha256": "b1e573e4fefee71b9a13e2563c660b463a8ef4a92a5eff41e9ef985b17bc56fc",
+      "bytes": 6260
+    },
+    {
+      "path": "tests/m01-track-bed.test.js",
+      "gitBlob": "3cd9f5ae613860db96cf73747f40f83fe3fb7c9c",
+      "sha256": "53f2a72d646c7c528ddba10ad2a80f72a7e8148e215597b2b5acc3e6db197b51",
+      "bytes": 16825
+    },
+    {
+      "path": "tests/m01-train-consist-polish.test.js",
+      "gitBlob": "e162846058b718aa16a74c375fa24d4c48670591",
+      "sha256": "f6bfeaa3b03ad6d12c61117876e17cca2eb552ef3a3174b31bebbd272f3f7100",
+      "bytes": 30572
+    },
+    {
+      "path": "tests/m01-vegetation-glb.test.js",
+      "gitBlob": "06da317000e95e4e2efe2d9aad0443edf728415c",
+      "sha256": "b79a30882236f38a325d2b9649b091af2595f867366bdc72b686f7ffab463479",
+      "bytes": 3457
+    },
+    {
+      "path": "tests/m01-vegetation-layout.test.js",
+      "gitBlob": "5c7103d214143e5d926a455ff1f96b68a9f6789e",
+      "sha256": "6f037e66e6c070d0ab9a087d40ae0958231e7b5a0091c4d5370b107ae4205a7c",
+      "bytes": 6845
+    },
+    {
+      "path": "tests/m01-vegetation-lod.test.js",
+      "gitBlob": "274d62592a703195db8f527f5cadf5192ef73ffa",
+      "sha256": "3aa6df94f5b9ff3dabd86478ec915f63d3070e7ede3445a8a51790480b3bf6fd",
+      "bytes": 3702
+    },
+    {
+      "path": "tests/m01-vegetation-runtime.test.js",
+      "gitBlob": "6c7a194752bca7ce31256445ef8d88058b9c0207",
+      "sha256": "437891c3e8ba1115ea09125fb611b5accef579d4ead7c7a548f5e35de8bb57f5",
+      "bytes": 6893
+    },
+    {
+      "path": "tests/m01-viewmodel-feel.test.js",
+      "gitBlob": "3b96f0c8df929b6d2e8f3df7d2ec7f797fea6a69",
+      "sha256": "e022804efd576682083c1a4ff89ee13f877126f78cf17b13fa30643af2766c1f",
+      "bytes": 26577
+    },
+    {
+      "path": "tests/m01-wagon-damage-glb.test.js",
+      "gitBlob": "3120f9dfa274dde67cbe3553581cd1fa65529487",
+      "sha256": "8a96ce962b5bc5618dde680a37d082976856a5eeee30437466efcc90186655d6",
+      "bytes": 7345
+    },
+    {
+      "path": "tests/m01-wagon-runtime-integration.test.js",
+      "gitBlob": "d3101de89ee22b130aed658ce3bbaeb384f473eb",
+      "sha256": "bae55c230a0a766832acf2c502729d7008972a97daaccadaf9c70791c18bec31",
+      "bytes": 8153
+    },
+    {
+      "path": "tests/m01-wagons-glb.test.js",
+      "gitBlob": "4131eb64a111b820415f8b4e0a2df789e70c5e8c",
+      "sha256": "871a8cbe7fc0d1cc2cec732cf2651584be25b7b58351945aea577a105dfb6f7d",
+      "bytes": 4695
+    },
+    {
+      "path": "tests/m01-water.test.js",
+      "gitBlob": "6ac16ff55fa31cb24cd703a08ccf5f1e3293a5fb",
+      "sha256": "9b457e01b4d00f85c557253ddf0e9d74e44e02e4ea05f1bcb0c6db8fed9b9e4c",
+      "bytes": 9603
+    },
+    {
+      "path": "tests/m01-weapon-presentation.test.js",
+      "gitBlob": "d525dfe347d62354bdf4150beb5e022619a2a350",
+      "sha256": "560df56c437aab483174698629566426d4d51acc13f1e25ad9dfefd9676797fa",
+      "bytes": 35724
+    },
+    {
+      "path": "tests/m01-wz29-viewmodel.test.js",
+      "gitBlob": "9511ce9046a18037d70c62ef50056b34311fa99d",
+      "sha256": "eec5811ecc9466d4f5288150cd948071ec6442b8458d52e8f2a370f37ff04a94",
+      "bytes": 12261
+    },
+    {
+      "path": "tools/assets/m01-bridges/.gitignore",
+      "gitBlob": "c2658d7d1b31848c3b71960543cb0368e56cd4c7",
+      "sha256": "4d56952b0fb13bf8f9b6c13a6d4c34a075bac3af447636a1df4335d7576e2f97",
+      "bytes": 14
+    },
+    {
+      "path": "tools/assets/m01-bridges/build.mjs",
+      "gitBlob": "043833f86cefd38298003da8c5bfac92d437094e",
+      "sha256": "5c8fcae1159536ef318fbce1a92132aa17257acf0944956445b6e3f527d1552a",
+      "bytes": 6947
+    },
+    {
+      "path": "tools/assets/m01-bridges/export-colliders.mjs",
+      "gitBlob": "a03c44c12215a2748f0fc67ccf1b07a734bc7ae9",
+      "sha256": "67ee9a5c1872d26bcfcc4fb6be4f5428aa0213ccc5412ce67099f913512ed3e4",
+      "bytes": 1833
+    },
+    {
+      "path": "tools/assets/m01-bridges/package-lock.json",
+      "gitBlob": "fc81198bfd700e3ad333248c4321ff5d3bd65136",
+      "sha256": "de415262f402d2754fe4642a5e8d4a0f5c4b3f302621b46ac377788c734dd0d1",
+      "bytes": 1396
+    },
+    {
+      "path": "tools/assets/m01-bridges/package.json",
+      "gitBlob": "26b11b250072e3521d230216f2efc58f93090484",
+      "sha256": "931c4fc8924d19dc10f8a21794a15786b9afc7fddc52f156a86875b036005512",
+      "bytes": 492
+    },
+    {
+      "path": "tools/assets/m01-bridges/render/render.mjs",
+      "gitBlob": "7306c719a76be29ed91a53bd8504a96c7642a40f",
+      "sha256": "29e425789292d3717e493acd2dbcf45802af2b4349b7c1540549c37fd2e3462d",
+      "bytes": 8404
+    },
+    {
+      "path": "tools/assets/m01-bridges/render/viewer.html",
+      "gitBlob": "f42ede166226f3de090def58c9ed41a47b0eb4df",
+      "sha256": "e477c7419f7e6d6741762330352ddeca6a52185483ba0d7e09aafc49fb073205",
+      "bytes": 1795
+    },
+    {
+      "path": "tools/assets/m01-bridges/render/viewer.mjs",
+      "gitBlob": "bc4c39946ceab174935d9b64e2585a960b43f317",
+      "sha256": "3e5d66ed70da94a84263f7d007027f67e2a2b092812915b021d57e2c16c2467d",
+      "bytes": 16093
+    },
+    {
+      "path": "tools/assets/m01-bridges/src/bridges.mjs",
+      "gitBlob": "b50cb455de6fcb484972d4f8732a3c6e53e6def2",
+      "sha256": "0c316875befcfbc007c74a0d0434c66dd365416771ab08d41e5816db057538e9",
+      "bytes": 29753
+    },
+    {
+      "path": "tools/assets/m01-bridges/src/geom.mjs",
+      "gitBlob": "e4971dacde41c4a24477c99cd6ec298a6c3cde7d",
+      "sha256": "41f3d8cd3cf621f9bd7b91a9be7ef3847d2411bc90018f215af383e9d62f1088",
+      "bytes": 7367
+    },
+    {
+      "path": "tools/assets/m01-bridges/src/state.mjs",
+      "gitBlob": "43dc6dae1b850851125baab157a61a727cd22841",
+      "sha256": "a887e60d28ed8c539f9171fe5d83d3583800cbc60b4f0101c200b12dfb1ba1c3",
+      "bytes": 1138
+    },
+    {
+      "path": "tools/assets/m01-bridges/src/write-glb.mjs",
+      "gitBlob": "ef9f9c2f0f835d6cd33db7d04d89b0c5a42a0637",
+      "sha256": "1e1318820e38cef19a4c1c45c6ba4bd41b7c38f3a99b450202708f8a6c65a2d4",
+      "bytes": 4616
+    },
+    {
+      "path": "vite.config.js",
+      "gitBlob": "ab32eee738af147fb5d0b62809d4b9ba6db95f5b",
+      "sha256": "9325cced82ead0e79028879afe2b7855295d9389f00970296b7570d6074122d0",
+      "bytes": 366
+    }
+  ],
+  "editableSourcesIndependentBaseline": [
+    {
+      "path": "src/render/m01-bridge-portal-polish.js",
+      "gitBlob": "230a86669984d6a25c279928fadadc01b761f59f",
+      "sha256": "be35965bac4de2738253436fecf6c61e2387f7c01ba5b1e477fe7f2ce09e17c4",
+      "bytes": 5430
+    },
+    {
+      "path": "src/render/m01-bridge-structure.js",
+      "gitBlob": "d2b64bc7543b31ab331753e16464705e48ae9b23",
+      "sha256": "d2477ceac805ae74084f1ee28a9216c47574fabae2e50b733a6d7ad6934392a8",
+      "bytes": 31356
+    },
+    {
+      "path": "src/render/m01-view.js",
+      "gitBlob": "a97ca062a581cac0c76beceab3bb9ef0d0e7be1b",
+      "sha256": "12da01a141aa301b0467c484eb94baca7e447c5a8afec1073b278100359e5075",
+      "bytes": 73696
+    }
+  ],
+  "byteMismatches": []
+}

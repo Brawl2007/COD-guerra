@@ -1,0 +1,98 @@
+{
+  "status": "IMPLEMENTED_FROZEN_WITH_VERIFICATION_FAIL",
+  "taskId": "M01-T14-T41-BRIDGE-FINISH-V2",
+  "fixAttempt": 3,
+  "fixBudget": 3,
+  "sourceHead": "b36ad7470ce977deeecab1ae193e51592d4aaf72",
+  "sourceSHA256": "d597f5d79be75be53e98d4589a9e74024b50adb38d6e957d708e1de7d135fa2c",
+  "sourceInventory": "runtime/fix3-resume-frozen-source.json",
+  "implemented": [
+    "Original material and geometry-derived impostor generators and sidecar manifests; painted ORM metalness .12 preserved after exact regeneration",
+    "Bridge material owner keeps inherited T31 contact/discard/cache/metadata and weathering, reserves the normal chunk to sample generated metre normals exactly once; bridge road consumes its own standard channels without shared terrain shader",
+    "Renderer-only LOD hysteresis, real 2-card geometry-derived far truss, original visibility/demolition fallback, once-only resources and paused revision invalidation",
+    "Exact calculated full RGBA8 mip chains separate from decoded base-level limits",
+    "Full actual snapshot/checkpoint/events and capture-phase real pointer-lock freeze, six phase views and two full-frame controls; far/preset/ten-second stationarity/damage return; late/fail; four actual restores and equally warmed reload",
+    "Production viewer/game fixture build, focused authority/browser CI, 24 active-owner future runner and source freeze/phase comparator"
+  ],
+  "cheapChecks": {
+    "meaningfulNewNode": "9/9 PASS",
+    "materialExact": "48 files PASS",
+    "impostorExact": "18 parts PASS",
+    "immutableOriginalAuthority": "552 original files PASS",
+    "dedicatedProductionBuild": "PASS",
+    "viewer": "2/2 production PASS; all-family High PNG inspected",
+    "untouchedBaseMatrix": "1/1 PASS,5.1min;9 rawcaptures exactstates/errors0/http0"
+  },
+  "evidence": [
+    "runtime/t14-fix3-resume-check.log",
+    "runtime/t14-t41-fix3-resume-node.log",
+    "runtime/t41-fix3-resume-impostor-check.log",
+    "runtime/t41-fix3-resume-authority.log",
+    "runtime/t41-fix3-resume-build.log",
+    "runtime/t14-fix3-resume-browser.log",
+    "runtime/fix3-resume-viewer"
+  ],
+  "limits": [
+    "No fourth correction, reset, assertion weakening, source edit during final GPU, or ACCEPT declaration by implementer",
+    "No FPS, physical VRAM, reference-PC measurement or human playtest claim",
+    "Independent verifier/perf/review, full regression and published-source CI remain Captain gates"
+  ],
+  "knownFailures": [
+    {
+      "stage": "source normal CI",
+      "run": 38528756419,
+      "job": 115735279060,
+      "result": "685 PASS / 1 FAIL / 686 tests",
+      "failure": "New impostors/manifest.json missing author required by existing asset metadata guard",
+      "retainedEvidence": "runtime/source-normal-ci-job-mcp.log",
+      "action": "No source correction; fix3/3 budget exhausted after final freeze. Continue readonly browser diagnostics only; cannot integrate without green source CI."
+    },
+    {
+      "stage": "actual production candidate browser case1",
+      "failure": "After successful current-0430-04 full actual capture, second open04:30/12 frozenContinue #pause remained hidden at default expect5000ms",
+      "retainedEvidence": [
+        "runtime/t41-fix3-resume-current-browser.log",
+        "test-results/m01-bridge-finish-runtime--d010d--13-plus-unaffected-control/trace.zip",
+        "test-results/m01-bridge-finish-runtime--d010d--13-plus-unaffected-control/test-failed-2.png"
+      ],
+      "action": "Retain source and assertions unchanged; no fourth correction. Browser proceeds with remaining independent cases for diagnostics."
+    },
+    {
+      "stage": "actual production candidate browser case2 stationary raw comparison",
+      "failure": "Before raw camera [-217.6,8,-304] at renderedFrames47/transitions309 was read before the requested [-650,8,-800] redraw. After raw camera changed, renderedFrames48/transitions343. Fixed300ms wait did not guarantee redraw. PNG pair is pixel-identical because screenshot occurred after redraw, but before raw provenance is inconsistent with that PNG. Cannot claim stationary raw equality or complete far/damage return coverage.",
+      "retainedEvidence": [
+        "runtime/fix3-resume-current/far-stationary-before.json",
+        "runtime/fix3-resume-current/far-stationary-after.json",
+        "runtime/t41-fix3-resume-current-browser.log",
+        "test-results/m01-bridge-finish-runtime--5955f-near-return-for-all-presets/trace.zip"
+      ],
+      "action": "No source or assertion changes after frozen final failure"
+    }
+  ],
+  "partialEvidence": {
+    "singleView0430_04": "runtime/fix3-resume-partial-comparison.json: exact actual snapshot/checkpoint/events/camera;131927 changedpixels,control0; base603calls/946534tri,current608calls/943646tri, noFPSclaim",
+    "farPresets": "Low/Medium/High captures all saved before stationary assertion failed; perpart max2draw4tri/shadow0, rawstate exact",
+    "lateFailure": "case3 completed; paused late readiness and intentional60HTTP503 all-assets fallback captures retained",
+    "fourRestores": "case4 PASS including all4 actual restores, fullactual exact at each, equally warm reload global textures/geometries and all owned resource equality; material restoredpixel0/control0"
+  },
+  "browserFinal": {
+    "base": "1/1 PASS,5.1m",
+    "viewer": "2/2 PASS,4.2s",
+    "candidate": "2/4 PASS,2/4 FAIL,9.1m",
+    "failures": [
+      "case1 secondview pause default5000ms timeout",
+      "case2 stationarybefore raw taken before requested camera redraw"
+    ],
+    "passes": [
+      "case3 actual delayed ready redraw in pause and explicit60HTTP503 usable legacy fallback",
+      "case4 Low/Medium/High churn, four real checkpoint restores, equally warmed reload, stable global/owner resources, material toggle changed/control/restored pixels"
+    ],
+    "failureArtifacts": "runtime/fix3-resume-failure-artifacts",
+    "sourceUnchanged": true
+  },
+  "proposedPatchNotApplied": "runtime/proposed-fixture-waits-fix.patch",
+  "fixAttempts": 3,
+  "maxFixAttempts": 3,
+  "additionalAttemptAuthorization": "PENDING, proposed patches have not been applied",
+  "nextAction": "Captain independent verifier/perf read-only; no reviewer acceptance/integration while required gates fail"
+}

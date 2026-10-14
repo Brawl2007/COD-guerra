@@ -1,0 +1,455 @@
+{
+  "baseline": "/workspace/COD-guerra/.agent/runs/M01-T14-T41-20261013/baseline-checkout",
+  "baselineHead": "8a0c3622f5375f2c5b5e847db71f4f6e8352ae39",
+  "candidateHead": "b36ad7470ce977deeecab1ae193e51592d4aaf72",
+  "sourceHashes": {
+    "src/render/m01-bridge-material.js": "4580c59d93052992f359da6cda4fa83bef7ba42017747040a0c9f610bda34e10",
+    "src/render/m01-bridge-lod.js": "56f6e886c7a68ec9db7110b42c91cb4e03c3f8b3b3d86ad7e219c4bbc1e4783a",
+    "src/render/m01-bridge-finish-runtime.js": "d3dcd7b5a677a1285217b0fd89cebc984ad26a4ee55d5d9158d9962127f750ff",
+    "src/render/m01-view.js": "5d01b717ad36ea54ec3f122cf9c442155a511221ffaf1970f8f6887ca2d4d98a",
+    "src/game/m01-simulation.js": "ffc198c1089da201d580b703b44d1a80f1536c3923cca7d7ca6fab9602362f14",
+    "src/world/tczew-world.js": "716c9b3fb3bca8c8d07a690caf1ef67288a416a043a94b47e98d8e58c4f95a22",
+    "assets/models/provisional/m01/m01-bridges/materials/manifest.json": "6c570f879a973936a5f71ccd27efa5a6a4de555ca6746650f739694e6bd31abc",
+    "assets/models/provisional/m01/m01-bridges/impostors/manifest.json": "7fcbea790cfe20f2b33486e1d97830bf1439f6788db53c2a5d68d9f9feb850ff"
+  },
+  "seeds": [
+    1234,
+    1945,
+    4294967295
+  ],
+  "routes": [
+    {
+      "seed": 1234,
+      "support": false,
+      "ticks": 20687,
+      "fullStateStreamSha256": "286fdee2dca91db99d8e3f6e7128fa144ed59757f642cfc7a174ae39a27f1343",
+      "eventStreamSha256": "d6d9e96d9d5c103c75256c4356be120a382eacd584cd208a56cf22b956df34a8",
+      "controlStreamSha256": "aa346d91e5198b5e683182b30733ef279ed9be5af8cb301cce95eecc91b76fc3",
+      "partStreamSha256": "ddab47bc0f947432e4cd7dc9c84dd7484cb767d6c93bde1e58fe50f4b27ba8b1",
+      "finalSha256": "285af87d510e9e44a11c5611db74ecf6778c89f7bda4eeadd36e03ed62442ab2",
+      "baselineFinalSha256": "285af87d510e9e44a11c5611db74ecf6778c89f7bda4eeadd36e03ed62442ab2",
+      "checkpointPairs": [
+        {
+          "tick": 0,
+          "id": "cp_m01_a_orientacao",
+          "candidateSha256": "5130788bb43a3443c989cdcedc75bf753e2f94de75c99b89f5c0812d02471345",
+          "baselineSha256": "5130788bb43a3443c989cdcedc75bf753e2f94de75c99b89f5c0812d02471345"
+        },
+        {
+          "tick": 1954,
+          "id": "cp_m01_b_reorganizacao",
+          "candidateSha256": "19e402ab27f6215a3ae069334d9151b85353b775397afa57f67efe290b76c300",
+          "baselineSha256": "19e402ab27f6215a3ae069334d9151b85353b775397afa57f67efe290b76c300"
+        },
+        {
+          "tick": 9996,
+          "id": "cp_m01_c_engenheiros",
+          "candidateSha256": "24b57d12deb25138a487386cfd980c2589b1bb2f171630626ac07c3cccccfe6b",
+          "baselineSha256": "24b57d12deb25138a487386cfd980c2589b1bb2f171630626ac07c3cccccfe6b"
+        },
+        {
+          "tick": 15606,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "3c092360b1d83ac640d615ff24c356ce9d45ec3c20c530c85982432a38233122",
+          "baselineSha256": "3c092360b1d83ac640d615ff24c356ce9d45ec3c20c530c85982432a38233122"
+        },
+        {
+          "tick": 20686,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "caccf762c885e115e69721e5edb5956188d553cbd4922bd3afdb9e8db200e6a9",
+          "baselineSha256": "caccf762c885e115e69721e5edb5956188d553cbd4922bd3afdb9e8db200e6a9"
+        }
+      ],
+      "finalCheckpointSha256": "caccf762c885e115e69721e5edb5956188d553cbd4922bd3afdb9e8db200e6a9",
+      "baselineFinalCheckpointSha256": "caccf762c885e115e69721e5edb5956188d553cbd4922bd3afdb9e8db200e6a9",
+      "complete": true,
+      "battleClock": 25500,
+      "bridge": {
+        "status": "ready",
+        "boundMeshes": 563,
+        "worldBound": true,
+        "resources": {
+          "textures": 60,
+          "bitmaps": 0,
+          "decodedBytes": 2162688,
+          "mipmapBytes": 721104,
+          "mipmapAccounting": "exact full RGBA8 chain from authored dimensions; calculated bytes, not physical VRAM",
+          "limitBytes": 4194304,
+          "ownedMaterials": 66,
+          "ownedGeometries": 16
+        },
+        "impostorSource": [
+          {
+            "file": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+            "sha256": "6bc61f88caba3a5efb8a5435081413d629ce0547b1b22d13b3f497538fd270dd"
+          },
+          {
+            "file": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+            "sha256": "e022cdd1454bca6dc908d31c542ab05f864096bef0ea40c39d5ae27ef3913404"
+          }
+        ]
+      }
+    },
+    {
+      "seed": 1234,
+      "support": true,
+      "ticks": 19960,
+      "fullStateStreamSha256": "5d13f1131217285db3b27f00a55251c4e18fe65fb0b340471ed905f4750f7887",
+      "eventStreamSha256": "0597cb9c1469ac0ccaba8189a8a232ad2f8173db8d2f7724e1698884a82df525",
+      "controlStreamSha256": "34bdfd20e83e95ea5c71760f2c3d759d483d7c34de053ad36a1c0bcb48e1625f",
+      "partStreamSha256": "561a40bcfe95b1bc28068505a803dd09e6f1de774cfc09023804b7f9b025e537",
+      "finalSha256": "f7575bb9466cc65bc2ec66e410d6014fa1c9b439f6fe2bb7e584f249d127465f",
+      "baselineFinalSha256": "f7575bb9466cc65bc2ec66e410d6014fa1c9b439f6fe2bb7e584f249d127465f",
+      "checkpointPairs": [
+        {
+          "tick": 0,
+          "id": "cp_m01_a_orientacao",
+          "candidateSha256": "5130788bb43a3443c989cdcedc75bf753e2f94de75c99b89f5c0812d02471345",
+          "baselineSha256": "5130788bb43a3443c989cdcedc75bf753e2f94de75c99b89f5c0812d02471345"
+        },
+        {
+          "tick": 1954,
+          "id": "cp_m01_b_reorganizacao",
+          "candidateSha256": "19e402ab27f6215a3ae069334d9151b85353b775397afa57f67efe290b76c300",
+          "baselineSha256": "19e402ab27f6215a3ae069334d9151b85353b775397afa57f67efe290b76c300"
+        },
+        {
+          "tick": 9269,
+          "id": "cp_m01_c_engenheiros",
+          "candidateSha256": "fb169d5968e733f3c4e6a7e37284bc80d806c04032eb2bb7ac3c9e43bd0ca3e5",
+          "baselineSha256": "fb169d5968e733f3c4e6a7e37284bc80d806c04032eb2bb7ac3c9e43bd0ca3e5"
+        },
+        {
+          "tick": 14906,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "0147a2846fc4b85b0fad25fd971711609a416a3ee9164b405fe13d2c4fcbcf68",
+          "baselineSha256": "0147a2846fc4b85b0fad25fd971711609a416a3ee9164b405fe13d2c4fcbcf68"
+        },
+        {
+          "tick": 19959,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "6f25cba4b2db4f471d4cd1a00dbe7f7e26216ca0f27023e22714c68a07766ef9",
+          "baselineSha256": "6f25cba4b2db4f471d4cd1a00dbe7f7e26216ca0f27023e22714c68a07766ef9"
+        }
+      ],
+      "finalCheckpointSha256": "6f25cba4b2db4f471d4cd1a00dbe7f7e26216ca0f27023e22714c68a07766ef9",
+      "baselineFinalCheckpointSha256": "6f25cba4b2db4f471d4cd1a00dbe7f7e26216ca0f27023e22714c68a07766ef9",
+      "complete": true,
+      "battleClock": 25500,
+      "bridge": {
+        "status": "ready",
+        "boundMeshes": 563,
+        "worldBound": true,
+        "resources": {
+          "textures": 60,
+          "bitmaps": 0,
+          "decodedBytes": 15728640,
+          "mipmapBytes": 5243088,
+          "mipmapAccounting": "exact full RGBA8 chain from authored dimensions; calculated bytes, not physical VRAM",
+          "limitBytes": 16777216,
+          "ownedMaterials": 66,
+          "ownedGeometries": 16
+        },
+        "impostorSource": [
+          {
+            "file": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+            "sha256": "6bc61f88caba3a5efb8a5435081413d629ce0547b1b22d13b3f497538fd270dd"
+          },
+          {
+            "file": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+            "sha256": "e022cdd1454bca6dc908d31c542ab05f864096bef0ea40c39d5ae27ef3913404"
+          }
+        ]
+      }
+    },
+    {
+      "seed": 1945,
+      "support": false,
+      "ticks": 20470,
+      "fullStateStreamSha256": "38ca4874275fdcb80bea4a89eb3734d4e80aee9bfd1dca4b85d43baef9a06c6a",
+      "eventStreamSha256": "e32227b82a9ef146586dca857980482160ca70eb79e4b4fa1529248f7574845c",
+      "controlStreamSha256": "1072e2b2941f40688d48bc6597121f014055db31ae5b8d728e35cabeb5262b68",
+      "partStreamSha256": "bb5342b16c278cb5b47e490a27f89d9525cb6487aac1f1cf915ce5b3e6c95e65",
+      "finalSha256": "d1e4f4da4aa5515fa8d220f12413a7dca558199e562319b06d68b060710f60ce",
+      "baselineFinalSha256": "d1e4f4da4aa5515fa8d220f12413a7dca558199e562319b06d68b060710f60ce",
+      "checkpointPairs": [
+        {
+          "tick": 0,
+          "id": "cp_m01_a_orientacao",
+          "candidateSha256": "8145fa3a3034bce371cbabcb47889012f0ba62f70ef005b4f4b391a605dd4ff3",
+          "baselineSha256": "8145fa3a3034bce371cbabcb47889012f0ba62f70ef005b4f4b391a605dd4ff3"
+        },
+        {
+          "tick": 1954,
+          "id": "cp_m01_b_reorganizacao",
+          "candidateSha256": "47c2d642d47b0dc14b38b94bc84591572bbced564ae841d10913eb9e220dec3b",
+          "baselineSha256": "47c2d642d47b0dc14b38b94bc84591572bbced564ae841d10913eb9e220dec3b"
+        },
+        {
+          "tick": 9779,
+          "id": "cp_m01_c_engenheiros",
+          "candidateSha256": "e0dd824f564a878f5e9b897aa588e64e6afad141eb8c2ef1d9452e384f8f538e",
+          "baselineSha256": "e0dd824f564a878f5e9b897aa588e64e6afad141eb8c2ef1d9452e384f8f538e"
+        },
+        {
+          "tick": 15389,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "ac3a3213b8b16050e82c84c72745601085f1b15762c3dcee6c2ffc1b87dae844",
+          "baselineSha256": "ac3a3213b8b16050e82c84c72745601085f1b15762c3dcee6c2ffc1b87dae844"
+        },
+        {
+          "tick": 20469,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "dfa59a4cceae4b8d2d8580fcd2b1a70b96eca1ac4673b3c5fc5b1005c983638a",
+          "baselineSha256": "dfa59a4cceae4b8d2d8580fcd2b1a70b96eca1ac4673b3c5fc5b1005c983638a"
+        }
+      ],
+      "finalCheckpointSha256": "dfa59a4cceae4b8d2d8580fcd2b1a70b96eca1ac4673b3c5fc5b1005c983638a",
+      "baselineFinalCheckpointSha256": "dfa59a4cceae4b8d2d8580fcd2b1a70b96eca1ac4673b3c5fc5b1005c983638a",
+      "complete": true,
+      "battleClock": 25500,
+      "bridge": {
+        "status": "ready",
+        "boundMeshes": 563,
+        "worldBound": true,
+        "resources": {
+          "textures": 60,
+          "bitmaps": 0,
+          "decodedBytes": 2162688,
+          "mipmapBytes": 721104,
+          "mipmapAccounting": "exact full RGBA8 chain from authored dimensions; calculated bytes, not physical VRAM",
+          "limitBytes": 4194304,
+          "ownedMaterials": 66,
+          "ownedGeometries": 16
+        },
+        "impostorSource": [
+          {
+            "file": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+            "sha256": "6bc61f88caba3a5efb8a5435081413d629ce0547b1b22d13b3f497538fd270dd"
+          },
+          {
+            "file": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+            "sha256": "e022cdd1454bca6dc908d31c542ab05f864096bef0ea40c39d5ae27ef3913404"
+          }
+        ]
+      }
+    },
+    {
+      "seed": 1945,
+      "support": true,
+      "ticks": 20093,
+      "fullStateStreamSha256": "cdccae2749eefa45765a53ef1f5a7749a277afc3abf1e5099c243e22fa0767ea",
+      "eventStreamSha256": "7fd1fc73a4c94b9b63670880ed876e61e54db42ea2b82f9075e9d399ab5d6dad",
+      "controlStreamSha256": "d6a3a2c0006e020f31ab82d4a460a6b74c24fb2ccd392cdaa1f961c8e1c45379",
+      "partStreamSha256": "f254d680535d20c0e355e4ee878635bcfb639069b0a2d3e73233841892ba76f1",
+      "finalSha256": "93d7aea8cc373c4cb322c0056c1d634b88057edecd6f9e9699930b219164c67e",
+      "baselineFinalSha256": "93d7aea8cc373c4cb322c0056c1d634b88057edecd6f9e9699930b219164c67e",
+      "checkpointPairs": [
+        {
+          "tick": 0,
+          "id": "cp_m01_a_orientacao",
+          "candidateSha256": "8145fa3a3034bce371cbabcb47889012f0ba62f70ef005b4f4b391a605dd4ff3",
+          "baselineSha256": "8145fa3a3034bce371cbabcb47889012f0ba62f70ef005b4f4b391a605dd4ff3"
+        },
+        {
+          "tick": 1954,
+          "id": "cp_m01_b_reorganizacao",
+          "candidateSha256": "47c2d642d47b0dc14b38b94bc84591572bbced564ae841d10913eb9e220dec3b",
+          "baselineSha256": "47c2d642d47b0dc14b38b94bc84591572bbced564ae841d10913eb9e220dec3b"
+        },
+        {
+          "tick": 9402,
+          "id": "cp_m01_c_engenheiros",
+          "candidateSha256": "a9505b682683bf893186a894be4491836aad3b8c557d37fa90d8c077b65e49ff",
+          "baselineSha256": "a9505b682683bf893186a894be4491836aad3b8c557d37fa90d8c077b65e49ff"
+        },
+        {
+          "tick": 15039,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "e1a5a0484293c4bfcc67ebc97f152c4b535484252eeb649abe3efc86cc0b818f",
+          "baselineSha256": "e1a5a0484293c4bfcc67ebc97f152c4b535484252eeb649abe3efc86cc0b818f"
+        },
+        {
+          "tick": 20092,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "55a2b35e2e76c2a6e22110e3adec10c0ad251aacdb7503b96e5bb7643366eee6",
+          "baselineSha256": "55a2b35e2e76c2a6e22110e3adec10c0ad251aacdb7503b96e5bb7643366eee6"
+        }
+      ],
+      "finalCheckpointSha256": "55a2b35e2e76c2a6e22110e3adec10c0ad251aacdb7503b96e5bb7643366eee6",
+      "baselineFinalCheckpointSha256": "55a2b35e2e76c2a6e22110e3adec10c0ad251aacdb7503b96e5bb7643366eee6",
+      "complete": true,
+      "battleClock": 25500,
+      "bridge": {
+        "status": "ready",
+        "boundMeshes": 563,
+        "worldBound": true,
+        "resources": {
+          "textures": 60,
+          "bitmaps": 0,
+          "decodedBytes": 15728640,
+          "mipmapBytes": 5243088,
+          "mipmapAccounting": "exact full RGBA8 chain from authored dimensions; calculated bytes, not physical VRAM",
+          "limitBytes": 16777216,
+          "ownedMaterials": 66,
+          "ownedGeometries": 16
+        },
+        "impostorSource": [
+          {
+            "file": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+            "sha256": "6bc61f88caba3a5efb8a5435081413d629ce0547b1b22d13b3f497538fd270dd"
+          },
+          {
+            "file": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+            "sha256": "e022cdd1454bca6dc908d31c542ab05f864096bef0ea40c39d5ae27ef3913404"
+          }
+        ]
+      }
+    },
+    {
+      "seed": 4294967295,
+      "support": false,
+      "ticks": 20874,
+      "fullStateStreamSha256": "dd45c6e120e69c89065603f4a99ab885c1904b3aa3e1f49e3cc9e313d7663e4d",
+      "eventStreamSha256": "da5dbfa482ef4c4d8828f527fc72446c8a9a0929e0a3d6c023ac9d2062ae465c",
+      "controlStreamSha256": "806de83883a984d2e4ee6ea950d01f71ac6c236248fde4673f4e272e0db28d3b",
+      "partStreamSha256": "29e3ad534bf56f1166291fa8e39842278da806e4630171b40ef3320d61b8d1bc",
+      "finalSha256": "76fb041bc2b2afdb6c01526a3b6f6e23356bd3c9304b3301eee9c9643d9f4c74",
+      "baselineFinalSha256": "76fb041bc2b2afdb6c01526a3b6f6e23356bd3c9304b3301eee9c9643d9f4c74",
+      "checkpointPairs": [
+        {
+          "tick": 0,
+          "id": "cp_m01_a_orientacao",
+          "candidateSha256": "daa03bc9b5a9efc973388eaa91fd33a6510f613fc652e62fd05f422b808e5358",
+          "baselineSha256": "daa03bc9b5a9efc973388eaa91fd33a6510f613fc652e62fd05f422b808e5358"
+        },
+        {
+          "tick": 1954,
+          "id": "cp_m01_b_reorganizacao",
+          "candidateSha256": "f6f68e5614d28e54a71cf50c88decf9be0eb1abfa7a65fd8ee26b39aa835713c",
+          "baselineSha256": "f6f68e5614d28e54a71cf50c88decf9be0eb1abfa7a65fd8ee26b39aa835713c"
+        },
+        {
+          "tick": 10183,
+          "id": "cp_m01_c_engenheiros",
+          "candidateSha256": "77fe2ed5e8bcea53868749006163527aa124c1fffe6a435f8af8cc62af1549aa",
+          "baselineSha256": "77fe2ed5e8bcea53868749006163527aa124c1fffe6a435f8af8cc62af1549aa"
+        },
+        {
+          "tick": 15793,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "05eec0403b4d150b31c148c5fb5446246154314ca05a6d58c62dc054d8cb18bf",
+          "baselineSha256": "05eec0403b4d150b31c148c5fb5446246154314ca05a6d58c62dc054d8cb18bf"
+        },
+        {
+          "tick": 20873,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "fdd1e0395babcec3eeff29ce6c09720f2ea9e3bcf032cb9bf6f3050e202385b9",
+          "baselineSha256": "fdd1e0395babcec3eeff29ce6c09720f2ea9e3bcf032cb9bf6f3050e202385b9"
+        }
+      ],
+      "finalCheckpointSha256": "fdd1e0395babcec3eeff29ce6c09720f2ea9e3bcf032cb9bf6f3050e202385b9",
+      "baselineFinalCheckpointSha256": "fdd1e0395babcec3eeff29ce6c09720f2ea9e3bcf032cb9bf6f3050e202385b9",
+      "complete": true,
+      "battleClock": 25500,
+      "bridge": {
+        "status": "ready",
+        "boundMeshes": 563,
+        "worldBound": true,
+        "resources": {
+          "textures": 60,
+          "bitmaps": 0,
+          "decodedBytes": 2162688,
+          "mipmapBytes": 721104,
+          "mipmapAccounting": "exact full RGBA8 chain from authored dimensions; calculated bytes, not physical VRAM",
+          "limitBytes": 4194304,
+          "ownedMaterials": 66,
+          "ownedGeometries": 16
+        },
+        "impostorSource": [
+          {
+            "file": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+            "sha256": "6bc61f88caba3a5efb8a5435081413d629ce0547b1b22d13b3f497538fd270dd"
+          },
+          {
+            "file": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+            "sha256": "e022cdd1454bca6dc908d31c542ab05f864096bef0ea40c39d5ae27ef3913404"
+          }
+        ]
+      }
+    },
+    {
+      "seed": 4294967295,
+      "support": true,
+      "ticks": 20102,
+      "fullStateStreamSha256": "5182ae2252267a4410b2c2675d7d458d8f517551c864143f8784eccc380fd8b2",
+      "eventStreamSha256": "46256df3da11d9b898d91353410c28c2efcf0c168760f55f63d98d6abd085c2b",
+      "controlStreamSha256": "d949f9b86e59312c9c984621fe70b6f8abea6d9ea32da7186fccd204cf895be7",
+      "partStreamSha256": "4e1e7586371c60f3d7c672f10eecf2f76fc24aea9cd16239fcfd93ba722bb8c6",
+      "finalSha256": "98b1abd3c5f16fca49835f8391ec6272fe672fc2bcebc7159671caa7152ea5e2",
+      "baselineFinalSha256": "98b1abd3c5f16fca49835f8391ec6272fe672fc2bcebc7159671caa7152ea5e2",
+      "checkpointPairs": [
+        {
+          "tick": 0,
+          "id": "cp_m01_a_orientacao",
+          "candidateSha256": "daa03bc9b5a9efc973388eaa91fd33a6510f613fc652e62fd05f422b808e5358",
+          "baselineSha256": "daa03bc9b5a9efc973388eaa91fd33a6510f613fc652e62fd05f422b808e5358"
+        },
+        {
+          "tick": 1954,
+          "id": "cp_m01_b_reorganizacao",
+          "candidateSha256": "f6f68e5614d28e54a71cf50c88decf9be0eb1abfa7a65fd8ee26b39aa835713c",
+          "baselineSha256": "f6f68e5614d28e54a71cf50c88decf9be0eb1abfa7a65fd8ee26b39aa835713c"
+        },
+        {
+          "tick": 9411,
+          "id": "cp_m01_c_engenheiros",
+          "candidateSha256": "c2e05f3391c0bd188baf1748ec2ad587bea5d1947745cb9de7c062d83d0096a0",
+          "baselineSha256": "c2e05f3391c0bd188baf1748ec2ad587bea5d1947745cb9de7c062d83d0096a0"
+        },
+        {
+          "tick": 15048,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "3f9d8ae30e61a9c92ed77fa9b17f9f88b6453bbeda9244e426d82e3ef79d13c7",
+          "baselineSha256": "3f9d8ae30e61a9c92ed77fa9b17f9f88b6453bbeda9244e426d82e3ef79d13c7"
+        },
+        {
+          "tick": 20101,
+          "id": "cp_m01_d_retirada",
+          "candidateSha256": "a3cf634e694364d5a9abc7c578fcbe2e89d42dd6446a553870cc89cd0d6fb03c",
+          "baselineSha256": "a3cf634e694364d5a9abc7c578fcbe2e89d42dd6446a553870cc89cd0d6fb03c"
+        }
+      ],
+      "finalCheckpointSha256": "a3cf634e694364d5a9abc7c578fcbe2e89d42dd6446a553870cc89cd0d6fb03c",
+      "baselineFinalCheckpointSha256": "a3cf634e694364d5a9abc7c578fcbe2e89d42dd6446a553870cc89cd0d6fb03c",
+      "complete": true,
+      "battleClock": 25500,
+      "bridge": {
+        "status": "ready",
+        "boundMeshes": 563,
+        "worldBound": true,
+        "resources": {
+          "textures": 60,
+          "bitmaps": 0,
+          "decodedBytes": 15728640,
+          "mipmapBytes": 5243088,
+          "mipmapAccounting": "exact full RGBA8 chain from authored dimensions; calculated bytes, not physical VRAM",
+          "limitBytes": 16777216,
+          "ownedMaterials": 66,
+          "ownedGeometries": 16
+        },
+        "impostorSource": [
+          {
+            "file": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+            "sha256": "6bc61f88caba3a5efb8a5435081413d629ce0547b1b22d13b3f497538fd270dd"
+          },
+          {
+            "file": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+            "sha256": "e022cdd1454bca6dc908d31c542ab05f864096bef0ea40c39d5ae27ef3913404"
+          }
+        ]
+      }
+    }
+  ],
+  "kind": "Complete real-control tick/event/full-save/checkpoint/part A/B futures; new bridge owner active on actual9original GLBs, existing structure/portal/T31 owners and decoded actual authored PNGs. CPU renderer fixture, no GPU/browser/playtest claim"
+}

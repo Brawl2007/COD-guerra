@@ -1,0 +1,588 @@
+{
+  "schema": 1,
+  "baseHead": "8a0c3622f5375f2c5b5e847db71f4f6e8352ae39",
+  "gitHead": "b36ad7470ce977deeecab1ae193e51592d4aaf72",
+  "sourceSHA256": "d597f5d79be75be53e98d4589a9e74024b50adb38d6e957d708e1de7d135fa2c",
+  "files": {
+    ".github/workflows/m01-t14-t41-bridge-finish.yml": {
+      "sha256": "00909d48403a6b45147756d6b02e1a269eb193d012a8780b915cbd2e2c8c5c4a",
+      "bytes": 4842
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/manifest.json": {
+      "sha256": "7fcbea790cfe20f2b33486e1d97830bf1439f6788db53c2a5d68d9f9feb850ff",
+      "bytes": 28610
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_01.high.side.png": {
+      "sha256": "dd415503c743215b9f0a3cbd5bee41ab32904c6bb1cca95030c81beb6b702815",
+      "bytes": 4073
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_01.high.top.png": {
+      "sha256": "65323ea2feaaf86065f253e6f7a73d3068de9386a39607ca39014a814fac2ace",
+      "bytes": 1458
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_01.low.side.png": {
+      "sha256": "fe5fa46d39d9ba10f4c78b9047677a44f497f507d95a5a5f558424e6c3379ea8",
+      "bytes": 667
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_01.low.top.png": {
+      "sha256": "3937dcdb23191c9b07788e904840cc8411d27be4f399385b375d5331eb923ca8",
+      "bytes": 323
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_02.high.side.png": {
+      "sha256": "35d3294c1a889c9c87a37a44e801187626f8f28264c9840a19664061b5306d51",
+      "bytes": 4080
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_02.high.top.png": {
+      "sha256": "10255b1f3d5bfd0ed8beeafbda1e5803c5f66dfaac8251d5d0b9727cd16cc261",
+      "bytes": 1481
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_02.low.side.png": {
+      "sha256": "fe5fa46d39d9ba10f4c78b9047677a44f497f507d95a5a5f558424e6c3379ea8",
+      "bytes": 667
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_02.low.top.png": {
+      "sha256": "3937dcdb23191c9b07788e904840cc8411d27be4f399385b375d5331eb923ca8",
+      "bytes": 323
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_03.high.side.png": {
+      "sha256": "8fd229945ab904284e0aeb77fa0e3b827d16456267a8caf9d69dc33febf0a95b",
+      "bytes": 4079
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_03.high.top.png": {
+      "sha256": "65323ea2feaaf86065f253e6f7a73d3068de9386a39607ca39014a814fac2ace",
+      "bytes": 1458
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_03.low.side.png": {
+      "sha256": "fe5fa46d39d9ba10f4c78b9047677a44f497f507d95a5a5f558424e6c3379ea8",
+      "bytes": 667
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_03.low.top.png": {
+      "sha256": "3937dcdb23191c9b07788e904840cc8411d27be4f399385b375d5331eb923ca8",
+      "bytes": 323
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_04.high.side.png": {
+      "sha256": "f8fdb05048a7801ebd4aa5603b7aad239812bb235e018c616502d03881c4e083",
+      "bytes": 4065
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_04.high.top.png": {
+      "sha256": "2e4a36581a8c24c959f7c47e9b33778ef2c15bbd5c2460000c541a05b94c2b62",
+      "bytes": 1467
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_04.low.side.png": {
+      "sha256": "fe5fa46d39d9ba10f4c78b9047677a44f497f507d95a5a5f558424e6c3379ea8",
+      "bytes": 667
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_04.low.top.png": {
+      "sha256": "3937dcdb23191c9b07788e904840cc8411d27be4f399385b375d5331eb923ca8",
+      "bytes": 323
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_05.high.side.png": {
+      "sha256": "f8fdb05048a7801ebd4aa5603b7aad239812bb235e018c616502d03881c4e083",
+      "bytes": 4065
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_05.high.top.png": {
+      "sha256": "2e4a36581a8c24c959f7c47e9b33778ef2c15bbd5c2460000c541a05b94c2b62",
+      "bytes": 1467
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_05.low.side.png": {
+      "sha256": "fe5fa46d39d9ba10f4c78b9047677a44f497f507d95a5a5f558424e6c3379ea8",
+      "bytes": 667
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_05.low.top.png": {
+      "sha256": "3937dcdb23191c9b07788e904840cc8411d27be4f399385b375d5331eb923ca8",
+      "bytes": 323
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_06.high.side.png": {
+      "sha256": "dd415503c743215b9f0a3cbd5bee41ab32904c6bb1cca95030c81beb6b702815",
+      "bytes": 4073
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_06.high.top.png": {
+      "sha256": "65323ea2feaaf86065f253e6f7a73d3068de9386a39607ca39014a814fac2ace",
+      "bytes": 1458
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_06.low.side.png": {
+      "sha256": "fe5fa46d39d9ba10f4c78b9047677a44f497f507d95a5a5f558424e6c3379ea8",
+      "bytes": 667
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_06.low.top.png": {
+      "sha256": "3937dcdb23191c9b07788e904840cc8411d27be4f399385b375d5331eb923ca8",
+      "bytes": 323
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_07.high.side.png": {
+      "sha256": "a7a25e9061f62821d64690eacfca7818f4baf5f0643c6585bef9eae4e8b4e594",
+      "bytes": 1865
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_07.high.top.png": {
+      "sha256": "b4c584fb7d59fba7f8fe494ae95983f2c5d390a0d0d987a7a5271ac46286667d",
+      "bytes": 691
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_07.low.side.png": {
+      "sha256": "f6e720a52bd4c89cb9384f524c79230540b7f775deac27b7846799ee486b7810",
+      "bytes": 458
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_07.low.top.png": {
+      "sha256": "40e4fa99ca4b32c15e3ccb3fd6352f79be63b506cd7b8308c6b456b4dea6fb5d",
+      "bytes": 184
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_08.high.side.png": {
+      "sha256": "02b296bb6e1a8dac38ba11743fa90fe88a11e9bf6b2c51071b1f30093e56c3da",
+      "bytes": 1779
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_08.high.top.png": {
+      "sha256": "b4c584fb7d59fba7f8fe494ae95983f2c5d390a0d0d987a7a5271ac46286667d",
+      "bytes": 691
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_08.low.side.png": {
+      "sha256": "6b883883fd0559abec733008f0e0232bff180553547d728aa043cf81378793a9",
+      "bytes": 458
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_08.low.top.png": {
+      "sha256": "40e4fa99ca4b32c15e3ccb3fd6352f79be63b506cd7b8308c6b456b4dea6fb5d",
+      "bytes": 184
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_09.high.side.png": {
+      "sha256": "9d69ed5692c0beb049ea5660c506746d6916c3aa72369ce15f4631f4130de7ba",
+      "bytes": 1848
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_09.high.top.png": {
+      "sha256": "b4c584fb7d59fba7f8fe494ae95983f2c5d390a0d0d987a7a5271ac46286667d",
+      "bytes": 691
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_09.low.side.png": {
+      "sha256": "6b883883fd0559abec733008f0e0232bff180553547d728aa043cf81378793a9",
+      "bytes": 458
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/rail_span_09.low.top.png": {
+      "sha256": "40e4fa99ca4b32c15e3ccb3fd6352f79be63b506cd7b8308c6b456b4dea6fb5d",
+      "bytes": 184
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_01.high.side.png": {
+      "sha256": "8a20c236c67afb0fd797819cc0f88afc992a7f2bb5d9cb9a4b9413e30794bfc4",
+      "bytes": 4507
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_01.high.top.png": {
+      "sha256": "d33b2d4bba070f6a98b968b8dac0ac97d19a77ef0be489cea2a5f35f71a2d54b",
+      "bytes": 1324
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_01.low.side.png": {
+      "sha256": "899288fbe977fe1fce2e667a23246c80bd5976c4651f2647caf39f617a048ab7",
+      "bytes": 169
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_01.low.top.png": {
+      "sha256": "bd137454580c6792bdb24bc34920e7a151521304b0cbad6a2bae6ac72fd14f1e",
+      "bytes": 365
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_02.high.side.png": {
+      "sha256": "004a233852706ea2c186d0d42f11d27c07788467e7c78832d0e094d13a69ef9f",
+      "bytes": 4412
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_02.high.top.png": {
+      "sha256": "464309206e0088910cd7f934629cd839d0949088c94cb90ed6e1d7768211dd94",
+      "bytes": 1322
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_02.low.side.png": {
+      "sha256": "e85aa393b4c85611bbaff78deb5328c46849a11ee828ba3903ab731c436d1359",
+      "bytes": 187
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_02.low.top.png": {
+      "sha256": "58bd3621eb8b291e9d587c6f4fb0e4fbe65f6ba174ef401d48c955101ff9ef4e",
+      "bytes": 353
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_03.high.side.png": {
+      "sha256": "004a233852706ea2c186d0d42f11d27c07788467e7c78832d0e094d13a69ef9f",
+      "bytes": 4412
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_03.high.top.png": {
+      "sha256": "464309206e0088910cd7f934629cd839d0949088c94cb90ed6e1d7768211dd94",
+      "bytes": 1322
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_03.low.side.png": {
+      "sha256": "e85aa393b4c85611bbaff78deb5328c46849a11ee828ba3903ab731c436d1359",
+      "bytes": 187
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_03.low.top.png": {
+      "sha256": "58bd3621eb8b291e9d587c6f4fb0e4fbe65f6ba174ef401d48c955101ff9ef4e",
+      "bytes": 353
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_04.high.side.png": {
+      "sha256": "21dd5702350c338d728ba451505d9a6495d3ab06120c752717337ece72f6554d",
+      "bytes": 4436
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_04.high.top.png": {
+      "sha256": "6741970ec20087f40ebe2824951a8c46ada7bb857362f73750f6d93f177851cd",
+      "bytes": 1334
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_04.low.side.png": {
+      "sha256": "d735688351b4bd045c23a471162dcea0d336df16e223094e9c6262405a6c847f",
+      "bytes": 187
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_04.low.top.png": {
+      "sha256": "58bd3621eb8b291e9d587c6f4fb0e4fbe65f6ba174ef401d48c955101ff9ef4e",
+      "bytes": 353
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_05.high.side.png": {
+      "sha256": "65be6985cb0d4d4fbf4ed686e5f5c72ba3aabbc7afdbb4dc24f7760782c44cad",
+      "bytes": 4030
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_05.high.top.png": {
+      "sha256": "561ea67b1003d28885906a5029b58a38e2743c07c019331cabb8335244bbe39d",
+      "bytes": 1332
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_05.low.side.png": {
+      "sha256": "5ba5819f4086c59d7009827885ddc918e495515e2220148ffa642cc15b7a4450",
+      "bytes": 159
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_05.low.top.png": {
+      "sha256": "58bd3621eb8b291e9d587c6f4fb0e4fbe65f6ba174ef401d48c955101ff9ef4e",
+      "bytes": 353
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_06.high.side.png": {
+      "sha256": "eef82e3ac53fdd9dd8069b63e3f9faab0f86e54df774d65253c5c078c75e3dc0",
+      "bytes": 4437
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_06.high.top.png": {
+      "sha256": "77a39baab9fc4a128a66ad17cae4ed057b2651bda231cdad100e7761ca91cf3e",
+      "bytes": 1981
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_06.low.side.png": {
+      "sha256": "179aad9d67a29dfa4ac71ec8c51fcfdf47c681b9c298cd8ff530670ec0a8445e",
+      "bytes": 140
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_06.low.top.png": {
+      "sha256": "59b4a85e749b3d44f2ea2e82b06ffdc3cc111e7bd912c978e9a3b3d945066898",
+      "bytes": 357
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_07.high.side.png": {
+      "sha256": "8d0d3b7df182566a29d7152520f5d12da2d15670fd621f2449a79baf16edf763",
+      "bytes": 1916
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_07.high.top.png": {
+      "sha256": "b442f18647279190e9e28e08dd2393ec9d3b4701c62576489d8ae2f24026669f",
+      "bytes": 574
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_07.low.side.png": {
+      "sha256": "d2a5ca050f47abe8658d167cec3c4a4c3487ea2312bb2c9a566a4db5d1984c47",
+      "bytes": 459
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_07.low.top.png": {
+      "sha256": "819db46d54c77a8200f5a85190d26e1dbb5d6ac2750c65545d4e721f647aa893",
+      "bytes": 181
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_08.high.side.png": {
+      "sha256": "5746040843dc6e4756df62a829ab3dd84f79ac5b6543e4700c76c01599640b9d",
+      "bytes": 1784
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_08.high.top.png": {
+      "sha256": "55617270d5362ab58c277bfb76cb891551c7c7792a4326c7b609431d8de60c25",
+      "bytes": 576
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_08.low.side.png": {
+      "sha256": "002c6ed2713dc09398c90682d591fe85b759b85d2bbd6ad124ffc8b0b5563c22",
+      "bytes": 462
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_08.low.top.png": {
+      "sha256": "15dee3bb97d6788f39f1a915ca0c17eab59aec47c49885ddf01fbec313905877",
+      "bytes": 165
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_09.high.side.png": {
+      "sha256": "72311066f70595bb011d0dd191626277d7e96e8a7bd8c8c372eaeaaaa134925d",
+      "bytes": 1837
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_09.high.top.png": {
+      "sha256": "55617270d5362ab58c277bfb76cb891551c7c7792a4326c7b609431d8de60c25",
+      "bytes": 576
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_09.low.side.png": {
+      "sha256": "002c6ed2713dc09398c90682d591fe85b759b85d2bbd6ad124ffc8b0b5563c22",
+      "bytes": 462
+    },
+    "assets/models/provisional/m01/m01-bridges/impostors/road_span_09.low.top.png": {
+      "sha256": "15dee3bb97d6788f39f1a915ca0c17eab59aec47c49885ddf01fbec313905877",
+      "bytes": 165
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/brick.high.albedo.png": {
+      "sha256": "c6b10edc9dbfb5b203f186b146f00bb3170daada25d9deb6b67d25fc3ac44e45",
+      "bytes": 2492
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/brick.high.normal.png": {
+      "sha256": "35b72410a42213ca623556ec69191f9f7e9dd84baa4402939536cd196e074d33",
+      "bytes": 8097
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/brick.high.orm.png": {
+      "sha256": "36b5ffaf33d4d8088f54dfee8453133892719cbca2a233773cc11a5810ded538",
+      "bytes": 19451
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/brick.low.albedo.png": {
+      "sha256": "2130e75e0e2fd79645d3431a473e45237dbb29678bef0648e8ea877222bdd811",
+      "bytes": 1728
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/brick.low.normal.png": {
+      "sha256": "8ad4fd34bee2934c058181b48b7c6f75f47739199f3a7ff96086c2bf03e74c78",
+      "bytes": 5840
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/brick.low.orm.png": {
+      "sha256": "6316518947993a1d609f22755a644fbb2ac3c83ba6d86407e7704f84ed6b9327",
+      "bytes": 15905
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/manifest.json": {
+      "sha256": "6c570f879a973936a5f71ccd27efa5a6a4de555ca6746650f739694e6bd31abc",
+      "bytes": 22451
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/painted-steel.high.albedo.png": {
+      "sha256": "7e894cc59bb0dcfa6c8b858a268a801978f72cc47fd371827c528cce4028be5f",
+      "bytes": 30193
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/painted-steel.high.normal.png": {
+      "sha256": "21516dc0a01d0a863a66c462b883fc147b77ea923fb7e22062f388addf8c2865",
+      "bytes": 31368
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/painted-steel.high.orm.png": {
+      "sha256": "474b3cd0b47ff894514b5894fd51c4d826df9b1b740a12ff8d66627d4b2a4fad",
+      "bytes": 14953
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/painted-steel.low.albedo.png": {
+      "sha256": "4e350b7db6815c993aeb45f85251e47562f9cf1eb9843f2c5f0d869be6b393c8",
+      "bytes": 24212
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/painted-steel.low.normal.png": {
+      "sha256": "79ef0aefab4deb7cf6623e088626ae7308673458b4cae8a2c1160dc9a5af5049",
+      "bytes": 23962
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/painted-steel.low.orm.png": {
+      "sha256": "294ca23c4633c2ba0a397c42cbd9e60241329bcc99aa2ee973c9ae04a871420c",
+      "bytes": 11413
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/rail.high.albedo.png": {
+      "sha256": "b381133da433d3b81c367c6eb1a780d192425355ee666e364140c6b096f8095f",
+      "bytes": 27347
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/rail.high.normal.png": {
+      "sha256": "ac51beb5d398ac3d7c5c595a4a732c49853f1f0e4ddcba76c03f7da16d2d04fa",
+      "bytes": 31242
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/rail.high.orm.png": {
+      "sha256": "ab4e54c1ad777987457a9187e65c0f9b973b3edff46c64b24e99de53be5a2a92",
+      "bytes": 16116
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/rail.low.albedo.png": {
+      "sha256": "e25793f620b82b5c80fef15962789cd2099e67151d6a844a61115109e427ee8a",
+      "bytes": 22117
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/rail.low.normal.png": {
+      "sha256": "4da8d5be6d1d5e2792c7585455eeec41f7e60c64d27e817df4170f99c615db16",
+      "bytes": 23862
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/rail.low.orm.png": {
+      "sha256": "e5cd6e79bf034ed2b057e52ef67644d542679e55658d5c037a769fcdfb5e684c",
+      "bytes": 12110
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/road.high.albedo.png": {
+      "sha256": "af12dc565530b844c57c5e05f036a4380e3ff9a77ebaa950b1ce27cc0f87a3f7",
+      "bytes": 31603
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/road.high.normal.png": {
+      "sha256": "ca83d2414ccef61bae845b480738a0e24ebec2ae94dae42e2399ab2c699dc9e8",
+      "bytes": 62776
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/road.high.orm.png": {
+      "sha256": "5b3710dbc7ded1a4e40b8f36b769455a37ee772264f0e98a30bf16fd18df012c",
+      "bytes": 16815
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/road.low.albedo.png": {
+      "sha256": "0fd2cb7ebf0b86c55876423cc5e72f7bcf654282fc03b49c1a976bd7c417f461",
+      "bytes": 25528
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/road.low.normal.png": {
+      "sha256": "53f435f748404555849b54135056fba5478518debd37f4625e42128e88dc5fd7",
+      "bytes": 36742
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/road.low.orm.png": {
+      "sha256": "0d9a577f32e8864382935a4e47d0125460190aa0b97b688110706fe434099787",
+      "bytes": 13416
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/rusted-steel.high.albedo.png": {
+      "sha256": "6b574c3af6df5904c3ad62fb8758a1ad05563a0cc0bb24faabc09265b433f138",
+      "bytes": 31857
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/rusted-steel.high.normal.png": {
+      "sha256": "9e58637f2b8eed01b9c903fc258b4ac47738cfac2ca2a7ed06f3d4b042607b36",
+      "bytes": 31239
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/rusted-steel.high.orm.png": {
+      "sha256": "7acbcf72fffd3c54f9c4ff19855f9e36bfa63b4f3d9cf1729a5956de5fe415eb",
+      "bytes": 964
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/rusted-steel.low.albedo.png": {
+      "sha256": "7f857da43ac28b079426c78e3c83f6739c5f1d51146e1bd3a6cf37f361618b74",
+      "bytes": 25788
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/rusted-steel.low.normal.png": {
+      "sha256": "b875e1b7c1ae2b64187a5bcba1e7d00ee5f55b11c8a38c70c5af8d913e637484",
+      "bytes": 23948
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/rusted-steel.low.orm.png": {
+      "sha256": "844b1b179c70f458648c4ee9fcf8fc1d053522d092278f808e215d53aedce900",
+      "bytes": 347
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/soot.high.albedo.png": {
+      "sha256": "270e7bd22a8023c5ea167b95ae488524c9a5d0a70401d872825e8baf97908b13",
+      "bytes": 1929
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/soot.high.normal.png": {
+      "sha256": "689bf708efedbf3cc3bc99cd944d4356138e356e474e10b2bd64d42339b1e252",
+      "bytes": 4896
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/soot.high.orm.png": {
+      "sha256": "dca6e4941bdd5c031056e29728ae845e04df771af16cf4b133c02233b3ff49c0",
+      "bytes": 19009
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/soot.low.albedo.png": {
+      "sha256": "436c00f95eff0fc08022408f84ec25c63f20eb9d8ae02dd8e9131f78f1b22f61",
+      "bytes": 1379
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/soot.low.normal.png": {
+      "sha256": "87592c4e6f41708aa86b164ae644b2a650c88533d29818efad818e91a9cb92b0",
+      "bytes": 3905
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/soot.low.orm.png": {
+      "sha256": "612c06874b58384c3fe4236760811b9ac3edaef04744380c3b3f19a0035cffc8",
+      "bytes": 15504
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/stone.high.albedo.png": {
+      "sha256": "20934857bcdca1d434c0efcab692add42ca5ce414af72b8f76d75585e3eb6a5b",
+      "bytes": 2008
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/stone.high.normal.png": {
+      "sha256": "689bf708efedbf3cc3bc99cd944d4356138e356e474e10b2bd64d42339b1e252",
+      "bytes": 4896
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/stone.high.orm.png": {
+      "sha256": "9b25bfdb347bd5c942811ef4a0e99c6b0f4e7e72e8ae844f99ce61ae874e6ec0",
+      "bytes": 19015
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/stone.low.albedo.png": {
+      "sha256": "9e4705697ad419404e93724d41efbdea583bbd8892cfe04e443837c32049a2fb",
+      "bytes": 1469
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/stone.low.normal.png": {
+      "sha256": "87592c4e6f41708aa86b164ae644b2a650c88533d29818efad818e91a9cb92b0",
+      "bytes": 3905
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/stone.low.orm.png": {
+      "sha256": "3ae993ebe2092a50d28d1e2fbe6d7fdbdf2e3f661b34cc978b1b99a84b391ddb",
+      "bytes": 15510
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/timber.high.albedo.png": {
+      "sha256": "d93d21ef8b069353e710090bed62cf90fa6a700354b8aa2adb83fc72ed45dcc6",
+      "bytes": 58634
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/timber.high.normal.png": {
+      "sha256": "abbbbd8222f3108eddc555ac7fd1aa637b0eb8f8075eb47d544d5bba7774cdf4",
+      "bytes": 15760
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/timber.high.orm.png": {
+      "sha256": "481bb8fdc53ad4732b3e2b610a2681e9fd52ec2e497b725a0b60a8e021db503d",
+      "bytes": 14108
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/timber.low.albedo.png": {
+      "sha256": "1fed5210026e5ee09772207c2758fcb9fad72ddb4c2079291ed99af2b6861fa8",
+      "bytes": 19557
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/timber.low.normal.png": {
+      "sha256": "bbb9f879b9ccd605b78ebd06e75d73bc559768d8c593a92da2f12256ec57e008",
+      "bytes": 10342
+    },
+    "assets/models/provisional/m01/m01-bridges/materials/timber.low.orm.png": {
+      "sha256": "c5fb9663c52e7886c3dcc346d6aaeb9815c803447ea55f5e8d6632f168b34b4c",
+      "bytes": 6332
+    },
+    "src/render/m01-bridge-finish-runtime.js": {
+      "sha256": "d3dcd7b5a677a1285217b0fd89cebc984ad26a4ee55d5d9158d9962127f750ff",
+      "bytes": 13060
+    },
+    "src/render/m01-bridge-lod.js": {
+      "sha256": "56f6e886c7a68ec9db7110b42c91cb4e03c3f8b3b3d86ad7e219c4bbc1e4783a",
+      "bytes": 1872
+    },
+    "src/render/m01-bridge-material.js": {
+      "sha256": "4580c59d93052992f359da6cda4fa83bef7ba42017747040a0c9f610bda34e10",
+      "bytes": 5091
+    },
+    "src/render/m01-view.js": {
+      "sha256": "5d01b717ad36ea54ec3f122cf9c442155a511221ffaf1970f8f6887ca2d4d98a",
+      "bytes": 75037
+    },
+    "tests/browser/m01-bridge-finish-runtime.spec.js": {
+      "sha256": "6674d4e84dffa239e765ab14d8f3fd840832107201e74baab13142ba993d84a4",
+      "bytes": 14286
+    },
+    "tests/browser/m01-bridge-material-kit.spec.js": {
+      "sha256": "fdf0aff8cf42095c81f5b0c0ec108e071d167fa74eadb43eb3c2b37ec57009f9",
+      "bytes": 872
+    },
+    "tests/m01-bridge-finish-runtime.test.js": {
+      "sha256": "437a838451c52a4216f3984a41a041dd1368ca38002931669d0bd8f9add978e4",
+      "bytes": 3950
+    },
+    "tests/m01-bridge-lod.test.js": {
+      "sha256": "ae6e0b694597b2865c871759e5642140be783f2d6d4dc81e57ae5c19d99c1852",
+      "bytes": 1401
+    },
+    "tests/m01-bridge-material-kit.test.js": {
+      "sha256": "b80e62bfa29341374de17194cee9ddea1dc800af21fcb88117ba0eae42b5c5db",
+      "bytes": 1130
+    },
+    "tests/m01-bridge-material.test.js": {
+      "sha256": "60be06e191b1121a05915042f4a25186866c5412e936cbdf4242c1461ee1b230",
+      "bytes": 3884
+    },
+    "tools/assets/m01-bridges/impostors/generate.mjs": {
+      "sha256": "73f263e013e030f05fbe365c08ba097f0a9e81470f7c0aac327ce1ed80bdc2a5",
+      "bytes": 4742
+    },
+    "tools/assets/m01-bridges/materials/generate.mjs": {
+      "sha256": "9f3fb35f42a0193adce9fd4b418e6d80707dcd4243e882b0945d593f05de07a4",
+      "bytes": 5443
+    },
+    "tools/assets/m01-bridges/materials/viewer.html": {
+      "sha256": "c01bf3eb0676fa0a87a230e09d291c173d1ea4cf641d0ac890d5f98db8b2c063",
+      "bytes": 2674
+    },
+    "tools/verification/m01-bridge-finish-v2-authority.mjs": {
+      "sha256": "4035e346816f4f54865f1f89a3e7ce53e4feeb67c97f5fcbfefcf38cb35cd34d",
+      "bytes": 960
+    },
+    "tools/verification/m01-bridge-finish-v2-build.mjs": {
+      "sha256": "aebb560b7963e7671781fd879491c4494dec23d27a89150b7a7aec828fc995f8",
+      "bytes": 349
+    },
+    "tools/verification/m01-bridge-finish-v2-compare.mjs": {
+      "sha256": "4301edb238e725e6aab6d59639cbd8fd97cfbd62cc09d0d60be7c99ff6fa2d46",
+      "bytes": 2802
+    },
+    "tools/verification/m01-bridge-finish-v2-future-batch.mjs": {
+      "sha256": "d755477d255bdd68b9a4e16f6d8dc99e4fc690fb8f59842a88ad221fae9950bc",
+      "bytes": 3646
+    },
+    "tools/verification/m01-bridge-finish-v2-futures.mjs": {
+      "sha256": "3ab4487416b2b26af7586fc3c851cf27ffd7a8f218444544849b637d887260b6",
+      "bytes": 4998
+    },
+    "tools/verification/m01-bridge-finish-v2-node-assets.mjs": {
+      "sha256": "809c85009587d67995c926f1fa1e3818f333ba5887b78790e11c0352b30d3552",
+      "bytes": 2345
+    },
+    "tools/verification/m01-bridge-finish-v2-source.mjs": {
+      "sha256": "2626dade95b5d99fdd992fb5cfc412473c1c02e72ff19fd49d747b9e1dc423b4",
+      "bytes": 1957
+    },
+    "tools/verification/playwright.bridge-finish-v2-regressions.config.js": {
+      "sha256": "6059486a0ddfb519cdd5e0160d98647e8c2c9eb51edbd63a170fe5b05829e1a6",
+      "bytes": 775
+    },
+    "tools/verification/playwright.bridge-finish-v2.config.js": {
+      "sha256": "494cf87bb9b20ee4b3112df0595c501e9dd6aa35c6114e1b780422ac26916074",
+      "bytes": 898
+    }
+  }
+}
