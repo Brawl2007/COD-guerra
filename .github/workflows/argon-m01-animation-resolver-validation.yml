@@ -1,0 +1,35 @@
+name: Argon M01 Animation Resolver - test only
+
+on:
+  push:
+    branches:
+      - argon/m01-animation-resolver-v1-integration
+
+permissions:
+  contents: read
+
+concurrency:
+  group: argon-m01-animation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Node 24 focused + regressions + build
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
+      - name: Set up Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Focused animation resolver tests
+        run: node --test tests/m01-animation-resolver.test.js
+      - name: All Node regression tests
+        run: npm test
+      - name: Production build only (no deployment)
+        run: npm run build
