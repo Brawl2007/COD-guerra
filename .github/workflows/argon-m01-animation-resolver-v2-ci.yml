@@ -1,0 +1,52 @@
+name: M01 Argon V2 — testes de integração sem deploy
+
+on:
+  push:
+    branches: [argon/m01-animation-resolver-v2-ik-reload-hit]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: argon-m01-animation-v2-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  focused:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Animation Resolver V1 e V2
+        run: node --test tests/m01-animation-resolver.test.js tests/m01-animation-resolver-v2.test.js
+      - name: Testes regressão dos especialistas
+        run: node --test tests/m01-ckm-runtime.test.js tests/m01-mg34-prone-presentation.test.js tests/m01-station-drag-runtime.test.js
+      - name: Sintaxe e build sem deploy
+        run: |
+          node --check src/render/m01-animation-resolver.js
+          node --check src/render/m01-actor-pose.js
+          node --check src/render/m01-characters.js
+          npm run build
+
+  full-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Suíte Node completa — reportar falhas herdadas e novas
+        run: npm test
