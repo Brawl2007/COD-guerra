@@ -1,4 +1,4 @@
-name: M01 Argon Animation Resolver V1 — CI isolado
+name: M01 Argon Animation Resolver V1 — CI e evidência visual
 
 on:
   push:
@@ -14,7 +14,33 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test-and-build:
+  tests-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout completo para testes históricos
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Instalar dependências
+        run: npm ci
+      - name: Testes focados do Animation Resolver
+        run: node --test tests/m01-animation-resolver.test.js
+      - name: Suíte Node completa
+        id: all_tests
+        continue-on-error: true
+        run: npm test
+      - name: Build de produção SEM deploy
+        run: npm run build
+      - name: Falhar se houve regressões
+        run: test "${{ steps.all_tests.outcome }}" = success
+
+  browser-visual-evidence:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -25,11 +51,21 @@ jobs:
         with:
           node-version: '24'
           cache: npm
-      - name: Instalar dependencias do lockfile
+      - name: Instalar dependências
         run: npm ci
-      - name: Testes focados do Animation Resolver
-        run: node --test tests/m01-animation-resolver.test.js
-      - name: Suite Node completa
-        run: npm test
-      - name: Build de producao (sem deploy)
+      - name: Build de produção SEM deploy
         run: npm run build
+      - name: Chromium para Playwright
+        run: npx playwright install --with-deps chromium
+      - name: Gravar navegador real M01
+        env:
+          CI: '1'
+        run: npx playwright test tests/browser/m01-argon-visual-evidence.spec.js --reporter=line
+      - name: Guardar capturas, vídeo e trace no GitHub
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-argon-browser-evidence
+          path: test-results/
+          if-no-files-found: warn
+          retention-days: 7
