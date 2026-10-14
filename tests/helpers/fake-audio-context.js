@@ -7,8 +7,14 @@ export class Param{
   setTargetAtTime(value,t,tau){this.value=value;this.events.push(['target',value,t,tau]);}
   cancelScheduledValues(t){this.events.push(['cancel',t]);}
 }
+// MEMORY SAFETY: node:assert builds a failure message by inspecting the actual value with depth 1000 and customInspect off.
+// Enumerable back-edges (node.ctx -> ctx.nodes -> every node) and the connection DAG (every path is re-expanded) make that
+// message combinatorial: one failing `assert.equal(node, null)` grew past 2 GB. `ctx` and `connections` therefore stay
+// readable but non-enumerable, so a failing assertion prints a node as a few lines.
+const hidden=(object,key,value)=>Object.defineProperty(object,key,{value,writable:true,configurable:true,enumerable:false});
+export const MAX_FAKE_SAMPLES=1<<22;   // allocation guard for createBuffer: a runaway length throws instead of eating RAM
 export class Node{
-  constructor(ctx,type){this.ctx=ctx;this.type=type;this.connections=[];this.disconnected=false;ctx.nodes.push(this);}
+  constructor(ctx,type){hidden(this,'ctx',ctx);this.type=type;hidden(this,'connections',[]);this.disconnected=false;ctx.nodes.push(this);}
   connect(node){this.connections.push(node);return node;}
   disconnect(){this.connections=[];this.disconnected=true;}
 }
@@ -31,6 +37,7 @@ export class FakeAudioContext{
   createOscillator(){const n=new Source(this,'oscillator');n.frequency=new Param(440);n.type='sine';return n;}
   createBufferSource(){return new Source(this,'buffer');}
   createBuffer(channels,length,sampleRate){
+    if(!(channels>=1&&length>=0&&channels*length<=MAX_FAKE_SAMPLES))throw new RangeError(`fake createBuffer(${channels}, ${length}) exceeds the ${MAX_FAKE_SAMPLES} sample guard`);
     const data=Array.from({length:channels},()=>new Float32Array(length));
     return {length,numberOfChannels:channels,duration:length/sampleRate,getChannelData:i=>data[i]};
   }

@@ -29,7 +29,7 @@ test('live M01 combat: real MG34 fire raises intensity; front bed, reverb, buses
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await startFrom(page,combat);
   const initial=await page.evaluate(()=>window.gameDiagnostics().audio);
-  expect(initial.reverb).toBe(true);expect(initial.compressor).toBe(true);expect(initial.maxVoices).toBe(32);
+  expect(initial.reverb).toBe(true);expect(initial.compressor).toBe(true);expect(initial.maxVoices).toBe(20);
   expect(initial.loops).toEqual(expect.arrayContaining(['wind','battle-bed']));
   await page.waitForFunction(()=>(window.gameDiagnostics().audio.eventCounts.mg34??0)>1,null,{timeout:30000});
   await page.waitForFunction(()=>window.gameDiagnostics().audio.intensity>0,null,{timeout:30000});
