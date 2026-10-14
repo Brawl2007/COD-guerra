@@ -87,6 +87,24 @@ const holdSlot=i=>({x:LAYOUT.x0+i%LAYOUT.columns*LAYOUT.dx,y:0,z:LAYOUT.z0+Math.
 // The block the east rifles aim at: the layout plus one metre in x and 0.2 m in z around it (two z bands of equal height).
 const BLOCK=(rows=>({x:LAYOUT.x0-1,w:(LAYOUT.columns-1)*LAYOUT.dx+2,z:LAYOUT.z0-.2,h:(rows-1)*LAYOUT.dz+.4}))(Math.ceil(24/LAYOUT.columns));
 
+// T25 estimates for gameplay, not historical impact locations. H16 chooses fixed battle-clock times; no gameplay RNG draw.
+const RAID_ID=/^raid_0530(?:_[1-5])?$/;
+export function raidPlan(def=definition,world=new TczewWorld()){
+  const fail=m=>{throw new Error(`M01 raid: ${m}`);},event=def.events.find(e=>e.id===E('bombing_0530'));
+  const targets=def.raidTargets;if(!Array.isArray(targets)||targets.length!==6)fail('six targets required');
+  const from=seconds(event.window.from),to=seconds(event.window.to),bounds=world.layout.bounds.playable;
+  return targets.map((t,i)=>{
+    const id=`raid_0530${i?'_'+i:''}`,at=typeof t?.at==='string'?seconds(t.at):NaN;
+    if(t?.id!==id||!Number.isFinite(at)||at<from||at>=to||(i&&at<=seconds(targets[i-1].at))||(!i&&at!==from))fail('IDs/times');
+    if(!Array.isArray(t.position)||t.position.length!==2||!t.position.every(Number.isFinite))fail('position');
+    const [x,z]=t.position;
+    // A 70 m envelope also covers safeImpact's maximum displacement (30 m approach + 40 m replacement).
+    if(x>bounds.minX-100)fail('west safety envelope');
+    return {id,at,point:{x,y:world.heightAt(x,z),z}};
+  });
+}
+const RAID_PLAN=raidPlan();
+
 export class M01Simulation {
   constructor(seed=19390901){this.reset(seed);}
   reset(seed=19390901){
@@ -219,7 +237,7 @@ export class M01Simulation {
     switch(id){
       case E('intro_card'):break;
       case E('prelude_start'):this.activate('deliver_message');this.mission.phase='SETUP';break;
-      case E('railway_worker_report'):line(dist(this.player,this.actor('franciszek_lipski'))<15?8:19);break;
+      case E('railway_worker_report'):if(dist(this.player,this.actor('franciszek_lipski'))<15)line(8);break;
       case E('planes_heard'):this.mission.phase='BUILDUP';line(12);line(13);line(66);this.actor('tadeusz_nowicki').target=this.world.point('repair_site_1');break;
       case E('bombing_0434'):
         this.finish('deliver_message');this.activate('take_cover');this.player.headgear='pl_helmet_wz31';
@@ -228,7 +246,7 @@ export class M01Simulation {
         this.impact('station_bomb',this.world.point('tczew_station'),true);break;
       case E('forward_post_bombed'):{const p=this.world.point('forward_post');
         const near=dist(this.player,p)<=30;this.flags['m01.forward_post_state']=near?'intact_near_miss':'destroyed';
-        this.impact('forward_post',near?{x:0,y:-10,z:-40}:p,true);break;}
+        this.impact('forward_post',near?{x:0,y:-10,z:-40}:p,true);if(!near)line(19);break;}
       case E('nowicki_lost'):this.flags['m01.nowicki_status']='missing';this.actor('tadeusz_nowicki').active=false;
         this.impact('repair_crater',this.world.point('repair_site_1'),true);break;
       case E('cable_cut'):this.destruction.push('ignition_line_damaged');break;
@@ -249,7 +267,8 @@ export class M01Simulation {
       case E('order_demolish'):this.activate('hold_access');this.pendingCheckpoint='cp_m01_c_engenheiros';this.startScene('cs_m01_order');this.mission.phase='MAIN_COMBAT';
         // Bąk ocupa cedo a posição no tabuleiro: às 06:04 cai em bak_wound_point, à frente do jogador, e não no caminho.
         this.actor('jozef_bak').target=this.world.point('bak_wound_point');break;
-      case E('bombing_0530'):this.flags['m01.second_raid_state']='active';this.impact('raid_0530',{x:-600,y:0,z:100},true);break;
+      case E('bombing_0530'):this.flags['m01.second_raid_state']='active';
+        this.timers.raidSchedule=RAID_PLAN.map(t=>({...clone(t),emitted:false}));this.updateRaidSchedule();break;
       case E('runner_pressure_report'):line(37);break;
       case E('north_contact_distant'):this.emit({type:'distant-shot',point:{x:-500,y:2,z:-1100}});break;
       case E('east_platoon_withdraws'):if(this.timers.holdAccessVisited)this.finish('hold_access');this.activate('cover_withdrawal');this.mission.phase='SET_PIECE';line(39);
@@ -287,9 +306,16 @@ export class M01Simulation {
     if(dist(p,this.player)<30)throw new Error('Impacto aéreo inseguro.');return p;
   }
   impact(id,point,aerial){
-    const p=aerial?this.safeImpact(point):point;
+    const p=aerial?this.safeImpact(point):{...point};
+    if(aerial)p.y=this.world.heightAt(p.x,p.z);   // Ground only after the existing safety shift, including near-miss alternatives.
     this.sectors.damage.push({id,...p,started:this.clock,soundAt:this.clock+dist(p,this.player)/343});
-    this.emit({type:'m01-blast',point:p,soundAt:this.clock+dist(p,this.player)/343,aerial});
+    this.emit({type:'m01-blast',point:p,soundAt:this.clock+dist(p,this.player)/343,aerial});return p;
+  }
+  updateRaidSchedule(){
+    // A missing schedule is a legacy schema-2 raid: never invent retroactive impacts on resume.
+    for(const t of this.timers.raidSchedule??[])if(!t.emitted&&this.battleClock>=t.at){
+      t.point=this.impact(t.id,t.point,true);t.emitted=true;
+    }
   }
   processEvents(){
     for(let pass=0;pass<4;pass++)for(const event of definition.events){
@@ -497,7 +523,7 @@ export class M01Simulation {
   }
   /** grp_de_east no dique: MG34 sobre o reparo/jogador/secção; atiradores sobretudo sobre a cabeça de ponte leste até às 06:00. */
   eastFire(a,retreat,withdrawal){
-    const p=this.player,r=()=>this.rng.next(),mg=a.weapon==='mg34',sees=t=>this.world.lineOfSight(a,t),west=p.x>-200;
+    const p=this.player,r=()=>this.rng.next(),mg=a.weapon==='mg34',sees=t=>this.world.lineOfSight(a,t),west=inside(p,this.world.layout.bounds.playable);
     let target=null,kind=null;
     if(retreat){   // s2 german_regroup: fogo esporádico da margem leste depois da demolição
       a.cooldown=(mg?16:32)+r()*20;if(gateShooter(a)&&west&&sees(p)){target=p;kind='player';}
@@ -760,7 +786,7 @@ export class M01Simulation {
     this.updateActors(dt);this.updateCombat(dt);
     for(const a of this.actors){updatePosture(a,this.clock);updateBodyYaw(a,dt);}
     if(!p.alive)return;
-    this.updateObjectives(dt,controls.interact);this.processEvents();
+    this.updateObjectives(dt,controls.interact);this.processEvents();this.updateRaidSchedule();
     if(this.flags['m01.second_raid_state']==='active'&&this.battleClock>=seconds('05:34:00'))this.flags['m01.second_raid_state']='ended';
     for(const sector of this.sectors.sectors){const schedule=definition.sectors.find(s=>s.id===sector.id).schedule;
       const current=schedule.filter(s=>seconds(s.at)<=this.battleClock).at(-1);sector.state=current.state;
@@ -971,7 +997,7 @@ export class M01Simulation {
       train963:this.consumedEvent(E('train963_arrives')),panzerzug:this.consumedEvent(E('panzerzug_arrives')),
       stukas:this.consumedEvent(E('planes_heard'))&&!this.consumedEvent(E('second_air_pass')),
       secondRaid:this.flags['m01.second_raid_state']==='active',weaponVisible:!this.player.carrying&&this.scene?.id!=='cs_m01_roll_call',
-      damage:this.sectors.damage.map(d=>({...d,smokeVisible:this.clock-d.started<240||d.id==='station_bomb'}))};
+      damage:this.sectors.damage.map(d=>({...d,smokeVisible:this.clock-d.started<240||d.id==='station_bomb'||RAID_ID.test(d.id)}))};
   }
   snapshot(includeCheckpoint=true){const s=clone({schema:2,missionId:this.missionId,clock:this.clock,battleClock:this.battleClock,rng:this.rng.state,
     player:this.player,weapon:this.weapon.snapshot(),actors:this.actors,consumed:this.consumed,objectives:this.objectives,flags:this.flags,
@@ -1115,6 +1141,22 @@ export function validateM01Snapshot(s){
   if('fireEase' in s.timers&&typeof s.timers.fireEase!=='boolean')reject('timer fireEase');
   if('withdrawalPressure' in s.timers&&(!Number.isInteger(s.timers.withdrawalPressure)||!finite(s.timers.withdrawalPressure,0,7)))reject('timer withdrawalPressure');
   if('nextCombatCall' in s.timers&&!finite(s.timers.nextCombatCall))reject('timer nextCombatCall');
+  if(s.timers.raidSchedule===undefined&&s.sectors.damage.some(d=>/^raid_0530_[1-5]$/.test(d.id)))reject('missing raid schedule');
+  if(s.timers.raidSchedule!==undefined){
+    const schedule=s.timers.raidSchedule,world=new TczewWorld(),raidAt=s.consumed[E('bombing_0530')];
+    if(!Array.isArray(schedule)||schedule.length!==RAID_PLAN.length||raidAt===undefined||s.battleClock<RAID_PLAN[0].at||
+      s.flags['m01.second_raid_state']!==(s.battleClock>=seconds('05:34:00')?'ended':'active'))reject('raid schedule');
+    for(const [i,t] of schedule.entries()){
+      const plan=RAID_PLAN[i],p=t?.point,emitted=t?.emitted,damage=s.sectors.damage.filter(d=>d.id===plan.id);
+      if(!t||Object.keys(t).some(k=>!['id','at','point','emitted'].includes(k))||t.id!==plan.id||t.at!==plan.at||
+        !p||Object.keys(p).some(k=>!['x','y','z'].includes(k))||![p.x,p.y,p.z].every(Number.isFinite)||
+        p.y!==world.heightAt(p.x,p.z)||p.x>world.layout.bounds.playable.minX-30||
+        typeof emitted!=='boolean'||emitted!==(s.battleClock>=plan.at)||
+        (emitted?dist(p,plan.point)>70.000001:p.x!==plan.point.x||p.y!==plan.point.y||p.z!==plan.point.z)||
+        damage.length!==(emitted?1:0)||damage.some(d=>d.x!==p.x||d.y!==p.y||d.z!==p.z||d.started<raidAt))reject('raid target');
+    }
+    if(s.sectors.damage.some(d=>RAID_ID.test(d.id)&&!schedule.some(t=>t.id===d.id&&t.emitted)))reject('raid damage');
+  }
   if(s.timers.coverFire!==undefined){
     const fire=s.timers.coverFire,actor=s.actors.find(a=>a.id===fire?.by);
     if(!fire||!actor||actor.group!=='grp_de_east'||!finite(fire.at,0,s.clock)||

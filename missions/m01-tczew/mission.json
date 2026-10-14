@@ -451,6 +451,63 @@
       "consequences": ["evt_m01_roll_call"]
     }
   ],
+  "raidTargets": [
+    {
+      "id": "raid_0530",
+      "at": "05:30:00",
+      "position": [
+        -600,
+        100
+      ],
+      "certainty": "GAMEPLAY_DRAMATIZATION"
+    },
+    {
+      "id": "raid_0530_1",
+      "at": "05:30:40",
+      "position": [
+        -680,
+        65
+      ],
+      "certainty": "GAMEPLAY_DRAMATIZATION"
+    },
+    {
+      "id": "raid_0530_2",
+      "at": "05:31:20",
+      "position": [
+        -760,
+        130
+      ],
+      "certainty": "GAMEPLAY_DRAMATIZATION"
+    },
+    {
+      "id": "raid_0530_3",
+      "at": "05:32:00",
+      "position": [
+        -820,
+        -20
+      ],
+      "certainty": "GAMEPLAY_DRAMATIZATION"
+    },
+    {
+      "id": "raid_0530_4",
+      "at": "05:32:40",
+      "position": [
+        -650,
+        -130
+      ],
+      "certainty": "GAMEPLAY_DRAMATIZATION"
+    },
+    {
+      "id": "raid_0530_5",
+      "at": "05:33:20",
+      "position": [
+        -740,
+        210
+      ],
+      "certainty": "GAMEPLAY_DRAMATIZATION"
+    }
+  ],
+  "raidTargetsNote": "Seis alvos estimados para gameplay a oeste da área jogável; não são localizações históricas precisas. Horas fixas (H16), sem consumo do RNG de combate. Fumo persistente até ao fim da missão; atmosfera/avião adicionais ficam em T17/T21.",
   "events": [
     {
       "id": "evt_m01_intro_card",
@@ -480,7 +537,7 @@
       "trigger": { "type": "battleClock", "at": "04:31:00" },
       "results": [
         "Lipski percorre os trilhos com lanterna entre x −100 e −20",
-        "fala dlg_m01_008 se o jogador estiver a até 15 m; caso contrário a informação chega por Zieliński em dlg_m01_019"
+        "fala dlg_m01_008 se o jogador estiver a até 15 m; dlg_m01_019 só após o impacto que destrói o posto"
       ],
       "idempotent": true,
       "persist": true,
@@ -528,7 +585,7 @@
       "sector": "s1_west_bridgehead",
       "trigger": { "type": "eventComplete", "event": "evt_m01_bombing_0434", "delaySec": 2.1 },
       "readiness": ["só atinge forward_post se o jogador estiver a mais de 30 m dele; caso contrário, a bomba cai no rio 40 m a norte do portal (quase-acerto)"],
-      "results": ["m01.forward_post_state = 'destroyed' ou 'intact_near_miss'", "coluna de água e lama; sacos de areia desabados"],
+      "results": ["m01.forward_post_state = 'destroyed' ou 'intact_near_miss'", "coluna de água e lama; sacos de areia desabados", "dlg_m01_019 após o impacto se o posto foi destruído"],
       "idempotent": true,
       "persist": true,
       "certainty": "RECONSTRUCTED",
@@ -649,7 +706,7 @@
       "readiness": ["cada impacto e alternativa a pelo menos 30 m da posição actual do jogador"],
       "results": [
         "m01.second_raid_state = 'active'; bombardamento de altitude, sem mergulho de Stukas",
-        "sons e fumaça na direção da cidade; nenhum impacto roteirizado no reparo ou no jogador",
+        "seis impactos fixos de raidTargets fora da área jogável, ancorados no terreno, com fumo persistente na direção da cidade; nenhum impacto no reparo ou no jogador",
         "às 05:34:00, m01.second_raid_state = 'ended'; terminar a passagem e permitir o checkpoint pendente"
       ],
       "idempotent": true,

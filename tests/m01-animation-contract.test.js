@@ -1,6 +1,7 @@
 import test,{after} from 'node:test';
 import assert from 'node:assert/strict';
-import {writeFileSync} from 'node:fs';
+import {readFileSync,writeFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import golden from './fixtures/m01-anim-gameplay-baseline.json' with {type:'json'};
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -26,7 +27,15 @@ test('schema 2 initializes all 89 IDs; diagnostics are detached, small presentat
   validateM01Snapshot(s.snapshot());
 });
 
-for(const expected of golden.routes)test(`all gameplay bytes hashed each tick against approved base: seed ${expected.seed}, support ${expected.support}`,()=>{
+test('approved T02-min/T03-lite/T25 golden locks the exact integration source and retains historical provenance',()=>{
+  assert.equal(golden.base,'61ecd77b099d5921bd025275eafd9c3157536bb7');
+  assert.equal(golden.sourceSha256,'792fdc9a7a56a09bda599669f7349e3bb6fad0e3e13d67eed03f1474eeef07b6');
+  assert.equal(golden.approvedIntegration.task,'M01-CONTINUITY-RAID-INTEGRATION-V1');
+  assert.equal(golden.approvedIntegration.base,'2d65dd0b9837d5e6f21fe24dd8a8b167ca76df55');
+  assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),golden.approvedIntegration.sourceSha256);
+});
+
+for(const expected of golden.routes)test(`all gameplay bytes hashed each tick against approved T02-min/T03-lite/T25 integration: seed ${expected.seed}, support ${expected.support}`,()=>{
   const trace=new GameplayDigest(),seen=new Set();let maxSpeed=0;
   const result=route(expected.seed,{support:expected.support,onStep:({sim,events})=>{
     trace.add(gameplayFrame(sim,events));

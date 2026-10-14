@@ -1,0 +1,56 @@
+name: M01 continuity and raid integration
+
+on:
+  push:
+    branches: [codex/m01-continuity-raid-integration-v1]
+    paths-ignore:
+      - "docs/**"
+      - ".agent/**"
+      - "DEVELOPMENT_STATUS.md"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-continuity-raid-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Preserve systems outside these two deliveries
+        run: |
+          git merge-base --is-ancestor 2d65dd0b9837d5e6f21fe24dd8a8b167ca76df55 HEAD
+          git diff --exit-code 2d65dd0b9837d5e6f21fe24dd8a8b167ca76df55 HEAD -- src/world src/core assets src/game/wz29.js src/game/m01-fire.js package.json package-lock.json playwright.config.js
+      - name: Full Node regression suite
+        run: |
+          set -o pipefail
+          mkdir -p evidence
+          node --test --test-concurrency=2 tests/*.test.js 2>&1 | tee evidence/node.log
+      - name: Production build
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee evidence/build.log
+      - run: npx playwright install --with-deps chromium
+      - name: Raid continuation and paused smoke frame
+        run: |
+          set -o pipefail
+          npx playwright test tests/browser/m01-continuity-raid.spec.js --workers=1 --retries=0 2>&1 | tee evidence/browser.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m01-continuity-raid-${{ github.sha }}
+          path: |
+            evidence/
+            test-results/
+          if-no-files-found: ignore

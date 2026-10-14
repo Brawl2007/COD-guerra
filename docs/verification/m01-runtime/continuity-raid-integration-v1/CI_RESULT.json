@@ -1,0 +1,122 @@
+{
+  "conclusion": "success",
+  "headSha": "8387b5627b3b5482370c0915f018776d563e31ec",
+  "jobs": [
+    {
+      "completedAt": "2026-10-14T14:49:38Z",
+      "conclusion": "success",
+      "databaseId": 115915383659,
+      "name": "verify",
+      "startedAt": "2026-10-14T14:38:59Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-node@v4",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run npm ci",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Preserve systems outside these two deliveries",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Full Node regression suite",
+          "number": 6,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Production build",
+          "number": 7,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run npx playwright install --with-deps chromium",
+          "number": 8,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Raid continuation and paused smoke frame",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-node@v4",
+          "number": 19,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "number": 20,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 21,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/38582392486/job/115915383659"
+    }
+  ],
+  "status": "completed",
+  "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/38582392486",
+  "verified_counts": {
+    "node": {
+      "tests": 694,
+      "pass": 694,
+      "fail": 0
+    },
+    "browser": {
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "workers": 1,
+      "retries": 0
+    },
+    "build": "PASS"
+  },
+  "artifacts": [
+    {
+      "digest": "sha256:030754b518a0cfd562342e6a9abf53fc5965547bc62274f7fabf478b55075464",
+      "expired": false,
+      "id": 11904905417,
+      "name": "m01-continuity-raid-8387b5627b3b5482370c0915f018776d563e31ec",
+      "size_in_bytes": 816129
+    }
+  ],
+  "artifact_download_note": "O CLI local recebeu 403 do endpoint de arquivo. Logs completos lidos pela liga\u00e7\u00e3o GitHub; artifact dispon\u00edvel no run remoto, sem alega\u00e7\u00e3o de ZIP local verificado."
+}

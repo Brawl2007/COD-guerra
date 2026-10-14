@@ -1,0 +1,391 @@
+{
+  "task": "M01-CONTINUITY-RAID-INTEGRATION-V1",
+  "base": "2d65dd0b9837d5e6f21fe24dd8a8b167ca76df55",
+  "architecture": "x64",
+  "protectedFiles": [
+    {
+      "path": "src/game/wz29.js",
+      "sha256": "3bd376bf1d1d6d4978871a4a35e4067779a1c9afda0adde155aba27b10636be5"
+    },
+    {
+      "path": "src/game/m01-fire.js",
+      "sha256": "e73713e21799fa70ec2e97c9049eb95c5bdcc9efdde3da216a4656ff008bd46c"
+    },
+    {
+      "path": "src/world/spatial.js",
+      "sha256": "49409541cf8b9c8542aba5cdaf79a46227e973932fa795743969a0f893551dcb"
+    },
+    {
+      "path": "src/core/random.js",
+      "sha256": "c7fe17d39b70b37adeab22bfdb488029476b489a8e940d43db06558251b273e1"
+    },
+    {
+      "path": "src/world/tczew-world.js",
+      "sha256": "595879345da147294b6ed22645c6df0fb74a6ea4e9513a5b76e373cd1310738d"
+    }
+  ],
+  "protectedMethods": [
+    {
+      "name": "safeImpact",
+      "sha256": "a3ad8fe93e3a99cd4670e76157d2b668d9ab487e721d4be128ac47b6c9319549"
+    },
+    {
+      "name": "readiness",
+      "sha256": "b7cfd14ab6dac2625d1b0f8528de4dfee11589fe760c2051563503d67a1ccfd4"
+    },
+    {
+      "name": "advanceBattle",
+      "sha256": "176f766b7b8d0e9d888aa111d06b967e9221eb3d24d999395eb0b2d098e4f59a"
+    },
+    {
+      "name": "burst",
+      "sha256": "2de88337bd03b18cbd784c362175cecac38904c245e6aa766a2e863de709e13b"
+    },
+    {
+      "name": "landRounds",
+      "sha256": "0c4e3f6dfacd539e88eecf7fcd8cfe1d0f505af26f517a1745e8e9b1fa2b357a"
+    },
+    {
+      "name": "spansFire",
+      "sha256": "6f76aedd786d142574733ce58ea9f5171e32b42d8980c7e02421aca90e0ae20d"
+    },
+    {
+      "name": "eastFire",
+      "change": "only west eligibility expression; cadence, target policy, LOS and RNG algorithm preserved"
+    }
+  ],
+  "routes": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "firstDifference": {
+        "tick": 320,
+        "battleClock": 16259.999999999767,
+        "difference": {
+          "path": "$.state.dialogueConsumed.7",
+          "a": "evt_m01_railway_worker_report:19",
+          "missing": true
+        }
+      },
+      "firstRngDifference": {
+        "tick": 16496,
+        "battleClock": 22528.524999999438,
+        "position": {
+          "x": -202.22509166887144,
+          "z": 27.056753304589357
+        },
+        "reference": 327479893,
+        "candidate": 2306448541
+      },
+      "differentTicks": 20647,
+      "changedStateFields": {
+        "dialogueConsumed": 20647,
+        "subtitle": 362,
+        "dialogueQueue": 102,
+        "sectors": 19569,
+        "timers": 11282,
+        "rng": 4471,
+        "actors": 4471,
+        "enemyFire": 4471,
+        "player": 1362
+      },
+      "newWestFire": [
+        {
+          "tick": 16496,
+          "by": "de_east_4",
+          "battleClock": 22528.524999999438,
+          "position": {
+            "x": -202.22509166887144,
+            "z": 27.056753304589357
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 16521,
+          "by": "de_east_10",
+          "battleClock": 22539.14999999942,
+          "position": {
+            "x": -209.72508938826687,
+            "z": 27.050904452770133
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 16541,
+          "by": "de_east_1",
+          "battleClock": 22547.649999999405,
+          "position": {
+            "x": -215.7250875637832,
+            "z": 27.046225371314755
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 16561,
+          "by": "de_east_6",
+          "battleClock": 22556.14999999939,
+          "position": {
+            "x": -221.72508573929954,
+            "z": 27.041546289859376
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 16697,
+          "by": "de_east_9",
+          "battleClock": 22613.94999999929,
+          "position": {
+            "x": -262.5250733328106,
+            "z": 27.00972853596268
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 16716,
+          "by": "de_east_7",
+          "battleClock": 22622.024999999277,
+          "position": {
+            "x": -268.22507159955114,
+            "z": 27.005283408580006
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 16751,
+          "by": "de_east_2",
+          "battleClock": 22636.899999999252,
+          "position": {
+            "x": -278.71772830314046,
+            "z": 26.735460988072653
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 16847,
+          "by": "de_east_13",
+          "battleClock": 22677.699999999182,
+          "position": {
+            "x": -290.9989155475655,
+            "z": 26.055431674440584
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 16863,
+          "by": "de_east_12",
+          "battleClock": 22684.49999999917,
+          "position": {
+            "x": -290.9989155475655,
+            "z": 26.055431674440584
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 16994,
+          "by": "de_east_0",
+          "battleClock": 22740.174999999075,
+          "position": {
+            "x": -290.9989155475655,
+            "z": 26.055431674440584
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 17067,
+          "by": "de_east_11",
+          "battleClock": 22771.199999999022,
+          "position": {
+            "x": -290.9989155475655,
+            "z": 26.055431674440584
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 17351,
+          "by": "de_east_0",
+          "battleClock": 22891.899999998815,
+          "position": {
+            "x": -290.9989155475655,
+            "z": 26.055431674440584
+          },
+          "lineOfSight": true
+        }
+      ],
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "approvedBaselineGoldenEqual": true,
+      "raidSchedulingUsesNoRng": true,
+      "complete": true
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "firstDifference": {
+        "tick": 320,
+        "battleClock": 16259.999999999767,
+        "difference": {
+          "path": "$.state.dialogueConsumed.7",
+          "a": "evt_m01_railway_worker_report:19",
+          "missing": true
+        }
+      },
+      "firstRngDifference": {
+        "tick": 15663,
+        "battleClock": 22543.82499999941,
+        "position": {
+          "x": -204.9844045046574,
+          "z": 27.051390203569323
+        },
+        "reference": 2997114669,
+        "candidate": 1948097653
+      },
+      "differentTicks": 19778,
+      "changedStateFields": {
+        "dialogueConsumed": 19778,
+        "subtitle": 362,
+        "dialogueQueue": 102,
+        "sectors": 18700,
+        "timers": 11282,
+        "rng": 4435,
+        "actors": 4435,
+        "enemyFire": 4435,
+        "player": 1026
+      },
+      "newWestFire": [
+        {
+          "tick": 15663,
+          "by": "de_east_9",
+          "battleClock": 22543.82499999941,
+          "position": {
+            "x": -204.9844045046574,
+            "z": 27.051390203569323
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 15746,
+          "by": "de_east_4",
+          "battleClock": 22579.09999999935,
+          "position": {
+            "x": -229.8843977974734,
+            "z": 27.033114050733094
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 15759,
+          "by": "de_east_8",
+          "battleClock": 22584.62499999934,
+          "position": {
+            "x": -233.78439674695062,
+            "z": 27.030251520770786
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 15787,
+          "by": "de_east_3",
+          "battleClock": 22596.52499999932,
+          "position": {
+            "x": -242.18439448428614,
+            "z": 27.024086071621216
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 15794,
+          "by": "de_east_5",
+          "battleClock": 22599.499999999316,
+          "position": {
+            "x": -244.28439391862003,
+            "z": 27.022544709333825
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 15836,
+          "by": "de_east_10",
+          "battleClock": 22617.349999999286,
+          "position": {
+            "x": -256.8843905246233,
+            "z": 27.013296535609467
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 15848,
+          "by": "de_east_11",
+          "battleClock": 22622.449999999277,
+          "position": {
+            "x": -260.48438955490997,
+            "z": 27.010654200259655
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 15861,
+          "by": "de_east_7",
+          "battleClock": 22627.974999999267,
+          "position": {
+            "x": -264.3843885043872,
+            "z": 27.007791670297348
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 15874,
+          "by": "de_east_13",
+          "battleClock": 22633.499999999258,
+          "position": {
+            "x": -268.2843874538644,
+            "z": 27.004929140335047
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 16079,
+          "by": "de_east_12",
+          "battleClock": 22720.62499999911,
+          "position": {
+            "x": -291.0580643618814,
+            "z": 26.052323378647916
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 16652,
+          "by": "de_east_11",
+          "battleClock": 22964.14999999869,
+          "position": {
+            "x": -291.0580643618814,
+            "z": 26.052323378647916
+          },
+          "lineOfSight": true
+        },
+        {
+          "tick": 16684,
+          "by": "de_east_13",
+          "battleClock": 22977.74999999867,
+          "position": {
+            "x": -291.0580643618814,
+            "z": 26.052323378647916
+          },
+          "lineOfSight": true
+        }
+      ],
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "approvedBaselineGoldenEqual": true,
+      "raidSchedulingUsesNoRng": true,
+      "complete": true
+    }
+  ]
+}
