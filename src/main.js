@@ -1,5 +1,18 @@
-import { Game } from './game/game.js';
 import './styles.css';
+import './styles-t50-loading.css';
+import { M01LoadingController } from './ui/m01-loading-controller.js';
+
+// Render a genuine loading screen before requesting the large 3D game graph.
+const t50Loading=new M01LoadingController(document);
+t50Loading.begin();
+let Game;
+try{({Game}=await import('./game/game.js'));}
+catch(error){
+  t50Loading.fail(error);
+  document.querySelector('#error-text').textContent=String(error?.message??error);
+  document.querySelector('#error').classList.remove('hidden');
+  throw error;
+}
 
 const $=selector=>document.querySelector(selector);
 const canvas=$('#game'),menu=$('#menu'),pause=$('#pause'),hudRoot=$('#hud'),complete=$('#complete'),errorPanel=$('#error');
@@ -38,6 +51,7 @@ function missionMenu(){
   $('#mission-briefing').textContent=m01?'Tczew, 04:30. Leve a mensagem ao posto da ponte. Mantenha contacto com a secção e cubra os sapadores.':'O posto avançado deixou de responder. Atravesse a aldeia com a patrulha e restabeleça as comunicações na capela.';
   $('#mission-note').textContent=m01?'AS PONTES DO VÍSTULA':'COMUNICAÇÕES INTERROMPIDAS';
   $('#mission-status').textContent=m01?'PROTÓTIPO · MODELOS E ÁUDIO PROVISÓRIOS':'BANCADA FICCIONAL · FRANÇA, 1944';
+  t50Loading.selectMission(m01);
   $('#continue').classList.toggle('hidden',!game.hasSave);
   $('#start').disabled=false;$('#continue').disabled=false;
   if(m01){
@@ -46,7 +60,11 @@ function missionMenu(){
       if(!game.isM01)return;
       const failed=game.renderer.m01.diagnostics.requiredAssetFailures.length;
       $('#start').disabled=Boolean(failed);$('#continue').disabled=Boolean(failed);
-      if(failed)showError('Não foi possível carregar as pontes de Tczew. Recarregue a página para tentar novamente. A bancada francesa continua disponível no selector de missão.');
+      if(failed){
+        const message='Não foi possível carregar as pontes de Tczew. Recarregue a página para tentar novamente. A bancada francesa continua disponível no selector de missão.';
+        t50Loading.fail(message);
+        showError(message);
+      }else t50Loading.ready();
     });
   }
 }

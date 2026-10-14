@@ -1,0 +1,60 @@
+name: M01 T50 — loading and bundle safe V7 integration
+on:
+  push:
+    branches: [argon/m01-loading-and-bundle-t50]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  fast-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: T50 public API and real progress
+        run: node --test tests/m01-loading-and-bundle-t50.test.js
+      - name: Build
+        run: npm run build
+      - name: Measure generated chunks
+        run: node tools/verify-t50-bundle.mjs
+      - run: npx playwright install --with-deps chromium
+      - name: Real M01 gameplay in Chromium
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/t50-preview.log 2>&1 &
+          node tools/verify-t50-loading.mjs
+      - name: Convert real Chromium WebM recording to MP4
+        if: success()
+        run: |
+          if command -v ffmpeg >/dev/null 2>&1; then
+            for file in artifacts/t50-proof/*.webm; do
+              test -f "$file" || continue
+              ffmpeg -y -i "$file" -c:v libx264 -pix_fmt yuv420p artifacts/t50-proof/t50-m01-real-loading.mp4
+            done
+          else
+            echo "ffmpeg unavailable: original real WebM remains preserved"
+          fi
+      - name: Attach browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-t50-captures-and-metrics
+          path: artifacts/t50-proof/
+          retention-days: 7
+          if-no-files-found: warn
+  full-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Complete V7 Node regression suite
+        run: npm test

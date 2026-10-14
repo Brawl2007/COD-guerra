@@ -3,32 +3,48 @@ import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 import { TextureLoader, AnimationMixer, MeshStandardMaterial } from 'three';
 import { repairOriginalRoundedPart } from './mesh-repair.js';
+import {beginAsset,progressAsset,finishAsset,clearAssetsForOwner} from './asset-progress.js';
+
+let monitorOwner=0;
+const transientFailure=e=>/(?:\b(?:500|502|503|504)\b|network|timeout|failed to fetch|temporar)/i.test(String(e?.message??e));
+const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 
 export const assetUrl=path=>`${import.meta.env?.BASE_URL??'/COD-guerra/'}${path.replace(/^\/+/, '')}`;
 
 export class AssetManager {
-  constructor(){this.assets=new Map();this.disposed=false;this.epoch=0;this.failures=[];}
+  constructor(){this.assets=new Map();this.disposed=false;this.epoch=0;this.failures=[];this.monitorOwner='m01assets-'+(++monitorOwner);}
   beginSession(){return ++this.epoch;}
   current(epoch){return !this.disposed&&epoch===this.epoch;}
   async load(name,path){
     if(this.disposed)throw new Error('AssetManager foi descartado.');
     const key=`${name}:${path}`;
     if(this.assets.has(key))return this.assets.get(key).promise;
+    const monitorKey=this.monitorOwner+':'+key;
+    beginAsset(monitorKey,path);
     const record={value:null,promise:null};
-    record.promise=this.fetchAsset(path).then(value=>{
+    record.promise=this.fetchWithRetry(path,event=>progressAsset(monitorKey,event)).then(value=>{
       if(this.disposed){this.release([value]);throw new Error('Carregamento cancelado.');}
-      record.value=value;return value;
-    }).catch(error=>{this.assets.delete(key);this.failures.push({path,message:error.message});throw error;});
+      record.value=value;finishAsset(monitorKey,true);return value;
+    }).catch(error=>{
+      finishAsset(monitorKey,false);
+      this.assets.delete(key);this.failures.push({path,message:error.message});throw error;
+    });
     this.assets.set(key,record);return record.promise;
   }
-  async fetchAsset(path){
+  async fetchWithRetry(path,onProgress){
+    for(let attempt=0;attempt<3;attempt++){
+      try{return await this.fetchAsset(path,onProgress);}
+      catch(error){if(this.disposed||attempt===2||!transientFailure(error))throw error;await wait(180*2**attempt);}
+    }
+  }
+  async fetchAsset(path,onProgress=()=>{}){
     const url=assetUrl(path);
-    if(/\.gltf$|\.glb$/i.test(path))return new GLTFLoader().loadAsync(url);
+    if(/\.gltf$|\.glb$/i.test(path))return new GLTFLoader().loadAsync(url,onProgress);
     if(/\.obj$/i.test(path)){
       const mtlUrl=url.replace(/\.obj$/i,'.mtl');
-      const materials=await new MTLLoader().loadAsync(mtlUrl);
+      const materials=await new MTLLoader().loadAsync(mtlUrl,onProgress);
       materials.preload();
-      const group=await new OBJLoader().setMaterials(materials).loadAsync(url);
+      const group=await new OBJLoader().setMaterials(materials).loadAsync(url,onProgress);
       const upgraded=new Map();
       group.traverse(node=>{
         if(!node.isMesh)return;
@@ -45,7 +61,7 @@ export class AssetManager {
       for(const old of upgraded.keys())old.dispose();
       return {scene:group,animations:[]};
     }
-    if(/\.(png|jpe?g|webp)$/i.test(path))return new TextureLoader().loadAsync(url);
+    if(/\.(png|jpe?g|webp)$/i.test(path))return new TextureLoader().loadAsync(url,onProgress);
     throw new Error(`Formato de asset não suportado: ${path}`);
   }
   get(name){return [...this.assets.entries()].find(([key])=>key.startsWith(`${name}:`))?.[1].value??null;}
@@ -64,5 +80,5 @@ export class AssetManager {
     }
     geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());
   }
-  dispose(){this.disposed=true;this.epoch++;this.release([...this.assets.values()].map(r=>r.value));this.assets.clear();}
+  dispose(){this.disposed=true;this.epoch++;this.release([...this.assets.values()].map(r=>r.value));this.assets.clear();clearAssetsForOwner(this.monitorOwner);}
 }
