@@ -263,35 +263,58 @@ export class M01Characters {
       let v=prevInst;
       if(v&&(v.key!==key||mgGunner(a)&&v.weaponLOD!==weaponLOD)){this.release(v);this.instances.delete(a.id);v=null;}
       v??=this.create(a,key,weaponLOD);selected.add(a.id);
-      const orientation=resolveTorsoOrientation(a,pose);
-      const useSpineTwist=Boolean(v.spineBone&&orientation.torsoTwist!==0);
-      const appliedRootYaw=useSpineTwist?orientation.rootYaw:orientation.facing;
-      // Always return a previously attached wounded actor to scene before sampling an updated carrier.
-      this.scene.add(v.root);v.root.visible=true;v.root.position.set(a.x,a.y??0,a.z);v.root.rotation.set(0,-appliedRootYaw-Math.PI/2,0);
-      if(v.spineBone){if(v.spineBaseQuat)v.spineBone.quaternion.copy(v.spineBaseQuat);v.spineBone.rotation.y=v.spineBaseRotY;}
-      const blendClipObj=sample.blend?this.clips.get(sample.blend.clip):null;
-      if(blendClipObj&&blendClipObj!==clip&&sample.blend.weight>.01){
-        if(v.clip!==sample.clip||v.blendClip!==sample.blend.clip){
-          v.mixer.stopAllAction();
-          v.blendAction=v.mixer.clipAction(blendClipObj);v.blendAction.setLoop(THREE.LoopOnce,1);v.blendAction.clampWhenFinished=true;v.blendAction.play();
-          v.action=v.mixer.clipAction(clip);v.action.setLoop(THREE.LoopOnce,1);v.action.clampWhenFinished=true;v.action.play();
-          v.clip=sample.clip;v.blendClip=sample.blend.clip;
-        }
-        const tFrom=sample.blend.loop?sample.blend.time%blendClipObj.duration:Math.min(sample.blend.time,blendClipObj.duration);
-        const tTo=sample.loop?sample.time%clip.duration:Math.min(sample.time,clip.duration);
-        v.blendAction.reset().play();v.blendAction.setEffectiveWeight?.(sample.blend.weight);
-        v.action.reset().play();v.action.setEffectiveWeight?.(sample.weight??1);
-        v.mixer.setTime(0);v.blendAction.time=tFrom;v.action.time=tTo;v.mixer.update?.(0);
-      }else{
+      // Specialist animated rigs retain the exact legacy sampling contract. In particular,
+      // CKM, prone MG34 and station drag must reproduce identical bone matrices after
+      // pause, save/reload and repeated render calls. The generic resolver must not
+      // modify their root orientation, spine bones or action weighting.
+      const legacySpecialist=/^(ckm_wz30_|mg34_prone_|station_drag_|drag_wounded$)/.test(sample.clip);
+      if(legacySpecialist){
+        this.scene.add(v.root);v.root.visible=true;
+        v.root.position.set(a.x,a.y??0,a.z);
+        v.root.rotation.set(0,-a.facing-Math.PI/2,0);
         if(v.clip!==sample.clip||v.blendClip){
-          v.mixer.stopAllAction();v.action=v.mixer.clipAction(clip);v.action.setLoop(THREE.LoopOnce,1);
-          v.action.clampWhenFinished=true;v.action.play();v.clip=sample.clip;v.blendClip=null;v.blendAction=null;
+          v.mixer.stopAllAction();
+          v.action=v.mixer.clipAction(clip).setLoop(THREE.LoopOnce,1);
+          v.action.clampWhenFinished=true;v.action.play();
+          v.clip=sample.clip;v.blendClip=null;v.blendAction=null;
         }
-        v.action.setEffectiveWeight?.(1);
-        v.action.reset().play();v.mixer.setTime(sample.loop?sample.time%clip.duration:Math.min(sample.time,clip.duration));
-      }
-      if(useSpineTwist){
-        v.spineBone.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(UP_AXIS,-orientation.torsoTwist));
+        v.action.reset().play();
+        v.mixer.setTime(sample.loop?sample.time%clip.duration:Math.min(sample.time,clip.duration));
+      }else{
+        const orientation=resolveTorsoOrientation(a,pose);
+        const useSpineTwist=Boolean(v.spineBone&&orientation.torsoTwist!==0);
+        const appliedRootYaw=useSpineTwist?orientation.rootYaw:orientation.facing;
+        this.scene.add(v.root);v.root.visible=true;
+        v.root.position.set(a.x,a.y??0,a.z);
+        v.root.rotation.set(0,-appliedRootYaw-Math.PI/2,0);
+        if(v.spineBone){if(v.spineBaseQuat)v.spineBone.quaternion.copy(v.spineBaseQuat);v.spineBone.rotation.y=v.spineBaseRotY;}
+        const blendClipObj=sample.blend?this.clips.get(sample.blend.clip):null;
+        if(blendClipObj&&blendClipObj!==clip&&sample.blend.weight>.01){
+          if(v.clip!==sample.clip||v.blendClip!==sample.blend.clip){
+            v.mixer.stopAllAction();
+            v.blendAction=v.mixer.clipAction(blendClipObj);
+            v.blendAction.setLoop(THREE.LoopOnce,1);v.blendAction.clampWhenFinished=true;v.blendAction.play();
+            v.action=v.mixer.clipAction(clip);
+            v.action.setLoop(THREE.LoopOnce,1);v.action.clampWhenFinished=true;v.action.play();
+            v.clip=sample.clip;v.blendClip=sample.blend.clip;
+          }
+          const tFrom=sample.blend.loop?sample.blend.time%blendClipObj.duration:Math.min(sample.blend.time,blendClipObj.duration);
+          const tTo=sample.loop?sample.time%clip.duration:Math.min(sample.time,clip.duration);
+          v.blendAction.reset().play();v.blendAction.setEffectiveWeight?.(sample.blend.weight);
+          v.action.reset().play();v.action.setEffectiveWeight?.(sample.weight??1);
+          v.mixer.setTime(0);v.blendAction.time=tFrom;v.action.time=tTo;v.mixer.update?.(0);
+        }else{
+          if(v.clip!==sample.clip||v.blendClip){
+            v.mixer.stopAllAction();v.action=v.mixer.clipAction(clip);v.action.setLoop(THREE.LoopOnce,1);
+            v.action.clampWhenFinished=true;v.action.play();v.clip=sample.clip;v.blendClip=null;v.blendAction=null;
+          }
+          v.action.setEffectiveWeight?.(1);
+          v.action.reset().play();
+          v.mixer.setTime(sample.loop?sample.time%clip.duration:Math.min(sample.time,clip.duration));
+        }
+        if(useSpineTwist){
+          v.spineBone.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(UP_AXIS,-orientation.torsoTwist));
+        }
       }
       const kowal=a.id==='szymon_kowal',bak=a.id==='jozef_bak';
       v.meshes.forEach(n=>{
