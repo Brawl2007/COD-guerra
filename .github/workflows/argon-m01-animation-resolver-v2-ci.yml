@@ -27,6 +27,8 @@ jobs:
       - run: npm ci
       - name: Animation Resolver V1 e V2
         run: node --test tests/m01-animation-resolver.test.js tests/m01-animation-resolver-v2.test.js
+      - name: Determinismo do renderer, incluindo CKM
+        run: node --test tests/m01-render-idempotence.test.js
       - name: Sintaxe e build sem deploy
         run: |
           node --check src/render/m01-animation-resolver.js
