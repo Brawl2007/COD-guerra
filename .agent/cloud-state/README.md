@@ -47,6 +47,11 @@ from the pushed feature branch. First-time setup (after approval):
 
     python3 .agent/tools/cloud_checkpoint.py publish --input /tmp/checkpoint.json --init
 
+Before publishing, check the file read-only (same checks as publish, never
+writes or pushes; reports `requires_init`):
+
+    python3 .agent/tools/cloud_checkpoint.py validate --input /tmp/checkpoint.json
+
 Later updates:
 
     python3 .agent/tools/cloud_checkpoint.py publish --input /tmp/checkpoint.json

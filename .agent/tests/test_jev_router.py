@@ -265,14 +265,14 @@ class BudgetTests(Base):
         self.assertEqual(self.stub.hits, 1)
 
     def test_http_errors_counted_no_retry(self):
-        for status in (401, 429, 500):
+        for status in (429, 500, 401):
             self.stub.status = status
             before = self.stub.hits
             o = self.route(*AMBIG)
             self.assertEqual((o["source"], o["error"]), ("rule_fallback", "HTTP%d" % status))
             self.assertEqual(self.stub.hits, before + 1)
         c = self.calls()
-        self.assertEqual([x["http_status"] for x in c], [401, 429, 500])
+        self.assertEqual([x["http_status"] for x in c], [429, 500, 401])
         self.assertEqual(self.route(*AMBIG)["reason"], "budget_exhausted")
         self.assertEqual(self.stub.hits, 3)
 
@@ -429,6 +429,147 @@ class ProductionCapTests(unittest.TestCase):
                 self.assertEqual(jev_router.reserve(ledger, None, "test", "mock-%d" % i), i)
             self.assertEqual(len(jev_router.read_ledger(ledger)["calls"]), 105)
             self.assertIsNone(jev_router.read_ledger(ledger)["limit"])
+
+
+class ProxyAuthTests(unittest.TestCase):
+    REQ = {"role": "implement", "risk": "medium", "complexity": "medium", "description": "x"}
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.tmp = Path(self._tmp.name).resolve()
+        self.ledger = self.tmp / "ledger.json"
+        self.env = {"COD_JEV_PILOT": "1", "COD_JEV_LEDGER": str(self.ledger),
+                    "COD_JEV_KEY_FILE": str(self.tmp / "none.env"), "HOME": str(self.tmp)}
+        self.sent = []
+        self.status = 200
+
+    def transport(self, url, headers, body, timeout):
+        self.sent.append(dict(headers))
+        if isinstance(self.status, Exception):
+            raise self.status
+        if self.status != 200:
+            return self.status, b"{}"
+        return 200, json.dumps({
+            "model": "jev-1", "usage": {"input_tokens": 10, "output_tokens": 1},
+            "answers": {"model_choice": {"choice": "sonnet", "confidence": 0.9}}}).encode()
+
+    def go(self, **kw):
+        return jev_router.route(self.REQ, transport=self.transport, env=self.env, **kw)
+
+    def n_calls(self):
+        return len(jev_router.read_ledger(self.ledger)["calls"]) if self.ledger.exists() else 0
+
+    def test_proxy_sends_without_authorization(self):
+        self.env["COD_JEV_AUTH"] = "proxy"
+        self.assertEqual(self.go()["source"], "jev")
+        self.assertEqual(self.sent, [{"Content-Type": "application/json"}])
+
+    def test_without_opt_in_still_no_key(self):
+        for v in (None, "other", ""):
+            if v is not None:
+                self.env["COD_JEV_AUTH"] = v
+            self.assertEqual(self.go()["reason"], "no_key")
+        self.assertEqual(self.sent, [])
+
+    def test_dry_run_proxy(self):
+        self.env["COD_JEV_AUTH"] = "proxy"
+        d = self.go(dry_run=True)["dry_run"]
+        self.assertEqual(d["auth"], "proxy")
+        self.assertEqual(d["headers"], {"Content-Type": "application/json"})
+        self.assertEqual(self.sent, [])
+
+    def test_check_key_proxy(self):
+        env = dict(os.environ, COD_JEV_AUTH="proxy")
+        p = subprocess.run([sys.executable, str(TOOL), "check-key"], env=env,
+                           capture_output=True, text=True)
+        self.assertEqual(p.stdout.strip(),
+                         "key: proxy (injected by egress proxy; not verifiable locally)")
+
+    def test_brake_after_401_and_403(self):
+        self.env["COD_JEV_AUTH"] = "proxy"
+        for code in (401, 403):
+            self.ledger.unlink(missing_ok=True)
+            self.sent.clear()
+            self.status = code
+            self.assertEqual(self.go()["reason"], "error")
+            self.assertEqual(len(self.sent), 1)
+            o = self.go()
+            self.assertEqual((o["source"], o["reason"]), ("rule_fallback", "auth_failed_previously"))
+            self.assertEqual(len(self.sent), 1)
+            self.assertEqual(self.n_calls(), 1)
+
+    def test_retry_auth_single_attempt_then_blocked(self):
+        self.env["COD_JEV_AUTH"] = "proxy"
+        self.status = 401
+        self.go()
+        self.go(retry_auth=True)
+        self.assertEqual(len(self.sent), 2)
+        self.assertEqual(self.go()["reason"], "auth_failed_previously")
+        self.assertEqual(len(self.sent), 2)
+        self.assertEqual(self.n_calls(), 2)
+
+    def test_success_after_retry_unblocks(self):
+        self.env["COD_JEV_AUTH"] = "proxy"
+        self.status = 401
+        self.go()
+        self.status = 200
+        self.assertEqual(self.go(retry_auth=True)["source"], "jev")
+        self.assertEqual(self.go()["source"], "jev")
+        self.assertEqual(len(self.sent), 3)
+
+    def test_brake_applies_in_key_mode(self):
+        self.env["TYPESAFE_API_KEY"] = SENTINEL
+        self.status = 401
+        self.go()
+        self.assertEqual(self.go()["reason"], "auth_failed_previously")
+        self.assertEqual(len(self.sent), 1)
+        self.assertEqual(self.sent[0]["Authorization"], "Bearer " + SENTINEL)
+
+    def test_500_and_timeout_do_not_brake(self):
+        self.env["COD_JEV_AUTH"] = "proxy"
+        self.status = 500
+        self.go()
+        self.status = TimeoutError()
+        self.go()
+        self.status = 200
+        self.assertEqual(self.go()["source"], "jev")
+        self.assertEqual(len(self.sent), 3)
+
+    def test_brake_persists_after_failed_retry(self):
+        self.env["COD_JEV_AUTH"] = "proxy"
+        for bad in (TimeoutError(), 500):
+            self.ledger.unlink(missing_ok=True)
+            self.sent.clear()
+            self.status = 401
+            self.go()
+            self.status = bad
+            self.go(retry_auth=True)
+            self.assertEqual(len(self.sent), 2)
+            self.assertEqual(self.go()["reason"], "auth_failed_previously")
+            self.assertEqual(len(self.sent), 2)
+
+    def test_ok_retry_then_500_does_not_brake(self):
+        self.env["COD_JEV_AUTH"] = "proxy"
+        self.status = 401
+        self.go()
+        self.status = 200
+        self.go(retry_auth=True)
+        self.status = 500
+        self.go()
+        self.status = 200
+        self.assertEqual(self.go()["source"], "jev")
+        self.assertEqual(len(self.sent), 4)
+
+    def test_usage_shows_blocked_line(self):
+        self.env["COD_JEV_AUTH"] = "proxy"
+        self.status = 401
+        self.go()
+        p = subprocess.run([sys.executable, str(TOOL), "usage"],
+                           env=dict(os.environ, COD_JEV_LEDGER=str(self.ledger)),
+                           capture_output=True, text=True)
+        self.assertIn("auth: BLOCKED after http_401 (use route --retry-auth after fixing credentials)",
+                      p.stdout)
 
 
 class UsageTests(Base):

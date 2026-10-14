@@ -45,6 +45,9 @@ O teste de fumo local dos 20 agentes (2026-10-09, Chromebook) não foi repetido.
 4. **Continuidade entre sessões não provada.** Não há checkpoints nem ref de estado; a permissão real de escrita
    no ref só se prova com o primeiro `publish --init`, que precisa de autorização separada. Depois disso: duas
    sessões, a segunda faz `get` e retoma (checklist, etapa 6).
+   *Atualização (mesmo dia, 21:34 UTC):* o utilizador criou a ref fora desta sessão (`6487334`, checkpoint
+   `CLOUD-STATE-SMOKE-20261014`, `ACCEPTED`); `list` passou a devolvê-lo. A escrita a partir da sessão cloud continua
+   por provar. Procedimento em `CLOUD_ENV_SETUP.md`.
 5. **Jogo não testável sem opt-in.** Sem `node_modules`; `npm test`/`build` exigem `COD_GUERRA_AUTOINSTALL_DEPS=1`.
    Node na cloud: v22.22.0 (cumpre >=22.12; o CI usa 24).
 6. **Cadência e quota do Max 5x** (etapa 7): não verificáveis numa sessão isolada.
@@ -53,3 +56,21 @@ O teste de fumo local dos 20 agentes (2026-10-09, Chromebook) não foi repetido.
 
 Subagentes: haiku-low ~9,5 k, sonnet-low ~11,7 k, captain ~29 k, claude-code-guide ~69 k tokens (consulta à
 documentação oficial). Jev: 1 chamada, sem tokens cobrados (401). Fable: nenhum.
+
+## Seguimento (mesma sessão, decisões do utilizador)
+
+Decisão 1: a sessão principal (Opus) continua a ser o Captain e delega diretamente; `.claude/settings.json` não muda.
+Decisão 2: a publicação de checkpoints a partir da cloud continua pendente de autorização.
+
+| Item | Estado | Evidência |
+|---|---|---|
+| Guarda `pre-push` neste clone | Instalada (não havia `pre-push` nem `core.hooksPath`) | `install-git-guards.sh --check` OK; hook direto: ref `main` → exit 1 `BLOCKED`, branch de trabalho → exit 0. Efémera: repetir em cada sessão |
+| Autenticação TypeSafe na cloud | Código pronto; falta a configuração do utilizador | `COD_JEV_AUTH=proxy` (sem chave, sem header `Authorization`); travão: 401/403 depois do último sucesso bloqueia chamadas pagas até `--retry-auth`. Nenhuma chamada nova feita; o ledger desta sessão mostra `auth: BLOCKED after http_401` |
+| `COD_JEV_LIMIT=10` | Documentado | `CLOUD_ENV_SETUP.md` §1 |
+| `__pycache__/`, `*.pyc` no `.gitignore` | Feito | `git check-ignore -v` → `.gitignore:12`/`:13` |
+| Procedimento de checkpoints | `cloud_checkpoint.py validate` (só leitura) + testes | contra `origin`: `{"requires_init": false, "task_id": "CLOUD-ROLLOUT-1", "valid": true}`, `ls-remote` inalterado |
+| Testes | 192 → 207 OK (15 novos: 3 checkpoint, 12 Jev) | `python3 -m unittest discover -s tests -p 'test_*.py'` em `.agent`, 105 s |
+
+Gates: implementação por `sonnet-medium`/`sonnet-low`, leitura por `haiku-medium`/`researcher`, `verifier` PASS,
+`reviewer` APPROVE. O achado LOW do reviewer (travão solto por erro de rede depois de `--retry-auth`) foi corrigido.
+Fica por corrigir um LOW: dois `route` em paralelo podem passar o travão antes de o primeiro gravar o 401.

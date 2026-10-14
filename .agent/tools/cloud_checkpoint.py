@@ -128,7 +128,7 @@ def read_record(remote, task):
             "reason": "ready" if safe else ("work_head_changed_or_missing" if not same else "manual_review_required")}
 
 
-def publish(remote, filename, init):
+def preflight(remote, filename):
     current = git("branch", "--show-current")
     if not current or current in {"main", "master", "cod-guerra/cloud-state"}:
         raise Failure("Publish requires an ordinary work branch, never main or detached HEAD")
@@ -141,6 +141,18 @@ def publish(remote, filename, init):
         raise Failure("Invalid JSON") from None
     if remote_head(remote, workref(data["work_branch"])) != data["work_head"]:
         raise Failure("Work branch does not match checkpoint")
+    return data
+
+
+def check(remote, filename):
+    """Read-only: same checks as publish, never writes or pushes."""
+    data = preflight(remote, filename)
+    return {"valid": True, "task_id": data["task_id"],
+            "requires_init": remote_head(remote, CONTROL) is None}
+
+
+def publish(remote, filename, init):
+    data = preflight(remote, filename)
     old = fetch_state(remote)
     if old is None and not init:
         raise Failure("First publish requires --init")
@@ -168,6 +180,8 @@ def main():
     subs.add_parser("list")
     getter = subs.add_parser("get")
     getter.add_argument("--task-id", required=True)
+    checker = subs.add_parser("validate")
+    checker.add_argument("--input", required=True)
     writer = subs.add_parser("publish")
     writer.add_argument("--input", required=True)
     writer.add_argument("--init", action="store_true")
@@ -177,8 +191,12 @@ def main():
     try:
         answer = (list_records(a.remote) if a.cmd == "list" else
                   read_record(a.remote, a.task_id) if a.cmd == "get" else
+                  check(a.remote, a.input) if a.cmd == "validate" else
                   publish(a.remote, a.input, a.init))
-        print(json.dumps(answer, ensure_ascii=False, sort_keys=True, indent=2))
+        if a.cmd == "validate":
+            print(json.dumps(answer, ensure_ascii=False, sort_keys=True))
+        else:
+            print(json.dumps(answer, ensure_ascii=False, sort_keys=True, indent=2))
         return 0
     except Failure as e:
         print("CLOUD_CHECKPOINT_ERROR: " + str(e), file=sys.stderr)
