@@ -56,8 +56,29 @@ export function staggeredLife(age,start,end,offset=0,spread=.16){
 export const M01_IMPACT_PROFILES=Object.freeze({
   earth:Object.freeze({dust:6,chips:2,life:1.05,color:'#8b7658',rise:.42,spread:2.0,elongation:.8}),
   stone:Object.freeze({dust:4,chips:5,life:.82,color:'#b9b09c',rise:.34,spread:1.55,elongation:.72}),
+  brick:Object.freeze({dust:5,chips:6,life:.92,color:'#9e5642',rise:.38,spread:1.68,elongation:.85}),
+  water:Object.freeze({dust:5,chips:3,life:.88,color:'#c6d5d8',rise:.68,spread:1.45,elongation:1.25}),
   wood:Object.freeze({dust:3,chips:7,life:.76,color:'#98744f',rise:.30,spread:1.75,elongation:1.75}),
   metal:Object.freeze({dust:0,chips:0,sparks:6,life:.22,color:'#ffd27a',rise:.92,spread:2.6,elongation:1}),
   character:Object.freeze({dust:0,chips:0,sparks:0,life:.35,color:'#7d3028',rise:.2,spread:.6,elongation:1})
 });
 export function impactProfile(material='earth'){return M01_IMPACT_PROFILES[material]??M01_IMPACT_PROFILES.earth;}
+
+export function blastFlashEnvelope(age,profile=M01_FX_PROFILES.small,distance=0){
+ const end=(profile.flashEnd??.1)+(distance>180?Math.min(.14,(distance-180)/4200):0);
+ if(age<0||age>=end)return {active:false,opacity:0,minScale:0,lightIntensity:0};
+ const k=1-age/end;
+ return {active:true,opacity:k*k,minScale:distance>120?Math.min(14,distance*.016):0,
+ lightIntensity:(profile.lightPeak??2)*k*Math.max(0,1-distance/Math.max(60,(profile.lightDistance??80)*3.8))};
+}
+export function sampleMuzzleEnvironmentLight(actors=[],time=0,listener={x:0,z:0},quality='medium'){
+ if(quality==='low')return {active:false,intensity:0};
+ let top=null,power=0;
+ for(const a of actors){if(!a.alive||!a.active)continue;const age=time-(a.firedAt??-1e9);
+  if(age<0||age>=.085)continue;
+  const d=Math.hypot(a.x-listener.x,a.z-listener.z);
+  if(d>=48)continue;const v=(1-age/.085)*(1-d/48)*(a.weapon==='mg34'?1.35:1);
+  if(v>power){power=v;top=a;}
+ }
+ return top?{active:true,intensity:power*1.45,position:[top.x,(top.y??0)+1.35,top.z],color:'#ffd68a'}:{active:false,intensity:0};
+}

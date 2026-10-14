@@ -1,0 +1,62 @@
+name: T21 — prova real Chromium (sem IA)
+on:
+  push:
+    branches: ['argon/m01-living-battlefield-t21']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+jobs:
+  validate-and-capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      CI: '1'
+    steps:
+      - name: Checkout completo da branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - name: Instalar ferramentas de teste
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          which ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+      - name: Unitários, regressões e build
+        run: |
+          node --test tests/m01-living-battlefield-t21.test.js
+          npm test
+          npm run build
+      - name: Preparar capturador original sem alterar a simulação
+        run: |
+          cp tools/capture-t21-proof.mjs tools/.t21-proof-runner.mjs
+          mkdir -p /tmp/t21-real-evidence
+          echo "T21_HEAD=$GITHUB_SHA" >> "$GITHUB_ENV"
+      - name: ANTES — gameplay real V7
+        run: |
+          git checkout 4c6f7bebee27b68af3bea8ad086da1dffbca0084
+          T21_CAPTURE_MODE=antes T21_OUT_DIR=/tmp/t21-real-evidence node tools/.t21-proof-runner.mjs
+      - name: DEPOIS — gameplay real T21
+        run: |
+          git checkout "$T21_HEAD"
+          T21_CAPTURE_MODE=depois T21_OUT_DIR=/tmp/t21-real-evidence node tools/.t21-proof-runner.mjs
+      - name: Garantir os 6 PNG e MP4 reais
+        run: |
+          for f in antes-combate.png depois-combate.png antes-cenario.png depois-cenario.png antes-explosao.png depois-explosao.png t21-gameplay-real.mp4; do
+            test -s "/tmp/t21-real-evidence/$f" || (echo "FALTA: $f" && exit 1)
+          done
+          ffprobe -v error -show_entries format=duration -of default=nk=1:nw=1 /tmp/t21-real-evidence/t21-gameplay-real.mp4
+      - name: Artefactos do navegador (mesmo se a captura falhar)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: t21-chromium-real-proof
+          path: /tmp/t21-real-evidence/
+          retention-days: 30
+          if-no-files-found: warn

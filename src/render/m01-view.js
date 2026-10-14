@@ -9,7 +9,8 @@ import { actorPose } from './m01-actor-pose.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { texturedSurface,weatheredBridgeSurface } from './m01-surfaces.js';
 import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';
-import {battlefieldBlastKind,battlefieldProfile,fxLayerCount,staggeredLife,impactProfile,fxDistanceBand} from './m01-battlefield-fx-profile.js';
+import {battlefieldBlastKind,battlefieldProfile,fxLayerCount,staggeredLife,impactProfile,fxDistanceBand,blastFlashEnvelope,sampleMuzzleEnvironmentLight} from './m01-battlefield-fx-profile.js';
+import {M01AmbientDirector,resolveSquadLivingMotion} from './m01-ambient.js';
 import { M01Environment } from './m01-environment.js';
 import { M01Characters } from './m01-characters.js';
 import { M01ViewModel } from './m01-viewmodel.js';
@@ -75,6 +76,11 @@ export class M01View {
     this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};
     this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
     this.combatFeedback=new M01CombatFeedback();
+    this.ambientDirector=new M01AmbientDirector();
+    this.horizonGlow=new THREE.Sprite(new THREE.SpriteMaterial({color:'#ff9e52',transparent:true,opacity:0,depthWrite:false,
+      blending:THREE.AdditiveBlending,fog:false}));this.horizonGlow.visible=false;this.horizonGlow.renderOrder=6;this.scene.add(this.horizonGlow);
+    this.muzzleFill=new THREE.PointLight('#ffd68a',0,48,2);this.muzzleFill.visible=false;this.scene.add(this.muzzleFill);
+    this.livingMotion={active:0,reacting:0};
     this.portalPolish=new M01BridgePortalPolish({stone:this.materials.bridgeStone});
     this.bridgeStructure=new M01BridgeStructure({steel:this.materials.bridgeSteel,rail:this.materials.metal,timber:this.materials.wood,stone:this.materials.bridgeStone});
     this.atmosphere=new M01Atmosphere(this.scene);
@@ -187,6 +193,7 @@ export class M01View {
     const up=new THREE.Vector3(0,1,0),direction=new THREE.Vector3(),tint=new THREE.Color();
     this.actorPoses={standing:0,crouched:0,pinned:0,seated:0,wounded:0,carried:0,fallen:0,prone:0};
     this.actorAnimations={aiming:0,firing:0,moving:0,underFire:0};
+    this.livingMotion={active:0,reacting:0};
     let pivot=0,shadowCount=0;
     const put=(name,p,size,color,bone=null)=>{
       const batch=this.batches.get(name),i=counts[name]??0;counts[name]=i+1;
@@ -199,6 +206,8 @@ export class M01View {
     for(const a of actors){
       if(!a.active)continue;
       const pose=actorPose(a,time);this.actorPoses[pose.name]++;pivot=pose.root.pivotY;
+      const living=resolveSquadLivingMotion(a,time,this.bursts);this.livingMotion.active++;
+      if(living.blastFlinch>.01)this.livingMotion.reacting++;
       for(const key of Object.keys(this.actorAnimations))if(pose[key])this.actorAnimations[key]++;
       if(this.contactShadows&&!a.carriedBy&&Math.hypot(a.x-player.x,a.z-player.z)<90){
         dummy.position.set(a.x,a.y+.018,a.z);dummy.rotation.set(0,-a.facing,0);dummy.scale.set(pose.name==='fallen'||pose.name==='wounded'?1.8:.7,1,.8);dummy.updateMatrix();
@@ -206,7 +215,8 @@ export class M01View {
       }
       if(skinned.has(a.id))continue;
       root.position.set(a.x,a.y+pose.root.offsetY,a.z);
-      root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
+      root.rotation.set(pose.root.pitch+living.blastFlinch*.12,-a.facing+living.swayYaw,
+        pose.root.roll+living.blastFlinch*.1,'YXZ');root.updateMatrix();
       const visual=!a.civilian&&this.characters?.visuals?soldierVisualVariant(a):null;
       const cloth=a.civilian?'#404c56':visual?'#'+visual.proxyCloth:a.team==='enemy'?'#b4c0b7':'#c9bea0',
         helmet=visual?'#'+visual.proxyHelmet:a.team==='enemy'?'#465252':'#635f47',skin=visual?'#'+visual.proxySkin:'#ffffff';
@@ -357,8 +367,9 @@ export class M01View {
       const farScale=band==='far'?1.12:band==='mid'?1.04:1;
       const flashN=fxLayerCount(profile.counts.flash,quality,distance);
       for(let j=0;j<flashN;j++){
-        const n0=visualNoise(b.seed,2+j*3),life=staggeredLife(age,0,profile.flashEnd,n0,.08);if(!life.life)continue;
-        const s=profile.scale*(.70+.34*life.t)*(.82+visualNoise(b.seed,3+j*3)*.28)*farScale;
+        const n0=visualNoise(b.seed,2+j*3),envelope=blastFlashEnvelope(age,profile,distance),
+          life=staggeredLife(age,0,profile.flashEnd+(distance>180?.14:0),n0,.08);if(!life.life||!envelope.active)continue;
+        const s=Math.max(profile.scale*(.70+.34*life.t)*(.82+visualNoise(b.seed,3+j*3)*.28)*farScale,envelope.minScale);
         put('flash',{x:b.x+(n0-.5)*profile.scale*.08,y:b.y+profile.scale*(.11+.08*life.t),z:b.z+(visualNoise(b.seed,4+j*3)-.5)*profile.scale*.08},
           s,s*(.58+.18*visualNoise(b.seed,5+j*3)),.94*life.life,kind==='small'?'#fff1c7':'#fff0c0',b.seed,2+j);
       }
@@ -573,6 +584,15 @@ export class M01View {
     this.syncSolids(sim.world);this.portalPolish.sync(this.owner.quality);this.bridgeStructure.sync(this.owner.quality,this.camera.position,sim.world);const dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
     this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.lighting(sim);
+    const atmosphere=this.ambientDirector.sample(sim,this.owner.quality),flash=atmosphere.horizonFlash;
+    this.horizonGlow.visible=Boolean(flash.active);
+    if(flash.active){const angle=flash.azimuthDeg*Math.PI/180,d=flash.distance;
+      this.horizonGlow.position.set(sim.player.x+Math.cos(angle)*d,75,sim.player.z+Math.sin(angle)*d);
+      this.horizonGlow.scale.set(145,110,1);this.horizonGlow.material.opacity=.75*flash.intensity;
+    }
+    const fill=sampleMuzzleEnvironmentLight(sim.actors,time,sim.player,this.owner.quality);
+    this.muzzleFill.visible=Boolean(fill.active);
+    if(fill.active){this.muzzleFill.position.set(...fill.position);this.muzzleFill.intensity=fill.intensity;}
     this.train.visible=state.train963;this.panzerzug.visible=state.panzerzug;
     this.updateAircraft(state,time,sim.player,ju87HeardAt(sim));
     const player=sim.player,eye=eyePosition(player),dir=aimDirection(player.angle,player.pitch);
@@ -664,11 +684,12 @@ export class M01View {
     damageDecals:this.damageDecals.diagnostics,
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},
     combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),
+    ambient:this.ambientDirector?.diagnostics,livingMotion:{...this.livingMotion},
     battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},meta:structuredClone(this.battlefieldFxMeta),limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
     this.disposed=true;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();
     this.fallbackFx.dispose();this.weaponWorldFx.dispose();this.weaponLighting.dispose();
-    this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
+    this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.horizonGlow?.material.dispose();this.geometry.forEach(g=>g.dispose());
     const textures=new Set();for(const m of Object.values(this.materials)){if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
     this.scene.traverse(n=>{if(n.isInstancedMesh)n.dispose();});this.scene.clear();this.weaponScene.clear();
   }
