@@ -6,6 +6,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: t21-proof-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   validate-and-capture:
     runs-on: ubuntu-latest
@@ -28,11 +32,6 @@ jobs:
           npm ci
           npx playwright install --with-deps chromium
           which ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
-      - name: Unitários, regressões e build
-        run: |
-          node --test tests/m01-living-battlefield-t21.test.js
-          npm test
-          npm run build
       - name: Preparar capturador original sem alterar a simulação
         run: |
           cp tools/capture-t21-proof.mjs tools/.t21-proof-runner.mjs
@@ -52,6 +51,11 @@ jobs:
             test -s "/tmp/t21-real-evidence/$f" || (echo "FALTA: $f" && exit 1)
           done
           ffprobe -v error -show_entries format=duration -of default=nk=1:nw=1 /tmp/t21-real-evidence/t21-gameplay-real.mp4
+      - name: Unitários, regressões e build
+        run: |
+          node --test tests/m01-living-battlefield-t21.test.js
+          npm test
+          npm run build
       - name: Artefactos do navegador (mesmo se a captura falhar)
         if: always()
         uses: actions/upload-artifact@v4
