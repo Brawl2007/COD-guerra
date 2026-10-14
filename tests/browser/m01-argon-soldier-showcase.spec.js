@@ -1,6 +1,17 @@
 import {test,expect} from '@playwright/test';
+import {spawn} from 'node:child_process';
 
 test.use({video:'on'});
+let showcaseServer;
+test.beforeAll(async()=>{
+  showcaseServer=spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','5188','--strictPort'],{stdio:['ignore','pipe','pipe']});
+  await new Promise((resolve,reject)=>{
+    const timer=setTimeout(()=>reject(Error('Showcase Vite server not ready')),30000);
+    showcaseServer.stdout.on('data',b=>{if(b.toString().includes('5188')){clearTimeout(timer);resolve();}});
+    showcaseServer.on('exit',c=>{clearTimeout(timer);reject(Error('Showcase Vite exited '+c));});
+  });
+});
+test.afterAll(()=>showcaseServer?.kill());
 
 test('M01 Argon — gameplay real + multi-soldier GLB animation showcase',async({page},info)=>{
   test.setTimeout(process.env.CI?240000:120000);
@@ -20,7 +31,7 @@ test('M01 Argon — gameplay real + multi-soldier GLB animation showcase',async(
     actors:window.gameDiagnostics().m01.characters.actors.map(a=>({id:a.id,clip:a.clip}))}));
   await page.screenshot({path:info.outputPath('01-m01-real-gameplay.png')});
   // Second shot: controlled inspection with the REAL M01Characters renderer, rigs, textures, and GLBs.
-  await page.goto('tools/verification/m01-argon-animation-showcase.html');
+  await page.goto('http://127.0.0.1:5188/COD-guerra/tools/verification/m01-argon-animation-showcase.html');
   await page.waitForFunction(()=>window.ready===true&&window.showcase?.diagnostics()?.renderedModels>=9,null,{timeout:100000});
   const stage=async(mode,screenshot,delay)=>{
     await page.evaluate(m=>window.showcase.setMode(m),mode);
