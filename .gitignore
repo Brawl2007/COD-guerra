@@ -1,9 +1,0 @@
-node_modules/
-dist/
-test-results/
-playwright-report/
-.artifacts/
-
-# Estado temporario dos agentes; so a documentacao e versionada
-.agent/runs/*
-!.agent/runs/README.md
