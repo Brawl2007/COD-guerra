@@ -1,0 +1,949 @@
+{
+  "schema": 1,
+  "author": "COD-guerra contributors (original procedural construction)",
+  "license": "CC0-1.0",
+  "units": "metres",
+  "axes": "+Y up; X/Z ground",
+  "generator": "node tools/assets/m01-vegetation/build.mjs",
+  "asset": {
+    "file": "vegetation-kit.glb",
+    "sha256": "ce03b8ad0e384a009b40599bdf67b575d142c64b85fce9c61446bb72185170af",
+    "bytes": 546120
+  },
+  "atlas": {
+    "file": "foliage-alpha.png",
+    "sha256": "bb8422aace0bd3f7274302eda7956bb62fb457d2de1fd0a92cc753052da5e0a5",
+    "bytes": 29082,
+    "width": 512,
+    "height": 512,
+    "decodedRGBA8": 1048576,
+    "mipRGBA8": 349524,
+    "shared": true
+  },
+  "models": [
+    {
+      "id": "poplar-lod0",
+      "family": "tree",
+      "species": "poplar",
+      "lod": 0,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 302,
+      "vertices": 906,
+      "bounds": {
+        "min": [
+          -0.23851072788238525,
+          0,
+          -0.23780059814453125
+        ],
+        "max": [
+          0.23871462047100067,
+          1,
+          0.23845985531806946
+        ]
+      }
+    },
+    {
+      "id": "poplar-lod1",
+      "family": "tree",
+      "species": "poplar",
+      "lod": 1,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 104,
+      "vertices": 312,
+      "bounds": {
+        "min": [
+          -0.23964950442314148,
+          0,
+          -0.24243789911270142
+        ],
+        "max": [
+          0.24336972832679749,
+          1,
+          0.23502591252326965
+        ]
+      }
+    },
+    {
+      "id": "poplar-lod2",
+      "family": "tree",
+      "species": "poplar",
+      "lod": 2,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 20,
+      "vertices": 60,
+      "bounds": {
+        "min": [
+          -0.2666400074958801,
+          0,
+          -0.2697424292564392
+        ],
+        "max": [
+          0.27077922224998474,
+          1,
+          0.2148904800415039
+        ]
+      }
+    },
+    {
+      "id": "poplar-lod3",
+      "family": "tree",
+      "species": "poplar",
+      "lod": 3,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 8,
+      "vertices": 24,
+      "bounds": {
+        "min": [
+          -0.23871462047100067,
+          0,
+          -0.23871462047100067
+        ],
+        "max": [
+          0.23871462047100067,
+          1,
+          0.23871462047100067
+        ]
+      }
+    },
+    {
+      "id": "willow-lod0",
+      "family": "tree",
+      "species": "willow",
+      "lod": 0,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 302,
+      "vertices": 906,
+      "bounds": {
+        "min": [
+          -0.794192910194397,
+          0,
+          -0.7918282747268677
+        ],
+        "max": [
+          0.7948718070983887,
+          1,
+          0.8709465861320496
+        ]
+      }
+    },
+    {
+      "id": "willow-lod1",
+      "family": "tree",
+      "species": "willow",
+      "lod": 1,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 104,
+      "vertices": 312,
+      "bounds": {
+        "min": [
+          -0.7827211022377014,
+          0,
+          -0.7918282747268677
+        ],
+        "max": [
+          0.7948718070983887,
+          1,
+          0.8445430397987366
+        ]
+      }
+    },
+    {
+      "id": "willow-lod2",
+      "family": "tree",
+      "species": "willow",
+      "lod": 2,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 20,
+      "vertices": 60,
+      "bounds": {
+        "min": [
+          -1.0251121520996094,
+          0,
+          -1.0370396375656128
+        ],
+        "max": [
+          1.0410256385803223,
+          1,
+          0.9030813574790955
+        ]
+      }
+    },
+    {
+      "id": "willow-lod3",
+      "family": "tree",
+      "species": "willow",
+      "lod": 3,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 8,
+      "vertices": 24,
+      "bounds": {
+        "min": [
+          -0.7948718070983887,
+          0,
+          -0.7948718070983887
+        ],
+        "max": [
+          0.7948718070983887,
+          1,
+          0.7948718070983887
+        ]
+      }
+    },
+    {
+      "id": "oak-lod0",
+      "family": "tree",
+      "species": "oak",
+      "lod": 0,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 302,
+      "vertices": 906,
+      "bounds": {
+        "min": [
+          -0.5504181385040283,
+          0,
+          -0.546765148639679
+        ],
+        "max": [
+          0.5334528684616089,
+          1,
+          0.5442737340927124
+        ]
+      }
+    },
+    {
+      "id": "oak-lod1",
+      "family": "tree",
+      "species": "oak",
+      "lod": 1,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 104,
+      "vertices": 312,
+      "bounds": {
+        "min": [
+          -0.5171407461166382,
+          0,
+          -0.49860674142837524
+        ],
+        "max": [
+          0.5286313891410828,
+          1,
+          0.5333734750747681
+        ]
+      }
+    },
+    {
+      "id": "oak-lod2",
+      "family": "tree",
+      "species": "oak",
+      "lod": 2,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 20,
+      "vertices": 60,
+      "bounds": {
+        "min": [
+          -0.7649276852607727,
+          0,
+          -0.7292416095733643
+        ],
+        "max": [
+          0.6446399688720703,
+          1,
+          0.6078169941902161
+        ]
+      }
+    },
+    {
+      "id": "oak-lod3",
+      "family": "tree",
+      "species": "oak",
+      "lod": 3,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 8,
+      "vertices": 24,
+      "bounds": {
+        "min": [
+          -0.5504181385040283,
+          0,
+          -0.5504181385040283
+        ],
+        "max": [
+          0.5504181385040283,
+          1,
+          0.5504181385040283
+        ]
+      }
+    },
+    {
+      "id": "birch-lod0",
+      "family": "tree",
+      "species": "birch",
+      "lod": 0,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 302,
+      "vertices": 906,
+      "bounds": {
+        "min": [
+          -0.36445853114128113,
+          0,
+          -0.36337339878082275
+        ],
+        "max": [
+          0.3647700846195221,
+          1,
+          0.36438077688217163
+        ]
+      }
+    },
+    {
+      "id": "birch-lod1",
+      "family": "tree",
+      "species": "birch",
+      "lod": 1,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 104,
+      "vertices": 312,
+      "bounds": {
+        "min": [
+          -0.3663322627544403,
+          0,
+          -0.37059465050697327
+        ],
+        "max": [
+          0.37201908230781555,
+          1,
+          0.3592645525932312
+        ]
+      }
+    },
+    {
+      "id": "birch-lod2",
+      "family": "tree",
+      "species": "birch",
+      "lod": 2,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 20,
+      "vertices": 60,
+      "bounds": {
+        "min": [
+          -0.5067036151885986,
+          0,
+          -0.5125992894172668
+        ],
+        "max": [
+          0.5145695209503174,
+          1,
+          0.40836256742477417
+        ]
+      }
+    },
+    {
+      "id": "birch-lod3",
+      "family": "tree",
+      "species": "birch",
+      "lod": 3,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 8,
+      "vertices": 24,
+      "bounds": {
+        "min": [
+          -0.3647700846195221,
+          0,
+          -0.3647700846195221
+        ],
+        "max": [
+          0.3647700846195221,
+          1,
+          0.3647700846195221
+        ]
+      }
+    },
+    {
+      "id": "lime-lod0",
+      "family": "tree",
+      "species": "lime",
+      "lod": 0,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 302,
+      "vertices": 906,
+      "bounds": {
+        "min": [
+          -0.4504038691520691,
+          0,
+          -0.44906285405158997
+        ],
+        "max": [
+          0.4507888853549957,
+          1,
+          0.45030781626701355
+        ]
+      }
+    },
+    {
+      "id": "lime-lod1",
+      "family": "tree",
+      "species": "lime",
+      "lod": 1,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 104,
+      "vertices": 312,
+      "bounds": {
+        "min": [
+          -0.4523952305316925,
+          0,
+          -0.4576590061187744
+        ],
+        "max": [
+          0.45941805839538574,
+          1,
+          0.44366711378097534
+        ]
+      }
+    },
+    {
+      "id": "lime-lod2",
+      "family": "tree",
+      "species": "lime",
+      "lod": 2,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 20,
+      "vertices": 60,
+      "bounds": {
+        "min": [
+          -0.6510399580001831,
+          0,
+          -0.658614993095398
+        ],
+        "max": [
+          0.6611465215682983,
+          1,
+          0.5246860980987549
+        ]
+      }
+    },
+    {
+      "id": "lime-lod3",
+      "family": "tree",
+      "species": "lime",
+      "lod": 3,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 8,
+      "vertices": 24,
+      "bounds": {
+        "min": [
+          -0.4507888853549957,
+          0,
+          -0.4507888853549957
+        ],
+        "max": [
+          0.4507888853549957,
+          1,
+          0.4507888853549957
+        ]
+      }
+    },
+    {
+      "id": "pine-lod0",
+      "family": "tree",
+      "species": "pine",
+      "lod": 0,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 302,
+      "vertices": 906,
+      "bounds": {
+        "min": [
+          -0.5611719489097595,
+          0,
+          -0.6009815335273743
+        ],
+        "max": [
+          0.6366995573043823,
+          1,
+          0.5180824995040894
+        ]
+      }
+    },
+    {
+      "id": "pine-lod1",
+      "family": "tree",
+      "species": "pine",
+      "lod": 1,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 104,
+      "vertices": 312,
+      "bounds": {
+        "min": [
+          -0.50673907995224,
+          0,
+          -0.5807220339775085
+        ],
+        "max": [
+          0.6513027548789978,
+          1,
+          0.43551185727119446
+        ]
+      }
+    },
+    {
+      "id": "pine-lod2",
+      "family": "tree",
+      "species": "pine",
+      "lod": 2,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 20,
+      "vertices": 60,
+      "bounds": {
+        "min": [
+          -0.5997502207756042,
+          0,
+          -0.7216493487358093
+        ],
+        "max": [
+          0.9023076891899109,
+          1,
+          0.5494205355644226
+        ]
+      }
+    },
+    {
+      "id": "pine-lod3",
+      "family": "tree",
+      "species": "pine",
+      "lod": 3,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 8,
+      "vertices": 24,
+      "bounds": {
+        "min": [
+          -0.6366995573043823,
+          0,
+          -0.6366995573043823
+        ],
+        "max": [
+          0.6366995573043823,
+          1,
+          0.6366995573043823
+        ]
+      }
+    },
+    {
+      "id": "pollard-lod0",
+      "family": "tree",
+      "species": "pollard",
+      "lod": 0,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 302,
+      "vertices": 906,
+      "bounds": {
+        "min": [
+          -0.7074697613716125,
+          0,
+          -0.705363392829895
+        ],
+        "max": [
+          0.7080745100975037,
+          1,
+          0.707318902015686
+        ]
+      }
+    },
+    {
+      "id": "pollard-lod1",
+      "family": "tree",
+      "species": "pollard",
+      "lod": 1,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 104,
+      "vertices": 312,
+      "bounds": {
+        "min": [
+          -0.6972506642341614,
+          0,
+          -0.705363392829895
+        ],
+        "max": [
+          0.7080745100975037,
+          1,
+          0.6837984919548035
+        ]
+      }
+    },
+    {
+      "id": "pollard-lod2",
+      "family": "tree",
+      "species": "pollard",
+      "lod": 2,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 20,
+      "vertices": 60,
+      "bounds": {
+        "min": [
+          -0.9125421047210693,
+          0,
+          -0.9231597781181335
+        ],
+        "max": [
+          0.9267081022262573,
+          1,
+          0.7354358434677124
+        ]
+      }
+    },
+    {
+      "id": "pollard-lod3",
+      "family": "tree",
+      "species": "pollard",
+      "lod": 3,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 8,
+      "vertices": 24,
+      "bounds": {
+        "min": [
+          -0.7080745100975037,
+          0,
+          -0.7080745100975037
+        ],
+        "max": [
+          0.7080745100975037,
+          1,
+          0.7080745100975037
+        ]
+      }
+    },
+    {
+      "id": "snag-lod0",
+      "family": "tree",
+      "species": "snag",
+      "lod": 0,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 206,
+      "vertices": 618,
+      "bounds": {
+        "min": [
+          -0.4051327705383301,
+          0,
+          -0.40266770124435425
+        ],
+        "max": [
+          0.3904857635498047,
+          1,
+          0.39757898449897766
+        ]
+      }
+    },
+    {
+      "id": "snag-lod1",
+      "family": "tree",
+      "species": "snag",
+      "lod": 1,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 80,
+      "vertices": 240,
+      "bounds": {
+        "min": [
+          -0.3822401762008667,
+          0,
+          -0.36829614639282227
+        ],
+        "max": [
+          0.3920608162879944,
+          1,
+          0.3903319239616394
+        ]
+      }
+    },
+    {
+      "id": "snag-lod2",
+      "family": "tree",
+      "species": "snag",
+      "lod": 2,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 44,
+      "vertices": 132,
+      "bounds": {
+        "min": [
+          -0.43212589621543884,
+          0,
+          -0.38089731335639954
+        ],
+        "max": [
+          0.3578171133995056,
+          1,
+          0.338782399892807
+        ]
+      }
+    },
+    {
+      "id": "snag-lod3",
+      "family": "tree",
+      "species": "snag",
+      "lod": 3,
+      "wind": "_WIND anchored weights; trunk roots zero",
+      "heightMetres": 1,
+      "triangles": 8,
+      "vertices": 24,
+      "bounds": {
+        "min": [
+          -0.4051327705383301,
+          0,
+          -0.4051327705383301
+        ],
+        "max": [
+          0.4051327705383301,
+          1,
+          0.4051327705383301
+        ]
+      }
+    },
+    {
+      "id": "shrub-hazel",
+      "family": "shrub",
+      "species": "hazel",
+      "heightMetres": 1,
+      "triangles": 80,
+      "vertices": 240,
+      "bounds": {
+        "min": [
+          -0.6180662512779236,
+          -0.0034943190403282642,
+          -0.5722687840461731
+        ],
+        "max": [
+          0.6276595592498779,
+          1,
+          0.5547753572463989
+        ]
+      }
+    },
+    {
+      "id": "shrub-elder",
+      "family": "shrub",
+      "species": "elder",
+      "heightMetres": 1,
+      "triangles": 88,
+      "vertices": 264,
+      "bounds": {
+        "min": [
+          -0.6180662512779236,
+          -0.0034943190403282642,
+          -0.5722687840461731
+        ],
+        "max": [
+          0.6276595592498779,
+          1,
+          0.5547753572463989
+        ]
+      }
+    },
+    {
+      "id": "shrub-bramble",
+      "family": "shrub",
+      "species": "bramble",
+      "heightMetres": 1,
+      "triangles": 96,
+      "vertices": 288,
+      "bounds": {
+        "min": [
+          -1.0563313961029053,
+          -0.007223752327263355,
+          -0.9780594110488892
+        ],
+        "max": [
+          1.0727273225784302,
+          1,
+          0.9481615424156189
+        ]
+      }
+    },
+    {
+      "id": "shrub-broom",
+      "family": "shrub",
+      "species": "broom",
+      "heightMetres": 1,
+      "triangles": 104,
+      "vertices": 312,
+      "bounds": {
+        "min": [
+          -0.24877029657363892,
+          -0.002300241030752659,
+          -0.4089546501636505
+        ],
+        "max": [
+          0.2526315748691559,
+          1,
+          0.39645352959632874
+        ]
+      }
+    },
+    {
+      "id": "shrub-dry",
+      "family": "shrub",
+      "species": "dry",
+      "heightMetres": 1,
+      "triangles": 112,
+      "vertices": 336,
+      "bounds": {
+        "min": [
+          -0.6180662512779236,
+          -0.0034943190403282642,
+          -0.5722687840461731
+        ],
+        "max": [
+          0.6276595592498779,
+          1,
+          0.5547753572463989
+        ]
+      }
+    },
+    {
+      "id": "shrub-dead",
+      "family": "shrub",
+      "species": "dead",
+      "heightMetres": 1,
+      "triangles": 42,
+      "vertices": 126,
+      "bounds": {
+        "min": [
+          -0.39022284746170044,
+          -0.0036860641557723284,
+          -0.33887627720832825
+        ],
+        "max": [
+          0.3958525061607361,
+          1,
+          0.3287501037120819
+        ]
+      }
+    },
+    {
+      "id": "ground-meadow",
+      "family": "ground",
+      "species": "meadow",
+      "heightMetres": 0.56,
+      "triangles": 6,
+      "vertices": 18,
+      "bounds": {
+        "min": [
+          -0.17000000178813934,
+          0,
+          -0.1472243219614029
+        ],
+        "max": [
+          0.17000000178813934,
+          0.5600000023841858,
+          0.1472243219614029
+        ]
+      }
+    },
+    {
+      "id": "ground-dry",
+      "family": "ground",
+      "species": "dry",
+      "heightMetres": 0.56,
+      "triangles": 6,
+      "vertices": 18,
+      "bounds": {
+        "min": [
+          -0.17000000178813934,
+          0,
+          -0.1472243219614029
+        ],
+        "max": [
+          0.17000000178813934,
+          0.5600000023841858,
+          0.1472243219614029
+        ]
+      }
+    },
+    {
+      "id": "ground-tall",
+      "family": "ground",
+      "species": "tall",
+      "heightMetres": 0.89,
+      "triangles": 6,
+      "vertices": 18,
+      "bounds": {
+        "min": [
+          -0.17000000178813934,
+          0,
+          -0.1472243219614029
+        ],
+        "max": [
+          0.17000000178813934,
+          0.8899999856948853,
+          0.1472243219614029
+        ]
+      }
+    },
+    {
+      "id": "ground-weed",
+      "family": "ground",
+      "species": "weed",
+      "heightMetres": 0.36,
+      "triangles": 6,
+      "vertices": 18,
+      "bounds": {
+        "min": [
+          -0.17000000178813934,
+          0,
+          -0.1472243219614029
+        ],
+        "max": [
+          0.17000000178813934,
+          0.36000001430511475,
+          0.1472243219614029
+        ]
+      }
+    },
+    {
+      "id": "ground-reed",
+      "family": "ground",
+      "species": "reed",
+      "heightMetres": 1.15,
+      "triangles": 6,
+      "vertices": 18,
+      "bounds": {
+        "min": [
+          -0.20999999344348907,
+          0,
+          -0.18186533451080322
+        ],
+        "max": [
+          0.20999999344348907,
+          1.149999976158142,
+          0.18186533451080322
+        ]
+      }
+    }
+  ]
+}

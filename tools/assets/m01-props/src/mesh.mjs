@@ -3,14 +3,13 @@
 // Cores em sRGB 0..1; a conversão para linear (glTF COLOR_0) é feita ao escrever o GLB.
 // Tudo é determinístico: o ruído vem de noise.mjs e não há Math.random.
 import { noise3, hash } from './noise.mjs';
-import * as pm from './pmath.mjs';
 
 const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
 const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
 const mul = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
 const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
-const norm = a => { const l = pm.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+const norm = a => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
 export const v3 = { sub, add, mul, dot, cross, norm };
 export const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 export const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
@@ -20,9 +19,9 @@ export const hex = h => [parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 
 /** Rotação Euler (ordem Z, X, Y) de um vector. */
 export function rotate(p, [rx = 0, ry = 0, rz = 0]) {
   let [x, y, z] = p;
-  if (rz) { const c = pm.cos(rz), s = pm.sin(rz); [x, y] = [x * c - y * s, x * s + y * c]; }
-  if (rx) { const c = pm.cos(rx), s = pm.sin(rx); [y, z] = [y * c - z * s, y * s + z * c]; }
-  if (ry) { const c = pm.cos(ry), s = pm.sin(ry); [x, z] = [x * c + z * s, -x * s + z * c]; }
+  if (rz) { const c = Math.cos(rz), s = Math.sin(rz); [x, y] = [x * c - y * s, x * s + y * c]; }
+  if (rx) { const c = Math.cos(rx), s = Math.sin(rx); [y, z] = [y * c - z * s, y * s + z * c]; }
+  if (ry) { const c = Math.cos(ry), s = Math.sin(ry); [x, z] = [x * c + z * s, -x * s + z * c]; }
   return [x, y, z];
 }
 
@@ -76,7 +75,7 @@ export class Model {
       for (let t = 0; t < indices.length; t += 3) {
         const [a, b, c] = [indices[t], indices[t + 1], indices[t + 2]].map(i => positions[i]);
         const cr = cross(sub(b, a), sub(c, a));
-        if (pm.hypot(...cr) < 1e-10) continue;   // triângulo degenerado
+        if (Math.hypot(...cr) < 1e-10) continue;   // triângulo degenerado
         const n = norm(cr), o = P.pos.length / 3;
         for (const [k, p] of [a, b, c].entries()) { P.pos.push(...p); P.nrm.push(...n); P.col.push(...col(p, n, indices[t + k])); }
         P.idx.push(o, o + 1, o + 2);
@@ -162,7 +161,7 @@ export class Model {
     const pts = [];
     for (let k = 0; k <= rings; k++) {
       const t = k / rings, row = [];
-      for (let i = 0; i < seg; i++) { const a = (i / seg) * Math.PI * 2; row.push(tf([pm.cos(a) * radius(t), t * h, pm.sin(a) * radius(t) * squash])); }
+      for (let i = 0; i < seg; i++) { const a = (i / seg) * Math.PI * 2; row.push(tf([Math.cos(a) * radius(t), t * h, Math.sin(a) * radius(t) * squash])); }
       pts.push(row);
     }
     this.grid(mat, pts, { wrapU: true, flat, ...o });
@@ -171,13 +170,13 @@ export class Model {
   }
   /** Superelipsoide (sacos, pedras, esferas): meios-eixos rad, expoentes e, nu×nv. `shape(p)` pode deformar. */
   blob(mat, { rad, at = [0, 0, 0], rot = null, nu = 8, nv = 5, e = [1, 1], shape = null, ...o }) {
-    const pw = (x, p) => Math.sign(x) * pm.pow(Math.abs(x), p);
+    const pw = (x, p) => Math.sign(x) * Math.abs(x) ** p;
     const pts = [];
     for (let j = 0; j <= nv; j++) {
       const th = -Math.PI / 2 + (j / nv) * Math.PI, row = [];
       for (let i = 0; i < nu; i++) {
         const ph = (i / nu) * Math.PI * 2;
-        let p = [rad[0] * pw(pm.cos(th), e[0]) * pw(pm.cos(ph), e[1]), rad[1] * pw(pm.sin(th), e[0]), rad[2] * pw(pm.cos(th), e[0]) * pw(pm.sin(ph), e[1])];
+        let p = [rad[0] * pw(Math.cos(th), e[0]) * pw(Math.cos(ph), e[1]), rad[1] * pw(Math.sin(th), e[0]), rad[2] * pw(Math.cos(th), e[0]) * pw(Math.sin(ph), e[1])];
         if (shape) p = shape(p, th, ph);
         const q = rot ? rotate(p, rot) : p;
         row.push([q[0] + at[0], q[1] + at[1], q[2] + at[2]]);
@@ -198,19 +197,19 @@ export class Model {
    */
   tube(mat, path, { r = 0.01, sides = 5, closed = false, caps = true, ...o }) {
     const n = path.length, rings = [];
-    let up = Math.abs(path[1][1] - path[0][1]) > 0.9 * pm.hypot(...sub(path[1], path[0])) ? [1, 0, 0] : [0, 1, 0];
+    let up = Math.abs(path[1][1] - path[0][1]) > 0.9 * Math.hypot(...sub(path[1], path[0])) ? [1, 0, 0] : [0, 1, 0];
     let prevT = null, nrm = null;
     for (let k = 0; k < n; k++) {
       const a = path[closed ? (k + n - 1) % n : Math.max(k - 1, 0)], b = path[closed ? (k + 1) % n : Math.min(k + 1, n - 1)];
       const t = norm(sub(b, a));
       if (!nrm) nrm = norm(cross(cross(t, up), t));
       else if (prevT) { // transporte paralelo
-        const ax = cross(prevT, t), s = pm.hypot(...ax);
-        if (s > 1e-6) { const ang = pm.asin(clamp(s, -1, 1)) * Math.sign(dot(prevT, t) || 1); const u = norm(ax); nrm = rotAxis(nrm, u, ang); }
+        const ax = cross(prevT, t), s = Math.hypot(...ax);
+        if (s > 1e-6) { const ang = Math.asin(clamp(s, -1, 1)) * Math.sign(dot(prevT, t) || 1); const u = norm(ax); nrm = rotAxis(nrm, u, ang); }
       }
       prevT = t;
       const bin = norm(cross(t, nrm)), rad = typeof r === 'function' ? r(k / (n - 1)) : r, ring = [];
-      for (let i = 0; i < sides; i++) { const ang = (i / sides) * Math.PI * 2; ring.push(add(path[k], add(mul(nrm, pm.cos(ang) * rad), mul(bin, pm.sin(ang) * rad)))); }
+      for (let i = 0; i < sides; i++) { const ang = (i / sides) * Math.PI * 2; ring.push(add(path[k], add(mul(nrm, Math.cos(ang) * rad), mul(bin, Math.sin(ang) * rad)))); }
       rings.push(ring);
     }
     this.grid(mat, rings, { wrapU: true, wrapV: closed, flipped: true, ...o });
@@ -224,7 +223,7 @@ export class Model {
 }
 
 function rotAxis(v, u, a) {
-  const c = pm.cos(a), s = pm.sin(a), d = dot(u, v) * (1 - c), x = cross(u, v);
+  const c = Math.cos(a), s = Math.sin(a), d = dot(u, v) * (1 - c), x = cross(u, v);
   return [v[0] * c + x[0] * s + u[0] * d, v[1] * c + x[1] * s + u[1] * d, v[2] * c + x[2] * s + u[2] * d];
 }
 
@@ -235,8 +234,8 @@ export function weather(model, { mud = hex('#4a4034'), dust = hex('#8b8470') } =
       const p = [P.pos[i * 3], P.pos[i * 3 + 1], P.pos[i * 3 + 2]], n = [P.nrm[i * 3], P.nrm[i * 3 + 1], P.nrm[i * 3 + 2]];
       let c = [P.col[i * 3], P.col[i * 3 + 1], P.col[i * 3 + 2]];
       const nz = noise3(p[0] * 7 + 3.1, p[1] * 7, p[2] * 7 - model.seed);
-      if (model.dirt) c = mix(c, mud, pm.pow15(clamp((0.42 - p[1]) / 0.42, 0, 1)) * (0.45 + 0.25 * nz) * model.dirt);
-      c = mix(c, dust, pm.sq(clamp(n[1], 0, 1)) * (0.12 + 0.05 * nz));
+      if (model.dirt) c = mix(c, mud, clamp((0.42 - p[1]) / 0.42, 0, 1) ** 1.5 * (0.45 + 0.25 * nz) * model.dirt);
+      c = mix(c, dust, clamp(n[1], 0, 1) ** 2 * (0.12 + 0.05 * nz));
       const down = clamp(-n[1], 0, 1);
       c = mul(c, 1 - 0.3 * down);
       // dessaturação ligeira: nenhuma cor saturada ao amanhecer

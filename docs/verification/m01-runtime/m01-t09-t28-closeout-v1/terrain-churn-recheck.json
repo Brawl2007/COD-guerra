@@ -1,0 +1,121 @@
+{
+  "config": {
+    "configFile": "/workspace/COD-guerra/playwright.config.js",
+    "rootDir": "/workspace/COD-guerra/tests/browser",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/COD-guerra/test-results/material-churn",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/workspace/COD-guerra/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run preview",
+      "url": "http://127.0.0.1:4173/COD-guerra/",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "m01-terrain-war-ground.spec.js",
+      "file": "m01-terrain-war-ground.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "paused High→Low→Medium→High churn preserves save state and reclaims textures",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 97268,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T20:53:13.236Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "quality-lifecycle.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJ0aWVycyI6IFsKICAgIHsKICAgICAgInRpZXIiOiAibG93IiwKICAgICAgImdsb2JhbFRleHR1cmVzIjogMTAyLAogICAgICAidGVycmFpbiI6IHsKICAgICAgICAibWF0ZXJpYWwiOiAibTAxLXRlcnJhaW4tbWFjcm8tdjEiLAogICAgICAgICJ0ZXh0dXJlcyI6IDEsCiAgICAgICAgImdwdUJ5dGVzIjogMTc0NzYxMiwKICAgICAgICAicXVhbGl0eSI6ICJsb3ciLAogICAgICAgICJ0aWVyIjogImxvdyIsCiAgICAgICAgImxvd0RldGFpbCI6IDEsCiAgICAgICAgImZpbGVzIjogW10sCiAgICAgICAgIm1hc2siOiB7CiAgICAgICAgICAid2lkdGgiOiAxMDI0LAogICAgICAgICAgImhlaWdodCI6IDMyMAogICAgICAgIH0sCiAgICAgICAgInNhbXBsZXJzIjogMSwKICAgICAgICAiZmFpbHVyZXMiOiBbXQogICAgICB9CiAgICB9LAogICAgewogICAgICAidGllciI6ICJtZWRpdW0iLAogICAgICAiZ2xvYmFsVGV4dHVyZXMiOiAxMTgsCiAgICAgICJ0ZXJyYWluIjogewogICAgICAgICJtYXRlcmlhbCI6ICJtMDEtdGVycmFpbi1tYWNyby12MSIsCiAgICAgICAgInRleHR1cmVzIjogNSwKICAgICAgICAiZ3B1Qnl0ZXMiOiA3MzQwMDEyLAogICAgICAgICJxdWFsaXR5IjogIm1lZGl1bSIsCiAgICAgICAgInRpZXIiOiAibWVkaXVtIiwKICAgICAgICAibG93RGV0YWlsIjogMCwKICAgICAgICAiZmlsZXMiOiBbCiAgICAgICAgICAidGVycmFpbi1kZXRhaWwtYS01MTIucG5nIiwKICAgICAgICAgICJ0ZXJyYWluLWRldGFpbC1iLTUxMi5wbmciLAogICAgICAgICAgInRlcnJhaW4tbm9ybWFsLWEtNTEyLnBuZyIsCiAgICAgICAgICAidGVycmFpbi1ub3JtYWwtYi01MTIucG5nIgogICAgICAgIF0sCiAgICAgICAgIm1hc2siOiB7CiAgICAgICAgICAid2lkdGgiOiAxMDI0LAogICAgICAgICAgImhlaWdodCI6IDMyMAogICAgICAgIH0sCiAgICAgICAgInNhbXBsZXJzIjogNSwKICAgICAgICAiZmFpbHVyZXMiOiBbXQogICAgICB9CiAgICB9LAogICAgewogICAgICAidGllciI6ICJoaWdoIiwKICAgICAgImdsb2JhbFRleHR1cmVzIjogMTMyLAogICAgICAidGVycmFpbiI6IHsKICAgICAgICAibWF0ZXJpYWwiOiAibTAxLXRlcnJhaW4tbWFjcm8tdjEiLAogICAgICAgICJ0ZXh0dXJlcyI6IDUsCiAgICAgICAgImdwdUJ5dGVzIjogMjA5NzE1MDAsCiAgICAgICAgInF1YWxpdHkiOiAiaGlnaCIsCiAgICAgICAgInRpZXIiOiAiaGlnaCIsCiAgICAgICAgImxvd0RldGFpbCI6IDAsCiAgICAgICAgImZpbGVzIjogWwogICAgICAgICAgInRlcnJhaW4tZGV0YWlsLWEtMTAyNC5wbmciLAogICAgICAgICAgInRlcnJhaW4tZGV0YWlsLWItNTEyLnBuZyIsCiAgICAgICAgICAidGVycmFpbi1ub3JtYWwtYS0xMDI0LnBuZyIsCiAgICAgICAgICAidGVycmFpbi1ub3JtYWwtYi01MTIucG5nIgogICAgICAgIF0sCiAgICAgICAgIm1hc2siOiB7CiAgICAgICAgICAid2lkdGgiOiAyMDQ4LAogICAgICAgICAgImhlaWdodCI6IDY0MAogICAgICAgIH0sCiAgICAgICAgInNhbXBsZXJzIjogNSwKICAgICAgICAiZmFpbHVyZXMiOiBbXQogICAgICB9CiAgICB9LAogICAgewogICAgICAidGllciI6ICJsb3ciLAogICAgICAiZ2xvYmFsVGV4dHVyZXMiOiAxMDIsCiAgICAgICJ0ZXJyYWluIjogewogICAgICAgICJtYXRlcmlhbCI6ICJtMDEtdGVycmFpbi1tYWNyby12MSIsCiAgICAgICAgInRleHR1cmVzIjogMSwKICAgICAgICAiZ3B1Qnl0ZXMiOiAxNzQ3NjEyLAogICAgICAgICJxdWFsaXR5IjogImxvdyIsCiAgICAgICAgInRpZXIiOiAibG93IiwKICAgICAgICAibG93RGV0YWlsIjogMSwKICAgICAgICAiZmlsZXMiOiBbXSwKICAgICAgICAibWFzayI6IHsKICAgICAgICAgICJ3aWR0aCI6IDEwMjQsCiAgICAgICAgICAiaGVpZ2h0IjogMzIwCiAgICAgICAgfSwKICAgICAgICAic2FtcGxlcnMiOiAxLAogICAgICAgICJmYWlsdXJlcyI6IFtdCiAgICAgIH0KICAgIH0sCiAgICB7CiAgICAgICJ0aWVyIjogImhpZ2giLAogICAgICAiZ2xvYmFsVGV4dHVyZXMiOiAxMzIsCiAgICAgICJ0ZXJyYWluIjogewogICAgICAgICJtYXRlcmlhbCI6ICJtMDEtdGVycmFpbi1tYWNyby12MSIsCiAgICAgICAgInRleHR1cmVzIjogNSwKICAgICAgICAiZ3B1Qnl0ZXMiOiAyMDk3MTUwMCwKICAgICAgICAicXVhbGl0eSI6ICJoaWdoIiwKICAgICAgICAidGllciI6ICJoaWdoIiwKICAgICAgICAibG93RGV0YWlsIjogMCwKICAgICAgICAiZmlsZXMiOiBbCiAgICAgICAgICAidGVycmFpbi1kZXRhaWwtYS0xMDI0LnBuZyIsCiAgICAgICAgICAidGVycmFpbi1kZXRhaWwtYi01MTIucG5nIiwKICAgICAgICAgICJ0ZXJyYWluLW5vcm1hbC1hLTEwMjQucG5nIiwKICAgICAgICAgICJ0ZXJyYWluLW5vcm1hbC1iLTUxMi5wbmciCiAgICAgICAgXSwKICAgICAgICAibWFzayI6IHsKICAgICAgICAgICJ3aWR0aCI6IDIwNDgsCiAgICAgICAgICAiaGVpZ2h0IjogNjQwCiAgICAgICAgfSwKICAgICAgICAic2FtcGxlcnMiOiA1LAogICAgICAgICJmYWlsdXJlcyI6IFtdCiAgICAgIH0KICAgIH0KICBdLAogICJjbG9jayI6IDAuNzUwMDAwMDAwMDAwMDAwMQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "92e789105155f9d11e64-68f577eed6c9b6030a1f",
+          "file": "m01-terrain-war-ground.spec.js",
+          "line": 199,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-11T20:53:11.849Z",
+    "duration": 99034.639,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

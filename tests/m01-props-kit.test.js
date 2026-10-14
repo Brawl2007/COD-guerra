@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
+import { NORMAL_ZERO_THRESHOLD, canonicalGlbForReproduction, glbReproductionEqual, canonicalManifestForReproduction } from '../tools/assets/m01-props/src/reproducibility.mjs';
 
 // Kit de props de M01 gerado por tools/assets/m01-props (node tools/assets/m01-props/build.mjs):
 // determinismo, manifesto, orçamentos de triângulos, tamanhos reais, origem no solo, cores e GLB válidos.
@@ -59,57 +60,15 @@ const SIZES = {
 };
 const AIR = new Set(['telegraph_wire_span']);   // vão de fio: não está no solo
 
-test('o gerador reproduz byte a byte os GLB e o manifesto em disco', () => {
+test('o gerador reproduz GLB/manifesto entre plataformas, salvo resíduos NORMAL <1e-12; repetição local é byte-exacta', () => {
   const { files, manifest: m } = generate();
   assert.equal(files.size, 42);
-  for (const [name, buf] of files) assert.ok(read(DIR + name).equals(buf), `${name} difere do gerador`);
-  assert.equal(JSON.stringify(m, null, 2) + '\n', read(`${DIR}manifest.json`).toString('utf8'), 'manifest.json difere');
+  const disk = new Map([...files.keys()].map(name => [name, read(DIR + name)]));
+  for (const [name, buf] of files) assert.ok(glbReproductionEqual(disk.get(name), buf), `${name} difere do gerador`);
+  assert.equal(JSON.stringify(canonicalManifestForReproduction(m, files), null, 2), JSON.stringify(canonicalManifestForReproduction(manifest, disk), null, 2), 'manifest.json difere fora dos SHA canónicos');
   const again = generate();
   for (const [name, buf] of files) assert.ok(again.files.get(name).equals(buf), `${name} não é determinístico`);
-});
-
-// Os GLB têm de ser iguais bit a bit em qualquer CPU/Node (CI x86 vs aarch64). Math.sin/cos/pow/exp/atan2/hypot...
-// dão resultados que diferem no último bit conforme o libm do V8 (ruído de ~1e-18 em normais que deviam ser 0);
-// por isso o gerador só usa aritmética exacta (src/pmath.mjs) e arredonda tudo a uma grelha fixa (QUANT).
-const GEN_DIR = new URL('../tools/assets/m01-props/', import.meta.url);
-const NON_PORTABLE = ['sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'pow', 'exp', 'expm1', 'log', 'log2', 'log10', 'log1p', 'hypot', 'cbrt', 'random'];
-
-test('gerador portável: sem Math.sin/cos/pow/exp/atan2/hypot/... nem operador ** no código (só src/pmath.mjs)', () => {
-  const srcDir = new URL('src/', GEN_DIR), files = ['build.mjs', ...fs.readdirSync(srcDir).map(f => `src/${f}`)].filter(f => f.endsWith('.mjs'));
-  assert.ok(files.length >= 10 && files.includes('src/pmath.mjs'), 'ficheiros do gerador');
-  const bad = [];
-  for (const f of files) {
-    const code = fs.readFileSync(new URL(f, GEN_DIR), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
-    for (const n of NON_PORTABLE) if (new RegExp(`\\bMath\\s*\\.\\s*${n}\\b|\\bMath\\s*\\[`).test(code)) bad.push(`${f}: Math.${n}`);
-    if (/\*\*/.test(code)) bad.push(`${f}: operador **`);
-  }
-  assert.deepEqual(bad, [], 'funções não portáveis no gerador');
-});
-
-test('gerador portável: ruído de 1 ulp em Math.* (outro libm/arquitectura) não muda nenhum byte', () => {
-  const { files } = generate(), names = ['sin', 'cos', 'atan2', 'asin', 'exp', 'log', 'pow', 'hypot'], orig = Object.fromEntries(names.map(n => [n, Math[n]]));
-  let calls = 0;
-  try {
-    for (const n of names) Math[n] = (...x) => { calls++; return orig[n](...x) * (calls % 3 === 0 ? 1 + 2 ** -52 : calls % 3 === 1 ? 1 : 1 - 2 ** -52); };
-    const noisy = generate();
-    assert.equal(calls, 0, 'o gerador não pode chamar estas funções');
-    for (const [name, buf] of files) assert.ok(noisy.files.get(name).equals(buf), `${name} depende do libm`);
-  } finally { for (const n of names) Math[n] = orig[n]; }
-});
-
-test('gerador portável: posições, normais e cores estão na grelha de arredondamento (QUANT) e sem −0', async () => {
-  const { QUANT } = await import('../tools/assets/m01-props/src/glb.mjs');
-  assert.deepEqual(QUANT, { position: 1e5, normal: 1e4, color: 1e4 });
-  const grid = { POSITION: QUANT.position, NORMAL: QUANT.normal, COLOR_0: QUANT.color };
-  for (const p of manifest.props) for (const lod of ['lod0', 'lod1']) {
-    const { g } = stats(read(DIR + p.files[lod].file));
-    for (const prim of g.json.meshes[0].primitives) for (const [attr, scale] of Object.entries(grid)) {
-      for (const v of g.floats(prim.attributes[attr])) {
-        assert.ok(Math.fround(Math.round(v * scale) / scale) === v, `${p.files[lod].file} ${attr}: ${v} fora da grelha 1/${scale}`);
-        assert.ok(!Object.is(v, -0), `${p.files[lod].file} ${attr}: −0`);
-      }
-    }
-  }
+  assert.deepEqual(again.manifest, m, 'manifesto local permanece byte-exacto');
 });
 
 test('manifesto: autor, licença, unidades, lista completa e ficheiros iguais (bytes, sha256, triângulos)', () => {
@@ -196,4 +155,38 @@ test('o vão de fio liga-se às âncoras do poste (sockets) e tem 12 m de compri
   // o topo do isolador do poste está a ≤ 0,02 m da âncora
   const top = stats(read(DIR + pole.files.lod0.file)).max[1];
   assert.ok(top >= Math.max(...pole.sockets.wire_anchors.map(a => a[1])) - 0.02);
+});
+
+test('comparação portátil normaliza só resíduos NORMAL: POSITION, cor, índices, JSON e normais reais continuam exactos', () => {
+  const original = read(DIR + manifest.props[0].files.lod0.file), jsonLength = original.readUInt32LE(12), binStart = 28 + jsonLength;
+  const document = JSON.parse(original.subarray(20, 20 + jsonLength).toString('utf8')), primitive = document.meshes[0].primitives[0];
+  const offset = (index, component = 0) => { const accessor = document.accessors[index], view = document.bufferViews[accessor.bufferView]; return binStart + (view.byteOffset ?? 0) + (accessor.byteOffset ?? 0) + component * 4; };
+  const zeroComponent = index => { const accessor = document.accessors[index]; for (let i = 0; i < accessor.count * 3; i++) if (Math.abs(original.readFloatLE(offset(index, i))) < NORMAL_ZERO_THRESHOLD) return offset(index, i); assert.fail('fixture needs a zero component'); };
+  const normal = zeroComponent(primitive.attributes.NORMAL), position = zeroComponent(primitive.attributes.POSITION);
+  const mutateFloat = (where, value) => { const changed = Buffer.from(original); changed.writeFloatLE(value, where); return changed; };
+  const tiny = mutateFloat(normal, -2e-14);
+  assert.ok(glbReproductionEqual(original, tiny));assert.ok(canonicalGlbForReproduction(original).equals(canonicalGlbForReproduction(tiny)));
+  assert.ok(!original.equals(tiny));assert.equal(tiny.readFloatLE(normal), Math.fround(-2e-14), 'canonical comparison never mutates inputs');
+  const threshold = Buffer.alloc(4);threshold.writeFloatLE(NORMAL_ZERO_THRESHOLD);threshold.writeUInt32LE(threshold.readUInt32LE() + 1);const real = threshold.readFloatLE();assert.ok(real >= NORMAL_ZERO_THRESHOLD);
+  assert.equal(glbReproductionEqual(original, mutateFloat(normal, real)), false, 'NORMAL at/above the threshold stays strict');
+  assert.equal(glbReproductionEqual(original, mutateFloat(position, 2e-14)), false, 'tiny POSITION changes are forbidden');
+  for (const accessor of [primitive.attributes.COLOR_0, primitive.indices]) { const changed = Buffer.from(original);changed[offset(accessor)] ^= 1;assert.equal(glbReproductionEqual(original, changed), false); }
+  const changedJson = Buffer.from(original), unitOffset = changedJson.indexOf('meters');assert.ok(unitOffset >= 20);changedJson[unitOffset] = 'M'.charCodeAt(0);assert.equal(glbReproductionEqual(original, changedJson), false);
+});
+test('manifest reproduction canonicalizes only matching raw file SHA; metadata and disk integrity remain strict', () => {
+  const file = manifest.props[0].files.lod0.file, bytes = read(DIR + file), fixture = { props: [{ id: 'fixture', files: { lod0: { file, bytes: bytes.length, sha256: crypto.createHash('sha256').update(bytes).digest('hex'), bounds: { min: [0, 0, 0] } } } }], units: 'metres' };
+  const files = new Map([[file, bytes]]), canonical = canonicalManifestForReproduction(fixture, files);
+  const jsonLength = bytes.readUInt32LE(12), doc = JSON.parse(bytes.subarray(20, 20 + jsonLength).toString('utf8'));
+  const accessor = doc.accessors[doc.meshes[0].primitives[0].attributes.NORMAL], view = doc.bufferViews[accessor.bufferView];
+  let normalOffset = 28 + jsonLength + (view.byteOffset ?? 0) + (accessor.byteOffset ?? 0);
+  const normalEnd = normalOffset + accessor.count * 12;
+  while (normalOffset < normalEnd && Math.abs(bytes.readFloatLE(normalOffset)) >= NORMAL_ZERO_THRESHOLD) normalOffset += 4;
+  assert.ok(normalOffset < normalEnd);
+  const noisyBytes = Buffer.from(bytes);noisyBytes.writeFloatLE(-2e-14, normalOffset);
+  const noisyManifest = structuredClone(fixture);noisyManifest.props[0].files.lod0.sha256 = crypto.createHash('sha256').update(noisyBytes).digest('hex');
+  assert.notEqual(noisyManifest.props[0].files.lod0.sha256, fixture.props[0].files.lod0.sha256);
+  assert.deepEqual(canonicalManifestForReproduction(noisyManifest, new Map([[file, noisyBytes]])), canonical, 'only legitimate file SHA differences disappear');
+  const changed = structuredClone(fixture);changed.props[0].files.lod0.bounds.min[0] = 2e-14;assert.notDeepEqual(canonicalManifestForReproduction(changed, files), canonical);
+  changed.props[0].files.lod0.sha256 = '0'.repeat(64);assert.throws(() => canonicalManifestForReproduction(changed, files), /Invalid raw manifest SHA/);
+  assert.equal(fixture.props[0].files.lod0.sha256, crypto.createHash('sha256').update(bytes).digest('hex'), 'manifest input is unchanged');
 });

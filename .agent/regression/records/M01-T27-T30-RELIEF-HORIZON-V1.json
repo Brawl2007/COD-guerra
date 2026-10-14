@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "task_id": "M01-T27-T30-RELIEF-HORIZON-V1",
+  "accepted_head": "4e5389b314f3e02b3197139cca953b79a5464d8f",
+  "status": "ACCEPTED",
+  "obligations": [
+    {"id":"m01-protected-ground-envelope-and-future", "kind":"test", "check":"node --test tests/m01-terrain-envelope.test.js tests/m01-terrain-relief.test.js tests/m01-material-authority.test.js; node tools/verification/m01-relief-horizon-futures.mjs --baseline /path/to/293a4f116b9b28818b7ff3bda4d83cc49b01014f --out test-results/m01-relief-horizon-futures.json", "reason":"Preserve complete participant hull union plus20m, original crossing/normal/UV/contact geometry and immutable physics; both real-control routes for12 seeds preserve all tick saves/events and checkpoint backups, without consuming simulation RNG."},
+    {"id":"m01-relief-horizon-render-budget-and-pixels", "kind":"browser", "check":"npx playwright test --config tools/verification/playwright.m01-relief-horizon.config.js", "reason":"Actual canonical01/09/17 ground submissions remain <=52000 triangles; far owner <=10 submissions; required relief01/09/17 and far01/10/17 pixels visible at identical paused state/camera/clock and zero control delta."},
+    {"id":"m01-relief-horizon-lifecycle-and-far-seating", "kind":"test", "check":"node --test tests/m01-terrain-relief.test.js tests/m01-far-landscape.test.js", "reason":"Far objects seat on actual submitted triangle surfaces outside complete envelope; owners rebind world/revision and quality without steady rebuild, release owned resources once and preserve borrowed inputs."},
+    {"id":"m01-relief-preserves-rail-contact-and-restores", "kind":"test", "check":"node --test tests/m01-terrain-material.test.js tests/m01-track-bed.test.js tests/m01-props-runtime.test.js; npx playwright test --config tools/verification/playwright.m01-relief-horizon.config.js", "reason":"Accepted T31 bounded ground hooks and prior owners remain intact; Low/High, paused debug invalidation, four restores and equally warmed reload preserve exact clock/save and geometry/texture plateau."}
+  ]
+}

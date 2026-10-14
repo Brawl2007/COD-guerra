@@ -1,0 +1,2 @@
+# Preserve captured terminal/CI bytes, including emitted spaces and line endings.
+*.log -text -whitespace

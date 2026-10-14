@@ -1,0 +1,172 @@
+{
+  "schema_version": 2,
+  "task": {
+    "id": "M01-T27-T30-RELIEF-HORIZON-V1",
+    "type": "renderer",
+    "role": "implementer",
+    "objective": "Natural relief outside a data-derived protected gameplay envelope and original distant Tczew/Lisewo skyline, preserving all simulation, playable heights and concurrent Claude work."
+  },
+  "git": {
+    "base_branch": "claude/m01-integration",
+    "base_head": "293a4f116b9b28818b7ff3bda4d83cc49b01014f",
+    "work_branch": "codex/m01-t27-t30-relief-horizon-v1",
+    "starting_head": "fbfca56d3991feb6f1307d2acbd89466c6836b7a"
+  },
+  "policy": {
+    "gameplay_change_allowed": false,
+    "visual_change_allowed": true,
+    "persistence_change_allowed": false,
+    "architecture_change_allowed": false
+  },
+  "scope": {
+    "allowed_files": [
+      "src/render/m01-terrain-envelope.js",
+      "src/render/m01-terrain-relief.js",
+      "src/render/m01-far-landscape.js",
+      "src/render/m01-view.js",
+      "tests/*terrain-envelope*.test.js",
+      "tests/*terrain-relief*.test.js",
+      "tests/*far-landscape*.test.js",
+      "tests/browser/*relief-horizon*.spec.js",
+      "tools/verification/*relief-horizon*",
+      ".github/workflows/m01-t27-t30-relief-horizon.yml",
+      "docs/**",
+      "DEVELOPMENT_STATUS.md",
+      ".agent/regression/records/**",
+      ".agent/memory/m01/**",
+      "tests/m01-material-authority.test.js"
+    ],
+    "forbidden_files": [
+      "src/game/**",
+      "src/core/**",
+      "src/world/**",
+      "missions/**",
+      "assets/**",
+      "tools/assets/**",
+      "src/render/m01-track-bed.js",
+      "src/render/m01-props-runtime.js",
+      "src/render/m01-environment.js",
+      "src/render/m01-environment-props.js",
+      "src/render/m01-train-consist-detail.js",
+      "src/render/m01-locomotive.js",
+      "src/render/m01-train-wagons.js",
+      "src/render/m01-station-architecture.js",
+      "src/render/m01-field-structures.js",
+      "src/render/m01-bridge-structure.js",
+      "src/render/m01-terrain-material.js",
+      "src/render/m01-lighting.js",
+      "package.json",
+      "package-lock.json",
+      "playwright.config.js"
+    ],
+    "allowed_systems": [
+      "data-derived renderer-only protected gameplay envelope",
+      "seeded relief outside envelope",
+      "chunked ground and frustum culling",
+      "distant skyline and altitude mist using existing T16 inputs",
+      "focused evidence"
+    ],
+    "exclusive_resources": [
+      "T27",
+      "T30"
+    ],
+    "read_areas": [
+      "src/world/**",
+      "src/game/**",
+      "missions/**",
+      "src/render/**"
+    ],
+    "write_areas": [
+      "new terrain/far owners and minimal view integration"
+    ]
+  },
+  "dependencies": {
+    "tasks": [
+      "T16 dawn lighting exists in integration",
+      "Station V3 accepted",
+      "T27 is implemented and proved before dependent T30",
+      "T31/T33 integrated first; preserve their accepted ownership/contact/lifecycle obligations"
+    ],
+    "branches": []
+  },
+  "risk": {
+    "level": "medium",
+    "complexity": "high"
+  },
+  "acceptance": {
+    "criteria": [
+      "T27: define in presentation data the union of actor positions, routes, fire origins, cover nodes and playable area plus20m margin using actual immutable data/source; account for all phases, not only initial active actors. No guessed bounds can omit gameplay participants.",
+      "T27: seeded natural field undulations/banks/berms only outside protected envelope. Actual world heightAt/terrainHeightAt, gameplay/core/mission/world bytes unchanged everywhere. Full1m-grid physics and visual sampler difference0 proof inside envelope. Preserve actual legacy ground surface/normals/UV field inside envelope: retain5m source lattice/triangles at nonplanar/contact seams; simplify only proved planar patches without changing interpolated heights. Preserve T31 bounded material hooks and actual contact; no global old vertex-count identity is required by this new renderer task.",
+      "T27: actual A/B future equivalence on BOTH existing real-control routes for12 seeds; presentation consumes no simulation RNG or writes to world/actors. Report actual seeds/states/checkpoints/event comparisons.",
+      "T27: ground chunks culled by actual camera frustum, skirt reaches authoredfog. Real views01/09/17 show modeled horizon; actual submitted ground triangle count in each view <=half original playable ground104000 triangles (derive and verify actual baseline, include all relevant new ground geometry). Avoid misleading triangle estimates or FPS claims.",
+      "T30: original distant masses west ofx-460 (Tczew roofs/towers/chimneys) and east ofx1800 (Lisewo), tree lines and altitude mist with T16 clock/fog inputs; all geometry outside actual envelope, singleLOD, farAnchors used as direction references without inventing actual distant cities/sounds. Terrain skirt ownership explicit. <=10 actual draw submissions for far-landscape owner including its terrain/mist, tested from actual geometries.",
+      "T30: actual paused before/after views01/10/17 with identical save/camera/clock, stable control area and visible skyline pixels; retain canonical framing and add useful skyline/bank closeups if occluded. No debug-only showcase can substitute production skyline.",
+      "Both: world reference/revision, Low/High, paused debug invalidation, clock-driven mist, checkpoint/reload resource plateau, once-only disposal/borrowed materials, no steady frame rebuild/allocation. Preserve all previous rail/props/station/field/train ownership and actual paused rendering.",
+      "Both: collider --check and exact route identity, immutable gameplay/mission/world/assets/protected renderer bytes; focused meaningful Node, full npmtest/tooling/build, actual focused browser evidence, independent verifierPASS/reviewerACCEPT and green exact-head branchCI before no-ff integration."
+    ]
+  },
+  "verification": {
+    "required_tests": [
+      "full1m envelope grid and actual ground geometry identity",
+      "both real-control routes A/B for12 seeds",
+      "actual ground/far draw and triangle budgets in required views",
+      "npm test",
+      "python3 -m unittest discover -s .agent/tests",
+      "npm run build",
+      "npm run assets:m01:colliders -- --check",
+      "node tools/verify-m01-route.mjs",
+      "focused relief/horizon browser on productionbuild",
+      "protected bytes diff versus updated integrationbase",
+      "previous T31/T33 source/geometry/contact regression obligations"
+    ],
+    "build_requirement": "required",
+    "browser_requirement": "focused",
+    "regression_obligations": [
+      "protected envelope interior/worldheight and gameplayfuture identity",
+      "actual visible ground triangle ceiling and far10draw ceiling",
+      "paused quality/restore/resource stability",
+      "previous railfloor contact/material ownership preserved"
+    ]
+  },
+  "execution": {
+    "max_fix_attempts": 3,
+    "max_review_rejections": 2,
+    "production_mode": "focused"
+  },
+  "routing": {
+    "policy": "auto",
+    "preferred_class": "standard",
+    "escalation_class": "advanced"
+  },
+  "human": {
+    "approval_points": []
+  },
+  "context": {
+    "required_memory_topics": [
+      "material and terrain ownership",
+      "fair pixel evidence",
+      "paused model contact and restore"
+    ],
+    "mutable_claims_to_verify": [
+      "fresh integrationbase and reservations/Claude overlaps",
+      "authoritative envelope participant positions in all missionphases",
+      "actual ground lattice/triangulation and baseline budget",
+      "T16 fog/lighting and farAnchors directions",
+      "T31 hooks plus floor/bridge ownership",
+      "all canonical snapshot/camera fixtures"
+    ]
+  },
+  "integration": {
+    "target_branch": "claude/m01-integration",
+    "auto_integrate": true
+  },
+  "state": {
+    "status": "ACCEPTED",
+    "accepted_head": "4e5389b314f3e02b3197139cca953b79a5464d8f",
+    "fix_attempts": 1,
+    "review_rejections": 0,
+    "integration_head": "14d37c5b9d69b88be9e30837e0bd92dba337413b",
+    "integration_tests": "669/669 PASS",
+    "integration_build": "PASS"
+  }
+}

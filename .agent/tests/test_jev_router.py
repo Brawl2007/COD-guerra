@@ -16,6 +16,8 @@ sys.path.insert(0, str(TOOLS))
 import jev_router  # noqa: E402
 
 SENTINEL = "SENTINEL-KEY-do-not-leak-9f3a"
+# Mechanics tests run at this environment cap (production is 100; the environment can only lower it).
+TEST_CAP = 3
 
 
 class Stub:
@@ -80,10 +82,11 @@ class Base(unittest.TestCase):
         self.keyfile = self.tmp / "key.env"
         self.write_key(self.keyfile)
         self.env = {k: v for k, v in os.environ.items()
-                    if not k.startswith(("TYPESAFE", "COD_JEV"))}
+                    if not k.startswith(("TYPESAFE", "COD_JEV")) and k != "CLAUDE_CODE_REMOTE"}
         self.env.update(HOME=str(self.tmp), COD_JEV_LEDGER=str(self.ledger),
                         COD_JEV_KEY_FILE=str(self.keyfile),
-                        TYPESAFE_BASE_URL=self.stub.url)
+                        TYPESAFE_BASE_URL=self.stub.url,
+                        COD_JEV_LIMIT=str(TEST_CAP))
 
     def write_key(self, path, mode=0o600):
         path.write_text("TYPESAFE_API_KEY=%s\n" % SENTINEL)
@@ -248,12 +251,12 @@ class BudgetTests(Base):
         self.assertEqual(len(self.calls()), 3)
 
     def test_limit_cannot_be_raised(self):
-        env = {"COD_JEV_LIMIT": "10"}
-        for _ in range(3):
-            self.route(*AMBIG, "--limit", "99", extra_env=env)
-        o = self.route(*AMBIG, "--limit", "99", extra_env=env)
+        # The environment cap is a ceiling: a flag asking for more cannot lift it.
+        for _ in range(TEST_CAP):
+            self.route(*AMBIG, "--limit", "99")
+        o = self.route(*AMBIG, "--limit", "99")
         self.assertEqual(o["reason"], "budget_exhausted")
-        self.assertEqual(self.stub.hits, 3)
+        self.assertEqual(self.stub.hits, TEST_CAP)
 
     def test_limit_can_be_lowered(self):
         self.route(*AMBIG, "--limit", "1")
@@ -289,6 +292,32 @@ class KeyTests(Base):
         self.assertEqual((o["source"], o["reason"]), ("rule_fallback", "no_key"))
         self.assertEqual(self.stub.hits, 0)
         self.assertIn("missing", self.cli("check-key").stdout)
+
+    def test_proxy_auth_without_key(self):
+        # Cloud: no key anywhere, the proxy injects Authorization. The call goes out without a header.
+        self.keyfile.unlink()
+        o = self.route(*AMBIG, extra_env={"CLAUDE_CODE_REMOTE": "true"})
+        self.assertEqual(o["source"], "jev")
+        self.assertEqual(self.stub.auth, [None])
+        self.assertNotIn(SENTINEL, self.last.stdout + self.last.stderr)
+        # Explicit opt-out keeps the old behaviour.
+        o = self.route(*AMBIG, extra_env={"CLAUDE_CODE_REMOTE": "true", "COD_JEV_PROXY_AUTH": "0"})
+        self.assertEqual((o["source"], o["reason"]), ("rule_fallback", "no_key"))
+        self.assertEqual(self.stub.hits, 1)
+        # A local key still wins over the proxy mode.
+        self.write_key(self.keyfile)
+        self.route(*AMBIG, extra_env={"CLAUDE_CODE_REMOTE": "true"})
+        self.assertEqual(self.stub.auth[-1], "Bearer " + SENTINEL)
+
+    def test_proxy_auth_stops_after_unauthorized(self):
+        self.keyfile.unlink()
+        env = {"COD_JEV_PROXY_AUTH": "1"}
+        self.stub.status = 401
+        o = self.route(*AMBIG, extra_env=env)
+        self.assertEqual((o["source"], o["reason"], o["error"]), ("rule_fallback", "error", "HTTP401"))
+        o = self.route(*AMBIG, extra_env=env)
+        self.assertEqual((o["source"], o["reason"]), ("rule_fallback", "proxy_unauthorized"))
+        self.assertEqual(self.stub.hits, 1)   # no second slot spent
 
     def test_insecure_mode(self):
         os.chmod(self.keyfile, 0o644)
@@ -407,6 +436,17 @@ class HardeningTests(Base):
         self.assertEqual((o["source"], o["error"]), ("rule_fallback", "HTTP302"))
         self.assertEqual(self.stub.hits, 1)
         self.assertEqual(len(self.calls()), 1)
+
+
+class ProductionCapTests(unittest.TestCase):
+    """The approved production cap is 100; environment and flags can only lower it."""
+
+    def test_production_cap_and_lower_only_rule(self):
+        self.assertEqual(jev_router.PILOT_MAX_PAID_CALLS, 100)
+        self.assertEqual(jev_router.effective_limit({}), 100)
+        self.assertEqual(jev_router.effective_limit({"COD_JEV_LIMIT": "500"}), 100)
+        self.assertEqual(jev_router.effective_limit({"COD_JEV_LIMIT": "3"}, flag="99"), 3)
+        self.assertEqual(jev_router.effective_limit({}, flag="1"), 1)
 
 
 class UsageTests(Base):

@@ -1,0 +1,52 @@
+{
+  "status": "PASS",
+  "source": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+  "exactAccessorConcat": true,
+  "trees": 212,
+  "solid": 17,
+  "visual": 195,
+  "shrubs": 716,
+  "ground": 23038,
+  "reeds": 900,
+  "actualTriangleSeating": {
+    "checked": 1066,
+    "maxFloat32Error": 9.358267121228891e-7
+  },
+  "presets": [
+    {
+      "quality": "low",
+      "structuralDrawCalls": 10,
+      "triangles": 24572,
+      "groundMaxDistance": 39.956534066003535
+    },
+    {
+      "quality": "medium",
+      "structuralDrawCalls": 10,
+      "triangles": 45528,
+      "groundMaxDistance": 39.973310983166435
+    },
+    {
+      "quality": "high",
+      "structuralDrawCalls": 10,
+      "triangles": 71958,
+      "groundMaxDistance": 39.98894289239919
+    },
+    {
+      "quality": "low",
+      "structuralDrawCalls": 10,
+      "triangles": 25820,
+      "groundMaxDistance": 39.956534066003535
+    },
+    {
+      "quality": "high",
+      "structuralDrawCalls": 10,
+      "triangles": 71958,
+      "groundMaxDistance": 39.98894289239919
+    }
+  ],
+  "restoreAttributeReuse": 4,
+  "physicalReceiverDescriptors": 17,
+  "ownedDisposeOnce": 95,
+  "borrowedDisposesDuringOwnerTeardown": 0,
+  "imageClosedOnce": 1
+}

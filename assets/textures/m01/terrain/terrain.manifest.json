@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "family": "terrain",
+  "author": "COD-guerra project, original procedural",
+  "license": "CC0-1.0",
+  "units": "metres per tile (tileMetres); mask and shader work in world metres, x/z ground",
+  "source": "tools/assets/m01-materials/generate.mjs",
+  "colorSpace": "linear data (not sRGB): luma / coverage / tangent-normal xy packed in RGBA; colour comes from shader tints",
+  "notes": "Original procedural art (periodic value noise, Worley, stamps; fixed seeds, exact arithmetic). Nothing extracted from or copied from any game.",
+  "files": [
+    {
+      "file": "terrain-detail-a-1024.png",
+      "role": "detail-a",
+      "size": [
+        1024,
+        1024
+      ],
+      "width": 1024,
+      "height": 1024,
+      "bytes": 2288674,
+      "sha256": "8fed579aa2cab3da1939e10165d335441c8730ed82aba177ac616cd686f37aa2",
+      "decodedBytes": 4194304,
+      "channels": [
+        "field",
+        "meadow",
+        "mud",
+        "wetbank"
+      ],
+      "tileMetres": 4,
+      "mipmaps": true,
+      "wrap": "repeat",
+      "flipY": false
+    },
+    {
+      "file": "terrain-detail-a-512.png",
+      "role": "detail-a",
+      "size": [
+        512,
+        512
+      ],
+      "width": 512,
+      "height": 512,
+      "bytes": 702821,
+      "sha256": "8ff60f32285d2b1c9ddedbbfe9be18e1246cbd8e07260db60d16ce49582232da",
+      "decodedBytes": 1048576,
+      "channels": [
+        "field",
+        "meadow",
+        "mud",
+        "wetbank"
+      ],
+      "tileMetres": 4,
+      "mipmaps": true,
+      "wrap": "repeat",
+      "flipY": false
+    },
+    {
+      "file": "terrain-detail-b-512.png",
+      "role": "detail-b",
+      "size": [
+        512,
+        512
+      ],
+      "width": 512,
+      "height": 512,
+      "bytes": 524285,
+      "sha256": "860cbe9898ff99a3978802a17609971613cb528b45746f5258dfe9f209bd65af",
+      "decodedBytes": 1048576,
+      "channels": [
+        "ballast",
+        "track",
+        "straw",
+        "soot"
+      ],
+      "tileMetres": 1.6,
+      "mipmaps": true,
+      "wrap": "repeat",
+      "flipY": false
+    },
+    {
+      "file": "terrain-normal-a-1024.png",
+      "role": "normal-a",
+      "size": [
+        1024,
+        1024
+      ],
+      "width": 1024,
+      "height": 1024,
+      "bytes": 2641816,
+      "sha256": "6790a714e85ae71df568a8ca44119fdbb39a3d741460063fd402be4dc4ae9705",
+      "decodedBytes": 4194304,
+      "channels": [
+        "field.nx",
+        "field.ny",
+        "mud.nx",
+        "mud.ny"
+      ],
+      "tileMetres": 4,
+      "mipmaps": true,
+      "wrap": "repeat",
+      "flipY": false
+    },
+    {
+      "file": "terrain-normal-a-512.png",
+      "role": "normal-a",
+      "size": [
+        512,
+        512
+      ],
+      "width": 512,
+      "height": 512,
+      "bytes": 775262,
+      "sha256": "df859b12e67708692fca901d9e7ca1d1353778600737433e76993496e5531843",
+      "decodedBytes": 1048576,
+      "channels": [
+        "field.nx",
+        "field.ny",
+        "mud.nx",
+        "mud.ny"
+      ],
+      "tileMetres": 4,
+      "mipmaps": true,
+      "wrap": "repeat",
+      "flipY": false
+    },
+    {
+      "file": "terrain-normal-b-512.png",
+      "role": "normal-b",
+      "size": [
+        512,
+        512
+      ],
+      "width": 512,
+      "height": 512,
+      "bytes": 787987,
+      "sha256": "ce02639c664f74c2cf428b90a98907da586473c448b9bfefc6893ae77a091851",
+      "decodedBytes": 1048576,
+      "channels": [
+        "track.nx",
+        "track.ny",
+        "ballast.nx",
+        "ballast.ny"
+      ],
+      "tileMetres": 1.6,
+      "mipmaps": true,
+      "wrap": "repeat",
+      "flipY": false
+    }
+  ]
+}

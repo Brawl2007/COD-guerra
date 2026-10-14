@@ -1,0 +1,16 @@
+{
+  "src/render/m01-terrain-envelope.js": "8f5678bbc5ed5382aa2c5219bdaa3ad37ec6f35983090bd0726038e726731200",
+  "src/render/m01-terrain-relief.js": "ed61262ce4b0faa65aaebecba139278fafaa9f6018b67642bc3fe4f39bd2ac69",
+  "src/render/m01-far-landscape.js": "bd8e8dbfc0092343f538c657ce2680800c1705a2da5ff528fbeb741bc6a022fb",
+  "src/render/m01-view.js": "5292a45bf16387973d3861e28186997ecfb818f8962f8e7c6eb7702fe7cef600",
+  "tests/m01-terrain-envelope.test.js": "1d12251f29875eda144fa737160f49d4d1ee7ae2d342204da16ba5a3aa5aa2ca",
+  "tests/m01-terrain-relief.test.js": "debc586343cd9dda65f41e260999261b755c3f6cce3df0ab7e161ed14426cf88",
+  "tests/m01-far-landscape.test.js": "2ad9b8fa14a9a5c53a3144cd5028c8c23554279f8b5e8b6bd3c6afb5a7f4677c",
+  "tests/browser/m01-relief-horizon.spec.js": "e363257a1d327a3341f000a34627c813511d9c9548529c65699bd8c96dc8e83a",
+  "tools/verification/m01-relief-horizon-futures.mjs": "91dc1cec9b9b5c208861a4e48f0474880830f923d819a678eb57a11e0077035e",
+  "tools/verification/m01-relief-horizon-views.mjs": "0c9b138e01a686201de661ff1de79af54671b9003bfe83864fc110697152275a",
+  "tools/verification/playwright.m01-relief-horizon.config.js": "e01a504dfcffb89a7ac7968bc157d791e808c23e530eb4cbe514e5d570d5f31c",
+  ".github/workflows/m01-t27-t30-relief-horizon.yml": "ff2f306a37699e8e903895530d11dbb173f3303a61d30e644639473985ed3274",
+  "docs/verification/m01-runtime/m01-t27-t30-relief-horizon-v1/README.md": "b4e8470846b085baf421b07dcc76c737c09aac27f792f02b944f0eef48302d29",
+  "tests/m01-material-authority.test.js": "d90a1b24a3a4300924c8a5a3fa148eb07387d3e16a316aa40111ad21290ef65f"
+}

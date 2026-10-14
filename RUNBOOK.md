@@ -130,7 +130,7 @@ Se o ecrã falha, inspeccionar consola, rede e `#error`. Ausência de WebGL2 mos
 
 ## Publicação
 
-Há um único workflow `.github/workflows/pages.yml`. PRs executam validação; pushes para main/master ou workflow_dispatch validam e publicam somente dist. Deploy depende da validação e tem concorrência Pages própria. Esta alteração deve chegar por PR para main; não publicar directamente uma bancada como campanha concluída.
+Há dois workflows ativos. `.github/workflows/ci.yml` corre `npm test`, os testes de `.agent/tests` e `npm run build` em todas as branches `claude/**` e `codex/**` e em PRs para main; a suíte de browser completa só corre por `workflow_dispatch` com `browser: true`. Os workflows de tarefas antigas estão em `.github/workflows-archive/`. Em `.github/workflows/pages.yml`, PRs executam validação; pushes para main/master ou workflow_dispatch validam e publicam somente dist. Deploy depende da validação e tem concorrência Pages própria. Esta alteração deve chegar por PR para main; não publicar directamente uma bancada como campanha concluída.
 
 ## HUD e apresentação de M01
 

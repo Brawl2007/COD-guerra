@@ -19,7 +19,9 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-PILOT_MAX_PAID_CALLS = 3
+# Paid-call cap of the pilot: 100, approved by the user on 2026-10-09 (was 3).
+# Changing it is a human decision; COD_JEV_LIMIT and --limit can only lower it.
+PILOT_MAX_PAID_CALLS = 100
 PRICE_PER_MTOK_INPUT = 0.042
 DEFAULT_BASE = "https://api.typesafe.ai"
 TIMEOUT_S = 15
@@ -137,6 +139,16 @@ def load_key(env=None):
 
 
 # ----------------------------------------------------------------- ledger
+def proxy_auth(env=None):
+    """Cloud sessions: the environment's network secret makes the proxy add Authorization for the
+    TypeSafe host, so no key is readable here. COD_JEV_PROXY_AUTH=0 turns this off."""
+    e = _env(env)
+    flag = (e.get("COD_JEV_PROXY_AUTH") or "").strip()
+    if flag in ("0", "1"):
+        return flag == "1"
+    return e.get("CLAUDE_CODE_REMOTE") == "true"
+
+
 def ledger_path(env=None):
     return Path(os.path.expanduser(_env(env).get("COD_JEV_LEDGER") or DEFAULT_LEDGER))
 
@@ -304,12 +316,17 @@ def route(request, *, enable_jev=False, offline=False, dry_run=False,
     if offline:
         return fallback("offline")
     kstatus, key = load_key(e)
+    if kstatus == "missing" and proxy_auth(e):
+        kstatus, key = "proxy", ""   # the cloud proxy injects Authorization; no key is visible here
     if key is None:
         return fallback("insecure_key_file" if kstatus == "insecure_key_file" else "no_key")
     try:
-        used = len(read_ledger(lpath)["calls"])
+        calls = read_ledger(lpath)["calls"]
     except LedgerUnreadable:
         return fallback("ledger_unreadable")
+    used = len(calls)
+    if kstatus == "proxy" and any(c.get("outcome") in ("http_401", "http_403") for c in calls):
+        return fallback("proxy_unauthorized")   # the proxy did not inject a valid key: stop spending slots
     if used >= limit:
         return fallback("budget_exhausted", budget={"used": used, "limit": limit})
 
@@ -320,7 +337,8 @@ def route(request, *, enable_jev=False, offline=False, dry_run=False,
         out["source"] = "rule"
         out["dry_run"] = {
             "would_call": True, "url": url,
-            "headers": {"Authorization": "Bearer ***", "Content-Type": "application/json"},
+            "headers": {"Authorization": "(proxy)" if kstatus == "proxy" else "Bearer ***",
+                        "Content-Type": "application/json"},
             "body": body, "budget": {"used": used, "limit": limit},
         }
         return out
@@ -332,7 +350,9 @@ def route(request, *, enable_jev=False, offline=False, dry_run=False,
         return fallback("ledger_unreadable")
     if idx is None:
         return fallback("budget_exhausted", budget={"used": used, "limit": limit})
-    headers = {"Authorization": "Bearer " + key, "Content-Type": "application/json"}
+    headers = {"Content-Type": "application/json"}
+    if key:
+        headers["Authorization"] = "Bearer " + key
     send = transport or default_transport
     try:
         status, raw = send(url, headers, json.dumps(body).encode(), TIMEOUT_S)

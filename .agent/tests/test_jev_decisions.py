@@ -126,7 +126,8 @@ class Base(unittest.TestCase):
         self.env = {k: v for k, v in os.environ.items()
                     if not k.startswith(("TYPESAFE", "COD_JEV"))}
         self.env.update(HOME=str(self.tmp), COD_JEV_LEDGER=str(self.ledger),
-                        COD_JEV_KEY_FILE=str(self.keyfile), TYPESAFE_BASE_URL=self.stub.url)
+                        COD_JEV_KEY_FILE=str(self.keyfile), TYPESAFE_BASE_URL=self.stub.url,
+                        COD_JEV_LIMIT=str(tjr.TEST_CAP))
 
     def d(self, cap, data, env=None, **kw):
         kw.setdefault("enable_jev", True)
@@ -289,12 +290,12 @@ class Generic(Base):
         self.assertEqual(self.stub.hits, 0)
         self.assertEqual(len(self.calls()), 3)
 
-    def test_cap_of_three_is_shared_and_hard(self):
+    def test_env_cap_of_three_is_shared_and_hard(self):
         self.stub.picks = {"*": "p3"}
         srcs = [self.d("priority", CASES["priority"]["amb"])["source"] for _ in range(5)]
         self.assertEqual(srcs, ["jev"] * 3 + ["rule_fallback"] * 2)
         self.assertEqual(self.stub.hits, 3)
-        self.assertEqual(jr.PILOT_MAX_PAID_CALLS, 3)
+        self.assertEqual(jr.PILOT_MAX_PAID_CALLS, 100)
         self.assertEqual(jd.decide("risk", CASES["risk"]["amb"], env=self.env, enable_jev=True,
                                    limit_flag=99)["fallback_reason"], "budget_exhausted")
 

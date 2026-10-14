@@ -2,7 +2,6 @@
 import { mix, clamp } from './mesh.mjs';
 import { P } from './palette.mjs';
 import { rng } from './util.mjs';
-import * as pm from './pmath.mjs';
 
 export const POLE_HEIGHT = 7.0;
 export const POLE_INSULATORS = [[0.62, 6.74], [0.25, 6.74], [-0.25, 6.74], [-0.62, 6.74], [0.4, 6.22], [-0.4, 6.22]];  // [z, y do topo do braço]
@@ -70,7 +69,7 @@ export function fenceWood(m, lod) {
     const lean = hi && i === 12 ? 0.18 : (r() - 0.5) * 0.03;
     const h = 0.95 - (hi ? r() * 0.05 : 0), x = -L / 2 + 0.1 + pw / 2 + i * (pw + gap);
     m.box('wood', { size: [pw, h, 0.022], at: [x, 0.15 + h / 2, -0.115], rot: [0, 0, lean], color: mix(P.woodNew, P.woodGrey, r() * 0.7), grain: 1, subdiv: hi ? [1, 2, 1] : 1, seed: 10 + i, variance: 0.12 });
-    if (hi) m.prism('wood', [[-pw / 2, 0], [pw / 2, 0], [0, 0.05]], 0.022, { at: [x + pm.sin(lean) * -h / 2, 0.15 + h + 0.0 - (1 - pm.cos(lean)) * h / 2, -0.115], rot: [0, 0, lean], color: mix(P.woodNew, P.woodGrey, 0.5), seed: 40 + i });
+    if (hi) m.prism('wood', [[-pw / 2, 0], [pw / 2, 0], [0, 0.05]], 0.022, { at: [x + Math.sin(lean) * -h / 2, 0.15 + h + 0.0 - (1 - Math.cos(lean)) * h / 2, -0.115], rot: [0, 0, lean], color: mix(P.woodNew, P.woodGrey, 0.5), seed: 40 + i });
   }
 }
 
@@ -83,7 +82,7 @@ export function fenceBarbed(m, lod) {
     const path = [], segsPerBay = hi ? 5 : 2;
     for (let b = 0; b < 2; b++) for (let k = (b ? 1 : 0); k <= segsPerBay; k++) {
       const t = k / segsPerBay, x = xs[b] + (xs[b + 1] - xs[b]) * t;
-      path.push([x, y - 0.04 * pm.sin(t * Math.PI) * (j % 2 ? 1.0 : 1.5) - (j === 2 && b === 1 && hi ? 0.16 * pm.sin(t * Math.PI) : 0), 0.045]);
+      path.push([x, y - 0.04 * Math.sin(t * Math.PI) * (j % 2 ? 1.0 : 1.5) - (j === 2 && b === 1 && hi ? 0.16 * Math.sin(t * Math.PI) : 0), 0.045]);
     }
     m.tube('wire', path, { r: 0.0045, sides: 3, caps: false, color: mix(P.steelDark, P.rust, 0.22 + 0.2 * (j % 2)), variance: 0.15, seed: j });
     if (hi) {
@@ -98,12 +97,12 @@ export function fenceBarbed(m, lod) {
   if (hi) {
     // rolo de arame farpado caído junto à estaca da direita
     const path = [];
-    for (let k = 0; k <= 24; k++) { const a = (k / 24) * Math.PI * 6; path.push([1.1 + 0.16 * pm.cos(a), 0.03 + 0.14 * Math.abs(pm.sin(a * 0.5)) + 0.01 * k / 24, 0.28 + 0.12 * pm.sin(a) + 0.01 * k]); }
+    for (let k = 0; k <= 24; k++) { const a = (k / 24) * Math.PI * 6; path.push([1.1 + 0.16 * Math.cos(a), 0.03 + 0.14 * Math.abs(Math.sin(a * 0.5)) + 0.01 * k / 24, 0.28 + 0.12 * Math.sin(a) + 0.01 * k]); }
     m.tube('wire', path, { r: 0.0045, sides: 3, caps: false, color: P.steelDark, variance: 0.2, seed: 9 });
   }
   else {
     const ring = [];
-    for (let k = 0; k < 8; k++) { const a = (k / 8) * Math.PI * 2; ring.push([1.1 + 0.16 * pm.cos(a), 0.1 + 0.07 * pm.sin(a * 2), 0.33 + 0.16 * pm.sin(a)]); }
+    for (let k = 0; k < 8; k++) { const a = (k / 8) * Math.PI * 2; ring.push([1.1 + 0.16 * Math.cos(a), 0.1 + 0.07 * Math.sin(a * 2), 0.33 + 0.16 * Math.sin(a)]); }
     m.tube('wire', ring, { r: 0.006, sides: 3, closed: true, caps: false, color: P.steelDark });
   }
   void r;
@@ -120,10 +119,10 @@ export function railwayLantern(m, lod) {
   const bars = hi ? 4 : 2;
   for (let i = 0; i < bars; i++) {
     const a = (i / bars) * Math.PI * 2 + 0.4;
-    m.cyl('steel', { r0: 0.0045, h: 0.14, seg: hi ? 4 : 3, at: [pm.cos(a) * 0.058, 0.075, pm.sin(a) * 0.058], caps: hi ? 'top' : 'none', color: P.steelDark });
+    m.cyl('steel', { r0: 0.0045, h: 0.14, seg: hi ? 4 : 3, at: [Math.cos(a) * 0.058, 0.075, Math.sin(a) * 0.058], caps: hi ? 'top' : 'none', color: P.steelDark });
   }
   const path = [];
-  for (let i = 0; i <= (hi ? 10 : 5); i++) { const a = (i / (hi ? 10 : 5)) * Math.PI; path.push([-pm.cos(a) * 0.07, 0.17 + pm.sin(a) * 0.19 * (i === 0 || i === (hi ? 10 : 5) ? 0.3 : 1), 0]); }
+  for (let i = 0; i <= (hi ? 10 : 5); i++) { const a = (i / (hi ? 10 : 5)) * Math.PI; path.push([-Math.cos(a) * 0.07, 0.17 + Math.sin(a) * 0.19 * (i === 0 || i === (hi ? 10 : 5) ? 0.3 : 1), 0]); }
   m.tube('steel', path, { r: 0.0055, sides: hi ? 5 : 3, color: P.steelDark, caps: hi });
   void clamp;
 }

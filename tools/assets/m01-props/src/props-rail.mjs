@@ -2,7 +2,6 @@
 import { mix, noise3, clamp } from './mesh.mjs';
 import { P } from './palette.mjs';
 import { rng } from './util.mjs';
-import * as pm from './pmath.mjs';
 
 /** Alavanca de agulha de mão (Handweiche), 1,2 m: base, fuso, alvo de duas faces, lanterna, braço com contrapeso. */
 export function pointLever(m, lod) {
@@ -20,9 +19,9 @@ export function pointLever(m, lod) {
   m.cyl('glass', { r0: 0.036, h: 0.012, seg: hi ? 10 : 6, at: [0, 1.2, 0.058], rot: [Math.PI / 2, 0, 0], caps: 'both', color: P.glassDirty, seed: 7 });
   // braço e contrapeso
   const ang = 0.5;
-  m.box('iron_cast', { size: [0.74, 0.03, 0.036], at: [pm.cos(ang) * 0.3, 0.52, -pm.sin(ang) * 0.3], rot: [0, ang, 0], color: P.steelDark, subdiv: hi ? [4, 1, 1] : 1, variance: 0.2, seed: 8 });
-  m.blob('iron_cast', { rad: [0.062, 0.062, 0.062], at: [pm.cos(ang) * 0.67, 0.52, -pm.sin(ang) * 0.67], nu: hi ? 10 : 6, nv: hi ? 6 : 4, color: P.steelDark, variance: 0.2, seed: 9 });
-  m.cyl('leather', { r0: 0.018, h: 0.22, seg: hi ? 8 : 5, at: [-pm.cos(ang) * 0.06, 0.52, pm.sin(ang) * 0.06], rot: [0, 0, 0], caps: 'top', color: P.leather, seed: 10 });
+  m.box('iron_cast', { size: [0.74, 0.03, 0.036], at: [Math.cos(ang) * 0.3, 0.52, -Math.sin(ang) * 0.3], rot: [0, ang, 0], color: P.steelDark, subdiv: hi ? [4, 1, 1] : 1, variance: 0.2, seed: 8 });
+  m.blob('iron_cast', { rad: [0.062, 0.062, 0.062], at: [Math.cos(ang) * 0.67, 0.52, -Math.sin(ang) * 0.67], nu: hi ? 10 : 6, nv: hi ? 6 : 4, color: P.steelDark, variance: 0.2, seed: 9 });
+  m.cyl('leather', { r0: 0.018, h: 0.22, seg: hi ? 8 : 5, at: [-Math.cos(ang) * 0.06, 0.52, Math.sin(ang) * 0.06], rot: [0, 0, 0], caps: 'top', color: P.leather, seed: 10 });
   // tirante da agulha para o carril (±Z), na altura das travessas
   m.box('steel', { size: [0.03, 0.03, 0.9], at: [0.0, 0.2, 0.62], color: P.rust, subdiv: hi ? [1, 1, 3] : 1, variance: 0.2, seed: 11 });
   if (hi) m.box('iron_cast', { size: [0.1, 0.08, 0.1], at: [0, 0.2, 0.2], color: P.steelDark, seed: 12 });
@@ -82,28 +81,28 @@ export function waterCrane(m, lod) {
   const arm = [];
   for (let i = 0; i <= n; i++) {
     const t = i / n;
-    arm.push([0.0 + 2.7 * t, 4.4 + 0.22 * pm.sin(t * Math.PI) - 0.5 * t * t * t, 0]);
+    arm.push([0.0 + 2.7 * t, 4.4 + 0.22 * Math.sin(t * Math.PI) - 0.5 * t ** 3, 0]);
   }
   m.tube('iron_cast', arm, { r: t => 0.1 - 0.025 * t, sides: hi ? 8 : 5, color: P.steelDark, variance: 0.16, seed: 10 });
   m.cyl('iron_cast', { r0: 0.1, r1: 0.12, h: 0.06, seg: hi ? 10 : 6, at: [2.7, 3.97, 0], caps: 'both', color: P.steelDark, seed: 11 });
   // manga de lona pendente
   m.cyl('cloth', {
-    r: t => 0.115 - 0.025 * t + (hi ? 0.014 * pm.sin(t * 38) : 0), h: 1.0, seg: hi ? 10 : 6, rings: hi ? 16 : 3, at: [2.7, 2.97, 0], caps: 'bottom', color: P.canvas, variance: 0.18, grain: 1, seed: 12,
+    r: t => 0.115 - 0.025 * t + (hi ? 0.014 * Math.sin(t * 38) : 0), h: 1.0, seg: hi ? 10 : 6, rings: hi ? 16 : 3, at: [2.7, 2.97, 0], caps: 'bottom', color: P.canvas, variance: 0.18, grain: 1, seed: 12,
   });
   if (hi) {
     // roda da válvula e braseiro anti-gelo
     const circ = [];
-    for (let k = 0; k < 14; k++) { const a = (k / 14) * Math.PI * 2; circ.push([0.25, 1.25 + 0.14 * pm.cos(a), 0.14 * pm.sin(a)]); }
+    for (let k = 0; k < 14; k++) { const a = (k / 14) * Math.PI * 2; circ.push([0.25, 1.25 + 0.14 * Math.cos(a), 0.14 * Math.sin(a)]); }
     m.tube('iron_cast', circ, { r: 0.011, sides: 4, closed: true, color: P.rust, variance: 0.2, seed: 13 });
     m.box('iron_cast', { size: [0.14, 0.02, 0.02], at: [0.25, 1.25, 0], color: P.rust, seed: 14 });
     m.box('iron_cast', { size: [0.02, 0.02, 0.28], at: [0.25, 1.25, 0], color: P.rust, seed: 15 });
     m.cyl('iron_cast', { r0: 0.014, h: 0.1, seg: 6, at: [0.2, 1.25, 0], rot: [0, 0, -Math.PI / 2], caps: 'none', color: P.rust, seed: 16 });
     for (let i = 0; i < 8; i++) {
       const a = (i / 8) * Math.PI * 2;
-      m.cyl('rust', { r0: 0.009, h: 0.6, seg: 4, at: [0.75 + pm.cos(a) * 0.2, 0.0, pm.sin(a) * 0.2], caps: 'none', color: P.rust, variance: 0.2, seed: 20 + i });
+      m.cyl('rust', { r0: 0.009, h: 0.6, seg: 4, at: [0.75 + Math.cos(a) * 0.2, 0.0, Math.sin(a) * 0.2], caps: 'none', color: P.rust, variance: 0.2, seed: 20 + i });
     }
     const ring = [];
-    for (let k = 0; k < 10; k++) { const a = (k / 10) * Math.PI * 2; ring.push([0.75 + pm.cos(a) * 0.2, 0.6, pm.sin(a) * 0.2]); }
+    for (let k = 0; k < 10; k++) { const a = (k / 10) * Math.PI * 2; ring.push([0.75 + Math.cos(a) * 0.2, 0.6, Math.sin(a) * 0.2]); }
     m.tube('rust', ring, { r: 0.012, sides: 4, closed: true, color: P.rust, variance: 0.2, seed: 30 });
     m.blob('coal', { rad: [0.17, 0.09, 0.17], at: [0.75, 0.1, 0], nu: 8, nv: 4, color: P.coalBrown, variance: 0.3, seed: 31 });
   }
@@ -114,16 +113,16 @@ export function waterCrane(m, lod) {
 export function coalPile(m, lod) {
   const hi = lod === 0, nx = hi ? 15 : 7, nz = hi ? 11 : 5, rx = 1.55, rz = 1.15, r = rng(81), pts = [];
   const hfun = (u, v) => {
-    const d = pm.hypot(u, v);
-    const base = pm.pow(Math.max(0, 1 - d * d), 0.8);
+    const d = Math.hypot(u, v);
+    const base = Math.max(0, 1 - d * d) ** 0.8;
     const rough = noise3(u * 3.2 + 4, v * 3.2, 1.7) * 0.18 + noise3(u * 8, v * 8, 3) * 0.07;
-    return Math.max(0, 1.12 * base + (base > 0.02 ? rough * Math.min(1, base * 3) : 0) + 0.2 * pm.pow(Math.max(0, 0.5 - pm.hypot(u - 0.35, v + 0.1)), 1.2) * 0);
+    return Math.max(0, 1.12 * base + (base > 0.02 ? rough * Math.min(1, base * 3) : 0) + 0.2 * Math.max(0, 0.5 - Math.hypot(u - 0.35, v + 0.1)) ** 1.2 * 0);
   };
   for (let j = 0; j <= nz; j++) {
     const row = [];
     for (let i = 0; i <= nx; i++) {
       const u = (i / nx - 0.5) * 2, v = (j / nz - 0.5) * 2;
-      const edge = pm.hypot(u, v) > 0.98;
+      const edge = Math.hypot(u, v) > 0.98;
       const jx = hi ? (r() - 0.5) * 0.04 : 0, jz = hi ? (r() - 0.5) * 0.04 : 0;
       const wob = 1 + 0.12 * noise3(u * 2 + 9, v * 2, 5);
       row.push([u * rx * wob + jx, edge ? 0.0 : hfun(u * wob * 0.97, v * wob * 0.97), v * rz * wob + jz]);
@@ -142,7 +141,7 @@ export function coalPile(m, lod) {
     for (let i = 0; i < 9; i++) {
       const a = r() * Math.PI * 2, d = 0.9 + r() * 0.8;
       const ry = 0.04 + r() * 0.04;
-      m.blob('coal', { rad: [0.05 + r() * 0.07, ry, 0.05 + r() * 0.06], at: [pm.cos(a) * d * 1.1, ry + 0.012, pm.sin(a) * d * 0.8], rot: [r() * 0.3, r() * 3, r() * 0.3], nu: 6, nv: 3, color: P.coal, variance: 0.3, seed: 40 + i });
+      m.blob('coal', { rad: [0.05 + r() * 0.07, ry, 0.05 + r() * 0.06], at: [Math.cos(a) * d * 1.1, ry + 0.012, Math.sin(a) * d * 0.8], rot: [r() * 0.3, r() * 3, r() * 0.3], nu: 6, nv: 3, color: P.coal, variance: 0.3, seed: 40 + i });
     }
     // pá cravada
     m.box('iron_cast', { size: [0.22, 0.02, 0.27], at: [-0.5, 0.52, 0.16], rot: [-0.9, 0.2, 0.08], color: P.steelDark, variance: 0.25, seed: 60 });

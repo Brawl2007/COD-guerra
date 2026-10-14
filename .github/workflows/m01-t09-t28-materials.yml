@@ -1,0 +1,59 @@
+name: M01 T09 T28 materials and terrain
+
+on:
+  push:
+    branches: [codex/m01-t09-t28-materials-closeout-v1]
+    paths:
+      - .github/workflows/m01-t09-t28-materials.yml
+      - src/render/**
+      - assets/textures/m01/**
+      - tools/assets/m01-materials/**
+      - tools/assets/m01-props/**
+      - tools/verification/*materials*
+      - tests/**
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-t09-t28-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  browser-and-authority:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Preserve game authority and existing models
+        run: |
+          git diff --exit-code 6edc3d6f90ea5e12b4d0f554555bac8499423acc HEAD -- src/game src/world src/core missions assets/models package.json package-lock.json playwright.config.js vite.config.js
+      - name: Reproduce material atlases in CI
+        run: |
+          node tools/assets/m01-materials/generate.mjs --all --out /tmp/m01-materials-regenerated/terrain
+          diff -r assets/textures/m01/terrain /tmp/m01-materials-regenerated/terrain
+          diff -r assets/textures/m01/atlas /tmp/m01-materials-regenerated/atlas
+      - name: Build the production game for browser evidence
+        run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Focused terrain browser evidence
+        env:
+          M01_TERRAIN_EVIDENCE: '1'
+        run: npx playwright test tests/browser/m01-terrain-war-ground.spec.js --workers=1 --retries=0 --output=test-results/terrain
+      - name: Focused atlas viewer evidence
+        env:
+          M01_MATERIAL_EVIDENCE: '1'
+        run: npx playwright test --config tools/verification/playwright.m01-materials.config.js --workers=1 --retries=0 --output=test-results/materials
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-t09-t28-${{ github.sha }}
+          path: |
+            test-results/
+            docs/verification/m01-runtime/m01-terrain-war-ground-v1/
+            docs/verification/m01-runtime/m01-t09-t28-closeout-v1/
+          if-no-files-found: error

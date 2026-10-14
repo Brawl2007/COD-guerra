@@ -1,0 +1,20 @@
+[1A[2K[2m[WebServer] [22m(node:17108) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 3 tests using 1 worker
+
+[1A[2K(node:17127) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:17127) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/3] tests/browser/m01-rail-props.spec.js:16:1 › actual renderer frozen views 01/02/03/07/10/16 and 5m model/rail joins
+[1A[2K[2/3] tests/browser/m01-rail-props.spec.js:17:1 › Low/High retain real kit at bounded submissions; identical checkpoint restores plateau
+[1A[2K[3/3] tests/browser/m01-rail-props.spec.js:19:1 › optional rejection retains proxies; late GLB residency invalidates paused frames without clock advance
+[1A[2K  Slow test file: tests/browser/m01-rail-props.spec.js (13.7m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  3 passed (13.9m)

@@ -89,7 +89,7 @@
         "lod0": {
           "file": "m01_prop_ammo_crate_wood_lod0.glb",
           "bytes": 28008,
-          "sha256": "cd9971edcf5048f37640b72f9d943dfbf6b8d4234fa7042f5e54504f97c017fa",
+          "sha256": "662dedddb19efb5cb3f6046fe82a476f487bf8a85331a8c5759bf3b2a861547c",
           "triangles": 468,
           "vertices": 568,
           "materials": [
@@ -115,7 +115,7 @@
         "lod1": {
           "file": "m01_prop_ammo_crate_wood_lod1.glb",
           "bytes": 5932,
-          "sha256": "04ddaa1fe767fbf1e7d6967a786162837e4559c82bd0637bb51bb934be3a3068",
+          "sha256": "e05b0f23882b63646709d3031b58dca392855feba11e91e5823c6e2b5b75b001",
           "triangles": 48,
           "vertices": 96,
           "materials": [
@@ -152,7 +152,7 @@
         "lod0": {
           "file": "m01_prop_supply_crate_planked_lod0.glb",
           "bytes": 44212,
-          "sha256": "189a58d3b588cc3f3e84da261d5ae603bb84bf5b3988efc921566d7d1e09a587",
+          "sha256": "9a68a2e1c8b5c8ad9ce3682a3a675854e4bc2983a01c6ec86213356558b7a708",
           "triangles": 712,
           "vertices": 1048,
           "materials": [
@@ -175,7 +175,7 @@
         "lod1": {
           "file": "m01_prop_supply_crate_planked_lod1.glb",
           "bytes": 20084,
-          "sha256": "5008e4f98f91a5a6a4d22de4da114566911aa9317ff589a119313f1b107fc5b0",
+          "sha256": "b8e4521910cc0b15094eb08e854104475af1e02f8dc7c79363d1818afc4cbb22",
           "triangles": 240,
           "vertices": 480,
           "materials": [
@@ -211,7 +211,7 @@
         "lod0": {
           "file": "m01_prop_ammo_tin_box_lod0.glb",
           "bytes": 14536,
-          "sha256": "1da2812b342b474f2f8ea31f018a6a3e53697d08998c4132ed62f0aa0db1af6f",
+          "sha256": "b96b1a611d4a038b9d493a8fcc11756e5b68c4b617482cc125006a9b12114a13",
           "triangles": 236,
           "vertices": 304,
           "materials": [
@@ -234,7 +234,7 @@
         "lod1": {
           "file": "m01_prop_ammo_tin_box_lod1.glb",
           "bytes": 4988,
-          "sha256": "26d7819b1ffa6151fd8a865529da66a5418b2d03aceb7b7300cabe999fe33847",
+          "sha256": "cd9f2cb17cc3b0ca034648a18287f47d3e9b1d105eb8e8e0d268b5344c548c30",
           "triangles": 36,
           "vertices": 72,
           "materials": [
@@ -270,8 +270,8 @@
       "files": {
         "lod0": {
           "file": "m01_prop_sandbag_run_lod0.glb",
-          "bytes": 42800,
-          "sha256": "0189efdf72b83f1252b1053cac0e6fe83c232f26170994b5c9c9dcf7f74b9bf4",
+          "bytes": 42796,
+          "sha256": "df9dc964c8fffe492cbda7ef3045380f00eb2b12ccf05874a2958d3ceb662850",
           "triangles": 1152,
           "vertices": 960,
           "materials": [
@@ -293,7 +293,7 @@
         "lod1": {
           "file": "m01_prop_sandbag_run_lod1.glb",
           "bytes": 7368,
-          "sha256": "2b5969a72ae47bda8a52cbb0e0efdb71a39eed139d276c523abf78dc95265440",
+          "sha256": "42aa6c69a913020b485b3dd1f72f3433e716a24cc02da53265419d83c681e176",
           "triangles": 144,
           "vertices": 144,
           "materials": [
@@ -301,7 +301,7 @@
           ],
           "bounds": {
             "min": [
-              -0.86,
+              -0.8599,
               0,
               -0.2486
             ],
@@ -329,7 +329,7 @@
         "lod0": {
           "file": "m01_prop_sandbag_corner_lod0.glb",
           "bytes": 42816,
-          "sha256": "5a66a3255f9b95cd09a8e9716e4089d6130ef0911030c489423e2163e0c8b6a0",
+          "sha256": "f2360f42d8f2c24bfbbfff20dd42dc34572f0b7da1d3d368e90d8c06a23f2aec",
           "triangles": 1152,
           "vertices": 960,
           "materials": [
@@ -351,7 +351,7 @@
         "lod1": {
           "file": "m01_prop_sandbag_corner_lod1.glb",
           "bytes": 7376,
-          "sha256": "329bd1d6a05a3c2bd61d03aa334f45a5a6c159408561fd61c46b2b47d8786dfc",
+          "sha256": "f32563f7a2bfbcd6b780ae6018018862d3e56711bfe536df87ea9c0a5fe09c14",
           "triangles": 144,
           "vertices": 144,
           "materials": [
@@ -387,7 +387,7 @@
         "lod0": {
           "file": "m01_prop_sandbag_burst_lod0.glb",
           "bytes": 28256,
-          "sha256": "f7fc5a634024411724b39a6db84614c4a323c7df745454fd3dbd58802cbcb2f7",
+          "sha256": "8001e1fe336728e6423c8feb1694bf625ae73f7e2e7f811881bdf244810d714f",
           "triangles": 557,
           "vertices": 631,
           "materials": [
@@ -398,7 +398,7 @@
             "min": [
               -1.0352,
               -0.009,
-              -0.1772
+              -0.1773
             ],
             "max": [
               1.2071,
@@ -410,7 +410,7 @@
         "lod1": {
           "file": "m01_prop_sandbag_burst_lod1.glb",
           "bytes": 12304,
-          "sha256": "036fcd15a1d290d4a428a8e56ea946469aaa9864d6c271f0a4224d9da5b6ae4a",
+          "sha256": "acac3c36127f438c0b3d731c101d5f52d8b1c81e731536583e7b761e06c43e8a",
           "triangles": 210,
           "vertices": 246,
           "materials": [
@@ -447,7 +447,7 @@
         "lod0": {
           "file": "m01_prop_barrel_wood_lod0.glb",
           "bytes": 19564,
-          "sha256": "5008977313fc180bc0d5a0d57732c57022062acaa3b355dec0e716ccccc4ef63",
+          "sha256": "722075ce3cf926c47a57452ffac5c8545194915b39ef87e82d419ff81982667a",
           "triangles": 400,
           "vertices": 416,
           "materials": [
@@ -470,7 +470,7 @@
         "lod1": {
           "file": "m01_prop_barrel_wood_lod1.glb",
           "bytes": 8988,
-          "sha256": "e737dcfa425a5a22fcd00f7c0c59ecdd9777634ce667b60cd6e95a49fbf14995",
+          "sha256": "8b3cf46d0bc007404e8ad0b471c8518d679af9687b61d4431e60ddf7b396fb92",
           "triangles": 80,
           "vertices": 176,
           "materials": [
@@ -507,7 +507,7 @@
         "lod0": {
           "file": "m01_prop_drum_fuel_200l_lod0.glb",
           "bytes": 27688,
-          "sha256": "efa0172d92583b0ec1a97ce68b207b5aed3154dc3b84322b72523e540edcd13d",
+          "sha256": "2965603e2e8756d734e21da61e3a4e0bd2c9b9b3c8f12f4c1bc4d2202d3f2426",
           "triangles": 768,
           "vertices": 580,
           "materials": [
@@ -530,7 +530,7 @@
         "lod1": {
           "file": "m01_prop_drum_fuel_200l_lod1.glb",
           "bytes": 6864,
-          "sha256": "a1ad91f0a393c7e0735a6cf06b80b157549ad0adbd65ff88374f73928832d848",
+          "sha256": "bf4d60e9e6dc3e3c51467635c9b80f0b55bea57cc5e3af978402538c4e6ba387",
           "triangles": 140,
           "vertices": 130,
           "materials": [
@@ -565,8 +565,8 @@
       "files": {
         "lod0": {
           "file": "m01_prop_jerrycans_lod0.glb",
-          "bytes": 35236,
-          "sha256": "d081c092771ffe5bead2612795515c6c54d8ec388b14dd76f2291bb2219e060a",
+          "bytes": 35232,
+          "sha256": "2c80a2a6ab5323f8ce096c6f63c0244e5013cc52f77b8206d9f70fa0d6178e1a",
           "triangles": 564,
           "vertices": 824,
           "materials": [
@@ -589,7 +589,7 @@
         "lod1": {
           "file": "m01_prop_jerrycans_lod1.glb",
           "bytes": 7876,
-          "sha256": "81e7eb035372318a980c1b2f221bf8cb9fd9ffe39b13d6316641b6be0c0afdaf",
+          "sha256": "69e8b5bdd928bf10f1a1dd8af3b889a93709bfecbce7d5bf3450d6b728ab0c59",
           "triangles": 84,
           "vertices": 168,
           "materials": [
@@ -625,7 +625,7 @@
         "lod0": {
           "file": "m01_prop_telegraph_pole_lod0.glb",
           "bytes": 47288,
-          "sha256": "592f84cdb43e7030c671bd4da61053a20fc4363c0353a4d3865e9b9391327675",
+          "sha256": "7683fb053b830c2ff49b1706e97756ab81d6af91f969508dab1f5b96aa4aafcc",
           "triangles": 670,
           "vertices": 1068,
           "materials": [
@@ -651,7 +651,7 @@
         "lod1": {
           "file": "m01_prop_telegraph_pole_lod1.glb",
           "bytes": 15164,
-          "sha256": "ace905c323340d19e8f4314f457c40d5b9455cc6f411f4317f070f08c165bae2",
+          "sha256": "26d7b74965d056381b3d790aece0b00421b60f0412a22349bc3f3a5bbdbf155d",
           "triangles": 174,
           "vertices": 330,
           "materials": [
@@ -721,8 +721,8 @@
       "files": {
         "lod0": {
           "file": "m01_prop_telegraph_wire_span_lod0.glb",
-          "bytes": 9168,
-          "sha256": "86a482d41490a13acac8454404bea8f3f7a26adcbcc61009a5813e0d21f9d0c3",
+          "bytes": 9164,
+          "sha256": "b0a406234f21d662d78cfee38c11112b25549d32c773dc8636c1de45a320b392",
           "triangles": 288,
           "vertices": 162,
           "materials": [
@@ -744,7 +744,7 @@
         "lod1": {
           "file": "m01_prop_telegraph_wire_span_lod1.glb",
           "bytes": 5704,
-          "sha256": "40b3a23aa6e24beb032c4020b5da2f91f8fc8b349ca52dd3d4890c566a5b35c1",
+          "sha256": "1d4fb1dbcd0ed3640ceef4957f7fcc395067f7aa3ebda2c0558780abe7e4f202",
           "triangles": 144,
           "vertices": 90,
           "materials": [
@@ -846,7 +846,7 @@
         "lod0": {
           "file": "m01_prop_fence_wood_lod0.glb",
           "bytes": 50688,
-          "sha256": "a99700e435bde717530b79a45b4d983a47980c58f43e71568844598a2657e6aa",
+          "sha256": "b27f8697d9e29828b4b26bb5834b8a3fb113f7a4bdae24c5daa6870ad3c2d9a6",
           "triangles": 692,
           "vertices": 1256,
           "materials": [
@@ -868,7 +868,7 @@
         "lod1": {
           "file": "m01_prop_fence_wood_lod1.glb",
           "bytes": 13476,
-          "sha256": "ec8b646d89cd258da3ee9775b2d38a9c2d4e88c98a1545f3c8f9bd6cba731ae2",
+          "sha256": "96e18b23417c987a790ae7e7cc352a8a3cf55326c81b264a2f2da49d1d765ee3",
           "triangles": 156,
           "vertices": 312,
           "materials": [
@@ -904,7 +904,7 @@
         "lod0": {
           "file": "m01_prop_fence_barbed_lod0.glb",
           "bytes": 22696,
-          "sha256": "aa9719d14fad9fe2b24de2a7321c0c1ca09152ed0e40bf6e7a0de8c81c91bd53",
+          "sha256": "2161257df05a3e93a6a51e1471385388c5a4e620aad03ea3e5548c938f0683a1",
           "triangles": 551,
           "vertices": 477,
           "materials": [
@@ -914,7 +914,7 @@
           "bounds": {
             "min": [
               -1.545,
-              -0.0041,
+              -0.004,
               -0.0487
             ],
             "max": [
@@ -927,7 +927,7 @@
         "lod1": {
           "file": "m01_prop_fence_barbed_lod1.glb",
           "bytes": 11228,
-          "sha256": "6109e715fba77e7cf7d0d052bd381272b6f58fa20d81b1e483fa639d11d379d0",
+          "sha256": "f70c8474e7e83bba905aa4cdc4516325bf56e2c906b49fafcbf3d8d624882ad5",
           "triangles": 189,
           "vertices": 219,
           "materials": [
@@ -964,7 +964,7 @@
         "lod0": {
           "file": "m01_prop_railway_lantern_lod0.glb",
           "bytes": 22408,
-          "sha256": "ccaffbec7a95793ffedc2a8c5759b0f6f7d8195960bd5c8f3531324a914ec463",
+          "sha256": "03e993a5a2e854a4ebc9c515ba8615a7366ecd57597453c029bd0e4e2509f719",
           "triangles": 338,
           "vertices": 481,
           "materials": [
@@ -980,15 +980,15 @@
             ],
             "max": [
               0.0744,
-              0.3645,
+              0.3644,
               0.07
             ]
           }
         },
         "lod1": {
           "file": "m01_prop_railway_lantern_lod1.glb",
-          "bytes": 12812,
-          "sha256": "c49f53dac5fe7bc9159873471df300e15b04d69db2ee55799e1981d10bcc8929",
+          "bytes": 12816,
+          "sha256": "626a405a2b0601ac556c61b66eb7cbd70c50cd9cc5dc3686b433f88c08110139",
           "triangles": 164,
           "vertices": 244,
           "materials": [
@@ -1012,7 +1012,7 @@
       },
       "size_m": {
         "x": 0.1489,
-        "y": 0.3645,
+        "y": 0.3644,
         "z": 0.14
       }
     },
@@ -1025,8 +1025,8 @@
       "files": {
         "lod0": {
           "file": "m01_prop_hand_cart_lod0.glb",
-          "bytes": 48324,
-          "sha256": "721c964f883b3715f7fc2f6afc6bf9c4dc9b34815a2e7e3b3fa482744d48866a",
+          "bytes": 48328,
+          "sha256": "114318a576b13dc6761e587f81a622491a6790adc71347a559e3e083ca693928",
           "triangles": 924,
           "vertices": 1104,
           "materials": [
@@ -1049,8 +1049,8 @@
         },
         "lod1": {
           "file": "m01_prop_hand_cart_lod1.glb",
-          "bytes": 13644,
-          "sha256": "740a4d69adbf2767220172f2dc9a818361eaffbb117ab3538ac8fab40da3cb4d",
+          "bytes": 13640,
+          "sha256": "4e46da3cf5e39c651a9565abe4cc4b6a530f0a5b7c25707fd73e6157ae72bc8b",
           "triangles": 218,
           "vertices": 282,
           "materials": [
@@ -1086,8 +1086,8 @@
       "files": {
         "lod0": {
           "file": "m01_prop_horse_cart_lod0.glb",
-          "bytes": 83336,
-          "sha256": "885307add89cf60d874b0f523c51de336b4012f8645243f9070764e64e2dbc81",
+          "bytes": 83356,
+          "sha256": "1b64d58dd2e21f676b7daee2797628f93139d5d675a11e351509c16454863342",
           "triangles": 1440,
           "vertices": 1992,
           "materials": [
@@ -1110,8 +1110,8 @@
         },
         "lod1": {
           "file": "m01_prop_horse_cart_lod1.glb",
-          "bytes": 15632,
-          "sha256": "c29ddad75ec3de866f628787863b2f06a4d86ffb1ae9be595b3bf2be77bfb996",
+          "bytes": 15652,
+          "sha256": "8701d907cf6da1be800441e67005439de2c3b61a1f8bb718c5af16de23578902",
           "triangles": 276,
           "vertices": 352,
           "materials": [
@@ -1147,7 +1147,7 @@
         "lod0": {
           "file": "m01_prop_point_lever_lod0.glb",
           "bytes": 28940,
-          "sha256": "958bf1f687a91a84b72a98574f62bbb78aa7263584610c08297ea55b9930f450",
+          "sha256": "5d28bd883cf53b80e93b0b49e34e9886001d980cf6f4906ae8179186e7790404",
           "triangles": 412,
           "vertices": 580,
           "materials": [
@@ -1173,8 +1173,8 @@
         },
         "lod1": {
           "file": "m01_prop_point_lever_lod1.glb",
-          "bytes": 18408,
-          "sha256": "ba04d64e1f7baa25a63f1a23fb0d1f7c3a48119071a59b9f911ea2822a179abb",
+          "bytes": 18412,
+          "sha256": "1dba9b92e8c2ab76eb52a1397439a152cdb1fe85078552e20c3ba5115a4bd0e4",
           "triangles": 194,
           "vertices": 324,
           "materials": [
@@ -1215,7 +1215,7 @@
         "lod0": {
           "file": "m01_prop_semaphore_signal_lod0.glb",
           "bytes": 59180,
-          "sha256": "89b295cc1cfbcd635176db8f70c3c4e503d91ec708bda4014fda464c3e5e893c",
+          "sha256": "f823b483bcce8aedd6621ff26253457eff76b4b3ef3c7f0191a742aff9fed448",
           "triangles": 862,
           "vertices": 1342,
           "materials": [
@@ -1241,8 +1241,8 @@
         },
         "lod1": {
           "file": "m01_prop_semaphore_signal_lod1.glb",
-          "bytes": 21388,
-          "sha256": "773e605d94798d8a58574cd81759a758e040c7d1ce86868f0681277a7e9b5afd",
+          "bytes": 21392,
+          "sha256": "a85eba01b5ee308a3662e4b5d33008fcfa238390daa4649bab16fec52e018700",
           "triangles": 240,
           "vertices": 420,
           "materials": [
@@ -1295,7 +1295,7 @@
         "lod0": {
           "file": "m01_prop_water_crane_lod0.glb",
           "bytes": 56692,
-          "sha256": "c83e9c374725beac6c88e0cd15b6ba24e41c587779fcbef6aa185a4e8ae81f00",
+          "sha256": "7c91ae9a9f1e283e55f3ecaa0578587fe50315e458606e28f5acb956e0ca3782",
           "triangles": 1210,
           "vertices": 1240,
           "materials": [
@@ -1320,8 +1320,8 @@
         },
         "lod1": {
           "file": "m01_prop_water_crane_lod1.glb",
-          "bytes": 17632,
-          "sha256": "074a8d1558bb41c62ada6a3a18daa17a829fe61492ee820ebe2399560332854b",
+          "bytes": 17636,
+          "sha256": "10f1bb6535cbdbc8b7cbbbc36ff2dbc0553c4bc7e6ae14b4b9089e69c2029071",
           "triangles": 235,
           "vertices": 365,
           "materials": [
@@ -1367,7 +1367,7 @@
         "lod0": {
           "file": "m01_prop_coal_pile_lod0.glb",
           "bytes": 51836,
-          "sha256": "7d4a20b1f8dfa065eaa9213cf1d685f8fc3923ef5916cc1e7218e3ffc13d6fc6",
+          "sha256": "0ee3d9b0c64959434428c33341d606d5fd7780bd40545fdacff0cc702fe9e747",
           "triangles": 576,
           "vertices": 1260,
           "materials": [
@@ -1390,8 +1390,8 @@
         },
         "lod1": {
           "file": "m01_prop_coal_pile_lod1.glb",
-          "bytes": 9296,
-          "sha256": "22506ab04e0e6152647dc2b509cb6ff37b2f980cf1ffc2101ce2c98e1c6fe0d4",
+          "bytes": 9292,
+          "sha256": "bede9e4fe158ecf8c1cee067e246631b73c451a0554e6613a2f2498c423c3f8f",
           "triangles": 70,
           "vertices": 210,
           "materials": [
@@ -1427,7 +1427,7 @@
         "lod0": {
           "file": "m01_prop_sleeper_stack_lod0.glb",
           "bytes": 69964,
-          "sha256": "4591cd34b0fb648891b7cb476972a982010e6e4d0e82d19ce0ca0a4f57c064e7",
+          "sha256": "a76ba9bc908a14e7a35eebbc1d0ca1154f5363ea67c9e9e251186f90d8720848",
           "triangles": 1264,
           "vertices": 1696,
           "materials": [
@@ -1449,7 +1449,7 @@
         "lod1": {
           "file": "m01_prop_sleeper_stack_lod1.glb",
           "bytes": 12632,
-          "sha256": "b0d0b4b31cc592154cfca59f826cf1079aeb2080574634f0510181dd563736ce",
+          "sha256": "4d17dc0241ed44a32a5821bf7f5eefc0c0ec4a1a441f68f4b2bf656eb689aac0",
           "triangles": 156,
           "vertices": 288,
           "materials": [

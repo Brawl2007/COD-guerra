@@ -2,7 +2,6 @@
 // LOD0 ≤ 1500 triângulos, LOD1 ≤ 300. Origem no contacto com o solo, metros, +Y para cima.
 import { mix } from './mesh.mjs';
 import { P } from './palette.mjs';
-import * as pm from './pmath.mjs';
 import { rng } from './util.mjs';
 
 /** Caixa de munição de madeira (tipo Munitionskiste), 0,78 × 0,34 × 0,40 m, com cintas, pegas de corda e tampa. */
@@ -22,7 +21,7 @@ export function ammoCrateWood(m, lod) {
     // pegas de corda nas cabeceiras
     for (const s of [-1, 1]) {
       const x = s * (W / 2 + 0.03), path = [];
-      for (let i = 0; i <= 6; i++) { const t = i / 6; path.push([x + s * 0.03 * pm.sin(t * Math.PI), 0.24 - 0.025 * pm.sin(t * Math.PI) - 0.07 * (1 - pm.sin(t * Math.PI)) * 0, -0.08 + 0.16 * t]); }
+      for (let i = 0; i <= 6; i++) { const t = i / 6; path.push([x + s * 0.03 * Math.sin(t * Math.PI), 0.24 - 0.025 * Math.sin(t * Math.PI) - 0.07 * (1 - Math.sin(t * Math.PI)) * 0, -0.08 + 0.16 * t]); }
       m.tube('rope', path, { r: 0.011, sides: 4, color: P.rope, variance: 0.1, seed: 7 });
     }
   } else {
@@ -70,7 +69,7 @@ export function ammoTinBox(m, lod) {
     for (const x of [-0.14, 0.14]) m.box('steel', { size: [0.035, 0.07, 0.014], at: [x, H * 0.55, D / 2 + 0.008], color: P.steelLight, variance: 0.18, seed: 3 });
     for (const s of [-1, 1]) m.box('steel', { size: [0.012, H * 0.9, D - 0.02], at: [s * (W / 2 + 0.002), H * 0.45, 0], color: P.rust, subdiv: [1, 1, 2], variance: 0.2, seed: 5 });
     const path = [];
-    for (let i = 0; i <= 7; i++) { const a = (i / 7) * Math.PI; path.push([-0.07 * pm.cos(a) , H + 0.012 + 0.045 * pm.sin(a), 0]); }
+    for (let i = 0; i <= 7; i++) { const a = (i / 7) * Math.PI; path.push([-0.07 * Math.cos(a) , H + 0.012 + 0.045 * Math.sin(a), 0]); }
     m.tube('steel', path, { r: 0.006, sides: 4, color: P.steelDark });
   }
 }
@@ -81,9 +80,9 @@ function bag(m, { at, rot = [0, 0, 0], tint = P.burlap, hi, seed, len = 0.6, dep
   m.blob('cloth', {
     rad: [rx, ry, rz], at, rot, nu: hi ? 8 : 6, nv: hi ? 4 : 3, e: [0.62, 0.7],
     shape: (p) => {
-      const ex = pm.cube(Math.abs(p[0] / rx));               // aperto nas pontas
-      const sag = 1 - 0.1 * pm.sq(p[0] / rx);
-      return [p[0], p[1] * (1 - 0.35 * ex) * sag * (split ? 0.7 : 1), p[2] * (1 - 0.4 * ex) * (1 + 0.04 * pm.sin(p[0] * 17 + seed))];
+      const ex = Math.abs(p[0] / rx) ** 3;               // aperto nas pontas
+      const sag = 1 - 0.1 * (p[0] / rx) ** 2;
+      return [p[0], p[1] * (1 - 0.35 * ex) * sag * (split ? 0.7 : 1), p[2] * (1 - 0.4 * ex) * (1 + 0.04 * Math.sin(p[0] * 17 + seed))];
     },
     colorFn: (p, n) => {
       const ends = Math.abs((p[0] - at[0]) / rx);
@@ -165,8 +164,8 @@ export function sandbagBurst(m, lod) {
   for (let j = 0; j <= nv; j++) {
     const row = [];
     for (let i = 0; i < nu; i++) {
-      const a = (i / nu) * Math.PI * 2, rr = j === 0 ? 0 : (0.2 + 0.55 * (j / nv)) * (1 + 0.25 * pm.sin(a * 3 + 1.3) + 0.12 * pm.sin(a * 5));
-      row.push([0.05 + pm.cos(a) * rr * 1.15, j === nv ? 0.003 : 0.1 * pm.pow(1 - j / nv, 1.3) + 0.01, 0.8 + pm.sin(a) * rr * 0.8]);
+      const a = (i / nu) * Math.PI * 2, rr = j === 0 ? 0 : (0.2 + 0.55 * (j / nv)) * (1 + 0.25 * Math.sin(a * 3 + 1.3) + 0.12 * Math.sin(a * 5));
+      row.push([0.05 + Math.cos(a) * rr * 1.15, j === nv ? 0.003 : 0.1 * (1 - j / nv) ** 1.3 + 0.01, 0.8 + Math.sin(a) * rr * 0.8]);
     }
     pts.push(row);
   }
@@ -176,14 +175,12 @@ export function sandbagBurst(m, lod) {
 /** Barril de madeira de aduelas, ø médio 0,58 m × 0,88 m, quatro arcos de ferro. */
 export function barrelWood(m, lod) {
   const hi = lod === 0, H = 0.88, rm = 0.29, re = 0.245;
-  const prof = t => re + (rm - re) * (1 - pm.sq(2 * t - 1));
+  const prof = t => re + (rm - re) * (1 - (2 * t - 1) ** 2);
   const seg = hi ? 16 : 8;
   m.cyl('wood', {
     h: H, seg, rings: hi ? 6 : 2, r: prof, caps: 'both', flat: !hi,
     colorFn: (p, n) => {
-      // os vértices dos anéis caem exactamente na fronteira entre aduelas: a tolerância de 1e-6 fixa a aduela (= índice
-      // do vértice) em vez de deixar o último bit de atan2 decidir
-      const a = pm.atan2(p[2], p[0]), stave = Math.floor(((a / (Math.PI * 2) + 1) % 1) * seg + 1e-6) % seg;
+      const a = Math.atan2(p[2], p[0]), stave = Math.floor(((a / (Math.PI * 2) + 1) % 1) * seg);
       const base = mix(P.woodMid, P.woodOld, ((stave * 37) % 11) / 11);
       return m.tint(base, p, { variance: 0.1, grain: 1, freq: 6, seed: stave });
     },
@@ -201,7 +198,7 @@ export function drumFuel200(m, lod) {
   const ribT = [0.28, 0.72];
   const prof = t => {
     let k = 1;
-    for (const rt of ribT) k += 0.022 * pm.exp(-pm.sq((t - rt) / 0.028));
+    for (const rt of ribT) k += 0.022 * Math.exp(-(((t - rt) / 0.028) ** 2));
     if (t < 0.025 || t > 0.975) k += 0.02;
     return R * k;
   };
@@ -223,7 +220,7 @@ export function jerrycans(m, lod) {
   const hi = lod === 0;
   const can = (at, rot, tint, seed) => {
     const tf = (p) => {
-      const c = pm.cos(rot[1]), s = pm.sin(rot[1]);
+      const c = Math.cos(rot[1]), s = Math.sin(rot[1]);
       return [at[0] + p[0] * c + p[2] * s, at[1] + p[1], at[2] - p[0] * s + p[2] * c];
     };
     const o = { rot, color: tint, seed, variance: 0.16 };

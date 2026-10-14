@@ -1,0 +1,164 @@
+{
+  "status": "DONE_IMPLEMENTATION",
+  "acceptance": "PENDING_INDEPENDENT_VERIFIER_AND_REVIEWER",
+  "taskId": "M01-T10-T29-VEGETATION-V2",
+  "runId": "M01-T10-T29-20261013",
+  "baseHead": "b2430fac3504aa6d0ce7d0ad664076c26f90d6f7",
+  "publishedHead": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+  "sourceSHA256": "8363ea61d93bb09c0c14215ef6818066c7bdfd4688db284e4da0f780100a2b70",
+  "criticalFiles": 29,
+  "manifest": ".agent/runs/M01-T10-T29-20261013/runtime/final-source/source-manifest-v7.json",
+  "allowedFiles": [
+    ".github/workflows/m01-t10-t29-vegetation.yml",
+    "assets/models/provisional/m01/vegetation/LICENSE.md",
+    "assets/models/provisional/m01/vegetation/foliage-alpha.png",
+    "assets/models/provisional/m01/vegetation/manifest.json",
+    "assets/models/provisional/m01/vegetation/vegetation-kit.glb",
+    "src/render/m01-environment.js",
+    "src/render/m01-vegetation-art.js",
+    "src/render/m01-vegetation-material.js",
+    "src/render/m01-vegetation-runtime.js",
+    "src/render/m01-view.js",
+    "tests/browser/m01-vegetation-kit.spec.js",
+    "tests/browser/m01-vegetation-lod.spec.js",
+    "tests/browser/m01-vegetation-runtime-v2.spec.js",
+    "tests/m01-vegetation-glb.test.js",
+    "tests/m01-vegetation-layout.test.js",
+    "tests/m01-vegetation-lod.test.js",
+    "tests/m01-vegetation-runtime.test.js",
+    "tools/assets/m01-vegetation/build.mjs",
+    "tools/assets/m01-vegetation/viewer-config.mjs",
+    "tools/assets/m01-vegetation/viewer.html",
+    "tools/assets/m01-vegetation/viewer.mjs",
+    "tools/verification/m01-vegetation-v2-compare.mjs",
+    "tools/verification/m01-vegetation-v2-future-batch.mjs",
+    "tools/verification/m01-vegetation-v2-futures.mjs",
+    "tools/verification/m01-vegetation-v2-kit.config.mjs",
+    "tools/verification/m01-vegetation-v2-node-asset.mjs",
+    "tools/verification/m01-vegetation-v2-pixels.mjs",
+    "tools/verification/m01-vegetation-v2-runtime.config.mjs",
+    "tools/verification/m01-vegetation-v2-source.mjs"
+  ],
+  "finalChangesFromRuntimeTestedSource": {
+    "head": "8aa1549f7eef58aec92ec4421aa84266ffce18ea",
+    "changed": [
+      ".github/workflows/m01-t10-t29-vegetation.yml",
+      "tests/browser/m01-vegetation-lod.spec.js"
+    ],
+    "unchangedCriticalComponents": 27,
+    "productionOwnerAndRuntimeV2HarnessUnchanged": true
+  },
+  "implemented": [
+    "Original43-modelGLB, eight tree identities/four tiers, six shrubs/five ground forms, one512RGBA8alpha atlas and authoredCC0 manifest/gallery",
+    "Actual loaded accessors in one runtime owner, real120m impostors/4m hysteresis,40m ground cutoff, mission-clock anchored wind, actual triangle seating, unchanged17 physical Lathe9 receivers",
+    "Actual positive main/shadow callback submissions including padding/passes, bounded presets, borrowed/shared ownership and once disposal, failed/hung/late fallback and paused invalidation",
+    "Compatible environment descriptor/math facade, maintained gallery/runtime/pixel/source/futures harnesses; four-process24-future consolidation and focused browser/authority workflow"
+  ],
+  "localChecks": [
+    {
+      "command": "node --test tests/m01-vegetation-*.test.js tests/m01-damage-decals.test.js",
+      "result": "PASS29/29",
+      "log": ".agent/runs/M01-T10-T29-20261013/runtime/fix1/node.log"
+    },
+    {
+      "command": "node tools/assets/m01-vegetation/build.mjs --check",
+      "result": "PASS exact43-model reproduction",
+      "log": ".agent/runs/M01-T10-T29-20261013/runtime/fix1/generator.log"
+    },
+    {
+      "command": "npm run build",
+      "result": "PASS95modules",
+      "log": ".agent/runs/M01-T10-T29-20261013/runtime/fix1/build.log"
+    },
+    {
+      "command": "env -u M01_VEGETATION_VIEWS CHROME_EXECUTABLE=/usr/bin/chromium npx playwright test --config tools/verification/m01-vegetation-v2-runtime.config.mjs",
+      "result": "PASS3/3 all9views,491084ms, no skips/flaky/unexpected",
+      "head": "8aa1549f7eef58aec92ec4421aa84266ffce18ea",
+      "evidence": ".agent/runs/M01-T10-T29-20261013/runtime/final-browser-attempt2/"
+    },
+    {
+      "command": "CHROME_EXECUTABLE=/usr/bin/chromium npx playwright test --config .agent/runs/M01-T10-T29-20261013/runtime/legacy-lod.config.mjs",
+      "result": "PASS2/2,106987ms",
+      "evidence": ".agent/runs/M01-T10-T29-20261013/runtime/fix3/legacy-lod-browser-attempt3/"
+    },
+    {
+      "command": "maintained base/current comparator (Captain run)",
+      "result": "PASS9/9 actual full save/checkpoint/events,camera,clock; changed>100/control0",
+      "evidence": ".agent/runs/M01-T10-T29-20261013/runtime/final-base-current-pixels.json"
+    },
+    {
+      "command": "single-seed actual-owner futures smoke",
+      "result": "PASS2/2 seed1 routes,20645/20211ticks; full state/events/checkpoint backups exact",
+      "evidence": ".agent/runs/M01-T10-T29-20261013/runtime/final-source/futures-smoke.json",
+      "limitation": "pre-publication smoke; does not replace final24futures"
+    }
+  ],
+  "metrics": {
+    "presets": [
+      {
+        "quality": "low",
+        "actualDraws": 10,
+        "actualTriangles": 22188,
+        "shadowDraws": 0,
+        "shadowTriangles": 0
+      },
+      {
+        "quality": "medium",
+        "actualDraws": 10,
+        "actualTriangles": 46314,
+        "shadowDraws": 2,
+        "shadowTriangles": 3060
+      },
+      {
+        "quality": "high",
+        "actualDraws": 12,
+        "actualTriangles": 74484,
+        "shadowDraws": 6,
+        "shadowTriangles": 7700
+      }
+    ],
+    "alphaDecodedRGBA8": 1048576,
+    "alphaMipRGBA8": 349524,
+    "frozenPixels": 0,
+    "ownerChangedPixels": 14312,
+    "controlPixels": 0,
+    "foliageRegionResumedPixels": 13646,
+    "equallyWarmedGlobalResources": {
+      "before": [
+        506,
+        133
+      ],
+      "reload": [
+        506,
+        133
+      ]
+    },
+    "fourCheckpointRestoresAndOwnerUUIDReuse": "PASS"
+  },
+  "fixes": {
+    "used": 3,
+    "max": 3,
+    "reviewRejections": 0,
+    "maxReviewRejections": 2,
+    "cycles": [
+      "Fix1: zero-instance/empty-range callback accounting and lightweight damage-decal facade compatibility",
+      "Fix2: fixed central sky control and unobstructed eastern supplement; canonical01/04/09/15/16 unchanged",
+      "Fix3: real rail saved-player fixture, real High→Medium hysteresis warmup, actual paused overlay/frame/residency waits; all tier>0 assertions retained"
+    ]
+  },
+  "exceptions": [
+    "Initial15s deliberate-network hold diagnostic retained; optional loader now bounded120s with visible195 decorative trunks/408 legacy crown fallback and explicit5ms hung/late Node checks",
+    "Historical40535 runtime3PASS retained as diagnostic before zero-callback fix; original normalCI668/676 failure and cancelled obsolete focused runs are not final acceptance",
+    "Original left control crossed217 new-crown pixels; original east view was tower-occluded with0 change. Both invalid-view diagnostics retained; final fixed sky delta0 and east18929 changed pixels",
+    "Local base/current assembly uses8 original base views plus explicit corrected east recapture. Final focusedCI performs all9 baseline views in one run",
+    "Fix3 superseded attempt1 intentionally SIGINT/exit130; attempt2 real1PASS/1FAIL pause race and original legacy1PASS/1FAIL preserved; final attempt3 PASS2/2"
+  ],
+  "pendingGates": [
+    "Normal and focusedCI on exact final cc3f459 source",
+    "Final24 futures/four raw batch reports/consolidation and fresh prior terrain/horizon/rail/props/material browser obligations",
+    "Independent VERIFIER PASS and REVIEW ACCEPT; source/protected inventory confirmation",
+    "No-ff integration, full test/build on actual merge result and playable publication"
+  ],
+  "risks": "No FPS,VRAM or reference-PC claim. Implementation completion does not approve the final task.",
+  "blockers": "None within implementation scope; final gates remain Captain/Verifier owned."
+}

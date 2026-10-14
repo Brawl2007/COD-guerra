@@ -1,0 +1,62 @@
+name: CI (Node + build)
+
+# One workflow for every work branch and every PR to main: unit tests and the production build.
+# Task-specific browser specs or authority checks go in a task workflow only when the task needs them.
+on:
+  push:
+    branches: ['claude/**', 'codex/**']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: 'Also run the full browser suite (slow: software WebGL)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  node-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}   # tests compare against historical commits (git show/diff)
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: npm test
+        run: npm test
+      - name: Agent tooling tests
+        run: python3 -m unittest discover -s .agent/tests
+      - name: npm run build
+        run: npm run build
+
+  browser:
+    if: github.event_name == 'workflow_dispatch' && inputs.browser
+    needs: node-build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}   # tests compare against historical commits (git show/diff)
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-evidence-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore

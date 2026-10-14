@@ -6,6 +6,18 @@ TASK_ID `M01-CONTINUITY-RAID-INTEGRATION-V1`. Branch `codex/m01-continuity-raid-
 
 # active-memory handoff: COD-guerra — Captain (M01 development)
 
+## UPDATE T13/T32 — 2026-10-12
+
+T13 kit e T32 runtime **ACEITES** em `codex/m01-t13-t32-field-structures-v1` @ `cbbe0d7`, base `a1dd76b`. Verifier PASS/reviewer ACCEPT; CI38225594014 verde (648 Node, 173 tooling, build) e CI38225594010 verde (4/4 browser/galeria, reprodução e autoridade). 4 estruturas originais, 15 GLBs/3 LODs, 20 imagens de galeria, 11 pares runtime A/B; entradas/colisores/rotas/estação e modelos prévios preservados. Memória e obrigações de regressão específicas registadas. Prova: `docs/verification/m01-runtime/m01-t13-t32-field-structures-v1/HANDOFF.md`.
+
+PLAY desta entrega: `claude/m01-integration` @ `80b04746db66a0e848c5c168292bd5bf003b878e`, merge sem conflitos; junção Node648/648 e build PASS. NEXT_ACTION: nenhuma nesta entrega; T13 e T32 concluídas e integradas. Branches concorrentes do Claude preservadas.
+
+## UPDATE T09/T28 — 2026-10-11
+
+T09 pipeline de materiais e T28 terreno macro **ACEITES** em `codex/m01-t09-t28-materials-closeout-v1` @ `c739b08`, base integração `6edc3d6`. Verifier PASS e reviewer ACCEPT; CI38174455690 verde (639/639 Node, 173 tooling, build) e CI38174455699 verde (terreno9/9, atlas3/3, regeneração e autoridade). 16 materiais originais PBR High/Low; terreno com encostas, caminhos, balastro e margens húmidas; Low macro-only; modelos/mesh/simulação preservados. Prova: `docs/verification/m01-runtime/m01-t09-t28-closeout-v1/HANDOFF.md`. Regressão e memória específicas registadas. Sem FPS/VRAM medidos; M01 continua PROTÓTIPO JOGÁVEL.
+
+PLAY desta entrega: `claude/m01-integration` @ `3bdcd994ab791547fb081a5ebff325f1563c33e7`, merge sem conflitos; 639/639 Node e build PASS na junção. NEXT_ACTION: nenhuma nesta entrega; as duas tarefas pedidas foram concluídas e integradas.
+
 **Handoff #3** · 2026-10-10 · Lineage: #1 (2026-10-09): Jev activated + decision-support V2; V7 certified 84/84 (PR #59 draft); M01 dev base; T19 accepted. #2 (2026-10-09): T16 dawn lighting ACCEPTED; T17 verified; Chromebook dropped as target (D13); dev-base merge blocked → tasks stacked. #3 (2026-10-09/10): T17 ACCEPTED (D15), T18 ACCEPTED (D16), T42 ACCEPTED (D17); user gave night rules; T20 and T44 run in parallel worktrees ended BLOCKED (fix budget 3/3, CI red); T39 started then stopped by user; user installed 20 tiered agents.
 
 ## UPDATE #5 (2026-10-10, sessão seguinte) — prevalece sobre linhas em conflito abaixo
