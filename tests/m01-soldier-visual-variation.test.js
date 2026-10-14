@@ -102,7 +102,7 @@ test('integration preserves gameplay, hitbox/muzzle, save, locomotion and non-pr
  // Old exact-byte lock was for unchanged visual-variation work. The new animation
  // resolver intentionally changes generic gait/transition selection. Preserve the
  // specialized MG34 prone, CKM and station patient/medic decision block exactly.
- assert.equal(section(file,'    const prone=mg34ProneSample(actor,time);',\"    if(pose.name==='carried')\"),
-              section(old,'    const prone=mg34ProneSample(actor,time);',\"    if(pose.name==='carried')\"));
+ assert.equal(section(file,'    const prone=mg34ProneSample(actor,time);',"    if(pose.name==='carried')"),
+              section(old,'    const prone=mg34ProneSample(actor,time);',"    if(pose.name==='carried')"));
  assert.equal(section(file,'  updateCKM(','  get diagnostics'),section(old,'  updateCKM(','  get diagnostics'));
 });
