@@ -23,7 +23,9 @@ export class M01LoadingController{
     panel.classList.toggle('hidden',!this.visible);
     panel.dataset.phase=this.phase;
     if(!this.visible)return;
-    if(this.phase==='loading')this.percent=Math.min(95,Math.max(this.percent,Math.round(snapshot.ratio*95)));
+    // Denominator grows as the existing V7 loaders discover models; reflect the real
+    // observed fraction even if it temporarily falls, instead of faking 92% for 15/48.
+    if(this.phase==='loading')this.percent=Math.min(95,Math.round(snapshot.ratio*95));
     const percent=this.root.querySelector('#m01-loading-percent');
     const bar=this.root.querySelector('#m01-loading-bar');
     const stage=this.root.querySelector('#m01-loading-stage');
