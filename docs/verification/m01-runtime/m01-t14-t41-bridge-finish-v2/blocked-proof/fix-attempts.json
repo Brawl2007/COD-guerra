@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "taskId": "M01-T14-T41-BRIDGE-FINISH-V2",
+  "maxFixAttempts": 3,
+  "fixAttempts": 3,
+  "maxReviewRejections": 2,
+  "reviewRejections": 0,
+  "fixes": [
+    {
+      "attempt": 1,
+      "stage": "T14 local meaningful Node kit gate",
+      "failure": "Timber ORM roughness constant214; initial shell continued and earlier PASS report was corrected after retained log inspection.",
+      "correction": "New sidecar generator only: timber grain-dependent roughness/AO, regenerate authored outputs, retain assertions and rerun exactcheck/Node/viewer before T41.",
+      "status": "PASS",
+      "evidence": [
+        "runtime/t14-fix1-check.log",
+        "runtime/t14-fix1-node.log",
+        "runtime/t14-fix1-browser.log",
+        "runtime/t14-fix1-viewer"
+      ]
+    },
+    {
+      "attempt": 2,
+      "stage": "T41 new browser harness parser",
+      "failure": "Unquoted camera key04 rejected as legacy octal literal in ESM; no application/frame executed.",
+      "correction": "Quote camera identifiers in new harness only; retain assertions and realclock/pointerlock flow; run syntax check then identical production browser.",
+      "evidence": [
+        "runtime/t41-first-browser.log",
+        "runtime/t41-browser-syntax-rerun.log"
+      ],
+      "status": "PASS_SYNTAX_BROWSER_NEW_FAILURE"
+    },
+    {
+      "attempt": 3,
+      "stage": "T41 stable production fixture and complete acceptance coverage",
+      "failure": "Actual GPU rerun pause assertion failed after implementation source edit during Vite smoke triggered same-URL HMR reload; new menu Game satisfied clock0 without restored pause. Existing fixture lacked stopImmediatePropagation and complete frozen state/contract coverage. Raw current-0430-12 PNG additionally shows black painted truss and excessive wet-road specular: authored painted ORM metalness .68 vs borrowed paint dielectric .15; road borrowed terrain shader consumes unrelated terrain maps/multiplier.",
+      "correction": "Freeze source during GPU run; use production preview4190, genuine capture-phase pointerlock acquisition/exit with propagation stop, exact full loaded snapshot/checkpoint/events and visible actual pause. Complete bounded initial six-view comparison/control, far/destruction/Medium, paused late/fail, four restore/warm reload and production-order CPU obligations without weaker assertions or clock mocks. Include verified painted metalness .12 and bridge-road standard-specific shader mapping only, keep other T31/contact hooks/cache metadata and borrowed terrain materials unchanged; reprove deterministic T14 generator/Node/viewer before final production execution.",
+      "status": "FAIL_VERIFICATION",
+      "evidence": [
+        "runtime/t41-browser-syntax-rerun.log",
+        "test-results/m01-bridge-finish-runtime--4287c-te06-10-\u00d7-editorial04-12-13/trace.zip",
+        "runtime/current-browser/current-0430-12.png",
+        "runtime/source-normal-ci-job-mcp.log",
+        "runtime/t41-fix3-resume-current-browser.log",
+        "runtime/fix3-resume-pause-trace-summary.json",
+        "runtime/fix3-resume-failure-artifacts"
+      ],
+      "newFailures": [
+        "Normal exactsourceCI685/686: impostor manifest author absent",
+        "Actual current browser case1: real pause DOM arrived after5sec fixture deadline (postfailure DOM visible), matrix incomplete",
+        "Actual current browser case2: raw beforecamera stale after300ms; after10sec actualnewcamera, stationarity compared different views"
+      ],
+      "passedEvidence": [
+        "New meaningfulNode9/9",
+        "Originalauthority552",
+        "ProductionT14viewer2/2",
+        "Untouchedbasephase1/1+9captures",
+        "Currentlate+explicitall503fallbackPASS",
+        "Currentchurn+4realcheckpointrestores+warmreload+togglecontrolsPASS"
+      ]
+    }
+  ],
+  "environmentRepairs": [
+    {
+      "failure": "Missing Playwright chromium_headless_shell-1208",
+      "classification": "Environment-only; existing /usr/bin/chromium used; no product correction count."
+    }
+  ],
+  "pendingApproval": {
+    "request": "Increase maxFixAttempts3\u21924 for alreadyreviewable metadata correction and consolidated exact-frame diagnostic repairs",
+    "status": "PENDING_USER_RESPONSE",
+    "notApplied": true
+  }
+}

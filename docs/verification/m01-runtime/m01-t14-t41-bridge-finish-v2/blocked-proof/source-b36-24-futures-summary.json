@@ -1,0 +1,18 @@
+{
+  "source": "b36ad7470ce977deeecab1ae193e51592d4aaf72",
+  "base": "8a0c3622f5375f2c5b5e847db71f4f6e8352ae39",
+  "routes": 24,
+  "ticks": 490051,
+  "checkpoints": 120,
+  "processExitCodes": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "sourceHashesSame": true,
+  "allFinalStatesEqual": true,
+  "allBackupsEqual": true,
+  "allComplete": true,
+  "allBridgeReadyAndActive": true
+}

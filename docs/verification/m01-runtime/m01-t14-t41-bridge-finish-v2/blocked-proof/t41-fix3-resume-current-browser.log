@@ -1,0 +1,759 @@
+
+Running 4 tests using 1 worker
+
+[1A[2K(node:3353) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:3353) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/4] tests/browser/m01-bridge-finish-runtime.spec.js:32:1 › exact constructor04:30 and genuine real-route06:10 × editorial04/12/13 plus unaffected control
+[1A[2K  1) tests/browser/m01-bridge-finish-runtime.spec.js:32:1 › exact constructor04:30 and genuine real-route06:10 × editorial04/12/13 plus unaffected control 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator:  locator('#pause')
+    Expected: visible
+    Received: hidden
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('#pause')[22m
+    [2m    2 × locator resolved to <section id="pause" class="overlay centered hidden">…</section>[22m
+    [2m      - unexpected value "hidden"[22m
+
+
+      11 | async function frozenContinue(page,selector='#continue'){
+      12 |  await page.evaluate(()=>{const hold=e=>{if(document.pointerLockElement?.id==='game'){document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();document.exitPointerLock();}};document.addEventListener('pointerlockchange',hold,true);});
+    > 13 |  await page.locator(selector).click();await expect(page.locator('#pause')).toBeVisible();await page.waitForFunction(()=>window.gameDiagnostics().paused&&document.pointerLockElement===null);
+         |                                                                            ^
+      14 | }
+      15 | async function settled(page,resident=true){await page.waitForFunction(({baseline,resident})=>{const d=window.gameDiagnostics?.();return d?.paused&&d.m01.models.length===9&&d.m01.wagons.loaded.length===6&&d.m01.damageDecals.atlasReady&&d.m01.fieldStructures.ready&&d.m01.environmentProps.runtime.ready&&d.m01.demolition.clock===d.clock&&(baseline||!resident||['ready','partial','failed'].includes(d.m01.bridgeFinish.status));},{baseline,resident},{timeout:180000});if(resident)await page.waitForLoadState('networkidle',{timeout:120000});}
+      16 | async function open(browser,input,{quality='high',intercept,resident=true}={}){
+        at frozenContinue (/workspace/COD-guerra/tests/browser/m01-bridge-finish-runtime.spec.js:13:76)
+        at open (/workspace/COD-guerra/tests/browser/m01-bridge-finish-runtime.spec.js:19:413)
+        at /workspace/COD-guerra/tests/browser/m01-bridge-finish-runtime.spec.js:34:129
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-bridge-finish-runtime--d010d--13-plus-unaffected-control/test-failed-2.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-bridge-finish-runtime--d010d--13-plus-unaffected-control/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-bridge-finish-runtime--d010d--13-plus-unaffected-control/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-bridge-finish-runtime--d010d--13-plus-unaffected-control/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:3604) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:3604) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[2/4] tests/browser/m01-bridge-finish-runtime.spec.js:38:2 › native actual far sweep, stationary ten seconds, damage fallback and intact near return for all presets
+[1A[2K  2) tests/browser/m01-bridge-finish-runtime.spec.js:38:2 › native actual far sweep, stationary ten seconds, damage fallback and intact near return for all presets 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 118[39m
+    [31m+ Received  + 118[39m
+
+    [33m@@ -6,531 +6,531 @@[39m
+    [2m      "mediumExit": 388,[22m
+    [2m    },[22m
+    [2m    "parts": Object {[22m
+    [2m      "gate_rail_left": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1307.6017130609764,[39m
+    [31m+       "distance": 1886.728554933115,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "gate_rail_right": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1307.6017130609764,[39m
+    [31m+       "distance": 1886.728554933115,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "gate_road_left": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1307.6017130609764,[39m
+    [31m+       "distance": 1886.728554933115,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "gate_road_right": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1307.6017130609764,[39m
+    [31m+       "distance": 1886.728554933115,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "portal_lisewo_1912": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1307.6017130609764,[39m
+    [31m+       "distance": 1886.728554933115,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_portal_old_east": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1056.1297079431106,[39m
+    [31m+       "distance": 1650.6430383338488,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_portal_old_east_rubble": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1056.1297079431106,[39m
+    [31m+       "distance": 1650.6430383338488,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": false,[22m
+    [2m      },[22m
+    [2m      "rail_portal_west": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 371.62475697940255,[39m
+    [31m+       "distance": 1028.289842408258,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 0,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_span_01": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 380.08420119757676,[39m
+    [32m-       "impostor": false,[39m
+    [32m-       "level": 0,[39m
+    [31m+       "distance": 1037.3968189656262,[39m
+    [31m+       "impostor": true,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_span_01_collapsed": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 380.4202537636917,[39m
+    [31m+       "distance": 1037.5709802289657,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 0,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": false,[22m
+    [2m      },[22m
+    [2m      "rail_span_02": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 471.02451103949994,[39m
+    [32m-       "impostor": false,[39m
+    [32m-       "level": 1,[39m
+    [31m+       "distance": 1125.826989372701,[39m
+    [31m+       "impostor": true,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_span_02_collapsed": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 471.2084708187932,[39m
+    [31m+       "distance": 1125.8518157395004,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": false,[22m
+    [2m      },[22m
+    [2m      "rail_span_03": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 575.8480702407537,[39m
+    [32m-       "impostor": false,[39m
+    [32m-       "level": 1,[39m
+    [31m+       "distance": 1220.2630699976132,[39m
+    [31m+       "impostor": true,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_span_04": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 690.4752059270485,[39m
+    [32m-       "impostor": false,[39m
+    [32m-       "level": 1,[39m
+    [31m+       "distance": 1321.8923140710062,[39m
+    [31m+       "impostor": true,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_span_05": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 809.7717270935063,[39m
+    [31m+       "distance": 1428.0463612922376,[39m
+    [2m        "impostor": true,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_span_06": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 932.1036476701505,[39m
+    [31m+       "distance": 1537.9682213882054,[39m
+    [2m        "impostor": true,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_span_06_collapsed": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 932.1487961772651,[39m
+    [31m+       "distance": 1538.0225281560122,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": false,[22m
+    [2m      },[22m
+    [2m      "rail_span_07": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1057.2789414340948,[39m
+    [31m+       "distance": 1651.6927680413207,[39m
+    [2m        "impostor": true,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_span_07_collapsed": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1057.2592748146333,[39m
+    [31m+       "distance": 1651.657109386495,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": false,[22m
+    [2m      },[22m
+    [2m      "rail_span_08": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1139.0457804671416,[39m
+    [31m+       "distance": 1726.635459499196,[39m
+    [2m        "impostor": true,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_span_09": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1219.040708918287,[39m
+    [31m+       "distance": 1800.4195094477286,[39m
+    [2m        "impostor": true,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_support_00": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 373.93817670839655,[39m
+    [31m+       "distance": 1030.8074504969393,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 0,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_support_00_damaged": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 373.93817670839655,[39m
+    [31m+       "distance": 1030.8074504969393,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 0,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": false,[22m
+    [2m      },[22m
+    [2m      "rail_support_01": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 470.1087640110531,[39m
+    [31m+       "distance": 1124.9830265386229,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_support_01_rubble": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 470.1087640110531,[39m
+    [31m+       "distance": 1124.9830265386229,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": false,[22m
+    [2m      },[22m
+    [2m      "rail_support_02": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 574.8294007790485,[39m
+    [31m+       "distance": 1219.3572241144102,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_support_03": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 689.3980635307878,[39m
+    [31m+       "distance": 1320.937246806221,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_support_04": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 808.6596873840072,[39m
+    [31m+       "distance": 1427.052518304775,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_support_05": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 930.9693926225502,[39m
+    [31m+       "distance": 1536.943489527185,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_support_06": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1056.1297079431106,[39m
+    [31m+       "distance": 1650.6430383338488,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_support_06_rubble": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1056.1297079431106,[39m
+    [31m+       "distance": 1650.6430383338488,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": false,[22m
+    [2m      },[22m
+    [2m      "rail_support_07": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1137.889383903374,[39m
+    [31m+       "distance": 1725.572139900271,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_support_08": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1217.8786844345375,[39m
+    [31m+       "distance": 1799.3445723373832,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "rail_support_09": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1302.7901749706282,[39m
+    [31m+       "distance": 1878.122637103339,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_portal_old_east": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1081.3093960564663,[39m
+    [31m+       "distance": 1682.2515418331468,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_portal_old_east_rubble": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1081.3093960564663,[39m
+    [31m+       "distance": 1682.2515418331468,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": false,[22m
+    [2m      },[22m
+    [2m      "road_portal_west": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 404.99995061728094,[39m
+    [31m+       "distance": 1059.7075068149702,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_span_01": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 411.7295350105455,[39m
+    [32m-       "impostor": false,[39m
+    [32m-       "level": 1,[39m
+    [31m+       "distance": 1067.3735288079802,[39m
+    [31m+       "impostor": true,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_span_01_collapsed": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 412.04826219672424,[39m
+    [31m+       "distance": 1067.5459610182902,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": false,[22m
+    [2m      },[22m
+    [2m      "road_span_02": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 497.77915786019,[39m
+    [32m-       "impostor": false,[39m
+    [32m-       "level": 1,[39m
+    [31m+       "distance": 1154.5936124888271,[39m
+    [31m+       "impostor": true,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_span_02_collapsed": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 497.94952667247446,[39m
+    [31m+       "distance": 1154.6163817908205,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": false,[22m
+    [2m      },[22m
+    [2m      "road_span_03": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 598.5032080114524,[39m
+    [32m-       "impostor": false,[39m
+    [32m-       "level": 1,[39m
+    [31m+       "distance": 1247.370197655852,[39m
+    [31m+       "impostor": true,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_span_04": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 708.82162071991,[39m
+    [32m-       "impostor": false,[39m
+    [32m-       "level": 1,[39m
+    [31m+       "distance": 1346.32032221162,[39m
+    [31m+       "impostor": true,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_span_05": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 825.6211298168187,[39m
+    [31m+       "distance": 1450.8330055523277,[39m
+    [2m        "impostor": true,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_span_06": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 945.7192025120354,[39m
+    [31m+       "distance": 1558.9807214972225,[39m
+    [2m        "impostor": true,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_span_06_collapsed": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 945.7637831423953,[39m
+    [31m+       "distance": 1559.0336172828406,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": false,[22m
+    [2m      },[22m
+    [2m      "road_span_07": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1082.447084157004,[39m
+    [31m+       "distance": 1683.2913265385764,[39m
+    [2m        "impostor": true,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_span_07_collapsed": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1082.4180009442564,[39m
+    [31m+       "distance": 1683.2478567458656,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": false,[22m
+    [2m      },[22m
+    [2m      "road_span_08": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1150.4628807571323,[39m
+    [31m+       "distance": 1745.6162350299105,[39m
+    [2m        "impostor": true,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_span_09": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1229.914078299781,[39m
+    [31m+       "distance": 1818.8123157709265,[39m
+    [2m        "impostor": true,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_support_00": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 408.41155713324275,[39m
+    [31m+       "distance": 1063.6210603405707,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_support_00_damaged": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 408.41155713324275,[39m
+    [31m+       "distance": 1063.6210603405707,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": false,[22m
+    [2m      },[22m
+    [2m      "road_support_01": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 496.9127186941385,[39m
+    [31m+       "distance": 1153.7706921221393,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_support_01_rubble": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 496.9127186941385,[39m
+    [31m+       "distance": 1153.7706921221393,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": false,[22m
+    [2m      },[22m
+    [2m      "road_support_02": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 597.5217569260553,[39m
+    [31m+       "distance": 1246.4833773460439,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_support_03": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 707.7727389494455,[39m
+    [31m+       "distance": 1345.3827745292417,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_support_04": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 824.5304663867795,[39m
+    [31m+       "distance": 1449.8547823833944,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_support_05": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 944.6015509197516,[39m
+    [31m+       "distance": 1557.9699644088134,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_support_06": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1081.3093960564663,[39m
+    [31m+       "distance": 1682.2515418331468,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_support_06_rubble": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1081.3093960564663,[39m
+    [31m+       "distance": 1682.2515418331468,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": false,[22m
+    [2m      },[22m
+    [2m      "road_support_07": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1149.317867258662,[39m
+    [31m+       "distance": 1744.5644155490504,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_support_08": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1228.7620436846182,[39m
+    [31m+       "distance": 1817.7480573500827,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_support_09": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 1312.6038587479466,[39m
+    [31m+       "distance": 1895.4167905766794,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_tower_01_n": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 492.79903611918724,[39m
+    [31m+       "distance": 1149.4187444095385,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_tower_01_n_rubble": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 492.77809407480765,[39m
+    [31m+       "distance": 1149.409765923363,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": false,[22m
+    [2m      },[22m
+    [2m      "road_tower_01_s": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 501.10566749938084,[39m
+    [31m+       "distance": 1158.1551925368206,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_tower_01_s_rubble": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 501.08507261741494,[39m
+    [31m+       "distance": 1158.1462817796378,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": false,[22m
+    [2m      },[22m
+    [2m      "road_tower_02_n": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 594.1051169616367,[39m
+    [31m+       "distance": 1242.4562165323975,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_tower_02_s": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 601.0132194885567,[39m
+    [31m+       "distance": 1250.5428621202873,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_tower_03_n": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 704.8906936539878,[39m
+    [31m+       "distance": 1341.6525071716596,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_tower_03_s": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 710.7227940624953,[39m
+    [31m+       "distance": 1349.1447105481311,[39m
+    [2m        "impostor": false,[22m
+    [32m-       "level": 1,[39m
+    [31m+       "level": 2,[39m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_tower_04_n": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 822.0578629269354,[39m
+    [31m+       "distance": 1446.3939746832466,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_tower_04_s": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 827.0641631699442,[39m
+    [31m+       "distance": 1453.3463214251449,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_tower_05_n": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 942.4440195576606,[39m
+    [31m+       "distance": 1554.7498351824963,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m      "road_tower_05_s": Object {[22m
+    [2m        "damaged": false,[22m
+    [32m-       "distance": 946.8139891235237,[39m
+    [31m+       "distance": 1561.2197314920152,[39m
+    [2m        "impostor": false,[22m
+    [2m        "level": 2,[22m
+    [2m        "visible": true,[22m
+    [2m      },[22m
+    [2m    },[22m
+    [32m-   "transitions": 309,[39m
+    [31m+   "transitions": 343,[39m
+    [2m  }[22m
+
+      39 |   test.setTimeout(900000);const input=save(new M01Simulation(19390901).snapshot(),cameras[0][1]),opened=await open(browser,input),{page}=opened,samples=[];
+      40 |   for(const q of ['low','medium','high']){await quality(page,q);for(const distance of [760,820,840,810,805,790,770,380,420,390,380]){const before=(await actual(page)).diagnostics.m01.renderedFrames;await page.evaluate(distance=>window.m01BridgeFinishDebug.setCamera({position:[10.4-.6*distance,8,-.8*distance],target:[80,5,0]}),distance);await page.waitForFunction(n=>window.gameDiagnostics().m01.renderedFrames>n,before);const d=(await actual(page)).diagnostics;budget(d);samples.push({q,requestedDistance:distance,actualCamera:d.m01.bridgeCamera,owner:d.m01.bridgeFinish});const p=d.m01.bridgeFinish.lod.parts.rail_span_01;expect(p.distance).toBeGreaterThan(distance);if(distance===840){expect(p.impostor).toBe(true);expect(d.m01.bridgeFinish.native.impostor.main.calls).toBeGreaterThan(0);await capture(page,`far-${q}`,input,opened);}}}
+    > 41 |   await page.evaluate(()=>window.m01BridgeFinishDebug.setCamera({position:[-650,8,-800],target:[100,6,0]}));await page.waitForTimeout(300);const before=await capture(page,'far-stationary-before',input,opened);await page.waitForTimeout(10000);const after=await capture(page,'far-stationary-after',input,opened);expect(after.state).toEqual(before.state);expect(after.diagnostics.m01.bridgeFinish.lod).toEqual(before.diagnostics.m01.bridgeFinish.lod);expect(pixelDelta(pixels('far-stationary-before'),pixels('far-stationary-after')).pixels).toBe(0);
+         |                                                                                                                                                                                                                                                                                                                                                                                                                ^
+      42 |   await page.evaluate(()=>window.m01BridgeFinishDebug.setEnabled(false));await page.waitForTimeout(300);const fallback=await capture(page,'far-original-lod2-fallback',input,opened);expect(fallback.diagnostics.m01.bridgeFinish.native.impostor.main.calls).toBe(0);await page.evaluate(()=>window.m01BridgeFinishDebug.setEnabled(true));await page.waitForTimeout(300);await capture(page,'far-enabled-again',input,opened);await page.evaluate(()=>window.m01BridgeFinishDebug.setCamera(null));await page.waitForTimeout(300);const near=await capture(page,'far-return-near',input,opened);expect(near.diagnostics.m01.bridgeFinish.lod.parts.rail_span_01.impostor).toBe(false);clean(opened);await page.close();
+      43 |   const east=route(19390901,{support:true}).combatSnapshots.eastDemolitionOutside,damageInput=save(east,cameras[0][1]),destroyed=await open(browser,damageInput);await destroyed.page.evaluate(()=>window.m01BridgeFinishDebug.setCamera({position:[-650,8,-800],target:[793.8,6,0]}));await destroyed.page.waitForTimeout(300);const far=await capture(destroyed.page,'genuine-east-destroyed-far',damageInput,destroyed);expect(far.diagnostics.m01.bridgeFinish.impostors.activeParts).toBe(0);expect(far.diagnostics.m01.parts.rail_span_06.visible).toBe(false);await destroyed.page.evaluate(()=>window.m01BridgeFinishDebug.setCamera(null));await destroyed.page.waitForTimeout(300);await capture(destroyed.page,'genuine-east-destroyed-return',damageInput,destroyed);clean(destroyed);await destroyed.page.close();fs.writeFileSync(`${OUT}/far-native-sweep.json`,JSON.stringify({samples,fallback,near,far},null,2));
+      44 |  });
+        at /workspace/COD-guerra/tests/browser/m01-bridge-finish-runtime.spec.js:41:400
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m01-bridge-finish-runtime--5955f-near-return-for-all-presets/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m01-bridge-finish-runtime--5955f-near-return-for-all-presets/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-bridge-finish-runtime--5955f-near-return-for-all-presets/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-bridge-finish-runtime--5955f-near-return-for-all-presets/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:3941) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:3941) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[3/4] tests/browser/m01-bridge-finish-runtime.spec.js:45:2 › actual delayed material readiness redraws in pause, explicit optional failure leaves usable originals
+[1A[2K[4/4] tests/browser/m01-bridge-finish-runtime.spec.js:49:2 › Low/Medium/High churn, four actual checkpoint restores, equally warm reload and material toggle control pixels
+[1A[2K  2 failed
+    tests/browser/m01-bridge-finish-runtime.spec.js:32:1 › exact constructor04:30 and genuine real-route06:10 × editorial04/12/13 plus unaffected control 
+    tests/browser/m01-bridge-finish-runtime.spec.js:38:2 › native actual far sweep, stationary ten seconds, damage fallback and intact near return for all presets 
+  2 passed (9.1m)

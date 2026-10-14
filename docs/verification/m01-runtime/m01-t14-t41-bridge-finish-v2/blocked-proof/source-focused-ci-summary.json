@@ -1,0 +1,37 @@
+{
+  "sourceHead": "b36ad7470ce977deeecab1ae193e51592d4aaf72",
+  "runId": 38528756490,
+  "jobId": 115735279228,
+  "conclusion": "failure",
+  "viewer": "2/2 PASS",
+  "baseline": "1/1 PASS:9 actualphase/controls/Low captures before deleted by next Playwright invocation",
+  "current": "3/4 PASS,1/4 FAIL (far camera sampled stale380 when requested760)",
+  "rawLog": "runtime/source-focused-ci-job.log",
+  "rawFailures": [
+    "2026-10-14T07:45:29.9110971Z     Expected: > \u001b[32m760\u001b[39m",
+    "2026-10-14T07:45:29.9111837Z     Received:   \u001b[31m380.08420119757676\u001b[39m",
+    "2026-10-14T07:50:19.9406996Z \u001b[1A\u001b[2K  1 failed",
+    "2026-10-14T07:50:19.9409010Z   3 passed (12.8m)"
+  ],
+  "artifactIntegrity": {
+    "artifactId": 11877997443,
+    "sourceHead": "b36ad7470ce977deeecab1ae193e51592d4aaf72",
+    "zipBytes": 44660567,
+    "zipSHA256": "1c3eb859e1e6d262ebd10807b76a00442a6366556dedcf3a6b5dcca1a39e344f",
+    "apiDigestMatch": true,
+    "zipCRC": "PASS",
+    "entries": 59,
+    "extracted": ".agent/runs/M01-T14-T41-20261013/runtime/source-focused-ci-artifact"
+  },
+  "artifactMissing": [
+    "base captures",
+    "viewer captures",
+    "source.json",
+    "preview logs"
+  ],
+  "whyMissing": "Playwright default outputDir test-results cleanup before each invocation deletes evidence siblings placed under same root",
+  "phaseComparison": "NOT RUN in CI; manual attempt cannot recover missing base PNGs; cross-GPU pixel comparison not accepted",
+  "futureBatch": "NOT RUN in focusedCI; fresh exactsource local24 future complete separately",
+  "coupledRegressions": "NOT RUN because currentbrowser failed",
+  "acceptance": "FAIL"
+}

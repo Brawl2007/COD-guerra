@@ -1,0 +1,4 @@
+import {test,expect} from '@playwright/test';
+import {mkdirSync,writeFileSync} from 'node:fs';
+const out=process.env.M01_BRIDGE_EVIDENCE??'test-results/bridge-finish-v2/material-viewer';
+for(const tier of ['high','low'])test(`all original bridge families ${tier}`,async({page})=>{const errors=[];page.on('pageerror',e=>errors.push(String(e)));await page.goto(`tools/assets/m01-bridges/materials/viewer.html?tier=${tier}`);await page.waitForFunction(()=>window.bridgeMaterialViewer?.ready);const d=await page.evaluate(()=>window.bridgeMaterialViewer.diagnostics);expect(d.families).toHaveLength(8);expect(d.textures).toBe(24);expect(d.calls).toBe(8);expect(errors).toEqual([]);mkdirSync(out,{recursive:true});await page.screenshot({path:`${out}/all-families-${tier}.png`});writeFileSync(`${out}/all-families-${tier}.json`,JSON.stringify({diagnostics:d,errors},null,2));});

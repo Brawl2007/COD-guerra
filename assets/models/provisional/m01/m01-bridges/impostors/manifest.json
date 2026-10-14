@@ -1,0 +1,944 @@
+{
+  "version": 1,
+  "family": "bridge-truss-geometry-projection",
+  "license": "CC0-1.0 for new rasterisation code; raster silhouettes derived from unchanged provisional meshes, original mesh licence remains unchosen",
+  "source": "tools/assets/m01-bridges/impostors/generate.mjs",
+  "sources": [
+    {
+      "file": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+      "sha256": "6bc61f88caba3a5efb8a5435081413d629ce0547b1b22d13b3f497538fd270dd"
+    },
+    {
+      "file": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+      "sha256": "e022cdd1454bca6dc908d31c542ab05f864096bef0ea40c39d5ae27ef3913404"
+    }
+  ],
+  "method": "Orthographic projected actual LOD0 steel_painted indexed triangles; conservative 0.6-pixel edge coverage. Side XY and top XZ. No hand-painted intact bridge replacement.",
+  "units": "metres, node-local bounds; existing node matrix supplies world placement",
+  "channels": "sRGB RGB steel; alpha geometry coverage",
+  "parts": [
+    {
+      "id": "rail_span_01",
+      "source": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+      "sourceTriangles": 2628,
+      "bounds": {
+        "min": [
+          -0.20000000298023224,
+          -6.299985885620117,
+          -5.150000095367432
+        ],
+        "max": [
+          129.5,
+          10.299932479858398,
+          5.150000095367432
+        ]
+      },
+      "views": {
+        "high-side": {
+          "file": "rail_span_01.high.side.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "dd415503c743215b9f0a3cbd5bee41ab32904c6bb1cca95030c81beb6b702815",
+          "bytes": 4073
+        },
+        "high-top": {
+          "file": "rail_span_01.high.top.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "65323ea2feaaf86065f253e6f7a73d3068de9386a39607ca39014a814fac2ace",
+          "bytes": 1458
+        },
+        "low-side": {
+          "file": "rail_span_01.low.side.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "fe5fa46d39d9ba10f4c78b9047677a44f497f507d95a5a5f558424e6c3379ea8",
+          "bytes": 667
+        },
+        "low-top": {
+          "file": "rail_span_01.low.top.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "3937dcdb23191c9b07788e904840cc8411d27be4f399385b375d5331eb923ca8",
+          "bytes": 323
+        }
+      }
+    },
+    {
+      "id": "rail_span_02",
+      "source": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+      "sourceTriangles": 2628,
+      "bounds": {
+        "min": [
+          -0.20000000298023224,
+          -6.299985408782959,
+          -5.150000095367432
+        ],
+        "max": [
+          127.0999984741211,
+          10.29992961883545,
+          5.150000095367432
+        ]
+      },
+      "views": {
+        "high-side": {
+          "file": "rail_span_02.high.side.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "35d3294c1a889c9c87a37a44e801187626f8f28264c9840a19664061b5306d51",
+          "bytes": 4080
+        },
+        "high-top": {
+          "file": "rail_span_02.high.top.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "10255b1f3d5bfd0ed8beeafbda1e5803c5f66dfaac8251d5d0b9727cd16cc261",
+          "bytes": 1481
+        },
+        "low-side": {
+          "file": "rail_span_02.low.side.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "fe5fa46d39d9ba10f4c78b9047677a44f497f507d95a5a5f558424e6c3379ea8",
+          "bytes": 667
+        },
+        "low-top": {
+          "file": "rail_span_02.low.top.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "3937dcdb23191c9b07788e904840cc8411d27be4f399385b375d5331eb923ca8",
+          "bytes": 323
+        }
+      }
+    },
+    {
+      "id": "rail_span_03",
+      "source": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+      "sourceTriangles": 2628,
+      "bounds": {
+        "min": [
+          -0.20000000298023224,
+          -6.299985885620117,
+          -5.150000095367432
+        ],
+        "max": [
+          128.6999969482422,
+          10.299931526184082,
+          5.150000095367432
+        ]
+      },
+      "views": {
+        "high-side": {
+          "file": "rail_span_03.high.side.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "8fd229945ab904284e0aeb77fa0e3b827d16456267a8caf9d69dc33febf0a95b",
+          "bytes": 4079
+        },
+        "high-top": {
+          "file": "rail_span_03.high.top.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "65323ea2feaaf86065f253e6f7a73d3068de9386a39607ca39014a814fac2ace",
+          "bytes": 1458
+        },
+        "low-side": {
+          "file": "rail_span_03.low.side.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "fe5fa46d39d9ba10f4c78b9047677a44f497f507d95a5a5f558424e6c3379ea8",
+          "bytes": 667
+        },
+        "low-top": {
+          "file": "rail_span_03.low.top.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "3937dcdb23191c9b07788e904840cc8411d27be4f399385b375d5331eb923ca8",
+          "bytes": 323
+        }
+      }
+    },
+    {
+      "id": "rail_span_04",
+      "source": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+      "sourceTriangles": 2628,
+      "bounds": {
+        "min": [
+          -0.20000000298023224,
+          -6.299985885620117,
+          -5.150000095367432
+        ],
+        "max": [
+          128.39999389648438,
+          10.299930572509766,
+          5.150000095367432
+        ]
+      },
+      "views": {
+        "high-side": {
+          "file": "rail_span_04.high.side.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "f8fdb05048a7801ebd4aa5603b7aad239812bb235e018c616502d03881c4e083",
+          "bytes": 4065
+        },
+        "high-top": {
+          "file": "rail_span_04.high.top.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "2e4a36581a8c24c959f7c47e9b33778ef2c15bbd5c2460000c541a05b94c2b62",
+          "bytes": 1467
+        },
+        "low-side": {
+          "file": "rail_span_04.low.side.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "fe5fa46d39d9ba10f4c78b9047677a44f497f507d95a5a5f558424e6c3379ea8",
+          "bytes": 667
+        },
+        "low-top": {
+          "file": "rail_span_04.low.top.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "3937dcdb23191c9b07788e904840cc8411d27be4f399385b375d5331eb923ca8",
+          "bytes": 323
+        }
+      }
+    },
+    {
+      "id": "rail_span_05",
+      "source": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+      "sourceTriangles": 2628,
+      "bounds": {
+        "min": [
+          -0.20000000298023224,
+          -6.299985885620117,
+          -5.150000095367432
+        ],
+        "max": [
+          128.39999389648438,
+          10.299930572509766,
+          5.150000095367432
+        ]
+      },
+      "views": {
+        "high-side": {
+          "file": "rail_span_05.high.side.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "f8fdb05048a7801ebd4aa5603b7aad239812bb235e018c616502d03881c4e083",
+          "bytes": 4065
+        },
+        "high-top": {
+          "file": "rail_span_05.high.top.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "2e4a36581a8c24c959f7c47e9b33778ef2c15bbd5c2460000c541a05b94c2b62",
+          "bytes": 1467
+        },
+        "low-side": {
+          "file": "rail_span_05.low.side.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "fe5fa46d39d9ba10f4c78b9047677a44f497f507d95a5a5f558424e6c3379ea8",
+          "bytes": 667
+        },
+        "low-top": {
+          "file": "rail_span_05.low.top.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "3937dcdb23191c9b07788e904840cc8411d27be4f399385b375d5331eb923ca8",
+          "bytes": 323
+        }
+      }
+    },
+    {
+      "id": "rail_span_06",
+      "source": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+      "sourceTriangles": 2628,
+      "bounds": {
+        "min": [
+          -0.20000000298023224,
+          -6.299985885620117,
+          -5.150000095367432
+        ],
+        "max": [
+          129.3000030517578,
+          10.299931526184082,
+          5.150000095367432
+        ]
+      },
+      "views": {
+        "high-side": {
+          "file": "rail_span_06.high.side.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "dd415503c743215b9f0a3cbd5bee41ab32904c6bb1cca95030c81beb6b702815",
+          "bytes": 4073
+        },
+        "high-top": {
+          "file": "rail_span_06.high.top.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "65323ea2feaaf86065f253e6f7a73d3068de9386a39607ca39014a814fac2ace",
+          "bytes": 1458
+        },
+        "low-side": {
+          "file": "rail_span_06.low.side.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "fe5fa46d39d9ba10f4c78b9047677a44f497f507d95a5a5f558424e6c3379ea8",
+          "bytes": 667
+        },
+        "low-top": {
+          "file": "rail_span_06.low.top.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "3937dcdb23191c9b07788e904840cc8411d27be4f399385b375d5331eb923ca8",
+          "bytes": 323
+        }
+      }
+    },
+    {
+      "id": "rail_span_07",
+      "source": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+      "sourceTriangles": 792,
+      "bounds": {
+        "min": [
+          -0.22090165317058563,
+          -1.649999976158142,
+          -5.099999904632568
+        ],
+        "max": [
+          82.9208984375,
+          8.300000190734863,
+          5.099999904632568
+        ]
+      },
+      "views": {
+        "high-side": {
+          "file": "rail_span_07.high.side.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "a7a25e9061f62821d64690eacfca7818f4baf5f0643c6585bef9eae4e8b4e594",
+          "bytes": 1865
+        },
+        "high-top": {
+          "file": "rail_span_07.high.top.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "b4c584fb7d59fba7f8fe494ae95983f2c5d390a0d0d987a7a5271ac46286667d",
+          "bytes": 691
+        },
+        "low-side": {
+          "file": "rail_span_07.low.side.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "f6e720a52bd4c89cb9384f524c79230540b7f775deac27b7846799ee486b7810",
+          "bytes": 458
+        },
+        "low-top": {
+          "file": "rail_span_07.low.top.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "40e4fa99ca4b32c15e3ccb3fd6352f79be63b506cd7b8308c6b456b4dea6fb5d",
+          "bytes": 184
+        }
+      }
+    },
+    {
+      "id": "rail_span_08",
+      "source": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+      "sourceTriangles": 792,
+      "bounds": {
+        "min": [
+          -0.2237282544374466,
+          -1.649999976158142,
+          -5.099999904632568
+        ],
+        "max": [
+          80.62372589111328,
+          8.300000190734863,
+          5.099999904632568
+        ]
+      },
+      "views": {
+        "high-side": {
+          "file": "rail_span_08.high.side.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "02b296bb6e1a8dac38ba11743fa90fe88a11e9bf6b2c51071b1f30093e56c3da",
+          "bytes": 1779
+        },
+        "high-top": {
+          "file": "rail_span_08.high.top.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "b4c584fb7d59fba7f8fe494ae95983f2c5d390a0d0d987a7a5271ac46286667d",
+          "bytes": 691
+        },
+        "low-side": {
+          "file": "rail_span_08.low.side.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "6b883883fd0559abec733008f0e0232bff180553547d728aa043cf81378793a9",
+          "bytes": 458
+        },
+        "low-top": {
+          "file": "rail_span_08.low.top.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "40e4fa99ca4b32c15e3ccb3fd6352f79be63b506cd7b8308c6b456b4dea6fb5d",
+          "bytes": 184
+        }
+      }
+    },
+    {
+      "id": "rail_span_09",
+      "source": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+      "sourceTriangles": 792,
+      "bounds": {
+        "min": [
+          -0.22200441360473633,
+          -1.649999976158142,
+          -5.099999904632568
+        ],
+        "max": [
+          82.02200317382812,
+          8.300000190734863,
+          5.099999904632568
+        ]
+      },
+      "views": {
+        "high-side": {
+          "file": "rail_span_09.high.side.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "9d69ed5692c0beb049ea5660c506746d6916c3aa72369ce15f4631f4130de7ba",
+          "bytes": 1848
+        },
+        "high-top": {
+          "file": "rail_span_09.high.top.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "b4c584fb7d59fba7f8fe494ae95983f2c5d390a0d0d987a7a5271ac46286667d",
+          "bytes": 691
+        },
+        "low-side": {
+          "file": "rail_span_09.low.side.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "6b883883fd0559abec733008f0e0232bff180553547d728aa043cf81378793a9",
+          "bytes": 458
+        },
+        "low-top": {
+          "file": "rail_span_09.low.top.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "40e4fa99ca4b32c15e3ccb3fd6352f79be63b506cd7b8308c6b456b4dea6fb5d",
+          "bytes": 184
+        }
+      }
+    },
+    {
+      "id": "road_span_01",
+      "source": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+      "sourceTriangles": 5424,
+      "bounds": {
+        "min": [
+          -0.15000000596046448,
+          -0.9699999690055847,
+          -3.565000057220459
+        ],
+        "max": [
+          131.35000610351562,
+          7.78000020980835,
+          3.565000057220459
+        ]
+      },
+      "views": {
+        "high-side": {
+          "file": "road_span_01.high.side.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "8a20c236c67afb0fd797819cc0f88afc992a7f2bb5d9cb9a4b9413e30794bfc4",
+          "bytes": 4507
+        },
+        "high-top": {
+          "file": "road_span_01.high.top.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "d33b2d4bba070f6a98b968b8dac0ac97d19a77ef0be489cea2a5f35f71a2d54b",
+          "bytes": 1324
+        },
+        "low-side": {
+          "file": "road_span_01.low.side.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "899288fbe977fe1fce2e667a23246c80bd5976c4651f2647caf39f617a048ab7",
+          "bytes": 169
+        },
+        "low-top": {
+          "file": "road_span_01.low.top.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "bd137454580c6792bdb24bc34920e7a151521304b0cbad6a2bae6ac72fd14f1e",
+          "bytes": 365
+        }
+      }
+    },
+    {
+      "id": "road_span_02",
+      "source": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+      "sourceTriangles": 5328,
+      "bounds": {
+        "min": [
+          -0.15000000596046448,
+          -0.9699999690055847,
+          -3.565000057220459
+        ],
+        "max": [
+          127.75,
+          7.78000020980835,
+          3.565000057220459
+        ]
+      },
+      "views": {
+        "high-side": {
+          "file": "road_span_02.high.side.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "004a233852706ea2c186d0d42f11d27c07788467e7c78832d0e094d13a69ef9f",
+          "bytes": 4412
+        },
+        "high-top": {
+          "file": "road_span_02.high.top.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "464309206e0088910cd7f934629cd839d0949088c94cb90ed6e1d7768211dd94",
+          "bytes": 1322
+        },
+        "low-side": {
+          "file": "road_span_02.low.side.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "e85aa393b4c85611bbaff78deb5328c46849a11ee828ba3903ab731c436d1359",
+          "bytes": 187
+        },
+        "low-top": {
+          "file": "road_span_02.low.top.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "58bd3621eb8b291e9d587c6f4fb0e4fbe65f6ba174ef401d48c955101ff9ef4e",
+          "bytes": 353
+        }
+      }
+    },
+    {
+      "id": "road_span_03",
+      "source": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+      "sourceTriangles": 5328,
+      "bounds": {
+        "min": [
+          -0.15000000596046448,
+          -0.9699999690055847,
+          -3.565000057220459
+        ],
+        "max": [
+          127.75,
+          7.78000020980835,
+          3.565000057220459
+        ]
+      },
+      "views": {
+        "high-side": {
+          "file": "road_span_03.high.side.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "004a233852706ea2c186d0d42f11d27c07788467e7c78832d0e094d13a69ef9f",
+          "bytes": 4412
+        },
+        "high-top": {
+          "file": "road_span_03.high.top.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "464309206e0088910cd7f934629cd839d0949088c94cb90ed6e1d7768211dd94",
+          "bytes": 1322
+        },
+        "low-side": {
+          "file": "road_span_03.low.side.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "e85aa393b4c85611bbaff78deb5328c46849a11ee828ba3903ab731c436d1359",
+          "bytes": 187
+        },
+        "low-top": {
+          "file": "road_span_03.low.top.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "58bd3621eb8b291e9d587c6f4fb0e4fbe65f6ba174ef401d48c955101ff9ef4e",
+          "bytes": 353
+        }
+      }
+    },
+    {
+      "id": "road_span_04",
+      "source": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+      "sourceTriangles": 5328,
+      "bounds": {
+        "min": [
+          -0.15000000596046448,
+          -0.9699999690055847,
+          -3.565000057220459
+        ],
+        "max": [
+          128.5500030517578,
+          7.78000020980835,
+          3.565000057220459
+        ]
+      },
+      "views": {
+        "high-side": {
+          "file": "road_span_04.high.side.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "21dd5702350c338d728ba451505d9a6495d3ab06120c752717337ece72f6554d",
+          "bytes": 4436
+        },
+        "high-top": {
+          "file": "road_span_04.high.top.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "6741970ec20087f40ebe2824951a8c46ada7bb857362f73750f6d93f177851cd",
+          "bytes": 1334
+        },
+        "low-side": {
+          "file": "road_span_04.low.side.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "d735688351b4bd045c23a471162dcea0d336df16e223094e9c6262405a6c847f",
+          "bytes": 187
+        },
+        "low-top": {
+          "file": "road_span_04.low.top.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "58bd3621eb8b291e9d587c6f4fb0e4fbe65f6ba174ef401d48c955101ff9ef4e",
+          "bytes": 353
+        }
+      }
+    },
+    {
+      "id": "road_span_05",
+      "source": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+      "sourceTriangles": 5328,
+      "bounds": {
+        "min": [
+          -0.15000000596046448,
+          -0.9699999690055847,
+          -3.565000057220459
+        ],
+        "max": [
+          128.14999389648438,
+          7.78000020980835,
+          3.565000057220459
+        ]
+      },
+      "views": {
+        "high-side": {
+          "file": "road_span_05.high.side.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "65be6985cb0d4d4fbf4ed686e5f5c72ba3aabbc7afdbb4dc24f7760782c44cad",
+          "bytes": 4030
+        },
+        "high-top": {
+          "file": "road_span_05.high.top.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "561ea67b1003d28885906a5029b58a38e2743c07c019331cabb8335244bbe39d",
+          "bytes": 1332
+        },
+        "low-side": {
+          "file": "road_span_05.low.side.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "5ba5819f4086c59d7009827885ddc918e495515e2220148ffa642cc15b7a4450",
+          "bytes": 159
+        },
+        "low-top": {
+          "file": "road_span_05.low.top.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "58bd3621eb8b291e9d587c6f4fb0e4fbe65f6ba174ef401d48c955101ff9ef4e",
+          "bytes": 353
+        }
+      }
+    },
+    {
+      "id": "road_span_06",
+      "source": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+      "sourceTriangles": 5928,
+      "bounds": {
+        "min": [
+          -0.15000000596046448,
+          -0.9699999690055847,
+          -3.565000057220459
+        ],
+        "max": [
+          143.14999389648438,
+          7.78000020980835,
+          3.565000057220459
+        ]
+      },
+      "views": {
+        "high-side": {
+          "file": "road_span_06.high.side.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "eef82e3ac53fdd9dd8069b63e3f9faab0f86e54df774d65253c5c078c75e3dc0",
+          "bytes": 4437
+        },
+        "high-top": {
+          "file": "road_span_06.high.top.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "77a39baab9fc4a128a66ad17cae4ed057b2651bda231cdad100e7761ca91cf3e",
+          "bytes": 1981
+        },
+        "low-side": {
+          "file": "road_span_06.low.side.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "179aad9d67a29dfa4ac71ec8c51fcfdf47c681b9c298cd8ff530670ec0a8445e",
+          "bytes": 140
+        },
+        "low-top": {
+          "file": "road_span_06.low.top.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "59b4a85e749b3d44f2ea2e82b06ffdc3cc111e7bd912c978e9a3b3d945066898",
+          "bytes": 357
+        }
+      }
+    },
+    {
+      "id": "road_span_07",
+      "source": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+      "sourceTriangles": 744,
+      "bounds": {
+        "min": [
+          -0.23795409500598907,
+          -1.2999999523162842,
+          -3.515000104904175
+        ],
+        "max": [
+          69.33795166015625,
+          8.300000190734863,
+          3.515000104904175
+        ]
+      },
+      "views": {
+        "high-side": {
+          "file": "road_span_07.high.side.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "8d0d3b7df182566a29d7152520f5d12da2d15670fd621f2449a79baf16edf763",
+          "bytes": 1916
+        },
+        "high-top": {
+          "file": "road_span_07.high.top.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "b442f18647279190e9e28e08dd2393ec9d3b4701c62576489d8ae2f24026669f",
+          "bytes": 574
+        },
+        "low-side": {
+          "file": "road_span_07.low.side.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "d2a5ca050f47abe8658d167cec3c4a4c3487ea2312bb2c9a566a4db5d1984c47",
+          "bytes": 459
+        },
+        "low-top": {
+          "file": "road_span_07.low.top.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "819db46d54c77a8200f5a85190d26e1dbb5d6ac2750c65545d4e721f647aa893",
+          "bytes": 181
+        }
+      }
+    },
+    {
+      "id": "road_span_08",
+      "source": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+      "sourceTriangles": 744,
+      "bounds": {
+        "min": [
+          -0.22348161041736603,
+          -1.2999999523162842,
+          -3.515000104904175
+        ],
+        "max": [
+          80.82347869873047,
+          8.300000190734863,
+          3.515000104904175
+        ]
+      },
+      "views": {
+        "high-side": {
+          "file": "road_span_08.high.side.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "5746040843dc6e4756df62a829ab3dd84f79ac5b6543e4700c76c01599640b9d",
+          "bytes": 1784
+        },
+        "high-top": {
+          "file": "road_span_08.high.top.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "55617270d5362ab58c277bfb76cb891551c7c7792a4326c7b609431d8de60c25",
+          "bytes": 576
+        },
+        "low-side": {
+          "file": "road_span_08.low.side.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "002c6ed2713dc09398c90682d591fe85b759b85d2bbd6ad124ffc8b0b5563c22",
+          "bytes": 462
+        },
+        "low-top": {
+          "file": "road_span_08.low.top.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "15dee3bb97d6788f39f1a915ca0c17eab59aec47c49885ddf01fbec313905877",
+          "bytes": 165
+        }
+      }
+    },
+    {
+      "id": "road_span_09",
+      "source": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+      "sourceTriangles": 744,
+      "bounds": {
+        "min": [
+          -0.22249582409858704,
+          -1.2999999523162842,
+          -3.515000104904175
+        ],
+        "max": [
+          81.62249755859375,
+          8.300000190734863,
+          3.515000104904175
+        ]
+      },
+      "views": {
+        "high-side": {
+          "file": "road_span_09.high.side.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "72311066f70595bb011d0dd191626277d7e96e8a7bd8c8c372eaeaaaa134925d",
+          "bytes": 1837
+        },
+        "high-top": {
+          "file": "road_span_09.high.top.png",
+          "width": 512,
+          "height": 128,
+          "decodedBytes": 262144,
+          "sha256": "55617270d5362ab58c277bfb76cb891551c7c7792a4326c7b609431d8de60c25",
+          "bytes": 576
+        },
+        "low-side": {
+          "file": "road_span_09.low.side.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "002c6ed2713dc09398c90682d591fe85b759b85d2bbd6ad124ffc8b0b5563c22",
+          "bytes": 462
+        },
+        "low-top": {
+          "file": "road_span_09.low.top.png",
+          "width": 128,
+          "height": 32,
+          "decodedBytes": 16384,
+          "sha256": "15dee3bb97d6788f39f1a915ca0c17eab59aec47c49885ddf01fbec313905877",
+          "bytes": 165
+        }
+      }
+    }
+  ],
+  "budget": {
+    "highDecodedBytes": 9437184,
+    "lowDecodedBytes": 589824,
+    "mipmaps": "reported separately: full chain approximately decodedBytes/3"
+  }
+}
