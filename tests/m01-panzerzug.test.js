@@ -11,7 +11,7 @@ const integratedPresentation=new Set([
  // Simulation presentation additions are checked against immutable per-tick gameplay traces in m01-animation-contract.test.js.
  'src/game/m01-simulation.js',
  'src/core/audio.js','src/game/game.js','src/main.js','src/styles.css',
- 'src/render/m01-atmosphere.js','src/render/m01-characters.js','src/render/m01-environment.js','src/render/m01-surfaces.js',
+ 'src/render/m01-actor-pose.js','src/render/m01-atmosphere.js','src/render/m01-characters.js','src/render/m01-environment.js','src/render/m01-surfaces.js',
  'src/render/m01-train-wagons.js','src/render/m01-view.js','src/render/m01-viewmodel.js','src/render/three-renderer.js',
  // Ju 87 production closeout: the raid's presentation-only aircraft art was regenerated (path/events unchanged).
  ...[0,1,2].map(lod=>`assets/models/provisional/m01-aircraft/m01_ju87_b1_lod${lod}.glb`),'assets/models/provisional/m01-aircraft/manifest.json'
