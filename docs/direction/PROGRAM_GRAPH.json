@@ -1,7 +1,7 @@
 {
   "schema": "cod-guerra-program-graph/1",
   "updated": "2026-10-14",
-  "note": "Grafo do programa (planeamento versionado). Cada nó de tarefa, ao iniciar, gera um Task Contract e um TASK_GRAPH de execução em .agent/runs/<RUN_ID>/ (não versionado). Estados: OPEN | READY | BLOCKED_GATE | BLOCKED_HUMAN | IN_PROGRESS | DONE.",
+  "note": "Grafo do programa (planeamento versionado). Cada nó de tarefa, ao iniciar, gera um Task Contract e um TASK_GRAPH de execução em .agent/runs/<RUN_ID>/ (não versionado). Estados: OPEN | READY | BLOCKED_GATE | BLOCKED_HUMAN | IN_PROGRESS | DONE. Atualização 2026-10-14: só os pré-requisitos comprovados e T02-min/T03-lite/T25 foram reconciliados; os restantes estados históricos exigem revalidação no código/handoff.",
   "lanes": {
     "gate": "Portões externos ou humanos",
     "sim": "src/game + missions/m01-tczew/mission.json: sequencial (mesmo ficheiro m01-simulation.js); preservar hashes protegidos, A/B de futuros, saves",
@@ -14,7 +14,7 @@
       "id": "G-V7",
       "lane": "gate",
       "title": "V7 com CI browser integral verde e relatório de integração fechado",
-      "status": "BLOCKED_HUMAN",
+      "status": "DONE",
       "owner": "GPT Sol/Codex + utilizador fornece o HEAD validado",
       "depends_on": [],
       "acceptance": [
@@ -24,13 +24,14 @@
       "evidence": [
         "gh run view <id>",
         "PR #59 descrição final"
-      ]
+      ],
+      "resolution": "D10: V7 4c6f7be certified 84/84 (run37876099475), ancestor of tested code8387b56."
     },
     {
       "id": "BASE",
       "lane": "gate",
       "title": "Nova base de desenvolvimento: V7 validada + infra Capitão V3 (cherry-pick 2645f3f)",
-      "status": "BLOCKED_GATE",
+      "status": "DONE",
       "agent": "captain",
       "depends_on": [
         "G-V7"
@@ -42,8 +43,10 @@
       ],
       "evidence": [
         "git log",
-        "contagem npm test"
-      ]
+        "contagem npm test",
+        "docs/verification/m01-runtime/continuity-raid-integration-v1/baseline-node.log"
+      ],
+      "resolution": "Accepted stack T08/T12 at2d65dd0: CI38117931250 success, plus new deliveryCI38582392486."
     },
     {
       "id": "DOC-SYNC",
@@ -103,9 +106,11 @@
       ],
       "partial_delivery": {
         "id": "M01-T03-lite",
-        "status": "VERIFIED_LOCAL",
+        "status": "ACCEPTED",
         "evidence": "docs/verification/m01-runtime/continuity-raid-integration-v1/HANDOFF.md",
-        "remaining": "ephemeral grenade smoke"
+        "remaining": "ephemeral grenade smoke",
+        "ci_run": 38582392486,
+        "code_head": "8387b5627b3b5482370c0915f018776d563e31ec"
       }
     },
     {
@@ -138,9 +143,11 @@
       ],
       "partial_delivery": {
         "id": "M01-T02-min",
-        "status": "VERIFIED_LOCAL",
+        "status": "ACCEPTED",
         "evidence": "docs/verification/m01-runtime/continuity-raid-integration-v1/HANDOFF.md",
-        "remaining": "T02b other dialogues/preroll"
+        "remaining": "T02b other dialogues/preroll",
+        "ci_run": 38582392486,
+        "code_head": "8387b5627b3b5482370c0915f018776d563e31ec"
       }
     },
     {
@@ -225,11 +232,11 @@
       "lane": "sim",
       "priority": 7,
       "title": "RAID-0530-SCHEDULE",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
-        "M01-T03"
+        "M01-T03-lite"
       ],
-      "current_delivery": "Verified locally; complete final CI pending; T03-lite included in this delivery.",
+      "current_delivery": "Accepted: full final CI 38582392486 (694 Node, build, browser), code8387b56, PR63; T03-lite included.",
       "evidence": [
         "docs/verification/m01-runtime/continuity-raid-integration-v1/HANDOFF.md"
       ]
@@ -366,6 +373,19 @@
         "M01-T35"
       ],
       "note": "só depois do M01 em PRODUÇÃO (CAMPAIGN_PLAN §4)"
+    },
+    {
+      "id": "M01-T03-lite",
+      "lane": "sim",
+      "title": "Pré-requisito da T25: grounding dos impactos aéreos",
+      "status": "DONE",
+      "depends_on": [
+        "BASE"
+      ],
+      "evidence": [
+        "docs/verification/m01-runtime/continuity-raid-integration-v1/HANDOFF.md"
+      ],
+      "scope_note": "Não inclui fumo efémero de granadas, ainda no T03 completo."
     }
   ]
 }

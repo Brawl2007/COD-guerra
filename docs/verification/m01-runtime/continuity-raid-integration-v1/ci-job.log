@@ -1,0 +1,1340 @@
+﻿2026-10-14T14:38:59.8513410Z Current runner version: '2.337.0'
+2026-10-14T14:38:59.8547881Z ##[group]Runner Image Provisioner
+2026-10-14T14:38:59.8549278Z Hosted Compute Agent
+2026-10-14T14:38:59.8550350Z Version: 20261002.596
+2026-10-14T14:38:59.8551549Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-14T14:38:59.8552822Z Build Date: 2026-10-02T22:28:27Z
+2026-10-14T14:38:59.8554027Z Worker ID: {05c6af73-ee3b-4c34-81ac-fde03581b46c}
+2026-10-14T14:38:59.8555290Z Region: eastus
+2026-10-14T14:38:59.8556240Z Cloud: Azure
+2026-10-14T14:38:59.8557547Z ##[endgroup]
+2026-10-14T14:38:59.8560030Z ##[group]Operating System
+2026-10-14T14:38:59.8561121Z Ubuntu
+2026-10-14T14:38:59.8561971Z 24.04.5
+2026-10-14T14:38:59.8562785Z LTS
+2026-10-14T14:38:59.8564362Z ##[endgroup]
+2026-10-14T14:38:59.8565303Z ##[group]Runner Image
+2026-10-14T14:38:59.8566402Z Image: ubuntu-24.04
+2026-10-14T14:38:59.8567685Z Version: 20261004.327.1
+2026-10-14T14:38:59.8569980Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-14T14:38:59.8572700Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-14T14:38:59.8574467Z ##[endgroup]
+2026-10-14T14:38:59.8576283Z ##[group]GITHUB_TOKEN Permissions
+2026-10-14T14:38:59.8579597Z Contents: read
+2026-10-14T14:38:59.8580570Z Metadata: read
+2026-10-14T14:38:59.8581688Z ##[endgroup]
+2026-10-14T14:38:59.8584685Z Secret source: Actions
+2026-10-14T14:38:59.8586362Z Cache mode: write
+2026-10-14T14:38:59.8588082Z Prepare workflow directory
+2026-10-14T14:38:59.9021045Z Prepare all required actions
+2026-10-14T14:38:59.9069681Z Getting action download info
+2026-10-14T14:39:00.0908608Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-14T14:39:00.2021762Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-10-14T14:39:00.2874005Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-14T14:39:00.5165849Z Complete job name: verify
+2026-10-14T14:39:00.5998376Z ##[group]Run actions/checkout@v4
+2026-10-14T14:39:00.5999387Z with:
+2026-10-14T14:39:00.5999835Z   fetch-depth: 0
+2026-10-14T14:39:00.6000314Z   repository: Brawl2007/COD-guerra
+2026-10-14T14:39:00.6004414Z   token: ***
+2026-10-14T14:39:00.6004860Z   ssh-strict: true
+2026-10-14T14:39:00.6005308Z   ssh-user: git
+2026-10-14T14:39:00.6005774Z   persist-credentials: true
+2026-10-14T14:39:00.6006278Z   clean: true
+2026-10-14T14:39:00.6006985Z   sparse-checkout-cone-mode: true
+2026-10-14T14:39:00.6007530Z   fetch-tags: false
+2026-10-14T14:39:00.6007992Z   show-progress: true
+2026-10-14T14:39:00.6008477Z   lfs: false
+2026-10-14T14:39:00.6008900Z   submodules: false
+2026-10-14T14:39:00.6009375Z   set-safe-directory: true
+2026-10-14T14:39:00.6009899Z   allow-unsafe-pr-checkout: false
+2026-10-14T14:39:00.6010723Z ##[endgroup]
+2026-10-14T14:39:00.7073534Z Syncing repository: Brawl2007/COD-guerra
+2026-10-14T14:39:00.7077074Z ##[group]Getting Git version info
+2026-10-14T14:39:00.7078590Z Working directory is '/home/runner/work/COD-guerra/COD-guerra'
+2026-10-14T14:39:00.7080331Z [command]/usr/bin/git version
+2026-10-14T14:39:00.7148699Z git version 2.55.0
+2026-10-14T14:39:00.7182958Z ##[endgroup]
+2026-10-14T14:39:00.7192335Z Temporarily overriding HOME='/home/runner/work/_temp/a5f6a724-58c2-4e34-9552-3d0e1db7bb8a' before making global git config changes
+2026-10-14T14:39:00.7195275Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-14T14:39:00.7209889Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/COD-guerra/COD-guerra
+2026-10-14T14:39:00.7264318Z Deleting the contents of '/home/runner/work/COD-guerra/COD-guerra'
+2026-10-14T14:39:00.7276526Z ##[group]Initializing the repository
+2026-10-14T14:39:00.7282325Z [command]/usr/bin/git init /home/runner/work/COD-guerra/COD-guerra
+2026-10-14T14:39:00.7465560Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-14T14:39:00.7468267Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-14T14:39:00.7470290Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-14T14:39:00.7471635Z hint: call:
+2026-10-14T14:39:00.7472897Z hint:
+2026-10-14T14:39:00.7473913Z hint: 	git config --global init.defaultBranch <name>
+2026-10-14T14:39:00.7475025Z hint:
+2026-10-14T14:39:00.7476082Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-14T14:39:00.7478125Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-14T14:39:00.7479752Z hint:
+2026-10-14T14:39:00.7480722Z hint: 	git branch -m <name>
+2026-10-14T14:39:00.7481730Z hint:
+2026-10-14T14:39:00.7483050Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-14T14:39:00.7484485Z Initialized empty Git repository in /home/runner/work/COD-guerra/COD-guerra/.git/
+2026-10-14T14:39:00.7487381Z [command]/usr/bin/git remote add origin https://github.com/Brawl2007/COD-guerra
+2026-10-14T14:39:00.7555953Z ##[endgroup]
+2026-10-14T14:39:00.7557676Z ##[group]Disabling automatic garbage collection
+2026-10-14T14:39:00.7559297Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-14T14:39:00.7609235Z ##[endgroup]
+2026-10-14T14:39:00.7610618Z ##[group]Setting up auth
+2026-10-14T14:39:00.7612035Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-14T14:39:00.7667325Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-14T14:39:00.8176515Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-14T14:39:00.8231051Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-14T14:39:00.8508336Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-14T14:39:00.8540993Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-14T14:39:00.8799236Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-14T14:39:00.8851169Z ##[endgroup]
+2026-10-14T14:39:00.8852784Z ##[group]Fetching the repository
+2026-10-14T14:39:00.8874576Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+2026-10-14T14:39:11.6968932Z From https://github.com/Brawl2007/COD-guerra
+2026-10-14T14:39:11.6971844Z  * [new branch]      argon/m01-animation-resolver-v1-integration -> origin/argon/m01-animation-resolver-v1-integration
+2026-10-14T14:39:11.6974504Z  * [new branch]      argon/m01-animation-resolver-v1-v7-integration -> origin/argon/m01-animation-resolver-v1-v7-integration
+2026-10-14T14:39:11.6977307Z  * [new branch]      chore/claude-cloud-agent-sync-20261012 -> origin/chore/claude-cloud-agent-sync-20261012
+2026-10-14T14:39:11.6980654Z  * [new branch]      claude/bold-cannon-rkvxjp -> origin/claude/bold-cannon-rkvxjp
+2026-10-14T14:39:11.6982692Z  * [new branch]      claude/busy-edison-mokkrb -> origin/claude/busy-edison-mokkrb
+2026-10-14T14:39:11.6984895Z  * [new branch]      claude/captain-jev-activation-v1 -> origin/claude/captain-jev-activation-v1
+2026-10-14T14:39:11.6987635Z  * [new branch]      claude/clever-goldberg-avn7dj -> origin/claude/clever-goldberg-avn7dj
+2026-10-14T14:39:11.6989618Z  * [new branch]      claude/cool-euler-fkyo43 -> origin/claude/cool-euler-fkyo43
+2026-10-14T14:39:11.6991771Z  * [new branch]      claude/ecstatic-planck-jiy2k3 -> origin/claude/ecstatic-planck-jiy2k3
+2026-10-14T14:39:11.6994198Z  * [new branch]      claude/exciting-planck-5ylz7z -> origin/claude/exciting-planck-5ylz7z
+2026-10-14T14:39:11.6997360Z  * [new branch]      claude/gracious-franklin-u8kdin -> origin/claude/gracious-franklin-u8kdin
+2026-10-14T14:39:11.7000014Z  * [new branch]      claude/jev-decision-support-v2 -> origin/claude/jev-decision-support-v2
+2026-10-14T14:39:11.7002931Z  * [new branch]      claude/m01-anim-clip-library-v2 -> origin/claude/m01-anim-clip-library-v2
+2026-10-14T14:39:11.7005725Z  * [new branch]      claude/m01-anim-resolver-v1 -> origin/claude/m01-anim-resolver-v1
+2026-10-14T14:39:11.7008439Z  * [new branch]      claude/m01-audio-core-v1 -> origin/claude/m01-audio-core-v1
+2026-10-14T14:39:11.7010986Z  * [new branch]      claude/m01-audio-data-fields-v1 -> origin/claude/m01-audio-data-fields-v1
+2026-10-14T14:39:11.7014494Z  * [new branch]      claude/m01-audio-director-music-v1 -> origin/claude/m01-audio-director-music-v1
+2026-10-14T14:39:11.7018705Z  * [new branch]      claude/m01-audio-real-v1 -> origin/claude/m01-audio-real-v1
+2026-10-14T14:39:11.7021320Z  * [new branch]      claude/m01-battle-visible-v1 -> origin/claude/m01-battle-visible-v1
+2026-10-14T14:39:11.7023920Z  * [new branch]      claude/m01-bridge-models -> origin/claude/m01-bridge-models
+2026-10-14T14:39:11.7028245Z  * [new branch]      claude/m01-byte-guard-shared-allowlist-v1 -> origin/claude/m01-byte-guard-shared-allowlist-v1
+2026-10-14T14:39:11.7031633Z  * [new branch]      claude/m01-ci-fetch-depth-v1 -> origin/claude/m01-ci-fetch-depth-v1
+2026-10-14T14:39:11.7034132Z  * [new branch]      claude/m01-ckm-budget   -> origin/claude/m01-ckm-budget
+2026-10-14T14:39:11.7036504Z  * [new branch]      claude/m01-ckm-wz30     -> origin/claude/m01-ckm-wz30
+2026-10-14T14:39:11.7039425Z  * [new branch]      claude/m01-continuous-playtest -> origin/claude/m01-continuous-playtest
+2026-10-14T14:39:11.7042234Z  * [new branch]      claude/m01-decisions-d37-v1 -> origin/claude/m01-decisions-d37-v1
+2026-10-14T14:39:11.7045101Z  * [new branch]      claude/m01-demolition-setpiece-v2 -> origin/claude/m01-demolition-setpiece-v2
+2026-10-14T14:39:11.7048325Z  * [new branch]      claude/m01-dev-base     -> origin/claude/m01-dev-base
+2026-10-14T14:39:11.7051148Z  * [new branch]      claude/m01-display-fire-readout-v1 -> origin/claude/m01-display-fire-readout-v1
+2026-10-14T14:39:11.7055195Z  * [new branch]      claude/m01-distant-front-impostors-v1 -> origin/claude/m01-distant-front-impostors-v1
+2026-10-14T14:39:11.7060174Z  * [new branch]      claude/m01-east-front-visible-v1 -> origin/claude/m01-east-front-visible-v1
+2026-10-14T14:39:11.7064945Z  * [new branch]      claude/m01-h9-d1-difficulty-data-v1 -> origin/claude/m01-h9-d1-difficulty-data-v1
+2026-10-14T14:39:11.7068716Z  * [new branch]      claude/m01-integration  -> origin/claude/m01-integration
+2026-10-14T14:39:11.7072394Z  * [new branch]      claude/m01-integration-prep -> origin/claude/m01-integration-prep
+2026-10-14T14:39:11.7076192Z  * [new branch]      claude/m01-ju87         -> origin/claude/m01-ju87
+2026-10-14T14:39:11.7079175Z  * [new branch]      claude/m01-lighting-dawn-v1 -> origin/claude/m01-lighting-dawn-v1
+2026-10-14T14:39:11.7081727Z  * [new branch]      claude/m01-mg34-prone   -> origin/claude/m01-mg34-prone
+2026-10-14T14:39:11.7084410Z  * [new branch]      claude/m01-player-shot-feedback-v1 -> origin/claude/m01-player-shot-feedback-v1
+2026-10-14T14:39:11.7088056Z  * [new branch]      claude/m01-postprocess-grading-v1 -> origin/claude/m01-postprocess-grading-v1
+2026-10-14T14:39:11.7090825Z  * [new branch]      claude/m01-prop-kit-v1  -> origin/claude/m01-prop-kit-v1
+2026-10-14T14:39:11.7093051Z  * [new branch]      claude/m01-rkm-wz28     -> origin/claude/m01-rkm-wz28
+2026-10-14T14:39:11.7095306Z  * [new branch]      claude/m01-soldiers-1939 -> origin/claude/m01-soldiers-1939
+2026-10-14T14:39:11.7098395Z  * [new branch]      claude/m01-spec-frame-gate-followup-v1 -> origin/claude/m01-spec-frame-gate-followup-v1
+2026-10-14T14:39:11.7101735Z  * [new branch]      claude/m01-stack-integration-t08-t12-v1 -> origin/claude/m01-stack-integration-t08-t12-v1
+2026-10-14T14:39:11.7105529Z  * [new branch]      claude/m01-stack-integration-t23-pt05-v1 -> origin/claude/m01-stack-integration-t23-pt05-v1
+2026-10-14T14:39:11.7109357Z  * [new branch]      claude/m01-stack-integration-t44-t20-v1 -> origin/claude/m01-stack-integration-t44-t20-v1
+2026-10-14T14:39:11.7112093Z  * [new branch]      claude/m01-staging      -> origin/claude/m01-staging
+2026-10-14T14:39:11.7114681Z  * [new branch]      claude/m01-station-drag-transitions -> origin/claude/m01-station-drag-transitions
+2026-10-14T14:39:11.7119451Z  * [new branch]      claude/m01-stuka-dive-sequence-v1 -> origin/claude/m01-stuka-dive-sequence-v1
+2026-10-14T14:39:11.7122990Z  * [new branch]      claude/m01-train-detail-coupling-polish-dws18u -> origin/claude/m01-train-detail-coupling-polish-dws18u
+2026-10-14T14:39:11.7127298Z  * [new branch]      claude/m01-train-detail-coupling-polish-v1 -> origin/claude/m01-train-detail-coupling-polish-v1
+2026-10-14T14:39:11.7130416Z  * [new branch]      claude/m01-viewmodel-feel-v2 -> origin/claude/m01-viewmodel-feel-v2
+2026-10-14T14:39:11.7132843Z  * [new branch]      claude/m01-wagon-damage -> origin/claude/m01-wagon-damage
+2026-10-14T14:39:11.7134950Z  * [new branch]      claude/m01-wagons       -> origin/claude/m01-wagons
+2026-10-14T14:39:11.7137191Z  * [new branch]      claude/m01-war-scars-v1 -> origin/claude/m01-war-scars-v1
+2026-10-14T14:39:11.7139513Z  * [new branch]      claude/m01-water-vistula-v1 -> origin/claude/m01-water-vistula-v1
+2026-10-14T14:39:11.7142235Z  * [new branch]      claude/m01-yard-wagon-colliders-v1 -> origin/claude/m01-yard-wagon-colliders-v1
+2026-10-14T14:39:11.7145484Z  * [new branch]      claude/pensive-thompson-jc2y12 -> origin/claude/pensive-thompson-jc2y12
+2026-10-14T14:39:11.7149005Z  * [new branch]      claude/railway-production-pass-3c7fwx -> origin/claude/railway-production-pass-3c7fwx
+2026-10-14T14:39:11.7152825Z  * [new branch]      claude/upbeat-ptolemy-rzqu5g -> origin/claude/upbeat-ptolemy-rzqu5g
+2026-10-14T14:39:11.7156199Z  * [new branch]      claude/zealous-ramanujan-2el38r -> origin/claude/zealous-ramanujan-2el38r
+2026-10-14T14:39:11.7159526Z  * [new branch]      codex/agentic-engineering-v1 -> origin/codex/agentic-engineering-v1
+2026-10-14T14:39:11.7162301Z  * [new branch]      codex/campaign-cinematic-m02-m30 -> origin/codex/campaign-cinematic-m02-m30
+2026-10-14T14:39:11.7165539Z  * [new branch]      codex/campaign-script-polish-v2-30-missions -> origin/codex/campaign-script-polish-v2-30-missions
+2026-10-14T14:39:11.7169936Z  * [new branch]      codex/criar-base-tecnica-para-fps-da-segunda-guerra -> origin/codex/criar-base-tecnica-para-fps-da-segunda-guerra
+2026-10-14T14:39:11.7175720Z  * [new branch]      codex/criar-base-tecnica-para-fps-da-segunda-guerra-8d0uog -> origin/codex/criar-base-tecnica-para-fps-da-segunda-guerra-8d0uog
+2026-10-14T14:39:11.7180937Z  * [new branch]      codex/criar-base-tecnica-para-fps-da-segunda-guerra-9pjnmy -> origin/codex/criar-base-tecnica-para-fps-da-segunda-guerra-9pjnmy
+2026-10-14T14:39:11.7186395Z  * [new branch]      codex/criar-base-tecnica-para-fps-da-segunda-guerra-bza8xt -> origin/codex/criar-base-tecnica-para-fps-da-segunda-guerra-bza8xt
+2026-10-14T14:39:11.7192181Z  * [new branch]      codex/criar-base-tecnica-para-fps-da-segunda-guerra-gdherg -> origin/codex/criar-base-tecnica-para-fps-da-segunda-guerra-gdherg
+2026-10-14T14:39:11.7197333Z  * [new branch]      codex/criar-base-tecnica-para-fps-da-segunda-guerra-os0vaa -> origin/codex/criar-base-tecnica-para-fps-da-segunda-guerra-os0vaa
+2026-10-14T14:39:11.7202411Z  * [new branch]      codex/criar-base-tecnica-para-fps-da-segunda-guerra-p5srg5 -> origin/codex/criar-base-tecnica-para-fps-da-segunda-guerra-p5srg5
+2026-10-14T14:39:11.7207399Z  * [new branch]      codex/criar-base-tecnica-para-fps-da-segunda-guerra-t54j0b -> origin/codex/criar-base-tecnica-para-fps-da-segunda-guerra-t54j0b
+2026-10-14T14:39:11.7212097Z  * [new branch]      codex/criar-base-tecnica-para-fps-da-segunda-guerra-y4di6h -> origin/codex/criar-base-tecnica-para-fps-da-segunda-guerra-y4di6h
+2026-10-14T14:39:11.7216046Z  * [new branch]      codex/m01-anim-contract-sim-v1 -> origin/codex/m01-anim-contract-sim-v1
+2026-10-14T14:39:11.7219553Z  * [new branch]      codex/m01-approved-consolidation-checkpoint-v1 -> origin/codex/m01-approved-consolidation-checkpoint-v1
+2026-10-14T14:39:11.7222547Z  * [new branch]      codex/m01-assets-review -> origin/codex/m01-assets-review
+2026-10-14T14:39:11.7225473Z  * [new branch]      codex/m01-authority-lease -> origin/codex/m01-authority-lease
+2026-10-14T14:39:11.7228640Z  * [new branch]      codex/m01-battlefield-audio-architecture -> origin/codex/m01-battlefield-audio-architecture
+2026-10-14T14:39:11.7232101Z  * [new branch]      codex/m01-battlefield-audio-production-pass -> origin/codex/m01-battlefield-audio-production-pass
+2026-10-14T14:39:11.7235784Z  * [new branch]      codex/m01-battlefield-audio-production-pass-v1 -> origin/codex/m01-battlefield-audio-production-pass-v1
+2026-10-14T14:39:11.7239254Z  * [new branch]      codex/m01-battlefield-fx-polish-v3 -> origin/codex/m01-battlefield-fx-polish-v3
+2026-10-14T14:39:11.7242446Z  * [new branch]      codex/m01-battlefield-fx-visual-runtime-v2 -> origin/codex/m01-battlefield-fx-visual-runtime-v2
+2026-10-14T14:39:11.7245330Z  * [new branch]      codex/m01-bridge-completion -> origin/codex/m01-bridge-completion
+2026-10-14T14:39:11.7248649Z  * [new branch]      codex/m01-bridge-portal-material-detail-polish-v1 -> origin/codex/m01-bridge-portal-material-detail-polish-v1
+2026-10-14T14:39:11.7252650Z  * [new branch]      codex/m01-bridge-structural-production-closeout-v2 -> origin/codex/m01-bridge-structural-production-closeout-v2
+2026-10-14T14:39:11.7256106Z  * [new branch]      codex/m01-browser-harness-hardening -> origin/codex/m01-browser-harness-hardening
+2026-10-14T14:39:11.7259178Z  * [new branch]      codex/m01-character-integration -> origin/codex/m01-character-integration
+2026-10-14T14:39:11.7261759Z  * [new branch]      codex/m01-chromebook-benchmark -> origin/codex/m01-chromebook-benchmark
+2026-10-14T14:39:11.7264426Z  * [new branch]      codex/m01-ci-capture-budget -> origin/codex/m01-ci-capture-budget
+2026-10-14T14:39:11.7267370Z  * [new branch]      codex/m01-ckm-fire-arc-resolution -> origin/codex/m01-ckm-fire-arc-resolution
+2026-10-14T14:39:11.7269927Z  * [new branch]      codex/m01-ckm-fire-runtime -> origin/codex/m01-ckm-fire-runtime
+2026-10-14T14:39:11.7272409Z  * [new branch]      codex/m01-ckm-placement-migration -> origin/codex/m01-ckm-placement-migration
+2026-10-14T14:39:11.7274780Z  * [new branch]      codex/m01-ckm-runtime   -> origin/codex/m01-ckm-runtime
+2026-10-14T14:39:11.7277291Z  * [new branch]      codex/m01-combat-ai-architecture -> origin/codex/m01-combat-ai-architecture
+2026-10-14T14:39:11.7279744Z  * [new branch]      codex/m01-combat-animation -> origin/codex/m01-combat-animation
+2026-10-14T14:39:11.7282462Z  * [new branch]      codex/m01-continuity-raid-integration-v1 -> origin/codex/m01-continuity-raid-integration-v1
+2026-10-14T14:39:11.7285213Z  * [new branch]      codex/m01-cover-fire-origin -> origin/codex/m01-cover-fire-origin
+2026-10-14T14:39:11.7287753Z  * [new branch]      codex/m01-demolition-cue -> origin/codex/m01-demolition-cue
+2026-10-14T14:39:11.7289895Z  * [new branch]      codex/m01-demolition-dust -> origin/codex/m01-demolition-dust
+2026-10-14T14:39:11.7292341Z  * [new branch]      codex/m01-destruction-persistence -> origin/codex/m01-destruction-persistence
+2026-10-14T14:39:11.7364162Z  * [new branch]      codex/m01-distant-battle-sectors -> origin/codex/m01-distant-battle-sectors
+2026-10-14T14:39:11.7369304Z  * [new branch]      codex/m01-distant-battlefield-presentation-v1 -> origin/codex/m01-distant-battlefield-presentation-v1
+2026-10-14T14:39:11.7375480Z  * [new branch]      codex/m01-environment-prop-density-grounding-v1 -> origin/codex/m01-environment-prop-density-grounding-v1
+2026-10-14T14:39:11.7381318Z  * [new branch]      codex/m01-environment-visual-runtime-pass -> origin/codex/m01-environment-visual-runtime-pass
+2026-10-14T14:39:11.7384859Z  * [new branch]      codex/m01-environmental-damage-decal-pass-v1 -> origin/codex/m01-environmental-damage-decal-pass-v1
+2026-10-14T14:39:11.7388964Z  * [new branch]      codex/m01-final-production-consolidation-v6 -> origin/codex/m01-final-production-consolidation-v6
+2026-10-14T14:39:11.7392368Z  * [new branch]      codex/m01-final-production-consolidation-v7 -> origin/codex/m01-final-production-consolidation-v7
+2026-10-14T14:39:11.7395802Z  * [new branch]      codex/m01-first-person-weapon-presentation-v1 -> origin/codex/m01-first-person-weapon-presentation-v1
+2026-10-14T14:39:11.7399452Z  * [new branch]      codex/m01-fx-browser-evidence-harness-v1 -> origin/codex/m01-fx-browser-evidence-harness-v1
+2026-10-14T14:39:11.7402125Z  * [new branch]      codex/m01-handoff-aircraft -> origin/codex/m01-handoff-aircraft
+2026-10-14T14:39:11.7404924Z  * [new branch]      codex/m01-historical-soldier-equipment-audit -> origin/codex/m01-historical-soldier-equipment-audit
+2026-10-14T14:39:11.7408637Z  * [new branch]      codex/m01-hud-cinematic-presentation-pass-v1 -> origin/codex/m01-hud-cinematic-presentation-pass-v1
+2026-10-14T14:39:11.7411389Z  * [new branch]      codex/m01-idle-render   -> origin/codex/m01-idle-render
+2026-10-14T14:39:11.7414320Z  * [new branch]      codex/m01-integrated-visual-placeholder-closeout-v2 -> origin/codex/m01-integrated-visual-placeholder-closeout-v2
+2026-10-14T14:39:11.7418567Z  * [new branch]      codex/m01-integration-browser-harness-stabilization-v2 -> origin/codex/m01-integration-browser-harness-stabilization-v2
+2026-10-14T14:39:11.7422375Z  * [new branch]      codex/m01-ju87-aircraft-production-closeout-v2 -> origin/codex/m01-ju87-aircraft-production-closeout-v2
+2026-10-14T14:39:11.7425973Z  * [new branch]      codex/m01-locomotive-963-production-asset-runtime -> origin/codex/m01-locomotive-963-production-asset-runtime
+2026-10-14T14:39:11.7429289Z  * [new branch]      codex/m01-mg34-prone-runtime -> origin/codex/m01-mg34-prone-runtime
+2026-10-14T14:39:11.7432092Z  * [new branch]      codex/m01-near-far-authority-runtime-pilot -> origin/codex/m01-near-far-authority-runtime-pilot
+2026-10-14T14:39:11.7435189Z  * [new branch]      codex/m01-next-pendencies-audit -> origin/codex/m01-next-pendencies-audit
+2026-10-14T14:39:11.7438639Z  * [new branch]      codex/m01-panzerzug-production-asset-runtime -> origin/codex/m01-panzerzug-production-asset-runtime
+2026-10-14T14:39:11.7441882Z  * [new branch]      codex/m01-per-formation-rng-architecture -> origin/codex/m01-per-formation-rng-architecture
+2026-10-14T14:39:11.7444920Z  * [new branch]      codex/m01-player-hit-near-miss-feedback -> origin/codex/m01-player-hit-near-miss-feedback
+2026-10-14T14:39:11.7448494Z  * [new branch]      codex/m01-production-integration-checkpoint-1 -> origin/codex/m01-production-integration-checkpoint-1
+2026-10-14T14:39:11.7451829Z  * [new branch]      codex/m01-ready-deliveries-consolidation-v2 -> origin/codex/m01-ready-deliveries-consolidation-v2
+2026-10-14T14:39:11.7455046Z  * [new branch]      codex/m01-ready-deliveries-consolidation-v3 -> origin/codex/m01-ready-deliveries-consolidation-v3
+2026-10-14T14:39:11.7458479Z  * [new branch]      codex/m01-ready-deliveries-consolidation-v4 -> origin/codex/m01-ready-deliveries-consolidation-v4
+2026-10-14T14:39:11.7461757Z  * [new branch]      codex/m01-ready-deliveries-consolidation-v5 -> origin/codex/m01-ready-deliveries-consolidation-v5
+2026-10-14T14:39:11.7464888Z  * [new branch]      codex/m01-ready-deliveries-validation-v3 -> origin/codex/m01-ready-deliveries-validation-v3
+2026-10-14T14:39:11.7468186Z  * [new branch]      codex/m01-rifleman-locomotion-runtime -> origin/codex/m01-rifleman-locomotion-runtime
+2026-10-14T14:39:11.7470554Z  * [new branch]      codex/m01-runtime       -> origin/codex/m01-runtime
+2026-10-14T14:39:11.7472799Z  * [new branch]      codex/m01-schema2-determinism-audit -> origin/codex/m01-schema2-determinism-audit
+2026-10-14T14:39:11.7475622Z  * [new branch]      codex/m01-soldier-locomotion-animation -> origin/codex/m01-soldier-locomotion-animation
+2026-10-14T14:39:11.7478942Z  * [new branch]      codex/m01-soldier-motion-clips-production-v1 -> origin/codex/m01-soldier-motion-clips-production-v1
+2026-10-14T14:39:11.7482297Z  * [new branch]      codex/m01-soldier-visual-variation-pass -> origin/codex/m01-soldier-visual-variation-pass
+2026-10-14T14:39:11.7485417Z  * [new branch]      codex/m01-station-architecture-production-v2 -> origin/codex/m01-station-architecture-production-v2
+2026-10-14T14:39:11.7488830Z  * [new branch]      codex/m01-station-visual-fidelity-v3 -> origin/codex/m01-station-visual-fidelity-v3
+2026-10-14T14:39:11.7491379Z  * [new branch]      codex/m01-station-wagon-state -> origin/codex/m01-station-wagon-state
+2026-10-14T14:39:11.7493857Z  * [new branch]      codex/m01-station-wagon-validation -> origin/codex/m01-station-wagon-validation
+2026-10-14T14:39:11.7496207Z  * [new branch]      codex/m01-support-runtime -> origin/codex/m01-support-runtime
+2026-10-14T14:39:11.7498834Z  * [new branch]      codex/m01-t09-t28-materials-closeout-v1 -> origin/codex/m01-t09-t28-materials-closeout-v1
+2026-10-14T14:39:11.7501486Z  * [new branch]      codex/m01-t10-t29-vegetation-v2 -> origin/codex/m01-t10-t29-vegetation-v2
+2026-10-14T14:39:11.7504037Z  * [new branch]      codex/m01-t13-t32-field-structures-v1 -> origin/codex/m01-t13-t32-field-structures-v1
+2026-10-14T14:39:11.7506819Z  * [new branch]      codex/m01-t14-t41-bridge-finish-v2 -> origin/codex/m01-t14-t41-bridge-finish-v2
+2026-10-14T14:39:11.7509424Z  * [new branch]      codex/m01-t27-t30-relief-horizon-v1 -> origin/codex/m01-t27-t30-relief-horizon-v1
+2026-10-14T14:39:11.7511923Z  * [new branch]      codex/m01-t31-t33-rail-props-v1 -> origin/codex/m01-t31-t33-rail-props-v1
+2026-10-14T14:39:11.7514514Z  * [new branch]      codex/m01-v3-isolated-cancelled-tests -> origin/codex/m01-v3-isolated-cancelled-tests
+2026-10-14T14:39:11.7517886Z  * [new branch]      codex/m01-vegetation-foliage-production-closeout-v1 -> origin/codex/m01-vegetation-foliage-production-closeout-v1
+2026-10-14T14:39:11.7521506Z  * [new branch]      codex/m01-vegetation-mesh-lod-runtime-pass -> origin/codex/m01-vegetation-mesh-lod-runtime-pass
+2026-10-14T14:39:11.7524235Z  * [new branch]      codex/m01-viewmodel-visual-v2 -> origin/codex/m01-viewmodel-visual-v2
+2026-10-14T14:39:11.7527218Z  * [new branch]      codex/m01-visual-placeholder-asset-audit -> origin/codex/m01-visual-placeholder-asset-audit
+2026-10-14T14:39:11.7529832Z  * [new branch]      codex/m01-visual-sprint -> origin/codex/m01-visual-sprint
+2026-10-14T14:39:11.7532511Z  * [new branch]      codex/m01-wagon-lod-damage-runtime-integration -> origin/codex/m01-wagon-lod-damage-runtime-integration
+2026-10-14T14:39:11.7535288Z  * [new branch]      codex/m01-world-interactions -> origin/codex/m01-world-interactions
+2026-10-14T14:39:11.7538129Z  * [new branch]      codex/m01-wz29-viewmodel-visual-runtime -> origin/codex/m01-wz29-viewmodel-visual-runtime
+2026-10-14T14:39:11.7540595Z  * [new branch]      codex/m01-yard-wagon-fit -> origin/codex/m01-yard-wagon-fit
+2026-10-14T14:39:11.7543102Z  * [new branch]      codex/m02-m30-full-creative-production-v1 -> origin/codex/m02-m30-full-creative-production-v1
+2026-10-14T14:39:11.7545937Z  * [new branch]      codex/three-foundation-checkpoints -> origin/codex/three-foundation-checkpoints
+2026-10-14T14:39:11.7548461Z  * [new branch]      deploy/m01-latest-playable -> origin/deploy/m01-latest-playable
+2026-10-14T14:39:11.7550263Z  * [new branch]      main                    -> origin/main
+2026-10-14T14:39:11.7552621Z  * [new branch]      x86-artifacts/t08-measurements-20261011T052828Z -> origin/x86-artifacts/t08-measurements-20261011T052828Z
+2026-10-14T14:39:11.7557093Z [command]/usr/bin/git branch --list --remote origin/codex/m01-continuity-raid-integration-v1
+2026-10-14T14:39:11.7559083Z   origin/codex/m01-continuity-raid-integration-v1
+2026-10-14T14:39:11.7562132Z [command]/usr/bin/git rev-parse refs/remotes/origin/codex/m01-continuity-raid-integration-v1
+2026-10-14T14:39:11.7564137Z 8387b5627b3b5482370c0915f018776d563e31ec
+2026-10-14T14:39:11.7567338Z ##[endgroup]
+2026-10-14T14:39:11.7569241Z ##[group]Determining the checkout info
+2026-10-14T14:39:11.7570942Z ##[endgroup]
+2026-10-14T14:39:11.7571929Z [command]/usr/bin/git sparse-checkout disable
+2026-10-14T14:39:11.7574741Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-14T14:39:11.7578342Z ##[group]Checking out the ref
+2026-10-14T14:39:11.7580975Z [command]/usr/bin/git checkout --progress --force -B codex/m01-continuity-raid-integration-v1 refs/remotes/origin/codex/m01-continuity-raid-integration-v1
+2026-10-14T14:39:12.7982826Z Switched to a new branch 'codex/m01-continuity-raid-integration-v1'
+2026-10-14T14:39:12.8458673Z branch 'codex/m01-continuity-raid-integration-v1' set up to track 'origin/codex/m01-continuity-raid-integration-v1'.
+2026-10-14T14:39:12.8518081Z ##[endgroup]
+2026-10-14T14:39:12.8568370Z [command]/usr/bin/git log -1 --format=%H
+2026-10-14T14:39:12.8596486Z 8387b5627b3b5482370c0915f018776d563e31ec
+2026-10-14T14:39:12.8878813Z ##[group]Run actions/setup-node@v4
+2026-10-14T14:39:12.8879227Z with:
+2026-10-14T14:39:12.8879511Z   node-version: 24
+2026-10-14T14:39:12.8879790Z   cache: npm
+2026-10-14T14:39:12.8880062Z   always-auth: false
+2026-10-14T14:39:12.8880354Z   check-latest: false
+2026-10-14T14:39:12.8883085Z   token: ***
+2026-10-14T14:39:12.8883375Z ##[endgroup]
+2026-10-14T14:39:13.0418136Z (node:2290) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-14T14:39:13.0420427Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-14T14:39:13.0431427Z Found in cache @ /opt/hostedtoolcache/node/24.21.0/x64
+2026-10-14T14:39:13.0433146Z ##[group]Environment details
+2026-10-14T14:39:13.4790928Z node: v24.21.0
+2026-10-14T14:39:13.4791444Z npm: 11.19.0
+2026-10-14T14:39:13.4791836Z yarn: 1.22.22
+2026-10-14T14:39:13.4793268Z ##[endgroup]
+2026-10-14T14:39:13.4842929Z [command]/opt/hostedtoolcache/node/24.21.0/x64/bin/npm config get cache
+2026-10-14T14:39:13.6012615Z /home/runner/.npm
+2026-10-14T14:39:13.6927795Z Cache hit for: node-cache-Linux-x64-npm-8f1cf7dcbae8d9792eb3058e1b70088e2662e09ea7a497e59bda9a9876b25d95
+2026-10-14T14:39:13.7041217Z (node:2290) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-14T14:39:14.0318275Z Received 32592483 of 32592483 (100.0%), 111.4 MBs/sec
+2026-10-14T14:39:14.0319094Z Cache Size: ~31 MB (32592483 B)
+2026-10-14T14:39:14.0346288Z [command]/usr/bin/tar -xf /home/runner/work/_temp/0d22c3e4-2670-415f-a47a-677c43ab05d8/cache.tzst -P -C /home/runner/work/COD-guerra/COD-guerra --use-compress-program unzstd
+2026-10-14T14:39:14.0899655Z Cache restored successfully
+2026-10-14T14:39:14.0925262Z Cache restored from key: node-cache-Linux-x64-npm-8f1cf7dcbae8d9792eb3058e1b70088e2662e09ea7a497e59bda9a9876b25d95
+2026-10-14T14:39:14.1126434Z ##[group]Run npm ci
+2026-10-14T14:39:14.1127119Z [36;1mnpm ci[0m
+2026-10-14T14:39:14.1429904Z shell: /usr/bin/bash -e {0}
+2026-10-14T14:39:14.1430312Z ##[endgroup]
+2026-10-14T14:39:16.0834935Z 
+2026-10-14T14:39:16.0842857Z added 21 packages, and audited 22 packages in 2s
+2026-10-14T14:39:16.0843496Z 
+2026-10-14T14:39:16.0843869Z 9 packages are looking for funding
+2026-10-14T14:39:16.0844401Z   run `npm fund` for details
+2026-10-14T14:39:16.0848782Z 
+2026-10-14T14:39:16.0849062Z found 0 vulnerabilities
+2026-10-14T14:39:16.1357544Z ##[group]Run git merge-base --is-ancestor 2d65dd0b9837d5e6f21fe24dd8a8b167ca76df55 HEAD
+2026-10-14T14:39:16.1358259Z [36;1mgit merge-base --is-ancestor 2d65dd0b9837d5e6f21fe24dd8a8b167ca76df55 HEAD[0m
+2026-10-14T14:39:16.1359246Z [36;1mgit diff --exit-code 2d65dd0b9837d5e6f21fe24dd8a8b167ca76df55 HEAD -- src/world src/core assets src/game/wz29.js src/game/m01-fire.js package.json package-lock.json playwright.config.js[0m
+2026-10-14T14:39:16.1427898Z shell: /usr/bin/bash -e {0}
+2026-10-14T14:39:16.1428188Z ##[endgroup]
+2026-10-14T14:39:16.1600344Z ##[group]Run set -o pipefail
+2026-10-14T14:39:16.1600841Z [36;1mset -o pipefail[0m
+2026-10-14T14:39:16.1601112Z [36;1mmkdir -p evidence[0m
+2026-10-14T14:39:16.1601521Z [36;1mnode --test --test-concurrency=2 tests/*.test.js 2>&1 | tee evidence/node.log[0m
+2026-10-14T14:39:16.1669956Z shell: /usr/bin/bash -e {0}
+2026-10-14T14:39:16.1670246Z ##[endgroup]
+2026-10-14T14:39:16.5853734Z ✔ planar y becomes scene z; height is independent (3.106108ms)
+2026-10-14T14:39:16.5893342Z ✔ horizontal head shot hits, aiming above the head misses (2.526035ms)
+2026-10-14T14:39:16.5905035Z ✔ nearest wall shields an enemy; lowering the aim hits terrain (0.670101ms)
+2026-10-14T14:39:16.5906467Z ✔ wall around muzzle blocks a clear camera sightline (0.580604ms)
+2026-10-14T14:39:16.5914526Z ✔ enemy in cover cannot cause damage through a wall (2.669934ms)
+2026-10-14T14:39:16.5915968Z ✔ unreachable destination reports failure and does not move through walls (0.515042ms)
+2026-10-14T14:39:16.5917865Z ✔ wall shields blast damage but visible nearby actor takes damage (0.948611ms)
+2026-10-14T14:39:16.5920491Z ✔ JSON checkpoint restores actors, reload, grenade, phase, clock and RNG exactly (18.76031ms)
+2026-10-14T14:39:16.5921963Z ✔ corrupt and incompatible saves are rejected atomically (5.77233ms)
+2026-10-14T14:39:16.5923393Z ✔ death restores the last living checkpoint without reviving defeated enemies (4.828575ms)
+2026-10-14T14:39:16.5924928Z ✔ restored simulation reproduces future seeded decisions and events (242.667846ms)
+2026-10-14T14:39:16.5926510Z ✔ two independent sectors evolve for 90 seconds with stable losses and unique events (1.324332ms)
+2026-10-14T14:39:16.5928544Z ✔ partial fourth reinforcement group activates and visible candidates remain hidden (0.599068ms)
+2026-10-14T14:39:16.5930278Z ✔ zero time never advances reload or the battle (4.064487ms)
+2026-10-14T14:39:16.6003089Z ✔ weapon enforces cadence, ammo, and reload transfer (2.267666ms)
+2026-10-14T14:39:16.6005298Z ✔ world blocks walls and permits open cells (1.074416ms)
+2026-10-14T14:39:16.6007192Z ✔ navigation chooses a walkable next tile around cover (1.595228ms)
+2026-10-14T14:39:16.6008334Z ✔ mission advances through checkpoint, combat, and radio (0.262119ms)
+2026-10-14T14:39:16.6009381Z ✔ shot geometry detects targets on aim line (0.204051ms)
+2026-10-14T14:39:16.6010471Z ✔ 3D matrix composition preserves translation and scale (0.356165ms)
+2026-10-14T14:39:16.6011232Z ✔ weapon exposes a stable reload animation timeline (0.185136ms)
+2026-10-14T14:39:16.6012100Z ✔ enemy selects cover instead of charging directly at player (1.821531ms)
+2026-10-14T14:39:16.6012839Z ✔ grenade bounces on walls, warns AI, and applies radial damage (5.020279ms)
+2026-10-14T14:39:16.6013604Z ✔ battle director activates reinforcement groups without replacing individual AI (0.733699ms)
+2026-10-14T14:39:16.6014372Z ✔ text-only OBJ assets load with meshes, normals, and MTL colors (15.988357ms)
+2026-10-14T14:39:16.6015171Z ✔ pointer lock entry and resume ignore cursor warps while later mouse movement works (1.921838ms)
+2026-10-14T14:39:17.2494057Z ✔ Ju 87 clones use native LODs, share art, sample the saved clock and follow the stukaPath anchored to the bombing (30.223277ms)
+2026-10-14T14:39:17.2559091Z ✔ missing optional Ju 87 art keeps the silhouettes; partial failure uses available detail and disposal prevents attachment (15.165482ms)
+2026-10-14T14:39:17.2561360Z ✔ each Ju 87 gets its own light-weight material instances over shared textures, propeller rpm/phase and attitude (21.060072ms)
+2026-10-14T14:39:17.2588217Z ✔ Ju 87 fade has no 90 s wrap (the path never loops) and eases in after the planes are heard, deterministically (16.54822ms)
+2026-10-14T14:39:17.2598898Z ✔ Ju 87 LOD keeps 10 % hysteresis at thresholds while the quality floor always applies (12.685199ms)
+2026-10-14T14:39:17.2600456Z ✔ at fade 0 the selected level (GLB or fallback proxy) stays visible and reported; opacity does the hiding (12.990649ms)
+2026-10-14T14:39:17.2601858Z ✔ the entry fade reads the saved planes_heard time of the real simulation (594.104523ms)
+2026-10-14T14:39:18.8499636Z ✔ constants agree with the mission data they mirror (4.705689ms)
+2026-10-14T14:39:18.8501973Z ✔ every Ju 87 lies on stukaPath at known instants after the bombing event, offset 0/3.5/7 s (14.817552ms)
+2026-10-14T14:39:18.8504384Z ✔ the approach comes from the east, then the formation departs east, hides and never repeats (0.714493ms)
+2026-10-14T14:39:18.8506892Z ✔ attitude comes from the path tangent: nose down in the dive, heading north then west, east on departure (43.643708ms)
+2026-10-14T14:39:18.8508835Z ✔ second raid: one high pass from the raid start, crossing once, then hidden (0.91649ms)
+2026-10-14T14:39:18.8511150Z ✔ the anchor is the consumed time of the bombing event: predicted before it, authoritative after; restore reproduces it (1081.271131ms)
+2026-10-14T14:39:18.8513426Z ✔ bombs appear 1.5 s before each aerial blast and land at the authoritative point at its instant (20.640439ms)
+2026-10-14T14:39:18.8515420Z ✔ the predicted blast points mirror the simulation (including the forward-post near miss and the 30 m rule) (4.86983ms)
+2026-10-14T14:39:18.8517624Z ✔ simulation never imports the presentation path and no time wrap remains in the aircraft presentation (2.681615ms)
+2026-10-14T14:39:18.8519442Z ✔ the view draws a bounded bomb pool from the flights and reports path/bomb diagnostics (15.931408ms)
+2026-10-14T14:39:18.8521438Z ✔ the presented Ju 87 yaw is a smooth pure function of time: bounded rate through the pull-out, no NaN, position untouched (866.779419ms)
+2026-10-14T14:41:22.8878444Z ✔ schema 2 initializes all 89 IDs; diagnostics are detached, small presentation records (18.184484ms)
+2026-10-14T14:41:22.8895260Z ✔ approved T02-min/T03-lite/T25 golden locks the exact integration source and retains historical provenance (1.312009ms)
+2026-10-14T14:41:22.8903496Z ✔ all gameplay bytes hashed each tick against approved T02-min/T03-lite/T25 integration: seed 19390901, support false (61966.186788ms)
+2026-10-14T14:41:22.8927246Z ✔ all gameplay bytes hashed each tick against approved T02-min/T03-lite/T25 integration: seed 7, support true (55014.59518ms)
+2026-10-14T14:41:22.8933293Z ✔ odometer equals accumulated effective XZ displacement, including collision slide; gait is real speed (31.072049ms)
+2026-10-14T14:41:22.8939625Z ✔ blocked ADVANCE publishes idle and zero speed instead of commanded speed (2.25031ms)
+2026-10-14T14:41:22.8942691Z ✔ direct German spans movement, platoon sprint and crouch walk publish distinct effective gaits (3.630171ms)
+2026-10-14T14:41:22.8944426Z ✔ idle bodyYaw follows the shortest arc at 180 degrees/s and preserves combat facing (19.313381ms)
+2026-10-14T14:41:22.8946071Z ✔ moving bodyYaw turns at 360 degrees/s; hitboxes and eye geometry still use authoritative facing (2.567854ms)
+2026-10-14T14:41:22.8947938Z ✔ pause/invalid dt does not touch timestamps, motion, yaw, RNG, checkpoint or events (6.14174ms)
+2026-10-14T14:41:22.8949757Z ✔ real script wounds and demolition deaths have stable timestamps; unseen reserve losses have unknown history (2.322334ms)
+2026-10-14T14:41:22.8951831Z ✔ actual grenade damage records only exposed living actors; repeat ticks do not replay impacts (3.135305ms)
+2026-10-14T14:41:22.8953540Z ✔ player rifle hit/death and real near-miss suppression stamp only the existing combat outcomes (4.820468ms)
+2026-10-14T14:41:22.8955197Z ✔ gait and bodyYaw resume identically at each real CP-A..D, including death recovery (2769.189818ms)
+2026-10-14T14:41:22.8956968Z ✔ station grab adapter retains exact data and motion after pause/double restore (770.836059ms)
+2026-10-14T14:41:22.8958451Z ✔ station drag adapter retains exact data and motion after pause/double restore (753.683713ms)
+2026-10-14T14:41:22.8960167Z ✔ station release adapter retains exact data and motion after pause/double restore (882.223941ms)
+2026-10-14T14:41:22.8962224Z ✔ Bąk carry and CKM/MG34 specialized adapters do not lose identity, timestamps or presentation on reload (1595.205052ms)
+2026-10-14T14:41:22.8986872Z ✔ legacy 86/89 schema-2 saves initialize without inventing events, mutating input or drawing RNG (1191.991814ms)
+2026-10-14T14:41:22.8989204Z ✔ optional partial migration preserves present fields byte for byte and defaults only missing fields (4.769624ms)
+2026-10-14T14:41:22.8990909Z ✔ corrupt presentation rejects atomically in current state and nested checkpoint (495.687388ms)
+2026-10-14T14:41:22.9387971Z ✔ stand to crouch blends skeleton transforms over 0.3 s of sim time instead of cutting between poses (31.90696ms)
+2026-10-14T14:41:22.9390415Z ✔ actions are persistent: the same AnimationAction objects serve every transition and none is recreated (17.607698ms)
+2026-10-14T14:41:22.9392813Z ✔ death plays the fall over sim time from diedAt, fading out of the live pose; without diedAt it keys on first sight (24.459798ms)
+2026-10-14T14:41:22.9394919Z ✔ pause freezes the pose: repeating the same sim time never changes a bone, a weight or the blend record (12.457484ms)
+2026-10-14T14:41:22.9396892Z ✔ LOD swap in the middle of a fade keeps the blend and gives identical bone matrices (4.581953ms)
+2026-10-14T14:41:22.9398537Z ✔ a reloaded renderer rebuilds posture, death and steady frames to the same bone matrices from sim data alone (34.236889ms)
+2026-10-14T14:41:22.9400226Z ✔ locomotion phase follows the saved odometer: the clip advances only as far as the body does (9.907875ms)
+2026-10-14T14:41:22.9403970Z ✔ instances leaving range and the whole renderer disposing never use a mixer-wide stop; stale records expire (0.812997ms)
+2026-10-14T14:41:22.9408605Z ✔ AnimationPlayer keeps evaluation order identical to the stack order and writes time/weight without touching mixer time (0.722539ms)
+2026-10-14T14:41:22.9410441Z ✔ the resolver generic selection mirrors the untouched M01Characters.sample() tail for ordinary soldiers (0.926058ms)
+2026-10-14T14:41:22.9412051Z ✔ blend curve is monotonic, symmetric, flat at both ends and weights always sum to one (3.171199ms)
+2026-10-14T14:41:22.9413668Z ✔ stand to crouch blends over 0.3 s of sim time without a single hard cut, in both directions (6.886126ms)
+2026-10-14T14:41:22.9415472Z ✔ idle, aim, walk, run and pinned switch with short cross-fades; bolt and pinned entry are faster than posture (0.325588ms)
+2026-10-14T14:41:22.9417448Z ✔ an authored (exact) clip is never cross-faded: one layer at full weight on both edges (1.668585ms)
+2026-10-14T14:41:22.9419176Z ✔ death falls over the sim clock from diedAt, cross-fading from the live pose and landing on the final frame (2.51248ms)
+2026-10-14T14:41:22.9421032Z ✔ death without a sim timestamp keys on the sim time the renderer first saw it, or lands on the final pose (2.232027ms)
+2026-10-14T14:41:22.9422672Z ✔ reload rebuilds an in-flight posture, death and gait-start fade from sim data alone (6.74989ms)
+2026-10-14T14:41:22.9424358Z ✔ same actor data at the same sim time gives identical output; pause (repeated clock) freezes every layer (2.140145ms)
+2026-10-14T14:41:22.9426101Z ✔ a retarget in mid-fade (A, B, A) is continuous: no pop, one layer per clip, weights sum to one (1.959578ms)
+2026-10-14T14:41:22.9428175Z ✔ foot drift: locomotion phase comes from the odometer so mean planted-foot speed error stays under 0.10 m/s (22.767569ms)
+2026-10-14T14:41:22.9429998Z ✔ locomotion helpers: clip from gait, cycle distance from GLB extras, blocked movers go idle after HOLD (0.598888ms)
+2026-10-14T14:41:22.9432223Z ✔ a blocked mover fades out of walking instead of sliding in place, and weights stay bounded by the layer cap (2.384191ms)
+2026-10-14T14:41:22.9433861Z ✔ layer clip time follows its own rate from sim time and never uses the wall clock (0.198561ms)
+2026-10-14T14:41:22.9435574Z ✔ the new presentation modules contain no RNG or wall clock, and nothing stops all actions on the generic path (1.196113ms)
+2026-10-14T14:41:22.9437620Z ✔ damage presentation is bounded, frozen at pause, reconstructible and never mutates source state (93.437035ms)
+2026-10-14T14:41:22.9439719Z ✔ T25 all six raid smoke columns survive 05:36 with bounded pools and identical pause/reconstruction (48.634356ms)
+2026-10-14T14:41:22.9441412Z ✔ audio variation is deterministic and independent of Math.random (1.245596ms)
+2026-10-14T14:41:22.9442974Z ✔ rifle, MG34, RKM, CKM, impacts, near miss and layered explosion remain distinct presentation events (14.910633ms)
+2026-10-14T14:41:22.9444517Z ✔ near/mid/far routing lowers gain and bandwidth without changing event identity (3.588468ms)
+2026-10-14T14:41:22.9445990Z ✔ voice budget evicts low-priority presentation and never exceeds the hard limit (0.805854ms)
+2026-10-14T14:41:22.9448094Z ✔ distant rifle/MG stay low priority and cannot evict more important voices; critical can evict distant (3.394205ms)
+2026-10-14T14:41:22.9450112Z ✔ M01 ambience/aircraft loops are unique; train clank only follows a live false-to-true transition (8.599002ms)
+2026-10-14T14:41:22.9451912Z ✔ distant battle scheduler is presentation-only, bounded and does not backlog skipped clock slots (2.970215ms)
+2026-10-14T14:41:22.9453430Z ✔ audio activity cannot consume or mutate M01 gameplay RNG/snapshot (11.892259ms)
+2026-10-14T14:41:22.9454764Z ✔ reset/dispose stop transient and permanent nodes without duplicated loops (1.5484ms)
+2026-10-14T14:41:22.9456210Z ✔ every weapon has its own synthesized identity (spectral and mechanical signature) (3.375922ms)
+2026-10-14T14:41:22.9469666Z ✔ near/mid/far/very-distant shots change layers continuously: mechanism only near, more echoes and longer tail far (0.693174ms)
+2026-10-14T14:41:22.9471276Z ✔ bursts keep the authoritative cadence in one voice; later rounds have shorter tails (9.930357ms)
+2026-10-14T14:41:22.9472181Z ✔ bullet crack vs whizz, material impacts and ricochets are distinct and deterministic (7.489981ms)
+2026-10-14T14:41:22.9473108Z ✔ explosions scale from grenade to bridge demolition with debris, metal stress, splash and rumble (9.84674ms)
+2026-10-14T14:41:22.9473939Z ✔ category limits and the global hard limit hold under a saturated battle (17.207981ms)
+2026-10-14T14:41:22.9474872Z ✔ dynamic intensity rises with heard combat, decays on the simulation clock and drives the distant scheduler (46.520961ms)
+2026-10-14T14:41:22.9475861Z ✔ distant battle is deterministic, aperiodic and never repeats the same sector+kind back to back (26.414156ms)
+2026-10-14T14:41:22.9477192Z ✔ Ju 87 engine layers follow the rendered aircraft path; pull-out siren only on request after a real aerial blast (10.804348ms)
+2026-10-14T14:41:22.9478239Z ✔ trains: emitters match rendered placements; arrivals play once per live transition; idle ticks vary (10.756889ms)
+2026-10-14T14:41:22.9479210Z ✔ fires: emitters come from presentation state; crackle only near, loop follows the nearest fire (4.056222ms)
+2026-10-14T14:41:22.9480236Z ✔ graph: buses, compressor and outdoor reverb exist; voices send to reverb; everything created is disposed (2.239581ms)
+2026-10-14T14:41:22.9481226Z ✔ full presentation pass over the complete real M01 route never changes simulation state or RNG (11516.193796ms)
+2026-10-14T14:41:22.9482158Z ✔ presentation clock jumps (pause, restore, slow frames) never backlog scheduled one-shots (1.449407ms)
+2026-10-14T14:41:22.9483084Z ✔ real MG34 event shape: one-round events from the same gun join one burst voice with burst tails (1.548523ms)
+2026-10-14T14:41:22.9484046Z ✔ early releases fade instead of cutting; fading voices leave the budget at once and still dispose cleanly (1.12582ms)
+2026-10-14T14:41:22.9485032Z ✔ overlapping ducks keep the deepest cut and the latest release; a near-miss cannot cancel a blast duck (0.990016ms)
+2026-10-14T14:41:22.9485951Z ✔ Ju 87 pull-out comes from the nearest rendered Stuka and only while the formation is shown (0.892043ms)
+2026-10-14T14:41:22.9487211Z ✔ Doppler acts on the Ju 87 engine during the dive; a restore jump does not glitch the pitch (16.224035ms)
+2026-10-14T14:41:22.9488194Z ✔ No Doppler dip around the former 90 s path wrap; INTRO/SETUP stay quiet; fire loop has hysteresis (22.53218ms)
+2026-10-14T14:41:22.9489392Z ✔ looped brown noise has no seam; ricochets (not distance) add the whizz; budget and floor bound the graph (18.459857ms)
+2026-10-14T14:41:22.9490477Z ✔ V3 visual RNG and lifecycle curves are deterministic and gameplay RNG stays untouched (11.314161ms)
+2026-10-14T14:41:22.9491251Z ✔ blast categories remain explicit rather than scale-only aliases (0.317656ms)
+2026-10-14T14:41:22.9491975Z ✔ distance and quality reduce secondary density without turning effects off (0.350356ms)
+2026-10-14T14:41:22.9492677Z ✔ fade curves stagger endings and never exceed normalized bounds (0.353663ms)
+2026-10-14T14:41:22.9493336Z ✔ impact materials have distinct bounded presentation families (0.278352ms)
+2026-10-14T14:41:22.9494067Z ✔ approved battlefield pool limits and one-light budget remain byte-explicit (1.146029ms)
+2026-10-14T14:41:22.9494890Z ✔ pause/reset/dispose paths keep presentation pools non-authoritative and cleanable (0.908212ms)
+2026-10-14T14:41:22.9495718Z ✔ demolition authority and saved state are unchanged by all V3 profile sampling (184.866474ms)
+2026-10-14T14:41:22.9496890Z ✔ battlefield FX visual noise is deterministic, bounded and independent from simulation RNG (127.388547ms)
+2026-10-14T14:41:22.9498346Z ✔ battlefield FX stays presentation-only with explicit hard pool limits (1.155496ms)
+2026-10-14T14:41:22.9499308Z ✔ muzzle presentation telemetry latches only after a rendered muzzle frame and resets without simulation state (0.643687ms)
+2026-10-14T14:41:22.9502103Z M01_PORTAL_ASSET_AUDIT {"portal_lisewo_1912.glb":{"meshes":5,"materials":["brick_red","stone_masonry","opening_dark","gate_timber_iron"],"textures":0,"triangles":1996,"nodes":7,"hasNormals":true,"hasUvs":true},"portal_lisewo_1912.lod1.glb":{"meshes":5,"materials":["brick_red","stone_masonry","gate_timber_iron"],"textures":0,"triangles":764,"nodes":7,"hasNormals":true,"hasUvs":true},"portal_lisewo_1912.lod2.glb":{"meshes":5,"materials":["brick_red","stone_masonry","gate_timber_iron"],"textures":0,"triangles":524,"nodes":7,"hasNormals":true,"hasUvs":true}}
+2026-10-14T14:41:22.9504543Z ✔ Lisewo portal GLBs and collider authority remain byte-identical to approved production base (2.526868ms)
+2026-10-14T14:41:22.9505412Z ✔ portal macro placement, LOD budgets and documented uncertainty remain unchanged (1.379977ms)
+2026-10-14T14:41:22.9506217Z ✔ portal binaries keep normals/UVs/material slots without adding texture assets (1.848125ms)
+2026-10-14T14:41:22.9507415Z ✔ microdetail stays inside approved portal macro envelopes and scales by quality (0.737853ms)
+2026-10-14T14:41:22.9508250Z ✔ portal material/detail lookup cannot consume gameplay RNG or mutate save/colliders (11.602691ms)
+2026-10-14T14:41:22.9509106Z ✔ known bridge materials map predictably while unknown material preserves GLB fallback (0.195577ms)
+2026-10-14T14:41:22.9509907Z ✔ authored bridge GLBs, manifest and collider authority stay byte-identical (11.510048ms)
+2026-10-14T14:41:22.9510697Z ✔ structural detail stays inside each span and support macro envelope in every LOD (128.082443ms)
+2026-10-14T14:41:22.9511471Z ✔ walkable decks and both rail loading gauges stay clear of new structure (84.814778ms)
+2026-10-14T14:41:22.9512300Z ✔ quality tiers: LOD2 and Low add nothing; High only adds rivets and fishplates; LOD0 > LOD1 (24.93775ms)
+2026-10-14T14:41:22.9513135Z ✔ descriptors are deterministic and never touch gameplay RNG, saves or colliders (113.215853ms)
+2026-10-14T14:41:22.9514042Z ✔ double-track approach lines up with the bridge tracks and the trains already placed east of Lisewo (0.244478ms)
+2026-10-14T14:41:22.9515029Z ✔ runtime attaches to real GLB nodes, swaps only the rail deck primitives by quality and disposes cleanly (469.219525ms)
+2026-10-14T14:41:22.9515885Z ✔ M01 GLBs keep nine spans, measured supports and map placement in every LOD (10.779368ms)
+2026-10-14T14:41:22.9516837Z ✔ M01 all LODs ship event-linked damage replacements with stable logical IDs (7.368934ms)
+2026-10-14T14:41:22.9517663Z ✔ M01 demolition IDs survive LOD changes and JSON restoration; colliders stay removed (28.976462ms)
+2026-10-14T14:41:22.9518622Z ✔ M01 road towers remain separate, measured and damage-linked in all LODs (5.57394ms)
+2026-10-14T14:41:22.9519448Z ✔ M01 binary exports contain finite positions and unit normals (113.393696ms)
+2026-10-14T14:41:22.9520186Z ✔ M01 manifest matches binary counts, current map hash and decreasing LOD budgets (5.879432ms)
+2026-10-14T14:41:22.9520952Z ✔ M01 historical uncertainty and modern geometry conflicts remain explicit (4.128149ms)
+2026-10-14T14:41:22.9521853Z ✔ all six GLBs have finite skin weights, valid joint indices, embedded textures and decreasing LOD budgets (102.805024ms)
+2026-10-14T14:41:22.9522839Z ✔ all twenty-five animation clips bind to real named bones, have monotonic times and finite transforms (38.590329ms)
+2026-10-14T14:41:22.9523775Z ✔ the original station drag loops on the existing rig with a locked source and finite transforms (8.797783ms)
+2026-10-14T14:41:22.9524696Z ✔ first-person geometry keeps actual GLB arm/hand surfaces and leaves the world uniform unchanged (59.05044ms)
+2026-10-14T14:41:22.9525685Z ✔ the actual reload rig keeps the open action, clip and hand in the first-person frustum on both usable LODs (138.295689ms)
+2026-10-14T14:41:22.9526917Z ✔ sampling real clock, changing LOD and restoring a copy preserves bone transforms and immutable data (9.012064ms)
+2026-10-14T14:41:22.9527986Z ✔ wounded attachment follows its carrier socket and detaches after delivery without changing simulation coordinates (5.39207ms)
+2026-10-14T14:41:22.9528876Z ✔ MakeHuman data licence is shipped exactly as locked at its source revision (0.86601ms)
+2026-10-14T14:41:22.9529745Z ✔ the station casualty remains grounded while the medic samples the backward drag and its fallback (5.219466ms)
+2026-10-14T14:41:22.9530769Z ✔ Kowal and healthy Bąk use their own meshes and muzzle sockets, preserve data and hide the casualty weapon (12.465626ms)
+2026-10-14T14:41:22.9531800Z ✔ riflemen finish the bolt after the flash; pinned engineers stop their working hands until the repair resumes (1.632655ms)
+2026-10-14T14:41:22.9532765Z ✔ schema 2 legacy 86 roster becomes 89 at the aligned post without changing old actors or RNG (30.443723ms)
+2026-10-14T14:41:22.9533883Z ✔ old 89-actor idle placement migrates once and snapshot restore is stable (17.056416ms)
+2026-10-14T14:41:22.9535397Z ✔ old 89-actor save immediately after east demolition keeps idle phase/start time while aligning the old post (16.407241ms)
+2026-10-14T14:41:22.9536992Z ✔ old 89-actor abandon placement shifts rigidly but preserves phase and startedAt exactly (14.829208ms)
+2026-10-14T14:41:22.9537946Z ✔ retreat saves are never translated, including an actor still on an old authored coordinate (13.612512ms)
+2026-10-14T14:41:22.9538801Z ✔ casualties stay casualties and post-west saves preserve their saved positions (23.966316ms)
+2026-10-14T14:41:22.9539792Z ✔ 86-actor saves after east or west demolition remain safe and do not restart abandon (22.825842ms)
+2026-10-14T14:41:22.9541082Z ✔ restore stays atomic when a legacy-position ckm save is invalid (10.217449ms)
+2026-10-14T14:41:22.9541825Z ✔ placement migration changes no non-ckm actor or unrelated saved state (7.62631ms)
+2026-10-14T14:41:22.9542543Z ✔ new ckm root puts gun_muzzle_flash on the mapped south embrasure x/z (1.067879ms)
+2026-10-14T14:41:22.9543406Z ✔ ckm crew is grounded below the deck, leaves after the real event and reaches safety before demolition (5856.323187ms)
+2026-10-14T14:41:22.9544384Z ✔ schema 2 accepts exact legacy rosters and migrates atomically without changing old actors or RNG (5161.857122ms)
+2026-10-14T14:41:22.9545316Z ✔ real ckm clips and weapon share saved time across pause, reload, casualties and optional fallback (67.445ms)
+2026-10-14T14:41:22.9546255Z ✔ M01 ckm wz.30: metros, +Y, cano para −Z, 1,2 m ±2 %, hierarquia de pivôs e três LODs no orçamento (5.288576ms)
+2026-10-14T14:41:22.9547679Z ✔ M01 ckm wz.30: clips da arma animam os nós móveis; rajada de 8 a 600/min; alimentação puxa a ponta e arma duas vezes (2.811731ms)
+2026-10-14T14:41:22.9549017Z ✔ M01 ckm wz.30: clips ckm_wz30_* do atirador e do municiador ligam-se ao rig polaco, não repetem nomes e mostram uma só arma (30.024626ms)
+2026-10-14T14:41:22.9550337Z ✔ M01 ckm wz.30: LOD0 dentro dos 4000 triângulos sem mudar silhueta, pivôs, sockets, fita nem clips; LOD1, LOD2 e clips intactos (5.191124ms)
+2026-10-14T14:41:22.9551774Z ✔ real player-hit presentation is clear, bounded and directional cue stays presentation-only (1.665156ms)
+2026-10-14T14:41:22.9552708Z ✔ near miss and close impact react while distant impact stays quiet (0.458808ms)
+2026-10-14T14:41:22.9553435Z ✔ multiple real MG34 near rounds accumulate danger but obey every hard cap (0.626782ms)
+2026-10-14T14:41:22.9554230Z ✔ near explosion has weight, distant explosion does not create exaggerated feedback (0.310962ms)
+2026-10-14T14:41:22.9555161Z ✔ feedback decay is driven only by mission clock, so pause freezes and resume continues without duplication (1.025659ms)
+2026-10-14T14:41:22.9556032Z ✔ restart/checkpoint reset clears all transient combat presentation state (0.252623ms)
+2026-10-14T14:41:22.9557101Z ✔ quality tiers preserve danger reading while Low stays cheaper and omits exposure flash (0.247994ms)
+2026-10-14T14:41:22.9558077Z ✔ combat presentation consumes no gameplay RNG and cannot alter snapshot, aim, position, HP or clocks (11.018769ms)
+2026-10-14T14:41:22.9559162Z ✔ actual M01 aerial/demolition/grenade events rebuild identical delayed sound, shake and pull-out metadata from Schema 2 (125.624151ms)
+2026-10-14T14:41:22.9560247Z ✔ portal recreate/dispose releases every owned instanced buffer exactly once and preserves shared materials (7.638835ms)
+2026-10-14T14:41:22.9561300Z ✔ missing viewmodel renders a repeated first-shot flash after restart even when the first frame is 100 ms late (32.264757ms)
+2026-10-14T14:41:22.9562305Z ✔ T02 firing post and shelter route receive real LOS fire with the existing cadence and RNG algorithm (37.214838ms)
+2026-10-14T14:41:22.9563299Z ✔ T02 eligibility follows real playable bounds, preserves LOS and excludes the east bridgehead/dike shooters (7.297586ms)
+2026-10-14T14:41:22.9564293Z ✔ T02 dialogue 019 follows the actual destruction impact and never the early railway report (10.480202ms)
+2026-10-14T14:41:22.9565351Z ✔ T03-lite aerial impacts ground after the safety shift; non-aerial demolition levels stay unchanged (2.468219ms)
+2026-10-14T14:41:22.9566265Z ✔ T25 six fixed-time city targets stay outside gameplay and safe, without drawing combat RNG (30.43357ms)
+2026-10-14T14:41:22.9567486Z ✔ T25 existing safeImpact replacement remains safe and grounded when a player is beside an estimated target (13.056372ms)
+2026-10-14T14:41:22.9568500Z ✔ T25 jump consumes due impacts in order once; pause/double restore resumes identical schedule and RNG (1075.390932ms)
+2026-10-14T14:41:22.9569450Z ✔ T25 legacy schema-2 pending/active/ended saves load without replaying historical raid impacts (21.863673ms)
+2026-10-14T14:41:22.9570394Z ✔ T25 corrupt schedules reject atomically including nested checkpoint, preserving input/live state (285.451756ms)
+2026-10-14T14:41:22.9571383Z ✔ the sappers walk to the second cut where the crate is delivered, so "leve a caixa aos sapadores" is true (6096.274369ms)
+2026-10-14T14:41:22.9572365Z ✔ Bąk takes the deck position with the 05:30 order and falls at bak_wound_point, in front of the player (1387.707892ms)
+2026-10-14T14:41:22.9573314Z ✔ a direction hint names the destination, distance and side when the player does not approach it (104.818328ms)
+2026-10-14T14:41:22.9574249Z ✔ once the repair gate is ready the rest of seg_repair runs at readyScale; before that it keeps scale (2.042572ms)
+2026-10-14T14:41:22.9575160Z ✔ the full control route still reaches the debrief with every required objective after the fixes (0.249757ms)
+2026-10-14T14:41:22.9576181Z ✔ the withdrawing east platoon runs past the firing point during the corridor phase and does not stall at x = -109 (3158.26793ms)
+2026-10-14T14:41:22.9577539Z ✔ a Bąk delivered by the player stays visible beside Dudek, who carries him west before the west demolition (1318.219062ms)
+2026-10-14T14:41:22.9578734Z ✔ when Dudek retrieves Bąk he walks to him on the deck and carries him to the station, visible all the way (1261.046914ms)
+2026-10-14T14:41:22.9579848Z ✔ the roll call positions the present section in the shelter facing Jan; the absent stay away (1362.894829ms)
+2026-10-14T14:41:22.9580824Z ✔ Kowal hands over at most six clips of section ammunition; saves keep the ammunition invariant (36.708441ms)
+2026-10-14T14:41:22.9581710Z ✔ legacy schema 2 saves receive the unused section supply and can resupply after loading (15.219675ms)
+2026-10-14T14:41:22.9582696Z ✔ the bridge trusses contain movement: no falling off a span sideways or into a blown gap; the river bank still can (4.239101ms)
+2026-10-14T14:41:22.9583724Z ✔ a Bąk delivered after the east demolition is still evacuated, so the west demolition is not held forever (1225.949488ms)
+2026-10-14T14:41:22.9584786Z ✔ real control routes compare covering and ignoring: faster repair, fewer near misses and more survivors with support (10615.66521ms)
+2026-10-14T14:41:22.9585841Z ✔ repair suppression requires a round that really arrives within 3 m; a solid wall shields the sappers (329.550407ms)
+2026-10-14T14:41:22.9587184Z ✔ inactive or suppressed Germans on the spans cause no withdrawal losses; looking away does not stop combat (1109.241729ms)
+2026-10-14T14:41:22.9588333Z ✔ casualty IDs and rounds in flight survive reload and checkpoint restore; invalid optional timers are rejected atomically (450.754341ms)
+2026-10-14T14:41:22.9589364Z ✔ legacy schema 2 saves migrate and the six reserve slots stay outside the eighteen-man platoon (77.648067ms)
+2026-10-14T14:41:22.9590303Z ✔ the air-raid cover instruction remains visible briefly even if the player was already in cover (16.957929ms)
+2026-10-14T14:41:22.9591311Z ✔ adjustment warning and HUD identify a real salvo; view direction changes the bearing without changing combat (2593.075524ms)
+2026-10-14T14:41:22.9592334Z ✔ a salvo from the dike behind the trusses identifies its actual origin, rather than the visible gate MG (2592.560622ms)
+2026-10-14T14:41:22.9593294Z ✔ an occluding wall prevents an adjustment warning and cover reservation, with a bounded retry (327.700122ms)
+2026-10-14T14:41:22.9594282Z ✔ saved origin restores as data, expires after eight active seconds, and invalid or legacy saves remain safe (110.363175ms)
+2026-10-14T14:41:22.9595308Z ✔ German fire starts on the east bank; only shooters in sight of the west bank (the Lisewo gates) aim at it (1547.577904ms)
+2026-10-14T14:41:22.9596335Z ✔ rounds that pass within 3 m pin the sappers and stop the repair; the HUD line is exactly the simulation state (1290.877273ms)
+2026-10-14T14:41:22.9597665Z ✔ keeping the gate MG down shortens the repair; ignoring it lets the sappers be pinned again and again (10591.577559ms)
+2026-10-14T14:41:22.9598660Z ✔ covering fire on the Germans on the spans saves men; without it the platoon falls to the predicted minimum (0.488364ms)
+2026-10-14T14:41:22.9599554Z ✔ historical times, checkpoints and demolition safety are unchanged in both routes (0.286416ms)
+2026-10-14T14:41:22.9600463Z ✔ rounds in flight survive save and restore and play out identically; corrupt rounds are rejected (768.201086ms)
+2026-10-14T14:41:22.9601436Z ✔ after 120 s of continuous suppression the fire on the repair eases without warning until work resumes (1416.929549ms)
+2026-10-14T14:41:22.9602423Z ✔ the withdrawal HUD line reports the real count by ID and whether the Germans on the spans are suppressed (3283.985933ms)
+2026-10-14T14:41:22.9603453Z ✔ allies under fire are drawn hunched (pinned pose) only while suppressedUntil lasts, without touching the actor (1.351249ms)
+2026-10-14T14:41:22.9604553Z ✔ a designated withdrawal casualty needs an actual actor hit; a wall, a miss or an already dead target cannot lower the count (2.194517ms)
+2026-10-14T14:41:22.9605617Z ✔ damage decals never write simulation state: the real repair route stays bit-identical with them attached (4220.870453ms)
+2026-10-14T14:41:22.9606870Z ✔ damage decal sources stay presentation-only: no RNG, no simulation writes, a single Game hook (2.058312ms)
+2026-10-14T14:41:22.9607933Z ✔ marks sit on the drawn receiver with a fixed lift, differ per material and never z-fight (141.697737ms)
+2026-10-14T14:41:22.9608773Z ✔ portal wall marks stay on masonry: never across the arch opening or below its apex (2.144272ms)
+2026-10-14T14:41:22.9609636Z ✔ the west bridgehead marks the drawn embankment, never the walkable abutment buried under it (74.902859ms)
+2026-10-14T14:41:22.9610481Z ✔ mark pools, spall, debris and embers stay within the declared per-quality budget (724.814663ms)
+2026-10-14T14:41:22.9611351Z ✔ marks expire on the mission clock and are dropped deterministically when time runs backwards (240.418788ms)
+2026-10-14T14:41:22.9612317Z ✔ blast residue lies on drawn surfaces, skips destroyed decks and the station interior, and is deterministic (47.053ms)
+2026-10-14T14:41:22.9613381Z ✔ reset clears every transient mark and the residue rebuilds identically from saved damage; restore follows the save (1901.849636ms)
+2026-10-14T14:41:22.9614347Z ✔ marks on a demolished span or a lowered cover are invalidated; marks elsewhere persist (142.840427ms)
+2026-10-14T14:41:22.9615332Z ✔ the first frame compiles the decal programs and draws every mesh once invisibly; later frames hide empty meshes (63.953181ms)
+2026-10-14T14:41:22.9616343Z ✔ the chip FX batch has instance colours from construction, so the first chip does not switch its program (8.084787ms)
+2026-10-14T14:41:22.9617297Z ✔ the decal atlas is original, deterministic art with bounded size (214.483116ms)
+2026-10-14T14:41:22.9618201Z ✔ demolition bearing follows the actual impact and player view without changing the event or camera (5898.737397ms)
+2026-10-14T14:41:22.9619129Z ✔ demolition cue restores from data, expires on active time, and distinguishes the west blast (274.152555ms)
+2026-10-14T14:41:22.9620047Z ✔ collapse duration and the declared presentation constants sit inside the task contract (1.820837ms)
+2026-10-14T14:41:22.9620973Z ✔ every demolition node of every LOD maps to its intact twin and to a damage id, from the real manifest (0.469388ms)
+2026-10-14T14:41:22.9621948Z ✔ collapse pose: untouched before the blast, full intact offset at age 0, exactly the stored pose from T on (8.257711ms)
+2026-10-14T14:41:22.9622904Z ✔ collapse pose is monotonic, gravity-like (ease-in), and the same clock always gives the same pose (7.475236ms)
+2026-10-14T14:41:22.9623990Z ✔ view: collapsed nodes are SET from the cached stored transform (never accumulated); pause, replay and restore give the same pose (3.566984ms)
+2026-10-14T14:41:22.9625021Z ✔ flash: minimum angular size and duration at 762 m and 362 m; the near-field profile is unchanged (1.172835ms)
+2026-10-14T14:41:22.9626119Z ✔ far field: exposure at the light (age 0), tremor at distance/343 s, complementary to the existing 180 m path, inside M01_FEEDBACK_CAPS (5.865094ms)
+2026-10-14T14:41:22.9627582Z ✔ far field is a pure function of the clock: pause freezes, a late registration or a restore reproduces the same values; reset clears it (1.125026ms)
+2026-10-14T14:41:22.9628672Z ✔ fall points: spans land where the manifest says, splashes only on water (x 25..265), earth elsewhere (0.914321ms)
+2026-10-14T14:41:22.9629698Z ✔ debris, splashes, earth rain and dust: timed from the blast, deterministic, bounded by the per-preset budgets (19.865961ms)
+2026-10-14T14:41:22.9630771Z ✔ M01Atmosphere draws the set-piece inside its existing pools, deterministically, and ignores non-demolition ids (95.418444ms)
+2026-10-14T14:41:22.9631700Z ✔ blast chips and shards have real colour: no vertexColors without a colour attribute (1.27229ms)
+2026-10-14T14:41:22.9632692Z ✔ silence hook: a 2 s window from the blast is exported and surfaced in the view diagnostics; the audio module is untouched (0.783687ms)
+2026-10-14T14:41:22.9633973Z ✔ presentation only: the simulation never imports the module, the module reads no wall clock/RNG, the view keeps owning visibility from renderState.parts (2.36725ms)
+2026-10-14T14:41:22.9635198Z ✔ projectToScreen matches a THREE.PerspectiveCamera for the camera the view reports (2.205898ms)
+2026-10-14T14:41:22.9636298Z ✔ far demolition flash: warm colour, stacked billboards and the declared angular size reach beyond 300 m only (2.239149ms)
+2026-10-14T14:41:22.9637553Z ✔ the far flash is visible over the horizon haze: footprint of the real puff texture, single old-style billboard vs the stack (63.259845ms)
+2026-10-14T14:41:22.9638646Z ✔ earth rain and river splash are legible: bigger clods, more of them, denser puffs, all inside the preset budgets (38.269857ms)
+2026-10-14T14:44:20.4402661Z ✔ mission data carries the T23 east-front profiles; the simulation starts with them, validated against its own roster (11.17472ms)
+2026-10-14T14:44:20.4416577Z ✔ profiles are validated, defaulted and frozen; malformed authoring data is rejected (1.667691ms)
+2026-10-14T14:44:20.4419105Z ✔ displayProfiles reads groups[].displayFire, checks event ids and rejects duplicate ids (0.616013ms)
+2026-10-14T14:44:20.4421703Z ✔ displayProfiles checks shooter ids, target ids and target groups against the roster and the mission groups: a typo fails (3.416152ms)
+2026-10-14T14:44:20.4425546Z ✔ the display RNG is a separate stream: construction mixes only the seed, restore also mixes the clock tick (6.176336ms)
+2026-10-14T14:44:20.4428619Z ✔ display rounds have the gameplay round shape, are frozen, never enter the saved list, and vanish on arrival with nothing happening (9.419866ms)
+2026-10-14T14:44:20.4430657Z ✔ a profile fires only between its from and until events (3.44699ms)
+2026-10-14T14:44:20.4432696Z ✔ only living, active, free, unsuppressed shooters fire, and a shooter coming back waits for a fresh staggered cooldown (16.469566ms)
+2026-10-14T14:44:20.4435092Z ✔ targets: living members of a group, listed ids or a box; no living target means no fire; a fixed origin needs no actor (19.169241ms)
+2026-10-14T14:44:20.4437799Z ✔ a fixed origin publishes its latest shot in display.fixed for the renderer; actor shooters publish nothing there (4.976321ms)
+2026-10-14T14:44:20.4441468Z ✔ the display stream is deterministic per seed, differs between seeds, and an empty profile list never draws (18.300061ms)
+2026-10-14T14:44:20.4443412Z ✔ the module reads a deeply frozen view: it writes nothing to actors or to the view (6.538174ms)
+2026-10-14T14:44:20.4445515Z ✔ the cap holds: a burst that does not fit is skipped whole, never truncated (9.859098ms)
+2026-10-14T14:44:20.4448558Z ✔ the module cannot reach the main RNG, the world trace, events or the clock by construction (1.118332ms)
+2026-10-14T14:44:20.4450698Z ✔ without profiles nothing is drawn and nothing is saved; the getters leave the simulation untouched (142.217412ms)
+2026-10-14T14:44:20.4452972Z ✔ battleReadout is computed on every read from existing state, with the designed fields, and is never stored (7.511935ms)
+2026-10-14T14:44:20.4458592Z ✔ a restore starts an empty display list re-seeded from the saved state; display fire never changes a save or its continuation (433.300184ms)
+2026-10-14T14:44:20.4461308Z ✔ a flood of display rounds, including rounds flying straight over the player, changes nothing in the simulation; the cap holds (1073.195227ms)
+2026-10-14T14:44:20.4464219Z ✔ positive control: the lockstep comparison detects a display round that leaks into the RNG, an actor or the events (1567.042838ms)
+2026-10-14T14:44:20.4467046Z ✔ compareContinuation at 04:47 passes, also with display fire running in the original and none in the restored copy (2444.978401ms)
+2026-10-14T14:44:20.4469770Z ✔ route seed 19390901: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (17539.786515ms)
+2026-10-14T14:44:20.4480780Z ✔ route seed 1: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (17150.2843ms)
+2026-10-14T14:44:20.4578898Z ✔ route seed 2: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (16442.899835ms)
+2026-10-14T14:44:20.4584513Z ✔ route seed 3: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (15606.411862ms)
+2026-10-14T14:44:20.4589490Z ✔ route seed 4: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (16109.125517ms)
+2026-10-14T14:44:20.4594428Z ✔ route seed 5: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (15517.552176ms)
+2026-10-14T14:44:20.4599595Z ✔ route seed 6: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (15663.956227ms)
+2026-10-14T14:44:20.4601684Z ✔ route seed 7: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (15869.214159ms)
+2026-10-14T14:44:20.4603776Z ✔ route seed 8: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (15949.374821ms)
+2026-10-14T14:44:20.4605143Z ✔ route seed 9: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (15910.700162ms)
+2026-10-14T14:44:20.4606451Z ✔ route seed 10: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (15687.478132ms)
+2026-10-14T14:44:20.4609134Z ✔ route seed 11: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (16056.459374ms)
+2026-10-14T14:44:20.4611328Z ✔ renderer: gameplay tracers are drawn first when the 48-instance batch is full; display fire takes at most 24 of what is left (8.133187ms)
+2026-10-14T14:44:20.4613447Z ✔ renderer: display muzzle flashes last 0.15 s, serve any team, need a living active man, and are not doubled on a gameplay flash (9.452315ms)
+2026-10-14T14:44:20.5059385Z ✔ the east front plan reads the mission data: six fixed times between the train and the withdrawal; every block is RECONSTRUCTED (2.647514ms)
+2026-10-14T14:44:20.5061988Z ✔ a data error stops the load: typos, duplicate or out-of-range victims, bad times and a broken hold are rejected (15.284338ms)
+2026-10-14T14:44:20.5064402Z ✔ 24 distinct slots on the road deck: nobody stands on another man, the six reserves are the back rank, the old four-point stack is gone (7.570485ms)
+2026-10-14T14:44:20.5066462Z ✔ the east rifles aim into the platoon block with exactly three draws per call, as before (20.415148ms)
+2026-10-14T14:44:20.5069096Z ✔ the real display profiles are east only: no gate shooters, nothing aimed anywhere near the playable area, the train fires from a fixed origin (2.459291ms)
+2026-10-14T14:44:20.5071377Z ✔ validRound accepts an attrition round only from a rifleman of the dike or the gates at a reserve man; the older kinds keep their rules (0.622394ms)
+2026-10-14T14:44:20.5073945Z ✔ before the train the platoon is off stage; from its arrival it stands, active and on guard, on its slots, and does not move until the withdrawal (1297.754747ms)
+2026-10-14T14:44:20.5075869Z ✔ at the withdrawal the hold ends: the eighteen run west and the six reserves are off stage and dead (86.906417ms)
+2026-10-14T14:44:20.5078546Z ✔ the first fall is fired on the very tick that crosses 04:53:00: one rifleman, one traced round, a tracer, a display flash (20.133521ms)
+2026-10-14T14:44:20.5080851Z ✔ firing one is invisible to the main stream and to the shooter: no draw, no event, no write on him or the player but his display flash (10.535512ms)
+2026-10-14T14:44:20.5083464Z ✔ the round lands: the man falls (DOWN, health 0, still active), the survivors flag stays 18, nobody else is touched, no event, no message, no wound roll (269.919027ms)
+2026-10-14T14:44:20.5085950Z ✔ a wall, a miss or a dead target changes nothing: the tick retries every tick until the round gets through; no duplicate death (286.959849ms)
+2026-10-14T14:44:20.5089290Z ✔ no shot before its time, after its cutoff or after the withdrawal; a suppressed or dead rifleman is skipped; the MG34 gunners never shoot (48.997557ms)
+2026-10-14T14:44:20.5091721Z ✔ a save with the round in flight restores to the same continuation, exactly one death; the validator refuses a malformed attrition round (1134.366104ms)
+2026-10-14T14:44:20.5094436Z ✔ saves from older code load: a hold-window save with the platoon off stage is brought into line on its next tick; the first schema-2 reserve migration is respected (153.730919ms)
+2026-10-14T14:44:20.5101328Z ✔ renderer: a fixed-origin shot draws a gun flash for 0.15 s, gun smoke for 3.2 s and a burst where the shell lands for 2.4 s, from the published data alone (9.841617ms)
+2026-10-14T14:44:20.5103808Z ✔ renderer: the real simulation publishes the Panzerzug shot and the view draws its flash on that very tick and its burst on arrival (504.784199ms)
+2026-10-14T14:44:20.5106459Z ✔ east front seed 19390901: route completes; six fixed falls by attrition rounds; against the T22 logic RNG, events and every other man are equal at every tick (17786.686225ms)
+2026-10-14T14:44:20.5109341Z ✔ east front seed 1: route completes; six fixed falls by attrition rounds; against the T22 logic RNG, events and every other man are equal at every tick (13044.544239ms)
+2026-10-14T14:44:20.5111873Z ✔ east front seed 2: route completes; six fixed falls by attrition rounds; against the T22 logic RNG, events and every other man are equal at every tick (12924.029675ms)
+2026-10-14T14:44:20.5114555Z ✔ east front seed 3: route completes; six fixed falls by attrition rounds; against the T22 logic RNG, events and every other man are equal at every tick (12480.325303ms)
+2026-10-14T14:44:20.5117588Z ✔ east front seed 4: route completes; six fixed falls by attrition rounds; against the T22 logic RNG, events and every other man are equal at every tick (12635.187551ms)
+2026-10-14T14:44:20.5120296Z ✔ east front seed 5: route completes; six fixed falls by attrition rounds; against the T22 logic RNG, events and every other man are equal at every tick (12142.948752ms)
+2026-10-14T14:44:20.5123045Z ✔ east front seed 6: route completes; six fixed falls by attrition rounds; against the T22 logic RNG, events and every other man are equal at every tick (12705.823791ms)
+2026-10-14T14:44:20.5125919Z ✔ east front seed 7: route completes; six fixed falls by attrition rounds; against the T22 logic RNG, events and every other man are equal at every tick (12500.345077ms)
+2026-10-14T14:44:20.5128933Z ✔ east front seed 8: route completes; six fixed falls by attrition rounds; against the T22 logic RNG, events and every other man are equal at every tick (12496.873143ms)
+2026-10-14T14:44:20.5131595Z ✔ east front seed 9: route completes; six fixed falls by attrition rounds; against the T22 logic RNG, events and every other man are equal at every tick (12743.80496ms)
+2026-10-14T14:44:20.5134239Z ✔ east front seed 10: route completes; six fixed falls by attrition rounds; against the T22 logic RNG, events and every other man are equal at every tick (12469.302179ms)
+2026-10-14T14:44:20.5137150Z ✔ east front seed 11: route completes; six fixed falls by attrition rounds; against the T22 logic RNG, events and every other man are equal at every tick (12535.053513ms)
+2026-10-14T14:44:20.5139724Z ✔ east front with covering fire (seed 7, the golden support route): the same, with the player shooting the gate MG and the Germans on the spans (11895.51549ms)
+2026-10-14T14:44:20.5141648Z ✔ M01 environment prop layout is deterministic, uniquely identified and grounded (12.313728ms)
+2026-10-14T14:44:20.5143273Z ✔ visual prop generation cannot consume gameplay RNG or mutate world colliders/save state (7.875665ms)
+2026-10-14T14:44:20.5144751Z ✔ critical rail, road and station access corridors remain visually clear (3.700554ms)
+2026-10-14T14:44:20.5146142Z ✔ Low, Medium and High preserve composition while scaling detail coherently (2.25543ms)
+2026-10-14T14:44:20.5148436Z ✔ rebuilding the visual layout is idempotent and does not create logical duplicates (6.127754ms)
+2026-10-14T14:44:20.5150197Z ✔ visual quality respects explicit settings and conservative hardware fallback (1.05303ms)
+2026-10-14T14:44:20.5151980Z ✔ foreground trunks obstruct walking and shots; restoring destruction reconstructs the same static obstacles (6.316608ms)
+2026-10-14T14:44:20.5153891Z ✔ grading is a pure function of (lighting model, quality): same input => identical uniforms; Low has none (4.519045ms)
+2026-10-14T14:44:20.5155761Z ✔ 04:30, 05:30 and 06:05 give distinct, plausible curves (cool blue hour, warm golden dawn, morning in between) (0.584042ms)
+2026-10-14T14:44:20.5157957Z ✔ transitions are continuous: no step in any grade term between consecutive sim seconds from 04:30 to 07:05 (73.737418ms)
+2026-10-14T14:44:20.5160071Z ✔ anchors turn on the T16 phases: one grade per lighting phase plus the sub-mission night, exact at the anchor, clamped beyond (0.456424ms)
+2026-10-14T14:44:20.5162319Z ✔ the grade tints, it does not change exposure: weighted gain 1, black and white fixed, no crushed blacks, no clipped whites added (1.495418ms)
+2026-10-14T14:44:20.5164310Z ✔ vignette: soft, exactly 1 in the middle of the frame, darkening at the corner stays at or below 25 % (0.419515ms)
+2026-10-14T14:44:20.5166239Z ✔ quality policy: Low builds nothing; Medium/High are ONE pass, ONE colour target and its depth texture, AO inline (0.424384ms)
+2026-10-14T14:44:20.5168076Z ✔ Low: no render target, no pass, no material, no allocation, ever (1.460662ms)
+2026-10-14T14:44:20.5170055Z ✔ Medium/High: one target (half-float, MSAA, depth texture), one composite pass per frame, resized with the canvas, freed when going back to Low (2.14866ms)
+2026-10-14T14:44:20.5172117Z ✔ uniform values reach the shader and follow the lighting model; pause = same model = same uniforms (1.021391ms)
+2026-10-14T14:44:20.5174211Z ✔ wiring: Low keeps the exact statements, the weapon is drawn after the composite and never into the target, tone mapping untouched (2.45847ms)
+2026-10-14T14:44:20.5176336Z ✔ three.js pin: the isXRRenderTarget tone-mapping / output-colour-space branches this pass relies on are still there (1.217618ms)
+2026-10-14T14:44:20.5182963Z ✔ test-only A/B hook is opt-in (?debug) and only toggles bypass / grade / vignette / ao (0.65761ms)
+2026-10-14T14:44:20.5239460Z ✔ intro cards and fade follow the cs_m01_intro beats in mission data (2.043474ms)
+2026-10-14T14:44:20.5258980Z ✔ roll call fades in with the 07:05 card from the battle clock and fades out at the debrief beat (0.555779ms)
+2026-10-14T14:44:20.5260840Z ✔ objective transitions, interaction keys and optional objective split are presentation parsing only (0.877061ms)
+2026-10-14T14:44:20.5262581Z ✔ the presenter never changes simulation state and keeps HUD text contracts on a real route (4482.835092ms)
+2026-10-14T14:44:20.5264204Z ✔ checkpoint feedback, restore fade and continue card are timed by the simulation clock (51.225218ms)
+2026-10-14T14:44:20.6448432Z ✔ projected height is max(3 px, 1.7 m) for several distances, fovs and viewports (1.572111ms)
+2026-10-14T14:44:20.6462313Z ✔ posture heights are distinct in metres and in pixels, and follow the existing pose state (1.424886ms)
+2026-10-14T14:44:20.6464432Z ✔ step phase: same sim clock and id => same phase; ids differ; clock advances it; no wall clock (0.551772ms)
+2026-10-14T14:44:20.6466269Z ✔ hand-off: exactly one representation; nothing changes below 350 m (0.469017ms)
+2026-10-14T14:44:20.6474822Z ✔ capacity 128/96/64 per nation; overflow keeps the nearest, deterministically; one draw call per nation (11.413674ms)
+2026-10-14T14:44:20.6477366Z ✔ minimum contrast against the backdrop at the actor distance, every phase, 350..2000 m (4.471646ms)
+2026-10-14T14:44:20.6479377Z ✔ backlight is active 05:30-06:40 only and only when the camera faces the sun (0.285263ms)
+2026-10-14T14:44:20.6481508Z ✔ class: one InstancedMesh per nation, capacity by quality, disabled => empty selection, no GPU needed (3.743613ms)
+2026-10-14T14:44:20.6484031Z ✔ wiring: only the view and the characters hand-off know the module; sim never imports it (2.062699ms)
+2026-10-14T14:44:20.6571056Z ✔ M01 Ju 87 B-1: metres, nose to −Z, 11.10 × 13.80 m, stable nodes and three LODs within budget (5.091206ms)
+2026-10-14T14:44:20.6572081Z ✔ M01 Ju 87 B-1: propeller turns a full revolution about Z; dive brakes open 90° about their hinge (1.537336ms)
+2026-10-14T14:44:20.8378857Z ✔ authored sun keyframes (C01) and the fog range are untouched (2.163067ms)
+2026-10-14T14:44:20.8384562Z ✔ sun interpolation is exactly the pre-extraction formula, including both clamped ends (6.006859ms)
+2026-10-14T14:44:20.8389680Z ✔ the five phase clocks give distinct sky, light, fog and exposure values (0.686705ms)
+2026-10-14T14:44:20.8394349Z ✔ the directional light casts shadows from 04:30 as a positive-elevation twilight key with the real azimuth (12.439456ms)
+2026-10-14T14:44:20.8400144Z ✔ daylight, light intensities and exposure follow the expected monotone trend over the mission (11.487403ms)
+2026-10-14T14:44:20.8411394Z ✔ every model value is finite and in range for any clock, including outside the mission (16.47833ms)
+2026-10-14T14:44:20.8414751Z ✔ applier drives the lights, fog, exposure and sky from the model without touching fog range or Low shadow cost (2.347332ms)
+2026-10-14T14:44:20.8463261Z ✔ weapon lighting inherits the twilight key: the weapon key is lit from above the hands at 04:30 and warms by 05:30 (7.245346ms)
+2026-10-14T14:44:20.8465263Z ✔ sky shader: colours come from the model uniforms, clouds project from direction (no sphere UV seam, no zenith pinch) (52.628603ms)
+2026-10-14T14:44:20.8468373Z ✔ shadow cascades: Low has one (no extra light), Medium/High two with the key intensity split, not doubled (6.245244ms)
+2026-10-14T14:44:21.7630924Z ✔ real GLBs: bounded decreasing LOD budgets, finite valid attributes, original licence and visible locomotive features (44.761104ms)
+2026-10-14T14:44:21.7638067Z ✔ loaded actual assets retain anchor and orientation; one visible LOD and three draw meshes (141.05319ms)
+2026-10-14T14:44:21.7642576Z ✔ LOD hysteresis avoids boundary flicker and ignores quality, clock and camera semantics (0.155761ms)
+2026-10-14T14:44:21.7648696Z ✔ partial asset failure uses a surviving LOD; total failure retains exact old proxy extents (16.140427ms)
+2026-10-14T14:44:21.7652066Z ✔ late optional downloads cannot attach after disposal; asset cache owns shared buffers (17.667715ms)
+2026-10-14T14:44:21.7654305Z ✔ integration preserves gameplay, RNG, hitboxes/muzzle modules, missions and non-presentation base assets byte-identical (703.215617ms)
+2026-10-14T14:44:21.7656496Z ✔ pause/restore and repeated rendering never mutate a save or introduce train movement authority (62.4931ms)
+2026-10-14T14:44:21.7815034Z ✔ M01 MG 34: metros, cano para −Z, 1,219 m ±2 %, peças móveis com pivô e três LODs no orçamento (4.535836ms)
+2026-10-14T14:44:21.7817473Z ✔ M01 MG 34: clips mg34_* ligam-se ao rig do soldado alemão e aos nós da arma; rajada de 7 a 800/min; recarga do tambor (10.001542ms)
+2026-10-14T14:44:21.7819768Z ✔ M01 MG 34 deitada: nomes novos, kit da MG 34 e soldados reutilizados sem alterações (hashes do manifesto) (17.548512ms)
+2026-10-14T14:44:21.7828178Z ✔ M01 MG 34 deitada: alvos do rig e da arma, valores finitos, quaternões unitários e durações (43.96223ms)
+2026-10-14T14:44:21.7830104Z ✔ M01 MG 34 deitada: rajada de 7 a 0,075 s, janela e cortes; bípode aberto/dobrado; recarga coordenada (2.465062ms)
+2026-10-14T14:44:21.7831846Z ✔ M01 MG 34 deitada: continuidade com mg34_aim do kit e entre clips deitados (69.840587ms)
+2026-10-14T14:44:21.7833679Z ✔ M01 MG 34 deitada: AnimationMixer do three.js — contactos, passagem do tambor e pausa/retoma no mesmo frame (62.967383ms)
+2026-10-14T14:44:22.2112469Z ✔ actual renderer samples enter, idle, burst and exit from simulation and matches its muzzle within 2 mm (175.286816ms)
+2026-10-14T14:44:22.2115235Z ✔ renderer save after 1 shots restores same frame and flash without replay or RNG draws (103.417724ms)
+2026-10-14T14:44:22.2117991Z ✔ renderer save after 4 shots restores same frame and flash without replay or RNG draws (86.893286ms)
+2026-10-14T14:44:22.2120298Z ✔ renderer save after 6 shots restores same frame and flash without replay or RNG draws (71.421624ms)
+2026-10-14T14:44:22.2122540Z ✔ missing prone GLB uses existing procedural batches without changing gameplay, hitboxes, save, RNG or real shots (114.10382ms)
+2026-10-14T14:44:22.2124659Z ✔ rendered death during enter has no residual prone frame, weapon, flash or loader (57.886261ms)
+2026-10-14T14:44:22.2126541Z ✔ rendered death during idle has no residual prone frame, weapon, flash or loader (65.546463ms)
+2026-10-14T14:44:22.2128751Z ✔ rendered death during fire_burst has no residual prone frame, weapon, flash or loader (37.195089ms)
+2026-10-14T14:44:22.2131311Z ✔ rendered death during exit has no residual prone frame, weapon, flash or loader (57.95497ms)
+2026-10-14T14:44:22.2135659Z ✔ actual muzzle effect after shot 1 has no extra flash in the .06/.075 gap or restore (21.581448ms)
+2026-10-14T14:44:22.2137552Z ✔ actual muzzle effect after shot 4 has no extra flash in the .06/.075 gap or restore (17.945535ms)
+2026-10-14T14:44:22.2140780Z ✔ actual muzzle effect after shot 6 has no extra flash in the .06/.075 gap or restore (13.537027ms)
+2026-10-14T14:44:22.2142220Z ✔ actual muzzle batches have no post-death flash during all four prone phases (6.776949ms)
+2026-10-14T14:44:22.3158839Z ✔ existing MG34 gunners enter for exactly 1.9 seconds; other actors have no new posture (11.093515ms)
+2026-10-14T14:44:22.3165010Z ✔ save and atomic restore preserve enter, idle, aim and exit and consume no RNG (88.862935ms)
+2026-10-14T14:44:22.3177831Z ✔ save after shot 1: resume without duplicate/lost rounds, events, frames or RNG (44.335558ms)
+2026-10-14T14:44:22.3182924Z ✔ save after shot 4: resume without duplicate/lost rounds, events, frames or RNG (30.605111ms)
+2026-10-14T14:44:22.3184807Z ✔ save after shot 6: resume without duplicate/lost rounds, events, frames or RNG (22.893672ms)
+2026-10-14T14:44:22.3186553Z ✔ 4, 5, 6 and 7 shots preserve the requested count and real .075 cadence (6.493088ms)
+2026-10-14T14:44:22.3188989Z ✔ pause leaves posture, progress, shot, pending burst, RNG and complete snapshot exactly stable (40.275092ms)
+2026-10-14T14:44:22.3190801Z ✔ ADVANCE exits prone, blocks firing, then remains standing (2.132329ms)
+2026-10-14T14:44:22.3192429Z ✔ RETREAT exits prone, blocks firing, then remains standing (2.050977ms)
+2026-10-14T14:44:22.3194136Z ✔ movement waits for exit; interrupted entry reverses its saved fractional progress (3.346201ms)
+2026-10-14T14:44:22.3196153Z ✔ suppression keeps the gunner low and cancels pending shots without cancelling those in flight (14.751008ms)
+2026-10-14T14:44:22.3199449Z ✔ death during enter immediately clears posture and future shots (13.396724ms)
+2026-10-14T14:44:22.3200980Z ✔ death during idle immediately clears posture and future shots (11.918438ms)
+2026-10-14T14:44:22.3203306Z ✔ death during fire_burst immediately clears posture and future shots (15.386845ms)
+2026-10-14T14:44:22.3205768Z ✔ death during exit immediately clears posture and future shots (13.856274ms)
+2026-10-14T14:44:22.3210205Z ✔ inactivity discards pending combat and never creates a loader association (2.233338ms)
+2026-10-14T14:44:22.3213555Z ✔ legacy missing prone data resumes safely with no marker; 86 roster/CKM migration stays unchanged (16.066399ms)
+2026-10-14T14:44:22.3220526Z ✔ invalid partial/impossible prone fields reject atomically without changing source or target (88.196108ms)
+2026-10-14T14:44:22.3233000Z ✔ movement and S3 station evacuation bodies remain byte-for-byte identical to the fixed base (7.307011ms)
+2026-10-14T14:44:22.3248660Z ✔ a nonlethal hit interrupts the remaining burst and stays low with a valid snapshot (4.348416ms)
+2026-10-14T14:44:22.3252407Z ✔ player fire observes the current transition progress within a real simulation tick (3.885569ms)
+2026-10-14T14:44:22.3292279Z ✔ save cannot remove or alter an emitted round still in flight (13.804467ms)
+2026-10-14T14:44:22.3294527Z ✔ OUTRO cancels pending rounds and blocks new MG bursts while preserving existing flight (1.484467ms)
+2026-10-14T14:44:22.3296539Z ✔ a target already reached never rewrites the state of a fixed prone burst (4.103418ms)
+2026-10-14T14:44:22.5708582Z MG34 muzzle proof: 2496 comparisons, max=0.000038402 m, tolerance=0.002 m
+2026-10-14T14:44:22.7484537Z ✔ numeric muzzle proof against real attached soldier/weapon GLBs for all phases and four facings (210.605995ms)
+2026-10-14T14:44:22.7491953Z ✔ geometry table is derived reproducibly from the exact real GLBs, without a graphics or asset dependency in simulation (135.069368ms)
+2026-10-14T14:44:22.7493805Z ✔ head/torso/legs move along body axis facing=0 during prone and transitions (1.195406ms)
+2026-10-14T14:44:22.7497845Z ✔ head/torso/legs move along body axis facing=1.5707963267948966 during prone and transitions (0.578943ms)
+2026-10-14T14:44:22.7499595Z ✔ head/torso/legs move along body axis facing=3.141592653589793 during prone and transitions (0.582059ms)
+2026-10-14T14:44:22.7501617Z ✔ head/torso/legs move along body axis facing=-1.5707963267948966 during prone and transitions (0.309389ms)
+2026-10-14T14:44:22.7503532Z ✔ partial entry interruption reverses the actual enter clip continuously instead of jumping to an unrelated exit frame (0.89809ms)
+2026-10-14T14:44:22.7505445Z ✔ real rounds start at the rendered prone socket at each of seven scheduled shot instants (30.084997ms)
+2026-10-14T14:44:22.7508581Z ✔ pause keeps eye, hitboxes, muzzle and canonical clip frame exactly stable across all saved phases (3.357942ms)
+2026-10-14T14:44:23.5993795Z ✔ real GLBs: bounded decreasing LOD budgets, finite valid attributes, original licence and five distinct conservative profiles (51.944232ms)
+2026-10-14T14:44:23.6004639Z ✔ loaded actual assets retain anchor and orientation; one visible LOD and three draw meshes (170.702735ms)
+2026-10-14T14:44:23.6013449Z ✔ LOD hysteresis avoids boundary flicker and ignores quality, clock and camera semantics (0.247353ms)
+2026-10-14T14:44:23.6015638Z ✔ partial asset failure uses a surviving LOD; total failure retains exact old proxy extents (27.364006ms)
+2026-10-14T14:44:23.6017788Z ✔ late optional downloads cannot attach after disposal; asset cache owns shared buffers (18.534116ms)
+2026-10-14T14:44:23.6019938Z ✔ integration preserves gameplay, RNG, hitboxes/muzzle modules, missions and non-presentation base assets byte-identical (782.694717ms)
+2026-10-14T14:44:23.6022440Z ✔ pause/restore and repeated rendering never mutate a save or introduce train movement authority (77.301194ms)
+2026-10-14T14:44:23.6295468Z ✔ hit marker lights only for player-shot hit:true and lives 0.15 s of mission clock (11.879316ms)
+2026-10-14T14:44:23.6297691Z ✔ hit marker freezes while paused (clock constant), is hidden in cinematic scenes and cleared by reset/clear (4.843652ms)
+2026-10-14T14:44:23.6299323Z ✔ sound plan: <= 60 m immediate, beyond 60 m due at clock + distance/343 (1.143399ms)
+2026-10-14T14:44:23.6300998Z ✔ game.js: far player impact is queued with the same key, drained when due, and never replays after restore (4.584487ms)
+2026-10-14T14:44:23.6302799Z ✔ a player shot into the Vistula yields water FX and water sound material, not earth dust (39.087726ms)
+2026-10-14T14:44:23.6304426Z ✔ hit marker and sound scheduling consume no gameplay RNG and leave the snapshot unchanged (3.512612ms)
+2026-10-14T14:44:31.0363094Z ✔ the real roll call seats only the present actors and keeps their positions and pose through save/reload (6496.751692ms)
+2026-10-14T14:44:31.0371056Z ✔ actual instance matrices lower seated/crouched heads, keep seated feet on the floor and render horizontal wounded/carried bodies without mutating data (28.099092ms)
+2026-10-14T14:44:31.0376355Z ✔ legacy actors without pose remain accepted and an unknown saved pose is rejected atomically (22.188634ms)
+2026-10-14T14:44:31.0385142Z ✔ distance removes face accessories while retaining the same head position, pose and immutable actor (4.309052ms)
+2026-10-14T14:44:31.0387913Z ✔ a shot shoulders the rifle, keeps both hands on it and attaches the flash to the barrel through yaw and recoil (2.716783ms)
+2026-10-14T14:44:31.0390540Z ✔ suppression lowers the upper body with feet planted and takes priority over a recent shot; seated, wounded and unarmed actors do not aim (3.646392ms)
+2026-10-14T14:44:31.0448532Z ✔ a real combat save reproduces the same animation matrices at the same clock after reload and walking lifts a foot without sinking either boot (935.963908ms)
+2026-10-14T14:44:31.0728876Z ✔ o gerador reproduz byte a byte os GLB e o manifesto em disco (296.750033ms)
+2026-10-14T14:44:31.0735196Z ✔ gerador portável: sem Math.sin/cos/pow/exp/atan2/hypot/... nem operador ** no código (só src/pmath.mjs) (3.919654ms)
+2026-10-14T14:44:31.0812765Z ✔ gerador portável: ruído de 1 ulp em Math.* (outro libm/arquitectura) não muda nenhum byte (228.926907ms)
+2026-10-14T14:44:31.0814968Z ✔ gerador portável: posições, normais e cores estão na grelha de arredondamento (QUANT) e sem −0 (140.788757ms)
+2026-10-14T14:44:31.0848036Z ✔ manifesto: autor, licença, unidades, lista completa e ficheiros iguais (bytes, sha256, triângulos) (4.777419ms)
+2026-10-14T14:44:31.0849339Z ✔ orçamentos: LOD0 ≤ 1500 triângulos, LOD1 ≤ 300 e menor que o LOD0 (3.563247ms)
+2026-10-14T14:44:31.0850296Z ✔ tamanhos reais em metros, origem no solo e LOD1 com a mesma pegada que o LOD0 (5.854884ms)
+2026-10-14T14:44:31.0851465Z ✔ GLB válidos: cor de vértice, sem texturas, normais unitárias, índices em limites, cores dessaturadas, PBR razoável (42.303845ms)
+2026-10-14T14:44:31.0852530Z ✔ o vão de fio liga-se às âncoras do poste (sockets) e tem 12 m de comprimento (0.664553ms)
+2026-10-14T14:44:31.0853538Z ✔ M01 rkm wz.28: metres, barrel to −Z, 1.11 m ±2 %, movable parts and three LODs within budget (4.114729ms)
+2026-10-14T14:44:31.0854582Z ✔ M01 rkm wz.28: clips bind to the soldier skeleton; burst fires 3 rounds; rifle clip hidden (6.936277ms)
+2026-10-14T14:44:33.5591543Z ✔ the pure collision JSON remains reproducible from the checked GLB translations (47.868336ms)
+2026-10-14T14:44:33.5593606Z ✔ debug diagnostics return copies; editing a returned gate or failure cannot change live state (13.66714ms)
+2026-10-14T14:44:33.5598527Z ✔ wz.29 requires a bolt cycle; an empty magazine uses a clip of five, preserving ammunition (0.314188ms)
+2026-10-14T14:44:33.5603371Z ✔ wz.29 partial loading commits one round at a time and can be interrupted; in-progress saves resume it (0.311964ms)
+2026-10-14T14:44:33.5608602Z ✔ M01 complete control route reaches debrief, all required objectives, unique events and all four actual checkpoints (6204.429753ms)
+2026-10-14T14:44:33.5610690Z ✔ every M01 checkpoint restores exact actors, ammunition, RNG, dialogue, destruction and real clocks after death (53.364272ms)
+2026-10-14T14:44:33.5613374Z ✔ damaged bridge pieces and German casualties survive LOD changes and checkpoint restoration (10.831575ms)
+2026-10-14T14:44:33.5617373Z ✔ overdue events use >=; delayed events wait active seconds; pause freezes both clocks and weapon work (41.068676ms)
+2026-10-14T14:44:33.5622568Z ✔ a late message never rewinds battle time and every aerial impact stays at least thirty metres away (4.402898ms)
+2026-10-14T14:44:33.5637064Z ✔ west demolition waits inside the safety zone, then releases once the player and allies have left (83.297039ms)
+2026-10-14T14:44:33.5639024Z ✔ boundary warning precedes failure and its eight second timer resets when the player returns (2.713226ms)
+2026-10-14T14:44:33.5640814Z ✔ metre-space hitboxes, actual cover and bridge joints support shots and continuous travel (1.595886ms)
+2026-10-14T14:44:33.5642760Z ✔ corrupt M01 state is rejected atomically before an active scene, grenade or missing timer can crash the game (40.265295ms)
+2026-10-14T14:44:33.5644884Z ✔ outro calls Nowicki twice as distinct beats and consumes completion once, including skip after partial playback (88.872797ms)
+2026-10-14T14:44:33.5728039Z ✔ optional Bąk rescue cannot be taken away mid-carry; delivery chooses the player continuity branch (5.894118ms)
+2026-10-14T14:44:33.5729935Z ✔ all five sectors keep their schedule and stable casualties for ninety seconds while the player looks away (875.671476ms)
+2026-10-14T14:44:33.5731200Z ✔ west hold timeout sends the sergeant to escort the player without demolition damage (1339.029273ms)
+2026-10-14T14:44:33.5732179Z ✔ grenade blast starts at its real height; solid cover shields a nearby actor and inactive actors stay unharmed (1.782785ms)
+2026-10-14T14:48:14.2075611Z ✔ first divergence diagnostic detects exact tick, field, missing key and event changes (42.295406ms)
+2026-10-14T14:48:14.2077981Z ✔ full route A/B with CP-A..D, events, RNG and long continuation: seed 19390901, support false (93287.738102ms)
+2026-10-14T14:48:14.2080015Z ✔ full route A/B with CP-A..D, events, RNG and long continuation: seed 7, support true (79908.735126ms)
+2026-10-14T14:48:14.2084693Z ✔ MG34 seven-shot burst after 1, actual tick pipeline plus grenade, rifle RNG and double load (532.799701ms)
+2026-10-14T14:48:14.2086846Z ✔ MG34 seven-shot burst after 4, actual tick pipeline plus grenade, rifle RNG and double load (517.762969ms)
+2026-10-14T14:48:14.2089614Z ✔ MG34 seven-shot burst after 6, actual tick pipeline plus grenade, rifle RNG and double load (516.164107ms)
+2026-10-14T14:48:14.2091774Z ✔ station grab: variable timestep, zero-dt pause, double save/load (1054.918312ms)
+2026-10-14T14:48:14.2095581Z ✔ station drag: variable timestep, zero-dt pause, double save/load (1079.536935ms)
+2026-10-14T14:48:14.2097942Z ✔ station release: variable timestep, zero-dt pause, double save/load (1192.368897ms)
+2026-10-14T14:48:14.2101705Z ✔ grenade bounce/fuse, rifle bolt and partial reload continue with exact RNG and events (571.395371ms)
+2026-10-14T14:48:14.2103989Z ✔ Bąk player carry/late delivery followed by Dudek evacuation and both demolitions (32584.08233ms)
+2026-10-14T14:48:14.2107452Z ✔ legacy 86/89 actors, missing optional fields and old CKM placement migrate once then have identical futures (945.814255ms)
+2026-10-14T14:48:14.2112393Z ✔ legacy MG34 pre-created future rounds migrate without replay, then continue identically (552.696688ms)
+2026-10-14T14:48:14.2114436Z ✔ death between each real CP-A..D and the next CP preserves exact recovery and subsequent future (2899.253719ms)
+2026-10-14T14:48:14.2116296Z ✔ corrupt cross-system states reject atomically and leave the destination future unchanged (1200.757124ms)
+2026-10-14T14:48:14.2118775Z ✔ corrupt weapon method/profile, unsigned RNG and unknown phase reject before changing future gameplay (785.514339ms)
+2026-10-14T14:48:14.2121187Z ✔ OUTRO playback, skip, double load and completed no-op use the same dialogue/event future (5362.350099ms)
+2026-10-14T14:48:14.2123770Z ✔ save between checkpoints preserves the future respawn destination (18.959181ms)
+2026-10-14T14:48:14.2573343Z ✔ motion package contains six distinct original clips and no renderable geometry, textures or root channels (4.52721ms)
+2026-10-14T14:48:14.2583958Z ✔ documented locomotion distance, contacts and durations can be sampled from an odometer (0.365494ms)
+2026-10-14T14:48:14.2585788Z ✔ all PL/DE and 61/28-joint LOD variants accept the same locked bind pose (4249.011854ms)
+2026-10-14T14:48:14.2588122Z ✔ real GLTFLoader/AnimationMixer binds all tracks, preserves root and limb lengths, without NaN or warnings (824.640463ms)
+2026-10-14T14:48:14.2589990Z ✔ actual skinned boot soles stay above ground; nominal root displacement cancels planted-foot drift (0.447387ms)
+2026-10-14T14:48:14.2592020Z ✔ wrists follow the weapon profile and elbows remain outside the chest envelope through the actual interpolated clips (0.265837ms)
+2026-10-14T14:48:14.2593722Z ✔ locomotion loops have matching transforms and no single-tick joint jump (0.233316ms)
+2026-10-14T14:48:14.2595408Z ✔ left/right turns use opposite foot orders and ±90° skeletal yaw while the actor root stays fixed (137.387835ms)
+2026-10-14T14:48:14.2597659Z ✔ reactions recover to their initial pose without deciding combat or moving the actor root (39.861048ms)
+2026-10-14T14:48:14.2599571Z ✔ the full visible skin stays finite and anatomically bounded at five requested clip phases on all six models (2732.670728ms)
+2026-10-14T14:48:14.2601387Z ✔ generation reproduces the exact GLB and metadata twice without modifying original assets (329.677234ms)
+2026-10-14T14:48:14.2602984Z ✔ motion package source commit preserves gameplay, original assets, dependencies and workflows (21.740365ms)
+2026-10-14T14:48:14.2604952Z ✔ eight bounded profiles per nation are deterministic by ID/side/real role and independent of clocks, health, order and quality (18.548875ms)
+2026-10-14T14:48:14.2607431Z ✔ actual GLB variants survive all three LODs, pause, rebind and re-created renderers without actor/source mutation (370.405391ms)
+2026-10-14T14:48:14.2609571Z ✔ OFF vs ON has exactly equal world bones, root/facing, gameplay hitboxes, weapon meshes and rendered muzzle at every LOD (185.722618ms)
+2026-10-14T14:48:14.2611753Z ✔ shared originals retain all attributes and indices; source atlas is shared; cached variants add no textures/draws (190.545905ms)
+2026-10-14T14:48:14.2613802Z ✔ actual gear silhouettes differ through existing breadbag fullness/optional shovel; ammo pouches and skins remain (65.96652ms)
+2026-10-14T14:48:14.2615991Z ✔ simulation futures/RNG/saves/checkpoints are exact with visual OFF vs ON; renderer freeze/reload does not write state (576.774526ms)
+2026-10-14T14:48:14.2618384Z ✔ missing optional art stays procedural; release/rebind keeps cached buffers until owner disposal (26.284988ms)
+2026-10-14T14:48:14.2620808Z ✔ real continuation and its CP backup keep the same visual identities; German face treatments stay within 3 mm (718.021655ms)
+2026-10-14T14:48:14.2623099Z ✔ integration preserves gameplay, hitbox/muzzle, save, locomotion and non-presentation base assets byte-identical (980.699481ms)
+2026-10-14T14:48:14.2625382Z ✔ M01 soldiers: metres, −Z facing, 1.65–1.85 m and the full game skeleton in every LOD (10.031298ms)
+2026-10-14T14:48:14.2627495Z ✔ M01 soldiers: visible triangle budget, textures per LOD and togglable variants (16.753034ms)
+2026-10-14T14:48:14.2629801Z ✔ M01 soldiers: weapons keep documented length (wz.29 1.10, Kar98k ~1.11, wz.98a 1.25, rkm wz.28 1.11 m) with bolt and magazine bones (8.945285ms)
+2026-10-14T14:48:14.2631749Z ✔ M01 soldier animations bind by bone name and keep kb_wz29 timings (5.177598ms)
+2026-10-14T14:48:14.2633675Z ✔ clip library V2: manifest, roster, durations, loops and masks of every new clip; animation-only, in place (54.352942ms)
+2026-10-14T14:48:14.2635807Z ✔ the shipped clips and every preserved file are byte-identical to the base commit; per-clip hashes match the base GLB (128.20368ms)
+2026-10-14T14:48:14.2652672Z ✔ sprint, crouch walk, hit_front and near_miss_duck carry the motion package track data unchanged (40.579325ms)
+2026-10-14T14:48:14.2654634Z ✔ clip extras are the 240 Hz measurement of the real mixer: contacts, nominal speed, drift, loop seam, junctions (700.019132ms)
+2026-10-14T14:48:14.2656809Z ✔ loops are continuous at the ends: identical first and last keys on every track, no seam in the measured pose (11.061415ms)
+2026-10-14T14:48:14.2659316Z ✔ runtime keys: locomotion clips publish speed_mps and cycle_distance_m (resolver contract); gaits match the nominal speeds (0.869597ms)
+2026-10-14T14:48:14.2661433Z ✔ the skinned LOD1 body stays out of the ground in every new clip and the dead end flat on it (539.410715ms)
+2026-10-14T14:48:14.2663325Z ✔ manifest sources, preserved files and the clip table are in sync; regenerating reproduces the committed package (1662.346882ms)
+2026-10-14T14:48:14.2665139Z ✔ Station mesh vertices remain inside the authorised visual envelope at all LODs (417.129329ms)
+2026-10-14T14:48:14.2666888Z ✔ the facade has real missing wall faces, deep closed reveals and physical parallax (313.674397ms)
+2026-10-14T14:48:14.2668569Z ✔ silhouette, roofs and openings survive quality switches; detail and allocation stay bounded (241.267267ms)
+2026-10-14T14:48:14.2670262Z ✔ geometry and material maps regenerate byte for byte without random state or external assets (585.980123ms)
+2026-10-14T14:48:14.2672203Z ✔ Station construction/sync preserves all anchors, colliders, props and save/RNG/evacuation authority (1459.36487ms)
+2026-10-14T14:48:14.2673359Z ✔ platform and awning preserve walking clearance in the existing facade and evacuation strips (181.557911ms)
+2026-10-14T14:48:14.2674359Z ✔ dispose is idempotent; recreate replaces one root and frees owned geometry/material/texture resources once (439.715624ms)
+2026-10-14T14:48:14.2675311Z ✔ unexpected or missing Station anchors fail safely before attaching any replacement root (1.026481ms)
+2026-10-14T14:48:14.2676162Z ✔ V3 preserves the V2 five-volume and 140-aperture contract and outward roof normals (111.182163ms)
+2026-10-14T14:48:14.2677340Z ✔ V3 resource budget remains seven shared batches and ten maps across all quality levels (176.529954ms)
+2026-10-14T14:48:14.2678269Z ✔ V3 varying panes, roughness and relief stay deterministic and Station shader scope stays private (161.864445ms)
+2026-10-14T14:48:14.2679355Z ✔ the real station clips sample both roles from saved phase time, with pause, fresh renderer and LOD restore (1650.554772ms)
+2026-10-14T14:48:14.2680278Z ✔ the patient holds the actual final grab pose throughout the moving backward drag (420.491374ms)
+2026-10-14T14:48:14.2681254Z ✔ a missing or incomplete optional transition pair falls back together and leaves evacuation success to simulation (7153.19015ms)
+2026-10-14T14:48:14.2682324Z ✔ M01 arrasto da estação: ficheiros novos, rig e clips reutilizados sem alterações (SHA-256 do manifesto) (5.05637ms)
+2026-10-14T14:48:14.2683354Z ✔ M01 arrasto da estação: alvos dos 61 ossos, valores finitos, quaternões unitários, relógio e eventos dos pares (45.717416ms)
+2026-10-14T14:48:14.2684350Z ✔ M01 arrasto da estação: extremos iguais às poses reais, percurso inverso e raiz sem deslocação (259.356571ms)
+2026-10-14T14:48:14.2685330Z ✔ M01 arrasto da estação: AnimationMixer do three.js — contactos, paciente de costas, corpos e pausa/retoma (118.90477ms)
+2026-10-14T14:48:14.2686296Z ✔ the fictional station casualty starts in the yard and the clock triggers his injury only once (615.059036ms)
+2026-10-14T14:48:14.2687586Z ✔ the backward drag stays on the ground, completes outside the camera and returns Dudek to his post (1045.093622ms)
+2026-10-14T14:48:14.2688471Z ✔ changing the player look never changes the station evacuation or its delivery (1321.326366ms)
+2026-10-14T14:48:14.2689355Z ✔ a save during the drag restores the same actors, task and future positions with no scene objects (869.543752ms)
+2026-10-14T14:48:14.2690378Z ✔ death or removal of a participant detaches the casualty instead of leaving an invalid or moving carrier reference (1792.665404ms)
+2026-10-14T14:48:14.2691315Z ✔ legacy schema 2 saves with an already consumed station event do not replay an injury (414.088563ms)
+2026-10-14T14:48:14.2692383Z ✔ station care coexists with Bąk, all objectives, checkpoints and both historical demolitions on supported and ignored routes (10368.874344ms)
+2026-10-14T14:48:14.2693722Z ✔ grab and release last 1.6 mission seconds, hold both roots and deliver only after settling (504.745091ms)
+2026-10-14T14:48:14.2694721Z ✔ schema 2 restores every station phase and its future clocks, actors and RNG exactly (1394.692857ms)
+2026-10-14T14:48:14.2695629Z ✔ all station phases interrupt on casualty/medic death, removal or reassignment without delivery (6388.194041ms)
+2026-10-14T14:48:14.2696907Z ✔ old schema 2 transit saves resume without a new grab and corrupt station phases are rejected atomically (438.937804ms)
+2026-10-14T14:48:14.2698416Z ✔ actual MG34 rig cuts 4/5/6/7-round bursts at their saved duration, keeps one weapon and samples pause/restore without mutation (287.954477ms)
+2026-10-14T14:48:14.2699728Z ✔ two existing MG sources share art and retain independent rigs within the light budget; LOD, suppression, casualties and missing kit fall back (230.96284ms)
+2026-10-14T14:48:14.2701272Z ✔ 65 actual wagon models use LOD2 instances at 9.10 m with source pivots and shared art; partial/full failures preserve the whole consist (73.189396ms)
+2026-10-14T14:48:14.2702609Z ✔ disposing while optional wagon downloads are pending never attaches models to the old scene (19.405507ms)
+2026-10-14T14:48:14.2703897Z ✔ M01 declares the mission contract fields of Prompt §74 (1.265948ms)
+2026-10-14T14:48:14.2705027Z ✔ M01 IDs are unique across the mission and every reference resolves (1.429755ms)
+2026-10-14T14:48:14.2706152Z ✔ M01 keeps the documented chronology on the battle clock (2.05244ms)
+2026-10-14T14:48:14.2707709Z ✔ M01 equips only gear available on 1 September 1939 and never the forbidden weapons (0.302806ms)
+2026-10-14T14:48:14.2708473Z ✔ M01 keeps the mandatory lines of the master script verbatim (0.233707ms)
+2026-10-14T14:48:14.2709130Z ✔ M01 labels history and space only with the agreed vocabularies (0.765623ms)
+2026-10-14T14:48:14.2709838Z ✔ M01 checkpoints accumulate state and never save inside a demolition zone (0.488003ms)
+2026-10-14T14:48:14.2710645Z ✔ M01 runs at least two independent battle sectors on the clock (0.479347ms)
+2026-10-14T14:48:14.2711394Z ✔ M01 map geometry matches the documented bridges of 1939 and the measured piers (0.695572ms)
+2026-10-14T14:48:14.2712180Z ✔ M01 debrief keeps unconfirmed paragraphs disabled until their checks pass (0.988269ms)
+2026-10-14T14:48:14.2713092Z ✔ consist keeps 65 wagons, plan ids/types/x and the plan anchor; LOD hysteresis and candidates are unchanged (38.747045ms)
+2026-10-14T14:48:14.2714072Z ✔ real GLB instances keep plan x/z, sit on the rail-top offset and stay in the original LOD batches (152.091511ms)
+2026-10-14T14:48:14.2715103Z ✔ wheel/rail fit: treads sit on the rail head, flanges stay inside the gauge, no lateral offset (all types and LODs) (56.488115ms)
+2026-10-14T14:48:14.2716235Z ✔ every detail batch matches the tier of the drawn LOD; near/mid sets vanish at LOD2 and on Low; budget counted on real submissions (88.497302ms)
+2026-10-14T14:48:14.2718740Z ✔ fallback: total and partial GLB failure keep the old proxies and never float details on them (31.354854ms)
+2026-10-14T14:48:14.2719683Z ✔ train consist never asks for damage art and the yard intact/burned authority is unchanged (11.535663ms)
+2026-10-14T14:48:14.2720787Z ✔ save/reload, pause frames and repeated updates never mutate simulation state or RNG; every detail/GLB buffer is history-free (142.824639ms)
+2026-10-14T14:48:14.2721798Z ✔ variation is deterministic, bounded and visibly non-uniform without touching wagon type (1.156734ms)
+2026-10-14T14:48:14.2722790Z ✔ couplings and underframe add no collider: world obstacles/walk surfaces are identical and nothing reads the world (15.27529ms)
+2026-10-14T14:48:14.2723733Z ✔ dispose/recreate and repeated rebuilds never duplicate meshes or free shared art (41.844791ms)
+2026-10-14T14:48:14.2724685Z ✔ original Claude train source changes only its renderer and adds detail, without touching gameplay or assets (22.532881ms)
+2026-10-14T14:48:14.2725751Z ✔ everything the consist draws (siding included) lives under the train963 group, so visibility authority is unchanged (10.792302ms)
+2026-10-14T14:48:14.2727343Z ✔ the drawn siding: rail heads at the rail top, standard gauge between inner faces, continuous from 1062 to 2000 m (13.491739ms)
+2026-10-14T14:48:14.2728467Z ✔ a wagon drawn with a finer fallback GLB far away keeps the far tier (missing LOD2 art) (8.993606ms)
+2026-10-14T14:48:14.2729338Z ✔ vegetation layout is deterministic, pure and leaves the approved solid trees untouched (213.998085ms)
+2026-10-14T14:48:14.2730107Z ✔ vegetation stays inside the browser budget and keeps Low cheaper (18.487431ms)
+2026-10-14T14:48:14.2730858Z ✔ trees, shrubs and ground cover are varied, clustered and never laid out on a grid (12.073229ms)
+2026-10-14T14:48:14.2731659Z ✔ decoration respects corridors, objectives, covers and the playable bounds (54.184621ms)
+2026-10-14T14:48:14.2732467Z ✔ no shrub or visual tree stands on a path actually walked in the scripted mission (5729.434618ms)
+2026-10-14T14:48:14.2733305Z ✔ vegetation variation is deterministic, visual-only and does not consume gameplay RNG (109.493893ms)
+2026-10-14T14:48:14.2734095Z ✔ vegetation LOD tiers use hysteresis and Low keeps a geometric canopy (0.304409ms)
+2026-10-14T14:48:14.2734872Z ✔ approved tree colliders and critical route remain unchanged by the visual pass (698.944617ms)
+2026-10-14T14:48:14.2735718Z ✔ ADS curve is eased, exact at both ends and takes 0.30 s in and 0.22 s out at any frame schedule (2.096562ms)
+2026-10-14T14:48:14.2736493Z ✔ world field of view 70 -> 48 uses the very same curve as the weapon pose (1.398126ms)
+2026-10-14T14:48:14.2737715Z ✔ ADS keeps the exact sight pose: breath, bob, wall and recoil terms are exact zeros at rest in full ADS (0.576638ms)
+2026-10-14T14:48:14.2738665Z ✔ breath sway and gait bob are pure functions of the clock and gait weights; a gait change never pops (10.270156ms)
+2026-10-14T14:48:14.2739486Z ✔ every changed render module is free of randomness, wall clocks and timers (1.391133ms)
+2026-10-14T14:48:14.2740220Z ✔ recoil kicks, returns to rest exactly and is deterministic per shot index (17.336417ms)
+2026-10-14T14:48:14.2741120Z ✔ wall probe measures the first collision box along the aim and ignores what is not in front, without writing (1.32033ms)
+2026-10-14T14:48:14.2742153Z ✔ wall lowering target: none beyond the reach, full at the lowest pose, linear between; lowers fast, raises slowly (0.641781ms)
+2026-10-14T14:48:14.2743285Z ✔ production viewmodel aims in 0.30 s and out 0.22 s of mission time; the camera FOV rides the same curve; a repeated clock is frozen (320.835053ms)
+2026-10-14T14:48:14.2744282Z ✔ ADS timing, gait bob and breath are the same at 40, 20 and 4 frames per second of mission time (87.702864ms)
+2026-10-14T14:48:14.2745153Z ✔ walking bob and breath are alive on the hip, frozen when the clock stops, and absent in ADS (153.908257ms)
+2026-10-14T14:48:14.2746139Z ✔ wall lowering keeps the rifle in front of the wall down to the lowest pose and never cuts geometry at the near plane (83.496389ms)
+2026-10-14T14:48:14.2748076Z ✔ wall lowering lowers fast when the wall arrives and raises once it is clear, on the mission clock only (99.181931ms)
+2026-10-14T14:48:14.2749069Z ✔ wall lowering needs the render camera and the world boxes; without either the pose is the old one (6.838647ms)
+2026-10-14T14:48:14.2750243Z ✔ real mission: the rifle lowers at the road portal wall on the sim collision boxes and raises when turning away; aim, shots and saves are untouched (768.06527ms)
+2026-10-14T14:48:14.2751308Z ✔ M01 vagões danificados: o kit intacto não foi alterado (sha256 registados no manifesto) (4.861116ms)
+2026-10-14T14:48:14.2752251Z ✔ M01 vagões danificados: metros, 9,10 m no LOD0, rodas no carril, pivôs do intacto e três LODs no orçamento (23.566398ms)
+2026-10-14T14:48:14.2753130Z ✔ M01 vagões danificados: sockets iguais aos do intacto, mais impact só no danificado (2.491722ms)
+2026-10-14T14:48:14.2754063Z ✔ M01 vagões danificados: wheels_roll igual ao intacto; doors_open só na porta esquerda do coberto danificado (2.191651ms)
+2026-10-14T14:48:14.2755242Z ✔ M01 vagões danificados: restos só visuais no nó debris, alterações registadas e sem efeitos próprios (1.386324ms)
+2026-10-14T14:48:14.2756221Z ✔ train and yard LOD selectors cover 0/1/2 with hysteresis and stable identities (1.8487ms)
+2026-10-14T14:48:14.2757133Z ✔ yard authority is only intact/burned; damaged art is never invented (0.460622ms)
+2026-10-14T14:48:14.2757987Z ✔ authoritative marker survives save/reload and checkpoint restore chooses the saved visual state (26.183355ms)
+2026-10-14T14:48:14.2758843Z ✔ yard positions/covers stay authoritative and fire/smoke use authored sockets (0.633245ms)
+2026-10-14T14:48:14.2759749Z ✔ yard renderer falls back to the best loaded asset, then procedural proxy, without changing semantic state (8.313016ms)
+2026-10-14T14:48:14.2760692Z ✔ train renderer uses all three real LODs and retains procedural fallback when every asset fails (59.530875ms)
+2026-10-14T14:48:14.2761670Z ✔ missing individual LODs choose the closest real train asset and missing burned art falls back to intact GLB (37.546547ms)
+2026-10-14T14:48:14.2762542Z ✔ late GLB completion after dispose cannot reattach or populate yard sources (1.562263ms)
+2026-10-14T14:48:14.2763438Z ✔ M01 vagões: metros, 9,10 m entre tampões no LOD0, rodas no carril, nós estáveis e três LODs no orçamento (6.783073ms)
+2026-10-14T14:48:14.2764326Z ✔ M01 vagões: rodados dão uma volta por segundo em X; portas do coberto correm 1,95 m em Z (2.351991ms)
+2026-10-14T14:48:14.2765155Z ✔ channel constants match the map data (vistula_channel flowDirection and extent) (2.024018ms)
+2026-10-14T14:48:14.2765860Z ✔ piers are the manifest supports standing inside the channel (0.439172ms)
+2026-10-14T14:48:14.2766533Z ✔ same clock => identical uniforms; different clock changes flow only (1.180128ms)
+2026-10-14T14:48:14.2767510Z ✔ fresnel grows monotonically from steep to grazing views (0.284953ms)
+2026-10-14T14:48:14.2768299Z ✔ sky reflection: grazing ray is the horizon colour, steep ray the zenith; sun halo adds light (0.475579ms)
+2026-10-14T14:48:14.2769203Z ✔ flow advances toward -z (flowDirection north) with the sim clock and follows the T16 wind (0.254026ms)
+2026-10-14T14:48:14.2770107Z ✔ pier foam: present around the known piers (and wake downstream), zero mid-channel far from them (0.319488ms)
+2026-10-14T14:48:14.2770916Z ✔ bank wetness: wet at x~25 and x~265, dry mid-channel, symmetric and monotone (0.320309ms)
+2026-10-14T14:48:14.2771788Z ✔ quality: Low has no reflection term; no planar reflection, render target or extra pass at any quality (0.512559ms)
+2026-10-14T14:48:14.2772725Z ✔ view wiring: only the river mesh uses the water material; game/world/core never import the module (3.441199ms)
+2026-10-14T14:48:14.2773767Z ✔ Low body tint: a constant horizon-colour term replaces the reflection (no near-black oil slick), absent at Medium/High (0.482843ms)
+2026-10-14T14:48:14.2774919Z ✔ foam readable: full-strength ring at each pier footprint, wake streaks downstream (-z) of rail_support_01 and road_support_01 (0.202408ms)
+2026-10-14T14:48:14.2775966Z ✔ bank foam fringe: on the bank line at x 25 and 265, gone past the fringe, deterministic in the sim clock (0.387345ms)
+2026-10-14T14:48:14.2777171Z ✔ test-only A/B hook is opt-in (?debug) and only toggles the foam/wet detail uniform (0.268202ms)
+2026-10-14T14:48:14.2777974Z ✔ ?debug toggle flips the detail uniform and state; no hook without ?debug (1.271599ms)
+2026-10-14T14:48:14.2778855Z ✔ unmodified weapon ballistics, RNG and spatial gameplay sources remain byte-identical to base 99309d9 (2.027704ms)
+2026-10-14T14:48:14.2779810Z ✔ the presentation modules read gameplay state but never import gameplay code (game, world, core) (0.85507ms)
+2026-10-14T14:48:14.2780666Z ✔ each weapon keeps its own frozen presentation identity and carries no gameplay keys (5.44014ms)
+2026-10-14T14:48:14.2781563Z ✔ recoil is a finite per-weapon impulse: zero at rest, bounded, weaker in ADS, deterministic per shot (9.826387ms)
+2026-10-14T14:48:14.2782434Z ✔ hip sway is bounded and does not visibly loop; ADS at rest keeps the exact sight pose (6.858975ms)
+2026-10-14T14:48:14.2783541Z ✔ look lag trails turns, is clamped, settles, ignores frozen clocks and wraps at ±π (0.536995ms)
+2026-10-14T14:48:14.2784523Z ✔ a weapon-pass point maps to the world point under the same pixel at hip and ADS fields of view (1.880268ms)
+2026-10-14T14:48:14.2785407Z ✔ brass/clip flight is analytic in age, never sinks below the ground plane and comes to rest (6.209079ms)
+2026-10-14T14:48:14.2786380Z ✔ weapon-pass FX: flash only in the event window, layered on the socket, constant light count, smoke after the shot (20.027516ms)
+2026-10-14T14:48:14.2788008Z ✔ world FX: emissions are idempotent by id, bounded, discarded by a restored world or an earlier clock (5.070117ms)
+2026-10-14T14:48:14.2788908Z ✔ weapon lighting follows the world sky/sun and the view, without new light types per frame (2.263015ms)
+2026-10-14T14:48:14.2789880Z ✔ wz.29: one case per shot at the authored eject marker, one muzzle cloud, nothing duplicated by repeated frames (559.753389ms)
+2026-10-14T14:48:14.2790887Z ✔ wz.29 clip reload throws exactly one empty stripper clip at 2,45 s; a single-round reload throws none (888.994538ms)
+2026-10-14T14:48:14.2791869Z ✔ wz.29 stroke, lag and FX keep every viewmodel vertex beyond the near plane and the flash on the socket (747.235158ms)
+2026-10-14T14:48:14.2792935Z ✔ pause and restore: repeated frames are frozen; a restored world rebuilds presentation at rest and drops world history (308.012267ms)
+2026-10-14T14:48:14.2793979Z ✔ independent renderers of the same restored mid-bolt state produce the same frame (no hidden clocks) (191.649177ms)
+2026-10-14T14:48:14.2795019Z ✔ a slow frame that steps past the 60 ms window still shows the shot once at full strength, never again or after restore (168.704883ms)
+2026-10-14T14:48:14.2795949Z ✔ ejected pieces settle on the surface under their landing point, never inside a slope (1.979313ms)
+2026-10-14T14:48:14.2797128Z ✔ look lag after the authoritative recoil pitch settles by READY at 4 fps as at 20 fps; sights exact (376.370861ms)
+2026-10-14T14:48:14.2798183Z ✔ ejected pieces turn continuously into a resting attitude: cases on their side, the clip flat on its base plate (47.742006ms)
+2026-10-14T14:48:14.2799253Z ✔ one weapon pass, one muzzle light: the procedural fallback and the rig share it and the drawing FX drives it (19.647455ms)
+2026-10-14T14:48:14.2800271Z ✔ a quick follow-up shot leaves the previous barrel smoke fading instead of cutting it off; a reset forgets it (4.987933ms)
+2026-10-14T14:48:14.2801207Z ✔ down the sights the world muzzle cloud is a thin haze: thinner and smaller than from the hip (1.858627ms)
+2026-10-14T14:48:14.2801947Z ✔ bench brass rests on the road slab it lands on, not inside it (1.989022ms)
+2026-10-14T14:48:14.2802822Z ✔ down the sights the rifle follows a turn exactly: no look lag, the sights stay on the aim point every frame (231.388798ms)
+2026-10-14T14:48:14.2803879Z ✔ a restore drops the barrel smoke of the previous timeline: the restored frame equals a fresh renderer of that save (341.009763ms)
+2026-10-14T14:48:14.2805027Z ✔ shot-FX programs are compiled and linked before the first shot, each against its own scene, without drawing or showing anything (4.953039ms)
+2026-10-14T14:48:14.2805993Z ✔ measured real clips and asset socket metadata are locked; archived BASE is exact (239.501208ms)
+2026-10-14T14:48:14.2807187Z ✔ integration keeps Wz29/muzzle/hitboxes/RNG bytes and locks the approved simulation gameplay baseline (0.529881ms)
+2026-10-14T14:48:14.2808051Z ✔ ADS aligns actual rear/front with camera -Z on LOD0, all qualities (199.376677ms)
+2026-10-14T14:48:14.2808752Z ✔ ADS aligns actual rear/front with camera -Z on LOD1, all qualities (115.043323ms)
+2026-10-14T14:48:14.2809543Z ✔ visual flash starts exactly on the barrel socket through hip, ADS, bolt, reload and run (231.014709ms)
+2026-10-14T14:48:14.2810330Z ✔ dense clipping matrix samples all referenced vertices, LOD0 (701.341461ms)
+2026-10-14T14:48:14.2810983Z ✔ dense clipping matrix samples all referenced vertices, LOD1 (385.831814ms)
+2026-10-14T14:48:14.2812012Z ✔ local arm skin/pose/material changes leave source geometry, bones, clips and materials intact (152.47292ms)
+2026-10-14T14:48:14.2813037Z ✔ pause freezes phase, transition, arms and mechanics including clamped clip endpoint (166.87534ms)
+2026-10-14T14:48:14.2813876Z ✔ ADS/run transitions are controlled by mission dt and converge without action rebind (140.326228ms)
+2026-10-14T14:48:14.2814627Z ✔ recoil is finite, damped, bounded and has weaker ADS presentation (3.855553ms)
+2026-10-14T14:48:14.2815412Z ✔ missing optional model/clips returns to existing caller fallback; LOD1 remains viable (97.628982ms)
+2026-10-14T14:48:14.2816252Z ✔ restore mid-bolt and both reloads reconstruct mechanical phase without saving a mixer (275.4933ms)
+2026-10-14T14:48:14.2817475Z ✔ an existing menu/checkpoint renderer reconstructs ADS at a replaced world boundary (176.103581ms)
+2026-10-14T14:48:14.2818493Z ✔ BASE/CANDIDATE whole save, HP/ammo/shots/hits/transforms/muzzle/RNG/clocks/CP remain exact for 600 input ticks (3399.734373ms)
+2026-10-14T14:48:14.2819507Z ✔ plan is single source: render re-exports the same frozen plan, ids/positions/covers unchanged (1.822029ms)
+2026-10-14T14:48:14.2820169Z ✔ size table derives from the manifest (0.271658ms)
+2026-10-14T14:48:14.2820991Z ✔ every drawn yard wagon has exactly one obstacle equal to its footprint, before and after all events; covers untouched (8.149613ms)
+2026-10-14T14:48:14.2821762Z ✔ drawn procedural body is inside the solid box (8.664311ms)
+2026-10-14T14:48:14.2822504Z ✔ movement is blocked from every side of every wagon, including the slope end of yard_wagon_1 (27.232598ms)
+2026-10-14T14:48:14.2823232Z ✔ line of sight through a wagon is blocked, above it is clear (1.791532ms)
+2026-10-14T14:48:14.2823643Z ℹ tests 694
+2026-10-14T14:48:14.2823864Z ℹ suites 0
+2026-10-14T14:48:14.2824080Z ℹ pass 694
+2026-10-14T14:48:14.2824294Z ℹ fail 0
+2026-10-14T14:48:14.2824515Z ℹ cancelled 0
+2026-10-14T14:48:14.2824748Z ℹ skipped 0
+2026-10-14T14:48:14.2824959Z ℹ todo 0
+2026-10-14T14:48:14.2825225Z ℹ duration_ms 538050.031211
+2026-10-14T14:48:14.2860621Z ##[group]Run set -o pipefail
+2026-10-14T14:48:14.2860965Z [36;1mset -o pipefail[0m
+2026-10-14T14:48:14.2861269Z [36;1mnpm run build 2>&1 | tee evidence/build.log[0m
+2026-10-14T14:48:14.2925447Z shell: /usr/bin/bash -e {0}
+2026-10-14T14:48:14.2925732Z ##[endgroup]
+2026-10-14T14:48:14.4098167Z 
+2026-10-14T14:48:14.4098802Z > operation-ashen-road@0.2.0 build
+2026-10-14T14:48:14.4099375Z > vite build
+2026-10-14T14:48:14.4099597Z 
+2026-10-14T14:48:14.6609286Z [36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+2026-10-14T14:48:14.6714828Z transforming...
+2026-10-14T14:48:14.8542512Z ✓ 83 modules transformed.
+2026-10-14T14:48:14.9090401Z rendering chunks...
+2026-10-14T14:48:15.1061205Z computing gzip size...
+2026-10-14T14:48:15.1291909Z dist/index.html                     4.73 kB │ gzip:   1.94 kB
+2026-10-14T14:48:15.1293379Z dist/assets/index-CKSfsDeE.css     15.47 kB │ gzip:   4.76 kB
+2026-10-14T14:48:15.1294874Z dist/assets/index-lOvjtvh9.js   1,495.44 kB │ gzip: 429.33 kB
+2026-10-14T14:48:15.1295481Z 
+2026-10-14T14:48:15.1297723Z [32m✓ built in 467ms[39m
+2026-10-14T14:48:15.1311624Z [33m[plugin builtin:vite-reporter] 
+2026-10-14T14:48:15.1312489Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-10-14T14:48:15.1313116Z - Using dynamic import() to code-split the application
+2026-10-14T14:48:15.1314325Z - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+2026-10-14T14:48:15.1315572Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2026-10-14T14:48:15.2379082Z ##[group]Run npx playwright install --with-deps chromium
+2026-10-14T14:48:15.2379537Z [36;1mnpx playwright install --with-deps chromium[0m
+2026-10-14T14:48:15.2442908Z shell: /usr/bin/bash -e {0}
+2026-10-14T14:48:15.2443234Z ##[endgroup]
+2026-10-14T14:48:16.2214623Z Installing dependencies...
+2026-10-14T14:48:16.2287037Z Switching to root user to install dependencies...
+2026-10-14T14:48:16.3167379Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-14T14:48:16.3543420Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+2026-10-14T14:48:16.3561088Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-10-14T14:48:16.3584801Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-10-14T14:48:16.3589060Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-10-14T14:48:16.3612671Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-10-14T14:48:16.4860531Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [518 kB]
+2026-10-14T14:48:16.4999002Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [576 kB]
+2026-10-14T14:48:16.5109841Z Get:9 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [12.4 kB]
+2026-10-14T14:48:16.5137968Z Get:10 https://packages.microsoft.com/ubuntu/24.04/prod noble/main all Packages [640 B]
+2026-10-14T14:48:16.5457082Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1397 kB]
+2026-10-14T14:48:16.5541678Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [308 kB]
+2026-10-14T14:48:16.5562649Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1702 kB]
+2026-10-14T14:48:16.5644931Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [342 kB]
+2026-10-14T14:48:16.5671248Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1805 kB]
+2026-10-14T14:48:16.5767232Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [411 kB]
+2026-10-14T14:48:16.5792467Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [50.7 kB]
+2026-10-14T14:48:16.5801977Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [14.0 kB]
+2026-10-14T14:48:16.6055936Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Packages [748 B]
+2026-10-14T14:48:16.6750054Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1144 kB]
+2026-10-14T14:48:16.7241708Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [231 kB]
+2026-10-14T14:48:16.7259534Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1221 kB]
+2026-10-14T14:48:16.7321881Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [246 kB]
+2026-10-14T14:48:16.7340505Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1713 kB]
+2026-10-14T14:48:16.7439113Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [392 kB]
+2026-10-14T14:48:16.7451248Z Get:26 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [45.4 kB]
+2026-10-14T14:48:16.7461936Z Get:27 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse Translation-en [12.1 kB]
+2026-10-14T14:48:20.2457441Z Fetched 12.5 MB in 1s (9595 kB/s)
+2026-10-14T14:48:21.2661315Z Reading package lists...
+2026-10-14T14:48:21.2918437Z Reading package lists...
+2026-10-14T14:48:21.5497943Z Building dependency tree...
+2026-10-14T14:48:21.5506328Z Reading state information...
+2026-10-14T14:48:21.8303565Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.3).
+2026-10-14T14:48:21.8304413Z libasound2t64 set to manually installed.
+2026-10-14T14:48:21.8305845Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-14T14:48:21.8307003Z libatk-bridge2.0-0t64 set to manually installed.
+2026-10-14T14:48:21.8307798Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-14T14:48:21.8308470Z libatk1.0-0t64 set to manually installed.
+2026-10-14T14:48:21.8309167Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-14T14:48:21.8309869Z libatspi2.0-0t64 set to manually installed.
+2026-10-14T14:48:21.8310813Z libcairo2 is already the newest version (1.18.0-3build1).
+2026-10-14T14:48:21.8311469Z libcairo2 set to manually installed.
+2026-10-14T14:48:21.8312166Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.14).
+2026-10-14T14:48:21.8312834Z libcups2t64 set to manually installed.
+2026-10-14T14:48:21.8313571Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+2026-10-14T14:48:21.8314291Z libdbus-1-3 set to manually installed.
+2026-10-14T14:48:21.8315043Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.2).
+2026-10-14T14:48:21.8315728Z libdrm2 set to manually installed.
+2026-10-14T14:48:21.8316523Z libgbm1 is already the newest version (25.2.8-0ubuntu0.24.04.4).
+2026-10-14T14:48:21.8317389Z libgbm1 set to manually installed.
+2026-10-14T14:48:21.8318061Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.9).
+2026-10-14T14:48:21.8318743Z libglib2.0-0t64 set to manually installed.
+2026-10-14T14:48:21.8319419Z libnspr4 is already the newest version (2:4.35-1.1build1).
+2026-10-14T14:48:21.8320069Z libnspr4 set to manually installed.
+2026-10-14T14:48:21.8320695Z libnss3 is already the newest version (2:3.98-1ubuntu0.2).
+2026-10-14T14:48:21.8321287Z libnss3 set to manually installed.
+2026-10-14T14:48:21.8321925Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+2026-10-14T14:48:21.8322352Z libpango-1.0-0 set to manually installed.
+2026-10-14T14:48:21.8322754Z libxcb1 is already the newest version (1.15-1ubuntu2).
+2026-10-14T14:48:21.8323127Z libxcb1 set to manually installed.
+2026-10-14T14:48:21.8323555Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+2026-10-14T14:48:21.8324134Z libxcomposite1 set to manually installed.
+2026-10-14T14:48:21.8324672Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+2026-10-14T14:48:21.8325079Z libxdamage1 set to manually installed.
+2026-10-14T14:48:21.8325482Z libxext6 is already the newest version (2:1.3.4-1build2).
+2026-10-14T14:48:21.8325858Z libxext6 set to manually installed.
+2026-10-14T14:48:21.8326419Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+2026-10-14T14:48:21.8327816Z libxfixes3 set to manually installed.
+2026-10-14T14:48:21.8328263Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+2026-10-14T14:48:21.8328970Z libxkbcommon0 set to manually installed.
+2026-10-14T14:48:21.8329656Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+2026-10-14T14:48:21.8330332Z libxrandr2 set to manually installed.
+2026-10-14T14:48:21.8331029Z xvfb is already the newest version (2:21.1.12-1ubuntu1.8).
+2026-10-14T14:48:21.8331900Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+2026-10-14T14:48:21.8332490Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+2026-10-14T14:48:21.8332928Z libfontconfig1 set to manually installed.
+2026-10-14T14:48:21.8333362Z fonts-liberation is already the newest version (1:2.1.5-3).
+2026-10-14T14:48:21.8333969Z fonts-liberation set to manually installed.
+2026-10-14T14:48:21.8334708Z The following additional packages will be installed:
+2026-10-14T14:48:21.8335462Z   libx11-data libx11-xcb1 xfonts-encodings xfonts-utils
+2026-10-14T14:48:21.8335969Z Recommended packages:
+2026-10-14T14:48:21.8336261Z   fonts-ipafont-mincho fonts-tlwg-loma
+2026-10-14T14:48:21.8588392Z The following NEW packages will be installed:
+2026-10-14T14:48:21.8589399Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+2026-10-14T14:48:21.8599717Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+2026-10-14T14:48:21.8600848Z   xfonts-utils
+2026-10-14T14:48:21.8607008Z The following packages will be upgraded:
+2026-10-14T14:48:21.8613925Z   libfreetype6 libx11-6 libx11-data libx11-xcb1
+2026-10-14T14:48:21.8824760Z 4 upgraded, 9 newly installed, 0 to remove and 50 not upgraded.
+2026-10-14T14:48:21.8825528Z Need to get 22.3 MB of archives.
+2026-10-14T14:48:21.8826304Z After this operation, 79.6 MB of additional disk space will be used.
+2026-10-14T14:48:21.8827793Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-14T14:48:22.0096410Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+2026-10-14T14:48:22.2438465Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 libx11-6 amd64 2:1.8.7-1ubuntu0.1 [653 kB]
+2026-10-14T14:48:22.3773255Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 libx11-xcb1 amd64 2:1.8.7-1ubuntu0.1 [7796 B]
+2026-10-14T14:48:22.4881801Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 libx11-data all 2:1.8.7-1ubuntu0.1 [116 kB]
+2026-10-14T14:48:22.6018110Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+2026-10-14T14:48:22.9107077Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+2026-10-14T14:48:23.0237763Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+2026-10-14T14:48:23.2392451Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+2026-10-14T14:48:23.6229788Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libfreetype6 amd64 2.13.2+dfsg-1ubuntu0.2 [403 kB]
+2026-10-14T14:48:23.7508979Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+2026-10-14T14:48:23.8770995Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+2026-10-14T14:48:23.9900779Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+2026-10-14T14:48:24.1139425Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+2026-10-14T14:48:24.4267073Z Fetched 22.3 MB in 2s (9837 kB/s)
+2026-10-14T14:48:24.4511472Z Selecting previously unselected package fonts-ipafont-gothic.
+2026-10-14T14:48:24.4827392Z (Reading database ... 
+2026-10-14T14:48:24.4827847Z (Reading database ... 5%
+2026-10-14T14:48:24.4828241Z (Reading database ... 10%
+2026-10-14T14:48:24.4828618Z (Reading database ... 15%
+2026-10-14T14:48:24.4829133Z (Reading database ... 20%
+2026-10-14T14:48:24.4829498Z (Reading database ... 25%
+2026-10-14T14:48:24.4829850Z (Reading database ... 30%
+2026-10-14T14:48:24.4830205Z (Reading database ... 35%
+2026-10-14T14:48:24.4830553Z (Reading database ... 40%
+2026-10-14T14:48:24.4830903Z (Reading database ... 45%
+2026-10-14T14:48:24.4831277Z (Reading database ... 50%
+2026-10-14T14:48:24.4879007Z (Reading database ... 55%
+2026-10-14T14:48:24.5964191Z (Reading database ... 60%
+2026-10-14T14:48:24.8055976Z (Reading database ... 65%
+2026-10-14T14:48:25.0087417Z (Reading database ... 70%
+2026-10-14T14:48:25.1581385Z (Reading database ... 75%
+2026-10-14T14:48:25.3579696Z (Reading database ... 80%
+2026-10-14T14:48:25.5511300Z (Reading database ... 85%
+2026-10-14T14:48:25.7612566Z (Reading database ... 90%
+2026-10-14T14:48:25.9296347Z (Reading database ... 95%
+2026-10-14T14:48:25.9297400Z (Reading database ... 100%
+2026-10-14T14:48:25.9298267Z (Reading database ... 203191 files and directories currently installed.)
+2026-10-14T14:48:25.9342939Z Preparing to unpack .../00-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+2026-10-14T14:48:25.9441396Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-10-14T14:48:26.1931479Z Preparing to unpack .../01-libx11-6_2%3a1.8.7-1ubuntu0.1_amd64.deb ...
+2026-10-14T14:48:26.1988023Z Unpacking libx11-6:amd64 (2:1.8.7-1ubuntu0.1) over (2:1.8.7-1build1) ...
+2026-10-14T14:48:26.2427333Z Preparing to unpack .../02-libx11-xcb1_2%3a1.8.7-1ubuntu0.1_amd64.deb ...
+2026-10-14T14:48:26.2448307Z Unpacking libx11-xcb1:amd64 (2:1.8.7-1ubuntu0.1) over (2:1.8.7-1build1) ...
+2026-10-14T14:48:26.2803099Z Preparing to unpack .../03-libx11-data_2%3a1.8.7-1ubuntu0.1_all.deb ...
+2026-10-14T14:48:26.2822164Z Unpacking libx11-data (2:1.8.7-1ubuntu0.1) over (2:1.8.7-1build1) ...
+2026-10-14T14:48:26.3773942Z Selecting previously unselected package fonts-freefont-ttf.
+2026-10-14T14:48:26.3906266Z Preparing to unpack .../04-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+2026-10-14T14:48:26.3914982Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-10-14T14:48:26.4753220Z Selecting previously unselected package fonts-tlwg-loma-otf.
+2026-10-14T14:48:26.4883548Z Preparing to unpack .../05-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+2026-10-14T14:48:26.4891082Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-10-14T14:48:26.5105203Z Selecting previously unselected package fonts-unifont.
+2026-10-14T14:48:26.5232055Z Preparing to unpack .../06-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+2026-10-14T14:48:26.5239164Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+2026-10-14T14:48:26.6324097Z Selecting previously unselected package fonts-wqy-zenhei.
+2026-10-14T14:48:26.6473311Z Preparing to unpack .../07-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+2026-10-14T14:48:26.6578632Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+2026-10-14T14:48:27.1397292Z Preparing to unpack .../08-libfreetype6_2.13.2+dfsg-1ubuntu0.2_amd64.deb ...
+2026-10-14T14:48:27.1419948Z Unpacking libfreetype6:amd64 (2.13.2+dfsg-1ubuntu0.2) over (2.13.2+dfsg-1ubuntu0.1) ...
+2026-10-14T14:48:27.1676162Z Selecting previously unselected package xfonts-encodings.
+2026-10-14T14:48:27.1810551Z Preparing to unpack .../09-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+2026-10-14T14:48:27.1817677Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-10-14T14:48:27.2117371Z Selecting previously unselected package xfonts-utils.
+2026-10-14T14:48:27.2247627Z Preparing to unpack .../10-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+2026-10-14T14:48:27.2254377Z Unpacking xfonts-utils (1:7.7+6build3) ...
+2026-10-14T14:48:27.2594644Z Selecting previously unselected package xfonts-cyrillic.
+2026-10-14T14:48:27.2724458Z Preparing to unpack .../11-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+2026-10-14T14:48:27.2732489Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-10-14T14:48:27.3096971Z Selecting previously unselected package xfonts-scalable.
+2026-10-14T14:48:27.3229767Z Preparing to unpack .../12-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+2026-10-14T14:48:27.3238011Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+2026-10-14T14:48:27.3706195Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+2026-10-14T14:48:27.3824300Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-10-14T14:48:27.3841312Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-10-14T14:48:27.3859018Z Setting up libfreetype6:amd64 (2.13.2+dfsg-1ubuntu0.2) ...
+2026-10-14T14:48:27.3877351Z Setting up libx11-data (2:1.8.7-1ubuntu0.1) ...
+2026-10-14T14:48:27.3897260Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-10-14T14:48:27.3916133Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-10-14T14:48:27.3984652Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+2026-10-14T14:48:27.4001376Z Setting up libx11-6:amd64 (2:1.8.7-1ubuntu0.1) ...
+2026-10-14T14:48:27.4018762Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+2026-10-14T14:48:27.4037371Z Setting up libx11-xcb1:amd64 (2:1.8.7-1ubuntu0.1) ...
+2026-10-14T14:48:27.4054726Z Setting up xfonts-utils (1:7.7+6build3) ...
+2026-10-14T14:48:27.4098020Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-10-14T14:48:27.4454951Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+2026-10-14T14:48:27.4732665Z Processing triggers for libc-bin (2.39-0ubuntu8.9) ...
+2026-10-14T14:48:27.5065571Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-10-14T14:48:27.5093154Z Not building database; man-db/auto-update is not 'true'.
+2026-10-14T14:48:27.5109377Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+2026-10-14T14:48:28.2520614Z 
+2026-10-14T14:48:28.2521317Z Running kernel seems to be up-to-date.
+2026-10-14T14:48:28.2521801Z 
+2026-10-14T14:48:28.2522041Z Restarting services...
+2026-10-14T14:48:28.2599388Z  systemctl restart php8.3-fpm.service
+2026-10-14T14:48:28.3729044Z 
+2026-10-14T14:48:28.3730259Z No containers need to be restarted.
+2026-10-14T14:48:28.3730661Z 
+2026-10-14T14:48:28.3731108Z No user sessions are running outdated binaries.
+2026-10-14T14:48:28.3731570Z 
+2026-10-14T14:48:28.3732269Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-10-14T14:48:29.5305758Z Downloading Chrome for Testing 145.0.7632.6 (playwright chromium v1208) from https://cdn.playwright.dev/builds/cft/145.0.7632.6/linux64/chrome-linux64.zip
+2026-10-14T14:48:29.7567072Z |                                                                                |   0% of 167.3 MiB
+2026-10-14T14:48:29.9288570Z |■■■■■■■■                                                                        |  10% of 167.3 MiB
+2026-10-14T14:48:30.0237708Z |■■■■■■■■■■■■■■■■                                                                |  20% of 167.3 MiB
+2026-10-14T14:48:30.1028878Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 167.3 MiB
+2026-10-14T14:48:30.1738472Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 167.3 MiB
+2026-10-14T14:48:30.2305691Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 167.3 MiB
+2026-10-14T14:48:30.2982061Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 167.3 MiB
+2026-10-14T14:48:30.3602188Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 167.3 MiB
+2026-10-14T14:48:30.4182230Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 167.3 MiB
+2026-10-14T14:48:30.4874419Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 167.3 MiB
+2026-10-14T14:48:30.5480879Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 167.3 MiB
+2026-10-14T14:48:33.2750845Z Chrome for Testing 145.0.7632.6 (playwright chromium v1208) downloaded to /home/runner/.cache/ms-playwright/chromium-1208
+2026-10-14T14:48:33.2756394Z Downloading FFmpeg (playwright ffmpeg v1011) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+2026-10-14T14:48:33.4391014Z |                                                                                |   0% of 2.3 MiB
+2026-10-14T14:48:33.4436476Z |■■■■■■■■                                                                        |  10% of 2.3 MiB
+2026-10-14T14:48:33.4462026Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+2026-10-14T14:48:33.4499319Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+2026-10-14T14:48:33.4507358Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+2026-10-14T14:48:33.4532274Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+2026-10-14T14:48:33.4546385Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+2026-10-14T14:48:33.4560487Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+2026-10-14T14:48:33.4607574Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+2026-10-14T14:48:33.4620481Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+2026-10-14T14:48:33.4634798Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+2026-10-14T14:48:33.5311065Z FFmpeg (playwright ffmpeg v1011) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1011
+2026-10-14T14:48:33.5314690Z Downloading Chrome Headless Shell 145.0.7632.6 (playwright chromium-headless-shell v1208) from https://cdn.playwright.dev/builds/cft/145.0.7632.6/linux64/chrome-headless-shell-linux64.zip
+2026-10-14T14:48:33.7173836Z |                                                                                |   0% of 110.9 MiB
+2026-10-14T14:48:33.9711872Z |■■■■■■■■                                                                        |  10% of 110.9 MiB
+2026-10-14T14:48:34.1102270Z |■■■■■■■■■■■■■■■■                                                                |  20% of 110.9 MiB
+2026-10-14T14:48:34.1699363Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 110.9 MiB
+2026-10-14T14:48:34.2247485Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 110.9 MiB
+2026-10-14T14:48:34.2870645Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 110.9 MiB
+2026-10-14T14:48:34.3297213Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 110.9 MiB
+2026-10-14T14:48:34.3662247Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 110.9 MiB
+2026-10-14T14:48:34.4077437Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 110.9 MiB
+2026-10-14T14:48:34.4478407Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 110.9 MiB
+2026-10-14T14:48:34.4875813Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 110.9 MiB
+2026-10-14T14:48:36.4631903Z Chrome Headless Shell 145.0.7632.6 (playwright chromium-headless-shell v1208) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1208
+2026-10-14T14:48:36.5013919Z ##[group]Run set -o pipefail
+2026-10-14T14:48:36.5014254Z [36;1mset -o pipefail[0m
+2026-10-14T14:48:36.5014840Z [36;1mnpx playwright test tests/browser/m01-continuity-raid.spec.js --workers=1 --retries=0 2>&1 | tee evidence/browser.log[0m
+2026-10-14T14:48:36.5079807Z shell: /usr/bin/bash -e {0}
+2026-10-14T14:48:36.5080106Z ##[endgroup]
+2026-10-14T14:48:41.0540870Z 
+2026-10-14T14:48:41.0541448Z Running 1 test using 1 worker
+2026-10-14T14:49:35.8434176Z ·
+2026-10-14T14:49:35.8440610Z   1 passed (58.0s)
+2026-10-14T14:49:35.9046523Z ##[group]Run actions/upload-artifact@v4
+2026-10-14T14:49:35.9047217Z with:
+2026-10-14T14:49:35.9047540Z   name: m01-continuity-raid-8387b5627b3b5482370c0915f018776d563e31ec
+2026-10-14T14:49:35.9047954Z   path: evidence/
+test-results/
+
+2026-10-14T14:49:35.9048233Z   if-no-files-found: ignore
+2026-10-14T14:49:35.9048494Z   compression-level: 6
+2026-10-14T14:49:35.9048738Z   overwrite: false
+2026-10-14T14:49:35.9048970Z   include-hidden-files: false
+2026-10-14T14:49:35.9049226Z ##[endgroup]
+2026-10-14T14:49:36.0896852Z (node:4331) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-14T14:49:36.0898280Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-14T14:49:36.1002445Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-10-14T14:49:36.1018187Z The least common ancestor is /home/runner/work/COD-guerra/COD-guerra. This will be the root directory of the artifact
+2026-10-14T14:49:36.1019729Z With the provided path, there will be 4 files uploaded
+2026-10-14T14:49:36.1021037Z Artifact name is valid!
+2026-10-14T14:49:36.1022051Z Root directory input is valid!
+2026-10-14T14:49:36.3445783Z Beginning upload of artifact content to blob storage
+2026-10-14T14:49:36.4108715Z (node:4331) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-14T14:49:36.5804918Z Uploaded bytes 816129
+2026-10-14T14:49:36.6325469Z Finished uploading artifact content to blob storage!
+2026-10-14T14:49:36.6327649Z SHA256 digest of uploaded artifact zip is 030754b518a0cfd562342e6a9abf53fc5965547bc62274f7fabf478b55075464
+2026-10-14T14:49:36.6329043Z Finalizing artifact upload
+2026-10-14T14:49:36.8427578Z Artifact m01-continuity-raid-8387b5627b3b5482370c0915f018776d563e31ec.zip successfully finalized. Artifact ID 11904905417
+2026-10-14T14:49:36.8430305Z Artifact m01-continuity-raid-8387b5627b3b5482370c0915f018776d563e31ec has been successfully uploaded! Final size is 816129 bytes. Artifact ID is 11904905417
+2026-10-14T14:49:36.8434534Z Artifact download URL: https://github.com/Brawl2007/COD-guerra/actions/runs/38582392486/artifacts/11904905417
+2026-10-14T14:49:36.8629298Z Post job cleanup.
+2026-10-14T14:49:36.9923261Z (node:4344) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-14T14:49:36.9924301Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-14T14:49:36.9927282Z Cache hit occurred on the primary key node-cache-Linux-x64-npm-8f1cf7dcbae8d9792eb3058e1b70088e2662e09ea7a497e59bda9a9876b25d95, not saving cache.
+2026-10-14T14:49:37.0063564Z Post job cleanup.
+2026-10-14T14:49:37.0997536Z [command]/usr/bin/git version
+2026-10-14T14:49:37.1051099Z git version 2.55.0
+2026-10-14T14:49:37.1107292Z Temporarily overriding HOME='/home/runner/work/_temp/1f3cce84-8081-4aeb-8f13-49f05ff27bb5' before making global git config changes
+2026-10-14T14:49:37.1110274Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-14T14:49:37.1111906Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/COD-guerra/COD-guerra
+2026-10-14T14:49:37.1167646Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-14T14:49:37.1217415Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-14T14:49:37.1578274Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-14T14:49:37.1587895Z http.https://github.com/.extraheader
+2026-10-14T14:49:37.1598860Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-14T14:49:37.1650842Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-14T14:49:37.1939129Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-14T14:49:37.1983479Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-14T14:49:37.2411128Z Cleaning up orphan processes
+2026-10-14T14:49:37.2870108Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+

@@ -13,8 +13,8 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 |---|---|---|---|
 | 00 | Consolidação dos planos | INCERTO | Planos paralelos em PR #56/#58/#44 fora do trunk |
 | 01 | Baseline FPS no Chromebook | ANULADA | D13: o Chromebook deixou de ser plataforma-alvo |
-| 02 | Continuidade roteiro/dados | PARCIAL: T02-min VERIFICADA LOCAL | Posto/rota oeste elegíveis com LOS real; dlg019 só após destruição. CI final pendente; T02b (outras falas/pré-roll) continua pendente. Handoff continuity-raid-integration-v1. |
-| 03 | Explosões ancoradas ao terreno | PARCIAL: T03-lite VERIFICADA LOCAL | Aéreos e predição assentes no terreno depois de safeImpact. Fumo de granadas continua pendente; CI final da integração pendente. |
+| 02 | Continuidade roteiro/dados | PARCIAL: T02-min ACEITE | Posto/rota oeste elegíveis com LOS real; dlg019 só após destruição. CI 38582392486 verde; T02b (outras falas/pré-roll) continua pendente. Handoff continuity-raid-integration-v1. |
+| 03 | Explosões ancoradas ao terreno | PARCIAL: T03-lite ACEITE | Aéreos e predição assentes no terreno depois de safeImpact. Fumo de granadas continua pendente; CI 38582392486 verde. |
 | 04 | HUD cinemático | DONE* | `src/ui/m01-hud.js`, `tests/m01-hud-presentation.test.js`, spec browser |
 | 05 | Campos de dados do áudio | PARCIAL | Sem `activeFrom`, `audioZones` nem `surfaces` |
 | 06 | Núcleo de áudio | PARCIAL | `src/core/battlefield-audio.js` + teste com FakeAudioContext; sem `src/core/audio/` nem director |
@@ -35,7 +35,7 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 22 | Battle readout / display rounds | **ACEITE** | `1881df1` (branch `claude/m01-display-fire-readout-v1`, workflow `cf7c2d7`), CI 38070927878 (628/628, golden ✔, 12 sementes, browser 7+2). Fogo de exibição separado e não guardado, RNG próprio; `battleReadout`; ainda sem perfis (T23). |
 | 23 | Frente leste visível | **ACEITE** | b9c6c6b, integrado em `claude/m01-stack-integration-t23-pt05-v1` @ 1990a58. PT05 (vagões no pátio, 6ef1027): ACEITE, integrado no mesmo ramo |
 | 24 | Chegada do comboio | PARCIAL | Módulos locomotiva/Panzerzug/vagões; chegada por `battleClock` em falta |
-| 25 | Horário do raid das 05:30 | VERIFICADO LOCAL: CI pendente | Seis impactos fixos fora da área, fumo persistente e agenda opcional schema 2; legacy sem replay, áudio aéreo após reload. Inclui pré-requisito T03-lite. |
+| 25 | Horário do raid das 05:30 | ACEITE | Seis impactos fixos fora da área, fumo persistente e agenda opcional schema 2; legacy sem replay, áudio aéreo após reload. Inclui pré-requisito T03-lite. |
 | 26 | Beats de cena | PARCIAL | Letterbox no HUD; tabela de cues por fazer |
 | 27 | Relevo fora do envelope | AUSENTE | — |
 | 28 | Material macro do terreno | AUSENTE | Depende de T09 |

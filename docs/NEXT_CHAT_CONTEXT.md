@@ -1,6 +1,6 @@
 # Continuação — duas tarefas M01 integradas, 2026-10-14
 
-Branch `codex/m01-continuity-raid-integration-v1`, base T08/T12 `2d65dd0`. Ler o handoff `docs/verification/m01-runtime/continuity-raid-integration-v1/HANDOFF.md` e confirmar HEAD/CI remoto. T02-min e T03-lite+T25 implementadas; 22/22 focados, 28/28 após correção aérea no reload, build e browser 1/1 PASS. Integral inicial 693/694 FAIL preservado; CI integral final pendente. Não repetir tarefas nem regenerar golden sem revisão: source hash exato bloqueado e proveniência histórica conservada. M01 continua PROTÓTIPO JOGÁVEL; main/deploy/source branches não foram escritos.
+Branch `codex/m01-continuity-raid-integration-v1`, base T08/T12 `2d65dd0`. Ler o handoff `docs/verification/m01-runtime/continuity-raid-integration-v1/HANDOFF.md` e confirmar HEAD/CI remoto. T02-min e T03-lite+T25 implementadas; 22/22 focados, 28/28 após correção aérea no reload, build e browser 1/1 PASS. Integral inicial 693/694 FAIL preservado; CI final **694/694 Node, build e browser 1/1 PASS** (run 38582392486, código `8387b56`, PR #63). Não repetir tarefas nem regenerar golden sem revisão: source hash exato bloqueado e proveniência histórica conservada. M01 continua PROTÓTIPO JOGÁVEL; main/deploy/source branches não foram escritos.
 
 ---
 

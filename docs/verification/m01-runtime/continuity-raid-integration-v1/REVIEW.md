@@ -55,3 +55,7 @@ O HANDOFF inicial ainda tem campos de gates pendentes; deve ser atualizado pelo 
 | `gameplay-delta-audit.json` | `d5d58a3b79878a2e1d3fb199dc22496d4dc53f8a719457d02c4bd9dc9f954d68` |
 
 Qualquer alteração posterior de produção/testes/golden exige confrontar estes hashes e revalidar proporcionalmente o delta. Sem alegação de playtest humano, FPS ou aprovação completa de M01.
+
+## Gate remoto fechado — 2026-10-14
+
+CI 38582392486 no commit `8387b5627b3b5482370c0915f018776d563e31ec`: SUCCESS. **694/694 Node**, build PASS e browser **1/1**, workers 1, retries 0, numa execução final própria; não é união com resultados anteriores. Provas: `CI_RESULT.json` e `ci-job.log`. Condição de fecho satisfeita; revisão seguinte só de documentos, sem mudanças no código validado.

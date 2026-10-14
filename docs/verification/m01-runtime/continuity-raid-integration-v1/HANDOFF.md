@@ -1,7 +1,10 @@
 # M01 — continuidade e raid das 05:30
 
 TASK_ID: `M01-CONTINUITY-RAID-INTEGRATION-V1`.
-STATUS: `REVIEWED_LOCAL — CI_FINAL_PENDING`.
+STATUS: `ACCEPTED`.
+CODE_HEAD_TESTED: `8387b5627b3b5482370c0915f018776d563e31ec`.
+PR: [#63](https://github.com/Brawl2007/COD-guerra/pull/63).
+CI: [38582392486 — SUCCESS](https://github.com/Brawl2007/COD-guerra/actions/runs/38582392486).
 BASE_BRANCH: `claude/m01-stack-integration-t08-t12-v1`.
 BASE_HEAD: `2d65dd0b9837d5e6f21fe24dd8a8b167ca76df55`.
 WORK_BRANCH: `codex/m01-continuity-raid-integration-v1`.
@@ -27,14 +30,14 @@ Os alvos são estimativas de gameplay, marcadas `GAMEPLAY_DRAMATIZATION`. As hor
 | Frame do raid às 05:36 | 6 IDs distintos; 171 puffs no pool; relógio e danos congelados; erros JS/HTTP 0 | `browser/frame-diagnostics.json`, `browser/raid-0536.png` |
 | Primeiro Node integral da candidata | 693/694 PASS, 1 FAIL; regressão identificada e corrigida | `candidate-node-first-failed.log`, `VERIFIER-FIRST-FAIL.md` |
 | Testes afetados depois da correção | 28/28 PASS | `final-focused-node.log`, `lifecycle-correction-attempt1.log` |
-| CI integral final | PENDENTE: 694 testes + build + browser | workflow `m01-continuity-raid-integration-v1.yml` |
-| Revisão crítica independente | ACCEPT para commit/push; fecho depende do CI integral final | `REVIEW.md` |
+| CI integral final no CODE_HEAD_TESTED | **694/694 Node PASS, build PASS, browser 1/1 PASS**, workers 1, retries 0 | `CI_RESULT.json`, `ci-job.log`, run 38582392486 |
+| Revisão crítica independente | **ACCEPT**, condição de CI final satisfeita | `REVIEW.md`, `CI_RESULT.json` |
 
 A captura foi inspeccionada: fumo visível sobre/atrás da estação; algumas colunas sobrepõem-se ou ficam parcialmente ocultas. Os testes de instâncias/opacidade provam seis colunas nos três níveis de qualidade, dentro dos pools existentes. A imagem isolada não demonstra seis silhuetas completamente separadas.
 
 O primeiro teste de navegador falhou na espera de 5 s pela confirmação assíncrona de pausa. A falha e o trace estão em `browser-first-failed/`; o primeiro reteste (`browser-before-audio-fix/`) conserva as asserções e espera pela pausa real, com produção idêntica à falha. Depois da correção de áudio abaixo, o build e o browser foram repetidos; `browser/` contém essa execução final 1/1 PASS. A screenshot usa o orçamento de readback de 120 s e oculta as sobreposições de UI somente para a captura.
 
-O primeiro integral da candidata encontrou uma regressão real: `Game.rebuildSounds()` só classificava `raid_0530` como aéreo; os sufixos restauravam o limite errado de tremor. Uma correção acrescentou os cinco IDs à tabela fechada e reforçou a cobertura dos seis no teste existente. Os 28 testes afetados, build e browser final passaram; o integral anterior continua FAIL e não se soma ao reteste.
+O primeiro integral da candidata encontrou uma regressão real: `Game.rebuildSounds()` só classificava `raid_0530` como aéreo; os sufixos restauravam o limite errado de tremor. Uma correção acrescentou os cinco IDs à tabela fechada e reforçou a cobertura dos seis no teste existente. Os 28 testes afetados, build e browser final passaram; o integral anterior continua FAIL e não se soma ao reteste. O CI final executou a suíte inteira uma vez e passou 694/694, com build e browser verdes.
 
 O primeiro baseline local foi interrompido explicitamente para mover os testes para uma cópia imutável. Uma tentativa nessa cópia falhou por ausência de `research/weapons`; a dependência foi reposta a partir da base exacta. Apenas a execução integral final 683/683 conta como baseline. Não se somam resultados parciais.
 
@@ -60,4 +63,6 @@ Jogo local: `http://127.0.0.1:5173/COD-guerra/`. Na máquina que já possui o sc
 
 Para verificar a auditoria sem regenerar o golden: exportar uma cópia imutável da base exacta com os seus `src`, `missions`, `tests`, `research`, assets e dependências; definir `M01_APPROVED_BASELINE` e executar `node tools/verification/m01-continuity-raid-audit.mjs`. `--write-golden` é reservado à regeneração controlada em x86 com revisão.
 
-Próximo passo: publicar a branch integrada com PR dirigido à base T08/T12 e observar o CI integral final antes de fechar a entrega. `main`, deploy e branches de origem pertencem aos respectivos donos e não receberam escritas.
+Branch publicada, PR #63 em rascunho dirigido à base T08/T12 e CI completo verde. A revisão posterior só acrescenta documentos/memória; produção e testes permanecem idênticos ao CODE_HEAD_TESTED. Próximo passo: jogar esta branch e escolher o próximo recorte pendente, sem repetir estas entregas nem regenerar golden para simples atualização de documentos. `main`, deploy e branches de origem pertencem aos respectivos donos e não receberam escritas.
+
+O arquivo ZIP do artifact não foi baixado neste executor (403); o run remoto disponibiliza-o. O log completo foi obtido pela ligação GitHub e comprova as contagens e os três gates. Não se alega validação local de CRC/SHA do ZIP.

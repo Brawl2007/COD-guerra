@@ -17,3 +17,7 @@ A suite Node completa anterior foi realmente **FAIL: 693/694 PASS, uma falha**, 
 Não foi executada outra suite completa local. A suite completa **final de 694 testes no CI da branch revista é gate obrigatório pendente**, e deve ser observada antes do fecho. Skills locais `focused-verification` e fase 2 de `autonomous-task` aplicados. Uma fix attempt; sem alterações de main/deploy.
 
 Próximo passo: critical review do diff final e, após push autorizado da branch de trabalho, observar full Node/build/browser CI. Se o CI falhar, preservar a falha e corrigir proporcionalmente; não declarar full694PASS antes do resultado real.
+
+## Gate remoto fechado — 2026-10-14
+
+CI 38582392486 no commit `8387b5627b3b5482370c0915f018776d563e31ec`: SUCCESS. **694/694 Node**, build PASS e browser **1/1**, workers 1, retries 0, numa execução final própria; não é união com resultados anteriores. Provas: `CI_RESULT.json` e `ci-job.log`. Condição de fecho satisfeita; revisão seguinte só de documentos, sem mudanças no código validado.
