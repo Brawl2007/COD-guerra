@@ -1,4 +1,4 @@
-// Deterministic M01 Animation Resolver V1. Pure presentation logic; never mutates simulation state or RNG.
+// M01 Animation Resolver V1 + Argon V2: deterministic visual helpers, no gameplay authority.
 export const STRIDE_METRES=Object.freeze({
   walk:1.54,run:2.88,sprint:3.2,crouch_walk:.768,
   rkm_walk:1.54,rkm_run:2.88,carry_wounded:1.4,drag_wounded:1.1
@@ -96,6 +96,55 @@ export function resolveTorsoOrientation(actor,pose){
   const torsoTwist=clamp(yawDelta,-MAX_TORSO_TWIST,MAX_TORSO_TWIST);
   const rootYaw=wrapAngle(facing-torsoTwist);
   return {facing,bodyYaw,yawDelta,torsoTwist,rootYaw};
+}
+
+
+// Argon V2 presentation-only helpers. Optional hit metadata is never inferred
+// from gameplay RNG, hitboxes or save fields.
+export function resolveDirectionalImpact(actor,time=0,clips=null){
+  const idle={active:false,pitch:0,roll:0,angle:0};
+  if(!actor?.alive||!Number.isFinite(actor.hitAt))return idle;
+  const duration=clips?.get?.('hit_front')?.duration??CLIP_DURATIONS.hit_front;
+  const age=time-actor.hitAt;
+  if(!Number.isFinite(duration)||duration<=0||age<0||age>=duration)return idle;
+  const facing=Number.isFinite(actor.facing)?actor.facing:0;
+  const angle=Number.isFinite(actor.hitYaw)?wrapAngle(actor.hitYaw-facing):0;
+  const envelope=Math.sin(Math.PI*age/duration);
+  return {active:true,pitch:Math.cos(angle)*.22*envelope,
+    roll:-Math.sin(angle)*.18*envelope,angle};
+}
+
+// Animate a reload only when the authoritative actor explicitly signals one.
+// A full magazine and cooldown do not, by themselves, prove a reload occurred.
+export function resolveRiflemanReload(actor,time=0,pose=null,clips=null){
+  if(!actor?.alive||actor.civilian||actor.role==='MEDIC'||
+     actor.id==='szymon_kowal'||actor.weapon==='mg34'||
+     actor.group==='grp_ckm_crew'||pose?.underFire||actor.shot>0)return null;
+  if(!actor.reloading&&actor.state!=='RELOAD_CLIP')return null;
+  if(clips?.size>0&&!clips.has('reload_clip'))return null;
+  const duration=clips?.get?.('reload_clip')?.duration??CLIP_DURATIONS.reload_clip;
+  const explicit=typeof actor.reloadProgress==='function'?
+    clamp(actor.reloadProgress(),0,1)*duration:null;
+  const offset=(actorHash(actor.id)%1000)/250;
+  const timeInClip=explicit??((Math.max(0,time)+offset)%duration);
+  return {clip:'reload_clip',time:timeInClip,loop:false};
+}
+
+// Bounded, approximate shoulder compensation in the existing rig.
+// Not a two-bone IK solver: no runtime physics or attachment authority.
+export function resolveSupportHandIK(actor,pose,orientation,sample=null){
+  const disabled={active:false,shoulderPitch:0,shoulderYaw:0,elbowBend:0};
+  if(!actor?.alive||actor.civilian||actor.role==='MEDIC'||
+     actor.weapon==='mg34'||actor.group==='grp_ckm_crew'||
+     actor.carriedBy||actor.state==='WOUNDED'||
+     ['fallen','wounded','carried','seated','prone','pinned'].includes(pose?.name)||
+     ['reload_clip','rkm_reload'].includes(sample?.clip))return disabled;
+  const twist=Number.isFinite(orientation?.torsoTwist)?orientation.torsoTwist:0;
+  // Keep offsets small enough to avoid moving the existing weapon sockets.
+  const shoulderYaw=clamp(twist*.25,-.12,.12);
+  const shoulderPitch=(pose?.aiming?.025:pose?.moving?-.04:0)-Math.abs(twist)*.04;
+  return {active:true,shoulderPitch,shoulderYaw,
+    elbowBend:clamp(Math.abs(twist)*.16,0,.12)};
 }
 
 export function resolveCombatReaction(actor,time=0,pose=null,clips=null){

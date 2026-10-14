@@ -99,8 +99,9 @@ test('integration preserves gameplay, hitbox/muzzle, save, locomotion and non-pr
  }
  const file=readFileSync(new URL('../src/render/m01-characters.js',import.meta.url),'utf8'),old=execFileSync('git',['show',base+':src/render/m01-characters.js'],{encoding:'utf8'});
  const section=(s,begin,end)=>s.slice(s.indexOf(begin),s.indexOf(end,s.indexOf(begin)));
- // Original specialist selection remains byte-identical; generic gait selection
- // is intentionally revised by Animation Resolver V1.
+ // Old exact-byte lock was for unchanged visual-variation work. The new animation
+ // resolver intentionally changes generic gait/transition selection. Preserve the
+ // specialized MG34 prone, CKM and station patient/medic decision block exactly.
  assert.equal(section(file,'    const prone=mg34ProneSample(actor,time);',"    if(pose.name==='carried')"),
               section(old,'    const prone=mg34ProneSample(actor,time);',"    if(pose.name==='carried')"));
  assert.equal(section(file,'  updateCKM(','  get diagnostics'),section(old,'  updateCKM(','  get diagnostics'));
