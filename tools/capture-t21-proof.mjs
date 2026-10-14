@@ -38,17 +38,18 @@ try{
  async function screenshot(name){
   const d=await diagnostic();
   if(!d||d.paused||d.missionId!=='m01_tczew'||!d.m01?.models?.length)throw Error('Missing real active M01 diagnostics: '+name);
+  if(Math.abs(d.player?.pitch??0)>0.85)throw Error('Camera not aimed at battlefield (pitch='+d.player.pitch+'): '+name);
   const filename=`${MODE}-${name}.png`;
   const screenshot=await canvas.screenshot({path:join(OUT,filename),timeout:120000});
   if(screenshot.length<15000)throw Error('Suspiciously small screenshot '+filename+' bytes='+screenshot.length);
-  report.snapshots.push({filename,bytes:screenshot.length,clock:d.clock,frames:d.m01.renderedFrames,ambient:d.m01.ambient??null,
+  report.snapshots.push({filename,bytes:screenshot.length,clock:d.clock,pitch:d.player?.pitch??null,frames:d.m01.renderedFrames,ambient:d.m01.ambient??null,
    shots:d.m01.weapon?.shotCount??null,grenades:d.m01.grenades?.ammo??null,explosions:d.m01.battlefieldFx?.active??null});
   return d;
  }
  await screenshot('cenario');
  // Real inputs. Move/look slightly, then fire a player round.
  await page.keyboard.down('KeyW');await page.waitForTimeout(1100);await page.keyboard.up('KeyW');
- await page.mouse.click(640,360,{delay:70});
+ await page.mouse.down();await page.waitForTimeout(70);await page.mouse.up();
  await page.waitForTimeout(600);
  await screenshot('combate');
  // Throw an actual grenade. Only call the next image an explosion if a renderer blast was observed.
@@ -63,7 +64,7 @@ try{
   const started=Date.now();
   while(Date.now()-started<36000){
    await page.keyboard.down('KeyW');await page.waitForTimeout(650);await page.keyboard.up('KeyW');
-   await page.mouse.click(640,360,{delay:40});
+   await page.mouse.down();await page.waitForTimeout(40);await page.mouse.up();
    await page.waitForTimeout(800);
    const d=await diagnostic();if(!d||d.paused||d.missionId!=='m01_tczew')throw Error('Gameplay interrupted during video');
   }
@@ -74,7 +75,11 @@ try{
   const f=readdirSync(videoDir).find(x=>x.endsWith('.webm'));
   if(!f)throw Error('Real browser video not recorded');
   const name=join(OUT,'t21-gameplay-real.mp4');
-  execFileSync('ffmpeg',['-hide_banner','-loglevel','error','-y','-i',join(videoDir,f),'-an','-c:v','libx264','-pix_fmt','yuv420p',name],{stdio:'inherit'});
+  const source=join(videoDir,f);
+  const duration=Number(execFileSync('ffprobe',['-v','error','-show_entries','format=duration','-of','default=nk=1:nw=1',source]).toString().trim());
+  if(!Number.isFinite(duration)||duration<35)throw Error('No 35s continuous gameplay segment in real browser footage');
+  execFileSync('ffmpeg',['-hide_banner','-loglevel','error','-y','-ss',String(Math.max(0,duration-35.5)),'-i',source,
+    '-t','35','-an','-c:v','libx264','-pix_fmt','yuv420p','-movflags','+faststart',name],{stdio:'inherit'});
   if(!existsSync(name))throw Error('MP4 conversion failed');
   report.video=name;
  }
