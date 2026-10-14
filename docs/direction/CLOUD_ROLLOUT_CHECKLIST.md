@@ -64,4 +64,5 @@ correspondente; o historico nao substitui os checks do HEAD atual.
 - CI jogo: https://github.com/Brawl2007/COD-guerra/actions/workflows/pages.yml
 
 A revisao da descricao do PR deve refletir os checks reais, nao apenas este
-documento. O primeiro diagnostico Claude Cloud continua pendente.
+documento. Primeiro diagnostico Claude Cloud: `CLOUD_VALIDATION_2026-10-14.md`
+(etapas 2-4 validadas com lacunas; 5-7 pendentes).
