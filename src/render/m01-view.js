@@ -79,7 +79,6 @@ export class M01View {
     this.ambientDirector=new M01AmbientDirector();
     this.horizonGlow=new THREE.Sprite(new THREE.SpriteMaterial({color:'#ff9e52',transparent:true,opacity:0,depthWrite:false,
       blending:THREE.AdditiveBlending,fog:false}));this.horizonGlow.visible=false;this.horizonGlow.renderOrder=6;this.scene.add(this.horizonGlow);
-    this.muzzleFill=new THREE.PointLight('#ffd68a',0,48,2);this.muzzleFill.visible=false;this.scene.add(this.muzzleFill);
     this.livingMotion={active:0,reacting:0};
     this.portalPolish=new M01BridgePortalPolish({stone:this.materials.bridgeStone});
     this.bridgeStructure=new M01BridgeStructure({steel:this.materials.bridgeSteel,rail:this.materials.metal,timber:this.materials.wood,stone:this.materials.bridgeStone});
@@ -215,8 +214,8 @@ export class M01View {
       }
       if(skinned.has(a.id))continue;
       root.position.set(a.x,a.y+pose.root.offsetY,a.z);
-      root.rotation.set(pose.root.pitch+living.blastFlinch*.12,-a.facing+living.swayYaw,
-        pose.root.roll+living.blastFlinch*.1,'YXZ');root.updateMatrix();
+      root.rotation.set(pose.root.pitch+(living.blastFlinch>.01?living.blastFlinch*.12:0),-a.facing,
+        pose.root.roll+(living.blastFlinch>.01?living.blastFlinch*.1:0),'YXZ');root.updateMatrix();
       const visual=!a.civilian&&this.characters?.visuals?soldierVisualVariant(a):null;
       const cloth=a.civilian?'#404c56':visual?'#'+visual.proxyCloth:a.team==='enemy'?'#b4c0b7':'#c9bea0',
         helmet=visual?'#'+visual.proxyHelmet:a.team==='enemy'?'#465252':'#635f47',skin=visual?'#'+visual.proxySkin:'#ffffff';
@@ -591,8 +590,7 @@ export class M01View {
       this.horizonGlow.scale.set(145,110,1);this.horizonGlow.material.opacity=.75*flash.intensity;
     }
     const fill=sampleMuzzleEnvironmentLight(sim.actors,time,sim.player,this.owner.quality);
-    this.muzzleFill.visible=Boolean(fill.active);
-    if(fill.active){this.muzzleFill.position.set(...fill.position);this.muzzleFill.intensity=fill.intensity;}
+    this.pendingMuzzleFill=fill;
     this.train.visible=state.train963;this.panzerzug.visible=state.panzerzug;
     this.updateAircraft(state,time,sim.player,ju87HeardAt(sim));
     const player=sim.player,eye=eyePosition(player),dir=aimDirection(player.angle,player.pitch);
@@ -626,6 +624,12 @@ export class M01View {
     this.weaponFxWarm??=prewarmWeaponFx(this.engine,[{scene:this.weaponScene,camera:this.weaponCamera,objects:[...this.fallbackFx.warmObjects,...this.viewModel.fx.warmObjects]},
       {scene:this.scene,camera:this.camera,objects:this.weaponWorldFx.warmObjects([WEAPON_PRESENTATION.wz29.casing.kind])}]);
     this.updateBattlefieldFx(state,time);
+    // Reuse the existing single battlefield point light to retain the light budget.
+    if(!this.explosionLight.visible&&this.pendingMuzzleFill?.active){
+      this.explosionLight.visible=true;this.explosionLight.position.set(...this.pendingMuzzleFill.position);
+      this.explosionLight.intensity=this.pendingMuzzleFill.intensity;
+      this.explosionLight.distance=48;this.explosionLight.color.set('#ffd68a');
+    }
     try{this.damageDecals.update({state,time,world:sim.world,trees:this.environment?.treeDescriptors,quality:this.owner.quality,camera:this.camera.position,renderer:this.engine,view:this.camera,warm:[this.fireBatches.chip]});}
     catch(error){this.damageDecals.fail(error);}   // presentation only: never stops the frame
     this.engine.info.autoReset=false;this.engine.info.reset();this.engine.clear();this.engine.render(this.scene,this.camera);
@@ -648,7 +652,11 @@ export class M01View {
   roundFeedback(event,clock,direction=null,weapon=null){
     this.combatFeedback.roundImpact({clock,distance:event.distance,crack:Boolean(event.crack),direction,weapon,material:event.material});this.lastFrame=null;
   }
-  explosionFeedback(clock,distance,direction=null){this.combatFeedback.explosion({clock,distance,direction});this.lastFrame=null;}
+  explosionFeedback(clock,distance,direction=null){
+    if(distance<=180)this.combatFeedback.explosion({clock,distance,direction});
+    else this.combatFeedback.distantShockwave({clock,distance,direction});
+    this.lastFrame=null;
+  }
   feedbackState(clock=this.lastClock){return this.combatFeedback.diagnostics(clock,this.owner.quality);}
   /** Layered visual-only blast. Scale is inferred later from the simulation-owned damage id. */
   explosion(point,clock,aerial){this.bursts.push({x:point.x,y:point.y??0,z:point.z,start:clock,aerial:Boolean(aerial),seed:fxSeed(point,clock)});if(this.bursts.length>M01_BATTLEFIELD_FX_LIMITS.bursts)this.bursts.shift();}

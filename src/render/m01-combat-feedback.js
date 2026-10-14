@@ -34,7 +34,7 @@ export class M01CombatFeedback {
   constructor({shakeScale=1}={}){this.shakeScale=clamp(shakeScale,0,1.5);this.reset();}
   setShakeScale(v){this.shakeScale=clamp(Number.isFinite(v)?v:1,0,1.5);}
   reset(){
-    this.events=[];this.counts={playerHit:0,nearMiss:0,nearImpact:0,explosion:0,shockwave:0,directional:0};
+    this.events=[];this.counts={playerHit:0,nearMiss:0,nearImpact:0,explosion:0,directional:0};
     this.peaks={suppressionVisual:0,hitImpulse:0,nearMissImpulse:0,impactImpulse:0,explosionImpulse:0,overlayAlpha:0,shakeStrength:0};
     this.lastHitDirection=null;this.lastDirection=null;this.sequence=0;
   }
@@ -62,11 +62,14 @@ export class M01CombatFeedback {
   }
   explosion({clock,distance=Infinity,direction=null}={}){
     const d=Math.max(0,Number(distance)||0),strength=clamp(1-d/180,0,1);
-    if(d<=180){if(strength<=.02)return false;this.counts.explosion++;return this.add('explosion',clock,strength,direction,{distance:d});}
-    if(d>850)return false;
+    if(strength<=.02)return false;this.counts.explosion++;return this.add('explosion',clock,strength,direction,{distance:d});
+  }
+  /** Separate opt-in optical/acoustic presentation: preserves legacy explosion semantics. */
+  distantShockwave({clock,distance=Infinity,direction=null}={}){
+    const d=Number(distance);
+    if(!Number.isFinite(d)||d<=180||d>850)return false;
     const delayed=clamp((1-(d-180)/670)*.65,0,1);
     if(delayed<=.02)return false;
-    this.counts.explosion++;this.counts.shockwave++;
     this.add('direction',clock,delayed*.45,direction,{opticalFlash:true,distance:d});
     return this.add('shockwave',clock+d/SOUND_SPEED_MS,delayed,direction,{distance:d});
   }

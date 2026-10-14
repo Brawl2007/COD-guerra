@@ -19,7 +19,7 @@ test('T21: profile extensions for stone, brick and water',()=>{
 });
 test('T21: distant acoustic impulse cannot trigger before sound arrival',()=>{
  const f=new M01CombatFeedback({shakeScale:.5});
- f.explosion({clock:100,distance:686,direction:.5});
+ f.distantShockwave({clock:100,distance:686,direction:.5});
  assert.equal(SOUND_SPEED_MS,343);
  assert.equal(f.sample(100.1,'high').explosionImpulse,0);
  assert.ok(f.sample(102.05,'high').explosionImpulse>0);
