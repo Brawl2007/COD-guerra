@@ -1,5 +1,6 @@
 const clamp=(v,min=0,max=1)=>Math.max(min,Math.min(max,v));
 const finiteDirection=value=>Number.isFinite(value)?clamp(value,-1,1):null;
+export const SOUND_SPEED_MS=343;
 
 export const M01_FEEDBACK_CAPS=Object.freeze({
   suppressionVisual:1,
@@ -23,13 +24,15 @@ const PROFILE=Object.freeze({
   nearMiss:{duration:.34,suppressionDuration:1.05,suppression:.26},
   impact:{duration:.32,suppressionDuration:.9,suppression:.18},
   explosion:{duration:.82,suppressionDuration:1.4,suppression:.42},
+  shockwave:{duration:.68,suppressionDuration:1.1,suppression:.24},
   direction:{duration:.42,suppressionDuration:.7,suppression:.08}
 });
 
 const envelope=(age,duration)=>age<0||age>=duration?0:(1-age/duration)**2;
 
 export class M01CombatFeedback {
-  constructor(){this.reset();}
+  constructor({shakeScale=1}={}){this.shakeScale=clamp(shakeScale,0,1.5);this.reset();}
+  setShakeScale(v){this.shakeScale=clamp(Number.isFinite(v)?v:1,0,1.5);}
   reset(){
     this.events=[];this.counts={playerHit:0,nearMiss:0,nearImpact:0,explosion:0,directional:0};
     this.peaks={suppressionVisual:0,hitImpulse:0,nearMissImpulse:0,impactImpulse:0,explosionImpulse:0,overlayAlpha:0,shakeStrength:0};
@@ -61,18 +64,28 @@ export class M01CombatFeedback {
     const d=Math.max(0,Number(distance)||0),strength=clamp(1-d/180,0,1);
     if(strength<=.02)return false;this.counts.explosion++;return this.add('explosion',clock,strength,direction,{distance:d});
   }
+  /** Separate opt-in optical/acoustic presentation: preserves legacy explosion semantics. */
+  distantShockwave({clock,distance=Infinity,direction=null}={}){
+    const d=Number(distance);
+    if(!Number.isFinite(d)||d<=180||d>850)return false;
+    const delayed=clamp((1-(d-180)/670)*.65,0,1);
+    if(delayed<=.02)return false;
+    this.add('direction',clock,delayed*.45,direction,{opticalFlash:true,distance:d});
+    return this.add('shockwave',clock+d/SOUND_SPEED_MS,delayed,direction,{distance:d});
+  }
   sample(clock,quality='medium'){
     const q=QUALITY[quality]??QUALITY.medium;
     let hit=0,near=0,impact=0,explosion=0,suppression=0,dirSum=0,dirWeight=0;
     const active=[];
     for(const event of this.events){
-      const age=Math.max(0,clock-event.clock),profile=PROFILE[event.kind],main=envelope(age,profile.duration),sup=envelope(age,profile.suppressionDuration);
+      if(clock<event.clock){active.push(event);continue;}
+      const age=clock-event.clock,profile=PROFILE[event.kind],main=envelope(age,profile.duration),sup=envelope(age,profile.suppressionDuration);
       if(!main&&!sup)continue;active.push(event);
       const value=event.intensity*main;
       if(event.kind==='hit')hit+=value;
       else if(event.kind==='nearMiss')near+=value;
       else if(event.kind==='impact')impact+=value;
-      else if(event.kind==='explosion')explosion+=value;
+      else if(event.kind==='explosion'||event.kind==='shockwave')explosion+=value;
       suppression+=event.intensity*profile.suppression*sup;
       if(event.direction!==null&&value>0){dirSum+=event.direction*value;dirWeight+=value;}
     }
@@ -81,12 +94,12 @@ export class M01CombatFeedback {
     impact=clamp(impact,0,M01_FEEDBACK_CAPS.impactImpulse);explosion=clamp(explosion,0,M01_FEEDBACK_CAPS.explosionImpulse);
     suppression=clamp(suppression,0,M01_FEEDBACK_CAPS.suppressionVisual);
     const direction=dirWeight?clamp(dirSum/dirWeight,-1,1):0;
-    const rawShake=.013*hit+.009*near+.006*impact+.018*explosion+.004*suppression;
+    const rawShake=(.013*hit+.009*near+.006*impact+.018*explosion+.004*suppression)*this.shakeScale;
     const shake=clamp(rawShake*q.camera,0,M01_FEEDBACK_CAPS.cameraOffset);
     const phase=clock*71.3+this.sequence*.37;
     const cameraX=clamp((Math.sin(phase)*.45+direction*.42)*shake,-M01_FEEDBACK_CAPS.cameraOffset,M01_FEEDBACK_CAPS.cameraOffset);
     const cameraY=clamp(Math.sin(phase*1.31+.8)*shake,-M01_FEEDBACK_CAPS.cameraOffset,M01_FEEDBACK_CAPS.cameraOffset);
-    const roll=clamp((direction*(.006*hit+.0045*near+.003*impact)+Math.sin(phase*.73)*.0025*suppression)*q.camera,
+    const roll=clamp((direction*(.006*hit+.0045*near+.003*impact)+Math.sin(phase*.73)*.0025*suppression)*q.camera*this.shakeScale,
       -M01_FEEDBACK_CAPS.cameraRoll,M01_FEEDBACK_CAPS.cameraRoll);
     const overlayAlpha=clamp((.28*hit+.13*near+.08*impact+.16*explosion+.075*suppression)*q.overlay,0,M01_FEEDBACK_CAPS.overlayAlpha);
     const exposureFlash=q.flash?clamp((.11*explosion+.035*hit)*q.flash,0,.13):0;
