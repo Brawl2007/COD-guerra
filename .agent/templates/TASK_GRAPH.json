@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "task_id": "",
+  "nodes": {
+    "memory_retrieval": {
+      "type": "memory",
+      "depends_on": []
+    },
+    "context_audit": {
+      "type": "context_audit",
+      "depends_on": [
+        "memory_retrieval"
+      ]
+    },
+    "implementation": {
+      "type": "agent",
+      "role": "implementer",
+      "depends_on": [
+        "context_audit"
+      ]
+    },
+    "verification": {
+      "type": "agent",
+      "role": "verifier",
+      "depends_on": [
+        "implementation"
+      ]
+    },
+    "review": {
+      "type": "agent",
+      "role": "reviewer",
+      "depends_on": [
+        "verification"
+      ]
+    },
+    "regression_obligations": {
+      "type": "regression",
+      "depends_on": [
+        "review"
+      ],
+      "optional": true
+    },
+    "memory_update": {
+      "type": "memory",
+      "depends_on": [
+        "review"
+      ],
+      "optional": true
+    },
+    "handoff": {
+      "type": "handoff",
+      "depends_on": [
+        "regression_obligations",
+        "memory_update"
+      ]
+    }
+  }
+}
