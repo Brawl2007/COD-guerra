@@ -1,4 +1,7 @@
 import {mg34ProneGeometry} from '../world/spatial.js';
+import {resolveLocomotionGait,resolveStrideSample,resolveTorsoOrientation} from './m01-animation-resolver.js';
+
+const GAIT_STRIDE=Object.freeze({crouch_walk:.16,walk:.22,run:.26,sprint:.31});
 // Procedural presentation in metres. This never writes to an actor or advances gameplay.
 export function actorPoseName(actor,time=0){
   if(!actor.alive)return 'fallen';
@@ -8,7 +11,7 @@ export function actorPoseName(actor,time=0){
   if(actor.pose==='seated')return 'seated';
   // Aliado sob fogo (suppressedUntil vem da simulação): agachado e curvado para a frente, cabeça em baixo.
   if(actor.team==='ally'&&time<(actor.suppressedUntil??0))return 'pinned';
-  return actor.crouched?'crouched':'standing';
+  return actor.crouched||actor.posture==='crouch'?'crouched':'standing';
 }
 
 export function actorPose(actor,time){
@@ -23,14 +26,17 @@ export function actorPose(actor,time){
       const knee=[legs[0]+.12,legs[1],side*.15],foot=[legs[0]-.27,.07,side*.18],shoulder=[torso[0]+.2,torso[1]+.02,side*.2],elbow=[torso[0]+.27,.07+(1-geometry.low)*.7,side*.22],hand=[rifle[0]+(side>0?-.1:.25),rifle[1]-.07,rifle[2]];
       limbs.push({from:hip.map((v,i)=>i===2?side*.15:v),to:knee,radius:.095},{from:knee,to:foot,radius:.085},{from:shoulder,to:elbow,radius:.075},{from:elbow,to:hand,radius:.065});boots.push(foot);
     }
-    return {name:'prone',prone:true,limbs,boots,aiming,firing,moving:false,underFire:time<(actor.suppressedUntil??0),
-      root:{offsetY:0,pivotY:0,pitch:0,roll:0},head,torso:{position:torso,size:[.30+.46*geometry.low,.65-.37*geometry.low,.46],roll:0},
+    return {name:'prone',prone:true,gait:'idle',walkPhase:0,limbs,boots,aiming,firing,moving:false,underFire:time<(actor.suppressedUntil??0),
+      root:{offsetY:0,pivotY:0,pitch:0,roll:0,yaw:actor.facing??0,yawOffset:0},head,
+      torso:{position:torso,size:[.30+.46*geometry.low,.65-.37*geometry.low,.46],roll:0,yaw:0},
       rifle:{position:rifle,axis:[1,0,0],pitch:0,barrelFrom:[muzzle[0]-.57,muzzle[1],muzzle[2]],muzzle}};
   }
   const name=actorPoseName(actor,time),seated=name==='seated',pinned=name==='pinned',crouched=name==='crouched'||pinned;
   const low=seated||crouched,underFire=time<(actor.suppressedUntil??0);
   const armed=!actor.civilian&&actor.role!=='MEDIC',upright=name==='standing'||name==='crouched';
-  const moving=name==='standing'&&!underFire&&!(actor.shot>0)&&['ADVANCE','RETREAT'].includes(actor.state);
+  const legacyMoving=name==='standing'&&!underFire&&!(actor.shot>0)&&['ADVANCE','RETREAT'].includes(actor.state);
+  const gait=resolveLocomotionGait(actor,{name,underFire,moving:legacyMoving});
+  const moving=gait!=='idle';
   const age=Number.isFinite(actor.firedAt)?time-actor.firedAt:actor.shot>0?Math.max(0,.25-actor.shot):Infinity;
   // SUPPRESS can persist after a burst. Only the actual shot/recent fire keeps the weapon shouldered.
   const aiming=armed&&upright&&!underFire&&!moving&&(actor.shot>0||
@@ -38,10 +44,19 @@ export function actorPose(actor,time){
   const firing=aiming&&actor.shot>0;
   const automatic=actor.weapon==='mg34'||actor.role==='SUPPORT',pulseAge=firing&&automatic?Math.max(0,age)%.075:age;
   const kick=aiming&&pulseAge>=0&&pulseAge<.22?Math.sin(Math.min(1,pulseAge/.016)*Math.PI/2)*Math.exp(-pulseAge/.055):0;
-  const phase=time*7+Number(actor.id.match(/\d+$/)?.[0]??0),stride=moving?Math.sin(phase)*.22:0;
+  const strideSample=moving?resolveStrideSample(actor,gait,time):null;
+  const phase=strideSample?.strideSynced?strideSample.stridePhase*Math.PI*2:time*7+Number(actor.id?.match(/\d+$/)?.[0]??0);
+  const strideAmp=GAIT_STRIDE[gait]??.22,stride=moving?Math.sin(phase)*strideAmp:0;
   const breath=name==='standing'&&!moving?Math.sin(phase*.32)*.006:0;
   const hip=(seated?.46:pinned?.38:crouched?.48:.84)+(moving?Math.sin(phase)**2*.025:0);
-  const lean=crouched?-.06:0,tilt=pinned?-.82:underFire&&crouched?-.35:moving?-.10:0;
+  const hitAge=Number.isFinite(actor.hitAt)?time-actor.hitAt:Infinity;
+  const hitFlinch=upright&&hitAge>=0&&hitAge<.5?Math.sin((hitAge/.5)*Math.PI)*.22:0;
+  const duckAge=Number.isFinite(actor.suppressedAt)?time-actor.suppressedAt:Infinity;
+  const nearMissDuck=upright&&!pinned&&duckAge>=0&&duckAge<.6?Math.sin((duckAge/.6)*Math.PI)*.28:0;
+  const lean=crouched?-.06:0;
+  const baseTilt=pinned?-.82:underFire&&crouched?-.35:gait==='sprint'?-.18:moving?-.10:0;
+  const tilt=baseTilt+hitFlinch-nearMissDuck;
+  const orientation=resolveTorsoOrientation(actor,{name});
   const spine=h=>[lean-Math.sin(tilt)*h,hip+Math.cos(tilt)*h+breath,0];
   const riflePitch=(aiming?.025:moving?-.22:0)+kick*.045;
   const rifle=[seated?.35:lean+.35-kick*.055,hip+(seated?.13:aiming?.55:.27)+breath,.12];
@@ -51,9 +66,9 @@ export function actorPose(actor,time){
   const limbs=[],boots=[];
   for(const [i,z]of [-.14,.14].entries()){
     const step=i?stride:-stride;
-    const lift=moving?Math.max(0,(i?1:-1)*Math.sin(phase))*.11:0;
-    const h=[lean,hip,z],k=[seated?.32:crouched?.22:step*.45+.055,.43-(crouched?.18:0)-lift*.35,z];
-    const ankle=[seated?.32:crouched?0:step,.07+lift,z];
+    const lift=moving?Math.max(0,(i?1:-1)*Math.sin(phase))*(crouched?.07:.11):0;
+    const h=[lean,hip,z],k=[seated?.32:crouched?.22+(moving?step*.25:0):step*.45+.055,.43-(crouched?.18:0)-lift*.35,z];
+    const ankle=[seated?.32:crouched?(moving?step*.75:0):step,.07+lift,z];
     limbs.push({from:h,to:k,radius:.095},{from:k,to:ankle,radius:.085});
     boots.push([ankle[0]+.045,.055+lift,z]);
     const shoulder=spine(.49);shoulder[2]=z*1.85;
@@ -63,8 +78,10 @@ export function actorPose(actor,time){
   }
   const lying=name==='wounded'||name==='fallen',carried=name==='carried';
   const head=spine(low?.74:.79);head[0]+=.02+(aiming?.045:0);head[2]=aiming?.07:0;
-  return {name,limbs,boots,aiming,firing,moving,underFire:upright||pinned?underFire:false,
-    root:{offsetY:lying?.42:0,pivotY:lying||carried?.84:0,pitch:lying?-Math.PI/2:0,roll:carried?-Math.PI/2:0},
-    torso:{position:spine(.34),size:[.24,low?.59:.65,.21],roll:tilt},head,
+  const walkPhase=((phase/(Math.PI*2))%1+1)%1;
+  return {name,gait,walkPhase,limbs,boots,aiming,firing,moving,underFire:upright||pinned?underFire:false,
+    root:{offsetY:lying?.42:0,pivotY:lying||carried?.84:0,pitch:lying?-Math.PI/2:0,roll:carried?-Math.PI/2:0,
+      yaw:orientation.rootYaw,yawOffset:orientation.torsoTwist},
+    torso:{position:spine(.34),size:[.24,low?.59:.65,.21],roll:tilt,yaw:orientation.torsoTwist},head,
     rifle:{position:rifle,axis,pitch:riflePitch,barrelFrom:along(.13,.025),muzzle}};
 }
