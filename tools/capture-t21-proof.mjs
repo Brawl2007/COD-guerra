@@ -35,7 +35,22 @@ try{
  await page.waitForTimeout(1600);
  const canvas=page.locator('canvas#game');
  const diagnostic=()=>page.evaluate(()=>window.gameDiagnostics?.());
+ // Orient through the game's normal mouse-input listener, never the simulation object.
+ async function levelCamera(){
+  for(let attempt=0;attempt<4;attempt++){
+   const pitch=await page.evaluate(()=>window.gameDiagnostics()?.player?.pitch??0);
+   if(Math.abs(pitch)<.18)return;
+   const step=Math.max(-580,Math.min(580,Math.round(pitch/.0022)));
+   await page.evaluate(delta=>{
+    const event=new MouseEvent('mousemove',{bubbles:true,movementY:delta,movementX:0});
+    if(event.movementY!==delta)Object.defineProperty(event,'movementY',{value:delta});
+    window.dispatchEvent(event);
+   },step);
+   await page.waitForTimeout(220);
+  }
+ }
  async function screenshot(name){
+  await levelCamera();
   const d=await diagnostic();
   if(!d||d.paused||d.missionId!=='m01_tczew'||!d.m01?.models?.length)throw Error('Missing real active M01 diagnostics: '+name);
   if(Math.abs(d.player?.pitch??0)>0.85)throw Error('Camera not aimed at battlefield (pitch='+d.player.pitch+'): '+name);
