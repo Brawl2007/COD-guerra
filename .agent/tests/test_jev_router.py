@@ -572,6 +572,72 @@ class ProxyAuthTests(unittest.TestCase):
                       p.stdout)
 
 
+class AuthGateConcurrencyTests(unittest.TestCase):
+    """Requests sharing the ledger must not race past an HTTP 401."""
+
+    REQ = {"role": "implement", "risk": "medium", "complexity": "medium"}
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.ledger = Path(self.tmp.name) / "ledger.json"
+        self.env = {"COD_JEV_LEDGER": str(self.ledger), "COD_JEV_AUTH": "proxy"}
+        self.started = threading.Event()
+        self.release = threading.Event()
+        self.calls = 0
+
+    def transport(self, *args):
+        self.calls += 1
+        if self.calls == 1:
+            self.started.set()
+            if not self.release.wait(5):
+                raise TimeoutError("wait timed out")
+            return 401, b'{}'
+        return 200, json.dumps({
+            "model": "jev-1", "usage": {"input_tokens": 5, "output_tokens": 1},
+            "answers": {"model_choice": {"choice": "sonnet", "confidence": 0.9}}
+        }).encode()
+
+    def test_two_parallel_requests_do_not_bypass_401(self):
+        results, errors = [], []
+        def call():
+            try:
+                results.append(jev_router.route(self.REQ, enable_jev=True,
+                                                transport=self.transport, env=self.env))
+            except Exception as exc:
+                errors.append(type(exc).__name__)
+        t1, t2 = threading.Thread(target=call), threading.Thread(target=call)
+        t1.start()
+        try:
+            self.assertTrue(self.started.wait(5))
+            t2.start()
+        finally:
+            self.release.set()
+        t1.join(6)
+        t2.join(6)
+        self.assertFalse(t1.is_alive() or t2.is_alive())
+        self.assertEqual(errors, [])
+        self.assertEqual(self.calls, 1)
+        self.assertEqual({r.get("reason") for r in results},
+                         {"error", "auth_failed_previously"})
+        self.assertEqual(len(jev_router.read_ledger(self.ledger)["calls"]), 1)
+
+    def test_exception_releases_gate_for_next_call(self):
+        def fails(*args):
+            raise TimeoutError("simulated")
+        first = jev_router.route(self.REQ, enable_jev=True,
+                                 transport=fails, env=self.env)
+        self.assertEqual(first["reason"], "error")
+        def succeeds(*args):
+            return 200, json.dumps({
+                "model": "jev-1", "usage": {"input_tokens": 5, "output_tokens": 1},
+                "answers": {"model_choice": {"choice": "sonnet", "confidence": 0.9}}
+            }).encode()
+        second = jev_router.route(self.REQ, enable_jev=True,
+                                  transport=succeeds, env=self.env)
+        self.assertEqual(second["source"], "jev")
+
+
 class UsageTests(Base):
     def test_usage_empty(self):
         self.assertIn("calls 0/3", self.cli("usage").stdout)

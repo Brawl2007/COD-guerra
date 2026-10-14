@@ -47,6 +47,17 @@ Só depois disso fazer **uma** chamada real (com `--retry-auth` se o ledger dess
 401/403 outra vez, o travão do router bloqueia as chamadas seguintes; não repetir, rever o segredo.
 O ledger fica em `~/.local/state/cod-guerra/jev_pilot_ledger.json` e o contentor cloud é efémero, por isso uma sessão nova começa sem o bloqueio.
 
+### Consultas paralelas e segurança de autenticação
+
+O router Jev e o suporte à decisão partilham um bloqueio local entre processos associado ao ledger.
+Antes de cada chamada real, revalidam o histórico dentro desse bloqueio; só o libertam
+quando a resposta HTTP e o seu resultado estão registados. Duas chamadas em paralelo na
+mesma sessão não podem enviar a segunda antes de conhecer o 401/403 da primeira.
+Não há teto adicional de chamadas e o modo proxy é preservado. O bloqueio é libertado
+pelo sistema operativo após a terminação do processo. Sessões cloud distintas não
+partilham o ledger local nem este bloqueio; não é um limite global de gastos.
+
+
 ## 3. Publicação de checkpoints a partir da cloud (pendente de autorização)
 
 Estado em 2026-10-14: a ref `cod-guerra/cloud-state` **já existe** (commit `6487334`, autor Brawl2007,

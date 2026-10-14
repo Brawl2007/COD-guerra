@@ -208,6 +208,15 @@ class Locked:
         os.replace(tmp, self.path)
 
 
+def paid_call_gate(path):
+    """Serialize requests through their persisted ledger outcomes.
+
+    Independent of the ledger file lock to avoid reentrant locking in
+    reserve() and finish(). The OS releases it on abrupt process exit.
+    """
+    return Locked(str(path) + ".auth")
+
+
 def reserve(path, limit, run_id, request_id):
     """Atomically reserve a slot. Return index or None if refused."""
     with Locked(path) as lk:
@@ -353,56 +362,67 @@ def route(request, *, enable_jev=False, offline=False, dry_run=False,
         }
         return out
 
-    request_id = "%s-%d" % (run_id or "norun", used + 1)
-    try:
-        idx = reserve(lpath, limit, run_id, request_id)
-    except LedgerUnreadable:
-        return fallback("ledger_unreadable")
-    if idx is None:
-        return fallback("budget_exhausted", budget={"used": used, "limit": limit})
-    headers = {"Content-Type": "application/json"}
-    if key is not None:
-        headers["Authorization"] = "Bearer " + key
-    send = transport or default_transport
-    try:
-        status, raw = send(url, headers, json.dumps(body).encode(), TIMEOUT_S)
-    except Exception as exc:  # network errors; never include message (may echo URL/headers)
-        finish(lpath, idx, outcome="error:" + type(exc).__name__)
-        return fallback("error", error=type(exc).__name__)
-    if status != 200:
-        finish(lpath, idx, http_status=status, outcome="http_%d" % status)
-        return fallback("error", error="HTTP%d" % status)
-    try:
-        resp = json.loads(raw)
-        ans = resp["answers"]["model_choice"]
-        choice = str(ans["choice"]).lower()
-        conf = ans["confidence"]
-        if isinstance(conf, bool) or not isinstance(conf, (int, float)):
-            raise ValueError("bad confidence")
-        conf = float(conf)
-        if not math.isfinite(conf) or not 0.0 <= conf <= 1.0:
-            raise ValueError("bad confidence")
-        usage = resp.get("usage") or {}
-        tin = int(usage.get("input_tokens", 0))
-        tout = int(usage.get("output_tokens", 0))
-        jmodel = resp.get("model")
-        if choice not in CRITERIA:
-            raise ValueError("bad choice")
-    except Exception as exc:
-        finish(lpath, idx, http_status=status, outcome="parse_error:" + type(exc).__name__)
-        return fallback("error", error="ParseError")
-    finish(lpath, idx, http_status=status, model=jmodel, input_tokens=tin,
-           output_tokens=tout, est_cost_usd=est_cost(tin), choice=choice,
-           confidence=conf, outcome="ok")
-    out.update(jev_choice=choice, jev_model=jmodel, confidence=conf,
-               usage={"input_tokens": tin, "output_tokens": tout,
-                      "est_cost_usd": est_cost(tin)})
-    if conf < min_confidence:
-        return fallback("low_confidence", confidence=conf)
-    m, a, flags = map_choice(choice, norm)
-    out.update(source="jev", recommendation_model=m, recommended_agent=a,
-               flags=flags, rationale="Jev choice %s (confidence %.2f)" % (choice, conf))
-    return out
+    # Keep the cross-process auth gate through the HTTP result and ledger write.
+    with paid_call_gate(lpath):
+        try:
+            latest = read_ledger(lpath)["calls"]
+        except LedgerUnreadable:
+            return fallback("ledger_unreadable")
+        now_used = len(latest)
+        if limit is not None and now_used >= limit:
+            return fallback("budget_exhausted", budget={"used": now_used, "limit": limit})
+        if auth_blocked(latest) and not retry_auth:
+            return fallback("auth_failed_previously")
+        request_id = "%s-%d" % (run_id or "norun", now_used + 1)
+        try:
+            idx = reserve(lpath, limit, run_id, request_id)
+        except LedgerUnreadable:
+            return fallback("ledger_unreadable")
+        if idx is None:
+            return fallback("budget_exhausted", budget={"used": now_used, "limit": limit})
+        headers = {"Content-Type": "application/json"}
+        if key is not None:
+            headers["Authorization"] = "Bearer " + key
+        send = transport or default_transport
+        try:
+            status, raw = send(url, headers, json.dumps(body).encode(), TIMEOUT_S)
+        except Exception as exc:  # network errors; never include message (may echo URL/headers)
+            finish(lpath, idx, outcome="error:" + type(exc).__name__)
+            return fallback("error", error=type(exc).__name__)
+        if status != 200:
+            finish(lpath, idx, http_status=status, outcome="http_%d" % status)
+            return fallback("error", error="HTTP%d" % status)
+        try:
+            resp = json.loads(raw)
+            ans = resp["answers"]["model_choice"]
+            choice = str(ans["choice"]).lower()
+            conf = ans["confidence"]
+            if isinstance(conf, bool) or not isinstance(conf, (int, float)):
+                raise ValueError("bad confidence")
+            conf = float(conf)
+            if not math.isfinite(conf) or not 0.0 <= conf <= 1.0:
+                raise ValueError("bad confidence")
+            usage = resp.get("usage") or {}
+            tin = int(usage.get("input_tokens", 0))
+            tout = int(usage.get("output_tokens", 0))
+            jmodel = resp.get("model")
+            if choice not in CRITERIA:
+                raise ValueError("bad choice")
+        except Exception as exc:
+            finish(lpath, idx, http_status=status, outcome="parse_error:" + type(exc).__name__)
+            return fallback("error", error="ParseError")
+        finish(lpath, idx, http_status=status, model=jmodel, input_tokens=tin,
+               output_tokens=tout, est_cost_usd=est_cost(tin), choice=choice,
+               confidence=conf, outcome="ok")
+        out.update(jev_choice=choice, jev_model=jmodel, confidence=conf,
+                   usage={"input_tokens": tin, "output_tokens": tout,
+                          "est_cost_usd": est_cost(tin)})
+        if conf < min_confidence:
+            return fallback("low_confidence", confidence=conf)
+        m, a, flags = map_choice(choice, norm)
+        out.update(source="jev", recommendation_model=m, recommended_agent=a,
+                   flags=flags, rationale="Jev choice %s (confidence %.2f)" % (choice, conf))
+        return out
 
 
 # -------------------------------------------------------------------- CLI
