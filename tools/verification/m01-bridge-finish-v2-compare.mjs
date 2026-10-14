@@ -1,0 +1,14 @@
+import fs from 'node:fs';import path from 'node:path';import assert from 'node:assert/strict';
+import {pngPixels,pixelDelta} from './m01-vegetation-v2-pixels.mjs';
+const [baseRoot,currentRoot,out='test-results/bridge-finish-v2/comparison.json']=process.argv.slice(2);
+assert.ok(baseRoot&&currentRoot,'Usage: BASE_CAPTURE_DIR CURRENT_CAPTURE_DIR [REPORT]');
+const read=(root,name)=>JSON.parse(fs.readFileSync(path.join(root,name+'.json'))),pixels=(root,name)=>pngPixels(fs.readFileSync(path.join(root,name+'.png'))),report=[];
+for(const phase of ['0430','0610'])for(const id of ['04','12','13','control']){
+ const name=`${phase}-${id}`,before=read(baseRoot,'base-'+name),after=read(currentRoot,'current-'+name);
+ assert.deepEqual(after.input,before.input,`${name} exact input`);assert.deepEqual(after.raw.state,before.raw.state,`${name} actual full snapshot/checkpoint/events`);assert.deepEqual(after.raw.diagnostics.m01.demolition.camera,before.raw.diagnostics.m01.demolition.camera,`${name} actual last-drawn camera`);assert.equal(after.raw.diagnostics.clock,before.raw.diagnostics.clock);assert.deepEqual(after.raw.diagnostics.m01.parts,before.raw.diagnostics.m01.parts);assert.deepEqual(after.raw.diagnostics.m01.demolition.pieces,before.raw.diagnostics.m01.demolition.pieces);assert.deepEqual(after.errors,[]);assert.deepEqual(after.http,[]);assert.deepEqual(before.errors,[]);assert.deepEqual(before.http,[]);
+ const delta=pixelDelta(pixels(baseRoot,'base-'+name),pixels(currentRoot,'current-'+name)),control=pixelDelta(pixels(baseRoot,'base-'+name),pixels(currentRoot,'current-'+name),{x:600,y:4,w:80,h:40});
+ const counters={base:{drawCalls:before.raw.diagnostics.drawCalls,triangles:before.raw.diagnostics.triangles,structure:before.raw.diagnostics.m01.bridgeStructure},current:{drawCalls:after.raw.diagnostics.drawCalls,triangles:after.raw.diagnostics.triangles,structure:after.raw.diagnostics.m01.bridgeStructure,bridgeNative:after.raw.diagnostics.m01.bridgeFinish.native}};
+ report.push({name,actualFullStateEqual:true,cameraEqual:true,clock:after.raw.diagnostics.clock,battleClock:after.raw.state.snapshot.battleClock,pixels:delta,control,counters,counterLabel:'Actual engine frame submissions; structural capacities separately labelled by each owner. No FPS or physical VRAM measurement.'});fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out,JSON.stringify(report,null,2)+'\n');
+ if(id==='control')assert.equal(delta.pixels,0,`${name} unaffected entire frame`);else assert.ok(delta.pixels>100,`${name} visible authored change`);assert.equal(control.pixels,0,`${name} unaffected control patch`);
+}
+assert.equal(report.length,8);console.log(`PASS six phase views and two full-frame controls with exact input, actual state/camera/clock/parts/collapse and pixels: ${out}`);

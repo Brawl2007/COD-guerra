@@ -30,6 +30,7 @@ import {M01BridgePortalPolish,bridgeMaterialSlot} from './m01-bridge-portal-poli
 import {M01DamageDecals} from './m01-damage-decals.js';
 import {WEAPON_PRESENTATION,WeaponViewFx,WeaponWorldFx,WeaponLighting,viewUp,prewarmWeaponFx} from './first-person-weapon-fx.js';
 import {M01BridgeStructure} from './m01-bridge-structure.js';
+import {M01BridgeFinishRuntime} from './m01-bridge-finish-runtime.js';
 import {isDemolitionDamage,collapseTwinName,collapseDamageId,collapseSeed,collapsePose,collapseProgress,demolitionFlash,demolitionFallPoints,demolitionSilenceWindow,
   farFeedback,farFeedbackApplies,M01_COLLAPSE_DURATION,M01_BLAST_CHIP_MATERIALS,M01_DEMOLITION_BUDGET} from './m01-demolition.js';
 
@@ -94,6 +95,10 @@ export class M01View {
     this.demolitionState={entries:[],pieces:[],flash:null};this.collapseTilt=new THREE.Quaternion();this.collapseEuler=new THREE.Euler();
     this.portalPolish=new M01BridgePortalPolish({stone:this.materials.bridgeStone});
     this.bridgeStructure=new M01BridgeStructure({steel:this.materials.bridgeSteel,rail:this.materials.metal,timber:this.materials.wood,stone:this.materials.bridgeStone});
+    this.bridgeFinish=new M01BridgeFinishRuntime(this.scene,{quality:this.owner.quality});
+    if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')){
+      this.bridgeFinishDebug={setEnabled:on=>{const result=this.bridgeFinish.setEnabled(on);this.lastFrame=null;return result;},setCamera:pose=>{this.bridgeEditorialCamera=pose;this.lastFrame=null;return pose;},get:()=>this.bridgeFinish.diagnostics};window.m01BridgeFinishDebug=this.bridgeFinishDebug;
+    }
     this.atmosphere=new M01Atmosphere(this.scene);
     this.damageDecals=new M01DamageDecals(this.scene);
     this.createWeapon();this.createActors();this.createContactShadows();this.createFireEffects();this.createAircraft();this.createTrains();
@@ -649,16 +654,17 @@ export class M01View {
     // Assets, world restore, quality and resizing still invalidate it.
     this.environment?.fieldStructures.sync(sim.world,this.owner.quality,sim.player);this.environment?.syncRailProps(sim.world,this.owner.quality,sim.player);this.environment?.trackBed.bindBridgeKits(this.kit,this.bridgeStructure);
     this.environment?.syncVegetation(sim.world,this.owner.quality,sim.player,sim.clock,this.terrainRelief.enabled);
+    this.bridgeFinish.sync({kits:this.kit,quality:this.owner.quality,world:sim.world});
     const canvas=this.owner.canvas,previous=this.lastFrame;
     const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
       width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,
-      vegetationRevision:this.environment?.vegetation.revision,reliefRevision:this.terrainRelief?.revision,farRevision:this.farLandscape?.revision,propsRuntime:this.environment?.propsRuntime.revision,trackBed:this.environment?.trackBed.revision,fieldStructures:this.environment?.fieldStructures.revision,wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles
+      bridgeFinishRevision:this.bridgeFinish.revision,vegetationRevision:this.environment?.vegetation.revision,reliefRevision:this.terrainRelief?.revision,farRevision:this.farLandscape?.revision,propsRuntime:this.environment?.propsRuntime.revision,trackBed:this.environment?.trackBed.revision,fieldStructures:this.environment?.fieldStructures.revision,wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
     for(const material of Object.values(this.materials))if(material.userData.m01Time)material.userData.m01Time.value=sim.clock;
     this.terrain?.sync(this.owner.quality);
-    this.syncSolids(sim.world);this.portalPolish.sync(this.owner.quality);this.bridgeStructure.sync(this.owner.quality,this.camera.position,sim.world);this.environment?.trackBed.applyLegacyVisibility();const dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
+    this.syncSolids(sim.world);this.portalPolish.sync(this.owner.quality);const dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
     this.updateDemolition(state,time,sim);
     this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.lighting(sim);this.water.sync(this.lightingModel,sim.clock,this.owner.quality);
@@ -671,6 +677,9 @@ export class M01View {
     this.camera.position.set(eye.x+feedback.cameraX,eye.y+bob+legacyShake+feedback.cameraY,eye.z);
     this.camera.lookAt(eye.x+dir.x+feedback.cameraX,eye.y+bob+legacyShake+dir.y+feedback.cameraY,eye.z+dir.z);
     if(feedback.roll)this.camera.rotateZ(feedback.roll);
+    if(this.bridgeEditorialCamera){this.camera.position.set(...this.bridgeEditorialCamera.position);this.camera.lookAt(...this.bridgeEditorialCamera.target);}
+    this.bridgeFinish.prepareFrame();this.bridgeStructure.sync(this.owner.quality,this.camera.position,sim.world);this.environment?.trackBed.applyLegacyVisibility();
+    this.bridgeFinish.select({kits:this.kit,state,camera:this.camera,prepared:true});
     this.updateFire(sim);
     const width=this.owner.canvas.clientWidth,height=this.owner.canvas.clientHeight,aspect=width/height;
     const fov=player.aiming?48:70;
@@ -702,6 +711,7 @@ export class M01View {
     // T44: Medium/High draw the world into the grade's target and composite it once; Low (post===null) runs the exact statements it always ran.
     const post=this.grading.begin(this.engine,this.owner.quality,this.lightingModel,this.camera);
     this.environment?.vegetation.beginFrame(this.camera);
+    this.bridgeFinish.beginFrame(this.camera);
     this.engine.info.autoReset=false;this.engine.info.reset();
     if(post)this.drawGraded(post);else this.engine.clear();
     if(!post)this.engine.render(this.scene,this.camera);
@@ -770,7 +780,7 @@ export class M01View {
     renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+(b.visible===false?0:b.count),0)??0,
     fieldStructures:this.environment?{...this.environment.fieldStructures.diagnostics,proxyColliderIds:this.solidGroup.children.flatMap(b=>b.userData.m01ProxyColliderIds??[]),environmentProxies:this.environment.fieldProxyBatches.map(b=>({id:b.userData.m01FieldProxy,visible:b.visible})),viewProxies:this.fieldProxyMeshes.map(b=>({id:b.userData.m01FieldProxy,visible:b.visible}))}:null,
     stationArchitecture:this.environment?.station?.diagnostics??{ready:false,failure:this.environment?.stationFailure??null},
-    environmentProps:this.environment?.propDiagnostics,trackBed:this.environment?.trackBed.diagnostics,bridgePortalPolish:this.portalPolish?.diagnostics,bridgeStructure:this.bridgeStructure?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
+    environmentProps:this.environment?.propDiagnostics,trackBed:this.environment?.trackBed.diagnostics,bridgeFinish:this.bridgeFinish.diagnostics,bridgeCamera:{position:this.camera.position.toArray(),quaternion:this.camera.quaternion.toArray(),fov:this.camera.fov},bridgePortalPolish:this.portalPolish?.diagnostics,bridgeStructure:this.bridgeStructure?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
     damageDecals:this.damageDecals.diagnostics,
     terrain:this.terrain?this.terrain.diagnostics:{material:'legacy-soil',textures:1,gpuBytes:0,quality:this.owner.quality},
     terrainRelief:this.terrainRelief?.diagnostics,farLandscape:this.farLandscape?.diagnostics,
@@ -784,7 +794,7 @@ export class M01View {
     battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},meta:structuredClone(this.battlefieldFxMeta),limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
     if(this.disposed)return;
-    this.disposed=true;if(typeof window!=='undefined'&&window.m01RailPropsDebug===this.railPropsDebug)delete window.m01RailPropsDebug;if(typeof window!=='undefined'&&window.m01FieldStructuresDebug===this.fieldStructuresDebug)delete window.m01FieldStructuresDebug;if(typeof window!=='undefined'&&window.m01TerrainDebug===this.terrainDebug)delete window.m01TerrainDebug;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();this.impostors?.dispose();
+    this.disposed=true;this.bridgeFinish.dispose();if(typeof window!=='undefined'&&window.m01BridgeFinishDebug===this.bridgeFinishDebug)delete window.m01BridgeFinishDebug;if(typeof window!=='undefined'&&window.m01RailPropsDebug===this.railPropsDebug)delete window.m01RailPropsDebug;if(typeof window!=='undefined'&&window.m01FieldStructuresDebug===this.fieldStructuresDebug)delete window.m01FieldStructuresDebug;if(typeof window!=='undefined'&&window.m01TerrainDebug===this.terrainDebug)delete window.m01TerrainDebug;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();this.impostors?.dispose();
     this.fallbackFx.dispose();this.weaponWorldFx.dispose();this.weaponLighting.dispose();
     if(typeof window!=='undefined'&&window.m01ReliefHorizonDebug===this.reliefHorizonDebug)delete window.m01ReliefHorizonDebug;this.terrainRelief?.dispose();this.farLandscape?.dispose();
     if(typeof window!=='undefined'&&window.m01VegetationDebug===this.vegetationDebug)delete window.m01VegetationDebug;
