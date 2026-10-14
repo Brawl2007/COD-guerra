@@ -1,5 +1,5 @@
 import {mg34ProneGeometry} from '../world/spatial.js';
-import {resolveLocomotionGait,resolveStrideSample,resolveTorsoOrientation} from './m01-animation-resolver.js';
+import {resolveDirectionalImpact,resolveLocomotionGait,resolveStrideSample,resolveSupportHandIK,resolveTorsoOrientation} from './m01-animation-resolver.js';
 
 const GAIT_STRIDE=Object.freeze({crouch_walk:.16,walk:.22,run:.26,sprint:.31});
 // Procedural presentation in metres. This never writes to an actor or advances gameplay.
@@ -51,12 +51,14 @@ export function actorPose(actor,time){
   const hip=(seated?.46:pinned?.38:crouched?.48:.84)+(moving?Math.sin(phase)**2*.025:0);
   const hitAge=Number.isFinite(actor.hitAt)?time-actor.hitAt:Infinity;
   const hitFlinch=upright&&hitAge>=0&&hitAge<.5?Math.sin((hitAge/.5)*Math.PI)*.22:0;
+  const directionalHit=upright&&Number.isFinite(actor.hitYaw)?resolveDirectionalImpact(actor,time):null;
   const duckAge=Number.isFinite(actor.suppressedAt)?time-actor.suppressedAt:Infinity;
   const nearMissDuck=upright&&!pinned&&duckAge>=0&&duckAge<.6?Math.sin((duckAge/.6)*Math.PI)*.28:0;
   const lean=crouched?-.06:0;
   const baseTilt=pinned?-.82:underFire&&crouched?-.35:gait==='sprint'?-.18:moving?-.10:0;
-  const tilt=baseTilt+hitFlinch-nearMissDuck;
+  const tilt=baseTilt+(directionalHit?.active?directionalHit.pitch:hitFlinch)-nearMissDuck;
   const orientation=resolveTorsoOrientation(actor,{name});
+  const ik=resolveSupportHandIK(actor,{name,aiming,moving},orientation);
   const spine=h=>[lean-Math.sin(tilt)*h,hip+Math.cos(tilt)*h+breath,0];
   const riflePitch=(aiming?.025:moving?-.22:0)+kick*.045;
   const rifle=[seated?.35:lean+.35-kick*.055,hip+(seated?.13:aiming?.55:.27)+breath,.12];
@@ -72,7 +74,8 @@ export function actorPose(actor,time){
     limbs.push({from:h,to:k,radius:.095},{from:k,to:ankle,radius:.085});
     boots.push([ankle[0]+.045,.055+lift,z]);
     const shoulder=spine(.49);shoulder[2]=z*1.85;
-    const elbow=seated?[.16,hip+.23,z*1.85]:aiming?[i?.12:.35,hip+(i?.27:.38)+breath,z*1.4]:[shoulder[0]+.20,hip+.22+breath,z*1.9];
+    const armLift=!i&&ik.active?ik.elbowBend*.10:0;
+    const elbow=seated?[.16,hip+.23,z*1.85]:aiming?[i?.12:.35,hip+(i?.27:.38+armLift)+breath,z*1.4]:[shoulder[0]+.20,hip+.22+armLift+breath,z*1.9];
     const hand=seated?[.30,hip+.10,z*1.3]:armed?(i?grip:support):[shoulder[0]+.10,hip+.06,z*1.85];
     limbs.push({from:shoulder,to:elbow,radius:.075},{from:elbow,to:hand,radius:.065});
   }
@@ -82,6 +85,7 @@ export function actorPose(actor,time){
   return {name,gait,walkPhase,limbs,boots,aiming,firing,moving,underFire:upright||pinned?underFire:false,
     root:{offsetY:lying?.42:0,pivotY:lying||carried?.84:0,pitch:lying?-Math.PI/2:0,roll:carried?-Math.PI/2:0,
       yaw:orientation.rootYaw,yawOffset:orientation.torsoTwist},
-    torso:{position:spine(.34),size:[.24,low?.59:.65,.21],roll:tilt,yaw:orientation.torsoTwist},head,
-    rifle:{position:rifle,axis,pitch:riflePitch,barrelFrom:along(.13,.025),muzzle}};
+    torso:{position:spine(.34),size:[.24,low?.59:.65,.21],roll:tilt,yaw:orientation.torsoTwist,
+      hitRoll:directionalHit?.roll??0},head,
+    rifle:{position:rifle,axis,pitch:riflePitch,barrelFrom:along(.13,.025),muzzle},ik};
 }
