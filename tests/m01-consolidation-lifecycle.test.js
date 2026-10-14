@@ -33,7 +33,7 @@ test('actual M01 aerial/demolition/grenade events rebuild identical delayed soun
     assert.deepEqual(restored.snapshot(false),before,'presentation cannot mutate RNG or save');
     restored.clock=expected.at;game.rebuildSounds();assert.ok(!game.pendingSounds.some(x=>x.key===expected.key),'expired sounds are not replayed');
   }
-  for(const id of ['station_bomb','forward_post','repair_crater','raid_0530','east_demolition','west_demolition'])assert.ok(ids.has(id),id);
+  for(const id of ['station_bomb','forward_post','repair_crater','raid_0530','raid_0530_1','raid_0530_2','raid_0530_3','raid_0530_4','raid_0530_5','east_demolition','west_demolition'])assert.ok(ids.has(id),id);
   assert.ok([...ids].some(id=>id.startsWith('m01_grenade_')));
 });
 

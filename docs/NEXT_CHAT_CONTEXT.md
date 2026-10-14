@@ -1,3 +1,9 @@
+# Continuação — duas tarefas M01 integradas, 2026-10-14
+
+Branch `codex/m01-continuity-raid-integration-v1`, base T08/T12 `2d65dd0`. Ler o handoff `docs/verification/m01-runtime/continuity-raid-integration-v1/HANDOFF.md` e confirmar HEAD/CI remoto. T02-min e T03-lite+T25 implementadas; 22/22 focados, 28/28 após correção aérea no reload, build e browser 1/1 PASS. Integral inicial 693/694 FAIL preservado; CI integral final pendente. Não repetir tarefas nem regenerar golden sem revisão: source hash exato bloqueado e proveniência histórica conservada. M01 continua PROTÓTIPO JOGÁVEL; main/deploy/source branches não foram escritos.
+
+---
+
 # Continuação atual — consolidação M01 V6 (2026-10-08)
 
 Esta secção prevalece sobre o histórico. TASK_ID `M01-FINAL-PRODUCTION-CONSOLIDATION-V6`. **READY_FOR_CAPTAIN_REVIEW**, [PR draft #57](https://github.com/Brawl2007/COD-guerra/pull/57) contra V5 `d277b06937170aa433bc418ef5b83b2925c6d6de`, nunca main. Branch `codex/m01-final-production-consolidation-v6`; confirmar HEAD remoto. HEAD final de código/fixtures `edefda544c702962ad3e378d06fb1bd7e792254e`; produção igual ao executável validado `2a2a56734861b0801234d7ddf3cda66c0100f326`. O pacote posterior só acrescenta workflows/evidência/docs; HEAD exato na PR.

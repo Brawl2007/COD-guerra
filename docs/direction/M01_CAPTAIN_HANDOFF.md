@@ -1,3 +1,9 @@
+# Continuação Codex — 2026-10-14
+
+TASK_ID `M01-CONTINUITY-RAID-INTEGRATION-V1`. Branch `codex/m01-continuity-raid-integration-v1`, base T08/T12 `2d65dd0`. T02-min e T03-lite+T25 implementadas e revistas: local 22/22 + 28/28 afetados, build PASS, browser final 1/1 PASS. Primeira suite 693/694 FAIL por classificação aérea no reload; corrigida em uma tentativa. Revisão crítica ACCEPT para commit/push, zero rejeições. CI final integral 694/build/browser pendente; não inventar union PASS. Ver `docs/verification/m01-runtime/continuity-raid-integration-v1/HANDOFF.md` para HEAD/CI, hashes, logs e limites. M01 continua PROTÓTIPO JOGÁVEL. Esta secção prevalece para as duas tarefas desta entrega; não retomar as tarefas antigas como WIP.
+
+---
+
 # active-memory handoff: COD-guerra — Captain (M01 development)
 
 **Handoff #3** · 2026-10-10 · Lineage: #1 (2026-10-09): Jev activated + decision-support V2; V7 certified 84/84 (PR #59 draft); M01 dev base; T19 accepted. #2 (2026-10-09): T16 dawn lighting ACCEPTED; T17 verified; Chromebook dropped as target (D13); dev-base merge blocked → tasks stacked. #3 (2026-10-09/10): T17 ACCEPTED (D15), T18 ACCEPTED (D16), T42 ACCEPTED (D17); user gave night rules; T20 and T44 run in parallel worktrees ended BLOCKED (fix budget 3/3, CI red); T39 started then stopped by user; user installed 20 tiered agents.

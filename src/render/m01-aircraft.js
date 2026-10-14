@@ -118,6 +118,7 @@ export function predictedBlastPoint(run,world,player){
     const angle=Math.atan2(point.z-player.z,point.x-player.x);
     point={x:player.x+Math.cos(angle)*40,y:point.y,z:player.z+Math.sin(angle)*40};
   }
+  point.y=world.heightAt(point.x,point.z);
   return point;
 }
 /** Cubic Bezier position and derivative (per second) over `duration` seconds. */

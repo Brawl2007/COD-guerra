@@ -7,9 +7,9 @@ import { M01Simulation } from './m01-simulation.js';
 import { M01HudPresenter, playerImpactSoundPlan } from '../ui/m01-hud.js';
 
 const SAVE_KEY='cod-guerra:checkpoint:v1';
-// These are the four aerial impacts emitted by M01. Schema 2 stores their IDs,
+// These are the nine aerial impacts emitted by M01. Schema 2 stores their IDs,
 // so delayed presentation can be recovered without extending simulation/save data.
-const AERIAL_BLAST_IDS=new Set(['station_bomb','forward_post','repair_crater','raid_0530']);
+const AERIAL_BLAST_IDS=new Set(['station_bomb','forward_post','repair_crater','raid_0530','raid_0530_1','raid_0530_2','raid_0530_3','raid_0530_4','raid_0530_5']);
 const blastScale=id=>id?.startsWith('m01_grenade_')?'small':id?.includes('demolition')?'demolition':'large';
 
 export class Game {

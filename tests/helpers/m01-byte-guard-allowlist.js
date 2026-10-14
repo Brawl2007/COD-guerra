@@ -9,6 +9,8 @@ export const integratedPresentation=new Set([
  // PT05 (D33): yard-wagon colliders change world collision only (4-line hunk); gameplay is locked by the per-tick golden traces (animation-contract) and tests/m01-yard-wagon-colliders.test.js.
  'src/world/tczew-world.js',
  'src/core/audio.js','src/game/game.js','src/main.js','src/styles.css',
+ // T02-min + T03-lite/T25: aircraft target prediction mirrors grounded authoritative impacts; per-tick deltas audited in tools/verification/m01-continuity-raid-audit.mjs.
+ 'src/render/m01-aircraft.js',
  'src/render/m01-atmosphere.js','src/render/m01-characters.js','src/render/m01-environment.js','src/render/m01-surfaces.js',
  'src/render/m01-train-wagons.js','src/render/m01-view.js','src/render/m01-viewmodel.js','src/render/three-renderer.js',
  // Ju 87 production closeout: the raid's presentation-only aircraft art was regenerated (path/events unchanged).
