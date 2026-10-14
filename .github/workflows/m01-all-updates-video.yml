@@ -1,0 +1,41 @@
+name: COD-guerra M01 — vídeo panorâmico de tarefas aplicadas
+on:
+  push:
+    branches:
+      - argon/m01-all-updates-video-v1
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cod-guerra-m01-all-updates-video-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  full-video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Código somente leitura da branch
+        uses: actions/checkout@v4
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Dependências do projeto
+        run: npm ci
+      - name: Build real SEM deploy
+        run: npm run build
+      - name: Chromium e WebGL por software
+        run: npx playwright install --with-deps chromium
+      - name: Gravar vídeo de demonstração das tarefas aplicadas
+        env:
+          CI: '1'
+        run: npx playwright test tests/browser/m01-all-updates-showcase.spec.js --reporter=line
+      - name: Preservar vídeo e fotografias mesmo em caso de falha
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-video-panorama-todas-tarefas
+          path: test-results/
+          retention-days: 14
+          if-no-files-found: warn
