@@ -227,6 +227,7 @@ export class M01Characters {
     for(const name of SPINE_NAMES){const b=root.getObjectByName(name);if(b){spineBone=b;break;}}
     const spineBaseQuat=spineBone?.quaternion?spineBone.quaternion.clone():null,spineBaseRotY=spineBone?.rotation?.y??0;
     const v={root,key,meshes,visual,weapon,weaponRoot,weaponLOD,spineBone,spineBaseQuat,spineBaseRotY,
+      spineClipQuat:spineBaseQuat?.clone()??null,
       muzzle:weaponRoot?MG34_MUZZLE_SOCKET:profile?.weapons?.[weapon]?.muzzle??profile?.sockets?.muzzle??[0,.032,-.765],
       mixer:new THREE.AnimationMixer(root),action:null,blendAction:null,clip:null,blendClip:null};
     this.instances.set(actor.id,v);return v;
@@ -268,6 +269,9 @@ export class M01Characters {
       // pause, save/reload and repeated render calls. The generic resolver must not
       // modify their root orientation, spine bones or action weighting.
       const legacySpecialist=/^(ckm_wz30_|mg34_prone_|station_drag_|drag_wounded$)/.test(sample.clip);
+      // Undo only the previously applied additive presentation offset, not
+      // the actual clip frame. A bind-pose reset caused same-frame CKM drift.
+      if(v.spineBone&&v.spineClipQuat)v.spineBone.quaternion.copy(v.spineClipQuat);
       if(legacySpecialist){
         this.scene.add(v.root);v.root.visible=true;
         v.root.position.set(a.x,a.y??0,a.z);
@@ -280,6 +284,7 @@ export class M01Characters {
         }
         v.action.reset().play();
         v.mixer.setTime(sample.loop?sample.time%clip.duration:Math.min(sample.time,clip.duration));
+        if(v.spineBone&&v.spineClipQuat)v.spineClipQuat.copy(v.spineBone.quaternion);
       }else{
         const orientation=resolveTorsoOrientation(a,pose);
         const useSpineTwist=Boolean(v.spineBone&&orientation.torsoTwist!==0);
@@ -287,7 +292,6 @@ export class M01Characters {
         this.scene.add(v.root);v.root.visible=true;
         v.root.position.set(a.x,a.y??0,a.z);
         v.root.rotation.set(0,-appliedRootYaw-Math.PI/2,0);
-        if(v.spineBone){if(v.spineBaseQuat)v.spineBone.quaternion.copy(v.spineBaseQuat);v.spineBone.rotation.y=v.spineBaseRotY;}
         const blendClipObj=sample.blend?this.clips.get(sample.blend.clip):null;
         if(blendClipObj&&blendClipObj!==clip&&sample.blend.weight>.01){
           if(v.clip!==sample.clip||v.blendClip!==sample.blend.clip){
@@ -312,6 +316,7 @@ export class M01Characters {
           v.action.reset().play();
           v.mixer.setTime(sample.loop?sample.time%clip.duration:Math.min(sample.time,clip.duration));
         }
+        if(v.spineBone&&v.spineClipQuat)v.spineClipQuat.copy(v.spineBone.quaternion);
         if(useSpineTwist){
           v.spineBone.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(UP_AXIS,-orientation.torsoTwist));
         }
