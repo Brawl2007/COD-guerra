@@ -1,0 +1,37 @@
+name: M01 T50 — loading and bundle safe V7 integration
+on:
+  push:
+    branches: [argon/m01-loading-and-bundle-t50]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: T50 existing API plus progress
+        run: node --test tests/m01-loading-and-bundle-t50.test.js
+      - name: Complete Node suite
+        run: npm test
+      - name: Build
+        run: npm run build
+      - name: Measure real emitted chunks
+        run: node tools/verify-t50-bundle.mjs
+      - run: npx playwright install --with-deps chromium
+      - name: M01 Chromium actual gameplay capture
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/t50-preview.log 2>&1 &
+          node tools/verify-t50-loading.mjs
+      - name: Attach evidence without deployment
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-t50-captures-and-metrics
+          path: artifacts/t50-proof/
+          retention-days: 7
+          if-no-files-found: warn

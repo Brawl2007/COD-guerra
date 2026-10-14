@@ -1,0 +1,11 @@
+import {readdir,stat,mkdir,writeFile} from 'node:fs/promises';
+import path from 'node:path';
+const names=(await readdir('dist/assets')).filter(n=>/\.js$/.test(n));
+const chunks=await Promise.all(names.map(async name=>({name,bytes:(await stat(path.join('dist/assets',name))).size})));
+const entry=chunks.find(x=>/^index-[\w-]+\.js$/.test(x.name));
+if(!entry)throw Error('Missing entry bundle');
+const summary={entry,total:chunks.reduce((s,v)=>s+v.bytes,0),chunks:chunks.sort((a,b)=>b.bytes-a.bytes)};
+await mkdir('artifacts/t50-proof',{recursive:true});
+await writeFile('artifacts/t50-proof/t50-bundle-metrics.json',JSON.stringify(summary,null,2));
+console.log(JSON.stringify(summary));
+if(entry.bytes>=600000)throw Error('Initial chunk over 600kB');
