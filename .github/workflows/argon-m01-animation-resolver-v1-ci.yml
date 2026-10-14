@@ -1,0 +1,35 @@
+name: M01 Argon Animation Resolver V1 — CI isolado
+
+on:
+  push:
+    branches:
+      - argon/m01-animation-resolver-v1-v7-integration
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: argon-m01-resolver-v1-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout da branch
+        uses: actions/checkout@v4
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Instalar dependencias do lockfile
+        run: npm ci
+      - name: Testes focados do Animation Resolver
+        run: node --test tests/m01-animation-resolver.test.js
+      - name: Suite Node completa
+        run: npm test
+      - name: Build de producao (sem deploy)
+        run: npm run build
