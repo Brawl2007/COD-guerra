@@ -23,8 +23,8 @@ import { M01Characters } from './m01-characters.js';
 import { M01ViewModel } from './m01-viewmodel.js';
 import { M01TrainWagons } from './m01-train-wagons.js';
 import { M01YardWagons, yardWagonFireDamage } from './m01-yard-wagons.js';
-import { M01Locomotive } from './m01-locomotive.js';
-import { M01Panzerzug } from './m01-panzerzug.js';
+import { M01Locomotive, isTrain963Visible } from './m01-locomotive.js';
+import { M01Panzerzug, isPanzerzugVisible } from './m01-panzerzug.js';
 import {JU87_LOD_DISTANCES,JU87_QUALITY_FLOOR,JU87_BOMB_POOL,ju87Attitude,ju87Fade,ju87HeardAt,ju87PropellerTime,selectJu87Level,ju87SkyEnvironment,instanceJu87Materials,setJu87Fade,m01BombFlights} from './m01-aircraft.js';
 import {soldierVisualVariant} from './m01-soldier-variation.js';
 import { M01CombatFeedback } from './m01-combat-feedback.js';
@@ -696,15 +696,17 @@ export class M01View {
   render(sim){
     // Apply authoritative train/wagon state before pause-frame caching so restore cannot freeze constructor defaults.
     const state=sim.renderState,time=sim.clock;
-    this.wagons.update(sim.player,this.owner.quality);
+    // T24: presentation-only arrival clock (04:43:30 train 963, 04:51:00 Panzerzug). The simulation flags below still force visibility.
+    const battleClock=sim.battleClock??(16200+time);
+    this.wagons.update(sim.player,this.owner.quality,battleClock);
     this.yardWagons.update(sim.destruction,this.owner.quality,sim.world,sim.player,time);
-    this.locomotive.update(sim.player);this.panzerzugArt.update(sim.player);
+    this.locomotive.update(sim.player,battleClock,state.train963);this.panzerzugArt.update(sim.player,battleClock,state.panzerzug);
     // Retain the last canvas frame while the mission clock is frozen (menu/pause).
     // Assets, world restore, quality and resizing still invalidate it.
     this.environment?.fieldStructures.sync(sim.world,this.owner.quality,sim.player);this.environment?.syncRailProps(sim.world,this.owner.quality,sim.player);this.environment?.trackBed.bindBridgeKits(this.kit,this.bridgeStructure);
     this.environment?.syncVegetation(sim.world,this.owner.quality,sim.player,sim.clock,this.terrainRelief.enabled);
     const canvas=this.owner.canvas,previous=this.lastFrame;
-    const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
+    const frame={clock:sim.clock,battleClock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
       width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,
       vegetationRevision:this.environment?.vegetation.revision,reliefRevision:this.terrainRelief?.revision,farRevision:this.farLandscape?.revision,propsRuntime:this.environment?.propsRuntime.revision,trackBed:this.environment?.trackBed.revision,fieldStructures:this.environment?.fieldStructures.revision,wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles; T20: so is the impostor A/B toggle
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
@@ -724,7 +726,7 @@ export class M01View {
     }
     const fill=sampleMuzzleEnvironmentLight(sim.actors,time,sim.player,this.owner.quality);
     this.pendingMuzzleFill=fill;
-    this.train.visible=state.train963;this.panzerzug.visible=state.panzerzug;
+    this.train.visible=isTrain963Visible(battleClock,state.train963);this.panzerzug.visible=isPanzerzugVisible(battleClock,state.panzerzug);
     this.updateAircraft(state,time,sim.player,ju87HeardAt(sim));this.updateBombs(state,time,sim.player,sim.world);
     const player=sim.player,eye=eyePosition(player),dir=aimDirection(player.angle,player.pitch);
     const bob=player.moveBlend*Math.sin(time*(player.sprinting?14:9))*.014;

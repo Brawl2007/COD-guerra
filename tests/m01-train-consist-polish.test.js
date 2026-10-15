@@ -289,7 +289,18 @@ test('original Claude train source changes only its renderer and adds detail, wi
     ['sleepers:this.track?.sleepers.count??0,railSegments:this.track?.rails.count??0','sleepers:this.track.sleepers.count,railSegments:this.track.rails.count'],
     ['...Object.values(this.meshes),...this.track?[this.track.rails,this.track.sleepers]:[]','...Object.values(this.meshes),this.track.rails,this.track.sleepers']
   ];
+  // T24 (M01-TRAIN-ARRIVAL-AND-LIFE-V1, Gemini/Argon): the wagon consist travels with train 963 while it arrives (04:43:30-04:45:00).
+  // Same rule as above: reverse only these explicit, bounded presentation additions (offset is exactly 0 without a clock or from 04:45:00,
+  // so every wagon matrix stays identical; covered by tests/m01-train-arrival-t24.test.js). The rest of the file must still equal SOURCE.
+  const t24Deltas=[
+    ["import {trainArrivalOffset} from './m01-locomotive.js';\n",''],
+    ["  update(player,quality='medium',battleClock=null){","  update(player,quality='medium'){"],
+    ["    // T24: the consist travels with the locomotive while 963 arrives (04:43:30-04:45:00); offset is exactly 0 when stopped or with no clock.\n    // The authoritative plan x/z never change; wagon LOD is chosen on the displaced position.\n    const offset=trainArrivalOffset(battleClock);this.group.position.x=offset;\n",''],
+    ['Math.hypot(wagon.x+offset-player.x,-2.5-player.z)','Math.hypot(wagon.x-player.x,-2.5-player.z)'],
+    ['step:9.1,arrivalOffset:this.group.position.x,','step:9.1,']
+  ];
   for(const p of changes){let current=readFileSync(new URL('../'+p,import.meta.url),'utf8');
+    if(p.endsWith('m01-train-wagons.js'))for(const [integration,original]of t24Deltas){assert.equal(current.split(integration).length,2,'T24 integration appears exactly once');current=current.replace(integration,original);}
     if(p.endsWith('m01-train-consist-detail.js'))for(const [integration,original]of ownershipDeltas){assert.equal(current.split(integration).length,2,'ownership integration appears exactly once');current=current.replace(integration,original);}
     assert.equal(current,execFileSync('git',['show',`${SOURCE}:${p}`],{maxBuffer:64*1024*1024,encoding:'utf8'}),p);
   }

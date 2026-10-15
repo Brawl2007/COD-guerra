@@ -3,6 +3,11 @@ import {puffTexture,cloudFieldTexture} from './m01-surfaces.js';
 import {dustPuffTexture} from './m01-fx-textures.js';
 import {CLOUD_WIND} from './m01-lighting.js';
 import {demolitionParticles} from './m01-demolition.js';
+import {train963Kinematics,isTrain963Visible} from './m01-locomotive.js';
+import {panzerzugKinematics,isPanzerzugVisible} from './m01-panzerzug.js';
+
+// T24 (Gemini/Argon, M01-TRAIN-ARRIVAL-AND-LIFE-V1): railway smoke and steam share the existing 256-puff pool (no extra draw call).
+export const RAILWAY_PUFF_BUDGET=Object.freeze({low:12,medium:18,high:24});
 
 // Presentation-only deterministic noise. It never consumes the simulation RNG.
 export function visualNoise(seed,index=0){
@@ -14,7 +19,7 @@ export function visualNoise(seed,index=0){
 // Bounded presentation pools. All emitters come from the simulation's damage/events.
 export class M01Atmosphere {
   constructor(scene){
-    this.scene=scene;this.texture=puffTexture();this.capacity=256;this.count=0;
+    this.scene=scene;this.texture=puffTexture();this.capacity=256;this.count=0;this.railwayPuffs=0;this.lastQuality='medium';
     this.skyGeometry=new THREE.SphereGeometry(5500,32,16);
     this.cloudTexture=cloudFieldTexture();
     // Sky by solar altitude: every colour comes from m01-lighting's model. Clouds are projected from the view direction
@@ -100,16 +105,125 @@ export class M01Atmosphere {
     u.skyGlow.value=sky.glow;u.discStrength.value=sky.discStrength;u.sunDirection.value.set(...sky.sunDir);
     this.material.uniforms.fogColor.value.setRGB(...model.fog.color);this.dustMaterial.uniforms.fogColor.value.setRGB(...model.fog.color);
   }
+  /** Railway puffs for this frame, decided before damage so the damage pass can leave exactly this room. Presentation only. */
+  railwayPlan(state,clock,quality){
+    const battleClock=state?.battleClock;
+    // Only a real simulation render state (it carries battleClock) emits railway life; bare damage fixtures stay unchanged.
+    if(!Number.isFinite(battleClock))return {battleClock:null,budget:0,west:0,smoke:0,steam:0,pz:0,total:0};
+    const budget=RAILWAY_PUFF_BUDGET[quality]??RAILWAY_PUFF_BUDGET.medium;
+    const trainVis=isTrain963Visible(battleClock,Boolean(state.train963)),pzVis=isPanzerzugVisible(battleClock,Boolean(state.panzerzug));
+    let used=0;const west=Math.min(2,budget);used+=west;
+    let smoke=0,steam=0,pz=0;
+    if(trainVis&&used<budget){
+      const kin=train963Kinematics(battleClock,Boolean(state.train963));
+      const pzShare=pzVis?Math.max(3,Math.floor((budget-used)*0.35)):0,quota=Math.max(0,budget-used-pzShare);
+      steam=kin.arriving?Math.min(3,Math.floor(quota*0.35)):1;smoke=Math.max(0,quota-steam);used+=smoke+steam;
+    }
+    if(pzVis&&used<budget){pz=budget-used;used+=pz;}
+    return {battleClock,budget,west,smoke,steam,pz,total:used};
+  }
+  emitRailwayPuffs(state,clock,plan,count,max){
+    const battleClock=plan.battleClock;let used=0;if(plan.total===0){this.railwayPuffs=0;return count;}
+
+    // 1. West Station yard shunting locomotive idling plume ("manobra parada a oeste")
+    const westQuota=plan.west;
+    for(let i=0;i<westQuota&&count<max;i++){
+      const seed=0x7261696c^(i*131);
+      const n0=visualNoise(seed,0),n1=visualNoise(seed,1);
+      const phase=((clock*0.032)+(i/Math.max(1,westQuota))+n0*0.11)%1;
+      const height=3.8+22.0*phase;
+      const width=4.2+8.5*phase;
+      const x=-292+(n0-0.5)*width*0.6+height*0.18;
+      const z=-18+(n1-0.5)*width*0.5;
+      const opacity=0.42*(1-phase*0.65)*Math.min(1,phase/0.15);
+      this.dummy.position.set(x,height,z);this.dummy.rotation.set(0,0,0);
+      this.dummy.scale.set(width,width*0.92,1);this.dummy.updateMatrix();
+      this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,seed,i);
+      this.puffs.setColorAt(count,this.color.set('#7a7d7e'));this.fade.setX(count,opacity);
+      count++;used++;
+    }
+
+    // 2. Train 963 coal chimney plume & cylinder/brake steam
+    if(plan.smoke+plan.steam>0){
+      const kin=train963Kinematics(battleClock,Boolean(state.train963));
+      const steamCount=plan.steam,smokeCount=plan.smoke;
+
+      for(let i=0;i<smokeCount&&count<max;i++){
+        const seed=0x963000^(i*197);
+        const n0=visualNoise(seed,0),n1=visualNoise(seed,1),n2=visualNoise(seed,2);
+        const rate=kin.arriving?0.065:0.034;
+        const phase=((clock*rate)+(i/Math.max(1,smokeCount))+n0*0.08)%1;
+        const height=4.4+(kin.arriving?42:32)*phase;
+        const width=(5.2+14.5*phase)*(0.82+n1*0.36);
+        const trailDrag=kin.arriving?phase*kin.speed*3.2:0;
+        const x=(kin.x-5.2)+trailDrag+height*0.15+(n0-0.5)*width*0.55;
+        const z=kin.z+(n1-0.5)*width*0.50;
+        const cycleFade=Math.min(1,phase/0.12,(1-phase)/0.18);
+        const opacity=(kin.arriving?0.78:0.62)*(1-phase*0.48)*cycleFade;
+        this.dummy.position.set(x,height,z);this.dummy.rotation.set(0,0,0);
+        this.dummy.scale.set(width,width*(0.92+n2*0.25),1);this.dummy.updateMatrix();
+        this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,seed,i);
+        const shade=phase<0.35?'#2e2c2a':phase<0.72?'#484542':'#686560';
+        this.puffs.setColorAt(count,this.color.set(shade));this.fade.setX(count,opacity);
+        count++;used++;
+      }
+
+      for(let i=0;i<steamCount&&count<max;i++){
+        const seed=0x963555^(i*251);
+        const side=i%2===0?1:-1;
+        const phase=((clock*(kin.arriving?0.18:0.06))+(i*0.37))%1;
+        const x=(kin.x-4.2)+phase*(kin.arriving?5.5:2.2);
+        const y=0.75+phase*3.4;
+        const z=kin.z+side*(1.55+phase*3.8);
+        const width=2.4+phase*5.2;
+        const opacity=(kin.arriving?0.68:0.44)*(1-phase*0.75);
+        this.dummy.position.set(x,y,z);this.dummy.rotation.set(0,0,0);
+        this.dummy.scale.set(width*1.15,width*0.78,1);this.dummy.updateMatrix();
+        this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,seed,i);
+        this.puffs.setColorAt(count,this.color.set('#dce2e6'));this.fade.setX(count,opacity);
+        count++;used++;
+      }
+    }
+
+    // 3. Panzerzug 7 armored locomotive smoke/steam column
+    if(plan.pz>0){
+      const kin=panzerzugKinematics(battleClock,Boolean(state.panzerzug));
+      const pzQuota=plan.pz;
+      for(let i=0;i<pzQuota&&count<max;i++){
+        const seed=0x505a3037^(i*173);
+        const n0=visualNoise(seed,0),n1=visualNoise(seed,1);
+        const phase=((clock*(kin.arriving?0.058:0.032))+(i/Math.max(1,pzQuota))+n0*0.09)%1;
+        const height=4.2+(kin.arriving?36:27)*phase;
+        const width=4.8+12.0*phase;
+        const x=(kin.x+38)+(kin.arriving?phase*kin.speed*2.6:0)+height*0.14+(n0-0.5)*width*0.5;
+        const z=kin.z+(n1-0.5)*width*0.45;
+        const cycleFade=Math.min(1,phase/0.12,(1-phase)/0.18);
+        const opacity=(kin.arriving?0.74:0.58)*(1-phase*0.50)*cycleFade;
+        this.dummy.position.set(x,height,z);this.dummy.rotation.set(0,0,0);
+        this.dummy.scale.set(width,width*0.95,1);this.dummy.updateMatrix();
+        this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,seed,i);
+        this.puffs.setColorAt(count,this.color.set(i===0&&kin.arriving?'#cfd6da':'#3d3c3a'));
+        this.fade.setX(count,opacity);
+        count++;used++;
+      }
+    }
+
+    this.railwayPuffs=used;
+    return count;
+  }
   update(state,clock,quality,context={}){
+    this.lastQuality=quality;
     let count=0,chips=0;this.demolitionDrawn={puffs:0,chips:0};const density=quality==='low'?.58:quality==='medium'?.80:1,max=quality==='low'?112:quality==='medium'?192:256;
+    // Railway puffs (T24) take their room from the same pool first; with no railway state damageMax===max and nothing changes.
+    const plan=this.railwayPlan(state,clock,quality),damageMax=Math.max(0,max-plan.total);
     const damage=state.damage.filter(d=>d.smokeVisible).sort((a,b)=>Number(b.id.endsWith('_demolition'))-Number(a.id.endsWith('_demolition'))||b.started-a.started);
     // Demolition set-piece first (priority over generic blasts): river/ground impact debris and splashes, earth rain at the west
-    // firing post, suspended dust. Bounded by M01_DEMOLITION_BUDGET inside the same pools and the same `count<max` / `chips<64` guards.
+    // firing post, suspended dust. Bounded by M01_DEMOLITION_BUDGET inside the same pools and the same `count<damageMax` / `chips<64` guards.
     for(const d of damage){
       if(d.id!=='east_demolition'&&d.id!=='west_demolition')continue;
       const fx=demolitionParticles({damage:d,clock,quality,surfaceY:context.surfaceY});
       for(const p of fx.puffs){
-        if(count>=max)break;
+        if(count>=damageMax)break;
         this.dummy.position.set(p.x,p.y,p.z);this.dummy.rotation.set(0,0,0);this.dummy.scale.set(p.sx,p.sy,1);this.dummy.updateMatrix();
         this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,p.seed,p.variant);
         this.puffs.setColorAt(count,this.color.set(p.color));this.fade.setX(count++,p.opacity);this.demolitionDrawn.puffs++;
@@ -125,7 +239,7 @@ export class M01Atmosphere {
       const base=demolition?30:heavy?22:17,number=Math.max(6,Math.round(base*density));
       const seed=(Math.floor((d.x+2048)*17)^Math.floor((d.z+2048)*31)^Math.floor(d.started*1000))>>>0;
       const endFade=d.id==='station_bomb'||d.id==='station_wagon_fire'||/^raid_0530(?:_[1-5])?$/.test(d.id)?1:Math.max(0,Math.min(1,(240-age)/30));
-      for(let i=0;i<number&&count<max;i++){
+      for(let i=0;i<number&&count<damageMax;i++){
         const n0=visualNoise(seed,i*5),n1=visualNoise(seed,i*5+1),n2=visualNoise(seed,i*5+2),n3=visualNoise(seed,i*5+3);
         let phase,height,width,x,z,opacity;
         if(demolition){
@@ -163,7 +277,7 @@ export class M01Atmosphere {
         this.debris.setMatrixAt(chips++,this.dummy.matrix);
       }
       const dustN=Math.max(2,Math.round((heavy?8:6)*density));
-      for(let i=0;i<dustN&&count<max;i++){
+      for(let i=0;i<dustN&&count<damageMax;i++){
         const n0=visualNoise(seed,200+i*3),n1=visualNoise(seed,201+i*3),a=i*2.399+n0*1.8;
         const r=age*(heavy?10:6.5)*(.55+n1*.65),fade=Math.max(0,1-age/(heavy?3.2:2.4)),w=(heavy?4.8:2.8)+age*(heavy?8:4.5);
         this.dummy.rotation.set(0,0,0);this.dummy.position.set(d.x+Math.cos(a)*r,d.y+.45+age*(.45+n0*.65),d.z+Math.sin(a)*r);
@@ -171,10 +285,11 @@ export class M01Atmosphere {
         this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,seed,200+i);this.puffs.setColorAt(count,this.color.set(heavy?'#9e8d72':'#aa9a81'));this.fade.setX(count++,.48*fade);
       }
     }
+    count=this.emitRailwayPuffs(state,clock,plan,count,max);
     this.debris.count=chips;this.debris.instanceMatrix.needsUpdate=true;this.dummy.rotation.set(0,0,0);
     this.count=count;this.puffs.count=count;this.puffs.instanceMatrix.needsUpdate=true;this.puffs.instanceColor.needsUpdate=true;this.fade.needsUpdate=true;
   }
-  get diagnostics(){return {puffs:this.count,puffCapacity:this.capacity,debris:this.debris.count,debrisCapacity:this.debris.instanceMatrix.count,puffBatches:this.puffBatches.length,demolition:{...this.demolitionDrawn}};}
+  get diagnostics(){return {puffs:this.count,puffCapacity:this.capacity,railwayPuffs:this.railwayPuffs,railwayBudget:RAILWAY_PUFF_BUDGET[this.lastQuality]??RAILWAY_PUFF_BUDGET.medium,debris:this.debris.count,debrisCapacity:this.debris.instanceMatrix.count,puffBatches:this.puffBatches.length,demolition:{...this.demolitionDrawn}};}
   dispose(){this.scene.remove(this.sky);this.debris.removeFromParent();this.debris.dispose();this.debrisGeometry.dispose();this.debrisMaterial.dispose();for(const batch of this.puffBatches){batch.removeFromParent();batch.dispose();batch.geometry.dispose();}this.puffBatches=[];
     this.quad.dispose();this.skyGeometry.dispose();this.skyMaterial.dispose();this.material.dispose();this.dustMaterial.dispose();this.texture.dispose();this.dustTexture.dispose();this.cloudTexture.dispose();}
 }
