@@ -32,6 +32,8 @@ jobs:
           npm ci
           npx playwright install --with-deps chromium
           which ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+      - name: Validar lógica de correção da câmara offline
+        run: node --test tests/t21-camera-level.test.js
       - name: Preparar capturador original sem alterar a simulação
         run: |
           cp tools/capture-t21-proof.mjs tools/.t21-proof-runner.mjs
