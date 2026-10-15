@@ -100,23 +100,21 @@
     },
     "T09": {
       "name": "TEXTURE AUTHORING PIPELINE",
-      "status": "IN_CANDIDATE_UNVERIFIED",
+      "status": "DELIVERED_BRANCH",
       "refs": [
         "branch:claude/m01-integration@8a0c362",
-        "CI:38174455690",
-        "PR:#76"
+        "CI:38174455690"
       ],
-      "note": "Atlas de materiais."
+      "note": "Atlas de materiais. Merge local na candidata pronto (9928bdc); aguarda decisão sobre o falso positivo do teste de fronteira (event.window) antes de entrar no PR #76."
     },
     "T10": {
       "name": "VEGETATION KIT",
-      "status": "IN_CANDIDATE_UNVERIFIED",
+      "status": "DELIVERED_BRANCH",
       "refs": [
         "branch:claude/m01-integration@8a0c362",
-        "CI:38432707375",
-        "PR:#76"
+        "CI:38432707375"
       ],
-      "note": "Kit de vegetação; falta linha em ASSET_CREDITS.md."
+      "note": "Kit de vegetação; falta linha em ASSET_CREDITS.md. Merge local na candidata pronto (9928bdc); aguarda decisão sobre o falso positivo do teste de fronteira (event.window) antes de entrar no PR #76."
     },
     "T11": {
       "name": "MERGED IN T24",
@@ -138,13 +136,12 @@
     },
     "T13": {
       "name": "FIELD STRUCTURES KIT",
-      "status": "IN_CANDIDATE_UNVERIFIED",
+      "status": "DELIVERED_BRANCH",
       "refs": [
         "branch:claude/m01-integration@8a0c362",
-        "CI:38225594014",
-        "PR:#76"
+        "CI:38225594014"
       ],
-      "note": "Estruturas de campo."
+      "note": "Estruturas de campo. Merge local na candidata pronto (9928bdc); aguarda decisão sobre o falso positivo do teste de fronteira (event.window) antes de entrar no PR #76."
     },
     "T14": {
       "name": "BRIDGE MATERIAL KIT",
@@ -274,73 +271,66 @@
     },
     "T27": {
       "name": "TERRAIN RELIEF",
-      "status": "IN_CANDIDATE_UNVERIFIED",
+      "status": "DELIVERED_BRANCH",
       "refs": [
         "branch:claude/m01-integration@8a0c362",
-        "CI:38376693678",
-        "PR:#76"
+        "CI:38376693678"
       ],
-      "note": "Relevo natural."
+      "note": "Relevo natural. Merge local na candidata pronto (9928bdc); aguarda decisão sobre o falso positivo do teste de fronteira (event.window) antes de entrar no PR #76."
     },
     "T28": {
       "name": "TERRAIN MATERIAL MACRO",
-      "status": "IN_CANDIDATE_UNVERIFIED",
+      "status": "DELIVERED_BRANCH",
       "refs": [
         "branch:claude/m01-integration@8a0c362",
-        "CI:38174455699",
-        "PR:#76"
+        "CI:38174455699"
       ],
-      "note": "Material macro do terreno."
+      "note": "Material macro do terreno. Merge local na candidata pronto (9928bdc); aguarda decisão sobre o falso positivo do teste de fronteira (event.window) antes de entrar no PR #76."
     },
     "T29": {
       "name": "VEGETATION RUNTIME",
-      "status": "IN_CANDIDATE_UNVERIFIED",
+      "status": "DELIVERED_BRANCH",
       "refs": [
         "branch:claude/m01-integration@8a0c362",
-        "CI:38432707503",
-        "PR:#76"
+        "CI:38432707503"
       ],
-      "note": "Vegetação em runtime."
+      "note": "Vegetação em runtime. Merge local na candidata pronto (9928bdc); aguarda decisão sobre o falso positivo do teste de fronteira (event.window) antes de entrar no PR #76."
     },
     "T30": {
       "name": "FAR LANDSCAPE",
-      "status": "IN_CANDIDATE_UNVERIFIED",
+      "status": "DELIVERED_BRANCH",
       "refs": [
         "branch:claude/m01-integration@8a0c362",
-        "CI:38376693616",
-        "PR:#76"
+        "CI:38376693616"
       ],
-      "note": "Paisagem distante."
+      "note": "Paisagem distante. Merge local na candidata pronto (9928bdc); aguarda decisão sobre o falso positivo do teste de fronteira (event.window) antes de entrar no PR #76."
     },
     "T31": {
       "name": "TRACK BED",
-      "status": "IN_CANDIDATE_UNVERIFIED",
+      "status": "DELIVERED_BRANCH",
       "refs": [
         "branch:claude/m01-integration@8a0c362",
-        "CI:38279380748",
-        "PR:#76"
+        "CI:38279380748"
       ],
-      "note": "Leito da via V2."
+      "note": "Leito da via V2. Merge local na candidata pronto (9928bdc); aguarda decisão sobre o falso positivo do teste de fronteira (event.window) antes de entrar no PR #76."
     },
     "T32": {
       "name": "FIELD STRUCTURES RUNTIME",
-      "status": "IN_CANDIDATE_UNVERIFIED",
+      "status": "DELIVERED_BRANCH",
       "refs": [
         "branch:claude/m01-integration@8a0c362",
-        "CI:38225594010",
-        "PR:#76"
+        "CI:38225594010"
       ],
-      "note": "Estruturas de campo em runtime."
+      "note": "Estruturas de campo em runtime. Merge local na candidata pronto (9928bdc); aguarda decisão sobre o falso positivo do teste de fronteira (event.window) antes de entrar no PR #76."
     },
     "T33": {
       "name": "PROPS RUNTIME",
-      "status": "IN_CANDIDATE_UNVERIFIED",
+      "status": "DELIVERED_BRANCH",
       "refs": [
         "branch:claude/m01-integration@8a0c362",
-        "CI:38279380744",
-        "PR:#76"
+        "CI:38279380744"
       ],
-      "note": "Props em runtime."
+      "note": "Props em runtime. Merge local na candidata pronto (9928bdc); aguarda decisão sobre o falso positivo do teste de fronteira (event.window) antes de entrar no PR #76."
     },
     "T34": {
       "name": "STATION YARD LIFE",
