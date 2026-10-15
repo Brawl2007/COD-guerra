@@ -1,5 +1,14 @@
 # Estado de desenvolvimento
 
+## Onze tarefas parciais em validação — 2026-10-15
+
+Lote `M01-PARTIALS-COMPLETION-INTEGRATION-V1`, branch publicada `codex/m01-partials-completion-integration-v1`, candidato inicial de código `e0d494e`, CI/provas `9a1535b5`. A união inclui continuidade/raid, gráficos/terreno/vegetação/estruturas/props, animação e áudio. T02/T03/T05/T06/T07/T14/T24/T26/T34/T36/T41 têm implementação, mas **o lote ainda não está aceite nem integrado na branch jogável**.
+
+A primeira verificação independente terminou em FAIL: Bąk ainda era transportado quando a prontidão era libertada, o municiador distante aparecia em pé e a lâmpada ficava ocluída na vista 10. A variância editorial `T24-CAMERA-01`, aprovada pelo Captain sob D34, preserva o portão e exige prova de luz/fumo numa linha livre medida a 1 km, duas pequenas perturbações e controlo negativo. A cláusula original fica preservada; a variância ainda exige revisão independente.
+
+CI inicial no código `9a1535b5`: Node **834/870**, navegador combinado **41/44**, comparação de imagens das pontes **FAIL**; auditoria de autoridade **PASS** (24 futuros ON/OFF, duas rotas estritas, 12 sementes nas duas rotas de cobertura e 299 ficheiros protegidos). Estes resultados pertencem ao candidato inicial. A correção delimitada **1/3** mantém todas as falhas registadas e precisa de certificação nova. A nova execução do navegador distribui os mesmos 44 casos por três grupos, um worker e zero retries por grupo; as seis obrigações de guarnição continuam adicionais. Provas e contrato: `docs/verification/m01-runtime/partials-completion-integration-v1/`. A contagem global anterior de **26 tarefas confirmadas** permanece válida até a conclusão dos gates.
+
+
 ## Continuidade e raid — 2026-10-14
 
 Branch integrada `codex/m01-continuity-raid-integration-v1`, sobre a base T08/T12 `2d65dd0`. Duas entregas: T02-min corrige elegibilidade de fogo no posto de disparo e a fala 019 prematura; T03-lite + T25 acrescenta seis impactos aéreos no terreno, horários fixos, fumo persistente e agenda opcional no schema 2. Reload conserva classificação aérea/áudio/tremor dos seis IDs. Estimativas de gameplay, sem alegação de coordenadas históricas precisas.

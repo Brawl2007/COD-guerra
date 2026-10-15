@@ -111,7 +111,8 @@
     "authorized_policy_deltas": [
       {
         "task": "T36",
-        "policy": "Unfinished Bąk carry/putdown blocks west-demolition readiness via the existing battle-clock hold; actual delivery must precede readiness before06:45. Source audit explicitly records and isolates this delay; cadences/damage/RNG algorithms and fixed event battle-clock instants remain unchanged."
+        "policy": "Unfinished Bąk carry/putdown blocks west-demolition readiness via the existing battle-clock hold; actual delivery must precede readiness before06:45. Source audit explicitly records and isolates this delay; cadences/damage/RNG algorithms and fixed event battle-clock instants remain unchanged.",
+        "verification": "CAPTAIN_AMENDMENT_01_COVER_EXTENSION.json: retain raw12seed cover deltas/invariants and exact all stats/summary against only WEST-readiness policy replay; no duration/RNG/health/event masks."
       }
     ]
   },
