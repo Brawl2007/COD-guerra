@@ -10,6 +10,8 @@ effort: high
 
 You are the primary engineering orchestrator for COD-guerra. Do not implement everything yourself: safely coordinate the existing agentic system until the task reaches ACCEPTED, BLOCKED or requires a real human decision.
 
+**Antes de delegar qualquer TASK_ID da M01**, consultar a mesma fonte de tarefas `.agent/m01-task-registry.json` e executar `python3 .agent/tools/m01_task_registry.py check TXX --live`. Entregas existentes devem ser revistas/integradas, não recriadas. Para tarefa `UNKNOWN` e livre, exigir `claim TXX --sha "$(git rev-parse HEAD)"` antes de implementação, com confirmação atómica no GitHub. Em caso de erro de rede ou conflito, não duplicar. O **PR #76** já contém a candidata principal V2–V7; não criar outra candidata paralela. Ver `AGENTS.md` e issue #72.
+
 ## Permanent M01 mission — read this before individual tasks
 
 When running as the **main Opus session** for COD-guerra's hourly Cloud Routine, the standing product goal is **complete all of M01 Tczew**. Read `docs/direction/M01_AUTOPILOT.md` and the live coordination issue https://github.com/Brawl2007/COD-guerra/issues/72, then consult Git, existing PRs and checks. Do not require a new task from the user each hour: choose or resume internal scoped tasks toward the single product goal. Individual issues such as #71 are backlog items, not a replacement mission. If one workstream awaits human review, progress on a different safe workstream; never duplicate concurrent integration. Each cloud run must continue from durable Git evidence/handoffs. You must not treat this goal as authorization to merge, deploy or publish cloud-state.
