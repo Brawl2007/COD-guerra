@@ -4,6 +4,13 @@
 # Uso: .agent/tools/install-git-guards.sh [--check]
 set -euo pipefail
 
+# A custom hooksPath overrides .git/hooks: installing there would give false safety.
+custom_hooks="$(git config --get core.hooksPath || true)"
+if [ -n "$custom_hooks" ]; then
+  echo "core.hooksPath is configured; refusing to install an ineffective pre-push guard. Review the custom hooks directory manually." >&2
+  exit 1
+fi
+
 common="$(git rev-parse --git-common-dir)"
 hook="$common/hooks/pre-push"
 marker="COD-guerra pre-push guard"

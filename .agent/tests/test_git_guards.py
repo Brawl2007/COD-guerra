@@ -53,5 +53,18 @@ class GitGuardsTest(unittest.TestCase):
             self.assertIn("pre-push guard", blocked_wt.stderr)
 
 
+    def test_custom_hooks_path_refuses_ineffective_install(self):
+        with tempfile.TemporaryDirectory() as d:
+            work = Path(d) / "work"
+            subprocess.run(["git", "init", "-q", "-b", "feature", str(work)], check=True)
+            self.assertEqual(git("config", "core.hooksPath", str(work / "hooks-other"),
+                                 cwd=work).returncode, 0)
+            installed = subprocess.run(["bash", str(INSTALLER)], cwd=work,
+                                       capture_output=True, text=True)
+            self.assertNotEqual(installed.returncode, 0)
+            self.assertIn("core.hooksPath", installed.stderr)
+            self.assertFalse((work / ".git" / "hooks" / "pre-push").exists())
+
+
 if __name__ == "__main__":
     unittest.main()
