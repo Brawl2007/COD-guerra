@@ -32,36 +32,44 @@ class RegistryTests(unittest.TestCase):
             self.assertEqual(gate.evaluate(task, data[task], []), "DO_NOT_START")
 
     def test_unknown_requires_live_scan(self):
-        t = gate.load()["tasks"]["T24"]
-        self.assertEqual(gate.evaluate("T24", t), "LIVE_CHECK_REQUIRED")
-        self.assertEqual(gate.evaluate("T24", t, [{"kind": "branch", "ref": "claims/m01-t24"}]), "EXISTING_REMOTE_WORK")
-        self.assertEqual(gate.evaluate("T24", t, []), "ELIGIBLE_FOR_ATOMIC_CLAIM")
+        # T24 became PARTIAL_IN_CANDIDATE after the PR #76 audit; T43 is the first truly undeveloped task.
+        t = gate.load()["tasks"]["T43"]
+        self.assertEqual(gate.evaluate("T43", t), "LIVE_CHECK_REQUIRED")
+        self.assertEqual(gate.evaluate("T43", t, [{"kind": "branch", "ref": "claims/m01-t43"}]), "EXISTING_REMOTE_WORK")
+        self.assertEqual(gate.evaluate("T43", t, []), "ELIGIBLE_FOR_ATOMIC_CLAIM")
 
     def test_unaudited_work_cannot_be_claimed(self):
-        t = gate.load()["tasks"]["T04"]
-        self.assertEqual(gate.evaluate("T04", t, []), "AUDIT_EXISTING_FIRST")
+        # T04 is in the candidate now; T00 and partial tasks still require an audit of existing work first.
+        for task in ("T00", "T24"):
+            t = gate.load()["tasks"][task]
+            self.assertEqual(gate.evaluate(task, t, []), "AUDIT_EXISTING_FIRST")
+
+    def test_candidate_and_correction_work_is_reused_not_reclaimed(self):
+        data = gate.load()["tasks"]
+        for task in ("T09", "T14", "T41"):
+            self.assertEqual(gate.evaluate(task, data[task], []), "REUSE_OR_REVIEW_EXISTING")
 
     def test_unavailable_github_prevents_claim(self):
         with patch.object(gate, "live_refs", side_effect=RuntimeError("no permission")):
-            self.assertEqual(gate.main(["claim", "T24", "--sha", "a"*40]), 3)
+            self.assertEqual(gate.main(["claim", "T43", "--sha", "a"*40]), 3)
 
     def test_duplicate_branch_blocks_claim_without_write(self):
-        with patch.object(gate, "live_refs", return_value=[{"kind":"branch","ref":"claims/m01-t24"}]), \
+        with patch.object(gate, "live_refs", return_value=[{"kind":"branch","ref":"claims/m01-t43"}]), \
              patch.object(gate.subprocess, "run") as run:
-            self.assertEqual(gate.main(["claim", "T24", "--sha", "a"*40]), 2)
+            self.assertEqual(gate.main(["claim", "T43", "--sha", "a"*40]), 2)
             run.assert_not_called()
 
     def test_atomic_post_conflict_stops_cleanly(self):
         with patch.object(gate, "live_refs", return_value=[]), \
              patch.object(gate.subprocess, "run", side_effect=gate.subprocess.CalledProcessError(1, "gh api")):
-            self.assertEqual(gate.main(["claim", "T24", "--sha", "a"*40]), 3)
+            self.assertEqual(gate.main(["claim", "T43", "--sha", "a"*40]), 3)
 
     def test_successful_claim_uses_unique_ref(self):
         with patch.object(gate, "live_refs", return_value=[]), \
              patch.object(gate.subprocess, "run") as run:
-            self.assertEqual(gate.main(["claim", "T24", "--sha", "a"*40]), 0)
+            self.assertEqual(gate.main(["claim", "T43", "--sha", "a"*40]), 0)
             call = run.call_args.args[0]
-            self.assertIn("ref=refs/heads/claims/m01-t24", call)
+            self.assertIn("ref=refs/heads/claims/m01-t43", call)
             self.assertIn("sha=" + "a"*40, call)
 
 
