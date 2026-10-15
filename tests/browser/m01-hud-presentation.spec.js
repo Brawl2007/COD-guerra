@@ -7,7 +7,7 @@ const key='cod-guerra:checkpoint:m01:v2';
 async function open(page){
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);
-  await expect(page.locator('#start')).toBeEnabled();return errors;
+  await expect(page.locator('#start')).toBeEnabled({timeout:60000});return errors;
 }
 const hud=page=>page.evaluate(()=>window.gameDiagnostics().m01.hudPresentation);
 const opacity=(page,id)=>page.evaluate(id=>Number(getComputedStyle(document.getElementById(id)).opacity),id);

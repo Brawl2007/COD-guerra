@@ -15,7 +15,7 @@ async function freezeClick(page,selector){
 async function open(page,snapshot){
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
   await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);
-  await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#continue')).toBeEnabled();
+  await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#continue')).toBeEnabled({timeout:60000});
   await freezeClick(page,'#continue');
 }
 

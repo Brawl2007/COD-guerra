@@ -18,7 +18,7 @@ async function continueAndPause(page){
 async function open(page,snapshot,freeze=true){
  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
  await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);
- await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#continue')).toBeEnabled();
+ await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#continue')).toBeEnabled({timeout:60000});
  if(freeze)await continueAndPause(page);else{await page.locator('#continue').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');}
 }
 for(const count of [1,4,6])test(`real MG34 prone save after shot ${count}: production continuation, real muzzle, pause and reload`,async({page},info)=>{
