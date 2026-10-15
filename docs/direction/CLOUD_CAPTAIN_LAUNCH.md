@@ -5,7 +5,7 @@ Preparação feita sem executar Claude, TypeSafe ou Fable.
 
 ## Dependências e autorização
 
-- PR #60 foi integrado na `main`; PR #67 (Jev proxy) e PR #68 (deploy manual) aguardam aprovação **explícita** para merge. Confirmar HEAD e CI antes de autorizar integração; não os integrar automaticamente.
+- PR #60 já estava integrado. PR #68 (deploy manual) e PR #67 (Jev proxy) foram integrados em 2026-10-15, respetivamente nos merges `d222c88e15fab304b11e4a640c0cce6a11297b17` e `ae2da4bf6a054b40075cd66335fa0fe5c5d7f1c1`. Confirmar sempre HEAD e CI antes de outras integrações; não fazer merge automaticamente.
 - Esta alteração acrescenta `COD_GUERRA_INSTALL_GIT_GUARDS=1` ao `SessionStart`, apenas em cloud, sem mudar o diagnóstico inicial só de leitura.
 - Nunca atualizar `main`, fazer merge ou deploy sem autorização humana específica. Não usar `git push --force`, `git reset --hard`, nem publicar checkpoints sem autorização separada.
 - A existência do hook local não substitui branch protection/rulesets. O hook pode ser contornado (por exemplo com `--no-verify`); aplicar a proteção no GitHub quando as permissões o permitirem.
@@ -56,7 +56,7 @@ Cada execução da Routine inicia uma sessão nova: checkpoints só de leitura n
 
 ## Critérios para ativação recorrente
 
-- [ ] PRs #67 e #68 aprovados e integrados separadamente, com checks vinculados ao HEAD atual; ou branch de execução definida explicitamente e segurança equivalente
+- [x] PRs #68 e #67 integrados com checks aprovados (2026-10-15); falta integrar este PR #69 com os seus próprios checks
 - [ ] Ambiente e segredo Jev configurados sem expor credenciais
 - [ ] Pre-push guard confirmado na sessão cloud e branch protection analisada
 - [ ] Teste read-only da sessão principal, delegação Haiku/Sonnet e handoff aprovado
