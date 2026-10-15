@@ -32,21 +32,22 @@ class RegistryTests(unittest.TestCase):
             self.assertEqual(gate.evaluate(task, data[task], []), "DO_NOT_START")
 
     def test_unknown_requires_live_scan(self):
-        # T24 became PARTIAL_IN_CANDIDATE after the PR #76 audit; T43 is the first truly undeveloped task.
+        # T43 is the first truly undeveloped task.
         t = gate.load()["tasks"]["T43"]
         self.assertEqual(gate.evaluate("T43", t), "LIVE_CHECK_REQUIRED")
         self.assertEqual(gate.evaluate("T43", t, [{"kind": "branch", "ref": "claims/m01-t43"}]), "EXISTING_REMOTE_WORK")
         self.assertEqual(gate.evaluate("T43", t, []), "ELIGIBLE_FOR_ATOMIC_CLAIM")
 
     def test_unaudited_work_cannot_be_claimed(self):
-        # T04 is in the candidate now; T00 and partial tasks still require an audit of existing work first.
-        for task in ("T00", "T24"):
+        # T04 is in the candidate now; T00 still requires an audit of existing work first.
+        for task in ("T00",):
             t = gate.load()["tasks"][task]
             self.assertEqual(gate.evaluate(task, t, []), "AUDIT_EXISTING_FIRST")
 
     def test_candidate_and_correction_work_is_reused_not_reclaimed(self):
         data = gate.load()["tasks"]
-        for task in ("T09", "T14", "T41"):
+        # T24: the Gemini and Codex T24 lines were reconciled in the candidate (IN_CANDIDATE_UNVERIFIED), so it is reused, never reclaimed.
+        for task in ("T09", "T14", "T24", "T41"):
             self.assertEqual(gate.evaluate(task, data[task], []), "REUSE_OR_REVIEW_EXISTING")
 
     def test_unavailable_github_prevents_claim(self):

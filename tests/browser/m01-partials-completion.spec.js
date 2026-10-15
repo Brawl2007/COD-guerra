@@ -45,8 +45,8 @@ test('train arrival at04:44:30, stop04:46 and yard at04:36/05:41 draw smoke/head
     else await camera(page,[-309,1,5],[-365,1,20]);
     const before=await record(page,`life-${at.replaceAll(':','')}`,input),d=before.diagnostics.m01;
     if(['04:44:30','04:46:00','04:51:30'].includes(at)){expect(d.trainLife.native.calls).toBeGreaterThan(0);expect(d.trainLife.native.calls).toBeLessThanOrEqual(12);}
-    if(at==='04:44:30'){expect(d.trainLife.trains[0].offset).toBeGreaterThan(0);expect(d.trainLife.trains[0].offset).toBeLessThan(600);}
-    if(at==='04:51:30'){expect(d.trainLife.trains[1].offset).toBeGreaterThan(0);expect(d.trainLife.trains[1].offset).toBeLessThan(400);}
+    if(at==='04:44:30'){expect(d.trainLife.trains[0].offset).toBeGreaterThan(0);expect(d.trainLife.trains[0].offset).toBeLessThan(360);}
+    if(at==='04:51:30'){expect(d.trainLife.trains[1].offset).toBeGreaterThan(0);expect(d.trainLife.trains[1].offset).toBeLessThan(240);}
     if(at==='04:46:00'){expect(d.trainLife.trains[0].offset).toBe(0);expect(d.trainLife.trains[0].headlamp).toBe(true);expect(d.trainLife.trains[0].fog).toBe(false);expect(d.battlefieldFx.atmosphere.trainPuffs).toBeGreaterThan(0);}
     if(at==='04:30:00')expect(d.stationDamage.visible).toBe(false);
     if(at==='04:36:00'||at==='05:41:00'){expect(d.stationDamage.visible).toBe(true);expect(d.stationDamage.brokenPanes).toBe(12);

@@ -112,7 +112,7 @@ export class M01View {
     this.bridgeSyncInput={kits:this.kit,quality:this.owner.quality,world:null};
     this.bridgeSelectInput={kits:this.kit,state:null,camera:this.camera,prepared:true};
     if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')){
-      this.bridgeFinishDebug={setEnabled:on=>{const result=this.bridgeFinish.setEnabled(on);this.lastFrame=null;return result;},setTrainEffects:options=>{const value=typeof options==='boolean'?{lamp:options,smoke:options}:options;this.trainSmokeEnabled=Boolean(value.smoke);for(const lamp of this.trainLife.lamps)lamp.visible=Boolean(value.lamp);this.lastFrame=null;return value;},setCamera:pose=>{this.bridgeEditorialCamera=pose;this.lastFrame=null;return pose;},get:()=>this.bridgeFinish.diagnostics};window.m01BridgeFinishDebug=this.bridgeFinishDebug;
+      this.bridgeFinishDebug={setEnabled:on=>{const result=this.bridgeFinish.setEnabled(on);this.lastFrame=null;return result;},setTrainEffects:options=>{const value=typeof options==='boolean'?{lamp:options,smoke:options}:options;this.trainSmokeEnabled=Boolean(value.smoke);this.trainLife.lampsEnabled=Boolean(value.lamp);this.lastFrame=null;return value;},setCamera:pose=>{this.bridgeEditorialCamera=pose;this.lastFrame=null;return pose;},get:()=>this.bridgeFinish.diagnostics};window.m01BridgeFinishDebug=this.bridgeFinishDebug;
     }
     this.atmosphere=new M01Atmosphere(this.scene);
     this.damageDecals=new M01DamageDecals(this.scene);
@@ -707,12 +707,12 @@ export class M01View {
     this.wagons=new M01TrainWagons(this.train,this.assets,this.box,this.cylinder,this.materials.wood,this.materials.metal);
     this.yardWagons=new M01YardWagons(this.scene,this.assets,this.box,this.cylinder,this.materials.wood,this.materials.metal,this.atmosphere.texture);
     this.panzerzugArt=new M01Panzerzug(this.panzerzug,this.assets,this.box,this.cylinder,this.materials.metal);
-    this.trainLife=new M01TrainLife(this.train,this.panzerzug);this.stationDamage=new M01StationDamage(this.scene);
+    this.trainLife=new M01TrainLife(this.train,this.panzerzug,{fixtures:[this.locomotive.lightingFixture,this.panzerzugArt.lampFixture]});this.stationDamage=new M01StationDamage(this.scene);
   }
   syncDamage(sim,state){
     this.stationDamage.update(state.damage,sim.clock);
     const yardFire=yardWagonFireDamage(sim.destruction,sim.world,sim.consumed.evt_m01_wounded_dragged??0,sim.clock);
-    this.atmosphere.update(yardFire?{...state,damage:[...state.damage,yardFire]}:state,sim.clock,this.owner.quality,{surfaceY:(x,z)=>sim.world.terrainHeightAt(x,z),trainSources:this.trainSmokeEnabled===false?[]:this.trainLife.sources});
+    this.atmosphere.update(yardFire?{...state,damage:[...state.damage,yardFire]}:state,sim.clock,this.owner.quality,{surfaceY:(x,z)=>sim.world.terrainHeightAt(x,z),trainSources:this.trainLife.sources,railwaySmoke:this.trainSmokeEnabled!==false});
     const live=new Set(sim.grenades.active.map(g=>g.id));
     for(const g of sim.grenades.active){let m=this.grenadeViews.get(g.id);if(!m){m=this.mesh('sphere','metal',[0,0,0],[.07,.07,.07],this.effects);this.grenadeViews.set(g.id,m);}m.position.set(g.x,g.y,g.z);}
     for(const [id,m]of this.grenadeViews)if(!live.has(id)){this.effects.remove(m);this.grenadeViews.delete(id);}
@@ -725,10 +725,15 @@ export class M01View {
   render(sim){
     // Apply authoritative train/wagon state before pause-frame caching so restore cannot freeze constructor defaults.
     const state=sim.renderState,time=sim.clock;
-    this.trainLife.update(sim.battleClock);
-    this.wagons.update(sim.player,this.owner.quality);
+    // T24 (one canonical arrival: Gemini brake-to-stop curve in m01-locomotive/m01-panzerzug). Presentation only.
+    // Transform ownership: M01Locomotive moves its root, M01TrainWagons its consist group, M01Panzerzug its root; the parent
+    // groups this.train/this.panzerzug never move. M01TrainLife owns only parent visibility (arrival started OR sim flag),
+    // its own 1 km halos and the puff sources, all from the same pure battle-clock functions.
+    const battleClock=sim.battleClock??(16200+time);
+    this.trainLife.update(battleClock,state);
+    this.wagons.update(sim.player,this.owner.quality,battleClock);
     this.yardWagons.update(sim.destruction,this.owner.quality,sim.world,sim.player,time,sim.consumed.evt_m01_wounded_dragged);
-    this.locomotive.update(sim.player);this.panzerzugArt.update(sim.player);
+    this.locomotive.update(sim.player,battleClock,state.train963);this.panzerzugArt.update(sim.player,battleClock,state.panzerzug);
     this.trainLife.observe(this.wagons.revision+this.locomotive.revision+this.panzerzugArt.revision);
     // Retain the last canvas frame while the mission clock is frozen (menu/pause).
     // Assets, world restore, quality and resizing still invalidate it.
@@ -736,7 +741,7 @@ export class M01View {
     this.environment?.syncVegetation(sim.world,this.owner.quality,sim.player,sim.clock,this.terrainRelief.enabled);
     this.bridgeSyncInput.kits=this.kit;this.bridgeSyncInput.quality=this.owner.quality;this.bridgeSyncInput.world=sim.world;this.bridgeFinish.sync(this.bridgeSyncInput);
     const canvas=this.owner.canvas,previous=this.lastFrame;
-    const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
+    const frame={clock:sim.clock,battleClock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
       width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,
       bridgeFinishRevision:this.bridgeFinish.revision,vegetationRevision:this.environment?.vegetation.revision,reliefRevision:this.terrainRelief?.revision,farRevision:this.farLandscape?.revision,propsRuntime:this.environment?.propsRuntime.revision,trackBed:this.environment?.trackBed.revision,fieldStructures:this.environment?.fieldStructures.revision,wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles; T20: so is the impostor A/B toggle
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
@@ -756,8 +761,7 @@ export class M01View {
     }
     const fill=sampleMuzzleEnvironmentLight(sim.actors,time,sim.player,this.owner.quality);
     this.pendingMuzzleFill=fill;
-    // Battle-clock arrival (M01TrainLife) is presentation only; the authoritative arrival flags still force the final consist visible.
-    if(state.train963)this.train.visible=true;if(state.panzerzug)this.panzerzug.visible=true;
+    // Train visibility is set once per render by M01TrainLife.update (arrival clock OR authoritative train963/panzerzug flags).
     this.updateAircraft(state,time,sim.player,ju87HeardAt(sim));this.updateBombs(state,time,sim.player,sim.world);
     const player=sim.player,eye=eyePosition(player),dir=aimDirection(player.angle,player.pitch);
     const bob=player.moveBlend*Math.sin(time*(player.sprinting?14:9))*.014;

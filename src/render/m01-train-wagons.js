@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {batchFarWagon} from './m01-train-batching.js';
+import {trainArrivalOffset} from './m01-locomotive.js';
 import {M01TrainConsistDetail,M01_TRAIN_ART_OFFSET_Y,m01WagonArtMatrix,m01WagonVariation} from './m01-train-consist-detail.js';
 
 const BASE='assets/models/provisional/m01-wagons/';
@@ -34,10 +35,13 @@ export class M01TrainWagons {
       catch{/* Optional art: closest loaded LOD or procedural proxy remains visible. */}
     })));
   }
-  update(player,quality='medium'){
+  update(player,quality='medium',battleClock=null){
     let changed=quality!==this.lastQuality;this.lastQuality=quality;
+    // T24: the consist travels with the locomotive while 963 arrives (04:43:30-04:45:00); offset is exactly 0 when stopped or with no clock.
+    // The authoritative plan x/z never change; wagon LOD is chosen on the displaced position.
+    const offset=trainArrivalOffset(battleClock);this.group.position.x=offset;
     for(const wagon of M01_TRAIN_WAGON_PLAN){
-      const distance=Math.hypot(wagon.x-player.x,-2.5-player.z),previous=this.lods.get(wagon.id),next=chooseWagonLod(distance,quality,previous);
+      const distance=Math.hypot(wagon.x+offset-player.x,-2.5-player.z),previous=this.lods.get(wagon.id),next=chooseWagonLod(distance,quality,previous);
       if(next!==previous){this.lods.set(wagon.id,next);changed=true;}
     }
     if(changed){this.rebuild();this.revision++;}
@@ -75,7 +79,7 @@ export class M01TrainWagons {
   get diagnostics(){
     const distribution={0:0,1:0,2:0};for(const lod of this.lods.values())distribution[lod]++;
     const active={0:0,1:0,2:0};for(const b of this.batches)active[b.userData.lod]=(active[b.userData.lod]??0)+b.count;
-    return {wagons:M01_TRAIN_WAGON_PLAN.length,step:9.1,lodDistribution:distribution,loaded:[...this.sources.keys()].sort(),proxies:this.proxyBody.count,batches:this.batches.length,activeInstancesByLod:active,visible:this.group.parent?.visible??false,first:[M01_TRAIN_WAGON_PLAN[0].x,0,-2.5],last:[M01_TRAIN_WAGON_PLAN.at(-1).x,0,-2.5],
+    return {wagons:M01_TRAIN_WAGON_PLAN.length,step:9.1,arrivalOffset:this.group.position.x,lodDistribution:distribution,loaded:[...this.sources.keys()].sort(),proxies:this.proxyBody.count,batches:this.batches.length,activeInstancesByLod:active,visible:this.group.parent?.visible??false,first:[M01_TRAIN_WAGON_PLAN[0].x,0,-2.5],last:[M01_TRAIN_WAGON_PLAN.at(-1).x,0,-2.5],
       artOffsetY:M01_TRAIN_ART_OFFSET_Y,shadowCasters:this.batches.filter(b=>b.castShadow).length+this.detail.diagnostics.shadowCasters,detail:this.detail.diagnostics};
   }
   dispose(){if(this.disposed)return;this.disposed=true;for(const b of [...this.batches,this.proxyBody,this.proxyWheels])b.dispose();this.detail.dispose();this.group.removeFromParent();this.batches=[];for(const s of this.sources.values())for(const g of s.ownedBatchGeometries??[])g.dispose();this.sources.clear();}

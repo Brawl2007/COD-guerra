@@ -253,13 +253,15 @@
     },
     "T24": {
       "name": "TRAIN ARRIVAL AND LIFE",
-      "status": "PARTIAL_IN_CANDIDATE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
       "refs": [
         "PR:#59",
         "PR:#76",
-        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b",
+        "branch:integ-t24@ae0f453 (port manual do pacote Gemini/Argon M01-TRAIN-ARRIVAL-AND-LIFE-V1, local)",
+        "docs/T24_TRAIN_ARRIVAL_REPORT.md"
       ],
-      "note": "Chegada por battleClock (963 04:43:30→04:45, Panzerzug 04:51→04:52), fumo/lanternas e batching integrados via partials; cláusula de visibilidade da lanterna na vista canónica 10 por provar (oclusão real), sem verificação independente."
+      "note": "Duas T24 reconciliadas numa junção: cinemática canónica única = Gemini (entra em andamento e trava até parar: 963 1435→1075 m 04:43:30→04:45:00; Panzerzug 1359→1119 m 04:51:00→04:52:00); M01TrainLife (Codex) usa trainArrivalOffset/panzerzugArrivalOffset e já não move os grupos pai (um só dono de transformação por comboio: raiz da locomotiva, grupo dos vagões, raiz do Panzerzug). Mantidos: halo de 1 km, contagem nativa de draw calls e fontes de fumo (Codex); fixture de luz/fornalha/travões, lanterna de fenda e coluna de manobra oeste (Gemini). Um só tecto de fumo 12/18/24 (RAILWAY_PUFF_BUDGET, TRAIN_PUFF_CAP é alias) e um só emissor. Visibilidade = chegada iniciada OU flags da simulação. Áudio veh.train.* testado mas não ligado. Cláusula da vista 10 e verificação independente por fazer; não é playtest."
     },
     "T25": {
       "name": "RAID 05:30",
