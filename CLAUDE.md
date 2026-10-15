@@ -1,5 +1,7 @@
 @AGENTS.md
 
+**Antes de delegar qualquer TASK_ID da M01**, consultar a mesma fonte de tarefas `.agent/m01-task-registry.json` e executar `python3 .agent/tools/m01_task_registry.py check TXX --live`. Entregas existentes devem ser revistas/integradas, não recriadas. Para tarefa `UNKNOWN` e livre, exigir `claim TXX --sha "$(git rev-parse HEAD)"` antes de implementação, com confirmação atómica no GitHub. Em caso de erro de rede ou conflito, não duplicar. O **PR #76** já contém a candidata principal V2–V7; não criar outra candidata paralela. Ver `AGENTS.md` e issue #72.
+
 ## Missão permanente da Routine Cloud — M01 completa
 
 Na sessão principal do Capitão Opus, o objetivo contínuo é **terminar toda a M01 Tczew**, não esperar que o utilizador forneça uma tarefa a cada execução horária. Ler `docs/direction/M01_AUTOPILOT.md` e https://github.com/Brawl2007/COD-guerra/issues/72; verificar estado Git/PR/CI atual, retomar trabalho próprio e escolher novos subpassos internos quando necessário. PRs pendentes não autorizam duplicação nem paralisação de toda a missão. **Sem merge/deploy/publicação de checkpoint sem autorização humana específica.**
