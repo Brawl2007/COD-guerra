@@ -1,3 +1,4 @@
+import { detectTouch, TouchState, bindTouchControls } from './core/touch-controls.js';
 import './styles.css';
 import './styles-t50-loading.css';
 import { M01LoadingController } from './ui/m01-loading-controller.js';
@@ -21,9 +22,10 @@ const hud={health:$('#health'),healthBar:$('#health-bar'),grenades:$('#grenades'
   weaponName:$('#weapon-name'),weaponState:$('#weapon-state'),clock:$('#battle-clock'),interaction:$('#interaction'),subtitle:$('#subtitle'),crosshair:$('#crosshair'),hitMarker:$('#hit-marker'),
   root:hudRoot,objectivePanel:$('#objective'),objectiveUpdate:$('#objective-update'),checkpointName:$('#checkpoint-name'),status:$('#status'),ammo:$('#ammo'),
   rounds:$('#rounds'),lowHealth:$('#low-health'),fade:$('#fade'),titleCard:$('#title-card'),resumeCard:$('#resume-card')};
-let game;
+let game,touchState;
 const showError=message=>{$('#error-text').textContent=message;errorPanel.classList.remove('hidden');};
 function stateChanged(state,detail){
+  if(touchState){const live=state==='playing';touchState.setActive(live);$('#touch-controls').classList.toggle('hidden',!live);}
   if(state==='menu'){
     menu.classList.remove('hidden');pause.classList.add('hidden');complete.classList.add('hidden');hudRoot.classList.add('hidden');
     $('#continue').classList.toggle('hidden',!game.hasSave);return;
@@ -70,7 +72,12 @@ function missionMenu(){
 }
 try{
   const params=new URLSearchParams(location.search);
-  game=new Game(canvas,hud,stateChanged,params.get('mission')==='sandbox-1944'?'sandbox-1944':'m01_tczew');
+  const touch=detectTouch();
+  game=new Game(canvas,hud,stateChanged,params.get('mission')==='sandbox-1944'?'sandbox-1944':'m01_tczew',{touch});
+  if(touch){
+    document.body.classList.add('touch');document.querySelector('.touch-hint').classList.remove('hidden');
+    touchState=new TouchState(game.input,{onPause:()=>game.pause()});bindTouchControls($('#touch-controls'),touchState);
+  }
   missionMenu();
   $('#mission-select').addEventListener('change',e=>{game.selectMission(e.target.value);missionMenu();});
   $('#start').addEventListener('click',()=>{

@@ -5,6 +5,8 @@ export class Input {
     this.fire = false; this.firePressed = false; this.aim = false;
     this.lookDelta = 0; this.lookDeltaY = 0;
     this.pointerLocked = false; this.discardLookSample = false;
+    // Virtual (touch) controls write here; the keyboard/mouse paths above are untouched.
+    this.touchForward = 0; this.touchSide = 0; this.touchSprint = false;
     this.listeners = [];
     const listen = (target, event, handler) => {
       target.addEventListener(event, handler);
@@ -46,7 +48,15 @@ export class Input {
   clear() {
     this.keys.clear(); this.pressed.clear(); this.fire = false; this.firePressed = false;
     this.aim = false; this.lookDelta = 0; this.lookDeltaY = 0;
+    this.touchForward = 0; this.touchSide = 0; this.touchSprint = false;
   }
+  setMove(side, forward, sprint = false) { this.touchSide = side; this.touchForward = forward; this.touchSprint = sprint; }
+  addLook(dx, dy) { this.lookDelta += dx; this.lookDeltaY += dy; }
+  setFire(on) { if (on) this.firePressed = !this.fire; this.fire = on; }
+  tap(code) { this.pressed.add(code); }
+  forwardAxis() { return Math.max(-1, Math.min(1, Number(this.down('KeyW')) - Number(this.down('KeyS')) + this.touchForward)); }
+  sideAxis() { return Math.max(-1, Math.min(1, Number(this.down('KeyD')) - Number(this.down('KeyA')) + this.touchSide)); }
+  sprinting() { return this.down('ShiftLeft') || this.down('ShiftRight') || this.touchSprint; }
   consumeLook() { const value = this.lookDelta; this.lookDelta = 0; return value; }
   consumeLookY() { const value = this.lookDeltaY; this.lookDeltaY = 0; return value; }
   consumePressed(code) { const value = this.pressed.has(code); this.pressed.delete(code); return value; }
