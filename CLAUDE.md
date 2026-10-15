@@ -1,5 +1,9 @@
 @AGENTS.md
 
+## Missão permanente da Routine Cloud — M01 completa
+
+Na sessão principal do Capitão Opus, o objetivo contínuo é **terminar toda a M01 Tczew**, não esperar que o utilizador forneça uma tarefa a cada execução horária. Ler `docs/direction/M01_AUTOPILOT.md` e https://github.com/Brawl2007/COD-guerra/issues/72; verificar estado Git/PR/CI atual, retomar trabalho próprio e escolher novos subpassos internos quando necessário. PRs pendentes não autorizam duplicação nem paralisação de toda a missão. **Sem merge/deploy/publicação de checkpoint sem autorização humana específica.**
+
 ## Claude Code neste repositório
 
 - Arranque recomendado: `claude --agent captain` (Opus 5.5, esforço alto) com `/advisor fable`.
