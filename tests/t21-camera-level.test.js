@@ -7,7 +7,7 @@ function delayedSimulation(initialPitch) {
   let queued = 0;
   let waiting = false;
   const movements = [];
-  const trace = [];
+  const traceEntries = [];
   return {
     readPitch: async () => pitch,
     sendMovement: async delta => {
@@ -25,8 +25,8 @@ function delayedSimulation(initialPitch) {
       waiting = false;
       return pitch;
     },
-    trace: entry => trace.push(entry),
-    movements, trace,
+    trace: entry => traceEntries.push(entry),
+    movements, traceEntries,
   };
 }
 
@@ -35,8 +35,8 @@ test('level camera converges from lower pitch clamp with delayed frames', async 
   const final = await levelCameraClosedLoop(sim);
   assert.ok(Math.abs(final) <= 0.18, String(final));
   assert.ok(sim.movements.length >= 8, 'must use small feedback-confirmed steps');
-  assert.equal(sim.trace.length, sim.movements.length);
-  assert.ok(sim.trace.every(entry => entry.status === 'confirmed'));
+  assert.equal(sim.traceEntries.length, sim.movements.length);
+  assert.ok(sim.traceEntries.every(entry => entry.status === 'confirmed'));
 });
 
 test('level camera converges from upper pitch clamp with delayed frames', async () => {
@@ -59,7 +59,7 @@ test('missing or stale diagnostics fail visibly', async () => {
   const stuck = delayedSimulation(-1.25);
   stuck.waitForChange = async () => { throw Error('simulated timeout'); };
   await assert.rejects(() => levelCameraClosedLoop(stuck), /input not confirmed/);
-  assert.equal(stuck.trace[0].status, 'no-confirmation');
+  assert.equal(stuck.traceEntries[0].status, 'no-confirmation');
 });
 
 test('incorrect input direction is rejected rather than retried in a queue', async () => {
