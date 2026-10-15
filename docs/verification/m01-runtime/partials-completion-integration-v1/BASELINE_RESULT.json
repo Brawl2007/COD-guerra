@@ -1,0 +1,9 @@
+{
+  "head": "bc8f6a21a57c",
+  "command": "npm test",
+  "status": "INTERRUPTED_AFTER_CONFIRMED_EXPECTED_FAILURE; NOT A COMPLETE SUITE",
+  "knownFailure": "asset manifest author missing in blocked bridge source",
+  "reason": "Known failure establishes required correction; clean immutable baseline checkout retained for delta audits. Stop expensive remaining predecessor suite to begin implementation; final full suite is mandatory.",
+  "log": "baseline-node.log",
+  "immutableCheckout": "/workspace/scratch/COD-guerra-partials-baseline"
+}

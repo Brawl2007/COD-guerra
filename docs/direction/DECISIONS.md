@@ -131,3 +131,12 @@ no Vístula. A especificação já pede dificuldade que mude comportamento, prec
 ## D37 — duas tarefas integradas, 2026-10-14
 
 O utilizador pediu "Faz mais 2 tarefas e integra cod guerra" e "Continua". Escolhidas as pendências executáveis de D30: T02-min e T03-lite+T25, sobre a ponta T08/T12 `2d65dd0` com CI 38117931250 verde. Horas fixas seguem H16; posições são estimativas de gameplay. A correcção necessária no reload acrescenta os cinco IDs à classificação aérea existente. Uma tentativa de correcção, zero rejeições de revisão; local verde e **CI 38582392486 completo final verde (694/694, build, browser 1/1), código 8387b56, PR #63 publicado**. A autorização D34 permite branch integrada e PR, sem escrita em main/deploy ou branches das fontes.
+
+
+## Lote M01-PARTIALS-COMPLETION-INTEGRATION-V1 — 2026-10-15
+
+O pedido explícito "Faz todas as tarefas parcialmente concluída e integra", retomado com "Continua", autoriza o lote T02/T03/T05/T06/T07/T14/T24/T26/T34/T36/T41 e a integração em `claude/m01-integration`, ao abrigo de D34. A aceitação exige verificador e revisão independentes; esta decisão não declara esses gates cumpridos.
+
+Para T36, o Captain adota a recomendação B4 do roadmap: Dudek transporta Bąk a 1,6 m/s, com pickup/putdown de 1,6 s, condicionada à prova da rota completa de prontidão oeste antes das 06:45. A auditoria deve conservar as alterações espaciais e os efeitos de supressão decorrentes desse transporte em deltas nomeados, mantendo todos os outros atores/tiros/gates comparados. A política de disparo real da ckm continua desligada; o contrato latente de rajada só admite `policy:disabled` e zero tiros emitidos (T47 separado).
+
+T05 reutiliza as zonas e superfícies já aceites em `audio-layout.json`; não duplica dados no layout físico só para mudar um hash. As provas novas das pontes comparam o proprietário gráfico ligado/desligado sobre a simulação atual, porque os novos dados de roteiro/transporte/elenco de T02/T07/T34/T36 alteram legitimamente os saves da base gráfica histórica. Os hashes físicos e GLBs originais continuam protegidos, e as antigas falhas das pontes ficam preservadas.
