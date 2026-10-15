@@ -104,21 +104,21 @@
       {
         "id": "T24-CAMERA-01",
         "approval": "Captain under permanent user D34; CAPTAIN_AMENDMENT_01.json",
-        "original_requirement": "vista 10 com fumo e lâmpada a 1 km",
+        "original_requirement": "vista 10 com fumo e l\u00e2mpada a 1 km",
         "replacement": "Retain canonical occluded view10 capture with honest visibility limit; prove actual lamp and smoke in a measured unobstructed >=1km production world ROI, two small target perturbations, and zero lamp through original occluder. Preserve depth, original gates and all other T24 clauses."
       },
       {
         "id": "T36-EXPOSURE-01",
-        "approval": "Captain under permanent user D34; CAPTAIN_AMENDMENT_02.json",
+        "approval": "Captain under permanent user D34; CAPTAIN_AMENDMENT_02.json clarified prospectively by CAPTAIN_AMENDMENT_03.json",
         "original_requirement": "Unchanged complete-route outcomes and additional conservative raw player-health equality.",
-        "replacement": "Exact full health/stats against the sole WEST-readiness policy replay; raw player-health loss permitted only when every extra real projectile impact is causally attributed to that hold. Preserve all other raw outcomes and actor health; retain raw reports and all24 complete routes."
+        "replacement": "Exact full health/stats/control and per-tick health/RNG against the sole WEST-readiness replay; raw player-health loss only from each causally attributed extra real impact during the existing readiness slowdown/clamp, including a shared-issued projectile avoided by RAW exit after WEST. Prove first causal divergence and actual RAW issue/impact/exit. Preserve all other raw outcomes and original actor health; retain every full report and all24 complete routes."
       }
     ],
     "authorized_policy_deltas": [
       {
         "task": "T36",
-        "policy": "Unfinished Bąk carry/putdown blocks west-demolition readiness via the existing battle-clock hold; actual delivery must precede readiness before06:45. Source audit explicitly records and isolates this delay; cadences/damage/RNG algorithms and fixed event battle-clock instants remain unchanged.",
-        "verification": "CAPTAIN_AMENDMENT_02.json prospectively supersedes only raw player-health equality: causal real-projectile attribution replaces that equality, all full replay health/stats and other raw invariants remain exact."
+        "policy": "Unfinished B\u0105k carry/putdown blocks west-demolition readiness via the existing battle-clock hold; actual delivery must precede readiness before06:45. Source audit explicitly records and isolates this delay; cadences/damage/RNG algorithms and fixed event battle-clock instants remain unchanged.",
+        "verification": "CAPTAIN_AMENDMENT_02.json plus prospective CAPTAIN_AMENDMENT_03.json: existing WEST last60-second slowdown and30-second clamp, strict causal attribution for additional-issued and shared-issued extra impacts, exact full policy health/stats/controls/tick RNG and all other RAW invariants."
       }
     ]
   },
@@ -168,7 +168,7 @@
   "integration": {
     "target_branch": "claude/m01-integration",
     "auto_integrate": true,
-    "authorization": "User explicitly: Faz todas as tarefas parcialmente concluída e integra",
+    "authorization": "User explicitly: Faz todas as tarefas parcialmente conclu\u00edda e integra",
     "main_modification_allowed": false
   },
   "escalation": {
@@ -181,9 +181,9 @@
   },
   "state": {
     "status": "RUNNING",
-    "current_node": "implementation",
-    "current_owner": "implementer",
-    "next_action": "correction2/3 after preserved independentFAIL2; causal health exposure audit, old safety/prone fixtures, full-matrix318pixel bridge control; no acceptance yet"
+    "current_node": "verification",
+    "current_owner": "verifier",
+    "next_action": "Source d7266b3 frozen; fresh complete CI plus independent verification of CAP03all24,874Node/build/tooling,44browser+6crews,originalpairedbridge/coupled and24current-owner futures. No acceptance/integration yet."
   },
   "result": {
     "final_head": "",

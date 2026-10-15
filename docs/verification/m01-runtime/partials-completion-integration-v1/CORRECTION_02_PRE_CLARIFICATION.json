@@ -1,0 +1,1404 @@
+{
+  "status": "FAIL",
+  "rule": "CAPTAIN-AMENDMENT-02 before clarification03",
+  "routes": 24,
+  "passed": 23,
+  "failed": 1,
+  "exactStatsAndSummary": "PASS",
+  "rawHealthDifferences": [
+    {
+      "seed": 1,
+      "mode": "ignore",
+      "delta": -8,
+      "attributedDamage": 8
+    },
+    {
+      "seed": 6,
+      "mode": "help",
+      "delta": -8,
+      "attributedDamage": 8
+    }
+  ],
+  "checks": [
+    {
+      "seed": 19390901,
+      "mode": "help",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/19390901-help.json",
+      "evidenceSha256": "ae5f4a30ffcc3974b03e5468df966888e13f5f7451b33a223f6cc71e2b035f32"
+    },
+    {
+      "seed": 19390901,
+      "mode": "ignore",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/19390901-ignore.json",
+      "evidenceSha256": "1b6e7db81d62848ebf18a56cafc1f471cdb01a59a731db66fd591ac7fe1c2324"
+    },
+    {
+      "seed": 1,
+      "mode": "help",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/1-help.json",
+      "evidenceSha256": "260504699d4f9e824dfc096fa14d976068bee0884ae22940851cb301b99092fa"
+    },
+    {
+      "seed": 1,
+      "mode": "ignore",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/1-ignore.json",
+      "evidenceSha256": "9536673a2d3aa4c94d4f9fbee2e8d97b0e579431948e7a6c7bdddf307cbf8be9"
+    },
+    {
+      "seed": 2,
+      "mode": "help",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/2-help.json",
+      "evidenceSha256": "8299e8b4d7cab25335215c9fc9a1c4e173f1403f0a672af74dadca8aaf8a8607"
+    },
+    {
+      "seed": 2,
+      "mode": "ignore",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/2-ignore.json",
+      "evidenceSha256": "9dc726fa3bd6fd9a63086b03d7f48ffb2f9d75ad9ff39d784a392a1b29a8e4d9"
+    },
+    {
+      "seed": 3,
+      "mode": "help",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/3-help.json",
+      "evidenceSha256": "e171a81abd5840e3fd0b8b70d38acee4d01a409afbf46fc7041841e887643247"
+    },
+    {
+      "seed": 3,
+      "mode": "ignore",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/3-ignore.json",
+      "evidenceSha256": "5509bbc49350657e2d0808c8be05e5a2604051b50615eef38b75d1c1591f74e6"
+    },
+    {
+      "seed": 4,
+      "mode": "help",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/4-help.json",
+      "evidenceSha256": "94f890e77eb25d6a2bb25d9fccf45fd9d2c269fc0650f426f605ddc175715884"
+    },
+    {
+      "seed": 4,
+      "mode": "ignore",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/4-ignore.json",
+      "evidenceSha256": "d42cd3dc5242c91a85d85008d15eff2d73b9d656926260efed483e262995d88a"
+    },
+    {
+      "seed": 5,
+      "mode": "help",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/5-help.json",
+      "evidenceSha256": "180a9fae7f86cf87cbcf9b1eb461effd7fdd88f484c5e1635faa3bb48b265900"
+    },
+    {
+      "seed": 5,
+      "mode": "ignore",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/5-ignore.json",
+      "evidenceSha256": "ab933900a3d41588cd980511b33421f695b175cc6b91718325048490694c0eb4"
+    },
+    {
+      "seed": 6,
+      "mode": "help",
+      "result": "FAIL",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "FAIL",
+          "error": "raw route had already completed before projectile was fired",
+          "actual": false,
+          "expected": true
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/6-help.json",
+      "evidenceSha256": "ab4216ce2f020b9af7f833d2cc4909acd73cec4f20b87efc2e5a83609a6f5e29"
+    },
+    {
+      "seed": 6,
+      "mode": "ignore",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/6-ignore.json",
+      "evidenceSha256": "5080aec82b48e06269e7a439b17800823d3b27165415e2b575b4c9fddbb429ab"
+    },
+    {
+      "seed": 7,
+      "mode": "help",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/7-help.json",
+      "evidenceSha256": "7b0e2da048b2598237ebea0d799da445e5ac136f89a6ec22b649bfc8263eec58"
+    },
+    {
+      "seed": 7,
+      "mode": "ignore",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/7-ignore.json",
+      "evidenceSha256": "eeec837d8ba4abb57f8727b5565ff52c1ae59903de37f7dcd6b2d4276273c822"
+    },
+    {
+      "seed": 8,
+      "mode": "help",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/8-help.json",
+      "evidenceSha256": "351a7ce5acb678f4ba4fa54385418e197b1f3846325369feb66ef5c002f9d4f4"
+    },
+    {
+      "seed": 8,
+      "mode": "ignore",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/8-ignore.json",
+      "evidenceSha256": "df1f5dfd5164e81731c99d6fd0d36691fd9089b22efdefbf658e6c309884e92d"
+    },
+    {
+      "seed": 9,
+      "mode": "help",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/9-help.json",
+      "evidenceSha256": "f3f4e413e6698a82f5a4d5fb4020144fe2b8fe515ed1c334386fa0190074ec05"
+    },
+    {
+      "seed": 9,
+      "mode": "ignore",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/9-ignore.json",
+      "evidenceSha256": "1946c5c6eb45d2361c3206417e54593563e0e2ef4389425655e7214ea8c847c8"
+    },
+    {
+      "seed": 10,
+      "mode": "help",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/10-help.json",
+      "evidenceSha256": "b0eac2f838570df8e9a026ab8e8342f920dfd2a208fb9a9f223954b3a075df16"
+    },
+    {
+      "seed": 10,
+      "mode": "ignore",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/10-ignore.json",
+      "evidenceSha256": "bf846ecdeabd82f65ff6fe63b23c1ed4f2822997e7d592f5929d8580bffce270"
+    },
+    {
+      "seed": 11,
+      "mode": "help",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/11-help.json",
+      "evidenceSha256": "a94209f5b32477b4459ceef5d5d0aca88915e2a59e04604eace9e09882a70cb1"
+    },
+    {
+      "seed": 11,
+      "mode": "ignore",
+      "result": "PASS",
+      "checks": [
+        {
+          "label": "complete 1:1 dt/control replay",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY dt/control value and tick health/RNG/clocks exact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy outcome stat and full player state/health exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all other RAW outcome stats exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all original RAW actor health/alive exact; all original policy actor health/alive exact",
+          "result": "PASS"
+        },
+        {
+          "label": "full policy clocks/RNG/issued round count exact",
+          "result": "PASS"
+        },
+        {
+          "label": "all health changes accounted for by actual player-hit + character impact",
+          "result": "PASS"
+        },
+        {
+          "label": "EVERY policy health change/projectile/source/issue/arrival/hit exact",
+          "result": "PASS"
+        },
+        {
+          "label": "every RAW health change preserved exactly",
+          "result": "PASS"
+        },
+        {
+          "label": "extra damage comes ONLY from real additional projectiles during approved WEST hold",
+          "result": "PASS"
+        },
+        {
+          "label": "EXACT current health = RAW health minus attributed extra real damage",
+          "result": "PASS"
+        },
+        {
+          "label": "all routes complete without death/restore or unfinished carry",
+          "result": "PASS"
+        }
+      ],
+      "evidenceFile": "/workspace/COD-guerra/test-results/partials-correction-02/cover-policy-final-routes/11-ignore.json",
+      "evidenceSha256": "9b65d6654cea4c55a9dc4d81dc0e109e2a3cfd63cdf869d97b9bc912a7f4f35e"
+    }
+  ],
+  "fullIndex": {
+    "path": "test-results/partials-correction-02/cover-policy-final.json",
+    "sha256": "966035bcd775574f80f1be749bc971fdc38e92316e058bf444566cdb236fcb5a"
+  },
+  "forensic": {
+    "path": "test-results/partials-correction-02/seed6-raw-impact.json",
+    "sha256": "ec5062f597d500912b0260ac44fa82759346e2959f0bd0503c7c60b437762072"
+  },
+  "acceptance": "NONE; historical FAIL retained. Future rule requires independent new verification."
+}

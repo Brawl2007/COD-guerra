@@ -4,7 +4,7 @@ This remains correction 2/3 after preserved independent verification FAIL 2. CAP
 
 ## Measured bridge cause and minimal correction
 
-The paused-frame cache did not observe completion of the procedural T05 damage atlas. The CPU atlas became ready at texture version 2 while the GPU retained uploaded version 1. An unrelated bridge toggle forced a frame and uploaded the completed atlas.
+The paused-frame cache did not observe completion of the inherited procedural damage atlas. The CPU atlas became ready at texture version 2 while the GPU retained uploaded version 1. An unrelated bridge toggle forced a frame and uploaded the completed atlas.
 
 The controlled production diagnostic holds the real `paintAtlas` work after its first chunk, freezes the genuine 06:10 route save, then releases atlas work without advancing gameplay. With the old cache, rendered frames remain 6 → 6 and GPU versions remain 1/1 although CPU versions become 2/2. Forcing a redraw changes exactly **318 pixels**, maximum channel difference 58, sum 7349. The stale PNG SHA256 `769f783b8c7cf5ca4ab773a5e501aed3cd791f8dac72f0977fabaafbeb203407` exactly matches historical CI5b ON; the ready PNG SHA256 `b68c335b2b328ed0d19dd23ce3a35aa0cb274856d716e6108c25406604c6e32c` exactly matches CI5b OFF. Full snapshot/checkpoint/events and camera remain exact throughout. Historical images are retained in artifact `11998069595` and the local fetched paired evidence.
 
@@ -46,3 +46,5 @@ Full evidence is retained under `test-results/partials-correction-02/`; this tab
 | `test-results/partials-correction-02/atlas-cache/temporary-instrumentation.patch` | `b304ce7f571cb4414b8d0af9725b33e0fe09b6515d53fbaa760376e9955a15bb` |
 | `test-results/partials-correction-02/atlas-paused-cache.mjs` | `56f8e78dd57a0b2ea475f67f638598332038d09a17ab06f4996bce3a012f5fd0` |
 | `test-results/partials-correction-02/warm-final/proof.json` | `d81faecc09a3fa475cbda437c454b3b8ceb3c6a56ac77fe551a53e67c16140b7` |
+
+Durable verbatim diagnostics and bounded production proof: `correction02-evidence/MANIFEST.json`. Focused route indices reference their original local full rows; the fresh all24 CI artifact must supply complete final causal rows.
