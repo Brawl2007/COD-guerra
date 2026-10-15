@@ -181,9 +181,9 @@
   },
   "state": {
     "status": "RUNNING",
-    "current_node": "implementation",
-    "current_owner": "implementer",
-    "next_action": "Final correction3/3 for preserved independentFAIL3: workflow schema guard must check report-level exactStatsAndSummary and every row.result/checks, preserve all24 counts and unknown/fail rejection. No production, task-criteria or audit changes. Re-pin and fresh full certification before verification/review."
+    "current_node": "verification",
+    "current_owner": "verifier",
+    "next_action": "Final formalcorrection3/3 frozen atddd84ab; production/tests/tools/assets identical016b. Guard requires top-level summaryPASS+everyroute/checkPASS and all12/24counts. Fresh full CI and independentattempt4 required; no remaining verification-fixbudget, review0/2; noacceptance yet."
   },
   "result": {
     "final_head": "",
