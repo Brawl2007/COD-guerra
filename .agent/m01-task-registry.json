@@ -1,0 +1,374 @@
+{
+  "schema_version": 1,
+  "project": "Brawl2007/COD-guerra",
+  "mission": "M01-TCZEW",
+  "source_of_truth": "GitHub Git HEAD/PR checks; this is an index, never completion proof",
+  "candidate": "PR:#76",
+  "rules": [
+    "Never confuse delivered branch with integrated and validated",
+    "Check live GitHub PRs/branches and unique claim before beginning a task",
+    "Resume current candidate PR #76; do not create a competing V7 integration",
+    "Do not merge to main or deploy without CI/review/authorization"
+  ],
+  "tasks": {
+    "T00": {
+      "name": "PLANS CONSOLIDATION",
+      "status": "NEEDS_AUDIT",
+      "refs": []
+    },
+    "T01": {
+      "name": "CHROMEBOOK FPS BASELINE",
+      "status": "HUMAN_REQUIRED",
+      "refs": [
+        "docs/M01_FINAL_ROADMAP.md"
+      ]
+    },
+    "T02": {
+      "name": "SCRIPT DATA CONTINUITY",
+      "status": "DELIVERED_PR",
+      "refs": [
+        "PR:#63"
+      ]
+    },
+    "T03": {
+      "name": "BLAST DATA GROUNDING",
+      "status": "DELIVERED_PR",
+      "refs": [
+        "PR:#63"
+      ]
+    },
+    "T04": {
+      "name": "HUD CINEMATIC",
+      "status": "NEEDS_AUDIT",
+      "refs": [
+        "PR:#59",
+        "PR:#76"
+      ]
+    },
+    "T05": {
+      "name": "AUDIO DATA FIELDS",
+      "status": "NEEDS_AUDIT",
+      "refs": [
+        "PR:#59",
+        "PR:#76"
+      ]
+    },
+    "T06": {
+      "name": "AUDIO CORE",
+      "status": "NEEDS_AUDIT",
+      "refs": [
+        "PR:#59",
+        "PR:#76"
+      ]
+    },
+    "T07": {
+      "name": "ANIM CONTRACT SIM",
+      "status": "NEEDS_AUDIT",
+      "refs": [
+        "PR:#59",
+        "PR:#76"
+      ]
+    },
+    "T08": {
+      "name": "ANIM CLIP LIBRARY",
+      "status": "NEEDS_AUDIT",
+      "refs": [
+        "PR:#59",
+        "PR:#76"
+      ]
+    },
+    "T09": {
+      "name": "TEXTURE AUTHORING PIPELINE",
+      "status": "NEEDS_AUDIT",
+      "refs": [
+        "PR:#59",
+        "PR:#76"
+      ]
+    },
+    "T10": {
+      "name": "VEGETATION KIT",
+      "status": "NEEDS_AUDIT",
+      "refs": [
+        "PR:#59",
+        "PR:#76"
+      ]
+    },
+    "T11": {
+      "name": "MERGED IN T24",
+      "status": "SUBSUMED",
+      "refs": [
+        "roadmap:T24"
+      ]
+    },
+    "T12": {
+      "name": "PROP KIT",
+      "status": "NEEDS_AUDIT",
+      "refs": [
+        "PR:#59",
+        "PR:#76"
+      ]
+    },
+    "T13": {
+      "name": "FIELD STRUCTURES KIT",
+      "status": "NEEDS_AUDIT",
+      "refs": [
+        "PR:#59",
+        "PR:#76"
+      ]
+    },
+    "T14": {
+      "name": "BRIDGE MATERIAL KIT",
+      "status": "NEEDS_AUDIT",
+      "refs": [
+        "PR:#59",
+        "PR:#76"
+      ]
+    },
+    "T15": {
+      "name": "FX V3 INTEGRATION GATE",
+      "status": "NEEDS_AUDIT",
+      "refs": [
+        "PR:#59",
+        "PR:#76"
+      ]
+    },
+    "T16": {
+      "name": "LIGHTING DAWN",
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:claude/m01-lighting-dawn-v1"
+      ]
+    },
+    "T17": {
+      "name": "STUKA DIVE SEQUENCE",
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:claude/m01-stuka-dive-sequence-v1"
+      ]
+    },
+    "T18": {
+      "name": "DEMOLITION SETPIECE",
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:claude/m01-demolition-setpiece-v2"
+      ]
+    },
+    "T19": {
+      "name": "PLAYER SHOT FEEDBACK",
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:claude/m01-player-shot-feedback-v1"
+      ]
+    },
+    "T20": {
+      "name": "DISTANT FRONT IMPOSTORS",
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:claude/m01-distant-front-impostors-v1"
+      ]
+    },
+    "T21": {
+      "name": "AMBIENT DIRECTOR",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#65",
+        "PR:#76"
+      ]
+    },
+    "T22": {
+      "name": "BATTLE READOUT",
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:claude/m01-display-fire-readout-v1"
+      ]
+    },
+    "T23": {
+      "name": "EAST FRONT VISIBLE",
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:claude/m01-east-front-visible-v1",
+        "CI:38091391874"
+      ]
+    },
+    "T24": {
+      "name": "TRAIN ARRIVAL AND LIFE",
+      "status": "UNKNOWN",
+      "refs": []
+    },
+    "T25": {
+      "name": "RAID 05:30",
+      "status": "DELIVERED_PR",
+      "refs": [
+        "PR:#63"
+      ]
+    },
+    "T26": {
+      "name": "SCENE BEATS PRESENTATION",
+      "status": "UNKNOWN",
+      "refs": []
+    },
+    "T27": {
+      "name": "TERRAIN RELIEF",
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:codex/m01-t27-t30-relief-horizon-v1"
+      ]
+    },
+    "T28": {
+      "name": "TERRAIN MATERIAL MACRO",
+      "status": "NEEDS_AUDIT",
+      "refs": []
+    },
+    "T29": {
+      "name": "VEGETATION RUNTIME",
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:codex/m01-t10-t29-vegetation-v2"
+      ]
+    },
+    "T30": {
+      "name": "FAR LANDSCAPE",
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:codex/m01-t27-t30-relief-horizon-v1"
+      ]
+    },
+    "T31": {
+      "name": "TRACK BED",
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:codex/m01-t31-t33-rail-props-v1"
+      ]
+    },
+    "T32": {
+      "name": "FIELD STRUCTURES RUNTIME",
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:codex/m01-t13-t32-field-structures-v1"
+      ]
+    },
+    "T33": {
+      "name": "PROPS RUNTIME",
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:codex/m01-t31-t33-rail-props-v1"
+      ]
+    },
+    "T34": {
+      "name": "STATION YARD LIFE",
+      "status": "UNKNOWN",
+      "refs": []
+    },
+    "T35": {
+      "name": "ANIM LOCOMOTION RESOLVER",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#62",
+        "PR:#64",
+        "PR:#76"
+      ]
+    },
+    "T36": {
+      "name": "ANIM CREWS EVACUATION",
+      "status": "UNKNOWN",
+      "refs": []
+    },
+    "T37": {
+      "name": "ANIM FIDELITY IK",
+      "status": "UNKNOWN",
+      "refs": []
+    },
+    "T38": {
+      "name": "COMBAT POSTURE STAGING",
+      "status": "UNKNOWN",
+      "refs": []
+    },
+    "T39": {
+      "name": "VIEWMODEL FEEL",
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:claude/m01-viewmodel-feel-v2"
+      ]
+    },
+    "T40": {
+      "name": "FP ARMS AND CARRY",
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:codex/m01-viewmodel-visual-v2"
+      ]
+    },
+    "T41": {
+      "name": "BRIDGE FINISH",
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:codex/m01-t14-t41-bridge-finish-v2"
+      ]
+    },
+    "T42": {
+      "name": "WATER VISTULA",
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:claude/m01-water-vistula-v1"
+      ]
+    },
+    "T43": {
+      "name": "LOD POLICY AND FADES",
+      "status": "UNKNOWN",
+      "refs": []
+    },
+    "T44": {
+      "name": "POSTPROCESS GRADING",
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:claude/m01-postprocess-grading-v1"
+      ]
+    },
+    "T45": {
+      "name": "AUDIO ASSETS",
+      "status": "UNKNOWN",
+      "refs": []
+    },
+    "T46": {
+      "name": "AUDIO MIX OPTIONS",
+      "status": "UNKNOWN",
+      "refs": []
+    },
+    "T47": {
+      "name": "CKM CASEMATE CREW",
+      "status": "UNKNOWN",
+      "refs": []
+    },
+    "T48": {
+      "name": "GERMAN RETREAT",
+      "status": "UNKNOWN",
+      "refs": []
+    },
+    "T49": {
+      "name": "PERFORMANCE BUDGET",
+      "status": "UNKNOWN",
+      "refs": []
+    },
+    "T50": {
+      "name": "LOADING AND BUNDLE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#66",
+        "PR:#76"
+      ]
+    },
+    "T51": {
+      "name": "INTEGRATED VISUAL CLOSEOUT",
+      "status": "HUMAN_REVIEW_REQUIRED",
+      "refs": [
+        "roadmap:T51"
+      ]
+    },
+    "T52": {
+      "name": "HUMAN PLAYTEST",
+      "status": "HUMAN_REQUIRED",
+      "refs": [
+        "docs/M01_FINAL_ROADMAP.md"
+      ]
+    }
+  }
+}
