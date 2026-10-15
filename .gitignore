@@ -3,3 +3,11 @@ dist/
 test-results/
 playwright-report/
 .artifacts/
+
+# Estado temporario dos agentes; so a documentacao e versionada
+.agent/runs/*
+!.agent/runs/README.md
+
+# Cache do Python (testes e ferramentas do sistema agentic)
+__pycache__/
+*.pyc
