@@ -21,6 +21,10 @@ jobs:
     steps:
       - name: Baixar o projeto
         uses: actions/checkout@v4
+        with:
+          # Byte-guard tests compare against fixed historical commits (git show/ls-tree/diff).
+          fetch-depth: 0
+          persist-credentials: false
       - name: Configurar Node
         uses: actions/setup-node@v4
         with:
