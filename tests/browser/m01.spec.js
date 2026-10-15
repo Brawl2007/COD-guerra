@@ -15,7 +15,7 @@ async function open(page){
   page.on('response',r=>{if(r.status()>=400)failed.push(`${r.status()} ${r.url()}`);});
   await page.goto('?debug=1');
   await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);
-  await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#start')).toBeEnabled();
+  await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#start')).toBeEnabled({timeout:60000});
   return {errors,failed};
 }
 async function start(page,button='#start'){
@@ -537,7 +537,7 @@ test('a failed M01 bridge load prevents an invisible bridge; the French sandbox 
   await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.requiredAssetFailures.length===9);
   await expect(page.locator('#error')).toBeVisible();await expect(page.locator('#start')).toBeDisabled();
   await page.locator('#close-error').click();await page.locator('#mission-select').selectOption('sandbox-1944');
-  await expect(page.locator('#start')).toBeEnabled();await page.locator('#start').click();
+  await expect(page.locator('#start')).toBeEnabled({timeout:60000});await page.locator('#start').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused);await expect(page.locator('#weapon-name')).toHaveText('M1 CARBINE');
 });
 

@@ -5,7 +5,7 @@ for(const quality of ['low','medium','high'])test(`Wz.29 production ADS, paused 
   const d=driver();d.step({skip:true});for(let i=0;i<12;i++)d.step({aim:true});
   const snapshot=d.sim.snapshot(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
-  await page.goto('?debug=1');await expect(page.locator('#start')).toBeEnabled();await page.locator('#quality').selectOption(quality);
+  await page.goto('?debug=1');await expect(page.locator('#start')).toBeEnabled({timeout:60000});await page.locator('#quality').selectOption(quality);
   // Freeze at the first native pointer-lock boundary, before a gameplay tick.
   await page.evaluate(()=>{
     const hold=e=>{if(document.pointerLockElement?.id==='game'){

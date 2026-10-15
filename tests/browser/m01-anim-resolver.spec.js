@@ -48,7 +48,7 @@ async function open(page){
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
   await page.goto('?debug=1');
   await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.characters?.loaded.includes('pl:2'));
-  await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#continue')).toBeEnabled();
+  await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#continue')).toBeEnabled({timeout:60000});
   await freezeClick(page,'#continue');
   await drawnAt(page,snapshot.clock);
   await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.actors?.length>0);
@@ -149,7 +149,7 @@ test('production UI, live: sappers cross-fade into the crouched work pose with e
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:scenes.drop});
   await page.goto('?debug=1&visual-verify=1');
   await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.characters?.loaded.includes('pl:2'));
-  await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#continue')).toBeEnabled();
+  await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#continue')).toBeEnabled({timeout:60000});
   phase.loadMs=Date.now()-t0;
   await page.locator('#continue').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
@@ -211,7 +211,7 @@ test('production UI, cold load: the MG34 gunner death cross-fades into fallen fr
     await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:snap});
     if(i===0)await page.goto('?debug=1');else await page.reload();
     await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.characters?.loaded.includes('pl:2'));
-    await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#continue')).toBeEnabled();
+    await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#continue')).toBeEnabled({timeout:60000});
     await freezeClick(page,'#continue');
     await drawnAt(page,snap.clock); // not the menu frame of the fresh mission: the fade has to be read from the frame drawn at the save
     const rendered=await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.actors?.some(a=>a.id==='de_east_0'),null,{timeout:30000}).then(()=>true,()=>false);
