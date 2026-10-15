@@ -1,7 +1,7 @@
 name: T21 — prova real Chromium (sem IA)
 on:
   push:
-    branches: ['argon/m01-living-battlefield-t21']
+    branches: ['argon/m01-living-battlefield-t21', 'fix/t21-closed-loop-camera-proof-20261015']
   workflow_dispatch:
 
 permissions:
@@ -35,14 +35,18 @@ jobs:
       - name: Preparar capturador original sem alterar a simulação
         run: |
           cp tools/capture-t21-proof.mjs tools/.t21-proof-runner.mjs
+          cp tools/t21-camera-level.mjs /tmp/t21-camera-level.mjs
           mkdir -p /tmp/t21-real-evidence
           echo "T21_HEAD=$GITHUB_SHA" >> "$GITHUB_ENV"
       - name: ANTES — gameplay real V7
         run: |
           git checkout 4c6f7bebee27b68af3bea8ad086da1dffbca0084
+          # Copy ONLY the proof helper, never game code, into the V7 reference checkout.
+          cp /tmp/t21-camera-level.mjs tools/t21-camera-level.mjs
           T21_CAPTURE_MODE=antes T21_OUT_DIR=/tmp/t21-real-evidence node tools/.t21-proof-runner.mjs
       - name: DEPOIS — gameplay real T21
         run: |
+          rm -f tools/t21-camera-level.mjs
           git checkout "$T21_HEAD"
           T21_CAPTURE_MODE=depois T21_OUT_DIR=/tmp/t21-real-evidence node tools/.t21-proof-runner.mjs
       - name: Garantir os 6 PNG e MP4 reais
