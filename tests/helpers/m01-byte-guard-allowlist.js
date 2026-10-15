@@ -14,6 +14,10 @@ export const integratedPresentation=new Set([
  // Argon Animation Resolver V1/V2 (PRs #62/#64): presentation-only pose (motion-driven gait, torso twist, hit/duck,
  // support-arm hints); renderer-only module, covered by tests/m01-animation-resolver*.test.js.
  'src/render/m01-actor-pose.js',
+ // Touch controls (PR #74): Input gains a separate virtual channel (touchForward/Side/Sprint, setMove/addLook/setFire/tap);
+ // with no touch input forwardAxis/sideAxis/sprinting equal the previous keyboard expressions. Covered by tests/touch.test.js
+ // and tests/browser/touch.spec.js; desktop pointer-lock input stays covered by tests/browser/game.spec.js.
+ 'src/core/input.js',
  'src/core/audio.js','src/game/game.js','src/main.js','src/styles.css',
  // T02-min + T03-lite/T25: aircraft target prediction mirrors grounded authoritative impacts; per-tick deltas audited in tools/verification/m01-continuity-raid-audit.mjs.
  'src/render/m01-aircraft.js',
