@@ -1,0 +1,76 @@
+name: M01 Audio Director Music V1
+
+on:
+  push:
+    branches: [claude/m01-audio-director-music-v1]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-audio-director-music-v1-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: "Authority check (T06b reads the simulation only; base is the T06a tip 9596059)"
+        run: |
+          set -o pipefail
+          mkdir -p evidence
+          git merge-base --is-ancestor 9596059 HEAD
+          echo "9596059 is an ancestor of HEAD" | tee evidence/authority.log
+          git diff --exit-code 9596059 HEAD -- src/game/m01-simulation.js src/render missions assets index.html src/main.js tests/fixtures package.json package-lock.json playwright.config.js 2>&1 | tee -a evidence/authority.log
+          echo "simulation, render, missions, assets, entry points, golden fixtures and build config untouched since 9596059" | tee -a evidence/authority.log
+          test ! -f tests/fixtures/.golden-stale
+          git diff --name-only 9596059 HEAD | tee evidence/changed-files.txt
+          git diff 9596059 HEAD -- src/game/game.js > evidence/game-wiring.diff
+          # game.js may change only by hook lines that name the director (construct / reset / update / handleEvent / dispose).
+          bad="$(git diff -U0 9596059 HEAD -- src/game/game.js | grep -E '^[+-]([^+-]|$)' | grep -v 'udioDirector' || true)"
+          if [ -n "$bad" ]; then echo "game.js lines that are not audio-director wiring:"; echo "$bad"; exit 1; fi
+          echo "game.js diff is audio-director wiring only" | tee -a evidence/authority.log
+      - name: "Scope check (only the files T06b may change)"
+        run: |
+          set -o pipefail
+          bad="$(grep -vE '^(src/game/audio-director-m01\.js|src/game/game\.js|src/core/audio\.js|src/core/audio/[a-z-]+\.js|tests/m01-audio-director\.test\.js|tests/audio-core\.test\.js|tests/browser/m01-audio-[a-z-]+\.spec\.js|\.github/workflows/m01-audio-director-music-v1\.yml)$' evidence/changed-files.txt || true)"
+          if [ -n "$bad" ]; then echo "files outside the T06b scope:"; echo "$bad"; exit 1; fi
+          echo "all changed files are inside the T06b scope" | tee evidence/scope.log
+      - name: "Audio tests (bounded: a runaway allocation must fail fast, not eat the runner)"
+        run: |
+          set -o pipefail
+          for f in tests/audio-core.test.js tests/m01-battlefield-audio.test.js tests/m01-audio-production.test.js tests/m01-audio-director.test.js; do
+            NODE_OPTIONS=--max-old-space-size=1024 timeout 900 node --test "$f" 2>&1 | tee -a evidence/audio-tests.log
+          done
+      - name: Byte guards
+        run: set -o pipefail; node --test tests/m01-locomotive.test.js tests/m01-panzerzug.test.js tests/m01-soldier-visual-variation.test.js 2>&1 | tee evidence/byte-guards.log
+      - name: npm test
+        run: set -o pipefail; npm test 2>&1 | tee evidence/npm-test.log
+      - name: "Golden proof lines (both committed x86 routes)"
+        run: |
+          set -o pipefail
+          grep -E '^\s*(ok [0-9]+ - |✔ )all gameplay bytes hashed each tick against approved base' evidence/npm-test.log | tee evidence/proof-lines.txt
+          test "$(grep -cE '^\s*(not ok [0-9]+ - |✖ )all gameplay bytes hashed each tick against approved base' evidence/npm-test.log)" = 0
+          test "$(grep -cE '^\s*(ok [0-9]+ - |✔ )all gameplay bytes hashed each tick against approved base' evidence/npm-test.log)" -ge 2
+      - name: npm run build
+        id: build
+        if: ${{ !cancelled() }}
+        run: set -o pipefail; npm run build 2>&1 | tee evidence/build.log
+      - name: Install Playwright Chromium
+        if: always() && steps.build.outcome == 'success'
+        run: npx playwright install --with-deps chromium
+      - name: "Audio browser specs (offline render, production, battlefield runtime)"
+        if: always() && steps.build.outcome == 'success'
+        run: set -o pipefail; npx playwright test tests/browser/m01-audio-offline-render.spec.js tests/browser/m01-audio-production.spec.js tests/browser/m01-battlefield-audio-runtime.spec.js --workers=1 --retries=0 2>&1 | tee evidence/browser.log
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-audio-director-music-v1-${{ github.sha }}
+          path: evidence/
+          if-no-files-found: ignore

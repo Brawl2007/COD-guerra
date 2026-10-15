@@ -50,8 +50,10 @@ async function serveSources(page){
     const url=new URL(route.request().url());
     if(url.pathname==='/')return route.fulfill({contentType:'text/html',body:'<!doctype html><title>audio</title>'});
     const file=path.join(root,url.pathname);
-    if(!file.startsWith(path.join(root,'src')+path.sep))return route.fulfill({status:404,body:''});
-    return route.fulfill({contentType:'text/javascript',body:readFileSync(file)});
+    const inSrc=file.startsWith(path.join(root,'src')+path.sep);
+    const isMissionJson=file.startsWith(path.join(root,'missions')+path.sep)&&file.endsWith('.json');
+    if(!inSrc&&!isMissionJson)return route.fulfill({status:404,body:''});
+    return route.fulfill({contentType:isMissionJson?'application/json':'text/javascript',body:readFileSync(file)});
   });
   await page.goto('http://audio.test/');
 }

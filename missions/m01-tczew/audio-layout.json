@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "missionId": "m01_tczew",
+  "status": "PLANEJADA",
+  "classification": "RECONSTRUCTED",
+  "presentationOnly": true,
+  "notes": "Dados só de apresentação sonora (AUDIO-DESIGN §3, T05a). Nenhum código de simulação, colisão ou mapa lê este ficheiro; map-layout.json fica intacto. Mesmo sistema de coordenadas de map-layout.json (metros, x leste, z sul, y altura). Caixas e prioridades reconstruídas a partir das geometrias de map-layout.json.",
+  "zones": [
+    { "id": "open", "default": true, "priority": 0, "reverb": "A", "occlusion": { "outsideLowpassHz": [600, 900], "outsideGainDb": -12 }, "notes": "Margem do rio e aterros: cauda longa (IR A, máx. 3,2 s)." },
+    { "id": "bridge", "priority": 1, "reverb": "B", "box": { "minX": 0, "maxX": 1049.2, "minZ": -8, "maxZ": 48 }, "occlusion": null, "wind": "creak", "notes": "Treliça e portais: semiaberto, reverberação metálica curta (IR B, máx. 0,9 s), sem oclusão. Eixos das pontes em z = 0 e z = 40 (map-layout rail_bridge, road_bridge)." },
+    { "id": "station", "priority": 2, "reverb": "B", "box": { "minX": -470, "maxX": -330, "minZ": 20, "maxZ": 55 }, "occlusion": { "interiorLowpassHz": 1800, "insideOnly": true }, "notes": "Pátio e edifício da estação (map-layout tczew_station): IR B e passa-baixo interior quando dentro." }
+  ],
+  "defaultSurface": "earth",
+  "surfaces": [
+    { "id": "bridge_deck", "material": "metal", "priority": 3, "box": { "minX": 0, "maxX": 1049.2, "minZ": -6, "maxZ": 46, "minY": -2 }, "notes": "Tabuleiro e treliça (rail_bridge, road_bridge)." },
+    { "id": "vistula_channel", "material": "water", "priority": 2, "box": { "minX": 25, "maxX": 265, "minZ": -3000, "maxZ": 3000, "maxY": -5 }, "notes": "Canal do Vístula, nível da água em y = -10 (map-layout vistula_channel)." },
+    { "id": "casemates_west", "material": "stone", "priority": 3, "box": { "minX": 0, "maxX": 26, "minZ": 34, "maxZ": 46, "minY": -7, "maxY": -1 }, "notes": "Casamatas do encontro oeste (map-layout casemates_west)." },
+    { "id": "tczew_station", "material": "brick", "priority": 2, "box": { "minX": -470, "maxX": -330, "minZ": 20, "maxZ": 55 }, "notes": "Edifício da estação (map-layout tczew_station)." },
+    { "id": "rail_hut", "material": "wood", "priority": 2, "box": { "minX": -270, "maxX": -250, "minZ": 14, "maxZ": 26 }, "notes": "Barracão ferroviário (map-layout rail_hut)." }
+  ]
+}
