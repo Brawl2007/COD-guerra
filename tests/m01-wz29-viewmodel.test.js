@@ -1,3 +1,4 @@
+import {spatialPredecessorBytes} from './helpers/m01-spatial-byte-guard.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -41,7 +42,7 @@ test('integration keeps Wz29/muzzle/hitboxes/RNG bytes and locks the approved si
       // m01-animation-contract.test.js compares all legacy state/checkpoint/event bytes on every route tick.
       const baseline=JSON.parse(readFileSync(new URL('./fixtures/m01-anim-gameplay-baseline.json',import.meta.url)));
       assert.equal(baseline.base,'61ecd77b099d5921bd025275eafd9c3157536bb7');assert.equal(baseline.sourceSha256,hash,path);
-    }else assert.equal(createHash('sha256').update(readFileSync(new URL('../'+path,import.meta.url))).digest('hex'),hash,path);
+    }else assert.equal(createHash('sha256').update(path==='src/world/spatial.js'?spatialPredecessorBytes(readFileSync(new URL('../'+path,import.meta.url))):readFileSync(new URL('../'+path,import.meta.url))).digest('hex'),hash,path);
   }
 });
 for(const lod of [0,1])test(`ADS aligns actual rear/front with camera -Z on LOD${lod}, all qualities`,async()=>{

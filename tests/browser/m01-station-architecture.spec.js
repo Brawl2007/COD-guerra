@@ -2,39 +2,51 @@ import {test,expect} from '@playwright/test';
 import {driver} from '../helpers/m01-route.js';
 const key='cod-guerra:checkpoint:m01:v2';
 function fixture(){const d=driver();d.step({skip:true});const s=d.sim.snapshot(false);Object.assign(s.player,{x:-325,y:-3,z:17,angle:Math.PI,pitch:.03});return s;}
-async function startFrozen(page){
+async function startFrozen(page,selector='#continue'){
   await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});
   await page.evaluate(()=>{const hold=e=>{if(document.pointerLockElement?.id==='game'){document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();document.exitPointerLock();}};document.addEventListener('pointerlockchange',hold,true);});
-  await page.locator('#continue').click();
+  await page.locator(selector).click();
   await page.waitForFunction(()=>window.gameDiagnostics().paused&&window.gameDiagnostics().m01.renderedFrames>0,null,{timeout:120000});
   // A previous paused/menu frame may still describe the distant default camera.
   // Wait for the restored player and its actual architectural LOD to be rendered.
-  await page.waitForFunction(()=>{const d=window.gameDiagnostics();return d.player.x===-325&&d.m01.stationArchitecture.lod===({low:2,medium:1,high:0})[d.quality];},null,{timeout:120000});
+  await page.waitForFunction(()=>{const d=window.gameDiagnostics();return d.player.x===-325&&d.m01.stationArchitecture.lod===({low:2,medium:1,high:0})[d.quality]&&d.m01.environmentProps.runtime.ready&&d.m01.environmentProps.runtime.quality===d.quality;},null,{timeout:120000});
 }
 test('Station quality, checkpoint restart and page reload retain one architectural root and all prop clusters',async({page},info)=>{
   test.setTimeout(180000);const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error'&&/shader|WebGLProgram/.test(m.text()))errors.push(m.text());});
   const snapshot=fixture();await page.addInitScript(({key,snapshot})=>{localStorage.setItem(key,JSON.stringify(snapshot));localStorage.setItem('cod-guerra:visual-quality','high');},{key,snapshot});
   await page.goto('?debug=1&visual-verify=1');await startFrozen(page);
-  const samples=[];
+  const authority=await page.evaluate(()=>window.gameVerificationState()),samples=[],propSamples=[];
   for(const [quality,lod]of [['low',2],['medium',1],['high',0]]){
     await page.locator('#back-menu').click();
     await page.locator('#quality').selectOption(quality);
     await startFrozen(page);
     await page.waitForFunction(q=>window.gameDiagnostics().m01.stationArchitecture.quality===q,quality);
-    const diag=await page.evaluate(()=>window.gameDiagnostics());samples.push(diag.m01.stationArchitecture);
+    const diag=await page.evaluate(()=>window.gameDiagnostics());samples.push(diag.m01.stationArchitecture);propSamples.push(diag.m01.environmentProps);
+    expect(await page.evaluate(()=>window.gameVerificationState())).toEqual(authority);
+    expect(diag.m01.environmentProps.runtime.ready).toBe(true);expect(diag.m01.environmentProps.runtime.loadedFiles).toBe(42);
+    if(propSamples.length>1)expect(diag.m01.environmentProps.runtime.revision).toBeGreaterThan(propSamples.at(-2).runtime.revision);
     expect(diag.m01.stationArchitecture.fidelity).toBe('v3');expect(diag.m01.stationArchitecture.textureBytes).toBe(1441792);expect(diag.m01.stationArchitecture.geometryBytes).toBeLessThan(11000000);
     expect(diag.m01.stationArchitecture.lod).toBe(lod);expect(diag.m01.stationArchitecture.openings).toBe(140);expect(diag.m01.stationArchitecture.drawCalls).toBe(7);
     expect(diag.m01.environmentProps.clusters).toBe(30);expect(diag.m01.stationArchitecture.collidersAdded).toBe(0);
   }
   const before=await page.evaluate(()=>window.gameDiagnostics());
-  await page.locator('#restart-checkpoint').click();
-  await page.waitForFunction(()=>window.gameDiagnostics().m01.stationArchitecture.ready);
+  await startFrozen(page,'#restart-checkpoint');
+  expect(await page.evaluate(()=>window.gameVerificationState())).toEqual(authority);
   const restart=await page.evaluate(()=>window.gameDiagnostics());
   expect(restart.m01.stationArchitecture.geometries).toBe(before.m01.stationArchitecture.geometries);
   expect(restart.m01.environmentProps.totalAll).toBe(before.m01.environmentProps.totalAll);
+  expect(restart.m01.environmentProps.runtime.revision).toBeGreaterThan(before.m01.environmentProps.runtime.revision);
   await page.reload();await startFrozen(page);const reloaded=await page.evaluate(()=>window.gameDiagnostics());
-  expect(reloaded.m01.stationArchitecture).toEqual(before.m01.stationArchitecture);expect(reloaded.m01.environmentProps).toEqual(before.m01.environmentProps);expect(errors).toEqual([]);
-  await info.attach('station-quality-lifecycle.json',{body:JSON.stringify({samples,before:before.m01.stationArchitecture,restart:restart.m01.stationArchitecture,reloaded:reloaded.m01.stationArchitecture}),contentType:'application/json'});
+  expect(await page.evaluate(()=>window.gameVerificationState())).toEqual(authority);
+  expect(reloaded.m01.stationArchitecture).toEqual(before.m01.stationArchitecture);
+  // Revision counts residency/quality rebuilds within one owner; a new page starts a new owner.
+  // Compare every resident resource/batch field, and assert each owner's counter separately.
+  const resident=props=>{const {revision,...runtime}=props.runtime;return {...props,runtime};};
+  expect(resident(restart.m01.environmentProps)).toEqual(resident(before.m01.environmentProps));
+  expect(resident(reloaded.m01.environmentProps)).toEqual(resident(before.m01.environmentProps));
+  expect(reloaded.m01.environmentProps.runtime.revision).toBeGreaterThan(0);
+  expect(reloaded.m01.environmentProps.runtime.revision).toBeLessThan(before.m01.environmentProps.runtime.revision);expect(errors).toEqual([]);
+  await info.attach('station-quality-lifecycle.json',{body:JSON.stringify({samples,propSamples,before,restart,reloaded,authority}),contentType:'application/json'});
 });
 test('missing optional soldier, aircraft and train GLBs preserve Station architecture and solid gameplay envelopes',async({page},info)=>{
   test.setTimeout(120000);const errors=[];page.on('pageerror',e=>errors.push(e.message));

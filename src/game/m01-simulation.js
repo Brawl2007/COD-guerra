@@ -213,6 +213,14 @@ export class M01Simulation {
         cue.kind==='withdrawal'?`${cue.text} ${this.flags['m01.east_platoon_survivors']} homens no pelotão.`:cue.text;
       this.emit({type:'message',message:text,continuity:{kind:cue.kind,slot,battleClock:this.battleClock}});
     }
+    // Finite delivery milestones remain legible in real time while the existing west gate holds battleClock.
+    const bak=this.actor('jozef_bak');
+    if(this.gate?.id===E('west_demolition')&&(bak.carry||bak.carriedBy)){
+      const remaining=dist(bak,EVACUATION),metres=[360,300,240,180,120,60,30,10].findLast(limit=>remaining<=limit),token=`continuity:bak_delivery_hold:${metres}`;
+      if(metres!==undefined&&!this.dialogueConsumed.includes(token)){
+        this.dialogueConsumed.push(token);this.emit({type:'message',message:`Dudek leva Bąk para a estação. Corredor livre; faltam cerca de ${Math.ceil(remaining)} metros.`,continuity:{kind:'bak_delivery_hold',slot:metres,battleClock:this.battleClock}});
+      }
+    }
     if(this.consumedEvent(E('panzerzug_arrives'))&&this.inView({x:1119,y:0,z:2.5}))this.line('dlg_m01_038');
     if(this.active('hold_corridor')&&this.clock-this.consumed[E('east_demolition')]>=10){this.line('dlg_m01_048');
       if(!this.dialogueQueue.some(l=>l.id==='dlg_m01_048')&&this.subtitle?.id!=='dlg_m01_048')this.line('dlg_m01_049');}
@@ -233,7 +241,7 @@ export class M01Simulation {
   readiness(id){
     if(id===E('repair_complete'))return this.objectives[O('cover_repair')].progress>=100;
     if(id===E('east_demolition'))return this.done('hold_access')&&this.actors.filter(a=>a.alive&&a.active&&a.group==='grp_east_platoon').every(a=>a.x<660)&&this.player.x<660;
-    if(id===E('west_demolition'))return this.consumedEvent(E('east_demolition'))&&this.player.x<-90&&this.actors.filter(a=>a.alive&&a.active&&a.team==='ally'&&!a.civilian).every(a=>a.x<-90);
+    if(id===E('west_demolition')){const bak=this.actor('jozef_bak');return this.consumedEvent(E('east_demolition'))&&this.player.x<-90&&this.actors.filter(a=>a.alive&&a.active&&a.team==='ally'&&!a.civilian).every(a=>a.x<-90)&&!bak.carry&&!bak.carriedBy;}
     if(id===E('dudek_retrieves_bak'))return this.player.carrying!=='jozef_bak';
     if(id===E('roll_call'))return this.scene?.id!=='cs_m01_west_blast';
     return true;

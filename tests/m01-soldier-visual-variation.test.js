@@ -1,3 +1,4 @@
+import {createHash} from 'node:crypto';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
@@ -91,6 +92,12 @@ test('integration preserves gameplay, hitbox/muzzle, save, locomotion and non-pr
  }
  const file=readFileSync(new URL('../src/render/m01-characters.js',import.meta.url),'utf8'),old=execFileSync('git',['show',base+':src/render/m01-characters.js'],{encoding:'utf8'});
  const section=(s,begin,end)=>s.slice(s.indexOf(begin),s.indexOf(end,s.indexOf(begin)));
- assert.equal(section(file,'  sample(','  create('),section(old,'  sample(','  create('));
- assert.equal(section(file,'  updateCKM(','  get diagnostics'),section(old,'  updateCKM(','  get diagnostics'));
+ // Exact T07/T36 adapter-only hunks; every generic sampler byte remains locked to the prior source.
+ let sampler=section(file,'  sample(','  create(');
+ for(const approved of [{"start": "    if(actor.mg34Loader)", "end": "    const prone=mg34ProneSample", "sha256": "5710ad4e1dd2385c3df6e78cf0440067a56cdf9d19a411701841196ad71c5f5f", "restore": ""}, {"start": "      const phase=actor.ckm.phase==='fire_burst'", "end": "    }\n    const stationPatient", "sha256": "f288f41881629e89a584ab06da468ec213c11424c24d67c7445cc57570a1e10b", "restore": "      const phase=actor.ckm.phase,role=actor.id==='ckm_gunner'?'gunner':'loader';\n      return {clip:`ckm_wz30_${role}_${phase}`,time:Math.max(0,time-actor.ckm.startedAt),loop:phase==='idle'};\n"}, {"start": "    const bak=actor.id==='jozef_bak'", "end": "    if(pose.name==='carried')", "sha256": "310a092f27f133732070e75729b568526d14c61eae7f0545eeec24ab4143b45f", "restore": ""}]){const start=sampler.indexOf(approved.start),end=sampler.indexOf(approved.end,start);assert.ok(start>=0&&end>start);const hunk=sampler.slice(start,end);assert.equal(createHash('sha256').update(hunk).digest('hex'),approved.sha256,'exact approved T07/T36 adapter');sampler=sampler.slice(0,start)+approved.restore+sampler.slice(end);}
+ assert.equal(sampler,section(old,'  sample(','  create('));
+ const currentCKM="    const v=this.ckm,phase=gunner.ckm.phase==='fire_burst'?'aim':['idle','aim','feed'].includes(gunner.ckm.phase)?gunner.ckm.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');";
+ const priorCKM="    const v=this.ckm,phase=gunner.ckm.phase==='idle'?'idle':'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`);";
+ const ckmSection=section(file,'  updateCKM(','  get diagnostics');assert.equal(ckmSection.split(currentCKM).length,2,'exact T36 disabled-burst/aim/feed adapter');
+ assert.equal(ckmSection.replace(currentCKM,priorCKM),section(old,'  updateCKM(','  get diagnostics'));
 });

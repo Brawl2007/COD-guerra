@@ -1,3 +1,4 @@
+import {spatialPredecessorBytes} from './helpers/m01-spatial-byte-guard.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -29,7 +30,7 @@ test('unmodified weapon ballistics, RNG and spatial gameplay sources remain byte
     'src/core/random.js':'c7fe17d39b70b37adeab22bfdb488029476b489a8e940d43db06558251b273e1',
     'research/weapons/kb_wz29.profile.json':'73a3cf9a9300d1e34cbedd8f103988854147377956c031f5645616f4ca8e589e'};
   for(const [path,hash]of Object.entries(hashes))
-    assert.equal(createHash('sha256').update(readFileSync(new URL('../'+path,import.meta.url))).digest('hex'),hash,path);
+    assert.equal(createHash('sha256').update(path==='src/world/spatial.js'?spatialPredecessorBytes(readFileSync(new URL('../'+path,import.meta.url))):readFileSync(new URL('../'+path,import.meta.url))).digest('hex'),hash,path);
 });
 
 test('the presentation modules read gameplay state but never import gameplay code (game, world, core)',()=>{

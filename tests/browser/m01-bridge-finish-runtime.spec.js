@@ -17,7 +17,10 @@ async function settled(page,resident=true){await page.waitForFunction(({baseline
 async function open(browser,input,{quality='high',intercept,resident=true}={}){
  const page=await browser.newPage(),errors=[],http=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});page.on('response',r=>{if(r.status()>=400)http.push(`${r.status()} ${r.url()}`);});if(intercept)await intercept(page);
  await page.addInitScript(({key,state,quality})=>{localStorage.setItem(key,JSON.stringify(state));localStorage.setItem('cod-guerra:visual-quality',quality);},{key,state:input,quality});
- await page.goto('?debug=1&visual-verify=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01.models.length===9&&window.gameDiagnostics().m01.wagons.loaded.length===6,null,{timeout:120000});if(!baseline&&resident)await page.waitForFunction(()=>['ready','partial','failed'].includes(window.gameDiagnostics().m01.bridgeFinish.status));await page.locator('#quality').selectOption(quality,{force:true});await frozenContinue(page);await settled(page,resident);if(baseline&&currentAuthority)await materialEnabled(page,false);return {page,errors,http};
+ await page.goto('?debug=1&visual-verify=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01.models.length===9&&window.gameDiagnostics().m01.wagons.loaded.length===6,null,{timeout:120000});if(!baseline&&resident)await page.waitForFunction(()=>['ready','partial','failed'].includes(window.gameDiagnostics().m01.bridgeFinish.status));await page.locator('#quality').selectOption(quality,{force:true});await frozenContinue(page);await settled(page,resident);
+ // Asset residency can settle before the first restored player-camera frame (constructor camera is at -66,22).
+ await page.waitForFunction(player=>{const d=window.gameDiagnostics(),p=d.m01.bridgeCamera.position;return d.paused&&Math.abs(p[0]-player.x)<.03&&Math.abs(p[2]-player.z)<.03;},input.player,{timeout:120000});
+ if(baseline&&currentAuthority)await materialEnabled(page,false);return {page,errors,http};
 }
 async function actual(page){return page.evaluate(()=>({state:window.gameVerificationState(),diagnostics:window.gameDiagnostics()}));}
 // Wait for the production frame carrying the requested presentation pose; fixed wall waits cannot prove that frame exists.

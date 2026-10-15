@@ -14,7 +14,7 @@ const FORBIDDEN_DIRS = ['src/render/', 'src/ui/'];
 const FORBIDDEN_FILES = /^src\/core\/(?:audio|battlefield-audio)[^/]*\.js$/;
 const FORBIDDEN_CODE = [
   [/\bdocument\./, 'DOM access'],
-  [/\bwindow\./, 'window access'],
+  [/(?<![\w$.])(?:globalThis\.)?window\s*\./, 'window access'],
   [/\brequestAnimationFrame\b/, 'frame callbacks'],
   [/\blocalStorage\b/, 'browser storage'],
   [/\bMath\.random\b/, 'Math.random (use the seeded Random)'],

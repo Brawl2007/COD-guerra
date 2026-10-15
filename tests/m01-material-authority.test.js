@@ -24,7 +24,17 @@ test('terrain rollout preserves the original sampled ground geometry and collide
   // T27 authorises extraction and exterior relief. Pin the independently recorded actual original buffers,
   // then compare actual protected surfaces/contact rays; the location of the generator is not an invariant.
   const integration='293a4f116b9b28818b7ff3bda4d83cc49b01014f',world=new TczewWorld(),original=new THREE.PlaneGeometry(2000,650,400,130);
-  for(const path of ['src/world/tczew-world.js','assets/models/provisional/m01/bridge-colliders.json','src/render/m01-track-bed.js'])assert.equal(readFileSync(path,'utf8'),git('show',`${integration}:${path}`),`immutable physics/contact owner ${path}`);
+  for(const path of ['src/world/tczew-world.js','assets/models/provisional/m01/bridge-colliders.json','src/render/m01-track-bed.js']){
+    let current=readFileSync(path,'utf8');
+    if(path==='src/world/tczew-world.js'){
+      // PT05 yard colliders were accepted after terrain. Reverse exactly its import and obstacle hunk.
+      for(const [after,before]of [
+        ["import {M01_YARD_WAGON_PLAN,yardWagonFootprint} from './m01-yard-wagon-layout.js';\n",''],
+        ["    // Drawn yard wagons are solid (movement, shots, LOS, grenades). Not covers: m01-environment draws a crate for every cover.\n    this.wagonObstacles=M01_YARD_WAGON_PLAN.map(w=>{const f=yardWagonFootprint(w,(x,z)=>this.heightAt(x,z));return box(f.id,[f.min.x,f.min.y,f.min.z],[f.max.x,f.max.y,f.max.z],{visual:true,material:'wood'});});\n    this.obstacles=[...this.colliders.filter(c=>c.collider==='solid'),...this.portals,...this.buildings,...this.covers,...this.treeObstacles,...this.wagonObstacles];this.revision++;", "    this.obstacles=[...this.colliders.filter(c=>c.collider==='solid'),...this.portals,...this.buildings,...this.covers,...this.treeObstacles];this.revision++;"]
+      ]){assert.equal(current.split(after).length,2,'exact accepted yard-collider hunk');current=current.replace(after,before);}
+    }
+    assert.equal(current,git('show',`${integration}:${path}`),`immutable physics/contact owner ${path}`);
+  }
   original.rotateX(-Math.PI/2);original.translate(300,0,40);const p=original.attributes.position;
   for(let i=0;i<p.count;i++)p.setY(i,world.terrainHeightAt(p.getX(i),p.getZ(i)));original.computeVertexNormals();
   const hashes={position:'25c524bd8f1f2b0a80378bacf1ea10bdba8cdd10b8b9d077b8eb5c148c1f376a',normal:'f76a0411c090ab56f65c7430498e277fa44b162b7e63c95797d9aae013a6531d',uv:'0da77efeb7a2e8cfb7e31f9b9953c1fd1045a460fc7e241d7272d2c6444d5a3d',index:'651345bc42911c8071fc2c38659861331f722b0905e5ed523e89ec16414622f2'};

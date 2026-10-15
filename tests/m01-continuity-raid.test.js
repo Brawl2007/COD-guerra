@@ -41,7 +41,8 @@ test('T02 dialogue 019 follows the actual destruction impact and never the early
   assert.ok(!s.dialogueQueue.some(d=>d.id==='dlg_m01_019'));
   let impactRecorded=false;const original=s.impact.bind(s);s.impact=(...args)=>{const result=original(...args);impactRecorded=true;return result;};
   const line=s.line.bind(s);s.line=(id,...args)=>{if(id==='dlg_m01_019')assert.equal(impactRecorded,true);return line(id,...args);};
-  s.consume(E('forward_post_bombed'));assert.ok(s.dialogueQueue.some(d=>d.id==='dlg_m01_019'));
+  s.consume(E('forward_post_bombed'));assert.ok(!s.dialogueQueue.some(d=>d.id==='dlg_m01_019'),'wait for actual reorganization');
+  s.activate('follow_sergeant');Object.assign(s.player,s.world.point('rally_point'));s.updateObjectives(.05,false);assert.ok(s.dialogueQueue.some(d=>d.id==='dlg_m01_019'));
   assert.equal(s.consume(E('forward_post_bombed')),false);
   const near=active();Object.assign(near.player,{x:18,z:3});near.consume(E('forward_post_bombed'));
   assert.equal(near.flags['m01.forward_post_state'],'intact_near_miss');

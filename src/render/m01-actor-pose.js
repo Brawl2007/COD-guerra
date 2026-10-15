@@ -2,11 +2,11 @@ import {mg34ProneGeometry,genericProneGeometry} from '../world/spatial.js';
 // Procedural presentation in metres. This never writes to an actor or advances gameplay.
 export function actorPoseName(actor,time=0){
   if(!actor.alive)return 'fallen';
-  if(actor.posture==='prone'&&!actor.mg34Prone)return 'prone';
   if(actor.task==='yard_patient')return 'wounded';
   if(actor.task==='station_wounded')return 'wounded';
   if(actor.carriedBy)return 'carried';
   if(actor.state==='WOUNDED')return 'wounded';
+  if(actor.posture==='prone'&&!actor.mg34Prone)return 'prone';
   if(actor.pose==='seated')return 'seated';
   // Aliado sob fogo (suppressedUntil vem da simulação): agachado e curvado para a frente, cabeça em baixo.
   if(actor.team==='ally'&&time<(actor.suppressedUntil??0))return 'pinned';
@@ -14,7 +14,8 @@ export function actorPoseName(actor,time=0){
 }
 
 export function actorPose(actor,time){
-  const geometry=mg34ProneGeometry(actor,time)??genericProneGeometry(actor);
+  const loader=actor.alive&&actor.mg34Loader&&actor.mg34Loader.phase!=='leave';
+  const geometry=actor.alive&&!actor.carriedBy&&actor.state!=='WOUNDED'?(mg34ProneGeometry(actor,time)??genericProneGeometry(loader?{...actor,posture:'prone',postureProgress:1}:actor)):null;
   if(geometry&&actor.mg34Prone?.phase!=='standing'){
     // Existing procedural fallback. Read physical posture/frame; never create combat state or advance time.
     const convert=p=>[-p[2],p[1],p[0]],head=convert(geometry.head),torso=convert(geometry.torso),legs=convert(geometry.legs),muzzle=convert(geometry.muzzle??[0,.22,-1.3]);
@@ -23,6 +24,7 @@ export function actorPose(actor,time){
     const limbs=[],boots=[],hip=[torso[0]-.2,torso[1]-.05,torso[2]],rifle=[muzzle[0]-.62,muzzle[1]-.03,muzzle[2]];
     for(const side of [-1,1]){
       const knee=[legs[0]+.12,legs[1],side*.15],foot=[legs[0]-.27,.07,side*.18],shoulder=[torso[0]+.2,torso[1]+.02,side*.2],elbow=[torso[0]+.27,.07+(1-geometry.low)*.7,side*.22],hand=[rifle[0]+(side>0?-.1:.25),rifle[1]-.07,rifle[2]];
+      if(loader){const age=Math.max(0,time-actor.mg34Loader.startedAt),feed=actor.mg34Loader.phase==='feed'?Math.sin(Math.min(1,age/4.8)*Math.PI)*.12:0;hand.splice(0,3,torso[0]+.65+feed,.18,side*.12);}
       limbs.push({from:hip.map((v,i)=>i===2?side*.15:v),to:knee,radius:.095},{from:knee,to:foot,radius:.085},{from:shoulder,to:elbow,radius:.075},{from:elbow,to:hand,radius:.065});boots.push(foot);
     }
     return {name:'prone',prone:true,limbs,boots,aiming,firing,moving:false,underFire:time<(actor.suppressedUntil??0),

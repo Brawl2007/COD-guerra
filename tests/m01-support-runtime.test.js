@@ -102,11 +102,13 @@ test('65 actual wagon models use LOD2 instances at 9.10 m with source pivots and
   const {w,close}=wagons(async key=>{if(key.includes(':open:'))throw new Error('missing optional open wagon');return sources.covered;});
   try{
     await w.load();assert.equal(w.diagnostics.wagons,65);assert.equal(w.diagnostics.proxies,16);
-    const body=w.batches.find(b=>b.name==='wagon_covered_lod2_body'),node=sources.covered.scene.getObjectByName('body');
-    assert.equal(body.count,49);assert.equal(body.geometry,node.geometry);assert.equal(body.material,node.material);
+    const body=w.batches.find(b=>b.name==='wagon_covered_lod2_authored_far_stock_batch'),node=sources.covered.scene.getObjectByName('body');
+    assert.equal(body.count,49);assert.notEqual(body.geometry,node.geometry);assert.equal(body.material,node.material);
+    const originalVertices=[];sources.covered.scene.updateMatrixWorld(true);sources.covered.scene.traverse(n=>{if(n.isMesh){const attr=n.geometry.attributes.position,indices=n.geometry.index;for(let i=0;i<(indices?.count??attr.count);i++)originalVertices.push(...new THREE.Vector3().fromBufferAttribute(attr,indices?indices.getX(i):i).applyMatrix4(n.matrixWorld).toArray());}});
+    assert.equal(body.geometry.attributes.position.array.length,originalVertices.length);for(let i=0;i<originalVertices.length;i++)assert.ok(Math.abs(body.geometry.attributes.position.array[i]-originalVertices[i])<1e-5,'every original transformed GLB vertex retained');
     // Plan anchor x/z unchanged; treads sit on the -.82 rail top (locomotive 963's) and symmetric wagons may be turned end for end.
     const flip=m01WagonVariation('train963_wagon_01').flip?Math.PI:0;assert.equal(M01_TRAIN_ART_OFFSET_Y,-.8325);
-    const m=new THREE.Matrix4(),expected=new THREE.Matrix4().makeRotationY(-Math.PI/2+flip);expected.setPosition(1090,-.8325,-2.5);expected.multiply(node.matrixWorld);
+    const m=new THREE.Matrix4(),expected=new THREE.Matrix4().makeRotationY(-Math.PI/2+flip);expected.setPosition(1090,-.8325,-2.5);expected.multiply(new THREE.Matrix4());
     body.getMatrixAt(0,m);assert.ok(m.elements.every((v,i)=>Math.abs(v-expected.elements[i])<1e-4));
     body.getMatrixAt(1,m);assert.ok(Math.abs(m.elements[12]-expected.elements[12]-9.1)<1e-4);
     w.sources.set('open:2',sources.open);w.rebuild();assert.equal(w.diagnostics.proxies,0);

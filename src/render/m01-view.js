@@ -214,7 +214,7 @@ export class M01View {
       ['limbs','cylinder','cloth'],['boots','accessoryBox','dark'],['rifle','accessoryBox','wood'],['flash','sphere','glow'],
       ['hands','featureSphere','skin'],['nose','featureSphere','skin'],['eyes','featureSphere','dark'],['ears','featureSphere','skin'],
       ['belt','accessoryBox','leather'],['pack','accessoryBox','cloth'],['pouches','accessoryBox','leather'],['buttons','featureSphere','brass'],['barrel','cylinder','metal'],['brim','featureSphere','metal'],['farHead','featureSphere','skin']]){
-      const capacity={limbs:720,boots:180,hands:270,eyes:450,ears:180,pouches:360,buttons:540}[name]??90;
+      const capacity={limbs:800,boots:200,hands:300,eyes:500,ears:200,pouches:400,buttons:600}[name]??100;
       const batch=new THREE.InstancedMesh(this[shape],this.materials[material],capacity);
       batch.instanceMatrix.setUsage(THREE.DynamicDrawUsage);batch.count=0;batch.frustumCulled=false;
       batch.castShadow=name!=='flash';batch.receiveShadow=true;this.scene.add(batch);this.batches.set(name,batch);
@@ -224,7 +224,7 @@ export class M01View {
     const geometry=new THREE.PlaneGeometry(1,1);geometry.rotateX(-Math.PI/2);this.geometry.push(geometry);
     this.contactMaterial=new THREE.MeshBasicMaterial({map:this.atmosphere.texture,color:0x000000,transparent:true,opacity:.24,
       depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1});
-    this.contactShadows=new THREE.InstancedMesh(geometry,this.contactMaterial,90);
+    this.contactShadows=new THREE.InstancedMesh(geometry,this.contactMaterial,100);
     this.contactShadows.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.contactShadows.count=0;this.contactShadows.frustumCulled=false;this.scene.add(this.contactShadows);
   }
   updateActors(actors,time,player={x:0,z:0},battleClock){
@@ -297,7 +297,7 @@ export class M01View {
       for(const foot of pose.boots)put('boots',foot,[.25,.11,.16]);
       if(near)put('hands',[hx-.005,hy-.17,hz],[.058,.072,.060],skin);
       if(near)for(const i of [3,7])put('hands',pose.limbs[i].to,[.043,.066,.048],skin);
-      if(!a.civilian&&a.role!=='MEDIC'){
+      if(!a.civilian&&a.role!=='MEDIC'&&!a.mg34Loader){
         put('rifle',pose.rifle.position,[.82,.095,.06],null,{roll:pose.rifle.pitch});
         const from=pose.rifle.barrelFrom,to=pose.rifle.muzzle;
         put('barrel',from.map((v,i)=>(v+to[i])/2),[.012,.57,.012],null,{from,to});

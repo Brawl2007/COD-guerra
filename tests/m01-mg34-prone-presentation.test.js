@@ -70,7 +70,7 @@ for(const phase of ['enter','idle','fire_burst','exit'])test(`rendered death dur
    c.update(s.actors,s.clock,s.player);a.alive=false;a.health=0;a.state='DOWN';s.updateMG34Posture(a);
    c.update(s.actors,s.clock,s.player);const v=c.instances.get(a.id);
    assert.equal(v.clip,'fallen');assert.equal(v.weaponRoot.visible,false);assert.equal(actorPose(a,s.clock).firing,false);assert.equal(a.mg34Prone,undefined);
-   s.drainEvents();at(s,s.clock+2);assert.deepEqual(s.drainEvents(),[]);assert.ok(s.actors.every(x=>!x.loaderFor&&!x.mg34Loader));
+   s.drainEvents();at(s,s.clock+.05);at(s,s.clock+2);assert.deepEqual(s.drainEvents(),[]);const loader=s.actor('de_mg34_loader_0');assert.equal(loader.loaderFor,a.id);assert.equal(loader.mg34Loader.phase,'leave');assert.equal(loader.active,false);assert.equal(loader.shot,0);
  }finally{c.dispose();}
 });
 
