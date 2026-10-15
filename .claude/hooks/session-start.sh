@@ -1,14 +1,25 @@
 #!/bin/bash
-# Cloud startup is read-only by default. Dependency installation is opt-in:
-# COD_GUERRA_AUTOINSTALL_DEPS=1 on a trusted non-diagnostic session.
-# This avoids network/install side effects in a first-pass Routine diagnosis.
+# Cloud startup is read-only by default. Both setup actions are explicitly opt-in:
+# COD_GUERRA_INSTALL_GIT_GUARDS=1 installs the local pre-push safety guard.
+# COD_GUERRA_AUTOINSTALL_DEPS=1 installs Node dependencies on a trusted session.
+# The first diagnostic session must leave both flags unset.
 set -euo pipefail
 
-if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ] || [ "${COD_GUERRA_AUTOINSTALL_DEPS:-0}" != "1" ]; then
+if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
   exit 0
 fi
 
 cd "${CLAUDE_PROJECT_DIR:-$(dirname "$0")/../..}"
+
+if [ "${COD_GUERRA_INSTALL_GIT_GUARDS:-0}" = "1" ]; then
+  bash .agent/tools/install-git-guards.sh >&2
+  bash .agent/tools/install-git-guards.sh --check >&2
+fi
+
+if [ "${COD_GUERRA_AUTOINSTALL_DEPS:-0}" != "1" ]; then
+  exit 0
+fi
+
 [ -f package-lock.json ] || exit 0
 
 lock_sha="$(sha256sum package-lock.json | cut -d' ' -f1)"
