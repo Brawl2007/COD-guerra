@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "baselineHead": "293a4f116b9b28818b7ff3bda4d83cc49b01014f",
+  "candidateSourceHead": "49a18863ad6fc6f821ccff6f65253ac264f607dc",
+  "candidateState": "uncommitted targeted correction; paired final manifest required",
+  "rawRegions": 61,
+  "margin": 20,
+  "extent": {
+    "id": "extent",
+    "minX": -624,
+    "maxX": 1735,
+    "minZ": -1320,
+    "maxZ": 228
+  },
+  "protected1mSamples": 444600,
+  "outsideLegacySurfaceSamples": 19884,
+  "maxPhysicsHeightDelta": 0,
+  "maxVisualSamplerDelta": 0,
+  "maxProtectedSkirtSurfaceDelta": 4.440892098500626e-16
+}

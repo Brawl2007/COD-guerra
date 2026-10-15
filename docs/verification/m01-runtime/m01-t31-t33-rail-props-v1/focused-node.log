@@ -1,0 +1,40 @@
+✔ M01 environment prop layout is deterministic, uniquely identified and grounded (15.78982ms)
+✔ visual prop generation cannot consume gameplay RNG or mutate world colliders/save state (6.738269ms)
+✔ critical rail, road and station access corridors remain visually clear (4.875049ms)
+✔ Low, Medium and High preserve composition while scaling detail coherently (1.444294ms)
+✔ rebuilding the visual layout is idempotent and does not create logical duplicates (8.322249ms)
+✔ 42 actual accepted GLBs retain all indexed source vertices, per-face PBR, finite colours; four actual instanced draw batches (150.124686ms)
+✔ all 21 kit types placed at metre scale, poles/wires and fences persist Low; authored sag/crossbars remain actual GLB geometry (1.039579ms)
+✔ first rejection immediately drains fulfilled assets even with a hung sibling; late assets release exactly once (1.187306ms)
+✔ dispose while sibling pending releases fulfilled now and stale results later; unsupported APIs keep fallback (0.541867ms)
+✔ GLB scene transforms and nonuniform normal transforms survive atlas flattening (0.903669ms)
+✔ terrain approaches, siding switch, train extension share exactly four actual submissions; quality steps use prepared instances (109.527569ms)
+✔ actual descriptor endpoints match immutable bridge support profiles and existing train heads; gradual gauge/top transition (65.303114ms)
+✔ fishplates repeat at 15 metres and sleepers at .63 in High; continuous ballast reaches the east approach slope (27.530586ms)
+✔ restored world with same revision replaces prepared terrain geometry once; disposal is idempotent (103.118715ms)
+✔ production train ownership skips duplicate track allocations while standalone detail retains its existing API (57.567147ms)
+✔ contact reveal wraps existing macro hooks and cache keys, clips only ballast footprint, never changes terrain geometry/world heights (43.86009ms)
+✔ actual production terrain triangles cannot bury the four receiving bridge heads; positive reveal stays under existing ballast and preserves vertices (617.434638ms)
+✔ real bridge metadata and floor raycasts establish east contact ownership; cloned materials retain borrowed textures and restore on off/dispose (206.905402ms)
+✔ consist keeps 65 wagons, plan ids/types/x and the plan anchor; LOD hysteresis and candidates are unchanged (26.032783ms)
+✔ real GLB instances keep plan x/z, sit on the rail-top offset and stay in the original LOD batches (127.108954ms)
+✔ wheel/rail fit: treads sit on the rail head, flanges stay inside the gauge, no lateral offset (all types and LODs) (26.756368ms)
+✔ every detail batch matches the tier of the drawn LOD; near/mid sets vanish at LOD2 and on Low; budget counted on real submissions (55.619103ms)
+✔ fallback: total and partial GLB failure keep the old proxies and never float details on them (20.572193ms)
+✔ train consist never asks for damage art and the yard intact/burned authority is unchanged (9.103217ms)
+✔ save/reload, pause frames and repeated updates never mutate simulation state or RNG; every detail/GLB buffer is history-free (98.626349ms)
+✔ variation is deterministic, bounded and visibly non-uniform without touching wagon type (0.670195ms)
+✔ couplings and underframe add no collider: world obstacles/walk surfaces are identical and nothing reads the world (10.806172ms)
+✔ dispose/recreate and repeated rebuilds never duplicate meshes or free shared art (32.5378ms)
+✔ original Claude train source changes only its renderer and adds detail, without touching gameplay or assets (17.922757ms)
+✔ everything the consist draws (siding included) lives under the train963 group, so visibility authority is unchanged (8.780963ms)
+✔ the drawn siding: rail heads at the rail top, standard gauge between inner faces, continuous from 1062 to 2000 m (12.017923ms)
+✔ a wagon drawn with a finer fallback GLB far away keeps the far tier (missing LOD2 art) (9.039224ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2311.042937

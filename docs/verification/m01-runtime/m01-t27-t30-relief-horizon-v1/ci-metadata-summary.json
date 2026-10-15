@@ -1,0 +1,13 @@
+{
+  "head": "faf4be8a1857964df646354bdc9822db8820c672",
+  "run": 38381491544,
+  "job": 115242755884,
+  "conclusion": "success",
+  "node669": true,
+  "tooling173": true,
+  "build92": true,
+  "focused": "source4e5389b unchanged; metadata-only focused not triggered",
+  "nodePassed": 669,
+  "toolingPassed": 173,
+  "buildModules": 92
+}

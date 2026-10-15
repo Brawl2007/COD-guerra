@@ -1,0 +1,934 @@
+
+> operation-ashen-road@0.2.0 test
+> node --test tests/*.test.js
+
+✔ every asset manifest records author, licence and units, and every asset file is in a manifest (9.357589ms)
+✔ the known-gap list only shrinks: fixed gaps must be removed from it (5.478436ms)
+✔ planar y becomes scene z; height is independent (6.167053ms)
+✔ horizontal head shot hits, aiming above the head misses (1.163079ms)
+✔ nearest wall shields an enemy; lowering the aim hits terrain (0.342066ms)
+✔ wall around muzzle blocks a clear camera sightline (0.163482ms)
+✔ enemy in cover cannot cause damage through a wall (1.323296ms)
+✔ unreachable destination reports failure and does not move through walls (0.259303ms)
+✔ wall shields blast damage but visible nearby actor takes damage (0.502052ms)
+✔ JSON checkpoint restores actors, reload, grenade, phase, clock and RNG exactly (6.088056ms)
+✔ corrupt and incompatible saves are rejected atomically (2.143478ms)
+✔ death restores the last living checkpoint without reviving defeated enemies (6.069409ms)
+✔ restored simulation reproduces future seeded decisions and events (172.721475ms)
+✔ two independent sectors evolve for 90 seconds with stable losses and unique events (0.890997ms)
+✔ partial fourth reinforcement group activates and visible candidates remain hidden (0.364819ms)
+✔ zero time never advances reload or the battle (1.015351ms)
+✔ weapon enforces cadence, ammo, and reload transfer (1.552885ms)
+✔ world blocks walls and permits open cells (0.732963ms)
+✔ navigation chooses a walkable next tile around cover (0.41247ms)
+✔ mission advances through checkpoint, combat, and radio (0.179675ms)
+✔ shot geometry detects targets on aim line (0.166776ms)
+✔ 3D matrix composition preserves translation and scale (0.31109ms)
+✔ weapon exposes a stable reload animation timeline (0.158975ms)
+✔ enemy selects cover instead of charging directly at player (1.049662ms)
+✔ grenade bounces on walls, warns AI, and applies radial damage (2.491011ms)
+✔ battle director activates reinforcement groups without replacing individual AI (0.493479ms)
+✔ text-only OBJ assets load with meshes, normals, and MTL colors (10.353761ms)
+✔ pointer lock entry and resume ignore cursor warps while later mouse movement works (1.395803ms)
+✔ Ju 87 clones use native LODs, share art, sample the saved clock and follow the stukaPath anchored to the bombing (19.130872ms)
+✔ missing optional Ju 87 art keeps the silhouettes; partial failure uses available detail and disposal prevents attachment (6.749854ms)
+✔ each Ju 87 gets its own light-weight material instances over shared textures, propeller rpm/phase and attitude (8.123265ms)
+✔ Ju 87 fade has no 90 s wrap (the path never loops) and eases in after the planes are heard, deterministically (7.052151ms)
+✔ Ju 87 LOD keeps 10 % hysteresis at thresholds while the quality floor always applies (8.025109ms)
+✔ at fade 0 the selected level (GLB or fallback proxy) stays visible and reported; opacity does the hiding (9.152575ms)
+✔ the entry fade reads the saved planes_heard time of the real simulation (359.262452ms)
+✔ constants agree with the mission data they mirror (2.54414ms)
+✔ every Ju 87 lies on stukaPath at known instants after the bombing event, offset 0/3.5/7 s (7.402028ms)
+✔ the approach comes from the east, then the formation departs east, hides and never repeats (0.434071ms)
+✔ attitude comes from the path tangent: nose down in the dive, heading north then west, east on departure (15.877644ms)
+✔ second raid: one high pass from the raid start, crossing once, then hidden (0.74433ms)
+✔ the anchor is the consumed time of the bombing event: predicted before it, authoritative after; restore reproduces it (533.638141ms)
+✔ bombs appear 1.5 s before each aerial blast and land at the authoritative point at its instant (5.466138ms)
+✔ the predicted blast points mirror the simulation (including the forward-post near miss and the 30 m rule) (1.773631ms)
+✔ simulation never imports the presentation path and no time wrap remains in the aircraft presentation (1.473448ms)
+✔ the view draws a bounded bomb pool from the flights and reports path/bomb diagnostics (4.559037ms)
+✔ the presented Ju 87 yaw is a smooth pure function of time: bounded rate through the pull-out, no NaN, position untouched (371.811137ms)
+✔ schema 2 initializes all 89 IDs; diagnostics are detached, small presentation records (9.790448ms)
+✔ all gameplay bytes hashed each tick against approved base: seed 19390901, support false (43899.809221ms)
+✔ all gameplay bytes hashed each tick against approved base: seed 7, support true (42283.966857ms)
+✔ odometer equals accumulated effective XZ displacement, including collision slide; gait is real speed (19.487276ms)
+✔ blocked ADVANCE publishes idle and zero speed instead of commanded speed (1.788382ms)
+✔ direct German spans movement, platoon sprint and crouch walk publish distinct effective gaits (2.338054ms)
+✔ idle bodyYaw follows the shortest arc at 180 degrees/s and preserves combat facing (13.7763ms)
+✔ moving bodyYaw turns at 360 degrees/s; hitboxes and eye geometry still use authoritative facing (1.73971ms)
+✔ pause/invalid dt does not touch timestamps, motion, yaw, RNG, checkpoint or events (3.806803ms)
+✔ real script wounds and demolition deaths have stable timestamps; unseen reserve losses have unknown history (1.659291ms)
+✔ actual grenade damage records only exposed living actors; repeat ticks do not replay impacts (1.928279ms)
+✔ player rifle hit/death and real near-miss suppression stamp only the existing combat outcomes (3.339303ms)
+✔ gait and bodyYaw resume identically at each real CP-A..D, including death recovery (2189.686002ms)
+✔ station grab adapter retains exact data and motion after pause/double restore (566.680305ms)
+✔ station drag adapter retains exact data and motion after pause/double restore (591.511035ms)
+✔ station release adapter retains exact data and motion after pause/double restore (644.001673ms)
+✔ Bąk carry and CKM/MG34 specialized adapters do not lose identity, timestamps or presentation on reload (1103.125483ms)
+✔ legacy 86/89 schema-2 saves initialize without inventing events, mutating input or drawing RNG (907.352781ms)
+✔ optional partial migration preserves present fields byte for byte and defaults only missing fields (4.141625ms)
+✔ corrupt presentation rejects atomically in current state and nested checkpoint (408.592488ms)
+✔ stand to crouch blends skeleton transforms over 0.3 s of sim time instead of cutting between poses (15.158063ms)
+✔ actions are persistent: the same AnimationAction objects serve every transition and none is recreated (12.012559ms)
+✔ death plays the fall over sim time from diedAt, fading out of the live pose; without diedAt it keys on first sight (13.715604ms)
+✔ pause freezes the pose: repeating the same sim time never changes a bone, a weight or the blend record (5.616644ms)
+✔ LOD swap in the middle of a fade keeps the blend and gives identical bone matrices (2.17432ms)
+✔ a reloaded renderer rebuilds posture, death and steady frames to the same bone matrices from sim data alone (24.778961ms)
+✔ locomotion phase follows the saved odometer: the clip advances only as far as the body does (6.140428ms)
+✔ instances leaving range and the whole renderer disposing never use a mixer-wide stop; stale records expire (0.540328ms)
+✔ AnimationPlayer keeps evaluation order identical to the stack order and writes time/weight without touching mixer time (0.645323ms)
+✔ the resolver generic selection mirrors the untouched M01Characters.sample() tail for ordinary soldiers (0.653595ms)
+✔ blend curve is monotonic, symmetric, flat at both ends and weights always sum to one (1.678969ms)
+✔ stand to crouch blends over 0.3 s of sim time without a single hard cut, in both directions (4.270737ms)
+✔ idle, aim, walk, run and pinned switch with short cross-fades; bolt and pinned entry are faster than posture (0.193435ms)
+✔ an authored (exact) clip is never cross-faded: one layer at full weight on both edges (1.146503ms)
+✔ death falls over the sim clock from diedAt, cross-fading from the live pose and landing on the final frame (1.481358ms)
+✔ death without a sim timestamp keys on the sim time the renderer first saw it, or lands on the final pose (1.251538ms)
+✔ reload rebuilds an in-flight posture, death and gait-start fade from sim data alone (2.989604ms)
+✔ same actor data at the same sim time gives identical output; pause (repeated clock) freezes every layer (2.338853ms)
+✔ a retarget in mid-fade (A, B, A) is continuous: no pop, one layer per clip, weights sum to one (1.490742ms)
+✔ foot drift: locomotion phase comes from the odometer so mean planted-foot speed error stays under 0.10 m/s (14.154932ms)
+✔ locomotion helpers: clip from gait, cycle distance from GLB extras, blocked movers go idle after HOLD (0.438457ms)
+✔ a blocked mover fades out of walking instead of sliding in place, and weights stay bounded by the layer cap (1.930325ms)
+✔ layer clip time follows its own rate from sim time and never uses the wall clock (0.25745ms)
+✔ the new presentation modules contain no RNG or wall clock, and nothing stops all actions on the generic path (0.870846ms)
+✔ damage presentation is bounded, frozen at pause, reconstructible and never mutates source state (60.073589ms)
+✔ audio variation is deterministic and independent of Math.random (1.071252ms)
+✔ rifle, MG34, RKM, CKM, impacts, near miss and layered explosion remain distinct presentation events (9.906989ms)
+✔ near/mid/far routing lowers gain and bandwidth without changing event identity (2.746426ms)
+✔ voice budget evicts low-priority presentation and never exceeds the hard limit (0.723889ms)
+✔ distant rifle/MG stay low priority and cannot evict more important voices; critical can evict distant (2.825322ms)
+✔ M01 ambience/aircraft loops are unique; train clank only follows a live false-to-true transition (7.068338ms)
+✔ distant battle scheduler is presentation-only, bounded and does not backlog skipped clock slots (2.70194ms)
+✔ audio activity cannot consume or mutate M01 gameplay RNG/snapshot (7.152662ms)
+✔ reset/dispose stop transient and permanent nodes without duplicated loops (1.140725ms)
+✔ every weapon has its own synthesized identity (spectral and mechanical signature) (5.528904ms)
+✔ near/mid/far/very-distant shots change layers continuously: mechanism only near, more echoes and longer tail far (0.522692ms)
+✔ bursts keep the authoritative cadence in one voice; later rounds have shorter tails (5.821787ms)
+✔ bullet crack vs whizz, material impacts and ricochets are distinct and deterministic (4.619352ms)
+✔ explosions scale from grenade to bridge demolition with debris, metal stress, splash and rumble (6.436214ms)
+✔ category limits and the global hard limit hold under a saturated battle (8.943217ms)
+✔ dynamic intensity rises with heard combat, decays on the simulation clock and drives the distant scheduler (25.453606ms)
+✔ distant battle is deterministic, aperiodic and never repeats the same sector+kind back to back (17.053863ms)
+✔ Ju 87 engine layers follow the rendered aircraft path; pull-out siren only on request after a real aerial blast (4.750474ms)
+✔ trains: emitters match rendered placements; arrivals play once per live transition; idle ticks vary (5.151637ms)
+✔ fires: emitters come from presentation state; crackle only near, loop follows the nearest fire (2.597145ms)
+✔ graph: buses, compressor and outdoor reverb exist; voices send to reverb; everything created is disposed (1.702684ms)
+✔ full presentation pass over the complete real M01 route never changes simulation state or RNG (7710.535872ms)
+✔ presentation clock jumps (pause, restore, slow frames) never backlog scheduled one-shots (1.480737ms)
+✔ real MG34 event shape: one-round events from the same gun join one burst voice with burst tails (1.074657ms)
+✔ early releases fade instead of cutting; fading voices leave the budget at once and still dispose cleanly (0.586226ms)
+✔ overlapping ducks keep the deepest cut and the latest release; a near-miss cannot cancel a blast duck (0.543773ms)
+✔ Ju 87 pull-out comes from the nearest rendered Stuka and only while the formation is shown (0.890495ms)
+✔ Doppler acts on the Ju 87 engine during the dive; a restore jump does not glitch the pitch (11.890127ms)
+✔ No Doppler dip around the former 90 s path wrap; INTRO/SETUP stay quiet; fire loop has hysteresis (14.371617ms)
+✔ looped brown noise has no seam; ricochets (not distance) add the whizz; budget and floor bound the graph (19.01177ms)
+✔ V3 visual RNG and lifecycle curves are deterministic and gameplay RNG stays untouched (9.484043ms)
+✔ blast categories remain explicit rather than scale-only aliases (0.475463ms)
+✔ distance and quality reduce secondary density without turning effects off (0.248607ms)
+✔ fade curves stagger endings and never exceed normalized bounds (0.434902ms)
+✔ impact materials have distinct bounded presentation families (0.166216ms)
+✔ approved battlefield pool limits and one-light budget remain byte-explicit (1.105913ms)
+✔ pause/reset/dispose paths keep presentation pools non-authoritative and cleanable (0.780823ms)
+✔ demolition authority and saved state are unchanged by all V3 profile sampling (155.945397ms)
+✔ battlefield FX visual noise is deterministic, bounded and independent from simulation RNG (78.74153ms)
+✔ battlefield FX stays presentation-only with explicit hard pool limits (0.990533ms)
+✔ muzzle presentation telemetry latches only after a rendered muzzle frame and resets without simulation state (0.503273ms)
+M01_PORTAL_ASSET_AUDIT {"portal_lisewo_1912.glb":{"meshes":5,"materials":["brick_red","stone_masonry","opening_dark","gate_timber_iron"],"textures":0,"triangles":1996,"nodes":7,"hasNormals":true,"hasUvs":true},"portal_lisewo_1912.lod1.glb":{"meshes":5,"materials":["brick_red","stone_masonry","gate_timber_iron"],"textures":0,"triangles":764,"nodes":7,"hasNormals":true,"hasUvs":true},"portal_lisewo_1912.lod2.glb":{"meshes":5,"materials":["brick_red","stone_masonry","gate_timber_iron"],"textures":0,"triangles":524,"nodes":7,"hasNormals":true,"hasUvs":true}}
+✔ Lisewo portal GLBs and collider authority remain byte-identical to approved production base (1.569798ms)
+✔ portal macro placement, LOD budgets and documented uncertainty remain unchanged (0.799561ms)
+✔ portal binaries keep normals/UVs/material slots without adding texture assets (1.280622ms)
+✔ microdetail stays inside approved portal macro envelopes and scales by quality (0.489022ms)
+✔ portal material/detail lookup cannot consume gameplay RNG or mutate save/colliders (5.036058ms)
+✔ known bridge materials map predictably while unknown material preserves GLB fallback (0.197572ms)
+✔ authored bridge GLBs, manifest and collider authority stay byte-identical (8.116117ms)
+✔ structural detail stays inside each span and support macro envelope in every LOD (97.864023ms)
+✔ walkable decks and both rail loading gauges stay clear of new structure (64.72609ms)
+✔ quality tiers: LOD2 and Low add nothing; High only adds rivets and fishplates; LOD0 > LOD1 (16.279799ms)
+✔ descriptors are deterministic and never touch gameplay RNG, saves or colliders (93.321964ms)
+✔ double-track approach lines up with the bridge tracks and the trains already placed east of Lisewo (0.259393ms)
+✔ runtime attaches to real GLB nodes, swaps only the rail deck primitives by quality and disposes cleanly (319.454141ms)
+✔ M01 GLBs keep nine spans, measured supports and map placement in every LOD (7.672482ms)
+✔ M01 all LODs ship event-linked damage replacements with stable logical IDs (6.063445ms)
+✔ M01 demolition IDs survive LOD changes and JSON restoration; colliders stay removed (20.395844ms)
+✔ M01 road towers remain separate, measured and damage-linked in all LODs (2.974583ms)
+✔ M01 binary exports contain finite positions and unit normals (69.723846ms)
+✔ M01 manifest matches binary counts, current map hash and decreasing LOD budgets (5.019934ms)
+✔ M01 historical uncertainty and modern geometry conflicts remain explicit (3.64967ms)
+✔ all six GLBs have finite skin weights, valid joint indices, embedded textures and decreasing LOD budgets (63.937004ms)
+✔ all twenty-five animation clips bind to real named bones, have monotonic times and finite transforms (22.426058ms)
+✔ the original station drag loops on the existing rig with a locked source and finite transforms (5.065972ms)
+✔ first-person geometry keeps actual GLB arm/hand surfaces and leaves the world uniform unchanged (33.508091ms)
+✔ the actual reload rig keeps the open action, clip and hand in the first-person frustum on both usable LODs (84.794769ms)
+✔ sampling real clock, changing LOD and restoring a copy preserves bone transforms and immutable data (8.818475ms)
+✔ wounded attachment follows its carrier socket and detaches after delivery without changing simulation coordinates (4.012707ms)
+✔ MakeHuman data licence is shipped exactly as locked at its source revision (0.695658ms)
+✔ the station casualty remains grounded while the medic samples the backward drag and its fallback (3.215459ms)
+✔ Kowal and healthy Bąk use their own meshes and muzzle sockets, preserve data and hide the casualty weapon (9.782228ms)
+✔ riflemen finish the bolt after the flash; pinned engineers stop their working hands until the repair resumes (1.074917ms)
+✔ schema 2 legacy 86 roster becomes 89 at the aligned post without changing old actors or RNG (15.204136ms)
+✔ old 89-actor idle placement migrates once and snapshot restore is stable (10.273063ms)
+✔ old 89-actor save immediately after east demolition keeps idle phase/start time while aligning the old post (10.967358ms)
+✔ old 89-actor abandon placement shifts rigidly but preserves phase and startedAt exactly (11.919295ms)
+✔ retreat saves are never translated, including an actor still on an old authored coordinate (8.502358ms)
+✔ casualties stay casualties and post-west saves preserve their saved positions (17.857335ms)
+✔ 86-actor saves after east or west demolition remain safe and do not restart abandon (18.810663ms)
+✔ restore stays atomic when a legacy-position ckm save is invalid (5.885573ms)
+✔ placement migration changes no non-ckm actor or unrelated saved state (4.518143ms)
+✔ new ckm root puts gun_muzzle_flash on the mapped south embrasure x/z (0.837967ms)
+✔ ckm crew is grounded below the deck, leaves after the real event and reaches safety before demolition (3889.380805ms)
+✔ schema 2 accepts exact legacy rosters and migrates atomically without changing old actors or RNG (3484.984944ms)
+✔ real ckm clips and weapon share saved time across pause, reload, casualties and optional fallback (70.736399ms)
+✔ M01 ckm wz.30: metros, +Y, cano para −Z, 1,2 m ±2 %, hierarquia de pivôs e três LODs no orçamento (4.036961ms)
+✔ M01 ckm wz.30: clips da arma animam os nós móveis; rajada de 8 a 600/min; alimentação puxa a ponta e arma duas vezes (3.732891ms)
+✔ M01 ckm wz.30: clips ckm_wz30_* do atirador e do municiador ligam-se ao rig polaco, não repetem nomes e mostram uma só arma (25.686365ms)
+✔ M01 ckm wz.30: LOD0 dentro dos 4000 triângulos sem mudar silhueta, pivôs, sockets, fita nem clips; LOD1, LOD2 e clips intactos (4.463641ms)
+✔ real player-hit presentation is clear, bounded and directional cue stays presentation-only (1.30674ms)
+✔ near miss and close impact react while distant impact stays quiet (0.299732ms)
+✔ multiple real MG34 near rounds accumulate danger but obey every hard cap (0.350317ms)
+✔ near explosion has weight, distant explosion does not create exaggerated feedback (0.214767ms)
+✔ feedback decay is driven only by mission clock, so pause freezes and resume continues without duplication (0.864887ms)
+✔ restart/checkpoint reset clears all transient combat presentation state (0.25745ms)
+✔ quality tiers preserve danger reading while Low stays cheaper and omits exposure flash (0.158664ms)
+✔ combat presentation consumes no gameplay RNG and cannot alter snapshot, aim, position, HP or clocks (5.22941ms)
+✔ actual M01 aerial/demolition/grenade events rebuild identical delayed sound, shake and pull-out metadata from Schema 2 (55.604837ms)
+✔ portal recreate/dispose releases every owned instanced buffer exactly once and preserves shared materials (6.110936ms)
+✔ missing viewmodel renders a repeated first-shot flash after restart even when the first frame is 100 ms late (21.263445ms)
+✔ the sappers walk to the second cut where the crate is delivered, so "leve a caixa aos sapadores" is true (4389.306721ms)
+✔ Bąk takes the deck position with the 05:30 order and falls at bak_wound_point, in front of the player (886.099136ms)
+✔ a direction hint names the destination, distance and side when the player does not approach it (89.236965ms)
+✔ once the repair gate is ready the rest of seg_repair runs at readyScale; before that it keeps scale (1.738758ms)
+✔ the full control route still reaches the debrief with every required objective after the fixes (0.180747ms)
+✔ the withdrawing east platoon runs past the firing point during the corridor phase and does not stall at x = -109 (2239.462674ms)
+✔ a Bąk delivered by the player stays visible beside Dudek, who carries him west before the west demolition (1032.299984ms)
+✔ when Dudek retrieves Bąk he walks to him on the deck and carries him to the station, visible all the way (929.176532ms)
+✔ the roll call positions the present section in the shelter facing Jan; the absent stay away (1061.617458ms)
+✔ Kowal hands over at most six clips of section ammunition; saves keep the ammunition invariant (25.95707ms)
+✔ legacy schema 2 saves receive the unused section supply and can resupply after loading (11.669887ms)
+✔ the bridge trusses contain movement: no falling off a span sideways or into a blown gap; the river bank still can (2.532249ms)
+✔ a Bąk delivered after the east demolition is still evacuated, so the west demolition is not held forever (897.187553ms)
+✔ real control routes compare covering and ignoring: faster repair, fewer near misses and more survivors with support (6843.205186ms)
+✔ repair suppression requires a round that really arrives within 3 m; a solid wall shields the sappers (199.992216ms)
+✔ inactive or suppressed Germans on the spans cause no withdrawal losses; looking away does not stop combat (785.477106ms)
+✔ casualty IDs and rounds in flight survive reload and checkpoint restore; invalid optional timers are rejected atomically (261.29861ms)
+✔ legacy schema 2 saves migrate and the six reserve slots stay outside the eighteen-man platoon (46.38435ms)
+✔ the air-raid cover instruction remains visible briefly even if the player was already in cover (12.274173ms)
+✔ adjustment warning and HUD identify a real salvo; view direction changes the bearing without changing combat (1534.381325ms)
+✔ a salvo from the dike behind the trusses identifies its actual origin, rather than the visible gate MG (1508.301977ms)
+✔ an occluding wall prevents an adjustment warning and cover reservation, with a bounded retry (192.808919ms)
+✔ saved origin restores as data, expires after eight active seconds, and invalid or legacy saves remain safe (78.490287ms)
+✔ German fire starts on the east bank; only shooters in sight of the west bank (the Lisewo gates) aim at it (932.273641ms)
+✔ rounds that pass within 3 m pin the sappers and stop the repair; the HUD line is exactly the simulation state (838.66955ms)
+✔ keeping the gate MG down shortens the repair; ignoring it lets the sappers be pinned again and again (6740.068927ms)
+✔ covering fire on the Germans on the spans saves men; without it the platoon falls to the predicted minimum (0.531444ms)
+✔ historical times, checkpoints and demolition safety are unchanged in both routes (0.287644ms)
+✔ rounds in flight survive save and restore and play out identically; corrupt rounds are rejected (593.498071ms)
+✔ after 120 s of continuous suppression the fire on the repair eases without warning until work resumes (889.272062ms)
+✔ the withdrawal HUD line reports the real count by ID and whether the Germans on the spans are suppressed (1990.884219ms)
+✔ allies under fire are drawn hunched (pinned pose) only while suppressedUntil lasts, without touching the actor (1.137729ms)
+✔ a designated withdrawal casualty needs an actual actor hit; a wall, a miss or an already dead target cannot lower the count (1.489818ms)
+✔ damage decals never write simulation state: the real repair route stays bit-identical with them attached (2707.928585ms)
+✔ damage decal sources stay presentation-only: no RNG, no simulation writes, a single Game hook (1.921317ms)
+✔ marks sit on the drawn receiver with a fixed lift, differ per material and never z-fight (99.987561ms)
+✔ portal wall marks stay on masonry: never across the arch opening or below its apex (1.743093ms)
+✔ the west bridgehead marks the drawn embankment, never the walkable abutment buried under it (57.226363ms)
+✔ mark pools, spall, debris and embers stay within the declared per-quality budget (453.567033ms)
+✔ marks expire on the mission clock and are dropped deterministically when time runs backwards (178.759943ms)
+✔ blast residue lies on drawn surfaces, skips destroyed decks and the station interior, and is deterministic (22.728794ms)
+✔ reset clears every transient mark and the residue rebuilds identically from saved damage; restore follows the save (1334.14162ms)
+✔ marks on a demolished span or a lowered cover are invalidated; marks elsewhere persist (107.941994ms)
+✔ the first frame compiles the decal programs and draws every mesh once invisibly; later frames hide empty meshes (49.523421ms)
+✔ the chip FX batch has instance colours from construction, so the first chip does not switch its program (5.744591ms)
+✔ the decal atlas is original, deterministic art with bounded size (156.189221ms)
+✔ demolition bearing follows the actual impact and player view without changing the event or camera (3916.448319ms)
+✔ demolition cue restores from data, expires on active time, and distinguishes the west blast (176.486834ms)
+✔ collapse duration and the declared presentation constants sit inside the task contract (1.614073ms)
+✔ every demolition node of every LOD maps to its intact twin and to a damage id, from the real manifest (0.389885ms)
+✔ collapse pose: untouched before the blast, full intact offset at age 0, exactly the stored pose from T on (2.359784ms)
+✔ collapse pose is monotonic, gravity-like (ease-in), and the same clock always gives the same pose (6.325367ms)
+✔ view: collapsed nodes are SET from the cached stored transform (never accumulated); pause, replay and restore give the same pose (2.950465ms)
+✔ flash: minimum angular size and duration at 762 m and 362 m; the near-field profile is unchanged (0.86009ms)
+✔ far field: exposure at the light (age 0), tremor at distance/343 s, complementary to the existing 180 m path, inside M01_FEEDBACK_CAPS (7.561302ms)
+✔ far field is a pure function of the clock: pause freezes, a late registration or a restore reproduces the same values; reset clears it (0.435452ms)
+✔ fall points: spans land where the manifest says, splashes only on water (x 25..265), earth elsewhere (0.911255ms)
+✔ debris, splashes, earth rain and dust: timed from the blast, deterministic, bounded by the per-preset budgets (14.005245ms)
+✔ M01Atmosphere draws the set-piece inside its existing pools, deterministically, and ignores non-demolition ids (66.155594ms)
+✔ blast chips and shards have real colour: no vertexColors without a colour attribute (1.589566ms)
+✔ silence hook: a 2 s window from the blast is exported and surfaced in the view diagnostics; the audio module is untouched (0.638984ms)
+✔ presentation only: the simulation never imports the module, the module reads no wall clock/RNG, the view keeps owning visibility from renderState.parts (1.835861ms)
+✔ projectToScreen matches a THREE.PerspectiveCamera for the camera the view reports (1.683365ms)
+✔ far demolition flash: warm colour, stacked billboards and the declared angular size reach beyond 300 m only (1.532863ms)
+✔ the far flash is visible over the horizon haze: footprint of the real puff texture, single old-style billboard vs the stack (52.332302ms)
+✔ earth rain and river splash are legible: bigger clods, more of them, denser puffs, all inside the preset budgets (15.353079ms)
+✔ M01 environment prop layout is deterministic, uniquely identified and grounded (9.644898ms)
+✔ visual prop generation cannot consume gameplay RNG or mutate world colliders/save state (8.372193ms)
+✔ critical rail, road and station access corridors remain visually clear (3.926236ms)
+✔ Low, Medium and High preserve composition while scaling detail coherently (1.175976ms)
+✔ rebuilding the visual layout is idempotent and does not create logical duplicates (4.459052ms)
+✔ visual quality respects explicit settings and conservative hardware fallback (0.72483ms)
+✔ foreground trunks obstruct walking and shots; restoring destruction reconstructs the same static obstacles (4.380497ms)
+✔ grading is a pure function of (lighting model, quality): same input => identical uniforms; Low has none (2.383479ms)
+✔ 04:30, 05:30 and 06:05 give distinct, plausible curves (cool blue hour, warm golden dawn, morning in between) (0.471957ms)
+✔ transitions are continuous: no step in any grade term between consecutive sim seconds from 04:30 to 07:05 (46.752475ms)
+✔ anchors turn on the T16 phases: one grade per lighting phase plus the sub-mission night, exact at the anchor, clamped beyond (0.380642ms)
+✔ the grade tints, it does not change exposure: weighted gain 1, black and white fixed, no crushed blacks, no clipped whites added (1.138872ms)
+✔ vignette: soft, exactly 1 in the middle of the frame, darkening at the corner stays at or below 25 % (0.287805ms)
+✔ quality policy: Low builds nothing; Medium/High are ONE pass, ONE colour target and its depth texture, AO inline (0.297139ms)
+✔ Low: no render target, no pass, no material, no allocation, ever (1.214463ms)
+✔ Medium/High: one target (half-float, MSAA, depth texture), one composite pass per frame, resized with the canvas, freed when going back to Low (1.587774ms)
+✔ uniform values reach the shader and follow the lighting model; pause = same model = same uniforms (0.886779ms)
+✖ wiring: Low keeps the exact statements, the weapon is drawn after the composite and never into the target, tone mapping untouched (1.650647ms)
+✔ three.js pin: the isXRRenderTarget tone-mapping / output-colour-space branches this pass relies on are still there (1.448358ms)
+✔ test-only A/B hook is opt-in (?debug) and only toggles bypass / grade / vignette / ao (0.499347ms)
+✔ intro cards and fade follow the cs_m01_intro beats in mission data (1.507355ms)
+✔ roll call fades in with the 07:05 card from the battle clock and fades out at the debrief beat (0.566156ms)
+✔ objective transitions, interaction keys and optional objective split are presentation parsing only (0.689658ms)
+✔ the presenter never changes simulation state and keeps HUD text contracts on a real route (3707.279854ms)
+✔ checkpoint feedback, restore fade and continue card are timed by the simulation clock (32.575203ms)
+✔ projected height is max(3 px, 1.7 m) for several distances, fovs and viewports (1.372976ms)
+✔ posture heights are distinct in metres and in pixels, and follow the existing pose state (1.094065ms)
+✔ step phase: same sim clock and id => same phase; ids differ; clock advances it; no wall clock (0.365459ms)
+✔ hand-off: exactly one representation; nothing changes below 350 m (0.960107ms)
+✔ capacity 128/96/64 per nation; overflow keeps the nearest, deterministically; one draw call per nation (9.628377ms)
+✔ minimum contrast against the backdrop at the actor distance, every phase, 350..2000 m (2.993828ms)
+✔ backlight is active 05:30-06:40 only and only when the camera faces the sun (0.303998ms)
+✔ class: one InstancedMesh per nation, capacity by quality, disabled => empty selection, no GPU needed (2.866781ms)
+✔ wiring: only the view and the characters hand-off know the module; sim never imports it (1.837802ms)
+✔ M01 Ju 87 B-1: metres, nose to −Z, 11.10 × 13.80 m, stable nodes and three LODs within budget (3.555827ms)
+✔ M01 Ju 87 B-1: propeller turns a full revolution about Z; dive brakes open 90° about their hinge (1.248908ms)
+✔ authored sun keyframes (C01) and the fog range are untouched (1.601533ms)
+✔ sun interpolation is exactly the pre-extraction formula, including both clamped ends (5.885145ms)
+✔ the five phase clocks give distinct sky, light, fog and exposure values (0.508741ms)
+✔ the directional light casts shadows from 04:30 as a positive-elevation twilight key with the real azimuth (7.098314ms)
+✔ daylight, light intensities and exposure follow the expected monotone trend over the mission (7.572895ms)
+✔ every model value is finite and in range for any clock, including outside the mission (8.926632ms)
+✔ applier drives the lights, fog, exposure and sky from the model without touching fog range or Low shadow cost (2.078627ms)
+✔ weapon lighting inherits the twilight key: the weapon key is lit from above the hands at 04:30 and warms by 05:30 (4.056516ms)
+✔ sky shader: colours come from the model uniforms, clouds project from direction (no sphere UV seam, no zenith pinch) (27.836585ms)
+✔ shadow cascades: Low has one (no extra light), Medium/High two with the key intensity split, not doubled (1.503799ms)
+✔ real GLBs: bounded decreasing LOD budgets, finite valid attributes, original licence and visible locomotive features (26.069188ms)
+✔ loaded actual assets retain anchor and orientation; one visible LOD and three draw meshes (107.27786ms)
+✔ LOD hysteresis avoids boundary flicker and ignores quality, clock and camera semantics (0.147047ms)
+✔ partial asset failure uses a surviving LOD; total failure retains exact old proxy extents (16.075391ms)
+✔ late optional downloads cannot attach after disposal; asset cache owns shared buffers (12.254152ms)
+✔ integration preserves gameplay, RNG, hitboxes/muzzle modules, missions and non-presentation base assets byte-identical (382.746742ms)
+✔ pause/restore and repeated rendering never mutate a save or introduce train movement authority (47.45493ms)
+✔ atlas generation is deterministic and shipped PNGs match generated pixels and provenance (8879.36906ms)
+✔ sixteen material cells cover the requested families, preserve periodic gutters and safe UV bounds (49.75113ms)
+✔ normal/ORM maps carry normalized relief and material-specific roughness and metalness (6.843539ms)
+✔ all High textures including terrain and macro mask fit 40 MiB decoded (0.613255ms)
+✔ shared registry owns three textures once, patches all five material maps, and safely cleans partial load failures (2.165246ms)
+✔ T09 registry preserves the original sandbox surface generator byte-for-byte (4.365262ms)
+✔ T09/T28 preserve simulation, world, audio, missions, models and build configuration bytes (10.92358ms)
+✔ terrain rollout preserves the original sampled ground geometry and colliders (3.127705ms)
+✔ M01 MG 34: metros, cano para −Z, 1,219 m ±2 %, peças móveis com pivô e três LODs no orçamento (3.755242ms)
+✔ M01 MG 34: clips mg34_* ligam-se ao rig do soldado alemão e aos nós da arma; rajada de 7 a 800/min; recarga do tambor (6.976379ms)
+✔ M01 MG 34 deitada: nomes novos, kit da MG 34 e soldados reutilizados sem alterações (hashes do manifesto) (13.342338ms)
+✔ M01 MG 34 deitada: alvos do rig e da arma, valores finitos, quaternões unitários e durações (32.423385ms)
+✔ M01 MG 34 deitada: rajada de 7 a 0,075 s, janela e cortes; bípode aberto/dobrado; recarga coordenada (1.865077ms)
+✔ M01 MG 34 deitada: continuidade com mg34_aim do kit e entre clips deitados (51.242861ms)
+✔ M01 MG 34 deitada: AnimationMixer do three.js — contactos, passagem do tambor e pausa/retoma no mesmo frame (41.693835ms)
+✔ actual renderer samples enter, idle, burst and exit from simulation and matches its muzzle within 2 mm (121.29664ms)
+✔ renderer save after 1 shots restores same frame and flash without replay or RNG draws (76.891194ms)
+✔ renderer save after 4 shots restores same frame and flash without replay or RNG draws (60.196198ms)
+✔ renderer save after 6 shots restores same frame and flash without replay or RNG draws (56.691356ms)
+✔ missing prone GLB uses existing procedural batches without changing gameplay, hitboxes, save, RNG or real shots (82.016737ms)
+✔ rendered death during enter has no residual prone frame, weapon, flash or loader (43.294076ms)
+✔ rendered death during idle has no residual prone frame, weapon, flash or loader (47.432573ms)
+✔ rendered death during fire_burst has no residual prone frame, weapon, flash or loader (55.340563ms)
+✔ rendered death during exit has no residual prone frame, weapon, flash or loader (40.702983ms)
+✔ actual muzzle effect after shot 1 has no extra flash in the .06/.075 gap or restore (15.946466ms)
+✔ actual muzzle effect after shot 4 has no extra flash in the .06/.075 gap or restore (22.158093ms)
+✔ actual muzzle effect after shot 6 has no extra flash in the .06/.075 gap or restore (12.755803ms)
+✔ actual muzzle batches have no post-death flash during all four prone phases (5.631631ms)
+✔ existing MG34 gunners enter for exactly 1.9 seconds; other actors have no new posture (6.406363ms)
+✔ save and atomic restore preserve enter, idle, aim and exit and consume no RNG (62.884205ms)
+✔ save after shot 1: resume without duplicate/lost rounds, events, frames or RNG (37.197245ms)
+✔ save after shot 4: resume without duplicate/lost rounds, events, frames or RNG (22.260419ms)
+✔ save after shot 6: resume without duplicate/lost rounds, events, frames or RNG (16.106618ms)
+✔ 4, 5, 6 and 7 shots preserve the requested count and real .075 cadence (4.338742ms)
+✔ pause leaves posture, progress, shot, pending burst, RNG and complete snapshot exactly stable (33.79555ms)
+✔ ADVANCE exits prone, blocks firing, then remains standing (1.110929ms)
+✔ RETREAT exits prone, blocks firing, then remains standing (0.938114ms)
+✔ movement waits for exit; interrupted entry reverses its saved fractional progress (2.278472ms)
+✔ suppression keeps the gunner low and cancels pending shots without cancelling those in flight (13.989463ms)
+✔ death during enter immediately clears posture and future shots (10.191479ms)
+✔ death during idle immediately clears posture and future shots (13.702269ms)
+✔ death during fire_burst immediately clears posture and future shots (9.941651ms)
+✔ death during exit immediately clears posture and future shots (13.488624ms)
+✔ inactivity discards pending combat and never creates a loader association (5.554847ms)
+✔ legacy missing prone data resumes safely with no marker; 86 roster/CKM migration stays unchanged (14.905835ms)
+✔ invalid partial/impossible prone fields reject atomically without changing source or target (65.418378ms)
+✔ movement and S3 station evacuation bodies remain byte-for-byte identical to the fixed base (5.638991ms)
+✔ a nonlethal hit interrupts the remaining burst and stays low with a valid snapshot (2.887892ms)
+✔ player fire observes the current transition progress within a real simulation tick (2.633326ms)
+✔ save cannot remove or alter an emitted round still in flight (10.879215ms)
+✔ OUTRO cancels pending rounds and blocks new MG bursts while preserving existing flight (1.279849ms)
+✔ a target already reached never rewrites the state of a fixed prone burst (3.371775ms)
+MG34 muzzle proof: 2496 comparisons, max=0.000038402 m, tolerance=0.002 m
+✔ numeric muzzle proof against real attached soldier/weapon GLBs for all phases and four facings (152.834281ms)
+✔ geometry table is derived reproducibly from the exact real GLBs, without a graphics or asset dependency in simulation (104.668135ms)
+✔ head/torso/legs move along body axis facing=0 during prone and transitions (1.161795ms)
+✔ head/torso/legs move along body axis facing=1.5707963267948966 during prone and transitions (0.337228ms)
+✔ head/torso/legs move along body axis facing=3.141592653589793 during prone and transitions (0.258782ms)
+✔ head/torso/legs move along body axis facing=-1.5707963267948966 during prone and transitions (0.185063ms)
+✔ partial entry interruption reverses the actual enter clip continuously instead of jumping to an unrelated exit frame (0.970543ms)
+✔ real rounds start at the rendered prone socket at each of seven scheduled shot instants (21.650168ms)
+✔ pause keeps eye, hitboxes, muzzle and canonical clip frame exactly stable across all saved phases (2.374986ms)
+✔ real GLBs: bounded decreasing LOD budgets, finite valid attributes, original licence and five distinct conservative profiles (28.897446ms)
+✔ loaded actual assets retain anchor and orientation; one visible LOD and three draw meshes (131.424441ms)
+✔ LOD hysteresis avoids boundary flicker and ignores quality, clock and camera semantics (0.152315ms)
+✔ partial asset failure uses a surviving LOD; total failure retains exact old proxy extents (16.819368ms)
+✔ late optional downloads cannot attach after disposal; asset cache owns shared buffers (16.329154ms)
+✔ integration preserves gameplay, RNG, hitboxes/muzzle modules, missions and non-presentation base assets byte-identical (453.31383ms)
+✔ pause/restore and repeated rendering never mutate a save or introduce train movement authority (50.622787ms)
+✔ hit marker lights only for player-shot hit:true and lives 0.15 s of mission clock (9.112741ms)
+✔ hit marker freezes while paused (clock constant), is hidden in cinematic scenes and cleared by reset/clear (2.762147ms)
+✔ sound plan: <= 60 m immediate, beyond 60 m due at clock + distance/343 (0.81344ms)
+✔ game.js: far player impact is queued with the same key, drained when due, and never replays after restore (3.504383ms)
+✔ a player shot into the Vistula yields water FX and water sound material, not earth dust (24.786338ms)
+✔ hit marker and sound scheduling consume no gameplay RNG and leave the snapshot unchanged (2.088182ms)
+✔ the real roll call seats only the present actors and keeps their positions and pose through save/reload (3769.152818ms)
+✔ actual instance matrices lower seated/crouched heads, keep seated feet on the floor and render horizontal wounded/carried bodies without mutating data (20.950815ms)
+✔ legacy actors without pose remain accepted and an unknown saved pose is rejected atomically (15.134289ms)
+✔ distance removes face accessories while retaining the same head position, pose and immutable actor (4.039413ms)
+✔ a shot shoulders the rifle, keeps both hands on it and attaches the flash to the barrel through yaw and recoil (2.03253ms)
+✔ suppression lowers the upper body with feet planted and takes priority over a recent shot; seated, wounded and unarmed actors do not aim (2.866141ms)
+✔ a real combat save reproduces the same animation matrices at the same clock after reload and walking lifts a foot without sinking either boot (597.282903ms)
+✖ o gerador reproduz byte a byte os GLB e o manifesto em disco (100.477108ms)
+✔ manifesto: autor, licença, unidades, lista completa e ficheiros iguais (bytes, sha256, triângulos) (5.916404ms)
+✔ orçamentos: LOD0 ≤ 1500 triângulos, LOD1 ≤ 300 e menor que o LOD0 (2.819712ms)
+✔ tamanhos reais em metros, origem no solo e LOD1 com a mesma pegada que o LOD0 (3.73296ms)
+✔ GLB válidos: cor de vértice, sem texturas, normais unitárias, índices em limites, cores dessaturadas, PBR razoável (47.074175ms)
+✔ o vão de fio liga-se às âncoras do poste (sockets) e tem 12 m de comprimento (0.740373ms)
+✔ M01 rkm wz.28: metres, barrel to −Z, 1.11 m ±2 %, movable parts and three LODs within budget (2.759514ms)
+✔ M01 rkm wz.28: clips bind to the soldier skeleton; burst fires 3 rounds; rifle clip hidden (2.754476ms)
+✔ the pure collision JSON remains reproducible from the checked GLB translations (40.617169ms)
+✔ debug diagnostics return copies; editing a returned gate or failure cannot change live state (10.357579ms)
+✔ wz.29 requires a bolt cycle; an empty magazine uses a clip of five, preserving ammunition (0.247315ms)
+✔ wz.29 partial loading commits one round at a time and can be interrupted; in-progress saves resume it (0.314664ms)
+✔ M01 complete control route reaches debrief, all required objectives, unique events and all four actual checkpoints (3674.494594ms)
+✔ every M01 checkpoint restores exact actors, ammunition, RNG, dialogue, destruction and real clocks after death (28.488923ms)
+✔ damaged bridge pieces and German casualties survive LOD changes and checkpoint restoration (5.635358ms)
+✔ overdue events use >=; delayed events wait active seconds; pause freezes both clocks and weapon work (25.26282ms)
+✔ a late message never rewinds battle time and every aerial impact stays at least thirty metres away (1.983468ms)
+✔ west demolition waits inside the safety zone, then releases once the player and allies have left (46.236599ms)
+✔ boundary warning precedes failure and its eight second timer resets when the player returns (1.708732ms)
+✔ metre-space hitboxes, actual cover and bridge joints support shots and continuous travel (1.17905ms)
+✔ corrupt M01 state is rejected atomically before an active scene, grenade or missing timer can crash the game (23.099918ms)
+✔ outro calls Nowicki twice as distinct beats and consumes completion once, including skip after partial playback (57.145041ms)
+✔ optional Bąk rescue cannot be taken away mid-carry; delivery chooses the player continuity branch (4.888396ms)
+✔ all five sectors keep their schedule and stable casualties for ninety seconds while the player looks away (491.318941ms)
+✔ west hold timeout sends the sergeant to escort the player without demolition damage (936.143197ms)
+✔ grenade blast starts at its real height; solid cover shields a nearby actor and inactive actors stay unharmed (1.346358ms)
+✔ first divergence diagnostic detects exact tick, field, missing key and event changes (29.657344ms)
+✔ full route A/B with CP-A..D, events, RNG and long continuation: seed 19390901, support false (68325.88797ms)
+✔ full route A/B with CP-A..D, events, RNG and long continuation: seed 7, support true (65529.678439ms)
+✔ MG34 seven-shot burst after 1, actual tick pipeline plus grenade, rifle RNG and double load (434.714661ms)
+✔ MG34 seven-shot burst after 4, actual tick pipeline plus grenade, rifle RNG and double load (418.123626ms)
+✔ MG34 seven-shot burst after 6, actual tick pipeline plus grenade, rifle RNG and double load (413.531406ms)
+✔ station grab: variable timestep, zero-dt pause, double save/load (860.620625ms)
+✔ station drag: variable timestep, zero-dt pause, double save/load (907.867758ms)
+✔ station release: variable timestep, zero-dt pause, double save/load (985.719929ms)
+✔ grenade bounce/fuse, rifle bolt and partial reload continue with exact RNG and events (481.275177ms)
+✔ Bąk player carry/late delivery followed by Dudek evacuation and both demolitions (25195.759001ms)
+✔ legacy 86/89 actors, missing optional fields and old CKM placement migrate once then have identical futures (829.881718ms)
+✔ legacy MG34 pre-created future rounds migrate without replay, then continue identically (489.640259ms)
+✔ death between each real CP-A..D and the next CP preserves exact recovery and subsequent future (2291.851236ms)
+✔ corrupt cross-system states reject atomically and leave the destination future unchanged (986.743326ms)
+✔ corrupt weapon method/profile, unsigned RNG and unknown phase reject before changing future gameplay (662.444184ms)
+✔ OUTRO playback, skip, double load and completed no-op use the same dialogue/event future (4370.244018ms)
+✔ save between checkpoints preserves the future respawn destination (14.075134ms)
+✔ the M01 simulation does not load Three.js, renderer, UI or audio modules (2.401132ms)
+✔ the M01 simulation stays deterministic and browser-free (2.48787ms)
+✔ motion package contains six distinct original clips and no renderable geometry, textures or root channels (2.505025ms)
+✔ documented locomotion distance, contacts and durations can be sampled from an odometer (0.299582ms)
+✔ all PL/DE and 61/28-joint LOD variants accept the same locked bind pose (2323.029654ms)
+✔ real GLTFLoader/AnimationMixer binds all tracks, preserves root and limb lengths, without NaN or warnings (1567.681898ms)
+✔ actual skinned boot soles stay above ground; nominal root displacement cancels planted-foot drift (0.476784ms)
+✔ wrists follow the weapon profile and elbows remain outside the chest envelope through the actual interpolated clips (0.187126ms)
+✔ locomotion loops have matching transforms and no single-tick joint jump (0.201117ms)
+✔ left/right turns use opposite foot orders and ±90° skeletal yaw while the actor root stays fixed (103.247678ms)
+✔ reactions recover to their initial pose without deciding combat or moving the actor root (37.447015ms)
+✔ the full visible skin stays finite and anatomically bounded at five requested clip phases on all six models (2222.386582ms)
+✔ generation reproduces the exact GLB and metadata twice without modifying original assets (220.306126ms)
+✔ motion package source commit preserves gameplay, original assets, dependencies and workflows (13.904473ms)
+✔ eight bounded profiles per nation are deterministic by ID/side/real role and independent of clocks, health, order and quality (10.054643ms)
+✔ actual GLB variants survive all three LODs, pause, rebind and re-created renderers without actor/source mutation (225.744113ms)
+✔ OFF vs ON has exactly equal world bones, root/facing, gameplay hitboxes, weapon meshes and rendered muzzle at every LOD (159.080015ms)
+✔ shared originals retain all attributes and indices; source atlas is shared; cached variants add no textures/draws (156.097406ms)
+✔ actual gear silhouettes differ through existing breadbag fullness/optional shovel; ammo pouches and skins remain (39.240149ms)
+✔ simulation futures/RNG/saves/checkpoints are exact with visual OFF vs ON; renderer freeze/reload does not write state (446.61808ms)
+✔ missing optional art stays procedural; release/rebind keeps cached buffers until owner disposal (24.347409ms)
+✔ real continuation and its CP backup keep the same visual identities; German face treatments stay within 3 mm (459.878863ms)
+✔ integration preserves gameplay, hitbox/muzzle, save, locomotion and non-presentation base assets byte-identical (602.612505ms)
+✔ M01 soldiers: metres, −Z facing, 1.65–1.85 m and the full game skeleton in every LOD (6.399541ms)
+✔ M01 soldiers: visible triangle budget, textures per LOD and togglable variants (4.490524ms)
+✔ M01 soldiers: weapons keep documented length (wz.29 1.10, Kar98k ~1.11, wz.98a 1.25, rkm wz.28 1.11 m) with bolt and magazine bones (5.471351ms)
+✔ M01 soldier animations bind by bone name and keep kb_wz29 timings (3.742431ms)
+✔ Station mesh vertices remain inside the authorised visual envelope at all LODs (262.591261ms)
+✔ the facade has real missing wall faces, deep closed reveals and physical parallax (195.873646ms)
+✔ silhouette, roofs and openings survive quality switches; detail and allocation stay bounded (141.79147ms)
+✔ geometry and material maps regenerate byte for byte without random state or external assets (437.277952ms)
+✔ Station construction/sync preserves all anchors, colliders, props and save/RNG/evacuation authority (1019.366381ms)
+✔ platform and awning preserve walking clearance in the existing facade and evacuation strips (121.325515ms)
+✔ dispose is idempotent; recreate replaces one root and frees owned geometry/material/texture resources once (337.99219ms)
+✔ unexpected or missing Station anchors fail safely before attaching any replacement root (0.777788ms)
+✔ V3 preserves the V2 five-volume and 140-aperture contract and outward roof normals (76.975878ms)
+✔ V3 resource budget remains seven shared batches and ten maps across all quality levels (118.766219ms)
+✔ V3 varying panes, roughness and relief stay deterministic and Station shader scope stays private (113.999037ms)
+✔ the real station clips sample both roles from saved phase time, with pause, fresh renderer and LOD restore (1099.011048ms)
+✔ the patient holds the actual final grab pose throughout the moving backward drag (284.003755ms)
+✔ a missing or incomplete optional transition pair falls back together and leaves evacuation success to simulation (5301.227621ms)
+✔ M01 arrasto da estação: ficheiros novos, rig e clips reutilizados sem alterações (SHA-256 do manifesto) (4.596691ms)
+✔ M01 arrasto da estação: alvos dos 61 ossos, valores finitos, quaternões unitários, relógio e eventos dos pares (39.649264ms)
+✔ M01 arrasto da estação: extremos iguais às poses reais, percurso inverso e raiz sem deslocação (187.975374ms)
+✔ M01 arrasto da estação: AnimationMixer do three.js — contactos, paciente de costas, corpos e pausa/retoma (96.611709ms)
+✔ the fictional station casualty starts in the yard and the clock triggers his injury only once (428.173547ms)
+✔ the backward drag stays on the ground, completes outside the camera and returns Dudek to his post (711.404784ms)
+✔ changing the player look never changes the station evacuation or its delivery (954.66293ms)
+✔ a save during the drag restores the same actors, task and future positions with no scene objects (643.581507ms)
+✔ death or removal of a participant detaches the casualty instead of leaving an invalid or moving carrier reference (1239.106466ms)
+✔ legacy schema 2 saves with an already consumed station event do not replay an injury (314.585268ms)
+✔ station care coexists with Bąk, all objectives, checkpoints and both historical demolitions on supported and ignored routes (6737.372874ms)
+✔ grab and release last 1.6 mission seconds, hold both roots and deliver only after settling (403.936755ms)
+✔ schema 2 restores every station phase and its future clocks, actors and RNG exactly (985.608601ms)
+✔ all station phases interrupt on casualty/medic death, removal or reassignment without delivery (4669.83949ms)
+✔ old schema 2 transit saves resume without a new grab and corrupt station phases are rejected atomically (314.598583ms)
+✔ actual MG34 rig cuts 4/5/6/7-round bursts at their saved duration, keeps one weapon and samples pause/restore without mutation (204.932869ms)
+✔ two existing MG sources share art and retain independent rigs within the light budget; LOD, suppression, casualties and missing kit fall back (184.054856ms)
+✔ 65 actual wagon models use LOD2 instances at 9.10 m with source pivots and shared art; partial/full failures preserve the whole consist (44.133536ms)
+✔ disposing while optional wagon downloads are pending never attaches models to the old scene (11.132671ms)
+✔ M01 declares the mission contract fields of Prompt §74 (1.221583ms)
+✔ M01 IDs are unique across the mission and every reference resolves (0.890344ms)
+✔ M01 keeps the documented chronology on the battle clock (1.411884ms)
+✔ M01 equips only gear available on 1 September 1939 and never the forbidden weapons (0.224291ms)
+✔ M01 keeps the mandatory lines of the master script verbatim (0.177241ms)
+✔ M01 labels history and space only with the agreed vocabularies (0.858227ms)
+✔ M01 checkpoints accumulate state and never save inside a demolition zone (0.371208ms)
+✔ M01 runs at least two independent battle sectors on the clock (0.333953ms)
+✔ M01 map geometry matches the documented bridges of 1939 and the measured piers (0.627516ms)
+✔ M01 debrief keeps unconfirmed paragraphs disabled until their checks pass (0.708807ms)
+✔ extent equals the terrain mesh of M01View (PlaneGeometry 2000x650 translated by 300,0,40) (3.376634ms)
+✔ sources come from the layout: roads, rails with the bridge-structure track centres, river polygon (0.226294ms)
+✔ bake is pure: same input -> same bytes; the world is not modified (62.344034ms)
+✔ worn track: ~0 on the road centre line, 1 at its edge, clamped far away (342.117396ms)
+✔ ballast strip: inside beside the rail centre line, absent beyond the shoulder (0.269347ms)
+✔ wet band: signed distance to the Vistula channel (negative in the river, ~0 at x 25 and 265, grows inland) (0.185483ms)
+✔ macro field: deterministic, 0..1, uses the whole range, meadow polygons are biased green (26.833307ms)
+✔ a mission without a river or tracks still bakes (everything far / neutral) (0.337568ms)
+✔ tier policy: low = macro mask only, medium/high = mask + detail + normals (527.425903ms)
+✔ quality change re-bakes the mask, swaps the set and disposes what it replaced (no leak) (479.308266ms)
+✔ a failed texture load is reported, never thrown: the terrain falls back to the macro colour (327.78126ms)
+✔ a stale load (quality changed while fetching) is discarded and disposed (401.431995ms)
+✔ shader patch: stock map / roughness / normal chunks are replaced, uniforms exposed, fog and shadows untouched (0.683188ms)
+✔ gpu byte accounting matches the texture sizes (0.191632ms)
+✔ out-of-order loads and failures never poison the current tier; every bitmap closes once (1.056539ms)
+✔ dispose during pending load is idempotent; no callbacks, resources or world mutations after disposal (351.85472ms)
+✔ steep slope patch samples three projections; Low shader constant-folds all detail (0.505846ms)
+✔ world replacement updates mask ownership and later tier rebakes without rebuilding ground geometry (144.354318ms)
+✔ partial fulfilled loads release immediately on Low or dispose while another request remains pending (0.607106ms)
+terrain texture budget (computed): {"high":{"textures":5,"mb":20},"medium":{"textures":5,"mb":7},"low":{"textures":1,"mb":1.67}}
+✔ generator rerun is byte-identical (same pixels, same PNG bytes, same sha256) (11295.693192ms)
+✔ manifest records author, licence, units, source and a matching bytes/sha256/size for every file (180.224835ms)
+✔ textures tile (no seam: opposite edges differ like neighbouring rows) and carry real detail (198.897945ms)
+✔ tile scale and per-tier texture sets match the shader constants (0.356346ms)
+✔ texture budget on the reference PC: GPU bytes incl. mips <= 24 MB High, <= 8 MB Medium/Low; sampler delta <= 4; no extra draw call (1.59986ms)
+✔ consist keeps 65 wagons, plan ids/types/x and the plan anchor; LOD hysteresis and candidates are unchanged (20.861176ms)
+✔ real GLB instances keep plan x/z, sit on the rail-top offset and stay in the original LOD batches (104.478467ms)
+✔ wheel/rail fit: treads sit on the rail head, flanges stay inside the gauge, no lateral offset (all types and LODs) (25.10002ms)
+✔ every detail batch matches the tier of the drawn LOD; near/mid sets vanish at LOD2 and on Low; budget counted on real submissions (60.053962ms)
+✔ fallback: total and partial GLB failure keep the old proxies and never float details on them (21.22249ms)
+✔ train consist never asks for damage art and the yard intact/burned authority is unchanged (10.179168ms)
+✔ save/reload, pause frames and repeated updates never mutate simulation state or RNG; every detail/GLB buffer is history-free (101.582605ms)
+✔ variation is deterministic, bounded and visibly non-uniform without touching wagon type (0.682306ms)
+✔ couplings and underframe add no collider: world obstacles/walk surfaces are identical and nothing reads the world (10.24895ms)
+✔ dispose/recreate and repeated rebuilds never duplicate meshes or free shared art (39.188484ms)
+✔ original Claude train source changes only its renderer and adds detail, without touching gameplay or assets (11.032536ms)
+✔ everything the consist draws (siding included) lives under the train963 group, so visibility authority is unchanged (7.663125ms)
+✔ the drawn siding: rail heads at the rail top, standard gauge between inner faces, continuous from 1062 to 2000 m (10.788356ms)
+✔ a wagon drawn with a finer fallback GLB far away keeps the far tier (missing LOD2 art) (7.579793ms)
+✔ vegetation layout is deterministic, pure and leaves the approved solid trees untouched (124.561505ms)
+✔ vegetation stays inside the browser budget and keeps Low cheaper (13.153535ms)
+✔ trees, shrubs and ground cover are varied, clustered and never laid out on a grid (8.525338ms)
+✔ decoration respects corridors, objectives, covers and the playable bounds (33.968733ms)
+✔ no shrub or visual tree stands on a path actually walked in the scripted mission (3672.019356ms)
+✔ vegetation variation is deterministic, visual-only and does not consume gameplay RNG (62.149599ms)
+✔ vegetation LOD tiers use hysteresis and Low keeps a geometric canopy (0.234897ms)
+✔ approved tree colliders and critical route remain unchanged by the visual pass (525.293209ms)
+✔ ADS curve is eased, exact at both ends and takes 0.30 s in and 0.22 s out at any frame schedule (1.682563ms)
+✔ world field of view 70 -> 48 uses the very same curve as the weapon pose (1.060164ms)
+✔ ADS keeps the exact sight pose: breath, bob, wall and recoil terms are exact zeros at rest in full ADS (0.466418ms)
+✔ breath sway and gait bob are pure functions of the clock and gait weights; a gait change never pops (8.030688ms)
+✔ every changed render module is free of randomness, wall clocks and timers (1.137789ms)
+✔ recoil kicks, returns to rest exactly and is deterministic per shot index (19.904756ms)
+✔ wall probe measures the first collision box along the aim and ignores what is not in front, without writing (0.959656ms)
+✔ wall lowering target: none beyond the reach, full at the lowest pose, linear between; lowers fast, raises slowly (0.498386ms)
+✔ production viewmodel aims in 0.30 s and out 0.22 s of mission time; the camera FOV rides the same curve; a repeated clock is frozen (255.106348ms)
+✔ ADS timing, gait bob and breath are the same at 40, 20 and 4 frames per second of mission time (70.08068ms)
+✔ walking bob and breath are alive on the hip, frozen when the clock stops, and absent in ADS (122.139902ms)
+✔ wall lowering keeps the rifle in front of the wall down to the lowest pose and never cuts geometry at the near plane (74.226286ms)
+✔ wall lowering lowers fast when the wall arrives and raises once it is clear, on the mission clock only (75.836081ms)
+✔ wall lowering needs the render camera and the world boxes; without either the pose is the old one (6.372632ms)
+✔ real mission: the rifle lowers at the road portal wall on the sim collision boxes and raises when turning away; aim, shots and saves are untouched (629.775937ms)
+✔ M01 vagões danificados: o kit intacto não foi alterado (sha256 registados no manifesto) (3.732867ms)
+✔ M01 vagões danificados: metros, 9,10 m no LOD0, rodas no carril, pivôs do intacto e três LODs no orçamento (18.646148ms)
+✔ M01 vagões danificados: sockets iguais aos do intacto, mais impact só no danificado (1.703733ms)
+✔ M01 vagões danificados: wheels_roll igual ao intacto; doors_open só na porta esquerda do coberto danificado (1.675762ms)
+✔ M01 vagões danificados: restos só visuais no nó debris, alterações registadas e sem efeitos próprios (0.956861ms)
+✔ train and yard LOD selectors cover 0/1/2 with hysteresis and stable identities (1.726777ms)
+✔ yard authority is only intact/burned; damaged art is never invented (0.575028ms)
+✔ authoritative marker survives save/reload and checkpoint restore chooses the saved visual state (18.925496ms)
+✔ yard positions/covers stay authoritative and fire/smoke use authored sockets (0.718339ms)
+✔ yard renderer falls back to the best loaded asset, then procedural proxy, without changing semantic state (9.951319ms)
+✔ train renderer uses all three real LODs and retains procedural fallback when every asset fails (40.565246ms)
+✔ missing individual LODs choose the closest real train asset and missing burned art falls back to intact GLB (28.402556ms)
+✔ late GLB completion after dispose cannot reattach or populate yard sources (0.778999ms)
+✔ M01 vagões: metros, 9,10 m entre tampões no LOD0, rodas no carril, nós estáveis e três LODs no orçamento (4.038197ms)
+✔ M01 vagões: rodados dão uma volta por segundo em X; portas do coberto correm 1,95 m em Z (1.453323ms)
+✔ channel constants match the map data (vistula_channel flowDirection and extent) (3.148865ms)
+✔ piers are the manifest supports standing inside the channel (0.462252ms)
+✔ same clock => identical uniforms; different clock changes flow only (0.839298ms)
+✔ fresnel grows monotonically from steep to grazing views (0.208767ms)
+✔ sky reflection: grazing ray is the horizon colour, steep ray the zenith; sun halo adds light (0.346291ms)
+✔ flow advances toward -z (flowDirection north) with the sim clock and follows the T16 wind (0.254706ms)
+✔ pier foam: present around the known piers (and wake downstream), zero mid-channel far from them (0.235267ms)
+✔ bank wetness: wet at x~25 and x~265, dry mid-channel, symmetric and monotone (0.221106ms)
+✔ quality: Low has no reflection term; no planar reflection, render target or extra pass at any quality (0.476903ms)
+✖ view wiring: only the river mesh uses the water material; game/world/core never import the module (1.596425ms)
+✔ Low body tint: a constant horizon-colour term replaces the reflection (no near-black oil slick), absent at Medium/High (0.573616ms)
+✔ foam readable: full-strength ring at each pier footprint, wake streaks downstream (-z) of rail_support_01 and road_support_01 (0.163822ms)
+✔ bank foam fringe: on the bank line at x 25 and 265, gone past the fringe, deterministic in the sim clock (0.391408ms)
+✔ test-only A/B hook is opt-in (?debug) and only toggles the foam/wet detail uniform (0.225572ms)
+✔ ?debug toggle flips the detail uniform and state; no hook without ?debug (0.984522ms)
+✔ unmodified weapon ballistics, RNG and spatial gameplay sources remain byte-identical to base 99309d9 (1.716903ms)
+✔ the presentation modules read gameplay state but never import gameplay code (game, world, core) (0.665271ms)
+✔ each weapon keeps its own frozen presentation identity and carries no gameplay keys (5.049809ms)
+✔ recoil is a finite per-weapon impulse: zero at rest, bounded, weaker in ADS, deterministic per shot (8.744519ms)
+✔ hip sway is bounded and does not visibly loop; ADS at rest keeps the exact sight pose (5.097659ms)
+✔ look lag trails turns, is clamped, settles, ignores frozen clocks and wraps at ±π (0.452297ms)
+✔ a weapon-pass point maps to the world point under the same pixel at hip and ADS fields of view (1.731144ms)
+✔ brass/clip flight is analytic in age, never sinks below the ground plane and comes to rest (5.623736ms)
+✔ weapon-pass FX: flash only in the event window, layered on the socket, constant light count, smoke after the shot (14.778719ms)
+✔ world FX: emissions are idempotent by id, bounded, discarded by a restored world or an earlier clock (5.906442ms)
+✔ weapon lighting follows the world sky/sun and the view, without new light types per frame (2.532786ms)
+✔ wz.29: one case per shot at the authored eject marker, one muzzle cloud, nothing duplicated by repeated frames (447.003958ms)
+✔ wz.29 clip reload throws exactly one empty stripper clip at 2,45 s; a single-round reload throws none (714.522793ms)
+✔ wz.29 stroke, lag and FX keep every viewmodel vertex beyond the near plane and the flash on the socket (587.180386ms)
+✔ pause and restore: repeated frames are frozen; a restored world rebuilds presentation at rest and drops world history (263.890965ms)
+✔ independent renderers of the same restored mid-bolt state produce the same frame (no hidden clocks) (162.87523ms)
+✔ a slow frame that steps past the 60 ms window still shows the shot once at full strength, never again or after restore (158.809503ms)
+✔ ejected pieces settle on the surface under their landing point, never inside a slope (3.814227ms)
+✔ look lag after the authoritative recoil pitch settles by READY at 4 fps as at 20 fps; sights exact (322.80724ms)
+✔ ejected pieces turn continuously into a resting attitude: cases on their side, the clip flat on its base plate (33.881466ms)
+✔ one weapon pass, one muzzle light: the procedural fallback and the rig share it and the drawing FX drives it (10.467079ms)
+✔ a quick follow-up shot leaves the previous barrel smoke fading instead of cutting it off; a reset forgets it (2.741404ms)
+✔ down the sights the world muzzle cloud is a thin haze: thinner and smaller than from the hip (0.995629ms)
+✔ bench brass rests on the road slab it lands on, not inside it (1.073603ms)
+✔ down the sights the rifle follows a turn exactly: no look lag, the sights stay on the aim point every frame (167.446423ms)
+✔ a restore drops the barrel smoke of the previous timeline: the restored frame equals a fresh renderer of that save (285.010227ms)
+✔ shot-FX programs are compiled and linked before the first shot, each against its own scene, without drawing or showing anything (3.941995ms)
+✔ measured real clips and asset socket metadata are locked; archived BASE is exact (186.805509ms)
+✔ integration keeps Wz29/muzzle/hitboxes/RNG bytes and locks the approved simulation gameplay baseline (0.404126ms)
+✔ ADS aligns actual rear/front with camera -Z on LOD0, all qualities (151.437037ms)
+✔ ADS aligns actual rear/front with camera -Z on LOD1, all qualities (135.938471ms)
+✔ visual flash starts exactly on the barrel socket through hip, ADS, bolt, reload and run (162.766975ms)
+✔ dense clipping matrix samples all referenced vertices, LOD0 (549.711159ms)
+✔ dense clipping matrix samples all referenced vertices, LOD1 (313.684565ms)
+✔ local arm skin/pose/material changes leave source geometry, bones, clips and materials intact (138.278515ms)
+✔ pause freezes phase, transition, arms and mechanics including clamped clip endpoint (127.4809ms)
+✔ ADS/run transitions are controlled by mission dt and converge without action rebind (136.114472ms)
+✔ recoil is finite, damped, bounded and has weaker ADS presentation (2.807652ms)
+✔ missing optional model/clips returns to existing caller fallback; LOD1 remains viable (81.219285ms)
+✔ restore mid-bolt and both reloads reconstruct mechanical phase without saving a mixer (255.425955ms)
+✔ an existing menu/checkpoint renderer reconstructs ADS at a replaced world boundary (124.364247ms)
+✔ BASE/CANDIDATE whole save, HP/ammo/shots/hits/transforms/muzzle/RNG/clocks/CP remain exact for 600 input ticks (2525.442665ms)
+ℹ tests 638
+ℹ suites 0
+ℹ pass 635
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 431101.334149
+
+✖ failing tests:
+
+test at tests/m01-grading.test.js:180:1
+✖ wiring: Low keeps the exact statements, the weapon is drawn after the composite and never into the target, tone mapping untouched (1.650647ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /grading:this\.grading\.stateKey,waterDetail:this\.water\.detail\}/. Input:
+  
+  "import * as THREE from 'three';\n" +
+    "import { AssetManager } from '../assets/asset-manager.js';\n" +
+    "import manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with {type:'json'};\n" +
+    "import { eyePosition, aimDirection } from '../world/spatial.js';\n" +
+    "import { roundPoint } from '../game/m01-fire.js';\n" +
+    "import { m01StukaPosition, m01StukaSince, m01StukaPathTime, m01StukaActive, m01RaidPlanePosition, m01RaidSince, m01RaidPlaneActive, M01_STUKA_DIVE_FROM, M01_STUKA_DIVE_TO } from '../world/m01-aircraft-path.js';\n" +
+    "import { actorPose } from './m01-actor-pose.js';\n" +
+    "import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';\n" +
+    "import { texturedSurface,weatheredBridgeSurface } from './m01-surfaces.js';\n" +
+    "import { M01TerrainMaterial } from './m01-terrain-material.js';\n" +
+    "import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';\n" +
+    "import { applyLighting, viewLightingDiagnostics, M01_FOG_RANGE } from './m01-lighting.js';\n" +
+    "import { M01Water } from './m01-water.js';\n" +
+    "import { M01Impostors } from './m01-impostors.js';\n" +
+    "import { M01Grading } from './m01-grading.js';\n" +
+    "import {battlefieldBlastKind,battlefieldProfile,fxLayerCount,staggeredLife,impactProfile,fxDistanceBand} from './m01-battlefield-fx-profile.js';\n" +
+    "import { M01Environment } from './m01-environment.js';\n" +
+    "import { M01Characters } from './m01-characters.js';\n" +
+    "import { M01ViewModel } from './m01-viewmodel.js';\n" +
+    "import { M01TrainWagons } from './m01-train-wagons.js';\n" +
+    "import { M01YardWagons, yardWagonFireDamage } from './m01-yard-wagons.js';\n" +
+    "import { M01Locomotive } from './m01-locomotive.js';\n" +
+    "import { M01Panzerzug } from './m01-panzerzug.js';\n" +
+    "import {JU87_LOD_DISTANCES,JU87_QUALITY_FLOOR,JU87_BOMB_POOL,ju87Attitude,ju87Fade,ju87HeardAt,ju87PropellerTime,selectJu87Level,ju87SkyEnvironment,instanceJu87Materials,setJu87Fade,m01BombFlights} from './m01-aircraft.js';\n" +
+    "import {soldierVisualVariant} from './m01-soldier-variation.js';\n" +
+    "import { M01CombatFeedback } from './m01-combat-feedback.js';\n" +
+    "import {M01BridgePortalPolish,bridgeMaterialSlot} from './m01-bridge-portal-polish.js';\n" +
+    "import {M01DamageDecals} from './m01-damage-decals.js';\n" +
+    "import {WEAPON_PRESENTATION,WeaponViewFx,WeaponWorldFx,WeaponLighting,viewUp,prewarmWeaponFx} from './first-person-weapon-fx.js';\n" +
+    "import {M01BridgeStructure,M01_TRACK_CENTRES} from './m01-bridge-structure.js';\n" +
+    'import {isDemolitionDamage,collapseTwinName,collapseDamageId,collapseSeed,collapsePose,collapseProgress,demolitionFlash,demolitionFallPoints,demolitionSilenceWindow,\n' +
+    "  farFeedback,farFeedbackApplies,M01_COLLAPSE_DURATION,M01_BLAST_CHIP_MATERIALS,M01_DEMOLITION_BUDGET} from './m01-demolition.js';\n" +
+    '\n' +
+    'export const M01_BATTLEFIELD_FX_LIMITS=Object.freeze({bursts:16,flash:16,core:48,fire:96,smoke:128,dust:128,shards:96,lights:1});\n' +
+    'const FX_DENSITY={low:.55,medium:.78,high:1};\n' +
+    'const BOMB_NOSE=new THREE.Vector3(0,0,-1);\n' +
+    'const fxSeed=(p,clock)=>((Math.floor((p.x+2048)*73)^Math.floor(((p.y??0)+128)*151)^Math.floor((p.z+2048)*197)^Math.floor(clock*1000))>>>0);\n' +
+    'const fxCount=(n,quality)=>Math.max(1,Math.round(n*(FX_DENSITY[quality]??FX_DENSITY.low)));\n' +
+    '\n' +
+    '// Presentation only: all actors, visible pieces, damage and clocks come from M01Simulation.\n' +
+    '// Original procedural art: textured environment and articulated humans; final scanned/rigged art remains pending.\n' +
+    'export class M01View {\n' +
+    '  constructor(renderer){\n' +
+    '    this.owner=renderer;this.engine=renderer.engine;this.assets=new AssetManager();this.disposed=false;this.grading=new M01Grading();\n' +
+    "    this.scene=new THREE.Scene();this.scene.fog=new THREE.Fog('#a0a7a8',M01_FOG_RANGE.near,M01_FOG_RANGE.far);\n" +
+    '    this.camera=new THREE.PerspectiveCamera(70,1,.05,7500);this.weaponCamera=new THREE.PerspectiveCamera(58,1,.03,6);\n' +
+    '    this.weaponScene=new THREE.Scene();this.weaponRoot=new THREE.Group();this.weaponScene.add(this.weaponRoot);\n' +
+    "    // Weapon-pass fill/key start from the old tuned values; every frame they follow the world's sky, sun and daylight\n" +
+    '    // (dimmer at dawn than the old constant 2,7/2,0, so the rifle sits in the same light as the world around it).\n' +
+    "    this.weaponLighting=new WeaponLighting(this.weaponScene,{fill:['#bfd0d5','#58422d',2.7],key:['#ffe0b0',2]});\n" +
+    "    this.skyLight=new THREE.HemisphereLight('#bac9d5','#625846',1.25);this.scene.add(this.skyLight);\n" +
+    "    this.sun=new THREE.DirectionalLight('#ffd6a0',.45);this.sun.castShadow=true;this.sun.shadow.mapSize.set(1024,1024);\n" +
+    '    Object.assign(this.sun.shadow.camera,{left:-65,right:65,top:65,bottom:-65,near:.5,far:450});this.sun.shadow.bias=-.0003;this.sun.shadow.normalBias=.025;\n' +
+    '    // Near cascade (Medium/High): tight ±25 m shadow camera for contact shadows; hidden (no cost) on Low. Intensity is split in applyLighting.\n' +
+    "    this.sunNear=new THREE.DirectionalLight('#ffd6a0',0);this.sunNear.castShadow=true;this.sunNear.visible=false;this.sunNear.shadow.mapSize.set(1024,1024);\n" +
+    '    Object.assign(this.sunNear.shadow.camera,{left:-25,right:25,top:25,bottom:-25,near:.5,far:450});this.sunNear.shadow.bias=-.0002;this.sunNear.shadow.normalBias=.02;\n' +
+    '    this.scene.add(this.sun,this.sun.target,this.sunNear,this.sunNear.target);\n' +
+    '    // T09/T28: layered terrain material on the ground slot. `?terrain=legacy` (presentation only) restores the single tiled soil for A/B captures.\n' +
+    "    this.legacyTerrain=typeof location!=='undefined'&&new URLSearchParams(location.search).get('terrain')==='legacy';\n" +
+    '    this.terrainMeshes=[];this.terrainEnabled=!this.legacyTerrain;\n' +
+    '    this.terrain=this.legacyTerrain?null:new M01TerrainMaterial({quality:this.owner.quality,onUpdate:()=>{this.lastFrame=null;}});\n' +
+    '    this.materials={\n' +
+    "      ground:this.terrain?.material??texturedSurface('soil',{worldScale:.42}),\n" +
+    "      earth:texturedSurface('soil',{worldScale:.65}),\n" +
+    "      stone:texturedSurface('stone',{worldScale:.5}),\n" +
+    "      brick:texturedSurface('brick',{worldScale:1.4}),\n" +
+    "      wood:texturedSurface('wood',{bump:.015}),\n" +
+    "      metal:texturedSurface('metal',{bump:.012}),\n" +
+    "      leather:texturedSurface('leather',{bump:.025}),\n" +
+    "      dark:new THREE.MeshStandardMaterial({color:'#202622',roughness:.8}),\n" +
+    "      skin:texturedSurface('skin',{bump:.006}),\n" +
+    "      brass:new THREE.MeshStandardMaterial({color:'#bfa66a',roughness:.55,metalness:.6}),\n" +
+    '      water:(this.water=new M01Water()).material,   // T42: lit river material (fresnel + T16 sky reflection, flow, pier foam, wet banks)\n' +
+    "      cloth:texturedSurface('cloth',{bump:.018}),\n" +
+    "      bridgeBrick:weatheredBridgeSurface('brick',{worldScale:.36,bump:.055,seed:1912}),\n" +
+    "      bridgeStone:weatheredBridgeSurface('stone',{worldScale:.5,bump:.07,seed:1857}),\n" +
+    "      bridgeGate:weatheredBridgeSurface('wood',{worldScale:1.0,bump:.025,seed:963,roughness:.9,metalness:.05}),\n" +
+    '      // Painted truss steel reads as paint (dielectric, grey-green, weathered), not bare black metal. Colour of 1939 uncertain.\n' +
+    "      bridgeSteel:weatheredBridgeSurface('metal',{worldScale:.8,bump:.018,seed:1891,roughness:.66,metalness:.15,color:'#d2d9d0'}),\n" +
+    "      glow:new THREE.MeshBasicMaterial({color:'#ffb14b',toneMapped:false}),\n" +
+    "      smoke:new THREE.MeshBasicMaterial({color:'#454744',transparent:true,opacity:.3,depthWrite:false}),\n" +
+    "      dust:new THREE.MeshBasicMaterial({color:'#7d6f5c',transparent:true,opacity:.42,depthWrite:false})};\n" +
+    '    this.box=new THREE.BoxGeometry(1,1,1);this.sphere=new THREE.SphereGeometry(1,20,14);this.roundBox=new RoundedBoxGeometry(1,1,1,2,.12);this.accessoryBox=new RoundedBoxGeometry(1,1,1,1,.10);\n' +
+    '    this.featureSphere=new THREE.SphereGeometry(1,10,7);\n' +
+    '    this.helmetGeometry=new THREE.SphereGeometry(1,20,8,0,Math.PI*2,0,Math.PI/2);\n' +
+    '    this.cylinder=new THREE.CylinderGeometry(1,1,1,12);this.geometry=[this.box,this.sphere,this.cylinder,this.roundBox,this.accessoryBox,this.helmetGeometry,this.featureSphere];\n' +
+    '    this.kit=[];this.batches=new Map();this.solidGroup=new THREE.Group();this.effects=new THREE.Group();\n' +
+    '    this.scene.add(this.solidGroup,this.effects);this.smokes=new Map();this.grenadeViews=new Map();this.world=null;this.revision=-1;\n' +
+    '    this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};\n' +
+    '    this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};\n' +
+    '    this.combatFeedback=new M01CombatFeedback();\n' +
+    '    this.demolitionState={entries:[],pieces:[],flash:null};this.collapseTilt=new THREE.Quaternion();this.collapseEuler=new THREE.Euler();\n' +
+    '    this.portalPolish=new M01BridgePortalPolish({stone:this.materials.bridgeStone});\n' +
+    '    this.bridgeStructure=new M01BridgeStructure({steel:this.materials.bridgeSteel,rail:this.materials.metal,timber:this.materials.wood,stone:this.materials.bridgeStone});\n' +
+    '    this.atmosphere=new M01Atmosphere(this.scene);\n' +
+    '    this.damageDecals=new M01DamageDecals(this.scene);\n' +
+    '    this.createWeapon();this.createActors();this.createContactShadows();this.createFireEffects();this.createAircraft();this.createTrains();\n' +
+    '    this.weaponWorldFx=new WeaponWorldFx(this.effects);\n' +
+    "    // One muzzle light in the weapon pass: the licensed rig drives the procedural fallback's light.\n" +
+    '    this.characters=new M01Characters(this.scene);\n' +
+    '    this.impostors=new M01Impostors(this.scene);   // T20: camera-facing silhouettes beyond 350 m (one draw call per nation)\n' +
+    '    this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture,this.weaponWorldFx,{muzzleLight:this.fallbackFx.light});\n' +
+    "    if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')&&this.terrain){\n" +
+    "      this.terrainLegacyMaterial=texturedSurface('soil',{worldScale:.42});\n" +
+    '      this.terrainDebug={setEnabled:on=>{\n' +
+    '        if(this.disposed)return;this.terrainEnabled=Boolean(on);\n' +
+    '        for(const mesh of this.terrainMeshes)mesh.material=this.terrainEnabled?this.terrain.material:this.terrainLegacyMaterial;\n' +
+    '        this.lastFrame=null;return this.terrainEnabled;\n' +
+    '      },get:()=>this.ter'... 60312 more characters
+  
+      at TestContext.<anonymous> (file:///workspace/COD-guerra/tests/m01-grading.test.js:190:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: "import * as THREE from 'three';\nimport { AssetManager } from '../assets/asset-manager.js';\nimport manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with {type:'json'};\nimport { eyePosition, aimDirection } from '../world/spatial.js';\nimport { roundPoint } from '../game/m01-fire.js';\nimport { m01StukaPosition, m01StukaSince, m01StukaPathTime, m01StukaActive, m01RaidPlanePosition, m01RaidSince, m01RaidPlaneActive, M01_STUKA_DIVE_FROM, M01_STUKA_DIVE_TO } from '../world/m01-aircraft-path.js';\nimport { actorPose } from './m01-actor-pose.js';\nimport { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';\nimport { texturedSurface,weatheredBridgeSurface } from './m01-surfaces.js';\nimport { M01TerrainMaterial } from './m01-terrain-material.js';\nimport { M01Atmosphere, visualNoise } from './m01-atmosphere.js';\nimport { applyLighting, viewLightingDiagnostics, M01_FOG_RANGE } from './m01-lighting.js';\nimport { M01Water } from './m01-water.js';\nimport { M01Impostors } from './m01-impostors.js';\nimport { M01Grading } from './m01-grading.js';\nimport {battlefieldBlastKind,battlefieldProfile,fxLayerCount,staggeredLife,impactProfile,fxDistanceBand} from './m01-battlefield-fx-profile.js';\nimport { M01Environment } from './m01-environment.js';\nimport { M01Characters } from './m01-characters.js';\nimport { M01ViewModel } from './m01-viewmodel.js';\nimport { M01TrainWagons } from './m01-train-wagons.js';\nimport { M01YardWagons, yardWagonFireDamage } from './m01-yard-wagons.js';\nimport { M01Locomotive } from './m01-locomotive.js';\nimport { M01Panzerzug } from './m01-panzerzug.js';\nimport {JU87_LOD_DISTANCES,JU87_QUALITY_FLOOR,JU87_BOMB_POOL,ju87Attitude,ju87Fade,ju87HeardAt,ju87PropellerTime,selectJu87Level,ju87SkyEnvironment,instanceJu87Materials,setJu87Fade,m01BombFlights} from './m01-aircraft.js';\nimport {soldierVisualVariant} from './m01-soldier-variation.js';\nimport { M01CombatFeedback } from './m01-combat-feedback.js';\nimport {M01BridgePortalPolish,bridgeMaterialSlot} from './m01-bridge-portal-polish.js';\nimport {M01DamageDecals} from './m01-damage-decals.js';\nimport {WEAPON_PRESENTATION,WeaponViewFx,WeaponWorldFx,WeaponLighting,viewUp,prewarmWeaponFx} from './first-person-weapon-fx.js';\nimport {M01BridgeStructure,M01_TRACK_CENTRES} from './m01-bridge-structure.js';\nimport {isDemolitionDamage,collapseTwinName,collapseDamageId,collapseSeed,collapsePose,collapseProgress,demolitionFlash,demolitionFallPoints,demolitionSilenceWindow,\n  farFeedback,farFeedbackApplies,M01_COLLAPSE_DURATION,M01_BLAST_CHIP_MATERIALS,M01_DEMOLITION_BUDGET} from './m01-demolition.js';\n\nexport const M01_BATTLEFIELD_FX_LIMITS=Object.freeze({bursts:16,flash:16,core:48,fire:96,smoke:128,dust:128,shards:96,lights:1});\nconst FX_DENSITY={low:.55,medium:.78,high:1};\nconst BOMB_NOSE=new THREE.Vector3(0,0,-1);\nconst fxSeed=(p,clock)=>((Math.floor((p.x+2048)*73)^Math.floor(((p.y??0)+128)*151)^Math.floor((p.z+2048)*197)^Math.floor(clock*1000))>>>0);\nconst fxCount=(n,quality)=>Math.max(1,Math.round(n*(FX_DENSITY[quality]??FX_DENSITY.low)));\n\n// Presentation only: all actors, visible pieces, damage and clocks come from M01Simulation.\n// Original procedural art: textured environment and articulated humans; final scanned/rigged art remains pending.\nexport class M01View {\n  constructor(renderer){\n    this.owner=renderer;this.engine=renderer.engine;this.assets=new AssetManager();this.disposed=false;this.grading=new M01Grading();\n    this.scene=new THREE.Scene();this.scene.fog=new THREE.Fog('#a0a7a8',M01_FOG_RANGE.near,M01_FOG_RANGE.far);\n    this.camera=new THREE.PerspectiveCamera(70,1,.05,7500);this.weaponCamera=new THREE.PerspectiveCamera(58,1,.03,6);\n    this.weaponScene=new THREE.Scene();this.weaponRoot=new THREE.Group();this.weaponScene.add(this.weaponRoot);\n    // Weapon-pass fill/key start from the old tuned values; every frame they follow the world's sky, sun and daylight\n    // (dimmer at dawn than the old constant 2,7/2,0, so the rifle sits in the same light as the world around it).\n    this.weaponLighting=new WeaponLighting(this.weaponScene,{fill:['#bfd0d5','#58422d',2.7],key:['#ffe0b0',2]});\n    this.skyLight=new THREE.HemisphereLight('#bac9d5','#625846',1.25);this.scene.add(this.skyLight);\n    this.sun=new THREE.DirectionalLight('#ffd6a0',.45);this.sun.castShadow=true;this.sun.shadow.mapSize.set(1024,1024);\n    Object.assign(this.sun.shadow.camera,{left:-65,right:65,top:65,bottom:-65,near:.5,far:450});this.sun.shadow.bias=-.0003;this.sun.shadow.normalBias=.025;\n    // Near cascade (Medium/High): tight ±25 m shadow camera for contact shadows; hidden (no cost) on Low. Intensity is split in applyLighting.\n    this.sunNear=new THREE.DirectionalLight('#ffd6a0',0);this.sunNear.castShadow=true;this.sunNear.visible=false;this.sunNear.shadow.mapSize.set(1024,1024);\n    Object.assign(this.sunNear.shadow.camera,{left:-25,right:25,top:25,bottom:-25,near:.5,far:450});this.sunNear.shadow.bias=-.0002;this.sunNear.shadow.normalBias=.02;\n    this.scene.add(this.sun,this.sun.target,this.sunNear,this.sunNear.target);\n    // T09/T28: layered terrain material on the ground slot. `?terrain=legacy` (presentation only) restores the single tiled soil for A/B captures.\n    this.legacyTerrain=typeof location!=='undefined'&&new URLSearchParams(location.search).get('terrain')==='legacy';\n    this.terrainMeshes=[];this.terrainEnabled=!this.legacyTerrain;\n    this.terrain=this.legacyTerrain?null:new M01TerrainMaterial({quality:this.owner.quality,onUpdate:()=>{this.lastFrame=null;}});\n    this.materials={\n      ground:this.terrain?.material??texturedSurface('soil',{worldScale:.42}),\n      earth:texturedSurface('soil',{worldScale:.65}),\n      stone:texturedSurface('stone',{worldScale:.5}),\n      brick:texturedSurface('brick',{worldScale:1.4}),\n      wood:texturedSurface('wood',{bump:.015}),\n      metal:texturedSurface('metal',{bump:.012}),\n      leather:texturedSurface('leather',{bump:.025}),\n      dark:new THREE.MeshStandardMaterial({color:'#202622',roughness:.8}),\n      skin:texturedSurface('skin',{bump:.006}),\n      brass:new THREE.MeshStandardMaterial({color:'#bfa66a',roughness:.55,metalness:.6}),\n      water:(this.water=new M01Water()).material,   // T42: lit river material (fresnel + T16 sky reflection, flow, pier foam, wet banks)\n      cloth:texturedSurface('cloth',{bump:.018}),\n      bridgeBrick:weatheredBridgeSurface('brick',{worldScale:.36,bump:.055,seed:1912}),\n      bridgeStone:weatheredBridgeSurface('stone',{worldScale:.5,bump:.07,seed:1857}),\n      bridgeGate:weatheredBridgeSurface('wood',{worldScale:1.0,bump:.025,seed:963,roughness:.9,metalness:.05}),\n      // Painted truss steel reads as paint (dielectric, grey-green, weathered), not bare black metal. Colour of 1939 uncertain.\n      bridgeSteel:weatheredBridgeSurface('metal',{worldScale:.8,bump:.018,seed:1891,roughness:.66,metalness:.15,color:'#d2d9d0'}),\n      glow:new THREE.MeshBasicMaterial({color:'#ffb14b',toneMapped:false}),\n      smoke:new THREE.MeshBasicMaterial({color:'#454744',transparent:true,opacity:.3,depthWrite:false}),\n      dust:new THREE.MeshBasicMaterial({color:'#7d6f5c',transparent:true,opacity:.42,depthWrite:false})};\n    this.box=new THREE.BoxGeometry(1,1,1);this.sphere=new THREE.SphereGeometry(1,20,14);this.roundBox=new RoundedBoxGeometry(1,1,1,2,.12);this.accessoryBox=new RoundedBoxGeometry(1,1,1,1,.10);\n    this.featureSphere=new THREE.SphereGeometry(1,10,7);\n    this.helmetGeometry=new THREE.SphereGeometry(1,20,8,0,Math.PI*2,0,Math.PI/2);\n    this.cylinder=new THREE.CylinderGeometry(1,1,1,12);this.geometry=[this.box,this.sphere,this.cylinder,this.roundBox,this.accessoryBox,this.helmetGeometry,this.featureSphere];\n    this.kit=[];this.batches=new Map();this.solidGroup=new THREE.Group();this.effects=new THREE.Group();\n    this.scene.add(this.solidGroup,this.effects);this.smokes=new Map();this.grenadeViews=new Map();this.world=null;this.revision=-1;\n    this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};\n    this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};\n    this.combatFeedback=new M01CombatFeedback();\n    this.demolitionState={entries:[],pieces:[],flash:null};this.collapseTilt=new THREE.Quaternion();this.collapseEuler=new THREE.Euler();\n    this.portalPolish=new M01BridgePortalPolish({stone:this.materials.bridgeStone});\n    this.bridgeStructure=new M01BridgeStructure({steel:this.materials.bridgeSteel,rail:this.materials.metal,timber:this.materials.wood,stone:this.materials.bridgeStone});\n    this.atmosphere=new M01Atmosphere(this.scene);\n    this.damageDecals=new M01DamageDecals(this.scene);\n    this.createWeapon();this.createActors();this.createContactShadows();this.createFireEffects();this.createAircraft();this.createTrains();\n    this.weaponWorldFx=new WeaponWorldFx(this.effects);\n    // One muzzle light in the weapon pass: the licensed rig drives the procedural fallback's light.\n    this.characters=new M01Characters(this.scene);\n    this.impostors=new M01Impostors(this.scene);   // T20: camera-facing silhouettes beyond 350 m (one draw call per nation)\n    this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture,this.weaponWorldFx,{muzzleLight:this.fallbackFx.light});\n    if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')&&this.terrain){\n      this.terrainLegacyMaterial=texturedSurface('soil',{worldScale:.42});\n      this.terrainDebug={setEnabled:on=>{\n        if(this.disposed)return;this.terrainEnabled=Boolean(on);\n        for(const mesh of this.terrainMeshes)mesh.material=this.terrainEnabled?this.terrain.material:this.terrainLegacyMaterial;\n        this.lastFrame=null;return this.terrainEnabled;\n      },get:()=>this.ter"... 60312 more characters,
+    expected: /grading:this\.grading\.stateKey,waterDetail:this\.water\.detail\}/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests/m01-props-kit.test.js:62:1
+✖ o gerador reproduz byte a byte os GLB e o manifesto em disco (100.477108ms)
+  AssertionError [ERR_ASSERTION]: m01_prop_hand_cart_lod0.glb difere do gerador
+      at TestContext.<anonymous> (file:///workspace/COD-guerra/tests/m01-props-kit.test.js:65:43)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/m01-water.test.js:75:1
+✖ view wiring: only the river mesh uses the water material; game/world/core never import the module (1.596425ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /waterDetail:this\.water\.detail\}/. Input:
+  
+  "import * as THREE from 'three';\n" +
+    "import { AssetManager } from '../assets/asset-manager.js';\n" +
+    "import manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with {type:'json'};\n" +
+    "import { eyePosition, aimDirection } from '../world/spatial.js';\n" +
+    "import { roundPoint } from '../game/m01-fire.js';\n" +
+    "import { m01StukaPosition, m01StukaSince, m01StukaPathTime, m01StukaActive, m01RaidPlanePosition, m01RaidSince, m01RaidPlaneActive, M01_STUKA_DIVE_FROM, M01_STUKA_DIVE_TO } from '../world/m01-aircraft-path.js';\n" +
+    "import { actorPose } from './m01-actor-pose.js';\n" +
+    "import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';\n" +
+    "import { texturedSurface,weatheredBridgeSurface } from './m01-surfaces.js';\n" +
+    "import { M01TerrainMaterial } from './m01-terrain-material.js';\n" +
+    "import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';\n" +
+    "import { applyLighting, viewLightingDiagnostics, M01_FOG_RANGE } from './m01-lighting.js';\n" +
+    "import { M01Water } from './m01-water.js';\n" +
+    "import { M01Impostors } from './m01-impostors.js';\n" +
+    "import { M01Grading } from './m01-grading.js';\n" +
+    "import {battlefieldBlastKind,battlefieldProfile,fxLayerCount,staggeredLife,impactProfile,fxDistanceBand} from './m01-battlefield-fx-profile.js';\n" +
+    "import { M01Environment } from './m01-environment.js';\n" +
+    "import { M01Characters } from './m01-characters.js';\n" +
+    "import { M01ViewModel } from './m01-viewmodel.js';\n" +
+    "import { M01TrainWagons } from './m01-train-wagons.js';\n" +
+    "import { M01YardWagons, yardWagonFireDamage } from './m01-yard-wagons.js';\n" +
+    "import { M01Locomotive } from './m01-locomotive.js';\n" +
+    "import { M01Panzerzug } from './m01-panzerzug.js';\n" +
+    "import {JU87_LOD_DISTANCES,JU87_QUALITY_FLOOR,JU87_BOMB_POOL,ju87Attitude,ju87Fade,ju87HeardAt,ju87PropellerTime,selectJu87Level,ju87SkyEnvironment,instanceJu87Materials,setJu87Fade,m01BombFlights} from './m01-aircraft.js';\n" +
+    "import {soldierVisualVariant} from './m01-soldier-variation.js';\n" +
+    "import { M01CombatFeedback } from './m01-combat-feedback.js';\n" +
+    "import {M01BridgePortalPolish,bridgeMaterialSlot} from './m01-bridge-portal-polish.js';\n" +
+    "import {M01DamageDecals} from './m01-damage-decals.js';\n" +
+    "import {WEAPON_PRESENTATION,WeaponViewFx,WeaponWorldFx,WeaponLighting,viewUp,prewarmWeaponFx} from './first-person-weapon-fx.js';\n" +
+    "import {M01BridgeStructure,M01_TRACK_CENTRES} from './m01-bridge-structure.js';\n" +
+    'import {isDemolitionDamage,collapseTwinName,collapseDamageId,collapseSeed,collapsePose,collapseProgress,demolitionFlash,demolitionFallPoints,demolitionSilenceWindow,\n' +
+    "  farFeedback,farFeedbackApplies,M01_COLLAPSE_DURATION,M01_BLAST_CHIP_MATERIALS,M01_DEMOLITION_BUDGET} from './m01-demolition.js';\n" +
+    '\n' +
+    'export const M01_BATTLEFIELD_FX_LIMITS=Object.freeze({bursts:16,flash:16,core:48,fire:96,smoke:128,dust:128,shards:96,lights:1});\n' +
+    'const FX_DENSITY={low:.55,medium:.78,high:1};\n' +
+    'const BOMB_NOSE=new THREE.Vector3(0,0,-1);\n' +
+    'const fxSeed=(p,clock)=>((Math.floor((p.x+2048)*73)^Math.floor(((p.y??0)+128)*151)^Math.floor((p.z+2048)*197)^Math.floor(clock*1000))>>>0);\n' +
+    'const fxCount=(n,quality)=>Math.max(1,Math.round(n*(FX_DENSITY[quality]??FX_DENSITY.low)));\n' +
+    '\n' +
+    '// Presentation only: all actors, visible pieces, damage and clocks come from M01Simulation.\n' +
+    '// Original procedural art: textured environment and articulated humans; final scanned/rigged art remains pending.\n' +
+    'export class M01View {\n' +
+    '  constructor(renderer){\n' +
+    '    this.owner=renderer;this.engine=renderer.engine;this.assets=new AssetManager();this.disposed=false;this.grading=new M01Grading();\n' +
+    "    this.scene=new THREE.Scene();this.scene.fog=new THREE.Fog('#a0a7a8',M01_FOG_RANGE.near,M01_FOG_RANGE.far);\n" +
+    '    this.camera=new THREE.PerspectiveCamera(70,1,.05,7500);this.weaponCamera=new THREE.PerspectiveCamera(58,1,.03,6);\n' +
+    '    this.weaponScene=new THREE.Scene();this.weaponRoot=new THREE.Group();this.weaponScene.add(this.weaponRoot);\n' +
+    "    // Weapon-pass fill/key start from the old tuned values; every frame they follow the world's sky, sun and daylight\n" +
+    '    // (dimmer at dawn than the old constant 2,7/2,0, so the rifle sits in the same light as the world around it).\n' +
+    "    this.weaponLighting=new WeaponLighting(this.weaponScene,{fill:['#bfd0d5','#58422d',2.7],key:['#ffe0b0',2]});\n" +
+    "    this.skyLight=new THREE.HemisphereLight('#bac9d5','#625846',1.25);this.scene.add(this.skyLight);\n" +
+    "    this.sun=new THREE.DirectionalLight('#ffd6a0',.45);this.sun.castShadow=true;this.sun.shadow.mapSize.set(1024,1024);\n" +
+    '    Object.assign(this.sun.shadow.camera,{left:-65,right:65,top:65,bottom:-65,near:.5,far:450});this.sun.shadow.bias=-.0003;this.sun.shadow.normalBias=.025;\n' +
+    '    // Near cascade (Medium/High): tight ±25 m shadow camera for contact shadows; hidden (no cost) on Low. Intensity is split in applyLighting.\n' +
+    "    this.sunNear=new THREE.DirectionalLight('#ffd6a0',0);this.sunNear.castShadow=true;this.sunNear.visible=false;this.sunNear.shadow.mapSize.set(1024,1024);\n" +
+    '    Object.assign(this.sunNear.shadow.camera,{left:-25,right:25,top:25,bottom:-25,near:.5,far:450});this.sunNear.shadow.bias=-.0002;this.sunNear.shadow.normalBias=.02;\n' +
+    '    this.scene.add(this.sun,this.sun.target,this.sunNear,this.sunNear.target);\n' +
+    '    // T09/T28: layered terrain material on the ground slot. `?terrain=legacy` (presentation only) restores the single tiled soil for A/B captures.\n' +
+    "    this.legacyTerrain=typeof location!=='undefined'&&new URLSearchParams(location.search).get('terrain')==='legacy';\n" +
+    '    this.terrainMeshes=[];this.terrainEnabled=!this.legacyTerrain;\n' +
+    '    this.terrain=this.legacyTerrain?null:new M01TerrainMaterial({quality:this.owner.quality,onUpdate:()=>{this.lastFrame=null;}});\n' +
+    '    this.materials={\n' +
+    "      ground:this.terrain?.material??texturedSurface('soil',{worldScale:.42}),\n" +
+    "      earth:texturedSurface('soil',{worldScale:.65}),\n" +
+    "      stone:texturedSurface('stone',{worldScale:.5}),\n" +
+    "      brick:texturedSurface('brick',{worldScale:1.4}),\n" +
+    "      wood:texturedSurface('wood',{bump:.015}),\n" +
+    "      metal:texturedSurface('metal',{bump:.012}),\n" +
+    "      leather:texturedSurface('leather',{bump:.025}),\n" +
+    "      dark:new THREE.MeshStandardMaterial({color:'#202622',roughness:.8}),\n" +
+    "      skin:texturedSurface('skin',{bump:.006}),\n" +
+    "      brass:new THREE.MeshStandardMaterial({color:'#bfa66a',roughness:.55,metalness:.6}),\n" +
+    '      water:(this.water=new M01Water()).material,   // T42: lit river material (fresnel + T16 sky reflection, flow, pier foam, wet banks)\n' +
+    "      cloth:texturedSurface('cloth',{bump:.018}),\n" +
+    "      bridgeBrick:weatheredBridgeSurface('brick',{worldScale:.36,bump:.055,seed:1912}),\n" +
+    "      bridgeStone:weatheredBridgeSurface('stone',{worldScale:.5,bump:.07,seed:1857}),\n" +
+    "      bridgeGate:weatheredBridgeSurface('wood',{worldScale:1.0,bump:.025,seed:963,roughness:.9,metalness:.05}),\n" +
+    '      // Painted truss steel reads as paint (dielectric, grey-green, weathered), not bare black metal. Colour of 1939 uncertain.\n' +
+    "      bridgeSteel:weatheredBridgeSurface('metal',{worldScale:.8,bump:.018,seed:1891,roughness:.66,metalness:.15,color:'#d2d9d0'}),\n" +
+    "      glow:new THREE.MeshBasicMaterial({color:'#ffb14b',toneMapped:false}),\n" +
+    "      smoke:new THREE.MeshBasicMaterial({color:'#454744',transparent:true,opacity:.3,depthWrite:false}),\n" +
+    "      dust:new THREE.MeshBasicMaterial({color:'#7d6f5c',transparent:true,opacity:.42,depthWrite:false})};\n" +
+    '    this.box=new THREE.BoxGeometry(1,1,1);this.sphere=new THREE.SphereGeometry(1,20,14);this.roundBox=new RoundedBoxGeometry(1,1,1,2,.12);this.accessoryBox=new RoundedBoxGeometry(1,1,1,1,.10);\n' +
+    '    this.featureSphere=new THREE.SphereGeometry(1,10,7);\n' +
+    '    this.helmetGeometry=new THREE.SphereGeometry(1,20,8,0,Math.PI*2,0,Math.PI/2);\n' +
+    '    this.cylinder=new THREE.CylinderGeometry(1,1,1,12);this.geometry=[this.box,this.sphere,this.cylinder,this.roundBox,this.accessoryBox,this.helmetGeometry,this.featureSphere];\n' +
+    '    this.kit=[];this.batches=new Map();this.solidGroup=new THREE.Group();this.effects=new THREE.Group();\n' +
+    '    this.scene.add(this.solidGroup,this.effects);this.smokes=new Map();this.grenadeViews=new Map();this.world=null;this.revision=-1;\n' +
+    '    this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};\n' +
+    '    this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};\n' +
+    '    this.combatFeedback=new M01CombatFeedback();\n' +
+    '    this.demolitionState={entries:[],pieces:[],flash:null};this.collapseTilt=new THREE.Quaternion();this.collapseEuler=new THREE.Euler();\n' +
+    '    this.portalPolish=new M01BridgePortalPolish({stone:this.materials.bridgeStone});\n' +
+    '    this.bridgeStructure=new M01BridgeStructure({steel:this.materials.bridgeSteel,rail:this.materials.metal,timber:this.materials.wood,stone:this.materials.bridgeStone});\n' +
+    '    this.atmosphere=new M01Atmosphere(this.scene);\n' +
+    '    this.damageDecals=new M01DamageDecals(this.scene);\n' +
+    '    this.createWeapon();this.createActors();this.createContactShadows();this.createFireEffects();this.createAircraft();this.createTrains();\n' +
+    '    this.weaponWorldFx=new WeaponWorldFx(this.effects);\n' +
+    "    // One muzzle light in the weapon pass: the licensed rig drives the procedural fallback's light.\n" +
+    '    this.characters=new M01Characters(this.scene);\n' +
+    '    this.impostors=new M01Impostors(this.scene);   // T20: camera-facing silhouettes beyond 350 m (one draw call per nation)\n' +
+    '    this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture,this.weaponWorldFx,{muzzleLight:this.fallbackFx.light});\n' +
+    "    if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')&&this.terrain){\n" +
+    "      this.terrainLegacyMaterial=texturedSurface('soil',{worldScale:.42});\n" +
+    '      this.terrainDebug={setEnabled:on=>{\n' +
+    '        if(this.disposed)return;this.terrainEnabled=Boolean(on);\n' +
+    '        for(const mesh of this.terrainMeshes)mesh.material=this.terrainEnabled?this.terrain.material:this.terrainLegacyMaterial;\n' +
+    '        this.lastFrame=null;return this.terrainEnabled;\n' +
+    '      },get:()=>this.ter'... 60343 more characters
+  
+      at TestContext.<anonymous> (file:///workspace/COD-guerra/tests/m01-water.test.js:78:48)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: "import * as THREE from 'three';\nimport { AssetManager } from '../assets/asset-manager.js';\nimport manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with {type:'json'};\nimport { eyePosition, aimDirection } from '../world/spatial.js';\nimport { roundPoint } from '../game/m01-fire.js';\nimport { m01StukaPosition, m01StukaSince, m01StukaPathTime, m01StukaActive, m01RaidPlanePosition, m01RaidSince, m01RaidPlaneActive, M01_STUKA_DIVE_FROM, M01_STUKA_DIVE_TO } from '../world/m01-aircraft-path.js';\nimport { actorPose } from './m01-actor-pose.js';\nimport { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';\nimport { texturedSurface,weatheredBridgeSurface } from './m01-surfaces.js';\nimport { M01TerrainMaterial } from './m01-terrain-material.js';\nimport { M01Atmosphere, visualNoise } from './m01-atmosphere.js';\nimport { applyLighting, viewLightingDiagnostics, M01_FOG_RANGE } from './m01-lighting.js';\nimport { M01Water } from './m01-water.js';\nimport { M01Impostors } from './m01-impostors.js';\nimport { M01Grading } from './m01-grading.js';\nimport {battlefieldBlastKind,battlefieldProfile,fxLayerCount,staggeredLife,impactProfile,fxDistanceBand} from './m01-battlefield-fx-profile.js';\nimport { M01Environment } from './m01-environment.js';\nimport { M01Characters } from './m01-characters.js';\nimport { M01ViewModel } from './m01-viewmodel.js';\nimport { M01TrainWagons } from './m01-train-wagons.js';\nimport { M01YardWagons, yardWagonFireDamage } from './m01-yard-wagons.js';\nimport { M01Locomotive } from './m01-locomotive.js';\nimport { M01Panzerzug } from './m01-panzerzug.js';\nimport {JU87_LOD_DISTANCES,JU87_QUALITY_FLOOR,JU87_BOMB_POOL,ju87Attitude,ju87Fade,ju87HeardAt,ju87PropellerTime,selectJu87Level,ju87SkyEnvironment,instanceJu87Materials,setJu87Fade,m01BombFlights} from './m01-aircraft.js';\nimport {soldierVisualVariant} from './m01-soldier-variation.js';\nimport { M01CombatFeedback } from './m01-combat-feedback.js';\nimport {M01BridgePortalPolish,bridgeMaterialSlot} from './m01-bridge-portal-polish.js';\nimport {M01DamageDecals} from './m01-damage-decals.js';\nimport {WEAPON_PRESENTATION,WeaponViewFx,WeaponWorldFx,WeaponLighting,viewUp,prewarmWeaponFx} from './first-person-weapon-fx.js';\nimport {M01BridgeStructure,M01_TRACK_CENTRES} from './m01-bridge-structure.js';\nimport {isDemolitionDamage,collapseTwinName,collapseDamageId,collapseSeed,collapsePose,collapseProgress,demolitionFlash,demolitionFallPoints,demolitionSilenceWindow,\n  farFeedback,farFeedbackApplies,M01_COLLAPSE_DURATION,M01_BLAST_CHIP_MATERIALS,M01_DEMOLITION_BUDGET} from './m01-demolition.js';\n\nexport const M01_BATTLEFIELD_FX_LIMITS=Object.freeze({bursts:16,flash:16,core:48,fire:96,smoke:128,dust:128,shards:96,lights:1});\nconst FX_DENSITY={low:.55,medium:.78,high:1};\nconst BOMB_NOSE=new THREE.Vector3(0,0,-1);\nconst fxSeed=(p,clock)=>((Math.floor((p.x+2048)*73)^Math.floor(((p.y??0)+128)*151)^Math.floor((p.z+2048)*197)^Math.floor(clock*1000))>>>0);\nconst fxCount=(n,quality)=>Math.max(1,Math.round(n*(FX_DENSITY[quality]??FX_DENSITY.low)));\n\n// Presentation only: all actors, visible pieces, damage and clocks come from M01Simulation.\n// Original procedural art: textured environment and articulated humans; final scanned/rigged art remains pending.\nexport class M01View {\n  constructor(renderer){\n    this.owner=renderer;this.engine=renderer.engine;this.assets=new AssetManager();this.disposed=false;this.grading=new M01Grading();\n    this.scene=new THREE.Scene();this.scene.fog=new THREE.Fog('#a0a7a8',M01_FOG_RANGE.near,M01_FOG_RANGE.far);\n    this.camera=new THREE.PerspectiveCamera(70,1,.05,7500);this.weaponCamera=new THREE.PerspectiveCamera(58,1,.03,6);\n    this.weaponScene=new THREE.Scene();this.weaponRoot=new THREE.Group();this.weaponScene.add(this.weaponRoot);\n    // Weapon-pass fill/key start from the old tuned values; every frame they follow the world's sky, sun and daylight\n    // (dimmer at dawn than the old constant 2,7/2,0, so the rifle sits in the same light as the world around it).\n    this.weaponLighting=new WeaponLighting(this.weaponScene,{fill:['#bfd0d5','#58422d',2.7],key:['#ffe0b0',2]});\n    this.skyLight=new THREE.HemisphereLight('#bac9d5','#625846',1.25);this.scene.add(this.skyLight);\n    this.sun=new THREE.DirectionalLight('#ffd6a0',.45);this.sun.castShadow=true;this.sun.shadow.mapSize.set(1024,1024);\n    Object.assign(this.sun.shadow.camera,{left:-65,right:65,top:65,bottom:-65,near:.5,far:450});this.sun.shadow.bias=-.0003;this.sun.shadow.normalBias=.025;\n    // Near cascade (Medium/High): tight ±25 m shadow camera for contact shadows; hidden (no cost) on Low. Intensity is split in applyLighting.\n    this.sunNear=new THREE.DirectionalLight('#ffd6a0',0);this.sunNear.castShadow=true;this.sunNear.visible=false;this.sunNear.shadow.mapSize.set(1024,1024);\n    Object.assign(this.sunNear.shadow.camera,{left:-25,right:25,top:25,bottom:-25,near:.5,far:450});this.sunNear.shadow.bias=-.0002;this.sunNear.shadow.normalBias=.02;\n    this.scene.add(this.sun,this.sun.target,this.sunNear,this.sunNear.target);\n    // T09/T28: layered terrain material on the ground slot. `?terrain=legacy` (presentation only) restores the single tiled soil for A/B captures.\n    this.legacyTerrain=typeof location!=='undefined'&&new URLSearchParams(location.search).get('terrain')==='legacy';\n    this.terrainMeshes=[];this.terrainEnabled=!this.legacyTerrain;\n    this.terrain=this.legacyTerrain?null:new M01TerrainMaterial({quality:this.owner.quality,onUpdate:()=>{this.lastFrame=null;}});\n    this.materials={\n      ground:this.terrain?.material??texturedSurface('soil',{worldScale:.42}),\n      earth:texturedSurface('soil',{worldScale:.65}),\n      stone:texturedSurface('stone',{worldScale:.5}),\n      brick:texturedSurface('brick',{worldScale:1.4}),\n      wood:texturedSurface('wood',{bump:.015}),\n      metal:texturedSurface('metal',{bump:.012}),\n      leather:texturedSurface('leather',{bump:.025}),\n      dark:new THREE.MeshStandardMaterial({color:'#202622',roughness:.8}),\n      skin:texturedSurface('skin',{bump:.006}),\n      brass:new THREE.MeshStandardMaterial({color:'#bfa66a',roughness:.55,metalness:.6}),\n      water:(this.water=new M01Water()).material,   // T42: lit river material (fresnel + T16 sky reflection, flow, pier foam, wet banks)\n      cloth:texturedSurface('cloth',{bump:.018}),\n      bridgeBrick:weatheredBridgeSurface('brick',{worldScale:.36,bump:.055,seed:1912}),\n      bridgeStone:weatheredBridgeSurface('stone',{worldScale:.5,bump:.07,seed:1857}),\n      bridgeGate:weatheredBridgeSurface('wood',{worldScale:1.0,bump:.025,seed:963,roughness:.9,metalness:.05}),\n      // Painted truss steel reads as paint (dielectric, grey-green, weathered), not bare black metal. Colour of 1939 uncertain.\n      bridgeSteel:weatheredBridgeSurface('metal',{worldScale:.8,bump:.018,seed:1891,roughness:.66,metalness:.15,color:'#d2d9d0'}),\n      glow:new THREE.MeshBasicMaterial({color:'#ffb14b',toneMapped:false}),\n      smoke:new THREE.MeshBasicMaterial({color:'#454744',transparent:true,opacity:.3,depthWrite:false}),\n      dust:new THREE.MeshBasicMaterial({color:'#7d6f5c',transparent:true,opacity:.42,depthWrite:false})};\n    this.box=new THREE.BoxGeometry(1,1,1);this.sphere=new THREE.SphereGeometry(1,20,14);this.roundBox=new RoundedBoxGeometry(1,1,1,2,.12);this.accessoryBox=new RoundedBoxGeometry(1,1,1,1,.10);\n    this.featureSphere=new THREE.SphereGeometry(1,10,7);\n    this.helmetGeometry=new THREE.SphereGeometry(1,20,8,0,Math.PI*2,0,Math.PI/2);\n    this.cylinder=new THREE.CylinderGeometry(1,1,1,12);this.geometry=[this.box,this.sphere,this.cylinder,this.roundBox,this.accessoryBox,this.helmetGeometry,this.featureSphere];\n    this.kit=[];this.batches=new Map();this.solidGroup=new THREE.Group();this.effects=new THREE.Group();\n    this.scene.add(this.solidGroup,this.effects);this.smokes=new Map();this.grenadeViews=new Map();this.world=null;this.revision=-1;\n    this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};\n    this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};\n    this.combatFeedback=new M01CombatFeedback();\n    this.demolitionState={entries:[],pieces:[],flash:null};this.collapseTilt=new THREE.Quaternion();this.collapseEuler=new THREE.Euler();\n    this.portalPolish=new M01BridgePortalPolish({stone:this.materials.bridgeStone});\n    this.bridgeStructure=new M01BridgeStructure({steel:this.materials.bridgeSteel,rail:this.materials.metal,timber:this.materials.wood,stone:this.materials.bridgeStone});\n    this.atmosphere=new M01Atmosphere(this.scene);\n    this.damageDecals=new M01DamageDecals(this.scene);\n    this.createWeapon();this.createActors();this.createContactShadows();this.createFireEffects();this.createAircraft();this.createTrains();\n    this.weaponWorldFx=new WeaponWorldFx(this.effects);\n    // One muzzle light in the weapon pass: the licensed rig drives the procedural fallback's light.\n    this.characters=new M01Characters(this.scene);\n    this.impostors=new M01Impostors(this.scene);   // T20: camera-facing silhouettes beyond 350 m (one draw call per nation)\n    this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture,this.weaponWorldFx,{muzzleLight:this.fallbackFx.light});\n    if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')&&this.terrain){\n      this.terrainLegacyMaterial=texturedSurface('soil',{worldScale:.42});\n      this.terrainDebug={setEnabled:on=>{\n        if(this.disposed)return;this.terrainEnabled=Boolean(on);\n        for(const mesh of this.terrainMeshes)mesh.material=this.terrainEnabled?this.terrain.material:this.terrainLegacyMaterial;\n        this.lastFrame=null;return this.terrainEnabled;\n      },get:()=>this.ter"... 60343 more characters,
+    expected: /waterDetail:this\.water\.detail\}/,
+    operator: 'match',
+    diff: 'simple'
+  }
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

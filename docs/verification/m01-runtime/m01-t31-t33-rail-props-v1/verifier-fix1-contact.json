@@ -1,0 +1,62 @@
+{
+  "sourceHead": "6878d01e895787342d5f43b98524d47d53475943",
+  "rawGlb": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+  "supportsX": [
+    0,
+    140.9,
+    270.2,
+    401.1,
+    531.7,
+    662.3,
+    793.8,
+    878.9,
+    961.7,
+    1049.2
+  ],
+  "spanPivot": 962.9000000000001,
+  "spanLength": 81.8,
+  "spanEnd": 1044.7,
+  "supportX": 1049.2,
+  "bridgeApproachEnd": 1058.2,
+  "floorEnd": 1067.2,
+  "westApproachLength": 10.400000000000006,
+  "western": {
+    "samples": 132,
+    "previouslyBuried": 47,
+    "retainedOcclusions": 0
+  },
+  "eastern": {
+    "samples": 288,
+    "previouslyBuried": 196,
+    "retainedOcclusions": 0
+  },
+  "gates": [
+    {
+      "name": "gate_rail_left",
+      "min": [
+        1058.45,
+        -1,
+        -4.700000762939453
+      ],
+      "max": [
+        1058.750000190735,
+        6,
+        0
+      ]
+    },
+    {
+      "name": "gate_rail_right",
+      "min": [
+        1058.45,
+        -1,
+        0
+      ],
+      "max": [
+        1058.750000190735,
+        6,
+        4.699999809265137
+      ]
+    }
+  ],
+  "method": "Independent actual GLB parse and geometry raycasts; west exact production terrain triangles; east actual last-support stone geometry; previously buried fragments must satisfy renderer reveal predicates."
+}

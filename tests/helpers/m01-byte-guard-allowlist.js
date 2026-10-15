@@ -18,6 +18,9 @@ export const integratedPresentation=new Set([
  // T02-min + T03-lite/T25: aircraft target prediction mirrors grounded authoritative impacts; per-tick deltas audited in tools/verification/m01-continuity-raid-audit.mjs.
  'src/render/m01-aircraft.js',
  'src/render/m01-atmosphere.js','src/render/m01-characters.js','src/render/m01-environment.js','src/render/m01-surfaces.js',
+ // T09 materials atlas (M01-T09-T28-MATERIALS-CLOSEOUT-V1, merged from claude/m01-integration @ 8a0c362): registry only;
+ // the original surface() is locked by tests/m01-material-authority.test.js.
+ 'src/render/materials.js',
  'src/render/m01-train-wagons.js','src/render/m01-view.js','src/render/m01-viewmodel.js','src/render/three-renderer.js',
  // Ju 87 production closeout: the raid's presentation-only aircraft art was regenerated (path/events unchanged).
  ...[0,1,2].map(lod=>`assets/models/provisional/m01-aircraft/m01_ju87_b1_lod${lod}.glb`),'assets/models/provisional/m01-aircraft/manifest.json'

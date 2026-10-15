@@ -5,6 +5,7 @@ import {M01Simulation} from '../src/game/m01-simulation.js';
 import {M01_TREES} from '../src/world/m01-decoration-layout.js';
 import {TczewWorld} from '../src/world/tczew-world.js';
 import {driver,toRepair} from './helpers/m01-route.js';
+import {chooseVegetationTier} from '../src/render/m01-vegetation-runtime.js';
 import {M01_VEGETATION_LOD,M01_LEGACY_LEAF_CARD_ESTIMATE,vegetationNoise,chooseVegetationLod} from '../src/render/m01-environment.js';
 
 test('vegetation variation is deterministic, visual-only and does not consume gameplay RNG',()=>{
@@ -23,22 +24,10 @@ test('vegetation variation is deterministic, visual-only and does not consume ga
   assert.deepEqual(a.snapshot(false),b.snapshot(false));
 });
 
-test('vegetation LOD tiers use hysteresis and Low keeps a geometric canopy',()=>{
-  assert.equal(M01_LEGACY_LEAF_CARD_ESTIMATE,1513);
-  assert.deepEqual(Object.keys(M01_VEGETATION_LOD),['low','medium','high']);
-  for(const q of Object.values(M01_VEGETATION_LOD)){
-    assert.ok(q.near>0&&q.mid>q.near&&q.hysteresis>0);
-    assert.ok(q.nearLobes>=3&&q.midLobes>=2);
-  }
-  const q=M01_VEGETATION_LOD.medium;
-  assert.equal(chooseVegetationLod(q.near-1,'medium',null),'near');
-  assert.equal(chooseVegetationLod(q.near+q.hysteresis-1,'medium','near'),'near');
-  assert.equal(chooseVegetationLod(q.near+q.hysteresis+1,'medium','near'),'mid');
-  assert.equal(chooseVegetationLod(q.mid-q.hysteresis+1,'medium','far'),'far');
-  assert.equal(chooseVegetationLod(q.mid-q.hysteresis-1,'medium','far'),'mid');
-  assert.equal(M01_VEGETATION_LOD.low.nearCards,0);
-  assert.ok(M01_VEGETATION_LOD.high.nearBranches>M01_VEGETATION_LOD.low.nearBranches);
-  assert.ok(M01_VEGETATION_LOD.high.nearLobes>M01_VEGETATION_LOD.low.nearLobes);
+test('actual four-tier kit LOD uses 120m impostors, bounded hysteresis and 40m grass in every quality',()=>{
+ assert.equal(M01_LEGACY_LEAF_CARD_ESTIMATE,1513);assert.deepEqual(Object.keys(M01_VEGETATION_LOD),['low','medium','high']);
+ for(const [quality,q]of Object.entries(M01_VEGETATION_LOD)){assert.equal(q.mid,120);assert.deepEqual(q.grassFade,[34,40]);assert.equal(q.hysteresis,4);assert.equal(chooseVegetationTier(q.near-1,quality),0);assert.equal(chooseVegetationTier(q.near+3,quality,0),0);assert.equal(chooseVegetationTier(q.near+5,quality,0),1);assert.equal(chooseVegetationTier(q.lod1+5,quality,1),2);assert.equal(chooseVegetationTier(120,quality,2),3);assert.equal(chooseVegetationTier(117,quality,3),3);assert.equal(chooseVegetationTier(115,quality,3),2);assert.equal(chooseVegetationLod(120,quality),'far');assert.equal(chooseVegetationLod(116,quality,'far'),'far');assert.equal(chooseVegetationLod(115,quality,'far'),'mid');}
+ assert.ok(M01_VEGETATION_LOD.low.densityStep>M01_VEGETATION_LOD.medium.densityStep);assert.ok(M01_VEGETATION_LOD.medium.densityStep>M01_VEGETATION_LOD.high.densityStep);
 });
 
 test('approved tree colliders and critical route remain unchanged by the visual pass',()=>{

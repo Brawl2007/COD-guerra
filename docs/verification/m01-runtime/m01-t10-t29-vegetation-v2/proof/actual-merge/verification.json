@@ -1,0 +1,53 @@
+{
+  "head": "403c7489cd3171ae5ee3eefff948ba0dddb2a844",
+  "branch": "claude/m01-integration",
+  "parents": [
+    "b2430fac3504aa6d0ce7d0ad664076c26f90d6f7",
+    "cd8e7023cbe80ce44d8f2ece9040e459977c6911"
+  ],
+  "nodeVersion": "v24.19.0",
+  "startedAt": "2026-10-13T21:18:17.091414+00:00",
+  "commands": [
+    {
+      "name": "source",
+      "command": [
+        "node",
+        "tools/verification/m01-vegetation-v2-source.mjs",
+        "--check",
+        ".agent/runs/M01-T10-T29-20261013/runtime/final-source/source-manifest-final-published.json"
+      ],
+      "exitCode": 0,
+      "seconds": 0.038,
+      "log": ".agent/runs/M01-T10-T29-20261013/runtime/actual-merge/source.log",
+      "sha256": "5036e15225d1f1bde86620a7e5445ac1d36c248c00d1b32c6aaf37777be52bc2",
+      "bytes": 106
+    },
+    {
+      "name": "node",
+      "command": [
+        "npm",
+        "test"
+      ],
+      "exitCode": 0,
+      "seconds": 458.293,
+      "log": ".agent/runs/M01-T10-T29-20261013/runtime/actual-merge/node.log",
+      "sha256": "0e55651b67dcd2004f4e4a2f628b73436cc35b781cb41fa581b6e97ef2b54c66",
+      "bytes": 76116
+    },
+    {
+      "name": "build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "exitCode": 0,
+      "seconds": 0.772,
+      "log": ".agent/runs/M01-T10-T29-20261013/runtime/actual-merge/build.log",
+      "sha256": "354a915afaf0b3c6925fd1f83989effed9dd3ee32ff2202355d2ebc75bf97a11",
+      "bytes": 767
+    }
+  ],
+  "status": "PASS",
+  "completedAt": "2026-10-13T21:25:56.196327+00:00"
+}

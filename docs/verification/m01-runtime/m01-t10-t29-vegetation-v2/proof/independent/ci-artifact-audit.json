@@ -1,0 +1,54 @@
+{
+  "status": "PASS",
+  "source": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+  "baseline": "b2430fac3504aa6d0ce7d0ad664076c26f90d6f7",
+  "artifactId": 11836333308,
+  "artifactSHA256": "65d82ce926f5601171f8121786910d47e6caefb99118445ea7becf24cf6ac5b2",
+  "zipEntries": 227,
+  "futureProcesses": 4,
+  "exitCodes": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "futures": 24,
+  "totalTicks": 490051,
+  "minFutureTicks": 19952,
+  "exactCanonicalPairs": 9,
+  "actualCheckpointRestores": 4,
+  "nativeMetrics": [
+    {
+      "quality": "low",
+      "mainCalls": 10,
+      "mainTriangles": 22188,
+      "shadowCalls": 0,
+      "shadowTriangles": 0,
+      "atlasRGBA8": 1048576,
+      "atlasMipRGBA8": 349524
+    },
+    {
+      "quality": "medium",
+      "mainCalls": 10,
+      "mainTriangles": 46314,
+      "shadowCalls": 2,
+      "shadowTriangles": 3060,
+      "atlasRGBA8": 1048576,
+      "atlasMipRGBA8": 349524
+    },
+    {
+      "quality": "high",
+      "mainCalls": 12,
+      "mainTriangles": 74484,
+      "shadowCalls": 6,
+      "shadowTriangles": 7700,
+      "atlasRGBA8": 1048576,
+      "atlasMipRGBA8": 349524
+    }
+  ],
+  "equallyWarmedGlobalResources": {
+    "geometries": 506,
+    "textures": 133
+  },
+  "terrain9": "PASS 9/9 unchanged exact-source local Chromium154, worker1/retries0; terrain-current/report.json"
+}

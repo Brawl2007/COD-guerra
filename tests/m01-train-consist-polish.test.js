@@ -278,12 +278,21 @@ test('original Claude train source changes only its renderer and adds detail, wi
   const SOURCE='e588c0cda2bbe191f752792ec7e05f865fcff1a5';
   const changes=execFileSync('git',['diff','--name-only',BASE,SOURCE,'--','src','missions','assets'],{encoding:'utf8'}).trim().split('\n').filter(Boolean);
   assert.deepEqual(changes,['src/render/m01-train-consist-detail.js','src/render/m01-train-wagons.js']);
-  // Both train modules on this integrated branch must be byte-identical to the
-  // approved source. Any silent semantic overwrite is a real regression.
-  for(const p of changes)assert.deepEqual(
-    readFileSync(new URL('../'+p,import.meta.url)),
-    execFileSync('git',['show',`${SOURCE}:${p}`],{maxBuffer:64*1024*1024}),p
-  );
+  // T31 transfers production track ownership to the shared track bed. Normalise
+  // only this explicit, bounded integration; every original art/profile byte remains guarded.
+  const ownershipDeltas=[
+    ["    this.externalTrackOwner=parent.parent?.userData.m01ExternalTrack??null;\n    this.track=this.externalTrackOwner?null:this.buildTrack(box,wood);","    this.track=this.buildTrack(box,wood);"],
+    ['if(this.track)this.track.rails.visible=this.track.sleepers.visible=trackNear;','this.track.rails.visible=this.track.sleepers.visible=trackNear;'],
+    ['let drawCalls=this.track?(trackNear?3:1):0,triangles=','let drawCalls=trackNear?3:1,triangles='],
+    ['get trackTriangles(){if(!this.track)return 0;const','get trackTriangles(){const'],
+    ["trackOwner:this.externalTrackOwner??'standalone-consist',track:{",'track:{'],
+    ['sleepers:this.track?.sleepers.count??0,railSegments:this.track?.rails.count??0','sleepers:this.track.sleepers.count,railSegments:this.track.rails.count'],
+    ['...Object.values(this.meshes),...this.track?[this.track.rails,this.track.sleepers]:[]','...Object.values(this.meshes),this.track.rails,this.track.sleepers']
+  ];
+  for(const p of changes){let current=readFileSync(new URL('../'+p,import.meta.url),'utf8');
+    if(p.endsWith('m01-train-consist-detail.js'))for(const [integration,original]of ownershipDeltas){assert.equal(current.split(integration).length,2,'ownership integration appears exactly once');current=current.replace(integration,original);}
+    assert.equal(current,execFileSync('git',['show',`${SOURCE}:${p}`],{maxBuffer:64*1024*1024,encoding:'utf8'}),p);
+  }
 });
 
 test('everything the consist draws (siding included) lives under the train963 group, so visibility authority is unchanged',async()=>{

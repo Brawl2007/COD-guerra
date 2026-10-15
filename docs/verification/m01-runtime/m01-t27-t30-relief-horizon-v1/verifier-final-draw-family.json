@@ -1,0 +1,62 @@
+{
+  "status": "PASS",
+  "head": "4e5389b314f3e02b3197139cca953b79a5464d8f",
+  "familySamples": 326,
+  "sourceParticipantHullCount": 61,
+  "draws": [
+    {
+      "view": "01-start-section-close",
+      "groundTriangles": 14368,
+      "groundSubmissions": 47,
+      "farTriangles": 3232,
+      "farSubmissions": 5
+    },
+    {
+      "view": "09-repair-sappers",
+      "groundTriangles": 37240,
+      "groundSubmissions": 151,
+      "farTriangles": 3232,
+      "farSubmissions": 5
+    },
+    {
+      "view": "10-repair-threat-lisewo-far",
+      "groundTriangles": 37288,
+      "groundSubmissions": 151,
+      "farTriangles": 3232,
+      "farSubmissions": 5
+    },
+    {
+      "view": "17-panzerzug-daylight",
+      "groundTriangles": 8368,
+      "groundSubmissions": 54,
+      "farTriangles": 3232,
+      "farSubmissions": 5
+    },
+    {
+      "view": "supplement-west-banks",
+      "groundTriangles": 13808,
+      "groundSubmissions": 51,
+      "farTriangles": 3232,
+      "farSubmissions": 5
+    },
+    {
+      "view": "supplement-east-banks",
+      "groundTriangles": 8368,
+      "groundSubmissions": 54,
+      "farTriangles": 3232,
+      "farSubmissions": 5
+    }
+  ],
+  "shaderSinglePass": true,
+  "groundAndFarNoStateWrites": true,
+  "steadySyncs": 1000,
+  "resourcesRetainExactReferences": true,
+  "ridgeExample": {
+    "x": 550,
+    "z": -135,
+    "inside": false,
+    "reliefOffset": 29.88251559911801,
+    "actualSurface": 24.88251495361328
+  },
+  "limitations": "Frustum reconstruction corroborates recorded actual browser callbacks; this is a separate CPU probe, not a fresh GL/FPS measurement."
+}

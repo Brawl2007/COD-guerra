@@ -1,0 +1,78 @@
+{
+  "status": "PASS",
+  "base": "b2430fac3504aa6d0ce7d0ad664076c26f90d6f7",
+  "source": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+  "method": "Import untouched base M01Environment.makeTreeDescriptor and trunkGeometry(9); compare all descriptor fields except current mutable LOD and every indexed receiver attribute against current owner",
+  "vertices": 60,
+  "triangles": 90,
+  "physical": [
+    {
+      "id": "m01_tree_0",
+      "trunkSHA256": "d5e3a36d9ca56639587979eff4e2e367d9e57c8b1cb941abd296493cc5ad4eb6"
+    },
+    {
+      "id": "m01_tree_1",
+      "trunkSHA256": "b916c39e7bdf6b9bd4f6b77eda9523075c33a561c68819cf9bda4e3d407dec34"
+    },
+    {
+      "id": "m01_tree_2",
+      "trunkSHA256": "dab983973ac1162a35cdf20bb4de57e97ace2f9281bd69d8b4a0e733d334e15e"
+    },
+    {
+      "id": "m01_tree_3",
+      "trunkSHA256": "0c278041ab6add27450f34703084551cbc2b7e0fac63ba8f1d37d84f73a4ebcf"
+    },
+    {
+      "id": "m01_tree_4",
+      "trunkSHA256": "dd4244ec0cacbd63c7fe67060d37408d19329a75179a2cfbb560441dc0c93be5"
+    },
+    {
+      "id": "m01_tree_5",
+      "trunkSHA256": "344d4ec37681a99d3bec999d1d25217e245d0cfeb7e8283bb591cd499a699f99"
+    },
+    {
+      "id": "m01_tree_6",
+      "trunkSHA256": "88e495e610e15071401125084a0866ceba8f07609643c1148de9f64dbe817bd7"
+    },
+    {
+      "id": "m01_tree_7",
+      "trunkSHA256": "e6c8f662957e6d97b7093b89cc368dc7ab614a32ee365ab60f5b7b6b1535dab7"
+    },
+    {
+      "id": "m01_tree_8",
+      "trunkSHA256": "3b526a95418453adfd3e7f675c91fde3dcab7a2c2f0c0bbeb2665a3b4fafd9b9"
+    },
+    {
+      "id": "m01_tree_9",
+      "trunkSHA256": "bab56fe243644f281a474d58eed05d3592a7f470e67d734a2c58f871f1676cb7"
+    },
+    {
+      "id": "m01_tree_10",
+      "trunkSHA256": "555b538667dfd4929fcacf09cb77074898baa9b88e750bf88890470fc724315e"
+    },
+    {
+      "id": "m01_tree_11",
+      "trunkSHA256": "d2f0f18a36334d272c473cda98ec677df08f974dd0bef433df965b5cbac40043"
+    },
+    {
+      "id": "m01_tree_12",
+      "trunkSHA256": "665e4d2f8f3808c5f7974adfd15e3582e46af95794760387886617f791322aee"
+    },
+    {
+      "id": "m01_tree_13",
+      "trunkSHA256": "10d63f356f9faf86a59931992f5096d2ba9826bb514fa610d4510fc9b0f81a92"
+    },
+    {
+      "id": "m01_tree_14",
+      "trunkSHA256": "0379553282827b5dd01b462183cb3532798434d782f23571159319a6791ec2cd"
+    },
+    {
+      "id": "m01_tree_15",
+      "trunkSHA256": "65d02139e7f7033d913beca08512f23425dd30102397a1ced79cc08f38a5d504"
+    },
+    {
+      "id": "m01_tree_16",
+      "trunkSHA256": "ec5ff8643a5744fd3ba86744eef3cf20ba0c608cd79a5a324eb07cbc0e6e89eb"
+    }
+  ]
+}

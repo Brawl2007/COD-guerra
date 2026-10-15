@@ -1,0 +1,25 @@
+{
+  "terrain": {
+    "material": "m01-terrain-macro-v1",
+    "textures": 1,
+    "gpuBytes": 1747612,
+    "quality": "low",
+    "tier": "low",
+    "lowDetail": 1,
+    "files": [],
+    "mask": {
+      "width": 1024,
+      "height": 320
+    },
+    "samplers": 1,
+    "failures": []
+  },
+  "drawCalls": 218,
+  "triangles": 434742,
+  "stats": {
+    "pixels": 168000,
+    "mean": 50.05058227022093,
+    "std": 6.331108113594059,
+    "localStd": 0.21782737316561684
+  }
+}

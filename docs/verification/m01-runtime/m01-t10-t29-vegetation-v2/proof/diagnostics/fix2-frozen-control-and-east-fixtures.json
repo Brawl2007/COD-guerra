@@ -1,0 +1,346 @@
+{
+  "fixAttempts": 2,
+  "maxFixAttempts": 3,
+  "sourceHead": "40535f633bc48b210c2cd08d069e2d5d8778d24b",
+  "status": "initial frozen comparator FAIL; preserved complete diagnostic",
+  "failures": [
+    {
+      "fixture": "04-start-west-portal-bridge",
+      "controlPixels": 217,
+      "reason": "Old top-left control patch overlaps intentionally changed tree crown; visually verified against both PNGs."
+    },
+    {
+      "fixture": "east-bank",
+      "changedPixels": 0,
+      "reason": "Supplemental camera points into Lisewo tower, occluding actual eastern groves; full nonvegetation scene unchanged. Camera supplement must demonstrate real existing east trees."
+    }
+  ],
+  "correction": "Use fixed top central unaffected sky control, keep strict0delta; replace only occluded eastern supplement with visible authored grove, preserve canonical01/04/09/15/16 exactly. Capture actual matching base/current state/camera/clock again.",
+  "otherPoses": [
+    {
+      "name": "01-start-section-close",
+      "pixels": {
+        "pixels": 53838,
+        "max": 168,
+        "sum": 7104351,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 1280,
+          "h": 720
+        }
+      },
+      "oldControl": {
+        "pixels": 0,
+        "max": 0,
+        "sum": 0,
+        "rect": {
+          "x": 4,
+          "y": 4,
+          "w": 80,
+          "h": 40
+        }
+      },
+      "proposedFixedSkyControl": {
+        "pixels": 0,
+        "max": 0,
+        "sum": 0,
+        "rect": {
+          "x": 600,
+          "y": 4,
+          "w": 80,
+          "h": 40
+        }
+      }
+    },
+    {
+      "name": "04-start-west-portal-bridge",
+      "pixels": {
+        "pixels": 123923,
+        "max": 180,
+        "sum": 12807248,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 1280,
+          "h": 720
+        }
+      },
+      "oldControl": {
+        "pixels": 217,
+        "max": 121,
+        "sum": 59720,
+        "rect": {
+          "x": 4,
+          "y": 4,
+          "w": 80,
+          "h": 40
+        }
+      },
+      "proposedFixedSkyControl": {
+        "pixels": 0,
+        "max": 0,
+        "sum": 0,
+        "rect": {
+          "x": 600,
+          "y": 4,
+          "w": 80,
+          "h": 40
+        }
+      }
+    },
+    {
+      "name": "09-repair-sappers",
+      "pixels": {
+        "pixels": 32466,
+        "max": 232,
+        "sum": 4418542,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 1280,
+          "h": 720
+        }
+      },
+      "oldControl": {
+        "pixels": 0,
+        "max": 0,
+        "sum": 0,
+        "rect": {
+          "x": 4,
+          "y": 4,
+          "w": 80,
+          "h": 40
+        }
+      },
+      "proposedFixedSkyControl": {
+        "pixels": 0,
+        "max": 0,
+        "sum": 0,
+        "rect": {
+          "x": 600,
+          "y": 4,
+          "w": 80,
+          "h": 40
+        }
+      }
+    },
+    {
+      "name": "15-west-demolition",
+      "pixels": {
+        "pixels": 14364,
+        "max": 214,
+        "sum": 3053120,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 1280,
+          "h": 720
+        }
+      },
+      "oldControl": {
+        "pixels": 0,
+        "max": 0,
+        "sum": 0,
+        "rect": {
+          "x": 4,
+          "y": 4,
+          "w": 80,
+          "h": 40
+        }
+      },
+      "proposedFixedSkyControl": {
+        "pixels": 0,
+        "max": 0,
+        "sum": 0,
+        "rect": {
+          "x": 600,
+          "y": 4,
+          "w": 80,
+          "h": 40
+        }
+      }
+    },
+    {
+      "name": "16-roll-call",
+      "pixels": {
+        "pixels": 131741,
+        "max": 191,
+        "sum": 5613741,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 1280,
+          "h": 720
+        }
+      },
+      "oldControl": {
+        "pixels": 0,
+        "max": 0,
+        "sum": 0,
+        "rect": {
+          "x": 4,
+          "y": 4,
+          "w": 80,
+          "h": 40
+        }
+      },
+      "proposedFixedSkyControl": {
+        "pixels": 0,
+        "max": 0,
+        "sum": 0,
+        "rect": {
+          "x": 600,
+          "y": 4,
+          "w": 80,
+          "h": 40
+        }
+      }
+    },
+    {
+      "name": "east-bank",
+      "pixels": {
+        "pixels": 0,
+        "max": 0,
+        "sum": 0,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 1280,
+          "h": 720
+        }
+      },
+      "oldControl": {
+        "pixels": 0,
+        "max": 0,
+        "sum": 0,
+        "rect": {
+          "x": 4,
+          "y": 4,
+          "w": 80,
+          "h": 40
+        }
+      },
+      "proposedFixedSkyControl": {
+        "pixels": 0,
+        "max": 0,
+        "sum": 0,
+        "rect": {
+          "x": 600,
+          "y": 4,
+          "w": 80,
+          "h": 40
+        }
+      }
+    },
+    {
+      "name": "near-foliage",
+      "pixels": {
+        "pixels": 18670,
+        "max": 166,
+        "sum": 2547897,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 1280,
+          "h": 720
+        }
+      },
+      "oldControl": {
+        "pixels": 0,
+        "max": 0,
+        "sum": 0,
+        "rect": {
+          "x": 4,
+          "y": 4,
+          "w": 80,
+          "h": 40
+        }
+      },
+      "proposedFixedSkyControl": {
+        "pixels": 0,
+        "max": 0,
+        "sum": 0,
+        "rect": {
+          "x": 600,
+          "y": 4,
+          "w": 80,
+          "h": 40
+        }
+      }
+    },
+    {
+      "name": "transition-116",
+      "pixels": {
+        "pixels": 71263,
+        "max": 183,
+        "sum": 8923832,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 1280,
+          "h": 720
+        }
+      },
+      "oldControl": {
+        "pixels": 0,
+        "max": 0,
+        "sum": 0,
+        "rect": {
+          "x": 4,
+          "y": 4,
+          "w": 80,
+          "h": 40
+        }
+      },
+      "proposedFixedSkyControl": {
+        "pixels": 0,
+        "max": 0,
+        "sum": 0,
+        "rect": {
+          "x": 600,
+          "y": 4,
+          "w": 80,
+          "h": 40
+        }
+      }
+    },
+    {
+      "name": "transition-120",
+      "pixels": {
+        "pixels": 77544,
+        "max": 186,
+        "sum": 7680892,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 1280,
+          "h": 720
+        }
+      },
+      "oldControl": {
+        "pixels": 0,
+        "max": 0,
+        "sum": 0,
+        "rect": {
+          "x": 4,
+          "y": 4,
+          "w": 80,
+          "h": 40
+        }
+      },
+      "proposedFixedSkyControl": {
+        "pixels": 0,
+        "max": 0,
+        "sum": 0,
+        "rect": {
+          "x": 600,
+          "y": 4,
+          "w": 80,
+          "h": 40
+        }
+      }
+    }
+  ],
+  "at": "2026-10-13T15:53:45.193913+00:00"
+}

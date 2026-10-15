@@ -1,0 +1,201 @@
+{
+  "status": "PASS",
+  "head": "4e5389b314f3e02b3197139cca953b79a5464d8f",
+  "base": "293a4f116b9b28818b7ff3bda4d83cc49b01014f",
+  "manifestEntries": 89,
+  "publishedFrozenFiles": 14,
+  "protectedDiffEmpty": true,
+  "canonicalAndSupplementPairs": 6,
+  "pixels": [
+    {
+      "name": "01-start-section-close",
+      "feature": "relief",
+      "changed": 2595,
+      "control": 0,
+      "bounds": [
+        7,
+        265,
+        1067,
+        293
+      ]
+    },
+    {
+      "name": "01-start-section-close",
+      "feature": "far",
+      "changed": 281,
+      "control": 0,
+      "bounds": [
+        7,
+        275,
+        305,
+        293
+      ]
+    },
+    {
+      "name": "09-repair-sappers",
+      "feature": "relief",
+      "changed": 65,
+      "control": 0,
+      "bounds": [
+        602,
+        336,
+        770,
+        357
+      ]
+    },
+    {
+      "name": "10-repair-threat-lisewo-far",
+      "feature": "far",
+      "changed": 30,
+      "control": 0,
+      "bounds": [
+        561,
+        348,
+        641,
+        353
+      ]
+    },
+    {
+      "name": "17-panzerzug-daylight",
+      "feature": "relief",
+      "changed": 8724,
+      "control": 0,
+      "bounds": [
+        208,
+        374,
+        1279,
+        408
+      ]
+    },
+    {
+      "name": "17-panzerzug-daylight",
+      "feature": "far",
+      "changed": 5822,
+      "control": 0,
+      "bounds": [
+        613,
+        339,
+        1279,
+        376
+      ]
+    },
+    {
+      "name": "supplement-west-banks",
+      "feature": "relief",
+      "changed": 2076,
+      "control": 0,
+      "bounds": [
+        0,
+        349,
+        529,
+        371
+      ]
+    },
+    {
+      "name": "supplement-west-banks",
+      "feature": "far",
+      "changed": 10184,
+      "control": 0,
+      "bounds": [
+        0,
+        315,
+        534,
+        369
+      ]
+    },
+    {
+      "name": "supplement-east-banks",
+      "feature": "relief",
+      "changed": 9493,
+      "control": 0,
+      "bounds": [
+        159,
+        364,
+        1279,
+        397
+      ]
+    },
+    {
+      "name": "supplement-east-banks",
+      "feature": "far",
+      "changed": 5822,
+      "control": 0,
+      "bounds": [
+        583,
+        330,
+        1279,
+        367
+      ]
+    }
+  ],
+  "budgets": [
+    {
+      "name": "01-start-section-close",
+      "ground": 14368,
+      "draws": 47,
+      "far": 5
+    },
+    {
+      "name": "09-repair-sappers",
+      "ground": 37240,
+      "draws": 151,
+      "far": 5
+    },
+    {
+      "name": "10-repair-threat-lisewo-far",
+      "ground": 37288,
+      "draws": 151,
+      "far": 5
+    },
+    {
+      "name": "17-panzerzug-daylight",
+      "ground": 8368,
+      "draws": 54,
+      "far": 5
+    },
+    {
+      "name": "supplement-west-banks",
+      "ground": 13808,
+      "draws": 51,
+      "far": 5
+    },
+    {
+      "name": "supplement-east-banks",
+      "ground": 8368,
+      "draws": 54,
+      "far": 5
+    }
+  ],
+  "resourcePlateau": [
+    536,
+    134,
+    0.05
+  ],
+  "futures": {
+    "routes": 24,
+    "ticks": 490051,
+    "actorSamples": 44104590,
+    "checkpointPairs": 120
+  },
+  "exactHeadCI": {
+    "head": "4e5389b314f3e02b3197139cca953b79a5464d8f",
+    "branch": "codex/m01-t27-t30-relief-horizon-v1",
+    "normal": {
+      "run": 38376693678,
+      "job": 115226752483,
+      "conclusion": "success",
+      "nodePassed": 669,
+      "toolingPassed": 173,
+      "buildModules": 92,
+      "otherBrowserJob": "skipped"
+    },
+    "focused": {
+      "run": 38376693616,
+      "job": 115226752605,
+      "conclusion": "success",
+      "browserPassed": 2,
+      "build92": "browser prerequisite only"
+    }
+  },
+  "method": "Fresh reviewer hashes, Git scope/provenance, direct PNG inspection plus pixel recomputation, snapshot/camera/clock/plateau/route semantic audit. Existing executed test/browser/futures results retain their original runner attribution."
+}

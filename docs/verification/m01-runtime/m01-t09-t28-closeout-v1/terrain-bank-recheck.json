@@ -1,0 +1,121 @@
+{
+  "config": {
+    "configFile": "/workspace/COD-guerra/playwright.config.js",
+    "rootDir": "/workspace/COD-guerra/tests/browser",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/COD-guerra/test-results/material-bank",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/workspace/COD-guerra/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run preview",
+      "url": "http://127.0.0.1:4173/COD-guerra/",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "m01-terrain-war-ground.spec.js",
+      "file": "m01-terrain-war-ground.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "bank-5m: war ground (high) vs the legacy single soil texture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 58660,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T20:50:26.934Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "bank-5m.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJ0ZXJyYWluIjogewogICAgIm1hdGVyaWFsIjogIm0wMS10ZXJyYWluLW1hY3JvLXYxIiwKICAgICJ0ZXh0dXJlcyI6IDUsCiAgICAiZ3B1Qnl0ZXMiOiAyMDk3MTUwMCwKICAgICJxdWFsaXR5IjogImhpZ2giLAogICAgInRpZXIiOiAiaGlnaCIsCiAgICAibG93RGV0YWlsIjogMCwKICAgICJmaWxlcyI6IFsKICAgICAgInRlcnJhaW4tZGV0YWlsLWEtMTAyNC5wbmciLAogICAgICAidGVycmFpbi1kZXRhaWwtYi01MTIucG5nIiwKICAgICAgInRlcnJhaW4tbm9ybWFsLWEtMTAyNC5wbmciLAogICAgICAidGVycmFpbi1ub3JtYWwtYi01MTIucG5nIgogICAgXSwKICAgICJtYXNrIjogewogICAgICAid2lkdGgiOiAyMDQ4LAogICAgICAiaGVpZ2h0IjogNjQwCiAgICB9LAogICAgInNhbXBsZXJzIjogNSwKICAgICJmYWlsdXJlcyI6IFtdCiAgfSwKICAiZHJhd0NhbGxzIjogNDQxLAogICJ0cmlhbmdsZXMiOiA4NjM4MjAsCiAgInN0YXRzIjogewogICAgInBpeGVscyI6IDE5MjAwMCwKICAgICJtZWFuIjogMjYuOTgzODc4NDU3Mjk5MDUsCiAgICAic3RkIjogOS42NDMyODI4NTAwODMwOTYsCiAgICAibG9jYWxTdGQiOiAyLjcwMTU0MDE1MjI1ODcwNTMsCiAgICAiY2hhbmdlZEZyYWN0aW9uIjogMC45NzYwOTM3NSwKICAgICJtYXhEaWZmIjogOTMKICB9LAogICJjb250cm9sIjogewogICAgInBpeGVscyI6IDY0MDAsCiAgICAibWVhbiI6IDE0NC4zMTQzODU3MTg3NDkwNywKICAgICJzdGQiOiA0LjI5NzAyNjA5MDM5NDYyMiwKICAgICJsb2NhbFN0ZCI6IDAuNTgyMTgyNTAyNTA1ODgzOCwKICAgICJjaGFuZ2VkRnJhY3Rpb24iOiAwLAogICAgIm1heERpZmYiOiAwCiAgfSwKICAibGVnYWN5U3RhdHMiOiB7CiAgICAicGl4ZWxzIjogMTkyMDAwLAogICAgIm1lYW4iOiAyMy4wOTMyNTcyOTA2MzYxMiwKICAgICJzdGQiOiA3LjYzNDkxMzQ5NDA2NDM3MzUsCiAgICAibG9jYWxTdGQiOiAzLjcxMTQxNzc5ODQ1MzY3NwogIH0sCiAgImxlZ2FjeVRlcnJhaW4iOiB7CiAgICAibWF0ZXJpYWwiOiAibTAxLXRlcnJhaW4tbWFjcm8tdjEiLAogICAgInRleHR1cmVzIjogNSwKICAgICJncHVCeXRlcyI6IDIwOTcxNTAwLAogICAgInF1YWxpdHkiOiAiaGlnaCIsCiAgICAidGllciI6ICJoaWdoIiwKICAgICJsb3dEZXRhaWwiOiAwLAogICAgImZpbGVzIjogWwogICAgICAidGVycmFpbi1kZXRhaWwtYS0xMDI0LnBuZyIsCiAgICAgICJ0ZXJyYWluLWRldGFpbC1iLTUxMi5wbmciLAogICAgICAidGVycmFpbi1ub3JtYWwtYS0xMDI0LnBuZyIsCiAgICAgICJ0ZXJyYWluLW5vcm1hbC1iLTUxMi5wbmciCiAgICBdLAogICAgIm1hc2siOiB7CiAgICAgICJ3aWR0aCI6IDIwNDgsCiAgICAgICJoZWlnaHQiOiA2NDAKICAgIH0sCiAgICAic2FtcGxlcnMiOiA1LAogICAgImZhaWx1cmVzIjogW10KICB9LAogICJsZWdhY3lEcmF3Q2FsbHMiOiA0NDEKfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "92e789105155f9d11e64-680072908a52eb2c6ce4",
+          "file": "m01-terrain-war-ground.spec.js",
+          "line": 156,
+          "column": 80
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-11T20:50:24.509Z",
+    "duration": 61486.175,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

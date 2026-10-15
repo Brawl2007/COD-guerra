@@ -1,0 +1,2 @@
+# Preserve original terminal evidence including control codes and whitespace.
+*.log -text -whitespace

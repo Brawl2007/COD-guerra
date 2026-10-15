@@ -1,0 +1,17 @@
+[2m[WebServer] [22m(node:1429) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:1454) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1454) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ROADMAP_CAPTURE {"view":"03-start-hut-objective","quality":"high","clock":16244.0666,"player":{"x":-242,"y":-3,"z":32,"angle":-2.601173153319209,"pitch":0.059952571984473534,"health":100,"crouched":false,"aiming":false},"drawCalls":185,"triangles":760407,"textures":87,"geometries":279,"actors":4,"visibleActors":4,"errors":[]}
+ROADMAP_CAPTURE {"view":"04-start-west-portal-bridge","quality":"high","clock":16244.0666,"player":{"x":-48,"y":-1.6713094068922087,"z":9,"angle":-0.17985349979247828,"pitch":0.11291557709837448,"health":100,"crouched":false,"aiming":false},"drawCalls":495,"triangles":977924,"textures":131,"geometries":267,"actors":13,"visibleActors":13,"errors":[]}
+ROADMAP_CAPTURE {"view":"15-west-demolition","quality":"high","clock":24300.0167,"player":{"x":-292,"y":-3,"z":26,"angle":-0.0796919785367403,"pitch":0.03252382926268121,"health":92,"crouched":false,"aiming":false},"drawCalls":672,"triangles":1118442,"textures":220,"geometries":375,"actors":28,"visibleActors":28,"errors":[]}
+ROADMAP_CAPTURE {"view":"16-roll-call","quality":"high","clock":25500,"player":{"x":-248,"y":-3,"z":80,"angle":-2.62566714012451,"pitch":-0.11282184645449368,"health":92,"crouched":false,"aiming":false},"drawCalls":422,"triangles":976062,"textures":239,"geometries":312,"actors":28,"visibleActors":28,"errors":[]}
+ROADMAP_TARGETS [{"name":"03-start-hut-objective","x":-242,"z":32,"target":{"x":-262,"z":20,"y":0}},{"name":"04-start-west-portal-bridge","x":-48,"z":9,"target":{"x":-4,"z":1,"y":5}},{"name":"15-west-demolition","x":-292,"z":26,"target":{"x":-4,"z":3,"y":8}},{"name":"16-roll-call","x":-248,"z":80,"target":{"x":-260.28333333333336,"y":-3,"z":73.03333333333335,"n":6}}]
+  ✓  1 tools/verification/m01-roadmap-captures.spec.js:44:1 › roadmap captures (2.0m)
+
+  1 passed (2.0m)

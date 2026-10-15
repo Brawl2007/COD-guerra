@@ -1,0 +1,29 @@
+{
+  "sourceHead": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+  "sourceAggregate": "8363ea61d93bb09c0c14215ef6818066c7bdfd4688db284e4da0f780100a2b70",
+  "command": "env -u M01_TERRAIN_EVIDENCE CHROME_EXECUTABLE=/usr/bin/chromium npx playwright test --config .agent/runs/M01-T10-T29-20261013/runtime/verifier/terrain-current/config.mjs",
+  "node": "v24.19.0",
+  "chromium": "154.0.8037.57 (Debian13)",
+  "rendering": "base Playwright ANGLE SwiftShader flags",
+  "workers": 1,
+  "retries": 0,
+  "reporters": [
+    "list",
+    "json"
+  ],
+  "testFile": "tests/browser/m01-terrain-war-ground.spec.js",
+  "testFileSHA256": "bb0cf8a414597443f076ac09207ee997f6e8d35ccd005588e88e52306e9d0ba8",
+  "configSHA256": "beaf7d9d9081ba66d2abea43cb60933ba1e7013e4958dc6dad11c889c63153a7",
+  "oldDurableEvidenceEnv": "unset; original durable evidence untouched",
+  "scope": "Missing coupled evidence collection; no production/test/workflow edits, no additional fix attempt",
+  "status": "PASS",
+  "stats": {
+    "startTime": "2026-10-13T20:50:22.965Z",
+    "duration": 555700.926,
+    "expected": 9,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "exitCode": 0
+}
