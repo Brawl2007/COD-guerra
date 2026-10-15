@@ -475,8 +475,10 @@
     "T48": {
       "name": "GERMAN RETREAT",
       "status": "NOT_DEVELOPED",
-      "refs": [],
-      "note": "Retirada alemã."
+      "refs": [
+        "package:Gemini T48 2026-10-15 (design input only)"
+      ],
+      "note": "Retirada alemã. Pacote Gemini avaliado em 2026-10-15: simulação substituída por stub de 289 linhas, IDs rg_dike_*/rg_gate_* inexistentes no mission.json e capturas de cena de teste; não integrável. Usar só como desenho (Fases A/B/C, silêncio 06:10–06:11, reagrupamento 06:12) para implementação real sobre RETREAT/carriedBy existentes."
     },
     "T49": {
       "name": "PERFORMANCE BUDGET",
