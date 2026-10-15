@@ -6,6 +6,9 @@ consult TypeSafe Jev, and only when the pilot is explicitly enabled, a key is
 available, any optional user-defined call limit permits it and --offline is not set.
 The tool never spawns agents; the Captain keeps the final decision.
 Python stdlib only. The API key is never printed, logged or written.
+COD_JEV_AUTH=proxy (opt-in) calls without a key or Authorization header, for an
+egress proxy that injects it. After a http_401/403 paid call, route refuses new
+paid calls (auth_failed_previously) until `route --retry-auth` (one attempt).
 """
 import argparse
 import datetime
@@ -111,8 +114,10 @@ def rule_decide(r):
 
 # -------------------------------------------------------------------- key
 def load_key(env=None):
-    """Return (status, key). status: env|file|missing|insecure_key_file."""
+    """Return (status, key). status: env|file|proxy|missing|insecure_key_file."""
     e = _env(env)
+    if (e.get("COD_JEV_AUTH") or "").strip() == "proxy":
+        return "proxy", None
     k = (e.get("TYPESAFE_API_KEY") or "").strip()
     if k:
         return "env", k
@@ -203,6 +208,15 @@ class Locked:
         os.replace(tmp, self.path)
 
 
+def paid_call_gate(path):
+    """Serialize requests through their persisted ledger outcomes.
+
+    Independent of the ledger file lock to avoid reentrant locking in
+    reserve() and finish(). The OS releases it on abrupt process exit.
+    """
+    return Locked(str(path) + ".auth")
+
+
 def reserve(path, limit, run_id, request_id):
     """Atomically reserve a slot. Return index or None if refused."""
     with Locked(path) as lk:
@@ -229,6 +243,18 @@ def finish(path, idx, **fields):
         if idx < len(data["calls"]):
             data["calls"][idx].update(fields)
             lk.write(data)
+
+
+def auth_blocked(calls):
+    """Latest http_401/http_403 outcome after the last successful ("ok") call, else None."""
+    found = None
+    for c in calls:
+        o = c.get("outcome")
+        if o == "ok":
+            found = None
+        elif o in ("http_401", "http_403"):
+            found = o
+    return found
 
 
 def est_cost(tokens):
@@ -285,7 +311,7 @@ def map_choice(choice, norm):
 # ------------------------------------------------------------------ route
 def route(request, *, enable_jev=False, offline=False, dry_run=False,
           min_confidence=0.6, transport=None, env=None, run_id=None,
-          limit_flag=None):
+          limit_flag=None, retry_auth=False):
     e = _env(env)
     norm = normalize(request)
     model, agent, ambiguous, why = rule_decide(norm)
@@ -309,14 +335,18 @@ def route(request, *, enable_jev=False, offline=False, dry_run=False,
     if offline:
         return fallback("offline")
     kstatus, key = load_key(e)
-    if key is None:
+    if key is None and kstatus != "proxy":
         return fallback("insecure_key_file" if kstatus == "insecure_key_file" else "no_key")
     try:
-        used = len(read_ledger(lpath)["calls"])
+        prior = read_ledger(lpath)["calls"]
+        used = len(prior)
     except LedgerUnreadable:
         return fallback("ledger_unreadable")
     if limit is not None and used >= limit:
         return fallback("budget_exhausted", budget={"used": used, "limit": limit})
+
+    if auth_blocked(prior) and not retry_auth:
+        return fallback("auth_failed_previously")
 
     base = (e.get("TYPESAFE_BASE_URL") or DEFAULT_BASE).rstrip("/")
     url = base + "/v1/systemone"
@@ -325,59 +355,74 @@ def route(request, *, enable_jev=False, offline=False, dry_run=False,
         out["source"] = "rule"
         out["dry_run"] = {
             "would_call": True, "url": url,
-            "headers": {"Authorization": "Bearer ***", "Content-Type": "application/json"},
+            "headers": ({"Content-Type": "application/json"} if kstatus == "proxy" else
+                        {"Authorization": "Bearer ***", "Content-Type": "application/json"}),
+            **({"auth": "proxy"} if kstatus == "proxy" else {}),
             "body": body, "budget": {"used": used, "limit": limit},
         }
         return out
 
-    request_id = "%s-%d" % (run_id or "norun", used + 1)
-    try:
-        idx = reserve(lpath, limit, run_id, request_id)
-    except LedgerUnreadable:
-        return fallback("ledger_unreadable")
-    if idx is None:
-        return fallback("budget_exhausted", budget={"used": used, "limit": limit})
-    headers = {"Authorization": "Bearer " + key, "Content-Type": "application/json"}
-    send = transport or default_transport
-    try:
-        status, raw = send(url, headers, json.dumps(body).encode(), TIMEOUT_S)
-    except Exception as exc:  # network errors; never include message (may echo URL/headers)
-        finish(lpath, idx, outcome="error:" + type(exc).__name__)
-        return fallback("error", error=type(exc).__name__)
-    if status != 200:
-        finish(lpath, idx, http_status=status, outcome="http_%d" % status)
-        return fallback("error", error="HTTP%d" % status)
-    try:
-        resp = json.loads(raw)
-        ans = resp["answers"]["model_choice"]
-        choice = str(ans["choice"]).lower()
-        conf = ans["confidence"]
-        if isinstance(conf, bool) or not isinstance(conf, (int, float)):
-            raise ValueError("bad confidence")
-        conf = float(conf)
-        if not math.isfinite(conf) or not 0.0 <= conf <= 1.0:
-            raise ValueError("bad confidence")
-        usage = resp.get("usage") or {}
-        tin = int(usage.get("input_tokens", 0))
-        tout = int(usage.get("output_tokens", 0))
-        jmodel = resp.get("model")
-        if choice not in CRITERIA:
-            raise ValueError("bad choice")
-    except Exception as exc:
-        finish(lpath, idx, http_status=status, outcome="parse_error:" + type(exc).__name__)
-        return fallback("error", error="ParseError")
-    finish(lpath, idx, http_status=status, model=jmodel, input_tokens=tin,
-           output_tokens=tout, est_cost_usd=est_cost(tin), choice=choice,
-           confidence=conf, outcome="ok")
-    out.update(jev_choice=choice, jev_model=jmodel, confidence=conf,
-               usage={"input_tokens": tin, "output_tokens": tout,
-                      "est_cost_usd": est_cost(tin)})
-    if conf < min_confidence:
-        return fallback("low_confidence", confidence=conf)
-    m, a, flags = map_choice(choice, norm)
-    out.update(source="jev", recommendation_model=m, recommended_agent=a,
-               flags=flags, rationale="Jev choice %s (confidence %.2f)" % (choice, conf))
-    return out
+    # Keep the cross-process auth gate through the HTTP result and ledger write.
+    with paid_call_gate(lpath):
+        try:
+            latest = read_ledger(lpath)["calls"]
+        except LedgerUnreadable:
+            return fallback("ledger_unreadable")
+        now_used = len(latest)
+        if limit is not None and now_used >= limit:
+            return fallback("budget_exhausted", budget={"used": now_used, "limit": limit})
+        if auth_blocked(latest) and not retry_auth:
+            return fallback("auth_failed_previously")
+        request_id = "%s-%d" % (run_id or "norun", now_used + 1)
+        try:
+            idx = reserve(lpath, limit, run_id, request_id)
+        except LedgerUnreadable:
+            return fallback("ledger_unreadable")
+        if idx is None:
+            return fallback("budget_exhausted", budget={"used": now_used, "limit": limit})
+        headers = {"Content-Type": "application/json"}
+        if key is not None:
+            headers["Authorization"] = "Bearer " + key
+        send = transport or default_transport
+        try:
+            status, raw = send(url, headers, json.dumps(body).encode(), TIMEOUT_S)
+        except Exception as exc:  # network errors; never include message (may echo URL/headers)
+            finish(lpath, idx, outcome="error:" + type(exc).__name__)
+            return fallback("error", error=type(exc).__name__)
+        if status != 200:
+            finish(lpath, idx, http_status=status, outcome="http_%d" % status)
+            return fallback("error", error="HTTP%d" % status)
+        try:
+            resp = json.loads(raw)
+            ans = resp["answers"]["model_choice"]
+            choice = str(ans["choice"]).lower()
+            conf = ans["confidence"]
+            if isinstance(conf, bool) or not isinstance(conf, (int, float)):
+                raise ValueError("bad confidence")
+            conf = float(conf)
+            if not math.isfinite(conf) or not 0.0 <= conf <= 1.0:
+                raise ValueError("bad confidence")
+            usage = resp.get("usage") or {}
+            tin = int(usage.get("input_tokens", 0))
+            tout = int(usage.get("output_tokens", 0))
+            jmodel = resp.get("model")
+            if choice not in CRITERIA:
+                raise ValueError("bad choice")
+        except Exception as exc:
+            finish(lpath, idx, http_status=status, outcome="parse_error:" + type(exc).__name__)
+            return fallback("error", error="ParseError")
+        finish(lpath, idx, http_status=status, model=jmodel, input_tokens=tin,
+               output_tokens=tout, est_cost_usd=est_cost(tin), choice=choice,
+               confidence=conf, outcome="ok")
+        out.update(jev_choice=choice, jev_model=jmodel, confidence=conf,
+                   usage={"input_tokens": tin, "output_tokens": tout,
+                          "est_cost_usd": est_cost(tin)})
+        if conf < min_confidence:
+            return fallback("low_confidence", confidence=conf)
+        m, a, flags = map_choice(choice, norm)
+        out.update(source="jev", recommendation_model=m, recommended_agent=a,
+                   flags=flags, rationale="Jev choice %s (confidence %.2f)" % (choice, conf))
+        return out
 
 
 # -------------------------------------------------------------------- CLI
@@ -433,6 +478,8 @@ def main(argv=None):
     r.add_argument("--enable-jev", action="store_true")
     r.add_argument("--offline", action="store_true")
     r.add_argument("--dry-run", action="store_true")
+    r.add_argument("--retry-auth", action="store_true",
+                   help="one paid attempt after http_401/403 (fix credentials first)")
     r.add_argument("--min-confidence", type=float, default=0.6)
     r.add_argument("--limit", type=int, help="optional cap on calls; default is unlimited")
     r.add_argument("--request-json", help="JSON file with request fields (CLI flags override)")
@@ -462,11 +509,19 @@ def main(argv=None):
                 print("  %s %s %s tokens=%s choice=%s conf=%s outcome=%s" % (
                     c.get("ts"), c.get("run_id"), c.get("model"), c.get("input_tokens"),
                     c.get("choice"), c.get("confidence"), c.get("outcome")))
+            blocked = auth_blocked(u["calls"])
+            if blocked:
+                print("auth: BLOCKED after %s (use route --retry-auth after fixing credentials)" % blocked)
         return 0
     if a.cmd == "check-key":
         st, _ = load_key()
         res = {"key_status": st}
-        print(json.dumps(res) if a.json else "key: " + st)
+        if a.json:
+            print(json.dumps(res))
+        elif st == "proxy":
+            print("key: proxy (injected by egress proxy; not verifiable locally)")
+        else:
+            print("key: " + st)
         return 0
 
     req = {}
@@ -483,7 +538,8 @@ def main(argv=None):
         req["critical_flags"] = a.critical
     try:
         out = route(req, enable_jev=a.enable_jev, offline=a.offline, dry_run=a.dry_run,
-                    min_confidence=a.min_confidence, run_id=a.run_id, limit_flag=a.limit)
+                    min_confidence=a.min_confidence, run_id=a.run_id, limit_flag=a.limit,
+                    retry_auth=a.retry_auth)
     except ValueError as exc:
         ap.error(str(exc))
     print_jev_banner(out)

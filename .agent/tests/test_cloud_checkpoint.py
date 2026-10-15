@@ -170,6 +170,38 @@ class CloudCheckpointTests(unittest.TestCase):
         self.assertEqual(self.run_tool("list"), [])
         self.assertFalse(self.control_head())
 
+    def validate(self, record=None, *, ok=True, raw=None):
+        file = self.base / "checkpoint.json"
+        file.write_text(raw if raw is not None else json.dumps(record or self.record()))
+        return self.run_tool("validate", "--input", str(file), ok=ok)
+
+    def test_validate_reports_requires_init_before_and_after_publish(self):
+        first = self.validate()
+        self.assertEqual(first, {"valid": True, "task_id": "M01-CLOUD-01",
+                                 "requires_init": True})
+        self.publish(init=True)
+        self.assertFalse(self.validate()["requires_init"])
+
+    def test_validate_rejects_invalid_json_and_mismatched_head(self):
+        self.validate(raw="{not json", ok=False)
+        self.validate(self.record(work_head="0" * 40), ok=False)
+        self.validate(self.record(work_branch="main"), ok=False)
+        self.git("switch", "-q", "main")
+        self.validate(ok=False)
+
+    def test_validate_never_writes_to_remote(self):
+        before = self.git("ls-remote", "origin")
+        self.validate()
+        self.validate(self.record(work_head="0" * 40), ok=False)
+        self.assertEqual(self.git("ls-remote", "origin"), before)
+        self.assertFalse(self.control_head())
+        self.publish(init=True)
+        before = self.git("ls-remote", "origin")
+        self.validate()
+        self.assertEqual(self.git("ls-remote", "origin"), before)
+        self.assertEqual(self.git("ls-remote", "--heads", "origin", "refs/heads/main").split()[0],
+                         self.main_before)
+
 
 if __name__ == "__main__":
     unittest.main()

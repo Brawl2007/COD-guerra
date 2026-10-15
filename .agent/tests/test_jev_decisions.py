@@ -699,6 +699,23 @@ class Hostile(Base):
             self.d("merge", {})
 
 
+class SharedAuthGateTests(Base):
+    def test_proxy_decision_can_call_and_honors_router_auth_failure(self):
+        env = dict(self.env, COD_JEV_AUTH="proxy")
+        self.stub.picks = {"*": "p3"}
+        res = self.d("priority", CASES["priority"]["amb"], env=env)
+        self.assertEqual(res["source"], "jev")
+        self.assertIsNone(self.stub.auth[-1])
+        self.ledger.unlink()
+        self.stub.status = 401
+        jr.route({"role": "implement", "risk": "medium", "complexity": "medium"},
+                 enable_jev=True, env=env)
+        hits = self.stub.hits
+        blocked = self.d("priority", CASES["priority"]["amb"], env=env)
+        self.assertEqual(blocked["fallback_reason"], "auth_failed_previously")
+        self.assertEqual(self.stub.hits, hits)
+
+
 class V1Compat(Base):
     def test_router_route_unchanged_and_budget_shared(self):
         amb = {"role": "implement", "risk": "medium", "complexity": "medium", "description": "add a feature"}

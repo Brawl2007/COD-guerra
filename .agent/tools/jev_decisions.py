@@ -178,7 +178,7 @@ def consult(out, spec, *, enable_jev, offline, dry_run, min_confidence,
     if offline:
         return fallback("offline")
     kstatus, key = jr.load_key(e)
-    if key is None:
+    if key is None and kstatus != "proxy":
         return fallback("insecure_key_file" if kstatus == "insecure_key_file" else "no_key")
     try:
         used = len(jr.read_ledger(lpath)["calls"])
@@ -194,48 +194,62 @@ def consult(out, spec, *, enable_jev, offline, dry_run, min_confidence,
     if dry_run:
         out["dry_run"] = {
             "would_call": True, "url": url,
-            "headers": {"Authorization": "Bearer ***", "Content-Type": "application/json"},
+            "headers": ({"Content-Type": "application/json"} if kstatus == "proxy" else
+                        {"Authorization": "Bearer ***", "Content-Type": "application/json"}),
             "body": body, "budget": {"used": used, "limit": limit}}
         return out
 
-    request_id = "%s-%d" % (run_id or "norun", used + 1)
-    try:
-        idx = jr.reserve(lpath, limit, run_id, request_id)
-    except jr.LedgerUnreadable:
-        return fallback("ledger_unreadable")
-    if idx is None:
-        return fallback("budget_exhausted", budget={"used": used, "limit": limit})
-    headers = {"Authorization": "Bearer " + key, "Content-Type": "application/json"}
-    send = transport or jr.default_transport
-    try:
-        status, raw = send(url, headers, json.dumps(body).encode(), jr.TIMEOUT_S)
-    except Exception as exc:  # never include the message (may echo URL/headers)
-        jr.finish(lpath, idx, outcome="error:" + type(exc).__name__)
-        return fallback("error", error=type(exc).__name__)
-    if status != 200:
-        jr.finish(lpath, idx, http_status=status, outcome="http_%d" % status)
-        return fallback("error", error="HTTP%d" % status)
-    try:
-        answers, conf, tin, tout, jmodel = _parse(raw, spec["questions"])
-    except Exception as exc:
-        jr.finish(lpath, idx, http_status=status, outcome="parse_error:" + type(exc).__name__)
-        return fallback("error", error="ParseError")
-    jr.finish(lpath, idx, http_status=status, model=jmodel, input_tokens=tin,
-              output_tokens=tout, est_cost_usd=jr.est_cost(tin),
-              choice=";".join("%s=%s" % kv for kv in sorted(answers.items()))[:200],
-              confidence=conf, outcome="ok")
-    out.update(jev_answers=answers, jev_model=jmodel, confidence=conf,
-               usage={"input_tokens": tin, "output_tokens": tout,
-                      "est_cost_usd": jr.est_cost(tin)})
-    if conf < min_confidence:
-        return fallback("low_confidence")
-    try:
-        spec["apply"](answers, out)
-    except Reject as exc:
-        return fallback("unsafe_jev_output", rejected=str(exc))
-    out.update(source="jev", needs_review="technical")
-    out["reason"] += " | Jev (confidence %.2f) refined the ambiguous part within safety filters" % conf
-    return out
+    # Shared with jev_router.route(): a second paid call sees any prior 401.
+    with jr.paid_call_gate(lpath):
+        try:
+            latest = jr.read_ledger(lpath)["calls"]
+        except jr.LedgerUnreadable:
+            return fallback("ledger_unreadable")
+        now_used = len(latest)
+        if limit is not None and now_used >= limit:
+            return fallback("budget_exhausted", budget={"used": now_used, "limit": limit})
+        if jr.auth_blocked(latest):
+            return fallback("auth_failed_previously")
+        request_id = "%s-%d" % (run_id or "norun", now_used + 1)
+        try:
+            idx = jr.reserve(lpath, limit, run_id, request_id)
+        except jr.LedgerUnreadable:
+            return fallback("ledger_unreadable")
+        if idx is None:
+            return fallback("budget_exhausted", budget={"used": now_used, "limit": limit})
+        headers = {"Content-Type": "application/json"}
+        if key is not None:
+            headers["Authorization"] = "Bearer " + key
+        send = transport or jr.default_transport
+        try:
+            status, raw = send(url, headers, json.dumps(body).encode(), jr.TIMEOUT_S)
+        except Exception as exc:  # never include the message (may echo URL/headers)
+            jr.finish(lpath, idx, outcome="error:" + type(exc).__name__)
+            return fallback("error", error=type(exc).__name__)
+        if status != 200:
+            jr.finish(lpath, idx, http_status=status, outcome="http_%d" % status)
+            return fallback("error", error="HTTP%d" % status)
+        try:
+            answers, conf, tin, tout, jmodel = _parse(raw, spec["questions"])
+        except Exception as exc:
+            jr.finish(lpath, idx, http_status=status, outcome="parse_error:" + type(exc).__name__)
+            return fallback("error", error="ParseError")
+        jr.finish(lpath, idx, http_status=status, model=jmodel, input_tokens=tin,
+                  output_tokens=tout, est_cost_usd=jr.est_cost(tin),
+                  choice=";".join("%s=%s" % kv for kv in sorted(answers.items()))[:200],
+                  confidence=conf, outcome="ok")
+        out.update(jev_answers=answers, jev_model=jmodel, confidence=conf,
+                   usage={"input_tokens": tin, "output_tokens": tout,
+                          "est_cost_usd": jr.est_cost(tin)})
+        if conf < min_confidence:
+            return fallback("low_confidence")
+        try:
+            spec["apply"](answers, out)
+        except Reject as exc:
+            return fallback("unsafe_jev_output", rejected=str(exc))
+        out.update(source="jev", needs_review="technical")
+        out["reason"] += " | Jev (confidence %.2f) refined the ambiguous part within safety filters" % conf
+        return out
 
 
 def run(cap, analysis, *, enable_jev=False, offline=False, dry_run=False,
