@@ -8,7 +8,8 @@ import { M01Simulation, clockText } from './m01-simulation.js';
 const SAVE_KEY='cod-guerra:checkpoint:v1';
 
 export class Game {
-  constructor(canvas,hud,onState=()=>{},missionId='m01_tczew'){
+  constructor(canvas,hud,onState=()=>{},missionId='m01_tczew',{touch=false}={}){
+    this.touch=touch;
     this.canvas=canvas;this.hud=hud;this.onState=onState;
     this.input=new Input(canvas);this.audio=new AudioSystem();this.renderer=new Renderer(canvas);
     this.sim=missionId==='m01_tczew'?new M01Simulation():new Simulation();this.started=false;this.paused=true;this.disposed=false;
@@ -53,6 +54,8 @@ export class Game {
   }
   requestControl(){
     if(this.disposed)return;
+    // Touch devices have no pointer lock: the on-screen controls own the input.
+    if(this.touch){this.paused=false;this.audio.init();this.input.clear();this.onState('playing');return;}
     try{const request=this.canvas.requestPointerLock();request?.catch(()=>{this.pause();this.onState('control-error');});}
     catch{this.pause();this.onState('control-error');}
   }
@@ -79,11 +82,11 @@ export class Game {
   loop(now){
     if(this.disposed)return;
     const dt=Math.min(.25,Math.max(0,(now-this.last)/1000));this.last=now;
-    if(this.started&&!this.paused&&!document.hidden&&document.pointerLockElement===this.canvas){
+    if(this.started&&!this.paused&&!document.hidden&&(this.touch||document.pointerLockElement===this.canvas)){
       const controls={lookX:this.input.consumeLook(),lookY:this.input.consumeLookY(),
-        forward:Number(this.input.down('KeyW'))-Number(this.input.down('KeyS')),
-        side:Number(this.input.down('KeyD'))-Number(this.input.down('KeyA')),
-        sprint:this.input.down('ShiftLeft')||this.input.down('ShiftRight'),aim:this.input.aim,
+        forward:this.input.forwardAxis(),
+        side:this.input.sideAxis(),
+        sprint:this.input.sprinting(),aim:this.input.aim,
         fire:this.input.consumeFire(),reload:this.input.consumePressed('KeyR'),grenade:this.input.consumePressed('KeyG'),
         interact:this.input.consumePressed('KeyE'),skip:this.input.consumePressed('Space'),
         crouch:this.input.consumePressed('KeyC'),sight:this.input.consumePressed('KeyV')};

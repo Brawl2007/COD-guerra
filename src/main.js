@@ -1,4 +1,5 @@
 import { Game } from './game/game.js';
+import { detectTouch, TouchState, bindTouchControls } from './core/touch-controls.js';
 import './styles.css';
 
 const $=selector=>document.querySelector(selector);
@@ -6,9 +7,10 @@ const canvas=$('#game'),menu=$('#menu'),pause=$('#pause'),hudRoot=$('#hud'),comp
 const hud={health:$('#health'),healthBar:$('#health-bar'),grenades:$('#grenades'),mag:$('#mag'),reserve:$('#reserve'),
   objective:$('#objective-text'),objectiveStatus:$('#objective-status'),message:$('#message'),checkpoint:$('#checkpoint'),vignette:$('#damage-vignette'),
   weaponName:$('#weapon-name'),weaponState:$('#weapon-state'),clock:$('#battle-clock'),interaction:$('#interaction'),subtitle:$('#subtitle'),crosshair:$('#crosshair')};
-let game;
+let game,touchState;
 const showError=message=>{$('#error-text').textContent=message;errorPanel.classList.remove('hidden');};
 function stateChanged(state,detail){
+  if(touchState){const live=state==='playing';touchState.setActive(live);$('#touch-controls').classList.toggle('hidden',!live);}
   if(state==='menu'){
     menu.classList.remove('hidden');pause.classList.add('hidden');complete.classList.add('hidden');hudRoot.classList.add('hidden');
     $('#continue').classList.toggle('hidden',!game.hasSave);return;
@@ -48,7 +50,12 @@ function missionMenu(){
 }
 try{
   const params=new URLSearchParams(location.search);
-  game=new Game(canvas,hud,stateChanged,params.get('mission')==='sandbox-1944'?'sandbox-1944':'m01_tczew');
+  const touch=detectTouch();
+  game=new Game(canvas,hud,stateChanged,params.get('mission')==='sandbox-1944'?'sandbox-1944':'m01_tczew',{touch});
+  if(touch){
+    document.body.classList.add('touch');document.querySelector('.touch-hint').classList.remove('hidden');
+    touchState=new TouchState(game.input,{onPause:()=>game.pause()});bindTouchControls($('#touch-controls'),touchState);
+  }
   missionMenu();
   $('#mission-select').addEventListener('change',e=>{game.selectMission(e.target.value);missionMenu();});
   $('#start').addEventListener('click',()=>{

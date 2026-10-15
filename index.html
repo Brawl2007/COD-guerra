@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
   <meta name="theme-color" content="#151a15" />
   <title>Estrada de Cinzas — COD Guerra</title>
   <link rel="icon" href="data:," />
@@ -23,6 +23,7 @@
           <label for="volume">VOLUME<input id="volume" type="range" min="0" max="1" step=".01" value=".68" /></label>
         </div>
         <p class="controls">WASD mover · Rato olhar · Clique disparar · Botão direito mirar<br>R recarregar · G granada · Shift correr · C agachar · E interagir<br>V alça de mira · Espaço saltar cena · Esc pausa</p>
+        <p class="controls touch-hint hidden">TÁTIL: joystick à esquerda para andar · arraste à direita para olhar · botões FOGO / MIRA / REC / GRN / USAR / AGA</p>
       </div>
       <div class="mission-note"><span id="mission-note">AS PONTES DO VÍSTULA</span><p>Mantenha contacto.<br>Avance sob cobertura.</p></div>
       <p class="menu-footer" id="mission-status">PROTÓTIPO JOGÁVEL · MODELOS E ÁUDIO PROVISÓRIOS</p>
@@ -36,6 +37,19 @@
       <time id="battle-clock"></time><div id="subtitle"></div><div id="interaction"></div>
       <div id="status"><div id="health-wrap"><small>SAÚDE</small><b id="health">100</b><span><i id="health-bar"></i></span><small id="grenades">GRANADAS ×2</small></div><div id="ammo"><small id="weapon-name">KARABINEK WZ.29</small><b id="mag">5</b><em>/</em><span id="reserve">40</span><small id="weapon-state"></small></div></div>
       <div id="message" aria-live="polite"></div><div id="checkpoint">CHECKPOINT ALCANÇADO</div>
+    </div>
+    <div id="touch-controls" class="hidden" aria-label="Controlos táteis">
+      <div class="touch-zone" id="touch-move" data-touch="move"><i id="touch-stick"></i></div>
+      <div class="touch-zone" id="touch-look" data-touch="look"></div>
+      <button type="button" class="tbtn" id="tb-pause" data-touch="pause" aria-label="Pausa">II</button>
+      <button type="button" class="tbtn" id="tb-skip" data-touch="skip" aria-label="Saltar cena">SKIP</button>
+      <button type="button" class="tbtn big" id="tb-fire" data-touch="fire" aria-label="Disparar">FOGO</button>
+      <button type="button" class="tbtn" id="tb-aim" data-touch="aim" aria-label="Mirar">MIRA</button>
+      <button type="button" class="tbtn" id="tb-reload" data-touch="reload" aria-label="Recarregar">REC</button>
+      <button type="button" class="tbtn" id="tb-grenade" data-touch="grenade" aria-label="Granada">GRN</button>
+      <button type="button" class="tbtn" id="tb-interact" data-touch="interact" aria-label="Interagir">USAR</button>
+      <button type="button" class="tbtn" id="tb-crouch" data-touch="crouch" aria-label="Agachar">AGA</button>
+      <button type="button" class="tbtn" id="tb-sight" data-touch="sight" aria-label="Alça de mira">ALÇA</button>
     </div>
   </main>
   <script type="module" src="/src/main.js"></script>
