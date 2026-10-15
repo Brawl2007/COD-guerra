@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "head": "bc8f6a21a57ccd926d4e0655481908d90d6b1978",
+  "branch": "codex/m01-partials-completion-integration-v1",
+  "confirmed": [
+    "Fresh accepted graphics stack 8a0c362, audio af81657 and blocked bridge fd2b0c7 merged; raid/clips/readout retained",
+    "11 partial tasks re-read against original roadmap and recovered animation/railway plans",
+    "User authorization covers completion/integration, including continuing previously blocked bridge source",
+    "Original source branches/main not modified; conflict variants for props chosen consistently with accepted renderer/generator"
+  ],
+  "stale": [
+    "Historical per-branch PASS does not prove merged result"
+  ],
+  "unverified_nonblocking": [
+    "Integrated baseline tests are running; blocked bridge source must fail until corrected",
+    "CLAUDE.md is absent; AGENTS.md and local skills govern available requirements"
+  ],
+  "invariants": [
+    "Simulation decides authority, renderer only presentation",
+    "Preserve French sandbox",
+    "No real ckm gunfire until T47",
+    "Avoid new gameplay RNG draws for presentation/yard tasks; atomic optional migration",
+    "Do not reset historical bridge 3/3 correction record"
+  ],
+  "source_variant_note": "T12 architecture-independent approved kit from graphics stack adopted for T33; T08 clips from continuity preserved. Shared byte-guard helper retained; new material registry allowance must be justified by original material-function assertion."
+}

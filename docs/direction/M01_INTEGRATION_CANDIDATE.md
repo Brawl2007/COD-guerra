@@ -31,6 +31,8 @@ iPhone/tablet: modo tátil automático (`pointer:coarse`) ou forçado com `?touc
 | Registo T00–T52 e carta do Capitão | #73 | integrado e actualizado |
 | T09/T28 materiais e terreno, T13/T32 estruturas, T31/T33 via e props, T27/T30 relevo e horizonte, T10/T29 vegetação | `claude/m01-integration` @ 8a0c362 | integrado (merge 9928bdc). Workflows arquivados por essa pilha foram mantidos activos; T12 mantém a versão independente da arquitectura; geradores T13 congelados para reproduzir os GLB aceites byte a byte |
 | Teste de fronteira da simulação | autorização do utilizador (2026-10-15) | regex só apanha globais do navegador (`event.window.from` do raid era falso positivo); nova regra para `globalThis` mantém o teste pelo menos tão estrito |
+| H9-D1 dificuldade (dados) | `claude/m01-h9-d1-difficulty-data-v1` @ 5745e48 | integrado. Só dados: opção `difficulty` em snapshot/restore/validate, nada lê a tabela; saves recruta byte a byte iguais. Rotas por tick da golden histórica passaram sem alteração antes de mover o bloqueio de fonte: novo registo `sourceLock` na golden, proveniência histórica mantida e fixada |
+| Lote parciais T02/T03/T05/T06/T07/T14/T24/T26/T34/T36/T41 | `codex/m01-partials-completion-integration-v1` @ 9a1535b | integrado com caveats. Golden separada `m01-partials-gameplay-baseline.json` regenerada só nos metadados de fonte após auditoria por tick contra o predecessor bc8f6a2 (mesma simulação da candidata). A branch tinha 26 testes Node vermelhos no próprio HEAD; correcções da junção: `M01ViewModel` lê `sim.actor` só se existir, mortos deixam de ser desenhados em prone genérico, lotes procedurais com capacidade para o elenco de 97, e 10 ficheiros de teste antigos actualizados ao comportamento autorizado sem largar invariantes (ver D39). T14/T41 continuam BLOCKED para aceitação (verifier/perf FAIL na fonte, sem nova verificação independente); T24 mantém a cláusula da vista 10 por provar; nenhum dos onze tem verifier/reviewer independentes |
 
 Evidência local no HEAD enviado: Node completo, `npm run build`, testes Python do sistema agentic, `tests/browser/touch.spec.js`.
 A suite Playwright completa é validada pelo CI do PR (o contentor cloud corre o SwiftShader a ~0,1× e dá timeouts falsos).
@@ -39,12 +41,9 @@ A suite Playwright completa é validada pelo CI do PR (o contentor cloud corre o
 
 | Entrega | Motivo |
 |---|---|
-| H9-D1 dificuldade (`claude/m01-h9-d1-difficulty-data-v1`) | Só dados, mas altera `m01-simulation.js`, cujo SHA-256 está bloqueado pela golden do #63. Integrar exige mover esse bloqueio com prova por tick; adiado. |
-| `codex/m01-partials-completion-integration-v1` | Integração concorrente de 2026-10-15 (B+C+áudio+T14/T41 bloqueadas+trabalho novo em parciais); os dois CI estão vermelhos. Não integrada. |
-| T14/T41 pontes (`codex/m01-t14-t41-bridge-finish-v2`) | BLOCKED na própria fonte (verifier/perf FAIL, CI vermelho). |
 | Branches pré-V7 excluídas pela V7 (autoridade near/far, RNG por formação, locomoção de fuzileiros, sectores distantes, Ju 87 closeout…) | Protótipos ou falhas por resolver; ver auditoria na issue #72. |
 | `claude/m01-audio-real-v1` (T45) | WIP não verificado; SFX exigem revisão de licença. |
 
 ## Pendentes reais (não desenvolvidos)
 T38 posturas de combate, T43 política de LOD, T46 mistura/opções de áudio, T47 fogo do ckm, T48 retirada alemã;
-mais as partes em falta das parciais (T02b, T03, T05, T06, T07, T24, T26, T34, T36, T37). T51/T52 são humanos.
+mais T37 e a cláusula da vista 10 de T24. As outras parciais entraram pelo lote partials, ainda sem verificação independente; T14/T41 continuam BLOCKED para aceitação. T51/T52 são humanos.

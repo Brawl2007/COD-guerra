@@ -1,0 +1,18 @@
+{
+  "taskId": "M01-T14-T41-BRIDGE-FINISH-V2",
+  "status": "BLOCKED",
+  "sourceHead": "b36ad7470ce977deeecab1ae193e51592d4aaf72",
+  "workBranch": "codex/m01-t14-t41-bridge-finish-v2",
+  "baseHead": "8a0c3622f5375f2c5b5e847db71f4f6e8352ae39",
+  "integration": "NOT_PERFORMED",
+  "acceptedHead": null,
+  "fixAttempts": 3,
+  "maxFixAttempts": 3,
+  "userExtraAttemptApproval": "PENDING_NO_RESPONSE",
+  "verification": "FAIL",
+  "perfAudit": "FAIL",
+  "review": "NOT_RUN_VERIFICATION_FAILED",
+  "future24": "PASS",
+  "graphVerificationNode": "FAIL (direct FAIL\u2192BLOCKED disallowed by state tool; no artificial reset)",
+  "nextAction": "Await explicit budget exception, then reopen implementation only for one consolidated scoped correction; do not restart audit/memory/run or reset counts"
+}

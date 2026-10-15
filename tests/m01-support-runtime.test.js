@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import * as THREE from 'three';
 import {M01Characters} from '../src/render/m01-characters.js';
 import {M01TrainWagons} from '../src/render/m01-train-wagons.js';
+import {batchFarWagon} from '../src/render/m01-train-batching.js';
 import {M01_TRAIN_ART_OFFSET_Y,m01WagonVariation} from '../src/render/m01-train-consist-detail.js';
 import {M01Simulation} from '../src/game/m01-simulation.js';
 
@@ -102,15 +103,17 @@ test('65 actual wagon models use LOD2 instances at 9.10 m with source pivots and
   const {w,close}=wagons(async key=>{if(key.includes(':open:'))throw new Error('missing optional open wagon');return sources.covered;});
   try{
     await w.load();assert.equal(w.diagnostics.wagons,65);assert.equal(w.diagnostics.proxies,16);
-    const body=w.batches.find(b=>b.name==='wagon_covered_lod2_body'),node=sources.covered.scene.getObjectByName('body');
-    assert.equal(body.count,49);assert.equal(body.geometry,node.geometry);assert.equal(body.material,node.material);
+    // T24 (partials): LOD2 nodes are baked per identical material into one owned far-stock geometry (authored vertices preserved,
+    // independently checked in m01-partials-completion); the instance matrix is therefore the wagon art matrix alone.
+    const body=w.batches.find(b=>b.name==='wagon_covered_lod2_authored_far_stock_batch'),node=sources.covered.scene.getObjectByName('body');
+    assert.equal(body.count,49);assert.notEqual(body.geometry,node.geometry);assert.equal(body.material,node.material);
     // Plan anchor x/z unchanged; treads sit on the -.82 rail top (locomotive 963's) and symmetric wagons may be turned end for end.
     const flip=m01WagonVariation('train963_wagon_01').flip?Math.PI:0;assert.equal(M01_TRAIN_ART_OFFSET_Y,-.8325);
-    const m=new THREE.Matrix4(),expected=new THREE.Matrix4().makeRotationY(-Math.PI/2+flip);expected.setPosition(1090,-.8325,-2.5);expected.multiply(node.matrixWorld);
+    const m=new THREE.Matrix4(),expected=new THREE.Matrix4().makeRotationY(-Math.PI/2+flip);expected.setPosition(1090,-.8325,-2.5);
     body.getMatrixAt(0,m);assert.ok(m.elements.every((v,i)=>Math.abs(v-expected.elements[i])<1e-4));
     body.getMatrixAt(1,m);assert.ok(Math.abs(m.elements[12]-expected.elements[12]-9.1)<1e-4);
-    w.sources.set('open:2',sources.open);w.rebuild();assert.equal(w.diagnostics.proxies,0);
-    assert.equal(w.batches.find(b=>b.name==='wagon_open_lod2_body').count,16);assert.equal(w.diagnostics.last[0],1672.4);
+    w.sources.set('open:2',batchFarWagon(sources.open));w.rebuild();assert.equal(w.diagnostics.proxies,0);
+    assert.equal(w.batches.find(b=>b.name==='wagon_open_lod2_authored_far_stock_batch').count,16);assert.equal(w.diagnostics.last[0],1672.4);
     let released=0;node.geometry.addEventListener('dispose',()=>released++);w.dispose();assert.equal(released,0,'source cache owns shared geometry');
   }finally{close();for(const s of Object.values(sources))s.scene.traverse(n=>n.geometry?.dispose());material.dispose();}
   const failed=wagons(async()=>{throw new Error('offline');});try{await failed.w.load();assert.equal(failed.w.diagnostics.proxies,65);assert.equal(failed.w.batches.length,0);}finally{failed.close();}

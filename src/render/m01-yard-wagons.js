@@ -21,11 +21,11 @@ export function chooseYardWagonLod(distance,quality='medium',previous=null){
 }
 export const yardWagonState=(wagon,destruction=[])=>wagon.damageKey&&destruction.includes(wagon.damageKey)?'burned':'intact';
 export const yardWagonPosition=(wagon,world)=>[wagon.position[0],world?.heightAt?world.heightAt(wagon.position[0],wagon.position[2]):wagon.position[1],wagon.position[2]];
-export const yardWagonFireDamage=(destruction,world)=>{
+export const yardWagonFireDamage=(destruction,world,started=0,clock=0)=>{
   const wagon=M01_YARD_WAGON_PLAN.find(w=>w.damageKey==='station_wagon_fire');
   if(!wagon||yardWagonState(wagon,destruction)!=='burned')return null;
   const [x,y,z]=yardWagonPosition(wagon,world),sockets=wagonManifest.types[wagon.type].sockets;
-  return {id:'station_wagon_fire',x,y:y+sockets.smoke_top[1]-3,z,fireY:y+sockets.fire[1],started:0,smokeVisible:true};
+  return {id:'station_wagon_fire',x,y:y+sockets.smoke_top[1]-3,z,fireY:y+sockets.fire[1],started,smokeVisible:clock-started<240};
 };
 
 const sourceKey=(type,state,lod)=>`${type}:${state}:${lod}`;
@@ -66,14 +66,14 @@ export class M01YardWagons{
     ]);
     if(!this.disposed)this.rebuild();
   }
-  update(destruction,quality,world,player,clock=0){
+  update(destruction,quality,world,player,clock=0,fireStartedAt){
     let changed=quality!==this.lastQuality;this.lastQuality=quality;
     for(const slot of this.slots){
       slot.root.position.fromArray(yardWagonPosition(slot.wagon,world));
       const state=yardWagonState(slot.wagon,destruction),distance=Math.hypot(slot.root.position.x-player.x,slot.root.position.z-player.z);
       const lod=chooseYardWagonLod(distance,quality,slot.lod);
       if(slot.state!==state||slot.lod!==lod){slot.state=state;slot.lod=lod;changed=true;}
-      const burning=slot.wagon.damageKey&&destruction.includes(slot.wagon.damageKey);slot.fire.visible=Boolean(burning);
+      const burning=slot.wagon.damageKey&&destruction.includes(slot.wagon.damageKey)&&(fireStartedAt===undefined||clock-fireStartedAt<180);slot.fire.visible=Boolean(burning);
       if(burning){const fireY=wagonManifest.types[slot.wagon.type].sockets.fire[1];slot.fire.position.set(0,fireY+.35,0);const pulse=.88+.12*Math.sin(clock*11+slot.root.position.x);slot.fire.scale.set(2.2*pulse,3.8*(1.08-pulse*.08),1);}
     }
     if(changed){this.rebuild();this.revision++;}

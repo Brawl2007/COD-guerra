@@ -3,6 +3,7 @@ import {puffTexture,cloudFieldTexture} from './m01-surfaces.js';
 import {dustPuffTexture} from './m01-fx-textures.js';
 import {CLOUD_WIND} from './m01-lighting.js';
 import {demolitionParticles} from './m01-demolition.js';
+import {TRAIN_PUFF_CAP} from './m01-train-life.js';
 
 // Presentation-only deterministic noise. It never consumes the simulation RNG.
 export function visualNoise(seed,index=0){
@@ -14,7 +15,7 @@ export function visualNoise(seed,index=0){
 // Bounded presentation pools. All emitters come from the simulation's damage/events.
 export class M01Atmosphere {
   constructor(scene){
-    this.scene=scene;this.texture=puffTexture();this.capacity=256;this.count=0;
+    this.scene=scene;this.texture=puffTexture();this.capacity=256;this.count=0;this.smokeByDamage={};
     this.skyGeometry=new THREE.SphereGeometry(5500,32,16);
     this.cloudTexture=cloudFieldTexture();
     // Sky by solar altitude: every colour comes from m01-lighting's model. Clouds are projected from the view direction
@@ -101,6 +102,7 @@ export class M01Atmosphere {
     this.material.uniforms.fogColor.value.setRGB(...model.fog.color);this.dustMaterial.uniforms.fogColor.value.setRGB(...model.fog.color);
   }
   update(state,clock,quality,context={}){
+    for(const id in this.smokeByDamage)this.smokeByDamage[id]=0;
     let count=0,chips=0;this.demolitionDrawn={puffs:0,chips:0};const density=quality==='low'?.58:quality==='medium'?.80:1,max=quality==='low'?112:quality==='medium'?192:256;
     const damage=state.damage.filter(d=>d.smokeVisible).sort((a,b)=>Number(b.id.endsWith('_demolition'))-Number(a.id.endsWith('_demolition'))||b.started-a.started);
     // Demolition set-piece first (priority over generic blasts): river/ground impact debris and splashes, earth rain at the west
@@ -124,7 +126,8 @@ export class M01Atmosphere {
       const demolition=d.id.endsWith('_demolition'),heavy=demolition||/bomb|raid/.test(d.id),age=Math.max(0,clock-d.started);
       const base=demolition?30:heavy?22:17,number=Math.max(6,Math.round(base*density));
       const seed=(Math.floor((d.x+2048)*17)^Math.floor((d.z+2048)*31)^Math.floor(d.started*1000))>>>0;
-      const endFade=d.id==='station_bomb'||d.id==='station_wagon_fire'||/^raid_0530(?:_[1-5])?$/.test(d.id)?1:Math.max(0,Math.min(1,(240-age)/30));
+      const endFade=d.id.startsWith('m01_grenade_')?Math.max(0,Math.min(1,(20-age)/5)):
+        d.id==='station_bomb'||d.id==='station_wagon_fire'||/^raid_0530(?:_[1-5])?$/.test(d.id)?1:Math.max(0,Math.min(1,(240-age)/30));
       for(let i=0;i<number&&count<max;i++){
         const n0=visualNoise(seed,i*5),n1=visualNoise(seed,i*5+1),n2=visualNoise(seed,i*5+2),n3=visualNoise(seed,i*5+3);
         let phase,height,width,x,z,opacity;
@@ -137,7 +140,8 @@ export class M01Atmosphere {
           opacity=.68*(1-phase*.48)*Math.min(1,localAge/1.4)*endFade;
         }else{
           const speed=.020+n0*.018;phase=(age*speed+(i+.5)/number+n1*.09)%1;
-          height=(31+n2*20)*phase;width=(6+n3*7+(8+n1*8)*phase)*(heavy?1.25:1);
+          const grenade=d.id.startsWith('m01_grenade_');
+          height=(grenade?2.2+n2:31+n2*20)*phase;width=(grenade?1.5+phase*2:6+n3*7+(8+n1*8)*phase)*(heavy?1.25:1);
           x=d.x+(n0-.5)*width+height*(.16+n1*.09)+Math.sin(age*(.12+n2*.11)+i*1.9)*width*.16;
           z=d.z+(n1-.5)*width+Math.cos(age*(.10+n0*.09)+i*1.5)*width*.14;
           const cycleFade=Math.min(1,phase/.13,(1-phase)/.20);
@@ -147,7 +151,7 @@ export class M01Atmosphere {
         this.dummy.scale.set(width*(.72+n2*.55),width*(.95+n3*.72),1);this.dummy.updateMatrix();
         this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,seed,i);
         const shade=demolition?(phase<.28?'#5a5145':phase<.68?'#777166':'#969188'):heavy?(i%3?'#68655e':'#4b4944'):(i%4===0?'#41413d':'#666965');
-        this.puffs.setColorAt(count,this.color.set(shade));this.fade.setX(count,opacity);count++;
+        this.puffs.setColorAt(count,this.color.set(shade));this.fade.setX(count,opacity);count++;this.smokeByDamage[d.id]=(this.smokeByDamage[d.id]??0)+1;
       }
     }
     for(const d of damage){
@@ -171,10 +175,20 @@ export class M01Atmosphere {
         this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,seed,200+i);this.puffs.setColorAt(count,this.color.set(heavy?'#9e8d72':'#aa9a81'));this.fade.setX(count++,.48*fade);
       }
     }
+    this.trainPuffs=0;const trainCap=TRAIN_PUFF_CAP[quality]??12;
+    for(const source of context.trainSources??[]){if(!source.active)continue;
+      for(let i=0;i<trainCap/2&&count<max;i++){
+        const phase=(clock*.13+i/(trainCap/2))%1,vapor=i%3===0,seed=i+(source.id==='train963'?311:727),noise=visualNoise(seed);
+        this.dummy.position.set(source.x+phase*(3+noise*3),source.y+phase*(vapor?3:17),source.z+(noise-.5)*phase*3);
+        this.dummy.rotation.set(0,0,0);this.dummy.scale.set((vapor?1:2)+phase*5,(vapor?1.2:2.5)+phase*8,1);this.dummy.updateMatrix();
+        this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,seed,i);
+        this.puffs.setColorAt(count,this.color.set(vapor?'#d1d2c9':'#353935'));this.fade.setX(count++,(1-phase)*.6);this.trainPuffs++;
+      }
+    }
     this.debris.count=chips;this.debris.instanceMatrix.needsUpdate=true;this.dummy.rotation.set(0,0,0);
     this.count=count;this.puffs.count=count;this.puffs.instanceMatrix.needsUpdate=true;this.puffs.instanceColor.needsUpdate=true;this.fade.needsUpdate=true;
   }
-  get diagnostics(){return {puffs:this.count,puffCapacity:this.capacity,debris:this.debris.count,debrisCapacity:this.debris.instanceMatrix.count,puffBatches:this.puffBatches.length,demolition:{...this.demolitionDrawn}};}
+  get diagnostics(){return {puffs:this.count,puffCapacity:this.capacity,trainPuffs:this.trainPuffs??0,smokeByDamage:{...this.smokeByDamage},debris:this.debris.count,debrisCapacity:this.debris.instanceMatrix.count,puffBatches:this.puffBatches.length,demolition:{...this.demolitionDrawn}};}
   dispose(){this.scene.remove(this.sky);this.debris.removeFromParent();this.debris.dispose();this.debrisGeometry.dispose();this.debrisMaterial.dispose();for(const batch of this.puffBatches){batch.removeFromParent();batch.dispose();batch.geometry.dispose();}this.puffBatches=[];
     this.quad.dispose();this.skyGeometry.dispose();this.skyMaterial.dispose();this.material.dispose();this.dustMaterial.dispose();this.texture.dispose();this.dustTexture.dispose();this.cloudTexture.dispose();}
 }

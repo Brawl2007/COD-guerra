@@ -25,6 +25,8 @@ import { M01TrainWagons } from './m01-train-wagons.js';
 import { M01YardWagons, yardWagonFireDamage } from './m01-yard-wagons.js';
 import { M01Locomotive } from './m01-locomotive.js';
 import { M01Panzerzug } from './m01-panzerzug.js';
+import {M01TrainLife} from './m01-train-life.js';
+import {M01StationDamage} from './m01-station-damage.js';
 import {JU87_LOD_DISTANCES,JU87_QUALITY_FLOOR,JU87_BOMB_POOL,ju87Attitude,ju87Fade,ju87HeardAt,ju87PropellerTime,selectJu87Level,ju87SkyEnvironment,instanceJu87Materials,setJu87Fade,m01BombFlights} from './m01-aircraft.js';
 import {soldierVisualVariant} from './m01-soldier-variation.js';
 import { M01CombatFeedback } from './m01-combat-feedback.js';
@@ -32,6 +34,7 @@ import {M01BridgePortalPolish,bridgeMaterialSlot} from './m01-bridge-portal-poli
 import {M01DamageDecals} from './m01-damage-decals.js';
 import {WEAPON_PRESENTATION,WeaponViewFx,WeaponWorldFx,WeaponLighting,viewUp,prewarmWeaponFx} from './first-person-weapon-fx.js';
 import {M01BridgeStructure} from './m01-bridge-structure.js';
+import {M01BridgeFinishRuntime} from './m01-bridge-finish-runtime.js';
 import {isDemolitionDamage,collapseTwinName,collapseDamageId,collapseSeed,collapsePose,collapseProgress,demolitionFlash,demolitionFallPoints,demolitionSilenceWindow,
   farFeedback,farFeedbackApplies,M01_COLLAPSE_DURATION,M01_BLAST_CHIP_MATERIALS,M01_DEMOLITION_BUDGET} from './m01-demolition.js';
 
@@ -47,6 +50,7 @@ const fxCount=(n,quality)=>Math.max(1,Math.round(n*(FX_DENSITY[quality]??FX_DENS
 
 // Presentation only: all actors, visible pieces, damage and clocks come from M01Simulation.
 // Original procedural art: textured environment and articulated humans; final scanned/rigged art remains pending.
+const PROCEDURAL_ACTOR_CAPACITY=120;
 export class M01View {
   constructor(renderer){
     this.owner=renderer;this.engine=renderer.engine;this.assets=new AssetManager();this.disposed=false;this.grading=new M01Grading();
@@ -104,6 +108,12 @@ export class M01View {
     this.demolitionState={entries:[],pieces:[],flash:null};this.collapseTilt=new THREE.Quaternion();this.collapseEuler=new THREE.Euler();
     this.portalPolish=new M01BridgePortalPolish({stone:this.materials.bridgeStone});
     this.bridgeStructure=new M01BridgeStructure({steel:this.materials.bridgeSteel,rail:this.materials.metal,timber:this.materials.wood,stone:this.materials.bridgeStone});
+    this.bridgeFinish=new M01BridgeFinishRuntime(this.scene,{quality:this.owner.quality});
+    this.bridgeSyncInput={kits:this.kit,quality:this.owner.quality,world:null};
+    this.bridgeSelectInput={kits:this.kit,state:null,camera:this.camera,prepared:true};
+    if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')){
+      this.bridgeFinishDebug={setEnabled:on=>{const result=this.bridgeFinish.setEnabled(on);this.lastFrame=null;return result;},setTrainEffects:options=>{const value=typeof options==='boolean'?{lamp:options,smoke:options}:options;this.trainSmokeEnabled=Boolean(value.smoke);for(const lamp of this.trainLife.lamps)lamp.visible=Boolean(value.lamp);this.lastFrame=null;return value;},setCamera:pose=>{this.bridgeEditorialCamera=pose;this.lastFrame=null;return pose;},get:()=>this.bridgeFinish.diagnostics};window.m01BridgeFinishDebug=this.bridgeFinishDebug;
+    }
     this.atmosphere=new M01Atmosphere(this.scene);
     this.damageDecals=new M01DamageDecals(this.scene);
     this.createWeapon();this.createActors();this.createContactShadows();this.createFireEffects();this.createAircraft();this.createTrains();
@@ -210,7 +220,8 @@ export class M01View {
       ['limbs','cylinder','cloth'],['boots','accessoryBox','dark'],['rifle','accessoryBox','wood'],['flash','sphere','glow'],
       ['hands','featureSphere','skin'],['nose','featureSphere','skin'],['eyes','featureSphere','dark'],['ears','featureSphere','skin'],
       ['belt','accessoryBox','leather'],['pack','accessoryBox','cloth'],['pouches','accessoryBox','leather'],['buttons','featureSphere','brass'],['barrel','cylinder','metal'],['brim','featureSphere','metal'],['farHead','featureSphere','skin']]){
-      const capacity={limbs:720,boots:180,hands:270,eyes:450,ears:180,pouches:360,buttons:540}[name]??90;
+      // Room for the whole 97-actor roster (89 combatants + 8 T34 display-only yard actors, whose cart/stretcher add parts) per batch.
+      const capacity=PROCEDURAL_ACTOR_CAPACITY*({limbs:8,boots:2,hands:3,eyes:5,ears:2,pouches:4,buttons:6}[name]??1);
       const batch=new THREE.InstancedMesh(this[shape],this.materials[material],capacity);
       batch.instanceMatrix.setUsage(THREE.DynamicDrawUsage);batch.count=0;batch.frustumCulled=false;
       batch.castShadow=name!=='flash';batch.receiveShadow=true;this.scene.add(batch);this.batches.set(name,batch);
@@ -220,7 +231,7 @@ export class M01View {
     const geometry=new THREE.PlaneGeometry(1,1);geometry.rotateX(-Math.PI/2);this.geometry.push(geometry);
     this.contactMaterial=new THREE.MeshBasicMaterial({map:this.atmosphere.texture,color:0x000000,transparent:true,opacity:.24,
       depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1});
-    this.contactShadows=new THREE.InstancedMesh(geometry,this.contactMaterial,90);
+    this.contactShadows=new THREE.InstancedMesh(geometry,this.contactMaterial,PROCEDURAL_ACTOR_CAPACITY);
     this.contactShadows.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.contactShadows.count=0;this.contactShadows.frustumCulled=false;this.scene.add(this.contactShadows);
   }
   updateActors(actors,time,player={x:0,z:0},battleClock){
@@ -254,13 +265,25 @@ export class M01View {
       root.position.set(a.x,a.y+pose.root.offsetY,a.z);
       root.rotation.set(pose.root.pitch+(living.blastFlinch>.01?living.blastFlinch*.12:0),-a.facing,
         pose.root.roll+(living.blastFlinch>.01?living.blastFlinch*.1:0),'YXZ');root.updateMatrix();
+      if(a.task==='yard_patient'){
+        root.position.set(a.x,a.y,a.z);root.rotation.set(0,-a.facing,0);root.updateMatrix();
+        put('torso',[0,.30,0],[.82,.055,2.05],'#8d856a');
+        for(const side of [-1,1])put('rifle',[side*.47,.29,0],[.045,.045,2.65],'#655642');
+        root.position.set(a.x,a.y+pose.root.offsetY,a.z);root.rotation.set(pose.root.pitch+(living.blastFlinch>.01?living.blastFlinch*.12:0),-a.facing,
+          pose.root.roll+(living.blastFlinch>.01?living.blastFlinch*.1:0),'YXZ');root.updateMatrix();
+      }
+      if(a.task==='cart'){
+        put('torso',[0,.85,0],[2.3,.65,1.2],'#685545');
+        for(const x of [-.85,.85])for(const z of [-.7,.7])put('boots',[x,.35,z],[.62,.62,.12],'#3e352a');
+        put('rifle',[1.7,.52,0],[1.8,.1,.1]);continue;
+      }
       const visual=!a.civilian&&this.characters?.visuals?soldierVisualVariant(a):null;
       const cloth=a.civilian?'#404c56':visual?'#'+visual.proxyCloth:a.team==='enemy'?'#b4c0b7':'#c9bea0',
         helmet=visual?'#'+visual.proxyHelmet:a.team==='enemy'?'#465252':'#635f47',skin=visual?'#'+visual.proxySkin:'#ffffff';
       const [hx,hy,hz]=pose.head,[tx,ty,tz]=pose.torso.position;
       const near=Math.hypot(a.x-player.x,a.z-player.z)<45;
       put('torso',pose.torso.position,pose.prone?pose.torso.size:[.30,pose.torso.size[1],.46],cloth,{roll:pose.torso.roll});put(near?'head':'farHead',pose.head,[.125,.18,.137],skin);
-      put('helmet',[hx,hy+.105,hz],[.175,.14,.188],helmet);
+      put('helmet',[hx,hy+.105,hz],[.175,a.civilian?.055:.14,.188],a.civilian?'#2b3134':helmet);
       put('brim',[hx+.01,hy+.12,hz],[.186,.022,.2],helmet);
       if(near){put('nose',[hx+.126,hy+.005,hz],[.020,.039,.022],skin);
       put('eyes',[hx+.121,hy-.064,hz],[.004,.002,.021]);
@@ -279,6 +302,10 @@ export class M01View {
         const midpoint=bone.from.map((v,i)=>(v+bone.to[i])/2),length=Math.hypot(...bone.from.map((v,i)=>v-bone.to[i]));
         put('limbs',midpoint,[bone.radius,length,bone.radius],cloth,bone);
       }
+      if(a.lantern&&a.alive){put('pouches',[.15,.85,-.24],[.19,.28,.18],'#242824');put('flash',[.24,.9,-.24],[.13,.20,.13],'#ffc778');}
+      if(a.task==='coffee'){put('pouches',[.32,1.12,.16],[.12,.14,.12],'#a6a19a');}
+      if(a.task==='map'){put('pouches',[.35,1,.04],[.02,.3,.38],'#b4ad8f');}
+      if(a.group==='grp_station_yard'&&a.role==='MEDIC'){put('pouches',[.09,1.34,.27],[.16,.13,.035],'#dfd8c8');put('pouches',[.09,1.34,.292],[.04,.11,.012],'#914539');put('pouches',[.09,1.34,.294],[.11,.035,.014],'#914539');}
       for(const foot of pose.boots)put('boots',foot,[.25,.11,.16]);
       if(near)put('hands',[hx-.005,hy-.17,hz],[.058,.072,.060],skin);
       if(near)for(const i of [3,7])put('hands',pose.limbs[i].to,[.043,.066,.048],skin);
@@ -680,10 +707,12 @@ export class M01View {
     this.wagons=new M01TrainWagons(this.train,this.assets,this.box,this.cylinder,this.materials.wood,this.materials.metal);
     this.yardWagons=new M01YardWagons(this.scene,this.assets,this.box,this.cylinder,this.materials.wood,this.materials.metal,this.atmosphere.texture);
     this.panzerzugArt=new M01Panzerzug(this.panzerzug,this.assets,this.box,this.cylinder,this.materials.metal);
+    this.trainLife=new M01TrainLife(this.train,this.panzerzug);this.stationDamage=new M01StationDamage(this.scene);
   }
   syncDamage(sim,state){
-    const yardFire=yardWagonFireDamage(sim.destruction,sim.world);
-    this.atmosphere.update(yardFire?{...state,damage:[...state.damage,yardFire]}:state,sim.clock,this.owner.quality,{surfaceY:(x,z)=>sim.world.terrainHeightAt(x,z)});
+    this.stationDamage.update(state.damage,sim.clock);
+    const yardFire=yardWagonFireDamage(sim.destruction,sim.world,sim.consumed.evt_m01_wounded_dragged??0,sim.clock);
+    this.atmosphere.update(yardFire?{...state,damage:[...state.damage,yardFire]}:state,sim.clock,this.owner.quality,{surfaceY:(x,z)=>sim.world.terrainHeightAt(x,z),trainSources:this.trainSmokeEnabled===false?[]:this.trainLife.sources});
     const live=new Set(sim.grenades.active.map(g=>g.id));
     for(const g of sim.grenades.active){let m=this.grenadeViews.get(g.id);if(!m){m=this.mesh('sphere','metal',[0,0,0],[.07,.07,.07],this.effects);this.grenadeViews.set(g.id,m);}m.position.set(g.x,g.y,g.z);}
     for(const [id,m]of this.grenadeViews)if(!live.has(id)){this.effects.remove(m);this.grenadeViews.delete(id);}
@@ -696,23 +725,26 @@ export class M01View {
   render(sim){
     // Apply authoritative train/wagon state before pause-frame caching so restore cannot freeze constructor defaults.
     const state=sim.renderState,time=sim.clock;
+    this.trainLife.update(sim.battleClock);
     this.wagons.update(sim.player,this.owner.quality);
-    this.yardWagons.update(sim.destruction,this.owner.quality,sim.world,sim.player,time);
+    this.yardWagons.update(sim.destruction,this.owner.quality,sim.world,sim.player,time,sim.consumed.evt_m01_wounded_dragged);
     this.locomotive.update(sim.player);this.panzerzugArt.update(sim.player);
+    this.trainLife.observe(this.wagons.revision+this.locomotive.revision+this.panzerzugArt.revision);
     // Retain the last canvas frame while the mission clock is frozen (menu/pause).
     // Assets, world restore, quality and resizing still invalidate it.
     this.environment?.fieldStructures.sync(sim.world,this.owner.quality,sim.player);this.environment?.syncRailProps(sim.world,this.owner.quality,sim.player);this.environment?.trackBed.bindBridgeKits(this.kit,this.bridgeStructure);
     this.environment?.syncVegetation(sim.world,this.owner.quality,sim.player,sim.clock,this.terrainRelief.enabled);
+    this.bridgeSyncInput.kits=this.kit;this.bridgeSyncInput.quality=this.owner.quality;this.bridgeSyncInput.world=sim.world;this.bridgeFinish.sync(this.bridgeSyncInput);
     const canvas=this.owner.canvas,previous=this.lastFrame;
     const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
       width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,
-      vegetationRevision:this.environment?.vegetation.revision,reliefRevision:this.terrainRelief?.revision,farRevision:this.farLandscape?.revision,propsRuntime:this.environment?.propsRuntime.revision,trackBed:this.environment?.trackBed.revision,fieldStructures:this.environment?.fieldStructures.revision,wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles; T20: so is the impostor A/B toggle
+      bridgeFinishRevision:this.bridgeFinish.revision,vegetationRevision:this.environment?.vegetation.revision,reliefRevision:this.terrainRelief?.revision,farRevision:this.farLandscape?.revision,propsRuntime:this.environment?.propsRuntime.revision,trackBed:this.environment?.trackBed.revision,fieldStructures:this.environment?.fieldStructures.revision,wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles; T20: so is the impostor A/B toggle
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
     for(const material of Object.values(this.materials))if(material.userData.m01Time)material.userData.m01Time.value=sim.clock;
     this.terrain?.sync(this.owner.quality);
-    this.syncSolids(sim.world);this.portalPolish.sync(this.owner.quality);this.bridgeStructure.sync(this.owner.quality,this.camera.position,sim.world);this.environment?.trackBed.applyLegacyVisibility();const dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
+    this.syncSolids(sim.world);this.portalPolish.sync(this.owner.quality);const dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
     this.updateDemolition(state,time,sim);
     this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.lighting(sim);this.water.sync(this.lightingModel,sim.clock,this.owner.quality);
@@ -724,7 +756,8 @@ export class M01View {
     }
     const fill=sampleMuzzleEnvironmentLight(sim.actors,time,sim.player,this.owner.quality);
     this.pendingMuzzleFill=fill;
-    this.train.visible=state.train963;this.panzerzug.visible=state.panzerzug;
+    // Battle-clock arrival (M01TrainLife) is presentation only; the authoritative arrival flags still force the final consist visible.
+    if(state.train963)this.train.visible=true;if(state.panzerzug)this.panzerzug.visible=true;
     this.updateAircraft(state,time,sim.player,ju87HeardAt(sim));this.updateBombs(state,time,sim.player,sim.world);
     const player=sim.player,eye=eyePosition(player),dir=aimDirection(player.angle,player.pitch);
     const bob=player.moveBlend*Math.sin(time*(player.sprinting?14:9))*.014;
@@ -733,6 +766,9 @@ export class M01View {
     this.camera.position.set(eye.x+feedback.cameraX,eye.y+bob+legacyShake+feedback.cameraY,eye.z);
     this.camera.lookAt(eye.x+dir.x+feedback.cameraX,eye.y+bob+legacyShake+dir.y+feedback.cameraY,eye.z+dir.z);
     if(feedback.roll)this.camera.rotateZ(feedback.roll);
+    if(this.bridgeEditorialCamera){this.camera.position.set(...this.bridgeEditorialCamera.position);this.camera.lookAt(...this.bridgeEditorialCamera.target);}
+    this.bridgeFinish.prepareFrame();this.bridgeStructure.sync(this.owner.quality,this.camera.position,sim.world);this.environment?.trackBed.applyLegacyVisibility();
+    this.bridgeSelectInput.kits=this.kit;this.bridgeSelectInput.state=state;this.bridgeFinish.select(this.bridgeSelectInput);
     this.updateFire(sim);
     const width=this.owner.canvas.clientWidth,height=this.owner.canvas.clientHeight,aspect=width/height;
     const fov=player.aiming?48:70;
@@ -770,6 +806,8 @@ export class M01View {
     // T44: Medium/High draw the world into the grade's target and composite it once; Low (post===null) runs the exact statements it always ran.
     const post=this.grading.begin(this.engine,this.owner.quality,this.lightingModel,this.camera);
     this.environment?.vegetation.beginFrame(this.camera);
+    this.bridgeFinish.beginFrame(this.camera);
+    this.trainLife.beginFrame(this.camera);
     this.engine.info.autoReset=false;this.engine.info.reset();
     if(post)this.drawGraded(post);else this.engine.clear();
     if(!post)this.engine.render(this.scene,this.camera);
@@ -836,7 +874,7 @@ export class M01View {
   get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,
     requiredAssetFailures:this.assets.failures.filter(f=>manifest.files.some(m=>typeof m.lod==='number'&&m.file===f.path)),
     characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,weaponFx:this.weaponWorldFx.diagnostics,weaponLighting:this.weaponLighting.state,lighting:viewLightingDiagnostics(this),water:this.water.diagnostics,grading:this.grading.diagnostics,impostors:this.impostors?.diagnostics,
-    locomotive:this.locomotive.diagnostics,panzerzug:this.panzerzugArt.diagnostics,wagons:this.wagons.diagnostics,yardWagons:this.yardWagons.diagnostics,
+    locomotive:this.locomotive.diagnostics,panzerzug:this.panzerzugArt.diagnostics,trainLife:this.trainLife.diagnostics,stationDamage:this.stationDamage.diagnostics,wagons:this.wagons.diagnostics,yardWagons:this.yardWagons.diagnostics,
     aircraft:{loaded:[...this.aircraftSources.keys()].sort(),planes:this.planes.map(p=>{const model=(p.levels[p.userData.level]??p.levels.find(l=>l.object.visible))?.object,prop=model?.getObjectByName('propeller');return {visible:p.visible,lod:model?.userData.lod,position:p.position.toArray(),attitude:[p.rotation.x,p.rotation.y,p.rotation.z],fade:p.userData.fade,propeller:prop?.quaternion.toArray()};}),
       path:this.aircraftPath?{...this.aircraftPath,planeSeconds:[0,1,2].map(i=>m01StukaPathTime(this.aircraftPath.since,i))}:null,
       bombs:{visible:this.bombState?.visible??0,pool:this.bombs?.length??0,flights:this.bombState?.flights??[]},
@@ -844,7 +882,7 @@ export class M01View {
     renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+(b.visible===false?0:b.count),0)??0,
     fieldStructures:this.environment?{...this.environment.fieldStructures.diagnostics,proxyColliderIds:this.solidGroup.children.flatMap(b=>b.userData.m01ProxyColliderIds??[]),environmentProxies:this.environment.fieldProxyBatches.map(b=>({id:b.userData.m01FieldProxy,visible:b.visible})),viewProxies:this.fieldProxyMeshes.map(b=>({id:b.userData.m01FieldProxy,visible:b.visible}))}:null,
     stationArchitecture:this.environment?.station?.diagnostics??{ready:false,failure:this.environment?.stationFailure??null},
-    environmentProps:this.environment?.propDiagnostics,trackBed:this.environment?.trackBed.diagnostics,bridgePortalPolish:this.portalPolish?.diagnostics,bridgeStructure:this.bridgeStructure?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
+    environmentProps:this.environment?.propDiagnostics,trackBed:this.environment?.trackBed.diagnostics,bridgeFinish:this.bridgeFinish.diagnostics,bridgeCamera:{position:this.camera.position.toArray(),quaternion:this.camera.quaternion.toArray(),fov:this.camera.fov},bridgePortalPolish:this.portalPolish?.diagnostics,bridgeStructure:this.bridgeStructure?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
     damageDecals:this.damageDecals.diagnostics,
     terrain:this.terrain?this.terrain.diagnostics:{material:'legacy-soil',textures:1,gpuBytes:0,quality:this.owner.quality},
     terrainRelief:this.terrainRelief?.diagnostics,farLandscape:this.farLandscape?.diagnostics,
@@ -859,11 +897,11 @@ export class M01View {
     battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},meta:structuredClone(this.battlefieldFxMeta),limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
     if(this.disposed)return;
-    this.disposed=true;if(typeof window!=='undefined'&&window.m01RailPropsDebug===this.railPropsDebug)delete window.m01RailPropsDebug;if(typeof window!=='undefined'&&window.m01FieldStructuresDebug===this.fieldStructuresDebug)delete window.m01FieldStructuresDebug;if(typeof window!=='undefined'&&window.m01TerrainDebug===this.terrainDebug)delete window.m01TerrainDebug;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();this.impostors?.dispose();
+    this.disposed=true;this.bridgeFinish.dispose();if(typeof window!=='undefined'&&window.m01BridgeFinishDebug===this.bridgeFinishDebug)delete window.m01BridgeFinishDebug;if(typeof window!=='undefined'&&window.m01RailPropsDebug===this.railPropsDebug)delete window.m01RailPropsDebug;if(typeof window!=='undefined'&&window.m01FieldStructuresDebug===this.fieldStructuresDebug)delete window.m01FieldStructuresDebug;if(typeof window!=='undefined'&&window.m01TerrainDebug===this.terrainDebug)delete window.m01TerrainDebug;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();this.impostors?.dispose();
     this.fallbackFx.dispose();this.weaponWorldFx.dispose();this.weaponLighting.dispose();
     if(typeof window!=='undefined'&&window.m01ReliefHorizonDebug===this.reliefHorizonDebug)delete window.m01ReliefHorizonDebug;this.terrainRelief?.dispose();this.farLandscape?.dispose();
     if(typeof window!=='undefined'&&window.m01VegetationDebug===this.vegetationDebug)delete window.m01VegetationDebug;
-    this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.environment?.dispose();this.assets.dispose();this.terrain?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.horizonGlow?.material.dispose();this.geometry.forEach(g=>g.dispose());
+    this.trainLife.dispose();this.stationDamage.dispose();this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.environment?.dispose();this.assets.dispose();this.terrain?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.horizonGlow?.material.dispose();this.geometry.forEach(g=>g.dispose());
     const textures=new Set();for(const m of new Set([...Object.values(this.materials),this.terrainLegacyMaterial].filter(Boolean))){if(m===this.terrain?.material)continue;if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
     this.scene.traverse(n=>{if(n.isInstancedMesh)n.dispose();});this.scene.clear();this.weaponScene.clear();
   }

@@ -1,0 +1,16 @@
+
+Running 2 tests using 1 worker
+
+[1A[2K(node:3263) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:3263) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/2] tests/browser/m01-partials-completion.spec.js:42:1 › train arrival at04:44:30, stop04:46 and yard at04:36/05:41 draw smoke/headlamps/civilian tasks/damage with exact authority
+[1A[2K[2/2] tests/browser/m01-partials-completion.spec.js:64:1 › train lamp and smoke at1km resolve in a clear sightline while the original gate still occludes the lamp
+[1A[2K  Slow test file: tests/browser/m01-partials-completion.spec.js (6.3m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  2 passed (6.4m)

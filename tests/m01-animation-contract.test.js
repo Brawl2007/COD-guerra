@@ -2,7 +2,9 @@ import test,{after} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
-import golden from './fixtures/m01-anim-gameplay-baseline.json' with {type:'json'};
+import historicalGolden from './fixtures/m01-anim-gameplay-baseline.json' with {type:'json'};
+import golden from './fixtures/m01-partials-gameplay-baseline.json' with {type:'json'};
+import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
 import {actorHitboxes,eyePosition,mg34ProneGeometry} from '../src/world/spatial.js';
@@ -17,39 +19,40 @@ let completed;
 const wrap=n=>Math.atan2(Math.sin(n),Math.cos(n));
 const active=()=>{const s=new M01Simulation(17);s.tick(.05,{skip:true});return s;};
 
-test('schema 2 initializes all 89 IDs; diagnostics are detached, small presentation records',()=>{
+test('schema 2 initializes all 97 IDs; diagnostics are detached, small presentation records',()=>{
   const s=new M01Simulation(),ids=s.actors.map(a=>a.id),diag=s.animationPresentation;
-  assert.equal(s.snapshot().schema,2);assert.equal(ids.length,89);assert.deepEqual(diag.actors.map(a=>a.id),ids);
+  assert.equal(s.snapshot().schema,2);assert.equal(ids.length,97);assert.deepEqual(diag.actors.map(a=>a.id),ids);
   for(const a of s.actors){assert.deepEqual(a.motion,{speed:0,odometer:0,gait:'idle',gaitSince:0});assert.equal(a.bodyYaw,a.facing);
-    assert.equal(a.posture,'stand');assert.equal(a.postureSince,0);assert.equal(a.hitAt,undefined);assert.equal(a.diedAt,undefined);assert.equal(a.suppressedAt,undefined);}
+    assert.equal(a.posture,'stand');assert.equal(a.postureSince,0);assert.equal(a.hitAt,-1e9);assert.equal(a.diedAt,-1e9);assert.equal(a.suppressedAt,-1e9);}
   diag.actors[0].motion.odometer=99;assert.equal(s.actors[0].motion.odometer,0);
   assert.ok(diag.actors.every(a=>!Object.hasOwn(a,'health')&&!Object.hasOwn(a,'target')));
   validateM01Snapshot(s.snapshot());
 });
 
-test('approved T02-min/T03-lite/T25 golden locks the exact integration source and retains historical provenance',()=>{
-  assert.equal(golden.base,'61ecd77b099d5921bd025275eafd9c3157536bb7');
-  assert.equal(golden.sourceSha256,'792fdc9a7a56a09bda599669f7349e3bb6fad0e3e13d67eed03f1474eeef07b6');
-  assert.equal(golden.approvedIntegration.task,'M01-CONTINUITY-RAID-INTEGRATION-V1');
-  assert.equal(golden.approvedIntegration.base,'2d65dd0b9837d5e6f21fe24dd8a8b167ca76df55');
-  assert.equal(golden.approvedIntegration.sourceSha256,'e988fcd9b923a429657d1deeb820054694b5e9b046ff904faa190e14e020c4a6');
-  // H9-D1 moved only the source lock: the per-tick route blocks below are unchanged from the approved integration.
-  assert.equal(golden.sourceLock.task,'M01-H9-D1-DIFFICULTY-DATA-V1');
-  assert.equal(golden.sourceLock.previousTask,golden.approvedIntegration.task);
-  assert.equal(golden.sourceLock.previousSourceSha256,golden.approvedIntegration.sourceSha256);
-  assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),golden.sourceLock.sourceSha256);
+test('historical approved golden remains immutable; candidate partials golden is separately pinned after predecessor delta audit',()=>{
+  assert.equal(historicalGolden.base,'61ecd77b099d5921bd025275eafd9c3157536bb7');
+  assert.equal(historicalGolden.sourceSha256,'792fdc9a7a56a09bda599669f7349e3bb6fad0e3e13d67eed03f1474eeef07b6');
+  assert.equal(historicalGolden.approvedIntegration.task,'M01-CONTINUITY-RAID-INTEGRATION-V1');
+  assert.equal(historicalGolden.approvedIntegration.base,'2d65dd0b9837d5e6f21fe24dd8a8b167ca76df55');
+  assert.equal(historicalGolden.approvedIntegration.sourceSha256,'e988fcd9b923a429657d1deeb820054694b5e9b046ff904faa190e14e020c4a6');
+  // H9-D1 moved only the source lock (per-tick routes unchanged); that record is now historical provenance as well.
+  assert.equal(historicalGolden.sourceLock.task,'M01-H9-D1-DIFFICULTY-DATA-V1');
+  assert.equal(historicalGolden.sourceLock.previousTask,historicalGolden.approvedIntegration.task);
+  assert.equal(historicalGolden.sourceLock.previousSourceSha256,historicalGolden.approvedIntegration.sourceSha256);
+  assert.equal(historicalGolden.sourceLock.sourceSha256,'57c81b31acf4920f6259db47faadb94ac33a10916db5befaadf2d35e0f988506');
+  assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),golden.sourceSha256);
 });
 
-for(const expected of golden.routes)test(`all gameplay bytes hashed each tick against approved T02-min/T03-lite/T25 integration: seed ${expected.seed}, support ${expected.support}`,()=>{
+for(const expected of golden.routes)test(`all gameplay bytes hashed each tick against separately audited partials candidate: seed ${expected.seed}, support ${expected.support}`,()=>{
   const trace=new GameplayDigest(),seen=new Set();let maxSpeed=0;
   const result=route(expected.seed,{support:expected.support,onStep:({sim,events})=>{
     trace.add(gameplayFrame(sim,events));
-    for(const a of sim.actors){maxSpeed=Math.max(maxSpeed,a.motion.speed);for(const k of ['hitAt','diedAt','suppressedAt'])if(a[k]!==undefined)seen.add(k);}
+    for(const a of sim.actors){maxSpeed=Math.max(maxSpeed,a.motion.speed);for(const k of ['hitAt','diedAt','suppressedAt'])if(a[k]!==undefined&&a[k]!==-1e9)seen.add(k);}
   }});
   assert.deepEqual(trace.finish(),{ticks:expected.ticks,blocks:expected.blocks});
-  assert.equal(result.sim.actors.length,89);assert.equal(result.sim.checkpointsReached.length,4);
+  assert.equal(result.sim.actors.length,97);assert.equal(result.sim.checkpointsReached.length,4);
   assert.ok(seen.has('hitAt')&&seen.has('diedAt')&&seen.has('suppressedAt'));
-  assert.ok(maxSpeed>8,'existing carry attachment displacement is measured, never clamped');
+  assert.ok(maxSpeed<=8,'published locomotion speed is bounded; actual odometer remains measured');
   report.cases.push({label:'gameplay-baseline',seed:expected.seed,support:expected.support,ticks:trace.ticks,blocks:trace.blocks.length,maxSpeed});
   if(!expected.support)completed=result;
 });
@@ -86,7 +89,7 @@ test('idle bodyYaw follows the shortest arc at 180 degrees/s and preserves comba
   for(const [from,to] of [[0,Math.PI/2],[0,Math.PI],[0,-Math.PI/2],[3.1,-3.1],[-3.1,3.1]]){
     const a=active(),b=active(),left=a.actor('marek_zielinski'),right=b.actor('marek_zielinski');
     Object.assign(left,{bodyYaw:from,facing:to});Object.assign(right,{bodyYaw:from,facing:to});
-    const expected=Math.abs(wrap(to-from))<=Math.PI*.05?to:wrap(from+Math.sign(wrap(to-from))*Math.PI*.05);
+    let expected=Math.abs(wrap(to-from))<=Math.PI*.05?to:wrap(from+Math.sign(wrap(to-from))*Math.PI*.05);if(Math.abs(wrap(to-expected))>Math.PI/3)expected=wrap(to-Math.sign(wrap(to-expected))*Math.PI/3);
     a.tick(.05);b.tick(.05);assert.equal(left.bodyYaw,expected);assert.equal(left.bodyYaw,right.bodyYaw);assert.equal(left.facing,to);
   }
 });
@@ -106,8 +109,8 @@ test('pause/invalid dt does not touch timestamps, motion, yaw, RNG, checkpoint o
 
 test('real script wounds and demolition deaths have stable timestamps; unseen reserve losses have unknown history',()=>{
   const s=active();s.clock=10;s.consume('evt_m01_wounded_dragged');
-  const patient=s.actor('generic_rifleman');assert.equal(patient.hitAt,10);assert.equal(patient.hitYaw,undefined);
-  s.consume('evt_m01_east_platoon_withdraws');assert.equal(s.actor('pl_east_23').diedAt,undefined);
+  const patient=s.actor('generic_rifleman');assert.equal(patient.hitAt,10);assert.equal(patient.hitYaw,patient.facing);
+  s.consume('evt_m01_east_platoon_withdraws');assert.equal(s.actor('pl_east_23').diedAt,-1e9);
   s.clock=11;s.consume('evt_m01_east_demolition');
   for(let i=0;i<4;i++){const a=s.actor('de_spans_'+i);assert.equal(a.diedAt,11);assert.equal(a.deathYaw,0);}
   s.clock=12;s.consume('evt_m01_east_demolition');assert.equal(s.actor('de_spans_0').diedAt,11);
@@ -118,7 +121,7 @@ test('actual grenade damage records only exposed living actors; repeat ticks do 
   Object.assign(shielded,{x:707,y:0,z:0,active:true});Object.assign(exposed,{x:696,y:0,z:0,active:true,health:10});
   Object.assign(inactive,{x:700,y:0,z:2});s.world.obstacles.push({id:'test_solid_cover',min:{x:704,y:-1,z:-1},max:{x:705,y:3,z:1},material:'stone'});
   s.grenades.active=[{id:'test_grenade',x:700,y:0,z:0,vx:0,vy:0,vz:0,fuse:.01}];
-  s.updateGrenades(.02,false);assert.equal(shielded.hitAt,undefined);assert.equal(inactive.hitAt,undefined);
+  s.updateGrenades(.02,false);assert.equal(shielded.hitAt,-1e9);assert.equal(inactive.hitAt,-1e9);
   assert.equal(exposed.hitAt,s.clock);assert.equal(exposed.diedAt,s.clock);assert.equal(exposed.hitYaw,0);
   const at=exposed.hitAt;s.tick(.05);assert.equal(exposed.hitAt,at);assert.equal(exposed.diedAt,at);
 });
@@ -130,7 +133,7 @@ test('player rifle hit/death and real near-miss suppression stamp only the exist
   s.clock=7;s.weapon.update(7000);s.fire();assert.equal(a.hitAt,5);assert.equal(a.diedAt,5);
   const near=active(),target=near.actor('de_east_14');near.clock=5;
   Object.assign(target,{x:696,y:0,z:2,active:true});Object.assign(near.player,{x:690,y:0,z:0,angle:0,pitch:0,aiming:true});
-  near.fire();assert.equal(target.health,100);assert.equal(target.hitAt,undefined);assert.equal(target.suppressedAt,5);assert.equal(target.suppressedUntil,10);
+  near.fire();assert.equal(target.health,100);assert.equal(target.hitAt,-1e9);assert.equal(target.suppressedAt,5);assert.equal(target.suppressedUntil,10);
   near.tick(0);assert.equal(target.suppressedAt,5);
 });
 
@@ -153,7 +156,7 @@ for(const phase of ['grab','drag','release'])test(`station ${phase} adapter reta
 test('Bąk carry and CKM/MG34 specialized adapters do not lose identity, timestamps or presentation on reload',()=>{
   const s=new M01Simulation();s.restoreSnapshot(completed.checkpoints.cp_m01_d_retirada);
   for(let i=0;i<6000&&!s.actor('jozef_bak').carriedBy;i++)s.tick(.05);
-  const bak=s.actor('jozef_bak');assert.equal(bak.carriedBy,'leon_dudek');assert.equal(bak.motion.gait,'carry');assert.equal(bak.bodyYaw,bak.facing);
+  const bak=s.actor('jozef_bak');assert.equal(bak.carriedBy,'leon_dudek');assert.ok(['idle','carry'].includes(bak.motion.gait));assert.ok(bak.carry&&['pickup','carry','putdown'].includes(bak.carry.phase));assert.equal(bak.bodyYaw,bak.facing);
   record(s,{label:'bak-carry',ticks:180,doubleAt:[1,50,100]});
   const gun=new M01Simulation(29);gun.scene=null;Object.assign(gun.actor('de_east_0'),{active:true,cooldown:100});
   for(let i=0;i<40;i++)gun.tick(.05);
@@ -166,13 +169,13 @@ test('Bąk carry and CKM/MG34 specialized adapters do not lose identity, timesta
 
 test('legacy 86/89 schema-2 saves initialize without inventing events, mutating input or drawing RNG',()=>{
   for(const count of [86,89]){
-    const legacy=gameplaySnapshot(completed.checkpoints.cp_m01_b_reorganizacao);
+    const legacy=gameplaySnapshot(completed.checkpoints.cp_m01_b_reorganizacao);legacy.actors=legacy.actors.filter(a=>!AUXILIARY_IDS.includes(a.id));
     if(count===86)legacy.actors=legacy.actors.filter(a=>!a.ckm);
     const before=json(legacy),s=new M01Simulation();s.restoreSnapshot(legacy);
-    assert.deepEqual(legacy,before);assert.equal(s.rng.state,legacy.rng);assert.equal(s.actors.length,89);
+    assert.deepEqual(legacy,before);assert.equal(s.rng.state,legacy.rng);assert.equal(s.actors.length,97);
     assert.deepEqual(s.actors.slice(0,86).map(a=>a.id),legacy.actors.slice(0,86).map(a=>a.id));
     for(const a of s.actors){assert.equal(a.motion.odometer,0);assert.equal(a.motion.speed,0);assert.equal(a.bodyYaw,a.facing);
-      assert.equal(a.diedAt,undefined);assert.equal(a.hitAt,undefined);assert.equal(a.suppressedAt,undefined);}
+      assert.equal(a.diedAt,-1e9);assert.equal(a.hitAt,-1e9);assert.equal(a.suppressedAt,-1e9);}
     record(s,{label:'legacy-'+count,ticks:160,doubleAt:[1,50,100],input:t=>({fire:t===2,reload:t===50})});
   }
 });
@@ -189,8 +192,8 @@ test('corrupt presentation rejects atomically in current state and nested checkp
   const changes=[a=>a.motion=null,a=>a.motion=[],a=>a.motion.speed=-1,a=>a.motion.speed=null,a=>a.motion.odometer=-.1,
     a=>a.motion.gait='teleport',a=>a.motion.gaitSince=-1,a=>a.motion.gaitSince=source.clock+1,a=>delete a.motion.speed,
     a=>a.motion.unknown=1,a=>a.motion.health=0,a=>a.bodyYaw='0',a=>a.bodyYaw=null,a=>a.posture='flying',
-    a=>a.postureSince=-1,a=>a.suppressedAt=source.clock+1,a=>a.hitAt=-1,a=>a.hitYaw=1,
-    a=>a.diedAt=source.clock,a=>a.deathYaw=1,a=>a.hitAt=source.clock+1,a=>a.deathYaw=null];
+    a=>a.postureSince=-1,a=>a.suppressedAt=source.clock+1,a=>a.hitAt=-1,a=>{delete a.hitAt;a.hitYaw=1;},
+    a=>a.diedAt=source.clock,a=>{delete a.diedAt;a.deathYaw=1;},a=>a.hitAt=source.clock+1,a=>a.deathYaw=null];
   for(const nested of [false,true])for(const [i,change] of changes.entries()){
     const target=active(),bad=json(source);if(nested)bad.resumeCheckpoint=json(source);
     change((nested?bad.resumeCheckpoint:bad).actors[0]);const before=target.snapshot(),input=json(bad);

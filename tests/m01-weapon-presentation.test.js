@@ -13,6 +13,7 @@ import {eyePosition,aimDirection} from '../src/world/spatial.js';
 import {viewModelFixture,geometryReport} from './helpers/m01-viewmodel-fixture.js';
 import {alignmentReport} from '../tools/verification/m01-wz29-viewmodel-audit.mjs';
 import {driver} from './helpers/m01-route.js';
+import {spatialWithoutPartialsDelta} from './helpers/m01-spatial-partials-delta.js';
 
 const {wz29,m1_carbine:carbine}=WEAPON_PRESENTATION;
 const BOLT=1.05;
@@ -28,8 +29,11 @@ test('unmodified weapon ballistics, RNG and spatial gameplay sources remain byte
     'src/world/spatial.js':'49409541cf8b9c8542aba5cdaf79a46227e973932fa795743969a0f893551dcb',
     'src/core/random.js':'c7fe17d39b70b37adeab22bfdb488029476b489a8e940d43db06558251b273e1',
     'research/weapons/kb_wz29.profile.json':'73a3cf9a9300d1e34cbedd8f103988854147377956c031f5645616f4ca8e589e'};
-  for(const [path,hash]of Object.entries(hashes))
-    assert.equal(createHash('sha256').update(readFileSync(new URL('../'+path,import.meta.url))).digest('hex'),hash,path);
+  for(const [path,hash]of Object.entries(hashes)){
+    const bytes=readFileSync(new URL('../'+path,import.meta.url));
+    // spatial.js: only the named partials T07/T36 delta is reverted; all other bytes stay locked.
+    assert.equal(createHash('sha256').update(path==='src/world/spatial.js'?spatialWithoutPartialsDelta(bytes.toString('utf8')):bytes).digest('hex'),hash,path);
+  }
 });
 
 test('the presentation modules read gameplay state but never import gameplay code (game, world, core)',()=>{

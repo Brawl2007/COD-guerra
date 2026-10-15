@@ -6,6 +6,7 @@ import { Simulation } from './simulation.js';
 import { M01Simulation } from './m01-simulation.js';
 import { M01HudPresenter, playerImpactSoundPlan } from '../ui/m01-hud.js';
 import { M01AudioDirector } from './audio-director-m01.js';
+import {enemyFireSoundPlan} from './m01-audio-events.js';
 
 const SAVE_KEY='cod-guerra:checkpoint:v1';
 // These are the nine aerial impacts emitted by M01. Schema 2 stores their IDs,
@@ -212,8 +213,8 @@ export class Game {
     }
     // Fogo alemão: o estampido chega com o atraso da distância (343 m/s); o impacto e o estalo de quem passa perto, à chegada do tiro.
     // source: arma que dispara (posição da boca arredondada), só para juntar os tiros da MG34 deitada numa rajada sonora.
-    if(event.type==='enemy-fire'){const s=this.spatial(event.origin),source=`${event.weapon}@${Math.round(event.origin.x)},${Math.round(event.origin.z)}`;
-      this.pendingSounds.push({...s,at:event.at+s.distance/343,kind:'fire',rounds:event.rounds,interval:event.interval,weapon:event.weapon,source,key:`${source}:${event.at.toFixed(3)}`});}
+    if(event.type==='enemy-fire'){const s=enemyFireSoundPlan(event,this.sim.player),source=`${event.weapon}@${Math.round(event.origin.x)},${Math.round(event.origin.z)}`;
+      this.pendingSounds.push({...s,kind:'fire',rounds:event.rounds,interval:event.interval,weapon:event.weapon,source,key:`${source}:${event.at.toFixed(3)}`});}
     if(event.type==='round-impact'){
       this.renderer.m01.impact(event.point,event.material,this.sim.clock);
       const s=this.spatial(event.point),key=`${event.by}:${this.sim.clock.toFixed(3)}`,shooter=this.sim.actor?.(event.by);

@@ -1,0 +1,133 @@
+schema_version: 2
+task:
+  id: "M01-T14-T41-BRIDGE-FINISH-V2"
+  type: "renderer-assets"
+  role: "implementer"
+  objective: "Complete original production bridge material sidecar and renderer-only bridge finish/LOD/impostor runtime, preserving every accepted bridge/deck/guard geometry, collision, decal receiver and simulation part."
+git:
+  base_branch: "claude/m01-integration"
+  base_head: "8a0c3622f5375f2c5b5e847db71f4f6e8352ae39"
+  work_branch: "codex/m01-t14-t41-bridge-finish-v2"
+  starting_head: "c00670786e85dc9c2671bc5234b828eb07b434bb"
+policy:
+  gameplay_change_allowed: false
+  visual_change_allowed: true
+  persistence_change_allowed: false
+  architecture_change_allowed: false
+scope:
+  allowed_files:
+    - "tools/assets/m01-bridges/materials/**"
+    - "tools/assets/m01-bridges/impostors/**"
+    - "assets/models/provisional/m01/m01-bridges/**"
+    - "src/render/m01-bridge-material.js"
+    - "src/render/m01-bridge-lod.js"
+    - "src/render/m01-bridge-finish-runtime.js"
+    - "src/render/m01-view.js"
+    - "src/render/m01-bridge-portal-polish.js"
+    - "src/render/m01-bridge-structure.js"
+    - "tests/m01-bridge-material-kit.test.js"
+    - "tests/m01-bridge-material.test.js"
+    - "tests/m01-bridge-finish-runtime.test.js"
+    - "tests/m01-bridge-lod.test.js"
+    - "tests/browser/m01-bridge-material-kit.spec.js"
+    - "tests/browser/m01-bridge-finish-runtime.spec.js"
+    - "tools/verification/*bridge-finish-v2*"
+    - ".github/workflows/m01-t14-t41-bridge-finish.yml"
+    - "docs/**"
+    - "DEVELOPMENT_STATUS.md"
+    - ".agent/regression/records/**"
+    - ".agent/memory/m01/**"
+  forbidden_files:
+    - "src/game/**"
+    - "src/core/**"
+    - "src/world/**"
+    - "src/ui/**"
+    - "src/assets/**"
+    - "missions/**"
+    - "assets/textures/**"
+    - "assets/models/provisional/m01/bridge_*.glb"
+    - "assets/models/provisional/m01/portal_*.glb"
+    - "assets/models/provisional/m01/bridges.manifest.json"
+    - "assets/models/provisional/m01/*.colliders.json"
+    - "tools/assets/m01-bridges/src/**"
+    - "tools/assets/m01-bridges/build.mjs"
+    - "tools/assets/m01-bridges/export-colliders.mjs"
+    - "tools/assets/m01-bridges/package.json"
+    - "tools/assets/m01-bridges/package-lock.json"
+    - "src/render/materials.js"
+    - "src/render/m01-surfaces.js"
+    - "src/render/m01-damage-decals.js"
+    - "src/render/m01-track-bed.js"
+    - "src/render/m01-environment.js"
+    - "src/render/m01-props-runtime.js"
+    - "src/render/m01-field-structures.js"
+    - "src/render/m01-station-architecture.js"
+    - "src/render/m01-terrain-material.js"
+    - "src/render/m01-terrain-relief.js"
+    - "src/render/m01-far-landscape.js"
+    - "src/render/m01-vegetation-runtime.js"
+    - "src/render/m01-vegetation-material.js"
+    - "src/render/m01-vegetation-layout.js"
+    - "src/render/m01-lighting.js"
+    - "src/render/m01-water.js"
+    - "src/render/m01-atmosphere.js"
+    - "src/render/m01-characters.js"
+    - "package.json"
+    - "package-lock.json"
+    - "vite.config.js"
+    - "playwright.config.js"
+    - ".github/workflows/ci.yml"
+    - "tests/m01-bridges-glb.test.js"
+    - "tests/m01-bridge-portal-polish.test.js"
+    - "tests/m01-bridge-structure.test.js"
+  allowed_systems:
+    - "new original bridge-specific material/impostor sidecar authoring and viewer"
+    - "dedicated renderer-only material/LOD/residency owner"
+    - "minimal view coupling and material-binding APIs in existing bridge owners"
+  exclusive_resources: ["T14", "T41", "bridge runtime hunks in m01-view.js"]
+  read_areas: ["bridge sources/assets, material library, view, accepted owner tests and immutable simulation parts"]
+  write_areas: ["new bridge sidecar/runtime, narrowly scoped existing material-binding APIs and evidence"]
+  phase_boundary: "Prove reproducible T14 sidecar/material viewer before dependent T41 src changes. Do not change original GLBs, their geometry generator, manifest or accepted tests. Existing bridge-owner edits are material/lifecycle API only; no descriptor, geometry, names, positions or contact changes."
+dependencies:
+  tasks: ["T09 accepted material conventions", "T15 integrated FX V3", "T14 proved before T41", "accepted bridge structure/portal/decks/guards and T31 contacts remain intact"]
+  branches: []
+risk:
+  level: "medium"
+  complexity: "high"
+acceptance:
+  criteria:
+    - "T14: deterministic original albedo/normal/ORM sidecar for painted/rusted steel with rivet/AO and variable roughness, desaturated mortar brick/stone/soot, road deck and existing timber/rail/guard slots. Useful Low tier; source/provenance/licence/SHA/bytes/physical scale/channel/color-space/tiers manifest. Reuse T09 conventions without editing its existing outputs/global legacy consumers. Exact independent regeneration --check and useful viewer captures of all families. Do not change existing bridge licence to CC0; only new authored assets have the appropriate original licence."
+    - "T14: sidecar binding consumes actual generated textures/normal/ORM, with readable metre scale/direction on beams, decks and curved portals and no atlas bleed or unintended black steel/saturated brick. All twelve existing bridge/portal GLBs, original bridges.manifest.json, collider exports and their accessor/node/transform bytes stay exact."
+    - "T41: actual new material owner binds bridge spans, portal brick/stone/gate, existing deck/rail/guard/structural batches without rebuilding accepted geometry. Preserve source material names, m01SourceMaterial/kind/grain/strip metadata, trackBed hidden rails/contact hooks, damage-decal receiver buffers and world IDs. Material debug disable/dispose restores originals and borrowed resources survive."
+    - "T41: per-logical-part renderer-only LOD with documented bounded hysteresis and genuine geometry-derived truss impostor beyond800m. Actual submitted far impostor <=2 draws/8tri per logical truss, no far impostor shadow caster; count applicable transparent passes. Demonstrate approach/return threshold, ten stationary seconds without flicker, Low/Medium/High useful savings. Simulation renderState.parts stays complete and exact; existing LOD0/1/2 remain valid fallback."
+    - "T41: correct original visibility, intact/damaged/collapsing/rubble state, cached collapse transforms and restored world/revision across threshold transitions. No intact impostor over demolished spans, hidden span or changed event clock. Destroyed and returning near views match original authoritative part state; never mutate incoming part descriptors."
+    - "T41: one owner, successful/partial/failed/hung/late loading, paused readiness/revision invalidation, preset/world changes, same-capacity restore reuse and once-only texture/bitmap/material/geometry disposal. No shared/borrowed double close, no per-instance steady-frame allocation/rebuild. Keep genuine legacy fallback visible during optional asset failure."
+    - "Both: incremental owned decoded RGBA8 material+impostor atlas <=16MiB High and <=4MiB Low excluding separately reported mipmaps; native actual main-camera/shadow counters and structural capacities separately labelled. Near preserved geometry budget is audited against exact same base views, not mesh estimates. No FPS/VRAM/reference-PC or human-playtest claim."
+    - "Both: actual untouched-base/current04/12/13 at04:30 and06:10, exact saved input/full actual snapshot/checkpoint/events/camera/clock and raw frozen PNGs, visible authored material/far change and unaffected control pixels0. Use real authoritative phase state and explicitly labelled fixed presentation viewpoints; do not claim an editorial camera is a completed player route. Record actor/bridge destruction state rather than assuming the old nineteen-view harness covers both clocks. Genuine >800m supplement and return/hysteresis/destruction captures; zero unexpected shader/page/HTTP errors."
+    - "Both: Low/High churn, at least four real checkpoint restores and equally warmed reload preserve exact save/clock and stable owner/global resources; delayed actual load completes in pause and redraws, explicit load failure remains usable. All existing bridge/portal/structure and protected-owner Node tests remain unchanged and green."
+    - "Both: protected source/assets/layout/collider checks; critical route and both real-control routes for12 seeds against8a0c362 with new bridge owners active preserve every tick state/event stream and checkpoint/backup pairs, including demolition parts. Applicable prior rail/contact/material/terrain/vegetation/water/demolition browser obligations green with exact-source provenance and retained logs/reports. Avoid nested baseline duplicate test discovery in new config."
+    - "Both: full npmtest, tooling and build, actual material viewer/runtime/focused regressions, exact published-source normal/focused CI green, independent verifierPASS/perf audit/reviewerACCEPT before no-ff integration. Full npmtest/build again on actual merge; publish playable claude/m01-integration and final evidence."
+  evidence_required: ["actual all-family viewer PNGs", "six base/current phase views and far/destruction/LOD supplement PNGs+raw states/counters", "native preset/atlas/shadow/resource histories", "exact source CI and applicable coupled regression logs/reports", "24 complete active-owner control futures", "formal independent VERIFIER/PERF/REVIEW reports"]
+verification:
+  required_tests: ["meaningful material kit/owner/LOD/lifecycle Node tests", "exact sidecar generator --check", "unchanged bridge/portal/structure Node tests", "full npm test", "python3 -m unittest discover -s .agent/tests", "npm run build", "npm run assets:m01:colliders -- --check", "node tools/verify-m01-route.mjs", "actual production material viewer/bridge runtime browser", "fresh applicable coupled prior-owner browser obligations", "24 full real-control A/B futures with new bridge owner active", "protected-byte/actual geometry/part-descriptor authority guard"]
+  build_requirement: "required"
+  browser_requirement: "focused"
+  regression_obligations: ["original bridge material sidecar reproduction/real channels/scale/tiers", "immutable bridge/collider/decal/contact/part semantics and future identity", "actual >800m impostor/hysteresis/destruction/render-state compatibility", "native atlas/shadow/preset budgets and partial/late/paused/restore/disposal ownership", "preserve accepted coupled bridge/rail/terrain/vegetation/material/water/demolition presentation"]
+execution:
+  max_fix_attempts: 3
+  max_review_rejections: 2
+  production_mode: "focused"
+routing:
+  policy: "auto"
+  preferred_class: "standard"
+  escalation_class: "advanced"
+human:
+  approval_points: []
+context:
+  required_memory_topics: ["material registry ownership", "track contact/source-material hiding", "borrowed resources and bitmap disposal", "paused loading revision and equally warmed resources"]
+  mutable_claims_to_verify: ["fresh remote integration and reservations", "all twelve original GLB/manifest/geometry hashes", "actual material slots/UVs and owner/decal/contact receivers", "immutable current renderState.parts/400m800m behavior", "existing deck/guard geometry already accepted", "real phase04/12/13 fixture availability", "current CI and applicable prior obligations"]
+integration:
+  target_branch: "claude/m01-integration"
+  auto_integrate: true
+state:
+  status: "BLOCKED"

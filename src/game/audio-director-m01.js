@@ -67,6 +67,8 @@ export class M01AudioDirector {
     this.sim = null; this.disposed = false; this.errors = 0; this.lastError = null;
     this.lastClock = -Infinity; this.restoredAt = -Infinity; this.emitterSlot = NaN;
     this.active = []; this.spatialOut = { distance: 0, pan: 0, front: 1 }; this.occ = { hz: 0, gain: 1 };
+    this.trainArrivals=[{id:'train963',from:17010,until:17100,x:1675,y:2,z:-2.5,heard:false,pending:false,at:0},
+      {id:'panzerzug',from:17460,until:17520,x:1519,y:2,z:2.5,heard:false,pending:false,at:0}];
     this.pending = Array.from({ length: MAX_PENDING }, () => ({ used: false, at: 0, emitter: null, pan: 0, distance: 0, front: 1, rounds: 1, key: '' }));
     this.stats = { slots: 0, scheduled: 0, played: 0, suppressed: 0, dropped: 0, occluded: 0, rewinds: 0, readoutSamples: 0, readoutMissing: 0 };
     this.derived = { grenade: 0, demolition: 0, bomb: 0, shell: 0, rkm_wz28: 0, ally_rifle: 0, other: 0, crack: 0, whizz: 0, none: 0 };
@@ -89,6 +91,7 @@ export class M01AudioDirector {
     this._clearPending(); this.emitterSlot = NaN; this.restoredAt = -Infinity;
     this.lastClock = m01 && Number.isFinite(sim.clock) ? sim.clock : -Infinity;
     this.conductor?.reset(m01 ? sim.consumed : EMPTY);
+    for(const train of this.trainArrivals){train.heard=m01&&sim.battleClock>=train.from;train.pending=false;}
     if (m01) { try { this.audio?.setEmitters?.(sim.definition); } catch { /* none -> silent emitters */ } }
   }
 
@@ -99,14 +102,14 @@ export class M01AudioDirector {
     switch (event.type) {
       case 'restored': this.restoredAt = sim.clock; break;   // 20 s of silence after a player death
       case 'm01-blast': {
-        const kind = deriveBlastKind(this._damageId(sim, event), event.aerial === true), p = event.point, pl = sim.player;
+        const kind = event.kind??deriveBlastKind(this._damageId(sim, event), event.aerial === true), p = event.point, pl = sim.player;
         this.derived[kind]++;
         // A near blast (< 60 m) dips the music 4 dB for 1.5 s when it is heard; the bridge demolitions are scored by their own stinger.
         if (kind !== 'demolition' && p && Math.hypot(p.x - pl.x, p.z - pl.z) < MUSIC_TUNING.nearBlastMeters && Number.isFinite(event.soundAt)) this.conductor?.noteBlast(event.soundAt);
         break;
       }
       case 'npc-shot': { const w = deriveNpcShotWeapon(event); this.derived[Object.hasOwn(this.derived, w) ? w : 'other']++; break; }
-      case 'round-impact': this.derived[derivePass(event)]++; break;
+      case 'round-impact': this.derived[event.pass??derivePass(event)]++; break;
       default: break;
     }
   }
@@ -125,12 +128,23 @@ export class M01AudioDirector {
       const p = sim.player;
       audio.setListener?.(p.x, p.y, p.z);   // zone + surface under the listener (reverb A/B and interior lowpass on change only)
       this._emitters(sim);   // sim, not numbers: a number argument across a non-inlined call is boxed on every frame
+      this._trainArrival(sim);
       this._music(sim);
       return true;
     } catch (error) { this._fail(error); return false; }
   }
   /** A failure here must never reach the frame loop; it is counted and kept for diagnostics/tests. */
   _fail(error) { this.errors++; this.lastError = String(error?.message ?? error); }
+  _trainArrival(sim){
+    for(const train of this.trainArrivals){
+      if(!train.heard&&sim.battleClock>=train.from&&sim.battleClock<train.until){
+        const p=sim.player,distance=Math.hypot(train.x-p.x,train.y-p.y-1.6,train.z-p.z);
+        train.heard=true;train.pending=true;train.at=sim.clock+distance/343;
+      }
+      if(train.pending&&sim.clock>=train.at){train.pending=false;this._spatial(train.x,train.z,sim.player);
+        this.audio.trainMoving?.(train.id,this.spatialOut.pan,this.spatialOut.distance,`${train.id}:approach`);}
+    }
+  }
 
   // ---------------------------------------------------------------- emitters
   _emitters(sim) {

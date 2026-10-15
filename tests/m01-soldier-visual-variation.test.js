@@ -94,7 +94,17 @@ test('integration preserves gameplay, hitbox/muzzle, save, locomotion and non-pr
  // Old exact-byte lock was for unchanged visual-variation work. The new animation
  // resolver intentionally changes generic gait/transition selection. Preserve the
  // specialized MG34 prone, CKM and station patient/medic decision block exactly.
- assert.equal(section(file,'    const prone=mg34ProneSample(actor,time);',"    if(pose.name==='carried')"),
-              section(old,'    const prone=mg34ProneSample(actor,time);',"    if(pose.name==='carried')"));
- assert.equal(section(file,'  updateCKM(','  get diagnostics'),section(old,'  updateCKM(','  get diagnostics'));
+ // Partials T36 (ckm aim/feed phases with latent fire_burst shown as aim; Bąk carry pickup/putdown and generic prone/reload
+ // clip selection) is the only approved delta: revert exactly those strings, each found once, and every other byte stays locked.
+ const T36_DELTA=[
+  ["      const phase=actor.ckm.phase==='fire_burst'?'aim':actor.ckm.phase,role=actor.id==='ckm_gunner'?'gunner':'loader';\n      const name=`ckm_wz30_${role}_${phase}`;\n      return {clip:this.clips.has(name)?name:`ckm_wz30_${role}_idle`,time:Math.max(0,time-actor.ckm.startedAt),loop:phase==='idle'||phase==='aim'};\n",
+   "      const phase=actor.ckm.phase,role=actor.id==='ckm_gunner'?'gunner':'loader';\n      return {clip:`ckm_wz30_${role}_${phase}`,time:Math.max(0,time-actor.ckm.startedAt),loop:phase==='idle'};\n"],
+  ["    }\n    const bak=actor.id==='jozef_bak'?actor:actors.find(a=>a.id==='jozef_bak'&&a.carriedBy===actor.id);\n    if(bak?.carry&&bak.alive){const phase=bak.carry.phase,patient=actor===bak;\n      if(phase!=='carry'){const name=`carry_${phase}_${patient?'patient':'carrier'}`;\n        if(this.clips.has(name))return {clip:name,time:Math.min(1.6,Math.max(0,time-bak.carry.startedAt)),loop:false};\n        return {clip:patient?'wounded':'crouched_idle',time:0,loop:false};}\n      if(patient)return {clip:'carried',time:time+offset,loop:true};\n      if(this.clips.has('carry_walk')){const duration=this.clips.get('carry_walk').duration,phase=(actor.motion?.odometer??0)/(1.6*duration);\n        return {clip:'carry_walk',time:(phase-Math.floor(phase))*duration,loop:true,rate:(actor.motion?.speed??1.6)/1.6};}\n    }\n    if(actor.posture==='prone'&&!actor.mg34Prone){const age=Math.max(0,time-actor.postureSince),clip=age<1.2?'prone_enter':'prone_idle';\n      if(this.clips.has(clip))return {clip,time:age<1.2?age:age-1.2,loop:age>=1.2};\n      return {clip:'pinned',time:0,loop:false};}\n    if(actor.reload&&this.clips.has('reload_clip'))return {clip:'reload_clip',time:Math.min(3.4,time-actor.reload.startedAt),loop:false};\n",
+   "    }\n"],
+  ["    const v=this.ckm,phase=gunner.ckm.phase==='fire_burst'?'aim':['idle','aim','feed'].includes(gunner.ckm.phase)?gunner.ckm.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');\n",
+   "    const v=this.ckm,phase=gunner.ckm.phase==='idle'?'idle':'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`);\n"]
+ ];
+ let current=section(file,'    const prone=mg34ProneSample(actor,time);',"    if(pose.name==='carried')")+section(file,'  updateCKM(','  get diagnostics');
+ for(const [now,original]of T36_DELTA){assert.equal(current.split(now).length,2,'approved T36 delta occurs exactly once');current=current.replace(now,()=>original);}
+ assert.equal(current,section(old,'    const prone=mg34ProneSample(actor,time);',"    if(pose.name==='carried')")+section(old,'  updateCKM(','  get diagnostics'));
 });

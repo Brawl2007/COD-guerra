@@ -1,0 +1,17 @@
+✔ successful owned maps bind/disable/quality/restore/dispose, borrowed geometry/material survives (11.820338ms)
+✔ partial and failed optional loads retain genuine original fallback and exact once ownership (3.276122ms)
+✔ hung/late and dispose-during-load cannot install resources and close every late bitmap once (27.569857ms)
+✔ actual 400/800m approach/return uses bounded hysteresis without threshold jitter (1.22201ms)
+✔ hidden/damaged/restore keep original authority and never display an intact far card (0.204583ms)
+✔ original bridge sidecar regenerates exactly, with useful physical channels and bounded tiers (5210.278124ms)
+✔ metre material preserves inherited T31 contact compile/cache and borrowed metadata/resources (2.131303ms)
+✔ existing authored and structural slots map without changing mesh metadata (0.680977ms)
+✔ road uses its own standard metre maps and never consumes shared terrain uniforms or wetness (0.447833ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5519.99064

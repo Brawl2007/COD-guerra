@@ -205,7 +205,7 @@ test('a wall, a miss or a dead target changes nothing: the tick retries every ti
   // a wall put up while the round flies: the round lands on the wall, the man lives, and the tick fires again once the wall is gone
   s.world.obstacles.push(wall);
   for(let i=0;i<10;i++)s.tick(.05,{});
-  assert.ok(s.actor('pl_east_23').alive&&s.actor('pl_east_23').diedAt===undefined);assert.deepEqual(attritionRounds(s),[]);
+  assert.ok(s.actor('pl_east_23').alive&&[undefined,-1e9].includes(s.actor('pl_east_23').diedAt));   // -1e9: T07 'never stamped'assert.deepEqual(attritionRounds(s),[]);
   s.world.obstacles.pop();s.tick(.05,{});assert.equal(attritionRounds(s).length,1);
   for(let i=0;i<10;i++)s.tick(.05,{});
   const man=s.actor('pl_east_23');assert.equal(man.alive,false);const diedAt=man.diedAt,hitAt=man.hitAt;
@@ -231,7 +231,7 @@ test('no shot before its time, after its cutoff or after the withdrawal; a suppr
   const t=before0453();t.battleClock=seconds('04:53:00');t.consume(E('east_platoon_withdraws'));t.attritionTick();assert.deepEqual(attritionRounds(t),[],'nothing after the withdrawal');
   // a round already in flight when the rule of 06:00 runs: the rule has killed the man, the arrival adds nothing
   const u=before0453();untilFired(u);const victim=u.actor(attritionRounds(u)[0].victim);u.consume(E('east_platoon_withdraws'));
-  for(let i=0;i<10;i++)u.tick(.05,{});assert.equal(victim.alive,false);assert.equal(victim.diedAt,undefined,'killed by the rule of 06:00, not by the round');
+  for(let i=0;i<10;i++)u.tick(.05,{});assert.equal(victim.alive,false);assert.ok([undefined,-1e9].includes(victim.diedAt),'killed by the rule of 06:00, not by the round (no death stamp; -1e9 is the T07 never-stamped value)');
 });
 
 test('a save with the round in flight restores to the same continuation, exactly one death; the validator refuses a malformed attrition round',()=>{

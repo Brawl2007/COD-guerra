@@ -70,7 +70,10 @@ for(const phase of ['enter','idle','fire_burst','exit'])test(`rendered death dur
    c.update(s.actors,s.clock,s.player);a.alive=false;a.health=0;a.state='DOWN';s.updateMG34Posture(a);
    c.update(s.actors,s.clock,s.player);const v=c.instances.get(a.id);
    assert.equal(v.clip,'fallen');assert.equal(v.weaponRoot.visible,false);assert.equal(actorPose(a,s.clock).firing,false);assert.equal(a.mg34Prone,undefined);
-   s.drainEvents();at(s,s.clock+2);assert.deepEqual(s.drainEvents(),[]);assert.ok(s.actors.every(x=>!x.loaderFor&&!x.mg34Loader));
+   s.drainEvents();at(s,s.clock+2);assert.deepEqual(s.drainEvents(),[]);assert.ok(!a.loaderFor&&!a.mg34Loader,'the dead gunner carries no loader state');
+   // T36 (partials) adds display-only loaders bound to fixed gunners: the dead gunner's loader leaves at once and is inactive after its leave.
+   const loader=s.actors.find(x=>x.loaderFor===a.id);assert.equal(loader.mg34Loader.phase,'leave');assert.equal(loader.shot,0);
+   at(s,s.clock+loader.mg34Loader.duration);assert.equal(loader.active,false);assert.deepEqual(s.drainEvents(),[]);
  }finally{c.dispose();}
 });
 

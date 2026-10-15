@@ -34,6 +34,18 @@ const LOCKED=new Set(['cs_m01_intro','cs_m01_roll_call']);
 export const isLockedScene=id=>LOCKED.has(id);
 
 const card=(id,lines,opacity,elapsed)=>({id,lines,opacity,elapsed});
+export function sceneBeatFrame(sim){
+  const scene=sim.scene,data=scene&&sim.definition.cutscenes?.find(c=>c.id===scene.id);
+  const frame={scene:scene?.id??null,elapsed:scene?.elapsed??0,letterbox:false,dimHud:0,lookPrompt:'',subtitlePause:false,shake:0};
+  if(!scene||!data)return frame;
+  for(const cue of data.presentationCues??[]){if(scene.elapsed<cue.t||scene.elapsed>=cue.until)continue;
+    if(cue.letterbox)frame.letterbox=true;if(cue.dimHud)frame.dimHud=cue.dimHud;
+    if(cue.lookPrompt)frame.lookPrompt=cue.lookPrompt;if(cue.subtitlePause)frame.subtitlePause=true;
+    if(cue.shakeAtSound){const id=scene.id==='cs_m01_east_blast'?'east_demolition':'west_demolition',damage=sim.sectors?.damage?.find(d=>d.id===id);
+      const age=damage?sim.clock-damage.soundAt:-1;if(age>=0&&age<.6)frame.shake=Math.sin(age*65)*(1-age/.6)*3;}
+  }
+  return frame;
+}
 /** Caracteres visíveis de cada linha: linhas desfasadas, escritas em paralelo à mesma cadência. */
 export const typedChars=(line,index,elapsed)=>Math.max(0,Math.min(line.length,Math.floor((elapsed-index*HUD_TIMING.lineDelay)*HUD_TIMING.typeRate)));
 /** Fotograma cinematográfico derivado da cena da simulação (id + elapsed). Só apresentação. */
@@ -84,9 +96,11 @@ export const lowHealthLevel=health=>clamp((45-health)/45);
 export class M01HudPresenter {
   constructor(el,{document:doc=globalThis.document}={}){
     this.el=el;this.doc=doc;this.cache=new Map();this.queue=[];this.reset('new',0);
+    if(!el.sceneCue&&el.root?.appendChild&&doc?.createElement){el.sceneCue=this.node('div','scene-look-prompt','');el.root.appendChild(el.sceneCue);}
   }
   /** kind: new (missão nova), continue (save carregado), restore (checkpoint reposto). */
   reset(kind='new',clock=0){
+    this.clearSceneCues();
     this.kind=kind;this.baseline=kind==='new'?null:undefined;this.queue=[];this.banner=null;this.checkpointAt=-Infinity;this.checkpointName='';
     this.lastClock=clock;this.resumeAt=kind==='new'?-Infinity:clock;this.objectiveText=null;this.objectiveAt=-Infinity;this.lastHealth=null;
     this.announceCurrent=kind!=='new';this.resumeLines=null;
@@ -96,7 +110,14 @@ export class M01HudPresenter {
   hit(clock){this.hitAt=clock;}
   checkpoint(name,clock){this.checkpointAt=clock;this.checkpointName=name;}
   /** Repõe o DOM neutro (troca para a bancada francesa). */
+  clearSceneCues(){
+    const e=this.el;this.beatFrame=null;e.root?.classList.remove('scene-beats');
+    for(const key of ['--scene-dim','--scene-shake'])e.root?.style?.removeProperty(key);
+    if(e.sceneCue){e.sceneCue.textContent='';e.sceneCue.style.removeProperty('opacity');}
+    for(const key of ['class:root:scene-beats','text:sceneCue','opacity:sceneCue'])this.cache.delete(key);
+  }
   clear(){
+    this.clearSceneCues();
     const e=this.el;this.cache.clear();
     e.root?.classList.remove('cinematic','m01');
     for(const k of ['interaction','subtitle','objective','objectiveStatus','titleCard','objectiveUpdate','resumeCard','checkpointName'])if(e[k])e[k].textContent='';
@@ -112,7 +133,10 @@ export class M01HudPresenter {
   update(sim){
     const clock=sim.clock,e=this.el,scene=sim.scene,cine=cinematicFrame(scene,sim.battleClock),defs=sim.definition.objectives;
     if(clock<this.lastClock-1e-6)this.reset('restore',clock);this.lastClock=clock;
+    const beats=this.beatFrame=sceneBeatFrame(sim);
     this.toggle('root','m01',true);this.toggle('root','cinematic',cine.locked);
+    this.toggle('root','scene-beats',beats.letterbox);this.text('sceneCue',beats.lookPrompt);this.opacity('sceneCue',beats.lookPrompt?1:0);
+    e.root?.style?.setProperty('--scene-dim',String(1-beats.dimHud));e.root?.style?.setProperty('--scene-shake',`${beats.shake.toFixed(3)}px`);
     this.updateObjectives(sim,defs,clock,cine.locked);
     // Fade: preto das cenas fechadas e fade-in breve depois de continuar/restaurar.
     const resume=Number.isFinite(this.resumeAt)?1-ramp(clock,this.resumeAt,this.resumeAt+HUD_TIMING.resumeFade):0;
@@ -124,6 +148,7 @@ export class M01HudPresenter {
     this.text('clock',clockText(sim.battleClock));
     this.updateInteraction(sim.interaction??'');
     this.updateSubtitle(sim.subtitle);
+    this.opacity('subtitle',beats.subtitlePause?0:1);
     this.updateWeapon(sim);
     this.updateHealth(sim.player.health,clock);
     const at=this.checkpointAt,cp=Number.isFinite(at)?ramp(clock,at,at+.25)*(1-ramp(clock,at+HUD_TIMING.checkpoint-.6,at+HUD_TIMING.checkpoint)):0;
@@ -234,6 +259,6 @@ export class M01HudPresenter {
     return {banner:this.banner?{kind:this.banner.kind,id:this.banner.id}:null,queued:this.queue.map(c=>`${c.kind}:${c.id}`),
       fade:Number(this.cache.get('opacity:fade')??0),checkpoint:Number(this.cache.get('opacity:checkpoint')??0),
       titleCard:this.cache.get('titleCard:lines')||null,resumeCard:this.cache.get('resumeCard:lines')||null,
-      cinematic:Boolean(this.cache.get('class:root:cinematic'))};
+      cinematic:Boolean(this.cache.get('class:root:cinematic')),sceneBeats:this.beatFrame??null};
   }
 }

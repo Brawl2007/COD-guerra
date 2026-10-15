@@ -32,21 +32,23 @@
     },
     "T02": {
       "name": "SCRIPT DATA CONTINUITY",
-      "status": "PARTIAL_IN_CANDIDATE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
       "refs": [
         "PR:#63",
-        "PR:#76"
+        "PR:#76",
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
       ],
-      "note": "T02-min aceite e na candidata; T02b por fazer."
+      "note": "T02-min aceite (#63); fecho T02 (018/019, 038, 048/049, 051, pré-roll, mensagens de continuidade) do lote partials integrado na candidata 2026-10-15; sem verifier/reviewer independentes."
     },
     "T03": {
       "name": "BLAST DATA GROUNDING",
-      "status": "PARTIAL_IN_CANDIDATE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
       "refs": [
         "PR:#63",
-        "PR:#76"
+        "PR:#76",
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
       ],
-      "note": "T03-lite aceite e na candidata; fumo de granadas pendente."
+      "note": "T03-lite aceite (#63); fumo finito de granadas (smokeSeconds 20) do lote partials integrado; sem verificação independente."
     },
     "T04": {
       "name": "HUD CINEMATIC",
@@ -59,34 +61,37 @@
     },
     "T05": {
       "name": "AUDIO DATA FIELDS",
-      "status": "PARTIAL_IN_CANDIDATE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
       "refs": [
         "branch:claude/m01-audio-director-music-v1@af81657",
         "CI:38120863543",
-        "PR:#76"
+        "PR:#76",
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
       ],
-      "note": "T05a na candidata; fecho integral T05 por demonstrar."
+      "note": "T05a na candidata; campos transitórios weapon/kind/pass e near-pass por aproximação do lote partials integrados; sem verificação independente."
     },
     "T06": {
       "name": "AUDIO CORE",
-      "status": "PARTIAL_IN_CANDIDATE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
       "refs": [
         "branch:claude/m01-audio-director-music-v1@af81657",
         "CI:38132511927",
         "CI:38138498956",
-        "PR:#76"
+        "PR:#76",
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
       ],
-      "note": "T06a+T06b na candidata."
+      "note": "T06a+T06b na candidata; atraso por distância de cada tiro inimigo e aproximação do comboio (lote partials) integrados; sem verificação independente."
     },
     "T07": {
       "name": "ANIM CONTRACT SIM",
-      "status": "PARTIAL_IN_CANDIDATE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
       "refs": [
         "PR:#43",
         "PR:#59",
-        "PR:#76"
+        "PR:#76",
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
       ],
-      "note": "Contrato de animação na V7; hitboxes prone por confirmar."
+      "note": "Contrato de animação na V7; prone genérico/hitboxes orientadas, migração de carry e validação do lote partials integrados (delta spatial.js nomeado no guard wz29); sem verificação independente."
     },
     "T08": {
       "name": "ANIM CLIP LIBRARY",
@@ -148,12 +153,13 @@
     },
     "T14": {
       "name": "BRIDGE MATERIAL KIT",
-      "status": "IN_CORRECTION",
+      "status": "IN_CANDIDATE_UNVERIFIED",
       "refs": [
         "branch:codex/m01-t14-t41-bridge-finish-v2@fd2b0c7",
-        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b",
+        "PR:#76"
       ],
-      "note": "BLOCKED no README da fonte; verifier/perf FAIL; CI vermelho. Não integrada."
+      "note": "Código integrado na candidata via partials (1affd34+e0d494e). Aceitação continua BLOCKED: README da fonte regista verifier/perf FAIL e orçamento de correcção esgotado; correcções de e0d494e (metadados de autor) sem verifier/perf independentes."
     },
     "T15": {
       "name": "FX V3 INTEGRATION GATE",
@@ -250,9 +256,10 @@
       "status": "PARTIAL_IN_CANDIDATE",
       "refs": [
         "PR:#59",
-        "PR:#76"
+        "PR:#76",
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
       ],
-      "note": "Locomotiva/Panzerzug/vagões presentes; chegada por battleClock em falta."
+      "note": "Chegada por battleClock (963 04:43:30→04:45, Panzerzug 04:51→04:52), fumo/lanternas e batching integrados via partials; cláusula de visibilidade da lanterna na vista canónica 10 por provar (oclusão real), sem verificação independente."
     },
     "T25": {
       "name": "RAID 05:30",
@@ -265,12 +272,13 @@
     },
     "T26": {
       "name": "SCENE BEATS PRESENTATION",
-      "status": "PARTIAL_IN_CANDIDATE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
       "refs": [
         "PR:#59",
-        "PR:#76"
+        "PR:#76",
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
       ],
-      "note": "Letterbox no HUD; tabela de cues por fazer."
+      "note": "Letterbox/prompt/shake/pausas derivados de scene.elapsed nas quatro cenas (lote partials) integrados; sem verificação independente."
     },
     "T27": {
       "name": "TERRAIN RELIEF",
@@ -344,13 +352,13 @@
     },
     "T34": {
       "name": "STATION YARD LIFE",
-      "status": "PARTIAL_IN_CANDIDATE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
       "refs": [
         "PR:#59",
         "PR:#76",
         "branch:codex/m01-partials-completion-integration-v1@9a1535b"
       ],
-      "note": "Evacuação na candidata; vida do pátio na branch partials (CI vermelho, não integrada)."
+      "note": "Evacuação na candidata; vida do pátio (seis auxiliares só de apresentação, danos reversíveis, fogo finito) do lote partials integrada; sem verificação independente."
     },
     "T35": {
       "name": "ANIM LOCOMOTION RESOLVER",
@@ -365,13 +373,13 @@
     },
     "T36": {
       "name": "ANIM CREWS EVACUATION",
-      "status": "PARTIAL_IN_CANDIDATE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
       "refs": [
         "PR:#59",
         "PR:#76",
         "branch:codex/m01-partials-completion-integration-v1@9a1535b"
       ],
-      "note": "carriedBy na candidata; guarnições na branch partials (CI vermelho)."
+      "note": "carriedBy na candidata; transporte Bąk/Dudek, carregadores MG34 e fases ckm (fire_burst latente, policy disabled) do lote partials integrados; fogo real da ckm continua em T47; sem verificação independente."
     },
     "T37": {
       "name": "ANIM FIDELITY IK",
@@ -408,12 +416,13 @@
     },
     "T41": {
       "name": "BRIDGE FINISH",
-      "status": "IN_CORRECTION",
+      "status": "IN_CANDIDATE_UNVERIFIED",
       "refs": [
         "branch:codex/m01-t14-t41-bridge-finish-v2@fd2b0c7",
-        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b",
+        "PR:#76"
       ],
-      "note": "BLOCKED; CI vermelho. Não integrada."
+      "note": "Código integrado na candidata via partials. Aceitação continua BLOCKED: README da fonte regista verifier/perf FAIL; e0d494e declara correcção de cartões desligados e alocações, sem verifier/perf independentes."
     },
     "T42": {
       "name": "WATER VISTULA",

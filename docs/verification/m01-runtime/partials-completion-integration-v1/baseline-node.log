@@ -1,0 +1,700 @@
+
+> operation-ashen-road@0.2.0 test
+> node --test tests/*.test.js
+
+✖ every asset manifest records author, licence and units, and every asset file is in a manifest (19.200374ms)
+✔ the known-gap list only shrinks: fixed gaps must be removed from it (12.865464ms)
+✔ graph topology: SFX / VOICE / MUSIC buses feed the master limiter, then destination (5.983028ms)
+✔ graph degrades without DynamicsCompressor and ConvolverNode, and never throws (6.848977ms)
+✔ caps: 32 SFX voices (20 on low), VOICE 3, music outside the pool (2.601444ms)
+✔ SFX priority stealing at the cap: lowest priority (oldest first) goes, never an equal or higher one (3.196984ms)
+✔ legacy per-category limits are unchanged: inside a full category an equal priority still replaces the oldest of that category (1.922498ms)
+✔ shrinking to low evicts down to the new cap on the next higher-priority admission (1.102106ms)
+✔ loops count toward the cap but are never stolen (0.220544ms)
+✔ VOICE bus: hard cap 3, priority stealing, independent of the SFX pool (2.557477ms)
+✔ MUSIC runs outside the SFX pool: 4 stems + 1 stinger, unknown slots refused, slots replaced in place (3.252674ms)
+✔ loader: a missing file, an HTTP error or a network failure falls back to synthesis without throwing (5.263829ms)
+✔ loader: decode failure (rejecting or empty buffer) falls back to synthesis; a good decode is used (7.826114ms)
+✔ loader: malformed manifests and unknown ids never throw; synthesis is deterministic (2.041838ms)
+✔ loader: a decode finishing after dispose is dropped (1.264242ms)
+✔ concussion ducks the SFX path only: MUSIC is untouched and VOICE is only touched above 0.6 (2.026784ms)
+✔ at most 2 ConvolverNodes with procedural impulses within the design lengths (56.432105ms)
+✔ impulse responses are generated from a seed: deterministic, finite, decaying, and need no files (7.331296ms)
+✔ allocation is bounded: IR length <= rate * max seconds for any rate or quality, and the fake refuses runaway buffers (199.571455ms)
+✔ regression: a failing assertion on a graph node produces a small message (it once grew past 2 GB) (5.414958ms)
+✔ zone changes crossfade reverb A/B and apply the interior lowpass only inside the station (2.23563ms)
+✔ layout loader: the real audio-layout.json compiles; open is the default zone, surfaces are resolved (0.222677ms)
+✔ layout tie-break: equal priority -> FIRST DECLARED wins (bridge_deck over casemates_west); priority still beats order (1.042286ms)
+✔ layout loader: malformed data falls back to open/earth and never throws (2.07612ms)
+✔ layout and update path are allocation-free in steady state: same objects, no nodes, no automation churn (3.572402ms)
+✔ dispose releases every node (graph, voices, dialogue, music) and the created/disposed audit balances (4.699066ms)
+✔ without an AudioContext every new entry point is an inert no-op (0.182496ms)
+✔ bus volumes (master/sfx/voice/music) are independent gains; the existing master volume still works (1.029276ms)
+✔ audio core never writes simulation state: sources read nothing but plain arguments (1.270722ms)
+✔ emitters: the real mission data compiles; windows, sectors and the display-only casemate ckm are read (3.620965ms)
+✔ emitters: casemate ckm is gated on crew presence / s1 state (the 06:45 window is only the outer bound) (1.012201ms)
+✔ emitters: activeEmitters reuses the caller array (no per-frame allocation) and follows the s1 state (3.534765ms)
+✔ emitters: malformed or missing data never throws and falls back to silence; bad entries drop alone (3.056002ms)
+✔ hardening: invalid caps and options fall back instead of meaning unbounded or throwing (1.052191ms)
+✔ presentation only: the audio core modules import nothing from simulation, game, render or world code (1.416342ms)
+✔ music (T06b): with no music files nothing starts, no synth drone is requested and nothing throws; a real buffer in the store plays (2.021867ms)
+✔ music (T06b): the module is presentation-only (imports constants only) and the gate constants are exported from the package index (0.350851ms)
+✔ occlusion hook (T06b): voices created while it is set are lowpassed and attenuated; null restores the normal path (0.784095ms)
+✔ director probe (T06b): diagnostics.director is null until a probe is registered, plain data when it is, and null again afterwards (0.695411ms)
+✔ planar y becomes scene z; height is independent (1.949307ms)
+✔ horizontal head shot hits, aiming above the head misses (1.094626ms)
+✔ nearest wall shields an enemy; lowering the aim hits terrain (0.482579ms)
+✔ wall around muzzle blocks a clear camera sightline (0.212772ms)
+✔ enemy in cover cannot cause damage through a wall (0.943337ms)
+✔ unreachable destination reports failure and does not move through walls (0.27769ms)
+✔ wall shields blast damage but visible nearby actor takes damage (0.432003ms)
+✔ JSON checkpoint restores actors, reload, grenade, phase, clock and RNG exactly (6.139504ms)
+✔ corrupt and incompatible saves are rejected atomically (1.833663ms)
+✔ death restores the last living checkpoint without reviving defeated enemies (3.126027ms)
+✔ restored simulation reproduces future seeded decisions and events (169.873516ms)
+✔ two independent sectors evolve for 90 seconds with stable losses and unique events (1.121476ms)
+✔ partial fourth reinforcement group activates and visible candidates remain hidden (0.358943ms)
+✔ zero time never advances reload or the battle (0.836235ms)
+✔ weapon enforces cadence, ammo, and reload transfer (1.521801ms)
+✔ world blocks walls and permits open cells (0.75377ms)
+✔ navigation chooses a walkable next tile around cover (12.909441ms)
+✔ mission advances through checkpoint, combat, and radio (0.284941ms)
+✔ shot geometry detects targets on aim line (0.187473ms)
+✔ 3D matrix composition preserves translation and scale (0.346274ms)
+✔ weapon exposes a stable reload animation timeline (0.157208ms)
+✔ enemy selects cover instead of charging directly at player (1.239394ms)
+✔ grenade bounces on walls, warns AI, and applies radial damage (5.386626ms)
+✔ battle director activates reinforcement groups without replacing individual AI (0.492094ms)
+✔ text-only OBJ assets load with meshes, normals, and MTL colors (15.205042ms)
+✔ pointer lock entry and resume ignore cursor warps while later mouse movement works (1.477364ms)
+✔ Ju 87 clones use native LODs, share art, sample the saved clock and follow the stukaPath anchored to the bombing (24.859042ms)
+✔ missing optional Ju 87 art keeps the silhouettes; partial failure uses available detail and disposal prevents attachment (11.32172ms)
+✔ each Ju 87 gets its own light-weight material instances over shared textures, propeller rpm/phase and attitude (11.752482ms)
+✔ Ju 87 fade has no 90 s wrap (the path never loops) and eases in after the planes are heard, deterministically (12.332529ms)
+✔ Ju 87 LOD keeps 10 % hysteresis at thresholds while the quality floor always applies (8.363998ms)
+✔ at fade 0 the selected level (GLB or fallback proxy) stays visible and reported; opacity does the hiding (8.020297ms)
+✔ the entry fade reads the saved planes_heard time of the real simulation (458.216739ms)
+✔ constants agree with the mission data they mirror (1.682694ms)
+✔ every Ju 87 lies on stukaPath at known instants after the bombing event, offset 0/3.5/7 s (6.148657ms)
+✔ the approach comes from the east, then the formation departs east, hides and never repeats (0.397091ms)
+✔ attitude comes from the path tangent: nose down in the dive, heading north then west, east on departure (16.248812ms)
+✔ second raid: one high pass from the raid start, crossing once, then hidden (0.532766ms)
+✔ the anchor is the consumed time of the bombing event: predicted before it, authoritative after; restore reproduces it (783.925634ms)
+✔ bombs appear 1.5 s before each aerial blast and land at the authoritative point at its instant (9.516911ms)
+✔ the predicted blast points mirror the simulation (including the forward-post near miss and the 30 m rule) (2.572991ms)
+✔ simulation never imports the presentation path and no time wrap remains in the aircraft presentation (1.894775ms)
+✔ the view draws a bounded bomb pool from the flights and reports path/bomb diagnostics (6.667542ms)
+✔ the presented Ju 87 yaw is a smooth pure function of time: bounded rate through the pull-out, no NaN, position untouched (371.804519ms)
+✔ schema 2 initializes all 89 IDs; diagnostics are detached, small presentation records (11.474552ms)
+✔ approved T02-min/T03-lite/T25 golden locks the exact integration source and retains historical provenance (0.900532ms)
+✔ all gameplay bytes hashed each tick against approved T02-min/T03-lite/T25 integration: seed 19390901, support false (48679.602759ms)
+✔ all gameplay bytes hashed each tick against approved T02-min/T03-lite/T25 integration: seed 7, support true (44714.601668ms)
+✔ odometer equals accumulated effective XZ displacement, including collision slide; gait is real speed (19.419281ms)
+✔ blocked ADVANCE publishes idle and zero speed instead of commanded speed (1.949316ms)
+✔ direct German spans movement, platoon sprint and crouch walk publish distinct effective gaits (2.096699ms)
+✔ idle bodyYaw follows the shortest arc at 180 degrees/s and preserves combat facing (14.560457ms)
+✔ moving bodyYaw turns at 360 degrees/s; hitboxes and eye geometry still use authoritative facing (1.790706ms)
+✔ pause/invalid dt does not touch timestamps, motion, yaw, RNG, checkpoint or events (3.823098ms)
+✔ real script wounds and demolition deaths have stable timestamps; unseen reserve losses have unknown history (1.871038ms)
+✔ actual grenade damage records only exposed living actors; repeat ticks do not replay impacts (2.290412ms)
+✔ player rifle hit/death and real near-miss suppression stamp only the existing combat outcomes (3.660162ms)
+✔ gait and bodyYaw resume identically at each real CP-A..D, including death recovery (2117.606322ms)
+✔ station grab adapter retains exact data and motion after pause/double restore (649.808992ms)
+✔ station drag adapter retains exact data and motion after pause/double restore (625.005779ms)
+✔ station release adapter retains exact data and motion after pause/double restore (654.084128ms)
+✔ Bąk carry and CKM/MG34 specialized adapters do not lose identity, timestamps or presentation on reload (1263.764689ms)
+✔ legacy 86/89 schema-2 saves initialize without inventing events, mutating input or drawing RNG (857.059134ms)
+✔ optional partial migration preserves present fields byte for byte and defaults only missing fields (3.84413ms)
+✔ corrupt presentation rejects atomically in current state and nested checkpoint (430.33801ms)
+✔ stand to crouch blends skeleton transforms over 0.3 s of sim time instead of cutting between poses (13.652312ms)
+✔ actions are persistent: the same AnimationAction objects serve every transition and none is recreated (9.801563ms)
+✔ death plays the fall over sim time from diedAt, fading out of the live pose; without diedAt it keys on first sight (14.355966ms)
+✔ pause freezes the pose: repeating the same sim time never changes a bone, a weight or the blend record (4.4832ms)
+✔ LOD swap in the middle of a fade keeps the blend and gives identical bone matrices (1.456401ms)
+✔ a reloaded renderer rebuilds posture, death and steady frames to the same bone matrices from sim data alone (21.698512ms)
+✔ locomotion phase follows the saved odometer: the clip advances only as far as the body does (6.503288ms)
+✔ instances leaving range and the whole renderer disposing never use a mixer-wide stop; stale records expire (0.5561ms)
+✔ AnimationPlayer keeps evaluation order identical to the stack order and writes time/weight without touching mixer time (0.502099ms)
+✔ the resolver generic selection mirrors the untouched M01Characters.sample() tail for ordinary soldiers (0.617363ms)
+✔ blend curve is monotonic, symmetric, flat at both ends and weights always sum to one (1.700039ms)
+✔ stand to crouch blends over 0.3 s of sim time without a single hard cut, in both directions (4.503506ms)
+✔ idle, aim, walk, run and pinned switch with short cross-fades; bolt and pinned entry are faster than posture (0.23167ms)
+✔ an authored (exact) clip is never cross-faded: one layer at full weight on both edges (1.424674ms)
+✔ death falls over the sim clock from diedAt, cross-fading from the live pose and landing on the final frame (2.188166ms)
+✔ death without a sim timestamp keys on the sim time the renderer first saw it, or lands on the final pose (1.699929ms)
+✔ reload rebuilds an in-flight posture, death and gait-start fade from sim data alone (5.10768ms)
+✔ same actor data at the same sim time gives identical output; pause (repeated clock) freezes every layer (1.066672ms)
+✔ a retarget in mid-fade (A, B, A) is continuous: no pop, one layer per clip, weights sum to one (1.101455ms)
+✔ foot drift: locomotion phase comes from the odometer so mean planted-foot speed error stays under 0.10 m/s (11.151503ms)
+✔ locomotion helpers: clip from gait, cycle distance from GLB extras, blocked movers go idle after HOLD (0.480597ms)
+✔ a blocked mover fades out of walking instead of sliding in place, and weights stay bounded by the layer cap (1.591936ms)
+✔ layer clip time follows its own rate from sim time and never uses the wall clock (0.124048ms)
+✔ the new presentation modules contain no RNG or wall clock, and nothing stops all actions on the generic path (0.935644ms)
+✔ damage presentation is bounded, frozen at pause, reconstructible and never mutates source state (55.427051ms)
+✔ T25 all six raid smoke columns survive 05:36 with bounded pools and identical pause/reconstruction (34.019774ms)
+✔ music gate truth table: off | stinger-only | layers per event and scene (1.322128ms)
+✔ readout intensity: weighted sectors plus 0.3 per blast within 300 m, capped; missing or malformed readouts give 0 (0.440646ms)
+✔ hysteresis: thresholds are strict, the band between on and off holds, and each layer waits its dwell (0.809473ms)
+✔ hysteresis: noise around the thresholds does not flap (>= 8 s between changes of a layer; band noise changes nothing) (5.526922ms)
+✔ phase caps: INTRO, SETUP and OUTRO stay on the drone; a cap drops higher layers immediately; unknown phases are uncapped (0.200493ms)
+✔ no music files: every decision runs, nothing starts, no node is created and nothing throws (silent, not synth) (10.284383ms)
+✔ real buffers: the drone is always on; layers follow intensity with 4 s fade-ins and 6 s fade-outs (1.925641ms)
+✔ decisions are sampled at 4 Hz: the intensity is only used when a new decision slot opens (1.701221ms)
+✔ gate: the MUSIC gate closes with a 2.5 s fade for silence, reopens afterwards, and stems follow it (1.555731ms)
+✔ stingers: once per run, re-armed only when the event is unconsumed again, never replayed on continue (3.331515ms)
+✔ demolition stingers play into the silence and are cut by it; a stinger that arrives in a silence is skipped (1.491023ms)
+✔ stingers duck the stems 12 dB while they sound, and the stems come back afterwards (0.911638ms)
+✔ ducks on the music bus: -6 dB under a VOICE line, -4 dB for 1.5 s after a near blast (1.476561ms)
+✔ robust: no context, a disposed core, a disposed conductor, non-finite input and a hostile core never throw (3.117682ms)
+✔ presentation-only derivation of weapon, kind and pass (no sim event field is added) (0.196968ms)
+✔ listener zone: the director follows the player through open, bridge and station and only touches the mix on a change (13.267561ms)
+✔ zone occlusion: only a listener inside an interior zone muffles sources outside it (600-900 Hz, -12 dB); open and bridge never do (0.797115ms)
+✔ casemate ckm with real sector states: audible 04:46-06:12 (s1 states), silent from the evacuation (193.308633ms)
+✔ emitters: far emitters use the distant category, timing is slot-based without backlog, and a rewind drops pending bursts (18.290643ms)
+✔ zone occlusion is applied to the director emitter fire and cleared right after (station listener vs open listener) (68.683941ms)
+✔ works with and without battleReadout (T22): the readout drives the layers, the heard intensity and the phase carry the music without it (56.656173ms)
+✔ no per-frame allocation in the director / music update path (steady frames, fresh process, garbage included) (250.047436ms)
+✔ full recruta route: the director only reads (deep read-only view, no RNG access, unchanged snapshots and RNG states) and the route is byte-identical with and without it; casemate gate follows real states (15181.431602ms)
+✔ determinism: two identical runs produce the identical director call log and diagnostics (2691.663152ms)
+✔ segment runs without battleReadout complete cleanly, with the same emitter calls as with it (2275.284491ms)
+✔ stingers re-arm on checkpoint restore: restore before the event plays it again; restore after it does not (828.635052ms)
+✔ reset and dispose: music stops, scheduling is forgotten, diagnostics detach; a non-M01 sim is ignored (4.489795ms)
+✔ events: restore silences the music for 20 s; near blasts dip it; derived kinds are counted (3.216491ms)
+✔ presentation only: director and music sources never touch the RNG, the wall clock or write to simulation state (0.884106ms)
+✔ game.js wiring: optional-chained hooks only, one construction, events after the game sounds (1.763185ms)
+✔ audio variation is deterministic and independent of Math.random (0.95274ms)
+✔ rifle, MG34, RKM, CKM, impacts, near miss and layered explosion remain distinct presentation events (10.949579ms)
+✔ near/mid/far routing lowers gain and bandwidth without changing event identity (2.487359ms)
+✔ voice budget evicts low-priority presentation and never exceeds the hard limit (0.810636ms)
+✔ distant rifle/MG stay low priority and cannot evict more important voices; critical can evict distant (2.692229ms)
+✔ M01 ambience/aircraft loops are unique; train clank only follows a live false-to-true transition (3.217984ms)
+✔ distant battle scheduler is presentation-only, bounded and does not backlog skipped clock slots (1.858199ms)
+✔ audio activity cannot consume or mutate M01 gameplay RNG/snapshot (6.348504ms)
+✔ reset/dispose stop transient and permanent nodes without duplicated loops (0.96606ms)
+✔ every weapon has its own synthesized identity (spectral and mechanical signature) (6.850314ms)
+✔ near/mid/far/very-distant shots change layers continuously: mechanism only near, more echoes and longer tail far (0.473475ms)
+✔ bursts keep the authoritative cadence in one voice; later rounds have shorter tails (5.517629ms)
+✔ bullet crack vs whizz, material impacts and ricochets are distinct and deterministic (3.112284ms)
+✔ explosions scale from grenade to bridge demolition with debris, metal stress, splash and rumble (6.418651ms)
+✔ category limits and the global hard limit hold under a saturated battle (9.182398ms)
+✔ dynamic intensity rises with heard combat, decays on the simulation clock and drives the distant scheduler (23.301496ms)
+✔ distant battle is deterministic, aperiodic and never repeats the same sector+kind back to back (15.735702ms)
+✔ Ju 87 engine layers follow the rendered aircraft path; pull-out siren only on request after a real aerial blast (5.728737ms)
+✔ trains: emitters match rendered placements; arrivals play once per live transition; idle ticks vary (4.471288ms)
+✔ fires: emitters come from presentation state; crackle only near, loop follows the nearest fire (3.38776ms)
+✔ graph: buses, compressor and outdoor reverb exist; voices send to reverb; everything created is disposed (2.688854ms)
+✔ full presentation pass over the complete real M01 route never changes simulation state or RNG (8558.981288ms)
+✔ presentation clock jumps (pause, restore, slow frames) never backlog scheduled one-shots (1.438283ms)
+✔ real MG34 event shape: one-round events from the same gun join one burst voice with burst tails (1.435198ms)
+✔ early releases fade instead of cutting; fading voices leave the budget at once and still dispose cleanly (1.206513ms)
+✔ overlapping ducks keep the deepest cut and the latest release; a near-miss cannot cancel a blast duck (0.951568ms)
+✔ Ju 87 pull-out comes from the nearest rendered Stuka and only while the formation is shown (1.343309ms)
+✔ Doppler acts on the Ju 87 engine during the dive; a restore jump does not glitch the pitch (14.367334ms)
+✔ No Doppler dip around the former 90 s path wrap; INTRO/SETUP stay quiet; fire loop has hysteresis (14.750393ms)
+✔ looped brown noise has no seam; ricochets (not distance) add the whizz; budget and floor bound the graph (20.542113ms)
+✔ V3 visual RNG and lifecycle curves are deterministic and gameplay RNG stays untouched (12.499307ms)
+✔ blast categories remain explicit rather than scale-only aliases (0.394065ms)
+✔ distance and quality reduce secondary density without turning effects off (0.385312ms)
+✔ fade curves stagger endings and never exceed normalized bounds (0.378201ms)
+✔ impact materials have distinct bounded presentation families (0.156396ms)
+✔ approved battlefield pool limits and one-light budget remain byte-explicit (1.263959ms)
+✔ pause/reset/dispose paths keep presentation pools non-authoritative and cleanable (0.956155ms)
+✔ demolition authority and saved state are unchanged by all V3 profile sampling (125.626395ms)
+✔ battlefield FX visual noise is deterministic, bounded and independent from simulation RNG (82.019425ms)
+✔ battlefield FX stays presentation-only with explicit hard pool limits (1.17844ms)
+✔ muzzle presentation telemetry latches only after a rendered muzzle frame and resets without simulation state (0.543552ms)
+✔ successful owned maps bind/disable/quality/restore/dispose, borrowed geometry/material survives (12.730452ms)
+✔ partial and failed optional loads retain genuine original fallback and exact once ownership (3.944649ms)
+✔ hung/late and dispose-during-load cannot install resources and close every late bitmap once (28.221915ms)
+✔ actual 400/800m approach/return uses bounded hysteresis without threshold jitter (1.129035ms)
+✔ hidden/damaged/restore keep original authority and never display an intact far card (0.216968ms)
+✔ original bridge sidecar regenerates exactly, with useful physical channels and bounded tiers (5319.200147ms)
+✔ metre material preserves inherited T31 contact compile/cache and borrowed metadata/resources (1.799669ms)
+✔ existing authored and structural slots map without changing mesh metadata (0.723102ms)
+✔ road uses its own standard metre maps and never consumes shared terrain uniforms or wetness (0.458332ms)
+M01_PORTAL_ASSET_AUDIT {"portal_lisewo_1912.glb":{"meshes":5,"materials":["brick_red","stone_masonry","opening_dark","gate_timber_iron"],"textures":0,"triangles":1996,"nodes":7,"hasNormals":true,"hasUvs":true},"portal_lisewo_1912.lod1.glb":{"meshes":5,"materials":["brick_red","stone_masonry","gate_timber_iron"],"textures":0,"triangles":764,"nodes":7,"hasNormals":true,"hasUvs":true},"portal_lisewo_1912.lod2.glb":{"meshes":5,"materials":["brick_red","stone_masonry","gate_timber_iron"],"textures":0,"triangles":524,"nodes":7,"hasNormals":true,"hasUvs":true}}
+✔ Lisewo portal GLBs and collider authority remain byte-identical to approved production base (1.492014ms)
+✔ portal macro placement, LOD budgets and documented uncertainty remain unchanged (0.732637ms)
+✔ portal binaries keep normals/UVs/material slots without adding texture assets (1.321316ms)
+✔ microdetail stays inside approved portal macro envelopes and scales by quality (0.506345ms)
+✔ portal material/detail lookup cannot consume gameplay RNG or mutate save/colliders (6.490305ms)
+✔ known bridge materials map predictably while unknown material preserves GLB fallback (0.153331ms)
+✔ authored bridge GLBs, manifest and collider authority stay byte-identical (8.707193ms)
+✔ structural detail stays inside each span and support macro envelope in every LOD (77.955201ms)
+✔ walkable decks and both rail loading gauges stay clear of new structure (49.710266ms)
+✔ quality tiers: LOD2 and Low add nothing; High only adds rivets and fishplates; LOD0 > LOD1 (25.43922ms)
+✔ descriptors are deterministic and never touch gameplay RNG, saves or colliders (119.861322ms)
+✔ double-track approach lines up with the bridge tracks and the trains already placed east of Lisewo (0.204859ms)
+✔ runtime attaches to real GLB nodes, swaps only the rail deck primitives by quality and disposes cleanly (279.927996ms)
+✔ M01 GLBs keep nine spans, measured supports and map placement in every LOD (9.377586ms)
+✔ M01 all LODs ship event-linked damage replacements with stable logical IDs (6.210552ms)
+✔ M01 demolition IDs survive LOD changes and JSON restoration; colliders stay removed (22.073066ms)
+✔ M01 road towers remain separate, measured and damage-linked in all LODs (3.129608ms)
+✔ M01 binary exports contain finite positions and unit normals (76.68438ms)
+✔ M01 manifest matches binary counts, current map hash and decreasing LOD budgets (5.277663ms)
+✔ M01 historical uncertainty and modern geometry conflicts remain explicit (5.097401ms)
+✔ all six GLBs have finite skin weights, valid joint indices, embedded textures and decreasing LOD budgets (87.774502ms)
+✔ all twenty-five animation clips bind to real named bones, have monotonic times and finite transforms (19.224119ms)
+✔ the original station drag loops on the existing rig with a locked source and finite transforms (5.570688ms)
+✔ first-person geometry keeps actual GLB arm/hand surfaces and leaves the world uniform unchanged (32.682775ms)
+✔ the actual reload rig keeps the open action, clip and hand in the first-person frustum on both usable LODs (75.576066ms)
+✔ sampling real clock, changing LOD and restoring a copy preserves bone transforms and immutable data (6.483728ms)
+✔ wounded attachment follows its carrier socket and detaches after delivery without changing simulation coordinates (3.794824ms)
+✔ MakeHuman data licence is shipped exactly as locked at its source revision (0.645645ms)
+✔ the station casualty remains grounded while the medic samples the backward drag and its fallback (3.32856ms)
+✔ Kowal and healthy Bąk use their own meshes and muzzle sockets, preserve data and hide the casualty weapon (9.176136ms)
+✔ riflemen finish the bolt after the flash; pinned engineers stop their working hands until the repair resumes (1.195286ms)
+✔ schema 2 legacy 86 roster becomes 89 at the aligned post without changing old actors or RNG (14.599926ms)
+✔ old 89-actor idle placement migrates once and snapshot restore is stable (11.60494ms)
+✔ old 89-actor save immediately after east demolition keeps idle phase/start time while aligning the old post (9.790603ms)
+✔ old 89-actor abandon placement shifts rigidly but preserves phase and startedAt exactly (10.493343ms)
+✔ retreat saves are never translated, including an actor still on an old authored coordinate (8.7139ms)
+✔ casualties stay casualties and post-west saves preserve their saved positions (15.328123ms)
+✔ 86-actor saves after east or west demolition remain safe and do not restart abandon (16.994666ms)
+✔ restore stays atomic when a legacy-position ckm save is invalid (5.845184ms)
+✔ placement migration changes no non-ckm actor or unrelated saved state (5.38489ms)
+✔ new ckm root puts gun_muzzle_flash on the mapped south embrasure x/z (0.819826ms)
+✔ ckm crew is grounded below the deck, leaves after the real event and reaches safety before demolition (4697.951204ms)
+✔ schema 2 accepts exact legacy rosters and migrates atomically without changing old actors or RNG (4573.064135ms)
+✔ real ckm clips and weapon share saved time across pause, reload, casualties and optional fallback (48.064895ms)
+✔ M01 ckm wz.30: metros, +Y, cano para −Z, 1,2 m ±2 %, hierarquia de pivôs e três LODs no orçamento (4.695996ms)
+✔ M01 ckm wz.30: clips da arma animam os nós móveis; rajada de 8 a 600/min; alimentação puxa a ponta e arma duas vezes (2.487999ms)
+✔ M01 ckm wz.30: clips ckm_wz30_* do atirador e do municiador ligam-se ao rig polaco, não repetem nomes e mostram uma só arma (24.376468ms)
+✔ M01 ckm wz.30: LOD0 dentro dos 4000 triângulos sem mudar silhueta, pivôs, sockets, fita nem clips; LOD1, LOD2 e clips intactos (4.986594ms)
+✔ real player-hit presentation is clear, bounded and directional cue stays presentation-only (1.4161ms)
+✔ near miss and close impact react while distant impact stays quiet (0.276648ms)
+✔ multiple real MG34 near rounds accumulate danger but obey every hard cap (0.531293ms)
+✔ near explosion has weight, distant explosion does not create exaggerated feedback (0.272852ms)
+✔ feedback decay is driven only by mission clock, so pause freezes and resume continues without duplication (0.854462ms)
+✔ restart/checkpoint reset clears all transient combat presentation state (0.184188ms)
+✔ quality tiers preserve danger reading while Low stays cheaper and omits exposure flash (0.149716ms)
+✔ combat presentation consumes no gameplay RNG and cannot alter snapshot, aim, position, HP or clocks (7.144125ms)
+✔ actual M01 aerial/demolition/grenade events rebuild identical delayed sound, shake and pull-out metadata from Schema 2 (102.328437ms)
+✔ portal recreate/dispose releases every owned instanced buffer exactly once and preserves shared materials (6.030443ms)
+✔ missing viewmodel renders a repeated first-shot flash after restart even when the first frame is 100 ms late (21.036256ms)
+✔ T02 firing post and shelter route receive real LOS fire with the existing cadence and RNG algorithm (28.46451ms)
+✔ T02 eligibility follows real playable bounds, preserves LOS and excludes the east bridgehead/dike shooters (5.660133ms)
+✔ T02 dialogue 019 follows the actual destruction impact and never the early railway report (7.768579ms)
+✔ T03-lite aerial impacts ground after the safety shift; non-aerial demolition levels stay unchanged (2.699509ms)
+✔ T25 six fixed-time city targets stay outside gameplay and safe, without drawing combat RNG (22.877778ms)
+✔ T25 existing safeImpact replacement remains safe and grounded when a player is beside an estimated target (7.915159ms)
+✔ T25 jump consumes due impacts in order once; pause/double restore resumes identical schedule and RNG (848.0236ms)
+✔ T25 legacy schema-2 pending/active/ended saves load without replaying historical raid impacts (18.037465ms)
+✔ T25 corrupt schedules reject atomically including nested checkpoint, preserving input/live state (200.250656ms)
+✔ the sappers walk to the second cut where the crate is delivered, so "leve a caixa aos sapadores" is true (4875.092945ms)
+✔ Bąk takes the deck position with the 05:30 order and falls at bak_wound_point, in front of the player (1105.096567ms)
+✔ a direction hint names the destination, distance and side when the player does not approach it (85.330304ms)
+✔ once the repair gate is ready the rest of seg_repair runs at readyScale; before that it keeps scale (1.803135ms)
+✔ the full control route still reaches the debrief with every required objective after the fixes (0.171619ms)
+✔ the withdrawing east platoon runs past the firing point during the corridor phase and does not stall at x = -109 (2762.562729ms)
+✔ a Bąk delivered by the player stays visible beside Dudek, who carries him west before the west demolition (1150.4523ms)
+✔ when Dudek retrieves Bąk he walks to him on the deck and carries him to the station, visible all the way (1028.346804ms)
+✔ the roll call positions the present section in the shelter facing Jan; the absent stay away (1118.044631ms)
+✔ Kowal hands over at most six clips of section ammunition; saves keep the ammunition invariant (28.371053ms)
+✔ legacy schema 2 saves receive the unused section supply and can resupply after loading (14.729839ms)
+✔ the bridge trusses contain movement: no falling off a span sideways or into a blown gap; the river bank still can (3.609405ms)
+✔ a Bąk delivered after the east demolition is still evacuated, so the west demolition is not held forever (1072.243668ms)
+✔ real control routes compare covering and ignoring: faster repair, fewer near misses and more survivors with support (8596.60768ms)
+✔ repair suppression requires a round that really arrives within 3 m; a solid wall shields the sappers (266.150847ms)
+✔ inactive or suppressed Germans on the spans cause no withdrawal losses; looking away does not stop combat (989.630178ms)
+✔ casualty IDs and rounds in flight survive reload and checkpoint restore; invalid optional timers are rejected atomically (338.342421ms)
+✔ legacy schema 2 saves migrate and the six reserve slots stay outside the eighteen-man platoon (67.52029ms)
+✔ the air-raid cover instruction remains visible briefly even if the player was already in cover (11.476553ms)
+✔ adjustment warning and HUD identify a real salvo; view direction changes the bearing without changing combat (1941.309321ms)
+✔ a salvo from the dike behind the trusses identifies its actual origin, rather than the visible gate MG (1932.351705ms)
+✔ an occluding wall prevents an adjustment warning and cover reservation, with a bounded retry (274.104055ms)
+✔ saved origin restores as data, expires after eight active seconds, and invalid or legacy saves remain safe (93.683461ms)
+✔ German fire starts on the east bank; only shooters in sight of the west bank (the Lisewo gates) aim at it (1165.429587ms)
+✔ rounds that pass within 3 m pin the sappers and stop the repair; the HUD line is exactly the simulation state (964.459626ms)
+✔ keeping the gate MG down shortens the repair; ignoring it lets the sappers be pinned again and again (8503.498421ms)
+✔ covering fire on the Germans on the spans saves men; without it the platoon falls to the predicted minimum (0.452393ms)
+✔ historical times, checkpoints and demolition safety are unchanged in both routes (0.240593ms)
+✔ rounds in flight survive save and restore and play out identically; corrupt rounds are rejected (594.751237ms)
+✔ after 120 s of continuous suppression the fire on the repair eases without warning until work resumes (1070.468464ms)
+✔ the withdrawal HUD line reports the real count by ID and whether the Germans on the spans are suppressed (2764.463765ms)
+✔ allies under fire are drawn hunched (pinned pose) only while suppressedUntil lasts, without touching the actor (1.463431ms)
+✔ a designated withdrawal casualty needs an actual actor hit; a wall, a miss or an already dead target cannot lower the count (1.565165ms)
+✔ damage decals never write simulation state: the real repair route stays bit-identical with them attached (3319.276155ms)
+✔ damage decal sources stay presentation-only: no RNG, no simulation writes, a single Game hook (2.102466ms)
+✔ marks sit on the drawn receiver with a fixed lift, differ per material and never z-fight (96.791044ms)
+✔ portal wall marks stay on masonry: never across the arch opening or below its apex (1.722773ms)
+✔ the west bridgehead marks the drawn embankment, never the walkable abutment buried under it (63.738865ms)
+✔ mark pools, spall, debris and embers stay within the declared per-quality budget (624.715022ms)
+✔ marks expire on the mission clock and are dropped deterministically when time runs backwards (206.690733ms)
+✔ blast residue lies on drawn surfaces, skips destroyed decks and the station interior, and is deterministic (36.37468ms)
+✔ reset clears every transient mark and the residue rebuilds identically from saved damage; restore follows the save (1477.841873ms)
+✔ marks on a demolished span or a lowered cover are invalidated; marks elsewhere persist (110.096416ms)
+✔ the first frame compiles the decal programs and draws every mesh once invisibly; later frames hide empty meshes (52.248738ms)
+✔ the chip FX batch has instance colours from construction, so the first chip does not switch its program (5.776336ms)
+✔ the decal atlas is original, deterministic art with bounded size (165.240397ms)
+✔ demolition bearing follows the actual impact and player view without changing the event or camera (4773.520341ms)
+✔ demolition cue restores from data, expires on active time, and distinguishes the west blast (234.608958ms)
+✔ collapse duration and the declared presentation constants sit inside the task contract (1.393846ms)
+✔ every demolition node of every LOD maps to its intact twin and to a damage id, from the real manifest (0.347095ms)
+✔ collapse pose: untouched before the blast, full intact offset at age 0, exactly the stored pose from T on (2.893351ms)
+✔ collapse pose is monotonic, gravity-like (ease-in), and the same clock always gives the same pose (4.740102ms)
+✔ view: collapsed nodes are SET from the cached stored transform (never accumulated); pause, replay and restore give the same pose (2.750496ms)
+✔ flash: minimum angular size and duration at 762 m and 362 m; the near-field profile is unchanged (0.804535ms)
+✔ far field: exposure at the light (age 0), tremor at distance/343 s, complementary to the existing 180 m path, inside M01_FEEDBACK_CAPS (4.205154ms)
+✔ far field is a pure function of the clock: pause freezes, a late registration or a restore reproduces the same values; reset clears it (0.39011ms)
+✔ fall points: spans land where the manifest says, splashes only on water (x 25..265), earth elsewhere (0.884296ms)
+✔ debris, splashes, earth rain and dust: timed from the blast, deterministic, bounded by the per-preset budgets (16.358236ms)
+✔ M01Atmosphere draws the set-piece inside its existing pools, deterministically, and ignores non-demolition ids (79.347562ms)
+✔ blast chips and shards have real colour: no vertexColors without a colour attribute (1.126102ms)
+✔ silence hook: a 2 s window from the blast is exported and surfaced in the view diagnostics; the audio module is untouched (0.70791ms)
+✔ presentation only: the simulation never imports the module, the module reads no wall clock/RNG, the view keeps owning visibility from renderState.parts (2.044129ms)
+✔ projectToScreen matches a THREE.PerspectiveCamera for the camera the view reports (1.532946ms)
+✔ far demolition flash: warm colour, stacked billboards and the declared angular size reach beyond 300 m only (1.54192ms)
+✔ the far flash is visible over the horizon haze: footprint of the real puff texture, single old-style billboard vs the stack (52.206219ms)
+✔ earth rain and river splash are legible: bigger clods, more of them, denser puffs, all inside the preset budgets (15.73915ms)
+✔ mission data carries the T23 east-front profiles; the simulation starts with them, validated against its own roster (5.322522ms)
+✔ profiles are validated, defaulted and frozen; malformed authoring data is rejected (0.931658ms)
+✔ displayProfiles reads groups[].displayFire, checks event ids and rejects duplicate ids (0.398172ms)
+✔ displayProfiles checks shooter ids, target ids and target groups against the roster and the mission groups: a typo fails (2.78627ms)
+✔ the display RNG is a separate stream: construction mixes only the seed, restore also mixes the clock tick (4.153055ms)
+✔ display rounds have the gameplay round shape, are frozen, never enter the saved list, and vanish on arrival with nothing happening (6.061428ms)
+✔ a profile fires only between its from and until events (1.372644ms)
+✔ only living, active, free, unsuppressed shooters fire, and a shooter coming back waits for a fresh staggered cooldown (13.56765ms)
+✔ targets: living members of a group, listed ids or a box; no living target means no fire; a fixed origin needs no actor (13.897848ms)
+✔ a fixed origin publishes its latest shot in display.fixed for the renderer; actor shooters publish nothing there (3.456872ms)
+✔ the display stream is deterministic per seed, differs between seeds, and an empty profile list never draws (11.012248ms)
+✔ the module reads a deeply frozen view: it writes nothing to actors or to the view (3.841804ms)
+✔ the cap holds: a burst that does not fit is skipped whole, never truncated (7.501714ms)
+✔ the module cannot reach the main RNG, the world trace, events or the clock by construction (0.77452ms)
+✔ without profiles nothing is drawn and nothing is saved; the getters leave the simulation untouched (99.159461ms)
+✔ battleReadout is computed on every read from existing state, with the designed fields, and is never stored (6.289233ms)
+✔ a restore starts an empty display list re-seeded from the saved state; display fire never changes a save or its continuation (323.214288ms)
+✔ a flood of display rounds, including rounds flying straight over the player, changes nothing in the simulation; the cap holds (800.867834ms)
+✔ positive control: the lockstep comparison detects a display round that leaks into the RNG, an actor or the events (1230.532606ms)
+✔ compareContinuation at 04:47 passes, also with display fire running in the original and none in the restored copy (2104.574362ms)
+✔ route seed 19390901: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (13705.754557ms)
+✔ route seed 1: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (13186.627012ms)
+✔ route seed 2: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (13277.435939ms)
+✔ route seed 3: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (12935.154225ms)
+✔ route seed 4: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (13602.220891ms)
+✔ route seed 5: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (12639.797398ms)
+✔ route seed 6: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (13144.602057ms)
+✔ route seed 7: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (12982.146294ms)
+✔ route seed 8: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (13386.944142ms)
+✔ route seed 9: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (13091.554045ms)
+✔ route seed 10: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (13047.824499ms)
+✔ route seed 11: main RNG, events and state equal a plain simulation every tick with the real east-front profiles and the synthetic ones running (12825.239064ms)
+✔ renderer: gameplay tracers are drawn first when the 48-instance batch is full; display fire takes at most 24 of what is left (5.896686ms)
+✔ renderer: display muzzle flashes last 0.15 s, serve any team, need a living active man, and are not doubled on a gameplay flash (8.194608ms)
+
+Interrupted while running:
+
+⚠ tests/m01-east-front.test.js (tests/m01-east-front.test.js:1:1)
+✖ tests/m01-east-front.test.js (81996.748493ms)
+✖ tests/m01-environment-props.test.js
+✖ tests/m01-environment-quality.test.js
+✖ tests/m01-environment.test.js
+✖ tests/m01-far-landscape.test.js
+✖ tests/m01-field-structures.test.js
+✖ tests/m01-grading.test.js
+✖ tests/m01-hud-presentation.test.js
+✖ tests/m01-impostors.test.js
+✖ tests/m01-ju87-glb.test.js
+✖ tests/m01-lighting.test.js
+✖ tests/m01-locomotive.test.js
+✖ tests/m01-material-atlas.test.js
+✖ tests/m01-material-authority.test.js
+✖ tests/m01-mg34-glb.test.js
+✖ tests/m01-mg34-prone-glb.test.js
+✖ tests/m01-mg34-prone-presentation.test.js
+✖ tests/m01-mg34-prone-runtime.test.js
+✖ tests/m01-mg34-prone-spatial.test.js
+✖ tests/m01-panzerzug.test.js
+✖ tests/m01-player-shot-feedback.test.js
+✖ tests/m01-poses.test.js
+✖ tests/m01-props-kit.test.js
+✖ tests/m01-props-runtime.test.js
+✖ tests/m01-rkm-wz28-glb.test.js
+✖ tests/m01-runtime.test.js
+✖ tests/m01-schema2-determinism.test.js
+✖ tests/m01-simulation-boundary.test.js
+✖ tests/m01-soldier-motion-clips.test.js
+✖ tests/m01-soldier-visual-variation.test.js
+✖ tests/m01-soldiers-glb.test.js
+✖ tests/m01-station-architecture.test.js
+✖ tests/m01-station-drag-runtime.test.js
+✖ tests/m01-station-drag-transitions-glb.test.js
+✖ tests/m01-station-evacuation.test.js
+✖ tests/m01-support-runtime.test.js
+✖ tests/m01-tczew-data.test.js
+✖ tests/m01-terrain-envelope.test.js
+✖ tests/m01-terrain-mask.test.js
+✖ tests/m01-terrain-material.test.js
+✖ tests/m01-terrain-relief.test.js
+✖ tests/m01-terrain-textures.test.js
+✖ tests/m01-track-bed.test.js
+✖ tests/m01-train-consist-polish.test.js
+✖ tests/m01-vegetation-glb.test.js
+✖ tests/m01-vegetation-layout.test.js
+✖ tests/m01-vegetation-lod.test.js
+✖ tests/m01-vegetation-runtime.test.js
+✖ tests/m01-viewmodel-feel.test.js
+✖ tests/m01-wagon-damage-glb.test.js
+✖ tests/m01-wagon-runtime-integration.test.js
+✖ tests/m01-wagons-glb.test.js
+✖ tests/m01-water.test.js
+✖ tests/m01-weapon-presentation.test.js
+✖ tests/m01-wz29-viewmodel.test.js
+✖ tests/m01-yard-wagon-colliders.test.js
+ℹ tests 434
+ℹ suites 0
+ℹ pass 377
+ℹ fail 1
+ℹ cancelled 56
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 456687.957677
+
+✖ failing tests:
+
+test at tests/assets-manifests.test.js:50:1
+✖ every asset manifest records author, licence and units, and every asset file is in a manifest (19.200374ms)
+  AssertionError [ERR_ASSERTION]: New asset without author/licence/units or without a manifest entry. Record them in the manifest (AGENTS.md).
+  + actual - expected
+
+  + [
+  +   'assets/models/provisional/m01/m01-bridges/impostors/manifest.json: author'
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///workspace/COD-guerra/tests/assets-manifests.test.js:53:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'assets/models/provisional/m01/m01-bridges/impostors/manifest.json: author' ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/m01-east-front.test.js:1:1
+✖ tests/m01-east-front.test.js (81996.748493ms)
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-environment-props.test.js:1:1
+✖ tests/m01-environment-props.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-environment-quality.test.js:1:1
+✖ tests/m01-environment-quality.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-environment.test.js:1:1
+✖ tests/m01-environment.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-far-landscape.test.js:1:1
+✖ tests/m01-far-landscape.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-field-structures.test.js:1:1
+✖ tests/m01-field-structures.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-grading.test.js:1:1
+✖ tests/m01-grading.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-hud-presentation.test.js:1:1
+✖ tests/m01-hud-presentation.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-impostors.test.js:1:1
+✖ tests/m01-impostors.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-ju87-glb.test.js:1:1
+✖ tests/m01-ju87-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-lighting.test.js:1:1
+✖ tests/m01-lighting.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-locomotive.test.js:1:1
+✖ tests/m01-locomotive.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-material-atlas.test.js:1:1
+✖ tests/m01-material-atlas.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-material-authority.test.js:1:1
+✖ tests/m01-material-authority.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-mg34-glb.test.js:1:1
+✖ tests/m01-mg34-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-mg34-prone-glb.test.js:1:1
+✖ tests/m01-mg34-prone-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-mg34-prone-presentation.test.js:1:1
+✖ tests/m01-mg34-prone-presentation.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-mg34-prone-runtime.test.js:1:1
+✖ tests/m01-mg34-prone-runtime.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-mg34-prone-spatial.test.js:1:1
+✖ tests/m01-mg34-prone-spatial.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-panzerzug.test.js:1:1
+✖ tests/m01-panzerzug.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-player-shot-feedback.test.js:1:1
+✖ tests/m01-player-shot-feedback.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-poses.test.js:1:1
+✖ tests/m01-poses.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-props-kit.test.js:1:1
+✖ tests/m01-props-kit.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-props-runtime.test.js:1:1
+✖ tests/m01-props-runtime.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-rkm-wz28-glb.test.js:1:1
+✖ tests/m01-rkm-wz28-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-runtime.test.js:1:1
+✖ tests/m01-runtime.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-schema2-determinism.test.js:1:1
+✖ tests/m01-schema2-determinism.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-simulation-boundary.test.js:1:1
+✖ tests/m01-simulation-boundary.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-soldier-motion-clips.test.js:1:1
+✖ tests/m01-soldier-motion-clips.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-soldier-visual-variation.test.js:1:1
+✖ tests/m01-soldier-visual-variation.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-soldiers-glb.test.js:1:1
+✖ tests/m01-soldiers-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-station-architecture.test.js:1:1
+✖ tests/m01-station-architecture.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-station-drag-runtime.test.js:1:1
+✖ tests/m01-station-drag-runtime.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-station-drag-transitions-glb.test.js:1:1
+✖ tests/m01-station-drag-transitions-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-station-evacuation.test.js:1:1
+✖ tests/m01-station-evacuation.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-support-runtime.test.js:1:1
+✖ tests/m01-support-runtime.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-tczew-data.test.js:1:1
+✖ tests/m01-tczew-data.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-terrain-envelope.test.js:1:1
+✖ tests/m01-terrain-envelope.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-terrain-mask.test.js:1:1
+✖ tests/m01-terrain-mask.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-terrain-material.test.js:1:1
+✖ tests/m01-terrain-material.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-terrain-relief.test.js:1:1
+✖ tests/m01-terrain-relief.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-terrain-textures.test.js:1:1
+✖ tests/m01-terrain-textures.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-track-bed.test.js:1:1
+✖ tests/m01-track-bed.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-train-consist-polish.test.js:1:1
+✖ tests/m01-train-consist-polish.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-vegetation-glb.test.js:1:1
+✖ tests/m01-vegetation-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-vegetation-layout.test.js:1:1
+✖ tests/m01-vegetation-layout.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-vegetation-lod.test.js:1:1
+✖ tests/m01-vegetation-lod.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-vegetation-runtime.test.js:1:1
+✖ tests/m01-vegetation-runtime.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-viewmodel-feel.test.js:1:1
+✖ tests/m01-viewmodel-feel.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-wagon-damage-glb.test.js:1:1
+✖ tests/m01-wagon-damage-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-wagon-runtime-integration.test.js:1:1
+✖ tests/m01-wagon-runtime-integration.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-wagons-glb.test.js:1:1
+✖ tests/m01-wagons-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-water.test.js:1:1
+✖ tests/m01-water.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-weapon-presentation.test.js:1:1
+✖ tests/m01-weapon-presentation.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-wz29-viewmodel.test.js:1:1
+✖ tests/m01-wz29-viewmodel.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-yard-wagon-colliders.test.js:1:1
+✖ tests/m01-yard-wagon-colliders.test.js
+  'Promise resolution is still pending but the event loop has already resolved'

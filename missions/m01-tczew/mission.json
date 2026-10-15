@@ -1177,18 +1177,66 @@
       "maxDurationSec": 75,
       "skipEndState": "evt_m01_intro_card consumido; jogador em squad_post com controle; Zieliński e Krawiec no mapa; café servido; mensagem e caneca no inventário de missão",
       "timeline": [
-        { "t": 0.0, "action": "tela preta; áudio: vento, água do Vístula, um apito de manobra distante" },
-        { "t": 3.0, "action": "cartela: TCZEW, POLÔNIA — 1 DE SETEMBRO DE 1939 — 04:30" },
-        { "t": 7.0, "action": "cartela 2: 2.º Batalhão de Fuzileiros · Oddział Wydzielony „Tczew” · Exército „Pomorze”" },
-        { "t": 11.0, "action": "fade-in: Jan sentado no posto; olhar livre; céu azul-escuro, faixa clara a ENE" },
-        { "t": 13.0, "action": "Kowal limpa o rkm; Bąk sopra o café", "line": "dlg_m01_005" },
-        { "t": 18.0, "action": "Zieliński e Krawiec sobre um mapa dobrado à luz de lanterna coberta", "line": "dlg_m01_001" },
-        { "t": 23.0, "line": "dlg_m01_002" },
-        { "t": 28.0, "line": "dlg_m01_006" },
-        { "t": 31.0, "line": "dlg_m01_007" },
-        { "t": 35.0, "action": "Zieliński vem até Jan, entrega papel dobrado e a caneca amassada", "line": "dlg_m01_003" },
-        { "t": 40.0, "line": "dlg_m01_004" },
-        { "t": 44.0, "action": "controle total ao jogador (evt_m01_prelude_start)" }
+        {
+          "t": 0.0,
+          "action": "tela preta; áudio: vento, água do Vístula, um apito de manobra distante"
+        },
+        {
+          "t": 3.0,
+          "action": "cartela: TCZEW, POLÔNIA — 1 DE SETEMBRO DE 1939 — 04:30"
+        },
+        {
+          "t": 7.0,
+          "action": "cartela 2: 2.º Batalhão de Fuzileiros · Oddział Wydzielony „Tczew” · Exército „Pomorze”"
+        },
+        {
+          "t": 11.0,
+          "action": "fade-in: Jan sentado no posto; olhar livre; céu azul-escuro, faixa clara a ENE"
+        },
+        {
+          "t": 13.0,
+          "action": "Kowal limpa o rkm; Bąk sopra o café",
+          "line": "dlg_m01_005"
+        },
+        {
+          "t": 18.0,
+          "action": "Zieliński e Krawiec sobre um mapa dobrado à luz de lanterna coberta",
+          "line": "dlg_m01_001"
+        },
+        {
+          "t": 23.0,
+          "line": "dlg_m01_002"
+        },
+        {
+          "t": 28.0,
+          "line": "dlg_m01_006"
+        },
+        {
+          "t": 31.0,
+          "line": "dlg_m01_007"
+        },
+        {
+          "t": 35.0,
+          "action": "Zieliński vem até Jan, entrega papel dobrado e a caneca amassada",
+          "line": "dlg_m01_003"
+        },
+        {
+          "t": 40.0,
+          "line": "dlg_m01_004"
+        },
+        {
+          "t": 44.0,
+          "action": "controle total ao jogador (evt_m01_prelude_start)"
+        }
+      ],
+      "presentationCues": [
+        {
+          "t": 0,
+          "until": 75,
+          "letterbox": true,
+          "dimHud": 0.35,
+          "lookPrompt": "▲ Posto da secção · mapa e lanterna"
+        }
       ]
     },
     {
@@ -1198,14 +1246,47 @@
       "maxDurationSec": 14,
       "note": "Curta e jogável: o jogador mantém câmera e movimento (reduzido 40% durante o sopro).",
       "timeline": [
-        { "t": 0.0, "action": "sirene de mergulho do primeiro Ju 87, vindo do céu claro (80°)" },
-        { "t": 0.6, "line": "dlg_m01_014" },
-        { "t": 2.1, "action": "primeira bomba (evt_m01_forward_post_bombed): posto avançado ou quase-acerto no rio; onda de choque; zumbido configurável" },
-        { "t": 5.0, "action": "segunda bomba perto de repair_site_1 (evt_m01_nowicki_lost); terra cai sobre a trincheira" },
-        { "t": 8.5, "action": "terceira bomba: pátio da estação; vagão pega fogo" },
-        { "t": 10.0, "line": "dlg_m01_016" },
-        { "t": 12.0, "line": "dlg_m01_015" },
-        { "t": 14.0, "action": "fim do bloqueio parcial; obj_m01_take_cover ativo" }
+        {
+          "t": 0.0,
+          "action": "sirene de mergulho do primeiro Ju 87, vindo do céu claro (80°)"
+        },
+        {
+          "t": 0.6,
+          "line": "dlg_m01_014"
+        },
+        {
+          "t": 2.1,
+          "action": "primeira bomba (evt_m01_forward_post_bombed): posto avançado ou quase-acerto no rio; onda de choque; zumbido configurável"
+        },
+        {
+          "t": 5.0,
+          "action": "segunda bomba perto de repair_site_1 (evt_m01_nowicki_lost); terra cai sobre a trincheira"
+        },
+        {
+          "t": 8.5,
+          "action": "terceira bomba: pátio da estação; vagão pega fogo"
+        },
+        {
+          "t": 10.0,
+          "line": "dlg_m01_016"
+        },
+        {
+          "t": 12.0,
+          "line": "dlg_m01_015"
+        },
+        {
+          "t": 14.0,
+          "action": "fim do bloqueio parcial; obj_m01_take_cover ativo"
+        }
+      ],
+      "presentationCues": [
+        {
+          "t": 0,
+          "until": 14,
+          "letterbox": true,
+          "dimHud": 0.35,
+          "lookPrompt": "▲ ENE · aeronaves sobre a ponte"
+        }
       ]
     },
     {
@@ -1215,10 +1296,31 @@
       "maxDurationSec": 12,
       "note": "Sem perda de controle. Pawlak chega correndo e fala abaixado atrás de cobertura.",
       "timeline": [
-        { "t": 0.0, "action": "Pawlak chega de oeste pela trincheira" },
-        { "t": 1.5, "line": "dlg_m01_033" },
-        { "t": 6.5, "line": "dlg_m01_034" },
-        { "t": 10.0, "action": "ativa obj_m01_hold_access" }
+        {
+          "t": 0.0,
+          "action": "Pawlak chega de oeste pela trincheira"
+        },
+        {
+          "t": 1.5,
+          "line": "dlg_m01_033"
+        },
+        {
+          "t": 6.5,
+          "line": "dlg_m01_034"
+        },
+        {
+          "t": 10.0,
+          "action": "ativa obj_m01_hold_access"
+        }
+      ],
+      "presentationCues": [
+        {
+          "t": 0,
+          "until": 12,
+          "letterbox": true,
+          "dimHud": 0.35,
+          "lookPrompt": "◀ Oeste · mensageiro na trincheira"
+        }
       ]
     },
     {
@@ -1227,17 +1329,71 @@
       "skippable": false,
       "maxDurationSec": 12,
       "timeline": [
-        { "t": -4.0, "action": "apito de sinal dos sapadores (curto, três vezes)" },
-        { "t": -2.0, "line": "dlg_m01_044" },
-        { "t": 0.0, "action": "clarão e coluna de poeira no antigo encontro leste (pilar 6, x ≈ 800); vãos cedem; nenhum som ainda" },
+        {
+          "t": 0,
+          "preRollOnly": true
+        },
+        {
+          "t": 0,
+          "preRollOnly": true
+        },
+        {
+          "t": 0.0,
+          "action": "clarão e coluna de poeira no antigo encontro leste (pilar 6, x ≈ 800); vãos cedem; nenhum som ainda"
+        },
         {
           "t": 2.1,
           "action": "estrondo chega: atraso = distância real até o pilar 6 ÷ 343 m/s, calculado em tempo de execução (C02; ~1,9–2,3 s a partir do tabuleiro); vibração do tabuleiro sob o jogador"
         },
-        { "t": 4.0, "action": "detritos caem no rio a 700–800 m; fumaça cobre o trem 963" },
-        { "t": 6.5, "action": "silêncio de 2 s (mixagem reduz tudo menos vento)" },
-        { "t": 8.5, "line": "dlg_m01_045" },
-        { "t": 10.0, "line": "dlg_m01_046" }
+        {
+          "t": 4.0,
+          "action": "detritos caem no rio a 700–800 m; fumaça cobre o trem 963"
+        },
+        {
+          "t": 6.5,
+          "action": "silêncio de 2 s (mixagem reduz tudo menos vento)"
+        },
+        {
+          "t": 8.5,
+          "line": "dlg_m01_045"
+        },
+        {
+          "t": 10.0,
+          "line": "dlg_m01_046"
+        }
+      ],
+      "preRoll": {
+        "event": "evt_m01_east_demolition",
+        "duration": 4.0,
+        "timeline": [
+          {
+            "t": 0.0,
+            "action": "apito de sinal dos sapadores (curto, três vezes)"
+          },
+          {
+            "t": 2.0,
+            "line": "dlg_m01_044"
+          }
+        ]
+      },
+      "presentationCues": [
+        {
+          "t": 0,
+          "until": 12,
+          "letterbox": true,
+          "dimHud": 0.35,
+          "lookPrompt": "▲ Leste · encontro da ponte"
+        },
+        {
+          "t": 6.5,
+          "until": 8.5,
+          "subtitlePause": true
+        },
+        {
+          "t": 0,
+          "until": 4,
+          "shakeAtSound": true
+        }
       ]
     },
     {
@@ -1246,14 +1402,71 @@
       "skippable": false,
       "maxDurationSec": 15,
       "timeline": [
-        { "t": -6.0, "line": "dlg_m01_051" },
-        { "t": -1.0, "action": "Zieliński abaixa a cabeça de Jan com a mão (se o jogador estiver a até 3 m)" },
-        { "t": 0.0, "action": "detonação a ~210 m: clarão, som quase imediato (0,6 s), onda de pressão, poeira" },
-        { "t": 1.5, "action": "portal oeste e primeiros vãos caem no Vístula; torres do 1.º pilar ficam de pé ou caem conforme P13/P11" },
-        { "t": 5.0, "action": "chuva de terra e pedaços de madeira no abrigo do posto de disparo" },
-        { "t": 8.0, "action": "silêncio, zumbido (opção reduzível), só vento e água" },
-        { "t": 11.0, "line": "dlg_m01_052" },
-        { "t": 14.0, "action": "ativa obj_m01_reach_shelter" }
+        {
+          "t": 0,
+          "preRollOnly": true
+        },
+        {
+          "t": 0,
+          "preRollOnly": true
+        },
+        {
+          "t": 0.0,
+          "action": "detonação a ~210 m: clarão, som quase imediato (0,6 s), onda de pressão, poeira"
+        },
+        {
+          "t": 1.5,
+          "action": "portal oeste e primeiros vãos caem no Vístula; torres do 1.º pilar ficam de pé ou caem conforme P13/P11"
+        },
+        {
+          "t": 5.0,
+          "action": "chuva de terra e pedaços de madeira no abrigo do posto de disparo"
+        },
+        {
+          "t": 8.0,
+          "action": "silêncio, zumbido (opção reduzível), só vento e água"
+        },
+        {
+          "t": 11.0,
+          "line": "dlg_m01_052"
+        },
+        {
+          "t": 14.0,
+          "action": "ativa obj_m01_reach_shelter"
+        }
+      ],
+      "preRoll": {
+        "event": "evt_m01_west_demolition",
+        "duration": 6.0,
+        "timeline": [
+          {
+            "t": 0.0,
+            "line": "dlg_m01_051"
+          },
+          {
+            "t": 5.0,
+            "action": "Zieliński abaixa a cabeça de Jan com a mão (se o jogador estiver a até 3 m)"
+          }
+        ]
+      },
+      "presentationCues": [
+        {
+          "t": 0,
+          "until": 15,
+          "letterbox": true,
+          "dimHud": 0.35,
+          "lookPrompt": "▼ Ponte oeste · cabeça baixa"
+        },
+        {
+          "t": 8,
+          "until": 11,
+          "subtitlePause": true
+        },
+        {
+          "t": 0,
+          "until": 4,
+          "shakeAtSound": true
+        }
       ]
     },
     {
@@ -1263,32 +1476,102 @@
       "maxDurationSec": 110,
       "skipEndState": "flags de continuidade já gravadas; vai direto ao debrief; nenhuma fala ou evento é repetido",
       "timeline": [
-        { "t": 0.0, "action": "fade com cartela 07:05; interior do abrigo; poeira no ar; Jan sentado; olhar livre" },
-        { "t": 3.0, "action": "Kowal passa um cantil; Krawiec, sentado, gira nas mãos a caneca amassada (achada na encosta durante o reparo)" },
-        { "t": 6.0, "line": "dlg_m01_053" },
-        { "t": 8.0, "line": "dlg_m01_054" },
-        { "t": 9.5, "line": "dlg_m01_055" },
-        { "t": 11.0, "line": "dlg_m01_063" },
+        {
+          "t": 0.0,
+          "action": "fade com cartela 07:05; interior do abrigo; poeira no ar; Jan sentado; olhar livre"
+        },
+        {
+          "t": 3.0,
+          "action": "Kowal passa um cantil; Krawiec, sentado, gira nas mãos a caneca amassada (achada na encosta durante o reparo)"
+        },
+        {
+          "t": 6.0,
+          "line": "dlg_m01_053"
+        },
+        {
+          "t": 8.0,
+          "line": "dlg_m01_054"
+        },
+        {
+          "t": 9.5,
+          "line": "dlg_m01_055"
+        },
+        {
+          "t": 11.0,
+          "line": "dlg_m01_063"
+        },
         {
           "t": 12.5,
-          "lineVariants": { "m01.bak_status=rescued_by_player": "dlg_m01_056a", "m01.bak_status=rescued_by_dudek": "dlg_m01_056b", "m01.bak_status=unhurt": "dlg_m01_056c" }
+          "lineVariants": {
+            "m01.bak_status=rescued_by_player": "dlg_m01_056a",
+            "m01.bak_status=rescued_by_dudek": "dlg_m01_056b",
+            "m01.bak_status=unhurt": "dlg_m01_056c"
+          }
         },
-        { "t": 18.0, "line": "dlg_m01_064" },
+        {
+          "t": 18.0,
+          "line": "dlg_m01_064"
+        },
         {
           "t": 19.5,
-          "lineVariants": { "m01.dudek_status=unhurt": "dlg_m01_057a", "m01.dudek_status=wounded_arm": "dlg_m01_057b" }
+          "lineVariants": {
+            "m01.dudek_status=unhurt": "dlg_m01_057a",
+            "m01.dudek_status=wounded_arm": "dlg_m01_057b"
+          }
         },
-        { "t": 24.0, "line": "dlg_m01_065" },
-        { "t": 25.5, "line": "dlg_m01_058" },
-        { "t": 28.0, "line": "dlg_m01_059" },
-        { "t": 31.0, "action": "silêncio de 4 s; ninguém responde" },
-        { "t": 35.0, "line": "dlg_m01_059" },
-        { "t": 38.0, "action": "silêncio de 3 s; câmera livre; a caneca está na mão de Krawiec, que não levanta os olhos" },
-        { "t": 41.0, "line": "dlg_m01_060" },
-        { "t": 48.0, "action": "tiros distantes ao norte (evt_m01_kozliny_attack_distant)" },
-        { "t": 50.0, "line": "dlg_m01_061" },
-        { "t": 54.0, "line": "dlg_m01_062" },
-        { "t": 60.0, "action": "fade para o debrief" }
+        {
+          "t": 24.0,
+          "line": "dlg_m01_065"
+        },
+        {
+          "t": 25.5,
+          "line": "dlg_m01_058"
+        },
+        {
+          "t": 28.0,
+          "line": "dlg_m01_059"
+        },
+        {
+          "t": 31.0,
+          "action": "silêncio de 4 s; ninguém responde"
+        },
+        {
+          "t": 35.0,
+          "line": "dlg_m01_059"
+        },
+        {
+          "t": 38.0,
+          "action": "silêncio de 3 s; câmera livre; a caneca está na mão de Krawiec, que não levanta os olhos"
+        },
+        {
+          "t": 41.0,
+          "line": "dlg_m01_060"
+        },
+        {
+          "t": 48.0,
+          "action": "tiros distantes ao norte (evt_m01_kozliny_attack_distant)"
+        },
+        {
+          "t": 50.0,
+          "line": "dlg_m01_061"
+        },
+        {
+          "t": 54.0,
+          "line": "dlg_m01_062"
+        },
+        {
+          "t": 60.0,
+          "action": "fade para o debrief"
+        }
+      ],
+      "presentationCues": [
+        {
+          "t": 0,
+          "until": 110,
+          "letterbox": true,
+          "dimHud": 0.35,
+          "lookPrompt": "▲ Chamada no abrigo"
+        }
       ]
     }
   ],
@@ -1640,5 +1923,59 @@
       },
       { "id": "db_07", "enabled": true, "text": "Jan Wrona, Marek Zieliński, Paweł Krawiec e os demais membros da secção são personagens fictícios." }
     ]
+  },
+  "continuityCues": [
+    {
+      "from": "04:46:00",
+      "until": "05:30:00",
+      "intervalSec": 55,
+      "kind": "repair",
+      "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
+    },
+    {
+      "from": "05:30:00",
+      "until": "06:00:00",
+      "intervalSec": 55,
+      "kind": "hold",
+      "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+    },
+    {
+      "from": "06:00:00",
+      "until": "06:10:00",
+      "intervalSec": 45,
+      "kind": "withdrawal",
+      "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens."
+    },
+    {
+      "from": "06:10:00",
+      "until": "06:45:00",
+      "intervalSec": 55,
+      "kind": "corridor",
+      "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+    }
+  ],
+  "yardLife": {
+    "certainty": "GAMEPLAY_DRAMATIZATION",
+    "actors": [
+      "yard_railway_0",
+      "yard_railway_1",
+      "yard_orderly",
+      "yard_patient",
+      "yard_aid",
+      "yard_cart"
+    ],
+    "tasks": [
+      "clean_weapon",
+      "coffee",
+      "map",
+      "patrol",
+      "guard_change",
+      "watch_bridge"
+    ],
+    "corridorExcluded": {
+      "minZ": 27,
+      "maxZ": 42
+    },
+    "lanterns": true
   }
 }

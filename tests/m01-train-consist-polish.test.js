@@ -62,25 +62,27 @@ test('consist keeps 65 wagons, plan ids/types/x and the plan anchor; LOD hystere
   assert.deepEqual(['high','medium','low'].map(q=>[0,1,2,null].map(l=>m01DetailTier(l,q))),[[0,1,2,null],[0,1,2,null],[1,2,2,null]]);
 });
 
-test('real GLB instances keep plan x/z, sit on the rail-top offset and stay in the original LOD batches',async()=>{
+test('real GLB instances keep plan x/z, sit on the rail-top offset and retain exact final transforms with material-preserving far batches',async()=>{
   const f=fixture(new Assets(await realSources()));
   try{
     await f.train.load();f.train.update({x:1090,z:-2.5},'high');const d=f.train.diagnostics;
     assert.equal(d.wagons,65);assert.equal(d.proxies,0);assert.deepEqual(d.first,[1090,0,-2.5]);assert.deepEqual(d.last,[1672.4,0,-2.5]);assert.equal(d.artOffsetY,-.8325);
-    assert.equal(d.batches,24,'5 covered + 3 open nodes per LOD; no extra GLB batches');
+    assert.equal(f.train.proxyBody.visible,false);assert.equal(f.train.proxyWheels.visible,false);
+    assert.equal(d.batches,18,'LOD0/1 retain8 nodes each; LOD2 merges identical-material covered/open nodes to2');
     for(const lod of [0,1,2])assert.ok(d.lodDistribution[lod]>0);
     const byX=new Map(M01_TRAIN_WAGON_PLAN.map(w=>[w.x.toFixed(4),w])),seen=new Set(),p=new THREE.Vector3(),q=new THREE.Quaternion(),s=new THREE.Vector3();
-    for(const batch of f.train.batches.filter(b=>b.name.endsWith('_body'))){
+    for(const batch of f.train.batches.filter(b=>b.name.endsWith('_body')||b.name.endsWith('_authored_far_stock_batch'))){
       const type=batch.name.split('_')[1],lod=batch.userData.lod;
       for(const m of instanceMatrices(batch)){
         m.decompose(p,q,s);const w=byX.get(p.x.toFixed(4));assert.ok(w,`plan x ${p.x}`);assert.equal(w.type,type);assert.equal(f.train.lods.get(w.id),lod);
         assert.ok(Math.abs(p.y-M01_TRAIN_ART_OFFSET_Y)<1e-6&&Math.abs(p.z+2.5)<1e-6);seen.add(w.id);   // float32 instance buffer
         const node=real[`${type}:${lod}`].scene.getObjectByName('body');node.updateWorldMatrix(true,false);
-        const art=m01WagonArtMatrix(w).multiply(node.matrixWorld).elements;assert.ok(m.elements.every((e,k)=>Math.abs(e-art[k])<(k===12?3e-4:1e-6)),'instance = wagon art matrix × GLB node (float32 x≈1.6 km)');
+        const art=(lod===2?m01WagonArtMatrix(w):m01WagonArtMatrix(w).multiply(node.matrixWorld)).elements;assert.ok(m.elements.every((e,k)=>Math.abs(e-art[k])<(k===12?3e-4:1e-6)),'instance = wagon art matrix × GLB node (float32 x≈1.6 km)');
         const yaw=new THREE.Euler().setFromQuaternion(q,'YXZ').y;assert.ok(Math.abs(Math.abs(yaw)-Math.PI/2)<1e-6);
         assert.ok(Math.abs(s.x-1)+Math.abs(s.y-1)+Math.abs(s.z-1)<1e-9,'no scale');
       }
-      assert.ok(batch.geometry===real[`${type}:${lod}`].scene.getObjectByName('body').geometry,'shared GLB geometry');
+      if(lod<2)assert.ok(batch.geometry===real[`${type}:${lod}`].scene.getObjectByName('body').geometry,'near/mid shared GLB geometry');
+      else{assert.ok(batch.geometry!==real[`${type}:${lod}`].scene.getObjectByName('body').geometry,'far owns baked copy; independent full attribute equality in m01-partials-completion');let count=0;real[`${type}:${lod}`].scene.traverse(n=>{if(n.isMesh)count+=n.geometry.index?.count??n.geometry.attributes.position.count;});assert.equal(batch.geometry.attributes.position.count,count);}
       assert.ok(batch.material===real[`${type}:${lod}`].scene.getObjectByName('body').material,'shared GLB material');
     }
     assert.equal(seen.size,65);
@@ -155,7 +157,8 @@ test('every detail batch matches the tier of the drawn LOD; near/mid sets vanish
       if(x>=2500||x<=440){assert.equal(n.midFrame+n.midGap+n.shade,0,'all LOD2: no mid set or contact shade');assert.equal(trackDetail,false);}
       // Real submissions of the whole train group against the approved base renderer at the same view.
       const now=submitted(f.train.group),was=submitted(bf.group);
-      assert.equal(f.train.diagnostics.batches,bf.diagnostics.batches,'same GLB batches as base');
+      const farTypes=new Set(plan.filter(w=>f.train.lods.get(w.id)===2).map(w=>w.type)),savedCalls=[...farTypes].reduce((n,type)=>n+(type==='covered'?4:2),0);
+      assert.equal(f.train.diagnostics.batches,bf.diagnostics.batches-savedCalls,'exact authorized far-node batching reduction; final placements still read back above');
       // Each GLB instance carries its wagon's own tone.
       for(const batch of f.train.batches){const byX=new Map(plan.map(w=>[w.x.toFixed(3),w])),c=new THREE.Color();
         for(let i=0;i<batch.count;i++){const m=new THREE.Matrix4();batch.getMatrixAt(i,m);const w=[...byX.values()].find(w=>Math.abs(w.x-new THREE.Vector3().setFromMatrixPosition(m).x)<2.6);
@@ -164,7 +167,7 @@ test('every detail batch matches the tier of the drawn LOD; near/mid sets vanish
       // Shadow map: only the LOD0 GLB batches (≤ 5 covered + 3 open nodes) on Medium/High; nothing on Low or in the base.
       assert.equal(was.shadows,0);assert.equal(now.shadows,f.train.diagnostics.shadowCasters);
       assert.ok(quality==='low'?now.shadows===0:now.shadows<=8,`${quality}@${x}: ${now.shadows} shadow casters`);
-      if(x<=440)assert.equal(now.draws-was.draws,2,'playable area: only ballast + far buffer silhouettes');
+      if(x<=440)assert.equal(now.draws-was.draws,-4,'playable area: six saved far-node submissions plus unchanged ballast/buffer submissions');
       assert.equal(f.train.detail.group.children.length,11,'8 tier batches + ballast, rails, sleepers; never per wagon');
     }
   }finally{f.close();bf.dispose();}
@@ -291,6 +294,14 @@ test('original Claude train source changes only its renderer and adds detail, wi
   ];
   for(const p of changes){let current=readFileSync(new URL('../'+p,import.meta.url),'utf8');
     if(p.endsWith('m01-train-consist-detail.js'))for(const [integration,original]of ownershipDeltas){assert.equal(current.split(integration).length,2,'ownership integration appears exactly once');current=current.replace(integration,original);}
+    // T24 only: far-node material-preserving batching. Independent real-GLB attribute
+    // equality and all65 final instance matrices above guard this approved submission reduction.
+    if(p.endsWith('m01-train-wagons.js'))for(const [integration,original]of [
+      ["import {batchFarWagon} from './m01-train-batching.js';\n",''],
+      ['this.sources.set(key(type,lod),lod===2?batchFarWagon(source):source);','this.sources.set(key(type,lod),source);'],
+      ['for(const s of this.sources.values())for(const g of s.ownedBatchGeometries??[])g.dispose();',''],
+      ['b.visible=missing>0;','']
+    ]){assert.equal(current.split(integration).length,2,'T24 exact bounded integration appears once');current=current.replace(integration,original);}
     assert.equal(current,execFileSync('git',['show',`${SOURCE}:${p}`],{maxBuffer:64*1024*1024,encoding:'utf8'}),p);
   }
 });

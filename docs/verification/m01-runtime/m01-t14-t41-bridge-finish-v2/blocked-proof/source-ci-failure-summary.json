@@ -1,0 +1,24 @@
+{
+  "sourceHead": "b36ad7470ce977deeecab1ae193e51592d4aaf72",
+  "runId": 38528756419,
+  "jobId": 115735279060,
+  "conclusion": "failure",
+  "counts": {
+    "tests": "686",
+    "pass": "685",
+    "fail": "1",
+    "cancelled": "0",
+    "skipped": "0",
+    "todo": "0",
+    "duration_ms": "210384.609478"
+  },
+  "failure": "New impostor manifest missing required author field",
+  "generator": "tools/assets/m01-bridges/impostors/generate.mjs",
+  "manifest": "assets/models/provisional/m01/m01-bridges/impostors/manifest.json",
+  "rawLog": "runtime/source-normal-ci-job-mcp.log",
+  "fixBudget": 3,
+  "fixAttemptsUsed": 3,
+  "proposedPatchOnly": "runtime/proposed-author-only-fix.patch",
+  "applied": false,
+  "normalToolingAndBuild": "SKIPPED by CI because npm test failed; not claimedPASS"
+}

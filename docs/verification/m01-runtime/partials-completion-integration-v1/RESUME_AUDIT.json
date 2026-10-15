@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "at": "2026-10-15T08:53:00Z",
+  "sameRun": true,
+  "head": "bc8f6a21a57ccd926d4e0655481908d90d6b1978",
+  "branch": "codex/m01-partials-completion-integration-v1",
+  "remoteTarget": "8a0c3622f5375f2c5b5e847db71f4f6e8352ae39",
+  "remoteMain": "3a3b3ff7b276ed7a8bfa48b4c1a355ef1de11c81",
+  "resumedBy": "explicit user Continua",
+  "interruption": "environment replacement: workspace edits and persisted test-results survive; /tmp logs and old agents/processes do not",
+  "missingLogs": "Never reconstruct or claim a missing final /tmp log passed. Persisted golden and audit metadata are candidates; independently reproduce.",
+  "knownFailure": "train lampPixels=0 at1004m on old build; anchor -8.65m fix present, needs actual browser proof",
+  "recoveryTool": "JSON contract unsupported by regex-only recovery reader; exact YAML serialization under run dir used for dry-run only; same budget3 unchanged.",
+  "resumeChecks": {
+    "protectedSandbox": "git diff against529e7de clean",
+    "ancestorTarget": "8a0c362 remains ancestor",
+    "githubActor": "Brawl2007",
+    "retryState": "same graph; implementation attempt1; verifier corrections0; original bridge attempt history retained"
+  }
+}

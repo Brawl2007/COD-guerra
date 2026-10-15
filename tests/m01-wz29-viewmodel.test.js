@@ -11,6 +11,7 @@ import {Wz29} from '../src/game/wz29.js';
 import {muzzlePosition,actorHitboxes} from '../src/world/spatial.js';
 import {viewModelFixture,geometryReport,readCharacterGLB} from './helpers/m01-viewmodel-fixture.js';
 import {alignmentReport} from '../tools/verification/m01-wz29-viewmodel-audit.mjs';
+import {spatialWithoutPartialsDelta} from './helpers/m01-spatial-partials-delta.js';
 
 const make=characters=>new M01ViewModel(new THREE.Scene(),characters,new THREE.Texture());
 const data=()=>({clock:10,player:{aiming:true,moveBlend:0,sprinting:false},weapon:new Wz29(),renderState:{weaponVisible:true}});
@@ -41,6 +42,10 @@ test('integration keeps Wz29/muzzle/hitboxes/RNG bytes and locks the approved si
       // m01-animation-contract.test.js compares all legacy state/checkpoint/event bytes on every route tick.
       const baseline=JSON.parse(readFileSync(new URL('./fixtures/m01-anim-gameplay-baseline.json',import.meta.url)));
       assert.equal(baseline.base,'61ecd77b099d5921bd025275eafd9c3157536bb7');assert.equal(baseline.sourceSha256,hash,path);
+    }else if(path==='src/world/spatial.js'){
+      // Partials T07 (generic prone geometry/eye/hitboxes) and T36 (MG34 reload curve sample) are the only approved deltas.
+      // Revert exactly those strings, each found once, and every other byte must still hash to the protected original.
+      assert.equal(createHash('sha256').update(spatialWithoutPartialsDelta(readFileSync(new URL('../'+path,import.meta.url),'utf8'))).digest('hex'),hash,path);
     }else assert.equal(createHash('sha256').update(readFileSync(new URL('../'+path,import.meta.url))).digest('hex'),hash,path);
   }
 });

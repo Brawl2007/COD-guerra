@@ -1,0 +1,128 @@
+{
+  "T02": {
+    "definition": "`M01-SCRIPT-DATA-CONTINUITY-FIX-V1`",
+    "requirements": [
+      "**Objectivo:** eliminar os buracos de ritmo e as contradições de diálogo que vêm dos dados e de uma condição espacial.",
+      "**Scope:** condição `west` em `m01-simulation.js:465` passa a cobrir o posto de disparo e a rota até ao abrigo (sem mudar cadências); re-timing de `dlg_m01_018/019/038/048/049/051`; beats com `t` negativo convertidos em pré-roll explícito; registo em `ENGINE_CONTRACT.md`.",
+      "**Ficheiros:** `src/game/m01-simulation.js` (condição e leitura de beats), `missions/m01-tczew/mission.json`, `tests/m01-runtime.test.js`, `tests/m01-cover-threat.test.js`, `tests/m01-tczew-data.test.js`.",
+      "**Não alterar:** cadências de fogo, dano, supressão, gates, CP-A..D, RNG, schema.",
+      "**Aceitação:** no posto de disparo durante a retirada há fogo alemão com a cadência já afinada; nenhuma janela >60 s sem acontecimento entre 04:46 e 06:45 na rota automática; falas na ordem do roteiro; 019 nunca antes da bomba.",
+      "**Verificação:** `tools/verify-m01-route.mjs` com tempos por fase; `tools/m01-cover-comparison.mjs` (12 sementes, invariantes iguais); `compareContinuation` nos instantes alterados; saves antigos válidos.",
+      "**Modelo/esforço:** GPT-6.1 Sol · HIGH. **Depende de:** —."
+    ]
+  },
+  "T03": {
+    "definition": "`M01-BLAST-DATA-GROUNDING-V1`",
+    "requirements": [
+      "**Objectivo:** bombas e granadas com dados coerentes com o terreno e com o fumo que o roteiro pede.",
+      "**Scope:** bomba do posto avançado (`y:-10`) e `raid_0530` (`y:0`) ancoradas à altura do terreno no ponto (`heightAt`), mantendo x/z e o instante; registos de granada em `sectors.damage` marcados como fumo efémero (≤20 s) ou sem fumo persistente; validador aceita o campo.",
+      "**Ficheiros:** `missions/m01-tczew/mission.json`, `src/game/m01-simulation.js` (`impact`), `src/game/grenade.js`, testes de dados/runtime.",
+      "**Não alterar:** raio de dano, `safeImpact`, instantes, IDs.",
+      "**Aceitação:** os três pontos de explosão ficam a ≤0,2 m do terreno; granadas não deixam colunas de 240 s; saves antigos com registos de granada continuam válidos (fumo cai para o novo limite).",
+      "**Verificação:** teste de dados; continuação às 04:34:30 e após uma granada com `smokePuffs` por registo; A/B de futuros.",
+      "**Modelo/esforço:** GPT-6.1 Sol · MEDIUM. **Depende de:** —. Mesmo lane que T02 (sequenciar)."
+    ]
+  },
+  "T05": {
+    "definition": "`M01-AUDIO-DATA-FIELDS-V1` (= plano de áudio T0)",
+    "requirements": [
+      "**Objectivo:** os campos de dados que o áudio precisa, sem comportamento novo.",
+      "**Scope:** `npc-shot.weapon`, `m01-blast.kind`, `round-impact.pass`; `audioEmitters` com `activeFrom/Until` (incl. ckm da casamata como dramatização); `audioZones` e `surfaces` em `map-layout.json`; `ENGINE_CONTRACT.md`.",
+      "**Ficheiros:** `src/game/m01-simulation.js`, `src/game/m01-fire.js`, `missions/m01-tczew/mission.json`, `map-layout.json`, testes de dados/runtime.",
+      "**Não alterar:** schema do save (nenhum campo novo no snapshot), cadências, dano.",
+      "**Aceitação:** eventos com os campos; validador aceita/exige; snapshots antigos válidos; hash da layout nas pontes actualizado de forma controlada (`tests/m01-bridges-glb.test.js`).",
+      "**Verificação:** `npm test`; A/B de futuros.",
+      "**Modelo/esforço:** GPT-6.1 Sol · MEDIUM. **Depende de:** —. Mesmo lane que T02/T03."
+    ]
+  },
+  "T06": {
+    "definition": "`M01-AUDIO-CORE-V1` (= plano de áudio T1 + T2)",
+    "requirements": [
+      "**Objectivo:** núcleo Web Audio de produção com fallback para a síntese actual.",
+      "**Scope:** `src/core/audio/` (contexto, buses, limiter, duck, reverb sintética, pool com prioridades e steal, atenuação por família, scheduler em `sim.clock`, manifesto por patamar, `presentation-random`, `synth-fallback` sem `Math.random`); `src/game/audio-director-m01.js`; `src/core/audio.js` mantém a API da bancada.",
+      "**Ficheiros:** novos acima + bridge mínimo em `src/game/game.js`.",
+      "**Não alterar:** som/comportamento da bancada francesa; nenhuma leitura de `sim.rng`.",
+      "**Aceitação:** testes Node com `FakeAudioContext` (atenuação, steal, determinismo, loops por fase, fallback); todo `enemy-fire` produz pedido com atraso `d/343`; `dropped` <2 % na retirada com 32 vozes; o jogo nunca fica mudo.",
+      "**Verificação:** `tests/audio-core.test.js`, `tests/m01-audio-director.test.js`; spec de navegador com `gameDiagnostics().audio` (estado, vozes, erros 0).",
+      "**Modelo/esforço:** Claude Code · HIGH. **Depende de:** T05 (campos; pode começar com stubs)."
+    ]
+  },
+  "T07": {
+    "definition": "`M01-ANIM-CONTRACT-SIM-V1` (= plano de animação TASK A)",
+    "requirements": [
+      "**Objectivo:** contrato de apresentação por actor na simulação (`motion`, `bodyYaw`, `posture/postureSince`, `suppressedAt`, `hitAt/hitYaw`, `diedAt/deathYaw`, `reload`, `cover`, `carry`).",
+      "**Scope:** Anexo A do plano; um ponto de escrita no fim de `updateActors`; validação atómica; defaults para saves antigos; hitboxes para `posture='prone'`.",
+      "**Ficheiros:** `src/game/m01-simulation.js`, `src/world/spatial.js` (só prone), testes de contrato/determinismo, `ENGINE_CONTRACT.md`.",
+      "**Não alterar:** renderer, clips, combate, gates, CP-A..D, mapa; velocidade de transporte de Bąk só com decisão do Captain (Anexo B).",
+      "**Aceitação:** I1, I9, I10, I15 do plano provados; `tests/m01-schema2-determinism.test.js` verde; rotas completas com resultados iguais.",
+      "**Verificação:** `compareContinuation` durante marcha/giro/flinch/morte/recarga; corrupção; legacy.",
+      "**Modelo/esforço:** GPT-6.1 Sol · HIGH. **Depende de:** —. Mesmo lane que T02/T03/T05 (sequenciar)."
+    ]
+  },
+  "T14": {
+    "definition": "`M01-BRIDGE-MATERIAL-KIT-V2`",
+    "requirements": [
+      "**Objectivo:** materiais de produção para treliças, portais e tabuleiro, sem tocar na geometria nem nos colisores.",
+      "**Scope:** regenerar o kit de pontes com aço pintado/ferrugem (roughness variável, rebites em normal, AO), tijolo dessaturado com argamassa + soco/cornijas/aduelas de pedra + fuligem, superfície do tabuleiro rodoviário (cubos/pranchas) e ferroviário, guardas; versão Low; manifesto.",
+      "**Ficheiros:** `tools/assets/m01-bridges/**`, `assets/models/**/m01-bridges/**`, `docs/assets/m01-bridges/`, `tests/m01-bridges-glb.test.js` (orçamentos), `src/render/m01-bridge-portal-polish.js` só se um material o exigir.",
+      "**Não alterar:** geometria, colisores, `map-layout.json`, `renderState.parts`.",
+      "**Aceitação:** hash da layout igual; colisores `--check` verde; capturas 04/12/13 às 04:30 e 06:10 sem aço preto nem tijolo saturado.",
+      "**Modelo/esforço:** Claude Code · HIGH. **Depende de:** T09."
+    ]
+  },
+  "T24": {
+    "definition": "`M01-TRAIN-ARRIVAL-AND-LIFE-V1` (= BX-07 + pass ferroviário D3, re-baseado)",
+    "requirements": [
+      "**Objectivo:** o trem 963 e o Panzerzug chegam, fumegam, acendem e soam.",
+      "**Scope:** passo 1: re-basear `docs/railway/*` no HEAD (o que já existe) e fechar D1–D10 (Anexo B); passo 2: chegada por `battleClock` antes do flag (04:43:30→04:45, 04:51→04:52) com paragem exacta na posição autoritativa, lâmpada frontal `fog:false`, fumo de carvão/vapor no pool com tectos (12/18/24), coluna do Panzerzug, sons `veh.train.*` com atraso; \"manobra parada\" a oeste.",
+      "**Ficheiros:** `src/render/m01-locomotive.js`, `m01-panzerzug.js`, `m01-train-wagons.js` (deslocamento de chegada), `m01-atmosphere.js` (emissores), `docs/railway/*`.",
+      "**Não alterar:** composição (65 vagões, posições finais), horários, `renderState`, colisores.",
+      "**Aceitação:** `trainX(battleClock)` monótono e com paragem exacta; `tests/m01-train-consist-polish.test.js` continua a comparar as posições finais com a base; continuações às 04:44:30 e 04:46; vista 10 com fumo e lâmpada a 1 km; draw calls ferroviários ≤12.",
+      "**Modelo/esforço:** Claude Code · HIGH. **Depende de:** T15; T06 (sons, opcional)."
+    ]
+  },
+  "T26": {
+    "definition": "`M01-SCENE-BEATS-PRESENTATION-V1`",
+    "requirements": [
+      "**Objectivo:** os beats `action` das cutscenes passam a cues de apresentação (sem rodar a câmara).",
+      "**Scope:** tabela de cues por beat em `mission.json` (campo só de apresentação: letterbox, escurecer HUD, prompt de olhar com rumo, tremor ao chegar o som, pausa de legendas), lidas por `m01-hud.js`/`game.js` a partir de `scene.elapsed`; beats com `t` negativo já corrigidos por T02; tarefas de NPC por beat ficam em T34.",
+      "**Ficheiros:** `src/ui/m01-hud.js`, `src/game/game.js`, `missions/m01-tczew/mission.json` (cues), testes/spec.",
+      "**Não alterar:** `m01-simulation.js` (os beats `action` continuam sem efeito de gameplay), câmara.",
+      "**Aceitação:** cada cutscene tem pelo menos letterbox + um cue visível; pausa congela; capturas das quatro cenas livres.",
+      "**Modelo/esforço:** Claude Code · MEDIUM. **Depende de:** T04, T02."
+    ]
+  },
+  "T34": {
+    "definition": "`M01-STATION-YARD-LIFE-V1` (= BX-08 + BX-11 + BX-12 parte da estação)",
+    "requirements": [
+      "**Objectivo:** o pátio e a secção têm vida antes, durante e depois do bombardeio.",
+      "**Scope:** engine: actores novos (ferroviários com lanternas, padioleiro/ferido, socorrista, carroça), tarefas por hora (`task` novos: `clean_weapon`, `coffee`, `map`, `patrol`, `guard_change`, `watch_bridge`), validador e migração; apresentação: lanternas, vagão a arder/queimado por idade do evento, fuligem/vidros na estação, poses por tarefa.",
+      "**Ficheiros:** `src/game/m01-simulation.js`, `mission.json`, `src/render/m01-yard-wagons.js`, `m01-environment.js` (estação, depois de V3), `m01-characters.js` (poses por tarefa, depois de Variação V2).",
+      "**Não alterar:** corredor do pelotão, `firing_point`/`shelter`, combate.",
+      "**Aceitação:** posições previstas em horas-chave; nunca no corredor; 90 s de independência; capturas 04:36 e 05:41.",
+      "**Modelo/esforço:** GPT-6.1 Sol · HIGH (engine) + Claude Code · MEDIUM (apresentação). **Depende de:** Estação V3, Variação V2, T20."
+    ]
+  },
+  "T36": {
+    "definition": "`M01-ANIM-CREWS-EVACUATION-V1` (= TASK D)",
+    "requirements": [
+      "**Objectivo:** municiador da MG34, fases da ckm, transporte de Bąk com pickup/putdown.",
+      "**Scope:** conforme TASK D; política de fogo da ckm desligada até decisão (Anexo B).",
+      "**Ficheiros:** `src/game/m01-simulation.js`, `src/render/m01-characters.js`, testes `m01-mg34-prone-*`, `m01-ckm-runtime`, `m01-station-drag-runtime`.",
+      "**Não alterar:** resolver genérico, variação.",
+      "**Aceitação:** F10/F12/F13 do plano fechados; sem tiros inventados; determinismo com saves a meio.",
+      "**Modelo/esforço:** GPT-6.1 Sol · HIGH. **Depende de:** T07, T35."
+    ]
+  },
+  "T41": {
+    "definition": "`M01-BRIDGE-FINISH-RUNTIME-V2`",
+    "requirements": [
+      "**Objectivo:** ligar o kit de materiais T14, impostor da treliça a >800 m, guardas e superfície do tabuleiro.",
+      "**Scope:** `m01-bridge-portal-polish.js`/carregamento do kit; impostor; LOD das partes com histerese.",
+      "**Ficheiros:** `src/render/m01-bridge-portal-polish.js`, `m01-view.js` (partes), testes.",
+      "**Não alterar:** `renderState.parts`, colisores.",
+      "**Aceitação:** capturas 04/12/13; contadores.",
+      "**Modelo/esforço:** Claude Code · MEDIUM. **Depende de:** T14, T15."
+    ]
+  }
+}

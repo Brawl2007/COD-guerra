@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {M01Simulation,validateM01Snapshot,CKM_POSITION} from '../src/game/m01-simulation.js';
+import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 
 const CKM_IDS=['ckm_gunner','ckm_loader','ckm_reserve'];
 const OLD=[[21.206,42.971],[22.08,42.48],[20.4,41.6]];
@@ -15,17 +16,18 @@ const oldPost=s=>{
 };
 const positions=s=>crew(s).map(a=>[a.x,a.y,a.z]);
 
-test('schema 2 legacy 86 roster becomes 89 at the aligned post without changing old actors or RNG',()=>{
+test('schema 2 legacy 86 roster gains the ckm crew at the aligned post (and the T34 auxiliaries) without changing old actors or RNG',()=>{
   const source=new M01Simulation(),legacy=source.snapshot(),rng=legacy.rng;
-  legacy.actors=legacy.actors.filter(a=>!a.ckm);
+  // A real 86-actor save predates both the ckm crew and the eight optional T34 display-only auxiliaries (partials).
+  legacy.actors=legacy.actors.filter(a=>!a.ckm&&!AUXILIARY_IDS.includes(a.id));assert.equal(legacy.actors.length,86);
   validateM01Snapshot(legacy);
   const before=structuredClone(legacy),restored=new M01Simulation();
   restored.restoreSnapshot(legacy);
   assert.deepEqual(legacy,before,'restore must not mutate the supplied save');
   assert.equal(restored.snapshot().schema,2);
   assert.equal(restored.rng.state,rng);
-  assert.equal(restored.actors.length,89);
-  assert.deepEqual(restored.actors.filter(a=>!a.ckm),legacy.actors);
+  assert.equal(restored.actors.length,97);
+  assert.deepEqual(restored.actors.filter(a=>!a.ckm&&!AUXILIARY_IDS.includes(a.id)),legacy.actors);
   assert.deepEqual(positions(restored),OLD.map(([x,z])=>[x+DX,-3,z]));
 });
 

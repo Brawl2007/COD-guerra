@@ -1,0 +1,175 @@
+{
+  "schema_version": 2,
+  "task": {
+    "id": "M01-PARTIALS-COMPLETION-INTEGRATION-V1",
+    "type": "GAMEPLAY_VISUAL_INTEGRATION",
+    "role": "captain",
+    "objective": "Complete all eleven roadmap tasks classified PARCIAL (T02/T03/T05/T06/T07/T14/T24/T26/T34/T36/T41) and integrate preserved accepted graphics, animation, audio and raid stacks into a validated playable branch."
+  },
+  "git": {
+    "base_branch": "codex/m01-continuity-raid-integration-v1",
+    "base_head": "529e7de5ccbb69408304196a8d4fab27529ecd60",
+    "work_branch": "codex/m01-partials-completion-integration-v1",
+    "starting_head": "529e7de5ccbb69408304196a8d4fab27529ecd60"
+  },
+  "policy": {
+    "gameplay_change_allowed": true,
+    "visual_change_allowed": true,
+    "persistence_change_allowed": true,
+    "architecture_change_allowed": false
+  },
+  "scope": {
+    "allowed_files": [
+      "src/**",
+      "missions/m01-tczew/**",
+      "tests/**",
+      "tools/assets/**",
+      "tools/verification/**",
+      "assets/**",
+      "docs/**",
+      ".agent/memory/**",
+      ".agent/regression/**",
+      ".github/workflows/**",
+      "DEVELOPMENT_STATUS.md",
+      "RUNBOOK.md",
+      "IMPLEMENTATION_PLAN.md"
+    ],
+    "forbidden_files": [
+      "src/game/simulation.js",
+      "src/world/world.js",
+      "missions/sandbox-1944/**",
+      "package-lock.json"
+    ],
+    "allowed_systems": [
+      "M01 only, all eleven partial task scopes; narrow integration conflicts and necessary meaningful test/harness corrections"
+    ],
+    "forbidden_systems": [
+      "French sandbox authority",
+      "Other missions",
+      "Real ckm fire T47",
+      "Generic IK T37 or extra T38 combat staging"
+    ],
+    "read_areas": [
+      "docs/M01_FINAL_ROADMAP.md",
+      "docs/architecture",
+      "docs/railway",
+      "docs/direction",
+      "src",
+      "missions",
+      "tests",
+      "tools",
+      ".agent/memory"
+    ],
+    "write_areas": [
+      "M01 task systems, verification and tracking metadata"
+    ],
+    "exclusive_resources": [
+      "src/game/m01-simulation.js",
+      "src/render/m01-view.js",
+      "src/render/m01-characters.js",
+      "src/game/game.js"
+    ]
+  },
+  "dependencies": {
+    "tasks": [
+      "Accepted tasks already present in either source stack"
+    ],
+    "branches": [
+      "claude/m01-integration",
+      "claude/m01-audio-director-music-v1",
+      "codex/m01-t14-t41-bridge-finish-v2"
+    ]
+  },
+  "risk": {
+    "level": "high",
+    "complexity": "high"
+  },
+  "acceptance": {
+    "criteria": [
+      "Every one of the eleven task acceptance clauses from docs/M01_FINAL_ROADMAP.md is implemented and individually evidenced; never close merely on symbols/file presence.",
+      "Existing accepted deliveries and original mission combat cadences/damage/LOS/mission gates/CP-A..D preserved except explicitly authorized task data/decoration changes. French sandbox unchanged.",
+      "Atomic persistence and backwards compatibility for any optional new fields/actors, full continuation invariants.",
+      "T14/T41 confirmed author, disabled-card, allocation, camera-wait and evidence-isolation blockers resolved with all required original matrix/authority/regression proofs. Historical failure evidence retained.",
+      "Full npm test and build pass on pinned final integration, meaningful browser matrix covers each changed player-visible system including pause/checkpoint/reload and optional fallback.",
+      "Independent verifier PASS and reviewer ACCEPT; publish branch, PR and update authorized claude/m01-integration after the actual integrated result is verified."
+    ],
+    "evidence_required": [
+      "Per-task criteria-to-proof matrix",
+      "Fresh full Node log/build log",
+      "Focused production browser captures and raw diagnostics on pinned source",
+      "Real-control route/continuation and golden audit",
+      "Source/ref integration manifest and retained historical blocker record"
+    ]
+  },
+  "verification": {
+    "required_tests": [
+      "npm test",
+      "npm run build",
+      "node tools/verify-m01-route.mjs",
+      "npm run assets:m01:colliders -- --check",
+      "Meaningful task-focused Node and browser tests, original audio and bridge/vegetation/rail regressions"
+    ],
+    "build_requirement": "required",
+    "browser_requirement": "focused multi-system integration matrix; workers 1 retries 0",
+    "regression_obligations": [
+      "M01 pause/reload preserves task cues, arrivals, crewing and damage clocks atomically",
+      "Sandbox and accepted graphics/gameplay ownership remains intact"
+    ]
+  },
+  "execution": {
+    "max_fix_attempts": 3,
+    "max_review_rejections": 2,
+    "production_mode": "focused",
+    "prior_bridge_attempts": 3,
+    "bridge_continuation_authorization": "User on 2026-10-14 explicitly requested completing ALL partial tasks and integrating; renewed scope includes T14/T41. Preserve earlier 3/3 record; this batch has a new bounded correction budget, not a historical reset."
+  },
+  "routing": {
+    "policy": "repository required sequential implementer/verifier/reviewer",
+    "preferred_class": "available inherited model",
+    "escalation_class": "available inherited model"
+  },
+  "human": {
+    "approval_points": []
+  },
+  "context": {
+    "required_memory_topics": [
+      "M01 mission clocks/schema2",
+      "bridge finish disabled ownership",
+      "audio sandbox/API",
+      "physical vegetation and prop identity"
+    ],
+    "mutable_claims_to_verify": [
+      "Fresh Git refs and ancestors",
+      "All partial source CI are predecessor-only until fresh integrated gates",
+      "Current task criteria and existing implementations"
+    ]
+  },
+  "integration": {
+    "target_branch": "claude/m01-integration",
+    "auto_integrate": true,
+    "authorization": "User explicitly: Faz todas as tarefas parcialmente conclu\u00edda e integra",
+    "main_modification_allowed": false
+  },
+  "escalation": {
+    "conditions": [
+      "Contradictory new product requirements",
+      "Unresolvable destructive integration",
+      "Correction or review budget exhausted",
+      "Mandatory human playtest/hardware unavailable"
+    ]
+  },
+  "state": {
+    "status": "PLANNED",
+    "current_node": "context_audit",
+    "current_owner": "root",
+    "next_action": "merge prior work and delegate implementation"
+  },
+  "result": {
+    "final_head": "",
+    "tests": [],
+    "build": "",
+    "runtime": "",
+    "review": "",
+    "final_status": ""
+  }
+}

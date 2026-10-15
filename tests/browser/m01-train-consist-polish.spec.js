@@ -70,7 +70,7 @@ test('captures wagon, coupling, underframe and consist views at High and Low',as
     const w=data.m01.wagons;
     expect(w.wagons).toBe(65);expect(w.visible).toBe(true);expect(w.proxies).toBe(0);
     expect([w.lodDistribution[0],w.lodDistribution[1],w.lodDistribution[2]]).toEqual(v.lod);
-    expect(w.batches).toBe(v.lod[0]?24:16);expect(w.first).toEqual([1090,0,-2.5]);expect(w.last).toEqual([1672.4,0,-2.5]);
+    expect(w.batches).toBe(baseline?(v.lod[0]?24:16):(v.lod[0]?18:10));expect(w.first).toEqual([1090,0,-2.5]);expect(w.last).toEqual([1672.4,0,-2.5]);
     if(!baseline){
       const detail=w.detail,[l0,l1,l2]=v.lod;
       expect(detail.wagons).toBe(65);expect(detail.quality).toBe(v.quality);expect(w.artOffsetY).toBe(-.8325);

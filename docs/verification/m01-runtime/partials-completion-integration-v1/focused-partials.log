@@ -1,0 +1,29 @@
+✔ all beats have nonnegative time; pre-roll is explicit and cannot move bomb instants or gates (85.462335ms)
+✔ 019 remains absent at reorganization and after reload when the forward post survives a real near-miss (387.113031ms)
+✔ audio contracts reject missing fields and real Game queues every enemy fire at 3D distance/343 (8.951806ms)
+✔ grenade smoke expires at20s even for old records, ground impacts retain safeImpact displacement (15.913277ms)
+✔ auxiliary roster is atomic/legacy-compatible; every yard actor clears real solids and the platoon corridor for90s (72.1324ms)
+✔ display-only auxiliaries cannot intercept real player rays or become grenade damage/suppression targets (15.641897ms)
+✔ optional cover validation binds mapped node/type; legitimate predecessor carry speed migrates but corrupt new speed rejects (23.510999ms)
+✔ generic prone hitboxes lower and orient the silhouette from authoritative progress, with atomic corruption rejection (1068.323196ms)
+✔ carry finite phases retain midphase saves, exact1.6m/s movement and death cleanup (532.292961ms)
+✔ battle-clock train arrival is monotone, stops at exact final anchors and leaves simulation/count65 untouched (54.516223ms)
+✔ MG34 loader feeds through a real finite reload, restores mid-feed and leaves immediately on gunner death without additional shots (511.702502ms)
+✔ ckm aim/feed are display-only and the finite west exit clears every real solid before retreat (1287.483244ms)
+✔ four free scenes expose letterbox and a visible cue; scene elapsed/pause/reload alone determine the frame and camera stays unchanged (105.991694ms)
+✔ station soot/glass derive from event age and restore cleanly; old protected station remains untouched (1.360123ms)
+✔ disabling warmed bridge owner stays disabled on its next native selection and all borrowed originals remain visible (17.514835ms)
+✔ real projectile near-pass classification uses closest approach even when impact is hundreds of metres away (9.811764ms)
+✔ far wagon batching independently preserves all authored vertices/UVs/normals/material identity and disposes only copies (65.84015ms)
+✔ legacy mid-demolition scene beat indices remain valid after explicit pre-roll extraction (434.001685ms)
+✔ grenade smoke contributes actual pooled puffs before20s and none at expiry after save continuation, while raid columns persist (213.367416ms)
+✔ ckm typed fire_burst plan is saveable but policy-disabled, never fires, and malformed/armed plans reject atomically (96.003443ms)
+✔ supplemental original crew GLB has finite paired carry phases, complete rig bindings and reproducible saved-time poses (109.764727ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5810.155866

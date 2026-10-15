@@ -359,6 +359,11 @@ export class AudioManager {
     this._record('train-arrival',{pan,distance,priority:AUDIO_PRIORITY.train,key});
     return this._playPlan(planTrainArrival(distance,{key,wagons:12}),{kind:'train-arrival',category:'vehicle',priority:AUDIO_PRIORITY.train,pan,distance,key});
   }
+  trainMoving(id,pan=0,distance=0,key='moving-train'){
+    this._record('veh.train.rolling',{pan,distance,priority:AUDIO_PRIORITY.train,key});
+    return this._playPlan(planTrainArrival(distance,{key,wagons:id==='train963'?12:6,heavy:id==='panzerzug'}),
+      {kind:'veh.train.rolling',category:'vehicle',priority:AUDIO_PRIORITY.train,pan,distance,key});
+  }
   panzerzugArrival(pan=0,distance=0,key='panzerzug'){
     this._record('panzerzug-arrival',{pan,distance,priority:AUDIO_PRIORITY.train,key});
     return this._playPlan(planTrainArrival(distance,{key,wagons:6,heavy:true}),{kind:'panzerzug-arrival',category:'vehicle',priority:AUDIO_PRIORITY.train,pan,distance,key});

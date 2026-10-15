@@ -1,0 +1,10 @@
+{
+  "artifactId": 11877997443,
+  "sourceHead": "b36ad7470ce977deeecab1ae193e51592d4aaf72",
+  "zipBytes": 44660567,
+  "zipSHA256": "1c3eb859e1e6d262ebd10807b76a00442a6366556dedcf3a6b5dcca1a39e344f",
+  "apiDigestMatch": true,
+  "zipCRC": "PASS",
+  "entries": 59,
+  "extracted": ".agent/runs/M01-T14-T41-20261013/runtime/source-focused-ci-artifact"
+}

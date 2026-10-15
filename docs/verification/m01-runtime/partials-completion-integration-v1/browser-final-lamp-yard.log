@@ -1,0 +1,71 @@
+[1A[2K[2m[WebServer] [22m(node:862) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 2 tests using 1 worker
+
+[1A[2K(node:881) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:881) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/2] tests/browser/m01-partials-completion.spec.js:42:1 › train arrival at04:44:30, stop04:46 and yard at04:36/05:41 draw smoke/headlamps/civilian tasks/damage with exact authority
+[1A[2K  1) tests/browser/m01-partials-completion.spec.js:42:1 › train arrival at04:44:30, stop04:46 and yard at04:36/05:41 draw smoke/headlamps/civilian tasks/damage with exact authority
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeGreaterThan[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: > [32m0[39m
+    Received:   [31m0[39m
+
+      76 |   },captures);
+      77 |   fs.writeFileSync(`${OUT}/train-1km-pixels.json`,JSON.stringify({distanceMetres:Math.hypot(1000,32.5,87.5),camera:[75,35,-90],target:[1075,8,-2.5],pixels,editorialMask:'pause/menu/frozen resume overlay only',method:'Same paused production frame/camera and snapshot, independently toggle only lamp and smoke, compare decoded PNG RGB at threshold3/255.'},null,2));
+    > 78 |   expect(pixels.lampPixels).toBeGreaterThan(0);expect(pixels.lampBrightening).toBeGreaterThanOrEqual(3);expect(pixels.smokePixels).toBeGreaterThan(0);
+         |                             ^
+      79 |   await page.evaluate(()=>window.m01BridgeFinishDebug.setTrainEffects(true));
+      80 | }
+      81 |
+        at trainPixels (/workspace/COD-guerra/tests/browser/m01-partials-completion.spec.js:78:29)
+        at /workspace/COD-guerra/tests/browser/m01-partials-completion.spec.js:55:75
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/partials-completion-runner/m01-partials-completion-tr-b578a-damage-with-exact-authority/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/partials-completion-runner/m01-partials-completion-tr-b578a-damage-with-exact-authority/test-failed-2.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/partials-completion-runner/m01-partials-completion-tr-b578a-damage-with-exact-authority/test-failed-3.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/partials-completion-runner/m01-partials-completion-tr-b578a-damage-with-exact-authority/test-failed-4.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/partials-completion-runner/m01-partials-completion-tr-b578a-damage-with-exact-authority/error-context.md
+
+    attachment #6: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/partials-completion-runner/m01-partials-completion-tr-b578a-damage-with-exact-authority/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/partials-completion-runner/m01-partials-completion-tr-b578a-damage-with-exact-authority/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:1309) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:1309) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[2/2] tests/browser/m01-partials-completion.spec.js:58:1 › optional supplemental crew GLB failure preserves mission continuation and procedural actors
+[1A[2K  1 failed
+    tests/browser/m01-partials-completion.spec.js:42:1 › train arrival at04:44:30, stop04:46 and yard at04:36/05:41 draw smoke/headlamps/civilian tasks/damage with exact authority
+  1 passed (4.3m)

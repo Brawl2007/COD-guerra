@@ -23,7 +23,7 @@ const events=s=>s.drainEvents().filter(e=>e.type==='enemy-fire');
 // This checkpoint covers simulation ownership. Socket/facing numerics are added with the spatial checkpoint.
 test('existing MG34 gunners enter for exactly 1.9 seconds; other actors have no new posture',()=>{
   const s=live(),a=s.actor(GUNNER),rng=s.rng.state;
-  assert.deepEqual(a.mg34Prone,{phase:'enter',startedAt:0,duration:1.9,progress:0});
+  assert.deepEqual(a.mg34Prone,{phase:'enter',startedAt:0,duration:1.9,progress:0,loader:'de_mg34_loader_0',beltRemaining:50});
   at(s,.95);assert.equal(a.mg34Prone.progress,.5);
   assert.equal(s.burst(a,TARGET,'area',{rounds:7}),false);
   assert.equal(s.enemyFire.nextId,0);assert.equal(s.rng.state,rng);
@@ -115,11 +115,11 @@ for(const dyingPhase of ['enter','idle','fire_burst','exit'])test(`death during 
   assert.deepEqual(restored(s).snapshot(),s.snapshot());
 });
 
-test('inactivity discards pending combat and never creates a loader association',()=>{
+test('inactivity discards pending combat and the optional display loader leaves without firing',()=>{
   const s=firing(),a=s.actor(GUNNER);a.active=false;s.updateMG34Posture(a);
   assert.equal(a.mg34Prone,undefined);assert.equal(a.shot,0);
-  assert.ok(s.actors.every(x=>!Object.hasOwn(x,'mg34Loader')&&!Object.hasOwn(x,'loaderFor')));
-  assert.equal(s.actors.length,89);assert.equal(s.snapshot().schema,2);
+  at(s,s.clock+.05);const loader=s.actor('de_mg34_loader_0');assert.equal(loader.loaderFor,GUNNER);assert.equal(loader.mg34Loader.phase,'leave');assert.equal(loader.shot,0);assert.ok(s.enemies.every(x=>!x.displayOnly));
+  assert.equal(s.actors.length,97);assert.equal(s.snapshot().schema,2);
 });
 
 test('legacy missing prone data resumes safely with no marker; 86 roster/CKM migration stays unchanged',()=>{
@@ -131,7 +131,7 @@ test('legacy missing prone data resumes safely with no marker; 86 roster/CKM mig
   s.updateMG34Posture(s.actor(GUNNER));assert.equal(phase(s),'enter');
   const oldest=new M01Simulation().snapshot();oldest.actors=oldest.actors.filter(a=>!a.ckm);
   const r=new M01Simulation();r.restoreSnapshot(oldest);
-  assert.equal(r.actors.length,89);assert.deepEqual(r.actors.filter(a=>!a.ckm),oldest.actors);assert.equal(r.rng.state,oldest.rng);
+  assert.equal(r.actors.length,97);assert.deepEqual(r.actors.filter(a=>!a.ckm),oldest.actors);assert.equal(r.rng.state,oldest.rng);
 });
 
 test('invalid partial/impossible prone fields reject atomically without changing source or target',()=>{
