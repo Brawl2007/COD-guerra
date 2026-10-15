@@ -4,6 +4,21 @@
 **Backlog vivo e critérios:** https://github.com/Brawl2007/COD-guerra/issues/72
 **Âmbito:** desenvolvimento do protótipo jogável, integração dos PRs de M01, validação e preparação para aceitação humana. Não substituir o objetivo permanente por uma sub-tarefa isolada (p. ex. #71).
 
+## ENTREGA OBRIGATÓRIA — transformar TODO o trabalho existente em jogo utilizável
+
+**Prioridade superior a criar novas funcionalidades:** aproveitar tudo o que já foi efetivamente produzido para a M01 (código, assets originais licenciados, animações, armas, efeitos, áudio, missões, correções e testes), sem deixar melhorias prontas esquecidas em PRs isolados.
+
+1. Criar e manter **uma única branch candidata de integração/jogo M01** (se já existir, retomá-la), derivada da base adequada e sem tocar na `main`. Trabalhar com uma *staging branch* ou PR rascunho para aprovação. Não criar nova branch candidata a cada hora.
+2. Analisar cada PR/branch M01 existente, **reutilizar os commits e funcionalidades válidos**, respeitar ordem de dependências V2–V7 e PRs filhos; resolver conflitos sem apagar melhorias anteriores nem reimplementar algo já feito. Evitar integrar duplicados (#61/#62) ou trabalho ainda falhado (#70) sem correção/verificação. Nunca integrar cegamente apenas porque um PR tem CI verde.
+3. Fazer **integrações reais com código**, executar testes de unidade, build, Playwright, percurso M01 e avaliação visual/sonora no HEAD combinado; corrigir regressões na branch candidata com histórico rastreável. Conservar invariantes de saves, simulação determinística e direitos dos assets.
+4. Manter um **inventário de entrega rastreável** para todo o trabalho identificado: origem (PR/commit), `INTEGRADO + VERIFICADO`, `PRONTO PARA INTEGRAR`, `EM CORREÇÃO`, `BLOQUEADO` ou `EXCLUÍDO COM JUSTIFICAÇÃO`; evidência e HEAD. Não confundir um documento, PR draft ou screenshot isolado com funcionalidade jogável integrada.
+5. Em cada marco significativo entregar **um pacote jogável e reproduzível** a partir da branch candidata: comandos exatos de `npm ci`, `npm run dev`/`npm run build` e como iniciar M01, commit/PR, relatórios CI, screenshots e vídeo reais quando possíveis. Se uma preview Web exigir deploy/publicação, **pedir aprovação para esse deploy**; não inventar link público nem publicar sem autorização.
+6. **No final de cada execução** mostrar claramente o acumulado entregue até ao momento, não só alterações da última hora: o que está integrado no jogo; o que foi apenas desenvolvido mas ainda não integrado; o que falta; como jogar a versão candidata; testes e HEAD; próxima operação concreta já escolhida. Atualizar o registo na issue #72 apenas quando houver evolução factual, não enviar relatórios duplicados.
+7. Se um PR estiver bloqueado, **continuar integração das outras áreas independentes**. A M01 inteira é o objetivo; não ficar horas fazendo só inventário/diagnóstico ou tarefas novas quando existem entregas por consolidar.
+8. O Capitão é responsável por preparar e **entregar a candidata completa** sem intervenção horária do utilizador. Pedir apenas autorizações realmente necessárias: merge para `main`, deploy/publicação, gastos não autorizados, autoria/licenças e playtest/decisões humanas.
+
+**Aceitação:** uma branch/PR candidato único, funcional e validado, com mapa de proveniência e lacunas transparentes; não chamar «tudo entregue» se funcionalidades aprovadas permanecem dispersas. O merge final ou publicação continuam reservados à decisão humana.
+
 ## Ação em cada execução da Routine
 
 1. A sessão principal Opus é o Capitão; **não iniciar `captain` como subagente**, pois subagentes aninhados foram bloqueados na Cloud. Ler este protocolo e a issue #72.
