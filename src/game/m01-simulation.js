@@ -4,7 +4,8 @@ import { TczewWorld } from '../world/tczew-world.js';
 import { Wz29 } from './wz29.js';
 import { Random } from '../core/random.js';
 import { eyePosition, aimDirection, muzzlePosition, traceShot, traceObstruction } from '../world/spatial.js';
-import { makeRound, traceRound, closestApproach, validRound, NEAR_MISS } from './m01-fire.js';
+import { makeRound, traceRound, closestApproach, validRound, NEAR_MISS, ATTRITION_VICTIM } from './m01-fire.js';
+import { createDisplayFire, displaySeed, displayProfiles, updateDisplayFire, displayFireView, computeBattleReadout } from './m01-display-fire.js';
 import { initializePresentation, updateMotion, updatePosture, updateBodyYaw, recordSuppression, recordHit, recordDeath,
   recordDamage, validatePresentation, presentationDiagnostics } from './m01-animation-presentation.js';
 
@@ -64,6 +65,45 @@ const proneGunner=a=>MG34_IDS.includes(a.id);
 const fixedMG34=a=>a.alive&&a.active&&!['ADVANCE','RETREAT','WOUNDED','DOWN','reached_safety'].includes(a.state)&&
   !(a.target&&dist(a,a.target)>=.8);
 const canMG34Fire=a=>!proneGunner(a)||(fixedMG34(a)&&['idle','aim'].includes(a.mg34Prone?.phase));
+// T23, the east front made visible (RECONSTRUCTED data in grp_east_platoon). From hold.from to hold.until the platoon stands on the end of the
+// road deck instead of staying off stage; six reserve men fall at the fixed battle-clock times of `attrition`, shot by a rifleman of the dike
+// or the gates. Validated when the module loads, so a typo in the data stops the game instead of changing it.
+export function eastFrontPlan(def=definition){
+  const fail=m=>{throw new Error(`M01 east front: ${m}`);},group=def.groups.find(g=>g.id==='grp_east_platoon'),hold=group?.hold,layout=hold?.layout,list=group?.attrition;
+  const at=id=>{const t=def.events.find(e=>e.id===id)?.trigger;if(t?.type!=='battleClock')fail(`${id} must be a battleClock event`);return seconds(t.at);};
+  if(!hold||at(hold.from)>=at(hold.until))fail('hold needs from before until');
+  if(!layout||!Number.isInteger(layout.columns)||layout.columns<1||![layout.x0,layout.dx,layout.z0,layout.dz].every(Number.isFinite)||layout.dx<=0||layout.dz<=0)fail('bad hold.layout');
+  if(!Array.isArray(list)||!list.length)fail('attrition must list the casualties');
+  const entries=list.map(e=>typeof e?.at==='string'&&typeof e.cutoff==='string'?{victim:e.victim,at:seconds(e.at),cutoff:seconds(e.cutoff)}:fail('attrition entry needs at and cutoff'));
+  entries.forEach((e,i)=>{
+    if(!ATTRITION_VICTIM.test(e.victim)||entries.findIndex(o=>o.victim===e.victim)!==i)fail(`victim ${e.victim}`);
+    // The cutoff leaves the flight time (3 s) before the withdrawal, so a round fired in time lands before the rule of 06:00 takes over.
+    if(!(e.at>=at(hold.from)&&e.at<e.cutoff&&e.cutoff<=at(hold.until)-3)||(i&&e.at<=entries[i-1].at))fail(`times of ${e.victim}`);
+  });
+  return {hold:{from:hold.from,until:hold.until},layout:{...layout},attrition:entries};
+}
+const EAST_FRONT=eastFrontPlan(),LAYOUT=EAST_FRONT.layout;
+const holdSlot=i=>({x:LAYOUT.x0+i%LAYOUT.columns*LAYOUT.dx,y:0,z:LAYOUT.z0+Math.floor(i/LAYOUT.columns)*LAYOUT.dz});
+// The block the east rifles aim at: the layout plus one metre in x and 0.2 m in z around it (two z bands of equal height).
+const BLOCK=(rows=>({x:LAYOUT.x0-1,w:(LAYOUT.columns-1)*LAYOUT.dx+2,z:LAYOUT.z0-.2,h:(rows-1)*LAYOUT.dz+.4}))(Math.ceil(24/LAYOUT.columns));
+
+// T25 estimates for gameplay, not historical impact locations. H16 chooses fixed battle-clock times; no gameplay RNG draw.
+const RAID_ID=/^raid_0530(?:_[1-5])?$/;
+export function raidPlan(def=definition,world=new TczewWorld()){
+  const fail=m=>{throw new Error(`M01 raid: ${m}`);},event=def.events.find(e=>e.id===E('bombing_0530'));
+  const targets=def.raidTargets;if(!Array.isArray(targets)||targets.length!==6)fail('six targets required');
+  const from=seconds(event.window.from),to=seconds(event.window.to),bounds=world.layout.bounds.playable;
+  return targets.map((t,i)=>{
+    const id=`raid_0530${i?'_'+i:''}`,at=typeof t?.at==='string'?seconds(t.at):NaN;
+    if(t?.id!==id||!Number.isFinite(at)||at<from||at>=to||(i&&at<=seconds(targets[i-1].at))||(!i&&at!==from))fail('IDs/times');
+    if(!Array.isArray(t.position)||t.position.length!==2||!t.position.every(Number.isFinite))fail('position');
+    const [x,z]=t.position;
+    // A 70 m envelope also covers safeImpact's maximum displacement (30 m approach + 40 m replacement).
+    if(x>bounds.minX-100)fail('west safety envelope');
+    return {id,at,point:{x,y:world.heightAt(x,z),z}};
+  });
+}
+const RAID_PLAN=raidPlan();
 
 export class M01Simulation {
   constructor(seed=19390901){this.reset(seed);}
@@ -87,7 +127,7 @@ export class M01Simulation {
     // Pela metade sul do tabuleiro; o pelotão recua em fila junto à treliça norte.
     for(let i=0;i<10;i++)this.actors.push(entity(`de_spans_${i}`,{x:1050+i*3,y:0,z:39.6+i%3*1.1},'enemy',
       {group:'grp_de_spans',weapon:'kar98k',active:false,firedAt:-1e9}));
-    for(let i=0;i<24;i++)this.actors.push(entity(`pl_east_${i}`,{x:1040+i%4*2,y:0,z:38+i%4*.65},'ally',
+    for(let i=0;i<24;i++)this.actors.push(entity(`pl_east_${i}`,holdSlot(i),'ally',
       {group:'grp_east_platoon',active:false,role:'RIFLEMAN'}));
     this.actors.push(...makeCKMCrew(this.world));
     for(const a of this.actors)initializePresentation(a,this.clock);
@@ -95,6 +135,7 @@ export class M01Simulation {
       ambient:0,nextCoverCall:40,guide:0,guideKey:null,guideAt:0,guideDist:0,guideShown:false,kowalRounds:30,lowAmmoHint:false,escort:false,escortSpoke:false,boundaryWarning:false,boundaryCountdown:0,holdAccessVisited:false,
       occupiedCover:null,coverExposure:0,coverCallIndex:0,repairPins:0,fireEase:false,calloutAt:-1e9,nextCombatCall:0};
     this.enemyFire={rounds:[],nextId:0};
+    this.display=createDisplayFire(displaySeed(this.rng.state),displayProfiles(definition,{actors:this.actors}));   // visual-only rounds: never saved, own RNG (m01-display-fire.js)
     this.sectors={sectors:definition.sectors.map(s=>({id:s.id,state:s.schedule[0].state,strength:100,morale:1,supply:1})),damage:[]};
     this.mission={phase:'INTRO',complete:false,text:phaseText.INTRO,status:''};
     this.consume(E('intro_card'));this.startScene('cs_m01_intro');this.checkpoint=this.snapshot(false);
@@ -196,7 +237,7 @@ export class M01Simulation {
     switch(id){
       case E('intro_card'):break;
       case E('prelude_start'):this.activate('deliver_message');this.mission.phase='SETUP';break;
-      case E('railway_worker_report'):line(dist(this.player,this.actor('franciszek_lipski'))<15?8:19);break;
+      case E('railway_worker_report'):if(dist(this.player,this.actor('franciszek_lipski'))<15)line(8);break;
       case E('planes_heard'):this.mission.phase='BUILDUP';line(12);line(13);line(66);this.actor('tadeusz_nowicki').target=this.world.point('repair_site_1');break;
       case E('bombing_0434'):
         this.finish('deliver_message');this.activate('take_cover');this.player.headgear='pl_helmet_wz31';
@@ -205,7 +246,7 @@ export class M01Simulation {
         this.impact('station_bomb',this.world.point('tczew_station'),true);break;
       case E('forward_post_bombed'):{const p=this.world.point('forward_post');
         const near=dist(this.player,p)<=30;this.flags['m01.forward_post_state']=near?'intact_near_miss':'destroyed';
-        this.impact('forward_post',near?{x:0,y:-10,z:-40}:p,true);break;}
+        this.impact('forward_post',near?{x:0,y:-10,z:-40}:p,true);if(!near)line(19);break;}
       case E('nowicki_lost'):this.flags['m01.nowicki_status']='missing';this.actor('tadeusz_nowicki').active=false;
         this.impact('repair_crater',this.world.point('repair_site_1'),true);break;
       case E('cable_cut'):this.destruction.push('ignition_line_damaged');break;
@@ -220,13 +261,14 @@ export class M01Simulation {
         break;
       }
       case E('second_air_pass'):this.emit({type:'distant-shot',point:{x:-550,y:20,z:60}});break;
-      case E('train963_arrives'):this.enemies.filter(a=>a.group==='grp_de_east').forEach(a=>{a.active=true;});line(25);line(28);break;
+      case E('train963_arrives'):this.enemies.filter(a=>a.group==='grp_de_east').forEach(a=>{a.active=true;});this.holdEastPlatoon();line(25);line(28);break;
       case E('panzerzug_arrives'):line(38);break;
       case E('repair_complete'):this.finish('cover_repair');this.destruction.push('ignition_line_repaired');line(31);line(32);break;
       case E('order_demolish'):this.activate('hold_access');this.pendingCheckpoint='cp_m01_c_engenheiros';this.startScene('cs_m01_order');this.mission.phase='MAIN_COMBAT';
         // Bąk ocupa cedo a posição no tabuleiro: às 06:04 cai em bak_wound_point, à frente do jogador, e não no caminho.
         this.actor('jozef_bak').target=this.world.point('bak_wound_point');break;
-      case E('bombing_0530'):this.flags['m01.second_raid_state']='active';this.impact('raid_0530',{x:-600,y:0,z:100},true);break;
+      case E('bombing_0530'):this.flags['m01.second_raid_state']='active';
+        this.timers.raidSchedule=RAID_PLAN.map(t=>({...clone(t),emitted:false}));this.updateRaidSchedule();break;
       case E('runner_pressure_report'):line(37);break;
       case E('north_contact_distant'):this.emit({type:'distant-shot',point:{x:-500,y:2,z:-1100}});break;
       case E('east_platoon_withdraws'):if(this.timers.holdAccessVisited)this.finish('hold_access');this.activate('cover_withdrawal');this.mission.phase='SET_PIECE';line(39);
@@ -264,9 +306,16 @@ export class M01Simulation {
     if(dist(p,this.player)<30)throw new Error('Impacto aéreo inseguro.');return p;
   }
   impact(id,point,aerial){
-    const p=aerial?this.safeImpact(point):point;
+    const p=aerial?this.safeImpact(point):{...point};
+    if(aerial)p.y=this.world.heightAt(p.x,p.z);   // Ground only after the existing safety shift, including near-miss alternatives.
     this.sectors.damage.push({id,...p,started:this.clock,soundAt:this.clock+dist(p,this.player)/343});
-    this.emit({type:'m01-blast',point:p,soundAt:this.clock+dist(p,this.player)/343,aerial});
+    this.emit({type:'m01-blast',point:p,soundAt:this.clock+dist(p,this.player)/343,aerial});return p;
+  }
+  updateRaidSchedule(){
+    // A missing schedule is a legacy schema-2 raid: never invent retroactive impacts on resume.
+    for(const t of this.timers.raidSchedule??[])if(!t.emitted&&this.battleClock>=t.at){
+      t.point=this.impact(t.id,t.point,true);t.emitted=true;
+    }
   }
   processEvents(){
     for(let pass=0;pass<4;pass++)for(const event of definition.events){
@@ -384,7 +433,8 @@ export class M01Simulation {
     // Measure only this movement pass: scene staging/offscreen recovery are not footsteps.
     const motionBefore=this.actors.map(a=>({x:a.x,z:a.z}));
     this.interruptStationEvacuation();
-    const retreat=this.consumedEvent(E('east_demolition'));
+    const retreat=this.consumedEvent(E('east_demolition')),holding=this.holdingEast();
+    this.holdEastPlatoon();
     for(const a of this.actors){
       if(a.ckm)a.ckm.visible=!this.consumedEvent(E('west_demolition'));
       a.shot=Math.max(0,a.shot-dt);this.updateMG34Posture(a);if(!a.alive||!a.active)continue;
@@ -405,6 +455,7 @@ export class M01Simulation {
         continue;
       }
       if(a.group==='grp_east_platoon'){
+        if(holding)continue;   // T23: parado no tabuleiro até à retirada das 06:00 (hold.until); só então corre para oeste
         // Etapas do recuo: portal rodoviário, sul do barracão e passagem pelo posto de disparo até junto da estação.
         // Os limiares ficam aquém dos pontos (moveActor pára a 0,8 m), para nenhum soldado ficar preso numa etapa.
         // O pelotão recua a correr sob fogo (5,5 m/s): ~1,3 km até à estação dentro da fase do corredor.
@@ -467,11 +518,12 @@ export class M01Simulation {
       if(a.cooldown>0)continue;
       if(a.group==='grp_de_spans')this.spansFire(a,retreat);else this.eastFire(a,retreat,withdrawal);
     }
-    this.kowalFire(dt);this.landRounds();
+    this.attritionTick();this.kowalFire(dt);this.landRounds();
+    updateDisplayFire(this.display,{clock:this.clock,battleClock:this.battleClock,actors:this.actors,consumedEvent:id=>this.consumedEvent(id),heightAt:(x,z)=>this.world.heightAt(x,z)},dt);
   }
   /** grp_de_east no dique: MG34 sobre o reparo/jogador/secção; atiradores sobretudo sobre a cabeça de ponte leste até às 06:00. */
   eastFire(a,retreat,withdrawal){
-    const p=this.player,r=()=>this.rng.next(),mg=a.weapon==='mg34',sees=t=>this.world.lineOfSight(a,t),west=p.x>-200;
+    const p=this.player,r=()=>this.rng.next(),mg=a.weapon==='mg34',sees=t=>this.world.lineOfSight(a,t),west=inside(p,this.world.layout.bounds.playable);
     let target=null,kind=null;
     if(retreat){   // s2 german_regroup: fogo esporádico da margem leste depois da demolição
       a.cooldown=(mg?16:32)+r()*20;if(gateShooter(a)&&west&&sees(p)){target=p;kind='player';}
@@ -518,11 +570,48 @@ export class M01Simulation {
     }
   }
   withdrawingPlatoon(){return this.actors.filter(a=>a.group==='grp_east_platoon'&&a.alive&&a.active);}
+  /** T23: true from hold.from (train 963) to hold.until (the withdrawal at 06:00). Read from the consumed events only, so a save needs no new key. */
+  holdingEast(){return this.consumedEvent(EAST_FRONT.hold.from)&&!this.consumedEvent(EAST_FRONT.hold.until);}
+  /** Puts every living platoon man on guard while the hold lasts. Also brings a save made inside that window by older code into line on its next tick. */
+  holdEastPlatoon(){
+    if(!this.holdingEast())return;
+    for(const a of this.actors)if(a.group==='grp_east_platoon'&&a.alive&&!a.active){a.active=true;a.state='GUARD';}
+  }
+  /**
+   * T23 attrition. At each fixed battle-clock time of the plan one reserve man (pl_east_18..23) is shot by the lowest-numbered rifleman who
+   * can hit him; a round that misses or finds a wall is simply retried on the next tick until the entry's cutoff. There is no timer key: what
+   * is done is read from the men themselves and from the rounds in flight (kept by the save), so a restore can neither skip nor repeat a casualty.
+   * Draws nothing from this.rng (the round is built without dispersion) and writes nothing on the shooter except his display flash, so his own
+   * eastFire cadence and Kowal's pick of the latest flash stay as they were. It is never aimed at the player: for H9 it is no telegraph.
+   */
+  attritionTick(){
+    if(!this.holdingEast())return;
+    for(const e of EAST_FRONT.attrition){
+      if(this.battleClock<e.at)return;   // in time order: nothing later is due either
+      const victim=this.actor(e.victim);
+      if(!victim.alive||!victim.active||this.battleClock>=e.cutoff)continue;   // already fallen, or too late to land before the withdrawal
+      if(this.enemyFire.rounds.some(r=>r.kind==='attrition'&&r.victim===e.victim))return;   // the round is in flight
+      this.shootAttrition(victim);return;
+    }
+  }
+  shootAttrition(victim){
+    const aim={x:victim.x,y:victim.y+(victim.crouched?.75:1.1),z:victim.z};
+    for(let i=2;i<40;i++){   // riflemen only: de_east_0 and de_east_1 are the MG34 gunners
+      const a=this.actor(`de_east_${i}`);
+      if(!a.alive||!a.active||this.clock<a.suppressedUntil)continue;
+      const r=makeRound({id:`m01_round_${this.enemyFire.nextId}`,by:a.id,weapon:'kar98k',kind:'attrition',origin:eyePosition(a),aim,firedAt:this.clock,
+        bias:[0,0],cone:[0,0],gauss:()=>0,tracer:true,victim:victim.id});
+      if(traceRound(this.world,r,[victim]).actor!==victim)continue;   // the very trace of the landing: a wall in the way tries the next man
+      this.enemyFire.nextId++;this.enemyFire.rounds.push(r);this.display.firedAt[a.id]=r.firedAt;return;   // the muzzle flash is display data (not saved)
+    }
+  }
   repairAim(){
     const sappers=this.actors.filter(a=>a.role==='ENGINEER'&&a.alive&&a.active);
     return sappers.length?sappers[Math.floor(this.rng.next()*sappers.length)]:this.world.point('repair_site_2');
   }
-  eastBridgeheadPoint(r){return r()<.5?{x:995+r()*45,y:.5,z:-3+r()*6}:{x:995+r()*45,y:.5,z:37.5+r()*5};}
+  // T23: the east rifles aim into the block where the platoon stands (two z bands over the layout), so their rounds fly at real men;
+  // still three draws per call (band, x, z), which keeps the main RNG stream exactly where it was.
+  eastBridgeheadPoint(r){return r()<.5?{x:BLOCK.x+r()*BLOCK.w,y:.5,z:BLOCK.z+r()*BLOCK.h/2}:{x:BLOCK.x+r()*BLOCK.w,y:.5,z:BLOCK.z+BLOCK.h/2+r()*BLOCK.h/2};}
   gauss(){let u=0;while(u<=1e-12)u=this.rng.next();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*this.rng.next());}
   /** Uma rajada (ou um tiro) com dispersão em milésimos; os tiros ficam em voo até à hora de chegada (enemyFire.rounds). */
   burst(a,target,kind,{rounds=1,interval=.075,bias=[0,0],cone=[0,0],tracer=false,victim=null}={}){
@@ -571,6 +660,7 @@ export class M01Simulation {
   /** Chegada de um tiro: impacto no mundo, ferimento possível no jogador, supressão de quem estiver a menos de 3 m da trajectória. */
   landRound(r){
     if(r.kind==='east')return;   // cabeça de ponte leste: só clarão e estampido para o jogador
+    if(r.kind==='attrition')return this.landAttrition(r);
     const p=this.player,victim=r.victim&&!this.consumedEvent(E('east_demolition'))?this.actor(r.victim):null;
     const hit=traceRound(this.world,r,victim?.alive?[p,victim]:[p]);
     let point=hit.point,material=hit.material??'earth';
@@ -602,6 +692,18 @@ export class M01Simulation {
     }
     this.emit({type:'round-impact',kind:r.kind,by:r.by,point,material,crack:closestApproach(r,hit.t,eyePosition(p))<=6,distance:dist(point,p),
       victim:casualty?victim.id:null,pinned:near});
+  }
+  /**
+   * T23: an attrition round traces against its victim only. A hit is the casualty: the man falls, with no write to m01.east_platoon_survivors
+   * (the rule of 06:00 and dlg_m01_049 keep counting 18), no combatCall, no wound roll on the player, no event, and it returns before the loop
+   * that pins allies near the path, so his neighbours are not suppressed. A miss or a wall does nothing; the tick retries until the cutoff.
+   */
+  landAttrition(r){
+    const victim=this.actor(r.victim);
+    if(!victim?.alive||!victim.active||this.consumedEvent(E('east_platoon_withdraws')))return;
+    if(traceRound(this.world,r,[victim]).actor!==victim)return;
+    victim.alive=false;victim.health=0;victim.state='DOWN';
+    recordHit(victim,this.clock,{x:r.ox,z:r.oz});recordDeath(victim,true,this.clock);
   }
   fire(){
     const p=this.player,now=this.clock*1000;if(p.carrying||!this.weapon.shoot(now))return;
@@ -684,7 +786,7 @@ export class M01Simulation {
     this.updateActors(dt);this.updateCombat(dt);
     for(const a of this.actors){updatePosture(a,this.clock);updateBodyYaw(a,dt);}
     if(!p.alive)return;
-    this.updateObjectives(dt,controls.interact);this.processEvents();
+    this.updateObjectives(dt,controls.interact);this.processEvents();this.updateRaidSchedule();
     if(this.flags['m01.second_raid_state']==='active'&&this.battleClock>=seconds('05:34:00'))this.flags['m01.second_raid_state']='ended';
     for(const sector of this.sectors.sectors){const schedule=definition.sectors.find(s=>s.id===sector.id).schedule;
       const current=schedule.filter(s=>seconds(s.at)<=this.battleClock).at(-1);sector.state=current.state;
@@ -870,6 +972,10 @@ export class M01Simulation {
       spansSuppressed:this.enemies.some(a=>a.group==='grp_de_spans'&&a.alive&&a.active&&a.suppressedUntil>this.clock),
       mgSuppressed:this.enemies.filter(a=>a.weapon==='mg34'&&a.alive&&a.suppressedUntil>this.clock).map(a=>a.id)};
   }
+  /** Read-only copy of the visual-only display rounds ({rounds, firedAt, skipped, nextId}); the renderer draws them after the gameplay tracers. */
+  get displayFire(){return displayFireView(this.display);}
+  /** Computed on every read, never stored or saved: clock, phase, scene, event flags, per-sector men and fire, recent blasts. */
+  get battleReadout(){return computeBattleReadout(this.display,this);}
   get interaction(){
     const p=this.player;
     if(this.scene&&definition.cutscenes.find(c=>c.id===this.scene.id).skippable)return 'Espaço · saltar cena';
@@ -891,7 +997,7 @@ export class M01Simulation {
       train963:this.consumedEvent(E('train963_arrives')),panzerzug:this.consumedEvent(E('panzerzug_arrives')),
       stukas:this.consumedEvent(E('planes_heard'))&&!this.consumedEvent(E('second_air_pass')),
       secondRaid:this.flags['m01.second_raid_state']==='active',weaponVisible:!this.player.carrying&&this.scene?.id!=='cs_m01_roll_call',
-      damage:this.sectors.damage.map(d=>({...d,smokeVisible:this.clock-d.started<240||d.id==='station_bomb'}))};
+      damage:this.sectors.damage.map(d=>({...d,smokeVisible:this.clock-d.started<240||d.id==='station_bomb'||RAID_ID.test(d.id)}))};
   }
   snapshot(includeCheckpoint=true){const s=clone({schema:2,missionId:this.missionId,clock:this.clock,battleClock:this.battleClock,rng:this.rng.state,
     player:this.player,weapon:this.weapon.snapshot(),actors:this.actors,consumed:this.consumed,objectives:this.objectives,flags:this.flags,
@@ -925,6 +1031,7 @@ export class M01Simulation {
       Object.assign(a,{active:false,alive:false,health:0,state:'DOWN'});
     for(const a of candidate.actors)initializePresentation(a,candidate.clock);
     candidate.weapon.restore(s.weapon);candidate.rng.state=s.rng;candidate.events=[];candidate.world.refresh(Object.keys(s.consumed),s.flags);
+    candidate.display=createDisplayFire(displaySeed(s.rng,s.clock),displayProfiles(definition,{actors:candidate.actors}));   // not saved: restarts empty, re-seeded from the saved state
     if(s.resumeCheckpoint!==undefined){
       const backup=new M01Simulation();backup.restoreSnapshot(s.resumeCheckpoint);candidate.checkpoint=backup.snapshot(false);
     }else candidate.checkpoint=candidate.snapshot(false);   // legacy schema 2 used the loaded state itself as CP
@@ -1034,6 +1141,22 @@ export function validateM01Snapshot(s){
   if('fireEase' in s.timers&&typeof s.timers.fireEase!=='boolean')reject('timer fireEase');
   if('withdrawalPressure' in s.timers&&(!Number.isInteger(s.timers.withdrawalPressure)||!finite(s.timers.withdrawalPressure,0,7)))reject('timer withdrawalPressure');
   if('nextCombatCall' in s.timers&&!finite(s.timers.nextCombatCall))reject('timer nextCombatCall');
+  if(s.timers.raidSchedule===undefined&&s.sectors.damage.some(d=>/^raid_0530_[1-5]$/.test(d.id)))reject('missing raid schedule');
+  if(s.timers.raidSchedule!==undefined){
+    const schedule=s.timers.raidSchedule,world=new TczewWorld(),raidAt=s.consumed[E('bombing_0530')];
+    if(!Array.isArray(schedule)||schedule.length!==RAID_PLAN.length||raidAt===undefined||s.battleClock<RAID_PLAN[0].at||
+      s.flags['m01.second_raid_state']!==(s.battleClock>=seconds('05:34:00')?'ended':'active'))reject('raid schedule');
+    for(const [i,t] of schedule.entries()){
+      const plan=RAID_PLAN[i],p=t?.point,emitted=t?.emitted,damage=s.sectors.damage.filter(d=>d.id===plan.id);
+      if(!t||Object.keys(t).some(k=>!['id','at','point','emitted'].includes(k))||t.id!==plan.id||t.at!==plan.at||
+        !p||Object.keys(p).some(k=>!['x','y','z'].includes(k))||![p.x,p.y,p.z].every(Number.isFinite)||
+        p.y!==world.heightAt(p.x,p.z)||p.x>world.layout.bounds.playable.minX-30||
+        typeof emitted!=='boolean'||emitted!==(s.battleClock>=plan.at)||
+        (emitted?dist(p,plan.point)>70.000001:p.x!==plan.point.x||p.y!==plan.point.y||p.z!==plan.point.z)||
+        damage.length!==(emitted?1:0)||damage.some(d=>d.x!==p.x||d.y!==p.y||d.z!==p.z||d.started<raidAt))reject('raid target');
+    }
+    if(s.sectors.damage.some(d=>RAID_ID.test(d.id)&&!schedule.some(t=>t.id===d.id&&t.emitted)))reject('raid damage');
+  }
   if(s.timers.coverFire!==undefined){
     const fire=s.timers.coverFire,actor=s.actors.find(a=>a.id===fire?.by);
     if(!fire||!actor||actor.group!=='grp_de_east'||!finite(fire.at,0,s.clock)||

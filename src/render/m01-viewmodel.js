@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
 import wz29Profile from '../../research/weapons/kb_wz29.profile.json' with {type:'json'};
-import {WZ29_VISUAL,reloadEnvelope,advanceVisualBlend,presentationPose,placeWz29,placeViewArms,riflePresentationMaterial,viewAtlasMaterial} from './m01-wz29-presentation.js';
+import {WZ29_VISUAL,reloadEnvelope,advanceVisualBlend,presentationPose,placeWz29,placeViewArms,riflePresentationMaterial,viewAtlasMaterial,
+  adsEase,adsFieldOfView,advanceAdsProgress,breathSway,wallClearance,wallLowerTarget,advanceWallLower} from './m01-wz29-presentation.js';
 import {WEAPON_PRESENTATION,WeaponViewFx,advanceLookLag,mechanicalPulse,viewPointToWorld,viewUp} from './first-person-weapon-fx.js';
 import {visualNoise} from './m01-atmosphere.js';
 
@@ -120,7 +121,23 @@ export class M01ViewModel {
     mixer.setTime(time);
     root.updateMatrixWorld(true);
   }
-  // view (optional): {camera, viewFov} lets brass/clips/smoke leave the visible port into the world.
+  /**
+   * World field of view for the aim transition (70 hip, 48 sights), on the same eased progress as the weapon pose. The mission
+   * view sets the camera before this frame's viewmodel pass, so this is the last write before the world is drawn; the
+   * value is a pure function of the aim progress. Presentation only: it never reads or writes the simulation.
+   */
+  applyFov(view){
+    const camera=view?.camera;if(!camera||!this.fovDriven||!this.visual)return;
+    const fov=adsFieldOfView(this.visual.aim);
+    if(camera.fov!==fov){camera.fov=fov;camera.updateProjectionMatrix();}
+  }
+  /** The render camera's eye and axes in world space, for the read-only wall probe. */
+  viewFrame(camera){
+    const {a,b,c}=this.tmp,q=camera.quaternion,frame={origin:camera.position,forward:a.set(0,0,-1).applyQuaternion(q),right:b.set(1,0,0).applyQuaternion(q),up:c.set(0,1,0).applyQuaternion(q)};
+    return frame;
+  }
+  // view (optional): {camera, viewFov}. The camera is READ for the brass/clip/smoke spawns and the wall probe, and its field of
+  // view is WRITTEN (applyFov) to the aim transition's value: the one camera property this class sets.
   update(sim,quality,flashUntil,view=null){
     const characters=this.characters;
     const lod=characters.sources.has('pl:0')?0:1;
@@ -130,9 +147,10 @@ export class M01ViewModel {
     // boundary instead of blending from an old menu/checkpoint presentation.
     if(this.sourceWorld!==sim.world){this.sourceWorld=sim.world;this.visual=null;this.sampleKey=null;this.flashShot=sim.weapon.shotCount;this.fx.reset();}
     const p=sim.player,w=sim.weapon,t=sim.clock,carry=p.carrying==='jozef_bak';
-    const key=JSON.stringify([t,p.aiming,p.moveBlend,p.sprinting,p.carrying,sim.renderState.weaponVisible,w.state,w.started,w.until,w.lastShot,w.shotCount,flashUntil,p.angle,p.pitch]);
-    if(this.sampleKey===key)return true;
-    this.sampleKey=key;
+    const key=JSON.stringify([t,p.aiming,p.moveBlend,p.sprinting,p.crouched,p.carrying,sim.renderState.weaponVisible,w.state,w.started,w.until,w.lastShot,w.shotCount,flashUntil,
+      p.angle,p.pitch,sim.world?.revision,view?.camera?[...view.camera.position.toArray(),...view.camera.quaternion.toArray()]:null]);
+    if(this.sampleKey===key){this.applyFov(view);return true;}
+    this.sampleKey=key;this.fovDriven=false;
     this.root.visible=sim.renderState.weaponVisible||carry;
     if(!this.root.visible){this.fx.hide();this.stats={active:true,visible:false,lod};return true;}
     let clip='aim',sample=0;
@@ -143,34 +161,43 @@ export class M01ViewModel {
     this.play(this.root,this.mixer,clip,sample);
     // Carry presentation is preserved; the rifle path uses measured sight landmarks.
     const eye=new THREE.Vector3();this.root.getObjectByName('eye_r').getWorldPosition(eye);
-    let mechanical=0,stroke=0;
+    let mechanical=0,stroke=0,feel={wallDistance:null,wallTarget:0,wallLower:0,fov:null,breath:0,bob:0,gait:0};
     if(carry){
       this.root.position.copy(eye).multiplyScalar(-1);
       this.root.position.y+=Math.abs(p.moveBlend*Math.sin(t*(p.sprinting?14:9))*.014);
       this.visual=null;
     }else{
       const dt=this.visual?Math.min(.05,Math.max(0,t-this.visual.clock)):0;
+      // Wall lowering reads the world's own collision boxes along the aim: a read-only render-side query, no write, no event.
+      const clearance=view?.camera&&sim.world?.obstacles?wallClearance(sim.world.obstacles,this.viewFrame(view.camera)):Infinity,wallTarget=wallLowerTarget(clearance);
       // A new rig/restore reconstructs immediately from authoritative flags. No mixer
       // or blend state enters schema 2; a repeated clock cannot advance a transition.
-      if(!this.visual||t<this.visual.clock)this.visual={clock:t,aim:Number(Boolean(p.aiming)),move:p.moveBlend??0,run:Number(Boolean(p.sprinting)),phase:t*9,
+      if(!this.visual||t<this.visual.clock)this.visual={clock:t,aim:Number(Boolean(p.aiming)),move:p.moveBlend??0,run:Number(Boolean(p.sprinting)),crouch:Number(Boolean(p.crouched)),wall:wallTarget,
         look:advanceLookLag(null,p.angle??0,p.pitch??0,0),lookShot:w.shotCount};
-      const v=this.visual;
-      // A 4 kg rifle: the eye blend is a touch slower than before (55 ms, both ways); the pose eases it in/out.
-      v.aim=advanceVisualBlend(v.aim,Number(Boolean(p.aiming)),dt,.055);
+      const v=this.visual,elapsed=Math.max(0,t-v.clock);
+      // A 4 kg rifle: shouldered in 0.30 s, lowered in 0.22 s of mission time, on one eased curve shared with the field of view.
+      // Progress is linear in the mission clock (uncapped, so a slow frame lands where a fast one would); dt 0 cannot move it.
+      v.aim=advanceAdsProgress(v.aim,Boolean(p.aiming),elapsed);
       v.move=advanceVisualBlend(v.move,p.moveBlend??0,dt,.09);
       v.run=advanceVisualBlend(v.run,Number(Boolean(p.sprinting)),dt,.10);
+      v.crouch=advanceVisualBlend(v.crouch,Number(Boolean(p.crouched)),dt,.14);
+      v.wall=advanceWallLower(v.wall,wallTarget,Math.min(.5,elapsed));
+      this.fovDriven=true;this.applyFov(view);
+      Object.assign(feel,{wallDistance:Number.isFinite(clearance)?+clearance.toFixed(4):null,wallTarget:+wallTarget.toFixed(4)});
       // Look lag is an exponential of the true frame time (capped), so a turn settles alike at 4 or 60 fps. The
       // simulation's own recoil kick to the view pitch is not the player looking up: the shot frame's pitch change is skipped.
       if(w.shotCount!==v.lookShot){v.look.pitch=p.pitch??0;v.lookShot=w.shotCount;}
-      v.look=advanceLookLag(v.look,p.angle??0,p.pitch??0,Math.min(.5,Math.max(0,t-v.clock)));v.phase+=dt*(9+5*v.run);v.clock=t;
+      v.look=advanceLookLag(v.look,p.angle??0,p.pitch??0,Math.min(.5,Math.max(0,t-v.clock)));v.clock=t;
       // Weight at the authored mechanical markers: bolt stop/slam (fire_bolt 0,70/1,00 s), clip seated/bolt closed (1,00/2,70 s).
       mechanical=clip==='fire_bolt'?mechanicalPulse(sample,1,.12)+.45*mechanicalPulse(sample,.7,.1):
         w.state==='RELOAD_CLIP'?mechanicalPulse(sample,PROFILE.mechanics.boltClosed,.14)+.35*mechanicalPulse(sample,1,.1):0;
       // Bolt-action convention: the stroke takes the rifle off the eye, canted to show the bolt and the ejection,
       // and it is back on the sights before the weapon is READY. player.aiming and authoritative spread are untouched.
       stroke=clip==='fire_bolt'?THREE.MathUtils.smoothstep(sample,.10,.30)*(1-THREE.MathUtils.smoothstep(sample,.92,1.12))*v.aim:0;
-      const pose=presentationPose({clock:t,lastShot:w.lastShot,aim:v.aim*(1-.6*stroke),move:v.move,run:v.run,reload:w.reloading?reloadEnvelope(sample):0,phase:v.phase,
+      const pose=presentationPose({clock:t,lastShot:w.lastShot,aim:v.aim*(1-.6*stroke),move:v.move,run:v.run,crouch:v.crouch,wall:v.wall,reload:w.reloading?reloadEnvelope(sample):0,
         shot:w.shotCount??0,look:v.look,mechanical,stroke,profile:PROFILE});
+      Object.assign(feel,{wallLower:+v.wall.toFixed(4),fov:+adsFieldOfView(v.aim).toFixed(4),aimEased:+adsEase(v.aim).toFixed(5),gait:+pose.gait.phase.toFixed(4),
+        bob:+(pose.gait.y*v.move*(1-adsEase(v.aim))).toFixed(6),breath:+(breathSway(t).y*(1-adsEase(v.aim))).toFixed(6)});
       placeWz29(this.root,this.root.getObjectByName('weapon'),pose);
       const gripWeight=w.reloading?1-reloadEnvelope(sample):w.boltCycling?
         1-THREE.MathUtils.smoothstep(sample,.12,.25)+THREE.MathUtils.smoothstep(sample,1.08,characters.clips.get('fire_bolt').duration):1;
@@ -202,9 +229,10 @@ export class M01ViewModel {
     if(this.worldFx&&view&&!carry)this.emitWorld(sim,view,weapon,clip,sample);
     this.stats={active:true,visible:true,lod,clip,clipTime:sample,carrying:carry,singleRound:this.round.visible,
       armTriangles:this.armGeometry.index.count/3,aimBlend:this.visual?.aim??null,runBlend:this.visual?.run??null,
-      phase:this.visual?.phase??null,visualMuzzle:this.flash.getWorldPosition(new THREE.Vector3()).toArray(),
+      phase:feel.gait,visualMuzzle:this.flash.getWorldPosition(new THREE.Vector3()).toArray(),
       visualSights:Object.fromEntries(['rear','front'].map(name=>[name,weapon.localToWorld(new THREE.Vector3(...WZ29_VISUAL[name])).toArray()])),
-      presentation:{profile:PROFILE.id,mechanical:+mechanical.toFixed(4),boltStroke:+stroke.toFixed(4),lookYaw:+(this.visual?.look?.yaw??0).toFixed(5),
+      // muzzleReach: how far the drawn muzzle stands in front of the eye (m); wallDistance is the probe's clearance the lowering answers.
+      presentation:{profile:PROFILE.id,mechanical:+mechanical.toFixed(4),boltStroke:+stroke.toFixed(4),...feel,muzzleReach:+(-weapon.localToWorld(a.fromArray(WZ29_VISUAL.muzzle)).z).toFixed(4),lookYaw:+(this.visual?.look?.yaw??0).toFixed(5),
         lookPitch:+(this.visual?.look?.pitchLag??0).toFixed(5),clipEjected:Boolean(clipEjected),...fx}};
     return true;
   }

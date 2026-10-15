@@ -1,0 +1,180 @@
+[WebServer] (node:3858) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:3877) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3877) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/m01-continuity-raid.spec.js:13:1 › raid das 05:30 mantém seis impactos e fumo após continuação às 05:36 (1.5m)
+
+
+  1) tests/browser/m01-continuity-raid.spec.js:13:1 › raid das 05:30 mantém seis impactos e fumo após continuação às 05:36 
+
+    Error: Timeout 5000ms exceeded while waiting on the predicate
+
+      30 |     document.exitPointerLock();return true;
+      31 |   },frame);
+    > 32 |   await expect.poll(()=>page.evaluate(()=>window.gameDiagnostics().paused)).toBe(true);
+         |   ^
+      33 |   const before=await page.evaluate(()=>window.gameDiagnostics());
+      34 |   const hits=before.m01.damage.filter(d=>/^raid_0530(?:_[1-5])?$/.test(d.id));
+      35 |   expect(hits).toHaveLength(6);
+        at /workspace/COD-guerra/tests/browser/m01-continuity-raid.spec.js:32:3
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-continuity-raid-raid-d-fb0f9-o-após-continuação-às-05-36/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-continuity-raid-raid-d-fb0f9-o-após-continuação-às-05-36/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/m01-continuity-raid.spec.js:13:1 › raid das 05:30 mantém seis impactos e fumo após continuação às 05:36 
+{
+  "config": {
+    "configFile": "/workspace/COD-guerra/playwright.config.js",
+    "rootDir": "/workspace/COD-guerra/tests/browser",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/COD-guerra/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/workspace/COD-guerra/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run preview",
+      "url": "http://127.0.0.1:4173/COD-guerra/",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "m01-continuity-raid.spec.js",
+      "file": "m01-continuity-raid.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "raid das 05:30 mantém seis impactos e fumo após continuação às 05:36",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 88485,
+                  "error": {
+                    "message": "Error: Timeout 5000ms exceeded while waiting on the predicate",
+                    "stack": "Error: Timeout 5000ms exceeded while waiting on the predicate\n    at /workspace/COD-guerra/tests/browser/m01-continuity-raid.spec.js:32:3",
+                    "location": {
+                      "file": "/workspace/COD-guerra/tests/browser/m01-continuity-raid.spec.js",
+                      "column": 3,
+                      "line": 32
+                    },
+                    "snippet": "  30 |     document.exitPointerLock();return true;\n  31 |   },frame);\n> 32 |   await expect.poll(()=>page.evaluate(()=>window.gameDiagnostics().paused)).toBe(true);\n     |   ^\n  33 |   const before=await page.evaluate(()=>window.gameDiagnostics());\n  34 |   const hits=before.m01.damage.filter(d=>/^raid_0530(?:_[1-5])?$/.test(d.id));\n  35 |   expect(hits).toHaveLength(6);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/COD-guerra/tests/browser/m01-continuity-raid.spec.js",
+                        "column": 3,
+                        "line": 32
+                      },
+                      "message": "Error: Timeout 5000ms exceeded while waiting on the predicate\n\n  30 |     document.exitPointerLock();return true;\n  31 |   },frame);\n> 32 |   await expect.poll(()=>page.evaluate(()=>window.gameDiagnostics().paused)).toBe(true);\n     |   ^\n  33 |   const before=await page.evaluate(()=>window.gameDiagnostics());\n  34 |   const hits=before.m01.damage.filter(d=>/^raid_0530(?:_[1-5])?$/.test(d.id));\n  35 |   expect(hits).toHaveLength(6);\n    at /workspace/COD-guerra/tests/browser/m01-continuity-raid.spec.js:32:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-14T09:13:40.332Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/workspace/COD-guerra/test-results/m01-continuity-raid-raid-d-fb0f9-o-após-continuação-às-05-36/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/COD-guerra/tests/browser/m01-continuity-raid.spec.js",
+                    "column": 3,
+                    "line": 32
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2f31d122fb440730a6b2-267219e237e2ef579347",
+          "file": "m01-continuity-raid.spec.js",
+          "line": 13,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-14T09:13:28.769Z",
+    "duration": 116188.349,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,45 @@
+M01-BATTLE-READOUT-DISPLAY-ROUNDS-V1 (T22): every local run, in order. Machine: aarch64, Node v24.21.0, one heavy command at a time,
+MemAvailable >= 300 MB checked before each, `timeout 900`, `--test-concurrency=1`. CI x86 is authoritative (D11) and has not run (no push).
+"base" = 21a6f76; for runs that need the old code, a pristine copy made with `git archive 21a6f76 src missions assets research tests/helpers tests/fixtures package.json`.
+
+BASE (before any edit)
+ 1. timeout 900 node --test --test-concurrency=1 tests/m01-animation-contract.test.js            tests 20, pass 13, FAIL 7, 476 s   -> animation-contract-aarch64-base.txt
+ 2. node scratch-sweep.mjs <pristine base> (13 route() runs: 19390901, 1..11, and 7 with support)  13/13 completed, ~5 min   -> pre-change-base-capture.jsonl
+ 3. node scratch-digest.mjs <pristine base> (the two golden routes, complete block lists)           426 s                      -> golden-blocks-aarch64-base.json
+ 4. timeout 900 node --test ... --test-name-pattern='seed 19390901' tests/m01-schema2-determinism.test.js (pristine base)   1/1, 372 s (timing control for item 17)
+
+THIS BRANCH
+ 5. (aborted by me, not a failure) first attempt at the new file with --test-name-pattern='^(?!route seed)': Node did not apply the negative lookahead, so
+    the 12 route tests started; I killed it after ~12 min and used --test-skip-pattern instead.
+ 6. node --test --test-concurrency=1 --test-skip-pattern='^route seed' tests/m01-display-fire.test.js         19/19 (28 s), later 20/20 after the positive control and the readout fix
+ 7. M01_DISPLAY_FIRE_SEEDS=19390901 ... --test-name-pattern='route seed' tests/m01-display-fire.test.js      1/1, 79 s
+ 8. --test-name-pattern='positive control' tests/m01-display-fire.test.js                                      1/1, 7 s
+ 9. 6 files that touch updateFire or tracers: m01-mg34-prone-presentation, m01-damage-decals, m01-aircraft-runtime, m01-consolidation-lifecycle, m01-demolition, m01-mg34-prone-runtime
+                                                                                                                78/78, 78 s
+10. M01_DISPLAY_FIRE_SEEDS=19390901,1,2,3,4,5 M01_DISPLAY_FIRE_REPORT=... --test-name-pattern='route seed' tests/m01-display-fire.test.js   6/6, 460 s, exit 0
+11. M01_DISPLAY_FIRE_SEEDS=6,7,8,9,10,11 M01_DISPLAY_FIRE_REPORT=...     --test-name-pattern='route seed' tests/m01-display-fire.test.js   6/6, 449 s, exit 0   -> seed-sweep.json (both merged)
+12. tests/m01-animation-contract.test.js                                                                       tests 20, pass 13, FAIL 7, 693 s, same 7 as item 1,
+    output identical to item 1 apart from timings (animation-contract-aarch64-compare.txt)                      -> animation-contract-aarch64-after.txt
+    (the seed 7 golden test took 448 s here against 218 s in item 1; a plain re-run of the same route on this branch takes 24.3 s against 25.7 s on base,
+    identical hashes, so this is machine load, not the change)
+13. node scratch-digest.mjs <this branch> (golden routes, complete block lists)                                  457 s; every block equal to item 3   -> golden-blocks-aarch64-after.json
+14. tests/m01-cover-threat.test.js tests/m01-runtime.test.js tests/m01-hud-presentation.test.js                 33/33, 160 s
+15. tests/game.test.js m01-ckm-placement-migration m01-combat-feedback m01-cover-combat m01-cover-origin m01-continuous-fixes m01-ckm-runtime m01-support-runtime
+    m01-player-shot-feedback m01-battlefield-fx m01-battlefield-fx-polish-v3 m01-impostors m01-panzerzug m01-poses m01-tczew-data m01-station-evacuation   120/120, 384 s
+16. timeout 900 npm run build                                                                                   OK (6 s); dist/ deleted afterwards (git status clean)
+17. tests/m01-schema2-determinism.test.js, whole file                                                           exit 124 at 900 s (INFRA: the file needs about 15 min on this board; no test result)
+    retry as two halves, each under 900 s (the three tests that read the first route's result stay with it):
+    17a. --test-name-pattern='first divergence|seed 19390901|Bąk player carry|death between|OUTRO playback'       5/5, 511 s
+    17b. --test-skip-pattern with the same pattern                                                              13/13, 371 s
+    (18/18 in total; the seed 19390901 route A/B test took 358 s here and 371 s on base, so no slowdown)
+18. git diff --exit-code 21a6f76 HEAD -- src/world src/core missions assets package.json package-lock.json playwright.config.js tests/fixtures/m01-anim-gameplay-baseline.json src/game/m01-fire.js   exit 0
+19. dry run of the workflow's "Golden and 12-seed proof lines" step on synthetic TAP and the real sweep file: exit 0, and exit 1 when a golden line is "not ok"
+20. final test file and source (HEAD 1ebc19c): non-route subset 20/20 (28 s), then M01_DISPLAY_FIRE_SEEDS=19390901,11 route tests 2/2 (147 s), results identical to
+    the earlier sweep entries for those seeds (rng and gameplay stream hashes, display round counts, final rng)
+
+NOT RUN: npm test (full), browser specs (no Chromium here), anything on x86.
+
+ORDER NOTE (so nobody has to reconstruct it from timestamps): items 5-12 ran with src/ at commit 8c122d9, before two later edits to the test file (an `owner`
+sanity assertion in the route test and header comments; the second route chunk may have started on either side of that edit). The only src change after those runs
+is commit 1ebc19c, which changes only computeBattleReadout (civilians and medics are not shooters): a read-only getter that neither the ticking path nor items 7-12
+call. Item 13 and items 14-17 ran after that edit, and item 20 re-ran the final test file and source (HEAD 1ebc19c).

@@ -8,18 +8,7 @@ import {soldierVisualVariant, SoldierVisualVariations} from '../src/render/m01-s
 import {nodeCharacterAssets} from '../tools/verification/m01-soldier-variation-assets.mjs';
 import {M01Simulation} from '../src/game/m01-simulation.js';
 import {actorHitboxes,muzzlePosition} from '../src/world/spatial.js';
-const integratedPresentation=new Set([
- // Simulation presentation additions are checked against immutable per-tick gameplay traces in m01-animation-contract.test.js.
- 'src/game/m01-simulation.js',
- // T50 modifies asset transfer observability only; original loader API is guarded
- // separately by tests/m01-loading-and-bundle-t50.test.js.
- 'src/assets/asset-manager.js',
- 'src/core/audio.js','src/game/game.js','src/main.js','src/styles.css',
- 'src/render/m01-actor-pose.js','src/render/m01-atmosphere.js','src/render/m01-characters.js','src/render/m01-environment.js','src/render/m01-surfaces.js',
- 'src/render/m01-train-wagons.js','src/render/m01-view.js','src/render/m01-viewmodel.js','src/render/three-renderer.js',
- // Ju 87 production closeout: the raid's presentation-only aircraft art was regenerated (path/events unchanged).
- ...[0,1,2].map(lod=>`assets/models/provisional/m01-aircraft/m01_ju87_b1_lod${lod}.glb`),'assets/models/provisional/m01-aircraft/manifest.json'
-]);
+import {integratedPresentation} from './helpers/m01-byte-guard-allowlist.js';
 import {driver,toRepair} from './helpers/m01-route.js';
 const assets=await nodeCharacterAssets();
 function characters(on=true){const c=new M01Characters(new THREE.Scene(),{visualVariation:on});c.sources=assets.sources;c.clips=assets.clips;return c;}

@@ -57,6 +57,7 @@ export const M01_IMPACT_PROFILES=Object.freeze({
   earth:Object.freeze({dust:6,chips:2,life:1.05,color:'#8b7658',rise:.42,spread:2.0,elongation:.8}),
   stone:Object.freeze({dust:4,chips:5,life:.82,color:'#b9b09c',rise:.34,spread:1.55,elongation:.72}),
   brick:Object.freeze({dust:5,chips:6,life:.92,color:'#9e5642',rise:.38,spread:1.68,elongation:.85}),
+  // One water profile: T21 and the player-shot river splash both added it; the T21 values satisfy both suites (rise >= .6, dust > 0).
   water:Object.freeze({dust:5,chips:3,life:.88,color:'#c6d5d8',rise:.68,spread:1.45,elongation:1.25}),
   wood:Object.freeze({dust:3,chips:7,life:.76,color:'#98744f',rise:.30,spread:1.75,elongation:1.75}),
   metal:Object.freeze({dust:0,chips:0,sparks:6,life:.22,color:'#ffd27a',rise:.92,spread:2.6,elongation:1}),

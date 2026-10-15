@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import {M01View} from '../src/render/m01-view.js';
-import {ju87HeardAt,ju87Fade} from '../src/render/m01-aircraft.js';
+import {ju87HeardAt,ju87Fade,ju87Attitude} from '../src/render/m01-aircraft.js';
+import {m01StukaPosition,m01RaidPlanePosition,M01_RAID_PASS_SECONDS} from '../src/world/m01-aircraft-path.js';
 import {driver} from './helpers/m01-route.js';
 
 function fixture(fail=()=>false){
@@ -20,11 +21,12 @@ function fixture(fail=()=>false){
   view.createAircraft();return {view,sources};
 }
 
-test('Ju 87 clones use native LODs, share art, sample the saved clock and preserve the existing raid path',async()=>{
+test('Ju 87 clones use native LODs, share art, sample the saved clock and follow the stukaPath anchored to the bombing',async()=>{
   const {view,sources}=fixture();await view.loadAircraft();
   assert.deepEqual([...view.aircraftSources.keys()].sort(),[0,1,2]);assert.equal(view.aircraftMixers.length,9);
-  const time=12.013,state=Object.freeze({stukas:true,secondRaid:false});
-  const player=Object.freeze({x:80+Math.sin(time*.02)*250,y:160,z:240-time%90*4});
+  // The bombing anchor comes from the saved station_bomb impact: about 1.7 s have passed since evt_m01_bombing_0434.
+  const time=12.013,started=10.3,since=time-started,state=Object.freeze({stukas:true,secondRaid:false,damage:Object.freeze([Object.freeze({id:'station_bomb',started})])});
+  const player=Object.freeze(m01StukaPosition(since,0));
   for(const [quality,want] of [['low',2],['medium',1],['high',0]]){
     view.owner.quality=quality;view.updateAircraft(state,time,player);
     const selected=view.planes[0].levels.filter(l=>l.object.visible);assert.equal(selected.length,1);
@@ -40,9 +42,11 @@ test('Ju 87 clones use native LODs, share art, sample the saved clock and preser
   view.updateAircraft(state,time+.005,player);assert.notDeepEqual(prop.quaternion.toArray(),frozen);
   view.updateAircraft(state,time,player);assert.deepEqual(prop.quaternion.toArray(),frozen,'restoring clock restores pose');
   assert.deepEqual(view.planes[0].position.toArray(),[player.x,player.y,player.z]);
-  assert.equal(view.planes[0].rotation.y,.1);
-  view.updateAircraft(Object.freeze({stukas:false,secondRaid:true}),time,player);
+  assert.equal(view.planes[0].rotation.y,ju87Attitude(since,0).yaw);
+  // The raid is hidden, then shown from its own state at the start of the high pass.
+  view.updateAircraft(Object.freeze({stukas:false,secondRaid:true,damage:Object.freeze([Object.freeze({id:'raid_0530',started:time})])}),time,player);
   assert.ok(view.planes.every(p=>!p.visible));assert.equal(view.raidPlane.visible,true);
+  assert.deepEqual(view.raidPlane.position.toArray(),Object.values(m01RaidPlanePosition(0)));
 });
 
 test('missing optional Ju 87 art keeps the silhouettes; partial failure uses available detail and disposal prevents attachment',async()=>{
@@ -71,7 +75,7 @@ function namedFixture(){
 
 test('each Ju 87 gets its own light-weight material instances over shared textures, propeller rpm/phase and attitude',async()=>{
   const {view,sources}=namedFixture();await view.loadAircraft();
-  const time=33.4,state={stukas:true,secondRaid:false},player={x:0,y:0,z:0};view.owner.quality='high';
+  const time=33.4,started=30,since=time-started,state={stukas:true,secondRaid:false,damage:[{id:'station_bomb',started}]},player={x:0,y:0,z:0};view.owner.quality='high';
   view.updateAircraft(state,time,player);
   const bodies=view.planes.map(p=>p.levels[0].object.getObjectByName('fuselage').material);
   assert.equal(new Set(bodies).size,3,'one material instance per aircraft');
@@ -83,28 +87,29 @@ test('each Ju 87 gets its own light-weight material instances over shared textur
   assert.equal(sources.get(0).scene.getObjectByName('propeller_disc').material.forceSinglePass,false);
   const props=view.planes.map(p=>p.levels.find(l=>l.object.visible).object.getObjectByName('propeller').quaternion.toArray());
   assert.notDeepEqual(props[0],props[1]);assert.notDeepEqual(props[1],props[2]);
-  // Heading and path are unchanged; bank/pitch come from the same saved clock, so pause/restore repeats them.
+  // Position and attitude come from the path tangent at the same saved clock, so pause/restore repeats them.
   view.planes.forEach((p,i)=>{
-    assert.deepEqual(p.position.toArray(),[80+Math.sin(time*.02+i)*250,160+i*20,240-time%90*4+i*30]);
-    assert.equal(p.rotation.y,.1);assert.equal(p.rotation.order,'YXZ');
-    assert.ok(Math.abs(p.rotation.z)<.11&&Math.abs(p.rotation.x)<.02&&p.rotation.z!==0);
+    assert.deepEqual(p.position.toArray(),Object.values(m01StukaPosition(since,i)));
+    const attitude=ju87Attitude(since,i);assert.deepEqual([p.rotation.x,p.rotation.y,p.rotation.z],[attitude.pitch,attitude.yaw,attitude.bank]);
+    assert.equal(p.rotation.order,'YXZ');
   });
+  assert.ok(view.planes[2].rotation.x<-.3&&view.planes[1].rotation.x>0,'3.4 s after the bombing the third plane is still diving while the second pulls out');
   const attitude=view.planes.map(p=>p.rotation.toArray());view.updateAircraft(state,time+7,player);view.updateAircraft(state,time,player);
   assert.deepEqual(view.planes.map(p=>p.rotation.toArray()),attitude);
 });
 
-test('Ju 87 fade hides the 90 s path wrap and eases in after the planes are heard, deterministically',async()=>{
+test('Ju 87 fade has no 90 s wrap (the path never loops) and eases in after the planes are heard, deterministically',async()=>{
   const {view}=namedFixture();await view.loadAircraft();
   const state={stukas:true,secondRaid:false},player={x:0,y:0,z:0};view.owner.quality='high';
-  const shown=time=>view.planes[0].levels.find(l=>l.object.visible);
-  view.updateAircraft(state,180.0,player);assert.equal(view.planes[0].userData.fade,0);
-  assert.ok(shown()?.object.userData.materials.every(m=>m.opacity===0),'fully dissolved exactly at the wrap (level kept, not culled)');
-  assert.equal(view.planes[0].visible,true,'raid state is unchanged; only the rendering fades');
-  view.updateAircraft(state,181.25,player);const half=view.planes[0].userData.fade,glass=shown().object.getObjectByName('canopy').material;
-  assert.ok(half>.3&&half<.7);assert.ok(Math.abs(glass.opacity-.3*half)<1e-9,'translucent parts fade from their own opacity');
+  const shown=()=>view.planes[0].levels.find(l=>l.object.visible);
+  for(const time of [89.95,90,90.05,180,181.25]){
+    view.updateAircraft(state,time,player);assert.equal(view.planes[0].userData.fade,1,`no dissolve at ${time}`);
+    assert.ok(shown().object.userData.materials.every(m=>m.opacity===m.userData.baseOpacity));
+  }
   view.updateAircraft(state,200,player);assert.equal(view.planes[0].userData.fade,1);
   assert.equal(shown().object.getObjectByName('fuselage').material.opacity,1);
-  view.updateAircraft(state,200,player,199);const entering=view.planes[0].userData.fade;assert.ok(entering>0&&entering<.5,'fades in after planes_heard');
+  view.updateAircraft(state,200,player,199);const entering=view.planes[0].userData.fade,glass=shown().object.getObjectByName('canopy').material;
+  assert.ok(entering>0&&entering<.5,'fades in after planes_heard');assert.ok(Math.abs(glass.opacity-.3*entering)<1e-9,'translucent parts fade from their own opacity');
   view.updateAircraft(state,215,player,199);assert.equal(view.planes[0].userData.fade,1);
   view.updateAircraft(state,200,player,199);assert.equal(view.planes[0].userData.fade,entering,'restoring the clock restores the fade');
 });

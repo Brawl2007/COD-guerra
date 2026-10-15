@@ -54,6 +54,13 @@ button:disabled{opacity:.45;cursor:wait}#complete{overflow:auto;justify-content:
 #crosshair i:nth-child(1){left:0}#crosshair i:nth-child(2){right:0}
 #crosshair i:nth-child(n+3){width:1px;height:.58em;left:50%}
 #crosshair i:nth-child(3){top:0}#crosshair i:nth-child(4){bottom:0}
+/* Marcador de acerto (M01): quatro traços diagonais pálidos à volta da mira; só o relógio da missão o acende. */
+#hit-marker{left:50%;top:50%;width:1.9em;height:1.9em;transform:translate(-50%,-50%);opacity:0;transition:none}
+#hit-marker i{position:absolute;width:.42em;height:1px;background:rgba(236,230,210,.9);box-shadow:0 0 2px rgba(0,0,0,.9)}
+#hit-marker i:nth-child(1){left:0;top:0;transform-origin:0 0;transform:rotate(45deg)}
+#hit-marker i:nth-child(2){right:0;top:0;transform-origin:100% 0;transform:rotate(-45deg)}
+#hit-marker i:nth-child(3){left:0;bottom:0;transform-origin:0 100%;transform:rotate(-45deg)}
+#hit-marker i:nth-child(4){right:0;bottom:0;transform-origin:100% 100%;transform:rotate(45deg)}
 /* Interacção contextual */
 #interaction{top:calc(50% + 3.4em);left:50%;transform:translateX(-50%);white-space:nowrap;font-size:.98em;font-weight:600;letter-spacing:.04em;opacity:0}
 #interaction.show{opacity:1}
@@ -93,7 +100,7 @@ button:disabled{opacity:.45;cursor:wait}#complete{overflow:auto;justify-content:
 #letterbox i:first-child{top:0;transform:translateY(-101%)}#letterbox i:last-child{bottom:0;transform:translateY(101%)}
 #hud.cinematic #letterbox i{transform:none}
 #fade{background:#030403;opacity:0}
-#hud.cinematic :is(#objective,#status,#clock-wrap,#crosshair,#objective-update,#checkpoint,#resume-card){opacity:0!important}
+#hud.cinematic :is(#objective,#status,#clock-wrap,#crosshair,#hit-marker,#objective-update,#checkpoint,#resume-card){opacity:0!important}
 #hud.cinematic #captions{bottom:calc(var(--bar) + 1.3em)}
 #hud.cinematic #interaction{top:auto;bottom:calc(var(--bar) * .5);left:auto;right:var(--edge);transform:translateY(50%);font-size:.78em;color:var(--dim);text-shadow:none}
 #title-card,#resume-card{opacity:0;font-family:var(--type);text-shadow:0 1px 2px #000}

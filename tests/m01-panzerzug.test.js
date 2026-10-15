@@ -7,18 +7,7 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {M01Panzerzug,panzerzugLOD} from '../src/render/m01-panzerzug.js';
 import {M01Simulation} from '../src/game/m01-simulation.js';
-const integratedPresentation=new Set([
- // Simulation presentation additions are checked against immutable per-tick gameplay traces in m01-animation-contract.test.js.
- 'src/game/m01-simulation.js',
- // T50 modifies asset transfer observability only; original loader API is guarded
- // separately by tests/m01-loading-and-bundle-t50.test.js.
- 'src/assets/asset-manager.js',
- 'src/core/audio.js','src/game/game.js','src/main.js','src/styles.css',
- 'src/render/m01-actor-pose.js','src/render/m01-atmosphere.js','src/render/m01-characters.js','src/render/m01-environment.js','src/render/m01-surfaces.js',
- 'src/render/m01-train-wagons.js','src/render/m01-view.js','src/render/m01-viewmodel.js','src/render/three-renderer.js',
- // Ju 87 production closeout: the raid's presentation-only aircraft art was regenerated (path/events unchanged).
- ...[0,1,2].map(lod=>`assets/models/provisional/m01-aircraft/m01_ju87_b1_lod${lod}.glb`),'assets/models/provisional/m01-aircraft/manifest.json'
-]);
+import {integratedPresentation} from './helpers/m01-byte-guard-allowlist.js';
 const base='5f3cc34f53c61beec52255d67f8babd7194c9f7f',dir=new URL('../assets/models/production/m01/panzerzug/',import.meta.url);
 const manifest=JSON.parse(readFileSync(new URL('manifest.json',dir)));
 const data=lod=>{const b=readFileSync(new URL(manifest.files[lod].file,dir)),n=b.readUInt32LE(12);return {b,j:JSON.parse(b.subarray(20,20+n)),bin:b.subarray(28+n)};};

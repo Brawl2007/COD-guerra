@@ -1,0 +1,94 @@
+{
+  "name": "m01-demolition-west-flash-363m",
+  "shot": {
+    "base": "west",
+    "x": -292,
+    "z": 40,
+    "aim": {
+      "x": 70,
+      "y": 8,
+      "z": 20
+    },
+    "lift": 110,
+    "player": {
+      "x": -292,
+      "y": -3,
+      "z": 40
+    }
+  },
+  "camera": {
+    "position": [
+      -292,
+      -1.36,
+      40
+    ],
+    "quaternion": [
+      -0.06707819675881994,
+      -0.6843893193911973,
+      -0.06347451610884886,
+      0.7232446064974052
+    ],
+    "fov": 70,
+    "aspect": 1.7777777777777777,
+    "near": 0.05,
+    "far": 7500,
+    "width": 1280,
+    "height": 720
+  },
+  "projected": [
+    {
+      "point": [
+        70,
+        8,
+        20
+      ],
+      "x": 640,
+      "y": 250,
+      "depth": 354.6
+    }
+  ],
+  "limit": {
+    "changed": 150,
+    "peak": 40,
+    "meanAbs": 0.15
+  },
+  "threshold": 24,
+  "stats": {
+    "roi": {
+      "box": [
+        554,
+        189,
+        725,
+        310
+      ],
+      "pixels": 20691,
+      "changed": 2420,
+      "changedLoose": 2645,
+      "peak": 211,
+      "meanAbs": 15.9267,
+      "meanLumaReference": 141.68,
+      "meanLumaLive": 156.256,
+      "centroid": [
+        633.9,
+        247.1
+      ]
+    },
+    "control": {
+      "box": [
+        480,
+        10,
+        800,
+        90
+      ],
+      "pixels": 25600,
+      "changed": 0,
+      "changedLoose": 0,
+      "peak": 0,
+      "meanAbs": 0,
+      "meanLumaReference": 206.33,
+      "meanLumaLive": 206.33,
+      "centroid": null
+    }
+  },
+  "changedInFrame": 2420
+}

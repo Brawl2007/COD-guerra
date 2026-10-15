@@ -1,0 +1,155 @@
+{
+  "live": {
+    "clock": 241.2500000000206,
+    "aircraft": {
+      "loaded": [
+        0,
+        1,
+        2
+      ],
+      "planes": [
+        {
+          "visible": false,
+          "lod": 2,
+          "position": [
+            5329.545454546858,
+            1271.590909091143,
+            -4999.431818183058
+          ],
+          "attitude": [
+            0.12426854631549318,
+            -0.8472660092618284,
+            0
+          ],
+          "fade": 1,
+          "propeller": [
+            0,
+            0,
+            -0.7071067702284708,
+            0.7071067679413902
+          ]
+        },
+        {
+          "visible": false,
+          "lod": 2,
+          "position": [
+            4852.27272727413,
+            1192.0454545456882,
+            -4577.840909092149
+          ],
+          "attitude": [
+            0.12426854631549318,
+            -0.8472660092618284,
+            0
+          ],
+          "fade": 1,
+          "propeller": [
+            0,
+            0,
+            -0.368124549204358,
+            0.9297764822773694
+          ]
+        },
+        {
+          "visible": false,
+          "lod": 2,
+          "position": [
+            4375.000000001403,
+            1112.5000000002337,
+            -4156.250000001239
+          ],
+          "attitude": [
+            0.12426854631549318,
+            -0.8472660092618284,
+            0
+          ],
+          "fade": 1,
+          "propeller": [
+            0,
+            0,
+            -0.9921147011772076,
+            0.1253332303609376
+          ]
+        }
+      ],
+      "path": {
+        "since": 45.25000000001029,
+        "leadPathTime": 90.75000000001029,
+        "raidSince": 0,
+        "phase": "departed",
+        "planeSeconds": [
+          90.75000000001029,
+          87.25000000001029,
+          83.75000000001029
+        ]
+      },
+      "bombs": {
+        "visible": 0,
+        "pool": 3,
+        "flights": []
+      },
+      "raid": {
+        "visible": false,
+        "position": [
+          -700,
+          1100,
+          1800
+        ]
+      }
+    },
+    "eventIds": [
+      "evt_m01_intro_card",
+      "evt_m01_prelude_start",
+      "evt_m01_railway_worker_report",
+      "evt_m01_planes_heard",
+      "evt_m01_bombing_0434",
+      "evt_m01_cable_cut",
+      "evt_m01_forward_post_bombed",
+      "evt_m01_nowicki_lost",
+      "evt_m01_wounded_dragged"
+    ],
+    "damage": [
+      {
+        "id": "station_bomb",
+        "x": -400,
+        "y": -3,
+        "z": 37.5,
+        "started": 196.00000000001032,
+        "soundAt": 196.97480892786984
+      },
+      {
+        "id": "forward_post",
+        "x": 18,
+        "y": 0,
+        "z": 3,
+        "started": 198.1000000000108,
+        "soundAt": 198.3510845670055
+      },
+      {
+        "id": "repair_crater",
+        "x": -29.681624619981932,
+        "z": 5.2376729015301215,
+        "y": -2,
+        "started": 201.00000000001145,
+        "soundAt": 201.1166180758132
+      }
+    ]
+  },
+  "pausedClock": 241.2500000000206,
+  "pausedBombs": {
+    "visible": 0,
+    "pool": 3,
+    "flights": []
+  },
+  "pausedPath": {
+    "since": 45.25000000001029,
+    "leadPathTime": 90.75000000001029,
+    "raidSince": 0,
+    "phase": "departed",
+    "planeSeconds": [
+      90.75000000001029,
+      87.25000000001029,
+      83.75000000001029
+    ]
+  }
+}

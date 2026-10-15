@@ -35,7 +35,7 @@ export function actorPose(actor,time){
   const low=seated||crouched,underFire=time<(actor.suppressedUntil??0);
   const armed=!actor.civilian&&actor.role!=='MEDIC',upright=name==='standing'||name==='crouched';
   const legacyMoving=name==='standing'&&!underFire&&!(actor.shot>0)&&['ADVANCE','RETREAT'].includes(actor.state);
-  const gait=resolveLocomotionGait(actor,{name,underFire,moving:legacyMoving});
+  const gait=resolveLocomotionGait(actor,{name,underFire,moving:legacyMoving},time);
   const moving=gait!=='idle';
   const age=Number.isFinite(actor.firedAt)?time-actor.firedAt:actor.shot>0?Math.max(0,.25-actor.shot):Infinity;
   // SUPPRESS can persist after a burst. Only the actual shot/recent fire keeps the weapon shouldered.

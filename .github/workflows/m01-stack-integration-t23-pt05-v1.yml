@@ -1,0 +1,82 @@
+name: M01 Stack Integration T23 PT05 V1
+
+on:
+  push:
+    branches: [claude/m01-stack-integration-t23-pt05-v1]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-stack-integration-t23-pt05-v1-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Authority check (integration of accepted T23 b9c6c6b and PT05 6ef1027 on the stack tip a3746ff)
+        run: |
+          set -o pipefail
+          mkdir -p evidence
+          for c in a3746ff b9c6c6b 6ef1027; do git merge-base --is-ancestor $c HEAD; echo "$c is an ancestor of HEAD" | tee -a evidence/authority.log; done
+          git diff --exit-code a3746ff HEAD -- src/core assets package.json package-lock.json playwright.config.js 2>&1 | tee -a evidence/authority.log
+          echo "core, assets and build config untouched since a3746ff" | tee -a evidence/authority.log
+          test ! -f tests/fixtures/.golden-stale
+          echo "no golden marker: the committed x86 golden (T23) is verified, never regenerated" | tee -a evidence/authority.log
+      - name: Golden base is the simulation shipped in this checkout
+        run: |
+          set -o pipefail
+          BASE=$(grep -oE "const base='[0-9a-f]{40}'" tests/helpers/m01-anim-baseline.mjs | grep -oE "[0-9a-f]{40}")
+          test -n "$BASE"
+          echo "golden base: $BASE" | tee evidence/golden-base.log
+          git merge-base --is-ancestor "$BASE" HEAD
+          git diff --exit-code "$BASE" HEAD -- src/game/m01-simulation.js 2>&1 | tee -a evidence/golden-base.log
+          sha256sum tests/fixtures/m01-anim-gameplay-baseline.json | tee -a evidence/golden-base.log
+      - name: npm test
+        env:
+          M01_DISPLAY_FIRE_REPORT: ${{ github.workspace }}/evidence/display-fire-sweep.json
+          M01_EAST_FRONT_REPORT: ${{ github.workspace }}/evidence/east-front-sweep.json
+        run: set -o pipefail; npm test 2>&1 | tee evidence/npm-test.log
+      - name: Golden, 12-seed and east-front proof lines
+        run: |
+          set -o pipefail
+          OK='^\s*(ok [0-9]+ - |✔ )'; BAD='^\s*(not ok [0-9]+ - |✖ )'
+          NAMES='(all gameplay bytes hashed each tick against approved base|route seed [0-9]+:|east front seed [0-9]+:|east front with covering fire)'
+          grep -E "($OK|$BAD)$NAMES" evidence/npm-test.log | tee evidence/proof-lines.txt
+          if grep -qE "$BAD$NAMES" evidence/npm-test.log; then echo "FAIL: a proof line is not ok" | tee -a evidence/proof-lines.txt; exit 1; fi
+          test "$(grep -cE "${OK}all gameplay bytes hashed each tick against approved base" evidence/npm-test.log)" = 2
+          test "$(grep -cE "${OK}route seed [0-9]+:" evidence/npm-test.log)" = 12
+          test "$(grep -cE "${OK}east front seed [0-9]+:" evidence/npm-test.log)" = 12
+          test "$(grep -cE "${OK}east front with covering fire" evidence/npm-test.log)" = 1
+      - name: npm run build
+        id: build
+        if: ${{ !cancelled() }}
+        run: set -o pipefail; npm run build 2>&1 | tee evidence/build.log
+      - name: Install Playwright Chromium
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: npx playwright install --with-deps chromium
+      - name: Browser - distant front impostors (T20/T23)
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: set -o pipefail; npx playwright test tests/browser/m01-distant-front-impostors.spec.js --workers=1 --retries=0 2>&1 | tee evidence/browser-impostors.log
+      - name: Browser - m01.spec.js German fire and withdrawal continuation (T22/T23)
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: set -o pipefail; npx playwright test tests/browser/m01.spec.js --grep "German fire on the repair|a real withdrawal continuation" --workers=1 --retries=0 2>&1 | tee evidence/browser-m01.log
+      - name: Browser - yard wagon runtime integration (PT05)
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: set -o pipefail; npx playwright test tests/browser/m01-wagon-runtime-integration.spec.js --workers=1 --retries=0 2>&1 | tee evidence/browser-wagons.log
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-stack-integration-t23-pt05-v1-${{ github.sha }}
+          path: |
+            evidence/
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore

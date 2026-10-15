@@ -2,21 +2,22 @@ import * as THREE from 'three';
 import { clone } from 'three/addons/utils/SkeletonUtils.js';
 import { AssetManager } from '../assets/asset-manager.js';
 import { actorPose } from './m01-actor-pose.js';
+import { AnimationPlayer } from './m01-animation-player.js';
 import {SoldierVisualVariations,soldierVisualVariant} from './m01-soldier-variation.js';
 import { CKM_POSITION } from '../game/m01-simulation.js';
 import {mg34ProneSample,MG34_MUZZLE_SOCKET,eyePosition,actorHitboxes,muzzlePosition} from '../world/spatial.js';
 import {
   actorHash as hash,
-  resolveAvailableClip,
   resolveCombatReaction,
   resolveLocomotionGait,
-  resolveRiflemanReload,
   resolveSupportHandIK,
   resolveLodWithHysteresis,
   resolveStrideSample,
   resolveTorsoOrientation,
-  resolveTransitionBlend,
-  resolveTurnClip
+  GAP,
+  genericCandidate,
+  refineCandidate,
+  resolveAnimation
 } from './m01-animation-resolver.js';
 
 const BASE='assets/models/provisional/m01/characters/';
@@ -41,6 +42,8 @@ export class M01Characters {
     this.visuals=visualVariation?new SoldierVisualVariations():null;
     this.scene=scene;this.assets=new AssetManager();this.sources=new Map();this.pending=new Set();
     this.instances=new Map();this.clips=new Map();this.revision=0;this.disposed=false;this.stats={};
+    // Cross-fade records by actor id (pure data from the resolver). They outlive LOD swaps; they never enter a save.
+    this.anim=new Map();
   }
   async load(quality='low'){
     await Promise.allSettled([
@@ -103,6 +106,18 @@ export class M01Characters {
       this.sources.get('ckm:2')?.animations.some(c=>c.name===`ckm_wz30_gun_${phase}`)&&
       ['gunner','loader'].every(role=>this.clips.has(`ckm_wz30_${role}_${phase}`)));
   }
+  // Read-only clip view for the pure resolver: has/get/size for the clip selection, info() for the GLB extras (duration and the
+  // nominal ground speed or cycle distance) used by the cross-fade's odometer phase.
+  get clipView(){
+    const clips=this.clips;
+    return this._clipView??={has:n=>clips.has(n),get:n=>clips.get(n),get size(){return clips.size;},info:n=>{const c=clips.get(n);
+      return c?{duration:c.duration,speed_mps:c.userData?.speed_mps,cycle_distance_m:c.userData?.cycle_distance_m}:undefined;}};
+  }
+  // sample() below (adapter precedence, then the resolver's genericCandidate) picks the clip; refineCandidate() then adds rate,
+  // exactness, death clock and real-motion locomotion. `hint` is the previous target, used to keep a clip across a one-tick gait glitch.
+  describe(actor,time,actors,pose,battleClock,hint){
+    return refineCandidate(this.sample(actor,time,actors,pose,battleClock),{actor,pose,time,offset:(hash(actor.id)%1000)/250,clips:this.clipView,hint});
+  }
   sample(actor,time,actors=[],pose=actorPose(actor,time),battleClock){
     const offset=(hash(actor.id)%1000)/250;
     if(pose.name==='fallen')return {clip:'fallen',time:Number.isFinite(actor.diedAt)&&time>=actor.diedAt?Math.min(1.4,time-actor.diedAt):1.4,loop:false};
@@ -164,7 +179,7 @@ export class M01Characters {
       const reload=this.clips.get('rkm_reload')?.duration??3.4;
       if(actor.rounds===20&&actor.cooldown>0&&age>=burst&&age<burst+reload)return {clip:'rkm_reload',time:age-burst,loop:false};
       if(battleClock<4*3600+33*60+10&&!Number.isFinite(actor.firedAt)&&!pose.moving)return {clip:'rkm_clean',time:time+offset,loop:true};
-      const kGait=resolveLocomotionGait(actor,pose);
+      const kGait=resolveLocomotionGait(actor,pose,time);
       if(kGait!=='idle'){
         const kClip=actor.state==='RETREAT'||kGait==='run'||kGait==='sprint'?'rkm_run':'rkm_walk';
         const s=resolveStrideSample(actor,kClip,time,this.clips);
@@ -172,33 +187,8 @@ export class M01Characters {
       }
       return {clip:pose.aiming?'rkm_aim':actor.crouched?'rkm_crouched_idle':'rkm_standing_idle',time:time+offset,loop:true};
     }
-    const fireAge=time-actor.firedAt,boltDuration=this.clips.get('fire_bolt')?.duration??1.17;
-    if(pose.aiming&&Number.isFinite(fireAge)&&fireAge>=0&&fireAge<boltDuration)
-      return {clip:'fire_bolt',time:fireAge,loop:false};
-    const explicitReload=resolveRiflemanReload(actor,time,pose,this.clips);
-    if(explicitReload)return explicitReload;
-    const gait=resolveLocomotionGait(actor,pose);
-    if(gait!=='idle'){
-      const preferred=gait==='crouch_walk'?'crouch_walk':gait==='sprint'?'sprint':gait==='run'?'run':'walk';
-      const clipName=resolveAvailableClip(preferred,this.clips);
-      const stride=resolveStrideSample(actor,clipName,time,this.clips);
-      const primary={clip:clipName,time:stride.time,loop:true,stridePhase:stride.stridePhase,strideSynced:stride.strideSynced};
-      const transition=resolveTransitionBlend(actor,pose,primary,time,this.clips);
-      return transition?{...primary,...transition}:primary;
-    }
-    const orientation=resolveTorsoOrientation(actor,pose);
-    const turn=resolveTurnClip(actor,pose,orientation.yawDelta,this.clips);
-    if(turn)return turn;
-    if(pose.aiming){
-      const primary={clip:'aim',time:time+offset,loop:true};
-      const transition=resolveTransitionBlend(actor,pose,primary,time,this.clips);
-      return transition?{...primary,...transition}:primary;
-    }
-    const idleClip=actor.crouched||actor.posture==='crouch'?
-      resolveAvailableClip('crouched_idle',this.clips):resolveAvailableClip('standing_idle',this.clips);
-    const primary={clip:idleClip,time:time+offset,loop:true};
-    const transition=resolveTransitionBlend(actor,pose,primary,time,this.clips);
-    return transition?{...primary,...transition}:primary;
+    // Ordinary soldiers: the pure selection shared with the resolver (bolt, explicit reload, gait/stride, turn, aim, idle).
+    return genericCandidate(actor,pose,time,offset,this.clipView);
   }
   create(actor,key,weaponLOD){
     const root=clone(this.sources.get(key).scene),meshes=[];let weaponRoot=null;
@@ -234,11 +224,12 @@ export class M01Characters {
       // so repeated rendering of the same simulation time is bit-identical.
       spineClipQuat:spineBaseQuat?.clone()??null,armClipQuat:armBaseQuat?.clone()??null,
       muzzle:weaponRoot?MG34_MUZZLE_SOCKET:profile?.weapons?.[weapon]?.muzzle??profile?.sockets?.muzzle??[0,.032,-.765],
-      mixer:new THREE.AnimationMixer(root),action:null,blendAction:null,clip:null,blendClip:null};
+      mixer:new THREE.AnimationMixer(root),action:null,clip:null};
+    v.player=new AnimationPlayer(v.mixer);
     this.instances.set(actor.id,v);return v;
   }
   release(v){
-    v.root.removeFromParent();v.mixer.stopAllAction();v.mixer.uncacheRoot(v.root);
+    v.root.removeFromParent();v.player.dispose();
     const skeletons=new Set(v.meshes.filter(n=>n.isSkinnedMesh).map(n=>n.skeleton));
     skeletons.forEach(s=>s.dispose());
     // Geometry, materials and atlases belong to the source cache, shared by all clones/LODs.
@@ -261,81 +252,48 @@ export class M01Characters {
       if(lod===3)continue;
       let weaponLOD=lod;
       if(mgGunner(a)){while(weaponLOD<3&&!this.sources.has(`mg34:${weaponLOD}`))weaponLOD++;if(weaponLOD===3)continue;}
-      const key=`${nation}:${lod}`,pose=actorPose(a,time),sample=this.sample(a,time,actors,pose,battleClock),clip=this.clips.get(sample.clip);
+      const key=`${nation}:${lod}`,pose=actorPose(a,time),sample=this.describe(a,time,actors,pose,battleClock,(()=>{const pv=this.anim.get(a.id);return pv&&time>=pv.t&&time-pv.t<=GAP?pv.target:undefined;})()),clip=this.clips.get(sample.clip);
       if(!clip)continue;
       if(a.id==='szymon_kowal'&&!this.sources.get(key).scene.getObjectByName('rkm_wz28'))continue;
       // Missing or partial optional clips use the existing procedural batches, sampled from the same posture.
       if(mgGunner(a)&&a.alive&&a.mg34Prone&&a.mg34Prone.phase!=='standing'&&!this.hasProne())continue;
       let v=prevInst;
+      // A new LOD gets new actions but keeps the actor's blend record (this.anim), so a fade survives the swap.
       if(v&&(v.key!==key||mgGunner(a)&&v.weaponLOD!==weaponLOD)){this.release(v);this.instances.delete(a.id);v=null;}
       v??=this.create(a,key,weaponLOD);selected.add(a.id);
-      // Specialist animated rigs retain the exact legacy sampling contract. In particular,
-      // CKM, prone MG34 and station drag must reproduce identical bone matrices after
-      // pause, save/reload and repeated render calls. The generic resolver must not
-      // modify their root orientation, spine bones or action weighting.
-      const legacySpecialist=/^(ckm_wz30_|mg34_prone_|station_drag_|drag_wounded$)/.test(sample.clip);
+      // Specialist animated rigs (CKM, prone MG34, station drag) keep their authored pose: the torso twist and support-arm hint
+      // never touch their root orientation or spine bones. Their clips are exact in the resolver: one layer, no cross-fade.
+      const specialist=/^(ckm_wz30_|mg34_prone_|station_drag_|drag_wounded$)/.test(sample.clip);
       // Remove last frame's additive rotations before AnimationMixer samples.
       // Restoring the original bind pose loses untracked clip bones and caused
       // ckm_reserve spine drift even with a paused/frozen simulation clock.
       if(v.spineBone&&v.spineClipQuat)v.spineBone.quaternion.copy(v.spineClipQuat);
       if(v.supportArmBone&&v.armClipQuat)v.supportArmBone.quaternion.copy(v.armClipQuat);
-      if(legacySpecialist){
-        this.scene.add(v.root);v.root.visible=true;
-        v.root.position.set(a.x,a.y??0,a.z);
-        v.root.rotation.set(0,-a.facing-Math.PI/2,0);
-        if(v.clip!==sample.clip||v.blendClip){
-          v.mixer.stopAllAction();
-          v.action=v.mixer.clipAction(clip).setLoop(THREE.LoopOnce,1);
-          v.action.clampWhenFinished=true;v.action.play();
-          v.clip=sample.clip;v.blendClip=null;v.blendAction=null;
-        }
-        v.action.reset().play();
-        v.mixer.setTime(sample.loop?sample.time%clip.duration:Math.min(sample.time,clip.duration));
-        if(v.spineBone&&v.spineClipQuat)v.spineClipQuat.copy(v.spineBone.quaternion);
-        if(v.supportArmBone&&v.armClipQuat)v.armClipQuat.copy(v.supportArmBone.quaternion);
-      }else{
-        const orientation=resolveTorsoOrientation(a,pose);
-        const useSpineTwist=Boolean(v.spineBone&&orientation.torsoTwist!==0);
-        const appliedRootYaw=useSpineTwist?orientation.rootYaw:orientation.facing;
-        this.scene.add(v.root);v.root.visible=true;
-        v.root.position.set(a.x,a.y??0,a.z);
-        v.root.rotation.set(0,-appliedRootYaw-Math.PI/2,0);
-        const blendClipObj=sample.blend?this.clips.get(sample.blend.clip):null;
-        if(blendClipObj&&blendClipObj!==clip&&sample.blend.weight>.01){
-          if(v.clip!==sample.clip||v.blendClip!==sample.blend.clip){
-            v.mixer.stopAllAction();
-            v.blendAction=v.mixer.clipAction(blendClipObj);
-            v.blendAction.setLoop(THREE.LoopOnce,1);v.blendAction.clampWhenFinished=true;v.blendAction.play();
-            v.action=v.mixer.clipAction(clip);
-            v.action.setLoop(THREE.LoopOnce,1);v.action.clampWhenFinished=true;v.action.play();
-            v.clip=sample.clip;v.blendClip=sample.blend.clip;
-          }
-          const tFrom=sample.blend.loop?sample.blend.time%blendClipObj.duration:Math.min(sample.blend.time,blendClipObj.duration);
-          const tTo=sample.loop?sample.time%clip.duration:Math.min(sample.time,clip.duration);
-          v.blendAction.reset().play();v.blendAction.setEffectiveWeight?.(sample.blend.weight);
-          v.action.reset().play();v.action.setEffectiveWeight?.(sample.weight??1);
-          v.mixer.setTime(0);v.blendAction.time=tFrom;v.action.time=tTo;v.mixer.update?.(0);
-        }else{
-          if(v.clip!==sample.clip||v.blendClip){
-            v.mixer.stopAllAction();v.action=v.mixer.clipAction(clip);v.action.setLoop(THREE.LoopOnce,1);
-            v.action.clampWhenFinished=true;v.action.play();v.clip=sample.clip;v.blendClip=null;v.blendAction=null;
-          }
-          v.action.setEffectiveWeight?.(1);
-          v.action.reset().play();
-          v.mixer.setTime(sample.loop?sample.time%clip.duration:Math.min(sample.time,clip.duration));
-        }
-        if(v.spineBone&&v.spineClipQuat)v.spineClipQuat.copy(v.spineBone.quaternion);
-        if(v.supportArmBone&&v.armClipQuat)v.armClipQuat.copy(v.supportArmBone.quaternion);
-        if(useSpineTwist){
-          v.spineBone.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(UP_AXIS,-orientation.torsoTwist));
-        }
-        if(v.supportArmBone){
-          const hint=resolveSupportHandIK(a,pose,orientation,sample);
-          if(hint.active&&Math.abs(hint.shoulderYaw)>.001){
-            // Approximate upper-arm correction; combat facing and weapon muzzle stay untouched.
-            v.supportArmBone.quaternion.multiply(
-              new THREE.Quaternion().setFromAxisAngle(UP_AXIS,hint.shoulderYaw));
-          }
+      const orientation=specialist?null:resolveTorsoOrientation(a,pose);
+      const useSpineTwist=Boolean(orientation&&v.spineBone&&orientation.torsoTwist!==0);
+      const appliedRootYaw=specialist?a.facing:useSpineTwist?orientation.rootYaw:orientation.facing;
+      // Always return a previously attached wounded actor to scene before sampling an updated carrier.
+      this.scene.add(v.root);v.root.visible=true;
+      v.root.position.set(a.x,a.y??0,a.z);
+      v.root.rotation.set(0,-appliedRootYaw-Math.PI/2,0);
+      // Pure resolver -> clip stack with weights (cross-fades from sim time); the player writes it to persistent actions.
+      const plan=resolveAnimation({actor:a,time,candidate:sample,prev:this.anim.get(a.id),
+        alt:patch=>{const b={...a,...patch},s=this.describe(b,time,actors,actorPose(b,time),battleClock);return this.clips.has(s.clip)?s:null;}});
+      this.anim.set(a.id,plan.state);
+      v.player.apply(plan.blend.flatMap(b=>{const c=this.clips.get(b.clip);return c?[{...b,clip:c}]:[];}));
+      v.action=v.player.target;v.clip=plan.clip;
+      // Cache the clip-sampled pose BEFORE any additive torso/arm correction, so a repeated sim time is bit-identical.
+      if(v.spineBone&&v.spineClipQuat)v.spineClipQuat.copy(v.spineBone.quaternion);
+      if(v.supportArmBone&&v.armClipQuat)v.armClipQuat.copy(v.supportArmBone.quaternion);
+      if(useSpineTwist){
+        v.spineBone.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(UP_AXIS,-orientation.torsoTwist));
+      }
+      if(!specialist&&v.supportArmBone){
+        const hint=resolveSupportHandIK(a,pose,orientation,sample);
+        if(hint.active&&Math.abs(hint.shoulderYaw)>.001){
+          // Approximate upper-arm correction; combat facing and weapon muzzle stay untouched.
+          v.supportArmBone.quaternion.multiply(
+            new THREE.Quaternion().setFromAxisAngle(UP_AXIS,hint.shoulderYaw));
         }
       }
       const kowal=a.id==='szymon_kowal',bak=a.id==='jozef_bak';
@@ -352,9 +310,12 @@ export class M01Characters {
       });
       if(v.weaponRoot)v.weaponRoot.visible=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy;
       v.root.updateMatrixWorld(true);clips[sample.clip]=(clips[sample.clip]??0)+1;
+      const fading=plan.blend.filter(b=>!b.target).reduce((m,b)=>!m||b.weight>m.weight?b:m,null);
       visible.push({...((mgGunner(a)&&a.mg34Prone)?{prone:{phase:a.mg34Prone.phase,startedAt:a.mg34Prone.startedAt,progress:a.mg34Prone.progress,rounds:a.mg34Prone.burst?.rounds??0,emitted:a.mg34Prone.burst?.emitted??0,shot:a.shot,firedAt:a.firedAt,eye:eyePosition(a),hitboxes:actorHitboxes(a),muzzle:muzzlePosition(a,time)}}:{}),
-        id:a.id,lod,key,visual:v.visual,clip:sample.clip,clipTime:v.action.time,loop:sample.loop,weapon:v.weapon,weaponLOD:v.weaponLOD,muzzle:this.muzzle(a.id)?.toArray(),
-        ...(sample.blend?{blendClip:sample.blend.clip,blendWeight:sample.blend.weight}:{}),
+        id:a.id,lod,key,visual:v.visual,clip:sample.clip,clipTime:v.action.time,loop:sample.loop,blend:plan.blend.map(({clip,weight,time})=>({clip,weight,time})),
+        // Strongest outgoing layer of the cross-fade actually drawn (diagnostics only).
+        ...(fading?{blendClip:fading.clip,blendWeight:fading.weight}:{}),
+        weapon:v.weapon,weaponLOD:v.weaponLOD,muzzle:this.muzzle(a.id)?.toArray(),
         weaponMeshes:v.meshes.filter(n=>weaponParts.has(n.name)&&n.visible||n.name.startsWith('mg34_')&&n.visible&&v.weaponRoot?.visible).map(n=>n.name)});
     }
     for(const {a}of candidates)if(selected.has(a.id)&&a.carriedBy&&a.task!=='station_wounded'&&selected.has(a.carriedBy)){
@@ -362,6 +323,8 @@ export class M01Characters {
       socket.add(v.root);v.root.position.set(0,0,0);v.root.rotation.set(0,0,0);v.root.updateMatrixWorld(true);
     }
     for(const [id,v]of this.instances)if(!selected.has(id)){this.release(v);this.instances.delete(id);}
+    // A record older than GAP (or from a later clock after a load) would be reset anyway: drop it.
+    for(const [id,r]of this.anim)if(!(time>=r.t&&time-r.t<=GAP))this.anim.delete(id);
     this.stats={active:selected.size,limit:limits.count,instances:this.instances.size,clips,actors:visible};
     return selected;
   }
@@ -390,5 +353,5 @@ export class M01Characters {
     v.root.updateMatrixWorld(true);return new THREE.Vector3().fromArray(v.muzzle).applyMatrix4(bone.matrixWorld);
   }
   get diagnostics(){return {...this.stats,visuals:this.visuals?.diagnostics??null,proneAvailable:this.hasProne(),ckm:this.ckm?{visible:this.ckm.root.visible,lod:this.ckm.lod,clip:this.ckm.clip,time:this.ckm.time,position:this.ckm.root.position.toArray()}:null,loaded:[...this.sources.keys()],failures:this.assets.failures};}
-  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.visuals?.dispose();this.assets.dispose();}
+  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.anim.clear();this.visuals?.dispose();this.assets.dispose();}
 }

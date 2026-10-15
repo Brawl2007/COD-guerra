@@ -41,3 +41,21 @@ export function geometryReport(view,near=.03){
   });
   return meshes;
 }
+/**
+ * Forward reach and near-plane clearance of everything the viewmodel draws (weapon pass: camera at the origin, looking -Z).
+ * rifleReach is how far the rifle's frontmost vertex stands in front of the eye; maxZ must stay below -near for no cut geometry.
+ */
+export function viewModelReach(view){
+  view.root.updateMatrixWorld(true);
+  const v=new THREE.Vector3(),report={rifleReach:0,maxZ:-Infinity,vertices:0};
+  view.root.traverseVisible(mesh=>{
+    if(!mesh.isMesh||!mesh.geometry.getAttribute('position'))return;
+    const positions=mesh.geometry.getAttribute('position');
+    for(const i of new Set(mesh.geometry.index?.array??Array.from({length:positions.count},(_,k)=>k))){
+      v.fromBufferAttribute(positions,i);if(mesh.isSkinnedMesh)mesh.applyBoneTransform(i,v);v.applyMatrix4(mesh.matrixWorld);
+      report.maxZ=Math.max(report.maxZ,v.z);report.vertices++;
+      if(mesh.name==='rifle')report.rifleReach=Math.max(report.rifleReach,-v.z);
+    }
+  });
+  return report;
+}

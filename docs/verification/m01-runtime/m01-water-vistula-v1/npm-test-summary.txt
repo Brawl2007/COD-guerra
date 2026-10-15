@@ -1,0 +1,12 @@
+✔ missing optional model/clips returns to existing caller fallback; LOD1 remains viable (95.804647ms)
+✔ restore mid-bolt and both reloads reconstruct mechanical phase without saving a mixer (271.313531ms)
+✔ an existing menu/checkpoint renderer reconstructs ADS at a replaced world boundary (138.083645ms)
+✔ BASE/CANDIDATE whole save, HP/ammo/shots/hits/transforms/muzzle/RNG/clocks/CP remain exact for 600 input ticks (3252.039681ms)
+ℹ tests 535
+ℹ suites 0
+ℹ pass 535
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 308118.813677

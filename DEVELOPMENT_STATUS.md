@@ -1,5 +1,21 @@
 # Estado de desenvolvimento
 
+## Continuidade e raid — 2026-10-14
+
+Branch integrada `codex/m01-continuity-raid-integration-v1`, sobre a base T08/T12 `2d65dd0`. Duas entregas: T02-min corrige elegibilidade de fogo no posto de disparo e a fala 019 prematura; T03-lite + T25 acrescenta seis impactos aéreos no terreno, horários fixos, fumo persistente e agenda opcional no schema 2. Reload conserva classificação aérea/áudio/tremor dos seis IDs. Estimativas de gameplay, sem alegação de coordenadas históricas precisas.
+
+Validação local: 22/22 focados da implementação; 28/28 afetados após a correção; build PASS; browser final 1/1, seis IDs, 171 puffs, pausa estável e zero erros. Primeiro integral 693/694 FAIL, regressão de áudio corrigida; CI final **694/694 Node, build e browser 1/1 PASS** (run 38582392486, código `8387b56`, PR #63). Auditoria por tick de duas rotas, golden original reproduzido antes de gerar o novo em x86; source hash exato conservado. Não somar resultados focados para declarar integral verde.
+
+Handoff: `docs/verification/m01-runtime/continuity-raid-integration-v1/HANDOFF.md`. M01 continua **PROTÓTIPO JOGÁVEL**; outras falas/pré-roll, fumo de granadas, restante ambiente, playtest humano e performance permanecem pendentes.
+
+## T39 Sensação do viewmodel V2 aceite — 2026-10-10
+
+`M01-VIEWMODEL-FEEL-V2` **ACEITE** no commit `29ba3cf` (branch `claude/m01-viewmodel-feel-v2`, base `304b90f`, T35 aceite mais documentação). CI x86 [38045111352](https://github.com/Brawl2007/COD-guerra/actions/runs/38045111352): autoridade OK, `npm test` 574/574, build OK, browser 9/9 com `--workers=1 --retries=0`. A mira demora 0,30 s a entrar e 0,22 s a sair, com a câmara a passar de FOV 70 para 48 na mesma curva; respiração e bob seguem o relógio da simulação; a arma baixa-se perto de paredes, árvores e cobertura. Trata a sensação da arma e da câmara, não a manga nem a mão junto a parede (T40). A disparar com a arma baixada, a precisão de ADS mantém-se (H8, pendente humano). Prova e limites em `docs/verification/m01-runtime/m01-viewmodel-feel-v2/README.md`. M01 continua **PROTÓTIPO JOGÁVEL**; sem alegação de FPS.
+
+## T35 Animation Resolver aceite — 2026-10-10
+
+`M01-ANIM-LOCOMOTION-RESOLVER-V1` **ACEITE** no commit `46b210f` (branch `claude/m01-anim-resolver-v1`, base `5765aa5`). CI x86 [38043817745](https://github.com/Brawl2007/COD-guerra/actions/runs/38043817745): `npm test` 559/559, build OK, browser 11/11 com `--workers=1 --retries=0`. Trata os itens 7, 9 e 11 do playtest 1; os itens 3, 4 e 8 (IA/simulação) seguem em H6, pendente humano. Prova e limites em `docs/verification/m01-runtime/m01-anim-resolver-v1/README.md`. M01 continua **PROTÓTIPO JOGÁVEL**; sem alegação de FPS nem de teste no Chromebook.
+
 ## Consolidação final de produção M01 V7 — 2026-10-09 UTC
 
 `M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7`, branch `codex/m01-final-production-consolidation-v7`, base V6 `cbc7de5668a1b2e4bc646b86548196a5f4f1039a`, [PR draft #59](https://github.com/Brawl2007/COD-guerra/pull/59) contra V6. **READY_FOR_CAPTAIN_REVIEW**. Integra os deltas admitidos de Station V3, armas no checkpoint validado `7dbc0a5` e decals, preservando a V6.

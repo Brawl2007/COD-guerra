@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "task_id": "M01-LIGHTING-DAWN-V1",
+  "accepted_head": "3386fc2921158136663993ea29aa47ffd58c9918",
+  "status": "ACCEPTED",
+  "obligations": [
+    {
+      "id": "m01-lighting-model",
+      "kind": "test",
+      "check": "node --test tests/m01-lighting.test.js",
+      "reason": "Pins fog 420/2800, C01 sun keyframe interpolation, five distinct ordered dawn phases, intensity split wide+near == total key, Low cascade plan (no extra shadow map)."
+    },
+    {
+      "id": "m01-lighting-dawn-browser",
+      "kind": "browser",
+      "check": "npx playwright test tests/browser/m01-lighting-dawn.spec.js --workers=1 --retries=0",
+      "reason": "Proves in the built page that Low keeps shadows disabled with one cascade, Medium/High cast shadows from 04:30 with two cascades, sky shader compiles with no page errors."
+    }
+  ]
+}

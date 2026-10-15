@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import {puffTexture,cloudFieldTexture} from './m01-surfaces.js';
 import {dustPuffTexture} from './m01-fx-textures.js';
+import {CLOUD_WIND} from './m01-lighting.js';
+import {demolitionParticles} from './m01-demolition.js';
 
 // Presentation-only deterministic noise. It never consumes the simulation RNG.
 export function visualNoise(seed,index=0){
@@ -15,19 +17,36 @@ export class M01Atmosphere {
     this.scene=scene;this.texture=puffTexture();this.capacity=256;this.count=0;
     this.skyGeometry=new THREE.SphereGeometry(5500,32,16);
     this.cloudTexture=cloudFieldTexture();
+    // Sky by solar altitude: every colour comes from m01-lighting's model. Clouds are projected from the view direction
+    // (xz / (y + k)) onto a plane, so there is no sphere-UV seam and no pinch at the zenith.
     this.skyMaterial=new THREE.ShaderMaterial({side:THREE.BackSide,depthWrite:false,fog:false,
-      uniforms:{clouds:{value:this.cloudTexture},day:{value:0},sunDirection:{value:new THREE.Vector3(1,-.1,0)},time:{value:0}},
-      vertexShader:'varying vec3 vDirection;varying vec2 vCloudUv;void main(){vDirection=normalize(position);vCloudUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
-      fragmentShader:`uniform sampler2D clouds;uniform float day;uniform float time;uniform vec3 sunDirection;varying vec3 vDirection;varying vec2 vCloudUv;
-        void main(){float h=clamp(vDirection.y,0.0,1.0);float c=texture2D(clouds,vCloudUv*vec2(2.0,1.0)+vec2(time*.000025,0.0)).r;
-          vec3 horizon=mix(vec3(.24,.28,.32),vec3(.53,.58,.60),day);
-          vec3 zenith=mix(vec3(.09,.15,.24),vec3(.22,.34,.47),day);
-          vec3 color=mix(horizon,zenith,pow(h,.55));
-          float cloud=smoothstep(.33,.68,c)*smoothstep(-.03,.15,vDirection.y);
-          vec3 cloudColor=mix(vec3(.30,.34,.37),vec3(.59,.63,.65),c)*(.72+day*.40);
+      uniforms:{clouds:{value:this.cloudTexture},time:{value:0},sunDirection:{value:new THREE.Vector3(1,-.1,0)},
+        skyZenith:{value:new THREE.Color('#2f4468')},skyHorizon:{value:new THREE.Color('#6f8096')},skyHalo:{value:new THREE.Color('#d9946e')},
+        skyDisc:{value:new THREE.Color('#ffc08a')},skyGlow:{value:.5},discStrength:{value:0},day:{value:0},cloudWind:{value:new THREE.Vector2(CLOUD_WIND.x,CLOUD_WIND.z)}},
+      vertexShader:'varying vec3 vDirection;void main(){vDirection=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
+      fragmentShader:`uniform sampler2D clouds;uniform float time;uniform float day;uniform float skyGlow;uniform float discStrength;uniform vec3 sunDirection;
+        uniform vec3 skyZenith;uniform vec3 skyHorizon;uniform vec3 skyHalo;uniform vec3 skyDisc;uniform vec2 cloudWind;varying vec3 vDirection;
+        void main(){
+          vec3 d=normalize(vDirection);vec3 sd=normalize(sunDirection);float h=clamp(d.y,0.0,1.0);
+          float toSun=max(0.0,dot(d,sd));
+          // Fog tint by view direction: the horizon band warms towards the sun's azimuth and stays the fog colour away from it.
+          vec2 viewAz=normalize(d.xz+vec2(1e-5,0.0)),sunAz=normalize(sd.xz+vec2(1e-5,0.0));
+          float towards=pow(dot(viewAz,sunAz)*.5+.5,3.0);
+          float band=exp(-h*9.0);
+          vec3 color=mix(skyHorizon,skyZenith,pow(h,.55));
+          color=mix(color,skyHalo,clamp(towards*band*skyGlow*.62,0.0,.85));
+          color+=skyHalo*pow(toSun,6.0)*skyGlow*.20*(1.0-h*.6);
+          float cloudShape=1.0/(max(d.y,0.0)+.32);
+          vec2 cuv=d.xz*cloudShape*.62+cloudWind*time;
+          float c=texture2D(clouds,cuv).r;
+          float cloud=smoothstep(.33,.68,c)*smoothstep(-.03,.15,d.y);
+          vec3 cloudShade=skyHorizon*.60+skyZenith*.12;
+          vec3 cloudLit=skyHorizon*1.12+vec3(.03)*day;
+          vec3 cloudColor=mix(cloudShade,cloudLit,c)*(.64+day*.36);
+          cloudColor+=skyHalo*pow(toSun,3.0)*skyGlow*.55*c;
           color=mix(color,cloudColor,cloud*.66);
-          float sun=pow(max(0.0,dot(vDirection,normalize(sunDirection))),24.0);
-          color+=vec3(.15,.075,.028)*sun*(1.0-h)*(.7+day*.3);
+          float disc=smoothstep(.99985,.99996,toSun);
+          color+=skyDisc*(disc*4.0+pow(toSun,60.0)*.9)*discStrength*(1.0-cloud*.75);
           gl_FragColor=vec4(color,1.0);
           #include <tonemapping_fragment>
           #include <colorspace_fragment>
@@ -53,6 +72,7 @@ export class M01Atmosphere {
     this.debrisGeometry=new THREE.TetrahedronGeometry(1);this.debrisMaterial=new THREE.MeshStandardMaterial({color:'#615846',roughness:1});
     this.debris=new THREE.InstancedMesh(this.debrisGeometry,this.debrisMaterial,64);this.debris.count=0;this.debris.frustumCulled=false;scene.add(this.debris);
     this.dummy=new THREE.Object3D();this.color=new THREE.Color();this.fade=this.puffs.geometry.attributes.puffOpacity;
+    this.demolitionDrawn={puffs:0,chips:0};   // set-piece particles drawn by the last update (diagnostics only)
   }
   /** Camera-facing soft particles share one material/texture; each bounded pool owns its opacity buffer. */
   billboardBatch(capacity,color,parent,style='smoke'){
@@ -71,18 +91,40 @@ export class M01Atmosphere {
     spin.setX(index,(visualNoise(seed,variant*3)-.5)*Math.PI*1.7);
     shape.setX(index,(visualNoise(seed,variant*3+1)*2-1)*(.45+.55*visualNoise(seed,variant*3+2)));
   }
-  lighting(player,day,alt,az,clock){
-    this.sky.position.set(player.x,player.y,player.z);this.skyMaterial.uniforms.day.value=day;this.skyMaterial.uniforms.time.value=clock;
-    this.skyMaterial.uniforms.sunDirection.value.set(Math.sin(az)*Math.cos(alt),Math.sin(alt),-Math.cos(az)*Math.cos(alt));
+  /** Sky uniforms from the lighting model (m01-lighting.js); the dome follows the player. */
+  lighting(player,model,clock){
+    const u=this.skyMaterial.uniforms,sky=model.sky;
+    this.sky.position.set(player.x,player.y,player.z);
+    u.day.value=model.daylight;u.time.value=clock;
+    u.skyZenith.value.setRGB(...sky.zenith);u.skyHorizon.value.setRGB(...sky.horizon);u.skyHalo.value.setRGB(...sky.halo);u.skyDisc.value.setRGB(...sky.disc);
+    u.skyGlow.value=sky.glow;u.discStrength.value=sky.discStrength;u.sunDirection.value.set(...sky.sunDir);
+    this.material.uniforms.fogColor.value.setRGB(...model.fog.color);this.dustMaterial.uniforms.fogColor.value.setRGB(...model.fog.color);
   }
-  update(state,clock,quality){
-    let count=0;const density=quality==='low'?.58:quality==='medium'?.80:1,max=quality==='low'?112:quality==='medium'?192:256;
+  update(state,clock,quality,context={}){
+    let count=0,chips=0;this.demolitionDrawn={puffs:0,chips:0};const density=quality==='low'?.58:quality==='medium'?.80:1,max=quality==='low'?112:quality==='medium'?192:256;
     const damage=state.damage.filter(d=>d.smokeVisible).sort((a,b)=>Number(b.id.endsWith('_demolition'))-Number(a.id.endsWith('_demolition'))||b.started-a.started);
+    // Demolition set-piece first (priority over generic blasts): river/ground impact debris and splashes, earth rain at the west
+    // firing post, suspended dust. Bounded by M01_DEMOLITION_BUDGET inside the same pools and the same `count<max` / `chips<64` guards.
+    for(const d of damage){
+      if(d.id!=='east_demolition'&&d.id!=='west_demolition')continue;
+      const fx=demolitionParticles({damage:d,clock,quality,surfaceY:context.surfaceY});
+      for(const p of fx.puffs){
+        if(count>=max)break;
+        this.dummy.position.set(p.x,p.y,p.z);this.dummy.rotation.set(0,0,0);this.dummy.scale.set(p.sx,p.sy,1);this.dummy.updateMatrix();
+        this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,p.seed,p.variant);
+        this.puffs.setColorAt(count,this.color.set(p.color));this.fade.setX(count++,p.opacity);this.demolitionDrawn.puffs++;
+      }
+      for(const c of fx.chips){
+        if(chips>=64)break;
+        this.dummy.position.set(c.x,c.y,c.z);this.dummy.rotation.set(c.rx,c.ry,c.rz);this.dummy.scale.set(c.sx,c.sy,c.sz);this.dummy.updateMatrix();
+        this.debris.setMatrixAt(chips++,this.dummy.matrix);this.demolitionDrawn.chips++;
+      }
+    }
     for(const d of damage){
       const demolition=d.id.endsWith('_demolition'),heavy=demolition||/bomb|raid/.test(d.id),age=Math.max(0,clock-d.started);
       const base=demolition?30:heavy?22:17,number=Math.max(6,Math.round(base*density));
       const seed=(Math.floor((d.x+2048)*17)^Math.floor((d.z+2048)*31)^Math.floor(d.started*1000))>>>0;
-      const endFade=d.id==='station_bomb'||d.id==='station_wagon_fire'?1:Math.max(0,Math.min(1,(240-age)/30));
+      const endFade=d.id==='station_bomb'||d.id==='station_wagon_fire'||/^raid_0530(?:_[1-5])?$/.test(d.id)?1:Math.max(0,Math.min(1,(240-age)/30));
       for(let i=0;i<number&&count<max;i++){
         const n0=visualNoise(seed,i*5),n1=visualNoise(seed,i*5+1),n2=visualNoise(seed,i*5+2),n3=visualNoise(seed,i*5+3);
         let phase,height,width,x,z,opacity;
@@ -108,7 +150,6 @@ export class M01Atmosphere {
         this.puffs.setColorAt(count,this.color.set(shade));this.fade.setX(count,opacity);count++;
       }
     }
-    let chips=0;
     for(const d of damage){
       const age=clock-d.started;if(age<0||age>3.2)continue;
       const heavy=d.id.endsWith('_demolition')||/bomb|raid/.test(d.id),seed=(Math.floor(d.started*1000)^Math.floor(d.x*97)^Math.floor(d.z*193))>>>0;
@@ -133,7 +174,7 @@ export class M01Atmosphere {
     this.debris.count=chips;this.debris.instanceMatrix.needsUpdate=true;this.dummy.rotation.set(0,0,0);
     this.count=count;this.puffs.count=count;this.puffs.instanceMatrix.needsUpdate=true;this.puffs.instanceColor.needsUpdate=true;this.fade.needsUpdate=true;
   }
-  get diagnostics(){return {puffs:this.count,puffCapacity:this.capacity,debris:this.debris.count,debrisCapacity:this.debris.instanceMatrix.count,puffBatches:this.puffBatches.length};}
+  get diagnostics(){return {puffs:this.count,puffCapacity:this.capacity,debris:this.debris.count,debrisCapacity:this.debris.instanceMatrix.count,puffBatches:this.puffBatches.length,demolition:{...this.demolitionDrawn}};}
   dispose(){this.scene.remove(this.sky);this.debris.removeFromParent();this.debris.dispose();this.debrisGeometry.dispose();this.debrisMaterial.dispose();for(const batch of this.puffBatches){batch.removeFromParent();batch.dispose();batch.geometry.dispose();}this.puffBatches=[];
     this.quad.dispose();this.skyGeometry.dispose();this.skyMaterial.dispose();this.material.dispose();this.dustMaterial.dispose();this.texture.dispose();this.dustTexture.dispose();this.cloudTexture.dispose();}
 }

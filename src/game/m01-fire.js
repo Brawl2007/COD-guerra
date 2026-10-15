@@ -5,7 +5,10 @@ import { traceShot } from '../world/spatial.js';
 // Aproximação de jogo, não balística medida (grp_de_east.fireModel): recta da boca ao ponto visado com flecha
 // parabólica h = ARC_K·R² (≈9 m a 1,2 km) e ROUND_SPEED de média (≈1,6 s a 1 km; perfil do wz.29: 1,5–2 s).
 // Sem a flecha, o tabuleiro e o portal oeste tapariam os sapadores a quem dispara do dique.
-export const ARC_K=6e-6,ROUND_SPEED=620,NEAR_MISS=3,ROUND_KINDS=['repair','player','squad','area','platoon','cover','east'];
+// 'attrition' (T23): the fixed-time casualties of the held east platoon. Only a rifleman of the dike or the gates (never an MG34, never the
+// spans) shoots a reserve man (pl_east_18..23); it is never aimed at the player and never wounds anyone else (see landAttrition).
+export const ARC_K=6e-6,ROUND_SPEED=620,NEAR_MISS=3,ROUND_KINDS=['repair','player','squad','area','platoon','cover','east','attrition'];
+export const ATTRITION_SHOOTER=/^de_east_([2-9]|[12]\d|3[0-9])$/,ATTRITION_VICTIM=/^pl_east_(1[89]|2[0-3])$/;
 
 export const roundPoint=(r,t)=>({x:r.ox+(r.ax-r.ox)*t,y:r.oy+(r.ay-r.oy)*t+4*r.h*t*(1-t),z:r.oz+(r.az-r.oz)*t});
 const range=r=>Math.max(1,Math.hypot(r.ax-r.ox,r.az-r.oz));
@@ -45,5 +48,6 @@ export function validRound(r,clock){
   return r&&typeof r.id==='string'&&typeof r.by==='string'&&/^de_(east|spans)_\d+$/.test(r.by)&&['mg34','kar98k'].includes(r.weapon)&&
     ROUND_KINDS.includes(r.kind)&&[r.ox,r.oy,r.oz,r.ax,r.ay,r.az,r.h,r.firedAt,r.arriveAt].every(Number.isFinite)&&
     r.ox>=690&&r.h>=0&&r.h<=40&&r.arriveAt>=r.firedAt&&r.arriveAt-clock<=10&&typeof r.tracer==='boolean'&&
-    (r.victim===null||(typeof r.victim==='string'&&/^pl_east_\d+$/.test(r.victim)));
+    (r.victim===null||(typeof r.victim==='string'&&/^pl_east_\d+$/.test(r.victim)))&&
+    (r.kind!=='attrition'||(r.weapon==='kar98k'&&ATTRITION_SHOOTER.test(r.by)&&ATTRITION_VICTIM.test(r.victim??'')));
 }

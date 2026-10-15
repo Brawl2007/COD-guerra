@@ -1,0 +1,14 @@
+{
+  "code_head": "8387b5627b3b5482370c0915f018776d563e31ec",
+  "ci_run": 38582392486,
+  "pr": "https://github.com/Brawl2007/COD-guerra/pull/63",
+  "sha256": {
+    "src/game/m01-simulation.js": "e988fcd9b923a429657d1deeb820054694b5e9b046ff904faa190e14e020c4a6",
+    "src/game/game.js": "95f2973cf2f6166cbc0814e5947ebcebfd02e1aeb4128205d4c449468d3394af",
+    "src/render/m01-aircraft.js": "b8c6ec5ecb2abf5e7348b87a3bd69405de4e956e5b52e3fdbf8ef69878694e3d",
+    "src/render/m01-atmosphere.js": "c596da1d7dcb4c1b7ee7a89dbd3d639df7b5031489407c1c0a1e053c0f2767ed",
+    "missions/m01-tczew/mission.json": "7561f0ced350ea0a619060609b276e9fbac2fe02edadc9274f1daeedc11cbc16",
+    "tests/fixtures/m01-anim-gameplay-baseline.json": "e0fb4ecbc1e483f9d9e177fd63c8a5a063529787238500d5a8a91e80e696b958"
+  },
+  "ci_result": "success"
+}

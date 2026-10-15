@@ -1,0 +1,2161 @@
+{
+  "clips": [
+    {
+      "name": "sprint",
+      "durationS": 0.64,
+      "loop": true,
+      "family": "port",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.153766
+          ]
+        ],
+        "r": [
+          [
+            0.315844,
+            0.473766
+          ]
+        ]
+      },
+      "model": {
+        "mode": "locomotion",
+        "speedMps": 5,
+        "cycleM": 3.2
+      },
+      "sampleHz": 240,
+      "samples": 155,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0.883,
+        "r": 2.133
+      },
+      "footLiftMm": {
+        "l": 0.776,
+        "r": 1.12
+      },
+      "maxContactDriftMm": 2.133,
+      "supportSpeedMps": {
+        "min": 4.747529,
+        "median": 4.998889,
+        "max": 5.054989
+      },
+      "measuredNominalSpeedMps": 4.998889,
+      "loopSeam": {
+        "positionMm": 0,
+        "angleRad": 0,
+        "velocityMps": 0.952692
+      },
+      "maxBoneSpeedMps": 5.06
+    },
+    {
+      "name": "crouch_walk",
+      "durationS": 0.96,
+      "loop": true,
+      "family": "low_ready",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.619221
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.137143
+          ],
+          [
+            0.477922,
+            0.96
+          ]
+        ]
+      },
+      "model": {
+        "mode": "locomotion",
+        "speedMps": 0.8,
+        "cycleM": 0.768
+      },
+      "sampleHz": 240,
+      "samples": 232,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0.291,
+        "r": 0.204
+      },
+      "footLiftMm": {
+        "l": 0.203,
+        "r": 0.139
+      },
+      "maxContactDriftMm": 0.291,
+      "supportSpeedMps": {
+        "min": 0.757066,
+        "median": 0.799988,
+        "max": 0.800816
+      },
+      "measuredNominalSpeedMps": 0.799988,
+      "loopSeam": {
+        "positionMm": 0,
+        "angleRad": 0,
+        "velocityMps": 0.073468
+      },
+      "maxBoneSpeedMps": 3.868
+    },
+    {
+      "name": "hit_front",
+      "durationS": 0.76,
+      "loop": false,
+      "family": "low_ready",
+      "mask": "additive",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.76
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.76
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 184,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0.025,
+        "r": 0.028
+      },
+      "footLiftMm": {
+        "l": 0.027,
+        "r": 0.026
+      },
+      "maxContactDriftMm": 0.028,
+      "maxBoneSpeedMps": 4.135,
+      "junction": {
+        "end": {
+          "ref": "own frame 0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "near_miss_duck",
+      "durationS": 0.98,
+      "loop": false,
+      "family": "low_ready",
+      "mask": "additive",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.116271
+          ],
+          [
+            0.132881,
+            0.98
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.099661
+          ],
+          [
+            0.132881,
+            0.98
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 237,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0.078,
+        "r": 0.091
+      },
+      "footLiftMm": {
+        "l": 0.538,
+        "r": 0.53
+      },
+      "maxContactDriftMm": 0.538,
+      "maxBoneSpeedMps": 3.904,
+      "junction": {
+        "end": {
+          "ref": "own frame 0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "turn_left_90",
+      "durationS": 0.5,
+      "loop": false,
+      "family": "low_ready",
+      "mask": "lower",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.05
+          ],
+          [
+            0.216667,
+            0.5
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.266667
+          ],
+          [
+            0.45,
+            0.5
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted",
+        "yawDeg": 90
+      },
+      "sampleHz": 240,
+      "samples": 121,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 1.455,
+        "r": 0.893
+      },
+      "footLiftMm": {
+        "l": 0.094,
+        "r": 0.123
+      },
+      "maxContactDriftMm": 1.455,
+      "maxBoneSpeedMps": 1.896,
+      "junction": {
+        "start": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "turn_right_90",
+      "durationS": 0.5,
+      "loop": false,
+      "family": "low_ready",
+      "mask": "lower",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.266667
+          ],
+          [
+            0.45,
+            0.5
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.05
+          ],
+          [
+            0.216667,
+            0.5
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted",
+        "yawDeg": -90
+      },
+      "sampleHz": 240,
+      "samples": 121,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0.884,
+        "r": 1.477
+      },
+      "footLiftMm": {
+        "l": 0.124,
+        "r": 0.093
+      },
+      "maxContactDriftMm": 1.477,
+      "maxBoneSpeedMps": 1.916,
+      "junction": {
+        "start": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "carry_walk",
+      "durationS": 1.1,
+      "loop": true,
+      "family": "carry",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0.037358,
+            0.618491
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.070566
+          ],
+          [
+            0.589434,
+            1.1
+          ]
+        ]
+      },
+      "model": {
+        "mode": "locomotion",
+        "speedMps": 1.6,
+        "cycleM": 1.7600000000000002
+      },
+      "sampleHz": 240,
+      "samples": 266,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0.58,
+        "r": 0.549
+      },
+      "footLiftMm": {
+        "l": 0.905,
+        "r": 0.849
+      },
+      "maxContactDriftMm": 0.905,
+      "supportSpeedMps": {
+        "min": 1.508137,
+        "median": 1.600074,
+        "max": 1.648895
+      },
+      "measuredNominalSpeedMps": 1.600074,
+      "loopSeam": {
+        "positionMm": 0,
+        "angleRad": 0,
+        "velocityMps": 0.056094
+      },
+      "maxBoneSpeedMps": 7.81
+    },
+    {
+      "name": "stand_to_crouch",
+      "durationS": 0.45,
+      "loop": false,
+      "family": "low_ready",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.033333
+          ],
+          [
+            0.183333,
+            0.45
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.2
+          ],
+          [
+            0.416667,
+            0.45
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 109,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 1.636,
+        "r": 0.52
+      },
+      "footLiftMm": {
+        "l": 0.437,
+        "r": 0.391
+      },
+      "maxContactDriftMm": 1.636,
+      "maxBoneSpeedMps": 4.304,
+      "junction": {
+        "start": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "crouched_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "crouch_to_stand",
+      "durationS": 0.45,
+      "loop": false,
+      "family": "low_ready",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.266667
+          ],
+          [
+            0.416667,
+            0.45
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.033333
+          ],
+          [
+            0.25,
+            0.45
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 109,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 1.636,
+        "r": 0.52
+      },
+      "footLiftMm": {
+        "l": 0.437,
+        "r": 0.391
+      },
+      "maxContactDriftMm": 1.636,
+      "maxBoneSpeedMps": 4.304,
+      "junction": {
+        "start": {
+          "ref": "crouched_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "prone_enter",
+      "durationS": 1.2,
+      "loop": false,
+      "family": "prone",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.361246
+          ],
+          [
+            0.884429,
+            1.2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.298962
+          ],
+          [
+            0.851211,
+            1.2
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 290,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 1.874,
+        "r": 2.95
+      },
+      "footLiftMm": {
+        "l": 0.958,
+        "r": 0.487
+      },
+      "maxContactDriftMm": 2.95,
+      "maxBoneSpeedMps": 5.334,
+      "junction": {
+        "start": {
+          "ref": "crouched_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "prone_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "prone_exit",
+      "durationS": 1.2,
+      "loop": false,
+      "family": "prone",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.315571
+          ],
+          [
+            0.838754,
+            1.2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.348789
+          ],
+          [
+            0.901038,
+            1.2
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 290,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 1.874,
+        "r": 2.95
+      },
+      "footLiftMm": {
+        "l": 0.958,
+        "r": 0.487
+      },
+      "maxContactDriftMm": 2.95,
+      "maxBoneSpeedMps": 5.334,
+      "junction": {
+        "start": {
+          "ref": "prone_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "crouched_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "prone_idle",
+      "durationS": 4,
+      "loop": true,
+      "family": "prone",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            4
+          ]
+        ],
+        "r": [
+          [
+            0,
+            4
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 961,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0.379,
+        "r": 0.395
+      },
+      "footLiftMm": {
+        "l": 1.243,
+        "r": 1.124
+      },
+      "maxContactDriftMm": 1.243,
+      "loopSeam": {
+        "positionMm": 0,
+        "angleRad": 0,
+        "velocityMps": 0.000008
+      },
+      "maxBoneSpeedMps": 0.009
+    },
+    {
+      "name": "prone_flinch",
+      "durationS": 0.45,
+      "loop": false,
+      "family": "prone",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.45
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.45
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 109,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0.27,
+        "r": 0.281
+      },
+      "footLiftMm": {
+        "l": 0.93,
+        "r": 0.84
+      },
+      "maxContactDriftMm": 0.93,
+      "maxBoneSpeedMps": 1.368,
+      "junction": {
+        "start": {
+          "ref": "prone_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "prone_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "prone_crawl",
+      "durationS": 1.4,
+      "loop": true,
+      "family": "prone",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.65
+          ]
+        ],
+        "r": [
+          [
+            0.683333,
+            1.4
+          ]
+        ]
+      },
+      "model": {
+        "mode": "locomotion",
+        "speedMps": 0.3,
+        "cycleM": 0.42
+      },
+      "sampleHz": 240,
+      "samples": 337,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0.224,
+        "r": 0.581
+      },
+      "footLiftMm": {
+        "l": 0.017,
+        "r": 0.522
+      },
+      "maxContactDriftMm": 0.581,
+      "supportSpeedMps": {
+        "min": 0.256865,
+        "median": 0.300255,
+        "max": 0.343084
+      },
+      "measuredNominalSpeedMps": 0.300255,
+      "loopSeam": {
+        "positionMm": 0,
+        "angleRad": 0,
+        "velocityMps": 0.030266
+      },
+      "maxBoneSpeedMps": 1.263
+    },
+    {
+      "name": "standing_idle_b",
+      "durationS": 4,
+      "loop": true,
+      "family": "low_ready",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            4
+          ]
+        ],
+        "r": [
+          [
+            0,
+            4
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 961,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "footLiftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "maxContactDriftMm": 0,
+      "loopSeam": {
+        "positionMm": 0,
+        "angleRad": 0,
+        "velocityMps": 0.000668
+      },
+      "maxBoneSpeedMps": 0.049
+    },
+    {
+      "name": "standing_idle_c",
+      "durationS": 4,
+      "loop": true,
+      "family": "low_ready",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            4
+          ]
+        ],
+        "r": [
+          [
+            0,
+            4
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 961,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "footLiftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "maxContactDriftMm": 0,
+      "loopSeam": {
+        "positionMm": 0,
+        "angleRad": 0,
+        "velocityMps": 0.000901
+      },
+      "maxBoneSpeedMps": 0.126
+    },
+    {
+      "name": "crouched_idle_b",
+      "durationS": 3,
+      "loop": true,
+      "family": "low_ready",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            3
+          ]
+        ],
+        "r": [
+          [
+            0,
+            3
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 721,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "footLiftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "maxContactDriftMm": 0,
+      "loopSeam": {
+        "positionMm": 0,
+        "angleRad": 0,
+        "velocityMps": 0.000096
+      },
+      "maxBoneSpeedMps": 0.027
+    },
+    {
+      "name": "fidget_look",
+      "durationS": 2,
+      "loop": false,
+      "family": "low_ready",
+      "mask": "upper",
+      "contacts": {
+        "l": [
+          [
+            0,
+            2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            2
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 481,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "footLiftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "maxContactDriftMm": 0,
+      "maxBoneSpeedMps": 0.463,
+      "junction": {
+        "start": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "fidget_shift",
+      "durationS": 2,
+      "loop": false,
+      "family": "low_ready",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.3
+          ],
+          [
+            0.6,
+            1.466667
+          ],
+          [
+            1.733333,
+            2
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 481,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0.003,
+        "r": 3.217
+      },
+      "footLiftMm": {
+        "l": 0.003,
+        "r": 0.892
+      },
+      "maxContactDriftMm": 3.217,
+      "maxBoneSpeedMps": 0.661,
+      "junction": {
+        "start": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "fidget_helmet",
+      "durationS": 2.2,
+      "loop": false,
+      "family": "low_ready",
+      "mask": "upper",
+      "contacts": {
+        "l": [
+          [
+            0,
+            2.2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            2.2
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 530,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "footLiftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "maxContactDriftMm": 0,
+      "maxBoneSpeedMps": 2.007,
+      "junction": {
+        "start": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "fidget_check_rifle",
+      "durationS": 2.4,
+      "loop": false,
+      "family": "low_ready",
+      "mask": "upper",
+      "contacts": {
+        "l": [
+          [
+            0,
+            2.4
+          ]
+        ],
+        "r": [
+          [
+            0,
+            2.4
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 578,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "footLiftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "maxContactDriftMm": 0,
+      "maxBoneSpeedMps": 0.634,
+      "junction": {
+        "start": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "hit_back",
+      "durationS": 0.76,
+      "loop": false,
+      "family": "low_ready",
+      "mask": "additive",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.76
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.76
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 184,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0.011,
+        "r": 0.019
+      },
+      "footLiftMm": {
+        "l": 0.029,
+        "r": 0.029
+      },
+      "maxContactDriftMm": 0.029,
+      "maxBoneSpeedMps": 4.11,
+      "junction": {
+        "end": {
+          "ref": "own frame 0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "hit_left",
+      "durationS": 0.76,
+      "loop": false,
+      "family": "low_ready",
+      "mask": "additive",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.76
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.76
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 184,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0.024,
+        "r": 0.026
+      },
+      "footLiftMm": {
+        "l": 0.023,
+        "r": 0.03
+      },
+      "maxContactDriftMm": 0.03,
+      "maxBoneSpeedMps": 3.695,
+      "junction": {
+        "end": {
+          "ref": "own frame 0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "hit_right",
+      "durationS": 0.76,
+      "loop": false,
+      "family": "low_ready",
+      "mask": "additive",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.76
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.76
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 184,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0.027,
+        "r": 0.024
+      },
+      "footLiftMm": {
+        "l": 0.03,
+        "r": 0.023
+      },
+      "maxContactDriftMm": 0.03,
+      "maxBoneSpeedMps": 3.695,
+      "junction": {
+        "end": {
+          "ref": "own frame 0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "blast_duck",
+      "durationS": 1,
+      "loop": false,
+      "family": "low_ready",
+      "mask": "additive",
+      "contacts": {
+        "l": [
+          [
+            0.066667,
+            1
+          ]
+        ],
+        "r": [
+          [
+            0.066667,
+            1
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 241,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0.259,
+        "r": 0.258
+      },
+      "footLiftMm": {
+        "l": 0.435,
+        "r": 0.45
+      },
+      "maxContactDriftMm": 0.45,
+      "maxBoneSpeedMps": 9.555,
+      "junction": {
+        "end": {
+          "ref": "own frame 0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "death_front",
+      "durationS": 1.6,
+      "loop": false,
+      "family": "hands_free",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.182857
+          ],
+          [
+            0.432208,
+            0.46961
+          ],
+          [
+            1.113766,
+            1.6
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.14961
+          ],
+          [
+            0.448831,
+            0.482078
+          ],
+          [
+            1.072208,
+            1.6
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted",
+        "ground": true,
+        "final_still_s": 0.3
+      },
+      "sampleHz": 240,
+      "samples": 386,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 5.055,
+        "r": 4.756
+      },
+      "footLiftMm": {
+        "l": 1.334,
+        "r": 2.744
+      },
+      "maxContactDriftMm": 5.055,
+      "maxBoneSpeedMps": 6.243,
+      "finalStillMm": 0,
+      "junction": {
+        "start": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "death_back",
+      "durationS": 1.5,
+      "loop": false,
+      "family": "hands_free",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.116667
+          ],
+          [
+            1,
+            1.5
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.133333
+          ],
+          [
+            1,
+            1.5
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted",
+        "ground": true,
+        "final_still_s": 0.3
+      },
+      "sampleHz": 240,
+      "samples": 361,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 1.986,
+        "r": 3.221
+      },
+      "footLiftMm": {
+        "l": 0.12,
+        "r": 0.09
+      },
+      "maxContactDriftMm": 3.221,
+      "maxBoneSpeedMps": 4.01,
+      "finalStillMm": 0,
+      "junction": {
+        "start": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "death_left",
+      "durationS": 1.5,
+      "loop": false,
+      "family": "hands_free",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.383333
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.383333
+          ],
+          [
+            1.033333,
+            1.5
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted",
+        "ground": true,
+        "final_still_s": 0.3
+      },
+      "sampleHz": 240,
+      "samples": 361,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 1.458,
+        "r": 2.402
+      },
+      "footLiftMm": {
+        "l": 0.429,
+        "r": 0.183
+      },
+      "maxContactDriftMm": 2.402,
+      "maxBoneSpeedMps": 3.899,
+      "finalStillMm": 0,
+      "junction": {
+        "start": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "death_right",
+      "durationS": 1.5,
+      "loop": false,
+      "family": "hands_free",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.383333
+          ],
+          [
+            1.033333,
+            1.5
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.383333
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted",
+        "ground": true,
+        "final_still_s": 0.3
+      },
+      "sampleHz": 240,
+      "samples": 361,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 2.225,
+        "r": 1.658
+      },
+      "footLiftMm": {
+        "l": 0.184,
+        "r": 0.429
+      },
+      "maxContactDriftMm": 2.225,
+      "maxBoneSpeedMps": 4.448,
+      "finalStillMm": 0,
+      "junction": {
+        "start": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "death_crumple",
+      "durationS": 1.8,
+      "loop": false,
+      "family": "hands_free",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.15
+          ],
+          [
+            0.633333,
+            0.666667
+          ],
+          [
+            1.25,
+            1.8
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.116667
+          ],
+          [
+            0.666667,
+            0.716667
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted",
+        "ground": true,
+        "final_still_s": 0.35
+      },
+      "sampleHz": 240,
+      "samples": 433,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 3.191,
+        "r": 2.386
+      },
+      "footLiftMm": {
+        "l": 0.118,
+        "r": 2.545
+      },
+      "maxContactDriftMm": 3.191,
+      "maxBoneSpeedMps": 3.394,
+      "finalStillMm": 0,
+      "junction": {
+        "start": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "cover_low_idle",
+      "durationS": 3,
+      "loop": true,
+      "family": "cover",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            3
+          ]
+        ],
+        "r": [
+          [
+            0,
+            3
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 721,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "footLiftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "maxContactDriftMm": 0,
+      "loopSeam": {
+        "positionMm": 0,
+        "angleRad": 0,
+        "velocityMps": 0.000025
+      },
+      "maxBoneSpeedMps": 0.037
+    },
+    {
+      "name": "cover_high_idle",
+      "durationS": 3,
+      "loop": true,
+      "family": "cover",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            3
+          ]
+        ],
+        "r": [
+          [
+            0,
+            3
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 721,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "footLiftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "maxContactDriftMm": 0,
+      "loopSeam": {
+        "positionMm": 0,
+        "angleRad": 0,
+        "velocityMps": 0.000029
+      },
+      "maxBoneSpeedMps": 0.051
+    },
+    {
+      "name": "cover_low_peek_fire_l",
+      "durationS": 1.2,
+      "loop": false,
+      "family": "cover",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            1.2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            1.2
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 290,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0.49,
+        "r": 0.255
+      },
+      "footLiftMm": {
+        "l": 0.079,
+        "r": 0.096
+      },
+      "maxContactDriftMm": 0.49,
+      "maxBoneSpeedMps": 9.6,
+      "junction": {
+        "start": {
+          "ref": "cover_low_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "cover_low_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "cover_low_peek_fire_r",
+      "durationS": 1.2,
+      "loop": false,
+      "family": "cover",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            1.2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            1.2
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 290,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0.399,
+        "r": 0.381
+      },
+      "footLiftMm": {
+        "l": 0.153,
+        "r": 0.166
+      },
+      "maxContactDriftMm": 0.399,
+      "maxBoneSpeedMps": 8.151,
+      "junction": {
+        "start": {
+          "ref": "cover_low_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "cover_low_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "cover_high_lean_l",
+      "durationS": 1.2,
+      "loop": false,
+      "family": "cover",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            1.2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            1.2
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 290,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0.052,
+        "r": 0.05
+      },
+      "footLiftMm": {
+        "l": 0.029,
+        "r": 0.072
+      },
+      "maxContactDriftMm": 0.072,
+      "maxBoneSpeedMps": 6.008,
+      "junction": {
+        "start": {
+          "ref": "cover_high_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "cover_high_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "cover_high_lean_r",
+      "durationS": 1.2,
+      "loop": false,
+      "family": "cover",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            1.2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            1.2
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 290,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0.029,
+        "r": 0.021
+      },
+      "footLiftMm": {
+        "l": 0.053,
+        "r": 0.048
+      },
+      "maxContactDriftMm": 0.053,
+      "maxBoneSpeedMps": 5.68,
+      "junction": {
+        "start": {
+          "ref": "cover_high_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "cover_high_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "cover_return",
+      "durationS": 1.2,
+      "loop": false,
+      "family": "cover",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.149481
+          ],
+          [
+            0.548097,
+            1.2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.610381
+          ],
+          [
+            0.950865,
+            1.2
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 290,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 2.89,
+        "r": 3.64
+      },
+      "footLiftMm": {
+        "l": 0.245,
+        "r": 2.635
+      },
+      "maxContactDriftMm": 3.64,
+      "maxBoneSpeedMps": 1.906,
+      "junction": {
+        "start": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "cover_low_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "cover_leave",
+      "durationS": 1.2,
+      "loop": false,
+      "family": "cover",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.651903
+          ],
+          [
+            1.050519,
+            1.2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.249135
+          ],
+          [
+            0.589619,
+            1.2
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 290,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 2.89,
+        "r": 3.64
+      },
+      "footLiftMm": {
+        "l": 0.245,
+        "r": 2.635
+      },
+      "maxContactDriftMm": 3.64,
+      "maxBoneSpeedMps": 1.906,
+      "junction": {
+        "start": {
+          "ref": "cover_low_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "call_out",
+      "durationS": 2,
+      "loop": false,
+      "family": "low_ready",
+      "mask": "upper",
+      "contacts": {
+        "l": [
+          [
+            0,
+            2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            2
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 481,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "footLiftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "maxContactDriftMm": 0,
+      "maxBoneSpeedMps": 2.988,
+      "junction": {
+        "start": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "standing_idle t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "seated_b",
+      "durationS": 4,
+      "loop": true,
+      "family": "seated",
+      "mask": "full",
+      "contacts": {
+        "l": [
+          [
+            0,
+            4
+          ]
+        ],
+        "r": [
+          [
+            0,
+            4
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 961,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "footLiftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "maxContactDriftMm": 0,
+      "loopSeam": {
+        "positionMm": 0,
+        "angleRad": 0,
+        "velocityMps": 0.001251
+      },
+      "maxBoneSpeedMps": 0.074
+    },
+    {
+      "name": "seated_pass_canteen",
+      "durationS": 3.6,
+      "loop": false,
+      "family": "seated",
+      "mask": "upper",
+      "contacts": {
+        "l": [
+          [
+            0,
+            3.6
+          ]
+        ],
+        "r": [
+          [
+            0,
+            3.6
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 865,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "footLiftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "maxContactDriftMm": 0,
+      "maxBoneSpeedMps": 1.313,
+      "junction": {
+        "start": {
+          "ref": "seated t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "seated t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "seated_receive_canteen",
+      "durationS": 4,
+      "loop": false,
+      "family": "seated",
+      "mask": "upper",
+      "contacts": {
+        "l": [
+          [
+            0,
+            4
+          ]
+        ],
+        "r": [
+          [
+            0,
+            4
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 961,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "footLiftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "maxContactDriftMm": 0,
+      "maxBoneSpeedMps": 2.529,
+      "junction": {
+        "start": {
+          "ref": "seated t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "seated t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    },
+    {
+      "name": "seated_cup_turn",
+      "durationS": 3.4,
+      "loop": false,
+      "family": "seated",
+      "mask": "upper",
+      "contacts": {
+        "l": [
+          [
+            0,
+            3.4
+          ]
+        ],
+        "r": [
+          [
+            0,
+            3.4
+          ]
+        ]
+      },
+      "model": {
+        "mode": "planted"
+      },
+      "sampleHz": 240,
+      "samples": 818,
+      "rootDisplacementM": 0,
+      "footDriftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "footLiftMm": {
+        "l": 0,
+        "r": 0
+      },
+      "maxContactDriftMm": 0,
+      "maxBoneSpeedMps": 3.969,
+      "junction": {
+        "start": {
+          "ref": "seated t0",
+          "positionMm": 0,
+          "angleRad": 0
+        },
+        "end": {
+          "ref": "seated t0",
+          "positionMm": 0,
+          "angleRad": 0
+        }
+      }
+    }
+  ],
+  "failures": []
+}

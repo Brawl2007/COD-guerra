@@ -6,7 +6,7 @@ import {
   planTrainArrival,planLocomotiveIdleTick,planJu87PullOut,planFireCrackle,planDistantBattleSlot,volleyOffsets,
   aircraftLayerMix,dopplerFactor,intensityWeight,m01FireEmitters,BattleIntensity,impactMaterial,
 } from './battlefield-audio.js';
-import { M01_STUKA_COUNT, m01StukaPosition, m01RaidPlanePosition } from '../world/m01-aircraft-path.js';
+import { M01_STUKA_COUNT, m01StukaPosition, m01StukaSince, m01StukaActive, m01RaidPlanePosition, m01RaidSince, m01RaidPlaneActive } from '../world/m01-aircraft-path.js';
 
 export { AUDIO_PRIORITY,audioHash,audioVariation,audioDistanceShape };
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
@@ -14,7 +14,7 @@ const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 export const AUDIO_LIMITS=Object.freeze({maxVoices:32,maxLoops:8,eventHistory:40});
 const EVENT_NAME=Object.freeze({kar98k:'rifle',ally_rifle:'rifle',mg34:'mg34',rkm_wz28:'rkm',ckm_wz30:'ckm',kb_wz29:'wz29-shot'});
 const NOISE_SECONDS=Object.freeze({white:2.37,brown:6.83});
-const LOOP_UPDATE_SEC=.05;
+const LOOP_UPDATE_SEC=.05,AIRCRAFT_DOPPLER_MAX_MPS=500,AIRCRAFT_DOPPLER_MAX_DT=1;
 const layer=(name,src,o)=>Object.freeze({name,src,...o,filter:o.filter&&Object.freeze(o.filter)});
 const WIND_LAYERS=Object.freeze([layer('low','noise',{noise:'brown',rate:.8,filter:{type:'lowpass',freq:520,q:.5}}),
   layer('high','noise',{noise:'white',rate:.5,gain:.25,filter:{type:'bandpass',freq:1400,q:.6}})]);
@@ -373,8 +373,10 @@ export class AudioManager {
   /** Saída de picada a partir do Ju 87 visível mais próximo (mesma trajectória do renderer), só com a formação em cena. */
   ju87PullOutNearest(clock,spatial,key='',stukas=true){
     if(!stukas)return null;let best=null;
-    for(let i=0;i<M01_STUKA_COUNT;i++){const p=m01StukaPosition(clock,i),s=spatial(p),d=Math.hypot(s.distance,s.dy??p.y);if(!best||d<best.d)best={s,d};}
-    return this.ju87PullOut(best.s.pan,best.d,key,best.s.front??1);
+    // Same path and anchor as the renderer: the last presented state carries the bombing anchor (game.js only passes the clock).
+    const since=m01StukaSince(clock,this.presentation.aircraftState);
+    for(let i=0;i<M01_STUKA_COUNT;i++){if(!m01StukaActive(since,i))continue;const p=m01StukaPosition(since,i),s=spatial(p),d=Math.hypot(s.distance,s.dy??p.y);if(!best||d<best.d)best={s,d};}
+    return best?this.ju87PullOut(best.s.pan,best.d,key,best.s.front??1):null;
   }
   railClank(pan=0,distance=0,key='train963'){
     this._record('train-arrival',{pan,distance,priority:AUDIO_PRIORITY.train,key});
@@ -437,15 +439,16 @@ export class AudioManager {
     for(const point of points){const s=spatial(point),d3=Math.hypot(s.distance,s.dy??point.y??0),w=1/Math.max(30,d3);
       panSum+=(s.pan??0)*w;weight+=w;if(!best||d3<best.distance)best={distance:d3,front:s.front??1};}
     const pan=weight?panSum/weight:0,prev=this.presentation.aircraft[key],mix=aircraftLayerMix(best.distance);
-    // Saltos de trajectória (volta do circuito a cada 90 s, troca do avião mais próximo) não são velocidade: sem Doppler.
-    const dd=prev!=null&&dt>0?best.distance-prev:0,pitch=Math.abs(dd/(dt||1))>120?1:dopplerFactor(dd,dt);this.presentation.aircraft[key]=best.distance;
+    // Saltos de trajectória (troca do avião mais próximo, relógio que salta no restauro) não são velocidade: sem Doppler.
+    // Os aviões voam a 140-390 m/s no stukaPath: o limite fica acima disso.
+    const dd=prev!=null&&dt>0?best.distance-prev:0,pitch=dt>AIRCRAFT_DOPPLER_MAX_DT||Math.abs(dd/(dt||1))>AIRCRAFT_DOPPLER_MAX_MPS?1:dopplerFactor(dd,dt);this.presentation.aircraft[key]=best.distance;
     if(!this.loops.has(key)&&!this._startLoop(key,{kind:'aircraft-engine',category:'aircraft',priority:AUDIO_PRIORITY.aircraft,volume,pan,distance:best.distance,front:best.front,layers:AIRCRAFT_LAYERS}))return;
     this._setLoop(key,{pan,distance:best.distance,front:best.front,volume,pitch,layers:{prop:mix.prop,engine:mix.engine,engine2:mix.engine*.8,rasp:mix.rasp,rumble:mix.rumble}});
   }
   _freshPresentation(clock,state){
     const c=Math.max(0,Number(clock)||0);
     return {initialized:Boolean(state),lastBattleSlot:Math.floor(c/DISTANT_SLOT_SEC),lastIdleSlot:Math.floor(c/LOCOMOTIVE_IDLE_SLOT_SEC),lastFireSlot:Math.floor(c/FIRE_SLOT_SEC),
-      lastLoopUpdate:-Infinity,train963:Boolean(state?.train963),panzerzug:Boolean(state?.panzerzug),aircraft:{},fires:[]};
+      lastLoopUpdate:-Infinity,train963:Boolean(state?.train963),panzerzug:Boolean(state?.panzerzug),aircraft:{},aircraftState:state,fires:[]};
   }
   resetPresentation(clock=0,state=null){
     this.stopAll();this.presentation=this._freshPresentation(clock,state);this.intensity.reset(clock);this.clock=Math.max(0,Number(clock)||0);
@@ -457,7 +460,7 @@ export class AudioManager {
   updateM01Presentation({clock=0,state={},spatial=()=>({pan:0,distance:900}),phase=null,fires=null,quality=null,emitters=M01_AUDIO_EMITTERS}={}){
     if(!this.ctx||this.disposed)return;
     if(quality)this.setQuality(quality);
-    this.clock=clock;const level=this.intensity.level(clock),pres=this.presentation,missionPhase=phase??'MAIN_COMBAT';
+    this.clock=clock;const level=this.intensity.level(clock),pres=this.presentation,missionPhase=phase??'MAIN_COMBAT';pres.aircraftState=state;
     if(!pres.initialized){Object.assign(pres,this._freshPresentation(clock,state));pres.initialized=true;}
     else{
       if(!pres.train963&&state.train963){const s=spatial(emitters.locomotive);this.railClank(s.pan,s.distance,'train963-arrival');}
@@ -477,8 +480,11 @@ export class AudioManager {
       if(!this.loops.has('battle-bed'))this._startLoop('battle-bed',{kind:'battle-bed',category:'distant',priority:AUDIO_PRIORITY.ambience,volume:bed,layers:BED_LAYERS});
       this._setLoop('battle-bed',{volume:bed*(.8+.4*presentationNoise('m01-front',clock,5.3)),layers:{crackle:.04+.12*level}});
       // Ju 87: formação de três (motor perto rasga, longe só ronca) e o avião alto do segundo raide.
-      if(state.stukas)this._updateAircraftLoop('aircraft',Array.from({length:M01_STUKA_COUNT},(_,i)=>m01StukaPosition(clock,i)),spatial,loopDt,.07);else this._stopLoop('aircraft');
-      if(state.secondRaid)this._updateAircraftLoop('aircraft-high',[m01RaidPlanePosition(clock)],spatial,loopDt,.06);else this._stopLoop('aircraft-high');
+      // Positions are pure functions of the bombing/raid anchors in the state (see m01-aircraft-path.js); planes that left are silent.
+      const since=m01StukaSince(clock,state),flying=Array.from({length:M01_STUKA_COUNT},(_,i)=>i).filter(i=>m01StukaActive(since,i));
+      if(state.stukas&&flying.length)this._updateAircraftLoop('aircraft',flying.map(i=>m01StukaPosition(since,i)),spatial,loopDt,.07);else this._stopLoop('aircraft');
+      const raidSince=m01RaidSince(clock,state);
+      if(state.secondRaid&&m01RaidPlaneActive(raidSince))this._updateAircraftLoop('aircraft-high',[m01RaidPlanePosition(raidSince)],spatial,loopDt,.06);else this._stopLoop('aircraft-high');
       // Comboios parados: vapor, ronco da caldeira.
       for(const [key,flag,heavy] of [['locomotive','train963',false],['panzerzug','panzerzug',true]]){
         if(!state[flag]){this._stopLoop(key);continue;}

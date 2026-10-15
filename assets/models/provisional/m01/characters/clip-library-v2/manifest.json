@@ -1,0 +1,3025 @@
+{
+  "schema": 1,
+  "task": "M01-ANIM-CLIP-LIBRARY-V2",
+  "roadmap": "T08",
+  "file": "m01_soldier_clip_library_v2.glb",
+  "bytes": 1851540,
+  "sha256": "1b84d8670e59a5048f4eead58ed6106f4bbf3b2990631fd068b4e11eb61d6881",
+  "base_commit": "11821bbb0e71a5e6a3447e00228754ff433d166a",
+  "author": "Original COD Guerra motion authored in this repository; existing M01 FK/IK solver reused",
+  "license": "Original project animation; repository-wide licence remains for the owner to decide. No animation copied from games or external motion libraries.",
+  "units": "metres",
+  "up": "+Y",
+  "forward": "-Z",
+  "root_motion": false,
+  "mesh_count": 0,
+  "material_count": 0,
+  "texture_count": 0,
+  "additional_draw_calls": 0,
+  "reference_rig": "m01_soldier_pl_lod1.glb",
+  "source_rigs": [
+    {
+      "nation": "pl",
+      "lod": 0,
+      "file": "m01_soldier_pl_lod0.glb",
+      "sha256": "9c98adb2eace9e4ac0558146b7cdc85a37374809a090208c0b51f42b4c87ae4d",
+      "skin_joints": 61
+    },
+    {
+      "nation": "pl",
+      "lod": 1,
+      "file": "m01_soldier_pl_lod1.glb",
+      "sha256": "d4e7565b92c6e266487a43af3c5a739b9f0a98328656662940ed0fe9fa361d8f",
+      "skin_joints": 61
+    },
+    {
+      "nation": "pl",
+      "lod": 2,
+      "file": "m01_soldier_pl_lod2.glb",
+      "sha256": "d1a59032549e07973684942aeac993d72c7427811db5061bba57c0bcf3fa15de",
+      "skin_joints": 28
+    },
+    {
+      "nation": "de",
+      "lod": 0,
+      "file": "m01_soldier_de_lod0.glb",
+      "sha256": "15082783b5a18ed93934e6eb47b9b07632d91e13478d9d7a450a7af2a9eb5b54",
+      "skin_joints": 61
+    },
+    {
+      "nation": "de",
+      "lod": 1,
+      "file": "m01_soldier_de_lod1.glb",
+      "sha256": "5c7294586cd75d0cd96eb757452854a5d8d19a93349fdf9d00d80d52d640a29f",
+      "skin_joints": 61
+    },
+    {
+      "nation": "de",
+      "lod": 2,
+      "file": "m01_soldier_de_lod2.glb",
+      "sha256": "6e04d5a34ee64ad8f142ada447e565314b45f4da8b2f123fa3ffeff6fd6c66d4",
+      "skin_joints": 28
+    }
+  ],
+  "reused": {
+    "assets/models/provisional/m01/characters/m01_soldier_pl_lod0.glb": {
+      "bytes": 2602908,
+      "sha256": "9c98adb2eace9e4ac0558146b7cdc85a37374809a090208c0b51f42b4c87ae4d"
+    },
+    "assets/models/provisional/m01/characters/m01_soldier_pl_lod1.glb": {
+      "bytes": 1041440,
+      "sha256": "d4e7565b92c6e266487a43af3c5a739b9f0a98328656662940ed0fe9fa361d8f"
+    },
+    "assets/models/provisional/m01/characters/m01_soldier_pl_lod2.glb": {
+      "bytes": 321668,
+      "sha256": "d1a59032549e07973684942aeac993d72c7427811db5061bba57c0bcf3fa15de"
+    },
+    "assets/models/provisional/m01/characters/m01_soldier_de_lod0.glb": {
+      "bytes": 1718132,
+      "sha256": "15082783b5a18ed93934e6eb47b9b07632d91e13478d9d7a450a7af2a9eb5b54"
+    },
+    "assets/models/provisional/m01/characters/m01_soldier_de_lod1.glb": {
+      "bytes": 604600,
+      "sha256": "5c7294586cd75d0cd96eb757452854a5d8d19a93349fdf9d00d80d52d640a29f"
+    },
+    "assets/models/provisional/m01/characters/m01_soldier_de_lod2.glb": {
+      "bytes": 187880,
+      "sha256": "6e04d5a34ee64ad8f142ada447e565314b45f4da8b2f123fa3ffeff6fd6c66d4"
+    },
+    "assets/models/provisional/m01/characters/m01_soldier_animations.glb": {
+      "bytes": 876612,
+      "sha256": "481d6114f4481ae0f99e162a4bbfdbe8e1d74cffc2460836a2b525bf93b0202d"
+    },
+    "assets/models/provisional/m01/characters/m01_station_animations.glb": {
+      "bytes": 96720,
+      "sha256": "504d4d84859149e3557da345e9572279a360d471e6c55c8550625ea5415ca9e5"
+    },
+    "assets/models/provisional/m01/characters/manifest.json": {
+      "bytes": 15722,
+      "sha256": "2f8e29ccf8894d40b7746abb4540105323650f4dbd9feab3d41908099c96eda6"
+    },
+    "assets/models/provisional/m01/characters/station-animations.manifest.json": {
+      "bytes": 707,
+      "sha256": "05e132bfa87f1626359fe3577e5cbc6eb4da67bc0756ac65ff8dab76af360a87"
+    },
+    "assets/models/provisional/m01/characters/motion-clips-v1/m01_soldier_motion_clips.glb": {
+      "bytes": 415724,
+      "sha256": "dbcb3e56015c1902d691c9fdb1783997e86c0a69e7c2abc29135ea773611031c"
+    },
+    "assets/models/provisional/m01/characters/motion-clips-v1/manifest.json": {
+      "bytes": 12213,
+      "sha256": "1269ec5fdb115f69af111beb23c32427954250b8be36d3eb4e69535808e6a78c"
+    },
+    "assets/models/provisional/m01/characters/station-drag-transitions/m01_station_drag_transitions.glb": {
+      "bytes": 408488,
+      "sha256": "5b59af9c0410f7747bed478a3c009ae54e916d7c38053530769f38a1d2c9eb6c"
+    },
+    "assets/models/provisional/m01/characters/station-drag-transitions/manifest.json": {
+      "bytes": 10143,
+      "sha256": "9dbbed8028b9828de0b6e487622c385774be863e5ac7157f74ccf57721a57017"
+    }
+  },
+  "generation_sources": [
+    {
+      "file": "tools/assets/m01-soldiers/build-clip-library-v2.mjs",
+      "sha256": "c804ec952ee0c973e6e168d75e0c3d0a97a84cbe25ef6aac6d03eba201a423c5"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/motion/library/common.mjs",
+      "sha256": "40052aa5a6c5364522e8fbe3ed7e16df17d149abb128c609e6e93dfaaa89ffe9"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/motion/library/audit.mjs",
+      "sha256": "1b769d654659edc5e98b17128faa8c7dcd1d6bb531cb1438b80f6b47d29da223"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/motion/library/index.mjs",
+      "sha256": "5e57eb654d379e1f937ec798e6cd6a15f05bc9704dcfc204eee0bbf2d51af85f"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/motion/library/locomotion.mjs",
+      "sha256": "e1b46896568aa8a0971eb0877bbf52f69a3badf1d21a045c022aa7916e162d56"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/motion/library/posture.mjs",
+      "sha256": "e6b754268a1e30618406a9d35d3ff8c1f7db0a114b7f5387dfcbbe7014ef36a7"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/motion/library/idles.mjs",
+      "sha256": "06765a886078785dc0a246d09b274ca66d06b5c38644f342ece3f9c117ee7cd3"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/motion/library/reactions.mjs",
+      "sha256": "3ca32dc30ba293890f29b69e6ff7e8815a8e5dc247083d5ade42082c389f5ef1"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/motion/library/cover.mjs",
+      "sha256": "d4f7fa87ff6f4675ce5002ae1bdeb5839fbbe3eda94c73ad17688083f422c4f2"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/motion/library/call.mjs",
+      "sha256": "405d672e33ebf1b23e86c77e33185537506ccafe6dc9f35fb88b0390585b7499"
+    }
+  ],
+  "audit": {
+    "sample_hz": 240,
+    "instrument": "three.js GLTFLoader + AnimationMixer, foot_l/foot_r ankle proxy (tools/assets/m01-soldiers/motion/library/audit.mjs; method of the rifleman locomotion pilot audit)",
+    "limits": {
+      "contactDriftMm": 15,
+      "loopSeamMm": 1,
+      "loopSeamRad": 0.002,
+      "loopSeamVelocityShare": 0.25,
+      "nominalSpeedTolerance": 0.03,
+      "junctionMm": 2.5,
+      "junctionRad": 0.012,
+      "finalStillMm": 3,
+      "maxBoneSpeedMps": 12
+    },
+    "failures": []
+  },
+  "clips": [
+    {
+      "name": "sprint",
+      "fps": 120,
+      "loop": true,
+      "pose": "standing",
+      "speed_mps": 5,
+      "cycle_distance_m": 3.2,
+      "semantic": "armed sprint, rifle at port arms",
+      "family": "port",
+      "mask": "full",
+      "interrupt": "any",
+      "durationS": 0.64,
+      "nominalSpeedMps": 5,
+      "cycleDuration": 0.64,
+      "strideM": 1.6,
+      "gait": "sprint",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.153766
+          ]
+        ],
+        "r": [
+          [
+            0.315844,
+            0.473766
+          ]
+        ]
+      },
+      "events": {},
+      "source": "motion-clips-v1 (identical track data)",
+      "audit": {
+        "model": {
+          "mode": "locomotion",
+          "speedMps": 5,
+          "cycleM": 3.2
+        },
+        "sampleHz": 240,
+        "samples": 155,
+        "durationS": 0.64,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0.883,
+          "r": 2.133
+        },
+        "footLiftMm": {
+          "l": 0.776,
+          "r": 1.12
+        },
+        "maxContactDriftMm": 2.133,
+        "supportSpeedMps": {
+          "min": 4.747529,
+          "median": 4.998889,
+          "max": 5.054989
+        },
+        "measuredNominalSpeedMps": 4.998889,
+        "loopSeam": {
+          "positionMm": 0,
+          "angleRad": 0,
+          "velocityMps": 0.952692
+        },
+        "maxBoneSpeedMps": 5.06
+      }
+    },
+    {
+      "name": "crouch_walk",
+      "fps": 120,
+      "loop": true,
+      "pose": "crouched",
+      "speed_mps": 0.8,
+      "cycle_distance_m": 0.768,
+      "semantic": "crouched advance, rifle low ready",
+      "family": "low_ready",
+      "mask": "full",
+      "interrupt": "any",
+      "durationS": 0.96,
+      "nominalSpeedMps": 0.8,
+      "cycleDuration": 0.96,
+      "strideM": 0.384,
+      "gait": "crouch_walk",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.619221
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.137143
+          ],
+          [
+            0.477922,
+            0.96
+          ]
+        ]
+      },
+      "events": {},
+      "source": "motion-clips-v1 (identical track data)",
+      "audit": {
+        "model": {
+          "mode": "locomotion",
+          "speedMps": 0.8,
+          "cycleM": 0.768
+        },
+        "sampleHz": 240,
+        "samples": 232,
+        "durationS": 0.96,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0.291,
+          "r": 0.204
+        },
+        "footLiftMm": {
+          "l": 0.203,
+          "r": 0.139
+        },
+        "maxContactDriftMm": 0.291,
+        "supportSpeedMps": {
+          "min": 0.757066,
+          "median": 0.799988,
+          "max": 0.800816
+        },
+        "measuredNominalSpeedMps": 0.799988,
+        "loopSeam": {
+          "positionMm": 0,
+          "angleRad": 0,
+          "velocityMps": 0.073468
+        },
+        "maxBoneSpeedMps": 3.868
+      }
+    },
+    {
+      "name": "hit_front",
+      "fps": 60,
+      "loop": false,
+      "pose": "standing",
+      "semantic": "chest impulse from the front",
+      "family": "low_ready",
+      "mask": "additive",
+      "interrupt": "none",
+      "durationS": 0.76,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.76
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.76
+          ]
+        ]
+      },
+      "events": {},
+      "reference": "frame 0",
+      "impact_from": "front",
+      "presentation_event": "hitAt",
+      "source": "motion-clips-v1 (identical track data)",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 184,
+        "durationS": 0.76,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0.025,
+          "r": 0.028
+        },
+        "footLiftMm": {
+          "l": 0.027,
+          "r": 0.026
+        },
+        "maxContactDriftMm": 0.028,
+        "maxBoneSpeedMps": 4.135,
+        "junction": {
+          "end": {
+            "ref": "own frame 0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "near_miss_duck",
+      "fps": 60,
+      "loop": false,
+      "pose": "standing",
+      "semantic": "defensive duck as a round passes",
+      "family": "low_ready",
+      "mask": "additive",
+      "interrupt": "none",
+      "durationS": 0.98,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.116271
+          ],
+          [
+            0.132881,
+            0.98
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.099661
+          ],
+          [
+            0.132881,
+            0.98
+          ]
+        ]
+      },
+      "events": {},
+      "reference": "frame 0",
+      "presentation_event": "suppressedAt",
+      "source": "motion-clips-v1 (identical track data)",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 237,
+        "durationS": 0.98,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0.078,
+          "r": 0.091
+        },
+        "footLiftMm": {
+          "l": 0.538,
+          "r": 0.53
+        },
+        "maxContactDriftMm": 0.538,
+        "maxBoneSpeedMps": 3.904,
+        "junction": {
+          "end": {
+            "ref": "own frame 0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "turn_left_90",
+      "fps": 60,
+      "loop": false,
+      "pose": "standing",
+      "semantic": "in-place step turn left; the rotation comes from bodyYaw",
+      "family": "low_ready",
+      "mask": "lower",
+      "interrupt": "none",
+      "durationS": 0.5,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.05
+          ],
+          [
+            0.216667,
+            0.5
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.266667
+          ],
+          [
+            0.45,
+            0.5
+          ]
+        ]
+      },
+      "events": {
+        "lead_foot_down": 0.23,
+        "trail_foot_down": 0.46
+      },
+      "yaw": {
+        "deltaDeg": 90,
+        "profile": "linear",
+        "startS": 0,
+        "endS": 0.5
+      },
+      "reference_start": "standing_idle t0",
+      "reference_end": "standing_idle t0 (actor rotated by bodyYaw)",
+      "audit": {
+        "model": {
+          "mode": "planted",
+          "yawDeg": 90
+        },
+        "sampleHz": 240,
+        "samples": 121,
+        "durationS": 0.5,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 1.455,
+          "r": 0.893
+        },
+        "footLiftMm": {
+          "l": 0.094,
+          "r": 0.123
+        },
+        "maxContactDriftMm": 1.455,
+        "maxBoneSpeedMps": 1.896,
+        "junction": {
+          "start": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "turn_right_90",
+      "fps": 60,
+      "loop": false,
+      "pose": "standing",
+      "semantic": "in-place step turn right; the rotation comes from bodyYaw",
+      "family": "low_ready",
+      "mask": "lower",
+      "interrupt": "none",
+      "durationS": 0.5,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.266667
+          ],
+          [
+            0.45,
+            0.5
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.05
+          ],
+          [
+            0.216667,
+            0.5
+          ]
+        ]
+      },
+      "events": {
+        "lead_foot_down": 0.23,
+        "trail_foot_down": 0.46
+      },
+      "yaw": {
+        "deltaDeg": -90,
+        "profile": "linear",
+        "startS": 0,
+        "endS": 0.5
+      },
+      "reference_start": "standing_idle t0",
+      "reference_end": "standing_idle t0 (actor rotated by bodyYaw)",
+      "audit": {
+        "model": {
+          "mode": "planted",
+          "yawDeg": -90
+        },
+        "sampleHz": 240,
+        "samples": 121,
+        "durationS": 0.5,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0.884,
+          "r": 1.477
+        },
+        "footLiftMm": {
+          "l": 0.124,
+          "r": 0.093
+        },
+        "maxContactDriftMm": 1.477,
+        "maxBoneSpeedMps": 1.916,
+        "junction": {
+          "start": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "carry_walk",
+      "fps": 120,
+      "loop": true,
+      "pose": "standing",
+      "speed_mps": 1.6,
+      "cycle_distance_m": 1.7600000000000002,
+      "semantic": "fireman carry, 1.6 m/s: re-authored carry_wounded (kept intact), casualty clip `carried` attaches to carry_socket",
+      "family": "carry",
+      "mask": "full",
+      "interrupt": "any",
+      "durationS": 1.1,
+      "nominalSpeedMps": 1.6,
+      "cycleDuration": 1.1,
+      "strideM": 0.8800000000000001,
+      "gait": "carry",
+      "contacts": {
+        "l": [
+          [
+            0.037358,
+            0.618491
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.070566
+          ],
+          [
+            0.589434,
+            1.1
+          ]
+        ]
+      },
+      "events": {},
+      "attach_partner": "carried",
+      "partner_socket": "carry_socket",
+      "audit": {
+        "model": {
+          "mode": "locomotion",
+          "speedMps": 1.6,
+          "cycleM": 1.7600000000000002
+        },
+        "sampleHz": 240,
+        "samples": 266,
+        "durationS": 1.1,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0.58,
+          "r": 0.549
+        },
+        "footLiftMm": {
+          "l": 0.905,
+          "r": 0.849
+        },
+        "maxContactDriftMm": 0.905,
+        "supportSpeedMps": {
+          "min": 1.508137,
+          "median": 1.600074,
+          "max": 1.648895
+        },
+        "measuredNominalSpeedMps": 1.600074,
+        "loopSeam": {
+          "positionMm": 0,
+          "angleRad": 0,
+          "velocityMps": 0.056094
+        },
+        "maxBoneSpeedMps": 7.81
+      }
+    },
+    {
+      "name": "stand_to_crouch",
+      "fps": 60,
+      "loop": false,
+      "pose": "standing->crouched",
+      "semantic": "drop to the right knee: left boot steps forward, right boot back",
+      "family": "low_ready",
+      "mask": "full",
+      "interrupt": "none",
+      "durationS": 0.45,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.033333
+          ],
+          [
+            0.183333,
+            0.45
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.2
+          ],
+          [
+            0.416667,
+            0.45
+          ]
+        ]
+      },
+      "events": {
+        "weight_on_knee": 0.38
+      },
+      "reference_start": "standing_idle t0",
+      "reference_end": "crouched_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 109,
+        "durationS": 0.45,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 1.636,
+          "r": 0.52
+        },
+        "footLiftMm": {
+          "l": 0.437,
+          "r": 0.391
+        },
+        "maxContactDriftMm": 1.636,
+        "maxBoneSpeedMps": 4.304,
+        "junction": {
+          "start": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "crouched_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "crouch_to_stand",
+      "fps": 60,
+      "loop": false,
+      "pose": "crouched->standing",
+      "semantic": "rise from the right knee to standing",
+      "family": "low_ready",
+      "mask": "full",
+      "interrupt": "none",
+      "durationS": 0.45,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.266667
+          ],
+          [
+            0.416667,
+            0.45
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.033333
+          ],
+          [
+            0.25,
+            0.45
+          ]
+        ]
+      },
+      "events": {
+        "weight_on_foot": 0.12
+      },
+      "reference_start": "crouched_idle t0",
+      "reference_end": "standing_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 109,
+        "durationS": 0.45,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 1.636,
+          "r": 0.52
+        },
+        "footLiftMm": {
+          "l": 0.437,
+          "r": 0.391
+        },
+        "maxContactDriftMm": 1.636,
+        "maxBoneSpeedMps": 4.304,
+        "junction": {
+          "start": {
+            "ref": "crouched_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "prone_enter",
+      "fps": 60,
+      "loop": false,
+      "pose": "crouched->prone",
+      "semantic": "kneeling to prone: legs thrown back, chest lowered, rifle laid forward",
+      "family": "prone",
+      "mask": "full",
+      "interrupt": "none",
+      "durationS": 1.2,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.361246
+          ],
+          [
+            0.884429,
+            1.2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.298962
+          ],
+          [
+            0.851211,
+            1.2
+          ]
+        ]
+      },
+      "events": {
+        "hands_down": 0.5,
+        "chest_down": 0.85
+      },
+      "reference_start": "crouched_idle t0",
+      "reference_end": "prone_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 290,
+        "durationS": 1.2,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 1.874,
+          "r": 2.95
+        },
+        "footLiftMm": {
+          "l": 0.958,
+          "r": 0.487
+        },
+        "maxContactDriftMm": 2.95,
+        "maxBoneSpeedMps": 5.334,
+        "junction": {
+          "start": {
+            "ref": "crouched_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "prone_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "prone_exit",
+      "fps": 60,
+      "loop": false,
+      "pose": "prone->crouched",
+      "semantic": "prone to kneeling",
+      "family": "prone",
+      "mask": "full",
+      "interrupt": "none",
+      "durationS": 1.2,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.315571
+          ],
+          [
+            0.838754,
+            1.2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.348789
+          ],
+          [
+            0.901038,
+            1.2
+          ]
+        ]
+      },
+      "events": {
+        "hands_down": 0.7,
+        "knee_down": 0.35
+      },
+      "reference_start": "prone_idle t0",
+      "reference_end": "crouched_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 290,
+        "durationS": 1.2,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 1.874,
+          "r": 2.95
+        },
+        "footLiftMm": {
+          "l": 0.958,
+          "r": 0.487
+        },
+        "maxContactDriftMm": 2.95,
+        "maxBoneSpeedMps": 5.334,
+        "junction": {
+          "start": {
+            "ref": "prone_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "crouched_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "prone_idle",
+      "fps": 30,
+      "loop": true,
+      "pose": "prone",
+      "semantic": "prone, breathing, slow look along the front",
+      "family": "prone",
+      "mask": "full",
+      "interrupt": "none",
+      "durationS": 4,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 4,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            4
+          ]
+        ],
+        "r": [
+          [
+            0,
+            4
+          ]
+        ]
+      },
+      "events": {},
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 961,
+        "durationS": 4,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0.379,
+          "r": 0.395
+        },
+        "footLiftMm": {
+          "l": 1.243,
+          "r": 1.124
+        },
+        "maxContactDriftMm": 1.243,
+        "loopSeam": {
+          "positionMm": 0,
+          "angleRad": 0,
+          "velocityMps": 0.000008
+        },
+        "maxBoneSpeedMps": 0.009
+      }
+    },
+    {
+      "name": "prone_flinch",
+      "fps": 60,
+      "loop": false,
+      "pose": "prone",
+      "semantic": "head ducks and chest presses into the ground",
+      "family": "prone",
+      "mask": "full",
+      "interrupt": "none",
+      "durationS": 0.45,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.45
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.45
+          ]
+        ]
+      },
+      "events": {
+        "peak": 0.1
+      },
+      "presentation_event": "suppressedAt",
+      "reference": "prone_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 109,
+        "durationS": 0.45,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0.27,
+          "r": 0.281
+        },
+        "footLiftMm": {
+          "l": 0.93,
+          "r": 0.84
+        },
+        "maxContactDriftMm": 0.93,
+        "maxBoneSpeedMps": 1.368,
+        "junction": {
+          "start": {
+            "ref": "prone_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "prone_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "prone_crawl",
+      "fps": 60,
+      "loop": true,
+      "pose": "prone",
+      "speed_mps": 0.3,
+      "cycle_distance_m": 0.42,
+      "semantic": "leopard crawl: toes push alternately, rifle cradled in the forearms",
+      "family": "prone",
+      "mask": "full",
+      "interrupt": "none",
+      "durationS": 1.4,
+      "nominalSpeedMps": 0.3,
+      "cycleDuration": 1.4,
+      "strideM": 0.21,
+      "gait": "crawl",
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.65
+          ]
+        ],
+        "r": [
+          [
+            0.683333,
+            1.4
+          ]
+        ]
+      },
+      "events": {},
+      "audit": {
+        "model": {
+          "mode": "locomotion",
+          "speedMps": 0.3,
+          "cycleM": 0.42
+        },
+        "sampleHz": 240,
+        "samples": 337,
+        "durationS": 1.4,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0.224,
+          "r": 0.581
+        },
+        "footLiftMm": {
+          "l": 0.017,
+          "r": 0.522
+        },
+        "maxContactDriftMm": 0.581,
+        "supportSpeedMps": {
+          "min": 0.256865,
+          "median": 0.300255,
+          "max": 0.343084
+        },
+        "measuredNominalSpeedMps": 0.300255,
+        "loopSeam": {
+          "positionMm": 0,
+          "angleRad": 0,
+          "velocityMps": 0.030266
+        },
+        "maxBoneSpeedMps": 1.263
+      }
+    },
+    {
+      "name": "standing_idle_b",
+      "fps": 30,
+      "loop": true,
+      "pose": "standing",
+      "semantic": "standing weight on right leg, relaxed left foot",
+      "family": "low_ready",
+      "mask": "full",
+      "interrupt": "any",
+      "durationS": 4,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 4,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            4
+          ]
+        ],
+        "r": [
+          [
+            0,
+            4
+          ]
+        ]
+      },
+      "events": {},
+      "variant_of": "standing_idle",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 961,
+        "durationS": 4,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "footLiftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "maxContactDriftMm": 0,
+        "loopSeam": {
+          "positionMm": 0,
+          "angleRad": 0,
+          "velocityMps": 0.000668
+        },
+        "maxBoneSpeedMps": 0.049
+      }
+    },
+    {
+      "name": "standing_idle_c",
+      "fps": 30,
+      "loop": true,
+      "pose": "standing",
+      "semantic": "standing at ease, feet apart, rifle carried high, glances left and right",
+      "family": "low_ready",
+      "mask": "full",
+      "interrupt": "any",
+      "durationS": 4,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 4,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            4
+          ]
+        ],
+        "r": [
+          [
+            0,
+            4
+          ]
+        ]
+      },
+      "events": {},
+      "variant_of": "standing_idle",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 961,
+        "durationS": 4,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "footLiftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "maxContactDriftMm": 0,
+        "loopSeam": {
+          "positionMm": 0,
+          "angleRad": 0,
+          "velocityMps": 0.000901
+        },
+        "maxBoneSpeedMps": 0.126
+      }
+    },
+    {
+      "name": "crouched_idle_b",
+      "fps": 30,
+      "loop": true,
+      "pose": "crouched",
+      "semantic": "kneeling on the left knee, rifle low ready",
+      "family": "low_ready",
+      "mask": "full",
+      "interrupt": "any",
+      "durationS": 3,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 3,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            3
+          ]
+        ],
+        "r": [
+          [
+            0,
+            3
+          ]
+        ]
+      },
+      "events": {},
+      "variant_of": "crouched_idle",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 721,
+        "durationS": 3,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "footLiftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "maxContactDriftMm": 0,
+        "loopSeam": {
+          "positionMm": 0,
+          "angleRad": 0,
+          "velocityMps": 0.000096
+        },
+        "maxBoneSpeedMps": 0.027
+      }
+    },
+    {
+      "name": "fidget_look",
+      "fps": 30,
+      "loop": false,
+      "pose": "standing",
+      "semantic": "glance left then right",
+      "family": "low_ready",
+      "mask": "upper",
+      "interrupt": "any",
+      "durationS": 2,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            2
+          ]
+        ]
+      },
+      "events": {
+        "look_left": 0.3,
+        "look_right": 0.75
+      },
+      "reference": "standing_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 481,
+        "durationS": 2,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "footLiftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "maxContactDriftMm": 0,
+        "maxBoneSpeedMps": 0.463,
+        "junction": {
+          "start": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "fidget_shift",
+      "fps": 30,
+      "loop": false,
+      "pose": "standing",
+      "semantic": "shifts weight, resets the right boot, shrugs the rifle strap",
+      "family": "low_ready",
+      "mask": "full",
+      "interrupt": "any",
+      "durationS": 2,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.3
+          ],
+          [
+            0.6,
+            1.466667
+          ],
+          [
+            1.733333,
+            2
+          ]
+        ]
+      },
+      "events": {
+        "boot_lift": 0.25,
+        "boot_down": 0.34,
+        "boot_return": 0.8
+      },
+      "reference": "standing_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 481,
+        "durationS": 2,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0.003,
+          "r": 3.217
+        },
+        "footLiftMm": {
+          "l": 0.003,
+          "r": 0.892
+        },
+        "maxContactDriftMm": 3.217,
+        "maxBoneSpeedMps": 0.661,
+        "junction": {
+          "start": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "fidget_helmet",
+      "fps": 30,
+      "loop": false,
+      "pose": "standing",
+      "semantic": "right hand to the helmet brim",
+      "family": "low_ready",
+      "mask": "upper",
+      "interrupt": "any",
+      "durationS": 2.2,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            2.2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            2.2
+          ]
+        ]
+      },
+      "events": {
+        "hand_on_helmet": 0.7
+      },
+      "reference": "standing_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 530,
+        "durationS": 2.2,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "footLiftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "maxContactDriftMm": 0,
+        "maxBoneSpeedMps": 2.007,
+        "junction": {
+          "start": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "fidget_check_rifle",
+      "fps": 30,
+      "loop": false,
+      "pose": "standing",
+      "semantic": "lifts the rifle to look it over, brief thumb on the safety",
+      "family": "low_ready",
+      "mask": "upper",
+      "interrupt": "any",
+      "durationS": 2.4,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            2.4
+          ]
+        ],
+        "r": [
+          [
+            0,
+            2.4
+          ]
+        ]
+      },
+      "events": {
+        "rifle_up": 0.8,
+        "rifle_down": 1.9
+      },
+      "reference": "standing_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 578,
+        "durationS": 2.4,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "footLiftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "maxContactDriftMm": 0,
+        "maxBoneSpeedMps": 0.634,
+        "junction": {
+          "start": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "hit_back",
+      "fps": 60,
+      "loop": false,
+      "pose": "standing",
+      "semantic": "impact in the back: shoulders thrown forward, knees give a little",
+      "family": "low_ready",
+      "mask": "additive",
+      "interrupt": "none",
+      "durationS": 0.76,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.76
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.76
+          ]
+        ]
+      },
+      "events": {
+        "peak": 0.13
+      },
+      "presentation_event": "hitAt",
+      "reference": "frame 0",
+      "impact_from": "back",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 184,
+        "durationS": 0.76,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0.011,
+          "r": 0.019
+        },
+        "footLiftMm": {
+          "l": 0.029,
+          "r": 0.029
+        },
+        "maxContactDriftMm": 0.029,
+        "maxBoneSpeedMps": 4.11,
+        "junction": {
+          "end": {
+            "ref": "own frame 0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "hit_left",
+      "fps": 60,
+      "loop": false,
+      "pose": "standing",
+      "semantic": "impact from the left: torso pushed to the right, head whips across",
+      "family": "low_ready",
+      "mask": "additive",
+      "interrupt": "none",
+      "durationS": 0.76,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.76
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.76
+          ]
+        ]
+      },
+      "events": {
+        "peak": 0.13
+      },
+      "presentation_event": "hitAt",
+      "reference": "frame 0",
+      "impact_from": "left",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 184,
+        "durationS": 0.76,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0.024,
+          "r": 0.026
+        },
+        "footLiftMm": {
+          "l": 0.023,
+          "r": 0.03
+        },
+        "maxContactDriftMm": 0.03,
+        "maxBoneSpeedMps": 3.695,
+        "junction": {
+          "end": {
+            "ref": "own frame 0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "hit_right",
+      "fps": 60,
+      "loop": false,
+      "pose": "standing",
+      "semantic": "impact from the right: torso pushed to the left, head whips across",
+      "family": "low_ready",
+      "mask": "additive",
+      "interrupt": "none",
+      "durationS": 0.76,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.76
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.76
+          ]
+        ]
+      },
+      "events": {
+        "peak": 0.13
+      },
+      "presentation_event": "hitAt",
+      "reference": "frame 0",
+      "impact_from": "right",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 184,
+        "durationS": 0.76,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0.027,
+          "r": 0.024
+        },
+        "footLiftMm": {
+          "l": 0.03,
+          "r": 0.023
+        },
+        "maxContactDriftMm": 0.03,
+        "maxBoneSpeedMps": 3.695,
+        "junction": {
+          "end": {
+            "ref": "own frame 0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "blast_duck",
+      "fps": 60,
+      "loop": false,
+      "pose": "standing",
+      "semantic": "violent crouch away from a nearby explosion, rifle clutched to the chest",
+      "family": "low_ready",
+      "mask": "additive",
+      "interrupt": "none",
+      "durationS": 1,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0.066667,
+            1
+          ]
+        ],
+        "r": [
+          [
+            0.066667,
+            1
+          ]
+        ]
+      },
+      "events": {
+        "peak": 0.18,
+        "hold_end": 0.52
+      },
+      "presentation_event": "blast",
+      "reference": "frame 0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 241,
+        "durationS": 1,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0.259,
+          "r": 0.258
+        },
+        "footLiftMm": {
+          "l": 0.435,
+          "r": 0.45
+        },
+        "maxContactDriftMm": 0.45,
+        "maxBoneSpeedMps": 9.555,
+        "junction": {
+          "end": {
+            "ref": "own frame 0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "death_front",
+      "fps": 60,
+      "loop": false,
+      "pose": "standing->fallen",
+      "semantic": "hit from the front: rocks back, knees give, falls onto the back and lies still; rifle slips away",
+      "family": "hands_free",
+      "mask": "full",
+      "interrupt": "none",
+      "durationS": 1.6,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.182857
+          ],
+          [
+            0.432208,
+            0.46961
+          ],
+          [
+            1.113766,
+            1.6
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.14961
+          ],
+          [
+            0.448831,
+            0.482078
+          ],
+          [
+            1.072208,
+            1.6
+          ]
+        ]
+      },
+      "events": {
+        "release": 0.3,
+        "ground": 0.78
+      },
+      "impact_from": "front",
+      "fall_toward": "back",
+      "reference_start": "standing_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted",
+          "ground": true,
+          "final_still_s": 0.3
+        },
+        "sampleHz": 240,
+        "samples": 386,
+        "durationS": 1.6,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 5.055,
+          "r": 4.756
+        },
+        "footLiftMm": {
+          "l": 1.334,
+          "r": 2.744
+        },
+        "maxContactDriftMm": 5.055,
+        "maxBoneSpeedMps": 6.243,
+        "finalStillMm": 0,
+        "junction": {
+          "start": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "death_back",
+      "fps": 60,
+      "loop": false,
+      "pose": "standing->fallen",
+      "semantic": "hit from behind: thrown forward, knees give, falls on the face and lies still; rifle skids ahead",
+      "family": "hands_free",
+      "mask": "full",
+      "interrupt": "none",
+      "durationS": 1.5,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.116667
+          ],
+          [
+            1,
+            1.5
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.133333
+          ],
+          [
+            1,
+            1.5
+          ]
+        ]
+      },
+      "events": {
+        "release": 0.28,
+        "ground": 0.72
+      },
+      "impact_from": "back",
+      "fall_toward": "front",
+      "reference_start": "standing_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted",
+          "ground": true,
+          "final_still_s": 0.3
+        },
+        "sampleHz": 240,
+        "samples": 361,
+        "durationS": 1.5,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 1.986,
+          "r": 3.221
+        },
+        "footLiftMm": {
+          "l": 0.12,
+          "r": 0.09
+        },
+        "maxContactDriftMm": 3.221,
+        "maxBoneSpeedMps": 4.01,
+        "finalStillMm": 0,
+        "junction": {
+          "start": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "death_left",
+      "fps": 60,
+      "loop": false,
+      "pose": "standing->fallen",
+      "semantic": "hit from the left: shoved away, legs fold, falls on the right side; rifle dropped",
+      "family": "hands_free",
+      "mask": "full",
+      "interrupt": "none",
+      "durationS": 1.5,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.383333
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.383333
+          ],
+          [
+            1.033333,
+            1.5
+          ]
+        ]
+      },
+      "events": {
+        "release": 0.26,
+        "ground": 0.74
+      },
+      "impact_from": "left",
+      "fall_toward": "right",
+      "reference_start": "standing_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted",
+          "ground": true,
+          "final_still_s": 0.3
+        },
+        "sampleHz": 240,
+        "samples": 361,
+        "durationS": 1.5,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 1.458,
+          "r": 2.402
+        },
+        "footLiftMm": {
+          "l": 0.429,
+          "r": 0.183
+        },
+        "maxContactDriftMm": 2.402,
+        "maxBoneSpeedMps": 3.899,
+        "finalStillMm": 0,
+        "junction": {
+          "start": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "death_right",
+      "fps": 60,
+      "loop": false,
+      "pose": "standing->fallen",
+      "semantic": "hit from the right: shoved away, legs fold, falls on the left side; rifle dropped",
+      "family": "hands_free",
+      "mask": "full",
+      "interrupt": "none",
+      "durationS": 1.5,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.383333
+          ],
+          [
+            1.033333,
+            1.5
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.383333
+          ]
+        ]
+      },
+      "events": {
+        "release": 0.26,
+        "ground": 0.74
+      },
+      "impact_from": "right",
+      "fall_toward": "left",
+      "reference_start": "standing_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted",
+          "ground": true,
+          "final_still_s": 0.3
+        },
+        "sampleHz": 240,
+        "samples": 361,
+        "durationS": 1.5,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 2.225,
+          "r": 1.658
+        },
+        "footLiftMm": {
+          "l": 0.184,
+          "r": 0.429
+        },
+        "maxContactDriftMm": 2.225,
+        "maxBoneSpeedMps": 4.448,
+        "finalStillMm": 0,
+        "junction": {
+          "start": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "death_crumple",
+      "fps": 60,
+      "loop": false,
+      "pose": "standing->fallen",
+      "semantic": "no clear direction: knees buckle, the soldier folds and slumps onto the left side, curled",
+      "family": "hands_free",
+      "mask": "full",
+      "interrupt": "none",
+      "durationS": 1.8,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.15
+          ],
+          [
+            0.633333,
+            0.666667
+          ],
+          [
+            1.25,
+            1.8
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.116667
+          ],
+          [
+            0.666667,
+            0.716667
+          ]
+        ]
+      },
+      "events": {
+        "release": 0.3,
+        "ground": 0.72
+      },
+      "impact_from": "any",
+      "fall_toward": "down",
+      "reference_start": "standing_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted",
+          "ground": true,
+          "final_still_s": 0.35
+        },
+        "sampleHz": 240,
+        "samples": 433,
+        "durationS": 1.8,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 3.191,
+          "r": 2.386
+        },
+        "footLiftMm": {
+          "l": 0.118,
+          "r": 2.545
+        },
+        "maxContactDriftMm": 3.191,
+        "maxBoneSpeedMps": 3.394,
+        "finalStillMm": 0,
+        "junction": {
+          "start": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "cover_low_idle",
+      "fps": 30,
+      "loop": true,
+      "pose": "crouched",
+      "semantic": "squatting below a 0.9 m sandbag line, rifle across the chest, slow look along the cover",
+      "family": "cover",
+      "mask": "full",
+      "interrupt": "any",
+      "durationS": 3,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 3,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            3
+          ]
+        ],
+        "r": [
+          [
+            0,
+            3
+          ]
+        ]
+      },
+      "events": {},
+      "cover_height_m": 0.9,
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 721,
+        "durationS": 3,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "footLiftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "maxContactDriftMm": 0,
+        "loopSeam": {
+          "positionMm": 0,
+          "angleRad": 0,
+          "velocityMps": 0.000025
+        },
+        "maxBoneSpeedMps": 0.037
+      }
+    },
+    {
+      "name": "cover_high_idle",
+      "fps": 30,
+      "loop": true,
+      "pose": "standing",
+      "semantic": "standing against a 1.6 m wall, rifle at high port, slow look along the wall",
+      "family": "cover",
+      "mask": "full",
+      "interrupt": "any",
+      "durationS": 3,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 3,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            3
+          ]
+        ],
+        "r": [
+          [
+            0,
+            3
+          ]
+        ]
+      },
+      "events": {},
+      "cover_height_m": 1.6,
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 721,
+        "durationS": 3,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "footLiftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "maxContactDriftMm": 0,
+        "loopSeam": {
+          "positionMm": 0,
+          "angleRad": 0,
+          "velocityMps": 0.000029
+        },
+        "maxBoneSpeedMps": 0.051
+      }
+    },
+    {
+      "name": "cover_low_peek_fire_l",
+      "fps": 60,
+      "loop": false,
+      "pose": "crouched",
+      "semantic": "rises on the left edge of low cover, fires one aimed shot, drops back",
+      "family": "cover",
+      "mask": "full",
+      "interrupt": "none",
+      "durationS": 1.2,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            1.2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            1.2
+          ]
+        ]
+      },
+      "events": {
+        "shoulder": 0.38,
+        "fire": 0.52,
+        "shouldered_down": 0.8
+      },
+      "cover_height_m": 0.9,
+      "peek_side": "left",
+      "reference_start": "cover_low_idle t0",
+      "reference_end": "cover_low_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 290,
+        "durationS": 1.2,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0.49,
+          "r": 0.255
+        },
+        "footLiftMm": {
+          "l": 0.079,
+          "r": 0.096
+        },
+        "maxContactDriftMm": 0.49,
+        "maxBoneSpeedMps": 9.6,
+        "junction": {
+          "start": {
+            "ref": "cover_low_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "cover_low_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "cover_low_peek_fire_r",
+      "fps": 60,
+      "loop": false,
+      "pose": "crouched",
+      "semantic": "rises on the right edge of low cover, fires one aimed shot, drops back",
+      "family": "cover",
+      "mask": "full",
+      "interrupt": "none",
+      "durationS": 1.2,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            1.2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            1.2
+          ]
+        ]
+      },
+      "events": {
+        "shoulder": 0.38,
+        "fire": 0.52,
+        "shouldered_down": 0.8
+      },
+      "cover_height_m": 0.9,
+      "peek_side": "right",
+      "reference_start": "cover_low_idle t0",
+      "reference_end": "cover_low_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 290,
+        "durationS": 1.2,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0.399,
+          "r": 0.381
+        },
+        "footLiftMm": {
+          "l": 0.153,
+          "r": 0.166
+        },
+        "maxContactDriftMm": 0.399,
+        "maxBoneSpeedMps": 8.151,
+        "junction": {
+          "start": {
+            "ref": "cover_low_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "cover_low_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "cover_high_lean_l",
+      "fps": 60,
+      "loop": false,
+      "pose": "standing",
+      "semantic": "leans out past the left edge of high cover, fires one aimed shot, leans back",
+      "family": "cover",
+      "mask": "full",
+      "interrupt": "none",
+      "durationS": 1.2,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            1.2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            1.2
+          ]
+        ]
+      },
+      "events": {
+        "shoulder": 0.38,
+        "fire": 0.52,
+        "shouldered_down": 0.8
+      },
+      "cover_height_m": 1.6,
+      "peek_side": "left",
+      "reference_start": "cover_high_idle t0",
+      "reference_end": "cover_high_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 290,
+        "durationS": 1.2,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0.052,
+          "r": 0.05
+        },
+        "footLiftMm": {
+          "l": 0.029,
+          "r": 0.072
+        },
+        "maxContactDriftMm": 0.072,
+        "maxBoneSpeedMps": 6.008,
+        "junction": {
+          "start": {
+            "ref": "cover_high_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "cover_high_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "cover_high_lean_r",
+      "fps": 60,
+      "loop": false,
+      "pose": "standing",
+      "semantic": "leans out past the right edge of high cover, fires one aimed shot, leans back",
+      "family": "cover",
+      "mask": "full",
+      "interrupt": "none",
+      "durationS": 1.2,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            1.2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            1.2
+          ]
+        ]
+      },
+      "events": {
+        "shoulder": 0.38,
+        "fire": 0.52,
+        "shouldered_down": 0.8
+      },
+      "cover_height_m": 1.6,
+      "peek_side": "right",
+      "reference_start": "cover_high_idle t0",
+      "reference_end": "cover_high_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 290,
+        "durationS": 1.2,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0.029,
+          "r": 0.021
+        },
+        "footLiftMm": {
+          "l": 0.053,
+          "r": 0.048
+        },
+        "maxContactDriftMm": 0.053,
+        "maxBoneSpeedMps": 5.68,
+        "junction": {
+          "start": {
+            "ref": "cover_high_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "cover_high_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "cover_return",
+      "fps": 60,
+      "loop": false,
+      "pose": "standing->crouched",
+      "semantic": "exposed ready stance to squatting behind low cover",
+      "family": "cover",
+      "mask": "full",
+      "interrupt": "none",
+      "durationS": 1.2,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.149481
+          ],
+          [
+            0.548097,
+            1.2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.610381
+          ],
+          [
+            0.950865,
+            1.2
+          ]
+        ]
+      },
+      "events": {
+        "boots_set": 0.9
+      },
+      "cover_height_m": 0.9,
+      "reference_start": "standing_idle t0",
+      "reference_end": "cover_low_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 290,
+        "durationS": 1.2,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 2.89,
+          "r": 3.64
+        },
+        "footLiftMm": {
+          "l": 0.245,
+          "r": 2.635
+        },
+        "maxContactDriftMm": 3.64,
+        "maxBoneSpeedMps": 1.906,
+        "junction": {
+          "start": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "cover_low_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "cover_leave",
+      "fps": 60,
+      "loop": false,
+      "pose": "crouched->standing",
+      "semantic": "rises from low cover to the exposed ready stance",
+      "family": "cover",
+      "mask": "full",
+      "interrupt": "none",
+      "durationS": 1.2,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            0.651903
+          ],
+          [
+            1.050519,
+            1.2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.249135
+          ],
+          [
+            0.589619,
+            1.2
+          ]
+        ]
+      },
+      "events": {
+        "boots_set": 0.1
+      },
+      "cover_height_m": 0.9,
+      "reference_start": "cover_low_idle t0",
+      "reference_end": "standing_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 290,
+        "durationS": 1.2,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 2.89,
+          "r": 3.64
+        },
+        "footLiftMm": {
+          "l": 0.245,
+          "r": 2.635
+        },
+        "maxContactDriftMm": 3.64,
+        "maxBoneSpeedMps": 1.906,
+        "junction": {
+          "start": {
+            "ref": "cover_low_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "call_out",
+      "fps": 30,
+      "loop": false,
+      "pose": "standing",
+      "semantic": "shouts an order with the left hand cupped at the mouth",
+      "family": "low_ready",
+      "mask": "upper",
+      "interrupt": "any",
+      "durationS": 2,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            2
+          ]
+        ],
+        "r": [
+          [
+            0,
+            2
+          ]
+        ]
+      },
+      "events": {
+        "shout_start": 0.76,
+        "shout_end": 1.5
+      },
+      "reference_start": "standing_idle t0",
+      "reference_end": "standing_idle t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 481,
+        "durationS": 2,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "footLiftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "maxContactDriftMm": 0,
+        "maxBoneSpeedMps": 2.988,
+        "junction": {
+          "start": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "standing_idle t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "seated_b",
+      "fps": 30,
+      "loop": true,
+      "pose": "seated",
+      "semantic": "seated, feet apart, leaning, looking around",
+      "family": "seated",
+      "mask": "full",
+      "interrupt": "any",
+      "durationS": 4,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 4,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            4
+          ]
+        ],
+        "r": [
+          [
+            0,
+            4
+          ]
+        ]
+      },
+      "events": {},
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 961,
+        "durationS": 4,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "footLiftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "maxContactDriftMm": 0,
+        "loopSeam": {
+          "positionMm": 0,
+          "angleRad": 0,
+          "velocityMps": 0.001251
+        },
+        "maxBoneSpeedMps": 0.074
+      }
+    },
+    {
+      "name": "seated_pass_canteen",
+      "fps": 30,
+      "loop": false,
+      "pose": "seated",
+      "semantic": "passes a canteen to the soldier on the right",
+      "family": "seated",
+      "mask": "upper",
+      "interrupt": "any",
+      "durationS": 3.6,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            3.6
+          ]
+        ],
+        "r": [
+          [
+            0,
+            3.6
+          ]
+        ]
+      },
+      "events": {
+        "reach": 0.3,
+        "release": 0.45
+      },
+      "reference_start": "seated t0",
+      "reference_end": "seated t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 865,
+        "durationS": 3.6,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "footLiftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "maxContactDriftMm": 0,
+        "maxBoneSpeedMps": 1.313,
+        "junction": {
+          "start": {
+            "ref": "seated t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "seated t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "seated_receive_canteen",
+      "fps": 30,
+      "loop": false,
+      "pose": "seated",
+      "semantic": "takes a canteen from the soldier on the left and drinks",
+      "family": "seated",
+      "mask": "upper",
+      "interrupt": "any",
+      "durationS": 4,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            4
+          ]
+        ],
+        "r": [
+          [
+            0,
+            4
+          ]
+        ]
+      },
+      "events": {
+        "receive": 0.25,
+        "drink": 0.5,
+        "lower": 0.78
+      },
+      "reference_start": "seated t0",
+      "reference_end": "seated t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 961,
+        "durationS": 4,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "footLiftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "maxContactDriftMm": 0,
+        "maxBoneSpeedMps": 2.529,
+        "junction": {
+          "start": {
+            "ref": "seated t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "seated t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "seated_cup_turn",
+      "fps": 30,
+      "loop": false,
+      "pose": "seated",
+      "semantic": "takes a cup from the left, turns, hands it to the right",
+      "family": "seated",
+      "mask": "upper",
+      "interrupt": "any",
+      "durationS": 3.4,
+      "nominalSpeedMps": 0,
+      "cycleDuration": 0,
+      "strideM": 0,
+      "contacts": {
+        "l": [
+          [
+            0,
+            3.4
+          ]
+        ],
+        "r": [
+          [
+            0,
+            3.4
+          ]
+        ]
+      },
+      "events": {
+        "receive": 0.22,
+        "handover": 0.62
+      },
+      "reference_start": "seated t0",
+      "reference_end": "seated t0",
+      "audit": {
+        "model": {
+          "mode": "planted"
+        },
+        "sampleHz": 240,
+        "samples": 818,
+        "durationS": 3.4,
+        "rootDisplacementM": 0,
+        "footDriftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "footLiftMm": {
+          "l": 0,
+          "r": 0
+        },
+        "maxContactDriftMm": 0,
+        "maxBoneSpeedMps": 3.969,
+        "junction": {
+          "start": {
+            "ref": "seated t0",
+            "positionMm": 0,
+            "angleRad": 0
+          },
+          "end": {
+            "ref": "seated t0",
+            "positionMm": 0,
+            "angleRad": 0
+          }
+        }
+      }
+    }
+  ],
+  "integration": {
+    "runtime_loaded": false,
+    "resolver_hooks": "m01-animation-resolver already selects `sprint` and `crouch_walk` by name when present; no other name is referenced by src/",
+    "overlap_with_motion_clips_v1": [
+      "sprint",
+      "crouch_walk",
+      "hit_front",
+      "near_miss_duck"
+    ],
+    "overlap_policy": "identical track data (tests/m01-soldiers-glb.test.js); load either package, not both under different semantics",
+    "all_clips_in_place": true,
+    "event_policy": "Events are clip-local seconds for presentation only; combat events come from the simulation."
+  }
+}

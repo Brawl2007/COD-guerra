@@ -2,13 +2,17 @@ import * as THREE from 'three';
 import { AssetManager } from '../assets/asset-manager.js';
 import manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with {type:'json'};
 import { eyePosition, aimDirection } from '../world/spatial.js';
-import { seconds } from '../game/m01-simulation.js';
 import { roundPoint } from '../game/m01-fire.js';
-import { m01StukaPosition, m01RaidPlanePosition } from '../world/m01-aircraft-path.js';
+import { DISPLAY_FLASH_SEC, DISPLAY_TRACER_CAP } from '../game/m01-display-fire.js';
+import { m01StukaPosition, m01StukaSince, m01StukaPathTime, m01StukaActive, m01RaidPlanePosition, m01RaidSince, m01RaidPlaneActive, M01_STUKA_DIVE_FROM, M01_STUKA_DIVE_TO } from '../world/m01-aircraft-path.js';
 import { actorPose } from './m01-actor-pose.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { texturedSurface,weatheredBridgeSurface } from './m01-surfaces.js';
 import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';
+import { applyLighting, viewLightingDiagnostics, M01_FOG_RANGE } from './m01-lighting.js';
+import { M01Water } from './m01-water.js';
+import { M01Grading } from './m01-grading.js';
+import { M01Impostors } from './m01-impostors.js';
 import {battlefieldBlastKind,battlefieldProfile,fxLayerCount,staggeredLife,impactProfile,fxDistanceBand,blastFlashEnvelope,sampleMuzzleEnvironmentLight} from './m01-battlefield-fx-profile.js';
 import {M01AmbientDirector,resolveSquadLivingMotion} from './m01-ambient.js';
 import { M01Environment } from './m01-environment.js';
@@ -18,16 +22,23 @@ import { M01TrainWagons } from './m01-train-wagons.js';
 import { M01YardWagons, yardWagonFireDamage } from './m01-yard-wagons.js';
 import { M01Locomotive } from './m01-locomotive.js';
 import { M01Panzerzug } from './m01-panzerzug.js';
-import {JU87_LOD_DISTANCES,JU87_QUALITY_FLOOR,ju87Attitude,ju87Fade,ju87HeardAt,ju87PropellerTime,selectJu87Level,ju87SkyEnvironment,instanceJu87Materials,setJu87Fade} from './m01-aircraft.js';
+import {JU87_LOD_DISTANCES,JU87_QUALITY_FLOOR,JU87_BOMB_POOL,ju87Attitude,ju87Fade,ju87HeardAt,ju87PropellerTime,selectJu87Level,ju87SkyEnvironment,instanceJu87Materials,setJu87Fade,m01BombFlights} from './m01-aircraft.js';
 import {soldierVisualVariant} from './m01-soldier-variation.js';
 import { M01CombatFeedback } from './m01-combat-feedback.js';
 import {M01BridgePortalPolish,bridgeMaterialSlot} from './m01-bridge-portal-polish.js';
 import {M01DamageDecals} from './m01-damage-decals.js';
 import {WEAPON_PRESENTATION,WeaponViewFx,WeaponWorldFx,WeaponLighting,viewUp,prewarmWeaponFx} from './first-person-weapon-fx.js';
 import {M01BridgeStructure,M01_TRACK_CENTRES} from './m01-bridge-structure.js';
+import {isDemolitionDamage,collapseTwinName,collapseDamageId,collapseSeed,collapsePose,collapseProgress,demolitionFlash,demolitionFallPoints,demolitionSilenceWindow,
+  farFeedback,farFeedbackApplies,M01_COLLAPSE_DURATION,M01_BLAST_CHIP_MATERIALS,M01_DEMOLITION_BUDGET} from './m01-demolition.js';
 
 export const M01_BATTLEFIELD_FX_LIMITS=Object.freeze({bursts:16,flash:16,core:48,fire:96,smoke:128,dust:128,shards:96,lights:1});
 const FX_DENSITY={low:.55,medium:.78,high:1};
+const NO_DISPLAY_FIRE=Object.freeze({rounds:Object.freeze([]),firedAt:Object.freeze({}),fixed:Object.freeze({})});
+// A fixed-origin display shot (the Panzerzug's 75 mm gun, T23): muzzle smoke lasts GUN_SMOKE_SEC and the burst where the shell lands SHELL_PUFF_SEC,
+// SHELL_SCALE times the size of a rifle round's impact. Presentation only: no damage record, no decal, no sound.
+const GUN_SMOKE_SEC=3.2,SHELL_PUFF_SEC=2.4,SHELL_SCALE=3;
+const BOMB_NOSE=new THREE.Vector3(0,0,-1);
 const fxSeed=(p,clock)=>((Math.floor((p.x+2048)*73)^Math.floor(((p.y??0)+128)*151)^Math.floor((p.z+2048)*197)^Math.floor(clock*1000))>>>0);
 const fxCount=(n,quality)=>Math.max(1,Math.round(n*(FX_DENSITY[quality]??FX_DENSITY.low)));
 
@@ -35,8 +46,8 @@ const fxCount=(n,quality)=>Math.max(1,Math.round(n*(FX_DENSITY[quality]??FX_DENS
 // Original procedural art: textured environment and articulated humans; final scanned/rigged art remains pending.
 export class M01View {
   constructor(renderer){
-    this.owner=renderer;this.engine=renderer.engine;this.assets=new AssetManager();this.disposed=false;
-    this.scene=new THREE.Scene();this.scene.fog=new THREE.Fog('#a0a7a8',420,2800);
+    this.owner=renderer;this.engine=renderer.engine;this.assets=new AssetManager();this.disposed=false;this.grading=new M01Grading();
+    this.scene=new THREE.Scene();this.scene.fog=new THREE.Fog('#a0a7a8',M01_FOG_RANGE.near,M01_FOG_RANGE.far);
     this.camera=new THREE.PerspectiveCamera(70,1,.05,7500);this.weaponCamera=new THREE.PerspectiveCamera(58,1,.03,6);
     this.weaponScene=new THREE.Scene();this.weaponRoot=new THREE.Group();this.weaponScene.add(this.weaponRoot);
     // Weapon-pass fill/key start from the old tuned values; every frame they follow the world's sky, sun and daylight
@@ -45,7 +56,10 @@ export class M01View {
     this.skyLight=new THREE.HemisphereLight('#bac9d5','#625846',1.25);this.scene.add(this.skyLight);
     this.sun=new THREE.DirectionalLight('#ffd6a0',.45);this.sun.castShadow=true;this.sun.shadow.mapSize.set(1024,1024);
     Object.assign(this.sun.shadow.camera,{left:-65,right:65,top:65,bottom:-65,near:.5,far:450});this.sun.shadow.bias=-.0003;this.sun.shadow.normalBias=.025;
-    this.scene.add(this.sun,this.sun.target);
+    // Near cascade (Medium/High): tight ±25 m shadow camera for contact shadows; hidden (no cost) on Low. Intensity is split in applyLighting.
+    this.sunNear=new THREE.DirectionalLight('#ffd6a0',0);this.sunNear.castShadow=true;this.sunNear.visible=false;this.sunNear.shadow.mapSize.set(1024,1024);
+    Object.assign(this.sunNear.shadow.camera,{left:-25,right:25,top:25,bottom:-25,near:.5,far:450});this.sunNear.shadow.bias=-.0002;this.sunNear.shadow.normalBias=.02;
+    this.scene.add(this.sun,this.sun.target,this.sunNear,this.sunNear.target);
     this.materials={
       ground:texturedSurface('soil',{worldScale:.42}),
       earth:texturedSurface('soil',{worldScale:.65}),
@@ -57,7 +71,7 @@ export class M01View {
       dark:new THREE.MeshStandardMaterial({color:'#202622',roughness:.8}),
       skin:texturedSurface('skin',{bump:.006}),
       brass:new THREE.MeshStandardMaterial({color:'#bfa66a',roughness:.55,metalness:.6}),
-      water:texturedSurface('water',{worldScale:.12,bump:.02}),
+      water:(this.water=new M01Water()).material,   // T42: lit river material (fresnel + T16 sky reflection, flow, pier foam, wet banks)
       cloth:texturedSurface('cloth',{bump:.018}),
       bridgeBrick:weatheredBridgeSurface('brick',{worldScale:.36,bump:.055,seed:1912}),
       bridgeStone:weatheredBridgeSurface('stone',{worldScale:.5,bump:.07,seed:1857}),
@@ -80,6 +94,7 @@ export class M01View {
     this.horizonGlow=new THREE.Sprite(new THREE.SpriteMaterial({color:'#ff9e52',transparent:true,opacity:0,depthWrite:false,
       blending:THREE.AdditiveBlending,fog:false}));this.horizonGlow.visible=false;this.horizonGlow.renderOrder=6;this.scene.add(this.horizonGlow);
     this.livingMotion={active:0,reacting:0};
+    this.demolitionState={entries:[],pieces:[],flash:null};this.collapseTilt=new THREE.Quaternion();this.collapseEuler=new THREE.Euler();
     this.portalPolish=new M01BridgePortalPolish({stone:this.materials.bridgeStone});
     this.bridgeStructure=new M01BridgeStructure({steel:this.materials.bridgeSteel,rail:this.materials.metal,timber:this.materials.wood,stone:this.materials.bridgeStone});
     this.atmosphere=new M01Atmosphere(this.scene);
@@ -88,6 +103,7 @@ export class M01View {
     this.weaponWorldFx=new WeaponWorldFx(this.effects);
     // One muzzle light in the weapon pass: the licensed rig drives the procedural fallback's light.
     this.characters=new M01Characters(this.scene);
+    this.impostors=new M01Impostors(this.scene);   // T20: camera-facing silhouettes beyond 350 m (one draw call per nation)
     this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture,this.weaponWorldFx,{muzzleLight:this.fallbackFx.light});
     this.ready=Promise.all([this.loadKit(),this.characters.load(this.owner.quality),this.loadAircraft(),
       this.wagons.load(),this.yardWagons.load(),this.locomotive.load(),this.panzerzugArt.load()]);
@@ -106,12 +122,25 @@ export class M01View {
           const slot=bridgeMaterialSlot(n.material?.name,portalAsset||/portal|tower/i.test(context));
           const replacement=slot==='metal'&&n.material?.name==='steel_painted'?'bridgeSteel':slot;if(replacement)n.material=this.materials[replacement];
         }});
-        const pieces=file.nodes.map(n=>({name:n.name,node:asset.scene.getObjectByName(n.name)})).filter(n=>n.node);
+        const pieces=file.nodes.map(n=>({name:n.name,node:asset.scene.getObjectByName(n.name),show:n.showAfterEvent??null})).filter(n=>n.node);
+        this.setupCollapse(pieces);
         for(const piece of pieces)this.portalPolish.attach(piece.node);
         this.bridgeStructure.attachKit(asset.scene,file);
         this.kit.push({file,root:asset.scene,pieces});this.scene.add(asset.scene);
       }catch(error){if(!this.disposed)console.warn(`Ponte M01: ${error.message}`);}
     }));
+  }
+  /**
+   * Demolition set-piece: every LOD's collapsed/rubble node caches its stored transform, so a per-frame SET (never an accumulation)
+   * can animate it from the intact pose and always land on exactly this pose. offset = intact node - stored node.
+   */
+  setupCollapse(pieces){
+    for(const piece of pieces){
+      const source=pieces.find(p=>p.name===collapseTwinName(piece.name)),damageId=collapseDamageId(piece.show);
+      if(!source||!damageId)continue;
+      piece.collapse={damageId,seed:collapseSeed(piece.name),applied:'base',base:{position:piece.node.position.clone(),quaternion:piece.node.quaternion.clone()},
+        offset:[source.node.position.x-piece.node.position.x,source.node.position.y-piece.node.position.y,source.node.position.z-piece.node.position.z]};
+    }
   }
   buildTerrain(world){
     this.world=world;
@@ -188,6 +217,7 @@ export class M01View {
   }
   updateActors(actors,time,player={x:0,z:0},battleClock){
     const skinned=this.characters?.update(actors,time,player,this.owner.quality,battleClock)??new Set();
+    const impostored=this.impostors?.select(actors,skinned,player,this.owner.quality,time)??new Set();   // hand-off: exactly one of {skinned body, impostor, procedural body}
     const counts={},dummy=new THREE.Object3D(),root=new THREE.Object3D(),matrix=new THREE.Matrix4();
     const up=new THREE.Vector3(0,1,0),direction=new THREE.Vector3(),tint=new THREE.Color();
     this.actorPoses={standing:0,crouched:0,pinned:0,seated:0,wounded:0,carried:0,fallen:0,prone:0};
@@ -212,7 +242,7 @@ export class M01View {
         dummy.position.set(a.x,a.y+.018,a.z);dummy.rotation.set(0,-a.facing,0);dummy.scale.set(pose.name==='fallen'||pose.name==='wounded'?1.8:.7,1,.8);dummy.updateMatrix();
         this.contactShadows.setMatrixAt(shadowCount++,dummy.matrix);
       }
-      if(skinned.has(a.id))continue;
+      if(skinned.has(a.id)||impostored.has(a.id))continue;
       root.position.set(a.x,a.y+pose.root.offsetY,a.z);
       root.rotation.set(pose.root.pitch+(living.blastFlinch>.01?living.blastFlinch*.12:0),-a.facing,
         pose.root.roll+(living.blastFlinch>.01?living.blastFlinch*.1:0),'YXZ');root.updateMatrix();
@@ -260,8 +290,9 @@ export class M01View {
     this.materials.tracer=new THREE.MeshBasicMaterial({color:'#ffb35a',toneMapped:false,fog:false});
     this.materials.puff=new THREE.MeshBasicMaterial({color:'#8c7c66',transparent:true,opacity:.62,depthWrite:false});
     this.materials.gunSmoke=new THREE.MeshBasicMaterial({color:'#b9b8ae',transparent:true,opacity:.55,depthWrite:false,fog:false});
-    this.materials.chip=new THREE.MeshStandardMaterial({color:'#ffffff',roughness:.88,vertexColors:true});
-    this.materials.blastShard=new THREE.MeshStandardMaterial({color:'#5c5142',roughness:1,vertexColors:true});
+    // Instance colours (setColorAt) tint these; vertexColors must stay off (no `color` attribute on the tetrahedra: it rendered black).
+    this.materials.chip=new THREE.MeshStandardMaterial(M01_BLAST_CHIP_MATERIALS.chip);
+    this.materials.blastShard=new THREE.MeshStandardMaterial(M01_BLAST_CHIP_MATERIALS.blastShard);
     this.fireBatches={};this.fireDummy=new THREE.Object3D();this.fireColor=new THREE.Color();
     for(const [name,material,capacity]of [['muzzle','flash',96],['tracer','tracer',48],['puff','puff',144],['spark','flash',96],['smoke','gunSmoke',64],['chip','chip',128]]){
       const soft=name==='smoke'||name==='puff',geometry=name==='chip'?this.atmosphere.debrisGeometry:this.sphere;
@@ -279,6 +310,7 @@ export class M01View {
     }
     this.battlefieldShards=new THREE.InstancedMesh(this.atmosphere.debrisGeometry,this.materials.blastShard,M01_BATTLEFIELD_FX_LIMITS.shards);
     this.battlefieldShards.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.battlefieldShards.count=0;this.battlefieldShards.frustumCulled=false;this.effects.add(this.battlefieldShards);
+    this.battlefieldShards.setColorAt(0,this.battlefieldColor.set('#665747'));   // allocate instance colours up front: stable shader variant
     this.explosionLight=new THREE.PointLight('#ff9e45',0,80,2);this.explosionLight.visible=false;this.explosionLight.castShadow=false;this.effects.add(this.explosionLight);
   }
   updateFire(sim){
@@ -309,11 +341,49 @@ export class M01View {
           Math.max(.22,d*.0065)*(.55+k*.95)*(1-k*k),null,.60*Math.pow(1-k,1.15),'#b9b8ae',seed,4);
       }
     }
-    for(const r of sim.enemyFire.rounds){
-      const t=(time-r.firedAt)/(r.arriveAt-r.firedAt);if(!r.tracer||t<0||t>1)continue;
+    // Display fire (T22) is visual only: the simulation never marks its shooters as firing, so the flash window comes from display.firedAt.
+    // A gameplay shot in the last 0.25 s (enemy flash above) already shows a flash at that muzzle, so it is not drawn twice.
+    const display=sim.displayFire??NO_DISPLAY_FIRE;
+    for(const a of sim.actors){
+      const at=display.firedAt[a.id],age=time-at;
+      if(at===undefined||!a.alive||!a.active||!(age>=0&&age<DISPLAY_FLASH_SEC)||a.team==='enemy'&&(a.shot>0||time-(a.firedAt??-1e9)<.25))continue;
+      const pose=actorPose(a,time);root.position.set(a.x,a.y+pose.root.offsetY,a.z);
+      root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
+      muzzle.fromArray(pose.rifle.muzzle);muzzle.y-=pose.root.pivotY;muzzle.applyMatrix4(root.matrix);
+      const skinnedMuzzle=this.characters?.muzzle(a.id);if(skinnedMuzzle)muzzle.copy(skinnedMuzzle);
+      const p={x:muzzle.x,y:muzzle.y,z:muzzle.z},d=far(p);
+      put('muzzle',p,Math.max(.12,d*.008)*(.8+.2*Math.sin(time*90)));
+    }
+    // Fixed-origin display shots have no actor to flash: the simulation publishes origin, aim point and times in display.fixed, so the flash, the
+    // gun smoke and the arrival burst are pure functions of the clock (they survive a frame that never saw the round in flight).
+    for(const shot of Object.values(display.fixed??{})){
+      const origin={x:shot.ox,y:shot.oy,z:shot.oz},age=time-shot.firedAt,d=far(origin);
+      if(age>=0&&age<DISPLAY_FLASH_SEC)put('muzzle',origin,Math.max(.5,d*.018)*(.8+.2*Math.sin(time*90)));
+      if(age>=0&&age<GUN_SMOKE_SEC){
+        const k=age/GUN_SMOKE_SEC,seed=fxSeed(origin,shot.firedAt),n0=visualNoise(seed,1),n1=visualNoise(seed,2);
+        put('smoke',{x:origin.x+(n0-.5)*.8*k,y:origin.y+.4+k*(2.2+n1*.8),z:origin.z+(n1-.5)*.7*k},
+          Math.max(.7,d*.02)*(.55+k*.95)*(1-k*k),null,.60*Math.pow(1-k,1.15),'#b9b8ae',seed,4);
+      }
+      const landed=time-shot.arriveAt;
+      if(landed>=0&&landed<SHELL_PUFF_SEC){
+        const aim={x:shot.ax,y:shot.ay-1,z:shot.az},profile=impactProfile(aim.y<-3?'water':'earth'),seed=fxSeed(aim,shot.arriveAt),dd=far(aim);   // aim = ground + 1 m
+        const fadeIn=Math.min(1,landed/.08),life=fadeIn*Math.pow(Math.max(0,1-landed/SHELL_PUFF_SEC),1.18),n=fxCount(profile.dust+2,this.owner?.quality);
+        for(let j=0;j<n&&life>0;j++){
+          const n0=visualNoise(seed,30+j*4),n1=visualNoise(seed,31+j*4),n2=visualNoise(seed,32+j*4),a=n0*Math.PI*2,r=landed*profile.spread*SHELL_SCALE*(.45+n1*.75);
+          const sx=Math.max(.24,dd*.0028)*SHELL_SCALE*(.58+n2*.7)*(1+landed*.42),sy=sx*(.42+.24*n1);
+          put('puff',{x:aim.x+Math.cos(a)*r,y:aim.y+.06+landed*(profile.rise+.20*n2)*SHELL_SCALE,z:aim.z+Math.sin(a)*r},[sx,sy,1],null,.60*life,profile.color,seed,30+j);
+        }
+      }
+    }
+    const tracer=r=>{
+      const t=(time-r.firedAt)/(r.arriveAt-r.firedAt);if(!r.tracer||t<0||t>1)return;
       const p=roundPoint(r,t),q=roundPoint(r,Math.min(1.02,t+.01)),len=Math.hypot(q.x-p.x,q.y-p.y,q.z-p.z)||1,d=far(p);
       put('tracer',p,[Math.max(.025,d*.0016),Math.max(.025,d*.0016),Math.max(.6,d*.012)],{x:(q.x-p.x)/len,y:(q.y-p.y)/len,z:(q.z-p.z)/len});
-    }
+    };
+    for(const r of sim.enemyFire.rounds)tracer(r);
+    // Second loop, after the gameplay tracers: they keep priority in the 48-instance batch and display fire takes at most DISPLAY_TRACER_CAP of what is left.
+    const gameplayTracers=counts.tracer;
+    for(const r of display.rounds){if(counts.tracer-gameplayTracers>=DISPLAY_TRACER_CAP)break;tracer(r);}
     this.impacts=this.impacts.filter(i=>{const p=impactProfile(i.material);return time>=i.start&&time-i.start<Math.max(1.15,p.life);});
     for(const i of this.impacts){
       const age=time-i.start,d=far(i),seed=i.seed,quality=this.owner.quality,profile=impactProfile(i.material);
@@ -349,11 +419,40 @@ export class M01View {
     }
     this.fx=counts;
   }
+  /**
+   * Demolition set-piece (presentation only). Every number is a pure function of `time - damage.started` (simulation clock, never
+   * wall time): the collapsed/rubble nodes are SET each frame from their cached stored transform plus the pose offset (never
+   * accumulated), exactly the stored transform before the blast and from M01_COLLAPSE_DURATION on. `renderState.parts` (which
+   * node is visible) is not touched. Far-field exposure/tremor is registered once per damage entry and replayed by age.
+   */
+  updateDemolition(state,time,sim){
+    const byId=new Map(),player=sim.player,entries=[];
+    for(const d of state.damage)if(isDemolitionDamage(d.id)&&(!byId.has(d.id)||d.started>=byId.get(d.id).started))byId.set(d.id,d);
+    for(const [id,d] of byId){
+      const age=time-d.started,distance=Math.hypot(d.x-player.x,d.z-player.z),silence=demolitionSilenceWindow(d);
+      this.combatFeedback.demolition({id,started:d.started,clock:time,distance});
+      entries.push({id,started:d.started,age,progress:collapseProgress(age),duration:M01_COLLAPSE_DURATION,distance,far:farFeedback(age,distance),
+        farActive:farFeedbackApplies(distance),silence:{...silence,active:time>=silence.from&&time<silence.to},fall:demolitionFallPoints(d)});
+    }
+    const euler=this.collapseEuler,tilt=this.collapseTilt,pieces=[];
+    for(const kit of this.kit)for(const piece of kit.pieces){
+      const c=piece.collapse;if(!c)continue;
+      const d=byId.get(c.damageId),age=d?time-d.started:NaN,pose=collapsePose({age,offset:c.offset,seed:c.seed}),node=piece.node;
+      if(pose.active){
+        node.position.set(c.base.position.x+pose.offset[0],c.base.position.y+pose.offset[1],c.base.position.z+pose.offset[2]);
+        node.quaternion.copy(c.base.quaternion).slerp(tilt.setFromEuler(euler.set(pose.tilt[0],pose.tilt[1],pose.tilt[2])),pose.remaining);
+        c.applied='animated';
+      }else if(c.applied!=='base'){node.position.copy(c.base.position);node.quaternion.copy(c.base.quaternion);c.applied='base';}
+      if(node.visible)pieces.push({name:piece.name,lod:kit.file.lod,damageId:c.damageId,phase:pose.active?'falling':pose.progress>=1?'settled':'idle',progress:pose.progress,
+        position:node.position.toArray(),basePosition:c.base.position.toArray(),quaternion:node.quaternion.toArray(),baseQuaternion:c.base.quaternion.toArray()});
+    }
+    this.demolitionState={entries,pieces,flash:this.demolitionState.flash};
+  }
   updateBattlefieldFx(state,time){
     const findDamage=b=>state.damage.find(d=>Math.abs(d.started-b.start)<.08&&Math.hypot(d.x-b.x,d.z-b.z)<2);
     this.bursts=this.bursts.filter(b=>{const d=findDamage(b),profile=battlefieldProfile(d?.id??'',b.aerial);return time>=b.start&&time-b.start<profile.duration;});
     const counts={flash:0,core:0,fire:0,smoke:0,dust:0},dummy=this.battlefieldDummy,quality=this.owner.quality,cam=this.camera.position;
-    const meta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};let shardCount=0,strongest=null;
+    const meta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};let shardCount=0,strongest=null,demolitionFlashState=null;
     const put=(name,p,sx,sy,opacity,color,seed,variant=0)=>{
       const batch=this.battlefieldFxBatches[name],index=counts[name];if(index>=batch.instanceMatrix.count||opacity<=.004)return;
       dummy.position.set(p.x,p.y,p.z);dummy.rotation.set(0,0,0);dummy.scale.set(sx,sy,1);dummy.updateMatrix();batch.setMatrixAt(index,dummy.matrix);
@@ -364,13 +463,19 @@ export class M01View {
       const age=time-b.start,match=findDamage(b),id=match?.id??'',kind=battlefieldBlastKind(id,b.aerial),profile=battlefieldProfile(id,b.aerial);
       const distance=Math.hypot(b.x-cam.x,b.y-cam.y,b.z-cam.z),band=fxDistanceBand(distance);meta.kinds[kind]++;meta.bands[band]++;
       const farScale=band==='far'?1.12:band==='mid'?1.04:1;
-      const flashN=fxLayerCount(profile.counts.flash,quality,distance);
+      // Demolition only: minimum angular size/duration of the flash and reach of the light by viewer distance (identical below 85 m).
+      const demolition=kind==='demolition'?demolitionFlash(distance,{scale:profile.scale,flashEnd:profile.flashEnd,lightRange:profile.lightDistance}):null;
+      const flashEnd=demolition?demolition.duration:profile.flashEnd,flashScale=demolition?demolition.scale:profile.scale;
+      if(demolition)demolitionFlashState={id:match?.id??'',age,...demolition};
+      // Far demolition viewers get stacked flash billboards (see M01_FLASH_FAR_LAYERS): one soft puff is too faint over the horizon haze.
+      const flashN=Math.min(M01_BATTLEFIELD_FX_LIMITS.flash,fxLayerCount(profile.counts.flash,quality,distance)+(demolition?demolition.extraLayers:0));
       for(let j=0;j<flashN;j++){
-        const n0=visualNoise(b.seed,2+j*3),envelope=blastFlashEnvelope(age,profile,distance),
-          life=staggeredLife(age,0,profile.flashEnd+(distance>180?.14:0),n0,.08);if(!life.life||!envelope.active)continue;
-        const s=Math.max(profile.scale*(.70+.34*life.t)*(.82+visualNoise(b.seed,3+j*3)*.28)*farScale,envelope.minScale);
+        // T18 demolition flash (distance-scaled duration/size) and T21 far-flash envelope for the other blast kinds: each kind keeps its own accepted path.
+        const n0=visualNoise(b.seed,2+j*3),envelope=demolition?null:blastFlashEnvelope(age,profile,distance),
+          life=staggeredLife(age,0,demolition?flashEnd:profile.flashEnd+(distance>180?.14:0),n0,.08);if(!life.life||envelope&&!envelope.active)continue;
+        const s=Math.max(flashScale*(.70+.34*life.t)*(.82+visualNoise(b.seed,3+j*3)*.28)*farScale,envelope?.minScale??0);
         put('flash',{x:b.x+(n0-.5)*profile.scale*.08,y:b.y+profile.scale*(.11+.08*life.t),z:b.z+(visualNoise(b.seed,4+j*3)-.5)*profile.scale*.08},
-          s,s*(.58+.18*visualNoise(b.seed,5+j*3)),.94*life.life,kind==='small'?'#fff1c7':'#fff0c0',b.seed,2+j);
+          s,s*(.58+.18*visualNoise(b.seed,5+j*3)),.94*life.life,kind==='small'?'#fff1c7':demolition?demolition.color:'#fff0c0',b.seed,2+j);
       }
       const coreN=fxLayerCount(profile.counts.core,quality,distance);
       for(let j=0;j<coreN;j++){
@@ -415,9 +520,9 @@ export class M01View {
         dummy.scale.set(s*(.65+n1*.8),s*(.32+n0*.48),s*(.62+n2*.55));dummy.updateMatrix();this.battlefieldShards.setMatrixAt(shardCount,dummy.matrix);
         this.battlefieldShards.setColorAt(shardCount,this.battlefieldColor.set(j%4===0?'#88745c':j%2?'#51483d':'#665747'));shardCount++;
       }
-      const light=staggeredLife(age,0,Math.min(.34,profile.coreEnd),.08,.05);
+      const light=staggeredLife(age,0,demolition?demolition.lightSeconds:Math.min(.34,profile.coreEnd),.08,.05);
       if(light.life){
-        const intensity=profile.lightPeak*light.life;if(!strongest||intensity>strongest.intensity)strongest={b,intensity,distance:profile.lightDistance,kind};
+        const intensity=profile.lightPeak*light.life;if(!strongest||intensity>strongest.intensity)strongest={b,intensity,distance:demolition?demolition.lightRange:profile.lightDistance,decay:demolition?demolition.lightDecay:2,kind};
       }
     }
     for(const [name,batch]of Object.entries(this.battlefieldFxBatches)){
@@ -425,8 +530,8 @@ export class M01View {
       for(const attr of ['puffOpacity','puffSpin','puffShape'])if(batch.geometry.attributes[attr])batch.geometry.attributes[attr].needsUpdate=true;
     }
     this.battlefieldShards.count=shardCount;this.battlefieldShards.instanceMatrix.needsUpdate=true;if(this.battlefieldShards.instanceColor)this.battlefieldShards.instanceColor.needsUpdate=true;
-    this.explosionLight.visible=Boolean(strongest);if(strongest){this.explosionLight.position.set(strongest.b.x,strongest.b.y+3,strongest.b.z);this.explosionLight.intensity=Math.min(5,strongest.intensity);this.explosionLight.distance=strongest.distance;this.explosionLight.color.set(strongest.kind==='small'?'#ffb15a':'#ff9340');}
-    this.battlefieldFxCounts={...counts,shard:shardCount};this.battlefieldFxMeta=meta;
+    this.explosionLight.visible=Boolean(strongest);if(strongest){this.explosionLight.position.set(strongest.b.x,strongest.b.y+3,strongest.b.z);this.explosionLight.intensity=Math.min(5,strongest.intensity);this.explosionLight.distance=strongest.distance;this.explosionLight.decay=strongest.decay;this.explosionLight.color.set(strongest.kind==='small'?'#ffb15a':'#ff9340');}
+    this.battlefieldFxCounts={...counts,shard:shardCount};this.battlefieldFxMeta=meta;this.demolitionState.flash=demolitionFlashState;
   }
   /** Impacto de um tiro alemão (evento round-impact da simulação): poeira/faísca/chips conforme a superfície. */
   impact(point,material,clock){this.impacts.push({x:point.x,y:point.y,z:point.z,material:material??'earth',start:clock,seed:fxSeed(point,clock)});if(this.impacts.length>96)this.impacts.shift();}
@@ -485,6 +590,16 @@ export class M01View {
       this.mesh('box','dark',[0,1,4],[.12,2,1.8],proxy);plane.addLevel(proxy,0);
       this.planes.push(plane);
     }
+    // Bounded pool (one bomb per carrier), hidden until a flight is due. Nose is -Z like the aircraft; SC 500-class (~2 m).
+    this.bombs=[];this.bombState={visible:0,flights:[]};
+    for(let i=0;i<JU87_BOMB_POOL;i++){
+      const bomb=new THREE.Group();bomb.visible=false;this.scene.add(bomb);
+      // SC 500-class bomb (~2 m, 0.45 m across), dark with cruciform tail fins: body z -0.6..0.6, nose to -0.9, fins at z 0.65..1.1.
+      const body=this.mesh('cylinder','dark',[0,0,0],[.45,1.2,.45],bomb);body.rotation.x=Math.PI/2;
+      this.mesh('sphere','dark',[0,0,-.6],[.45,.45,.6],bomb);
+      for(const rotation of [0,Math.PI/2]){const fin=this.mesh('box','dark',[0,0,.88],[.95,.04,.44],bomb);fin.rotation.z=rotation;}
+      this.bombs.push(bomb);
+    }
     this.raidPlane=new THREE.Group();this.scene.add(this.raidPlane);
     this.mesh('box','dark',[0,0,0],[1.4,1.8,15.8],this.raidPlane);
     this.mesh('box','dark',[0,0,0],[18,.3,3],this.raidPlane);
@@ -518,11 +633,11 @@ export class M01View {
     this.aircraftRevision++;
   }
   updateAircraft(state,time,player,heardAt){
-    const floor=JU87_QUALITY_FLOOR[this.owner.quality]??0,fade=ju87Fade(time,heardAt);
+    const floor=JU87_QUALITY_FLOOR[this.owner.quality]??0,fade=ju87Fade(time,heardAt),since=m01StukaSince(time,state);
     this.planes.forEach((plane,i)=>{
-      // The raid path and heading are unchanged; attitude, fade and LOD below are presentation only.
-      const path=m01StukaPosition(time,i);plane.visible=state.stukas;plane.position.set(path.x,path.y,path.z);
-      const {pitch,bank}=ju87Attitude(time,i);plane.rotation.set(pitch,.1,bank,'YXZ');
+      // Pure function of the mission clock: path and attitude come from stukaPath anchored to evt_m01_bombing_0434 (no loop).
+      const path=m01StukaPosition(since,i);plane.visible=Boolean(state.stukas)&&m01StukaActive(since,i);plane.position.set(path.x,path.y,path.z);
+      const {yaw,pitch,bank}=ju87Attitude(since,i);plane.rotation.set(pitch,yaw,bank,'YXZ');
       const distance=Math.hypot(plane.position.x-player.x,plane.position.y-player.y,plane.position.z-player.z);
       const level=selectJu87Level(plane.levels,distance,floor,plane.userData.level),selected=plane.levels[level]?.object;
       plane.userData.level=level;plane.userData.fade=fade;
@@ -532,7 +647,23 @@ export class M01View {
       // Deterministic presentation at an estimated ~1500 rpm; pause and restore sample the same saved clock.
       selected?.userData.propellerMixer?.setTime(ju87PropellerTime(time,i));
     });
-    const raid=m01RaidPlanePosition(time);this.raidPlane.visible=state.secondRaid;this.raidPlane.position.set(raid.x,raid.y,raid.z);
+    // Second raid: one high pass from the raid's own start (damage raid_0530), hidden once it has crossed.
+    const raidSince=m01RaidSince(time,state),raid=m01RaidPlanePosition(raidSince);
+    this.raidPlane.visible=Boolean(state.secondRaid)&&m01RaidPlaneActive(raidSince);this.raidPlane.position.set(raid.x,raid.y,raid.z);
+    const lead=m01StukaPathTime(since,0);
+    this.aircraftPath={since,leadPathTime:lead,raidSince,
+      phase:!state.stukas?'absent':lead<M01_STUKA_DIVE_FROM?'approach':lead<=M01_STUKA_DIVE_TO?'dive':this.planes.some((_,i)=>m01StukaActive(since,i))?'departure':'departed'};
+  }
+  /** Falling bombs: flights come from m01BombFlights (damage `started`/point once emitted, schedule before); the pool only draws them. */
+  updateBombs(state,time,player,world){
+    const flights=state.stukas?m01BombFlights({clock:time,state,world,player}):[];
+    this.bombs.forEach((bomb,i)=>{
+      const flight=flights.find(f=>f.plane===i);bomb.visible=Boolean(flight);if(!flight)return;
+      bomb.position.set(flight.position.x,flight.position.y,flight.position.z);
+      const v=flight.velocity,speed=Math.hypot(v.x,v.y,v.z);
+      if(speed>1e-6)bomb.quaternion.setFromUnitVectors(BOMB_NOSE,new THREE.Vector3(v.x/speed,v.y/speed,v.z/speed));
+    });
+    this.bombState={visible:flights.length,flights:flights.map(f=>({id:f.id,plane:f.plane,s:f.s,predicted:f.predicted,releaseAt:f.releaseAt,at:f.at,position:[f.position.x,f.position.y,f.position.z],target:[f.target.x,f.target.y,f.target.z]}))};
   }
   createTrains(){
     this.train=new THREE.Group();this.panzerzug=new THREE.Group();this.scene.add(this.train,this.panzerzug);
@@ -543,26 +674,15 @@ export class M01View {
   }
   syncDamage(sim,state){
     const yardFire=yardWagonFireDamage(sim.destruction,sim.world);
-    this.atmosphere.update(yardFire?{...state,damage:[...state.damage,yardFire]}:state,sim.clock,this.owner.quality);
+    this.atmosphere.update(yardFire?{...state,damage:[...state.damage,yardFire]}:state,sim.clock,this.owner.quality,{surfaceY:(x,z)=>sim.world.terrainHeightAt(x,z)});
     const live=new Set(sim.grenades.active.map(g=>g.id));
     for(const g of sim.grenades.active){let m=this.grenadeViews.get(g.id);if(!m){m=this.mesh('sphere','metal',[0,0,0],[.07,.07,.07],this.effects);this.grenadeViews.set(g.id,m);}m.position.set(g.x,g.y,g.z);}
     for(const [id,m]of this.grenadeViews)if(!live.has(id)){this.effects.remove(m);this.grenadeViews.delete(id);}
   }
   lighting(sim){
-    const keys=sim.world.layout.sun.keyframes,after=keys.findIndex(k=>seconds(k.clock)>sim.battleClock);
-    const a=keys[Math.max(0,after<0?keys.length-1:after-1)],b=keys[after<0?keys.length-1:after];
-    const t=Math.max(0,Math.min(1,(sim.battleClock-seconds(a.clock))/(seconds(b.clock)-seconds(a.clock)||1)));
-    const alt=THREE.MathUtils.degToRad(THREE.MathUtils.lerp(a.altitudeDeg,b.altitudeDeg,t));
-    const az=THREE.MathUtils.degToRad(THREE.MathUtils.lerp(a.azimuthDeg,b.azimuthDeg,t));
-    const p=sim.player;this.sun.target.position.set(p.x,p.y,p.z);
-    this.sun.position.set(p.x+Math.sin(az)*Math.cos(alt)*200,p.y+Math.sin(alt)*200,p.z-Math.cos(az)*Math.cos(alt)*200);
-    this.sun.intensity=Math.max(.09,Math.sin(alt)*5.8);this.sun.castShadow=alt>0;
-    const daylight=Math.max(0,Math.min(1,(alt+.08)/.4));this.skyLight.intensity=1.6+daylight*.22;this.daylight=daylight;
-    this.scene.background=new THREE.Color('#727f8c').lerp(new THREE.Color('#a8b2b0'),daylight);this.scene.fog.color.copy(this.scene.background);
-    this.engine.toneMappingExposure=1.08;
-    this.sun.color.set('#ffe0b0');this.skyLight.color.set('#b4c8df');this.skyLight.groundColor.set('#4b4435');
-    this.atmosphere.material.uniforms.fogColor.value.copy(this.scene.fog.color);
-    this.atmosphere.lighting(p,daylight,alt,az,sim.clock);this.environment?.sync(sim.world,this.owner.quality,sim.player,sim.clock);
+    // Sky, sun, hemisphere, fog and exposure come from the pure model in m01-lighting.js (twilight key, per-phase exposure).
+    applyLighting(this,sim);
+    this.environment?.sync(sim.world,this.owner.quality,sim.player,sim.clock);
   }
   render(sim){
     // Apply authoritative train/wagon state before pause-frame caching so restore cannot freeze constructor defaults.
@@ -575,14 +695,15 @@ export class M01View {
     const canvas=this.owner.canvas,previous=this.lastFrame;
     const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
       width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,
-      wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision};
+      wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles; T20: so is the impostor A/B toggle
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
     for(const material of Object.values(this.materials))if(material.userData.m01Time)material.userData.m01Time.value=sim.clock;
     this.syncSolids(sim.world);this.portalPolish.sync(this.owner.quality);this.bridgeStructure.sync(this.owner.quality,this.camera.position,sim.world);const dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
-    this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.lighting(sim);
+    this.updateDemolition(state,time,sim);
+    this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.lighting(sim);this.water.sync(this.lightingModel,sim.clock,this.owner.quality);
     const atmosphere=this.ambientDirector.sample(sim,this.owner.quality),flash=atmosphere.horizonFlash;
     this.horizonGlow.visible=Boolean(flash.active);
     if(flash.active){const angle=flash.azimuthDeg*Math.PI/180,d=flash.distance;
@@ -592,7 +713,7 @@ export class M01View {
     const fill=sampleMuzzleEnvironmentLight(sim.actors,time,sim.player,this.owner.quality);
     this.pendingMuzzleFill=fill;
     this.train.visible=state.train963;this.panzerzug.visible=state.panzerzug;
-    this.updateAircraft(state,time,sim.player,ju87HeardAt(sim));
+    this.updateAircraft(state,time,sim.player,ju87HeardAt(sim));this.updateBombs(state,time,sim.player,sim.world);
     const player=sim.player,eye=eyePosition(player),dir=aimDirection(player.angle,player.pitch);
     const bob=player.moveBlend*Math.sin(time*(player.sprinting?14:9))*.014;
     const legacyShake=time<this.shakeUntil?Math.sin(time*85)*.012:0,feedback=this.combatFeedback.sample(time,this.owner.quality);
@@ -605,6 +726,7 @@ export class M01View {
     const fov=player.aiming?48:70;
     this.camera.aspect=this.weaponCamera.aspect=aspect;this.camera.fov=THREE.MathUtils.lerp(this.camera.fov,fov,Math.min(1,dt*12));
     this.camera.updateProjectionMatrix();this.weaponCamera.updateProjectionMatrix();
+    this.impostors?.sync({camera:this.camera,clock:time,battleClock:sim.battleClock,fog:this.lightingModel?.fog.color??[.63,.65,.65],sunColor:this.lightingModel?.sun.color,sunDir:this.lightingModel?.sky.sunDir,viewportHeight:this.owner.canvas.height});
     const w=sim.weapon,reload=w.reloadProgress(time*1000),bolt=w.boltCycling?Math.min(1,(time*1000-w.started)/1050):0;
     this.weaponRoot.position.set(player.aiming?0:.20,player.aiming?-.11:-.24,-.60);
     this.weaponRoot.position.y+=Math.abs(bob)-Math.sin(reload*Math.PI)*.10;
@@ -616,7 +738,7 @@ export class M01View {
     this.loadingHand.position.set(-.055+Math.sin(reload*Math.PI)*.06,-.04+Math.sin(reload*Math.PI)*.16,-.2+Math.sin(reload*Math.PI)*.15);
     this.carryBody.visible=sim.player.carrying==='jozef_bak';this.carryCrate.visible=sim.player.carrying==='sapper_crate';
     this.carryBody.position.y=this.carryCrate.position.y=bob*1.5;
-    this.weaponLighting.sync({sky:this.skyLight,sun:this.sun,camera:this.camera,daylight:this.daylight??1,pitch:player.pitch});
+    this.weaponLighting.sync({sky:this.skyLight,sun:this.lightingModel?{position:this.sun.position,target:this.sun.target,color:this.sun.color,intensity:this.lightingModel.sun.intensity}:this.sun,camera:this.camera,daylight:this.daylight??1,pitch:player.pitch});
     if(this.viewModel.update(sim,this.owner.quality,this.flashUntil,{camera:this.camera,viewFov:this.weaponCamera.fov})){this.weaponRoot.visible=false;this.carryBody.visible=false;this.fallbackFx.hide(false);}
     else this.updateFallbackWeapon(sim);
     this.weaponWorldFx.update(time,sim.world);
@@ -632,7 +754,11 @@ export class M01View {
     }
     try{this.damageDecals.update({state,time,world:sim.world,trees:this.environment?.treeDescriptors,quality:this.owner.quality,camera:this.camera.position,renderer:this.engine,view:this.camera,warm:[this.fireBatches.chip]});}
     catch(error){this.damageDecals.fail(error);}   // presentation only: never stops the frame
-    this.engine.info.autoReset=false;this.engine.info.reset();this.engine.clear();this.engine.render(this.scene,this.camera);
+    // T44: Medium/High draw the world into the grade's target and composite it once; Low (post===null) runs the exact statements it always ran.
+    const post=this.grading.begin(this.engine,this.owner.quality,this.lightingModel,this.camera);
+    this.engine.info.autoReset=false;this.engine.info.reset();
+    if(post)this.drawGraded(post);else this.engine.clear();
+    if(!post)this.engine.render(this.scene,this.camera);
     if(this.fx.muzzle>0){this.muzzlePresentation.frames++;this.muzzlePresentation.lastClock=time;this.muzzlePresentation.lastFrame=this.renderedFrames??0;}
     this.engine.clearDepth();this.engine.render(this.weaponScene,this.weaponCamera);this.engine.toneMappingExposure=1.15;
   }
@@ -652,9 +778,11 @@ export class M01View {
   roundFeedback(event,clock,direction=null,weapon=null){
     this.combatFeedback.roundImpact({clock,distance:event.distance,crack:Boolean(event.crack),direction,weapon,material:event.material});this.lastFrame=null;
   }
-  explosionFeedback(clock,distance,direction=null){
+  explosionFeedback(clock,distance,direction=null,damageId=null){
     if(distance<=180)this.combatFeedback.explosion({clock,distance,direction});
-    else this.combatFeedback.distantShockwave({clock,distance,direction});
+    // A far demolition is covered by the T18 far-field path (combatFeedback.demolition, registered in updateDemolition);
+    // the T21 distant shockwave serves every other far blast, so no demolition is felt twice.
+    else if(!isDemolitionDamage(damageId))this.combatFeedback.distantShockwave({clock,distance,direction});
     this.lastFrame=null;
   }
   feedbackState(clock=this.lastClock){return this.combatFeedback.diagnostics(clock,this.owner.quality);}
@@ -663,10 +791,11 @@ export class M01View {
   /** Authoritative round-impact / player-shot event → bounded surface mark; the player's own hit also gets the impact FX. */
   surfaceDamage(event,sim){
     const shooter=event.type==='round-impact'?sim.actor?.(event.by)??null:sim.player;
-    let result=null;
+    let result=null;this.lastSurface=null;
     // Runs before Game's own handlers for this event: a decal failure is counted, never allowed to skip them.
     try{result=this.damageDecals.impact(event,{world:sim.world,trees:this.environment?.treeDescriptors,player:sim.player,shooter,clock:sim.clock,quality:this.owner.quality});}
     catch(error){this.damageDecals.fail(error);}
+    this.lastSurface=result;   // read by Game for the matching impact sound (water); presentation only
     if(!result)return;
     // The player's own shot had no impact FX: it gets the one matching the drawn surface (sparks off a rail the
     // simulation calls 'earth'). German rounds keep Game's FX for the simulation material, plus that one if different.
@@ -676,16 +805,28 @@ export class M01View {
   }
   resetEffects(){
     for(const plane of this.planes??[])plane.userData.level=null;
+    for(const bomb of this.bombs??[])bomb.visible=false;
     this.lastFrame=null;this.flashUntil=0;this.fallbackShot=null;this.shakeUntil=0;this.lastClock=0;this.impacts=[];this.bursts=[];this.combatFeedback.reset();this.damageDecals.reset();
     for(const b of Object.values(this.fireBatches))b.count=0;for(const b of Object.values(this.battlefieldFxBatches))b.count=0;
     this.battlefieldShards.count=0;this.explosionLight.visible=false;this.explosionLight.intensity=0;
+    this.demolitionState={entries:[],pieces:[],flash:null};
     this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
+  }
+  /** T44 (Medium/High): the world goes into the grade's target, then ONE full-screen pass paints the canvas. The weapon scene is drawn afterwards, ungraded. */
+  drawGraded(post){
+    const e=this.engine;
+    try{e.setRenderTarget(post);e.clear();e.render(this.scene,this.camera);}
+    finally{e.setRenderTarget(null);}
+    this.grading.composite(e);
   }
   get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,
     requiredAssetFailures:this.assets.failures.filter(f=>manifest.files.some(m=>typeof m.lod==='number'&&m.file===f.path)),
-    characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,weaponFx:this.weaponWorldFx.diagnostics,weaponLighting:this.weaponLighting.state,
+    characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,weaponFx:this.weaponWorldFx.diagnostics,weaponLighting:this.weaponLighting.state,lighting:viewLightingDiagnostics(this),water:this.water.diagnostics,grading:this.grading.diagnostics,impostors:this.impostors?.diagnostics,
     locomotive:this.locomotive.diagnostics,panzerzug:this.panzerzugArt.diagnostics,wagons:this.wagons.diagnostics,yardWagons:this.yardWagons.diagnostics,
-    aircraft:{loaded:[...this.aircraftSources.keys()].sort(),planes:this.planes.map(p=>{const model=(p.levels[p.userData.level]??p.levels.find(l=>l.object.visible))?.object,prop=model?.getObjectByName('propeller');return {visible:p.visible,lod:model?.userData.lod,position:p.position.toArray(),attitude:[p.rotation.x,p.rotation.y,p.rotation.z],fade:p.userData.fade,propeller:prop?.quaternion.toArray()};})},
+    aircraft:{loaded:[...this.aircraftSources.keys()].sort(),planes:this.planes.map(p=>{const model=(p.levels[p.userData.level]??p.levels.find(l=>l.object.visible))?.object,prop=model?.getObjectByName('propeller');return {visible:p.visible,lod:model?.userData.lod,position:p.position.toArray(),attitude:[p.rotation.x,p.rotation.y,p.rotation.z],fade:p.userData.fade,propeller:prop?.quaternion.toArray()};}),
+      path:this.aircraftPath?{...this.aircraftPath,planeSeconds:[0,1,2].map(i=>m01StukaPathTime(this.aircraftPath.since,i))}:null,
+      bombs:{visible:this.bombState?.visible??0,pool:this.bombs?.length??0,flights:this.bombState?.flights??[]},
+      raid:{visible:this.raidPlane.visible,position:this.raidPlane.position.toArray()}},
     renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+(b.visible===false?0:b.count),0)??0,
     stationArchitecture:this.environment?.station?.diagnostics??{ready:false,failure:this.environment?.stationFailure??null},
     environmentProps:this.environment?.propDiagnostics,bridgePortalPolish:this.portalPolish?.diagnostics,bridgeStructure:this.bridgeStructure?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
@@ -693,9 +834,14 @@ export class M01View {
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},
     combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),
     ambient:this.ambientDirector?.diagnostics,livingMotion:{...this.livingMotion},
+    demolition:{clock:this.lastClock,collapseSeconds:M01_COLLAPSE_DURATION,budget:M01_DEMOLITION_BUDGET,entries:this.demolitionState.entries,pieces:this.demolitionState.pieces,flash:this.demolitionState.flash,
+      far:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality).farDemolitions,
+      // The camera of the last drawn frame (read-only): lets the browser spec project a world point onto the screenshot.
+      camera:{position:this.camera.position.toArray(),quaternion:this.camera.quaternion.toArray(),fov:this.camera.fov,aspect:this.camera.aspect,
+        near:this.camera.near,far:this.camera.far,width:this.owner.canvas.width,height:this.owner.canvas.height}},
     battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},meta:structuredClone(this.battlefieldFxMeta),limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
-    this.disposed=true;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();
+    this.disposed=true;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();this.impostors?.dispose();
     this.fallbackFx.dispose();this.weaponWorldFx.dispose();this.weaponLighting.dispose();
     this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.assets.dispose();this.environment?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.horizonGlow?.material.dispose();this.geometry.forEach(g=>g.dispose());
     const textures=new Set();for(const m of Object.values(this.materials)){if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());

@@ -44,3 +44,20 @@ Em ambientes sem o Chromium do Playwright, definir `CHROME_EXECUTABLE`, por exem
 - 1 unidade = 1 m, +Y para cima, frente e cano para −Z. Os ossos têm os eixos do mundo na pose de ligação: rotação local = inv(R_pai)·R_osso.
 - As translações das faixas de `hips`/`weapon` assumem o corpo de base (1,745 m), partilhado por todas as variantes. Mudar `MACRO` em `assemble.mjs` exige regenerar as animações.
 - Os mapas de normais seguem o glTF (+Y para cima na imagem), verificados com botões e bolsos iluminados de cima.
+
+## Biblioteca de clips V2 (T08)
+
+`node tools/assets/m01-soldiers/build-clip-library-v2.mjs [--out dir] [--report ficheiro]` gera `assets/models/provisional/m01/characters/clip-library-v2/` (GLB só de animação + `manifest.json`). Precisa apenas do `three` da raiz e da pose de ligação dos GLB de personagem já versionados: **não** corre o MakeHuman nem precisa de `@gltf-transform`. Não toca em `m01_soldier_animations.glb`, nos LOD nem nos outros pacotes de animação (os hashes são fixados por outros manifestos); o manifesto regista o SHA-256 de cada ficheiro preservado.
+
+| Módulo (`motion/library/`) | Função |
+| --- | --- |
+| `common.mjs` | pega da espingarda e pés copiados de `standing_idle`/`crouched_idle`, mistura de descritores (IK resolvida depois), `bakeClip` |
+| `locomotion.mjs` | `sprint`, `crouch_walk`, `hit_front`, `near_miss_duck` (iguais ao `motion-clips-v1`), `turn_left_90/right_90`, `carry_walk` |
+| `posture.mjs` | `stand_to_crouch`, `crouch_to_stand`, `prone_enter/exit/idle/flinch/crawl` |
+| `idles.mjs` | `standing_idle_b/c`, `crouched_idle_b`, `fidget_look/shift/helmet/check_rifle` |
+| `reactions.mjs` | `hit_back/left/right`, `blast_duck`, `death_front/back/left/right/crumple` |
+| `cover.mjs` | `cover_low_idle`, `cover_high_idle`, `cover_low_peek_fire_l/r`, `cover_high_lean_l/r`, `cover_return`, `cover_leave` |
+| `call.mjs` | `call_out`, `seated_b`, `seated_pass_canteen`, `seated_receive_canteen`, `seated_cup_turn` |
+| `audit.mjs` | auditoria a 240 Hz com o `AnimationMixer` real (tornozelos como proxy do pé, método do piloto de locomoção): contactos, velocidade nominal, deriva, costura dos loops, junções |
+
+O construtor exporta o GLB, mede-o e escreve as medições nos `extras` de cada clip (`contacts`, `audit`, `speed_mps`/`cycle_distance_m` só nos de locomoção, `events`, `interrupt`, `family`, `mask`). Falha (código ≠ 0) se um clip violar os limites (`LIMITS`, derivados de 15 mm de deriva nos contactos). `node tools/assets/m01-soldiers/render/gallery-v2.mjs` regenera a tabela e as folhas de contacto em `docs/assets/m01-soldiers/` (rasterizador em software, sem navegador).

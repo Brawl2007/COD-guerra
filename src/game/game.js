@@ -4,12 +4,12 @@ import { AudioSystem } from '../core/audio.js';
 import { Renderer } from '../render/three-renderer.js';
 import { Simulation } from './simulation.js';
 import { M01Simulation } from './m01-simulation.js';
-import { M01HudPresenter } from '../ui/m01-hud.js';
+import { M01HudPresenter, playerImpactSoundPlan } from '../ui/m01-hud.js';
 
 const SAVE_KEY='cod-guerra:checkpoint:v1';
-// These are the four aerial impacts emitted by M01. Schema 2 stores their IDs,
+// These are the nine aerial impacts emitted by M01. Schema 2 stores their IDs,
 // so delayed presentation can be recovered without extending simulation/save data.
-const AERIAL_BLAST_IDS=new Set(['station_bomb','forward_post','repair_crater','raid_0530']);
+const AERIAL_BLAST_IDS=new Set(['station_bomb','forward_post','repair_crater','raid_0530','raid_0530_1','raid_0530_2','raid_0530_3','raid_0530_4','raid_0530_5']);
 const blastScale=id=>id?.startsWith('m01_grenade_')?'small':id?.includes('demolition')?'demolition':'large';
 
 export class Game {
@@ -114,6 +114,7 @@ export class Game {
           else this.audio.rifleShot(sound.pan,sound.distance,sound.weapon??'kar98k',sound.key);
           return;
         }
+        if(sound.kind==='impact'){this.audio.impact(sound.material,sound.pan,sound.distance,sound.key);return;}
         if(sound.kind==='blast'){
           this.audio.explosion(sound.pan,sound.distance,{scale:sound.scale??'large',key:sound.key,front:sound.front});
           // Ju 87 a sair da picada: só depois de um sopro aéreo real, vindo de cima do ponto de impacto.
@@ -184,7 +185,13 @@ export class Game {
     if(event.type==='reload')this.audio.wz29Mechanism(this.sim.weapon.reloadMode);
     if(event.type==='player-shot'){
       this.audio.wz29Shot();this.audio.wz29Mechanism('bolt');this.renderer.m01.muzzle(this.sim.clock);
-      if(event.material&&event.material!=='character'){const s=this.spatial(event.point);this.audio.impact(event.material,s.pan,s.distance,`player:${this.sim.weapon.shotCount}`);}
+      if(event.hit===true)this.m01Hud.hit(this.sim.clock);
+      if(event.material&&event.material!=='character'){
+        const s=this.spatial(event.point),key=`player:${this.sim.weapon.shotCount}`,material=this.renderer.m01.lastSurface?.kind==='water'?'water':event.material,plan=playerImpactSoundPlan(s.distance,this.sim.clock);
+        // Beyond 60 m the impact is heard after distance/343 s of mission clock (cleared by rebuildSounds on restore/restart).
+        if(plan.immediate)this.audio.impact(material,s.pan,s.distance,key);
+        else this.pendingSounds.push({...s,at:plan.at,kind:'impact',material,key});
+      }
     }
     if(event.type==='npc-shot'){
       const s=this.spatial(event.point);
@@ -220,7 +227,7 @@ export class Game {
       const scale=blastScale(damage?.id);
       this.pendingSounds.push({...s,at:event.soundAt,kind:'blast',scale,key:damage?.id??`blast:${event.soundAt.toFixed(3)}`,shake:s.distance<(event.aerial?500:1000),
         aerial:Boolean(event.aerial),point:{x:event.point.x,y:event.point.y,z:event.point.z}});
-      this.renderer.m01.explosionFeedback(this.sim.clock,s.distance,s.pan);
+      this.renderer.m01.explosionFeedback(this.sim.clock,s.distance,s.pan,damage?.id);
       this.renderer.m01.explosion(event.point,this.sim.clock,event.aerial);
     }
     if(event.type==='checkpoint'){
