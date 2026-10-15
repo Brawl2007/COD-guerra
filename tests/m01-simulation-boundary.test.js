@@ -13,8 +13,10 @@ const IMPORT = /(?:^|\n)\s*(?:import|export)\b[^'"]*?from\s*['"]([^'"]+)['"]|(?:
 const FORBIDDEN_DIRS = ['src/render/', 'src/ui/'];
 const FORBIDDEN_FILES = /^src\/core\/(?:audio|battlefield-audio)[^/]*\.js$/;
 const FORBIDDEN_CODE = [
-  [/\bdocument\./, 'DOM access'],
-  [/\bwindow\./, 'window access'],
+  // Browser globals only: a data property such as `event.window.from` (the 05:30 raid window) is not browser access.
+  [/(?<![.$\w])document\./, 'DOM access'],
+  [/(?<![.$\w])window\./, 'window access'],
+  [/\bglobalThis\b|\bself\.(?:document|window|location)\b/, 'global object access'],
   [/\brequestAnimationFrame\b/, 'frame callbacks'],
   [/\blocalStorage\b/, 'browser storage'],
   [/\bMath\.random\b/, 'Math.random (use the seeded Random)'],

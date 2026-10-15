@@ -29,6 +29,8 @@ iPhone/tablet: modo tátil automático (`pointer:coarse`) ou forçado com `?touc
 | Controlos táteis iPhone | #74 | integrado; `input.js` registado na allowlist partilhada |
 | Ferramenta de prova da câmara T21 | #70 + correção local 9b6988f | integrado; causa: movimento real do rato do Playwright sob pointer lock; captura CI por reprovar |
 | Registo T00–T52 e carta do Capitão | #73 | integrado e actualizado |
+| T09/T28 materiais e terreno, T13/T32 estruturas, T31/T33 via e props, T27/T30 relevo e horizonte, T10/T29 vegetação | `claude/m01-integration` @ 8a0c362 | integrado (merge 9928bdc). Workflows arquivados por essa pilha foram mantidos activos; T12 mantém a versão independente da arquitectura; geradores T13 congelados para reproduzir os GLB aceites byte a byte |
+| Teste de fronteira da simulação | autorização do utilizador (2026-10-15) | regex só apanha globais do navegador (`event.window.from` do raid era falso positivo); nova regra para `globalThis` mantém o teste pelo menos tão estrito |
 
 Evidência local no HEAD enviado: Node completo, `npm run build`, testes Python do sistema agentic, `tests/browser/touch.spec.js`.
 A suite Playwright completa é validada pelo CI do PR (o contentor cloud corre o SwiftShader a ~0,1× e dá timeouts falsos).
@@ -37,7 +39,6 @@ A suite Playwright completa é validada pelo CI do PR (o contentor cloud corre o
 
 | Entrega | Motivo |
 |---|---|
-| `claude/m01-integration` @ 8a0c362: T09/T28, T13/T32, T31/T33, T27/T30, T10/T29 | Merge pronto localmente (9928bdc; 865/866 Node). O teste `m01-simulation-boundary` dá falso positivo em `event.window.from` (janela temporal do raid, não o `window` do navegador). A correção da regex aguarda decisão humana. Falta também a linha da vegetação T10 em `ASSET_CREDITS.md`. |
 | H9-D1 dificuldade (`claude/m01-h9-d1-difficulty-data-v1`) | Só dados, mas altera `m01-simulation.js`, cujo SHA-256 está bloqueado pela golden do #63. Integrar exige mover esse bloqueio com prova por tick; adiado. |
 | `codex/m01-partials-completion-integration-v1` | Integração concorrente de 2026-10-15 (B+C+áudio+T14/T41 bloqueadas+trabalho novo em parciais); os dois CI estão vermelhos. Não integrada. |
 | T14/T41 pontes (`codex/m01-t14-t41-bridge-finish-v2`) | BLOCKED na própria fonte (verifier/perf FAIL, CI vermelho). |
