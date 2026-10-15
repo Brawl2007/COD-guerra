@@ -1,224 +1,291 @@
 {
   "schema_version": 1,
   "role": "independent_verifier",
+  "attempt": 2,
   "status": "FAIL",
-  "source_head": "9a1535b5a530ea39186a09ab5465a14449d27569",
-  "implementation_head": "e0d494e",
+  "source_head": "5b76d24f57fdcfd0b0bd2b099aba3800eed0a9cf",
+  "implementation_head": "2304a7df52ea61b6945d06d087c24e9ec05b4849",
   "predecessor": "bc8f6a21a57ccd926d4e0655481908d90d6b1978",
-  "created_at": "2026-10-15T09:32:40.019137+00:00",
-  "context_packet": "VALID at verification entry",
-  "evidence_sufficient": "NO",
+  "created_at": "2026-10-15T19:13:50.144859+00:00",
+  "context_packet": "VALID at entry and before report writes",
+  "source_frozen": {
+    "files": 840,
+    "unchanged": true,
+    "four_ancestors": true,
+    "forbidden_files_unchanged": true,
+    "historical_golden_sha256": "e0fb4ecbc1e483f9d9e177fd63c8a5a063529787238500d5a8a91e80e696b958",
+    "attempt1_preserved": {
+      "VERIFIER_ATTEMPT_1.md": "fbd879f3de216831e7b5580b75ca4dac9ed86b4320d9feddb7170cece3fe1d3e",
+      "VERIFIER_ATTEMPT_1.json": "db228c43111ecac8e868e52bf297a65d1d272533f6ec01382f4ee1dbeb351a0f"
+    }
+  },
+  "evidence_sufficient": "NO for acceptance; YES for FAIL verdict",
   "review_acceptance_decision": null,
   "per_task": {
     "T02": {
       "status": "BLOCKED",
-      "finding": "Focused continuity/pre-roll tests pass; complete strict predecessor route audit and twelve-seed cover gate still running."
+      "finding": "Continuity/pre-roll/order and original event instants: both strict per-tick golden routes PASS, maximum narrative battle gap56.25/55.35s and real gap30.25s. Mandatory twelve-seed raw-outcome gate FAIL at seed1/ignore; only3/24 cover rows completed before assertion."
     },
     "T03": {
       "status": "BLOCKED",
-      "finding": "Focused grounded blasts and actual grenade-puff expiry/continuation pass; complete continuation and integrated browser gate still running."
+      "finding": "Grounding/safeImpact/IDs/times and actual legacy grenade pooled-puff expiry/continuation tests passed within873 Node passes. No specific new T03 failure; complete mandatory certification is not green."
     },
     "T05": {
       "status": "BLOCKED",
-      "finding": "Focused typed-event/closest-pass tests pass; physical layout bytes preserved; full Node and authority gates pending."
+      "finding": "Typed transient events, closest-approach crack/whizz, legacy snapshots, unchanged physical/audio layout ownership covered by passing Node checks and strict routes. Final authority certification incomplete."
     },
     "T06": {
       "status": "BLOCKED",
-      "finding": "Production audio pressure evidence and merged core inspected; fresh complete Node and browser/offline-waveform gates pending."
+      "finding": "Core/director/fallback/acoustic-delay and32-voice pressure tests pass; corrected live-MG focused production evidence exists. Combined browser43/44 by three shards is not a full pass; final regression gate incomplete."
     },
     "T07": {
-      "status": "BLOCKED",
-      "finding": "Focused legacy/corrupt/prone/continuation tests pass; 86/89/97 roster and schema2 production browser gates pending."
+      "status": "FAIL",
+      "finding": "Legacy86/89/97, atomic corruption, prone and schema2 continuation checks pass. Required unchanged complete-route outcomes fail raw seed1/ignore health84\u219276; full Node is873/874."
     },
     "T14": {
-      "status": "BLOCKED",
-      "finding": "299 protected predecessor files and author-only manifest verified; fresh authored viewer and paired six-view material/colour matrix not yet concluded or inspected."
+      "status": "FAIL",
+      "finding": "299 original assets/world/layout/variation/package bytes protected; authored six-view material pixels change and all six3200-pixel control patches are zero. Required unaffected full-frame0610 control changes318 pixels; paired certification FAIL."
     },
     "T24": {
-      "status": "FAIL",
-      "finding": "Exact roadmap view-10 lamp visibility is not demonstrated and implementation explicitly records physical occlusion. Unobstructed oblique 1000.528m proof cannot satisfy the exact view-10 clause."
+      "status": "BLOCKED",
+      "finding": "Monotone arrival/exact65 final anchors/transformed wagon attributes/native budget tests pass. Approved T24-CAMERA-01 explicitly retains canonical occlusion and requires clear>=1km positive/perturbation/negative proof; scoped train production cases pass. No claim canonical lamp visible; final integrated acceptance withheld."
     },
     "T26": {
       "status": "BLOCKED",
-      "finding": "Implementation four-scene images inspected in part and focused cue tests are present; fresh integrated browser pause/reload/camera matrix pending."
+      "finding": "Fresh four-free-scene production test passes letterbox/look cues, pause, actual reload, full state and camera identity. Entire integrated and coupled certification still not green."
     },
     "T34": {
       "status": "BLOCKED",
-      "finding": "Focused auxiliary corridor/combat exclusion tests pass; station/lantern implementation specimen inspected; fresh integrated browser matrix pending."
+      "finding": "Auxiliary roster/corridor90s/combat exclusion and scheduled task tests pass; fresh train/yard station damage production case passes. Warm-control pixel leak remains unresolved; its cause is not assigned to this owner."
     },
     "T36": {
       "status": "FAIL",
-      "finding": "Real route finishes with Bak still carried, no putdown; violates F10 delivery before west readiness. Real reload/feed frame also shows loader standing proxy rather than feed presentation."
+      "finding": "Original F10 readiness/delivery defect and F12 far standing-loader defect corrected in actual production captures; finite phases/legacy/death/continuation proved. Raw-health preservation fails; existing optional-prone browser test times out on obsolete exact2-prone count after two loaders add4. F13 remains policy-disabled/no invented fire, covered by passing Node and production crew obligations pending confirmation."
     },
     "T41": {
-      "status": "BLOCKED",
-      "finding": "Disabled-owner fix and 299 protected bytes verified statically; fresh native-frame disabled cards, allocations, 24 futures, coupled regressions and paired camera matrix pending."
+      "status": "FAIL",
+      "finding": "Far-disable-enable-exact-near behavior and cold0610 zero control pass; native paired OFF1/1 and ON4/4 pass. Complete warm paired comparator fails0610 full-frame318 pixels.24 current-owner futures and coupled regressions were skipped after earlier job failures."
     }
   },
-  "checks": [
-    {
-      "command": "node --test tests/m01-partials-completion.test.js",
-      "status": "PASS",
-      "tests": 22,
-      "passed": 22,
-      "failed": 0,
-      "log": "test-results/partials-independent/focused-partials.log"
-    },
-    {
-      "command": "npm run build",
-      "status": "PASS",
-      "log": "test-results/partials-independent/build.log",
-      "runtime_bundle_identical_before_after": true,
-      "bundle_sha_files": [
-        "test-results/partials-independent/runtime-bundle-before.sha256",
-        "test-results/partials-independent/runtime-bundle-after.sha256"
-      ]
-    },
-    {
-      "command": "node tools/verification/m01-bridge-finish-v2-authority.mjs --current-authority",
-      "status": "PASS",
-      "protected_files": 299,
-      "log": "test-results/partials-independent/protected-bytes.log"
-    },
-    {
-      "command": "Four ancestry checks; forbidden French/package-lock diff; historical golden comparison",
-      "status": "PASS",
-      "evidence": "test-results/partials-independent/source-pinned.json"
-    },
-    {
-      "command": "node tools/verification/m01-bridge-finish-v2-source.mjs --check test-results/partials-independent/source-freeze.json",
-      "status": "PASS",
-      "source_files": 145,
-      "digest": "e33ca2b34d23e7a43bd4028f6f624a9146210c7cd3b38773c2b47b5df395ee7d"
-    },
-    {
-      "command": "node test-results/partials-independent/carry-route-check.mjs",
-      "status": "FAIL",
-      "meaning": "20966 genuine control ticks reproduce F10 counterexample; script records observations without altering production",
-      "evidence": [
-        "test-results/partials-independent/carry-route-check.json",
-        "test-results/partials-independent/carry-route-check.log"
-      ]
-    },
-    {
-      "command": "node test-results/partials-independent/crew-runtime.mjs",
-      "status": "COMPLETED_WITH_FINDINGS",
-      "cases": 4,
-      "page_errors": 0,
-      "exact_full_snapshot_unchanged": true,
-      "findings": "Pickup/carry proxies at344m; late putdown pair clips selected at t0.35; gunner reload selected but feed loader standing proxy at1084m. These are four inspected frames, not four acceptance-test passes.",
-      "evidence": "test-results/partials-independent/crew-runtime-results.json"
-    }
-  ],
   "failures": [
     {
-      "id": "T24-VIEW10",
-      "criterion": "vista 10 com fumo e lâmpada a 1 km",
-      "evidence": [
-        "docs/verification/m01-runtime/partials-completion-integration-v1/TASK_CRITERIA.json",
-        "docs/verification/m01-runtime/partials-completion-integration-v1/train-1km-final-proof.json",
-        "test-results/partials-completion-evidence/production/train-canonical-view10.png"
-      ],
-      "provenance": "Implementation artifacts personally inspected, not fresh CI artifacts. Implementation expressly disclaims canonical lamp visibility.",
-      "minimal_next_action": "Captain must resolve the exact-view physical-occlusion conflict explicitly through change control or provide compliant evidence. Preserve original criterion and occlusion; do not make lamp draw through geometry."
+      "id": "F2-RAW-HEALTH",
+      "kind": "contract_outcome",
+      "status": "FAIL",
+      "check": "tools/verification/m01-partials-cover-policy-audit.mjs:48",
+      "exact": "AssertionError [ERR_ASSERTION]: raw repair, health, survivors, player shots, casualty times, historical battle instants, checkpoints and lethal rounds stay exact; seed1/ignore actual health76 expected84",
+      "cause": "Actual additional m01_round_1982 by de_east_11/kar98k; fired sim1046.40, arriveAt1048.5677414381105, applied1048.60; west hold9.30s at battle06:44:30; Bak still carry; real player-hit and character round-impact reduce84\u219276. Raw route already complete1031.75. Current/policy complete1095.80 (+64.05s); enemyFire1952\u21921977 (+25).",
+      "policyComparison": "Every current stat and dt/control SHA exactly matches predecessor with ONLY named WEST readiness replay. This explains exposure but does not satisfy frozen raw-health clause.",
+      "evidence": "test-results/partials-independent-attempt2/seed1-health-cause.json"
     },
     {
-      "id": "T36-F10",
-      "criterion": "Bak continua entregue antes da prontidao da demolicao oeste (rota completa)",
-      "seed": 19390901,
-      "support": false,
-      "ticks": 20966,
-      "first_west_ready": {
-        "battle_time": "06:32:01",
-        "bak_x": -90.01576921378182,
-        "phase": "carry"
-      },
-      "west_demolition": {
-        "battle_time": "06:45:00",
-        "bak_x": -236.51497927370366,
-        "phase": "carry"
-      },
-      "mission_complete": {
-        "battle_time": "07:05:00",
-        "bak_x": -260.57185992184077,
-        "phase": "carry"
-      },
-      "putdown_ticks": 0,
-      "minimal_next_action": "Correct only the authorized transport timing/path/lifecycle so the complete real route delivers Bak before west readiness, retaining1.6m/s and finite phases unless Captain explicitly amends that choice; add a true route delivery assertion, then strict delta audit without rewriting historical golden."
+      "id": "F2-NODE-GATE",
+      "kind": "superseded_fixture_expectation",
+      "status": "FAIL",
+      "check": "tests/m01-runtime.test.js:91, assertion96:39",
+      "exact": "false !== true; west demolition waits inside the safety zone, then releases once the player and allies have left",
+      "cause": "CP-D contains unfinished carry. Test relocates allies to-170 and expects demolition only4s after moving player outside unsafe zone; actual approved delivery prerequisite still blocks. Preserve both positional and delivery assertions in correction.",
+      "evidence": "test-results/partials-independent-attempt2/node-ci-5b.log"
     },
     {
-      "id": "T36-F12-PRESENTATION",
-      "criterion": "Municiador associado por ID, feed sincronizado com reload (4.8s)",
-      "battle_time": "04:56:50",
-      "gunner_clip": "mg34_prone_reload",
-      "gunner_clip_time": 0.3500000000001364,
-      "loader_sim_phase": "feed",
-      "loader_proxy_pose": "standing",
-      "loader_in_skinned_diagnostics": false,
-      "player_distance_m": 1084.0553806238574,
-      "evidence": [
-        "test-results/partials-independent/crew-feed.png",
-        "test-results/partials-independent/crew-feed.json"
-      ],
-      "minimal_next_action": "Give actual visible loader a phase-correct prone/feed presentation in the relevant distance tier/fallback; preserve existing actor/draw budget and prove same real reload frame."
+      "id": "F2-MG-FALLBACK",
+      "kind": "superseded_fixture_expectation",
+      "status": "FAIL",
+      "check": "tests/browser/m01-mg34-prone.spec.js:46 and49",
+      "exact": "Test timeout of180000ms exceeded waiting actorPoses.prone===2 && fireEffects.muzzle>0",
+      "cause": "Two authorised loaders also use prone fallback, yielding4 low actors. Independent actual optional-prone503 production capture proves low fallback and no loader rifle; failed mandatory original spec still needs meaningful ID-specific correction preserving actual muzzle and noninterference.",
+      "evidence": "test-results/partials-independent-attempt2/browser2-ci-5b.log"
+    },
+    {
+      "id": "F2-BRIDGE-WARM-CONTROL",
+      "kind": "unresolved_pixel_noninterference",
+      "status": "FAIL",
+      "check": "tools/verification/m01-bridge-finish-v2-compare.mjs",
+      "exact": "AssertionError [ERR_ASSERTION]: 0610-control unaffected entire frame; actual318 expected0",
+      "cause": "Unresolved. Same full saved state/camera/parts pass; all patch controls0 and0430 entire control0. Cold isolated0610 control0 does not prove warm complete matrix. No pixel waiver or cause claim.",
+      "evidence": "/workspace/scratch/partials-bridge-ci5b/evidence/bridge-paired.json"
     }
   ],
-  "ci": {
-    "normal": {
-      "run": 38712314965,
-      "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/38712314965",
-      "status": "in_progress",
-      "evidence": "test-results/partials-independent/normal-ci-status.json"
+  "checks": {
+    "protected_bytes": {
+      "status": "PASS",
+      "files": 299,
+      "log": "test-results/partials-independent-attempt2/protected-bytes.log"
     },
-    "integration": {
-      "run": 38712315225,
-      "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/38712315225",
-      "status": "in_progress",
-      "evidence": "test-results/partials-independent/integration-ci-status.json"
+    "full_node_ci": {
+      "status": "FAIL",
+      "run": 38784359414,
+      "job": 116592404590,
+      "tests": 874,
+      "pass": 873,
+      "fail": 1,
+      "normal_tooling_build": "SKIPPED after Node failure"
     },
-    "note": "Both headSha independently confirmed exact source_head; no final counts or passed jobs inferred. Integrated build/colliders/route setup steps successful; expensive suites remain pending."
+    "integrated_browser": {
+      "run": 38784359449,
+      "status": "FAIL",
+      "shards": [
+        {
+          "shard": 1,
+          "pass": 15,
+          "fail": 0,
+          "provenance": "Captain observed remote conclusion"
+        },
+        {
+          "shard": 2,
+          "pass": 14,
+          "fail": 1,
+          "provenance": "raw completed job log personally inspected"
+        },
+        {
+          "shard": 3,
+          "pass": 14,
+          "fail": 0,
+          "provenance": "Captain observed remote conclusion"
+        }
+      ],
+      "workers": 1,
+      "retries": 0,
+      "crew_extra_6": "not independently confirmed; no pass claimed"
+    },
+    "strict_golden_routes": {
+      "status": "PASS",
+      "cases": [
+        [
+          19390901,
+          false
+        ],
+        [
+          7,
+          true
+        ]
+      ],
+      "ticks": [
+        22247,
+        21378
+      ],
+      "provenance": "fresh source5b CI log, includes fixture reproduction assertion"
+    },
+    "cover_12x2": {
+      "status": "FAIL",
+      "completed_rows": 3,
+      "failed_case": [
+        1,
+        "ignore"
+      ],
+      "remaining": "not executed after assertion"
+    },
+    "paired_bridge": {
+      "status": "FAIL",
+      "off_cases": 1,
+      "off_pass": 1,
+      "on_cases": 4,
+      "on_pass": 4,
+      "comparator": "0610-control318 versus0",
+      "coupled_regressions": "SKIPPED after comparator failure"
+    },
+    "build_colliders_route": {
+      "status": "PASS observed",
+      "scope": "custom browser job presteps on5b; normal workflow build skipped",
+      "provenance": "Captain monitored fresh CI plus inspected local corrected-production build log; not independently rerun"
+    },
+    "current_owner_24_futures": {
+      "status": "NOT RUN",
+      "reason": "authority job aborted at raw-health assertion"
+    },
+    "local_full_node": {
+      "status": "INTERRUPTED_OR_INCOMPLETE",
+      "reason": "transport/process interruption; partial log preserves known same Node failure; no pass claimed"
+    }
   },
-  "images_examined": [
-    {
-      "path": "test-results/partials-completion-evidence/production/train-canonical-view10.png",
-      "provenance": "implementation"
+  "independent_runtime": {
+    "production_url": "http://127.0.0.1:4173/COD-guerra/?debug=1&visual-verify=1",
+    "cases": [
+      {
+        "name": "far-feed",
+        "distance": 1084.0553806238574,
+        "loaderPhase": "feed",
+        "loaderActive": true,
+        "carryPhase": null
+      },
+      {
+        "name": "near-feed",
+        "distance": 11.313708498984761,
+        "loaderPhase": "feed",
+        "loaderActive": true,
+        "carryPhase": null
+      },
+      {
+        "name": "far-feed-fallback",
+        "distance": 1084.0553806238574,
+        "loaderPhase": "feed",
+        "loaderActive": true,
+        "carryPhase": null
+      },
+      {
+        "name": "far-death-cleanup",
+        "distance": 1084.0553806238574,
+        "loaderPhase": "leave",
+        "loaderActive": false,
+        "carryPhase": null
+      },
+      {
+        "name": "putdown-real-route",
+        "distance": 39.88581170787605,
+        "loaderPhase": null,
+        "loaderActive": true,
+        "carryPhase": "putdown"
+      },
+      {
+        "name": "pickup-near-controlled",
+        "distance": 11.313708498984761,
+        "loaderPhase": null,
+        "loaderActive": true,
+        "carryPhase": "pickup"
+      },
+      {
+        "name": "carry-near-controlled",
+        "distance": 11.313708498984761,
+        "loaderPhase": null,
+        "loaderActive": true,
+        "carryPhase": "carry"
+      }
+    ],
+    "reload_equality": [
+      "far-feed",
+      "near-feed",
+      "putdown-real-route"
+    ],
+    "reload_proof": "Exact full verification state, all character clip/time/weight plans, editorial camera and entire PNG bytes equal across actual page.reload/Continue",
+    "putdown_real_route": {
+      "clock": 1092.4499999995542,
+      "battleClock": 24270,
+      "ready": false,
+      "clipTime": 0.3499999999996817,
+      "lod": 1,
+      "deliveryClock": 1093.749999999553,
+      "gateReleaseClock": 1093.799999999553,
+      "gateReleaseBattleClock": 24270.425,
+      "ordinary_outro_skip_completes": true
     },
-    {
-      "path": "test-results/partials-completion-evidence/production/train-1km-both.png",
-      "provenance": "implementation"
-    },
-    {
-      "path": "test-results/partials-completion-evidence/production/life-043600.png",
-      "provenance": "implementation"
-    },
-    {
-      "path": "test-results/partials-completion-evidence/production/cs_m01_order.png",
-      "provenance": "implementation"
-    },
-    {
-      "path": "test-results/partials-independent/crew-pickup.png",
-      "provenance": "independent production capture; paused real route snapshot, editorial camera only"
-    },
-    {
-      "path": "test-results/partials-independent/crew-carry.png",
-      "provenance": "independent production capture; paused real route snapshot, editorial camera only"
-    },
-    {
-      "path": "test-results/partials-independent/crew-putdown.png",
-      "provenance": "independent production capture; paused real route snapshot, editorial camera only"
-    },
-    {
-      "path": "test-results/partials-independent/crew-feed.png",
-      "provenance": "independent production capture; paused real route snapshot, editorial camera only"
-    }
-  ],
-  "intentionally_not_run": [
-    "Full local Node/browser/cover/futures duplication while exact same-source CI is running.",
-    "No fresh local complete bridge paired matrix or material viewer.",
-    "No human playtest or hardware/FPS measurement."
-  ],
-  "production_modified": false,
-  "fixtures_or_goldens_modified": false,
-  "commits_pushes_checkouts_spawned": false,
-  "recommended_next_action": "Return to implementer for bounded fix attempt1/3 covering T36 delivery/presentation and Captain resolution of T24 exact-view conflict. Preserve this FAIL and historical bridge failures; rerun failed focused checks on a newly pinned source, then finish pending CI gates and independent review."
+    "controlled_variants": "Near feed/pickup/carry change only player position for tier proof. Cleanup applies controlled gunner death then42 actual ticks. Far feed and real-route putdown retain exact real-control save. Cameras affect presentation only.",
+    "continuation": "40 exact state/event ticks each pickup/carry/putdown; legacy carriedBy blocks; death of either member clears gate next tick; unhurt adds no lock",
+    "personal_image_inspection": [
+      "far-feed-initial",
+      "near-feed-initial",
+      "far-feed-fallback-initial",
+      "far-death-cleanup-initial",
+      "putdown-real-route-initial",
+      "pickup-near-controlled-initial",
+      "carry-near-controlled-initial"
+    ],
+    "limits": "Pickup/carry editorial angles partly occluded by original rail. Initial far angle occluded prone bodies and retained as diagnostic. Supplemental-only503 correctly left original MG clips resident; wrong fallback assumption retained as diagnostic and actual optional MG-prone clip subsequently failed to exercise real fallback. Initial forensic diagnostic did not hook baseline helper; preserved and corrected via explicit prototype wrappers. No production/test/asset/workflow changes."
+  },
+  "logs_sha256": {
+    "authority-ci-5b.log": "ae9ec2a1a2f406c1f0c41f8abf8f2485ee96912f6d04ffe9d2b335c88a61582f",
+    "bridge-ci-5b.log": "c91e7a5a3e423687dc7eae8edf4721ff671da1214ad9f5cb360a2a6b9438c4a7",
+    "browser2-ci-5b.log": "5fdb8d632aee1ae029fced5f3e07ecd7716dd848af426c9f25ea8f9e68ad1bf9",
+    "node-ci-5b.log": "35248156cd8031282e28c2a1c287e9aa268f84bf86ef0d870b684610b3a20821"
+  },
+  "next_action": "Captain reopen bounded correction2/3. Preserve this FAIL and raw reports; any later D34 health-policy amendment is prospective. Fix meaningful superseded test assumptions and unresolved warm full-frame leak; re-pin and complete fresh24 cover routes, owner futures, full Node, browser and coupled gates before reviewer."
 }

@@ -86,7 +86,7 @@
   },
   "acceptance": {
     "criteria": [
-      "Every one of the eleven task acceptance clauses from docs/M01_FINAL_ROADMAP.md is implemented and individually evidenced, subject only to the explicit D34-approved T24 editorial-camera variance CAPTAIN-AMENDMENT-01; never close merely on symbols/file presence.",
+      "Every one of the eleven task acceptance clauses from docs/M01_FINAL_ROADMAP.md is implemented and individually evidenced, subject to the explicit D34-approved T24 editorial-camera variance and T36 timing/exposure policy in CAPTAIN-AMENDMENT-01/02; never close merely on symbols/file presence.",
       "Existing accepted deliveries and original mission combat cadences/damage/LOS/mission gates/CP-A..D preserved except explicitly authorized task data/decoration changes. French sandbox unchanged.",
       "Atomic persistence and backwards compatibility for any optional new fields/actors, full continuation invariants.",
       "T14/T41 confirmed author, disabled-card, allocation, camera-wait and evidence-isolation blockers resolved with all required original matrix/authority/regression proofs. Historical failure evidence retained.",
@@ -106,13 +106,19 @@
         "approval": "Captain under permanent user D34; CAPTAIN_AMENDMENT_01.json",
         "original_requirement": "vista 10 com fumo e lâmpada a 1 km",
         "replacement": "Retain canonical occluded view10 capture with honest visibility limit; prove actual lamp and smoke in a measured unobstructed >=1km production world ROI, two small target perturbations, and zero lamp through original occluder. Preserve depth, original gates and all other T24 clauses."
+      },
+      {
+        "id": "T36-EXPOSURE-01",
+        "approval": "Captain under permanent user D34; CAPTAIN_AMENDMENT_02.json",
+        "original_requirement": "Unchanged complete-route outcomes and additional conservative raw player-health equality.",
+        "replacement": "Exact full health/stats against the sole WEST-readiness policy replay; raw player-health loss permitted only when every extra real projectile impact is causally attributed to that hold. Preserve all other raw outcomes and actor health; retain raw reports and all24 complete routes."
       }
     ],
     "authorized_policy_deltas": [
       {
         "task": "T36",
         "policy": "Unfinished Bąk carry/putdown blocks west-demolition readiness via the existing battle-clock hold; actual delivery must precede readiness before06:45. Source audit explicitly records and isolates this delay; cadences/damage/RNG algorithms and fixed event battle-clock instants remain unchanged.",
-        "verification": "CAPTAIN_AMENDMENT_01_COVER_EXTENSION.json: retain raw12seed cover deltas/invariants and exact all stats/summary against only WEST-readiness policy replay; no duration/RNG/health/event masks."
+        "verification": "CAPTAIN_AMENDMENT_02.json prospectively supersedes only raw player-health equality: causal real-projectile attribution replaces that equality, all full replay health/stats and other raw invariants remain exact."
       }
     ]
   },
@@ -177,7 +183,7 @@
     "status": "RUNNING",
     "current_node": "implementation",
     "current_owner": "implementer",
-    "next_action": "correction1/3 after preserved independent FAIL; implement T36 delivery/readiness and loader presentation, reverify approved contract"
+    "next_action": "correction2/3 after preserved independentFAIL2; causal health exposure audit, old safety/prone fixtures, full-matrix318pixel bridge control; no acceptance yet"
   },
   "result": {
     "final_head": "",
