@@ -1,291 +1,577 @@
 {
   "schema_version": 1,
   "role": "independent_verifier",
-  "attempt": 2,
+  "attempt": 3,
   "status": "FAIL",
-  "source_head": "5b76d24f57fdcfd0b0bd2b099aba3800eed0a9cf",
-  "implementation_head": "2304a7df52ea61b6945d06d087c24e9ec05b4849",
+  "source_head": "016b2486025342d33629cbc301e8317d47606bc8",
+  "implementation_head": "d7266b3d347045597f384f3df1320ec99070e693",
   "predecessor": "bc8f6a21a57ccd926d4e0655481908d90d6b1978",
-  "created_at": "2026-10-15T19:13:50.144859+00:00",
-  "context_packet": "VALID at entry and before report writes",
+  "created_at": "2026-10-15T23:36:55.509959+00:00",
+  "context_packet": "VALID at entry and before report writes; show completed first",
+  "budget": {
+    "formal_fix": 2,
+    "max_fix_attempts": 3,
+    "review_rejections": 0
+  },
+  "evidence_sufficient": "YES for deterministic certification FAIL; NO for acceptance",
+  "review_acceptance_decision": null,
+  "closure_authority": "Captain requested immediate report after independently reproducing deterministic schema defect; do not wait for unfinished browser jobs. Running CI remains running and pending gates are not relabelled FAIL or PASS.",
+  "failures": [
+    {
+      "id": "F3-CI-SCHEMA-GUARD",
+      "status": "FAIL",
+      "kind": "deterministic_certification_schema_defect",
+      "path": ".github/workflows/m01-partials-completion-integration-v1.yml:94",
+      "exact_assertion": "assert.ok(r.routes.every(row=>row.exactStatsAndSummary===\"PASS\"))",
+      "actual": "undefined for each row; predicate false",
+      "expected": "true",
+      "cause": "Audit writes row.result and row.checks, plus report.exactStatsAndSummary only at top level (audit lines131/137/138). The frozen workflow reads the removed row field.",
+      "independent_reproduction": "Evaluated this exact row predicate against retained successful CAP03 seed1 index: top-level result/exactStatsAndSummary PASS, both rows.result PASS, both row.exactStatsAndSummary undefined; AssertionError reproduced. Same producer schema applies to every final24 report.",
+      "scope": "No new production gameplay failure inferred. A completed PASS24 audit will still fail this guard and skip subsequent authority/futures steps. Actual remote outcome remains pending at report time."
+    }
+  ],
   "source_frozen": {
-    "files": 840,
+    "files": 835,
     "unchanged": true,
     "four_ancestors": true,
     "forbidden_files_unchanged": true,
     "historical_golden_sha256": "e0fb4ecbc1e483f9d9e177fd63c8a5a063529787238500d5a8a91e80e696b958",
-    "attempt1_preserved": {
+    "historical_reports_sha256": {
       "VERIFIER_ATTEMPT_1.md": "fbd879f3de216831e7b5580b75ca4dac9ed86b4320d9feddb7170cece3fe1d3e",
-      "VERIFIER_ATTEMPT_1.json": "db228c43111ecac8e868e52bf297a65d1d272533f6ec01382f4ee1dbeb351a0f"
+      "VERIFIER_ATTEMPT_1.json": "db228c43111ecac8e868e52bf297a65d1d272533f6ec01382f4ee1dbeb351a0f",
+      "VERIFIER_ATTEMPT_2.md": "72c8d05dce88ce37df3c85892c382b06f4ccaae64a4e3caa14b59085e9079962",
+      "VERIFIER_ATTEMPT_2.json": "2e54b3b478e390ce24360dddcc72c5fab1d7535a97e927744d1758943378d89d",
+      "CORRECTION_02_PRE_CLARIFICATION.json": "7d766efa84f3d774028199a662f00684a14b0a68f1b3ac6f63cba8b57dbb33c4"
     }
   },
-  "evidence_sufficient": "NO for acceptance; YES for FAIL verdict",
-  "review_acceptance_decision": null,
-  "per_task": {
-    "T02": {
-      "status": "BLOCKED",
-      "finding": "Continuity/pre-roll/order and original event instants: both strict per-tick golden routes PASS, maximum narrative battle gap56.25/55.35s and real gap30.25s. Mandatory twelve-seed raw-outcome gate FAIL at seed1/ignore; only3/24 cover rows completed before assertion."
-    },
-    "T03": {
-      "status": "BLOCKED",
-      "finding": "Grounding/safeImpact/IDs/times and actual legacy grenade pooled-puff expiry/continuation tests passed within873 Node passes. No specific new T03 failure; complete mandatory certification is not green."
-    },
-    "T05": {
-      "status": "BLOCKED",
-      "finding": "Typed transient events, closest-approach crack/whizz, legacy snapshots, unchanged physical/audio layout ownership covered by passing Node checks and strict routes. Final authority certification incomplete."
-    },
-    "T06": {
-      "status": "BLOCKED",
-      "finding": "Core/director/fallback/acoustic-delay and32-voice pressure tests pass; corrected live-MG focused production evidence exists. Combined browser43/44 by three shards is not a full pass; final regression gate incomplete."
-    },
-    "T07": {
-      "status": "FAIL",
-      "finding": "Legacy86/89/97, atomic corruption, prone and schema2 continuation checks pass. Required unchanged complete-route outcomes fail raw seed1/ignore health84\u219276; full Node is873/874."
-    },
-    "T14": {
-      "status": "FAIL",
-      "finding": "299 original assets/world/layout/variation/package bytes protected; authored six-view material pixels change and all six3200-pixel control patches are zero. Required unaffected full-frame0610 control changes318 pixels; paired certification FAIL."
-    },
-    "T24": {
-      "status": "BLOCKED",
-      "finding": "Monotone arrival/exact65 final anchors/transformed wagon attributes/native budget tests pass. Approved T24-CAMERA-01 explicitly retains canonical occlusion and requires clear>=1km positive/perturbation/negative proof; scoped train production cases pass. No claim canonical lamp visible; final integrated acceptance withheld."
-    },
-    "T26": {
-      "status": "BLOCKED",
-      "finding": "Fresh four-free-scene production test passes letterbox/look cues, pause, actual reload, full state and camera identity. Entire integrated and coupled certification still not green."
-    },
-    "T34": {
-      "status": "BLOCKED",
-      "finding": "Auxiliary roster/corridor90s/combat exclusion and scheduled task tests pass; fresh train/yard station damage production case passes. Warm-control pixel leak remains unresolved; its cause is not assigned to this owner."
-    },
-    "T36": {
-      "status": "FAIL",
-      "finding": "Original F10 readiness/delivery defect and F12 far standing-loader defect corrected in actual production captures; finite phases/legacy/death/continuation proved. Raw-health preservation fails; existing optional-prone browser test times out on obsolete exact2-prone count after two loaders add4. F13 remains policy-disabled/no invented fire, covered by passing Node and production crew obligations pending confirmation."
-    },
-    "T41": {
-      "status": "FAIL",
-      "finding": "Far-disable-enable-exact-near behavior and cold0610 zero control pass; native paired OFF1/1 and ON4/4 pass. Complete warm paired comparator fails0610 full-frame318 pixels.24 current-owner futures and coupled regressions were skipped after earlier job failures."
-    }
-  },
-  "failures": [
-    {
-      "id": "F2-RAW-HEALTH",
-      "kind": "contract_outcome",
-      "status": "FAIL",
-      "check": "tools/verification/m01-partials-cover-policy-audit.mjs:48",
-      "exact": "AssertionError [ERR_ASSERTION]: raw repair, health, survivors, player shots, casualty times, historical battle instants, checkpoints and lethal rounds stay exact; seed1/ignore actual health76 expected84",
-      "cause": "Actual additional m01_round_1982 by de_east_11/kar98k; fired sim1046.40, arriveAt1048.5677414381105, applied1048.60; west hold9.30s at battle06:44:30; Bak still carry; real player-hit and character round-impact reduce84\u219276. Raw route already complete1031.75. Current/policy complete1095.80 (+64.05s); enemyFire1952\u21921977 (+25).",
-      "policyComparison": "Every current stat and dt/control SHA exactly matches predecessor with ONLY named WEST readiness replay. This explains exposure but does not satisfy frozen raw-health clause.",
-      "evidence": "test-results/partials-independent-attempt2/seed1-health-cause.json"
-    },
-    {
-      "id": "F2-NODE-GATE",
-      "kind": "superseded_fixture_expectation",
-      "status": "FAIL",
-      "check": "tests/m01-runtime.test.js:91, assertion96:39",
-      "exact": "false !== true; west demolition waits inside the safety zone, then releases once the player and allies have left",
-      "cause": "CP-D contains unfinished carry. Test relocates allies to-170 and expects demolition only4s after moving player outside unsafe zone; actual approved delivery prerequisite still blocks. Preserve both positional and delivery assertions in correction.",
-      "evidence": "test-results/partials-independent-attempt2/node-ci-5b.log"
-    },
-    {
-      "id": "F2-MG-FALLBACK",
-      "kind": "superseded_fixture_expectation",
-      "status": "FAIL",
-      "check": "tests/browser/m01-mg34-prone.spec.js:46 and49",
-      "exact": "Test timeout of180000ms exceeded waiting actorPoses.prone===2 && fireEffects.muzzle>0",
-      "cause": "Two authorised loaders also use prone fallback, yielding4 low actors. Independent actual optional-prone503 production capture proves low fallback and no loader rifle; failed mandatory original spec still needs meaningful ID-specific correction preserving actual muzzle and noninterference.",
-      "evidence": "test-results/partials-independent-attempt2/browser2-ci-5b.log"
-    },
-    {
-      "id": "F2-BRIDGE-WARM-CONTROL",
-      "kind": "unresolved_pixel_noninterference",
-      "status": "FAIL",
-      "check": "tools/verification/m01-bridge-finish-v2-compare.mjs",
-      "exact": "AssertionError [ERR_ASSERTION]: 0610-control unaffected entire frame; actual318 expected0",
-      "cause": "Unresolved. Same full saved state/camera/parts pass; all patch controls0 and0430 entire control0. Cold isolated0610 control0 does not prove warm complete matrix. No pixel waiver or cause claim.",
-      "evidence": "/workspace/scratch/partials-bridge-ci5b/evidence/bridge-paired.json"
-    }
-  ],
   "checks": {
     "protected_bytes": {
       "status": "PASS",
+      "command": "node tools/verification/m01-bridge-finish-v2-authority.mjs --current-authority",
       "files": 299,
-      "log": "test-results/partials-independent-attempt2/protected-bytes.log"
+      "exception": "pre-existing exact author-only impostor-manifest metadata"
     },
-    "full_node_ci": {
-      "status": "FAIL",
-      "run": 38784359414,
-      "job": 116592404590,
-      "tests": 874,
-      "pass": 873,
-      "fail": 1,
-      "normal_tooling_build": "SKIPPED after Node failure"
-    },
-    "integrated_browser": {
-      "run": 38784359449,
-      "status": "FAIL",
-      "shards": [
-        {
-          "shard": 1,
-          "pass": 15,
-          "fail": 0,
-          "provenance": "Captain observed remote conclusion"
-        },
-        {
-          "shard": 2,
-          "pass": 14,
-          "fail": 1,
-          "provenance": "raw completed job log personally inspected"
-        },
-        {
-          "shard": 3,
-          "pass": 14,
-          "fail": 0,
-          "provenance": "Captain observed remote conclusion"
-        }
-      ],
-      "workers": 1,
-      "retries": 0,
-      "crew_extra_6": "not independently confirmed; no pass claimed"
-    },
-    "strict_golden_routes": {
+    "scope_ancestry_golden": {
       "status": "PASS",
+      "detail": "Four required ancestors; French/world/sandbox/package-lock forbidden diff empty; historical golden exact."
+    },
+    "durable_diagnostics": {
+      "status": "PASS",
+      "detail": "All10 MANIFEST files exact SHA256/bytes; actual stale/ready PNGs SHA-identical to original CI5b ON/OFF."
+    },
+    "atlas_causal_proof": {
+      "status": "PASS inspected implementation evidence",
+      "detail": "Old frames6→6 despite CPU2/GPU1; fixed7→8/GPU2 automatically; every full verification state and camera exact. Real late-atlas change318 pixels; final whole frame0. Production diff only colour/height texture-version keys; temporary hooks absent. Does not replace mandatory fresh full paired/coupled matrix."
+    },
+    "focused_cap03_full_rows": {
+      "status": "PASS inspected implementation evidence",
       "cases": [
-        [
-          19390901,
-          false
-        ],
-        [
-          7,
-          true
-        ]
+        "seed1/ignore additional-issued Kar98k1982:84→76",
+        "seed6/help shared-issued MG1659:100→92"
       ],
-      "ticks": [
-        22247,
-        21378
+      "detail": "Personally parsed original full rows: current/policy controls, tick clocks/RNG/health/readiness exact; raw prefix exact; original impacts retained. Shared round exact RAW issue/emission/earth impact, RAW WEST/exit before impact and measured different player positions. No unexplained health changes. Fresh24 pending; prior CAP02 23/24 remains FAIL."
+    },
+    "prior_independent_crew_evidence": {
+      "status": "REUSED NARROWLY with exact source identity",
+      "source_files": [
+        "src/game/m01-simulation.js",
+        "src/render/m01-characters.js",
+        "src/render/m01-actor-pose.js",
+        "src/game/m01-animation-presentation.js"
       ],
-      "provenance": "fresh source5b CI log, includes fixture reproduction assertion"
+      "identity": "All byte-identical to5b76d24; original independent actual1084mLOD2/near feed, optional prone fallback, finite putdown/reload and death-cleanup proof retained. Current M01View differs only in atlas key.",
+      "evidence": "VERIFIER_ATTEMPT_2.json independent_runtime and test-results/partials-independent-attempt2/"
     },
-    "cover_12x2": {
-      "status": "FAIL",
-      "completed_rows": 3,
-      "failed_case": [
-        1,
-        "ignore"
-      ],
-      "remaining": "not executed after assertion"
+    "syntax": {
+      "status": "PASS",
+      "commands": [
+        "node --check tools/verification/m01-partials-cover-policy-audit.mjs",
+        "node --check tools/verification/m01-partials-atlas-warm-proof.mjs"
+      ]
     },
-    "paired_bridge": {
-      "status": "FAIL",
-      "off_cases": 1,
-      "off_pass": 1,
-      "on_cases": 4,
-      "on_pass": 4,
-      "comparator": "0610-control318 versus0",
-      "coupled_regressions": "SKIPPED after comparator failure"
+    "fresh_full_node_tooling_build": {
+      "status": "PENDING",
+      "run": 38823957607,
+      "head": "016b2486025342d33629cbc301e8317d47606bc8",
+      "remote_status_at_report": "in_progress",
+      "jobs": [
+        {
+          "databaseId": 116726907987,
+          "name": "node-build",
+          "status": "in_progress",
+          "conclusion": "",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "npm test",
+              "status": "in_progress",
+              "conclusion": ""
+            },
+            {
+              "name": "Agent tooling tests",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "npm run build",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "pending",
+              "conclusion": ""
+            }
+          ]
+        }
+      ]
     },
-    "build_colliders_route": {
-      "status": "PASS observed",
-      "scope": "custom browser job presteps on5b; normal workflow build skipped",
-      "provenance": "Captain monitored fresh CI plus inspected local corrected-production build log; not independently rerun"
+    "fresh_custom_ci": {
+      "status": "PENDING",
+      "run": 38823957628,
+      "head": "016b2486025342d33629cbc301e8317d47606bc8",
+      "remote_status_at_report": "in_progress",
+      "jobs": [
+        {
+          "databaseId": 116726908426,
+          "name": "simulation-authority",
+          "status": "in_progress",
+          "conclusion": "",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run mkdir -p evidence",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact predecessor delta audit and twelve-seed cover invariants",
+              "status": "in_progress",
+              "conclusion": ""
+            },
+            {
+              "name": "Protected current integration bytes and original assets",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Twenty-four current simulation bridge-owner ON/OFF futures",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "pending",
+              "conclusion": ""
+            }
+          ]
+        },
+        {
+          "databaseId": 116726908662,
+          "name": "bridge-paired-and-coupled",
+          "status": "in_progress",
+          "conclusion": "",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run mkdir -p evidence",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Authored sidecars and production viewers",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npx playwright install --with-deps chromium",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Current authority with bridge owner OFF, same six phase views and controls",
+              "status": "in_progress",
+              "conclusion": ""
+            },
+            {
+              "name": "Current authority with bridge owner ON and full bridge behavior matrix",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Coupled bridge, terrain, contact, water and demolition regressions",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Source remained frozen throughout runtime checks",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "pending",
+              "conclusion": ""
+            }
+          ]
+        },
+        {
+          "databaseId": 116726908681,
+          "name": "integrated-browser (1/3)",
+          "status": "in_progress",
+          "conclusion": "",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Preserve source histories and sandbox authority",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Production build",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Physical colliders and full mission route",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npx playwright install --with-deps chromium",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Integrated task and coupled browser checks",
+              "status": "in_progress",
+              "conclusion": ""
+            },
+            {
+              "name": "Existing crew and evacuation pause/reload obligations",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "pending",
+              "conclusion": ""
+            }
+          ]
+        },
+        {
+          "databaseId": 116726908702,
+          "name": "integrated-browser (3/3)",
+          "status": "in_progress",
+          "conclusion": "",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Preserve source histories and sandbox authority",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Production build",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Physical colliders and full mission route",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npx playwright install --with-deps chromium",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Integrated task and coupled browser checks",
+              "status": "in_progress",
+              "conclusion": ""
+            },
+            {
+              "name": "Existing crew and evacuation pause/reload obligations",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "pending",
+              "conclusion": ""
+            }
+          ]
+        },
+        {
+          "databaseId": 116726908743,
+          "name": "integrated-browser (2/3)",
+          "status": "in_progress",
+          "conclusion": "",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Preserve source histories and sandbox authority",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Production build",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Physical colliders and full mission route",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npx playwright install --with-deps chromium",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Integrated task and coupled browser checks",
+              "status": "in_progress",
+              "conclusion": ""
+            },
+            {
+              "name": "Existing crew and evacuation pause/reload obligations",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "pending",
+              "conclusion": ""
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "pending",
+              "conclusion": ""
+            }
+          ]
+        }
+      ]
     },
-    "current_owner_24_futures": {
-      "status": "NOT RUN",
-      "reason": "authority job aborted at raw-health assertion"
+    "strict_golden_routes": "PENDING fresh final CI evidence inspection",
+    "cover_all24": "PENDING fresh final CI evidence inspection",
+    "current_owner_24_futures": "PENDING; not executed yet; workflow schema guard prevents normal progression after audit",
+    "integrated_browser_44_and_crews6": "PENDING; no full-suite pass claimed",
+    "paired_bridge_full_frame_zero_and_coupled": "PENDING; no cold/warm diagnostic substituted",
+    "production_build_colliders_routes": "PASS observed remote presteps in all3 browser shards on exact016b248; normal workflow build pending"
+  },
+  "per_task": {
+    "T02": {
+      "status": "UNACCEPTED",
+      "finding": "Final integrated mandatory gates remain pending; certification schema defect prevents acceptance. Existing implementation/prior focused proofs retained without relabelling."
     },
-    "local_full_node": {
-      "status": "INTERRUPTED_OR_INCOMPLETE",
-      "reason": "transport/process interruption; partial log preserves known same Node failure; no pass claimed"
+    "T03": {
+      "status": "UNACCEPTED",
+      "finding": "Final integrated mandatory gates remain pending; certification schema defect prevents acceptance. Existing implementation/prior focused proofs retained without relabelling."
+    },
+    "T05": {
+      "status": "UNACCEPTED",
+      "finding": "Final integrated mandatory gates remain pending; certification schema defect prevents acceptance. Existing implementation/prior focused proofs retained without relabelling."
+    },
+    "T06": {
+      "status": "UNACCEPTED",
+      "finding": "Final integrated mandatory gates remain pending; certification schema defect prevents acceptance. Existing implementation/prior focused proofs retained without relabelling."
+    },
+    "T07": {
+      "status": "UNACCEPTED",
+      "finding": "Final integrated mandatory gates remain pending; certification schema defect prevents acceptance. Existing implementation/prior focused proofs retained without relabelling."
+    },
+    "T14": {
+      "status": "UNACCEPTED",
+      "finding": "Final integrated mandatory gates remain pending; certification schema defect prevents acceptance. Existing implementation/prior focused proofs retained without relabelling."
+    },
+    "T24": {
+      "status": "UNACCEPTED",
+      "finding": "Final integrated mandatory gates remain pending; certification schema defect prevents acceptance. Existing implementation/prior focused proofs retained without relabelling."
+    },
+    "T26": {
+      "status": "UNACCEPTED",
+      "finding": "Final integrated mandatory gates remain pending; certification schema defect prevents acceptance. Existing implementation/prior focused proofs retained without relabelling."
+    },
+    "T34": {
+      "status": "UNACCEPTED",
+      "finding": "Final integrated mandatory gates remain pending; certification schema defect prevents acceptance. Existing implementation/prior focused proofs retained without relabelling."
+    },
+    "T36": {
+      "status": "UNACCEPTED",
+      "finding": "Final integrated mandatory gates remain pending; certification schema defect prevents acceptance. Existing implementation/prior focused proofs retained without relabelling."
+    },
+    "T41": {
+      "status": "UNACCEPTED",
+      "finding": "Final integrated mandatory gates remain pending; certification schema defect prevents acceptance. Existing implementation/prior focused proofs retained without relabelling."
     }
   },
-  "independent_runtime": {
-    "production_url": "http://127.0.0.1:4173/COD-guerra/?debug=1&visual-verify=1",
-    "cases": [
-      {
-        "name": "far-feed",
-        "distance": 1084.0553806238574,
-        "loaderPhase": "feed",
-        "loaderActive": true,
-        "carryPhase": null
-      },
-      {
-        "name": "near-feed",
-        "distance": 11.313708498984761,
-        "loaderPhase": "feed",
-        "loaderActive": true,
-        "carryPhase": null
-      },
-      {
-        "name": "far-feed-fallback",
-        "distance": 1084.0553806238574,
-        "loaderPhase": "feed",
-        "loaderActive": true,
-        "carryPhase": null
-      },
-      {
-        "name": "far-death-cleanup",
-        "distance": 1084.0553806238574,
-        "loaderPhase": "leave",
-        "loaderActive": false,
-        "carryPhase": null
-      },
-      {
-        "name": "putdown-real-route",
-        "distance": 39.88581170787605,
-        "loaderPhase": null,
-        "loaderActive": true,
-        "carryPhase": "putdown"
-      },
-      {
-        "name": "pickup-near-controlled",
-        "distance": 11.313708498984761,
-        "loaderPhase": null,
-        "loaderActive": true,
-        "carryPhase": "pickup"
-      },
-      {
-        "name": "carry-near-controlled",
-        "distance": 11.313708498984761,
-        "loaderPhase": null,
-        "loaderActive": true,
-        "carryPhase": "carry"
-      }
-    ],
-    "reload_equality": [
-      "far-feed",
-      "near-feed",
-      "putdown-real-route"
-    ],
-    "reload_proof": "Exact full verification state, all character clip/time/weight plans, editorial camera and entire PNG bytes equal across actual page.reload/Continue",
-    "putdown_real_route": {
-      "clock": 1092.4499999995542,
-      "battleClock": 24270,
-      "ready": false,
-      "clipTime": 0.3499999999996817,
-      "lod": 1,
-      "deliveryClock": 1093.749999999553,
-      "gateReleaseClock": 1093.799999999553,
-      "gateReleaseBattleClock": 24270.425,
-      "ordinary_outro_skip_completes": true
-    },
-    "controlled_variants": "Near feed/pickup/carry change only player position for tier proof. Cleanup applies controlled gunner death then42 actual ticks. Far feed and real-route putdown retain exact real-control save. Cameras affect presentation only.",
-    "continuation": "40 exact state/event ticks each pickup/carry/putdown; legacy carriedBy blocks; death of either member clears gate next tick; unhurt adds no lock",
-    "personal_image_inspection": [
-      "far-feed-initial",
-      "near-feed-initial",
-      "far-feed-fallback-initial",
-      "far-death-cleanup-initial",
-      "putdown-real-route-initial",
-      "pickup-near-controlled-initial",
-      "carry-near-controlled-initial"
-    ],
-    "limits": "Pickup/carry editorial angles partly occluded by original rail. Initial far angle occluded prone bodies and retained as diagnostic. Supplemental-only503 correctly left original MG clips resident; wrong fallback assumption retained as diagnostic and actual optional MG-prone clip subsequently failed to exercise real fallback. Initial forensic diagnostic did not hook baseline helper; preserved and corrected via explicit prototype wrappers. No production/test/asset/workflow changes."
-  },
-  "logs_sha256": {
-    "authority-ci-5b.log": "ae9ec2a1a2f406c1f0c41f8abf8f2485ee96912f6d04ffe9d2b335c88a61582f",
-    "bridge-ci-5b.log": "c91e7a5a3e423687dc7eae8edf4721ff671da1214ad9f5cb360a2a6b9438c4a7",
-    "browser2-ci-5b.log": "5fdb8d632aee1ae029fced5f3e07ecd7716dd848af426c9f25ea8f9e68ad1bf9",
-    "node-ci-5b.log": "35248156cd8031282e28c2a1c287e9aa268f84bf86ef0d870b684610b3a20821"
-  },
-  "next_action": "Captain reopen bounded correction2/3. Preserve this FAIL and raw reports; any later D34 health-policy amendment is prospective. Fix meaningful superseded test assumptions and unresolved warm full-frame leak; re-pin and complete fresh24 cover routes, owner futures, full Node, browser and coupled gates before reviewer."
+  "visual_limits": "T24 canonical view10 remains physically occluded. CAP01 variance requires clear measured>=1km lamp/smoke pair, two perturbations and original blocked negative control; no canonical-positive claim.",
+  "intentionally_not_rerun": "No duplicate full Node, all-browser or all24 local suites. No production/test/tooling edits, push, cancellation, budget reset or integration decision.",
+  "next_action": "Captain may apply final bounded correction3/3 to the workflow/report schema guard, preserve this FAIL, re-pin and recertify. Retain all final016b CI measurements as they finish; do not combine failed runs into a fictional pass. Fresh mandatory current-owner24futures, all24causal, fullNode/build,44browser+6crews, original paired/coupled gates and independent verification are required before review."
 }

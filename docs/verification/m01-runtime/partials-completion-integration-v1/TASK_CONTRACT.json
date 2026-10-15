@@ -181,9 +181,9 @@
   },
   "state": {
     "status": "RUNNING",
-    "current_node": "verification",
-    "current_owner": "verifier",
-    "next_action": "Source d7266b3 frozen; fresh complete CI plus independent verification of CAP03all24,874Node/build/tooling,44browser+6crews,originalpairedbridge/coupled and24current-owner futures. No acceptance/integration yet."
+    "current_node": "implementation",
+    "current_owner": "implementer",
+    "next_action": "Final correction3/3 for preserved independentFAIL3: workflow schema guard must check report-level exactStatsAndSummary and every row.result/checks, preserve all24 counts and unknown/fail rejection. No production, task-criteria or audit changes. Re-pin and fresh full certification before verification/review."
   },
   "result": {
     "final_head": "",
