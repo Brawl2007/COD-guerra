@@ -14,7 +14,8 @@ from pathlib import Path
 REGISTRY = Path(__file__).resolve().parents[1] / "m01-task-registry.json"
 CLAIM_PREFIX = "claims/m01-"
 VALID = {"UNKNOWN", "NEEDS_AUDIT", "DELIVERED_PR", "DELIVERED_BRANCH",
-         "IN_CANDIDATE_UNVERIFIED", "SUBSUMED", "HUMAN_REQUIRED", "HUMAN_REVIEW_REQUIRED"}
+         "IN_CANDIDATE_UNVERIFIED", "SUBSUMED", "HUMAN_REQUIRED", "HUMAN_REVIEW_REQUIRED",
+         "INTEGRATED_VERIFIED", "PARTIAL_IN_CANDIDATE", "IN_CORRECTION", "NOT_DEVELOPED", "ANNULLED"}
 
 
 def load(path=REGISTRY):
@@ -57,11 +58,12 @@ def live_refs(repo, task):
 
 
 def evaluate(task, entry, matches=None):
-    if entry["status"] in ("DELIVERED_PR", "DELIVERED_BRANCH", "IN_CANDIDATE_UNVERIFIED"):
+    if entry["status"] in ("DELIVERED_PR", "DELIVERED_BRANCH", "IN_CANDIDATE_UNVERIFIED",
+                           "INTEGRATED_VERIFIED", "IN_CORRECTION"):
         return "REUSE_OR_REVIEW_EXISTING"
-    if entry["status"] in ("SUBSUMED", "HUMAN_REQUIRED", "HUMAN_REVIEW_REQUIRED"):
+    if entry["status"] in ("SUBSUMED", "HUMAN_REQUIRED", "HUMAN_REVIEW_REQUIRED", "ANNULLED"):
         return "DO_NOT_START"
-    if entry["status"] == "NEEDS_AUDIT":
+    if entry["status"] in ("NEEDS_AUDIT", "PARTIAL_IN_CANDIDATE"):
         return "AUDIT_EXISTING_FIRST"
     if matches is None:
         return "LIVE_CHECK_REQUIRED"
