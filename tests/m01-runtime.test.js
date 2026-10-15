@@ -88,11 +88,16 @@ test('a late message never rewinds battle time and every aerial impact stays at 
   assert.equal(sim.flags['m01.forward_post_state'],'intact_near_miss');
   for(const d of sim.sectors.damage)if(d.id==='forward_post')assert.ok(Math.hypot(d.x-sim.player.x,d.z-sim.player.z)>=30);
 });
-test('west demolition waits inside the safety zone, then releases once the player and allies have left',()=>{
+test('west demolition requires actual delivery and waits while the player remains inside the safety zone',()=>{
   const sim=new M01Simulation();sim.restoreSnapshot(full().checkpoints.cp_m01_d_retirada);
   for(const a of sim.allies)if(a.alive&&a.active&&!a.civilian){a.x=-170;a.z=22;}
   sim.player.x=-40;sim.player.z=32;sim.battleClock=seconds('06:44:30');
-  run(sim,3);assert.equal(sim.battleClock,seconds('06:44:30'));assert.equal(sim.consumedEvent(E('west_demolition')),false);
+  const bak=sim.actor('jozef_bak'),carrier=sim.actor('leon_dudek');
+  run(sim,3);assert.ok(bak.carry||bak.carriedBy);assert.equal(bak.carriedBy,carrier.id);assert.equal(sim.battleClock,seconds('06:44:30'));assert.equal(sim.consumedEvent(E('west_demolition')),false);
+  // Complete the real finite putdown at the actual evacuation destination; do not clear the carry flag.
+  Object.assign(carrier,{x:-332,z:24});run(sim,.1);assert.equal(bak.carry.phase,'putdown');
+  run(sim,2);assert.equal(bak.carry,undefined);assert.equal(bak.carriedBy,null);
+  assert.equal(sim.battleClock,seconds('06:44:30'));assert.equal(sim.consumedEvent(E('west_demolition')),false);
   sim.player.x=-120;run(sim,4);assert.equal(sim.consumedEvent(E('west_demolition')),true);assert.ok(sim.player.alive);
 });
 test('boundary warning precedes failure and its eight second timer resets when the player returns',()=>{
