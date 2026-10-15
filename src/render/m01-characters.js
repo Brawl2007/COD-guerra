@@ -11,7 +11,7 @@ import {mg34ProneSample,MG34_MUZZLE_SOCKET,eyePosition,actorHitboxes,muzzlePosit
 const BASE='assets/models/provisional/m01/characters/';
 const MG='assets/models/provisional/m01/weapons/mg34/';
 const MG_PRONE='assets/models/provisional/m01/weapons/mg34-prone/';
-const PRONE_CLIPS=['enter','idle','aim','fire_burst','exit'].map(n=>`mg34_prone_${n}`);
+const PRONE_CLIPS=['enter','idle','aim','fire_burst','exit','reload'].map(n=>`mg34_prone_${n}`);
 const CKM='assets/models/provisional/m01/weapons/ckm_wz30/';
 const ckmRole=a=>a.group==='grp_ckm_crew'&&['ckm_gunner','ckm_loader'].includes(a.id);
 const ckmAtPost=a=>ckmRole(a)&&a.ckm?.phase!=='retreat';
@@ -40,6 +40,9 @@ export class M01Characters {
         if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
       }),
       this.assets.load('m01-station-transitions',BASE+'station-drag-transitions/m01_station_drag_transitions.glb').then(g=>{
+        if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
+      }),
+      this.assets.load('m01-crews-evacuation',BASE+'crews-evacuation/m01_crews_evacuation.glb').then(g=>{
         if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
       }),
       this.assets.load('mg34-clips',MG+'m01_mg34_animations.glb').then(g=>{
@@ -100,11 +103,15 @@ export class M01Characters {
   sample(actor,time,actors,pose,battleClock){
     const offset=(hash(actor.id)%1000)/250;
     if(pose.name==='fallen')return {clip:'fallen',time:1.4,loop:false};
+    if(actor.mg34Loader){const phase=actor.mg34Loader.phase,name=`mg34_loader_prone_${phase}`;
+      if(this.clips.has(name))return {clip:name,time:Math.max(0,time-actor.mg34Loader.startedAt),loop:phase==='idle'};
+      return {clip:phase==='leave'?'walk':'pinned',time:time+offset,loop:true};}
     const prone=mg34ProneSample(actor,time);
     if(prone&&actor.mg34Prone.phase!=='standing'&&this.hasProne())return {clip:prone.clip,time:prone.time,loop:false};
     if(ckmAtPost(actor)&&this.hasCKM()&&!['wounded','carried'].includes(pose.name)){
-      const phase=actor.ckm.phase,role=actor.id==='ckm_gunner'?'gunner':'loader';
-      return {clip:`ckm_wz30_${role}_${phase}`,time:Math.max(0,time-actor.ckm.startedAt),loop:phase==='idle'};
+      const phase=actor.ckm.phase==='fire_burst'?'aim':actor.ckm.phase,role=actor.id==='ckm_gunner'?'gunner':'loader';
+      const name=`ckm_wz30_${role}_${phase}`;
+      return {clip:this.clips.has(name)?name:`ckm_wz30_${role}_idle`,time:Math.max(0,time-actor.ckm.startedAt),loop:phase==='idle'||phase==='aim'};
     }
     const stationPatient=actor.id==='generic_rifleman'?actor:actors.find(a=>a.id==='generic_rifleman'&&a.carriedBy===actor.id);
     const stationMedic=stationPatient&&actors.find(a=>a.id===stationPatient.carriedBy);
@@ -121,6 +128,19 @@ export class M01Characters {
       return phase==='drag'?{clip:this.clips.has('drag_wounded')?'drag_wounded':'pinned',time:time+offset,loop:true}:
         {clip:this.clips.has('crouched_idle')?'crouched_idle':'pinned',time:0,loop:false};
     }
+    const bak=actor.id==='jozef_bak'?actor:actors.find(a=>a.id==='jozef_bak'&&a.carriedBy===actor.id);
+    if(bak?.carry&&bak.alive){const phase=bak.carry.phase,patient=actor===bak;
+      if(phase!=='carry'){const name=`carry_${phase}_${patient?'patient':'carrier'}`;
+        if(this.clips.has(name))return {clip:name,time:Math.min(1.6,Math.max(0,time-bak.carry.startedAt)),loop:false};
+        return {clip:patient?'wounded':'crouched_idle',time:0,loop:false};}
+      if(patient)return {clip:'carried',time:time+offset,loop:true};
+      if(this.clips.has('carry_walk')){const duration=this.clips.get('carry_walk').duration,phase=(actor.motion?.odometer??0)/(1.6*duration);
+        return {clip:'carry_walk',time:(phase-Math.floor(phase))*duration,loop:true,rate:(actor.motion?.speed??1.6)/1.6};}
+    }
+    if(actor.posture==='prone'&&!actor.mg34Prone){const age=Math.max(0,time-actor.postureSince),clip=age<1.2?'prone_enter':'prone_idle';
+      if(this.clips.has(clip))return {clip,time:age<1.2?age:age-1.2,loop:age>=1.2};
+      return {clip:'pinned',time:0,loop:false};}
+    if(actor.reload&&this.clips.has('reload_clip'))return {clip:'reload_clip',time:Math.min(3.4,time-actor.reload.startedAt),loop:false};
     if(pose.name==='carried')return {clip:'carried',time:time+offset,loop:true};
     if(pose.name==='wounded')return {clip:'wounded',time:time+offset,loop:true};
     if(pose.name==='seated')return {clip:'seated',time:time+offset,loop:true};
@@ -223,6 +243,12 @@ export class M01Characters {
       // Pure resolver -> clip stack with weights (cross-fades from sim time); the player writes it to persistent actions.
       const plan=resolveAnimation({actor:a,time,candidate:sample,prev:this.anim.get(a.id),
         alt:patch=>{const b={...a,...patch},s=this.describe(b,time,actors,actorPose(b,time),battleClock);return this.clips.has(s.clip)?s:null;}});
+      const fade=a.mg34Prone?.fade;
+      if(a.alive&&fade&&time>=fade.startedAt&&time<fade.startedAt+.2&&this.clips.has('mg34_prone_fire_burst')){
+        const u=(time-fade.startedAt)/.2,w=u*u*(3-2*u);
+        plan.blend=[{clip:'mg34_prone_fire_burst',time:fade.rounds*.075,weight:1-w,loop:false},
+          {clip:sample.clip,time:sample.time,weight:w,loop:sample.loop,target:true}];
+      }
       this.anim.set(a.id,plan.state);
       v.player.apply(plan.blend.flatMap(b=>{const c=this.clips.get(b.clip);return c?[{...b,clip:c}]:[];}));
       v.action=v.player.target;v.clip=plan.clip;
@@ -242,7 +268,7 @@ export class M01Characters {
       visible.push({...((mgGunner(a)&&a.mg34Prone)?{prone:{phase:a.mg34Prone.phase,startedAt:a.mg34Prone.startedAt,progress:a.mg34Prone.progress,rounds:a.mg34Prone.burst?.rounds??0,emitted:a.mg34Prone.burst?.emitted??0,shot:a.shot,firedAt:a.firedAt,eye:eyePosition(a),hitboxes:actorHitboxes(a),muzzle:muzzlePosition(a,time)}}:{}),id:a.id,lod,visual:v.visual,clip:sample.clip,clipTime:v.action.time,loop:sample.loop,blend:plan.blend.map(({clip,weight,time})=>({clip,weight,time})),weapon:v.weapon,weaponLOD:v.weaponLOD,muzzle:this.muzzle(a.id)?.toArray(),
         weaponMeshes:v.meshes.filter(n=>weaponParts.has(n.name)&&n.visible||n.name.startsWith('mg34_')&&n.visible&&v.weaponRoot?.visible).map(n=>n.name)});
     }
-    for(const {a}of candidates)if(selected.has(a.id)&&a.carriedBy&&a.task!=='station_wounded'&&selected.has(a.carriedBy)){
+    for(const {a}of candidates)if(selected.has(a.id)&&a.carriedBy&&a.task!=='station_wounded'&&(!a.carry||a.carry.phase==='carry')&&selected.has(a.carriedBy)){
       const v=this.instances.get(a.id),socket=this.instances.get(a.carriedBy).root.getObjectByName('carry_socket');
       socket.add(v.root);v.root.position.set(0,0,0);v.root.rotation.set(0,0,0);v.root.updateMatrixWorld(true);
     }
@@ -265,7 +291,7 @@ export class M01Characters {
       const source=this.sources.get(`ckm:${lod}`),root=source.scene.clone(true);
       this.scene.add(root);this.ckm={root,lod,mixer:new THREE.AnimationMixer(root),clips:source.animations};
     }
-    const v=this.ckm,phase=gunner.ckm.phase==='idle'?'idle':'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`);
+    const v=this.ckm,phase=gunner.ckm.phase==='fire_burst'?'aim':['idle','aim','feed'].includes(gunner.ckm.phase)?gunner.ckm.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');
     if(!clip){v.root.visible=false;return;}
     v.root.visible=true;v.root.position.set(CKM_POSITION.x,CKM_POSITION.y,CKM_POSITION.z);v.root.rotation.y=-Math.PI/2;
     v.mixer.stopAllAction();const action=v.mixer.clipAction(clip).setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.reset().play();

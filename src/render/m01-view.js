@@ -24,6 +24,8 @@ import { M01TrainWagons } from './m01-train-wagons.js';
 import { M01YardWagons, yardWagonFireDamage } from './m01-yard-wagons.js';
 import { M01Locomotive } from './m01-locomotive.js';
 import { M01Panzerzug } from './m01-panzerzug.js';
+import {M01TrainLife} from './m01-train-life.js';
+import {M01StationDamage} from './m01-station-damage.js';
 import {JU87_LOD_DISTANCES,JU87_QUALITY_FLOOR,JU87_BOMB_POOL,ju87Attitude,ju87Fade,ju87HeardAt,ju87PropellerTime,selectJu87Level,ju87SkyEnvironment,instanceJu87Materials,setJu87Fade,m01BombFlights} from './m01-aircraft.js';
 import {soldierVisualVariant} from './m01-soldier-variation.js';
 import { M01CombatFeedback } from './m01-combat-feedback.js';
@@ -101,8 +103,10 @@ export class M01View {
     this.portalPolish=new M01BridgePortalPolish({stone:this.materials.bridgeStone});
     this.bridgeStructure=new M01BridgeStructure({steel:this.materials.bridgeSteel,rail:this.materials.metal,timber:this.materials.wood,stone:this.materials.bridgeStone});
     this.bridgeFinish=new M01BridgeFinishRuntime(this.scene,{quality:this.owner.quality});
+    this.bridgeSyncInput={kits:this.kit,quality:this.owner.quality,world:null};
+    this.bridgeSelectInput={kits:this.kit,state:null,camera:this.camera,prepared:true};
     if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')){
-      this.bridgeFinishDebug={setEnabled:on=>{const result=this.bridgeFinish.setEnabled(on);this.lastFrame=null;return result;},setCamera:pose=>{this.bridgeEditorialCamera=pose;this.lastFrame=null;return pose;},get:()=>this.bridgeFinish.diagnostics};window.m01BridgeFinishDebug=this.bridgeFinishDebug;
+      this.bridgeFinishDebug={setEnabled:on=>{const result=this.bridgeFinish.setEnabled(on);this.lastFrame=null;return result;},setTrainEffects:options=>{const value=typeof options==='boolean'?{lamp:options,smoke:options}:options;this.trainSmokeEnabled=Boolean(value.smoke);for(const lamp of this.trainLife.lamps)lamp.visible=Boolean(value.lamp);this.lastFrame=null;return value;},setCamera:pose=>{this.bridgeEditorialCamera=pose;this.lastFrame=null;return pose;},get:()=>this.bridgeFinish.diagnostics};window.m01BridgeFinishDebug=this.bridgeFinishDebug;
     }
     this.atmosphere=new M01Atmosphere(this.scene);
     this.damageDecals=new M01DamageDecals(this.scene);
@@ -250,13 +254,24 @@ export class M01View {
       if(skinned.has(a.id)||impostored.has(a.id))continue;
       root.position.set(a.x,a.y+pose.root.offsetY,a.z);
       root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
+      if(a.task==='yard_patient'){
+        root.position.set(a.x,a.y,a.z);root.rotation.set(0,-a.facing,0);root.updateMatrix();
+        put('torso',[0,.30,0],[.82,.055,2.05],'#8d856a');
+        for(const side of [-1,1])put('rifle',[side*.47,.29,0],[.045,.045,2.65],'#655642');
+        root.position.set(a.x,a.y+pose.root.offsetY,a.z);root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
+      }
+      if(a.task==='cart'){
+        put('torso',[0,.85,0],[2.3,.65,1.2],'#685545');
+        for(const x of [-.85,.85])for(const z of [-.7,.7])put('boots',[x,.35,z],[.62,.62,.12],'#3e352a');
+        put('rifle',[1.7,.52,0],[1.8,.1,.1]);continue;
+      }
       const visual=!a.civilian&&this.characters?.visuals?soldierVisualVariant(a):null;
       const cloth=a.civilian?'#404c56':visual?'#'+visual.proxyCloth:a.team==='enemy'?'#b4c0b7':'#c9bea0',
         helmet=visual?'#'+visual.proxyHelmet:a.team==='enemy'?'#465252':'#635f47',skin=visual?'#'+visual.proxySkin:'#ffffff';
       const [hx,hy,hz]=pose.head,[tx,ty,tz]=pose.torso.position;
       const near=Math.hypot(a.x-player.x,a.z-player.z)<45;
       put('torso',pose.torso.position,pose.prone?pose.torso.size:[.30,pose.torso.size[1],.46],cloth,{roll:pose.torso.roll});put(near?'head':'farHead',pose.head,[.125,.18,.137],skin);
-      put('helmet',[hx,hy+.105,hz],[.175,.14,.188],helmet);
+      put('helmet',[hx,hy+.105,hz],[.175,a.civilian?.055:.14,.188],a.civilian?'#2b3134':helmet);
       put('brim',[hx+.01,hy+.12,hz],[.186,.022,.2],helmet);
       if(near){put('nose',[hx+.126,hy+.005,hz],[.020,.039,.022],skin);
       put('eyes',[hx+.121,hy-.064,hz],[.004,.002,.021]);
@@ -275,6 +290,10 @@ export class M01View {
         const midpoint=bone.from.map((v,i)=>(v+bone.to[i])/2),length=Math.hypot(...bone.from.map((v,i)=>v-bone.to[i]));
         put('limbs',midpoint,[bone.radius,length,bone.radius],cloth,bone);
       }
+      if(a.lantern&&a.alive){put('pouches',[.15,.85,-.24],[.19,.28,.18],'#242824');put('flash',[.24,.9,-.24],[.13,.20,.13],'#ffc778');}
+      if(a.task==='coffee'){put('pouches',[.32,1.12,.16],[.12,.14,.12],'#a6a19a');}
+      if(a.task==='map'){put('pouches',[.35,1,.04],[.02,.3,.38],'#b4ad8f');}
+      if(a.group==='grp_station_yard'&&a.role==='MEDIC'){put('pouches',[.09,1.34,.27],[.16,.13,.035],'#dfd8c8');put('pouches',[.09,1.34,.292],[.04,.11,.012],'#914539');put('pouches',[.09,1.34,.294],[.11,.035,.014],'#914539');}
       for(const foot of pose.boots)put('boots',foot,[.25,.11,.16]);
       if(near)put('hands',[hx-.005,hy-.17,hz],[.058,.072,.060],skin);
       if(near)for(const i of [3,7])put('hands',pose.limbs[i].to,[.043,.066,.048],skin);
@@ -674,10 +693,12 @@ export class M01View {
     this.wagons=new M01TrainWagons(this.train,this.assets,this.box,this.cylinder,this.materials.wood,this.materials.metal);
     this.yardWagons=new M01YardWagons(this.scene,this.assets,this.box,this.cylinder,this.materials.wood,this.materials.metal,this.atmosphere.texture);
     this.panzerzugArt=new M01Panzerzug(this.panzerzug,this.assets,this.box,this.cylinder,this.materials.metal);
+    this.trainLife=new M01TrainLife(this.train,this.panzerzug);this.stationDamage=new M01StationDamage(this.scene);
   }
   syncDamage(sim,state){
-    const yardFire=yardWagonFireDamage(sim.destruction,sim.world);
-    this.atmosphere.update(yardFire?{...state,damage:[...state.damage,yardFire]}:state,sim.clock,this.owner.quality,{surfaceY:(x,z)=>sim.world.terrainHeightAt(x,z)});
+    this.stationDamage.update(state.damage,sim.clock);
+    const yardFire=yardWagonFireDamage(sim.destruction,sim.world,sim.consumed.evt_m01_wounded_dragged??0,sim.clock);
+    this.atmosphere.update(yardFire?{...state,damage:[...state.damage,yardFire]}:state,sim.clock,this.owner.quality,{surfaceY:(x,z)=>sim.world.terrainHeightAt(x,z),trainSources:this.trainSmokeEnabled===false?[]:this.trainLife.sources});
     const live=new Set(sim.grenades.active.map(g=>g.id));
     for(const g of sim.grenades.active){let m=this.grenadeViews.get(g.id);if(!m){m=this.mesh('sphere','metal',[0,0,0],[.07,.07,.07],this.effects);this.grenadeViews.set(g.id,m);}m.position.set(g.x,g.y,g.z);}
     for(const [id,m]of this.grenadeViews)if(!live.has(id)){this.effects.remove(m);this.grenadeViews.delete(id);}
@@ -690,14 +711,16 @@ export class M01View {
   render(sim){
     // Apply authoritative train/wagon state before pause-frame caching so restore cannot freeze constructor defaults.
     const state=sim.renderState,time=sim.clock;
+    this.trainLife.update(sim.battleClock);
     this.wagons.update(sim.player,this.owner.quality);
-    this.yardWagons.update(sim.destruction,this.owner.quality,sim.world,sim.player,time);
+    this.yardWagons.update(sim.destruction,this.owner.quality,sim.world,sim.player,time,sim.consumed.evt_m01_wounded_dragged);
     this.locomotive.update(sim.player);this.panzerzugArt.update(sim.player);
+    this.trainLife.observe(this.wagons.revision+this.locomotive.revision+this.panzerzugArt.revision);
     // Retain the last canvas frame while the mission clock is frozen (menu/pause).
     // Assets, world restore, quality and resizing still invalidate it.
     this.environment?.fieldStructures.sync(sim.world,this.owner.quality,sim.player);this.environment?.syncRailProps(sim.world,this.owner.quality,sim.player);this.environment?.trackBed.bindBridgeKits(this.kit,this.bridgeStructure);
     this.environment?.syncVegetation(sim.world,this.owner.quality,sim.player,sim.clock,this.terrainRelief.enabled);
-    this.bridgeFinish.sync({kits:this.kit,quality:this.owner.quality,world:sim.world});
+    this.bridgeSyncInput.kits=this.kit;this.bridgeSyncInput.quality=this.owner.quality;this.bridgeSyncInput.world=sim.world;this.bridgeFinish.sync(this.bridgeSyncInput);
     const canvas=this.owner.canvas,previous=this.lastFrame;
     const frame={clock:sim.clock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
       width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,
@@ -711,7 +734,7 @@ export class M01View {
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
     this.updateDemolition(state,time,sim);
     this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.lighting(sim);this.water.sync(this.lightingModel,sim.clock,this.owner.quality);
-    this.train.visible=state.train963;this.panzerzug.visible=state.panzerzug;
+    // Battle-clock arrival is presentation only; final anchors and event flags remain authoritative and unchanged.
     this.updateAircraft(state,time,sim.player,ju87HeardAt(sim));this.updateBombs(state,time,sim.player,sim.world);
     const player=sim.player,eye=eyePosition(player),dir=aimDirection(player.angle,player.pitch);
     const bob=player.moveBlend*Math.sin(time*(player.sprinting?14:9))*.014;
@@ -722,7 +745,7 @@ export class M01View {
     if(feedback.roll)this.camera.rotateZ(feedback.roll);
     if(this.bridgeEditorialCamera){this.camera.position.set(...this.bridgeEditorialCamera.position);this.camera.lookAt(...this.bridgeEditorialCamera.target);}
     this.bridgeFinish.prepareFrame();this.bridgeStructure.sync(this.owner.quality,this.camera.position,sim.world);this.environment?.trackBed.applyLegacyVisibility();
-    this.bridgeFinish.select({kits:this.kit,state,camera:this.camera,prepared:true});
+    this.bridgeSelectInput.kits=this.kit;this.bridgeSelectInput.state=state;this.bridgeFinish.select(this.bridgeSelectInput);
     this.updateFire(sim);
     const width=this.owner.canvas.clientWidth,height=this.owner.canvas.clientHeight,aspect=width/height;
     const fov=player.aiming?48:70;
@@ -755,6 +778,7 @@ export class M01View {
     const post=this.grading.begin(this.engine,this.owner.quality,this.lightingModel,this.camera);
     this.environment?.vegetation.beginFrame(this.camera);
     this.bridgeFinish.beginFrame(this.camera);
+    this.trainLife.beginFrame(this.camera);
     this.engine.info.autoReset=false;this.engine.info.reset();
     if(post)this.drawGraded(post);else this.engine.clear();
     if(!post)this.engine.render(this.scene,this.camera);
@@ -815,7 +839,7 @@ export class M01View {
   get diagnostics(){return {models:this.kit.map(k=>k.file.file),assetFailures:this.assets.failures,
     requiredAssetFailures:this.assets.failures.filter(f=>manifest.files.some(m=>typeof m.lod==='number'&&m.file===f.path)),
     characters:this.characters?.diagnostics,viewModel:this.viewModel?.stats,weaponFx:this.weaponWorldFx.diagnostics,weaponLighting:this.weaponLighting.state,lighting:viewLightingDiagnostics(this),water:this.water.diagnostics,impostors:this.impostors?.diagnostics,grading:this.grading.diagnostics,
-    locomotive:this.locomotive.diagnostics,panzerzug:this.panzerzugArt.diagnostics,wagons:this.wagons.diagnostics,yardWagons:this.yardWagons.diagnostics,
+    locomotive:this.locomotive.diagnostics,panzerzug:this.panzerzugArt.diagnostics,trainLife:this.trainLife.diagnostics,stationDamage:this.stationDamage.diagnostics,wagons:this.wagons.diagnostics,yardWagons:this.yardWagons.diagnostics,
     aircraft:{loaded:[...this.aircraftSources.keys()].sort(),planes:this.planes.map(p=>{const model=(p.levels[p.userData.level]??p.levels.find(l=>l.object.visible))?.object,prop=model?.getObjectByName('propeller');return {visible:p.visible,lod:model?.userData.lod,position:p.position.toArray(),attitude:[p.rotation.x,p.rotation.y,p.rotation.z],fade:p.userData.fade,propeller:prop?.quaternion.toArray()};}),
       path:this.aircraftPath?{...this.aircraftPath,planeSeconds:[0,1,2].map(i=>m01StukaPathTime(this.aircraftPath.since,i))}:null,
       bombs:{visible:this.bombState?.visible??0,pool:this.bombs?.length??0,flights:this.bombState?.flights??[]},
@@ -841,7 +865,7 @@ export class M01View {
     this.fallbackFx.dispose();this.weaponWorldFx.dispose();this.weaponLighting.dispose();
     if(typeof window!=='undefined'&&window.m01ReliefHorizonDebug===this.reliefHorizonDebug)delete window.m01ReliefHorizonDebug;this.terrainRelief?.dispose();this.farLandscape?.dispose();
     if(typeof window!=='undefined'&&window.m01VegetationDebug===this.vegetationDebug)delete window.m01VegetationDebug;
-    this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.environment?.dispose();this.assets.dispose();this.terrain?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
+    this.trainLife.dispose();this.stationDamage.dispose();this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.environment?.dispose();this.assets.dispose();this.terrain?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.geometry.forEach(g=>g.dispose());
     const textures=new Set();for(const m of new Set([...Object.values(this.materials),this.terrainLegacyMaterial].filter(Boolean))){if(m===this.terrain?.material)continue;if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
     this.scene.traverse(n=>{if(n.isInstancedMesh)n.dispose();});this.scene.clear();this.weaponScene.clear();
   }

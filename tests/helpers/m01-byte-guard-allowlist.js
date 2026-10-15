@@ -3,6 +3,16 @@
 export const integratedPresentation=new Set([
  // Simulation presentation additions are checked against immutable per-tick gameplay traces in m01-animation-contract.test.js.
  'src/game/m01-simulation.js',
+ // T07 generic prone geometry only; standing/crouched slab/ray code is retained, with meaningful oriented-prone tests in m01-partials-completion.
+ 'src/world/spatial.js',
+ // T36 adds a measured reload curve from the unchanged MG34 GLB; geometryContract() independently reproduces the whole file.
+ 'src/world/m01-mg34-prone-geometry.json',
+ // T07/T34: generic prone and civilian task poses, and finite event-age wagon fire. Collider/yard placement guards remain exact.
+ 'src/render/m01-actor-pose.js','src/render/m01-yard-wagons.js',
+ // T26: read-only data cues; tests/m01-partials-completion proves pause/reload and full simulation identity.
+ 'src/ui/m01-hud.js',
+ // T09 adds the material registry. m01-material-authority.test.js independently asserts the ENTIRE original surface() function byte-for-byte.
+ 'src/render/materials.js',
  // T23 (M01-EAST-FRONT-VISIBLE-V1): the east platoon holds the deck and six reserve men fall by attrition rounds. The mission data (hold, attrition,
  // display profiles) and the round kinds (m01-fire.js) change by design; the per-tick gameplay golden was re-baselined on x86 for it.
  'missions/m01-tczew/mission.json','src/game/m01-fire.js',

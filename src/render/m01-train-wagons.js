@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {batchFarWagon} from './m01-train-batching.js';
 import {M01TrainConsistDetail,M01_TRAIN_ART_OFFSET_Y,m01WagonArtMatrix,m01WagonVariation} from './m01-train-consist-detail.js';
 
 const BASE='assets/models/provisional/m01-wagons/';
@@ -29,7 +30,7 @@ export class M01TrainWagons {
   }
   async load(){
     await Promise.allSettled(TYPES.flatMap(type=>[0,1,2].map(async lod=>{
-      try{const source=await this.assets.load(`wagon:${type}:${lod}`,path(type,lod));if(!this.disposed){this.sources.set(key(type,lod),source);this.rebuild();this.revision++;}}
+      try{const source=await this.assets.load(`wagon:${type}:${lod}`,path(type,lod));if(!this.disposed){this.sources.set(key(type,lod),lod===2?batchFarWagon(source):source);this.rebuild();this.revision++;}}
       catch{/* Optional art: closest loaded LOD or procedural proxy remains visible. */}
     })));
   }
@@ -58,7 +59,7 @@ export class M01TrainWagons {
       }
       const groupKey=key(wagon.type,best.lod);if(!groups.has(groupKey))groups.set(groupKey,{source:best.source,wagons:[],lod:best.lod,type:wagon.type});groups.get(groupKey).wagons.push(wagon);
     }
-    this.proxyBody.count=missing;this.proxyWheels.count=missing*2;for(const b of [this.proxyBody,this.proxyWheels]){b.instanceMatrix.needsUpdate=true;b.computeBoundingSphere();}
+    this.proxyBody.count=missing;this.proxyWheels.count=missing*2;for(const b of [this.proxyBody,this.proxyWheels]){b.visible=missing>0;b.instanceMatrix.needsUpdate=true;b.computeBoundingSphere();}
     const arts=new Map(),tints=new Map();   // once per wagon, not per GLB node
     for(const {wagons} of groups.values())for(const w of wagons){arts.set(w.id,m01WagonArtMatrix(w));tints.set(w.id,new THREE.Color(...m01WagonVariation(w.id).tint));}
     for(const {source,wagons,lod,type} of groups.values()){
@@ -77,5 +78,5 @@ export class M01TrainWagons {
     return {wagons:M01_TRAIN_WAGON_PLAN.length,step:9.1,lodDistribution:distribution,loaded:[...this.sources.keys()].sort(),proxies:this.proxyBody.count,batches:this.batches.length,activeInstancesByLod:active,visible:this.group.parent?.visible??false,first:[M01_TRAIN_WAGON_PLAN[0].x,0,-2.5],last:[M01_TRAIN_WAGON_PLAN.at(-1).x,0,-2.5],
       artOffsetY:M01_TRAIN_ART_OFFSET_Y,shadowCasters:this.batches.filter(b=>b.castShadow).length+this.detail.diagnostics.shadowCasters,detail:this.detail.diagnostics};
   }
-  dispose(){if(this.disposed)return;this.disposed=true;for(const b of [...this.batches,this.proxyBody,this.proxyWheels])b.dispose();this.detail.dispose();this.group.removeFromParent();this.batches=[];this.sources.clear();}
+  dispose(){if(this.disposed)return;this.disposed=true;for(const b of [...this.batches,this.proxyBody,this.proxyWheels])b.dispose();this.detail.dispose();this.group.removeFromParent();this.batches=[];for(const s of this.sources.values())for(const g of s.ownedBatchGeometries??[])g.dispose();this.sources.clear();}
 }

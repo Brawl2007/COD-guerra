@@ -1,0 +1,76 @@
+{
+  "task": "T06",
+  "provenance": "Real-control mission retreat, production Game.handleM01Event and AudioManager/Director; FakeAudioContext tracks actual scheduled source ends. All sample fetches intentionally offline.",
+  "maxVoices": 32,
+  "requests": 2572,
+  "dropped": 1,
+  "ratio": 0.00038880248833592535,
+  "enemyFireEvents": 339,
+  "heardRequests": 339,
+  "maxDelayedRequests": 21,
+  "generatedSynthSources": 17316,
+  "peakVoices": 22,
+  "director": {
+    "bound": true,
+    "errors": 0,
+    "lastError": null,
+    "zone": "open",
+    "surface": "default",
+    "emitters": {
+      "slots": 217,
+      "scheduled": 288,
+      "played": 282,
+      "suppressed": 1,
+      "dropped": 0,
+      "occluded": 0,
+      "rewinds": 0,
+      "readoutSamples": 1297,
+      "readoutMissing": 0,
+      "active": [
+        "ae_s2_mg_dike",
+        "ae_s2_mg_train"
+      ],
+      "pending": 5
+    },
+    "derived": {
+      "grenade": 0,
+      "demolition": 0,
+      "bomb": 0,
+      "shell": 0,
+      "rkm_wz28": 0,
+      "ally_rifle": 0,
+      "other": 0,
+      "crack": 0,
+      "whizz": 0,
+      "none": 0
+    },
+    "music": {
+      "gate": "stinger-only",
+      "gateOpen": true,
+      "layers": [
+        true,
+        false,
+        false,
+        false
+      ],
+      "layerChanges": 21,
+      "fired": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "ducked": false,
+      "busDuck": 1,
+      "playing": [],
+      "primed": true,
+      "stingerFired": 2,
+      "stingerSkipped": 0,
+      "stingerPlayed": 0,
+      "stingerSilent": 2,
+      "stemStarts": 0,
+      "gateChanges": 5,
+      "rewinds": 0
+    }
+  }
+}

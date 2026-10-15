@@ -120,3 +120,13 @@ test('checkpoint feedback, restore fade and continue card are timed by the simul
   assert.equal(JSON.stringify([...el.fade.styles,...el.resumeCard.styles,presenter.diagnostics]),frozen);
   presenter.clear();assert.equal(el.root.classes.has('m01'),false);assert.equal(el.checkpointName.textContent,'');assert.equal(el.ammo.classes.has('low'),false);assert.equal(el.interaction.textContent,'');assert.equal(el.fade.styles.has('opacity'),false);
 });
+
+
+test('switching from an active free M01 cue to French clears all owned cue DOM and reset reapplies the same scene deterministically',()=>{
+  const {el,presenter}=hud();el.sceneCue=new FakeElement();const sim=new M01Simulation();sim.scene={id:'cs_m01_bombing',elapsed:1,beats:[]};
+  presenter.update(sim);assert.equal(el.root.classes.has('scene-beats'),true);assert.ok(el.sceneCue.textContent.length>0);assert.ok(el.root.styles.has('--scene-dim'));
+  presenter.clear();assert.equal(el.root.classes.has('scene-beats'),false);assert.equal(el.sceneCue.textContent,'');assert.equal(el.sceneCue.styles.has('opacity'),false);
+  assert.equal(el.root.styles.has('--scene-dim'),false);assert.equal(el.root.styles.has('--scene-shake'),false);
+  presenter.update(sim);const frame=presenter.beatFrame;assert.equal(el.root.classes.has('scene-beats'),true);presenter.reset('new',sim.clock);
+  assert.equal(el.root.classes.has('scene-beats'),false);assert.equal(el.sceneCue.textContent,'');presenter.update(sim);assert.deepEqual(presenter.beatFrame,frame);assert.equal(el.root.classes.has('scene-beats'),true);
+});

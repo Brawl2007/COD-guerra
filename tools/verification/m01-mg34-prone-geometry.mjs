@@ -23,7 +23,7 @@ export async function realMG34Rig(){
 }
 export async function geometryContract(){
   const rig=await realMG34Rig(),curves={};
-  for(const [phase,name,end] of [['enter','mg34_prone_enter',1.9],['idle','mg34_prone_idle',0],['aim','mg34_prone_aim',0],['fire_burst','mg34_prone_fire_burst',.525],['exit','mg34_prone_exit',1.9]]){
+  for(const [phase,name,end] of [['enter','mg34_prone_enter',1.9],['idle','mg34_prone_idle',0],['aim','mg34_prone_aim',0],['fire_burst','mg34_prone_fire_burst',.525],['exit','mg34_prone_exit',1.9],['reload','mg34_prone_reload',4.8]]){
     const rows=[];
     // Retain authored keys, refining nonlinear segments to 0.1 mm at quarter/midpoints.
     const clip=rig.animations.find(c=>c.name===name);

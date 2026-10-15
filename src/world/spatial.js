@@ -15,7 +15,7 @@ export function mg34ProneSample(actor,clock){
     return p.fromProgress<1?{clip:'mg34_prone_enter',curve:'enter',time:low*1.9,low}:
       {clip:'mg34_prone_exit',curve:'exit',time:progress*1.9,low};
   }
-  const time=p.phase==='fire_burst'?Math.max(0,Math.min(.525,(clock??p.startedAt)-p.startedAt)):0;
+  const time=['fire_burst','reload'].includes(p.phase)?Math.max(0,Math.min(p.phase==='reload'?4.8:.525,(clock??p.startedAt)-p.startedAt)):0;
   return {clip:`mg34_prone_${p.phase}`,curve:p.phase,time,low:1};
 }
 export function mg34ProneGeometry(actor,clock){
@@ -31,10 +31,15 @@ export function mg34LocalToWorld(actor,p){
   // Same transform as M01Characters: rotation.y = -facing - PI/2; model forward is -Z.
   return {x:actor.x-s*p[0]-c*p[2],y:actor.y+p[1],z:actor.z+c*p[0]-s*p[2]};
 }
+export function genericProneGeometry(actor){
+  if(actor.posture!=='prone'||actor.mg34Prone)return null;
+  const low=actor.postureProgress??1,mix=(standing,prone)=>standing.map((v,i)=>v+(prone[i]-v)*low);
+  return {low,head:mix([0,1.6,0],[0,.26,-.8]),torso:mix([0,1.15,0],[0,.22,-.12]),legs:mix([0,.45,0],[0,.13,.67]),eye:mix([0,EYE_HEIGHT,0],[0,.34,-.8])};
+}
 
 export const toScene = (point, height) => point.space==='metres'?
   ({x:point.x,y:height??point.y,z:point.z}):({x:point.x/UNITS_PER_METRE,y:height??0,z:point.y/UNITS_PER_METRE});
-export const eyePosition = actor => mg34ProneGeometry(actor)?mg34LocalToWorld(actor,mg34ProneGeometry(actor).eye):toScene(actor, (actor.space==='metres'?actor.y:actor.feetHeight||0) +
+export const eyePosition = actor => mg34ProneGeometry(actor)||genericProneGeometry(actor)?mg34LocalToWorld(actor,(mg34ProneGeometry(actor)??genericProneGeometry(actor)).eye):toScene(actor, (actor.space==='metres'?actor.y:actor.feetHeight||0) +
   (actor.eyeHeight ?? (actor.crouched ? 1.08 : EYE_HEIGHT)));
 export const aimDirection = (angle, pitch = 0) => ({
   x: Math.cos(angle) * Math.cos(pitch), y: Math.sin(pitch),
@@ -67,7 +72,7 @@ export function rayBox(origin, direction, min, max, limit = Infinity) {
 }
 
 export function actorHitboxes(actor) {
-  const g=mg34ProneGeometry(actor);
+  const g=mg34ProneGeometry(actor)??genericProneGeometry(actor);
   if(g){
     const c=Math.abs(Math.cos(actor.facing??0)),s=Math.abs(Math.sin(actor.facing??0));
     return [['head',2,[.18,.20,.18],[.18,.16,.22]],['torso',1,[.29,.33,.23],[.25,.18,.38]],['legs',.7,[.25,.37,.20],[.27,.12,.48]]].map(([part,multiplier,standing,prone])=>{

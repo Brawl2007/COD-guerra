@@ -1,5 +1,10 @@
 # TASK_CONTRACT — M01 railway production pass
 
+> **Re-base T24 — 2026-10-14, merged predecessor `bc8f6a21a57c`.** O diagnóstico abaixo é histórico e não deve ser executado literalmente. O HEAD já contém locomotiva/Panzerzug GLB de produção, 65 vagões GLB, via com carris/travessas/lastro e três vagões do pátio com colisão (`M01_YARD_WAGON_PLAN`, `TczewWorld.wagonObstacles`). A composição e os anchors finais continuam intactos. A chegada nova é somente a translação do parent de apresentação em `m01-train-life.js`, por `battleClock`, 04:43:30→04:45 e 04:51→04:52; não altera `renderState`, agenda nem obstáculos.
+>
+> Decisões D1–D10 do Anexo B: D1 aplicar o kit já existente; D2 adiar novo LOD0; D3 lanternas/fornalha reconstruídas (as novas luzes não simulam factos históricos); D4 substituída por chegada de apresentação; D5 sem insígnias; D6 fora do scope de gameplay; D7 manter vagão (−352,0,8); D8 preservar vias ±2,5m; D9 sim; D10 encerrada pela presença verificada das três colisões existentes. Manobra oeste permanece parada. Repetir `m01-partials-completion.test.js`, consist-polish e o check de colisores. Evidências e limitações: `docs/verification/m01-runtime/partials-completion-integration-v1/IMPLEMENTATION.md`.
+
+
 | Campo | Valor |
 | --- | --- |
 | Contrato | `M01-RAILWAY-PP-01` |

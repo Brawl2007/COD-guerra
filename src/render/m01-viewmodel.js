@@ -146,7 +146,8 @@ export class M01ViewModel {
     // Restore replaces the data world; reconstruct visual flags/phase at that safe
     // boundary instead of blending from an old menu/checkpoint presentation.
     if(this.sourceWorld!==sim.world){this.sourceWorld=sim.world;this.visual=null;this.sampleKey=null;this.flashShot=sim.weapon.shotCount;this.fx.reset();}
-    const p=sim.player,w=sim.weapon,t=sim.clock,carry=p.carrying==='jozef_bak';
+    const p=sim.player,w=sim.weapon,t=sim.clock,carryPhase=sim.actor('jozef_bak')?.carry,
+      carry=p.carrying==='jozef_bak'||carryPhase?.phase==='putdown'&&sim.actor('jozef_bak')?.carriedBy===p.id;
     const key=JSON.stringify([t,p.aiming,p.moveBlend,p.sprinting,p.crouched,p.carrying,sim.renderState.weaponVisible,w.state,w.started,w.until,w.lastShot,w.shotCount,flashUntil,
       p.angle,p.pitch,sim.world?.revision,view?.camera?[...view.camera.position.toArray(),...view.camera.quaternion.toArray()]:null]);
     if(this.sampleKey===key){this.applyFov(view);return true;}
@@ -154,7 +155,9 @@ export class M01ViewModel {
     this.root.visible=sim.renderState.weaponVisible||carry;
     if(!this.root.visible){this.fx.hide();this.stats={active:true,visible:false,lod};return true;}
     let clip='aim',sample=0;
-    if(carry){clip='carry_wounded';sample=t%characters.clips.get(clip).duration;}
+    if(carry){const transition=carryPhase&&carryPhase.phase!=='carry'?`carry_${carryPhase.phase}_carrier`:null;
+      clip=transition&&characters.clips.has(transition)?transition:characters.clips.has('carry_walk')?'carry_walk':'carry_wounded';
+      sample=transition&&clip===transition?Math.min(1.6,Math.max(0,t-carryPhase.startedAt)):t%characters.clips.get(clip).duration;}
     else if(w.reloading){clip='reload_clip';sample=w.reloadProgress(t*1000)*characters.clips.get(clip).duration;}
     else if(w.boltCycling){clip='fire_bolt';sample=Math.min(1,(t*1000-w.started)/(w.until-w.started))*characters.clips.get(clip).duration;}
     this.root.position.set(0,0,0);this.root.rotation.set(0,0,0);

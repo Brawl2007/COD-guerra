@@ -99,6 +99,10 @@ button:disabled{opacity:.45;cursor:wait}#complete{overflow:auto;justify-content:
 #letterbox i{position:absolute;left:0;right:0;height:var(--bar);background:#050605;transition:transform .9s cubic-bezier(.5,0,.2,1)}
 #letterbox i:first-child{top:0;transform:translateY(-101%)}#letterbox i:last-child{bottom:0;transform:translateY(101%)}
 #hud.cinematic #letterbox i{transform:none}
+#hud.scene-beats #letterbox i{transform:none;transition:none}
+#hud.scene-beats :is(#objective-panel,#status,#clock-wrap){opacity:var(--scene-dim,1)}
+#hud.scene-beats #captions{bottom:calc(var(--bar) + 1.3em)}
+.scene-look-prompt{position:absolute;top:calc(var(--bar) + 1.1em);left:50%;transform:translate(-50%,var(--scene-shake,0px));color:var(--brass);font-size:.8em;letter-spacing:.07em;text-shadow:0 1px 2px #000;pointer-events:none}
 #fade{background:#030403;opacity:0}
 #hud.cinematic :is(#objective,#status,#clock-wrap,#crosshair,#hit-marker,#objective-update,#checkpoint,#resume-card){opacity:0!important}
 #hud.cinematic #captions{bottom:calc(var(--bar) + 1.3em)}

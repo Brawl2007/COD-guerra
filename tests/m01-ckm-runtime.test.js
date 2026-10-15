@@ -17,7 +17,7 @@ test('ckm crew is grounded below the deck, leaves after the real event and reach
   assert.equal(crew(s).length,3);assert.ok(crew(s).every(a=>a.y===-3&&a.ckm.phase==='idle'));
   s.updateActors(.05);assert.equal(s.rng.state,rng);
   const flow=route(),east=flow.combatSnapshots.eastDemolition,west=flow.combatSnapshots.westDemolition;
-  assert.ok(crew({actors:east.actors}).every(a=>a.x>0&&a.ckm.phase==='idle'));
+  assert.ok(crew({actors:east.actors}).every(a=>a.x>0&&['idle','aim','feed'].includes(a.ckm.phase)));
   assert.ok(crew({actors:west.actors}).filter(a=>a.alive&&a.active).every(a=>a.x<-90));
   assert.ok(crew(flow.sim).every(a=>!a.ckm.visible));validateM01Snapshot(flow.sim.snapshot());
   const blocked=new M01Simulation();blocked.consumed.evt_m01_east_demolition=0;blocked.player.x=-170;

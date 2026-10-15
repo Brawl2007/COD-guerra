@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "file": "m01_crews_evacuation.glb",
+  "bytes": 471704,
+  "sha256": "d084885f740f3136f458bc1751dfd336a4c7f81fd719608dd678266da83e42cc",
+  "author": "COD-guerra original procedural animation, using preserved project rig and solver",
+  "license": "Original project assets; project licence pending owner decision",
+  "units": "metres",
+  "sourceRig": {
+    "file": "m01_soldier_pl_lod1.glb",
+    "sha256": "d4e7565b92c6e266487a43af3c5a739b9f0a98328656662940ed0fe9fa361d8f"
+  },
+  "generator": "tools/assets/m01-soldiers/build-crews-evacuation.mjs",
+  "clips": [
+    {
+      "name": "carry_pickup_carrier",
+      "duration": 1.6,
+      "loop": false,
+      "rootMotion": false
+    },
+    {
+      "name": "carry_pickup_patient",
+      "duration": 1.6,
+      "loop": false,
+      "rootMotion": false
+    },
+    {
+      "name": "carry_putdown_carrier",
+      "duration": 1.6,
+      "loop": false,
+      "rootMotion": false
+    },
+    {
+      "name": "carry_putdown_patient",
+      "duration": 1.6,
+      "loop": false,
+      "rootMotion": false
+    },
+    {
+      "name": "carry_walk",
+      "duration": 1.1,
+      "loop": true,
+      "rootMotion": false
+    },
+    {
+      "name": "prone_enter",
+      "duration": 1.2,
+      "loop": false,
+      "rootMotion": false
+    },
+    {
+      "name": "prone_exit",
+      "duration": 1.2,
+      "loop": false,
+      "rootMotion": false
+    },
+    {
+      "name": "prone_idle",
+      "duration": 4,
+      "loop": true,
+      "rootMotion": false
+    }
+  ],
+  "authority": "simulation owns transport phases/position/posture; clips contain no root-motion channel"
+}

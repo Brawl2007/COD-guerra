@@ -1,7 +1,9 @@
-import {mg34ProneGeometry} from '../world/spatial.js';
+import {mg34ProneGeometry,genericProneGeometry} from '../world/spatial.js';
 // Procedural presentation in metres. This never writes to an actor or advances gameplay.
 export function actorPoseName(actor,time=0){
   if(!actor.alive)return 'fallen';
+  if(actor.posture==='prone'&&!actor.mg34Prone)return 'prone';
+  if(actor.task==='yard_patient')return 'wounded';
   if(actor.task==='station_wounded')return 'wounded';
   if(actor.carriedBy)return 'carried';
   if(actor.state==='WOUNDED')return 'wounded';
@@ -12,12 +14,12 @@ export function actorPoseName(actor,time=0){
 }
 
 export function actorPose(actor,time){
-  const geometry=mg34ProneGeometry(actor,time);
-  if(geometry&&actor.mg34Prone.phase!=='standing'){
+  const geometry=mg34ProneGeometry(actor,time)??genericProneGeometry(actor);
+  if(geometry&&actor.mg34Prone?.phase!=='standing'){
     // Existing procedural fallback. Read physical posture/frame; never create combat state or advance time.
-    const convert=p=>[-p[2],p[1],p[0]],head=convert(geometry.head),torso=convert(geometry.torso),legs=convert(geometry.legs),muzzle=convert(geometry.muzzle);
+    const convert=p=>[-p[2],p[1],p[0]],head=convert(geometry.head),torso=convert(geometry.torso),legs=convert(geometry.legs),muzzle=convert(geometry.muzzle??[0,.22,-1.3]);
     head[1]+=.08;
-    const aiming=['aim','fire_burst'].includes(actor.mg34Prone.phase)&&time>=(actor.suppressedUntil??0),firing=aiming&&actor.mg34Prone.phase==='fire_burst'&&actor.shot>0;
+    const aiming=['aim','fire_burst'].includes(actor.mg34Prone?.phase)&&time>=(actor.suppressedUntil??0),firing=aiming&&actor.mg34Prone?.phase==='fire_burst'&&actor.shot>0;
     const limbs=[],boots=[],hip=[torso[0]-.2,torso[1]-.05,torso[2]],rifle=[muzzle[0]-.62,muzzle[1]-.03,muzzle[2]];
     for(const side of [-1,1]){
       const knee=[legs[0]+.12,legs[1],side*.15],foot=[legs[0]-.27,.07,side*.18],shoulder=[torso[0]+.2,torso[1]+.02,side*.2],elbow=[torso[0]+.27,.07+(1-geometry.low)*.7,side*.22],hand=[rifle[0]+(side>0?-.1:.25),rifle[1]-.07,rifle[2]];
@@ -58,7 +60,11 @@ export function actorPose(actor,time){
     boots.push([ankle[0]+.045,.055+lift,z]);
     const shoulder=spine(.49);shoulder[2]=z*1.85;
     const elbow=seated?[.16,hip+.23,z*1.85]:aiming?[i?.12:.35,hip+(i?.27:.38)+breath,z*1.4]:[shoulder[0]+.20,hip+.22+breath,z*1.9];
-    const hand=seated?[.30,hip+.10,z*1.3]:armed?(i?grip:support):[shoulder[0]+.10,hip+.06,z*1.85];
+    let hand=seated?[.30,hip+.10,z*1.3]:armed?(i?grip:support):[shoulder[0]+.10,hip+.06,z*1.85];
+    if(actor.task==='coffee'&&i===1)hand=[.32,1.12,.16];
+    if(actor.task==='map')hand=[.34,1,z*1.05];
+    if(actor.task==='clean_weapon')hand=[.32,hip+.2,z*.65+Math.sin(time*2+i)*.03];
+    if(actor.task==='yard_aid')hand=[.3,hip-.12,z*.8];
     limbs.push({from:shoulder,to:elbow,radius:.075},{from:elbow,to:hand,radius:.065});
   }
   const lying=name==='wounded'||name==='fallen',carried=name==='carried';

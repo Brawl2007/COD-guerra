@@ -1,6 +1,7 @@
 {
   "version": 1,
   "family": "bridge-truss-geometry-projection",
+  "author": "COD-guerra project, original geometry-projection code and rasterisation",
   "license": "CC0-1.0 for new rasterisation code; raster silhouettes derived from unchanged provisional meshes, original mesh licence remains unchosen",
   "source": "tools/assets/m01-bridges/impostors/generate.mjs",
   "sources": [
