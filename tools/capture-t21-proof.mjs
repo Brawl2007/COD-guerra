@@ -3,6 +3,7 @@ import {chromium} from '@playwright/test';
 import {spawn,execFileSync} from 'node:child_process';
 import {mkdirSync,readdirSync,writeFileSync,existsSync} from 'node:fs';
 import {resolve,join} from 'node:path';
+import {levelCameraClosedLoop} from './t21-camera-level.mjs';
 
 const MODE=process.env.T21_CAPTURE_MODE==='antes'?'antes':'depois';
 const OUT=resolve(process.env.T21_OUT_DIR||'test-results/t21'),PORT=Number(process.env.T21_PORT||5173);
@@ -15,7 +16,7 @@ async function ready(){
 }
 let child=null,browser=null,ctx=null;
 const report={mode:MODE,url:URL,viewport:'1280x720',captureKind:'real DOM canvas screenshot',
- time:new Date().toISOString(),snapshots:[],consoleErrors:[],gameState:[],video:null};
+ time:new Date().toISOString(),snapshots:[],cameraCorrections:[],consoleErrors:[],gameState:[],video:null};
 try{
  child=spawn('npm',['run','dev','--','--port',String(PORT), '--strictPort'],{stdio:'ignore'});
  await ready();
@@ -37,17 +38,23 @@ try{
  const diagnostic=()=>page.evaluate(()=>window.gameDiagnostics?.());
  // Orient through the game's normal mouse-input listener, never the simulation object.
  async function levelCamera(){
-  for(let attempt=0;attempt<4;attempt++){
-   const pitch=await page.evaluate(()=>window.gameDiagnostics()?.player?.pitch??0);
-   if(Math.abs(pitch)<.18)return;
-   const step=Math.max(-580,Math.min(580,Math.round(pitch/.0022)));
-   await page.evaluate(delta=>{
-    const event=new MouseEvent('mousemove',{bubbles:true,movementY:delta,movementX:0});
-    if(event.movementY!==delta)Object.defineProperty(event,'movementY',{value:delta});
+  const readPitch=()=>page.evaluate(()=>window.gameDiagnostics?.()?.player?.pitch);
+  await levelCameraClosedLoop({
+   readPitch,
+   sendMovement:delta=>page.evaluate(movementY=>{
+    const event=new MouseEvent('mousemove',{bubbles:true,movementY,movementX:0});
+    if(event.movementY!==movementY)Object.defineProperty(event,'movementY',{value:movementY});
     window.dispatchEvent(event);
-   },step);
-   await page.waitForTimeout(220);
-  }
+   },delta),
+   waitForChange:async previous=>{
+    await page.waitForFunction(before=>{
+     const pitch=window.gameDiagnostics?.()?.player?.pitch;
+     return Number.isFinite(pitch)&&Math.abs(pitch-before)>=.003;
+    },previous,{timeout:10000,polling:100});
+    return readPitch();
+   },
+   trace:entry=>{report.cameraCorrections.push(entry);console.log('T21 camera:',JSON.stringify(entry));},
+  });
  }
  async function screenshot(name){
   await levelCamera();
