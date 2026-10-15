@@ -5,6 +5,19 @@ import { actorPose } from './m01-actor-pose.js';
 import {SoldierVisualVariations,soldierVisualVariant} from './m01-soldier-variation.js';
 import { CKM_POSITION } from '../game/m01-simulation.js';
 import {mg34ProneSample,MG34_MUZZLE_SOCKET,eyePosition,actorHitboxes,muzzlePosition} from '../world/spatial.js';
+import {
+  actorHash as hash,
+  resolveAvailableClip,
+  resolveCombatReaction,
+  resolveLocomotionGait,
+  resolveRiflemanReload,
+  resolveSupportHandIK,
+  resolveLodWithHysteresis,
+  resolveStrideSample,
+  resolveTorsoOrientation,
+  resolveTransitionBlend,
+  resolveTurnClip
+} from './m01-animation-resolver.js';
 
 const BASE='assets/models/provisional/m01/characters/';
 const MG='assets/models/provisional/m01/weapons/mg34/';
@@ -15,10 +28,12 @@ const ckmRole=a=>a.group==='grp_ckm_crew'&&['ckm_gunner','ckm_loader'].includes(
 const ckmAtPost=a=>ckmRole(a)&&a.ckm?.phase!=='retreat';
 const LIMITS={low:{count:18,near:0,middle:15,far:100},medium:{count:24,near:0,middle:40,far:130},high:{count:28,near:14,middle:45,far:160}};
 const named={marek_zielinski:'zielinski',pawel_krawiec:'krawiec',tadeusz_nowicki:'nowicki',jozef_bak:'bak',szymon_kowal:'kowal',leon_dudek:'dudek'};
-const hash=id=>[...id].reduce((n,c)=>(n*31+c.charCodeAt(0))>>>0,0);
 const weaponParts=new Set(['rifle','clip','rifle_wz98a','rkm_wz28','rkm_bipod_open','rkm_bipod_folded','rkm_pouch','rag']);
 const mgGunner=a=>a.team==='enemy'&&a.weapon==='mg34'&&['de_east_0','de_east_1'].includes(a.id);
 const stationClips=['station_drag_medic_grab','station_drag_patient_grab','station_drag_medic_release','station_drag_patient_release','drag_wounded','crouched_idle','wounded'];
+const SPINE_NAMES=['spine_02','spine_01','spine','chest','Spine2','Spine1','Spine'];
+const SUPPORT_ARM_NAMES=['upperarm_l','arm_l','LeftArm','mixamorigLeftArm'];
+const UP_AXIS=new THREE.Vector3(0,1,0);
 
 // Presentation only. Playback is sampled from the saved mission clock; no renderer timers enter saves.
 export class M01Characters {
@@ -30,6 +45,11 @@ export class M01Characters {
   async load(quality='low'){
     await Promise.allSettled([
       this.assets.load('m01-clips',BASE+'m01_soldier_animations.glb').then(g=>{
+        if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
+      }),
+      // Six original motion clips live in a separate GLB in the V7 asset library.
+      // Loading only the original animations GLB would silently fall back for all six.
+      this.assets.load('m01-motion-clips',BASE+'motion-clips-v1/m01_soldier_motion_clips.glb').then(g=>{
         if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
       }),
       this.assets.load('m01-station-clips',BASE+'m01_station_animations.glb').then(g=>{
@@ -83,9 +103,9 @@ export class M01Characters {
       this.sources.get('ckm:2')?.animations.some(c=>c.name===`ckm_wz30_gun_${phase}`)&&
       ['gunner','loader'].every(role=>this.clips.has(`ckm_wz30_${role}_${phase}`)));
   }
-  sample(actor,time,actors,pose,battleClock){
+  sample(actor,time,actors=[],pose=actorPose(actor,time),battleClock){
     const offset=(hash(actor.id)%1000)/250;
-    if(pose.name==='fallen')return {clip:'fallen',time:1.4,loop:false};
+    if(pose.name==='fallen')return {clip:'fallen',time:Number.isFinite(actor.diedAt)&&time>=actor.diedAt?Math.min(1.4,time-actor.diedAt):1.4,loop:false};
     const prone=mg34ProneSample(actor,time);
     if(prone&&actor.mg34Prone.phase!=='standing'&&this.hasProne())return {clip:prone.clip,time:prone.time,loop:false};
     if(ckmAtPost(actor)&&this.hasCKM()&&!['wounded','carried'].includes(pose.name)){
@@ -112,11 +132,21 @@ export class M01Characters {
     if(pose.name==='seated')return {clip:'seated',time:time+offset,loop:true};
     const patient=actors.find(a=>a.active&&a.carriedBy===actor.id);
     if(patient?.task==='station_wounded')return {clip:this.clips.has('drag_wounded')?'drag_wounded':'pinned',time:time+offset,loop:true};
-    if(patient)return {clip:'carry_wounded',time:time+offset,loop:true};
-    if(actor.role==='ENGINEER'&&actor.crouched){
-      // The repair has stopped under fire. Hold the sheltered pose instead of replaying working hands.
-      return pose.underFire?{clip:'sapper_work_pinned',time:.8,loop:false}:
-        {clip:'sapper_work',time:time+offset,loop:true};
+    if(patient){
+      const carryStride=resolveStrideSample(actor,'carry_wounded',time,this.clips);
+      return {clip:'carry_wounded',time:carryStride.time,loop:true,stridePhase:carryStride.stridePhase};
+    }
+    if(actor.role==='ENGINEER'&&(actor.crouched||actor.posture==='crouch')){
+      const sapperMoving=actor.motion&&actor.motion.gait==='crouch_walk'&&actor.motion.speed>.05&&actor.task!=='repair_bridge'&&actor.state!=='REPAIR';
+      if(!sapperMoving){
+        // The repair has stopped under fire. Hold the sheltered pose instead of replaying working hands.
+        return pose.underFire?{clip:'sapper_work_pinned',time:.8,loop:false}:
+          {clip:'sapper_work',time:time+offset,loop:true};
+      }
+    }
+    if(!mgGunner(actor)&&actor.id!=='szymon_kowal'){
+      const reaction=resolveCombatReaction(actor,time,pose,this.clips);
+      if(reaction)return reaction;
     }
     if(pose.underFire)return {clip:'pinned',time:time+offset,loop:true};
     if(mgGunner(actor)){
@@ -134,15 +164,41 @@ export class M01Characters {
       const reload=this.clips.get('rkm_reload')?.duration??3.4;
       if(actor.rounds===20&&actor.cooldown>0&&age>=burst&&age<burst+reload)return {clip:'rkm_reload',time:age-burst,loop:false};
       if(battleClock<4*3600+33*60+10&&!Number.isFinite(actor.firedAt)&&!pose.moving)return {clip:'rkm_clean',time:time+offset,loop:true};
-      if(pose.moving)return {clip:actor.state==='RETREAT'?'rkm_run':'rkm_walk',time:time+offset,loop:true};
+      const kGait=resolveLocomotionGait(actor,pose);
+      if(kGait!=='idle'){
+        const kClip=actor.state==='RETREAT'||kGait==='run'||kGait==='sprint'?'rkm_run':'rkm_walk';
+        const s=resolveStrideSample(actor,kClip,time,this.clips);
+        return {clip:kClip,time:s.time,loop:true,stridePhase:s.stridePhase};
+      }
       return {clip:pose.aiming?'rkm_aim':actor.crouched?'rkm_crouched_idle':'rkm_standing_idle',time:time+offset,loop:true};
     }
-    if(pose.moving)return {clip:actor.group==='grp_east_platoon'?'run':'walk',time:time+offset,loop:true};
     const fireAge=time-actor.firedAt,boltDuration=this.clips.get('fire_bolt')?.duration??1.17;
     if(pose.aiming&&Number.isFinite(fireAge)&&fireAge>=0&&fireAge<boltDuration)
       return {clip:'fire_bolt',time:fireAge,loop:false};
-    if(pose.aiming)return {clip:'aim',time:time+offset,loop:true};
-    return {clip:actor.crouched?'crouched_idle':'standing_idle',time:time+offset,loop:true};
+    const explicitReload=resolveRiflemanReload(actor,time,pose,this.clips);
+    if(explicitReload)return explicitReload;
+    const gait=resolveLocomotionGait(actor,pose);
+    if(gait!=='idle'){
+      const preferred=gait==='crouch_walk'?'crouch_walk':gait==='sprint'?'sprint':gait==='run'?'run':'walk';
+      const clipName=resolveAvailableClip(preferred,this.clips);
+      const stride=resolveStrideSample(actor,clipName,time,this.clips);
+      const primary={clip:clipName,time:stride.time,loop:true,stridePhase:stride.stridePhase,strideSynced:stride.strideSynced};
+      const transition=resolveTransitionBlend(actor,pose,primary,time,this.clips);
+      return transition?{...primary,...transition}:primary;
+    }
+    const orientation=resolveTorsoOrientation(actor,pose);
+    const turn=resolveTurnClip(actor,pose,orientation.yawDelta,this.clips);
+    if(turn)return turn;
+    if(pose.aiming){
+      const primary={clip:'aim',time:time+offset,loop:true};
+      const transition=resolveTransitionBlend(actor,pose,primary,time,this.clips);
+      return transition?{...primary,...transition}:primary;
+    }
+    const idleClip=actor.crouched||actor.posture==='crouch'?
+      resolveAvailableClip('crouched_idle',this.clips):resolveAvailableClip('standing_idle',this.clips);
+    const primary={clip:idleClip,time:time+offset,loop:true};
+    const transition=resolveTransitionBlend(actor,pose,primary,time,this.clips);
+    return transition?{...primary,...transition}:primary;
   }
   create(actor,key,weaponLOD){
     const root=clone(this.sources.get(key).scene),meshes=[];let weaponRoot=null;
@@ -167,8 +223,18 @@ export class M01Characters {
     this.scene.add(root);
     const weapon=weaponRoot?'mg34':actor.id==='szymon_kowal'?'rkm_wz28':actor.id==='jozef_bak'?'wz98a':nation==='pl'?'wz29':'kar98k';
     const profile=root.getObjectByName(`m01_soldier_${nation}`)?.userData;
-    const v={root,key,meshes,visual,weapon,weaponRoot,weaponLOD,muzzle:weaponRoot?MG34_MUZZLE_SOCKET:profile?.weapons?.[weapon]?.muzzle??profile?.sockets?.muzzle??[0,.032,-.765],
-      mixer:new THREE.AnimationMixer(root),action:null,clip:null};
+    let spineBone=null,supportArmBone=null;
+    for(const name of SPINE_NAMES){const b=root.getObjectByName(name);if(b){spineBone=b;break;}}
+    for(const name of SUPPORT_ARM_NAMES){const b=root.getObjectByName(name);if(b?.isBone){supportArmBone=b;break;}}
+    const spineBaseQuat=spineBone?.quaternion?spineBone.quaternion.clone():null,spineBaseRotY=spineBone?.rotation?.y??0;
+    const armBaseQuat=supportArmBone?.quaternion.clone()??null;
+    const v={root,key,meshes,visual,weapon,weaponRoot,weaponLOD,spineBone,spineBaseQuat,spineBaseRotY,
+      supportArmBone,armBaseQuat,
+      // Cache the clip-sampled pose BEFORE any additive torso/arm correction,
+      // so repeated rendering of the same simulation time is bit-identical.
+      spineClipQuat:spineBaseQuat?.clone()??null,armClipQuat:armBaseQuat?.clone()??null,
+      muzzle:weaponRoot?MG34_MUZZLE_SOCKET:profile?.weapons?.[weapon]?.muzzle??profile?.sockets?.muzzle??[0,.032,-.765],
+      mixer:new THREE.AnimationMixer(root),action:null,blendAction:null,clip:null,blendClip:null};
     this.instances.set(actor.id,v);return v;
   }
   release(v){
@@ -189,8 +255,9 @@ export class M01Characters {
       // Reserve two existing fire sources within the same 18/24/28 actor budget, including from the west bank.
       .sort((a,b)=>Number(mgGunner(b.a))-Number(mgGunner(a.a))||a.d-b.d||a.a.id.localeCompare(b.a.id)).slice(0,limits.count);
     if(this.clips.size)for(const {a,d}of candidates){
-      const nation=a.team==='enemy'?'de':'pl';let lod=d<limits.near?0:d<limits.middle?1:2;
-      while(lod<3&&!this.sources.has(`${nation}:${lod}`))lod++;
+      const nation=a.team==='enemy'?'de':'pl';
+      const prevInst=this.instances.get(a.id);
+      const lod=resolveLodWithHysteresis(d,limits,prevInst?.key,nation,quality,this.sources);
       if(lod===3)continue;
       let weaponLOD=lod;
       if(mgGunner(a)){while(weaponLOD<3&&!this.sources.has(`mg34:${weaponLOD}`))weaponLOD++;if(weaponLOD===3)continue;}
@@ -199,16 +266,79 @@ export class M01Characters {
       if(a.id==='szymon_kowal'&&!this.sources.get(key).scene.getObjectByName('rkm_wz28'))continue;
       // Missing or partial optional clips use the existing procedural batches, sampled from the same posture.
       if(mgGunner(a)&&a.alive&&a.mg34Prone&&a.mg34Prone.phase!=='standing'&&!this.hasProne())continue;
-      let v=this.instances.get(a.id);
+      let v=prevInst;
       if(v&&(v.key!==key||mgGunner(a)&&v.weaponLOD!==weaponLOD)){this.release(v);this.instances.delete(a.id);v=null;}
       v??=this.create(a,key,weaponLOD);selected.add(a.id);
-      // Always return a previously attached wounded actor to scene before sampling an updated carrier.
-      this.scene.add(v.root);v.root.visible=true;v.root.position.set(a.x,a.y,a.z);v.root.rotation.set(0,-a.facing-Math.PI/2,0);
-      if(v.clip!==sample.clip){
-        v.mixer.stopAllAction();v.action=v.mixer.clipAction(clip);v.action.setLoop(THREE.LoopOnce,1);
-        v.action.clampWhenFinished=true;v.action.play();v.clip=sample.clip;
+      // Specialist animated rigs retain the exact legacy sampling contract. In particular,
+      // CKM, prone MG34 and station drag must reproduce identical bone matrices after
+      // pause, save/reload and repeated render calls. The generic resolver must not
+      // modify their root orientation, spine bones or action weighting.
+      const legacySpecialist=/^(ckm_wz30_|mg34_prone_|station_drag_|drag_wounded$)/.test(sample.clip);
+      // Remove last frame's additive rotations before AnimationMixer samples.
+      // Restoring the original bind pose loses untracked clip bones and caused
+      // ckm_reserve spine drift even with a paused/frozen simulation clock.
+      if(v.spineBone&&v.spineClipQuat)v.spineBone.quaternion.copy(v.spineClipQuat);
+      if(v.supportArmBone&&v.armClipQuat)v.supportArmBone.quaternion.copy(v.armClipQuat);
+      if(legacySpecialist){
+        this.scene.add(v.root);v.root.visible=true;
+        v.root.position.set(a.x,a.y??0,a.z);
+        v.root.rotation.set(0,-a.facing-Math.PI/2,0);
+        if(v.clip!==sample.clip||v.blendClip){
+          v.mixer.stopAllAction();
+          v.action=v.mixer.clipAction(clip).setLoop(THREE.LoopOnce,1);
+          v.action.clampWhenFinished=true;v.action.play();
+          v.clip=sample.clip;v.blendClip=null;v.blendAction=null;
+        }
+        v.action.reset().play();
+        v.mixer.setTime(sample.loop?sample.time%clip.duration:Math.min(sample.time,clip.duration));
+        if(v.spineBone&&v.spineClipQuat)v.spineClipQuat.copy(v.spineBone.quaternion);
+        if(v.supportArmBone&&v.armClipQuat)v.armClipQuat.copy(v.supportArmBone.quaternion);
+      }else{
+        const orientation=resolveTorsoOrientation(a,pose);
+        const useSpineTwist=Boolean(v.spineBone&&orientation.torsoTwist!==0);
+        const appliedRootYaw=useSpineTwist?orientation.rootYaw:orientation.facing;
+        this.scene.add(v.root);v.root.visible=true;
+        v.root.position.set(a.x,a.y??0,a.z);
+        v.root.rotation.set(0,-appliedRootYaw-Math.PI/2,0);
+        const blendClipObj=sample.blend?this.clips.get(sample.blend.clip):null;
+        if(blendClipObj&&blendClipObj!==clip&&sample.blend.weight>.01){
+          if(v.clip!==sample.clip||v.blendClip!==sample.blend.clip){
+            v.mixer.stopAllAction();
+            v.blendAction=v.mixer.clipAction(blendClipObj);
+            v.blendAction.setLoop(THREE.LoopOnce,1);v.blendAction.clampWhenFinished=true;v.blendAction.play();
+            v.action=v.mixer.clipAction(clip);
+            v.action.setLoop(THREE.LoopOnce,1);v.action.clampWhenFinished=true;v.action.play();
+            v.clip=sample.clip;v.blendClip=sample.blend.clip;
+          }
+          const tFrom=sample.blend.loop?sample.blend.time%blendClipObj.duration:Math.min(sample.blend.time,blendClipObj.duration);
+          const tTo=sample.loop?sample.time%clip.duration:Math.min(sample.time,clip.duration);
+          v.blendAction.reset().play();v.blendAction.setEffectiveWeight?.(sample.blend.weight);
+          v.action.reset().play();v.action.setEffectiveWeight?.(sample.weight??1);
+          v.mixer.setTime(0);v.blendAction.time=tFrom;v.action.time=tTo;v.mixer.update?.(0);
+        }else{
+          if(v.clip!==sample.clip||v.blendClip){
+            v.mixer.stopAllAction();v.action=v.mixer.clipAction(clip);v.action.setLoop(THREE.LoopOnce,1);
+            v.action.clampWhenFinished=true;v.action.play();v.clip=sample.clip;v.blendClip=null;v.blendAction=null;
+          }
+          v.action.setEffectiveWeight?.(1);
+          v.action.reset().play();
+          v.mixer.setTime(sample.loop?sample.time%clip.duration:Math.min(sample.time,clip.duration));
+        }
+        if(v.spineBone&&v.spineClipQuat)v.spineClipQuat.copy(v.spineBone.quaternion);
+        if(v.supportArmBone&&v.armClipQuat)v.armClipQuat.copy(v.supportArmBone.quaternion);
+        if(useSpineTwist){
+          v.spineBone.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(UP_AXIS,-orientation.torsoTwist));
+        }
+        if(v.supportArmBone){
+          const hint=resolveSupportHandIK(a,pose,orientation,sample);
+          if(hint.active&&Math.abs(hint.shoulderYaw)>.001){
+            // Approximate upper-arm correction; combat facing and weapon muzzle stay untouched.
+            v.supportArmBone.quaternion.multiply(
+              new THREE.Quaternion().setFromAxisAngle(UP_AXIS,hint.shoulderYaw));
+          }
+        }
       }
-      v.action.reset().play();v.mixer.setTime(sample.loop?sample.time%clip.duration:Math.min(sample.time,clip.duration));
+      const kowal=a.id==='szymon_kowal',bak=a.id==='jozef_bak';
       v.meshes.forEach(n=>{
         n.castShadow=quality!=='low'&&d<35;
         if(n.name==='mg34_bipod_open')n.visible=Boolean(a.alive&&a.mg34Prone&&a.mg34Prone.phase!=='standing'&&this.hasProne());
@@ -222,7 +352,9 @@ export class M01Characters {
       });
       if(v.weaponRoot)v.weaponRoot.visible=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy;
       v.root.updateMatrixWorld(true);clips[sample.clip]=(clips[sample.clip]??0)+1;
-      visible.push({...((mgGunner(a)&&a.mg34Prone)?{prone:{phase:a.mg34Prone.phase,startedAt:a.mg34Prone.startedAt,progress:a.mg34Prone.progress,rounds:a.mg34Prone.burst?.rounds??0,emitted:a.mg34Prone.burst?.emitted??0,shot:a.shot,firedAt:a.firedAt,eye:eyePosition(a),hitboxes:actorHitboxes(a),muzzle:muzzlePosition(a,time)}}:{}),id:a.id,lod,visual:v.visual,clip:sample.clip,clipTime:v.action.time,loop:sample.loop,weapon:v.weapon,weaponLOD:v.weaponLOD,muzzle:this.muzzle(a.id)?.toArray(),
+      visible.push({...((mgGunner(a)&&a.mg34Prone)?{prone:{phase:a.mg34Prone.phase,startedAt:a.mg34Prone.startedAt,progress:a.mg34Prone.progress,rounds:a.mg34Prone.burst?.rounds??0,emitted:a.mg34Prone.burst?.emitted??0,shot:a.shot,firedAt:a.firedAt,eye:eyePosition(a),hitboxes:actorHitboxes(a),muzzle:muzzlePosition(a,time)}}:{}),
+        id:a.id,lod,key,visual:v.visual,clip:sample.clip,clipTime:v.action.time,loop:sample.loop,weapon:v.weapon,weaponLOD:v.weaponLOD,muzzle:this.muzzle(a.id)?.toArray(),
+        ...(sample.blend?{blendClip:sample.blend.clip,blendWeight:sample.blend.weight}:{}),
         weaponMeshes:v.meshes.filter(n=>weaponParts.has(n.name)&&n.visible||n.name.startsWith('mg34_')&&n.visible&&v.weaponRoot?.visible).map(n=>n.name)});
     }
     for(const {a}of candidates)if(selected.has(a.id)&&a.carriedBy&&a.task!=='station_wounded'&&selected.has(a.carriedBy)){
