@@ -7,6 +7,7 @@ import unittest
 from pathlib import Path
 
 SCRIPT = Path(__file__).resolve().parents[2] / ".claude/hooks/session-start.sh"
+GUARD_INSTALLER = Path(__file__).resolve().parents[2] / ".agent/tools/install-git-guards.sh"
 
 
 class SessionStartTests(unittest.TestCase):
