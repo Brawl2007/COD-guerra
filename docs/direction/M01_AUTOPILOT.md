@@ -4,6 +4,14 @@
 **Backlog vivo e critérios:** https://github.com/Brawl2007/COD-guerra/issues/72
 **Âmbito:** desenvolvimento do protótipo jogável, integração dos PRs de M01, validação e preparação para aceitação humana. Não substituir o objetivo permanente por uma sub-tarefa isolada (p. ex. #71).
 
+## Antiduplicação executável e candidata única
+
+- Registo canónico inicial: `.agent/m01-task-registry.json`, com T00–T52, evidências/branches e estados conservadores. **Um índice não é certificado de integração.**
+- Antes de cada tarefa: `python3 .agent/tools/m01_task_registry.py check TXX --live` e ler a issue #72. Não criar outra tarefa já marcada `DELIVERED_BRANCH`, `DELIVERED_PR` ou `IN_CANDIDATE_UNVERIFIED`. Usar commits e PRs existentes.
+- Apenas depois de verificar que TXX é `UNKNOWN` e sem dono: `python3 .agent/tools/m01_task_registry.py claim TXX --sha "$(git rev-parse HEAD)"`. A criação de `claims/m01-txx` é atómica; conflito = não implementar duplicado. Ver `AGENTS.md`.
+- **PR #76 já é a candidata única de integração V2–V7 + Argon V1/V2 + T50 + T21.** Não começar outra candidata: retomar #76, corrigir a prova combinada sem suprimir testes, trazer outras entregas verificadas seletivamente.
+- A execução atual do PR #76 falhou na etapa `npm test` do CI: muitas verificações invocam históricos do Git não disponíveis no checkout raso, mas há também testes com referências a caminhos ausentes em revisões históricas. Investigar e corrigir a causa de cada grupo no PR/branch de trabalho correspondente, sem afrouxar proteções. Não afirmar CI verde com base em 502 testes locais.
+
 ## ENTREGA OBRIGATÓRIA — transformar TODO o trabalho existente em jogo utilizável
 
 **Prioridade superior a criar novas funcionalidades:** aproveitar tudo o que já foi efetivamente produzido para a M01 (código, assets originais licenciados, animações, armas, efeitos, áudio, missões, correções e testes), sem deixar melhorias prontas esquecidas em PRs isolados.
