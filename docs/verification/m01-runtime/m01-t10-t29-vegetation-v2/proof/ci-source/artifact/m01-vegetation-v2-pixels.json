@@ -1,0 +1,254 @@
+[
+  {
+    "name": "01-start-section-close",
+    "pixels": {
+      "pixels": 53838,
+      "max": 168,
+      "sum": 7104351,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 1280,
+        "h": 720
+      }
+    },
+    "control": {
+      "pixels": 0,
+      "max": 0,
+      "sum": 0,
+      "rect": {
+        "x": 600,
+        "y": 4,
+        "w": 80,
+        "h": 40
+      }
+    },
+    "saveEqual": true,
+    "cameraEqual": true,
+    "clock": 0.05
+  },
+  {
+    "name": "04-start-west-portal-bridge",
+    "pixels": {
+      "pixels": 123923,
+      "max": 180,
+      "sum": 12807248,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 1280,
+        "h": 720
+      }
+    },
+    "control": {
+      "pixels": 0,
+      "max": 0,
+      "sum": 0,
+      "rect": {
+        "x": 600,
+        "y": 4,
+        "w": 80,
+        "h": 40
+      }
+    },
+    "saveEqual": true,
+    "cameraEqual": true,
+    "clock": 0.05
+  },
+  {
+    "name": "09-repair-sappers",
+    "pixels": {
+      "pixels": 32466,
+      "max": 232,
+      "sum": 4418542,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 1280,
+        "h": 720
+      }
+    },
+    "control": {
+      "pixels": 0,
+      "max": 0,
+      "sum": 0,
+      "rect": {
+        "x": 600,
+        "y": 4,
+        "w": 80,
+        "h": 40
+      }
+    },
+    "saveEqual": true,
+    "cameraEqual": true,
+    "clock": 207.3500000000129
+  },
+  {
+    "name": "15-west-demolition",
+    "pixels": {
+      "pixels": 14364,
+      "max": 214,
+      "sum": 3053120,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 1280,
+        "h": 720
+      }
+    },
+    "control": {
+      "pixels": 0,
+      "max": 0,
+      "sum": 0,
+      "rect": {
+        "x": 600,
+        "y": 4,
+        "w": 80,
+        "h": 40
+      }
+    },
+    "saveEqual": true,
+    "cameraEqual": true,
+    "clock": 988.2499999996489
+  },
+  {
+    "name": "16-roll-call",
+    "pixels": {
+      "pixels": 131741,
+      "max": 191,
+      "sum": 5613741,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 1280,
+        "h": 720
+      }
+    },
+    "control": {
+      "pixels": 0,
+      "max": 0,
+      "sum": 0,
+      "rect": {
+        "x": 600,
+        "y": 4,
+        "w": 80,
+        "h": 40
+      }
+    },
+    "saveEqual": true,
+    "cameraEqual": true,
+    "clock": 1003.2499999996353
+  },
+  {
+    "name": "east-bank",
+    "pixels": {
+      "pixels": 18929,
+      "max": 188,
+      "sum": 2997927,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 1280,
+        "h": 720
+      }
+    },
+    "control": {
+      "pixels": 0,
+      "max": 0,
+      "sum": 0,
+      "rect": {
+        "x": 600,
+        "y": 4,
+        "w": 80,
+        "h": 40
+      }
+    },
+    "saveEqual": true,
+    "cameraEqual": true,
+    "clock": 764.0999999998528
+  },
+  {
+    "name": "near-foliage",
+    "pixels": {
+      "pixels": 18670,
+      "max": 166,
+      "sum": 2547897,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 1280,
+        "h": 720
+      }
+    },
+    "control": {
+      "pixels": 0,
+      "max": 0,
+      "sum": 0,
+      "rect": {
+        "x": 600,
+        "y": 4,
+        "w": 80,
+        "h": 40
+      }
+    },
+    "saveEqual": true,
+    "cameraEqual": true,
+    "clock": 0.05
+  },
+  {
+    "name": "transition-116",
+    "pixels": {
+      "pixels": 71263,
+      "max": 183,
+      "sum": 8923832,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 1280,
+        "h": 720
+      }
+    },
+    "control": {
+      "pixels": 0,
+      "max": 0,
+      "sum": 0,
+      "rect": {
+        "x": 600,
+        "y": 4,
+        "w": 80,
+        "h": 40
+      }
+    },
+    "saveEqual": true,
+    "cameraEqual": true,
+    "clock": 0.05
+  },
+  {
+    "name": "transition-120",
+    "pixels": {
+      "pixels": 77544,
+      "max": 186,
+      "sum": 7680892,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 1280,
+        "h": 720
+      }
+    },
+    "control": {
+      "pixels": 0,
+      "max": 0,
+      "sum": 0,
+      "rect": {
+        "x": 600,
+        "y": 4,
+        "w": 80,
+        "h": 40
+      }
+    },
+    "saveEqual": true,
+    "cameraEqual": true,
+    "clock": 0.05
+  }
+]

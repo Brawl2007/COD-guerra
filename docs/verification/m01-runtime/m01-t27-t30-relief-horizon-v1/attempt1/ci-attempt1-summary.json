@@ -1,0 +1,25 @@
+{
+  "head": "49a18863ad6fc6f821ccff6f65253ac264f607dc",
+  "normal": {
+    "run": 38313350629,
+    "job": 115024064998,
+    "status": "completed",
+    "conclusion": "failure",
+    "node": {
+      "pass": 667,
+      "fail": 1,
+      "total": 668
+    }
+  },
+  "focused": {
+    "run": 38313350611,
+    "job": 115024064840,
+    "status": "completed",
+    "conclusion": "failure",
+    "browser": {
+      "pass": 0,
+      "fail": 2
+    }
+  },
+  "preserved": "actual GitHub raw job logs, independent verifier-attempt1.md; superseded pending correction"
+}

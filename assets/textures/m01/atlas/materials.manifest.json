@@ -1,0 +1,393 @@
+{
+  "version": 1,
+  "family": "shared-material-atlas",
+  "author": "COD-guerra project, original procedural",
+  "license": "CC0-1.0",
+  "source": "tools/assets/m01-materials/generate.mjs",
+  "notes": "Original procedural art; fixed seeds; no game extraction or third-party images. Scale and palette are artistic estimates, not historical measurements.",
+  "units": "metres per repeating material cell",
+  "layout": {
+    "columns": 4,
+    "rows": 4,
+    "highSize": 1024,
+    "cellSize": 256,
+    "gutter": 4,
+    "lowSize": 512
+  },
+  "channels": {
+    "albedo": "sRGB RGB + opaque alpha",
+    "normal": "linear tangent-space XYZ in RGB + opaque alpha; +Y",
+    "orm": "linear R occlusion, G roughness, B metalness + opaque alpha"
+  },
+  "materials": [
+    {
+      "id": "field",
+      "family": "terrain",
+      "tileMetres": 4,
+      "scaleProvenance": "artistic estimate",
+      "cell": [
+        0,
+        0
+      ],
+      "uv": [
+        0.00390625,
+        0.00390625,
+        0.2421875,
+        0.2421875
+      ]
+    },
+    {
+      "id": "meadow",
+      "family": "terrain",
+      "tileMetres": 4,
+      "scaleProvenance": "artistic estimate",
+      "cell": [
+        1,
+        0
+      ],
+      "uv": [
+        0.25390625,
+        0.00390625,
+        0.2421875,
+        0.2421875
+      ]
+    },
+    {
+      "id": "mud",
+      "family": "terrain",
+      "tileMetres": 4,
+      "scaleProvenance": "artistic estimate",
+      "cell": [
+        2,
+        0
+      ],
+      "uv": [
+        0.50390625,
+        0.00390625,
+        0.2421875,
+        0.2421875
+      ]
+    },
+    {
+      "id": "track",
+      "family": "terrain",
+      "tileMetres": 1.6,
+      "scaleProvenance": "artistic estimate",
+      "cell": [
+        3,
+        0
+      ],
+      "uv": [
+        0.75390625,
+        0.00390625,
+        0.2421875,
+        0.2421875
+      ]
+    },
+    {
+      "id": "ballast",
+      "family": "ballast",
+      "tileMetres": 1.6,
+      "scaleProvenance": "artistic estimate",
+      "cell": [
+        0,
+        1
+      ],
+      "uv": [
+        0.00390625,
+        0.25390625,
+        0.2421875,
+        0.2421875
+      ]
+    },
+    {
+      "id": "brick",
+      "family": "masonry",
+      "tileMetres": 1.2,
+      "scaleProvenance": "artistic estimate",
+      "cell": [
+        1,
+        1
+      ],
+      "uv": [
+        0.25390625,
+        0.25390625,
+        0.2421875,
+        0.2421875
+      ]
+    },
+    {
+      "id": "stone",
+      "family": "masonry",
+      "tileMetres": 2,
+      "scaleProvenance": "artistic estimate",
+      "cell": [
+        2,
+        1
+      ],
+      "uv": [
+        0.50390625,
+        0.25390625,
+        0.2421875,
+        0.2421875
+      ]
+    },
+    {
+      "id": "wood",
+      "family": "wood",
+      "tileMetres": 2,
+      "scaleProvenance": "artistic estimate",
+      "cell": [
+        3,
+        1
+      ],
+      "uv": [
+        0.75390625,
+        0.25390625,
+        0.2421875,
+        0.2421875
+      ]
+    },
+    {
+      "id": "painted-steel",
+      "family": "steel",
+      "tileMetres": 2,
+      "scaleProvenance": "artistic estimate",
+      "cell": [
+        0,
+        2
+      ],
+      "uv": [
+        0.00390625,
+        0.50390625,
+        0.2421875,
+        0.2421875
+      ]
+    },
+    {
+      "id": "rusted-steel",
+      "family": "steel",
+      "tileMetres": 2,
+      "scaleProvenance": "artistic estimate",
+      "cell": [
+        1,
+        2
+      ],
+      "uv": [
+        0.25390625,
+        0.50390625,
+        0.2421875,
+        0.2421875
+      ]
+    },
+    {
+      "id": "canvas",
+      "family": "canvas",
+      "tileMetres": 1,
+      "scaleProvenance": "artistic estimate",
+      "cell": [
+        2,
+        2
+      ],
+      "uv": [
+        0.50390625,
+        0.50390625,
+        0.2421875,
+        0.2421875
+      ]
+    },
+    {
+      "id": "roof-tile",
+      "family": "roof",
+      "tileMetres": 1.5,
+      "scaleProvenance": "artistic estimate",
+      "cell": [
+        3,
+        2
+      ],
+      "uv": [
+        0.75390625,
+        0.50390625,
+        0.2421875,
+        0.2421875
+      ]
+    },
+    {
+      "id": "asphalt",
+      "family": "roof",
+      "tileMetres": 2,
+      "scaleProvenance": "artistic estimate",
+      "cell": [
+        0,
+        3
+      ],
+      "uv": [
+        0.00390625,
+        0.75390625,
+        0.2421875,
+        0.2421875
+      ]
+    },
+    {
+      "id": "wetbank",
+      "family": "terrain",
+      "tileMetres": 4,
+      "scaleProvenance": "artistic estimate",
+      "cell": [
+        1,
+        3
+      ],
+      "uv": [
+        0.25390625,
+        0.75390625,
+        0.2421875,
+        0.2421875
+      ]
+    },
+    {
+      "id": "mortar",
+      "family": "masonry",
+      "tileMetres": 1,
+      "scaleProvenance": "artistic estimate",
+      "cell": [
+        2,
+        3
+      ],
+      "uv": [
+        0.50390625,
+        0.75390625,
+        0.2421875,
+        0.2421875
+      ]
+    },
+    {
+      "id": "plaster",
+      "family": "masonry",
+      "tileMetres": 2,
+      "scaleProvenance": "artistic estimate",
+      "cell": [
+        3,
+        3
+      ],
+      "uv": [
+        0.75390625,
+        0.75390625,
+        0.2421875,
+        0.2421875
+      ]
+    }
+  ],
+  "files": [
+    {
+      "file": "materials-albedo-1024.png",
+      "role": "albedo",
+      "tier": "high",
+      "width": 1024,
+      "height": 1024,
+      "size": [
+        1024,
+        1024
+      ],
+      "bytes": 1441702,
+      "decodedBytes": 4194304,
+      "sha256": "1c0da223fd9aecd5a4433e31e2bbf5475223788185367cfe616ec2b369dcd306",
+      "colorSpace": "sRGB",
+      "mipmaps": true,
+      "flipY": false
+    },
+    {
+      "file": "materials-albedo-512.png",
+      "role": "albedo",
+      "tier": "low",
+      "width": 512,
+      "height": 512,
+      "size": [
+        512,
+        512
+      ],
+      "bytes": 360750,
+      "decodedBytes": 1048576,
+      "sha256": "38c49be8c6faa71c7364bde546553164b2fdcbf0b71536df035224e4fabbe79c",
+      "colorSpace": "sRGB",
+      "mipmaps": true,
+      "flipY": false
+    },
+    {
+      "file": "materials-normal-1024.png",
+      "role": "normal",
+      "tier": "high",
+      "width": 1024,
+      "height": 1024,
+      "size": [
+        1024,
+        1024
+      ],
+      "bytes": 1233039,
+      "decodedBytes": 4194304,
+      "sha256": "62fb0a64d763537bf2bac27774fe9472b37b3844c7cb4a2f1ae66dbed583273c",
+      "colorSpace": "linear",
+      "mipmaps": true,
+      "flipY": false
+    },
+    {
+      "file": "materials-normal-512.png",
+      "role": "normal",
+      "tier": "low",
+      "width": 512,
+      "height": 512,
+      "size": [
+        512,
+        512
+      ],
+      "bytes": 346215,
+      "decodedBytes": 1048576,
+      "sha256": "487aba00a696a158adb922058b26e629698a84b814175c8497f7a0b552e60b89",
+      "colorSpace": "linear",
+      "mipmaps": true,
+      "flipY": false
+    },
+    {
+      "file": "materials-orm-1024.png",
+      "role": "orm",
+      "tier": "high",
+      "width": 1024,
+      "height": 1024,
+      "size": [
+        1024,
+        1024
+      ],
+      "bytes": 349042,
+      "decodedBytes": 4194304,
+      "sha256": "fb35d668041d969ef4f88ec1c81019b8047bf6f40d8cd7dbead6c29b005870a3",
+      "colorSpace": "linear",
+      "mipmaps": true,
+      "flipY": false
+    },
+    {
+      "file": "materials-orm-512.png",
+      "role": "orm",
+      "tier": "low",
+      "width": 512,
+      "height": 512,
+      "size": [
+        512,
+        512
+      ],
+      "bytes": 114755,
+      "decodedBytes": 1048576,
+      "sha256": "4c208e73bd5bdcd218644061fefee4f49a30ad3fb3562fe35fc4eeac0cea0c02",
+      "colorSpace": "linear",
+      "mipmaps": true,
+      "flipY": false
+    }
+  ],
+  "decodedHighBytes": 12582912,
+  "budget": {
+    "units": "RGBA8 decoded bytes, excluding mipmaps; computed, not measured GPU allocation",
+    "atlasHighDecodedBytes": 12582912,
+    "terrainHighDecodedBytes": 10485760,
+    "macroMaskHighDecodedBytes": 5242880,
+    "totalHighDecodedBytes": 28311552,
+    "limitBytes": 41943040
+  }
+}

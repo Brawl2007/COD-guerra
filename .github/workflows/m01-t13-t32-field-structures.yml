@@ -1,0 +1,55 @@
+name: M01 T13 T32 field structures browser and authority
+on:
+  push:
+    branches: [codex/m01-t13-t32-field-structures-v1]
+    paths:
+      - .github/workflows/m01-t13-t32-field-structures.yml
+      - src/render/**
+      - assets/models/provisional/m01/structures/**
+      - tools/assets/m01-field-structures/**
+      - tools/verification/*field-structures*
+      - tests/m01-field-structures*.test.js
+      - tests/browser/m01-field-structures*.spec.js
+  pull_request:
+    branches: [main]
+    paths:
+      - assets/models/provisional/m01/structures/**
+      - src/render/m01-field-structures.js
+      - tests/browser/m01-field-structures*.spec.js
+permissions:
+  contents: read
+concurrency:
+  group: m01-t13-t32-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  browser-authority-regeneration:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Preserve gameplay, station, existing GLBs and renderer configuration
+        run: |
+          git diff --exit-code a1dd76b8fd30467f9bb335411cf8f589a4fd829a HEAD -- src/game src/world src/core missions src/render/m01-station-architecture.js package.json package-lock.json playwright.config.js vite.config.js 'assets/models/**' ':!assets/models/provisional/m01/structures/**'
+      - name: Reproduce the original field kit exactly
+        run: node tools/assets/m01-field-structures/build.mjs --check
+      - name: Check collider and route identity
+        run: |
+          npm run assets:m01:colliders -- --check
+          node tools/verify-m01-route.mjs
+      - run: npx playwright install --with-deps chromium
+      - name: Real renderer same-pause comparisons, lifecycle and gallery
+        env: {M01_FIELD_EVIDENCE: '1'}
+        run: npx playwright test --config tools/verification/playwright.m01-field-structures.config.js --workers=1 --retries=0 --output=test-results/field-structures-ci
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-t13-t32-${{ github.sha }}
+          path: |
+            test-results/
+            docs/assets/m01-field-structures/captures/
+            docs/verification/m01-runtime/m01-t13-t32-field-structures-v1/captures/
+          if-no-files-found: error

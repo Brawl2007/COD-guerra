@@ -1,0 +1,575 @@
+{
+  "sourceHead": "40535f633bc48b210c2cd08d069e2d5d8778d24b",
+  "fixAttempts": 1,
+  "maxFixAttempts": 3,
+  "reviewRejections": 0,
+  "reason": "Three invokes submission callbacks for zero-instance meshes, then renderInstances returns before a GPU draw. Existing callbacks overcounted draw calls (triangles remain correct).",
+  "diagnosticReportedDrawCalls": 12,
+  "nonemptyCallbackPasses": 2,
+  "submitted": [
+    {
+      "family": "physical-receiver",
+      "instances": 17,
+      "trianglesPerInstance": 90,
+      "passes": 1,
+      "triangles": 1530,
+      "paddingIncluded": true,
+      "sourceRanges": null
+    },
+    {
+      "family": "tree",
+      "tier": 3,
+      "leaf": true,
+      "instances": 212,
+      "trianglesPerInstance": 64,
+      "passes": 1,
+      "triangles": 13568,
+      "paddingIncluded": true,
+      "sourceRanges": [
+        {
+          "name": "poplar-lod3",
+          "species": 0,
+          "start": 0,
+          "count": 24
+        },
+        {
+          "name": "willow-lod3",
+          "species": 1,
+          "start": 24,
+          "count": 24
+        },
+        {
+          "name": "oak-lod3",
+          "species": 2,
+          "start": 48,
+          "count": 24
+        },
+        {
+          "name": "birch-lod3",
+          "species": 3,
+          "start": 72,
+          "count": 24
+        },
+        {
+          "name": "lime-lod3",
+          "species": 4,
+          "start": 96,
+          "count": 24
+        },
+        {
+          "name": "pine-lod3",
+          "species": 5,
+          "start": 120,
+          "count": 24
+        },
+        {
+          "name": "pollard-lod3",
+          "species": 6,
+          "start": 144,
+          "count": 24
+        },
+        {
+          "name": "snag-lod3",
+          "species": 7,
+          "start": 168,
+          "count": 24
+        }
+      ]
+    },
+    {
+      "family": "tree",
+      "tier": 0,
+      "leaf": true,
+      "instances": 0,
+      "trianglesPerInstance": 672,
+      "passes": 1,
+      "triangles": 0,
+      "paddingIncluded": true,
+      "sourceRanges": [
+        {
+          "name": "poplar-lod0",
+          "species": 0,
+          "start": 0,
+          "count": 288
+        },
+        {
+          "name": "willow-lod0",
+          "species": 1,
+          "start": 288,
+          "count": 288
+        },
+        {
+          "name": "oak-lod0",
+          "species": 2,
+          "start": 576,
+          "count": 288
+        },
+        {
+          "name": "birch-lod0",
+          "species": 3,
+          "start": 864,
+          "count": 288
+        },
+        {
+          "name": "lime-lod0",
+          "species": 4,
+          "start": 1152,
+          "count": 288
+        },
+        {
+          "name": "pine-lod0",
+          "species": 5,
+          "start": 1440,
+          "count": 288
+        },
+        {
+          "name": "pollard-lod0",
+          "species": 6,
+          "start": 1728,
+          "count": 288
+        }
+      ]
+    },
+    {
+      "family": "tree",
+      "tier": 1,
+      "leaf": true,
+      "instances": 0,
+      "trianglesPerInstance": 168,
+      "passes": 1,
+      "triangles": 0,
+      "paddingIncluded": true,
+      "sourceRanges": [
+        {
+          "name": "poplar-lod1",
+          "species": 0,
+          "start": 0,
+          "count": 72
+        },
+        {
+          "name": "willow-lod1",
+          "species": 1,
+          "start": 72,
+          "count": 72
+        },
+        {
+          "name": "oak-lod1",
+          "species": 2,
+          "start": 144,
+          "count": 72
+        },
+        {
+          "name": "birch-lod1",
+          "species": 3,
+          "start": 216,
+          "count": 72
+        },
+        {
+          "name": "lime-lod1",
+          "species": 4,
+          "start": 288,
+          "count": 72
+        },
+        {
+          "name": "pine-lod1",
+          "species": 5,
+          "start": 360,
+          "count": 72
+        },
+        {
+          "name": "pollard-lod1",
+          "species": 6,
+          "start": 432,
+          "count": 72
+        }
+      ]
+    },
+    {
+      "family": "tree",
+      "tier": 2,
+      "leaf": true,
+      "instances": 0,
+      "trianglesPerInstance": 84,
+      "passes": 1,
+      "triangles": 0,
+      "paddingIncluded": true,
+      "sourceRanges": [
+        {
+          "name": "poplar-lod2",
+          "species": 0,
+          "start": 0,
+          "count": 36
+        },
+        {
+          "name": "willow-lod2",
+          "species": 1,
+          "start": 36,
+          "count": 36
+        },
+        {
+          "name": "oak-lod2",
+          "species": 2,
+          "start": 72,
+          "count": 36
+        },
+        {
+          "name": "birch-lod2",
+          "species": 3,
+          "start": 108,
+          "count": 36
+        },
+        {
+          "name": "lime-lod2",
+          "species": 4,
+          "start": 144,
+          "count": 36
+        },
+        {
+          "name": "pine-lod2",
+          "species": 5,
+          "start": 180,
+          "count": 36
+        },
+        {
+          "name": "pollard-lod2",
+          "species": 6,
+          "start": 216,
+          "count": 36
+        }
+      ]
+    },
+    {
+      "family": "tree",
+      "tier": 0,
+      "leaf": false,
+      "instances": 0,
+      "trianglesPerInstance": 1648,
+      "passes": 1,
+      "triangles": 0,
+      "paddingIncluded": true,
+      "sourceRanges": [
+        {
+          "name": "poplar-lod0",
+          "species": 0,
+          "start": 0,
+          "count": 618
+        },
+        {
+          "name": "willow-lod0",
+          "species": 1,
+          "start": 618,
+          "count": 618
+        },
+        {
+          "name": "oak-lod0",
+          "species": 2,
+          "start": 1236,
+          "count": 618
+        },
+        {
+          "name": "birch-lod0",
+          "species": 3,
+          "start": 1854,
+          "count": 618
+        },
+        {
+          "name": "lime-lod0",
+          "species": 4,
+          "start": 2472,
+          "count": 618
+        },
+        {
+          "name": "pine-lod0",
+          "species": 5,
+          "start": 3090,
+          "count": 618
+        },
+        {
+          "name": "pollard-lod0",
+          "species": 6,
+          "start": 3708,
+          "count": 618
+        },
+        {
+          "name": "snag-lod0",
+          "species": 7,
+          "start": 4326,
+          "count": 618
+        }
+      ]
+    },
+    {
+      "family": "tree",
+      "tier": 1,
+      "leaf": false,
+      "instances": 0,
+      "trianglesPerInstance": 640,
+      "passes": 1,
+      "triangles": 0,
+      "paddingIncluded": true,
+      "sourceRanges": [
+        {
+          "name": "poplar-lod1",
+          "species": 0,
+          "start": 0,
+          "count": 240
+        },
+        {
+          "name": "willow-lod1",
+          "species": 1,
+          "start": 240,
+          "count": 240
+        },
+        {
+          "name": "oak-lod1",
+          "species": 2,
+          "start": 480,
+          "count": 240
+        },
+        {
+          "name": "birch-lod1",
+          "species": 3,
+          "start": 720,
+          "count": 240
+        },
+        {
+          "name": "lime-lod1",
+          "species": 4,
+          "start": 960,
+          "count": 240
+        },
+        {
+          "name": "pine-lod1",
+          "species": 5,
+          "start": 1200,
+          "count": 240
+        },
+        {
+          "name": "pollard-lod1",
+          "species": 6,
+          "start": 1440,
+          "count": 240
+        },
+        {
+          "name": "snag-lod1",
+          "species": 7,
+          "start": 1680,
+          "count": 240
+        }
+      ]
+    },
+    {
+      "family": "tree",
+      "tier": 2,
+      "leaf": false,
+      "instances": 0,
+      "trianglesPerInstance": 100,
+      "passes": 1,
+      "triangles": 0,
+      "paddingIncluded": true,
+      "sourceRanges": [
+        {
+          "name": "poplar-lod2",
+          "species": 0,
+          "start": 0,
+          "count": 24
+        },
+        {
+          "name": "willow-lod2",
+          "species": 1,
+          "start": 24,
+          "count": 24
+        },
+        {
+          "name": "oak-lod2",
+          "species": 2,
+          "start": 48,
+          "count": 24
+        },
+        {
+          "name": "birch-lod2",
+          "species": 3,
+          "start": 72,
+          "count": 24
+        },
+        {
+          "name": "lime-lod2",
+          "species": 4,
+          "start": 96,
+          "count": 24
+        },
+        {
+          "name": "pine-lod2",
+          "species": 5,
+          "start": 120,
+          "count": 24
+        },
+        {
+          "name": "pollard-lod2",
+          "species": 6,
+          "start": 144,
+          "count": 24
+        },
+        {
+          "name": "snag-lod2",
+          "species": 7,
+          "start": 168,
+          "count": 132
+        }
+      ]
+    },
+    {
+      "family": "shrub",
+      "leaf": true,
+      "instances": 0,
+      "trianglesPerInstance": 120,
+      "passes": 1,
+      "triangles": 0,
+      "paddingIncluded": true,
+      "sourceRanges": [
+        {
+          "name": "shrub-hazel",
+          "species": 0,
+          "start": 0,
+          "count": 60
+        },
+        {
+          "name": "shrub-elder",
+          "species": 1,
+          "start": 60,
+          "count": 66
+        },
+        {
+          "name": "shrub-bramble",
+          "species": 2,
+          "start": 126,
+          "count": 72
+        },
+        {
+          "name": "shrub-broom",
+          "species": 3,
+          "start": 198,
+          "count": 78
+        },
+        {
+          "name": "shrub-dry",
+          "species": 4,
+          "start": 276,
+          "count": 84
+        }
+      ]
+    },
+    {
+      "family": "shrub",
+      "leaf": false,
+      "instances": 0,
+      "trianglesPerInstance": 402,
+      "passes": 1,
+      "triangles": 0,
+      "paddingIncluded": true,
+      "sourceRanges": [
+        {
+          "name": "shrub-hazel",
+          "species": 0,
+          "start": 0,
+          "count": 180
+        },
+        {
+          "name": "shrub-elder",
+          "species": 1,
+          "start": 180,
+          "count": 198
+        },
+        {
+          "name": "shrub-bramble",
+          "species": 2,
+          "start": 378,
+          "count": 216
+        },
+        {
+          "name": "shrub-broom",
+          "species": 3,
+          "start": 594,
+          "count": 234
+        },
+        {
+          "name": "shrub-dry",
+          "species": 4,
+          "start": 828,
+          "count": 252
+        },
+        {
+          "name": "shrub-dead",
+          "species": 5,
+          "start": 1080,
+          "count": 126
+        }
+      ]
+    },
+    {
+      "family": "ground",
+      "leaf": true,
+      "instances": 0,
+      "trianglesPerInstance": 30,
+      "passes": 1,
+      "triangles": 0,
+      "paddingIncluded": true,
+      "sourceRanges": [
+        {
+          "name": "ground-meadow",
+          "species": 0,
+          "start": 0,
+          "count": 18
+        },
+        {
+          "name": "ground-dry",
+          "species": 1,
+          "start": 18,
+          "count": 18
+        },
+        {
+          "name": "ground-tall",
+          "species": 2,
+          "start": 36,
+          "count": 18
+        },
+        {
+          "name": "ground-weed",
+          "species": 3,
+          "start": 54,
+          "count": 18
+        },
+        {
+          "name": "ground-reed",
+          "species": 4,
+          "start": 72,
+          "count": 18
+        }
+      ]
+    },
+    {
+      "family": "contact-shadow",
+      "instances": 0,
+      "trianglesPerInstance": 14,
+      "passes": 1,
+      "triangles": 0,
+      "paddingIncluded": true,
+      "sourceRanges": null
+    }
+  ],
+  "action": "Preserve initial full suite; local correction skips empty instances/ranges for main and shadow counters, adds regression; republish and require new source gates.",
+  "at": "2026-10-13T15:41:19.948193+00:00",
+  "additionalSameCycleFailure": {
+    "ciRun": 38423220741,
+    "tests": 676,
+    "pass": 668,
+    "fail": 8,
+    "rootCause": "M01Environment descriptor prototype API removed; immutable damage-decal tests construct lightweight prototype-backed descriptor maker. Restore compatible delegation, leave prior tests intact.",
+    "rawLog": "ci-source-attempt1-node-failure.log"
+  },
+  "supersededFocusedRun": {
+    "id": 38423220343,
+    "conclusion": "cancelled",
+    "reason": "Captain deliberately cancelled obsolete source run; not a product test failure."
+  }
+}

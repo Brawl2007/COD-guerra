@@ -1,0 +1,46 @@
+[
+  {
+    "part": 1,
+    "seeds": [
+      19390901,
+      1,
+      2
+    ],
+    "output": "/home/runner/work/COD-guerra/COD-guerra/test-results/m01-vegetation-v2-futures-part-1.json",
+    "exitCode": 0,
+    "signal": null
+  },
+  {
+    "part": 2,
+    "seeds": [
+      3,
+      7,
+      17
+    ],
+    "output": "/home/runner/work/COD-guerra/COD-guerra/test-results/m01-vegetation-v2-futures-part-2.json",
+    "exitCode": 0,
+    "signal": null
+  },
+  {
+    "part": 3,
+    "seeds": [
+      41,
+      73,
+      99
+    ],
+    "output": "/home/runner/work/COD-guerra/COD-guerra/test-results/m01-vegetation-v2-futures-part-3.json",
+    "exitCode": 0,
+    "signal": null
+  },
+  {
+    "part": 4,
+    "seeds": [
+      1234,
+      1945,
+      4294967295
+    ],
+    "output": "/home/runner/work/COD-guerra/COD-guerra/test-results/m01-vegetation-v2-futures-part-4.json",
+    "exitCode": 0,
+    "signal": null
+  }
+]

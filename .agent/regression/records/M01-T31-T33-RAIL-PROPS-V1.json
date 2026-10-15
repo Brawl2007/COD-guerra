@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "task_id": "M01-T31-T33-RAIL-PROPS-V1",
+  "accepted_head": "6878d01e895787342d5f43b98524d47d53475943",
+  "status": "ACCEPTED",
+  "obligations": [
+    {
+      "id": "m01-actual-glb-track-contact-owner",
+      "kind": "test",
+      "check": "node --test tests/m01-track-bed.test.js tests/m01-train-consist-polish.test.js",
+      "reason": "Use immutable actual span/support/floor metadata, preserve fixed train wheel contact, bounded floor reveal and borrowed material restoration, one owner for approach and train extension, four track batches and sleeper/gauge profiles."
+    },
+    {
+      "id": "m01-actual-prop-instancing-ownership",
+      "kind": "test",
+      "check": "node --test tests/m01-props-runtime.test.js",
+      "reason": "42 original GLBs remain actual indexed heterogeneous geometry in bounded atlases, partial/hung/late completion releases once, borrowed inputs untouched, same-capacity world restores reuse GPU attributes."
+    },
+    {
+      "id": "m01-rail-props-frozen-render-and-resources",
+      "kind": "browser",
+      "check": "npx playwright test --config tools/verification/playwright.m01-rail-props.config.js",
+      "reason": "Real model/track replacements must visibly render at fixed save/camera/clock, original closed gates preserved, all15 controls stable, Low/High and checkpoint resource plateau, failure fallback and paused late residency."
+    },
+    {
+      "id": "m01-rail-props-gameplay-authority",
+      "kind": "test",
+      "check": "npm run assets:m01:colliders -- --check; node tools/verify-m01-route.mjs",
+      "reason": "No presentation owner may change colliders, gameplay routes, train anchors, bridge source geometry or deterministic mission future."
+    }
+  ]
+}

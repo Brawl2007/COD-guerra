@@ -1,0 +1,165 @@
+[
+  {
+    "family": "poplar",
+    "names": [
+      "poplar-lod0",
+      "poplar-lod1",
+      "poplar-lod2",
+      "poplar-lod3"
+    ],
+    "geometry": 15,
+    "textures": 1,
+    "rendererTextures": 2,
+    "drawCalls": 8,
+    "triangles": 436,
+    "materials": 2,
+    "atlasDecodedRGBA8": 1048576
+  },
+  {
+    "family": "willow",
+    "names": [
+      "willow-lod0",
+      "willow-lod1",
+      "willow-lod2",
+      "willow-lod3"
+    ],
+    "geometry": 22,
+    "textures": 1,
+    "rendererTextures": 2,
+    "drawCalls": 8,
+    "triangles": 436,
+    "materials": 2,
+    "atlasDecodedRGBA8": 1048576
+  },
+  {
+    "family": "oak",
+    "names": [
+      "oak-lod0",
+      "oak-lod1",
+      "oak-lod2",
+      "oak-lod3"
+    ],
+    "geometry": 22,
+    "textures": 1,
+    "rendererTextures": 2,
+    "drawCalls": 8,
+    "triangles": 436,
+    "materials": 2,
+    "atlasDecodedRGBA8": 1048576
+  },
+  {
+    "family": "birch",
+    "names": [
+      "birch-lod0",
+      "birch-lod1",
+      "birch-lod2",
+      "birch-lod3"
+    ],
+    "geometry": 29,
+    "textures": 1,
+    "rendererTextures": 2,
+    "drawCalls": 8,
+    "triangles": 436,
+    "materials": 2,
+    "atlasDecodedRGBA8": 1048576
+  },
+  {
+    "family": "lime",
+    "names": [
+      "lime-lod0",
+      "lime-lod1",
+      "lime-lod2",
+      "lime-lod3"
+    ],
+    "geometry": 36,
+    "textures": 1,
+    "rendererTextures": 2,
+    "drawCalls": 8,
+    "triangles": 436,
+    "materials": 2,
+    "atlasDecodedRGBA8": 1048576
+  },
+  {
+    "family": "pine",
+    "names": [
+      "pine-lod0",
+      "pine-lod1",
+      "pine-lod2",
+      "pine-lod3"
+    ],
+    "geometry": 43,
+    "textures": 1,
+    "rendererTextures": 2,
+    "drawCalls": 8,
+    "triangles": 436,
+    "materials": 2,
+    "atlasDecodedRGBA8": 1048576
+  },
+  {
+    "family": "pollard",
+    "names": [
+      "pollard-lod0",
+      "pollard-lod1",
+      "pollard-lod2",
+      "pollard-lod3"
+    ],
+    "geometry": 50,
+    "textures": 1,
+    "rendererTextures": 2,
+    "drawCalls": 8,
+    "triangles": 436,
+    "materials": 2,
+    "atlasDecodedRGBA8": 1048576
+  },
+  {
+    "family": "snag",
+    "names": [
+      "snag-lod0",
+      "snag-lod1",
+      "snag-lod2",
+      "snag-lod3"
+    ],
+    "geometry": 54,
+    "textures": 1,
+    "rendererTextures": 2,
+    "drawCalls": 5,
+    "triangles": 340,
+    "materials": 2,
+    "atlasDecodedRGBA8": 1048576
+  },
+  {
+    "family": "shrubs",
+    "names": [
+      "shrub-hazel",
+      "shrub-elder",
+      "shrub-bramble",
+      "shrub-broom",
+      "shrub-dry",
+      "shrub-dead"
+    ],
+    "geometry": 65,
+    "textures": 1,
+    "rendererTextures": 2,
+    "drawCalls": 12,
+    "triangles": 524,
+    "materials": 2,
+    "atlasDecodedRGBA8": 1048576
+  },
+  {
+    "family": "ground",
+    "names": [
+      "ground-meadow",
+      "ground-dry",
+      "ground-tall",
+      "ground-weed",
+      "ground-reed"
+    ],
+    "geometry": 70,
+    "textures": 1,
+    "rendererTextures": 2,
+    "drawCalls": 6,
+    "triangles": 32,
+    "materials": 2,
+    "atlasDecodedRGBA8": 1048576
+  }
+]

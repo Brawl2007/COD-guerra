@@ -1,0 +1,112 @@
+[1A[2K[2m[WebServer] [22m(node:9023) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K[2m[WebServer] [22m(node:9048) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 9 tests using 1 worker
+
+[1A[2K(node:9074) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:9074) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/9] tests/browser/m01-terrain-war-ground.spec.js:145:80 › near-1m: war ground (high) vs the legacy single soil texture
+[1A[2K[2/9] tests/browser/m01-terrain-war-ground.spec.js:145:80 › mid-5m: war ground (high) vs the legacy single soil texture
+[1A[2K[3/9] tests/browser/m01-terrain-war-ground.spec.js:145:80 › far-50m: war ground (high) vs the legacy single soil texture
+[1A[2K[4/9] tests/browser/m01-terrain-war-ground.spec.js:145:80 › rail-5m: war ground (high) vs the legacy single soil texture
+[1A[2K[5/9] tests/browser/m01-terrain-war-ground.spec.js:145:80 › road-5m: war ground (high) vs the legacy single soil texture
+[1A[2K[6/9] tests/browser/m01-terrain-war-ground.spec.js:145:80 › bank-5m: war ground (high) vs the legacy single soil texture
+[1A[2K  1) tests/browser/m01-terrain-war-ground.spec.js:145:80 › bank-5m: war ground (high) vs the legacy single soil texture 
+
+    Error: ground local texture richness > legacy ({"new":{"pixels":192000,"mean":26.98560756042399,"std":9.642889583508579,"localStd":2.70203140100495},"old":{"pixels":192000,"mean":23.094755763552776,"std":7.636870489236504,"localStd":3.7116152717958073}})
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBeGreaterThan[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: > [32m3.7116152717958073[39m
+    Received:   [31m2.70203140100495[39m
+
+      157 |   if(ls){
+      158 |     expect(s.std,`ground luminance variance > legacy (${JSON.stringify({new:s,old:ls})})`).toBeGreaterThan(ls.std);
+    > 159 |     expect(s.localStd,`ground local texture richness > legacy (${JSON.stringify({new:s,old:ls})})`).toBeGreaterThan(ls.localStd);
+          |                                                                                                     ^
+      160 |     expect(c.diagnostics.drawCalls,'no extra draw calls vs legacy ground').toBeLessThanOrEqual(l.diagnostics.drawCalls);
+      161 |   }
+      162 | });
+        at /workspace/COD-guerra/tests/browser/m01-terrain-war-ground.spec.js:159:101
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/material-terrain/m01-terrain-war-ground-ban-13ba4--legacy-single-soil-texture/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/material-terrain/m01-terrain-war-ground-ban-13ba4--legacy-single-soil-texture/test-failed-2.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/material-terrain/m01-terrain-war-ground-ban-13ba4--legacy-single-soil-texture/test-failed-3.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/material-terrain/m01-terrain-war-ground-ban-13ba4--legacy-single-soil-texture/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/material-terrain/m01-terrain-war-ground-ban-13ba4--legacy-single-soil-texture/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:11771) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:11771) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[7/9] tests/browser/m01-terrain-war-ground.spec.js:164:39 › medium: tier texture set, budget and look at 5 m
+[1A[2K[8/9] tests/browser/m01-terrain-war-ground.spec.js:164:39 › low: tier texture set, budget and look at 5 m
+[1A[2K[9/9] tests/browser/m01-terrain-war-ground.spec.js:178:1 › paused High→Low→Medium→High churn preserves save state and reclaims textures
+[1A[2K  2) tests/browser/m01-terrain-war-ground.spec.js:178:1 › paused High→Low→Medium→High churn preserves save state and reclaims textures 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m948153[39m
+    Received: [31m945755[39m
+
+      110 |       const highs=tiers.filter(d=>d.tier==='high');
+      111 |       expect(highs[1].globalTextures).toBe(highs[0].globalTextures);
+    > 112 |       expect(highs[1].terrain.gpuBytes).toBe(highs[0].terrain.gpuBytes);
+          |                                           ^
+      113 |       lifecycle={tiers,clock:data.clock};
+      114 |     }
+      115 |     let legacyCapture=null;
+        at capture (/workspace/COD-guerra/tests/browser/m01-terrain-war-ground.spec.js:112:43)
+        at /workspace/COD-guerra/tests/browser/m01-terrain-war-ground.spec.js:180:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/material-terrain/m01-terrain-war-ground-pau-22566-state-and-reclaims-textures/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/material-terrain/m01-terrain-war-ground-pau-22566-state-and-reclaims-textures/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/material-terrain/m01-terrain-war-ground-pau-22566-state-and-reclaims-textures/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  2 failed
+    tests/browser/m01-terrain-war-ground.spec.js:145:80 › bank-5m: war ground (high) vs the legacy single soil texture 
+    tests/browser/m01-terrain-war-ground.spec.js:178:1 › paused High→Low→Medium→High churn preserves save state and reclaims textures 
+  7 passed (7.8m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

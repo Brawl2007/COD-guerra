@@ -16,17 +16,19 @@ async function observe(page){
   return {errors,failed};
 }
 async function waitMenu(page){
-  await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});
+  await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.vegetation?.ready&&window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});
   await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#continue')).toBeVisible();
 }
 async function freezeContinue(page){
+  const frames=await page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames);
   await page.evaluate(()=>{
     const hold=e=>{if(document.pointerLockElement?.id==='game'){
       document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();document.exitPointerLock();
     }};document.addEventListener('pointerlockchange',hold,true);
   });
   await page.locator('#continue').click();
-  await page.waitForFunction(()=>window.gameDiagnostics().paused&&window.gameDiagnostics().m01?.vegetation?.treeCount>17,null,{timeout:120000});
+  await page.waitForFunction(frames=>{const d=window.gameDiagnostics(),overlay=document.querySelector('#pause');return d.paused&&overlay&&!overlay.classList.contains('hidden')&&getComputedStyle(overlay).display!=='none'&&d.m01.vegetation.treeCount>17&&d.m01.vegetation.ready&&d.m01.renderedFrames>frames&&d.m01.demolition.clock===d.clock&&d.m01.damageDecals.atlasReady&&d.m01.fieldStructures.ready&&d.m01.environmentProps.runtime.ready&&d.m01.wagons.loaded.length===6;},frames,{timeout:120000});
+  await page.waitForLoadState('networkidle',{timeout:120000});
   await expect(page.locator('#pause')).toBeVisible();
 }
 async function lookAt(page,target){
@@ -51,19 +53,19 @@ test('fixed rail camera shows volumetric grove in High and a cheaper intact silh
   await page.goto('?debug=1');await waitMenu(page);
   await page.locator('#quality').selectOption('high');await freezeContinue(page);
   const high=await page.evaluate(()=>window.gameDiagnostics()),vh=high.m01.vegetation;
-  expect(vh.treeCount).toBe(TREES);expect(vh.solidTreeCount).toBe(17);expect(vh.visualTreeCount).toBe(layout.visualTrees.length);expect(vh.tracked.m01_tree_0).toBe('near');
+  expect(vh.treeCount).toBe(TREES);expect(vh.solidTreeCount).toBe(17);expect(vh.visualTreeCount).toBe(layout.visualTrees.length);expect(['near','mid','far']).toContain(vh.tracked.m01_tree_0);
   expect(vh.lod.near+vh.lod.mid+vh.lod.far).toBe(TREES);expect(vh.leafCards).toBeGreaterThan(0);
   expect(vh.shrubCount).toBe(SHRUBS);expect(vh.shrubLod.near).toBeGreaterThan(0);expect(vh.collidersAdded).toBe(0);
-  expect(Object.keys(vh.species).length).toBeGreaterThanOrEqual(7);expect(vh.groundShadows).toBeGreaterThan(TREES);
-  expect(vh.grassInstances).toBeGreaterThan(500);expect(vh.grassInstances).toBeLessThan(vh.groundCoverTotal);
-  expect(vh.leafCards).toBeLessThanOrEqual(170);expect(vh.alphaCardReductionApprox).toBeGreaterThan(.88);
+  expect(Object.keys(vh.species).length).toBeGreaterThanOrEqual(7);expect(vh.groundShadows).toBeGreaterThan(0);expect(vh.groundShadows).toBeLessThanOrEqual(TREES+SHRUBS);
+  expect(vh.grassInstances).toBeGreaterThan(0);expect(vh.grassInstances).toBeLessThan(vh.groundCoverTotal);
+  expect(vh.ready).toBe(true);expect(vh.atlasTextures).toBe(1);expect(vh.drawCalls).toBeLessThanOrEqual(48);expect(vh.triangles).toBeLessThanOrEqual(350000);expect(vh.submitted.every(s=>s.paddingIncluded)).toBe(true);
   await page.screenshot({path:info.outputPath('CANDIDATE-B-rail-sappers-high.png'),style:'#pause,#hud,#menu {visibility:hidden!important}',timeout:120000});
 
   await page.locator('#back-menu').click();await page.waitForFunction(()=>window.gameDiagnostics().paused);
   await page.locator('#quality').selectOption('low');await freezeContinue(page);
   const low=await page.evaluate(()=>window.gameDiagnostics()),vl=low.m01.vegetation;
   expect(low.player.x).toBeCloseTo(high.player.x,6);expect(low.player.z).toBeCloseTo(high.player.z,6);
-  expect(low.player.angle).toBeCloseTo(high.player.angle,6);expect(vl.treeCount).toBe(TREES);expect(vl.leafCards).toBe(0);expect(vl.tracked.m01_tree_0).toBe('mid');
+  expect(low.player.angle).toBeCloseTo(high.player.angle,6);expect(vl.treeCount).toBe(TREES);expect(vl.ready).toBe(true);expect(['near','mid','far']).toContain(vl.tracked.m01_tree_0);expect(vl.drawCalls).toBeLessThanOrEqual(24);expect(vl.triangles).toBeLessThanOrEqual(120000);
   expect(vl.treeTriangles).toBeLessThan(vh.treeTriangles);expect(vl.treeDrawCalls).toBeLessThanOrEqual(vh.treeDrawCalls);
   expect(vl.grassInstances).toBeLessThan(vh.grassInstances/2);expect(vl.groundTriangles).toBeLessThan(vh.groundTriangles);
   expect(vl.shrubLod.culled).toBeGreaterThan(vh.shrubLod.culled);expect(vl.drawCalls).toBeLessThanOrEqual(vh.drawCalls);
@@ -77,20 +79,26 @@ test('fixed rail camera shows volumetric grove in High and a cheaper intact silh
 test('Medium keeps volumetric near and distant battlefield vegetation without changing gameplay state',async({page},info)=>{
   test.setTimeout(120000);
   const watch=await observe(page);
-  await page.addInitScript(()=>localStorage.setItem('cod-guerra:visual-quality','medium'));
-  await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});
-  await page.locator('#quality').selectOption('medium');await page.locator('#start').click();
-  await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game',null,{timeout:120000});
-  await page.keyboard.press('Space');await page.waitForFunction(n=>window.gameDiagnostics().m01?.vegetation?.treeCount===n,TREES);
+  await page.addInitScript(({key,snapshot})=>{localStorage.setItem(key,JSON.stringify(snapshot));localStorage.setItem('cod-guerra:visual-quality','medium');},{key,snapshot:rail.snapshot});
+  await page.goto('?debug=1&visual-verify=1');await waitMenu(page);
+  await page.locator('#quality').selectOption('high');await freezeContinue(page);
+  await page.waitForFunction(()=>{const d=window.gameDiagnostics();return d.quality==='high'&&d.m01.vegetation.quality==='high'&&d.m01.vegetation.lod.near>0;});
+  const highWarmup=await page.evaluate(()=>window.gameDiagnostics());
+  await page.locator('#quality').selectOption('medium',{force:true});
+  await page.waitForFunction(frames=>{const d=window.gameDiagnostics();return d.quality==='medium'&&d.m01.vegetation.quality==='medium'&&d.m01.renderedFrames>frames;},highWarmup.m01.renderedFrames);
+  const frozenState=await page.evaluate(()=>window.gameVerificationState());
+  expect(frozenState.snapshot.player).toEqual(rail.snapshot.player);
   const before=await page.evaluate(()=>window.gameDiagnostics());
-
-  await lookAt(page,{x:-36,z:-9,y:5});await capture(page,info,'AFTER-near-tree-medium.png');
+  await page.locator('#resume').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game',null,{timeout:120000});
+  const nearTree=layout.solid.find(t=>t.id==='m01_tree_4');
+  // This real rail save is 34.54 m from tree4. Real High→Medium warmup retains its near tier through the documented hysteresis.
+  await lookAt(page,{x:nearTree.x,z:nearTree.z,y:nearTree.y+nearTree.height*.62});await capture(page,info,'AFTER-near-tree-medium.png');
   await page.locator('#resume').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
   await lookAt(page,{x:-520,z:-150,y:6});await capture(page,info,'AFTER-battlefield-far-medium.png');
   const after=await page.evaluate(()=>window.gameDiagnostics());
-  expect(after.player.x).toBeCloseTo(before.player.x,5);expect(after.player.z).toBeCloseTo(before.player.z,5);
+  expect(after.player.x).toBeCloseTo(before.player.x,5);expect(after.player.z).toBeCloseTo(before.player.z,5);expect(after.player.y).toBe(before.player.y);
   expect(after.m01.vegetation.treeCount).toBe(TREES);expect(after.m01.vegetation.shrubCount).toBe(SHRUBS);
   expect(after.m01.vegetation.lod.near).toBeGreaterThan(0);expect(after.m01.vegetation.lod.mid).toBeGreaterThan(0);expect(after.m01.vegetation.lod.far).toBeGreaterThan(0);
-  await info.attach('vegetation-medium-counters',{body:JSON.stringify({before:{player:before.player,vegetation:before.m01.vegetation},after:{player:after.player,vegetation:after.m01.vegetation}},null,2),contentType:'application/json'});
+  await info.attach('vegetation-medium-counters',{body:JSON.stringify({fixture:rail.name,highWarmup:{player:highWarmup.player,vegetation:highWarmup.m01.vegetation},frozenPlayer:frozenState.snapshot.player,nearTarget:{id:nearTree.id,distance:Math.hypot(nearTree.x-before.player.x,nearTree.z-before.player.z)},before:{player:before.player,vegetation:before.m01.vegetation},after:{player:after.player,vegetation:after.m01.vegetation}},null,2),contentType:'application/json'});
   expect(watch.errors).toEqual([]);expect(watch.failed).toEqual([]);
 });

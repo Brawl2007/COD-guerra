@@ -1,0 +1,1922 @@
+[
+  {
+    "material": "field",
+    "distance": 1,
+    "diagnostics": {
+      "family": "field",
+      "tier": "low",
+      "distance": 1,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 2,
+      "decodedBytes": 3145728,
+      "cameraDistance": 1,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "meadow",
+    "distance": 1,
+    "diagnostics": {
+      "family": "meadow",
+      "tier": "low",
+      "distance": 1,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 3,
+      "decodedBytes": 3145728,
+      "cameraDistance": 1,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "mud",
+    "distance": 1,
+    "diagnostics": {
+      "family": "mud",
+      "tier": "low",
+      "distance": 1,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 4,
+      "decodedBytes": 3145728,
+      "cameraDistance": 1,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "track",
+    "distance": 1,
+    "diagnostics": {
+      "family": "track",
+      "tier": "low",
+      "distance": 1,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 5,
+      "decodedBytes": 3145728,
+      "cameraDistance": 1,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "ballast",
+    "distance": 1,
+    "diagnostics": {
+      "family": "ballast",
+      "tier": "low",
+      "distance": 1,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 6,
+      "decodedBytes": 3145728,
+      "cameraDistance": 1,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "brick",
+    "distance": 1,
+    "diagnostics": {
+      "family": "brick",
+      "tier": "low",
+      "distance": 1,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 6,
+      "decodedBytes": 3145728,
+      "cameraDistance": 1,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "stone",
+    "distance": 1,
+    "diagnostics": {
+      "family": "stone",
+      "tier": "low",
+      "distance": 1,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 7,
+      "decodedBytes": 3145728,
+      "cameraDistance": 1,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "wood",
+    "distance": 1,
+    "diagnostics": {
+      "family": "wood",
+      "tier": "low",
+      "distance": 1,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 8,
+      "decodedBytes": 3145728,
+      "cameraDistance": 1,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "painted-steel",
+    "distance": 1,
+    "diagnostics": {
+      "family": "painted-steel",
+      "tier": "low",
+      "distance": 1,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 9,
+      "decodedBytes": 3145728,
+      "cameraDistance": 1,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "rusted-steel",
+    "distance": 1,
+    "diagnostics": {
+      "family": "rusted-steel",
+      "tier": "low",
+      "distance": 1,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 10,
+      "decodedBytes": 3145728,
+      "cameraDistance": 1,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "canvas",
+    "distance": 1,
+    "diagnostics": {
+      "family": "canvas",
+      "tier": "low",
+      "distance": 1,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 11,
+      "decodedBytes": 3145728,
+      "cameraDistance": 1,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "roof-tile",
+    "distance": 1,
+    "diagnostics": {
+      "family": "roof-tile",
+      "tier": "low",
+      "distance": 1,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 12,
+      "decodedBytes": 3145728,
+      "cameraDistance": 1,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "asphalt",
+    "distance": 1,
+    "diagnostics": {
+      "family": "asphalt",
+      "tier": "low",
+      "distance": 1,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 13,
+      "decodedBytes": 3145728,
+      "cameraDistance": 1,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "wetbank",
+    "distance": 1,
+    "diagnostics": {
+      "family": "wetbank",
+      "tier": "low",
+      "distance": 1,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 14,
+      "decodedBytes": 3145728,
+      "cameraDistance": 1,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "mortar",
+    "distance": 1,
+    "diagnostics": {
+      "family": "mortar",
+      "tier": "low",
+      "distance": 1,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 15,
+      "decodedBytes": 3145728,
+      "cameraDistance": 1,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "plaster",
+    "distance": 1,
+    "diagnostics": {
+      "family": "plaster",
+      "tier": "low",
+      "distance": 1,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 1,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "field",
+    "distance": 5,
+    "diagnostics": {
+      "family": "field",
+      "tier": "low",
+      "distance": 5,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 5,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "meadow",
+    "distance": 5,
+    "diagnostics": {
+      "family": "meadow",
+      "tier": "low",
+      "distance": 5,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 5,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "mud",
+    "distance": 5,
+    "diagnostics": {
+      "family": "mud",
+      "tier": "low",
+      "distance": 5,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 5,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "track",
+    "distance": 5,
+    "diagnostics": {
+      "family": "track",
+      "tier": "low",
+      "distance": 5,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 5,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "ballast",
+    "distance": 5,
+    "diagnostics": {
+      "family": "ballast",
+      "tier": "low",
+      "distance": 5,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 5,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "brick",
+    "distance": 5,
+    "diagnostics": {
+      "family": "brick",
+      "tier": "low",
+      "distance": 5,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 5,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "stone",
+    "distance": 5,
+    "diagnostics": {
+      "family": "stone",
+      "tier": "low",
+      "distance": 5,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 5,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "wood",
+    "distance": 5,
+    "diagnostics": {
+      "family": "wood",
+      "tier": "low",
+      "distance": 5,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 5,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "painted-steel",
+    "distance": 5,
+    "diagnostics": {
+      "family": "painted-steel",
+      "tier": "low",
+      "distance": 5,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 5,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "rusted-steel",
+    "distance": 5,
+    "diagnostics": {
+      "family": "rusted-steel",
+      "tier": "low",
+      "distance": 5,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 5,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "canvas",
+    "distance": 5,
+    "diagnostics": {
+      "family": "canvas",
+      "tier": "low",
+      "distance": 5,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 5,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "roof-tile",
+    "distance": 5,
+    "diagnostics": {
+      "family": "roof-tile",
+      "tier": "low",
+      "distance": 5,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 5,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "asphalt",
+    "distance": 5,
+    "diagnostics": {
+      "family": "asphalt",
+      "tier": "low",
+      "distance": 5,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 5,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "wetbank",
+    "distance": 5,
+    "diagnostics": {
+      "family": "wetbank",
+      "tier": "low",
+      "distance": 5,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 5,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "mortar",
+    "distance": 5,
+    "diagnostics": {
+      "family": "mortar",
+      "tier": "low",
+      "distance": 5,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 5,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "plaster",
+    "distance": 5,
+    "diagnostics": {
+      "family": "plaster",
+      "tier": "low",
+      "distance": 5,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 5,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "field",
+    "distance": 20,
+    "diagnostics": {
+      "family": "field",
+      "tier": "low",
+      "distance": 20,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 20,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "meadow",
+    "distance": 20,
+    "diagnostics": {
+      "family": "meadow",
+      "tier": "low",
+      "distance": 20,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 20,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "mud",
+    "distance": 20,
+    "diagnostics": {
+      "family": "mud",
+      "tier": "low",
+      "distance": 20,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 20,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "track",
+    "distance": 20,
+    "diagnostics": {
+      "family": "track",
+      "tier": "low",
+      "distance": 20,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 20,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "ballast",
+    "distance": 20,
+    "diagnostics": {
+      "family": "ballast",
+      "tier": "low",
+      "distance": 20,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 20,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "brick",
+    "distance": 20,
+    "diagnostics": {
+      "family": "brick",
+      "tier": "low",
+      "distance": 20,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 20,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "stone",
+    "distance": 20,
+    "diagnostics": {
+      "family": "stone",
+      "tier": "low",
+      "distance": 20,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 20,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "wood",
+    "distance": 20,
+    "diagnostics": {
+      "family": "wood",
+      "tier": "low",
+      "distance": 20,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 20,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "painted-steel",
+    "distance": 20,
+    "diagnostics": {
+      "family": "painted-steel",
+      "tier": "low",
+      "distance": 20,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 20,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "rusted-steel",
+    "distance": 20,
+    "diagnostics": {
+      "family": "rusted-steel",
+      "tier": "low",
+      "distance": 20,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 20,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "canvas",
+    "distance": 20,
+    "diagnostics": {
+      "family": "canvas",
+      "tier": "low",
+      "distance": 20,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 20,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "roof-tile",
+    "distance": 20,
+    "diagnostics": {
+      "family": "roof-tile",
+      "tier": "low",
+      "distance": 20,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 20,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "asphalt",
+    "distance": 20,
+    "diagnostics": {
+      "family": "asphalt",
+      "tier": "low",
+      "distance": 20,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 20,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "wetbank",
+    "distance": 20,
+    "diagnostics": {
+      "family": "wetbank",
+      "tier": "low",
+      "distance": 20,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 20,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "mortar",
+    "distance": 20,
+    "diagnostics": {
+      "family": "mortar",
+      "tier": "low",
+      "distance": 20,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 20,
+      "calls": 1,
+      "triangles": 2
+    }
+  },
+  {
+    "material": "plaster",
+    "distance": 20,
+    "diagnostics": {
+      "family": "plaster",
+      "tier": "low",
+      "distance": 20,
+      "status": "ready",
+      "materialIds": [
+        "field",
+        "meadow",
+        "mud",
+        "track",
+        "ballast",
+        "brick",
+        "stone",
+        "wood",
+        "painted-steel",
+        "rusted-steel",
+        "canvas",
+        "roof-tile",
+        "asphalt",
+        "wetbank",
+        "mortar",
+        "plaster"
+      ],
+      "maps": [
+        "albedo",
+        "normal",
+        "orm"
+      ],
+      "loaded": true,
+      "textures": 3,
+      "materials": 16,
+      "decodedBytes": 3145728,
+      "cameraDistance": 20,
+      "calls": 1,
+      "triangles": 2
+    }
+  }
+]

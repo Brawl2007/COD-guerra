@@ -1,0 +1,40 @@
+[1A[2K[2m[WebServer] [22m(node:6271) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 2 tests using 1 worker
+
+[1A[2K(node:6301) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:6301) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/2] tests/browser/m01-relief-horizon.spec.js:28:1 › canonical 01/09/10/17 and supplemental banks: separate paused relief and skyline pixels, exact save/camera/clock
+[1A[2Ktests/browser/m01-relief-horizon.spec.js:28:1 › canonical 01/09/10/17 and supplemental banks: separate paused relief and skyline pixels, exact save/camera/clock
+M01_FEATURE_PIXELS {"view":"01-start-section-close","feature":"relief","pixels":{"changed":2595,"controlMaxDiff":0,"control":{"x":0,"y":0,"width":32,"height":24},"changedBounds":{"minX":7,"minY":265,"maxX":1067,"maxY":293}}}
+
+[1A[2KM01_FEATURE_PIXELS {"view":"01-start-section-close","feature":"far","pixels":{"changed":281,"controlMaxDiff":0,"control":{"x":0,"y":0,"width":32,"height":24},"changedBounds":{"minX":7,"minY":275,"maxX":305,"maxY":293}}}
+
+[1A[2KM01_FEATURE_PIXELS {"view":"09-repair-sappers","feature":"relief","pixels":{"changed":65,"controlMaxDiff":0,"control":{"x":0,"y":0,"width":32,"height":24},"changedBounds":{"minX":602,"minY":336,"maxX":770,"maxY":357}}}
+
+[1A[2KM01_FEATURE_PIXELS {"view":"10-repair-threat-lisewo-far","feature":"far","pixels":{"changed":30,"controlMaxDiff":0,"control":{"x":0,"y":0,"width":32,"height":24},"changedBounds":{"minX":561,"minY":348,"maxX":641,"maxY":353}}}
+
+[1A[2KM01_FEATURE_PIXELS {"view":"17-panzerzug-daylight","feature":"relief","pixels":{"changed":8724,"controlMaxDiff":0,"control":{"x":0,"y":0,"width":32,"height":24},"changedBounds":{"minX":208,"minY":374,"maxX":1279,"maxY":408}}}
+
+[1A[2KM01_FEATURE_PIXELS {"view":"17-panzerzug-daylight","feature":"far","pixels":{"changed":5822,"controlMaxDiff":0,"control":{"x":0,"y":0,"width":32,"height":24},"changedBounds":{"minX":613,"minY":339,"maxX":1279,"maxY":376}}}
+
+[1A[2KM01_FEATURE_PIXELS {"view":"supplement-west-banks","feature":"relief","pixels":{"changed":2076,"controlMaxDiff":0,"control":{"x":0,"y":0,"width":32,"height":24},"changedBounds":{"minX":0,"minY":349,"maxX":529,"maxY":371}}}
+
+[1A[2KM01_FEATURE_PIXELS {"view":"supplement-west-banks","feature":"far","pixels":{"changed":10184,"controlMaxDiff":0,"control":{"x":0,"y":0,"width":32,"height":24},"changedBounds":{"minX":0,"minY":315,"maxX":534,"maxY":369}}}
+
+[1A[2KM01_FEATURE_PIXELS {"view":"supplement-east-banks","feature":"relief","pixels":{"changed":9493,"controlMaxDiff":0,"control":{"x":0,"y":0,"width":32,"height":24},"changedBounds":{"minX":159,"minY":364,"maxX":1279,"maxY":397}}}
+
+[1A[2KM01_FEATURE_PIXELS {"view":"supplement-east-banks","feature":"far","pixels":{"changed":5822,"controlMaxDiff":0,"control":{"x":0,"y":0,"width":32,"height":24},"changedBounds":{"minX":583,"minY":330,"maxX":1279,"maxY":367}}}
+
+[1A[2K[2/2] tests/browser/m01-relief-horizon.spec.js:40:1 › Low/High, paused debug invalidation, checkpoint and reload preserve resource plateau and world binding
+[1A[2K  Slow test file: tests/browser/m01-relief-horizon.spec.js (13.0m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  2 passed (13.3m)

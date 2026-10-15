@@ -1,0 +1,38 @@
+{
+  "status": "PASS_SOURCE_GEOMETRY_ONLY",
+  "head": "49a18863ad6fc6f821ccff6f65253ac264f607dc",
+  "immutablePaths": 621,
+  "actualBaseline": {
+    "triangles": 104000,
+    "vertices": 52531,
+    "bufferHashesMatched": true
+  },
+  "protected": {
+    "haloMeters": 10,
+    "haloVertexCopiesChecked": 20986,
+    "actualCrossingTrianglesRetained": 39196,
+    "actualGeometry1mGridSamples": 424716,
+    "maxInterpolatedAttributeDelta": 0,
+    "verticalRangeRays": 152,
+    "maxRayDistanceDelta": 0
+  },
+  "terrain": {
+    "legacyTriangles": 48368,
+    "skirtTriangles": 11144,
+    "totalTriangles": 59512
+  },
+  "far": {
+    "triangles": 3232,
+    "objects": 5,
+    "actualMaximumPassesIncludingDoubleSidedMist": 5,
+    "triangleInteriorsOutsideHullMargin": true
+  },
+  "resources": {
+    "terrainDisposes": 478,
+    "farGeometryDisposes": 5,
+    "farMaterialDisposes": 5,
+    "borrowedDisposes": 0,
+    "steadySyncs": 1000
+  },
+  "runtimeAcceptance": "PENDING_REAL_BROWSER_AND_EXACT_HEAD_CI"
+}

@@ -1,0 +1,71 @@
+{
+  "status": "PASS",
+  "source": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+  "reliefHorizonPixelSamples": [
+    {
+      "view": "01-start-section-close",
+      "feature": "relief",
+      "pixels": 4943,
+      "controlMaxDiff": 0
+    },
+    {
+      "view": "01-start-section-close",
+      "feature": "far",
+      "pixels": 187,
+      "controlMaxDiff": 0
+    },
+    {
+      "view": "09-repair-sappers",
+      "feature": "relief",
+      "pixels": 69,
+      "controlMaxDiff": 0
+    },
+    {
+      "view": "10-repair-threat-lisewo-far",
+      "feature": "far",
+      "pixels": 31,
+      "controlMaxDiff": 0
+    },
+    {
+      "view": "17-panzerzug-daylight",
+      "feature": "relief",
+      "pixels": 8724,
+      "controlMaxDiff": 0
+    },
+    {
+      "view": "17-panzerzug-daylight",
+      "feature": "far",
+      "pixels": 5822,
+      "controlMaxDiff": 0
+    },
+    {
+      "view": "supplement-west-banks",
+      "feature": "relief",
+      "pixels": 2200,
+      "controlMaxDiff": 0
+    },
+    {
+      "view": "supplement-west-banks",
+      "feature": "far",
+      "pixels": 9536,
+      "controlMaxDiff": 0
+    },
+    {
+      "view": "supplement-east-banks",
+      "feature": "relief",
+      "pixels": 9493,
+      "controlMaxDiff": 0
+    },
+    {
+      "view": "supplement-east-banks",
+      "feature": "far",
+      "pixels": 5822,
+      "controlMaxDiff": 0
+    }
+  ],
+  "reliefRestoreSamples": 4,
+  "reliefEquallyWarmedReloadSamples": 1,
+  "kitFamilies": 10,
+  "kitModels": 43,
+  "railEvidence": "Exact-source focused raw log:3 candidate tests PASS plus3 nested-baseline-import duplicates. Runtime rail raw-report path omitted by artifact upload; passing immutable source assertions are retained in logs."
+}

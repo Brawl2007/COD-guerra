@@ -1,0 +1,165 @@
+{
+  "baselineHead": "293a4f116b9b28818b7ff3bda4d83cc49b01014f",
+  "productionModules": 89,
+  "browserPassed": 1,
+  "trackedSourceClean": true,
+  "viewport": [
+    1280,
+    720
+  ],
+  "frames": [
+    {
+      "name": "01-start-section-close",
+      "clock": 0.05,
+      "camera": {
+        "position": [
+          -74,
+          -1.36,
+          30
+        ],
+        "quaternion": [
+          -0.04666455842651134,
+          0.16000314519233547,
+          0.007572615354244863,
+          0.9859838071754098
+        ],
+        "fov": 70,
+        "aspect": 1.7777777777777777,
+        "near": 0.05,
+        "far": 7500,
+        "width": 1280,
+        "height": 720
+      },
+      "snapshotSha256": "b8a17c811e1d07b4f53b4662d0c03d943f63c0ff1ff47ec6d9f0bf1a9ec31779"
+    },
+    {
+      "name": "09-repair-sappers",
+      "clock": 207.3500000000129,
+      "camera": {
+        "position": [
+          -146,
+          -1.36,
+          14
+        ],
+        "quaternion": [
+          -0.0031325547721998796,
+          -0.651528455589629,
+          -0.0026903687187539802,
+          0.7586129583481614
+        ],
+        "fov": 70,
+        "aspect": 1.7777777777777777,
+        "near": 0.05,
+        "far": 7500,
+        "width": 1280,
+        "height": 720
+      },
+      "snapshotSha256": "59a59392c855ae6fe96de3abebda9213be80611ebd6454f1d2dd360eb772d224"
+    },
+    {
+      "name": "10-repair-threat-lisewo-far",
+      "clock": 290.85000000003186,
+      "camera": {
+        "position": [
+          -120,
+          -1.36,
+          16.5
+        ],
+        "quaternion": [
+          0.0013207552442824216,
+          -0.703960646108615,
+          0.0013090845873012947,
+          0.7102365455490652
+        ],
+        "fov": 70,
+        "aspect": 1.7777777777777777,
+        "near": 0.05,
+        "far": 7500,
+        "width": 1280,
+        "height": 720
+      },
+      "snapshotSha256": "ccc9a37f0aaa68ea2d0c369772d0678932f07094b9ddbbd874acd84b1e8910e1"
+    },
+    {
+      "name": "17-panzerzug-daylight",
+      "clock": 764.0999999998528,
+      "camera": {
+        "position": [
+          1092,
+          0.6361712070045648,
+          24
+        ],
+        "quaternion": [
+          0.012602167258386723,
+          -0.5710816993774274,
+          0.008768650817532019,
+          0.8207496504899783
+        ],
+        "fov": 70,
+        "aspect": 1.7777777777777777,
+        "near": 0.05,
+        "far": 7500,
+        "width": 1280,
+        "height": 720
+      },
+      "snapshotSha256": "22d1544ab4ec1c0fa16292859bca380a8ba533381051d2e9f1f7338ce3d8cb0f"
+    },
+    {
+      "name": "supplement-west-banks",
+      "clock": 207.3500000000129,
+      "camera": {
+        "position": [
+          -420,
+          -1.36,
+          120
+        ],
+        "quaternion": [
+          0.004622557879728347,
+          0.3674043631924682,
+          -0.001826086273016645,
+          0.930048026326979
+        ],
+        "fov": 70,
+        "aspect": 1.7777777777777777,
+        "near": 0.05,
+        "far": 7500,
+        "width": 1280,
+        "height": 720
+      },
+      "snapshotSha256": "d39b8c62a5b9cdfe3379a33e3afab3d52d2bf25a50a9bd419b8eed134ab0b613"
+    },
+    {
+      "name": "supplement-east-banks",
+      "clock": 764.0999999998528,
+      "camera": {
+        "position": [
+          1092,
+          0.6361712070045648,
+          24
+        ],
+        "quaternion": [
+          0.004721578056947669,
+          -0.5947008652274792,
+          0.0034927691281137594,
+          0.8039256110873427
+        ],
+        "fov": 70,
+        "aspect": 1.7777777777777777,
+        "near": 0.05,
+        "far": 7500,
+        "width": 1280,
+        "height": 720
+      },
+      "snapshotSha256": "e68eafbd3cb40e17ae84f041bb8a241470c8655d865f0f77fcbc5b9cea5c872d"
+    }
+  ],
+  "files": {
+    "baseline-captures/10-repair-threat-lisewo-far-legacy.png": "9c5c51a44a6ce8a0d55218a3b30ffc5ce1bf47cd4fdc38dcd3472521746b38a5",
+    "baseline-captures/01-start-section-close-legacy.png": "12d0ccb669cf3ff5187e23ea167631b76c98cc6775fad7db4f452c22a071cef0",
+    "baseline-captures/same-paused-views.json": "6c44ac868f8f3f743430911c0cc288ffd8362afe0abe415ae379ea60486a023e",
+    "baseline-captures/09-repair-sappers-legacy.png": "88e155af24a45ecdbeb11f25de0e5cd6b40b1cec7fd6d7458d896130743540aa",
+    "baseline-captures/supplement-west-banks-legacy.png": "a48b3674bbf7d3de7ac0d31502b085ce31ea5a4de67bd46e43fab16abce29d71",
+    "baseline-captures/supplement-east-banks-legacy.png": "7d78df50bdff30ffc8b80660fa6d6e2d3abe030cca968d0824027e711986c25b",
+    "baseline-captures/17-panzerzug-daylight-legacy.png": "31953ce16e0f755d57e37f1ba996503e0c0da126097659709842689a265b5642"
+  }
+}

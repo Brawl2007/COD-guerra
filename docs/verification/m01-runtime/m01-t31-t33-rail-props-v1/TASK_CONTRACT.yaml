@@ -1,0 +1,156 @@
+{
+  "schema_version": 2,
+  "task": {
+    "id": "M01-T31-T33-RAIL-PROPS-V1",
+    "type": "renderer",
+    "role": "implementer",
+    "objective": "Complete visual track bed T31 and integrate accepted T12 GLB prop kit T33 with bounded draws, preserving gameplay and concurrent Claude work."
+  },
+  "git": {
+    "base_branch": "claude/m01-integration",
+    "base_head": "02f2145cd71ce17a6af84ef611823a0c0f1ddac5",
+    "work_branch": "codex/m01-t31-t33-rail-props-v1",
+    "starting_head": "dfef0bfe3f903788b498fcef24663002c25a1f44"
+  },
+  "policy": {
+    "gameplay_change_allowed": false,
+    "visual_change_allowed": true,
+    "persistence_change_allowed": false,
+    "architecture_change_allowed": false
+  },
+  "scope": {
+    "allowed_files": [
+      "src/render/m01-track-bed.js",
+      "src/render/m01-props-runtime.js",
+      "src/render/m01-environment-props.js",
+      "src/render/m01-environment.js",
+      "src/render/m01-view.js",
+      "src/render/m01-train-consist-detail.js",
+      "src/world/m01-decoration-layout.js",
+      "tests/*track-bed*.test.js",
+      "tests/*props-runtime*.test.js",
+      "tests/browser/*rail-props*.spec.js",
+      "tools/verification/*rail-props*",
+      ".github/workflows/m01-t31-t33-rail-props.yml",
+      "docs/**",
+      "DEVELOPMENT_STATUS.md",
+      ".agent/regression/records/**",
+      ".agent/memory/m01/**",
+      "tests/m01-train-consist-polish.test.js",
+      "tests/m01-environment-props.test.js",
+      "tests/browser/m01-train-consist-polish.spec.js"
+    ],
+    "forbidden_files": [
+      "src/game/**",
+      "src/core/**",
+      "src/world/tczew-world.js",
+      "missions/**",
+      "src/render/m01-station-architecture.js",
+      "src/render/m01-field-structures.js",
+      "src/render/m01-bridge-structure.js",
+      "assets/**",
+      "tools/assets/**",
+      "package.json",
+      "package-lock.json",
+      "playwright.config.js"
+    ],
+    "allowed_systems": [
+      "visual track bed and join presentation",
+      "optional instanced T12 prop runtime",
+      "focused verification",
+      "bounded visual rail-floor contact and eastern approach proxy replacement"
+    ],
+    "exclusive_resources": [
+      "T31",
+      "T33"
+    ],
+    "read_areas": [
+      "src/world/tczew-world.js",
+      "missions/m01-tczew/map-layout.json",
+      "src/render/m01-station-architecture.js",
+      "tools/assets/m01-props/**"
+    ],
+    "write_areas": [
+      "track bed presentation",
+      "non-solid prop decoration"
+    ]
+  },
+  "dependencies": {
+    "tasks": [
+      "Station V3 exists in base",
+      "T12 accepted prop kit: immutable source/model bytes"
+    ],
+    "branches": []
+  },
+  "risk": {
+    "level": "medium",
+    "complexity": "high"
+  },
+  "acceptance": {
+    "criteria": [
+      "T31: sleepers 0.63m High/Medium and 1.26m Low, continuous ballast, head/web/foot rail profiles, fishplates each 15m, station siding switch; grounded eastern polylines. Track rendering draw calls <=4; document ownership boundaries including train extension.",
+      "Actual immutable bridge GLB metadata is authoritative: supportsX ends1049.2 (10supports), original eastern approach ends1058.2, decorative floor ends1067.2. New track owner replaces only eastern approach presentation from actual lastspan end1044.7 (pivot962.9+length81.8), flat to bearing1049.2 top+.012, then through1062 top\u2212.82/centres\u00b12.5, preserving locomotive1075/west wheel1068.23 and wagons1090 onward. No duplicate legacy approach. Exact gauge/profile endpoints and real5m closeups; document the short reconstructed~6.5% presentation grade without historical claim. Original model/generator/bridge-controller bytes and all terrain vertex buffers remain identical.",
+      "T33: actual accepted T12 GLB geometry replaces primitive box/wire dressing; instanced render batches <=8 draws. Telegraph poles/wires western line, fences/lanterns and yard crane/coal/sleeper stacks/switch/semaphore. No new solids, routes or cover nodes. Preserve licences and all kit bytes.",
+      "Safe partial/rejection/stale/disposal ownership, no steady-frame reload/allocation; quality LOD, world reference/revision replacement, paused asset revision and fallback proxy ownership. No duplicate opaque proxy after residency.",
+      "Real renderer before/after views01/02/03/07/16 and10; identical paused camera/clock/save controls, inspect images, meaningful closeups of actual models. Low/High, failure fallback and checkpoint restore plateau.",
+      "Collider export --check and exact route unchanged. Protected gameplay/mission/asset bytes identical versus base; Node suite, tooling, build, focused browser all pass; independent verifier PASS reviewer ACCEPT and green branch CI before integration.",
+      "Bounded renderer-only decorative floor contact replacement is authorized: cloned last-support stone/courses materials discard only source floor/old ballast above newbed crown inside two3.4m footprints x1049.2..1067.2. Existing foundation/masonry outside footprints and below crown preserved; borrowed textures never disposed. Track-off/dispose restore original materials/floor/legacy approach. No collider/height/mission/art position change; independent actualGLB geometry/raycast and visibleinside-corridor evidence required."
+    ]
+  },
+  "verification": {
+    "required_tests": [
+      "npm test",
+      "python3 -m unittest discover -s .agent/tests",
+      "npm run build",
+      "npm run assets:m01:colliders -- --check",
+      "node tools/verify-m01-route.mjs",
+      "focused track/prop geometry batching and lifecycle unit tests",
+      "focused rail/props browser with screenshots",
+      "protected bytes diff versus base"
+    ],
+    "build_requirement": "required",
+    "browser_requirement": "focused",
+    "regression_obligations": [
+      "rail joins/gauge/sleeper quality and draw budget",
+      "actual GLB prop instancing/draw budget/fallback ownership",
+      "route and collider identity",
+      "paused restore and allocation stability"
+    ]
+  },
+  "execution": {
+    "max_fix_attempts": 3,
+    "max_review_rejections": 2,
+    "production_mode": "focused"
+  },
+  "routing": {
+    "policy": "auto",
+    "preferred_class": "standard",
+    "escalation_class": "advanced"
+  },
+  "human": {
+    "approval_points": []
+  },
+  "context": {
+    "required_memory_topics": [
+      "fair pixel evidence",
+      "paused loaded frames",
+      "optional model ownership"
+    ],
+    "mutable_claims_to_verify": [
+      "reservations",
+      "integration head",
+      "existing bridge endpoint geometry and rail profile",
+      "T12 manifest types/LODs/materials",
+      "old rail and prop proxy ownership"
+    ]
+  },
+  "integration": {
+    "target_branch": "claude/m01-integration",
+    "auto_integrate": true
+  },
+  "state": {
+    "status": "INTEGRATED",
+    "accepted_head": "6878d01e895787342d5f43b98524d47d53475943",
+    "integration_head": "096a393fff3b33e221a0c586f58101b2025f9eac"
+  }
+}

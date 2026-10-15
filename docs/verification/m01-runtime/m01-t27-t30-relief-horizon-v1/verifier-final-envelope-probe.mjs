@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {writeFileSync} from 'node:fs';
+import * as THREE from 'three';
+import {TczewWorld as CandidateWorld} from '../../../src/world/tczew-world.js';
+import {TczewWorld as BaselineWorld} from './baseline-checkout/src/world/tczew-world.js';
+import {M01TerrainRelief} from '../../../src/render/m01-terrain-relief.js';
+const world=new CandidateWorld(),baseline=new BaselineWorld(),mat=new THREE.MeshBasicMaterial(),owner=new M01TerrainRelief(new THREE.Group(),world,mat),e=owner.envelope,buckets=new Map();
+const sample=(g,ids,x,z)=>{const p=g.attributes.position,[[ax,az],[bx,bz],[cx,cz]]=ids.map(v=>[p.getX(v),p.getZ(v)]),den=(bz-cz)*(ax-cx)+(cx-bx)*(az-cz),u=((bz-cz)*(x-cx)+(cx-bx)*(z-cz))/den,v=((cz-az)*(x-cx)+(ax-cx)*(z-cz))/den,w=1-u-v;if(Math.min(u,v,w)<-1e-9)return null;return u*p.getY(ids[0])+v*p.getY(ids[1])+w*p.getY(ids[2]);};
+for(const m of owner.meshes.filter(m=>m.geometry.userData.kind==='fog-skirt')){const g=m.geometry,p=g.attributes.position;for(let t=0;t<g.index.count;t+=3){const ids=[g.index.getX(t),g.index.getX(t+1),g.index.getX(t+2)],xs=ids.map(v=>p.getX(v)),zs=ids.map(v=>p.getZ(v));for(let j=Math.floor(Math.min(...zs)/100);j<=Math.floor(Math.max(...zs)/100);j++)for(let i=Math.floor(Math.min(...xs)/100);i<=Math.floor(Math.max(...xs)/100);i++){const key=`${i},${j}`;if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push([g,ids]);}}}
+let protected1mSamples=0,outsideLegacySurfaceSamples=0,maxPhysicsHeightDelta=0,maxVisualSamplerDelta=0,maxProtectedSkirtSurfaceDelta=0;
+for(let z=Math.ceil(e.extent.minZ);z<=e.extent.maxZ;z++)for(let x=Math.ceil(e.extent.minX);x<=e.extent.maxX;x++)if(e.contains(x,z)){
+ const physics=Math.abs(world.heightAt(x,z)-baseline.heightAt(x,z)),terrain=Math.abs(world.terrainHeightAt(x,z)-baseline.terrainHeightAt(x,z)),visual=Math.abs(owner.visualHeightAt(x,z)-baseline.heightAt(x,z));assert.equal(physics,0);assert.equal(terrain,0);assert.equal(visual,0);maxPhysicsHeightDelta=Math.max(maxPhysicsHeightDelta,physics,terrain);maxVisualSamplerDelta=Math.max(maxVisualSamplerDelta,visual);protected1mSamples++;
+ if(x<-700||x>1300||z<-285||z>365){const triangles=buckets.get(`${Math.floor(x/100)},${Math.floor(z/100)}`)??[];let actual=null;for(const [g,ids]of triangles){actual=sample(g,ids,x,z);if(actual!==null)break;}assert.notEqual(actual,null,`missing protected skirt ${x},${z}`);const d=Math.abs(actual-baseline.terrainHeightAt(x,z));assert.ok(d<1e-10,`skirt surface ${x},${z}: ${actual} vs ${baseline.terrainHeightAt(x,z)}`);maxProtectedSkirtSurfaceDelta=Math.max(maxProtectedSkirtSurfaceDelta,d);outsideLegacySurfaceSamples++;}
+}
+const report={status:'PASS',baselineHead:'293a4f116b9b28818b7ff3bda4d83cc49b01014f',candidateSourceHead:'4e5389b314f3e02b3197139cca953b79a5464d8f',rawRegions:e.regions.length,margin:e.margin,extent:e.extent,protected1mSamples,outsideLegacySurfaceSamples,maxPhysicsHeightDelta,maxVisualSamplerDelta,maxProtectedSkirtSurfaceDelta};writeFileSync('.agent/runs/M01-T27-T30-20261012/verifier-final-envelope-probe.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));owner.dispose();mat.dispose();

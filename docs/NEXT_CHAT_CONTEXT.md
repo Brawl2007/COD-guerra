@@ -1,10 +1,41 @@
+# Continuação — candidato M01 com a pilha `claude/m01-integration`, 2026-10-15
+
+Branch local `integ-c`: candidato único M01 + merge `--no-ff` de `claude/m01-integration` @ `8a0c362` (T09/T28, T13/T32, T31/T33, T27/T30, T10/T29). Decisões em D38; estado em `DEVELOPMENT_STATUS.md`. Node 865/866 (falha só o falso positivo `event.window` de `m01-simulation-boundary`, correcção do teste por autorizar), build e `.agent/tests` verdes; browser por correr. Não está em `main` nem publicado.
+
+---
+
 # Continuação — duas tarefas M01 integradas, 2026-10-14
 
 Branch `codex/m01-continuity-raid-integration-v1`, base T08/T12 `2d65dd0`. Ler o handoff `docs/verification/m01-runtime/continuity-raid-integration-v1/HANDOFF.md` e confirmar HEAD/CI remoto. T02-min e T03-lite+T25 implementadas; 22/22 focados, 28/28 após correção aérea no reload, build e browser 1/1 PASS. Integral inicial 693/694 FAIL preservado; CI final **694/694 Node, build e browser 1/1 PASS** (run 38582392486, código `8387b56`, PR #63). Não repetir tarefas nem regenerar golden sem revisão: source hash exato bloqueado e proveniência histórica conservada. M01 continua PROTÓTIPO JOGÁVEL; main/deploy/source branches não foram escritos.
 
 ---
 
-# Continuação atual — consolidação M01 V6 (2026-10-08)
+# Continuação anterior — Captain nuvem, área 5 (2026-10-11)
+
+Histórico da linha `claude/m01-integration`; integrada no candidato M01 em 2026-10-15 (ver topo).
+- **Versão jogável:** `claude/m01-integration` @ `443f74d` (inclui T12 e o fix de CI `d668298`).
+- **T12 ACEITE e integrado:** kit de 21 props procedurais (ver `DEVELOPMENT_STATUS.md`). Ligação ao jogo = T33.
+- **T09+T28 PARADA:** WIP do terreno (máscara macro, material, texturas, spec) em `claude/m01-war-scars-v1` @ `7010f0f`, **não verificado**. Retomar: verifier → reviewer → merge. Contrato em `.agent/runs/RUN-T28-20261010/contract.md` (local, não versionado; regra principal: só `src/render`, `git diff --exit-code f51c9c1 -- src/game src/world src/core missions` vazio, capturas a 1/5/50 m, orçamento ≤24 MB High).
+- Branch `claude/m01-ci-fetch-depth-v1` ficou redundante (o mesmo fix entrou como `d668298`); pode apagar-se.
+- Por ordem do utilizador, esta sessão parou; cada tarefa nova corre numa sessão pequena criada pela rotina.
+
+---
+
+# Continuação anterior — primeiro playtest humano da M01 (2026-10-09)
+
+Histórico. Ficha completa: `docs/direction/PLAYTEST_M01.md`, secção 10 (itens 1 a 11). Branch `claude/gracious-franklin-u8kdin`: leva 1 em `2cc4f24`, leva 2 em `d1aef41`. Não está em `main`.
+
+- **Estado:** o utilizador jogou a M01 e enviou notas em texto e capturas, em duas levas. Estão registadas na ficha. Nenhuma correção de código foi feita por causa delas. M01 continua **PROTÓTIPO JOGÁVEL**; um playtest de uma pessoa não valida o marco nem mede FPS.
+- **Causas verificadas no código:** item 9, agachar sem suavização (`src/render/m01-actor-pose.js`); item 10, na qualidade baixa e média os soldados alemães carregam só `de:2` (`src/render/m01-characters.js`); item 11, nos estados normais só `standing_idle` e `crouched_idle` são escolhidos, e falta o resolvedor de animação.
+- **Lacuna conhecida, não bug novo:** itens 3, 4, 8 e 11. A V7 excluiu a locomoção dos soldados, e o M01 não usa a lógica de cobertura do motor base (`actors.js`). Decisão humana pendente: H6 em `docs/direction/DECISIONS.md`.
+- **Por confirmar pelo utilizador (H7):** branch e commit jogados (decidem se a água e as árvores, itens 1 e 2, são a versão nova); resposta 5 sobre a ckm; qualidade usada; causa da vida 92 da ponte; se a parede invisível (item 5) impediu o avanço; respostas 1 a 10.
+- **Classificação provisória:** central, 3, 4, 8 e 11. Pode bloquear, 5 (colisões), a confirmar. Incomoda, 1, 2, 7, 9 e 10. Detalhe, 6.
+- **Próximo passo proposto, à espera de ordem do utilizador:** 9 primeiro (correção pequena e verificada); depois investigar 5 e 7; depois o resolvedor simples para 3 e 11. Cobertura e reação (4 e 8) precisam de desenho antes de implementar.
+- **Regras:** não alterar as respostas do utilizador na ficha; não reportar FPS; toda a alteração de código passa por `verifier` e `reviewer` (ficha, secção 9); não tocar em `main`.
+
+---
+
+# Continuação anterior — consolidação M01 V6 (2026-10-08)
 
 Esta secção prevalece sobre o histórico. TASK_ID `M01-FINAL-PRODUCTION-CONSOLIDATION-V6`. **READY_FOR_CAPTAIN_REVIEW**, [PR draft #57](https://github.com/Brawl2007/COD-guerra/pull/57) contra V5 `d277b06937170aa433bc418ef5b83b2925c6d6de`, nunca main. Branch `codex/m01-final-production-consolidation-v6`; confirmar HEAD remoto. HEAD final de código/fixtures `edefda544c702962ad3e378d06fb1bd7e792254e`; produção igual ao executável validado `2a2a56734861b0801234d7ddf3cda66c0100f326`. O pacote posterior só acrescenta workflows/evidência/docs; HEAD exato na PR.
 

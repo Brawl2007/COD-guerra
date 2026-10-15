@@ -66,14 +66,9 @@ export function canopyLeafTexture(){
 }
 
 export function groundShadowTexture(){
-  const size=64,canvas=document.createElement('canvas');canvas.width=canvas.height=size;const ctx=canvas.getContext('2d');
-  const image=ctx.createImageData(size,size);
-  for(let y=0;y<size;y++)for(let x=0;x<size;x++){
-    const dx=(x+.5)/size*2-1,dy=(y+.5)/size*2-1,r=Math.hypot(dx,dy),a=Math.atan2(dy,dx);
-    const edge=.78+.16*Math.sin(a*3+1.1)*Math.sin(a*5),v=Math.max(0,1-THREE.MathUtils.smoothstep(r,edge*.35,edge));
-    const i=(y*size+x)*4;image.data[i]=image.data[i+1]=image.data[i+2]=255;image.data[i+3]=Math.round(v*255);
-  }
-  ctx.putImageData(image,0,0);const map=new THREE.CanvasTexture(canvas);return map;
+ const size=64,data=new Uint8Array(size*size*4);
+ for(let y=0;y<size;y++)for(let x=0;x<size;x++){const dx=(x+.5)/size*2-1,dy=(y+.5)/size*2-1,r=Math.hypot(dx,dy),a=Math.atan2(dy,dx),edge=.78+.16*Math.sin(a*3+1.1)*Math.sin(a*5),v=Math.max(0,1-THREE.MathUtils.smoothstep(r,edge*.35,edge)),i=(y*size+x)*4;data[i]=data[i+1]=data[i+2]=255;data[i+3]=Math.round(v*255);}
+ const map=new THREE.DataTexture(data,size,size,THREE.RGBAFormat);map.magFilter=map.minFilter=THREE.LinearFilter;map.needsUpdate=true;return map;
 }
 
 const NOISE3=`

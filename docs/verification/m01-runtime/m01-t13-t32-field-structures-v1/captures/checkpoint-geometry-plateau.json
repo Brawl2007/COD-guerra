@@ -1,0 +1,544 @@
+{
+  "beforeRestore": {
+    "geometries": 316,
+    "clock": 764.0999999998528
+  },
+  "restoreSamples": [
+    {
+      "stage": "first-restore-warmup",
+      "geometries": 343,
+      "clock": 750.649999999865,
+      "drawnClock": 750.649999999865,
+      "field": {
+        "enabled": true,
+        "revision": 38,
+        "quality": "high",
+        "ready": true,
+        "collidersAdded": 0,
+        "source": "original-procedural-CC0-1.0",
+        "structures": [
+          {
+            "id": "rail_shed",
+            "ready": true,
+            "failure": null,
+            "lod": 1,
+            "variant": "intact",
+            "height": null,
+            "visible": true,
+            "models": 3,
+            "visibleModels": 1,
+            "colliderIds": [
+              "hut_north",
+              "hut_east",
+              "hut_south",
+              "hut_west_n",
+              "hut_west_s"
+            ]
+          },
+          {
+            "id": "shelter",
+            "ready": true,
+            "failure": null,
+            "lod": 1,
+            "variant": "intact",
+            "height": null,
+            "visible": true,
+            "models": 3,
+            "visibleModels": 1,
+            "colliderIds": [
+              "cv_shelter_entrance"
+            ]
+          },
+          {
+            "id": "forward_post",
+            "ready": true,
+            "failure": null,
+            "lod": 0,
+            "variant": "intact",
+            "height": 1.1,
+            "visible": true,
+            "models": 6,
+            "visibleModels": 1,
+            "colliderIds": [
+              "cv_forward_post"
+            ]
+          },
+          {
+            "id": "casemate",
+            "ready": true,
+            "failure": null,
+            "lod": 0,
+            "variant": "intact",
+            "height": null,
+            "visible": true,
+            "models": 3,
+            "visibleModels": 1,
+            "colliderIds": []
+          }
+        ],
+        "roots": 4,
+        "proxyColliderIds": [
+          "cv_sandbag_mid_1",
+          "cv_sandbag_mid_2",
+          "cv_trench_1",
+          "cv_trench_2",
+          "cv_squad_post",
+          "cv_crater_1",
+          "cv_firing_point",
+          "rail_joint_1",
+          "rail_joint_2",
+          "rail_joint_3",
+          "rail_joint_4",
+          "rail_joint_8",
+          "road_joint_1",
+          "road_joint_2",
+          "road_joint_3",
+          "road_joint_4",
+          "road_joint_8"
+        ],
+        "environmentProxies": [
+          {
+            "id": "rail_shed",
+            "visible": false
+          },
+          {
+            "id": "rail_shed",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          }
+        ],
+        "viewProxies": [
+          {
+            "id": "rail_shed",
+            "visible": false
+          },
+          {
+            "id": "rail_shed",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          }
+        ]
+      }
+    },
+    {
+      "stage": "identical-restore-1",
+      "geometries": 343,
+      "clock": 750.649999999865,
+      "drawnClock": 750.649999999865,
+      "field": {
+        "enabled": true,
+        "revision": 40,
+        "quality": "high",
+        "ready": true,
+        "collidersAdded": 0,
+        "source": "original-procedural-CC0-1.0",
+        "structures": [
+          {
+            "id": "rail_shed",
+            "ready": true,
+            "failure": null,
+            "lod": 1,
+            "variant": "intact",
+            "height": null,
+            "visible": true,
+            "models": 3,
+            "visibleModels": 1,
+            "colliderIds": [
+              "hut_north",
+              "hut_east",
+              "hut_south",
+              "hut_west_n",
+              "hut_west_s"
+            ]
+          },
+          {
+            "id": "shelter",
+            "ready": true,
+            "failure": null,
+            "lod": 1,
+            "variant": "intact",
+            "height": null,
+            "visible": true,
+            "models": 3,
+            "visibleModels": 1,
+            "colliderIds": [
+              "cv_shelter_entrance"
+            ]
+          },
+          {
+            "id": "forward_post",
+            "ready": true,
+            "failure": null,
+            "lod": 0,
+            "variant": "intact",
+            "height": 1.1,
+            "visible": true,
+            "models": 6,
+            "visibleModels": 1,
+            "colliderIds": [
+              "cv_forward_post"
+            ]
+          },
+          {
+            "id": "casemate",
+            "ready": true,
+            "failure": null,
+            "lod": 0,
+            "variant": "intact",
+            "height": null,
+            "visible": true,
+            "models": 3,
+            "visibleModels": 1,
+            "colliderIds": []
+          }
+        ],
+        "roots": 4,
+        "proxyColliderIds": [
+          "cv_sandbag_mid_1",
+          "cv_sandbag_mid_2",
+          "cv_trench_1",
+          "cv_trench_2",
+          "cv_squad_post",
+          "cv_crater_1",
+          "cv_firing_point",
+          "rail_joint_1",
+          "rail_joint_2",
+          "rail_joint_3",
+          "rail_joint_4",
+          "rail_joint_8",
+          "road_joint_1",
+          "road_joint_2",
+          "road_joint_3",
+          "road_joint_4",
+          "road_joint_8"
+        ],
+        "environmentProxies": [
+          {
+            "id": "rail_shed",
+            "visible": false
+          },
+          {
+            "id": "rail_shed",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          }
+        ],
+        "viewProxies": [
+          {
+            "id": "rail_shed",
+            "visible": false
+          },
+          {
+            "id": "rail_shed",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          }
+        ]
+      }
+    },
+    {
+      "stage": "identical-restore-2",
+      "geometries": 343,
+      "clock": 750.649999999865,
+      "drawnClock": 750.649999999865,
+      "field": {
+        "enabled": true,
+        "revision": 42,
+        "quality": "high",
+        "ready": true,
+        "collidersAdded": 0,
+        "source": "original-procedural-CC0-1.0",
+        "structures": [
+          {
+            "id": "rail_shed",
+            "ready": true,
+            "failure": null,
+            "lod": 1,
+            "variant": "intact",
+            "height": null,
+            "visible": true,
+            "models": 3,
+            "visibleModels": 1,
+            "colliderIds": [
+              "hut_north",
+              "hut_east",
+              "hut_south",
+              "hut_west_n",
+              "hut_west_s"
+            ]
+          },
+          {
+            "id": "shelter",
+            "ready": true,
+            "failure": null,
+            "lod": 1,
+            "variant": "intact",
+            "height": null,
+            "visible": true,
+            "models": 3,
+            "visibleModels": 1,
+            "colliderIds": [
+              "cv_shelter_entrance"
+            ]
+          },
+          {
+            "id": "forward_post",
+            "ready": true,
+            "failure": null,
+            "lod": 0,
+            "variant": "intact",
+            "height": 1.1,
+            "visible": true,
+            "models": 6,
+            "visibleModels": 1,
+            "colliderIds": [
+              "cv_forward_post"
+            ]
+          },
+          {
+            "id": "casemate",
+            "ready": true,
+            "failure": null,
+            "lod": 0,
+            "variant": "intact",
+            "height": null,
+            "visible": true,
+            "models": 3,
+            "visibleModels": 1,
+            "colliderIds": []
+          }
+        ],
+        "roots": 4,
+        "proxyColliderIds": [
+          "cv_sandbag_mid_1",
+          "cv_sandbag_mid_2",
+          "cv_trench_1",
+          "cv_trench_2",
+          "cv_squad_post",
+          "cv_crater_1",
+          "cv_firing_point",
+          "rail_joint_1",
+          "rail_joint_2",
+          "rail_joint_3",
+          "rail_joint_4",
+          "rail_joint_8",
+          "road_joint_1",
+          "road_joint_2",
+          "road_joint_3",
+          "road_joint_4",
+          "road_joint_8"
+        ],
+        "environmentProxies": [
+          {
+            "id": "rail_shed",
+            "visible": false
+          },
+          {
+            "id": "rail_shed",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          }
+        ],
+        "viewProxies": [
+          {
+            "id": "rail_shed",
+            "visible": false
+          },
+          {
+            "id": "rail_shed",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          }
+        ]
+      }
+    },
+    {
+      "stage": "identical-restore-3",
+      "geometries": 343,
+      "clock": 750.649999999865,
+      "drawnClock": 750.649999999865,
+      "field": {
+        "enabled": true,
+        "revision": 44,
+        "quality": "high",
+        "ready": true,
+        "collidersAdded": 0,
+        "source": "original-procedural-CC0-1.0",
+        "structures": [
+          {
+            "id": "rail_shed",
+            "ready": true,
+            "failure": null,
+            "lod": 1,
+            "variant": "intact",
+            "height": null,
+            "visible": true,
+            "models": 3,
+            "visibleModels": 1,
+            "colliderIds": [
+              "hut_north",
+              "hut_east",
+              "hut_south",
+              "hut_west_n",
+              "hut_west_s"
+            ]
+          },
+          {
+            "id": "shelter",
+            "ready": true,
+            "failure": null,
+            "lod": 1,
+            "variant": "intact",
+            "height": null,
+            "visible": true,
+            "models": 3,
+            "visibleModels": 1,
+            "colliderIds": [
+              "cv_shelter_entrance"
+            ]
+          },
+          {
+            "id": "forward_post",
+            "ready": true,
+            "failure": null,
+            "lod": 0,
+            "variant": "intact",
+            "height": 1.1,
+            "visible": true,
+            "models": 6,
+            "visibleModels": 1,
+            "colliderIds": [
+              "cv_forward_post"
+            ]
+          },
+          {
+            "id": "casemate",
+            "ready": true,
+            "failure": null,
+            "lod": 0,
+            "variant": "intact",
+            "height": null,
+            "visible": true,
+            "models": 3,
+            "visibleModels": 1,
+            "colliderIds": []
+          }
+        ],
+        "roots": 4,
+        "proxyColliderIds": [
+          "cv_sandbag_mid_1",
+          "cv_sandbag_mid_2",
+          "cv_trench_1",
+          "cv_trench_2",
+          "cv_squad_post",
+          "cv_crater_1",
+          "cv_firing_point",
+          "rail_joint_1",
+          "rail_joint_2",
+          "rail_joint_3",
+          "rail_joint_4",
+          "rail_joint_8",
+          "road_joint_1",
+          "road_joint_2",
+          "road_joint_3",
+          "road_joint_4",
+          "road_joint_8"
+        ],
+        "environmentProxies": [
+          {
+            "id": "rail_shed",
+            "visible": false
+          },
+          {
+            "id": "rail_shed",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          }
+        ],
+        "viewProxies": [
+          {
+            "id": "rail_shed",
+            "visible": false
+          },
+          {
+            "id": "rail_shed",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          },
+          {
+            "id": "shelter",
+            "visible": false
+          }
+        ]
+      }
+    }
+  ]
+}

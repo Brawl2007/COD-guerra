@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "taskId": "M01-T10-T29-VEGETATION-V2",
+  "status": "ACCEPTED_AND_ACTUAL_MERGE_VERIFIED",
+  "sourceHead": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+  "baselineHead": "b2430fac3504aa6d0ce7d0ad664076c26f90d6f7",
+  "sourceSHA256": "8363ea61d93bb09c0c14215ef6818066c7bdfd4688db284e4da0f780100a2b70",
+  "sourceFiles": 29,
+  "protectedFiles": 533,
+  "normalCI": {
+    "runId": 38432707375,
+    "jobId": 115418724532,
+    "status": "success",
+    "nodeTests": 677,
+    "toolingTests": 173,
+    "buildModules": 95
+  },
+  "focusedCI": {
+    "runId": 38432707503,
+    "jobId": 115418724968,
+    "status": "success",
+    "baseCaptureCases": 1,
+    "kitCases": 1,
+    "runtimeCases": 3,
+    "legacyLODCases": 2,
+    "reliefCases": 2,
+    "candidateRailCases": 3,
+    "nestedDuplicateRailCases": 3,
+    "atlasCases": 3,
+    "terrainCases": {
+      "runner": "independent local exact-source cc3",
+      "passed": 9,
+      "retries": 0,
+      "skipped": 0,
+      "workers": 1
+    }
+  },
+  "futures": {
+    "routes": 24,
+    "ticks": 490051,
+    "actorSamples": 44104590,
+    "checkpointPairs": 120,
+    "processExits": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "allPairsEqual": true
+  },
+  "nativePresetCounters": [
+    {
+      "quality": "low",
+      "drawCalls": 10,
+      "triangles": 22188,
+      "shadowDrawCalls": 0,
+      "shadowTriangles": 0,
+      "atlasDecodedRGBA8": 1048576,
+      "atlasMipRGBA8": 349524
+    },
+    {
+      "quality": "medium",
+      "drawCalls": 10,
+      "triangles": 46314,
+      "shadowDrawCalls": 2,
+      "shadowTriangles": 3060,
+      "atlasDecodedRGBA8": 1048576,
+      "atlasMipRGBA8": 349524
+    },
+    {
+      "quality": "high",
+      "drawCalls": 12,
+      "triangles": 74484,
+      "shadowDrawCalls": 6,
+      "shadowTriangles": 7700,
+      "atlasDecodedRGBA8": 1048576,
+      "atlasMipRGBA8": 349524
+    }
+  ],
+  "fixAttempts": 3,
+  "maxFixAttempts": 3,
+  "reviewRejections": 0,
+  "limitations": [
+    "No FPS/VRAM/reference-PC/human-playtest claim.",
+    "FocusedCI rail raw JSON/PNG not uploaded due preexisting path mismatch; candidate3 casesPASS in raw job log.",
+    "M01 remains a playable prototype."
+  ],
+  "verifier": "PASS / EVIDENCE_SUFFICIENT YES",
+  "review": "ACCEPT",
+  "metadataHead": "cd8e7023cbe80ce44d8f2ece9040e459977c6911",
+  "mergeHead": "403c7489cd3171ae5ee3eefff948ba0dddb2a844",
+  "regression": {
+    "records": 11,
+    "obligations": 32,
+    "status": "PASS"
+  },
+  "memory": "One CURRENT note; accepted source cc3f459",
+  "metadataCI": {
+    "runId": 38468300586,
+    "jobId": 115540572628,
+    "status": "success",
+    "nodeTests": 677,
+    "toolingTests": 173,
+    "buildModules": 95
+  },
+  "mergeVerification": {
+    "status": "PASS",
+    "node": {
+      "tests": 677,
+      "pass": 677,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "buildModules": 95,
+    "protectedFiles": 533,
+    "parents": [
+      "b2430fac3504aa6d0ce7d0ad664076c26f90d6f7",
+      "cd8e7023cbe80ce44d8f2ece9040e459977c6911"
+    ],
+    "proof": "proof/actual-merge/verification.json"
+  },
+  "publication": {
+    "branch": "claude/m01-integration",
+    "policy": "Publish a documentation-only descendant of the verified merge; final remote tip is confirmed in stable RUN and final user handoff."
+  }
+}

@@ -39,6 +39,24 @@ Criar o Task Contract e um `RUN_ID`, e correr o skill `autonomous-task`
 Os agentes correm sequencialmente (Chromebook). O Explorer não tem Bash: com o checkout esparso, exportar
 primeiro para o scratchpad os documentos de `docs/` de que ele precisa.
 
+## Branch de integração (2026-10-10)
+
+`claude/m01-integration` = jogo da pilha T16→T17→T18→T42→T35→T39 (`m01-viewmodel-feel-v2`) + T20 (impostores da
+frente distante) + T44 (grading) + a direção, os 30 agentes, os hooks e o `ci.yml` desta linha. É a versão que o
+utilizador joga (`bash ~/jogar.sh claude/m01-integration`) e a base de todas as tarefas novas; cada tarefa ACEITE
+entra aqui por merge (regra em `.claude/agents/captain.md`).
+
+## Visão do utilizador (2026-10-10)
+
+"Sentir a guerra, a sensação verdadeira, como se você fosse só mais 1 soldado no meio da grande guerra, sentindo o
+impacto." Vale para as 30 missões. Detalhe, tarefas da M01 que a servem (T17, T20, T23, T25) e proposta H9
+(escala histórica por missão) em `DECISIONS.md`.
+Segundo pedido: dificuldade e perigo real, com fases difíceis em cada missão (H10).
+Terceiro pedido: gráficos, som e animação ao nível de COD: World at War, sem copiar nada do COD (H11).
+Quarto pedido: efeitos sonoros fortes e música sombria durante o jogo, com silêncios nos momentos certos (H12).
+O computador de referência do jogo passa a ser o PC de teste do utilizador, que corre COD WaW; o Chromebook só
+corre o Claude Code (H13).
+
 ## Último handoff: 2026-10-08
 
 - **Estado:** PLANEAMENTO CONCLUÍDO; desenvolvimento **à espera do portão G-V7**.

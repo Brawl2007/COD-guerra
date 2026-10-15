@@ -1,0 +1,24 @@
+[1A[2K[2m[WebServer] [22m(node:13442) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K[2m[WebServer] [22m(node:13455) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 1 test using 1 worker
+
+[1A[2K(node:13474) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:13474) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/1] tests/browser/m01-terrain-war-ground.spec.js:199:1 › paused High→Low→Medium→High churn preserves save state and reclaims textures
+[1A[2K  1 passed (1.7m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

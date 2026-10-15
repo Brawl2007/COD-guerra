@@ -1,0 +1,16 @@
+[1A[2K[2m[WebServer] [22m(node:4654) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 1 test using 1 worker
+
+[1A[2K(node:4673) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:4673) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/1] tools/verification/m01-field-structures-gallery.spec.js:3:1 › well-lit original kit gallery: four types, three LODs and destroyed state
+[1A[2K  1 passed (8.4s)

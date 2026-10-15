@@ -1,0 +1,198 @@
+{
+  "sourceHead": "ab85e6b942628ebb032fbe3b53660b2e95ec392f",
+  "method": "Exact m01-view terrain PlaneGeometry reconstruction, downward Three.js raycasts at immutable support rail head centres; bridge top linear -.17 at0 to .012 at24.5.",
+  "samples": [
+    {
+      "x": 0,
+      "z": -2.7175000000000002,
+      "terrainY": 0,
+      "railTop": -0.17,
+      "terrainAboveRail": true,
+      "discardedByContactReveal": true
+    },
+    {
+      "x": 0,
+      "z": -1.2825,
+      "terrainY": -1.7763568394002505e-15,
+      "railTop": -0.17,
+      "terrainAboveRail": true,
+      "discardedByContactReveal": true
+    },
+    {
+      "x": 0,
+      "z": 1.2825,
+      "terrainY": -1.7763568394002505e-15,
+      "railTop": -0.17,
+      "terrainAboveRail": true,
+      "discardedByContactReveal": true
+    },
+    {
+      "x": 0,
+      "z": 2.7175000000000002,
+      "terrainY": 0,
+      "railTop": -0.17,
+      "terrainAboveRail": true,
+      "discardedByContactReveal": true
+    },
+    {
+      "x": 1,
+      "z": -2.7175000000000002,
+      "terrainY": -0.10710678100585902,
+      "railTop": -0.1625714285714286,
+      "terrainAboveRail": true,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 1,
+      "z": -1.2825,
+      "terrainY": -0.1071067810058608,
+      "railTop": -0.1625714285714286,
+      "terrainAboveRail": true,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 1,
+      "z": 1.2825,
+      "terrainY": 0,
+      "railTop": -0.1625714285714286,
+      "terrainAboveRail": true,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 1,
+      "z": 2.7175000000000002,
+      "terrainY": 0,
+      "railTop": -0.1625714285714286,
+      "terrainAboveRail": true,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 2,
+      "z": -2.7175000000000002,
+      "terrainY": -0.21421356201171804,
+      "railTop": -0.15514285714285717,
+      "terrainAboveRail": false,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 2,
+      "z": -1.2825,
+      "terrainY": -0.13736444664001546,
+      "railTop": -0.15514285714285717,
+      "terrainAboveRail": true,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 2,
+      "z": 1.2825,
+      "terrainY": 0,
+      "railTop": -0.15514285714285717,
+      "terrainAboveRail": true,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 2,
+      "z": 2.7175000000000002,
+      "terrainY": 0,
+      "railTop": -0.15514285714285717,
+      "terrainAboveRail": true,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 3,
+      "z": -2.7175000000000002,
+      "terrainY": -0.2910626773834224,
+      "railTop": -0.14771428571428571,
+      "terrainAboveRail": false,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 3,
+      "z": -1.2825,
+      "terrainY": -0.13736444664001546,
+      "railTop": -0.14771428571428571,
+      "terrainAboveRail": true,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 3,
+      "z": 1.2825,
+      "terrainY": 0,
+      "railTop": -0.14771428571428571,
+      "terrainAboveRail": true,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 3,
+      "z": 2.7175000000000002,
+      "terrainY": -0.07684911537170258,
+      "railTop": -0.14771428571428571,
+      "terrainAboveRail": true,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 4,
+      "z": -2.7175000000000002,
+      "terrainY": -0.2910626773834224,
+      "railTop": -0.1402857142857143,
+      "terrainAboveRail": false,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 4,
+      "z": -1.2825,
+      "terrainY": -0.13736444664001546,
+      "railTop": -0.1402857142857143,
+      "terrainAboveRail": true,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 4,
+      "z": 1.2825,
+      "terrainY": -0.03025766563415644,
+      "railTop": -0.1402857142857143,
+      "terrainAboveRail": true,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 4,
+      "z": 2.7175000000000002,
+      "terrainY": -0.18395589637756338,
+      "railTop": -0.1402857142857143,
+      "terrainAboveRail": false,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 5,
+      "z": -2.7175000000000002,
+      "terrainY": -0.2910626773834224,
+      "railTop": -0.13285714285714287,
+      "terrainAboveRail": false,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 5,
+      "z": -1.2825,
+      "terrainY": -0.13736444664001546,
+      "railTop": -0.13285714285714287,
+      "terrainAboveRail": false,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 5,
+      "z": 1.2825,
+      "terrainY": -0.13736444664001546,
+      "railTop": -0.13285714285714287,
+      "terrainAboveRail": false,
+      "discardedByContactReveal": false
+    },
+    {
+      "x": 5,
+      "z": 2.7175000000000002,
+      "terrainY": -0.2910626773834224,
+      "railTop": -0.13285714285714287,
+      "terrainAboveRail": false,
+      "discardedByContactReveal": false
+    }
+  ]
+}
