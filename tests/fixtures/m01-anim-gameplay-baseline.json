@@ -345,5 +345,13 @@
     "task": "M01-CONTINUITY-RAID-INTEGRATION-V1",
     "base": "2d65dd0b9837d5e6f21fe24dd8a8b167ca76df55",
     "sourceSha256": "e988fcd9b923a429657d1deeb820054694b5e9b046ff904faa190e14e020c4a6"
+  },
+  "sourceLock": {
+    "task": "M01-H9-D1-DIFFICULTY-DATA-V1",
+    "base": "5745e48f5509609f787205aa02f3c6d6bc7ee53c",
+    "previousTask": "M01-CONTINUITY-RAID-INTEGRATION-V1",
+    "previousSourceSha256": "e988fcd9b923a429657d1deeb820054694b5e9b046ff904faa190e14e020c4a6",
+    "sourceSha256": "57c81b31acf4920f6259db47faadb94ac33a10916db5befaadf2d35e0f988506",
+    "routes": "unchanged: every per-tick block of both routes reproduces the approved integration bytes; difficulty is snapshot/restore/validate data only"
   }
 }

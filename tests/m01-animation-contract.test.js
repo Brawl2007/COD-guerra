@@ -32,7 +32,12 @@ test('approved T02-min/T03-lite/T25 golden locks the exact integration source an
   assert.equal(golden.sourceSha256,'792fdc9a7a56a09bda599669f7349e3bb6fad0e3e13d67eed03f1474eeef07b6');
   assert.equal(golden.approvedIntegration.task,'M01-CONTINUITY-RAID-INTEGRATION-V1');
   assert.equal(golden.approvedIntegration.base,'2d65dd0b9837d5e6f21fe24dd8a8b167ca76df55');
-  assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),golden.approvedIntegration.sourceSha256);
+  assert.equal(golden.approvedIntegration.sourceSha256,'e988fcd9b923a429657d1deeb820054694b5e9b046ff904faa190e14e020c4a6');
+  // H9-D1 moved only the source lock: the per-tick route blocks below are unchanged from the approved integration.
+  assert.equal(golden.sourceLock.task,'M01-H9-D1-DIFFICULTY-DATA-V1');
+  assert.equal(golden.sourceLock.previousTask,golden.approvedIntegration.task);
+  assert.equal(golden.sourceLock.previousSourceSha256,golden.approvedIntegration.sourceSha256);
+  assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),golden.sourceLock.sourceSha256);
 });
 
 for(const expected of golden.routes)test(`all gameplay bytes hashed each tick against approved T02-min/T03-lite/T25 integration: seed ${expected.seed}, support ${expected.support}`,()=>{
