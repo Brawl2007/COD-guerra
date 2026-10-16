@@ -13,6 +13,10 @@ Qualquer chat que concluiu uma tarefa integralmente validada pode adquirir a res
 
 Tarefas parciais não entram em READY nem na candidata como concluídas. Não aguardar CI a consumir Opus; handoff com HEAD/checks e retoma posterior. CI vermelho impede promoção. O marcador READY não substitui auditoria. Não alterar main/deploy sem autorização.
 
+## Protocolo anti-inatividade da Routine
+
+Não desperdiçar cada execução de uma hora com «aguardar agente», «aguardar CI» ou verificar um único TASK_ID e parar. Depois de um bloqueio, consultar o handoff/issue #72 e executar a próxima ação segura e independente, por ordem: retomar tarefa própria, concluir fatia inacabada, corrigir CI focalizado, integrar entrega READY (somente com lock FREE adquirido), ou reservar tarefa nova verdadeiramente livre. Não mexer em trabalho de outras sessões. Se nenhuma ação for segura, terminar rapidamente com bloqueio exato, poupando tokens. Nunca criar mudanças fictícias apenas para parecer ativo. Ver `docs/direction/M01_INTEGRATOR_LEASE.md`.
+
 ## Missão permanente da Routine Cloud — M01 completa
 
 Na sessão principal do Capitão Opus, o objetivo contínuo é **terminar toda a M01 Tczew**, não esperar que o utilizador forneça uma tarefa a cada execução horária. Ler `docs/direction/M01_AUTOPILOT.md` e https://github.com/Brawl2007/COD-guerra/issues/72; verificar estado Git/PR/CI atual, retomar trabalho próprio e escolher novos subpassos internos quando necessário. PRs pendentes não autorizam duplicação nem paralisação de toda a missão. **Sem merge/deploy/publicação de checkpoint sem autorização humana específica.**
