@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Exclusive M01 integrator lease stored in a GitHub-only coordination branch.
+"""Serialize M01 integrations with a single GitHub Contents API state file.
 
-Uses stdlib + authenticated gh CLI; never modifies main or the game candidate.
-GitHub git-ref creation and non-forced fast-forward transitions serialize sessions.
-There is deliberately NO automatic timeout-based lock stealing.
+Requires Python stdlib and authenticated 'gh'. Cloud agents without gh auth
+can use GitHub MCP fetch_file/update_file on the SAME state file/blob SHA.
+No automatic expiry / silent stealing: one-hour routine overlap is harmless.
 """
 import argparse
+import base64
 import datetime as dt
 import json
 import os
@@ -13,10 +14,11 @@ import re
 import secrets
 import subprocess
 import sys
+from urllib.parse import quote
 
 REPO = os.environ.get("COD_GUERRA_REPO", "Brawl2007/COD-guerra")
-LOCK = "coordination/m01-integrator-lock"
-MARKER = "M01-INTEGRATOR-STATE-V1\n"
+COORD_BRANCH = "coordination/m01-integration-state"
+STATE_PATH = ".agent/coordination/m01-integrator.json"
 READY = re.compile(r"(?m)^M01-INTEGRATION:\s*READY\s*$")
 
 
@@ -24,7 +26,7 @@ class LeaseError(Exception):
     pass
 
 
-def api(method, path, payload=None, missing_ok=False):
+def api(method, path, payload=None):
     cmd = ["gh", "api", "--method", method, "repos/" + REPO + "/" + path]
     if payload is not None:
         cmd += ["--input", "-"]
@@ -36,185 +38,172 @@ def api(method, path, payload=None, missing_ok=False):
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise LeaseError("GitHub unavailable; fail closed: " + str(exc)) from exc
     if result.returncode:
-        if missing_ok and ("HTTP 404" in result.stderr or '"status":404' in result.stderr
-                           or "Not Found (HTTP 404)" in result.stderr):
-            return None
-        raise LeaseError("GitHub request failed; no lease changes assumed: " +
-                         result.stderr[:450])
+        raise LeaseError("GitHub request failed (do not assume lock changed): " +
+                         result.stderr[:400])
     try:
         return json.loads(result.stdout)
     except ValueError as exc:
         raise LeaseError("Invalid GitHub API response") from exc
 
 
-def head(branch, missing_ok=False):
-    ref = api("GET", "git/ref/heads/" + branch, missing_ok=missing_ok)
-    return ref["object"]["sha"] if ref else None
-
-
-def commit(sha):
-    return api("GET", "git/commits/" + sha)
-
-
-def read_lock():
-    sha = head(LOCK, missing_ok=True)
-    if sha is None:
-        return None, None
-    data = commit(sha)
-    message = data["message"]
-    if not message.startswith(MARKER):
-        raise LeaseError("Coordination ref exists without a recognized state; stop")
-    try:
-        state = json.loads(message[len(MARKER):])
-    except ValueError as exc:
-        raise LeaseError("Coordination ref state is corrupt; stop") from exc
-    if state.get("schema") != 1 or state.get("status") not in ("FREE", "HELD"):
-        raise LeaseError("Invalid coordination state; stop")
-    return sha, state
-
-
 def timestamp():
-    return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
+    return dt.datetime.now(dt.timezone.utc).isoformat(timespec="microseconds")
 
 
-def make_commit(parent, state):
-    base = commit(parent)
-    payload = {
-        "message": MARKER + json.dumps(state, sort_keys=True, ensure_ascii=False),
-        "tree": base["tree"]["sha"],
-        "parents": [parent],
-    }
-    return api("POST", "git/commits", payload)["sha"]
+def branch_head(branch):
+    return api("GET", "git/ref/heads/" + quote(branch, safe="/"))["object"]["sha"]
 
 
-def transition(old_sha, state):
-    new_sha = make_commit(old_sha, state)
-    # force=False is essential: competing state transitions from the same
-    # parent are NOT both fast-forwards. Only one can win.
-    api("PATCH", "git/refs/heads/" + LOCK,
-        {"sha": new_sha, "force": False})
-    return new_sha
+def read_state():
+    record = api("GET", "contents/" + STATE_PATH + "?ref=" + quote(COORD_BRANCH, safe=""))
+    try:
+        raw = base64.b64decode(record["content"].replace("\n", ""))
+        state = json.loads(raw.decode("utf-8"))
+    except (ValueError, KeyError, UnicodeError) as exc:
+        raise LeaseError("Invalid coordination state (fail closed)") from exc
+    if state.get("schema") != 1 or state.get("status") not in ("FREE", "HELD"):
+        raise LeaseError("Unexpected coordination state (fail closed)")
+    return record["sha"], state
+
+
+def write_state(expected_blob_sha, state, operation):
+    state["generation"] = int(state["generation"]) + 1
+    state["updated_at"] = timestamp()
+    content = (json.dumps(state, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode()
+    # GitHub checks the original content SHA and rejects conflicting writes.
+    # Never force-update a ref or push to the game branch in this function.
+    api("PUT", "contents/" + STATE_PATH, {
+        "message": "chore(coordination): M01 " + operation,
+        "content": base64.b64encode(content).decode("ascii"),
+        "sha": expected_blob_sha,
+        "branch": COORD_BRANCH,
+    })
+    return {"generation": state["generation"], "updated_at": state["updated_at"]}
 
 
 def assert_owner(state, token):
     if state["status"] != "HELD" or not token or state.get("token") != token:
-        raise LeaseError("Not the active lease owner; no write permitted")
+        raise LeaseError("Another session owns the integrator lock")
 
 
 def acquire(candidate, owner):
     if not candidate or candidate in ("main", "master") or candidate.startswith("coordination/"):
-        raise LeaseError("A development candidate branch (never main) is required")
-    candidate_sha = head(candidate)  # fail closed on network error / missing branch
-    old_sha, old = read_lock()
-    if old is not None and old["status"] == "HELD":
-        raise LeaseError("Integration is occupied by " + str(old.get("owner")) +
-                         " (since " + str(old.get("updated_at")) + "). Do not steal.")
+        raise LeaseError("Only an isolated development candidate can be integrated")
+    remote_sha = branch_head(candidate)
+    blob, state = read_state()
+    if state["status"] != "FREE":
+        raise LeaseError("Integrator occupied by " + str(state.get("owner")) +
+                         "; DO NOT start another integration")
     token = secrets.token_hex(16)
-    state = {"schema": 1, "status": "HELD", "owner": owner,
-             "token": token, "candidate": candidate,
-             "candidate_sha": candidate_sha, "updated_at": timestamp(),
-             "handoff": old.get("handoff") if old else None}
-    if old_sha is None:
-        marker_sha = make_commit(candidate_sha, state)
-        api("POST", "git/refs",
-            {"ref": "refs/heads/" + LOCK, "sha": marker_sha})
-    else:
-        transition(old_sha, state)
+    previous_handoff = state.get("handoff")
+    state.update({"status": "HELD", "owner": owner, "token": token,
+                  "candidate": candidate, "candidate_sha": remote_sha,
+                  "handoff": previous_handoff})
+    version = write_state(blob, state, "acquire " + candidate)
     return {"acquired": True, "token": token, "candidate": candidate,
-            "candidate_sha": candidate_sha, "owner": owner,
-            "previous_handoff": state["handoff"]}
+            "sha": remote_sha, "previous_handoff": previous_handoff, **version}
 
 
 def guard(token):
-    _, state = read_lock()
-    if state is None:
-        raise LeaseError("No integration lock: do not modify candidate")
+    _, state = read_state()
     assert_owner(state, token)
-    actual = head(state["candidate"])
-    if actual != state["candidate_sha"]:
-        raise LeaseError("Candidate HEAD changed: pinned=" +
-                         state["candidate_sha"] + " actual=" + actual +
-                         "; stop and inspect commits")
-    return {"owner": state["owner"], "candidate": state["candidate"],
-            "sha": actual, "authorized": True}
+    sha = branch_head(state["candidate"])
+    if sha != state["candidate_sha"]:
+        raise LeaseError("Candidate HEAD changed unexpectedly; stop, inspect and reconcile")
+    return {"authorized": True, "candidate": state["candidate"],
+            "sha": sha, "owner": state["owner"]}
 
 
 def heartbeat(token):
-    old_sha, state = read_lock()
-    assert_owner(state, token)
-    # Guard checks the candidate has not been changed unexpectedly.
     guard(token)
-    state["updated_at"] = timestamp()
-    transition(old_sha, state)
-    return {"heartbeat": state["updated_at"], "owner": state["owner"]}
+    blob, state = read_state()
+    assert_owner(state, token)
+    version = write_state(blob, state, "heartbeat")
+    return {"heartbeat": True, **version}
 
 
 def advance(token, new_sha):
-    old_sha, state = read_lock()
+    blob, state = read_state()
     assert_owner(state, token)
-    if not re.fullmatch(r"[0-9a-f]{40}", new_sha):
-        raise LeaseError("Expected a 40-character commit SHA")
-    if head(state["candidate"]) != new_sha:
-        raise LeaseError("The candidate remote HEAD is not the supplied SHA")
-    old_pin = state["candidate_sha"]
-    if old_pin != new_sha:
-        comparison = api("GET", "compare/" + old_pin + "..." + new_sha)
-        if comparison.get("status") not in ("ahead", "identical") or comparison.get("behind_by", 1):
-            raise LeaseError("Candidate moved non-fast-forward; stop")
+    if not re.fullmatch(r"[a-fA-F0-9]{40}", new_sha):
+        raise LeaseError("Supply the exact new 40-character candidate commit SHA")
+    if branch_head(state["candidate"]) != new_sha:
+        raise LeaseError("Remote candidate HEAD differs from --sha")
+    previous_sha = state["candidate_sha"]
+    if previous_sha != new_sha:
+        comparison = api("GET", "compare/" + previous_sha + "..." + new_sha)
+        if comparison.get("status") not in ("ahead", "identical") or comparison.get("behind_by") != 0:
+            raise LeaseError("Not a proven fast-forward from the pinned candidate; stop")
     state["candidate_sha"] = new_sha
-    state["updated_at"] = timestamp()
-    transition(old_sha, state)
-    return {"advanced": True, "previous": old_pin, "current": new_sha}
+    version = write_state(blob, state, "advance candidate pin")
+    return {"previous_sha": previous_sha, "current_sha": new_sha, **version}
 
 
 def release(token, handoff):
-    old_sha, state = read_lock()
+    blob, state = read_state()
     assert_owner(state, token)
     state.update({"status": "FREE", "owner": None, "token": None,
-                  "updated_at": timestamp(), "handoff": handoff or None})
-    transition(old_sha, state)
-    return {"released": True, "handoff": state["handoff"]}
+                  "handoff": handoff or None})
+    version = write_state(blob, state, "release")
+    return {"released": True, "handoff": state["handoff"], **version}
+
+
+def recover(expected_owner, expected_generation, reason):
+    """Exceptional operator-verified recovery; NEVER called on a time limit."""
+    blob, state = read_state()
+    if state["status"] != "HELD":
+        raise LeaseError("Recovery only applies to a held lock")
+    if state["owner"] != expected_owner or state["generation"] != expected_generation:
+        raise LeaseError("Owner/generation changed; the active session may still be running")
+    if len(reason.strip()) < 20:
+        raise LeaseError("Provide a concrete verification of why the old session ended")
+    state.update({"status": "FREE", "owner": None, "token": None,
+                  "handoff": "RECOVERED AFTER CONFIRMED INACTIVITY: " + reason})
+    version = write_state(blob, state, "operator-confirmed recovery")
+    return {"recovered": True, **version}
 
 
 def candidates():
-    """PR metadata is an intake queue, NOT proof of completion or passing CI."""
+    """Intake only: READY marker is not CI proof and never triggers auto-merge."""
     prs = api("GET", "pulls?state=open&per_page=100")
     items = []
     for pr in prs:
-        labels = {v.get("name", "") for v in pr.get("labels", [])}
-        is_ready = "m01-ready-to-integrate" in labels or bool(READY.search(pr.get("body") or ""))
-        if not is_ready or pr.get("draft"):
+        labels = {item.get("name") for item in pr.get("labels", [])}
+        ready = "m01-ready-to-integrate" in labels or bool(READY.search(pr.get("body") or ""))
+        if not ready or pr.get("draft"):
             continue
-        items.append({"pr": pr["number"], "head": pr["head"]["ref"],
-                      "sha": pr["head"]["sha"], "base": pr["base"]["ref"],
-                      "title": pr["title"], "status": "AWAITING_INTEGRATOR_REVIEW"})
-    return sorted(items, key=lambda x: x["pr"])
+        items.append({"pr": pr["number"], "title": pr["title"],
+                      "head": pr["head"]["ref"], "sha": pr["head"]["sha"],
+                      "base": pr["base"]["ref"], "status": "REQUIRES_REVIEW_AND_CI"})
+    return sorted(items, key=lambda entry: entry["pr"])
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    sub = parser.add_subparsers(dest="action", required=True)
-    sub.add_parser("status")
-    sub.add_parser("queue")
-    ac = sub.add_parser("acquire")
-    ac.add_argument("--candidate", required=True, help="e.g. claude/quirky-heisenberg-9l4m7b")
-    ac.add_argument("--owner", required=True, help="unique Claude session/run ID")
-    for action in ("guard", "heartbeat", "release", "advance"):
-        subp = sub.add_parser(action)
-        subp.add_argument("--token", required=True, help="token returned by acquire")
-        if action == "release":
-            subp.add_argument("--handoff", default="", help="short state / CI handoff")
-        if action == "advance":
-            subp.add_argument("--sha", required=True)
-    a = parser.parse_args()
+    actions = parser.add_subparsers(dest="action", required=True)
+    actions.add_parser("status")
+    actions.add_parser("queue")
+    ac = actions.add_parser("acquire")
+    ac.add_argument("--candidate", required=True)
+    ac.add_argument("--owner", required=True, help="unique session identifier")
+    for name in ("guard", "heartbeat", "advance", "release"):
+        sub = actions.add_parser(name)
+        sub.add_argument("--token", required=True)
+        if name == "advance":
+            sub.add_argument("--sha", required=True)
+        if name == "release":
+            sub.add_argument("--handoff", default="")
+    re = actions.add_parser("recover")
+    re.add_argument("--expected-owner", required=True)
+    re.add_argument("--expected-generation", type=int, required=True)
+    re.add_argument("--reason", required=True)
+    a = parser.parse_args(argv)
     try:
         if a.action == "status":
-            sha, state = read_lock()
-            if state and state.get("token"):
-                state = {k: v for k, v in state.items() if k != "token"}
-            result = {"lock_commit": sha, "state": state or {"status": "FREE", "uninitialized": True}}
+            blob, state = read_state()
+            result = {"state_blob_sha": blob, **{k: v for k, v in state.items() if k != "token"}}
         elif a.action == "queue":
-            result = {"ready_prs": candidates(), "note": "Each PR still needs code, CI and provenance checks"}
+            result = {"ready_prs": candidates(), "warning": "Do not integrate without reviewing CI and code"}
         elif a.action == "acquire":
             result = acquire(a.candidate, a.owner)
         elif a.action == "guard":
@@ -223,9 +212,11 @@ def main():
             result = heartbeat(a.token)
         elif a.action == "advance":
             result = advance(a.token, a.sha)
-        else:
+        elif a.action == "release":
             result = release(a.token, a.handoff)
-        print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
+        else:
+            result = recover(a.expected_owner, a.expected_generation, a.reason)
+        print(json.dumps(result, sort_keys=True, indent=2, ensure_ascii=False))
         return 0
     except LeaseError as exc:
         print("BLOCKED: " + str(exc), file=sys.stderr)
