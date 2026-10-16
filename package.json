@@ -8,6 +8,7 @@
     "dev": "vite --host 127.0.0.1",
     "test": "node --test tests/*.test.js",
     "build": "vite build",
+    "build:browser": "node tools/verification/m01-browser-build.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "test:browser": "playwright test",
     "assets:m01:colliders": "node tools/assets/m01-bridges/export-colliders.mjs",
