@@ -56,13 +56,14 @@ async function expectFrozen(page){
 // whose aim is clearly mid-transition. Pausing uses the game's own blur/pointer-lock path, synchronously, so a slow software
 // renderer cannot step past the moment. Nothing is injected into the simulation.
 const install=page=>page.evaluate(()=>{
-  const raf=window.requestAnimationFrame.bind(window),state=window.__feel={recording:false,captureMid:false,frames:[],mid:null};
+  const raf=window.requestAnimationFrame.bind(window),state=window.__feel={recording:false,captureMid:false,frames:[],mid:null,callbacks:0,skipped:[],events:[],installedAt:performance.now()};
+  for(const type of ['mousedown','mouseup','pointerlockchange','blur'])window.addEventListener(type,event=>{const g=window.gameDiagnostics?.();state.events.push({type,button:event.button,time:performance.now(),clock:g?.clock,paused:g?.paused,aiming:g?.player.aiming,pointerLock:document.pointerLockElement?.id??null});});
   window.requestAnimationFrame=callback=>raf(time=>{
-    callback(time);
+    callback(time);state.callbacks++;
     if(!state.recording)return;
-    const g=window.gameDiagnostics?.();if(!g||g.paused||!g.m01?.viewModel?.active)return;
+    const g=window.gameDiagnostics?.();if(!g||g.paused||!g.m01?.viewModel?.active){state.skipped.push({time:performance.now(),clock:g?.clock,paused:g?.paused,active:g?.m01?.viewModel?.active});return;}
     const v=g.m01.viewModel;
-    state.frames.push({clock:g.clock,aim:v.aimBlend,aiming:g.player.aiming,fov:v.presentation.fov,camFov:g.m01.demolition.camera.fov});
+    state.frames.push({time:performance.now(),clock:g.clock,aim:v.aimBlend,aiming:g.player.aiming,fov:v.presentation.fov,camFov:g.m01.demolition.camera.fov,fpVariant:v.fpVariant,loaded:g.m01.characters.loaded,renderedFrames:g.m01.renderedFrames,nativeClock:v.native?.clock});
     if(state.captureMid&&!state.mid&&g.player.aiming&&v.aimBlend>=.25&&v.aimBlend<1){
       window.dispatchEvent(new Event('blur'));
       state.mid={clock:g.clock,aim:v.aimBlend,fov:v.presentation.fov,camFov:g.m01.demolition.camera.fov,aiming:g.player.aiming,paused:g.paused};
@@ -91,6 +92,9 @@ function expectCurve(frames){
 test('hip, mid-ADS and ADS by real right-mouse aim: 70 -> 48 on the shared eased curve; pause freezes the weapon region',async({page},info)=>{
   test.setTimeout(TIMEOUT());
   const {errors,failed}=await open(page,saves.hip);
+  // Rig arrival rebuilds presentation from authoritative flags; measure the eased input transition on the resident FP rig.
+  // The dedicated delayed-optional-residency test covers the independent fallback/late-arrival path.
+  await page.waitForFunction(()=>{const g=window.gameDiagnostics(),m=g.m01,v=m.viewModel;return m.characters.loaded.includes('fp:0')&&m.characters.loaded.includes('pl:0')&&v.fpVariant==='fp-arms-v2'&&v.lod===0&&v.clock===g.clock&&v.native.clock===g.clock;});
   // HIP: nothing aimed, world FOV 70, no wall in reach.
   const hip=await diag(page);
   expect(hip.player.aiming).toBe(false);expect(hip.m01.viewModel.aimBlend).toBe(0);expect(hip.m01.viewModel.presentation.fov).toBe(70);
@@ -104,7 +108,8 @@ test('hip, mid-ADS and ADS by real right-mouse aim: 70 -> 48 on the shared eased
   await page.evaluate(()=>{window.__feel.frames=[];window.__feel.recording=true;window.__feel.captureMid=true;});
   await resume(page);
   await page.mouse.down({button:'right'});
-  await page.waitForFunction(()=>window.__feel.mid,null,{timeout:60000});
+  try{await page.waitForFunction(()=>window.__feel.mid,null,{timeout:60000});}
+  finally{await info.attach('mid-ads-observer.json',{body:JSON.stringify(await page.evaluate(()=>({observer:window.__feel,diagnostics:window.gameDiagnostics(),fpResources:performance.getEntriesByType('resource').filter(r=>r.name.includes('/fp-arms-v2/')).map(r=>r.toJSON())}))),contentType:'application/json'});}
   await expect(page.locator('#pause')).toBeVisible();
   const mid=await page.evaluate(()=>window.__feel.mid);
   expect(mid.aiming).toBe(true);expect(mid.aim).toBeGreaterThanOrEqual(.25);expect(mid.aim).toBeLessThan(1);
