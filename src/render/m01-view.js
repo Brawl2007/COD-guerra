@@ -109,7 +109,8 @@ export class M01View {
     this.portalPolish=new M01BridgePortalPolish({stone:this.materials.bridgeStone});
     this.bridgeStructure=new M01BridgeStructure({steel:this.materials.bridgeSteel,rail:this.materials.metal,timber:this.materials.wood,stone:this.materials.bridgeStone});
     this.bridgeFinish=new M01BridgeFinishRuntime(this.scene,{quality:this.owner.quality});
-    this.bridgeSyncInput={kits:this.kit,quality:this.owner.quality,world:null};
+    this.kitsSettled=false;   // every bridge kit GLB has arrived or failed (see M01BridgeFinishRuntime.sync)
+    this.bridgeSyncInput={kits:this.kit,quality:this.owner.quality,world:null,kitsSettled:false};
     this.bridgeSelectInput={kits:this.kit,state:null,camera:this.camera,prepared:true};
     if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')){
       this.bridgeFinishDebug={setEnabled:on=>{const result=this.bridgeFinish.setEnabled(on);this.lastFrame=null;return result;},setTrainEffects:options=>{const value=typeof options==='boolean'?{lamp:options,smoke:options}:options;this.trainSmokeEnabled=Boolean(value.smoke);this.trainLife.lampsEnabled=Boolean(value.lamp);this.lastFrame=null;return value;},setCamera:pose=>{this.bridgeEditorialCamera=pose;this.lastFrame=null;return pose;},get:()=>this.bridgeFinish.diagnostics};window.m01BridgeFinishDebug=this.bridgeFinishDebug;
@@ -154,6 +155,7 @@ export class M01View {
         this.kit.push({file,root:asset.scene,pieces});this.scene.add(asset.scene);
       }catch(error){if(!this.disposed)console.warn(`Ponte M01: ${error.message}`);}
     }));
+    this.kitsSettled=true;
   }
   /**
    * Demolition set-piece: every LOD's collapsed/rubble node caches its stored transform, so a per-frame SET (never an accumulation)
@@ -739,10 +741,10 @@ export class M01View {
     // Assets, world restore, quality and resizing still invalidate it.
     this.environment?.fieldStructures.sync(sim.world,this.owner.quality,sim.player);this.environment?.syncRailProps(sim.world,this.owner.quality,sim.player);this.environment?.trackBed.bindBridgeKits(this.kit,this.bridgeStructure);
     this.environment?.syncVegetation(sim.world,this.owner.quality,sim.player,sim.clock,this.terrainRelief.enabled);
-    this.bridgeSyncInput.kits=this.kit;this.bridgeSyncInput.quality=this.owner.quality;this.bridgeSyncInput.world=sim.world;this.bridgeFinish.sync(this.bridgeSyncInput);
+    this.bridgeSyncInput.kits=this.kit;this.bridgeSyncInput.quality=this.owner.quality;this.bridgeSyncInput.world=sim.world;this.bridgeSyncInput.kitsSettled=this.kitsSettled;this.bridgeFinish.sync(this.bridgeSyncInput);
     const canvas=this.owner.canvas,previous=this.lastFrame;
     const frame={clock:sim.clock,battleClock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
-      width:canvas.width,height:canvas.height,models:this.kit.length,characters:this.characters?.revision,aircraft:this.aircraftRevision,
+      width:canvas.width,height:canvas.height,models:this.kit.length,kitsSettled:this.kitsSettled,characters:this.characters?.revision,aircraft:this.aircraftRevision,
       bridgeFinishRevision:this.bridgeFinish.revision,vegetationRevision:this.environment?.vegetation.revision,reliefRevision:this.terrainRelief?.revision,farRevision:this.farLandscape?.revision,propsRuntime:this.environment?.propsRuntime.revision,trackBed:this.environment?.trackBed.revision,fieldStructures:this.environment?.fieldStructures.revision,wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles; T20: so is the impostor A/B toggle
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;

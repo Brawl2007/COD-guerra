@@ -26,6 +26,8 @@ Essa variável é opcional e não afecta produção/CI. O renderer de teste usa 
 
 O CI mantém viewport 1280×720 e as mesmas assertions, com 180 s por teste (120 s para o percurso) por causa da renderização em software no runner. Não há retries automáticos. Traces, capturas e diagnóstico de simulação nas falhas ajudam a distinguir espera lenta de erro de jogo.
 
+Suíte completa (`.github/workflows/pages.yml`, job `browser`, 4 shards): usar `npm run build:browser` em vez de `npm run build` antes de `npm run test:browser`. Faz primeiro o build de produção (idêntico a `npm run build`) e acrescenta ao mesmo `dist` os visualizadores de autoria abertos por specs (`m01-material-atlas`, `m01-bridge-material-kit`, `m01-vegetation-kit`); `dist` publicado continua só com o jogo. `m01-postprocess-grading.spec.js` (T44) exige `M01_GRADING_BEFORE_DIR` com os frames BEFORE da mesma árvore sem o passe de grading: `tools/verification/m01-grading-before.sh <shard> 4 <dir>` cria um worktree de HEAD, retira o grading (`m01-grading-strip.mjs`), compila e corre o spec em modo `M01_GRADING_BASELINE=1`; só trabalha no shard que contém o spec. Localmente, com HEAD já commitado: `M01_GRADING_BEFORE_DIR=$PWD/.agent/runs/grading-before/png tools/verification/m01-grading-before.sh 1 1 "$M01_GRADING_BEFORE_DIR"` e depois o spec com a mesma variável.
+
 ## Controlos e estado
 
 WASD: mover; mouse: olhar; clique esquerdo: um disparo semiautomático; botão direito: mira; R: recarregar; G: granada; Shift: correr; Esc: libertar rato/pausar. Iniciar/Retomar solicita pointer lock e habilita áudio por gesto. Perder foco limpa as teclas e pausa simulação/áudio.
