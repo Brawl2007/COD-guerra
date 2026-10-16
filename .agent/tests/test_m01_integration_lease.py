@@ -103,7 +103,7 @@ class LeaseTests(unittest.TestCase):
         with patch.object(lease, "read_state", return_value=(BLOB, record())), \
              patch.object(lease, "write_state") as write:
             with self.assertRaises(lease.LeaseError):
-                lease.recover("session-a", 2, "Confirmed previous run is no longer running")
+                lease.recover("session-a", 2, "Confirmed previous run is no longer running", True)
             write.assert_not_called()
 
     def test_recovery_cannot_use_expiration_without_evidence(self):
