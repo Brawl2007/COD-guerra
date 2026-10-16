@@ -46,6 +46,7 @@ test('missing optional prone GLB keeps real MG34 gameplay and procedural low pos
  await page.waitForFunction(()=>window.gameDiagnostics().m01.actorPoses.prone===2&&window.gameDiagnostics().m01.fireEffects.muzzle>0);
  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();const g=await page.evaluate(()=>window.gameDiagnostics());
  expect(g.m01.characters.actors.every(a=>a.id!=='de_east_0'&&a.id!=='de_east_1')).toBe(true);
- expect(g.m01.requiredAssetFailures).toEqual([]);expect(g.m01.actorPoses.prone).toBe(2);expect(errors).toEqual([]);
+ // The two MG34 gunners stay prone; the three repair sappers also lie prone whenever the gate fire pins the repair (e0d494e).
+ expect(g.m01.requiredAssetFailures).toEqual([]);expect(g.m01.actorPoses.prone).toBe(g.m01.threat.repair.pinned?5:2);expect(errors).toEqual([]);
  await info.attach('mg34-prone-fallback',{body:JSON.stringify({kind:'optional prone clip failure; genuine burst save continued in production',diagnostics:g}),contentType:'application/json'});
 });
