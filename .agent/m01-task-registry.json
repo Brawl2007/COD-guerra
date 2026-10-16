@@ -3,7 +3,7 @@
   "project": "Brawl2007/COD-guerra",
   "mission": "M01-TCZEW",
   "source_of_truth": "GitHub Git HEAD/PR checks; this is an index, never completion proof",
-  "candidate": "PR:#76",
+  "candidate": "PR:#80",
   "rules": [
     "Never confuse delivered branch with integrated and validated",
     "Check live GitHub PRs/branches and unique claim before beginning a task",
@@ -36,7 +36,8 @@
       "refs": [
         "PR:#63",
         "PR:#76",
-        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b",
+        "PR:#78@d151a97 (merge c24ee0b na candidata pós-#76)"
       ],
       "note": "T02-min aceite (#63); fecho T02 (018/019, 038, 048/049, 051, pré-roll, mensagens de continuidade) do lote partials integrado na candidata 2026-10-15; sem verifier/reviewer independentes."
     },
@@ -46,7 +47,8 @@
       "refs": [
         "PR:#63",
         "PR:#76",
-        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b",
+        "PR:#78@d151a97 (merge c24ee0b na candidata pós-#76)"
       ],
       "note": "T03-lite aceite (#63); fumo finito de granadas (smokeSeconds 20) do lote partials integrado; sem verificação independente."
     },
@@ -66,7 +68,8 @@
         "branch:claude/m01-audio-director-music-v1@af81657",
         "CI:38120863543",
         "PR:#76",
-        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b",
+        "PR:#78@d151a97 (merge c24ee0b na candidata pós-#76)"
       ],
       "note": "T05a na candidata; campos transitórios weapon/kind/pass e near-pass por aproximação do lote partials integrados; sem verificação independente."
     },
@@ -78,7 +81,8 @@
         "CI:38132511927",
         "CI:38138498956",
         "PR:#76",
-        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b",
+        "PR:#78@d151a97 (merge c24ee0b na candidata pós-#76)"
       ],
       "note": "T06a+T06b na candidata; atraso por distância de cada tiro inimigo e aproximação do comboio (lote partials) integrados; sem verificação independente."
     },
@@ -89,7 +93,8 @@
         "PR:#43",
         "PR:#59",
         "PR:#76",
-        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b",
+        "PR:#78@d151a97 (merge c24ee0b na candidata pós-#76)"
       ],
       "note": "Contrato de animação na V7; prone genérico/hitboxes orientadas, migração de carry e validação do lote partials integrados (delta spatial.js nomeado no guard wz29); sem verificação independente."
     },
@@ -157,7 +162,8 @@
       "refs": [
         "branch:codex/m01-t14-t41-bridge-finish-v2@fd2b0c7",
         "branch:codex/m01-partials-completion-integration-v1@9a1535b",
-        "PR:#76"
+        "PR:#76",
+        "PR:#78@d151a97 (merge c24ee0b na candidata pós-#76)"
       ],
       "note": "Código integrado na candidata via partials (1affd34+e0d494e). Aceitação continua BLOCKED: README da fonte regista verifier/perf FAIL e orçamento de correcção esgotado; correcções de e0d494e (metadados de autor) sem verifier/perf independentes."
     },
@@ -259,7 +265,8 @@
         "PR:#76",
         "branch:codex/m01-partials-completion-integration-v1@9a1535b",
         "branch:integ-t24@ae0f453 (port manual do pacote Gemini/Argon M01-TRAIN-ARRIVAL-AND-LIFE-V1, local)",
-        "docs/T24_TRAIN_ARRIVAL_REPORT.md"
+        "docs/T24_TRAIN_ARRIVAL_REPORT.md",
+        "PR:#78@d151a97 (merge c24ee0b na candidata pós-#76)"
       ],
       "note": "Duas T24 reconciliadas numa junção: cinemática canónica única = Gemini (entra em andamento e trava até parar: 963 1435→1075 m 04:43:30→04:45:00; Panzerzug 1359→1119 m 04:51:00→04:52:00); M01TrainLife (Codex) usa trainArrivalOffset/panzerzugArrivalOffset e já não move os grupos pai (um só dono de transformação por comboio: raiz da locomotiva, grupo dos vagões, raiz do Panzerzug). Mantidos: halo de 1 km, contagem nativa de draw calls e fontes de fumo (Codex); fixture de luz/fornalha/travões, lanterna de fenda e coluna de manobra oeste (Gemini). Um só tecto de fumo 12/18/24 (RAILWAY_PUFF_BUDGET, TRAIN_PUFF_CAP é alias) e um só emissor. Visibilidade = chegada iniciada OU flags da simulação. Áudio veh.train.* testado mas não ligado. Cláusula da vista 10 e verificação independente por fazer; não é playtest."
     },
@@ -278,7 +285,8 @@
       "refs": [
         "PR:#59",
         "PR:#76",
-        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b",
+        "PR:#78@d151a97 (merge c24ee0b na candidata pós-#76)"
       ],
       "note": "Letterbox/prompt/shake/pausas derivados de scene.elapsed nas quatro cenas (lote partials) integrados; sem verificação independente."
     },
@@ -358,7 +366,8 @@
       "refs": [
         "PR:#59",
         "PR:#76",
-        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b",
+        "PR:#78@d151a97 (merge c24ee0b na candidata pós-#76)"
       ],
       "note": "Evacuação na candidata; vida do pátio (seis auxiliares só de apresentação, danos reversíveis, fogo finito) do lote partials integrada; sem verificação independente."
     },
@@ -379,7 +388,8 @@
       "refs": [
         "PR:#59",
         "PR:#76",
-        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b",
+        "PR:#78@d151a97 (merge c24ee0b na candidata pós-#76)"
       ],
       "note": "carriedBy na candidata; transporte Bąk/Dudek, carregadores MG34 e fases ckm (fire_burst latente, policy disabled) do lote partials integrados; fogo real da ckm continua em T47; sem verificação independente."
     },
@@ -422,7 +432,8 @@
       "refs": [
         "branch:codex/m01-t14-t41-bridge-finish-v2@fd2b0c7",
         "branch:codex/m01-partials-completion-integration-v1@9a1535b",
-        "PR:#76"
+        "PR:#76",
+        "PR:#78@d151a97 (merge c24ee0b na candidata pós-#76)"
       ],
       "note": "Código integrado na candidata via partials. Aceitação continua BLOCKED: README da fonte regista verifier/perf FAIL; e0d494e declara correcção de cartões desligados e alocações, sem verifier/perf independentes."
     },
@@ -462,9 +473,13 @@
     },
     "T46": {
       "name": "AUDIO MIX OPTIONS",
-      "status": "NOT_DEVELOPED",
-      "refs": [],
-      "note": "Mistura e opções de áudio."
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#80",
+        "commit:a11f2b8",
+        "claim:claims/m01-t46"
+      ],
+      "note": "Mistura e opções de áudio: grupos sfx/voz/música + reduzir zumbido; falta sessão manual de 10 min no aparelho."
     },
     "T47": {
       "name": "CKM CASEMATE CREW",
