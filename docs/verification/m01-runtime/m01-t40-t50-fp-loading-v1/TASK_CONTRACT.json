@@ -131,7 +131,7 @@
     ]
   },
   "execution": {
-    "max_fix_attempts": 3,
+    "max_fix_attempts": 8,
     "max_review_rejections": 2,
     "production_mode": "focused"
   },
@@ -180,5 +180,15 @@
     "runtime": "",
     "review": "",
     "final_status": ""
-  }
+  },
+  "authorization_amendments": [
+    {
+      "at": "2026-10-16T23:17:50.819809+00:00",
+      "user_instruction": "autorizado para tudo",
+      "interpretation": "Resume corrections beyond prior cap3; max8 prospectively, retain all three attempts and failed evidence. Resolve reported integration conflicts by union of accepted intent into latest single candidate after source gates. No automatic main/force/destructive changes; no inference that other writers ended.",
+      "prior_max_fix_attempts": 3,
+      "prior_used": 3,
+      "unchanged": "Original criteria, immutable golden/protected source obligations, independent verifier and critical review gates."
+    }
+  ]
 }
