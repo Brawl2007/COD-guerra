@@ -1,18 +1,31 @@
-STATUS: FAIL
+STATUS: PASS — independent verification only
 
-Frozen source: `9a679c50cdbe9a19330aba72961cb51cda808a5d`. Independent phase4; formal correction3/3 and the one bounded same-source CI job retry are spent. Context packet VALID before report writes; all837 frozen inputs unchanged.
+Frozen HEAD: `e377a0739906507dee63cd4006a3428efd22c56b`, branch `codex/m01-partials-browser-sampling-repair-v1`, sameRUN. ContextpacketVALID; clean tree and838frozeninputs unchanged before report writes. ProspectiveCAPTAIN_EXTENSION04: formal4/4 consumed, original3/3 and priorretry1/1 preserved; review0/2.
 
 CHECKS:
-- **FAIL — mandatory Stuka browser regression:** `tests/browser/m01-stuka-dive.spec.js:189` expects bombY>targetY−3, receives−3. Initial exact-source matrix:42/44PASS+6crews, FAIL. One justified unchanged-source shard3 retry:13/14PASS, FAIL; station restart recovers, Stuka repeats. No single full44 PASS is claimed.
-- The original trace samples the valid authoritative impact endpoint (`s=1`, clock196, position=target[-400,-3,37.5]); polling starts2.810s afterContinue returns and waits only for a visiblebomb before requiring airborne. This identifies a sampling gap, without proving a bad production trajectory. Recurrence leaves the required gate unresolved and requires an upstream decision/correction.
-- **PASS — fresh required authority/build gates:**874/874Node,173Python tooling, productionbuild/colliders/route, strict2predecessor routes, all24CAP03causal reports, protected299bytes and all24current-owner futures. All24full causal rowSHA/check/control/tickauthority/readiness/rawprefix/health data personally inspected; only the two disclosed extra8HP impacts occur. Originalgolden/history remain unchanged.
-- **PASS — original bridge gates:** ownerOFF1/1, ON4/4, all6phaseviews, both wholeframecontrols0pixels,44coupled regressions. Originalcomparator independently rerunPASS; all145sourcehashes exact. Actualmaterialviewer/all6PNGs inspected.
-- **PASS — focused presentation:** firstshards15/15 each and6crewobligations;4scenes exact fullstate/camera/cues acrosspause/reload; measured1000.528m clear lamp2/smoke7pixels, perturbations1/3lamp, originalblockedlamp0; native stock7/7/11≤12. Canonicalview10 remainsoccluded underCAP01variance. FreshoptionalMGfallback4namedactors/fullreloadauthorityPASS. Prioractualfar/nearfeed/putdown/fallback/death visualproof reused only with exactsimulation/characters/pose sourceidentity. The inherited black station-releasePNG is not visualbody proof.
+- **PASS fresh e377:** all5original Stuka cases, workers1/retries0/skips0/flaky0;874/874Node,173Python tooling and productionbuild. CI38870062186/job116871790801 and38870061991/job116871790355 personally checked via metadata/rawlogs. Globalbrowser job wasSKIPPED; no full44PASS claim.
+- **PASS correction integrity:** all5testbodies, originalassertionlines, fixtures/framing/puremodelprefix exact9a679c5. Only existingchangedinput is the capturehelper; all production/assets/missions/audittools/package/build/playwright and existing44workflow byte-identical. The in-page sampler is armed beforeContinue, reads an actual drawn restoredframe undernativepointerlock, clonesdiagnostics and exits nativepointerlock in that callback. No clock/RNG/state mutation or airborne filtering.
+- **PASS actual fresh production proof:** live/paused clock195.5000000000102, drift0; bomb `s=.66666666477`, Y68.2681485>target−3, bomb12.7px/plane46.6px insideframe. All4samplepause drifts0; bomb/formation/departure/empty-sky PNGs personally inspected. Artifact12032822544 SHA`662061d9a53e030fe912b1cdf5208c129d2cf11edd32f94fed729ea64070650f` verified.
+- **PASS retained9a gates with exactsourceidentity:** strict2predecessor routes; all24fullCAP03causalrows;299protectedbytes;24current-owner fullfutures; originalbridgeOFF1/ON4, sixviews and bothfullframecontrols0pixels; separate44coupled regressions;6crew obligations; fourfree-scene fullstate/camera/cues pause+reload; native train7/7/11<=12 and approved1000.528m lamp/smoke/perturbation/negative proof. These were personally inspected in phase4 and remain valid for identicalproduction.
 
-BUILD: PASS. RUNTIME_OR_BROWSER: FAIL on repeated mandatoryStuka sampling assertion; both failed invocations remainFAIL.
+| Task | Criteria-to-proof result |
+| --- | --- |
+| T02 | Narrative/order/pre-roll/near-miss and strict routes; maximum battle gap56.25/55.35s, real30.25s; rawoutcomes under disclosedT36policy. |
+| T03 | Terrain/safeImpact/IDs/instants/radii plus actual legacygrenade20s pooled-puff/savecontinuation tests. |
+| T05 | Typed transient audiofields/closestapproach/legacy; physical layout and strict authority preserved. |
+| T06 | Core/director/propagation/fallback/offline/browser;32voice pressure1/2572drops (0.03888%),339/339enemyfire heard. |
+| T07 | Legacy86/89/97, atomiccorruption/posture/continuation/schema2 and exactauthority with explicitT36variance. |
+| T14 | Protectedassets/colliders, actualmaterialviewer and sixphaseviews; both unaffected wholeframes0. |
+| T24 | Monotonearrival/exact65anchors; native7/7/11; clear1000.528m lamp2/smoke7pixels, jitter1/3lamp, occluder0lamp underCAP01. |
+| T26 | Fourvisibleletterbox/look cues and exactfullstate/camera/cues acrosspause and actualreload. |
+| T34 | Yardpositions/tasks/lanterns/damage04:36/05:41;90scorridor/solids, legacy andcombat-exclusion tests. |
+| T36 | Finitecarry/feed/realputdown-before-gate/death/reload; actualfar/nearbody proof with sourceidentity;4namedfallbackactors+6crew; CKMdisabled; all24causalhealth reports. |
+| T41 | Disabledwarm/nativeLOD/fallback/destruction/restore;24ownerfutures, originalpairedzero controls and44coupled regressions. |
 
-FAILURE_CONTEXT: Initialstation assertion read revision15 before proving restoredworld sync; it passes the one retry. Stuka189 repeats. No more retries or source/test/tool/workflow edits performed. No review or integration decision. HistoricalFAIL1/2/3 and CAP02local23/24 remainFAIL; all11tasks unaccepted/global26.
+BUILD: PASS. RUNTIME_OR_BROWSER: sufficient measured composite evidence mapped explicitly between9a production and e377 sampling correction. Originalmatrix42/44FAIL and unchanged-source retry13/14FAIL remainFAIL; newfull5PASS is separate. No single full44PASS is claimed.
 
-EVIDENCE_SUFFICIENT: YES forFAIL; NO foracceptance. Freshraw artifacts/logs: `/workspace/scratch/partials-ci9a679/`; independentinspection: `test-results/partials-independent-attempt4/`. Retryraw provenance and allarchiveSHAs are explicit in the JSON report.
+LIMITS: CanonicalT24view10 remainsphysicallyoccluded. Inheritedblackstation-releasePNG is not bodyappearance proof; priorindependentactualunmaskedcrewproof is reused with exactsourceidentity. No FPS/hardware/human-playtest claim. Traceprovenance: firstfailedsamplingdelay2.810308s; retry2.913842s (Captain to correct CORRECTION04 wording).
 
-RECOMMENDED_NEXT_ACTION: STOP under spentformal3/3 and sameSHAretry1/1 budgets. Captain owns any prospectivecontract/budget/escalation decision. Preserve exactfailures; no automatic extrafix/retry, acceptance or integration.
+EVIDENCE_SUFFICIENT: YES for critical review. All11tasks remainunaccepted/global26 until reviewerACCEPT. HistoricalFAIL1/2/3/4, CAP02local23/24 and cancelledsupersededCI unchanged. No production/test/tool/workflow edits, commit, push or integration performed by verifier.
+
+RECOMMENDED_NEXT_ACTION: Independent critical review of finaldiff, exactoriginalclauses, CAP01/02/03variances and source-mapped evidence. Verifier makes no acceptance or integration decision.

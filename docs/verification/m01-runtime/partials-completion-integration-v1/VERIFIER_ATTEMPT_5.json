@@ -1,0 +1,703 @@
+{
+  "schema_version": 1,
+  "role": "independent_verifier",
+  "attempt": 5,
+  "status": "PASS",
+  "created_at": "2026-10-16T08:05:14.778712+00:00",
+  "run_id": "M01-PARTIALS-COMPLETION-20261014",
+  "task_id": "M01-PARTIALS-COMPLETION-INTEGRATION-V1",
+  "source_head": "e377a0739906507dee63cd4006a3428efd22c56b",
+  "work_branch": "codex/m01-partials-browser-sampling-repair-v1",
+  "reused_production_head": "9a679c50cdbe9a19330aba72961cb51cda808a5d",
+  "production_implementation_head": "d7266b3d347045597f384f3df1320ec99070e693",
+  "immutable_predecessor": "bc8f6a21a57ccd926d4e0655481908d90d6b1978",
+  "context_packet": "VALID/check+show at entry; VALID immediately before finalreport writes. Treeclean and all838pinnedinputs unchanged before writes.",
+  "authority": "CAPTAIN_EXTENSION_04.json is prospective under D34/latestContinua; sameRUN. Originalacceptance/TASK_CRITERIA and CAP01/02/03 unchanged. One sampling-only fourth correction, no production/assertion relaxation or new CIretry.",
+  "budget": {
+    "original_formal_max": 3,
+    "prospective_additional": 1,
+    "formal_used": 4,
+    "formal_max": 4,
+    "unchanged_SHA_ci_job_retry_used": 1,
+    "unchanged_SHA_ci_job_retry_max": 1,
+    "review_rejections": 0,
+    "reset": false
+  },
+  "evidence_sufficient": "YES for independent verification and critical review; task acceptance requires separate reviewer ACCEPT",
+  "review_acceptance_decision": null,
+  "integration_decision": null,
+  "new_correction_review": {
+    "status": "PASS",
+    "base": "9a679c50cdbe9a19330aba72961cb51cda808a5d",
+    "candidate": "e377a0739906507dee63cd4006a3428efd22c56b",
+    "all5test_bodies": "byte-identical",
+    "all_original_assertion_lines": "identical including helper pause/projection/error assertions",
+    "fixture_framing_pure_model_prefix": "byte-identical",
+    "previous837_changed": [
+      "tests/browser/m01-stuka-dive.spec.js"
+    ],
+    "production_assets_missions_tools_package_build_playwright_old44workflow": "byte-identical",
+    "frozen_inputs": 838,
+    "sampler_review": "PrearmedrAF; nativepointerlock+restoredclock+renderclockguard; actualdiagnosticclone; samecallbacknativeexit; readonly retrieval; no clock/RNG/authority mutation"
+  },
+  "fresh_e377_checks": {
+    "full_original_Stuka_spec": {
+      "status": "PASS",
+      "head": "e377a0739906507dee63cd4006a3428efd22c56b",
+      "run": 38870062186,
+      "job": 116871790801,
+      "cases": 5,
+      "workers": 1,
+      "retries": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "raw_stats": {
+        "startTime": "2026-10-16T07:54:06.233Z",
+        "duration": 146984.561,
+        "expected": 5,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "artifact_id": 12032822544,
+      "artifact_sha256": "662061d9a53e030fe912b1cdf5208c129d2cf11edd32f94fed729ea64070650f",
+      "actual_samples": [
+        {
+          "name": "m01-stuka-gone-diagnostics",
+          "sha256": "53b518a5ac74ab75bbf80491136ea18fadd54faa2e5d76eb33ef9a57c8659159",
+          "liveClock": 241.2500000000206,
+          "pausedClock": 241.2500000000206,
+          "sampling": {
+            "armedAt": 21194.20000000001,
+            "armedClock": 0,
+            "sampledAt": 23672.5,
+            "sampledFrame": 13
+          },
+          "path": {
+            "since": 45.25000000001029,
+            "leadPathTime": 90.75000000001029,
+            "raidSince": 0,
+            "phase": "departed",
+            "planeSeconds": [
+              90.75000000001029,
+              87.25000000001029,
+              83.75000000001029
+            ]
+          }
+        },
+        {
+          "name": "m01-stuka-formation-diagnostics",
+          "sha256": "a581fda608c0714ccc487b99a9449badae7ca0d49924211ee6eedc51d1e1a98f",
+          "liveClock": 199.55000000001112,
+          "pausedClock": 199.55000000001112,
+          "sampling": {
+            "armedAt": 17374.199999999997,
+            "armedClock": 0,
+            "sampledAt": 23294.399999999994,
+            "sampledFrame": 11
+          },
+          "path": {
+            "since": 3.550000000000807,
+            "leadPathTime": 49.05000000000081,
+            "raidSince": 0,
+            "phase": "departure",
+            "planeSeconds": [
+              49.05000000000081,
+              45.55000000000081,
+              42.05000000000081
+            ]
+          },
+          "framing": {
+            "framing": {
+              "formation": {
+                "x": -100,
+                "y": -3,
+                "z": -20,
+                "angle": 2.5508899515341352,
+                "pitch": 1.0024330517014413
+              },
+              "bomb": {
+                "x": -250,
+                "y": -3,
+                "z": 40,
+                "angle": -2.167371657855996,
+                "pitch": 1.25
+              }
+            },
+            "live": {
+              "eye": {
+                "x": -100,
+                "y": -1.36,
+                "z": -20
+              },
+              "yaw": 2.5508899515341352,
+              "pitch": 1.0024330517014413,
+              "fov": 70,
+              "aspect": 1.7777777777777777,
+              "objects": {
+                "plane0": {
+                  "distance": 442.8,
+                  "ndc": [
+                    0.202,
+                    -0.197
+                  ],
+                  "pixel": [
+                    769,
+                    431
+                  ],
+                  "inside": true,
+                  "sizePx": 17.4
+                },
+                "plane1": {
+                  "distance": 308.4,
+                  "ndc": [
+                    0.093,
+                    -0.532
+                  ],
+                  "pixel": [
+                    699,
+                    551
+                  ],
+                  "inside": true,
+                  "sizePx": 25
+                },
+                "plane2": {
+                  "distance": 494.8,
+                  "ndc": [
+                    -0.407,
+                    0.628
+                  ],
+                  "pixel": [
+                    379,
+                    134
+                  ],
+                  "inside": true,
+                  "sizePx": 15.6
+                }
+              }
+            },
+            "paused": {
+              "eye": {
+                "x": -100,
+                "y": -1.36,
+                "z": -20
+              },
+              "yaw": 2.5508899515341352,
+              "pitch": 1.0024330517014413,
+              "fov": 70,
+              "aspect": 1.7777777777777777,
+              "objects": {
+                "plane0": {
+                  "distance": 442.8,
+                  "ndc": [
+                    0.202,
+                    -0.197
+                  ],
+                  "pixel": [
+                    769,
+                    431
+                  ],
+                  "inside": true,
+                  "sizePx": 17.4
+                },
+                "plane1": {
+                  "distance": 308.4,
+                  "ndc": [
+                    0.093,
+                    -0.532
+                  ],
+                  "pixel": [
+                    699,
+                    551
+                  ],
+                  "inside": true,
+                  "sizePx": 25
+                },
+                "plane2": {
+                  "distance": 494.8,
+                  "ndc": [
+                    -0.407,
+                    0.628
+                  ],
+                  "pixel": [
+                    379,
+                    134
+                  ],
+                  "inside": true,
+                  "sizePx": 15.6
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "m01-stuka-bomb-diagnostics",
+          "sha256": "3951bca318777c6765f48c634476572b9a36b4a94cc9dc53397fb29a1fc194ae",
+          "liveClock": 195.5000000000102,
+          "pausedClock": 195.5000000000102,
+          "sampling": {
+            "armedAt": 18160.399999999994,
+            "armedClock": 0,
+            "sampledAt": 23258.5,
+            "sampledFrame": 11
+          },
+          "path": {
+            "since": -0.5000000028448994,
+            "leadPathTime": 44.9999999971551,
+            "raidSince": 0,
+            "phase": "dive",
+            "planeSeconds": [
+              44.9999999971551,
+              41.4999999971551,
+              37.9999999971551
+            ]
+          },
+          "framing": {
+            "framing": {
+              "formation": {
+                "x": -100,
+                "y": -3,
+                "z": -20,
+                "angle": 2.5508899515341352,
+                "pitch": 1.0024330517014413
+              },
+              "bomb": {
+                "x": -250,
+                "y": -3,
+                "z": 40,
+                "angle": -2.167371657855996,
+                "pitch": 1.25
+              }
+            },
+            "live": {
+              "eye": {
+                "x": -250,
+                "y": -1.36,
+                "z": 40
+              },
+              "yaw": -2.167371657855996,
+              "pitch": 1.25,
+              "fov": 70,
+              "aspect": 1.7777777777777777,
+              "objects": {
+                "plane0": {
+                  "distance": 165.6,
+                  "ndc": [
+                    0.054,
+                    0.628
+                  ],
+                  "pixel": [
+                    675,
+                    134
+                  ],
+                  "inside": true,
+                  "sizePx": 46.6
+                },
+                "bomb": {
+                  "distance": 80.7,
+                  "ndc": [
+                    -0.249,
+                    -0.176
+                  ],
+                  "pixel": [
+                    480,
+                    423
+                  ],
+                  "inside": true,
+                  "sizePx": 12.7
+                }
+              }
+            },
+            "paused": {
+              "eye": {
+                "x": -250,
+                "y": -1.36,
+                "z": 40
+              },
+              "yaw": -2.167371657855996,
+              "pitch": 1.25,
+              "fov": 70,
+              "aspect": 1.7777777777777777,
+              "objects": {
+                "plane0": {
+                  "distance": 165.6,
+                  "ndc": [
+                    0.054,
+                    0.628
+                  ],
+                  "pixel": [
+                    675,
+                    134
+                  ],
+                  "inside": true,
+                  "sizePx": 46.6
+                },
+                "bomb": {
+                  "distance": 80.7,
+                  "ndc": [
+                    -0.249,
+                    -0.176
+                  ],
+                  "pixel": [
+                    480,
+                    423
+                  ],
+                  "inside": true,
+                  "sizePx": 12.7
+                }
+              }
+            }
+          },
+          "bomb": {
+            "id": "station_bomb",
+            "plane": 0,
+            "s": 0.6666666647700671,
+            "predicted": true,
+            "releaseAt": 194.5000000028551,
+            "at": 196.0000000028551,
+            "position": [
+              -288.2222215615734,
+              68.26814853360041,
+              25.996296223909418
+            ],
+            "target": [
+              -400,
+              -3,
+              37.5
+            ]
+          }
+        },
+        {
+          "name": "m01-stuka-0435-diagnostics",
+          "sha256": "5de92bd3d0e094ad20324b6d744e49eadcb5c0e62b484243b5cb6f6cce983d1d",
+          "liveClock": 213.45000000001428,
+          "pausedClock": 213.45000000001428,
+          "sampling": {
+            "armedAt": 18013.70000000001,
+            "armedClock": 0,
+            "sampledAt": 21938.20000000001,
+            "sampledFrame": 11
+          },
+          "path": {
+            "since": 17.450000000003968,
+            "leadPathTime": 62.95000000000397,
+            "raidSince": 0,
+            "phase": "departure",
+            "planeSeconds": [
+              62.95000000000397,
+              59.45000000000397,
+              55.95000000000397
+            ]
+          }
+        }
+      ],
+      "personal_png_inspection": [
+        "bomb",
+        "formation",
+        "0435",
+        "gone"
+      ],
+      "scope": "Actual freshproductionbrowser artifacts; alloriginalassertions preserved; no localbrowserrerun"
+    },
+    "node_tooling_build": {
+      "status": "PASS",
+      "run": 38870061991,
+      "job": 116871790355,
+      "head": "e377a0739906507dee63cd4006a3428efd22c56b",
+      "node": {
+        "tests": 874,
+        "pass": 874,
+        "fail": 0
+      },
+      "python_tooling": 173,
+      "production_build": "PASS",
+      "provenance": "Verifier personally inspected freshMCPrawnode.log and GitHubmetadata. Nodeworkflow browserjobSKIPPED; fullfreshbrowser proof is dedicated5casejob, not globalbrowser."
+    },
+    "syntax": "PASS node--check modifiedStukaspec",
+    "artifact": {
+      "id": 12032822544,
+      "path": "/workspace/scratch/partials-ci-e377/stuka.zip",
+      "bytes": 1939424,
+      "sha256": "662061d9a53e030fe912b1cdf5208c129d2cf11edd32f94fed729ea64070650f",
+      "crc_entries": 19,
+      "independent_SHA_size_check": "PASS"
+    },
+    "actual_airborne_sample": {
+      "liveClock": 195.5000000000102,
+      "pausedClock": 195.5000000000102,
+      "pause_drift": 0,
+      "flight_s": 0.6666666647700671,
+      "bomb_y": 68.26814853360041,
+      "target_y": -3,
+      "plane_pixels": 46.6,
+      "bomb_pixels": 12.7,
+      "both_inside": true,
+      "all4sample_pause_drifts": 0,
+      "all4PNGs_personally_viewed": [
+        "bomb",
+        "formation",
+        "0435departure",
+        "goneemptysky"
+      ]
+    }
+  },
+  "reused_9a_gates": {
+    "source_head": "9a679c50cdbe9a19330aba72961cb51cda808a5d",
+    "justification": "Every production/asset/mission/audittool/package/build/playwright input and existing44workflow is byte-identical. Of verifier4own837pinnedinputs ONLYStuka helper changed; all5testbodies/assertions/fixture/framing prefix exact. CAPEXT04 explicitly permits retaining independently inspected passed9a gates. No duplicate expensive full44 or all24local suites.",
+    "checks": {
+      "schema_correction": {
+        "status": "PASS",
+        "proof": "Exact embeddedprogramSHA8bd799a9...; independently run actualfocused count-adapted positive, explicitlysynthetic24shape positive and32rejectednegatives. Full freshCI report also passed correctedguard. Both archivedschemafiles exactSHA/bytes. Synthetic fixture is not24route evidence."
+      },
+      "strict_predecessor_routes": {
+        "status": "PASS",
+        "cases": [
+          [
+            19390901,
+            false
+          ],
+          [
+            7,
+            true
+          ]
+        ],
+        "ticks": [
+          22247,
+          21378
+        ],
+        "max_narrative_battle_gap_seconds": [
+          56.24999999998181,
+          55.350000000089494
+        ],
+        "max_narrative_real_gap_seconds": 30.249999999972488,
+        "delivery_before_gate_release": true,
+        "provenance": "Fresh immutable-predecessor per-tick audit and committed fixture reproduction; originalgolden unchanged; only named authorized projection/readiness replay."
+      },
+      "cover_all24_CAP03": {
+        "status": "PASS",
+        "seeds": 12,
+        "routes": 24,
+        "full_raw_rows_SHA_verified_and_parsed": 24,
+        "current_policy_every_control_tickclock_rng_health_readiness": "EXACT",
+        "full_stats_summary_player": "EXACT current/policy; all otherRAWoutcomes and originalactorhealth preserved",
+        "extra_damage": [
+          {
+            "seed": 1,
+            "mode": "ignore",
+            "damage": 8,
+            "round": "m01_round_1982",
+            "weapon": "kar98k",
+            "kind": "additional-issued"
+          },
+          {
+            "seed": 6,
+            "mode": "help",
+            "damage": 8,
+            "round": "m01_round_1659",
+            "weapon": "mg34",
+            "kind": "shared-issued additionalimpact; actualRAWearthmiss/exit retained"
+          }
+        ],
+        "no_unexplained_health_changes": true,
+        "all_complete_without_carry_death_restore": true,
+        "scope": "Only sole WEST-readiness replay; per-hit projection onlyT05pass and namedBak/Dudek pinned membership; allraw events retained. CAP02 local23/24 remainsFAIL."
+      },
+      "current_owner_futures": {
+        "status": "PASS",
+        "routes": 24,
+        "candidate_and_baseline_head": "9a679c50cdbe9a19330aba72961cb51cda808a5d",
+        "full_tick_events_save_checkpoints_parts": "EXACT withactualbridgeownerON/OFF",
+        "provenance": "Source assertions inspected; fresh24 reportfinal/checkpointpairSHAs personally checked. CPU actualGLB/PNG fixture, notGPU/humanplaytest."
+      },
+      "original_bridge_paired": {
+        "status": "PASS",
+        "owner_off_cases": 1,
+        "owner_on_cases": 4,
+        "authored_phase_views": 6,
+        "control_full_frames": {
+          "0430": 0,
+          "0610": 0
+        },
+        "all_six_control_patches": 0,
+        "full_state_camera_clock_parts_collapse": "EXACT",
+        "independent_comparator_rerun": "PASS",
+        "frozen_source_files": 145,
+        "frozen_source_sha256": "e2258bfc36ba478c2fb680f54afd1bf65b3d7d2f316628213d8269eda56f25d9",
+        "personally_viewed": "All6phasePNGs and authoredmaterialviewer; readable detail and desaturatedbrick, dawn shading retained."
+      },
+      "bridge_coupled_regressions": {
+        "status": "PASS",
+        "cases": 44,
+        "workers": 1,
+        "retries": 0,
+        "job": 116731431254,
+        "provenance": "Fresh raw bridge.log44passed and sourcefrozencheckPASS."
+      },
+      "scene_presentation": {
+        "status": "PASS",
+        "scenes": 4,
+        "full_state_camera_saved_cues_pause_actual_reload": "EXACT; all letterbox+lookprompt",
+        "provenance": "Personally parsed12freshcaptureJSONs and inspectedworldcuePNG."
+      },
+      "train_T24_variance": {
+        "status": "PASS underCAP01 variance; no canonicalpositive claim",
+        "clear_distance_metres": 1000.527985615595,
+        "clear_world_ROI_pixels": {
+          "lamp": 2,
+          "smoke": 7
+        },
+        "two_target_perturbation_lamp_pixels": [
+          1,
+          3
+        ],
+        "original_occluder_lamp_pixels": 0,
+        "native_stock_draw_calls": [
+          7,
+          7,
+          11
+        ],
+        "budget": 12,
+        "provenance": "FreshactualPNGs independently decoded RGBthreshold3/255 to reproduce everyROIcount; all65finalanchors/monotonicity/continuation covered by freshNode."
+      },
+      "T36_crew": {
+        "status": "PASS focused verification evidence; no task acceptance conferred",
+        "fresh_six_existing_crew_obligations": 6,
+        "fresh_optional_prone_fallback": "Four namedgunner/loaderIDs, actualmuzzle, fullauthority+reload exact; attachment personallydecoded",
+        "prior_independent_actual_visual_reuse": "Exact5bsourceidentity of simulation/characters/actor-pose/animation-presentation; viewonlyatlas2cachekeys changed. Prior1084mLOD2/nearfeed/fallback/finiteputdown/reload/death proof retained and relevantPNGs personallyviewed.",
+        "limit": "Inherited fresh station-releasePNG is black underresumeoverlay and is not counted as bodyappearance proof; prior independent unmaskedproduction proof supplies that narrow visual evidence."
+      },
+      "atlas_correction_causality": {
+        "status": "PASS",
+        "scope": "Retained actualstale/readyPNGs exactly historicalCI5bON/OFFSHA; oldframes6→6/GPU1 andfixed7→8/GPU2; fullstate/cameraexact;318actual lateatlas pixels;final0pixels. Fresh originalpairedmatrix nowalsozero. Temporaryhooks absent."
+      }
+    },
+    "artifact_sha256": [
+      {
+        "name": "authority",
+        "bytes": 66548199,
+        "sha256": "5de68fc50920644496aeef9a255cf3a04266e932600ee40006f843a210ec4e0e"
+      },
+      {
+        "name": "bridge",
+        "bytes": 192720086,
+        "sha256": "d4986bdde16a8d817ade65da0f5ce267375bc9ac451bdeb6421c35a1b450772b"
+      },
+      {
+        "name": "browser1",
+        "bytes": 63757892,
+        "sha256": "a9de827eff577b370b06ececbb768b665c6dbb099a3c0df5f0013272c917b2d8"
+      },
+      {
+        "name": "browser2",
+        "bytes": 85240290,
+        "sha256": "1dac3b09a1888cb4d56407b61c370a0bbbcec592b3be2aa74bb418dcbd99d10f"
+      },
+      {
+        "name": "browser3",
+        "bytes": 49175846,
+        "sha256": "a750404c14630e43e99f47d3dfd9027fbe73395eb61a432b4ad8fbfff7af2580"
+      }
+    ],
+    "independent_artifact_inspections": [
+      "test-results/partials-independent-attempt4/fresh-authority-inspection.json",
+      "test-results/partials-independent-attempt4/bridge-paired-independent.json",
+      "test-results/partials-independent-attempt4/fresh-archive-and-scenes.json"
+    ]
+  },
+  "browser_evidence_composition": {
+    "original9a_matrix": "42/44PASS+6crew;FAIL preserved",
+    "one9a_retry": "13/14PASS;FAIL preserved; station recovered andStuka repeated",
+    "new_e377_fullStuka": "5/5PASS,workers1,retries0,skipped0,flaky0; alloriginalassertions",
+    "other_original_case_evidence": "43distinct unchanged originalcases have retained passing evidence across9a firstshards/retry; newfull5 covers the sole unresolvedcase and all helpercallers. This is documented composite evidence with strictsourceidentity, not a single44-casePASS invocation.",
+    "single_full44_pass_claim": false,
+    "coupled_separate_suite": "44/44PASS at9a; unchangedsourceproof applies"
+  },
+  "per_task": {
+    "T02": {
+      "status": "PASS verification only",
+      "proof": "PASS: all original narrative/order/pre-roll/near-miss clauses covered by fresh874Node and strict immutable-predecessor routes; battle-message gaps56.25/55.35s and real30.25s; all24raw outcomes preserved except disclosedT36exposure."
+    },
+    "T03": {
+      "status": "PASS verification only",
+      "proof": "PASS: terrain/safeImpact grounding, original IDs/instants/radii, actual legacy grenade pooled-puff expiry at20s and exact save continuation covered by freshNode."
+    },
+    "T05": {
+      "status": "PASS verification only",
+      "proof": "PASS: transient weapon/kind/pass validation, closest-approach audio data, legacy snapshots and controlled audio-layout ownership; physical map unchanged and strict authority retained."
+    },
+    "T06": {
+      "status": "PASS verification only",
+      "proof": "PASS: production core/director/delays/fallback and coupled browser/offline waveform checks; actual32voice pressure2572requests/1drop=0.03888%,339/339enemy-fire heard; French API/RNG ownership unchanged."
+    },
+    "T07": {
+      "status": "PASS verification only",
+      "proof": "PASS: legacy86/89/97, atomic malformed fields, posture/hitbox/continuation/schema2 tests and per-tick authority; authorizedT36timing/exposure disclosed separately."
+    },
+    "T14": {
+      "status": "PASS verification only",
+      "proof": "PASS:299protected bytes, colliders, actual authored material viewer and six0430/0610views04/12/13; no missing material/oversaturatedbrick; both unaffected wholeframes0pixels."
+    },
+    "T24": {
+      "status": "PASS verification only",
+      "proof": "PASS underCAP01: monotone arrivals/exact65anchors/continuations; native7/7/11<=12; actual clear1000.528m lamp2/smoke7ROI pixels, perturbations1/3lamp, originaloccluder0lamp. Canonicalview10 remainsphysicallyoccluded."
+    },
+    "T26": {
+      "status": "PASS verification only",
+      "proof": "PASS: all4free scenes visibleletterbox+lookprompt and exact fullstate/camera/cues across realpause/page.reload; no authoritative camera control."
+    },
+    "T34": {
+      "status": "PASS verification only",
+      "proof": "PASS: six optional yardactors/tasks/lanterns and damage at04:36/05:41;90s actual corridor/solid clearance, atomiclegacy and combat exclusion; original physics/source unchanged."
+    },
+    "T36": {
+      "status": "PASS verification only",
+      "proof": "PASS: finitepairedcarry/feed/realputdown-before-readiness,midphase/death/reload/legacy proofs;actualfarLOD2 and nearbody visuals reused with exactsourceidentity; fresh4namedoptionalMGfallback+6existingcrew obligations; CKM policy-disabled/no inventedshots. All24causalhealth rows exact underCAP02/03."
+    },
+    "T41": {
+      "status": "PASS verification only",
+      "proof": "PASS: disabledwarm/nativeLOD/fallback/destruction/restore behavior; originalpairedOFF1/ON4, sixviews/twozero controls, currentowner24fullfutures and44coupled regressions; source145frozen."
+    }
+  },
+  "source_and_scope": {
+    "frozen_input_count": 838,
+    "unchanged_at_exit": true,
+    "four_accepted_ancestors_preserved": true,
+    "forbidden_French_world_sandbox_package_lock_unchanged": true,
+    "protected_predecessor_files": 299,
+    "author_only_impostor_metadata_exception": "Exactpre-existing narrow exception, no newasset/geometry/physics changes",
+    "historical_golden_sha256": "e0fb4ecbc1e483f9d9e177fd63c8a5a063529787238500d5a8a91e80e696b958",
+    "TASK_CRITERIA_sha256": "d846634f0cafcbb8b3491faec908eabd0ce998add54f6707a2da1681d331c371"
+  },
+  "historical_failures_preserved": {
+    "status": "FAIL1/2/3/4 remainFAIL; CAP02local23/24 remainsFAIL; superseded016bCI remainsCANCELLED. No counter/RUN reset or earlieracceptance inferred.",
+    "sha256": {
+      "VERIFIER_ATTEMPT_1.md": "fbd879f3de216831e7b5580b75ca4dac9ed86b4320d9feddb7170cece3fe1d3e",
+      "VERIFIER_ATTEMPT_1.json": "db228c43111ecac8e868e52bf297a65d1d272533f6ec01382f4ee1dbeb351a0f",
+      "VERIFIER_ATTEMPT_2.md": "72c8d05dce88ce37df3c85892c382b06f4ccaae64a4e3caa14b59085e9079962",
+      "VERIFIER_ATTEMPT_2.json": "2e54b3b478e390ce24360dddcc72c5fab1d7535a97e927744d1758943378d89d",
+      "VERIFIER_ATTEMPT_3.md": "30283b1582211cff696cc8b0bd5fcef1f395381aca53805c98ccfb912c002f1f",
+      "VERIFIER_ATTEMPT_3.json": "78a1ce3884bebb98ebe7ee2f8e813c7280467f5c28dd463c324f059be371b588",
+      "VERIFIER_ATTEMPT_4.md": "dfc807598322a63e3c4d36019b157f33f2e21cbf73266b72c3b01c1719675ada",
+      "VERIFIER_ATTEMPT_4.json": "ffe9993b84a1f63e25e896325ad6cb3d3c7e2023b890f9b6df8231566d4f6068",
+      "CORRECTION_02_PRE_CLARIFICATION.json": "7d766efa84f3d774028199a662f00684a14b0a68f1b3ac6f63cba8b57dbb33c4"
+    }
+  },
+  "limits": [
+    "T24 canonicalview10 remainsoccluded; only approvedCAP01clearline/perturbation/negative proof closes that variance.",
+    "Fresh inheritedstation-releasePNG underresumeoverlay is not bodyappearance proof; priorindependent unmaskedactualcrew proof reused only with exactsimulation/characters/poseidentity.",
+    "No FPS, physicalVRAM, targethardware performance or humanplaytest inferred.",
+    "No taskacceptance/globalcountchange or integration decision; all11 remainunaccepted/global26 until independentcriticalreview."
+  ],
+  "provenance_clarification": {
+    "first_failed_Stuka_capture_install_delay_seconds": 2.810308,
+    "retry_failed_capture_install_delay_seconds": 2.913842,
+    "note": "CORRECTION04 calls2.810s retrydelay; exactmeasure is firstfailure2.810308/retry2.913842. Captain will correct that textualprovenance separately; no code/assertion/evidence effect."
+  },
+  "fresh_log_sha256": {
+    "/workspace/scratch/partials-ci-e377/node.log": "a8bcc48daf263ded22d4afb960228f2d027d6a9e48e8a3c3885e1e55f7b186a2",
+    "/workspace/scratch/partials-ci-e377/stuka.log": "836f0f922eec453797945fa9736ec85ba785afb8a6e38589a166d03a7718cd41",
+    "/workspace/scratch/partials-ci-e377/stuka/evidence/stuka-report.json": "25165dc7ea013b9a8cb135b91b8d185f23bda38cddd18cbb3ca6ed281342c092"
+  },
+  "independent_outputs": "test-results/partials-independent-attempt5/",
+  "next_action": "Independent critical reviewer assesses unchanged original11clauses, disclosedCAP01/02/03variances, finaldiff and this source-mapped evidence. Verifier grants no acceptance/integration; no furtherautomaticfix/retry performed."
+}

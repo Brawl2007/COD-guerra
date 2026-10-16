@@ -183,17 +183,22 @@
     ]
   },
   "state": {
-    "status": "RUNNING",
-    "current_node": "implementation",
-    "current_owner": "implementer",
-    "next_action": "One prospective scoped correction4/4: pre-arm real Stuka sampling before Continue; unchanged production; fresh full Stuka and Node/build; independent verifier5 then critical review. No acceptance yet."
+    "status": "VERIFIED",
+    "current_node": "review",
+    "current_owner": "reviewer-critical",
+    "next_action": "Independent verifier5 PASS at e377. Criticalreview required beforeacceptance/countchanges/targetintegration; originalfailures retained, formal4/4 consumed, review0/2."
   },
   "result": {
     "final_head": "",
-    "tests": [],
-    "build": "",
-    "runtime": "",
+    "tests": [
+      "Fresh874Node/173tooling PASS",
+      "Freshoriginal5Stuka PASS, zero retries/skips/flaky",
+      "Retained9a source-identical24causal/299protected/24owner/paired0/coupled44 gates PASS"
+    ],
+    "build": "PASS",
+    "runtime": "IndependentverifierPASS, compositeproof; no singlefull44PASS",
     "review": "",
-    "final_status": ""
+    "final_status": "",
+    "verification_head": "e377a0739906507dee63cd4006a3428efd22c56b"
   }
 }
