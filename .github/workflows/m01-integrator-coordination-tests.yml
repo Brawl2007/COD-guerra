@@ -1,0 +1,25 @@
+name: M01 Integrator Coordination Tests
+
+on:
+  pull_request:
+    paths:
+      - '.agent/tools/m01_integration_lease.py'
+      - '.agent/tests/test_m01_integration_lease.py'
+      - '.github/workflows/m01-integrator-coordination-tests.yml'
+      - 'docs/direction/M01_INTEGRATOR_LEASE.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lease-offline-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout coordination code
+        uses: actions/checkout@v4
+      - name: Run coordination unit tests (offline)
+        run: python3 -m unittest discover -s .agent/tests -p 'test_m01_integration_lease.py' -v
+      - name: Check CLI syntax
+        run: python3 -m py_compile .agent/tools/m01_integration_lease.py

@@ -9,8 +9,8 @@
 - Registo canónico inicial: `.agent/m01-task-registry.json`, com T00–T52, evidências/branches e estados conservadores. **Um índice não é certificado de integração.**
 - Antes de cada tarefa: `python3 .agent/tools/m01_task_registry.py check TXX --live` e ler a issue #72. Não criar outra tarefa já marcada `DELIVERED_BRANCH`, `DELIVERED_PR` ou `IN_CANDIDATE_UNVERIFIED`. Usar commits e PRs existentes.
 - Apenas depois de verificar que TXX é `UNKNOWN` e sem dono: `python3 .agent/tools/m01_task_registry.py claim TXX --sha "$(git rev-parse HEAD)"`. A criação de `claims/m01-txx` é atómica; conflito = não implementar duplicado. Ver `AGENTS.md`.
-- **PR #76 já é a candidata única de integração V2–V7 + Argon V1/V2 + T50 + T21.** Não começar outra candidata: retomar #76, corrigir a prova combinada sem suprimir testes, trazer outras entregas verificadas seletivamente.
-- A execução atual do PR #76 falhou na etapa `npm test` do CI: muitas verificações invocam históricos do Git não disponíveis no checkout raso, mas há também testes com referências a caminhos ausentes em revisões históricas. Investigar e corrigir a causa de cada grupo no PR/branch de trabalho correspondente, sem afrouxar proteções. Não afirmar CI verde com base em 502 testes locais.
+- **PR #76 foi integrado na main**; em 2026-10-16 a candidata única posterior é o **PR #80**. Antes de trabalhar, revalidar no GitHub se o #80 continua ativo e qual a sua HEAD. Não criar candidata concorrente.
+- O histórico do CI do #76 não deve ser usado como prova do HEAD atual. Verificar os checks da candidata atual no mesmo SHA, investigar falhas de autoridade com rigor e não afrouxar proteções. Não afirmar CI verde com base em 502 testes locais.
 
 ## ENTREGA OBRIGATÓRIA — transformar TODO o trabalho existente em jogo utilizável
 
@@ -26,6 +26,30 @@
 8. O Capitão é responsável por preparar e **entregar a candidata completa** sem intervenção horária do utilizador. Pedir apenas autorizações realmente necessárias: merge para `main`, deploy/publicação, gastos não autorizados, autoria/licenças e playtest/decisões humanas.
 
 **Aceitação:** uma branch/PR candidato único, funcional e validado, com mapa de proveniência e lacunas transparentes; não chamar «tudo entregue» se funcionalidades aprovadas permanecem dispersas. O merge final ou publicação continuam reservados à decisão humana.
+
+## Reserva exclusiva e passagem de turno entre sessões
+
+**Obrigatório:** ler `docs/direction/M01_INTEGRATOR_LEASE.md` antes de integrar. O estado remoto único já existe em `coordination/m01-integration-state:.agent/coordination/m01-integrator.json`.
+
+- **Migração:** a reserva começa PAUSED, não FREE. Não iniciar integrações novas por este protocolo até o PR #84 ser validado e confirmar que todas as sessões legadas saíram da candidata; ativar FREE por CAS com evidência.
+- Cada execução horária começa por verificar o lock e as reservas de tarefas existentes. Se um chat já está a integrar, outros não modificam a candidata, mesmo que tenham passado várias horas; continuar só trabalho independente ou terminar sem gastar tokens.
+- Quem termina uma tarefa totalmente concluída pode integrá-la diretamente **se conseguir a reserva exclusiva**. Caso contrário, sinaliza PR não-draft como READY após provas e deixa na fila única.
+- O lock exige atualização atómica do ficheiro via SHA de conteúdo. Via GitHub CLI autenticado usar `.agent/tools/m01_integration_lease.py`; via MCP usar fetch_file/update_file para o mesmo ficheiro. Nunca criar locks paralelos.
+- Antes de cada push, confirmar que a sessão ainda é proprietária e que o HEAD da candidata coincide com a SHA pinada; se mudou, parar e reconciliar. Sem force.
+- No fim, registar código integrado, SHA, testes, CI pendente, próximos passos e libertar lock. O próximo horário **retoma** este estado, não reinicia tarefa nem reexecuta CI idêntico.
+- Se a sessão anterior desaparecer, não roubar reserva apenas por timeout. Sem prova de encerramento, bloqueia-se a integração e mantém-se trabalho independente. Recuperação exige confirmação de inatividade e CAS.
+
+## Regra mais importante — fechar TASK_ID completo, não fatias isoladas
+
+A unidade de entrega é o **TASK_ID com TODOS os critérios de aceitação**, não o tempo de uma sessão Claude. Cada execução horária retoma o PR/branch da tarefa em curso e executa o próximo passo previsto no handoff, sem mudar de tarefa apenas por terminar uma fatia. Checkpoints intermédios são permitidos para preservar trabalho, mas ficam DRAFT e PARTIAL até prova do fecho integral. Se uma tarefa foi reservada por outra sessão, não a retomar sem handoff e confirmação de que a outra terminou.
+
+Não iniciar TASK_ID novo enquanto existir tarefa própria incompleta, salvo bloqueio externo real e comprovado (aprovação humana, dependência de outra branch, CI indisponível ou autoridade protegida não atualizável legitimamente). Neste caso, registar critério e motivo, colocar a tarefa em BLOCKED sem a declarar concluída, e avançar apenas para tarefa independente. Testes demorados ou fim da janela horária são motivos para handoff e retoma, não para abandono. Priorizar **fecho da T38, T43, T47 e T40/T50 conforme responsáveis, dependências e licenças**, sem invadir reservas de outros agentes e sem alterar a candidata #80 sem lock.
+
+## Regra anti-inatividade — continuidade produtiva sem duplicações
+
+Se a primeira tarefa escolhida estiver bloqueada, **não terminar a hora automaticamente**. Verificar em sequência: (1) tarefas próprias incompletas e handoff, (2) PR completo READY para integração apenas com lock livre e ativo, (3) CI falhado do HEAD com correção isolada permitida, (4) tarefa parcial livre e recuperável sem violar claims, (5) TASK_ID novo realmente livre e independente. Preferir terminar tarefas existentes a abrir novas fatias. Não ficar à espera com Opus ativo de Sonnet ou CI; recolher o resultado/handoff e executar trabalho independente quando seguro.
+
+Uma sessão da Routine pode executar vários passos úteis, mas não deve iniciar o mesmo trabalho que outra sessão ativa. Se todas as frentes estiverem ocupadas ou dependentes de aprovação humana, terminar rapidamente com uma única linha explicativa para poupar tokens. Seguir `docs/direction/M01_INTEGRATOR_LEASE.md`.
 
 ## Ação em cada execução da Routine
 

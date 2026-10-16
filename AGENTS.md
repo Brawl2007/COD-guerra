@@ -15,7 +15,7 @@ python3 .agent/tools/m01_task_registry.py claim TXX --sha "$(git rev-parse HEAD)
 ```
 A reserva cria exclusivamente `refs/heads/claims/m01-txx` no GitHub; se a criação falhar, outro agente pode ter reclamado a tarefa: não continuar nem fazer outra reserva. Registar owner e branch de desenvolvimento na issue #72 e criar PR de implementação. Não converter estados em `INTEGRATED` sem verificar commits, CI e destino; não tratar a presença na V7 ou no PR #76 como integração em `main`.
 
-**Integração única existente:** PR #76 é a candidata M01. Não criar outra consolidação V7 concorrente. O Capitão trabalha sobre ela quando for seguro, mantendo histórico, provas e proteções. A lista é índice conservador; Git/PR/CI recentes sempre prevalecem.
+**Candidata única M01:** o PR #76 já foi integrado na main; em 2026-10-16 a candidata pós-#76 é o PR #80 (`claude/quirky-heisenberg-9l4m7b`). Antes de agir, revalidar o HEAD e qual PR a substituiu. O índice é conservador; Git/PR/CI recentes prevalecem.
 
 
 Leia `DEVELOPMENT_STATUS.md`, `RUNBOOK.md`, `IMPLEMENTATION_PLAN.md` e o sistema afectado antes de editar.
@@ -31,3 +31,18 @@ A especificação completa é `docs/PROMPT_MESTRE.txt`; o índice do produto é 
 - Trabalhar em branch própria; abrir PR para main. Actualizar status e evidências antes de terminar.
 - Trabalho simultâneo com Claude Code: pesquisa/mapa/roteiro de M01 em branch própria, evitando alterações concorrentes em engine/combate/build.
 - Direção do Captain (estado verificado, plano das 30 missões, grafo de tarefas, decisões, handoff): `docs/direction/README.md`.
+
+
+## Regra permanente — uma IA entrega, um jogo recebe
+
+- As tarefas completas e validadas por Codex, Claude, Gemini ou outras IAs convergem para **uma única candidata jogável M01**. Nunca tratar PR isolado ou fatia parcial como tarefa concluída ou integrada; nunca repetir trabalho já feito.
+- O agente que concluiu a tarefa **pode ser o integrador**, mas qualquer sessão pode assumir esse papel desde que tenha a **reserva exclusiva**. Somente **um integrador ativo** pode modificar a candidata, mesmo que a Routine Cloud inicie outros chats de hora em hora.
+- **Migração inicial em 2026-10-16:** estado PAUSED enquanto o PR #84 não estiver validado e antigas sessões puderem editar a #80. É proibido adquirir a reserva ou escrever na candidata até verificar handoff dos antigos integradores e ativar o estado FREE em CAS.
+- A reserva encontra-se no GitHub, na branch `coordination/m01-integration-state`, ficheiro `.agent/coordination/m01-integrator.json`; aquisição e libertação exigem atualização com SHA anterior (compare-and-swap). **Nunca assumir que uma reserva caducou apenas por passar uma hora.** Se estiver ocupada ou incerta, não modificar a candidata.
+- Ler primeiro `docs/direction/M01_INTEGRATOR_LEASE.md` e executar o coordenador `python3 .agent/tools/m01_integration_lease.py status` / `queue` quando `gh` estiver autenticado. Sem `gh`, usar a mesma fonte via GitHub MCP `fetch_file` / `update_file`. Falha de rede ou conflito = **não integrar**.
+- Um PR só pode entrar na fila quando cumprir **todos** os critérios de aceitação e testes aplicáveis, sem partes em aberto. O marcador READY é triagem, não certificado de CI. Confirmar dependências, autoria, proveniência e se código já está presente.
+- **Conclusão integral antes de nova tarefa:** um TASK_ID só termina quando o contrato de aceitação original, todas as fases funcionais, os testes e a prova no jogo estiverem completos. Commits/checkpoints intermédios são permitidos, mas o PR continua DRAFT e o estado PARTIAL/IN_PROGRESS, nunca READY nem COMPLETE. A sessão seguinte deve retomar a **mesma tarefa e branch a partir do handoff**, sem criar outro PR/fatia paralela. Só trocar de TASK_ID se houver bloqueio externo concreto, comprovado e registado; CI a correr ou uma hora decorrida não são bloqueios de conclusão. Ver `docs/direction/M01_INTEGRATOR_LEASE.md`.
+- **Routine anti-inatividade:** após verificar uma tarefa bloqueada, não terminar sem procurar trabalho independente seguro: retomar tarefa própria parcial, terminar outra fatia pendente, rever um CI falhado no HEAD atual, integrar READY se a reserva estiver FREE, ou assumir tarefa realmente livre. Respeitar reservas de outros agentes. Se todas as frentes estiverem ocupadas/bloqueadas, encerrar imediatamente com uma linha de bloqueio para poupar tokens. Consultar `docs/direction/M01_INTEGRATOR_LEASE.md`.
+- Guardar handoff curto com TASK_ID, dono, branch, HEAD, testes e CI pendente. Se a sessão estiver ativa noutra branch, respeitar a reserva. Retomar trabalho existente antes de iniciar outro TASK_ID.
+- Testes proporcionais durante o desenvolvimento, verificação obrigatória da candidata no SHA integrado antes de a declarar jogável. Sem force-push, atalhos em CI, regressões escondidas, merge em main ou deploy sem autorização explícita.
+- Priorizar comandos/script e Sonnet; não iniciar Opus ou subagentes redundantes nem desperdiçar sessões com polling contínuo de CI. As autorizações financeiras existentes não obrigam a usar APIs pagas.

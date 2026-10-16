@@ -1,6 +1,25 @@
 @AGENTS.md
 
-**Antes de delegar qualquer TASK_ID da M01**, consultar a mesma fonte de tarefas `.agent/m01-task-registry.json` e executar `python3 .agent/tools/m01_task_registry.py check TXX --live`. Entregas existentes devem ser revistas/integradas, não recriadas. Para tarefa `UNKNOWN` e livre, exigir `claim TXX --sha "$(git rev-parse HEAD)"` antes de implementação, com confirmação atómica no GitHub. Em caso de erro de rede ou conflito, não duplicar. O **PR #76** já contém a candidata principal V2–V7; não criar outra candidata paralela. Ver `AGENTS.md` e issue #72.
+**Antes de delegar qualquer TASK_ID da M01**, consultar a mesma fonte de tarefas `.agent/m01-task-registry.json` e executar `python3 .agent/tools/m01_task_registry.py check TXX --live`. Entregas existentes devem ser revistas/integradas, não recriadas. Para tarefa `UNKNOWN` e livre, exigir `claim TXX --sha "$(git rev-parse HEAD)"` antes de implementação, com confirmação atómica no GitHub. Em caso de erro de rede ou conflito, não duplicar. O PR #76 já foi integrado na main. A candidata pós-#76 era o PR #80 em 2026-10-16; revalidar a candidata atual pelo GitHub. Nunca criar outra candidata paralela. Ver `AGENTS.md` e issue #72.
+
+
+## Regra obrigatória da Routine horária — um integrador
+
+Ler `docs/direction/M01_INTEGRATOR_LEASE.md`. As sessões Cloud podem sobrepor-se: antes de iniciar qualquer integração, consultar o estado remoto em `coordination/m01-integration-state:.agent/coordination/m01-integrator.json`. Se estiver HELD por outra sessão, **não tocar na candidata**, mesmo após uma hora; encerrar ou continuar uma tarefa comprovadamente independente.
+
+**IMPORTANTE:** o estado de coordenação está PAUSED durante a migração da rotina antiga. Não o tornar FREE sem confirmação verificável de que não há sessões anteriores a modificar #80, e sem revisão do PR #84. A idade de uma sessão não prova inatividade.
+
+Qualquer chat que concluiu uma tarefa integralmente validada pode adquirir a reserva de integrador e colocá-la na fila/candidata. Apenas o detentor da reserva pode atualizar a candidata. Usar o SHA do blob anterior via GitHub Contents API (ou o script `.agent/tools/m01_integration_lease.py`, se gh autenticado); falha do CAS ou identidade incerta exige parar. Antes de cada push, confirmar propriedade e HEAD da candidata. Após o push, atualizar SHA monitorizada, publicar handoff e libertar reserva quando seguro.
+
+Tarefas parciais não entram em READY nem na candidata como concluídas. Não aguardar CI a consumir Opus; handoff com HEAD/checks e retoma posterior. CI vermelho impede promoção. O marcador READY não substitui auditoria. Não alterar main/deploy sem autorização.
+
+## Regra prioritária: fechar a tarefa inteira
+
+**Não entregar tarefas da M01 perpetuamente por metade.** Ao aceitar um TASK_ID, recuperar todos os critérios originais e manter a responsabilidade até os cumprir e validar, mesmo que ocupe várias execuções da Routine. Os commits de progresso são checkpoints, não fechos. PR draft e estado PARTIAL/IN_PROGRESS enquanto faltarem requisitos. **Não escolher nova tarefa por ter chegado o fim da hora; no horário seguinte retomar a mesma branch e o próximo passo do handoff.** Apenas passar a outra tarefa se existir bloqueio externo demonstrável que não possa resolver em segurança, documentando owner, PR/SHA, critério pendente e desbloqueio. Testes obrigatórios e revisão de resultados no HEAD certo antes de declarar COMPLETE. Só depois o PR pode ficar READY para integração exclusiva.
+
+## Protocolo anti-inatividade da Routine
+
+Não desperdiçar cada execução de uma hora com «aguardar agente», «aguardar CI» ou verificar um único TASK_ID e parar. Depois de um bloqueio, consultar o handoff/issue #72 e executar a próxima ação segura e independente, por ordem: retomar tarefa própria, concluir fatia inacabada, corrigir CI focalizado, integrar entrega READY (somente com lock FREE adquirido), ou reservar tarefa nova verdadeiramente livre. Não mexer em trabalho de outras sessões. Se nenhuma ação for segura, terminar rapidamente com bloqueio exato, poupando tokens. Nunca criar mudanças fictícias apenas para parecer ativo. Ver `docs/direction/M01_INTEGRATOR_LEASE.md`.
 
 ## Missão permanente da Routine Cloud — M01 completa
 
