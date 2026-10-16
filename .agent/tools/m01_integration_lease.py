@@ -148,8 +148,10 @@ def release(token, handoff):
     return {"released": True, "handoff": state["handoff"], **version}
 
 
-def recover(expected_owner, expected_generation, reason):
+def recover(expected_owner, expected_generation, reason, confirmed_inactive=False):
     """Exceptional operator-verified recovery; NEVER called on a time limit."""
+    if not confirmed_inactive:
+        raise LeaseError("Explicit verification of ended session is mandatory; never infer from a timeout")
     blob, state = read_state()
     if state["status"] != "HELD":
         raise LeaseError("Recovery only applies to a held lock")
@@ -165,7 +167,14 @@ def recover(expected_owner, expected_generation, reason):
 
 def candidates():
     """Intake only: READY marker is not CI proof and never triggers auto-merge."""
-    prs = api("GET", "pulls?state=open&per_page=100")
+    prs = []
+    for page in range(1, 11):
+        batch = api("GET", "pulls?state=open&per_page=100&page=" + str(page))
+        prs.extend(batch)
+        if len(batch) < 100:
+            break
+    else:
+        raise LeaseError("PR intake exceeded 1000 results; do not silently omit tasks")
     items = []
     for pr in prs:
         labels = {item.get("name") for item in pr.get("labels", [])}
@@ -197,6 +206,7 @@ def main(argv=None):
     re.add_argument("--expected-owner", required=True)
     re.add_argument("--expected-generation", type=int, required=True)
     re.add_argument("--reason", required=True)
+    re.add_argument("--confirm-inactive", action="store_true", help="operator verified old session ended")
     a = parser.parse_args(argv)
     try:
         if a.action == "status":
@@ -215,7 +225,7 @@ def main(argv=None):
         elif a.action == "release":
             result = release(a.token, a.handoff)
         else:
-            result = recover(a.expected_owner, a.expected_generation, a.reason)
+            result = recover(a.expected_owner, a.expected_generation, a.reason, a.confirm_inactive)
         print(json.dumps(result, sort_keys=True, indent=2, ensure_ascii=False))
         return 0
     except LeaseError as exc:
