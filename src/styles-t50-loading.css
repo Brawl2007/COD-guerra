@@ -1,0 +1,17 @@
+/* T50 incremental: retains every V7 menu, HUD and save control. */
+.m01-loading{width:min(100%,450px);margin:12px 0 3px;padding:12px 14px;
+  border-left:3px solid #b8a36a;background:rgba(12,17,13,.78);color:#ddd9c8}
+.m01-loading-header{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  letter-spacing:.07em;font:600 .8rem/1.35 Arial,Helvetica,sans-serif;margin-bottom:8px}
+.m01-loading-header strong{font-variant-numeric:tabular-nums;color:#e7c77d}
+.m01-loading-track{height:7px;background:rgba(255,255,255,.12);overflow:hidden}
+.m01-loading-bar{width:0;height:100%;background:linear-gradient(90deg,#ad8250,#e7c77d);
+  transition:width .12s ease-out}
+.m01-loading[data-phase='ready']{border-left-color:#81ad80}
+.m01-loading[data-phase='error']{border-left-color:#d3785f}
+#m01-loading-retry{font-size:.8rem;margin-top:10px;padding:8px 12px}
+@media(prefers-reduced-motion:reduce){.m01-loading-bar{transition:none}}
+
+@font-face{font-family:Barlow;src:url('/COD-guerra/assets/fonts/barlow/Barlow-Regular.ttf') format('truetype');font-weight:400 900;font-display:block}
+html.font-loading #game-shell{visibility:hidden}
+html.font-ready :is(body,.overlay h1,.briefing,button,.settings select,.mission-choice,.mission-choice select){font-family:Barlow,Arial,sans-serif}

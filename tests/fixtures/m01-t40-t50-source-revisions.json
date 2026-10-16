@@ -1,0 +1,11 @@
+{
+  "task": "T50",
+  "base": "d151a97239a54dc3f92b594e88ae5933c6bdfa06",
+  "files": {
+    "src/assets/asset-manager.js": {
+      "originalSha256": "f0366f743ac499f66c3f312bd6c78da70e7ffa869f1b5286107bf40397e4db39",
+      "currentSha256": "0cf75fcf0b3a7885fe2cc7e68f08c9db360b9f5c13ef976f11ee2056c1707abf",
+      "scope": "Only AssetManager observable request lifecycle; accepted loader conversion/release policy retained."
+    }
+  }
+}

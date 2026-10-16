@@ -1,0 +1,53 @@
+name: M01 T40 T50 FP loading production
+on:
+  push:
+    branches: [codex/m01-t40-t50-fp-loading-v1]
+    paths-ignore: ['docs/**', '.agent/**', '**/*.md']
+  pull_request:
+    branches: [main]
+    paths:
+      - src/assets/asset-progress.js
+      - src/ui/m01-loading-controller.js
+      - src/styles-t50-loading.css
+      - src/render/m01-fp-*.js
+      - assets/models/provisional/m01/characters/fp*/**
+      - assets/fonts/**
+      - tests/browser/m01-t40-t50.spec.js
+      - tools/verify-t50-bundle.mjs
+      - tools/verification/*t40*
+      - .github/workflows/m01-t40-t50-fp-loading-v1.yml
+permissions: {contents: read}
+concurrency:
+  group: m01-t40-t50-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  production:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      # Normal CI owns the complete Node/tooling suite; this build is the browser production fixture.
+      - run: mkdir -p test-results/t40-t50-ci && npm run build > test-results/t40-t50-ci/build.log 2>&1
+      - name: Entire initial static graph budget and named chunks
+        env: {T50_BUNDLE_REPORT: test-results/t40-t50-ci/bundle.json}
+        run: node tools/verify-t50-bundle.mjs
+      - run: npx playwright install --with-deps chromium
+      - name: Native production FP and real loading
+        env: {T40_T50_REPORT: test-results/t40-t50-ci/browser.json}
+        run: npx playwright test -c tools/verification/playwright.m01-t40-t50.config.js --workers=1 --retries=0 --output=test-results/t40-t50-ci/browser > test-results/t40-t50-ci/browser.log 2>&1
+      - name: Existing viewmodel, animation and startup regressions
+        env: {T40_REGRESSION: '1', T40_T50_REPORT: test-results/t40-t50-ci/regression.json}
+        run: npx playwright test -c tools/verification/playwright.m01-t40-t50.config.js --workers=1 --retries=0 --output=test-results/t40-t50-ci/regression > test-results/t40-t50-ci/regression.log 2>&1
+      - name: Pin source after execution
+        if: always()
+        run: node tools/verify-t40-t50-source.mjs test-results/t40-t50-ci/source.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-t40-t50-${{ github.sha }}
+          path: test-results/t40-t50-ci/
+          if-no-files-found: error

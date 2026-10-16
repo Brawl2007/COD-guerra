@@ -4,6 +4,7 @@ import wz29Profile from '../../research/weapons/kb_wz29.profile.json' with {type
 import {WZ29_VISUAL,reloadEnvelope,advanceVisualBlend,presentationPose,placeWz29,placeViewArms,riflePresentationMaterial,viewAtlasMaterial,
   adsEase,adsFieldOfView,advanceAdsProgress,breathSway,wallClearance,wallLowerTarget,advanceWallLower} from './m01-wz29-presentation.js';
 import {WEAPON_PRESENTATION,WeaponViewFx,advanceLookLag,mechanicalPulse,viewPointToWorld,viewUp} from './first-person-weapon-fx.js';
+import {frameFirstPersonCarry} from './m01-fp-carry.js';
 import {visualNoise} from './m01-atmosphere.js';
 
 const PROFILE=WEAPON_PRESENTATION.wz29,BOLT_SECONDS=wz29Profile.gameplay.boltCycleSec,RELOAD_CLIP_SECONDS=3.4;
@@ -43,6 +44,7 @@ export class M01ViewModel {
   // worldFx (optional) receives world-space brass, clips and muzzle smoke; texture stays for caller compatibility.
   // muzzleLight (optional): the weapon pass's existing muzzle light, shared instead of adding a second one.
   constructor(scene,characters,texture,worldFx=null,{muzzleLight=null}={}){
+    this.native={frame:null,clock:null,triangles:0,calls:0,meshes:[]};this.nativeHooks=new Map();
     this.scene=scene;this.characters=characters;this.root=null;this.lod=null;this.mixer=null;this.worldFx=worldFx;
     // Layered flash, muzzle light and barrel/chamber smoke. `flash` remains the core sprite on the real muzzle socket.
     this.fx=new WeaponViewFx(scene,PROFILE,{light:muzzleLight});this.flash=this.fx.core;this.boltSeconds=BOLT_SECONDS;
@@ -54,25 +56,45 @@ export class M01ViewModel {
     this.tmp={a:new THREE.Vector3(),b:new THREE.Vector3(),c:new THREE.Vector3(),q:new THREE.Quaternion(),r:new THREE.Quaternion(),r2:new THREE.Quaternion(),up:new THREE.Vector3()};
   }
   release(root,mixer){
-    if(!root)return;root.removeFromParent();mixer.stopAllAction();mixer.uncacheRoot(root);
+    if(!root)return;root.traverse(n=>{if(this.nativeHooks.has(n)){n.onBeforeRender=this.nativeHooks.get(n);this.nativeHooks.delete(n);}});root.removeFromParent();mixer.stopAllAction();mixer.uncacheRoot(root);
     const skins=new Set();root.traverse(n=>{if(n.isSkinnedMesh)skins.add(n.skeleton);});skins.forEach(s=>s.dispose());
   }
   build(lod){
-    this.release(this.wounded?.root,this.wounded?.mixer);this.wounded=null;
-    this.release(this.root,this.mixer);this.armGeometry?.dispose();this.rifleMaterial?.dispose();this.atlasMaterial?.dispose();this.lod=lod;this.visual=null;this.sampleKey=null;
-    this.root=clone(this.characters.sources.get(`pl:${lod}`).scene);this.scene.add(this.root);
-    this.root.traverse(n=>{if(n.isMesh){n.visible=['body','rifle','clip'].includes(n.name);n.frustumCulled=false;n.castShadow=false;n.receiveShadow=false;}});
+    this.release(this.wounded?.root,this.wounded?.mixer);this.wounded=null;this.patientGearGeometry?.dispose();this.patientGearGeometry=null;
+    this.release(this.root,this.mixer);this.armGeometry?.dispose();this.rifleMaterial?.dispose();this.atlasMaterial?.dispose();this.skinMaterial?.dispose();this.skinMaterial=null;this.lod=lod;this.visual=null;this.sampleKey=null;
+    this.fpSource=this.characters.sources.has('fp:0');
+    this.root=clone(this.characters.sources.get(this.fpSource?'fp:0':`pl:${lod}`).scene);this.scene.add(this.root);
+    this.root.traverse(n=>{if(n.isMesh){n.visible=['body','rifle','clip','fp_sleeve_caps','fp_cuffs','fp_straps','fp_hands'].includes(n.name);n.frustumCulled=false;n.castShadow=false;n.receiveShadow=false;}});
     const body=this.root.getObjectByName('body');
     this.root.updateMatrixWorld(true);
     this.root.userData.viewArmBind=Object.fromEntries(['l','r'].map(side=>[side,this.root.getObjectByName(`upperarm_${side}`).position.toArray()]));
-    this.armGeometry=viewModelArmsGeometry(body.geometry,body.skeleton.bones.map(b=>b.name));
+    this.armGeometry=this.fpSource?body.geometry.clone():viewModelArmsGeometry(body.geometry,body.skeleton.bones.map(b=>b.name));
     body.geometry=this.armGeometry;
     const rifle=this.root.getObjectByName('rifle');this.rifleMaterial=riflePresentationMaterial(rifle.material);rifle.material=this.rifleMaterial;
+    const hands=this.root.getObjectByName('fp_hands');
+    if(hands){this.skinMaterial=viewAtlasMaterial(hands.material);this.skinMaterial.name='FP skin';hands.material=this.skinMaterial;}
     this.atlasMaterial=viewAtlasMaterial(body.material);body.material=this.atlasMaterial;this.root.getObjectByName('clip').material=this.atlasMaterial;
     this.mixer=new THREE.AnimationMixer(this.root);
     let sockets=null;this.root.traverse(n=>{sockets??=n.userData?.sockets??null;});
     this.port=sockets?.ejection_port?[...sockets.ejection_port]:PORT;
     this.fx.attach(this.root.getObjectByName('weapon'),WZ29_VISUAL.muzzle);this.root.getObjectByName('weapon_clip').add(this.round);
+  }
+  // Actual draw callbacks from the complete weapon scene, including patient, clip, FX and fallbacks.
+  // These observations never advance presentation or simulation time.
+  observeNative(clock){
+    this.native.clock=clock;
+    this.scene.traverse(n=>{
+      if(!(n.isMesh||n.isSprite)||this.nativeHooks.has(n))return;
+      const original=n.onBeforeRender;this.nativeHooks.set(n,original);
+      n.onBeforeRender=(renderer,scene,camera,geometry,material,group)=>{
+        original?.call(n,renderer,scene,camera,geometry,material,group);
+        const frame=renderer.info.render.frame,report=this.native;
+        if(report.frame!==frame){report.frame=frame;report.triangles=0;report.calls=0;report.meshes=[];}
+        const count=n.isSprite?6:Math.min(group?.count??Infinity,geometry.drawRange.count,(geometry.index?.count??geometry.getAttribute('position').count));
+        const triangles=count/3;report.triangles+=triangles;report.calls++;
+        report.meshes.push({name:n.name||n.type,triangles});
+      };
+    });
   }
   /** Presentation-only ejection/smoke spawns in world space, keyed by authoritative shot/reload ids. */
   emitWorld(sim,view,weapon,clip,sample){
@@ -139,21 +161,22 @@ export class M01ViewModel {
   // view (optional): {camera, viewFov}. The camera is READ for the brass/clip/smoke spawns and the wall probe, and its field of
   // view is WRITTEN (applyFov) to the aim transition's value: the one camera property this class sets.
   update(sim,quality,flashUntil,view=null){
-    const characters=this.characters;
+    const characters=this.characters;this.observeNative(sim.clock);
     const lod=characters.sources.has('pl:0')?0:1;
     if(!characters.sources.has(`pl:${lod}`)||!['aim','reload_clip','fire_bolt','carry_wounded','carried'].every(name=>characters.clips.has(name)))return false;
-    if(this.lod!==lod)this.build(lod);
+    if(this.lod!==lod||this.fpSource!==characters.sources.has('fp:0'))this.build(lod);
+    if(this.wounded&&this.wounded.fpPatient!==characters.sources.has('fp:patient')){this.release(this.wounded.root,this.wounded.mixer);this.wounded=null;this.patientGearGeometry?.dispose();this.patientGearGeometry=null;this.sampleKey=null;}
     // Restore replaces the data world; reconstruct visual flags/phase at that safe
     // boundary instead of blending from an old menu/checkpoint presentation.
     if(this.sourceWorld!==sim.world){this.sourceWorld=sim.world;this.visual=null;this.sampleKey=null;this.flashShot=sim.weapon.shotCount;this.fx.reset();}
     const p=sim.player,w=sim.weapon,t=sim.clock,patient=typeof sim.actor==='function'?sim.actor('jozef_bak'):sim.actors?.find(a=>a.id==='jozef_bak'),carryPhase=patient?.carry,
       carry=p.carrying==='jozef_bak'||carryPhase?.phase==='putdown'&&patient?.carriedBy===p.id;
-    const key=JSON.stringify([t,p.aiming,p.moveBlend,p.sprinting,p.crouched,p.carrying,sim.renderState.weaponVisible,w.state,w.started,w.until,w.lastShot,w.shotCount,flashUntil,
+    const key=JSON.stringify([characters.revision,t,p.aiming,p.moveBlend,p.sprinting,p.crouched,p.carrying,sim.renderState.weaponVisible,w.state,w.started,w.until,w.lastShot,w.shotCount,flashUntil,
       p.angle,p.pitch,sim.world?.revision,view?.camera?[...view.camera.position.toArray(),...view.camera.quaternion.toArray()]:null]);
     if(this.sampleKey===key){this.applyFov(view);return true;}
     this.sampleKey=key;this.fovDriven=false;
     this.root.visible=sim.renderState.weaponVisible||carry;
-    if(!this.root.visible){this.fx.hide();this.stats={active:true,visible:false,lod};return true;}
+    if(!this.root.visible){this.fx.hide();this.stats={active:true,visible:false,lod,clock:t,drawnTriangles:0,drawnMeshes:[],native:this.native};return true;}
     let clip='aim',sample=0;
     if(carry){const transition=carryPhase&&carryPhase.phase!=='carry'?`carry_${carryPhase.phase}_carrier`:null;
       clip=transition&&characters.clips.has(transition)?transition:characters.clips.has('carry_walk')?'carry_walk':'carry_wounded';
@@ -211,18 +234,34 @@ export class M01ViewModel {
     const clipEjected=Boolean(this.worldFx&&view)&&w.state==='RELOAD_CLIP'&&sample>=PROFILE.mechanics.clipEjected;
     this.root.getObjectByName('clip').visible=!carry&&w.state==='RELOAD_CLIP'&&!clipEjected;
     // Partial reload inserts one cartridge. The five-round clip mesh stays hidden.
-    this.round.visible=w.state==='RELOAD_SINGLE'&&sample>.7&&sample<2.3;
+    this.round.visible=!carry&&w.state==='RELOAD_SINGLE'&&sample>.7&&sample<2.3;
     if(carry&&!this.wounded){
-      const root=clone(characters.sources.get(`pl:${lod}`).scene);
+      // Dedicated carry budget: detailed LOD1 face/body with compact LOD2 webbing.
+      const patientLod=characters.sources.has('pl:1')?1:characters.sources.has('pl:2')?2:lod;
+      const patientSource=characters.sources.get('fp:patient')??characters.sources.get(`pl:${patientLod}`);
+      const root=clone(patientSource.scene);
+      const gear=root.getObjectByName('gear'),compact=characters.sources.get('pl:2')?.scene.getObjectByName('gear');
+      if(gear&&compact&&patientLod===1&&!characters.sources.has('fp:patient')){
+        const geometry=compact.geometry.clone(),old=geometry.getAttribute('skinIndex'),names=compact.skeleton.bones.map(b=>b.name);
+        const indices=new Uint16Array(old.count*4),target=gear.skeleton.bones.map(b=>b.name);
+        for(let i=0;i<old.count;i++)[old.getX(i),old.getY(i),old.getZ(i),old.getW(i)].forEach((j,k)=>indices[i*4+k]=target.indexOf(names[j]));
+        geometry.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(indices,4));gear.geometry=geometry;this.patientGearGeometry=geometry;
+      }
       root.traverse(n=>{if(n.isMesh){n.visible=['body','head_bak','helmet_wz31','gear'].includes(n.name);n.frustumCulled=false;n.castShadow=false;n.material=this.atlasMaterial;}});
       this.root.getObjectByName('carry_socket').add(root);
-      this.wounded={root,mixer:new THREE.AnimationMixer(root)};
+      this.wounded={root,mixer:new THREE.AnimationMixer(root),fpPatient:characters.sources.has('fp:patient')};
     }
     if(this.wounded){
       this.wounded.root.visible=carry;
-      if(carry)this.play(this.wounded.root,this.wounded.mixer,'carried',t%characters.clips.get('carried').duration);
+      if(carry){
+        const transition=carryPhase&&carryPhase.phase!=='carry'?`carry_${carryPhase.phase}_patient`:null;
+        const patientClip=transition&&characters.clips.has(transition)?transition:'carried';
+        this.wounded.root.position.set(0,0,0);this.wounded.root.quaternion.identity();
+        this.play(this.wounded.root,this.wounded.mixer,patientClip,patientClip===transition?Math.min(1.6,Math.max(0,t-carryPhase.startedAt)):t%characters.clips.get(patientClip).duration);
+        this.carryFrame=frameFirstPersonCarry(this.root,this.wounded.root,{phase:carryPhase?.phase??'carry',age:t-(carryPhase?.startedAt??t)});
+      }
     }
-    this.root.updateMatrixWorld(true);
+    this.root.updateMatrixWorld(true);this.observeNative(t);
     const weapon=this.root.getObjectByName('weapon'),{a,b,c,up}=this.tmp,shotAt=Number.isFinite(w.lastShot)?w.lastShot/1000:-Infinity;
     // Low frame rates can step past the 60 ms window in one frame: the first frame after a shot event always flashes.
     const fresh=!carry&&w.shotCount!==this.flashShot&&t<flashUntil+.2&&t-shotAt>=0&&t-shotAt<.25;if(fresh)this.flashShot=w.shotCount;
@@ -230,8 +269,10 @@ export class M01ViewModel {
       muzzle:weapon.localToWorld(a.fromArray(WZ29_VISUAL.muzzle)),axis:b.set(0,0,-1).transformDirection(weapon.matrixWorld),
       port:weapon.localToWorld(c.fromArray(this.port)),up:viewUp(p.pitch??0,up),chamberAt:shotAt+PROFILE.mechanics.chamberOpen*BOLT_SECONDS});
     if(this.worldFx&&view&&!carry)this.emitWorld(sim,view,weapon,clip,sample);
-    this.stats={active:true,visible:true,lod,clip,clipTime:sample,carrying:carry,singleRound:this.round.visible,
-      armTriangles:this.armGeometry.index.count/3,aimBlend:this.visual?.aim??null,runBlend:this.visual?.run??null,
+    let drawnTriangles=0;const drawnMeshes=[];
+    this.root.traverseVisible(n=>{if(n.isMesh){const triangles=(n.geometry.index?.count??n.geometry.getAttribute('position').count)/3;drawnTriangles+=triangles;drawnMeshes.push({name:n.name||'singleRound',triangles});}});
+    this.stats={active:true,visible:true,lod,native:this.native,clock:t,fpVariant:this.fpSource?'fp-arms-v2':'optional-fallback',drawnTriangles,drawnMeshes,carryFrame:carry?this.carryFrame:null,clip,clipTime:sample,carrying:carry,singleRound:this.round.visible,
+      armTriangles:this.armGeometry.index.count/3+['fp_sleeve_caps','fp_cuffs','fp_straps','fp_hands'].reduce((n,name)=>n+(this.root.getObjectByName(name)?.geometry.index.count??0)/3,0),aimBlend:this.visual?.aim??null,runBlend:this.visual?.run??null,
       phase:feel.gait,visualMuzzle:this.flash.getWorldPosition(new THREE.Vector3()).toArray(),
       visualSights:Object.fromEntries(['rear','front'].map(name=>[name,weapon.localToWorld(new THREE.Vector3(...WZ29_VISUAL[name])).toArray()])),
       // muzzleReach: how far the drawn muzzle stands in front of the eye (m); wallDistance is the probe's clearance the lowering answers.
@@ -240,9 +281,10 @@ export class M01ViewModel {
     return true;
   }
   dispose(){
-    this.release(this.wounded?.root,this.wounded?.mixer);this.wounded=null;this.release(this.root,this.mixer);this.root=null;
+    this.release(this.wounded?.root,this.wounded?.mixer);this.wounded=null;this.patientGearGeometry?.dispose();this.patientGearGeometry=null;this.release(this.root,this.mixer);this.root=null;
     this.armGeometry?.dispose();this.armGeometry=null;
-    this.rifleMaterial?.dispose();this.rifleMaterial=null;this.atlasMaterial?.dispose();this.atlasMaterial=null;
+    this.rifleMaterial?.dispose();this.rifleMaterial=null;this.atlasMaterial?.dispose();this.atlasMaterial=null;this.skinMaterial?.dispose();this.skinMaterial=null;
+    for(const [node,callback]of this.nativeHooks)node.onBeforeRender=callback;this.nativeHooks.clear();
     this.fx.dispose();this.roundGeometry.dispose();this.round.material.dispose();
   }
 }

@@ -1,0 +1,10 @@
+import {execFileSync} from 'node:child_process';
+import {readFileSync,writeFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import assert from 'node:assert/strict';
+const sha=b=>createHash('sha256').update(b).digest('hex'),proof='docs/verification/m01-runtime/m01-t40-t50-fp-loading-v1/PROTECTED_BASELINE.json',protectedFiles=JSON.parse(readFileSync(proof)).files;
+for(const [file,hash]of Object.entries(protectedFiles))assert.equal(sha(readFileSync(file)),hash,file);
+const files=execFileSync('git',['ls-files'],{encoding:'utf8'}).trim().split('\n').filter(f=>/^(src\/|assets\/fonts\/|assets\/models\/provisional\/m01\/characters\/fp|tests\/.*t40|tests\/m01-(loading|fp-arms)|tools\/.*t40|tools\/verify-t50|vite.config|index.html|.github\/workflows\/m01-t40)/.test(f));
+for(const file of files)assert.equal(sha(readFileSync(file)),sha(execFileSync('git',['show',`HEAD:${file}`],{maxBuffer:32*1024*1024})),file+' differs from committed HEAD after browser execution');
+const report={committedSourceExact:true,head:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),protectedCount:Object.keys(protectedFiles).length,files:Object.fromEntries(files.map(f=>[f,sha(readFileSync(f))]))};
+writeFileSync(process.argv[2]??'test-results/t40-t50-source.json',JSON.stringify(report,null,2)+'\n');console.log(`protected ${report.protectedCount} exact; source fingerprint ${files.length} files @ ${report.head}`);

@@ -1,6 +1,8 @@
 // Single allowlist shared by the three byte-guard tests (m01-locomotive, m01-panzerzug, m01-soldier-visual-variation).
 // A task that legitimately changes a locked src/missions/assets file adds it here once, with a comment naming the task and the evidence.
 export const integratedPresentation=new Set([
+ // T50 request-progress instrumentation only; exact accepted/current revisions are pinned in m01-t40-t50-source-revisions.json and tested by m01-loading.test.js.
+ 'src/assets/asset-manager.js',
  // Simulation presentation additions are checked against immutable per-tick gameplay traces in m01-animation-contract.test.js.
  'src/game/m01-simulation.js',
  // T07 generic prone geometry only; standing/crouched slab/ray code is retained, with meaningful oriented-prone tests in m01-partials-completion.
