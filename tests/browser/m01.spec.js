@@ -557,18 +557,35 @@ test('a failed M01 bridge load prevents an invisible bridge; the French sandbox 
   await page.waitForFunction(()=>!window.gameDiagnostics().paused);await expect(page.locator('#weapon-name')).toHaveText('M1 CARBINE');
 });
 
+// Textures and geometries are counted when first drawn, and several owners finish asynchronously after the restored frame (bridge finish,
+// vegetation kit, rigs, burned wagons). Smoke puffs and the legacy batches already exist in the menu, so they cannot say the scene is
+// resident: take resource baselines only once the async owners reported and the counts held still for `frames` rendered frames.
+async function resourcesSettled(page,frames=3){
+  await page.evaluate(()=>{delete window.__resourceSettle;});
+  await page.waitForFunction(({frames})=>{
+    const d=window.gameDiagnostics(),m=d.m01;
+    if(m.bridgeFinish.status==='loading'||!(m.vegetation.ready||m.vegetation.failure))return false;
+    const w=window.__resourceSettle??={frame:-1,textures:-1,geometries:-1,stable:0};
+    if(m.renderedFrames===w.frame)return false;
+    w.stable=d.textures===w.textures&&d.geometries===w.geometries?w.stable+1:0;
+    Object.assign(w,{frame:m.renderedFrames,textures:d.textures,geometries:d.geometries});
+    return w.stable>=frames;
+  },{frames});
+}
 test('textured atmosphere survives checkpoint restart without duplicating resources; low quality reduces vegetation',async({page},info)=>{
-  test.setTimeout(180000);
+  test.setTimeout(process.env.CI?300000:180000);
   const snapshot=flow().checkpoints.cp_m01_d_retirada,shaderErrors=[];
   page.on('console',m=>{if(m.type()==='error')shaderErrors.push(m.text());});
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
   const {errors,failed}=await open(page);await page.locator('#quality').selectOption('medium');await start(page,'#continue');
   await page.waitForFunction(()=>window.gameDiagnostics().m01.smokePuffs>0&&window.gameDiagnostics().m01.environmentInstances>2000);
+  await resourcesSettled(page);
   const initial=await page.evaluate(()=>window.gameDiagnostics());
   expect(initial.m01.smokePuffs).toBeLessThanOrEqual(192);
   await page.screenshot({path:info.outputPath('m01-visual-medium.png')});
   await page.evaluate(()=>document.exitPointerLock());await page.locator('#restart-checkpoint').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
+  await resourcesSettled(page);
   const restored=await page.evaluate(()=>window.gameDiagnostics());
   expect(restored.m01.environmentInstances).toBe(initial.m01.environmentInstances);
   expect(restored.textures).toBeLessThanOrEqual(initial.textures+2);expect(restored.geometries).toBeLessThanOrEqual(initial.geometries+2);

@@ -883,7 +883,7 @@ export class M01View {
       path:this.aircraftPath?{...this.aircraftPath,planeSeconds:[0,1,2].map(i=>m01StukaPathTime(this.aircraftPath.since,i))}:null,
       bombs:{visible:this.bombState?.visible??0,pool:this.bombs?.length??0,flights:this.bombState?.flights??[]},
       raid:{visible:this.raidPlane.visible,position:this.raidPlane.position.toArray()}},
-    renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:this.environment?.resources.reduce((n,b)=>n+(b.visible===false?0:b.count),0)??0,
+    renderedFrames:this.renderedFrames??0,smokePuffs:this.atmosphere.count,environmentInstances:(this.environment?.resources.reduce((n,b)=>n+(b.visible===false?0:b.count),0)??0)+(this.environment?.vegetation.selectedInstances??0),
     fieldStructures:this.environment?{...this.environment.fieldStructures.diagnostics,proxyColliderIds:this.solidGroup.children.flatMap(b=>b.userData.m01ProxyColliderIds??[]),environmentProxies:this.environment.fieldProxyBatches.map(b=>({id:b.userData.m01FieldProxy,visible:b.visible})),viewProxies:this.fieldProxyMeshes.map(b=>({id:b.userData.m01FieldProxy,visible:b.visible}))}:null,
     stationArchitecture:this.environment?.station?.diagnostics??{ready:false,failure:this.environment?.stationFailure??null},
     environmentProps:this.environment?.propDiagnostics,trackBed:this.environment?.trackBed.diagnostics,bridgeFinish:this.bridgeFinish.diagnostics,bridgeCamera:{position:this.camera.position.toArray(),quaternion:this.camera.quaternion.toArray(),fov:this.camera.fov},bridgePortalPolish:this.portalPolish?.diagnostics,bridgeStructure:this.bridgeStructure?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},

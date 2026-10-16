@@ -15,3 +15,18 @@ test('failure, partial validation, hung timeout and late completion close exclus
 test('failed/hung residency retains all decorative trunks and both-bank legacy silhouettes without new colliders',async()=>{const r=new M01VegetationRuntime(new THREE.Group(),new TczewWorld(),{load:()=>Promise.reject(Error('unavailable'))});await r.load();r.sync(r.world,'low',{x:1100,z:30},7);const d=r.diagnostics;assert.equal(d.fallback.active,true);assert.equal(d.fallback.visualTrunks,195);assert.ok(d.fallback.crownInstances>300);assert.equal(d.easternTrees,34);assert.equal(d.collidersAdded,0);assert.ok(d.structuralDrawCalls<=24);assert.ok(d.structuralTriangles<=120000);assert.equal(d.atlasTextures,0);r.dispose();});
 
 test('submission callbacks exclude zero instances and empty ranges; structural capacity stays separate',async()=>{const r=new M01VegetationRuntime(new THREE.Group(),new TczewWorld(),{load:async()=>asset()});await r.load();r.sync(r.world,'high',{x:1092,z:24},5);const camera=new THREE.PerspectiveCamera(),otherCamera=new THREE.PerspectiveCamera(),mesh=r.receiver,geometry=mesh.geometry,material=mesh.material;r.beginFrame(camera);mesh.count=0;mesh.onBeforeRender(null,null,camera,geometry,material);mesh.onBeforeShadow(null,mesh,camera,otherCamera,geometry);assert.equal(r.diagnostics.drawCalls,0);assert.equal(r.diagnostics.shadowDrawCalls,0);assert.deepEqual(r.diagnostics.submitted,[]);mesh.count=17;mesh.onBeforeRender(null,null,otherCamera,geometry,material);assert.equal(r.diagnostics.drawCalls,0);mesh.onBeforeRender(null,null,camera,geometry,material);mesh.onBeforeShadow(null,mesh,camera,otherCamera,geometry);assert.equal(r.diagnostics.drawCalls,1);assert.equal(r.diagnostics.triangles,1530);assert.equal(r.diagnostics.shadowDrawCalls,1);assert.equal(r.diagnostics.shadowTriangles,1530);assert.equal(r.diagnostics.submitted.length,1);assert.equal(r.diagnostics.submitted[0].instances,17);assert.ok(r.diagnostics.structuralDrawCalls>r.diagnostics.drawCalls);geometry.setDrawRange(0,0);mesh.onBeforeRender(null,null,camera,geometry,material);mesh.onBeforeShadow(null,mesh,camera,otherCamera,geometry);assert.equal(r.diagnostics.drawCalls,1);assert.equal(r.diagnostics.shadowDrawCalls,1);assert.equal(r.diagnostics.triangles,1530);assert.equal(r.diagnostics.shadowTriangles,1530);geometry.setDrawRange(0,Infinity);r.dispose();});
+
+test('selectedInstances follows the LOD selection, not kit residency: fewer at lower quality, identical before and after the GLB, none when disabled',async()=>{
+  const world=new TczewWorld(),waiting=new M01VegetationRuntime(new THREE.Group(),world),resident=new M01VegetationRuntime(new THREE.Group(),world,{load:async()=>asset()});
+  try{
+    await resident.load();assert.equal(resident.ready,true);assert.equal(waiting.ready,false);
+    const at={x:-66,z:22},counts={};
+    for(const quality of ['low','medium','high']){
+      waiting.sync(world,quality,at,0);resident.sync(world,quality,at,0);
+      assert.equal(waiting.selectedInstances,resident.selectedInstances,`${quality}: the fallback silhouettes and the kit present the same selection`);
+      counts[quality]=resident.selectedInstances;
+    }
+    assert.ok(counts.low>0&&counts.low<counts.medium&&counts.medium<counts.high,JSON.stringify(counts));
+    resident.setEnabled(false);assert.equal(resident.selectedInstances,0);
+  }finally{waiting.dispose();resident.dispose();}
+});
