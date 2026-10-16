@@ -1,0 +1,38 @@
+[2m[WebServer] [22m(node:8361) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+(node:8380) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8380) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/m01-t40-t50.spec.js:52:2 › T40 native ADS/reload and saved midreload reconstruction (2.8m)
+
+
+  1) tests/browser/m01-t40-t50.spec.js:52:2 › T40 native ADS/reload and saved midreload reconstruction 
+
+    Test was interrupted.
+
+    Error: page.waitForFunction: Test ended.
+
+      52 |  test('T40 native ADS/reload and saved midreload reconstruction',async({page},info)=>{
+      53 |   const d=driver();d.step({skip:true});d.step({fire:true});for(let i=0;i<30;i++)d.step();await seed(page,d.sim.snapshot());await page.locator('#continue').click();
+    > 54 |   await page.waitForFunction(()=>document.pointerLockElement?.id==='game'&&!window.gameDiagnostics().paused);await page.mouse.down({button:'right'});await page.waitForFunction(()=>window.gameDiagnostics().m01.viewModel.aimBlend===1);await page.mouse.up({button:'right'});
+         |                                                                                                                               ^
+      55 |   await page.keyboard.press('KeyR');await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state.startsWith('RELOAD'));
+      56 |   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+      57 |   const paused=await capture(page,info,'native-reload'),snapshot=paused.state.snapshot;expect(paused.diagnostics.m01.viewModel.native.triangles).toBeLessThanOrEqual(6000);
+        at /workspace/COD-guerra/tests/browser/m01-t40-t50.spec.js:54:127
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/t40-t50-after-behavior/m01-t40-t50-T40-native-ADS-be4b8-ed-midreload-reconstruction/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/t40-t50-after-behavior/m01-t40-t50-T40-native-ADS-be4b8-ed-midreload-reconstruction/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 interrupted
+    tests/browser/m01-t40-t50.spec.js:52:2 › T40 native ADS/reload and saved midreload reconstruction 
+  3 did not run

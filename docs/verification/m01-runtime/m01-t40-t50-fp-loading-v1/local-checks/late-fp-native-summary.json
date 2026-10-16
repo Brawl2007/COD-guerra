@@ -1,0 +1,201 @@
+{
+  "beforeClock": 0.05,
+  "afterClock": 0.05,
+  "completeAuthorityEqual": true,
+  "beforeRevisionFrames": 6,
+  "afterRevisionFrames": 8,
+  "before": {
+    "active": true,
+    "visible": true,
+    "lod": 0,
+    "native": {
+      "frame": 42,
+      "clock": 0.05,
+      "triangles": 3017,
+      "calls": 2,
+      "meshes": [
+        {
+          "name": "rifle",
+          "triangles": 1414
+        },
+        {
+          "name": "body",
+          "triangles": 1603
+        }
+      ]
+    },
+    "clock": 0.05,
+    "fpVariant": "optional-fallback",
+    "drawnTriangles": 3017,
+    "drawnMeshes": [
+      {
+        "name": "body",
+        "triangles": 1603
+      },
+      {
+        "name": "rifle",
+        "triangles": 1414
+      }
+    ],
+    "carryFrame": null,
+    "clip": "aim",
+    "clipTime": 0,
+    "carrying": false,
+    "singleRound": false,
+    "armTriangles": 1603,
+    "aimBlend": 0,
+    "runBlend": 0,
+    "phase": 0.45,
+    "visualMuzzle": [
+      0.07328052937419477,
+      -0.2339218248821604,
+      -1.2058600304594245
+    ],
+    "visualSights": {
+      "rear": [
+        0.1472892759644112,
+        -0.17310951158551605,
+        -0.74
+      ],
+      "front": [
+        0.07691005234129719,
+        -0.20007480740516084,
+        -1.1958998110369938
+      ]
+    },
+    "presentation": {
+      "profile": "wz29",
+      "mechanical": 0,
+      "boltStroke": 0,
+      "wallDistance": null,
+      "wallTarget": 0,
+      "wallLower": 0,
+      "fov": 70,
+      "breath": 0.000349,
+      "bob": 0,
+      "gait": 0.45,
+      "aimEased": 0,
+      "muzzleReach": 1.2059,
+      "lookYaw": 0,
+      "lookPitch": 0,
+      "clipEjected": false,
+      "flash": 0,
+      "layers": 0,
+      "light": 0,
+      "wisps": 0
+    }
+  },
+  "after": {
+    "active": true,
+    "visible": true,
+    "lod": 0,
+    "native": {
+      "frame": 46,
+      "clock": 0.05,
+      "triangles": 3264,
+      "calls": 6,
+      "meshes": [
+        {
+          "name": "fp_sleeve_caps",
+          "triangles": 102
+        },
+        {
+          "name": "fp_cuffs",
+          "triangles": 96
+        },
+        {
+          "name": "fp_straps",
+          "triangles": 24
+        },
+        {
+          "name": "rifle",
+          "triangles": 1414
+        },
+        {
+          "name": "fp_hands",
+          "triangles": 1028
+        },
+        {
+          "name": "body",
+          "triangles": 600
+        }
+      ]
+    },
+    "clock": 0.05,
+    "fpVariant": "fp-arms-v2",
+    "drawnTriangles": 3264,
+    "drawnMeshes": [
+      {
+        "name": "body",
+        "triangles": 600
+      },
+      {
+        "name": "rifle",
+        "triangles": 1414
+      },
+      {
+        "name": "fp_sleeve_caps",
+        "triangles": 102
+      },
+      {
+        "name": "fp_hands",
+        "triangles": 1028
+      },
+      {
+        "name": "fp_cuffs",
+        "triangles": 96
+      },
+      {
+        "name": "fp_straps",
+        "triangles": 24
+      }
+    ],
+    "carryFrame": null,
+    "clip": "aim",
+    "clipTime": 0,
+    "carrying": false,
+    "singleRound": false,
+    "armTriangles": 1850,
+    "aimBlend": 0,
+    "runBlend": 0,
+    "phase": 0.45,
+    "visualMuzzle": [
+      0.07328052937419477,
+      -0.2339218248821604,
+      -1.2058600304594245
+    ],
+    "visualSights": {
+      "rear": [
+        0.1472892759644112,
+        -0.17310951158551605,
+        -0.74
+      ],
+      "front": [
+        0.07691005234129719,
+        -0.20007480740516084,
+        -1.1958998110369938
+      ]
+    },
+    "presentation": {
+      "profile": "wz29",
+      "mechanical": 0,
+      "boltStroke": 0,
+      "wallDistance": null,
+      "wallTarget": 0,
+      "wallLower": 0,
+      "fov": 70,
+      "breath": 0.000349,
+      "bob": 0,
+      "gait": 0.45,
+      "aimEased": 0,
+      "muzzleReach": 1.2059,
+      "lookYaw": 0,
+      "lookPitch": 0,
+      "clipEjected": false,
+      "flash": 0,
+      "layers": 0,
+      "light": 0,
+      "wisps": 0
+    }
+  }
+}

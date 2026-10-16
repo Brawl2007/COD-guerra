@@ -1,0 +1,30 @@
+{
+  "viewport": [
+    1280,
+    720
+  ],
+  "baselineHead": "d151a97239a54dc3f92b594e88ae5933c6bdfa06",
+  "productionCodeHead": "c17cb40333b58b4164eeab097932094789c0c09e",
+  "finalHarnessHead": "6fa19741abf45c18279fc574c6b59d1bd7df9df5",
+  "productionChangesBetweenCodeAndHarness": false,
+  "canonicalQuality": "high",
+  "carryQuality": "low",
+  "canonicalDefinitions": "tools/verification/m01-roadmap-captures.spec.js views01/05/14, reproduced in m01-t40-views.mjs",
+  "sourceSnapshots": "Actual current deterministic driver routes; no actor/event/clock injection. Canonical saved player camera framing matches original roadmap definitions.",
+  "freeze": "Native Continue pointer-lock boundary held before simulation tick; actual saved clock and rendered demolition/viewmodel clocks checked.",
+  "editorialStyle": "Only pause/resume-card/fade visibility hidden for world PNG. Raw unmasked UI sibling retained. No object hidden to satisfy budgets.",
+  "pairedAssertion": "Complete actual snapshot/checkpoint/events, player/camera controls, native camera and clock all byte/value exact for six paired views.",
+  "measurements": {
+    "initialStaticJsRawBytes": 10883,
+    "armsTriangles": 1850,
+    "armsRifleTriangles": 3264,
+    "armsRifleClipTriangles": 3882,
+    "armsPatientTriangles": 5869
+  },
+  "claimsExcluded": [
+    "human playtest",
+    "device FPS",
+    "independent acceptance",
+    "integration"
+  ]
+}

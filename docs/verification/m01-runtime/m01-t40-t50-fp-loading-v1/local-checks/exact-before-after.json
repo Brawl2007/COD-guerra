@@ -1,0 +1,294 @@
+[
+  {
+    "name": "01-start-section-close.json",
+    "clock": 0.05,
+    "snapshotExact": true,
+    "cameraExact": true,
+    "before": "docs/verification/m01-runtime/m01-t40-t50-fp-loading-v1/captures/before/01-start-section-close.json",
+    "after": "docs/verification/m01-runtime/m01-t40-t50-fp-loading-v1/captures/after/01-start-section-close.json",
+    "pngBefore": "b572faa0d54bdc1248b82dd4b17ac8ffefb4aed43be66cd0d6e75f7ac8fc8d1a",
+    "pngAfter": "0237bc59043a9ae8491bf45fb4fa621ff0209e49a97f39b43ca067579937e0d8",
+    "native": {
+      "frame": 54,
+      "clock": 0.05,
+      "triangles": 3264,
+      "calls": 6,
+      "meshes": [
+        {
+          "name": "fp_sleeve_caps",
+          "triangles": 102
+        },
+        {
+          "name": "fp_cuffs",
+          "triangles": 96
+        },
+        {
+          "name": "fp_straps",
+          "triangles": 24
+        },
+        {
+          "name": "rifle",
+          "triangles": 1414
+        },
+        {
+          "name": "fp_hands",
+          "triangles": 1028
+        },
+        {
+          "name": "body",
+          "triangles": 600
+        }
+      ]
+    }
+  },
+  {
+    "name": "05-start-ads-viewmodel.json",
+    "clock": 0.05,
+    "snapshotExact": true,
+    "cameraExact": true,
+    "before": "docs/verification/m01-runtime/m01-t40-t50-fp-loading-v1/captures/before/05-start-ads-viewmodel.json",
+    "after": "docs/verification/m01-runtime/m01-t40-t50-fp-loading-v1/captures/after/05-start-ads-viewmodel.json",
+    "pngBefore": "656807d2bc9a9ce2c3db1085309014e39955dbcbfaf3291907a5919bf46ceb5c",
+    "pngAfter": "6fa2f815bde49d8c34afc04c944dff712ab42b4e5a0b912580f80080c9526e59",
+    "native": {
+      "frame": 51,
+      "clock": 0.05,
+      "triangles": 3264,
+      "calls": 6,
+      "meshes": [
+        {
+          "name": "fp_sleeve_caps",
+          "triangles": 102
+        },
+        {
+          "name": "fp_cuffs",
+          "triangles": 96
+        },
+        {
+          "name": "fp_straps",
+          "triangles": 24
+        },
+        {
+          "name": "rifle",
+          "triangles": 1414
+        },
+        {
+          "name": "fp_hands",
+          "triangles": 1028
+        },
+        {
+          "name": "body",
+          "triangles": 600
+        }
+      ]
+    }
+  },
+  {
+    "name": "14-east-demolition.json",
+    "clock": 740.6499999998741,
+    "snapshotExact": true,
+    "cameraExact": true,
+    "before": "docs/verification/m01-runtime/m01-t40-t50-fp-loading-v1/captures/before/14-east-demolition.json",
+    "after": "docs/verification/m01-runtime/m01-t40-t50-fp-loading-v1/captures/after/14-east-demolition.json",
+    "pngBefore": "da4f685bfb7c425a337f2a20abaa8f7b858078ea53d7d973055187c8b7d042a8",
+    "pngAfter": "f22cd6064e620ff716d888adca3a3e9b6f7fb23d9ce0d18d7e9de27776bb36bf",
+    "native": {
+      "frame": 54,
+      "clock": 740.6499999998741,
+      "triangles": 3882,
+      "calls": 7,
+      "meshes": [
+        {
+          "name": "fp_sleeve_caps",
+          "triangles": 102
+        },
+        {
+          "name": "fp_cuffs",
+          "triangles": 96
+        },
+        {
+          "name": "fp_straps",
+          "triangles": 24
+        },
+        {
+          "name": "rifle",
+          "triangles": 1414
+        },
+        {
+          "name": "fp_hands",
+          "triangles": 1028
+        },
+        {
+          "name": "body",
+          "triangles": 600
+        },
+        {
+          "name": "clip",
+          "triangles": 618
+        }
+      ]
+    }
+  },
+  {
+    "name": "frozen-carry.json",
+    "clock": 698.1999999999127,
+    "snapshotExact": true,
+    "cameraExact": true,
+    "before": "docs/verification/m01-runtime/m01-t40-t50-fp-loading-v1/captures/before/frozen-carry.json",
+    "after": "docs/verification/m01-runtime/m01-t40-t50-fp-loading-v1/captures/after/frozen-carry.json",
+    "pngBefore": "7efc19181574ce707e48f31a6f05fe511bc91245926b50616f090c2ce7a0b876",
+    "pngAfter": "c73079001ae5396e9fe05891cdb2ae702600acc4c64395609673056d752f9102",
+    "native": {
+      "frame": 44,
+      "clock": 698.1999999999127,
+      "triangles": 5869,
+      "calls": 9,
+      "meshes": [
+        {
+          "name": "fp_sleeve_caps",
+          "triangles": 102
+        },
+        {
+          "name": "fp_cuffs",
+          "triangles": 96
+        },
+        {
+          "name": "fp_straps",
+          "triangles": 24
+        },
+        {
+          "name": "fp_hands",
+          "triangles": 1028
+        },
+        {
+          "name": "body",
+          "triangles": 600
+        },
+        {
+          "name": "body",
+          "triangles": 2451
+        },
+        {
+          "name": "gear",
+          "triangles": 204
+        },
+        {
+          "name": "helmet_wz31",
+          "triangles": 381
+        },
+        {
+          "name": "head_bak",
+          "triangles": 983
+        }
+      ]
+    }
+  },
+  {
+    "name": "frozen-pickup.json",
+    "clock": 696.5499999999142,
+    "snapshotExact": true,
+    "cameraExact": true,
+    "before": "docs/verification/m01-runtime/m01-t40-t50-fp-loading-v1/captures/before/frozen-pickup.json",
+    "after": "docs/verification/m01-runtime/m01-t40-t50-fp-loading-v1/captures/after/frozen-pickup.json",
+    "pngBefore": "e20fc4f5ebf8731e2e3f0006fb738d5d16f8690e7e8d3d656262a88b06760d73",
+    "pngAfter": "e0cc1070ecbcb6fc5d4a8d39ec67e5306fb03cfeeeb2c28be60b82746fadee0c",
+    "native": {
+      "frame": 46,
+      "clock": 696.5499999999142,
+      "triangles": 5869,
+      "calls": 9,
+      "meshes": [
+        {
+          "name": "fp_sleeve_caps",
+          "triangles": 102
+        },
+        {
+          "name": "fp_cuffs",
+          "triangles": 96
+        },
+        {
+          "name": "fp_straps",
+          "triangles": 24
+        },
+        {
+          "name": "fp_hands",
+          "triangles": 1028
+        },
+        {
+          "name": "body",
+          "triangles": 600
+        },
+        {
+          "name": "body",
+          "triangles": 2451
+        },
+        {
+          "name": "helmet_wz31",
+          "triangles": 381
+        },
+        {
+          "name": "gear",
+          "triangles": 204
+        },
+        {
+          "name": "head_bak",
+          "triangles": 983
+        }
+      ]
+    }
+  },
+  {
+    "name": "frozen-putdown.json",
+    "clock": 718.749999999894,
+    "snapshotExact": true,
+    "cameraExact": true,
+    "before": "docs/verification/m01-runtime/m01-t40-t50-fp-loading-v1/captures/before/frozen-putdown.json",
+    "after": "docs/verification/m01-runtime/m01-t40-t50-fp-loading-v1/captures/after/frozen-putdown.json",
+    "pngBefore": "91e9a22f65ac50f8ee4e11b32ac49b63b32df84bb90cb0f479aaff6e3e704a30",
+    "pngAfter": "4473299d40def43fafdeaa9089d21670451ff26cb470ae19c03d54c0b93be517",
+    "native": {
+      "frame": 44,
+      "clock": 718.749999999894,
+      "triangles": 5869,
+      "calls": 9,
+      "meshes": [
+        {
+          "name": "fp_sleeve_caps",
+          "triangles": 102
+        },
+        {
+          "name": "fp_cuffs",
+          "triangles": 96
+        },
+        {
+          "name": "fp_straps",
+          "triangles": 24
+        },
+        {
+          "name": "fp_hands",
+          "triangles": 1028
+        },
+        {
+          "name": "body",
+          "triangles": 600
+        },
+        {
+          "name": "body",
+          "triangles": 2451
+        },
+        {
+          "name": "helmet_wz31",
+          "triangles": 381
+        },
+        {
+          "name": "gear",
+          "triangles": 204
+        },
+        {
+          "name": "head_bak",
+          "triangles": 983
+        }
+      ]
+    }
+  }
+]

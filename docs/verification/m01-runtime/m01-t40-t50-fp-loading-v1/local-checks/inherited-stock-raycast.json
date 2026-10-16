@@ -1,0 +1,133 @@
+{
+  "head": "c17cb40333b58b4164eeab097932094789c0c09e",
+  "kind": "Official Three raycast of actual loaded FP/accepted rifle geometry in the exact clock0.05 ADS presentation,58-degree16:9 camera. Explains mesh ownership; not a separate native pixel-capture claim.",
+  "source": "accepted m01_soldier_pl_lod0.glb rifle, retained byte-identical in private variant",
+  "results": [
+    {
+      "pixel": [
+        640,
+        490
+      ],
+      "hits": [
+        {
+          "mesh": "rifle",
+          "face": 16,
+          "distance": 0.1305055234179221,
+          "uv": [
+            0.3360553479150478,
+            0.2801056341680416
+          ]
+        },
+        {
+          "mesh": "rifle",
+          "face": 859,
+          "distance": 0.481022073326919,
+          "uv": [
+            0.9163818359374999,
+            0.9246020052520117
+          ]
+        },
+        {
+          "mesh": "rifle",
+          "face": 976,
+          "distance": 0.4868219248158249,
+          "uv": [
+            0.339944262145541,
+            0.9772908602542432
+          ]
+        }
+      ]
+    },
+    {
+      "pixel": [
+        600,
+        490
+      ],
+      "hits": [
+        {
+          "mesh": "rifle",
+          "face": 17,
+          "distance": 0.13074329563103737,
+          "uv": [
+            0.33678376865014026,
+            0.2801056341680417
+          ]
+        },
+        {
+          "mesh": "body",
+          "face": 438,
+          "distance": 0.689127375397928,
+          "uv": [
+            0.6384687074509263,
+            0.3364748329793755
+          ]
+        },
+        {
+          "mesh": "fp_straps",
+          "face": 0,
+          "distance": 0.7432372500407399,
+          "uv": [
+            6.493466453611326e-7,
+            0.44231373446523425
+          ]
+        }
+      ]
+    },
+    {
+      "pixel": [
+        640,
+        450
+      ],
+      "hits": [
+        {
+          "mesh": "rifle",
+          "face": 17,
+          "distance": 0.1999810960939411,
+          "uv": [
+            0.3360428287418751,
+            0.29184747753066764
+          ]
+        },
+        {
+          "mesh": "rifle",
+          "face": 1096,
+          "distance": 0.9010022949271818,
+          "uv": [
+            0.5075683579198088,
+            0.5507068451759864
+          ]
+        }
+      ]
+    },
+    {
+      "pixel": [
+        660,
+        440
+      ],
+      "hits": [
+        {
+          "mesh": "rifle",
+          "face": 16,
+          "distance": 0.23137459846412456,
+          "uv": [
+            0.3353713300530533,
+            0.29711275027468576
+          ]
+        }
+      ]
+    },
+    {
+      "pixel": [
+        740,
+        480
+      ],
+      "hits": [
+        {
+          "mesh": "fp_hands",
+          "face": 572,
+          "distance": 0.38889995385758463
+        }
+      ]
+    }
+  ]
+}

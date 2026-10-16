@@ -1,0 +1,13 @@
+[2m[WebServer] [22m(node:7500) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:7519) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7519) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/m01-t40-t50.spec.js:22:34 › T40 canonical 05 exact saved clock and camera (47.5s)
+  ✓  2 tests/browser/m01-t40-t50.spec.js:32:2 › T50 delayed real request progress, mandatory failure and French recovery (34.0s)
+
+  2 passed (1.4m)

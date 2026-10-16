@@ -1,0 +1,49 @@
+[2m[WebServer] [22m(node:10756) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+(node:10781) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10781) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/m01-t40-t50.spec.js:22:34 › T40 canonical 01 exact saved clock and camera (49.2s)
+  ✓  2 tests/browser/m01-t40-t50.spec.js:22:34 › T40 canonical 05 exact saved clock and camera (47.4s)
+  ✓  3 tests/browser/m01-t40-t50.spec.js:22:34 › T40 canonical 14 exact saved clock and camera (55.4s)
+  ✘  4 tests/browser/m01-t40-t50.spec.js:52:2 › T40 native ADS/reload and saved midreload reconstruction (2.6m)
+
+
+  1) tests/browser/m01-t40-t50.spec.js:52:2 › T40 native ADS/reload and saved midreload reconstruction 
+
+    Test was interrupted.
+
+    Error: page.waitForFunction: Test ended.
+
+      11 | async function frozen(page,snapshot){
+      12 |  await holdNext(page);await page.locator('#continue').click();await expect(page.locator('#pause')).toBeVisible();
+    > 13 |  await page.waitForFunction(({clock,baseline})=>{const g=window.gameDiagnostics(),v=g.m01.viewModel;return g.paused&&g.clock===clock&&g.m01.demolition.clock===clock&&v.active&&(baseline||v.clock===clock);},{clock:snapshot.clock,baseline},{timeout:180000});
+         |             ^
+      14 | }
+      15 | async function capture(page,info,name){
+      16 |  const data=await page.evaluate(()=>({diagnostics:window.gameDiagnostics(),state:window.gameVerificationState?.()}));
+        at frozen (/workspace/COD-guerra/tests/browser/m01-t40-t50.spec.js:13:13)
+        at /workspace/COD-guerra/tests/browser/m01-t40-t50.spec.js:58:195
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/t40-t50-final-browser/m01-t40-t50-T40-native-ADS-be4b8-ed-midreload-reconstruction/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/t40-t50-final-browser/m01-t40-t50-T40-native-ADS-be4b8-ed-midreload-reconstruction/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/t40-t50-final-browser/m01-t40-t50-T40-native-ADS-be4b8-ed-midreload-reconstruction/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  Slow test file: tests/browser/m01-t40-t50.spec.js (5.2m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 interrupted
+    tests/browser/m01-t40-t50.spec.js:52:2 › T40 native ADS/reload and saved midreload reconstruction 
+  1 did not run
+  3 passed (5.2m)
