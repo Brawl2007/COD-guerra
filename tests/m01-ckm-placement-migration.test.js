@@ -16,7 +16,7 @@ const oldPost=s=>{
 };
 const positions=s=>crew(s).map(a=>[a.x,a.y,a.z]);
 
-test('schema 2 legacy 86 roster gains the ckm crew at the aligned post (and the T34 auxiliaries) without changing old actors or RNG',()=>{
+test('schema 2 legacy 86 roster becomes 97 with all89 pre-auxiliary IDs at the aligned post without changing old actors or RNG',()=>{
   const source=new M01Simulation(),legacy=source.snapshot(),rng=legacy.rng;
   // A real 86-actor save predates both the ckm crew and the eight optional T34 display-only auxiliaries (partials).
   legacy.actors=legacy.actors.filter(a=>!a.ckm&&!AUXILIARY_IDS.includes(a.id));assert.equal(legacy.actors.length,86);
@@ -98,7 +98,7 @@ test('casualties stay casualties and post-west saves preserve their saved positi
 test('86-actor saves after east or west demolition remain safe and do not restart abandon',()=>{
   for(const west of [false,true]){
     const s=new M01Simulation();s.clock=20;s.consumed[E('east_demolition')]=8;if(west)s.consumed[E('west_demolition')]=18;
-    const legacy=s.snapshot();legacy.actors=legacy.actors.filter(a=>!a.ckm);const rng=legacy.rng;
+    const legacy=s.snapshot();legacy.actors=legacy.actors.filter(a=>!a.ckm&&!AUXILIARY_IDS.includes(a.id));assert.equal(legacy.actors.length,86);const rng=legacy.rng;
     validateM01Snapshot(legacy);
     const restored=new M01Simulation();restored.restoreSnapshot(legacy);
     assert.equal(restored.rng.state,rng);

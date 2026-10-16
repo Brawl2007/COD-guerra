@@ -1,0 +1,25 @@
+{
+  "id": "CAPTAIN-EXTENSION-04",
+  "date": "2026-10-16",
+  "authority": "Permanent user authorization D34 and latest explicit Continua after original correction budget exhaustion; Captain prospective scoped continuation decision. Developer instructions prioritize existing user authorization over skill guidelines.",
+  "run_id": "M01-PARTIALS-COMPLETION-20261014",
+  "task_id": "M01-PARTIALS-COMPLETION-INTEGRATION-V1",
+  "historical_state": "Independent verifier4 FAIL retained at9a679c50; original formal fixes3/3 and bounded unchangedSHA CI jobretry1/1 exhausted. No failures reclassified; no new RUN or counter reset.",
+  "original_max_fix_attempts": 3,
+  "additional_fix_attempts": 1,
+  "max_fix_attempts": 4,
+  "scope": [
+    "Only tests/browser/m01-stuka-dive.spec.js live capture synchronization",
+    "Isolated browser CI workflow for all original Stuka assertions, workers1 retries0",
+    "Evidence/contract metadata and strict source identity proof against9a679c50"
+  ],
+  "forbidden": [
+    "Production/gameplay/asset/tool implementation changes",
+    "Relaxing any trajectory, airborne, projection, timing or pause assertion",
+    "Additional unchanged-source CI job retries",
+    "Resetting counters, acceptance before verifier PASS and independent critical reviewer ACCEPT"
+  ],
+  "work_branch": "codex/m01-partials-browser-sampling-repair-v1",
+  "validation": "Fresh full Stuka spec with all original assertions, armed beforeContinue using real native pointer-lock pause; independent exact production/assets/mission/tool source identity to9a679 justifies retaining its other passed gates; fresh Node/build on correction branch. Prior matrix42/44 and retry13/14 remainFAIL, never claim a single full44PASS.",
+  "stop_condition": "If additional targeted correction fails mandatory verification, STOP/BLOCKED with all4 corrections and original1 retry retained; no further automatic extension."
+}

@@ -6,8 +6,8 @@ import { driver, toRepair } from './m01-route.js';
 // (recent muzzle flashes from sim.threat). State-level comparison: not a browser playthrough, not a human playtest.
 // - ignore: the control route (waits behind the sandbags, never fires; Bąk is left to Dudek).
 // - help: beside the sappers it keeps the gate MG down; on the deck it fires at the Germans on the spans.
-export function coverRoute(seed=19390901,mode='ignore'){
-  const d=toRepair(driver(seed)),{sim,events,step,until,walk}=d;
+export function coverRoute(seed=19390901,mode='ignore',options={}){
+  const d=toRepair(driver(seed,options)),{sim,events,step,until,walk}=d;
   const stats={seed,mode,shots:0,repair:{deliveredAt:sim.clock,start:clockText(sim.battleClock)},casualties:[],repairMgSuppressed:0,repairUnderFire:0};
   let lastFlash=null,flashAt=-1e9,lastShot=-1e9,survivors=sim.flags['m01.east_platoon_survivors'],germans=sim.enemies.filter(a=>a.alive).length;
   const times={},historic=['order_demolish','east_platoon_withdraws','germans_on_east_spans','east_demolition','west_demolition','roll_call'];

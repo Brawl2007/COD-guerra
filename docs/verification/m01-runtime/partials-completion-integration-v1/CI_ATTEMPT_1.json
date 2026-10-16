@@ -1,0 +1,157 @@
+{
+  "sourceHead": "9a1535b5a530ea39186a09ab5465a14449d27569",
+  "at": "2026-10-15T09:46:51.762824+00:00",
+  "status": "FAIL / not accepted",
+  "normalCI": {
+    "run": 38712314965,
+    "job": 116346451658,
+    "result": "FAIL",
+    "node": {
+      "tests": 870,
+      "pass": 834,
+      "fail": 36,
+      "durationMs": 687125.293421
+    },
+    "tooling": "not run after Node failure",
+    "build": "not run after Node failure",
+    "rawLogSha256": "aff567b45ccf4eee8b80da6d9791331aa5db27a26fbcb0ebbb9cd99bc8aaeaf0",
+    "rawLogLocal": "/workspace/scratch/partials-node-ci-9a.log",
+    "failingLocations": [
+      "tests/m01-character-assets.test.js:117:1",
+      "tests/m01-ckm-placement-migration.test.js:18:1",
+      "tests/m01-continuity-raid.test.js:39:1",
+      "tests/m01-continuous-fixes.test.js:99:1",
+      "tests/m01-display-fire.test.js:236:1",
+      "tests/m01-display-fire.test.js:294:1",
+      "tests/m01-display-fire.test.js:335:1",
+      "tests/m01-east-front.test.js:197:1",
+      "tests/m01-east-front.test.js:219:1",
+      "tests/m01-material-authority.test.js:23:1",
+      "tests/m01-mg34-prone-presentation.test.js:66:57",
+      "tests/m01-mg34-prone-presentation.test.js:66:57",
+      "tests/m01-mg34-prone-presentation.test.js:66:57",
+      "tests/m01-mg34-prone-presentation.test.js:66:57",
+      "tests/m01-poses.test.js:35:1",
+      "tests/m01-simulation-boundary.test.js:51:1",
+      "tests/m01-soldier-visual-variation.test.js:79:1",
+      "tests/m01-support-runtime.test.js:100:1",
+      "tests/m01-terrain-envelope.test.js:7:1",
+      "tests/m01-viewmodel-feel.test.js:187:1",
+      "tests/m01-viewmodel-feel.test.js:215:1",
+      "tests/m01-viewmodel-feel.test.js:234:1",
+      "tests/m01-viewmodel-feel.test.js:253:1",
+      "tests/m01-viewmodel-feel.test.js:284:1",
+      "tests/m01-viewmodel-feel.test.js:305:1",
+      "tests/m01-weapon-presentation.test.js:20:1",
+      "tests/m01-wz29-viewmodel.test.js:36:1",
+      "tests/m01-wz29-viewmodel.test.js:47:24",
+      "tests/m01-wz29-viewmodel.test.js:47:24",
+      "tests/m01-wz29-viewmodel.test.js:55:1",
+      "tests/m01-wz29-viewmodel.test.js:64:24",
+      "tests/m01-wz29-viewmodel.test.js:64:24",
+      "tests/m01-wz29-viewmodel.test.js:74:1",
+      "tests/m01-wz29-viewmodel.test.js:87:1",
+      "tests/m01-wz29-viewmodel.test.js:96:1",
+      "tests/m01-wz29-viewmodel.test.js:113:1"
+    ]
+  },
+  "bridgeJob": {
+    "run": 38712315225,
+    "job": 116346452285,
+    "result": "FAIL",
+    "offBrowser": {
+      "pass": 1,
+      "fail": 0
+    },
+    "onBrowser": {
+      "pass": 4,
+      "fail": 0
+    },
+    "pairComparison": "FAIL:0430-12 control patch4pixels, expected0",
+    "remainingComparisonsDiagnosed": "ROI13 intersects actual truss;0610fullcontrol318pixels near station glass",
+    "artifactId": 11962200704,
+    "artifactBytes": 78040062,
+    "artifactSha256": "c5e706ad4a0d2911f48168b8569c79f5fdb57b1ef552c76d2a0b95b129bb97da",
+    "verifiedDownloadLocal": "/workspace/scratch/m01-partials-bridge-ci9a.zip",
+    "extracted": "/workspace/scratch/partials-bridge-ci9a",
+    "fileCount": 143,
+    "method": "Supported GitHub connector fetched archive; its file-service download URL was consumed directly. gh archive redirect returned403; that failed transfer is not claimed as evidence.",
+    "controlQualification": {
+      "reason": "Original12/13controlrectangles intersect authored steel; per-view patches moved to actual sky, same3200pixels and exactzero threshold. Complete controlframe still must remain zero.",
+      "newRects": {
+        "04": [
+          600,
+          4,
+          80,
+          40
+        ],
+        "12": [
+          600,
+          0,
+          80,
+          40
+        ],
+        "13": [
+          0,
+          0,
+          80,
+          40
+        ]
+      },
+      "decodedUniqueRgbColorsIn3200PixelPatch": {
+        "0430": {
+          "04": 154,
+          "12": 158,
+          "13": 31
+        },
+        "0610": {
+          "04": 26,
+          "12": 135,
+          "13": 72
+        }
+      },
+      "interpretation": "Nonuniform world pixels, not a blank UI/letterbox patch. This diagnostic on old9a does not substitute new-source comparison."
+    }
+  },
+  "correction": "Concrete failures sent to implementer under formal correction1/3. No failed check relabelled; no acceptance claimed.",
+  "integratedBrowser": {
+    "run": 38712315225,
+    "job": 116346452344,
+    "result": "FAIL",
+    "pass": 41,
+    "fail": 3,
+    "duration": "1.6h",
+    "crewObligations": "not run after combined failure",
+    "rawLogLocal": "/workspace/scratch/partials-browser-ci-9a.log",
+    "rawLogSha256": "65f84f70d9cd6cc59a7780c24b4e9077ae516d610a95affac0a8ec870cb8eed2",
+    "failures": [
+      "m01-battlefield-audio-runtime.spec.js:34 mg34 count timeout30s",
+      "m01-bridge-finish-runtime.spec.js:27 editorial camera far sweep timeout120s",
+      "m01-station-architecture.spec.js:36 reload environmentProps.runtime.revision15 vs6"
+    ],
+    "artifact": {
+      "id": 11966074813,
+      "bytes": 204491454,
+      "sha256": "33f6facb9f945d07e18b6326c4afe706269896b55246a209ddd5b43c98333717",
+      "status": "downloaded; SHA256,size,allzipentriesverified",
+      "localArchive": "/workspace/scratch/m01-partials-integration-9a.zip",
+      "extracted": "/workspace/scratch/partials-browser-ci9a",
+      "fileCount": 297
+    }
+  },
+  "simulationAuthority": {
+    "run": 38712315225,
+    "job": 116346452430,
+    "result": "PASS",
+    "scope": "original9a only;24currentOwnerONOFF, strict audit2routes, cover12seedsx2,299protectedbytes; new readiness correction requires fresh certification",
+    "artifact": {
+      "id": 11962599227,
+      "bytes": 43710,
+      "sha256": "56fa55495c1e7561f06e3ab097dda94265243eb7e2d9ff7871728ddb5b41efba",
+      "status": "verified size/SHA/zip entries; extracted",
+      "extracted": "/workspace/scratch/partials-authority-ci9a",
+      "fileCount": 9
+    }
+  },
+  "nextExecution": "Three Playwright shards of the same unfiltered combined config, workers1/retries0 per isolated runner, fail-fast false; all original44 cases retained. Crew obligation6cases on shard1 also runs if combined checks fail. Do not describe three shards as a single invocation."
+}

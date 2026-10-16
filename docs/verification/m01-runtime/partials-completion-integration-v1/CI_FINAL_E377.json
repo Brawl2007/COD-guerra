@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "source_head": "e377a0739906507dee63cd4006a3428efd22c56b",
+  "production_identity_base": "9a679c50cdbe9a19330aba72961cb51cda808a5d",
+  "production_identity_scope": [
+    "src",
+    "missions",
+    "assets",
+    "tools",
+    "package*.json",
+    "existing44caseworkflow",
+    "allotherbrowser/tests/config"
+  ],
+  "normal_ci": {
+    "run": 38870061991,
+    "job": 116871790355,
+    "result": "PASS",
+    "node": {
+      "passed": 874,
+      "failed": 0,
+      "duration_ms": 442823.793333
+    },
+    "python": {
+      "passed": 173,
+      "seconds": 70.715
+    },
+    "build": "PASS",
+    "raw_log_sha256": "a8bcc48daf263ded22d4afb960228f2d027d6a9e48e8a3c3885e1e55f7b186a2"
+  },
+  "stuka_ci": {
+    "run": 38870062186,
+    "job": 116871790801,
+    "result": "PASS",
+    "stats": {
+      "startTime": "2026-10-16T07:54:06.233Z",
+      "duration": 146984.561,
+      "expected": 5,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "workers": 1,
+    "retries": 0,
+    "artifact": 12032822544,
+    "artifact_bytes": 1939424,
+    "artifact_sha256": "662061d9a53e030fe912b1cdf5208c129d2cf11edd32f94fed729ea64070650f",
+    "artifact_crc": "PASS",
+    "artifact_entries": 19,
+    "raw_log_sha256": "836f0f922eec453797945fa9736ec85ba785afb8a6e38589a166d03a7718cd41"
+  },
+  "historical_ci": "CI_FINAL_9A.json: original42/44+crews6 and boundedretry13/14 bothFAIL; no singlefull44PASS. Remaining passed source-identical9agates retain exactsource/provenance.",
+  "acceptance": "Independent verifier/reviewer decision required; this CI summary alone does not accept tasks."
+}
