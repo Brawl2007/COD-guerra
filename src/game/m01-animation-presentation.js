@@ -1,8 +1,35 @@
 // Schema-2 presentation data. No gameplay/RNG writes, renderer history or wall clock.
+import definition from '../../missions/m01-tczew/mission.json' with { type: 'json' };
 export const MOTION_GAITS=Object.freeze(['idle','walk','run','sprint','crouch_walk','carry','drag']);
 export const PRESENTATION_FIELDS=Object.freeze(['motion','bodyYaw','posture','postureSince','postureProgress','suppressedAt','hitAt','hitYaw','diedAt','deathYaw','reload','cover','carry']);
 const angle=x=>Math.atan2(Math.sin(x),Math.cos(x));
-const posture=(a,clock)=>a.mg34Prone?.progress>0||a.team==='ally'&&a.role==='ENGINEER'&&clock<a.suppressedUntil?'prone':a.crouched?'crouch':'stand';
+/**
+ * T38 (M01-COMBAT-POSTURE-STAGING-V1, slice 1): grp_east_platoon.hold.stage. Presentation only: a platoon man standing still on his slot of
+ * the waiting block is drawn crouched/kneeling and his body turned by yaw[i] from his gameplay facing, so nobody stands in a row under fire.
+ * Gameplay `crouched`, positions, hitboxes (spatial.js only reads `posture` for 'prone', excluded here), aim heights and cadences are untouched.
+ * The box is the east rifles' aim block of m01-simulation.js (layout +1 m in x, +0.2 m in z). Validated at load: a typo stops the game.
+ */
+export function eastHoldStage(def=definition){
+  const fail=m=>{throw new Error(`M01 east hold stage: ${m}`);};
+  const group=def.groups?.find(g=>g.id==='grp_east_platoon'),l=group?.hold?.layout,s=group?.hold?.stage,size=group?.startSize;
+  if(!l||!Number.isInteger(l.columns)||l.columns<1||![l.x0,l.dx,l.z0,l.dz].every(Number.isFinite))fail('hold.layout');
+  if(!s||s.posture!=='crouch')fail('posture must be crouch (stand keeps the row; prone would change the hitboxes)');
+  if(!Number.isInteger(size)||!Array.isArray(s.yaw)||s.yaw.length!==size||!s.yaw.every(y=>Number.isFinite(y)&&Math.abs(y)<=.4))fail('one yaw per man, |yaw| <= 0.4 rad');
+  const rows=Math.ceil(size/l.columns);
+  return Object.freeze({posture:s.posture,yaw:Object.freeze([...s.yaw]),
+    box:Object.freeze({x0:l.x0-1,x1:l.x0+(l.columns-1)*l.dx+1,z0:l.z0-.2,z1:l.z0+(rows-1)*l.dz+.2})});
+}
+const EAST_HOLD_STAGE=eastHoldStage();
+/** Slot index of a platoon man staged on the waiting block, or -1. Reads gameplay data only; writes nothing. */
+export function holdStageSlot(a){
+  if(a.group!=='grp_east_platoon'||!a.active||a.crouched||a.carriedBy||a.state==='WOUNDED'||(a.motion?.speed??0)!==0)return -1;
+  const b=EAST_HOLD_STAGE.box,i=Number(a.id.slice('pl_east_'.length));
+  if(!(a.x>=b.x0&&a.x<=b.x1&&a.z>=b.z0&&a.z<=b.z1)||!Number.isInteger(i)||i<0||i>=EAST_HOLD_STAGE.yaw.length)return -1;
+  return i;
+}
+const bodyGoal=a=>{const i=holdStageSlot(a);return i<0?a.facing:angle(a.facing+EAST_HOLD_STAGE.yaw[i]);};
+const posture=(a,clock)=>a.mg34Prone?.progress>0||a.team==='ally'&&a.role==='ENGINEER'&&clock<a.suppressedUntil?'prone':a.crouched?'crouch':
+  holdStageSlot(a)>=0?EAST_HOLD_STAGE.posture:'stand';
 const fixedBody=a=>!a.alive||a.state==='WOUNDED'||a.carriedBy||a.pose==='seated'||
   (a.mg34Prone&&a.mg34Prone.phase!=='standing')||(a.ckm&&a.ckm.phase!=='retreat');
 
@@ -29,9 +56,10 @@ export function updatePosture(a,clock){
 
 export function updateBodyYaw(a,dt){
   if(fixedBody(a))return;
-  const delta=angle(a.facing-a.bodyYaw),limit=(a.motion.speed===0?Math.PI:2*Math.PI)*dt;
-  a.bodyYaw=Math.abs(delta)<=limit?a.facing:angle(a.bodyYaw+Math.sign(delta)*limit);
-  if(a.motion.speed===0){const remaining=angle(a.facing-a.bodyYaw);if(Math.abs(remaining)>Math.PI/3)a.bodyYaw=angle(a.facing-Math.sign(remaining)*Math.PI/3);}
+  const goal=bodyGoal(a);   // the gameplay facing, or (T38) the staged turn of a waiting platoon man
+  const delta=angle(goal-a.bodyYaw),limit=(a.motion.speed===0?Math.PI:2*Math.PI)*dt;
+  a.bodyYaw=Math.abs(delta)<=limit?goal:angle(a.bodyYaw+Math.sign(delta)*limit);
+  if(a.motion.speed===0){const remaining=angle(goal-a.bodyYaw);if(Math.abs(remaining)>Math.PI/3)a.bodyYaw=angle(goal-Math.sign(remaining)*Math.PI/3);}
 }
 
 export function updateMotion(actors,before,dt,clock){

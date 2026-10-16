@@ -404,9 +404,12 @@
     },
     "T38": {
       "name": "COMBAT POSTURE STAGING",
-      "status": "NOT_DEVELOPED",
-      "refs": [],
-      "note": "Posturas de combate."
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:claude/quirky-heisenberg-iytxsy",
+        "claim:claims/m01-t38"
+      ],
+      "note": "Fatia 1 (apresentação): pelotão leste em espera agachado/ajoelhado com rotações variadas, sem alterar gameplay. Fatia 2 por fazer: escalonar posições (exige mexer em m01-simulation.js e regenerar goldens em CI x86), atiradores dos portões, secção e sapadores."
     },
     "T39": {
       "name": "VIEWMODEL FEEL",

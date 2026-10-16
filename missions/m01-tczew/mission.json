@@ -224,6 +224,12 @@
         "from": "evt_m01_train963_arrives",
         "until": "evt_m01_east_platoon_withdraws",
         "layout": { "columns": 6, "x0": 1033, "dx": 2, "z0": 38.2, "dz": 1.2 },
+        "stage": {
+          "posture": "crouch",
+          "yaw": [0.12, -0.2, 0.31, -0.08, 0.22, -0.3, -0.15, 0.27, -0.33, 0.05, -0.24, 0.18, 0.29, -0.11, 0.16, -0.27, 0.09, -0.19, -0.05, 0.24, -0.22, 0.33, -0.14, 0.07],
+          "classification": "GAMEPLAY_DRAMATIZATION",
+          "note": "T38 (M01-COMBAT-POSTURE-STAGING-V1, fatia 1): só apresentação. Parado no seu lugar do bloco de espera, cada homem do pelotão fica de joelhos/agachado (postura 'crouch' de apresentação) e o corpo roda yaw[i] radianos (|yaw| <= 0,4) em relação à direcção de jogo (facing); ninguém fica de pé em fila sob fogo. O campo de jogo `crouched`, as posições, as hitboxes, a altura de mira e as cadências não mudam (provado por tests/m01-combat-posture-staging.test.js e pelos traços dourados por tick). 'prone' está excluído: mudaria as hitboxes (spatial.js)."
+        },
         "classification": "RECONSTRUCTED",
         "note": "T23: o pelotão está presente e parado no extremo leste do tabuleiro rodoviário (x 1033–1043, z 38,2–41,8, entre as treliças) desde a chegada do trem 963 até à retirada das 06:00, e só então corre para oeste. Os 24 lugares são de jogo: antes os homens partilhavam 4 pontos (6 por ponto) e uma baixa não se via. Saves anteriores guardam as suas posições e são postos em guarda na tick seguinte."
       },
