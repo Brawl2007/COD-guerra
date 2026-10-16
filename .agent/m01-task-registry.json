@@ -438,9 +438,9 @@
     },
     "T43": {
       "name": "LOD POLICY AND FADES",
-      "status": "NOT_DEVELOPED",
-      "refs": [],
-      "note": "Política de LOD."
+      "status": "DELIVERED_BRANCH",
+      "refs": ["branch:claude/quirky-heisenberg-eldlky", "claim:claims/m01-t43"],
+      "note": "Política de LOD. Fatia 1 (2026-10-16): src/render/m01-lod-policy.js (histerese, fade determinístico 0,3 s não ligado a shaders, contadores) adotada por vagões do pátio, estruturas de campo, props, locomotiva e Panzerzug; m01-train-wagons.js mantém seletor próprio (bloqueio de proveniência) com perfil equivalente testado. Falta: ligar fade/dither, atores/vegetação (ficheiros de #78/#79), contadores na vista."
     },
     "T44": {
       "name": "POSTPROCESS GRADING",

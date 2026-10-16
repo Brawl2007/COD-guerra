@@ -78,3 +78,17 @@ test('failed optional kit retains exact proxies; reload restores; async ready re
  let release;const gate=new Promise(resolve=>{release=resolve;});await page.route('**/structures/*rail_shed_intact_lod0.glb',async route=>{await gate;await route.continue();});await page.reload();await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});await page.evaluate(()=>{const hold=e=>{if(document.pointerLockElement){document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();document.exitPointerLock();}};document.addEventListener('pointerlockchange',hold,true);});await page.locator('#continue').click();await page.waitForFunction(()=>{const d=window.gameDiagnostics();return d.paused&&d.m01.demolition.clock===d.clock&&d.m01.fieldStructures.structures.find(s=>s.id==='rail_shed').ready===false;});const waiting=await page.evaluate(()=>window.gameDiagnostics());expect(waiting.m01.fieldStructures.proxyColliderIds).toContain('hut_north');const frozen=await page.evaluate(()=>window.gameVerificationState());release();await page.waitForFunction(()=>{const d=window.gameDiagnostics();return d.m01.fieldStructures.ready&&d.m01.fieldStructures.viewProxies.every(p=>!p.visible)&&d.m01.demolition.clock===d.clock;},null,{timeout:120000});const loaded=await page.evaluate(()=>window.gameDiagnostics());expect(loaded.clock).toBe(waiting.clock);expect(loaded.m01.renderedFrames).toBeGreaterThan(waiting.m01.renderedFrames);expect(await page.evaluate(()=>window.gameVerificationState())).toEqual(frozen);noDuplicateProxies(loaded);await capture(page,'optional-reload-restored',info);expect(errors).toEqual([]);
  }finally{await page.close();}
 });
+// T43 slice 2: still camera for 10 s => no LOD change, no fade, lodSwitches stable (frame clock of the consumer keeps running).
+test('LOD cross-fade: still camera for 10 s keeps lodSwitches and never fades',async({page})=>{
+ test.setTimeout(300000);const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const v=VIEWS.find(v=>v.name==='close-shelter');await open(page,v);
+ await page.waitForFunction(()=>!window.gameDiagnostics().m01.fieldStructures.fading,null,{timeout:30000});
+ const before=await page.evaluate(()=>window.gameDiagnostics().m01.fieldStructures);
+ expect(before.fading).toBe(false);
+ await page.waitForTimeout(10000);
+ const after=await page.evaluate(()=>window.gameDiagnostics().m01.fieldStructures);
+ expect(after.lodSwitches).toBe(before.lodSwitches);expect(after.fading).toBe(false);
+ expect(after.structures.map(s=>s.lod)).toEqual(before.structures.map(s=>s.lod));
+ for(const s of after.structures)expect(s.visibleModels).toBe(s.visible?1:0);
+ expect(errors).toEqual([]);
+});
