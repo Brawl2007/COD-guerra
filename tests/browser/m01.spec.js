@@ -1,6 +1,7 @@
 import {test,expect} from '@playwright/test';
 import {route,driver,toRepair,toCoverAdjustment,toStationEvacuation} from '../helpers/m01-route.js';
 import {seconds} from '../../src/game/m01-simulation.js';
+import {M01_BOMBING_BATTLE_SECONDS} from '../../src/world/m01-aircraft-path.js';
 
 let result;
 const flow=()=>result??=route();
@@ -76,16 +77,22 @@ test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, a
 });
 test('the genuine first raid displays three Ju 87 GLBs with light LODs and freezes the propellers on pause',async({page},info)=>{
   test.setTimeout(180000);
+  // T17 flies the formation along the authored stukaPath, anchored to evt_m01_bombing_0434. At the instant the planes are first heard
+  // (50 s earlier) they are still at the start of that path, ~10 km east of the station and ~5 degrees above the horizon, so the view can
+  // never rise past 0.2 rad. Continue the genuine route until the formation is inbound over the station (3 s before the bombing event).
   const d=driver();d.step({skip:true});d.until(()=>d.sim.renderState.stukas,200);
+  d.until(()=>M01_BOMBING_BATTLE_SECONDS-d.sim.battleClock<=3,200);
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
   const {errors,failed}=await open(page);await start(page,'#continue');
   await page.waitForFunction(()=>window.gameDiagnostics().m01.aircraft.loaded.length===3);
-  // The restored snapshot is the instant the planes are heard: wait for the presentation fade-in to finish.
+  // The planes were heard long before the restored instant: the presentation fade-in has to be complete.
   await page.waitForFunction(()=>window.gameDiagnostics().m01.aircraft.planes.every(p=>p.fade===1));
   const before=await page.evaluate(()=>window.gameDiagnostics()),planes=before.m01.aircraft.planes;
   expect(planes).toHaveLength(3);expect(planes.every(p=>p.visible&&p.lod===2&&p.propeller.every(Number.isFinite))).toBe(true);
   const target=planes[0].position,dx=target[0]-before.player.x,dz=target[2]-before.player.z;
   const angle=Math.atan2(dz,dx),pitch=Math.atan2(target[1]-before.player.y-1.6,Math.hypot(dx,dz));
+  // The look input below can only reach the waited-for pitch if the lead aircraft really is that high above the player.
+  expect(pitch).toBeGreaterThan(.2);
   await page.evaluate(({x,y})=>{
     document.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0,bubbles:true}));
     document.dispatchEvent(new MouseEvent('mousemove',{movementX:x,movementY:y,bubbles:true}));
