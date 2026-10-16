@@ -5,12 +5,14 @@ test('menu Low quality controls first audio allocation; persisted pagehide pause
   await page.addInitScript(()=>{
     localStorage.setItem('cod-guerra:visual-quality','high');
     const original=AudioContext.prototype.createConvolver;
-    AudioContext.prototype.createConvolver=function(...args){const node=original.apply(this,args);window.__convolver=node;return node;};
+    window.__convolvers=[];
+    AudioContext.prototype.createConvolver=function(...args){const node=original.apply(this,args);window.__convolvers.push(node);return node;};
   });
   await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);
   await page.locator('#quality').selectOption('low');await page.locator('#start').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&window.gameDiagnostics().audio.state==='running');
-  expect(await page.evaluate(()=>window.__convolver.buffer.duration)).toBeCloseTo(1.2,5);
+  // T06a builds two zone reverbs (src/core/audio/mix.js): A is the open exterior tail, 1.2 s on Low (the allocation this spec has always pinned); B is the short metallic one, 0.45 s on Low.
+  expect(await page.evaluate(()=>window.__convolvers.map(c=>c.buffer.duration))).toEqual([expect.closeTo(1.2,5),expect.closeTo(.45,5)]);
   const initial=await page.evaluate(()=>window.gameDiagnostics());expect(initial.quality).toBe('low');expect(initial.audio.quality).toBe('low');
   // Exercise the persisted lifecycle branch with the browser's PageTransitionEvent.
   // Chromium may not admit a WebGL/Pointer Lock page to its actual BFCache.

@@ -33,7 +33,12 @@ test('Station quality, checkpoint restart and page reload retain one architectur
   expect(restart.m01.stationArchitecture.geometries).toBe(before.m01.stationArchitecture.geometries);
   expect(restart.m01.environmentProps.totalAll).toBe(before.m01.environmentProps.totalAll);
   await page.reload();await startFrozen(page);const reloaded=await page.evaluate(()=>window.gameDiagnostics());
-  expect(reloaded.m01.stationArchitecture).toEqual(before.m01.stationArchitecture);expect(reloaded.m01.environmentProps).toEqual(before.m01.environmentProps);expect(errors).toEqual([]);
+  expect(reloaded.m01.stationArchitecture).toEqual(before.m01.stationArchitecture);
+  // runtime.revision counts the T12 prop re-instancing passes of the page's lifetime (every quality or LOD change adds one): the lived page and
+  // the fresh reload cannot share it, so it is compared as "built" while every other prop field stays exactly equal.
+  const lifetime=p=>({...p,runtime:{...p.runtime,revision:undefined}});
+  expect(before.m01.environmentProps.runtime.revision).toBeGreaterThan(0);expect(reloaded.m01.environmentProps.runtime.revision).toBeGreaterThan(0);
+  expect(lifetime(reloaded.m01.environmentProps)).toEqual(lifetime(before.m01.environmentProps));expect(errors).toEqual([]);
   await info.attach('station-quality-lifecycle.json',{body:JSON.stringify({samples,before:before.m01.stationArchitecture,restart:restart.m01.stationArchitecture,reloaded:reloaded.m01.stationArchitecture}),contentType:'application/json'});
 });
 test('missing optional soldier, aircraft and train GLBs preserve Station architecture and solid gameplay envelopes',async({page},info)=>{
