@@ -45,6 +45,9 @@ jobs:
       fail-fast: false
       matrix:
         shard: [1, 2, 3, 4]
+    env:
+      # tests/browser/m01-postprocess-grading.spec.js reads the BEFORE frames from here (made below by the shard that runs it).
+      M01_GRADING_BEFORE_DIR: ${{ github.workspace }}/m01-grading-before/png
     steps:
       - name: Baixar o projeto
         uses: actions/checkout@v4
@@ -57,15 +60,20 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
-      - run: npm run build
+      # The game exactly as `npm run build` ships it, plus the authoring viewers some specs open (materials atlas, bridge materials, vegetation kit).
+      - run: npm run build:browser
       - run: npx playwright install --with-deps chromium
+      - name: BEFORE do grading T44 (esta árvore sem o passe de grading)
+        run: tools/verification/m01-grading-before.sh ${{ matrix.shard }} 4 "$M01_GRADING_BEFORE_DIR"
       - run: npm run test:browser -- --shard=${{ matrix.shard }}/4
       - name: Evidências do navegador
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: browser-evidence-${{ matrix.shard }}
-          path: test-results/
+          path: |
+            test-results/
+            m01-grading-before/
           if-no-files-found: ignore
   deploy:
     if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
