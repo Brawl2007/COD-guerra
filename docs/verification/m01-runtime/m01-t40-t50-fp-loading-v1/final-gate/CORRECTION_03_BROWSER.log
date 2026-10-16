@@ -1,0 +1,44 @@
+[2m[WebServer] [22m(node:16434) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:16453) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16453) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/m01-consolidation-lifecycle.spec.js:3:1 › menu Low quality controls first audio allocation; persisted pagehide pauses and remains resumable (42.6s)
+  ✘  2 tests/browser/m01-viewmodel-feel.spec.js:91:1 › hip, mid-ADS and ADS by real right-mouse aim: 70 -> 48 on the shared eased curve; pause freezes the weapon region (1.5m)
+(node:16775) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16775) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  3 tests/browser/m01-viewmodel-feel.spec.js:136:1 › near a wall the rifle is held lowered and short of the wall; with the wall behind, it is raised again (55.3s)
+
+
+  1) tests/browser/m01-viewmodel-feel.spec.js:91:1 › hip, mid-ADS and ADS by real right-mouse aim: 70 -> 48 on the shared eased curve; pause freezes the weapon region 
+
+    TimeoutError: page.waitForFunction: Timeout 60000ms exceeded.
+
+      104 |   await page.evaluate(()=>{window.__feel.frames=[];window.__feel.recording=true;window.__feel.captureMid=true;});
+      105 |   await page.mouse.down({button:'right'});
+    > 106 |   await page.waitForFunction(()=>window.__feel.mid,null,{timeout:60000});
+          |              ^
+      107 |   await expect(page.locator('#pause')).toBeVisible();
+      108 |   const mid=await page.evaluate(()=>window.__feel.mid);
+      109 |   expect(mid.aiming).toBe(true);expect(mid.aim).toBeGreaterThanOrEqual(.25);expect(mid.aim).toBeLessThan(1);
+        at /workspace/COD-guerra/tests/browser/m01-viewmodel-feel.spec.js:106:14
+
+    Error Context: .agent/runs/M01-T40-T50-20261016/correction03-browser/m01-viewmodel-feel-hip-mid-c0af1-e-freezes-the-weapon-region/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    .agent/runs/M01-T40-T50-20261016/correction03-browser/m01-viewmodel-feel-hip-mid-c0af1-e-freezes-the-weapon-region/trace.zip
+    Usage:
+
+        npx playwright show-trace .agent/runs/M01-T40-T50-20261016/correction03-browser/m01-viewmodel-feel-hip-mid-c0af1-e-freezes-the-weapon-region/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/m01-viewmodel-feel.spec.js:91:1 › hip, mid-ADS and ADS by real right-mouse aim: 70 -> 48 on the shared eased curve; pause freezes the weapon region 
+  2 passed (3.2m)

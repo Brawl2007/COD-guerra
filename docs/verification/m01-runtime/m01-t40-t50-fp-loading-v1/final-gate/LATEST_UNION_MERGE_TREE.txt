@@ -1,0 +1,29 @@
+f40bab51e1fedd14e0d9950f30288c6136c5790f
+src/assets/asset-manager.js
+src/main.js
+src/styles-t50-loading.css
+src/ui/m01-loading-controller.js
+tests/browser/m01-consolidation-lifecycle.spec.js
+tools/verify-t50-bundle.mjs
+vite.config.js
+
+Auto-merging ASSET_CREDITS.md
+Auto-merging docs/direction/M01_TASK_STATUS.md
+Auto-merging index.html
+Auto-merging src/assets/asset-manager.js
+CONFLICT (content): Merge conflict in src/assets/asset-manager.js
+Auto-merging src/main.js
+CONFLICT (content): Merge conflict in src/main.js
+Auto-merging src/render/m01-characters.js
+Auto-merging src/render/m01-viewmodel.js
+Auto-merging src/styles-t50-loading.css
+CONFLICT (add/add): Merge conflict in src/styles-t50-loading.css
+Auto-merging src/ui/m01-loading-controller.js
+CONFLICT (add/add): Merge conflict in src/ui/m01-loading-controller.js
+Auto-merging tests/browser/m01-consolidation-lifecycle.spec.js
+CONFLICT (content): Merge conflict in tests/browser/m01-consolidation-lifecycle.spec.js
+Auto-merging tests/helpers/m01-byte-guard-allowlist.js
+Auto-merging tools/verify-t50-bundle.mjs
+CONFLICT (add/add): Merge conflict in tools/verify-t50-bundle.mjs
+Auto-merging vite.config.js
+CONFLICT (content): Merge conflict in vite.config.js

@@ -51,7 +51,7 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 37 | IK e orçamento | AUSENTE | — |
 | 38 | Posturas de combate | AUSENTE | — |
 | 39 | Sensação do viewmodel V2 | **ACEITE** | 29ba3cf, CI 38045111352 (574/574, build, browser 9/9); mira 0,30/0,22 s com curva, FOV 70→48, respiração e bob pelo relógio da simulação, arma baixa perto de paredes (D22). Manga/mão junto a parede vai para T40; H8 pendente humano |
-| 40 | Braços FP e transporte | **EM CURSO** | Reivindicada em 2026-10-16 por `codex/m01-t40-t50-fp-loading-v1`, sobre integração jogável d151a97. Validação e revisão pendentes; não contar como aceite. Braços FP próprios, sem alterar rig/clips de terceira pessoa.|
+| 40 | Braços FP e transporte | **BLOQUEADA — validação** | `codex/m01-t40-t50-fp-loading-v1` @a1ed6ff;1850tri braços/5869carry,67fontes protegidas. Node881/tooling173/buildPASS; browser8/9 e regressões não executadas,3/3correções consumidas. Não aceite/não integrada. [Handoff](../verification/m01-runtime/m01-t40-t50-fp-loading-v1/HANDOFF.md). |
 | 41 | Acabamento das pontes em runtime | **ACEITE** | Proprietário gráfico/LOD/impostores preservados, cards desligados não ressurgem; atlas tardio invalida pausa e comparação integral0. Fonte aceite `e377a07`; matriz de provas no handoff do lote. |
 | 42 | Água do Vístula | DONE* | `claude/m01-water-vistula-v1` @ `71ad067`, CI 37988900379 (535/535, browser 15/15 incl. regressão T18); fresnel + céu de T16, fluxo para norte pelo relógio, espuma nos pilares, margem molhada, Low sem reflexo mas com tom (média 59→99) (D17) |
 | 43 | Política de LOD | AUSENTE | — |
@@ -61,7 +61,7 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 47 | Guarnição do ckm (fogo) | AUSENTE | Sem fogo nem munição na simulação. Depende de T22 (display rounds) e T05. |
 | 48 | Retirada alemã | AUSENTE | Depende de T22/T35 |
 | 49 | Orçamento de performance | REVER | T01 anulada (D13); orçamento a definir para a plataforma-alvo nova |
-| 50 | Loading e bundle | **EM CURSO** | Reivindicada em 2026-10-16 por `codex/m01-t40-t50-fp-loading-v1`, sobre integração jogável d151a97. Validação e revisão pendentes; não contar como aceite. Candidata T50/PR66 será avaliada e reutilizada sem a tratar como aprovada.|
+| 50 | Loading e bundle | **BLOQUEADA — validação do lote** | Fonte real/BarlowOFL/JSestático10883bytes implementados em a1ed6ff, grafo dinâmico separado. Mesmos gates T40/T50 pendentes,3/3correções consumidas. CandidataClaude#80 tem7conflitos e coordenaçãoPAUSED; não contar como aceite/integrada. [Handoff](../verification/m01-runtime/m01-t40-t50-fp-loading-v1/HANDOFF.md). |
 | 51 | Fecho visual integrado | AUSENTE | Final |
 | 52 | Playtest humano | **HUMANO** | Final do Marco 2 |
 | 53 | App de PC instalável | AUSENTE | Decisão do utilizador D37 e definição em `claude/m01-decisions-d37-v1` @ `d5afc09`; depende de T51/T52. Escopo acrescentado fora do roadmap desta branch. |

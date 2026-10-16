@@ -1,0 +1,32 @@
+{
+  "max_fix_attempts": 3,
+  "used": 3,
+  "max_review_rejections": 2,
+  "review_rejections": 0,
+  "corrections": [
+    {
+      "number": 1,
+      "kind": "prospective initial browser harness correction",
+      "from": "c17cb40333b58b4164eeab097932094789c0c09e",
+      "to": "6fa19741abf45c18279fc574c6b59d1bd7df9df5",
+      "reason": "New seed addInitScript reapplied initial checkpoint on native midreload page.reload; apply initial seed once per session only; production and assertions unchanged."
+    },
+    {
+      "number": 2,
+      "kind": "independent verifier FAIL, native walk harness observation",
+      "from": "1f306fe3517d5dd76d5ff99b36656f6af9964087",
+      "reason": "diagnostics.player has no moveBlend; use existing readonly verification snapshot; preserve native W, displacement and clock checks",
+      "status": "IMPLEMENTED",
+      "to": "bea4149ba71d5a06f33d1d456671a51bc6c4c888",
+      "proof": "targeted native E/W/E PASS1/1 and CI38933065746 new9/9"
+    },
+    {
+      "number": 3,
+      "status": "IMPLEMENTED",
+      "from": "bea4149ba71d5a06f33d1d456671a51bc6c4c888",
+      "reason": "All independentattempt2 five failures as verified, final grouped narrow metadata/diagnostic/staleABIRharness correction",
+      "to": "a1ed6ff77ff8cf0bfdff7930f33bf2a2a72ee084",
+      "checks": "Node50/50 build source67/121 PASS; one focusedbrowser2/3 with new midADS wait timeout preserved; freshCIpending, no certification"
+    }
+  ]
+}

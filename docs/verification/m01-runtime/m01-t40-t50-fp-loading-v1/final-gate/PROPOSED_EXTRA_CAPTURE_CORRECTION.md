@@ -1,0 +1,5 @@
+# Proposta adicional NÃO aplicada/não testada
+
+Base a1ed6ff; dois testes browser, sem alterações de produção, relógio, RNG, asserções existentes ou limites. Aguarda autorização para ultrapassar o orçamento original3/3; não reinicia contadores. NovoCI preservado FAIL8/9, regressões9 não executadas. Trace prova recarga real começou e terminou, mas o observador externo perdeu a fase transitória antes do save. Localhip esperava mid-ADS; prearmar observador antes de Resume assegura que o callback já agendado é consumido em pausa. Proposta captura frames desenhados, pausa pela via blur/pointer-lock já usada no teste existente e guarda evidência persistente do momento. A hipótese mid-ADS continua por verificar, sem declarar correção garantida.
+
+Se autorizada: revisão técnica do patch, uma correção adicional agrupada (usado passa3→4, nunca reset0), testes proporcionais e nova verificação independente/CI exatos e reviewer antes de READY. Nem autorização desta proposta nem CI verde dispensam handoff/reserva da candidata #80 e resolução segura dos7conflitos. Nenhuma integração remota foi feita.

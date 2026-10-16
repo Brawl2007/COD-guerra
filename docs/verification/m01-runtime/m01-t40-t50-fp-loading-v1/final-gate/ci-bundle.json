@@ -1,0 +1,64 @@
+{
+  "rule": "entry + transitive static imports + HTML JS preloads, raw bytes; dynamic gameplay graph separately loaded",
+  "limit": 600000,
+  "bytes": 10883,
+  "files": [
+    {
+      "key": "index.html",
+      "file": "assets/index-Bi-lJDRb.js",
+      "bytes": 9740
+    },
+    {
+      "key": "_asset-progress-B1UdpVEN.js",
+      "file": "assets/asset-progress-B1UdpVEN.js",
+      "bytes": 1143
+    }
+  ],
+  "chunks": [
+    {
+      "name": "asset-progress",
+      "file": "assets/asset-progress-B1UdpVEN.js",
+      "bytes": 1143,
+      "imports": []
+    },
+    {
+      "name": "french-bench",
+      "file": "assets/french-bench-CL1jGOse.js",
+      "bytes": 112381,
+      "imports": []
+    },
+    {
+      "name": "three-core",
+      "file": "assets/three-core-DHJZDzJU.js",
+      "bytes": 626268,
+      "imports": []
+    },
+    {
+      "name": "three-loaders",
+      "file": "assets/three-loaders-xoHaYwaR.js",
+      "bytes": 63176,
+      "imports": [
+        "_three-core-DHJZDzJU.js"
+      ]
+    },
+    {
+      "name": "index",
+      "file": "assets/index-Bi-lJDRb.js",
+      "bytes": 9740,
+      "imports": [
+        "_asset-progress-B1UdpVEN.js"
+      ]
+    },
+    {
+      "name": "game",
+      "file": "assets/game-D1umKATX.js",
+      "bytes": 942648,
+      "imports": [
+        "_asset-progress-B1UdpVEN.js",
+        "_french-bench-CL1jGOse.js",
+        "_three-core-DHJZDzJU.js",
+        "_three-loaders-xoHaYwaR.js"
+      ]
+    }
+  ]
+}

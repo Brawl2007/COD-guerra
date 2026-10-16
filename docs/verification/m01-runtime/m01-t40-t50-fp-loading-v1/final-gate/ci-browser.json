@@ -1,0 +1,462 @@
+{
+  "config": {
+    "configFile": "/home/runner/work/COD-guerra/COD-guerra/tools/verification/playwright.m01-t40-t50.config.js",
+    "rootDir": "/home/runner/work/COD-guerra/COD-guerra/tests/browser",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "ci": {
+        "commitHref": "https://github.com/Brawl2007/COD-guerra/commit/a1ed6ff77ff8cf0bfdff7930f33bf2a2a72ee084",
+        "commitHash": "a1ed6ff77ff8cf0bfdff7930f33bf2a2a72ee084",
+        "buildHref": "https://github.com/Brawl2007/COD-guerra/actions/runs/38966629778"
+      },
+      "gitCommit": {
+        "shortHash": "a1ed6ff",
+        "hash": "a1ed6ff77ff8cf0bfdff7930f33bf2a2a72ee084",
+        "subject": "Fix FP metadata and stable native diagnostics; observe both lifecycle reverbs",
+        "body": "Fix FP metadata and stable native diagnostics; observe both lifecycle reverbs\n",
+        "author": {
+          "name": "TArcio",
+          "email": "tarciodark16@gmail.com",
+          "time": 1792184550000
+        },
+        "committer": {
+          "name": "TArcio",
+          "email": "tarciodark16@gmail.com",
+          "time": 1792184550000
+        },
+        "branch": "codex/m01-t40-t50-fp-loading-v1"
+      },
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/runner/work/COD-guerra/COD-guerra/test-results/t40-t50-ci/browser",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/Brawl2007/COD-guerra/commit/a1ed6ff77ff8cf0bfdff7930f33bf2a2a72ee084",
+            "commitHash": "a1ed6ff77ff8cf0bfdff7930f33bf2a2a72ee084",
+            "buildHref": "https://github.com/Brawl2007/COD-guerra/actions/runs/38966629778"
+          },
+          "gitCommit": {
+            "shortHash": "a1ed6ff",
+            "hash": "a1ed6ff77ff8cf0bfdff7930f33bf2a2a72ee084",
+            "subject": "Fix FP metadata and stable native diagnostics; observe both lifecycle reverbs",
+            "body": "Fix FP metadata and stable native diagnostics; observe both lifecycle reverbs\n",
+            "author": {
+              "name": "TArcio",
+              "email": "tarciodark16@gmail.com",
+              "time": 1792184550000
+            },
+            "committer": {
+              "name": "TArcio",
+              "email": "tarciodark16@gmail.com",
+              "time": 1792184550000
+            },
+            "branch": "codex/m01-t40-t50-fp-loading-v1"
+          },
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/runner/work/COD-guerra/COD-guerra/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "m01-t40-t50.spec.js"
+        ],
+        "timeout": 240000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/home/runner/work/COD-guerra/COD-guerra/test-results/t40-t50-ci/browser.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run preview -- --port 4187",
+      "url": "http://127.0.0.1:4187/COD-guerra/",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "m01-t40-t50.spec.js",
+      "file": "m01-t40-t50.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "T40 canonical 01 exact saved clock and camera",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 55637,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-16T21:03:48.808Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "efff6582e6ed6c47cf25-9d90cced0a8349825cfb",
+          "file": "m01-t40-t50.spec.js",
+          "line": 22,
+          "column": 34
+        },
+        {
+          "title": "T40 canonical 05 exact saved clock and camera",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 56209,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-16T21:04:44.690Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "efff6582e6ed6c47cf25-95785d2deca65484d294",
+          "file": "m01-t40-t50.spec.js",
+          "line": 22,
+          "column": 34
+        },
+        {
+          "title": "T40 canonical 14 exact saved clock and camera",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 59248,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-16T21:05:40.923Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "efff6582e6ed6c47cf25-7b4378000890770d55e3",
+          "file": "m01-t40-t50.spec.js",
+          "line": 22,
+          "column": 34
+        },
+        {
+          "title": "T50 delayed real request progress, mandatory failure and French recovery",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 42744,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-16T21:06:40.192Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "efff6582e6ed6c47cf25-9eede5c1b4bb55b54c7f",
+          "file": "m01-t40-t50.spec.js",
+          "line": 32,
+          "column": 2
+        },
+        {
+          "title": "T40 native ADS/reload and saved midreload reconstruction",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 248327,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 240000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 240000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "/home/runner/work/COD-guerra/COD-guerra/tests/browser/m01-t40-t50.spec.js",
+                        "column": 48,
+                        "line": 60
+                      },
+                      "message": "Error: page.waitForFunction: Test timeout of 240000ms exceeded.\n\n  58 |   const d=driver();d.step({skip:true});d.step({fire:true});for(let i=0;i<30;i++)d.step();await seed(page,d.sim.snapshot());await page.locator('#continue').click();\n  59 |   await page.waitForFunction(()=>document.pointerLockElement?.id==='game'&&!window.gameDiagnostics().paused);await page.mouse.down({button:'right'});await page.waitForFunction(()=>window.gameDiagnostics().m01.viewModel.aimBlend===1);await page.mouse.up({button:'right'});\n> 60 |   await page.keyboard.press('KeyR');await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state.startsWith('RELOAD'));\n     |                                                ^\n  61 |   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();\n  62 |   const paused=await capture(page,info,'native-reload'),snapshot=paused.state.snapshot;expect(paused.diagnostics.m01.viewModel.native.triangles).toBeLessThanOrEqual(6000);\n  63 |   await page.evaluate(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});await page.reload();await expect(page.locator('#start')).toBeEnabled({timeout:180000});await frozen(page,snapshot);\n    at /home/runner/work/COD-guerra/COD-guerra/tests/browser/m01-t40-t50.spec.js:60:48"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-16T21:07:22.987Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/runner/work/COD-guerra/COD-guerra/test-results/t40-t50-ci/browser/m01-t40-t50-T40-native-ADS-be4b8-ed-midreload-reconstruction/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/home/runner/work/COD-guerra/COD-guerra/test-results/t40-t50-ci/browser/m01-t40-t50-T40-native-ADS-be4b8-ed-midreload-reconstruction/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "efff6582e6ed6c47cf25-aa40210fb544d78dfca5",
+          "file": "m01-t40-t50.spec.js",
+          "line": 57,
+          "column": 2
+        },
+        {
+          "title": "T40 native pickup, saved carry walk and native putdown preserve full FP budget",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 104362,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-16T21:11:37.348Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "efff6582e6ed6c47cf25-1788239ebf10759e8e00",
+          "file": "m01-t40-t50.spec.js",
+          "line": 66,
+          "column": 2
+        },
+        {
+          "title": "T50 font failure reaches a finite readable fallback",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 19131,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-16T21:13:21.818Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "efff6582e6ed6c47cf25-7cfe8e87d48beb3726c9",
+          "file": "m01-t40-t50.spec.js",
+          "line": 77,
+          "column": 2
+        },
+        {
+          "title": "T40 delayed optional FP residency redraws the paused saved clock, failure preserves play",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 50249,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-16T21:13:40.964Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "efff6582e6ed6c47cf25-daae1b6c34b59d0f6a23",
+          "file": "m01-t40-t50.spec.js",
+          "line": 81,
+          "column": 14
+        },
+        {
+          "title": "T40 frozen carry phases exact source snapshots and camera",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 93322,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-16T21:14:31.241Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "efff6582e6ed6c47cf25-b6d77f840ef203889b6d",
+          "file": "m01-t40-t50.spec.js",
+          "line": 92,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-16T21:03:46.920Z",
+    "duration": 737821.822,
+    "expected": 8,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

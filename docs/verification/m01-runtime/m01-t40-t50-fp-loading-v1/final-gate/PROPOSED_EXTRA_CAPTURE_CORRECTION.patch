@@ -1,0 +1,46 @@
+--- a/tests/browser/m01-t40-t50.spec.js
++++ b/tests/browser/m01-t40-t50.spec.js
+@@ -57,8 +57,24 @@
+  test('T40 native ADS/reload and saved midreload reconstruction',async({page},info)=>{
+   const d=driver();d.step({skip:true});d.step({fire:true});for(let i=0;i<30;i++)d.step();await seed(page,d.sim.snapshot());await page.locator('#continue').click();
+   await page.waitForFunction(()=>document.pointerLockElement?.id==='game'&&!window.gameDiagnostics().paused);await page.mouse.down({button:'right'});await page.waitForFunction(()=>window.gameDiagnostics().m01.viewModel.aimBlend===1);await page.mouse.up({button:'right'});
+-  await page.keyboard.press('KeyR');await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state.startsWith('RELOAD'));
+-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
++  // Arm the read-only rendered-frame observer before the native key.
++  await page.evaluate(()=>{
++   const raf=window.requestAnimationFrame.bind(window),capture=window.__t40ReloadCapture={armed:true,value:null};
++   window.requestAnimationFrame=callback=>raf(time=>{
++    callback(time);if(!capture.armed)return;
++    const g=window.gameDiagnostics?.();
++    if(g&&!g.paused&&g.m01.weapon.state.startsWith('RELOAD')){
++     capture.armed=false;window.dispatchEvent(new Event('blur'));document.exitPointerLock();
++     capture.value={clock:g.clock,weapon:structuredClone(g.m01.weapon)};
++    }
++   });
++  });
++  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(resolve)));
++  await page.keyboard.press('KeyR');await page.waitForFunction(()=>window.__t40ReloadCapture.value);
++  await expect(page.locator('#pause')).toBeVisible();
++  const observedReload=await page.evaluate(()=>window.__t40ReloadCapture.value);
++  expect(observedReload.weapon.state).toMatch(/^RELOAD/);
++  expect((await page.evaluate(()=>window.gameDiagnostics())).clock).toBe(observedReload.clock);
+   const paused=await capture(page,info,'native-reload'),snapshot=paused.state.snapshot;expect(paused.diagnostics.m01.viewModel.native.triangles).toBeLessThanOrEqual(6000);
+   await page.evaluate(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});await page.reload();await expect(page.locator('#start')).toBeEnabled({timeout:180000});await frozen(page,snapshot);
+   const restored=await capture(page,info,'restored-native-reload');expect(restored.diagnostics.m01.weapon).toEqual(paused.diagnostics.m01.weapon);expect(restored.diagnostics.m01.viewModel.clipTime).toBe(paused.diagnostics.m01.viewModel.clipTime);
+--- a/tests/browser/m01-viewmodel-feel.spec.js
++++ b/tests/browser/m01-viewmodel-feel.spec.js
+@@ -98,10 +98,11 @@
+   await pause(page);
+   const hipShot=await expectFrozen(page);await info.attach('hip',{body:hipShot,contentType:'image/png'});
+   await page.screenshot({path:info.outputPath('viewmodel-feel-hip.png'),style:HIDE});
++  // MID-ADS: arm while paused so the next game frame is already observed before native resume/input.
++  await install(page);
++  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(resolve)));
++  await page.evaluate(()=>{window.__feel.frames=[];window.__feel.recording=true;window.__feel.captureMid=true;});
+   await resume(page);
+-  // MID-ADS: right mouse down; the page pauses on the first rendered frame with the aim between 25 % and 100 %.
+-  await install(page);
+-  await page.evaluate(()=>{window.__feel.frames=[];window.__feel.recording=true;window.__feel.captureMid=true;});
+   await page.mouse.down({button:'right'});
+   await page.waitForFunction(()=>window.__feel.mid,null,{timeout:60000});
+   await expect(page.locator('#pause')).toBeVisible();

@@ -1,0 +1,41 @@
+{
+  "sourceGate": "FAIL",
+  "taskIntegration": "BLOCKED/not performed",
+  "head": "a1ed6ff77ff8cf0bfdff7930f33bf2a2a72ee084",
+  "protectedCount": 67,
+  "sourceCount": 121,
+  "artifact": {
+    "id": 12075621765,
+    "sha256": "9dd4b845c6a0138ec2c7296ae289568fbdb44295198d066ed0109e31950ac881",
+    "crc": "clean",
+    "safePaths": true,
+    "entries": 43
+  },
+  "browserStats": {
+    "startTime": "2026-10-16T21:03:46.920Z",
+    "duration": 737821.822,
+    "expected": 8,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "workers": 1,
+  "retries": [
+    0
+  ],
+  "existingRegressionStep": "SKIPPED",
+  "node": {
+    "tests": 881,
+    "pass": 881,
+    "fail": 0,
+    "skipped": 0
+  },
+  "tooling": {
+    "tests": 173,
+    "status": "OK"
+  },
+  "build": "PASS",
+  "localCorrection03": "FAIL 2/3, midADS capture timeout",
+  "budget": "03/03 EXHAUSTED",
+  "lifecycleTestSHA": "52a9eaef2e6e2b935c460d6ef928188839d5c3fb4e138c561ef8f31ce7d4ce0d"
+}
