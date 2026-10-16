@@ -98,10 +98,11 @@ test('hip, mid-ADS and ADS by real right-mouse aim: 70 -> 48 on the shared eased
   await pause(page);
   const hipShot=await expectFrozen(page);await info.attach('hip',{body:hipShot,contentType:'image/png'});
   await page.screenshot({path:info.outputPath('viewmodel-feel-hip.png'),style:HIDE});
-  await resume(page);
-  // MID-ADS: right mouse down; the page pauses on the first rendered frame with the aim between 25 % and 100 %.
+  // MID-ADS: arm while paused so the next game frame is already observed before native resume/input.
   await install(page);
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(resolve)));
   await page.evaluate(()=>{window.__feel.frames=[];window.__feel.recording=true;window.__feel.captureMid=true;});
+  await resume(page);
   await page.mouse.down({button:'right'});
   await page.waitForFunction(()=>window.__feel.mid,null,{timeout:60000});
   await expect(page.locator('#pause')).toBeVisible();

@@ -57,8 +57,24 @@ if(!baseline){
  test('T40 native ADS/reload and saved midreload reconstruction',async({page},info)=>{
   const d=driver();d.step({skip:true});d.step({fire:true});for(let i=0;i<30;i++)d.step();await seed(page,d.sim.snapshot());await page.locator('#continue').click();
   await page.waitForFunction(()=>document.pointerLockElement?.id==='game'&&!window.gameDiagnostics().paused);await page.mouse.down({button:'right'});await page.waitForFunction(()=>window.gameDiagnostics().m01.viewModel.aimBlend===1);await page.mouse.up({button:'right'});
-  await page.keyboard.press('KeyR');await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state.startsWith('RELOAD'));
-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  // Arm the read-only rendered-frame observer before the native key.
+  await page.evaluate(()=>{
+   const raf=window.requestAnimationFrame.bind(window),capture=window.__t40ReloadCapture={armed:true,value:null};
+   window.requestAnimationFrame=callback=>raf(time=>{
+    callback(time);if(!capture.armed)return;
+    const g=window.gameDiagnostics?.();
+    if(g&&!g.paused&&g.m01.weapon.state.startsWith('RELOAD')){
+     capture.armed=false;window.dispatchEvent(new Event('blur'));document.exitPointerLock();
+     capture.value={clock:g.clock,weapon:structuredClone(g.m01.weapon)};
+    }
+   });
+  });
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(resolve)));
+  await page.keyboard.press('KeyR');await page.waitForFunction(()=>window.__t40ReloadCapture.value);
+  await expect(page.locator('#pause')).toBeVisible();
+  const observedReload=await page.evaluate(()=>window.__t40ReloadCapture.value);
+  expect(observedReload.weapon.state).toMatch(/^RELOAD/);
+  expect((await page.evaluate(()=>window.gameDiagnostics())).clock).toBe(observedReload.clock);
   const paused=await capture(page,info,'native-reload'),snapshot=paused.state.snapshot;expect(paused.diagnostics.m01.viewModel.native.triangles).toBeLessThanOrEqual(6000);
   await page.evaluate(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});await page.reload();await expect(page.locator('#start')).toBeEnabled({timeout:180000});await frozen(page,snapshot);
   const restored=await capture(page,info,'restored-native-reload');expect(restored.diagnostics.m01.weapon).toEqual(paused.diagnostics.m01.weapon);expect(restored.diagnostics.m01.viewModel.clipTime).toBe(paused.diagnostics.m01.viewModel.clipTime);
