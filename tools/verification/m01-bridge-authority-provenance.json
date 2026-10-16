@@ -1,0 +1,1821 @@
+{
+ "schema": 1,
+ "description": "Reviewed provenance ledger for the bridge-finish authority check (tools/verification/m01-bridge-finish-v2-authority.mjs --provenance). Each entry lists a protected path whose bytes at main differ from the historical pin, the approved sha256 at main, and the commit(s) already on main that introduced those bytes. The verifier accepts a protected file only if it equals the pin or the approved hash with every approving commit an ancestor of the PR base and holding those bytes. Regenerate a DRAFT only with m01-bridge-authority-ledger-draft.mjs and review before committing; entries are append-only evidence.",
+ "pins": {
+  "historical": "8a0c3622f5375f2c5b5e847db71f4f6e8352ae39",
+  "currentAuthority": "bc8f6a21a57ccd926d4e0655481908d90d6b1978"
+ },
+ "approvedAt": "6697956f3c684f06a856ddc4c6501bbb053bd438",
+ "entries": [
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_ammo_crate_wood_lod0.glb",
+   "pinnedSha256": "662dedddb19efb5cb3f6046fe82a476f487bf8a85331a8c5759bf3b2a861547c",
+   "approvedSha256": "cd9971edcf5048f37640b72f9d943dfbf6b8d4234fa7042f5e54504f97c017fa",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_ammo_crate_wood_lod1.glb",
+   "pinnedSha256": "e05b0f23882b63646709d3031b58dca392855feba11e91e5823c6e2b5b75b001",
+   "approvedSha256": "04ddaa1fe767fbf1e7d6967a786162837e4559c82bd0637bb51bb934be3a3068",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_ammo_tin_box_lod0.glb",
+   "pinnedSha256": "b96b1a611d4a038b9d493a8fcc11756e5b68c4b617482cc125006a9b12114a13",
+   "approvedSha256": "1da2812b342b474f2f8ea31f018a6a3e53697d08998c4132ed62f0aa0db1af6f",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_ammo_tin_box_lod1.glb",
+   "pinnedSha256": "cd9f2cb17cc3b0ca034648a18287f47d3e9b1d105eb8e8e0d268b5344c548c30",
+   "approvedSha256": "26d7819b1ffa6151fd8a865529da66a5418b2d03aceb7b7300cabe999fe33847",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_barrel_wood_lod0.glb",
+   "pinnedSha256": "722075ce3cf926c47a57452ffac5c8545194915b39ef87e82d419ff81982667a",
+   "approvedSha256": "5008977313fc180bc0d5a0d57732c57022062acaa3b355dec0e716ccccc4ef63",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_barrel_wood_lod1.glb",
+   "pinnedSha256": "8b3cf46d0bc007404e8ad0b471c8518d679af9687b61d4431e60ddf7b396fb92",
+   "approvedSha256": "e737dcfa425a5a22fcd00f7c0c59ecdd9777634ce667b60cd6e95a49fbf14995",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_coal_pile_lod0.glb",
+   "pinnedSha256": "0ee3d9b0c64959434428c33341d606d5fd7780bd40545fdacff0cc702fe9e747",
+   "approvedSha256": "7d4a20b1f8dfa065eaa9213cf1d685f8fc3923ef5916cc1e7218e3ffc13d6fc6",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_coal_pile_lod1.glb",
+   "pinnedSha256": "bede9e4fe158ecf8c1cee067e246631b73c451a0554e6613a2f2498c423c3f8f",
+   "approvedSha256": "22506ab04e0e6152647dc2b509cb6ff37b2f980cf1ffc2101ce2c98e1c6fe0d4",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_drum_fuel_200l_lod0.glb",
+   "pinnedSha256": "2965603e2e8756d734e21da61e3a4e0bd2c9b9b3c8f12f4c1bc4d2202d3f2426",
+   "approvedSha256": "efa0172d92583b0ec1a97ce68b207b5aed3154dc3b84322b72523e540edcd13d",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_drum_fuel_200l_lod1.glb",
+   "pinnedSha256": "bf4d60e9e6dc3e3c51467635c9b80f0b55bea57cc5e3af978402538c4e6ba387",
+   "approvedSha256": "a1ad91f0a393c7e0735a6cf06b80b157549ad0adbd65ff88374f73928832d848",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_fence_barbed_lod0.glb",
+   "pinnedSha256": "2161257df05a3e93a6a51e1471385388c5a4e620aad03ea3e5548c938f0683a1",
+   "approvedSha256": "aa9719d14fad9fe2b24de2a7321c0c1ca09152ed0e40bf6e7a0de8c81c91bd53",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_fence_barbed_lod1.glb",
+   "pinnedSha256": "f70c8474e7e83bba905aa4cdc4516325bf56e2c906b49fafcbf3d8d624882ad5",
+   "approvedSha256": "6109e715fba77e7cf7d0d052bd381272b6f58fa20d81b1e483fa639d11d379d0",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_fence_wood_lod0.glb",
+   "pinnedSha256": "b27f8697d9e29828b4b26bb5834b8a3fb113f7a4bdae24c5daa6870ad3c2d9a6",
+   "approvedSha256": "a99700e435bde717530b79a45b4d983a47980c58f43e71568844598a2657e6aa",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_fence_wood_lod1.glb",
+   "pinnedSha256": "96e18b23417c987a790ae7e7cc352a8a3cf55326c81b264a2f2da49d1d765ee3",
+   "approvedSha256": "ec8b646d89cd258da3ee9775b2d38a9c2d4e88c98a1545f3c8f9bd6cba731ae2",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_hand_cart_lod0.glb",
+   "pinnedSha256": "114318a576b13dc6761e587f81a622491a6790adc71347a559e3e083ca693928",
+   "approvedSha256": "721c964f883b3715f7fc2f6afc6bf9c4dc9b34815a2e7e3b3fa482744d48866a",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_hand_cart_lod1.glb",
+   "pinnedSha256": "4e46da3cf5e39c651a9565abe4cc4b6a530f0a5b7c25707fd73e6157ae72bc8b",
+   "approvedSha256": "740a4d69adbf2767220172f2dc9a818361eaffbb117ab3538ac8fab40da3cb4d",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_horse_cart_lod0.glb",
+   "pinnedSha256": "1b64d58dd2e21f676b7daee2797628f93139d5d675a11e351509c16454863342",
+   "approvedSha256": "885307add89cf60d874b0f523c51de336b4012f8645243f9070764e64e2dbc81",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_horse_cart_lod1.glb",
+   "pinnedSha256": "8701d907cf6da1be800441e67005439de2c3b61a1f8bb718c5af16de23578902",
+   "approvedSha256": "c29ddad75ec3de866f628787863b2f06a4d86ffb1ae9be595b3bf2be77bfb996",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_jerrycans_lod0.glb",
+   "pinnedSha256": "2c80a2a6ab5323f8ce096c6f63c0244e5013cc52f77b8206d9f70fa0d6178e1a",
+   "approvedSha256": "d081c092771ffe5bead2612795515c6c54d8ec388b14dd76f2291bb2219e060a",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_jerrycans_lod1.glb",
+   "pinnedSha256": "69e8b5bdd928bf10f1a1dd8af3b889a93709bfecbce7d5bf3450d6b728ab0c59",
+   "approvedSha256": "81e7eb035372318a980c1b2f221bf8cb9fd9ffe39b13d6316641b6be0c0afdaf",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_point_lever_lod0.glb",
+   "pinnedSha256": "5d28bd883cf53b80e93b0b49e34e9886001d980cf6f4906ae8179186e7790404",
+   "approvedSha256": "958bf1f687a91a84b72a98574f62bbb78aa7263584610c08297ea55b9930f450",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_point_lever_lod1.glb",
+   "pinnedSha256": "1dba9b92e8c2ab76eb52a1397439a152cdb1fe85078552e20c3ba5115a4bd0e4",
+   "approvedSha256": "ba04d64e1f7baa25a63f1a23fb0d1f7c3a48119071a59b9f911ea2822a179abb",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_railway_lantern_lod0.glb",
+   "pinnedSha256": "03e993a5a2e854a4ebc9c515ba8615a7366ecd57597453c029bd0e4e2509f719",
+   "approvedSha256": "ccaffbec7a95793ffedc2a8c5759b0f6f7d8195960bd5c8f3531324a914ec463",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_railway_lantern_lod1.glb",
+   "pinnedSha256": "626a405a2b0601ac556c61b66eb7cbd70c50cd9cc5dc3686b433f88c08110139",
+   "approvedSha256": "c49f53dac5fe7bc9159873471df300e15b04d69db2ee55799e1981d10bcc8929",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_sandbag_burst_lod0.glb",
+   "pinnedSha256": "8001e1fe336728e6423c8feb1694bf625ae73f7e2e7f811881bdf244810d714f",
+   "approvedSha256": "f7fc5a634024411724b39a6db84614c4a323c7df745454fd3dbd58802cbcb2f7",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_sandbag_burst_lod1.glb",
+   "pinnedSha256": "acac3c36127f438c0b3d731c101d5f52d8b1c81e731536583e7b761e06c43e8a",
+   "approvedSha256": "036fcd15a1d290d4a428a8e56ea946469aaa9864d6c271f0a4224d9da5b6ae4a",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_sandbag_corner_lod0.glb",
+   "pinnedSha256": "f2360f42d8f2c24bfbbfff20dd42dc34572f0b7da1d3d368e90d8c06a23f2aec",
+   "approvedSha256": "5a66a3255f9b95cd09a8e9716e4089d6130ef0911030c489423e2163e0c8b6a0",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_sandbag_corner_lod1.glb",
+   "pinnedSha256": "f32563f7a2bfbcd6b780ae6018018862d3e56711bfe536df87ea9c0a5fe09c14",
+   "approvedSha256": "329bd1d6a05a3c2bd61d03aa334f45a5a6c159408561fd61c46b2b47d8786dfc",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_sandbag_run_lod0.glb",
+   "pinnedSha256": "df9dc964c8fffe492cbda7ef3045380f00eb2b12ccf05874a2958d3ceb662850",
+   "approvedSha256": "0189efdf72b83f1252b1053cac0e6fe83c232f26170994b5c9c9dcf7f74b9bf4",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_sandbag_run_lod1.glb",
+   "pinnedSha256": "42aa6c69a913020b485b3dd1f72f3433e716a24cc02da53265419d83c681e176",
+   "approvedSha256": "2b5969a72ae47bda8a52cbb0e0efdb71a39eed139d276c523abf78dc95265440",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_semaphore_signal_lod0.glb",
+   "pinnedSha256": "f823b483bcce8aedd6621ff26253457eff76b4b3ef3c7f0191a742aff9fed448",
+   "approvedSha256": "89b295cc1cfbcd635176db8f70c3c4e503d91ec708bda4014fda464c3e5e893c",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_semaphore_signal_lod1.glb",
+   "pinnedSha256": "a85eba01b5ee308a3662e4b5d33008fcfa238390daa4649bab16fec52e018700",
+   "approvedSha256": "773e605d94798d8a58574cd81759a758e040c7d1ce86868f0681277a7e9b5afd",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_sleeper_stack_lod0.glb",
+   "pinnedSha256": "a76ba9bc908a14e7a35eebbc1d0ca1154f5363ea67c9e9e251186f90d8720848",
+   "approvedSha256": "4591cd34b0fb648891b7cb476972a982010e6e4d0e82d19ce0ca0a4f57c064e7",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_sleeper_stack_lod1.glb",
+   "pinnedSha256": "4d17dc0241ed44a32a5821bf7f5eefc0c0ec4a1a441f68f4b2bf656eb689aac0",
+   "approvedSha256": "b0d0b4b31cc592154cfca59f826cf1079aeb2080574634f0510181dd563736ce",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_supply_crate_planked_lod0.glb",
+   "pinnedSha256": "9a68a2e1c8b5c8ad9ce3682a3a675854e4bc2983a01c6ec86213356558b7a708",
+   "approvedSha256": "189a58d3b588cc3f3e84da261d5ae603bb84bf5b3988efc921566d7d1e09a587",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_supply_crate_planked_lod1.glb",
+   "pinnedSha256": "b8e4521910cc0b15094eb08e854104475af1e02f8dc7c79363d1818afc4cbb22",
+   "approvedSha256": "5008e4f98f91a5a6a4d22de4da114566911aa9317ff589a119313f1b107fc5b0",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_telegraph_pole_lod0.glb",
+   "pinnedSha256": "7683fb053b830c2ff49b1706e97756ab81d6af91f969508dab1f5b96aa4aafcc",
+   "approvedSha256": "592f84cdb43e7030c671bd4da61053a20fc4363c0353a4d3865e9b9391327675",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_telegraph_pole_lod1.glb",
+   "pinnedSha256": "26d7b74965d056381b3d790aece0b00421b60f0412a22349bc3f3a5bbdbf155d",
+   "approvedSha256": "ace905c323340d19e8f4314f457c40d5b9455cc6f411f4317f070f08c165bae2",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_telegraph_wire_span_lod0.glb",
+   "pinnedSha256": "b0a406234f21d662d78cfee38c11112b25549d32c773dc8636c1de45a320b392",
+   "approvedSha256": "86a482d41490a13acac8454404bea8f3f7a26adcbcc61009a5813e0d21f9d0c3",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_telegraph_wire_span_lod1.glb",
+   "pinnedSha256": "1d4fb1dbcd0ed3640ceef4957f7fcc395067f7aa3ebda2c0558780abe7e4f202",
+   "approvedSha256": "40b3a23aa6e24beb032c4020b5da2f91f8fc8b349ca52dd3d4890c566a5b35c1",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_water_crane_lod0.glb",
+   "pinnedSha256": "7c91ae9a9f1e283e55f3ecaa0578587fe50315e458606e28f5acb956e0ca3782",
+   "approvedSha256": "c83e9c374725beac6c88e0cd15b6ba24e41c587779fcbef6aa185a4e8ae81f00",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/m01_prop_water_crane_lod1.glb",
+   "pinnedSha256": "10f1bb6535cbdbc8b7cbbbc36ff2dbc0553c4bc7e6ae14b4b9089e69c2029071",
+   "approvedSha256": "074a8d1558bb41c62ada6a3a18daa17a829fe61492ee820ebe2399560332854b",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "assets/models/provisional/m01/props/manifest.json",
+   "pinnedSha256": "52ebed5e9aaa088b50f2ded6d7b0775fc3f9fa0d0643b6ae93046e580865c75f",
+   "approvedSha256": "5bd5ad6f5f0f88cd506e9a8c56871c91d64d441f5de38ab5a50920f5d96c640b",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "package.json",
+   "pinnedSha256": "4c9c6dd123b6e5a66a63071b8e0e873397613f9026fcd8c963b4a11e3dacd5c9",
+   "approvedSha256": "d951c07264359d18bbe0749efd12b65e03264aa102ac58c3ac3f7e1ac4a2759a",
+   "approvingCommits": [
+    "64275b34dcf786ad29819f7a792fb96e5c732b4b"
+   ],
+   "reason": "Approved change already on main: build manifest or config introduced by 64275b3 \"build(m01): build:browser serves the authoring viewers that three specs open next to the game\"."
+  },
+  {
+   "mode": "currentAuthority",
+   "path": "src/render/m01-terrain-envelope.js",
+   "pinnedSha256": "8f5678bbc5ed5382aa2c5219bdaa3ad37ec6f35983090bd0726038e726731200",
+   "approvedSha256": "99d83e06105cc45ef8d7e0f018a722353899bb5358e808148077f02af45d5053",
+   "approvingCommits": [
+    "9928bdcd7e4a81ed1239cb1db29a51d4993ee559"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by 9928bdc \"Merge claude/m01-integration (8a0c362: T09/T28, T13/T32, T31/T33, T27/T30, T10/T29) into the M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": ".github/workflows/ci.yml",
+   "pinnedSha256": "5da32223c3e437a4645f0ad9213e8523a3acf61fd711cb738dc23ca687539e3b",
+   "approvedSha256": null,
+   "approvingCommits": [
+    "9928bdcd7e4a81ed1239cb1db29a51d4993ee559"
+   ],
+   "reason": "Deleted: the generic CI workflow of the 8a0c362 delivery was never carried into the M01 integration candidate (its first-parent chain never had it); the merge that integrated 8a0c362 dropped it. The 8a0c362-pinned authority check listed it as protected, hence ENOENT on every main-based PR. Recorded here as a reviewed deletion rather than dropped from the protected list."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_ammo_crate_wood_lod0.glb",
+   "pinnedSha256": "662dedddb19efb5cb3f6046fe82a476f487bf8a85331a8c5759bf3b2a861547c",
+   "approvedSha256": "cd9971edcf5048f37640b72f9d943dfbf6b8d4234fa7042f5e54504f97c017fa",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_ammo_crate_wood_lod1.glb",
+   "pinnedSha256": "e05b0f23882b63646709d3031b58dca392855feba11e91e5823c6e2b5b75b001",
+   "approvedSha256": "04ddaa1fe767fbf1e7d6967a786162837e4559c82bd0637bb51bb934be3a3068",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_ammo_tin_box_lod0.glb",
+   "pinnedSha256": "b96b1a611d4a038b9d493a8fcc11756e5b68c4b617482cc125006a9b12114a13",
+   "approvedSha256": "1da2812b342b474f2f8ea31f018a6a3e53697d08998c4132ed62f0aa0db1af6f",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_ammo_tin_box_lod1.glb",
+   "pinnedSha256": "cd9f2cb17cc3b0ca034648a18287f47d3e9b1d105eb8e8e0d268b5344c548c30",
+   "approvedSha256": "26d7819b1ffa6151fd8a865529da66a5418b2d03aceb7b7300cabe999fe33847",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_barrel_wood_lod0.glb",
+   "pinnedSha256": "722075ce3cf926c47a57452ffac5c8545194915b39ef87e82d419ff81982667a",
+   "approvedSha256": "5008977313fc180bc0d5a0d57732c57022062acaa3b355dec0e716ccccc4ef63",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_barrel_wood_lod1.glb",
+   "pinnedSha256": "8b3cf46d0bc007404e8ad0b471c8518d679af9687b61d4431e60ddf7b396fb92",
+   "approvedSha256": "e737dcfa425a5a22fcd00f7c0c59ecdd9777634ce667b60cd6e95a49fbf14995",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_coal_pile_lod0.glb",
+   "pinnedSha256": "0ee3d9b0c64959434428c33341d606d5fd7780bd40545fdacff0cc702fe9e747",
+   "approvedSha256": "7d4a20b1f8dfa065eaa9213cf1d685f8fc3923ef5916cc1e7218e3ffc13d6fc6",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_coal_pile_lod1.glb",
+   "pinnedSha256": "bede9e4fe158ecf8c1cee067e246631b73c451a0554e6613a2f2498c423c3f8f",
+   "approvedSha256": "22506ab04e0e6152647dc2b509cb6ff37b2f980cf1ffc2101ce2c98e1c6fe0d4",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_drum_fuel_200l_lod0.glb",
+   "pinnedSha256": "2965603e2e8756d734e21da61e3a4e0bd2c9b9b3c8f12f4c1bc4d2202d3f2426",
+   "approvedSha256": "efa0172d92583b0ec1a97ce68b207b5aed3154dc3b84322b72523e540edcd13d",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_drum_fuel_200l_lod1.glb",
+   "pinnedSha256": "bf4d60e9e6dc3e3c51467635c9b80f0b55bea57cc5e3af978402538c4e6ba387",
+   "approvedSha256": "a1ad91f0a393c7e0735a6cf06b80b157549ad0adbd65ff88374f73928832d848",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_fence_barbed_lod0.glb",
+   "pinnedSha256": "2161257df05a3e93a6a51e1471385388c5a4e620aad03ea3e5548c938f0683a1",
+   "approvedSha256": "aa9719d14fad9fe2b24de2a7321c0c1ca09152ed0e40bf6e7a0de8c81c91bd53",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_fence_barbed_lod1.glb",
+   "pinnedSha256": "f70c8474e7e83bba905aa4cdc4516325bf56e2c906b49fafcbf3d8d624882ad5",
+   "approvedSha256": "6109e715fba77e7cf7d0d052bd381272b6f58fa20d81b1e483fa639d11d379d0",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_fence_wood_lod0.glb",
+   "pinnedSha256": "b27f8697d9e29828b4b26bb5834b8a3fb113f7a4bdae24c5daa6870ad3c2d9a6",
+   "approvedSha256": "a99700e435bde717530b79a45b4d983a47980c58f43e71568844598a2657e6aa",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_fence_wood_lod1.glb",
+   "pinnedSha256": "96e18b23417c987a790ae7e7cc352a8a3cf55326c81b264a2f2da49d1d765ee3",
+   "approvedSha256": "ec8b646d89cd258da3ee9775b2d38a9c2d4e88c98a1545f3c8f9bd6cba731ae2",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_hand_cart_lod0.glb",
+   "pinnedSha256": "114318a576b13dc6761e587f81a622491a6790adc71347a559e3e083ca693928",
+   "approvedSha256": "721c964f883b3715f7fc2f6afc6bf9c4dc9b34815a2e7e3b3fa482744d48866a",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_hand_cart_lod1.glb",
+   "pinnedSha256": "4e46da3cf5e39c651a9565abe4cc4b6a530f0a5b7c25707fd73e6157ae72bc8b",
+   "approvedSha256": "740a4d69adbf2767220172f2dc9a818361eaffbb117ab3538ac8fab40da3cb4d",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_horse_cart_lod0.glb",
+   "pinnedSha256": "1b64d58dd2e21f676b7daee2797628f93139d5d675a11e351509c16454863342",
+   "approvedSha256": "885307add89cf60d874b0f523c51de336b4012f8645243f9070764e64e2dbc81",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_horse_cart_lod1.glb",
+   "pinnedSha256": "8701d907cf6da1be800441e67005439de2c3b61a1f8bb718c5af16de23578902",
+   "approvedSha256": "c29ddad75ec3de866f628787863b2f06a4d86ffb1ae9be595b3bf2be77bfb996",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_jerrycans_lod0.glb",
+   "pinnedSha256": "2c80a2a6ab5323f8ce096c6f63c0244e5013cc52f77b8206d9f70fa0d6178e1a",
+   "approvedSha256": "d081c092771ffe5bead2612795515c6c54d8ec388b14dd76f2291bb2219e060a",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_jerrycans_lod1.glb",
+   "pinnedSha256": "69e8b5bdd928bf10f1a1dd8af3b889a93709bfecbce7d5bf3450d6b728ab0c59",
+   "approvedSha256": "81e7eb035372318a980c1b2f221bf8cb9fd9ffe39b13d6316641b6be0c0afdaf",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_point_lever_lod0.glb",
+   "pinnedSha256": "5d28bd883cf53b80e93b0b49e34e9886001d980cf6f4906ae8179186e7790404",
+   "approvedSha256": "958bf1f687a91a84b72a98574f62bbb78aa7263584610c08297ea55b9930f450",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_point_lever_lod1.glb",
+   "pinnedSha256": "1dba9b92e8c2ab76eb52a1397439a152cdb1fe85078552e20c3ba5115a4bd0e4",
+   "approvedSha256": "ba04d64e1f7baa25a63f1a23fb0d1f7c3a48119071a59b9f911ea2822a179abb",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_railway_lantern_lod0.glb",
+   "pinnedSha256": "03e993a5a2e854a4ebc9c515ba8615a7366ecd57597453c029bd0e4e2509f719",
+   "approvedSha256": "ccaffbec7a95793ffedc2a8c5759b0f6f7d8195960bd5c8f3531324a914ec463",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_railway_lantern_lod1.glb",
+   "pinnedSha256": "626a405a2b0601ac556c61b66eb7cbd70c50cd9cc5dc3686b433f88c08110139",
+   "approvedSha256": "c49f53dac5fe7bc9159873471df300e15b04d69db2ee55799e1981d10bcc8929",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_sandbag_burst_lod0.glb",
+   "pinnedSha256": "8001e1fe336728e6423c8feb1694bf625ae73f7e2e7f811881bdf244810d714f",
+   "approvedSha256": "f7fc5a634024411724b39a6db84614c4a323c7df745454fd3dbd58802cbcb2f7",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_sandbag_burst_lod1.glb",
+   "pinnedSha256": "acac3c36127f438c0b3d731c101d5f52d8b1c81e731536583e7b761e06c43e8a",
+   "approvedSha256": "036fcd15a1d290d4a428a8e56ea946469aaa9864d6c271f0a4224d9da5b6ae4a",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_sandbag_corner_lod0.glb",
+   "pinnedSha256": "f2360f42d8f2c24bfbbfff20dd42dc34572f0b7da1d3d368e90d8c06a23f2aec",
+   "approvedSha256": "5a66a3255f9b95cd09a8e9716e4089d6130ef0911030c489423e2163e0c8b6a0",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_sandbag_corner_lod1.glb",
+   "pinnedSha256": "f32563f7a2bfbcd6b780ae6018018862d3e56711bfe536df87ea9c0a5fe09c14",
+   "approvedSha256": "329bd1d6a05a3c2bd61d03aa334f45a5a6c159408561fd61c46b2b47d8786dfc",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_sandbag_run_lod0.glb",
+   "pinnedSha256": "df9dc964c8fffe492cbda7ef3045380f00eb2b12ccf05874a2958d3ceb662850",
+   "approvedSha256": "0189efdf72b83f1252b1053cac0e6fe83c232f26170994b5c9c9dcf7f74b9bf4",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_sandbag_run_lod1.glb",
+   "pinnedSha256": "42aa6c69a913020b485b3dd1f72f3433e716a24cc02da53265419d83c681e176",
+   "approvedSha256": "2b5969a72ae47bda8a52cbb0e0efdb71a39eed139d276c523abf78dc95265440",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_semaphore_signal_lod0.glb",
+   "pinnedSha256": "f823b483bcce8aedd6621ff26253457eff76b4b3ef3c7f0191a742aff9fed448",
+   "approvedSha256": "89b295cc1cfbcd635176db8f70c3c4e503d91ec708bda4014fda464c3e5e893c",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_semaphore_signal_lod1.glb",
+   "pinnedSha256": "a85eba01b5ee308a3662e4b5d33008fcfa238390daa4649bab16fec52e018700",
+   "approvedSha256": "773e605d94798d8a58574cd81759a758e040c7d1ce86868f0681277a7e9b5afd",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_sleeper_stack_lod0.glb",
+   "pinnedSha256": "a76ba9bc908a14e7a35eebbc1d0ca1154f5363ea67c9e9e251186f90d8720848",
+   "approvedSha256": "4591cd34b0fb648891b7cb476972a982010e6e4d0e82d19ce0ca0a4f57c064e7",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_sleeper_stack_lod1.glb",
+   "pinnedSha256": "4d17dc0241ed44a32a5821bf7f5eefc0c0ec4a1a441f68f4b2bf656eb689aac0",
+   "approvedSha256": "b0d0b4b31cc592154cfca59f826cf1079aeb2080574634f0510181dd563736ce",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_supply_crate_planked_lod0.glb",
+   "pinnedSha256": "9a68a2e1c8b5c8ad9ce3682a3a675854e4bc2983a01c6ec86213356558b7a708",
+   "approvedSha256": "189a58d3b588cc3f3e84da261d5ae603bb84bf5b3988efc921566d7d1e09a587",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_supply_crate_planked_lod1.glb",
+   "pinnedSha256": "b8e4521910cc0b15094eb08e854104475af1e02f8dc7c79363d1818afc4cbb22",
+   "approvedSha256": "5008e4f98f91a5a6a4d22de4da114566911aa9317ff589a119313f1b107fc5b0",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_telegraph_pole_lod0.glb",
+   "pinnedSha256": "7683fb053b830c2ff49b1706e97756ab81d6af91f969508dab1f5b96aa4aafcc",
+   "approvedSha256": "592f84cdb43e7030c671bd4da61053a20fc4363c0353a4d3865e9b9391327675",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_telegraph_pole_lod1.glb",
+   "pinnedSha256": "26d7b74965d056381b3d790aece0b00421b60f0412a22349bc3f3a5bbdbf155d",
+   "approvedSha256": "ace905c323340d19e8f4314f457c40d5b9455cc6f411f4317f070f08c165bae2",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_telegraph_wire_span_lod0.glb",
+   "pinnedSha256": "b0a406234f21d662d78cfee38c11112b25549d32c773dc8636c1de45a320b392",
+   "approvedSha256": "86a482d41490a13acac8454404bea8f3f7a26adcbcc61009a5813e0d21f9d0c3",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_telegraph_wire_span_lod1.glb",
+   "pinnedSha256": "1d4fb1dbcd0ed3640ceef4957f7fcc395067f7aa3ebda2c0558780abe7e4f202",
+   "approvedSha256": "40b3a23aa6e24beb032c4020b5da2f91f8fc8b349ca52dd3d4890c566a5b35c1",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_water_crane_lod0.glb",
+   "pinnedSha256": "7c91ae9a9f1e283e55f3ecaa0578587fe50315e458606e28f5acb956e0ca3782",
+   "approvedSha256": "c83e9c374725beac6c88e0cd15b6ba24e41c587779fcbef6aa185a4e8ae81f00",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/m01_prop_water_crane_lod1.glb",
+   "pinnedSha256": "10f1bb6535cbdbc8b7cbbbc36ff2dbc0553c4bc7e6ae14b4b9089e69c2029071",
+   "approvedSha256": "074a8d1558bb41c62ada6a3a18daa17a829fe61492ee820ebe2399560332854b",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "assets/models/provisional/m01/props/manifest.json",
+   "pinnedSha256": "52ebed5e9aaa088b50f2ded6d7b0775fc3f9fa0d0643b6ae93046e580865c75f",
+   "approvedSha256": "5bd5ad6f5f0f88cd506e9a8c56871c91d64d441f5de38ab5a50920f5d96c640b",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: asset bytes introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "missions/m01-tczew/ENGINE_CONTRACT.md",
+   "pinnedSha256": "d2651e7d0f8f067de55fb030a5f7ff7a1c7d9618822ec770bc3c57f0ea8de242",
+   "approvedSha256": "30fcf97a7c0f9ccf2383f2ab7be53b95faee70a2328c60f9a276552813ef867f",
+   "approvingCommits": [
+    "e0d494e51e367383952719d577207c233c290fbb"
+   ],
+   "reason": "Approved change already on main: mission data introduced by e0d494e \"feat(m01): complete scoped partial runtime systems\"."
+  },
+  {
+   "mode": "historical",
+   "path": "missions/m01-tczew/mission.json",
+   "pinnedSha256": "1af2b926493b5df8c75fdd34702f9f869c642bb005b423fcbb6c9b49f493a69e",
+   "approvedSha256": "8df839877b50c0ae0141d36a90b17990b5e3888384f67873c3dd1d7ceff8c1b2",
+   "approvingCommits": [
+    "e0d494e51e367383952719d577207c233c290fbb"
+   ],
+   "reason": "Approved change already on main: mission data introduced by e0d494e \"feat(m01): complete scoped partial runtime systems\"."
+  },
+  {
+   "mode": "historical",
+   "path": "package.json",
+   "pinnedSha256": "4c9c6dd123b6e5a66a63071b8e0e873397613f9026fcd8c963b4a11e3dacd5c9",
+   "approvedSha256": "d951c07264359d18bbe0749efd12b65e03264aa102ac58c3ac3f7e1ac4a2759a",
+   "approvingCommits": [
+    "64275b34dcf786ad29819f7a792fb96e5c732b4b"
+   ],
+   "reason": "Approved change already on main: build manifest or config introduced by 64275b3 \"build(m01): build:browser serves the authoring viewers that three specs open next to the game\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/assets/asset-manager.js",
+   "pinnedSha256": "f0366f743ac499f66c3f312bd6c78da70e7ffa869f1b5286107bf40397e4db39",
+   "approvedSha256": "116792c96421d9d499556a721e026c6c6a437c9dd88301ce62c9d097934db99d",
+   "approvingCommits": [
+    "afcd970f0892e339c3949afadbba99cbc45aacb6"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by afcd970 \"feat(m01): integrate Argon T50 safely with V7 loader contracts, real progress and lazy game boot\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/core/audio.js",
+   "pinnedSha256": "b4c5470bf85c0dd5566bcd8bdfe3859fd07c619ff4803ae1c14bba21209bbf17",
+   "approvedSha256": "471975560b9cee149c7cca1b8fcd60c551e8fe3a7d99a37886a4c6f728dd4bfa",
+   "approvingCommits": [
+    "e0d494e51e367383952719d577207c233c290fbb"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by e0d494e \"feat(m01): complete scoped partial runtime systems\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/core/input.js",
+   "pinnedSha256": "71b9f99f864ae52f78a8b53f45c6beff582771760c7062df149979e4c4b83f15",
+   "approvedSha256": "6a7170f72024945f8a41d16b3960a10383d048436fe72d56d79e423a33530956",
+   "approvingCommits": [
+    "1c59d6ac2451df2f02611be82eb7244728cec675"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by 1c59d6a \"feat(m01): controlos táteis para iPhone (joystick, olhar, botões) sem pointer lock\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/game/game.js",
+   "pinnedSha256": "04a1350034cb081b14b2335685d7b3575d655e7673d9f23d203fb5ff8db22389",
+   "approvedSha256": "1133ac68e37cfeda25bbb84d3b2391fca890b330d445db5d6f40f4393ec3bb8c",
+   "approvingCommits": [
+    "02396fd4fc1fd03086bda0817b972dd799839fce"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by 02396fd \"Merge the partials completion batch into the full M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/game/m01-animation-presentation.js",
+   "pinnedSha256": "f7f5d2290a670d2fdd20a68cf28ed938b103741aa0ee122e16a10d2efe5d5268",
+   "approvedSha256": "94dea425958ddd3c365b0a37df406abd34bffabf835105bc5fe3854773978e7b",
+   "approvingCommits": [
+    "e0d494e51e367383952719d577207c233c290fbb"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by e0d494e \"feat(m01): complete scoped partial runtime systems\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/game/m01-fire.js",
+   "pinnedSha256": "f5962ee028e5a6d101793ba3fe6896ccba9350c2e22de7bab60666ef9f53aa1e",
+   "approvedSha256": "e73713e21799fa70ec2e97c9049eb95c5bdcc9efdde3da216a4656ff008bd46c",
+   "approvingCommits": [
+    "61ecd77b099d5921bd025275eafd9c3157536bb7"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by 61ecd77 \"feat(m01): east front visible (T23): platoon holds the deck, six reserves fall by attrition rounds, real display profiles, Panzerzug flash\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/game/m01-simulation.js",
+   "pinnedSha256": "ffc198c1089da201d580b703b44d1a80f1536c3923cca7d7ca6fab9602362f14",
+   "approvedSha256": "a00a1418f5574ce165f8d13f6b056085bd171e7c54f5099b7457218c2d5c5837",
+   "approvingCommits": [
+    "02396fd4fc1fd03086bda0817b972dd799839fce"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by 02396fd \"Merge the partials completion batch into the full M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/main.js",
+   "pinnedSha256": "3f15dbb9e8dea499e11c8372df5237bbe34236732af2f1feba9eadc35788c24c",
+   "approvedSha256": "fa1de3127c709a7ef7a7ac7f84d273b7098252777f712276e0020703c87b700f",
+   "approvingCommits": [
+    "e257c6e7ac88c6b78c5e52618fc082a9625f56c4"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by e257c6e \"Merge M01 touch controls (PR #74, 1c59d6a) into the integration candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/render/m01-actor-pose.js",
+   "pinnedSha256": "94f412d84e0b78159c4c766044880b1642bb310d3a21ab5cc26b2cdbcb4fab8d",
+   "approvedSha256": "97961f93a2afda3a51dc05b3198838bc8c5faa27735e87bd0ee8a1f1f9da2b95",
+   "approvingCommits": [
+    "02396fd4fc1fd03086bda0817b972dd799839fce"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by 02396fd \"Merge the partials completion batch into the full M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/render/m01-aircraft.js",
+   "pinnedSha256": "7cfb8350f9d7445bd9643b298ef107fc9b40e6b6a7b8554a0900d48abac17f4b",
+   "approvedSha256": "b8c6ec5ecb2abf5e7348b87a3bd69405de4e956e5b52e3fdbf8ef69878694e3d",
+   "approvingCommits": [
+    "8387b5627b3b5482370c0915f018776d563e31ec"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by 8387b56 \"feat(m01): integrate west-fire continuity and persistent 0530 raid\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/render/m01-animation-resolver.js",
+   "pinnedSha256": "3093a55e19531dbf8caa49013a8649e4a4b1056fa8988deaf25cca77d62c843c",
+   "approvedSha256": "ae4abc83de231db6267905097c68009f146f2864777453848927dd8045258791",
+   "approvingCommits": [
+    "9149de7e20358945f1c3b5f5922a6aadb182e134"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by 9149de7 \"Merge M01 continuity/raid stack (PR #63, 529e7de) into the M01 integration candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/render/m01-atmosphere.js",
+   "pinnedSha256": "bc4a6c8116181c399952212e5c5c59e70b067face5d4e75c3d61dfe7712a09ce",
+   "approvedSha256": "722916d270c5ab6dd75f47e2fae2c9a0c2accd4a16598786027657b8e44a837e",
+   "approvingCommits": [
+    "467953d17a4e2c1228f311e5032f5a370abe2eac"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by 467953d \"Merge T24 (Gemini/Argon port) into the full candidate, reconciled with the partials T24\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/render/m01-battlefield-fx-profile.js",
+   "pinnedSha256": "33c6d5581dec7b872b277110e9d10b8a59fcbdd5f5a834118c410686d176e6c6",
+   "approvedSha256": "540c0da089a8b0a098cb4a82c757c9f0f86b931befa8d86d2bfe1dba7ae916e0",
+   "approvingCommits": [
+    "9149de7e20358945f1c3b5f5922a6aadb182e134"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by 9149de7 \"Merge M01 continuity/raid stack (PR #63, 529e7de) into the M01 integration candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/render/m01-characters.js",
+   "pinnedSha256": "192292c164751182defbd959fb103648f59606bf0336ffd43df83f144402f673",
+   "approvedSha256": "f815ea3f94e23bb4ddfa977a0e834197ebbd14320cd481981d4a3f59891e8395",
+   "approvingCommits": [
+    "02396fd4fc1fd03086bda0817b972dd799839fce"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by 02396fd \"Merge the partials completion batch into the full M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/render/m01-combat-feedback.js",
+   "pinnedSha256": "6363f48aaeaf858a2565d074926f68102695de2b21b9139527f75454a0e34b4f",
+   "approvedSha256": "881938da0453a1f95026eb8fa70c331de448dfe410648aa395c8852fff7b8f9d",
+   "approvingCommits": [
+    "9149de7e20358945f1c3b5f5922a6aadb182e134"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by 9149de7 \"Merge M01 continuity/raid stack (PR #63, 529e7de) into the M01 integration candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/render/m01-locomotive.js",
+   "pinnedSha256": "620d9f7979a8e235feb46b92af197887d33176592817942229ef16537a3110fa",
+   "approvedSha256": "03239e6b6e2810ed56d0387657c0c6090cc89b4e18360f9e58227cb96dbe696a",
+   "approvingCommits": [
+    "ae0f453151ca69192d11d2ad2337df1531629332"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by ae0f453 \"feat(m01): T24 train 963 and Panzerzug arrival, lamps, railway smoke (port of Gemini/Argon delivery)\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/render/m01-panzerzug.js",
+   "pinnedSha256": "bcfaecfadc9470ab803a983512784d932dc5746639f07cb54bedf6743e769db4",
+   "approvedSha256": "29042c47ffa25ef25addf79a1ce25b187f4cb5e4dd10d04156fab8cb609d5efb",
+   "approvingCommits": [
+    "ae0f453151ca69192d11d2ad2337df1531629332"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by ae0f453 \"feat(m01): T24 train 963 and Panzerzug arrival, lamps, railway smoke (port of Gemini/Argon delivery)\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/render/m01-terrain-envelope.js",
+   "pinnedSha256": "8f5678bbc5ed5382aa2c5219bdaa3ad37ec6f35983090bd0726038e726731200",
+   "approvedSha256": "99d83e06105cc45ef8d7e0f018a722353899bb5358e808148077f02af45d5053",
+   "approvingCommits": [
+    "9928bdcd7e4a81ed1239cb1db29a51d4993ee559"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by 9928bdc \"Merge claude/m01-integration (8a0c362: T09/T28, T13/T32, T31/T33, T27/T30, T10/T29) into the M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/render/m01-train-wagons.js",
+   "pinnedSha256": "5e01a239e2c0c89684fd6b67d877a5ff4acaeb5422361f8c591ff022a2cfa695",
+   "approvedSha256": "3df4241a29adc4424fa3415ed7176e6411352713e691f8f2a4a662a4befa4401",
+   "approvingCommits": [
+    "467953d17a4e2c1228f311e5032f5a370abe2eac"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by 467953d \"Merge T24 (Gemini/Argon port) into the full candidate, reconciled with the partials T24\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/render/m01-vegetation-runtime.js",
+   "pinnedSha256": "0018743429d8cb25cf0039134d58f77c8d3d288706d993619198c810bf6d87ac",
+   "approvedSha256": "81713bc32fd2f57d0244cb55fab1ee708fb7901c68b5fcb2a826146fe9c69880",
+   "approvingCommits": [
+    "fd2539fa7d7716a025438b227c3fb4cc91bfd41d"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by fd2539f \"fix(m01): environmentInstances counts the vegetation runtime again; atmosphere test waits for resident resources\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/render/m01-viewmodel.js",
+   "pinnedSha256": "2485a48b749dec72b090664f5914c47d94ba7c35d0770186de634e59d1871f50",
+   "approvedSha256": "3d83abf5d303e6bcbb0fdc4ea346741933a03f76853af830d12b0576b445ce0b",
+   "approvingCommits": [
+    "02396fd4fc1fd03086bda0817b972dd799839fce"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by 02396fd \"Merge the partials completion batch into the full M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/render/m01-yard-wagons.js",
+   "pinnedSha256": "f09a2cb963c21f8af64c5ebf1ec9342c9e986521eeb3f2ac6b8642d416810c0b",
+   "approvedSha256": "807744bf925e2d03b93f90fd8689697970988d626835946540faaf5b92f29917",
+   "approvingCommits": [
+    "e0d494e51e367383952719d577207c233c290fbb"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by e0d494e \"feat(m01): complete scoped partial runtime systems\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/styles.css",
+   "pinnedSha256": "c9e1f68ca2ddeb732653dad5be4c9ba941fdf700b68ebc40aa9a5da327e8aeb4",
+   "approvedSha256": "4e541247d936a98a84887c3aea7a21bbf5ec8ceb42ddf81c18995b354640f809",
+   "approvingCommits": [
+    "02396fd4fc1fd03086bda0817b972dd799839fce"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by 02396fd \"Merge the partials completion batch into the full M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/ui/m01-hud.js",
+   "pinnedSha256": "e47930526be39a54a1ebf69534119ea28debbc66f51cfacf4bbdede5ad602aa3",
+   "approvedSha256": "f11d9ad5f694ecc86dd0d64506ac3da41401c7a133122b51d0eeb76fc485682c",
+   "approvingCommits": [
+    "e0d494e51e367383952719d577207c233c290fbb"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by e0d494e \"feat(m01): complete scoped partial runtime systems\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/world/m01-mg34-prone-geometry.json",
+   "pinnedSha256": "05bbe5806ed017ddc215352634519524d70d749c08d4c68f3f0d459094f02fbb",
+   "approvedSha256": "5a2747b231fb15e3ef83080ea089f3c509460104fe99d393b86099896092446b",
+   "approvingCommits": [
+    "e0d494e51e367383952719d577207c233c290fbb"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by e0d494e \"feat(m01): complete scoped partial runtime systems\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/world/spatial.js",
+   "pinnedSha256": "49409541cf8b9c8542aba5cdaf79a46227e973932fa795743969a0f893551dcb",
+   "approvedSha256": "13fbb4d3064190ea0bbd7c1d1f7b425cdaf9c9c2ffaec34bd2814797fde4e05d",
+   "approvingCommits": [
+    "e0d494e51e367383952719d577207c233c290fbb"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by e0d494e \"feat(m01): complete scoped partial runtime systems\"."
+  },
+  {
+   "mode": "historical",
+   "path": "src/world/tczew-world.js",
+   "pinnedSha256": "716c9b3fb3bca8c8d07a690caf1ef67288a416a043a94b47e98d8e58c4f95a22",
+   "approvedSha256": "595879345da147294b6ed22645c6df0fb74a6ea4e9513a5b76e373cd1310738d",
+   "approvingCommits": [
+    "1f8bd2d0af9552abd713a665082d33ce53535214"
+   ],
+   "reason": "Approved change already on main: runtime source introduced by 1f8bd2d \"feat(m01): solid yard wagon colliders from shared footprint table (PT05)\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-anim-resolver.spec.js",
+   "pinnedSha256": "ce9f7b36b7b5653a94e90f1a50d3c6f4d9c73c39d14c5a0d413322386ce7a47f",
+   "approvedSha256": "517b8bce067097c61d9d40d07b31d6d494553b128cb2498c38fe4e7eb379235e",
+   "approvingCommits": [
+    "04d6dcfd450926ed3a805d150483491cb0780d60"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 04d6dcf \"test(browser): give the M01 asset-loading gate a CI budget in every spec\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-animation-contract.spec.js",
+   "pinnedSha256": "e9e8b77623dccb86b6209197c824d0993a0ae03ff8345e03b42b644f871640f9",
+   "approvedSha256": "93636cda6ab26f62f919a2ac3a7481795b6f18c9c203d6a28f3000efb9e3c19b",
+   "approvingCommits": [
+    "02396fd4fc1fd03086bda0817b972dd799839fce"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 02396fd \"Merge the partials completion batch into the full M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-audio-offline-render.spec.js",
+   "pinnedSha256": "726ec6a9a055cadeab3bc4ea2577868567fbf175e1f594ef53156d72877720d5",
+   "approvedSha256": "1a37364bb887be5a4f43318ec4ffdda646aee83bb44a830f13c2e9416a588c31",
+   "approvingCommits": [
+    "9596059680e908c5883a546d23262ef846a05de7"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 9596059 \"test(audio): serve mission JSON modules in the offline-render spec harness\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-audio-production.spec.js",
+   "pinnedSha256": "a8e711a0740c99f5423a4dfc42e3769d4a066cf2be96ddc26dc943e142c3aaf3",
+   "approvedSha256": "62ce3e2e232e1fc8fbd0d483d9ae7e1707d25768a850ebc993958be7974a444e",
+   "approvingCommits": [
+    "ed26449d93bbb283b5266bbe75387df24ca27198"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by ed26449 \"Align audio browser specs with 20-voice low-quality cap and run them in CI\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-battlefield-audio-runtime.spec.js",
+   "pinnedSha256": "4c83806ebbe9b1e134e3551e6854ce26a3c73061e55371eda06313e5a2b93f95",
+   "approvedSha256": "aeb3234ebba2e967a46b546bb446f0bc137849fef0d2da1da1640c90cb303022",
+   "approvingCommits": [
+    "521bdf36ee3616ffd4f951c3d40f9f74e183bda7"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 521bdf3 \"test(m01): stuka bomb waits for the bridge-finish bind; CI budgets for four frame-bound waits\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-battlefield-fx.spec.js",
+   "pinnedSha256": "73a982c9348642cac88c37e7b731222686ee490960f13a7dd31a9b0573c04366",
+   "approvedSha256": "8201169d0ba4d4a05e8fc0a2617cb1649fe064714ccd5446c9d854917911bba1",
+   "approvingCommits": [
+    "521bdf36ee3616ffd4f951c3d40f9f74e183bda7"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 521bdf3 \"test(m01): stuka bomb waits for the bridge-finish bind; CI budgets for four frame-bound waits\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-combat-feedback.spec.js",
+   "pinnedSha256": "dc421795077381830b2d3d48d4f156fb4eb797bc3c50542e9dfc6640985f3124",
+   "approvedSha256": "9df89ed01aba31c9286f196dfcab2c6a57bc6a94774ba37e57d85e0fbd4bd3f2",
+   "approvingCommits": [
+    "521bdf36ee3616ffd4f951c3d40f9f74e183bda7"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 521bdf3 \"test(m01): stuka bomb waits for the bridge-finish bind; CI budgets for four frame-bound waits\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-consolidation-lifecycle.spec.js",
+   "pinnedSha256": "7bb26d31984c69aa24de1944ddd0cb7a10bc44ca11bebfa43690b61475ab24af",
+   "approvedSha256": "e2a7f53d8326ce7cd019ab7da37afd7510eda55f2efd4860ef06ec4cb33c9a2f",
+   "approvingCommits": [
+    "c5ed487f712c6da955416e98f012d3755ddc7ba1"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by c5ed487 \"test(m01): four browser specs wait for what they assert after T50 lazy boot, T06a reverbs, T12 prop counter\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-distant-front-impostors.spec.js",
+   "pinnedSha256": "6d3787b4241f1ba55f9a936f5b21c00624811e6749ed96557301cb07368cea78",
+   "approvedSha256": "84f619c7e4b70f2bf349c502cb399565a99d366d1baeadfe5d89fc9250c8c0e3",
+   "approvingCommits": [
+    "1990a58bc5c91b4156b6e0cb87c483cc8793470c"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 1990a58 \"test(m01): wait for a rendered frame at the loaded clock before reading impostor diagnostics\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-environment-quality.spec.js",
+   "pinnedSha256": "6729c6e6b76bbef699c7eefa0ece175ce892961b730d664dbf9fbf043cd4d29d",
+   "approvedSha256": "f5802bc2611df562ca0004c181a5c71777d95063f19d8b3ab600c2f7ef00f28a",
+   "approvingCommits": [
+    "c5ed487f712c6da955416e98f012d3755ddc7ba1"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by c5ed487 \"test(m01): four browser specs wait for what they assert after T50 lazy boot, T06a reverbs, T12 prop counter\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-hud-presentation.spec.js",
+   "pinnedSha256": "c703f955e041b60cb9c9e9d139c2a0ac6c8c54c1f877e44219ef7ff416f762de",
+   "approvedSha256": "9950b266f27949890efa9b47b25dfb26ffdee21c115e2d6d60b50237413a7498",
+   "approvingCommits": [
+    "04d6dcfd450926ed3a805d150483491cb0780d60"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 04d6dcf \"test(browser): give the M01 asset-loading gate a CI budget in every spec\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-mg34-prone.spec.js",
+   "pinnedSha256": "975d3f8402e8d546a7ed714569d5cfc3f9805b8aabd07b552395f1775f8dae37",
+   "approvedSha256": "ee3aade1d3a9f361598a4313f087bcd720948548b3216ef998386448b872e83b",
+   "approvingCommits": [
+    "04d6dcfd450926ed3a805d150483491cb0780d60"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 04d6dcf \"test(browser): give the M01 asset-loading gate a CI budget in every spec\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-station-architecture.spec.js",
+   "pinnedSha256": "ffbb46c8752ac7f792b1eee50c053f1ef0d46bfef844349057386b818a8b4e1c",
+   "approvedSha256": "bcce2884062b05828c541880dbba65369778fee89488cf5fbe907ca293830f3c",
+   "approvingCommits": [
+    "c5ed487f712c6da955416e98f012d3755ddc7ba1"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by c5ed487 \"test(m01): four browser specs wait for what they assert after T50 lazy boot, T06a reverbs, T12 prop counter\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-stuka-dive.spec.js",
+   "pinnedSha256": "21f4dfc77e8a7819dac3b9b0ba54053051f67d18315646e307b8739aacc3ace1",
+   "approvedSha256": "0586602601bc2936c40c9cb87038f9a6a31353e5d34eeb621c027dc4913d50be",
+   "approvingCommits": [
+    "521bdf36ee3616ffd4f951c3d40f9f74e183bda7"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 521bdf3 \"test(m01): stuka bomb waits for the bridge-finish bind; CI budgets for four frame-bound waits\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-train-consist-polish.spec.js",
+   "pinnedSha256": "bd6ca2877005c70b683a8811950365e30ba408629ee67f7bdd7125eebe73afc0",
+   "approvedSha256": "79f8fe2a60bdc19e5908dd74066e3af58fe48c5fa186654ba3d57c95c3d1cbad",
+   "approvingCommits": [
+    "e0d494e51e367383952719d577207c233c290fbb"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by e0d494e \"feat(m01): complete scoped partial runtime systems\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-vegetation-kit.spec.js",
+   "pinnedSha256": "f3b1c49877745d5634bf76bbc2f2e2293bd091ed34b67b08f5ec8fa3c120996e",
+   "approvedSha256": "b8e64c5c4860423802db6ba463edef7127371482190c724cb18618245566bb6d",
+   "approvingCommits": [
+    "64275b34dcf786ad29819f7a792fb96e5c732b4b"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 64275b3 \"build(m01): build:browser serves the authoring viewers that three specs open next to the game\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-vegetation-lod.spec.js",
+   "pinnedSha256": "c50a32d61f1e7f557c0b297ef391818e43fc24837dbdbab83bcdf855346eb8ba",
+   "approvedSha256": "247cd64bff274e5727c663ee387f91311fd0cad8522be9c2869cf8413b9b3bb7",
+   "approvingCommits": [
+    "9d5f49d2f250a0c47383a43530b7bb51c053b1ad"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 9d5f49d \"test(m01): vegetation LOD lookAt re-aims until the angle tolerance holds\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-wagon-runtime-integration.spec.js",
+   "pinnedSha256": "6d560f567b59a67d2fc7421925e065b6c33df81c23baad8545e8395b4fb22b1c",
+   "approvedSha256": "f97ca3d13fe8d81b02af0ad4590c9ece81dbf00bdc84b1a9fc6abf18cd2109e9",
+   "approvingCommits": [
+    "e085e96e21a270d648836d2ebf306e84df7eb598"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by e085e96 \"test(m01): split the wagon LOD/burn/checkpoint browser test so each concern has its own budget\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01-wz29-viewmodel.spec.js",
+   "pinnedSha256": "151fae4daee0532027e17b501291e16c3de80fb840fe49a0b54f8b06d45de7a3",
+   "approvedSha256": "81e4be3a575bc69b07e79de146d3e40c3e376128d56f665763c36c034a06e001",
+   "approvingCommits": [
+    "04d6dcfd450926ed3a805d150483491cb0780d60"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 04d6dcf \"test(browser): give the M01 asset-loading gate a CI budget in every spec\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/browser/m01.spec.js",
+   "pinnedSha256": "c3ec7e24f34333ca43ffe84043d31a9d2dbc9227e01e45fa7b1c35130359acfa",
+   "approvedSha256": "07b61a6d27c9c69c67d7b1d2bea0c576b44b454c8266c8a4a00dd97cf9ea8794",
+   "approvingCommits": [
+    "fd2539fa7d7716a025438b227c3fb4cc91bfd41d"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by fd2539f \"fix(m01): environmentInstances counts the vegetation runtime again; atmosphere test waits for resident resources\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/fixtures/m01-anim-gameplay-baseline.json",
+   "pinnedSha256": "c775d6d46d8401c8284a93fca290fbdae1cb34966a9e8d32743829fb6e40e3c8",
+   "approvedSha256": "1081cb7cf5d000d4a7f6c602355142a1bdc064b7ef21e29b4d96b862223c3c46",
+   "approvingCommits": [
+    "bca75aee86f68e091f86bd2c0fe48160ca4f572f"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by bca75ae \"Merge H9-D1 difficulty data into the full candidate; move the simulation source lock\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/helpers/fake-audio-context.js",
+   "pinnedSha256": "0f22f1fa4fed216fd3fa5cfd166a7c9ebc3e1ee178f3e73bd43b356932669fe6",
+   "approvedSha256": "cf1c29e3a67aff080335f56c68b9f25303d2f2a2fc3e72e8abb25872a7fd2279",
+   "approvingCommits": [
+    "4653207cf02ca65ffc3abd7a8c1152094dbdaeea"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 4653207 \"fix(test): stop failing audio assertions from serialising the whole fake audio graph (runaway RAM)\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/helpers/m01-anim-baseline.mjs",
+   "pinnedSha256": "ba4a492af3505e65699efd9701d356fa16cadd1e4a97f0a6535c2a2efcc928e9",
+   "approvedSha256": "5c7a6775a3eb08ffe1220ed1b383685efa1848970281b066719dcf7c2a0091fa",
+   "approvingCommits": [
+    "f3ef5fa88f51aed2b653e6b569d5e3fc33f99ebf"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by f3ef5fa \"ci(m01): east-front workflow; golden base moves to the T23 simulation commit; x86 golden regenerated in CI while tests/fixtures/.golden-stale exists\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-animation-contract.test.js",
+   "pinnedSha256": "4515bba905b8b3bd2ea201a2776f7bce00d54d3cdcab639b4d10e45ac8c9f6fc",
+   "approvedSha256": "142dd6cc9aa1e48c9503e4fe7b60072d162d852f4168883ecdb9bc096be9f0ba",
+   "approvingCommits": [
+    "02396fd4fc1fd03086bda0817b972dd799839fce"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 02396fd \"Merge the partials completion batch into the full M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-animation-player.test.js",
+   "pinnedSha256": "d7f3f669b03038db16ca74c8b29ae16256e86513d2e7ae2d75c52f2910f566c8",
+   "approvedSha256": "5400d657769be3e32730fbe943541502c6cf5e45a5c797e1fb887d716aa6e103",
+   "approvingCommits": [
+    "9149de7e20358945f1c3b5f5922a6aadb182e134"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 9149de7 \"Merge M01 continuity/raid stack (PR #63, 529e7de) into the M01 integration candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-animation-resolver.test.js",
+   "pinnedSha256": "c8169ff0137b535651a185f82ee9485a6fe0c3ca990044211a5722a9aa1558da",
+   "approvedSha256": "fd2b06087d0f94b5be5db942ea258fdd2682f15452a0e180018bda200f772846",
+   "approvingCommits": [
+    "9149de7e20358945f1c3b5f5922a6aadb182e134"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 9149de7 \"Merge M01 continuity/raid stack (PR #63, 529e7de) into the M01 integration candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-atmosphere-runtime.test.js",
+   "pinnedSha256": "4536c4633b3cc42dd72c27dff5cbb9ea16eb4d1b8688463042253bd0d108fd06",
+   "approvedSha256": "2013c85fd796f9ebd8dc7bae8438675c6f78dc2c1b37b8b490d6d9464c83189a",
+   "approvingCommits": [
+    "8387b5627b3b5482370c0915f018776d563e31ec"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 8387b56 \"feat(m01): integrate west-fire continuity and persistent 0530 raid\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-ckm-placement-migration.test.js",
+   "pinnedSha256": "5f903fff63b91242de4f9dc2102182d91a723e962c75ce2a7ac1fd8c0515fe6f",
+   "approvedSha256": "971d95f1654d5534c0dd2b2bc77130fbf101cdcbe60508aa4d73385830e0ee22",
+   "approvingCommits": [
+    "02396fd4fc1fd03086bda0817b972dd799839fce"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 02396fd \"Merge the partials completion batch into the full M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-ckm-runtime.test.js",
+   "pinnedSha256": "f86a4e8093e9e49f75e44011bcfdfbe46cd8287e097d34eb811af256a4b76d3c",
+   "approvedSha256": "ece767323884bc2806633dc6cc3d57ae59bb24887eaa2c0e51e5d415fa8f3f51",
+   "approvingCommits": [
+    "e0d494e51e367383952719d577207c233c290fbb"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by e0d494e \"feat(m01): complete scoped partial runtime systems\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-consolidation-lifecycle.test.js",
+   "pinnedSha256": "a53d4da98d46d1049067290e2a7da8a22f3a7bfcbe63974ff77e586450379e7d",
+   "approvedSha256": "f7cc6e96b71aa3c538b30c1c73df5bb37c972ea3ef2ddc0a893428ffc39dab5b",
+   "approvingCommits": [
+    "8387b5627b3b5482370c0915f018776d563e31ec"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 8387b56 \"feat(m01): integrate west-fire continuity and persistent 0530 raid\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-continuous-fixes.test.js",
+   "pinnedSha256": "5adcb599646116e2597937282a1d16fbf24cdf8affa7d5841d9a193958ab1e9b",
+   "approvedSha256": "45fac7dc567c578a8c58b6524a47fc4c63af9d0224b2e907718f8b92b43d1d86",
+   "approvingCommits": [
+    "02396fd4fc1fd03086bda0817b972dd799839fce"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 02396fd \"Merge the partials completion batch into the full M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-cover-combat.test.js",
+   "pinnedSha256": "765a4b1ad924b416b36039ef4b01f16c415e2cbf1ab4d3312af677b660b2f248",
+   "approvedSha256": "ac25090f25d44ded1835cf58ab958d4609c6aabb3990f8eb52dc0249911e29a7",
+   "approvingCommits": [
+    "f86ceb7d8e26906670a9dd28a31bab7e74efc6ba"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by f86ceb7 \"test(m01): east front tests (hold, attrition, saves, renderer, 12-seed lockstep against the T22 logic) and the pins the change moves\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-hud-presentation.test.js",
+   "pinnedSha256": "e3a7e7c612e01a632091142b45c86411bda7e41b05ad7d7fc657deb8e6c7e0c2",
+   "approvedSha256": "c372517e4b734a2c084eefed648b1deb16daf54ec49a9796b72b4bcbfae2909a",
+   "approvingCommits": [
+    "e0d494e51e367383952719d577207c233c290fbb"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by e0d494e \"feat(m01): complete scoped partial runtime systems\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-locomotive.test.js",
+   "pinnedSha256": "884d92bce48cd13232640173eac0b18b0c37c103874ffc4599a04200ec219f31",
+   "approvedSha256": "933e98a445973342447b18e0b82c59a380c78b972f13575b39041ee92a4b2d60",
+   "approvingCommits": [
+    "fb9968b057b065c4484ce09eff3ab22e95136da5"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by fb9968b \"test(m01): share the byte-guard allowlist across the three byte-guard tests\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-material-authority.test.js",
+   "pinnedSha256": "d90a1b24a3a4300924c8a5a3fa148eb07387d3e16a316aa40111ad21290ef65f",
+   "approvedSha256": "f31ab0950d794d7ee454e8bd1d82c391cf452b6005df9bd26c085022b2d686bc",
+   "approvingCommits": [
+    "9928bdcd7e4a81ed1239cb1db29a51d4993ee559"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 9928bdc \"Merge claude/m01-integration (8a0c362: T09/T28, T13/T32, T31/T33, T27/T30, T10/T29) into the M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-mg34-prone-presentation.test.js",
+   "pinnedSha256": "7e325a6bf52cd52aba7b4db984e2b8a5bc25f4d5fc1f8abd27b4ed1b9dccc1b0",
+   "approvedSha256": "caed34878660a08635279b9d1d5243d7f5703e6a3c39b30bafa099a14670758a",
+   "approvingCommits": [
+    "02396fd4fc1fd03086bda0817b972dd799839fce"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 02396fd \"Merge the partials completion batch into the full M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-mg34-prone-runtime.test.js",
+   "pinnedSha256": "74595c468a20641e34c1e60cc96d23a834044bb3395c0fdcce4ece4ca66e6e2e",
+   "approvedSha256": "9ecce8dc6a2a7cb6811f600e90ba0a5d307fd57c3b3fcc4875c5fa06a49590d3",
+   "approvingCommits": [
+    "e0d494e51e367383952719d577207c233c290fbb"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by e0d494e \"feat(m01): complete scoped partial runtime systems\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-panzerzug.test.js",
+   "pinnedSha256": "c177526760b242a0e5a135300436bb54e2f1aea714925ae166304534d5451c1b",
+   "approvedSha256": "139dd9be0a2b829570e7ec3cb860e29ca179b3d209a6d62151978da40a696469",
+   "approvingCommits": [
+    "fb9968b057b065c4484ce09eff3ab22e95136da5"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by fb9968b \"test(m01): share the byte-guard allowlist across the three byte-guard tests\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-props-kit.test.js",
+   "pinnedSha256": "3d47b66deb65ebe94c8d2f8327aa24be4760ce91f1bbf04db0a15029aecc13b6",
+   "approvedSha256": "bc9fb5b3321ee571a68eaf15451c2fddf55ed9a91c108e0e857a7a4151e374c5",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-schema2-determinism.test.js",
+   "pinnedSha256": "2c5973ad28722dd9f27ebf56cf5358b4ec510b8042d7bc8f2499114a7cf5de3e",
+   "approvedSha256": "33d269cbff1e92100bd5f209aade20c8080fdd847361cb403597ff9e7a82de3a",
+   "approvingCommits": [
+    "e0d494e51e367383952719d577207c233c290fbb"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by e0d494e \"feat(m01): complete scoped partial runtime systems\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-simulation-boundary.test.js",
+   "pinnedSha256": "a9e21a173605ff903be4451ed736b5797d67f9cddb91a3d8c1a921698f2242c0",
+   "approvedSha256": "8cdb26624b82badc0ca5fcd0b18e93b2ad84e19cf8fb171f55d5d2729fa7b88b",
+   "approvingCommits": [
+    "6de39c1cd437806520a6470970a4a84af0baae53"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 6de39c1 \"test(m01): boundary test flags browser globals only; credit the T10 vegetation kit\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-soldier-visual-variation.test.js",
+   "pinnedSha256": "fc7deadef99c88ce19f60e027652e1378a3ac5e655365cea6420b390bbb65cfb",
+   "approvedSha256": "64452364f505515b947e94a2f83558532a7c70f775f3055e5a8deffd36d28bea",
+   "approvingCommits": [
+    "02396fd4fc1fd03086bda0817b972dd799839fce"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 02396fd \"Merge the partials completion batch into the full M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-soldiers-glb.test.js",
+   "pinnedSha256": "b198fa166cbc78c627c8fccb569f3320ac83ed2459e90cb98b73d50659681188",
+   "approvedSha256": "63ed54517c5f7c02756f72ccddbcac966ef191c113350cfcf77698b12c2865eb",
+   "approvingCommits": [
+    "438510de3c0c9e00c364549673bff863a0d2d7ca"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 438510d \"test(m01-soldiers): clip library V2 roster, 240 Hz extras, loops, junctions, ground, byte-identity of shipped clips\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-support-runtime.test.js",
+   "pinnedSha256": "26165ae4f762051d3e159e3dcdb780eed77bcfc8a03257f1b7a0d8840220d676",
+   "approvedSha256": "3641f417ec119c7794489256bcc65999dc7142ea2f1ea8362e54d8aca9fedc20",
+   "approvingCommits": [
+    "02396fd4fc1fd03086bda0817b972dd799839fce"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 02396fd \"Merge the partials completion batch into the full M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-tczew-data.test.js",
+   "pinnedSha256": "e12c6457065ea336ff6e078d502bd3ee47256a3353e10e21054e7402022864ca",
+   "approvedSha256": "f4a6fd3aa9e55d6dd2d87e542b976d72d4317b7a205558ba15e7cada5c06a618",
+   "approvingCommits": [
+    "899937fd2852ec99f7bd339c59c31222a88f1751"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 899937f \"feat(m01): presentation-only audio data fields (T05a)\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-train-consist-polish.test.js",
+   "pinnedSha256": "f6bfeaa3b03ad6d12c61117876e17cca2eb552ef3a3174b31bebbd272f3f7100",
+   "approvedSha256": "de6b0f16ad1a148d4f014b98fe31d4614c371a93996dee00520ecda50712f59e",
+   "approvingCommits": [
+    "467953d17a4e2c1228f311e5032f5a370abe2eac"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 467953d \"Merge T24 (Gemini/Argon port) into the full candidate, reconciled with the partials T24\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-vegetation-runtime.test.js",
+   "pinnedSha256": "437891c3e8ba1115ea09125fb611b5accef579d4ead7c7a548f5e35de8bb57f5",
+   "approvedSha256": "563066f446441f4d49a0e081d569ead3268c1266a00f0e841610f695399a70e7",
+   "approvingCommits": [
+    "fd2539fa7d7716a025438b227c3fb4cc91bfd41d"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by fd2539f \"fix(m01): environmentInstances counts the vegetation runtime again; atmosphere test waits for resident resources\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-weapon-presentation.test.js",
+   "pinnedSha256": "560df56c437aab483174698629566426d4d51acc13f1e25ad9dfefd9676797fa",
+   "approvedSha256": "e1fbf86438ae6b5ab0920eaf40857b602ff3af2db57dd39bfa1013ed02cb646c",
+   "approvingCommits": [
+    "02396fd4fc1fd03086bda0817b972dd799839fce"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 02396fd \"Merge the partials completion batch into the full M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tests/m01-wz29-viewmodel.test.js",
+   "pinnedSha256": "eec5811ecc9466d4f5288150cd948071ec6442b8458d52e8f2a370f37ff04a94",
+   "approvedSha256": "6d766ded884b34b7ad8f8e5010d58056763260baeb3263cf734ccd82ed328a51",
+   "approvingCommits": [
+    "02396fd4fc1fd03086bda0817b972dd799839fce"
+   ],
+   "reason": "Approved change already on main: test or test fixture introduced by 02396fd \"Merge the partials completion batch into the full M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tools/assets/m01-field-structures/build.mjs",
+   "pinnedSha256": "837f45cefc865c602567e98485982a3a56944a33da84549b5ed41ebf76fb7aa3",
+   "approvedSha256": "cbeba6275db2697bbfb7622716331756eea6a8edb95a22c466eed0936690ebb0",
+   "approvingCommits": [
+    "9928bdcd7e4a81ed1239cb1db29a51d4993ee559"
+   ],
+   "reason": "Approved change already on main: authoring tool introduced by 9928bdc \"Merge claude/m01-integration (8a0c362: T09/T28, T13/T32, T31/T33, T27/T30, T10/T29) into the M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tools/assets/m01-field-structures/README.md",
+   "pinnedSha256": "0a2c3fe395f0a40f4b42ca3fda2068622636277a65b54de56784a39d6c3d7baa",
+   "approvedSha256": "b7ac7ea207c2522fd63949725040981d58dea82445188c0b22c1e193d6ba9770",
+   "approvingCommits": [
+    "9928bdcd7e4a81ed1239cb1db29a51d4993ee559"
+   ],
+   "reason": "Approved change already on main: authoring tool introduced by 9928bdc \"Merge claude/m01-integration (8a0c362: T09/T28, T13/T32, T31/T33, T27/T30, T10/T29) into the M01 candidate\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tools/assets/m01-props/build.mjs",
+   "pinnedSha256": "4f21a5cf3dd55e0e59393467873b8c0152ddb6dc339b1879b789f7e23524625d",
+   "approvedSha256": "0938deea64ca4b55a1654c6231428e6a1bdc31d96de669fa128c80651488be3e",
+   "approvingCommits": [
+    "1ff893d56c97c98df3b4b3ff217f73fefdae7177"
+   ],
+   "reason": "Approved change already on main: authoring tool introduced by 1ff893d \"fix(assets): licença dos props como os outros provisórios (por decidir pelo proprietário); linha em ASSET_CREDITS\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tools/assets/m01-props/README.md",
+   "pinnedSha256": "ef6d187e027a978aa5ca3febaea31c30be74a8cf808d57b22fe91ed9fadb62fa",
+   "approvedSha256": "e9da014125bf9a3e85b95de1655d94d3361188f4a609e435aa5acc80bf13b218",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: authoring tool introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tools/assets/m01-props/src/glb.mjs",
+   "pinnedSha256": "dc20070182a1a47f1bb87695f74ba6b609dfbf167f260b5f6974da76a5ecacd2",
+   "approvedSha256": "c3ff81068b5d861adc36438f2af1c54606cda452dd8e916070e98ab865cc36fd",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: authoring tool introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tools/assets/m01-props/src/mesh.mjs",
+   "pinnedSha256": "57be343d44fcbbddfd48e26cf6a84db606a72d1a26ac771e02b6eb36033d8fba",
+   "approvedSha256": "3d088da900436701d0881eec0edaf2d481d1ed73d79437fa8d39bff58c5b81b0",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: authoring tool introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tools/assets/m01-props/src/props-carts.mjs",
+   "pinnedSha256": "8355f2c5688cc9d595c02e40ccaf14c4da8e1cf32c83b5d6ddfe5e6c593b766b",
+   "approvedSha256": "58bd9735f7c732804d009648c3178f64afa941602df68cdf129161e0b87a5ade",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: authoring tool introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tools/assets/m01-props/src/props-line.mjs",
+   "pinnedSha256": "58665eada80f98e3cb6c99bb2f74849235139227326d5148ed5f5738a717b236",
+   "approvedSha256": "2f7fa52cf2c50de1112a50b9546e629c42fa89a67a6c234e11b4e86012394236",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: authoring tool introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tools/assets/m01-props/src/props-rail.mjs",
+   "pinnedSha256": "cde3a15530d01fe241de20fe06c7780deda49b4aa8583132d34dd4e4c5ee2c83",
+   "approvedSha256": "c76507f965e5ae7b238e1b221b0f27e4e8150c5d4b3df411eaef597ae8519520",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: authoring tool introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tools/assets/m01-props/src/props-supply.mjs",
+   "pinnedSha256": "648251366c3b3df16579d834910bbccef91dd8aa4c48398444ab2f63d1a0f161",
+   "approvedSha256": "f88165d061350f6bcdb0aa67aba2c9af7f42abca884d35161ffb7c8d8a3f345f",
+   "approvingCommits": [
+    "16dd41b1f41162d7c30c32f05cb11219bde6de86"
+   ],
+   "reason": "Approved change already on main: authoring tool introduced by 16dd41b \"fix(assets): make the M01 prop kit generator architecture-independent\"."
+  },
+  {
+   "mode": "historical",
+   "path": "tools/assets/m01-props/src/reproducibility.mjs",
+   "pinnedSha256": "22789fca6d137cbbc4c3eb88351d9a2df5d14b7cbfdae04f1b69fe72789c4725",
+   "approvedSha256": null,
+   "approvingCommits": [
+    "9928bdcd7e4a81ed1239cb1db29a51d4993ee559"
+   ],
+   "reason": "Deleted: the prop kit generator was made architecture-independent (see 16dd41b on main) and this reproducibility helper no longer exists on main; merge 9928bdc is the first commit containing 8a0c362 without the file."
+  },
+  {
+   "mode": "historical",
+   "path": "tools/assets/m01-soldiers/README.md",
+   "pinnedSha256": "0b11a669b9bd88e57343f74c8f1f0e40067694c90f5043c64b572b1c97e6439c",
+   "approvedSha256": "29ed830b0dfa7678618738fd274afae0f465a59532b55efa19d4b2533e787a1f",
+   "approvingCommits": [
+    "ea0b4ca2e6a0608355b16eddd09c60b3633c8803"
+   ],
+   "reason": "Approved change already on main: authoring tool introduced by ea0b4ca \"docs(m01-soldiers): document clip library V2 build and modules\"."
+  },
+  {
+   "mode": "historical",
+   "path": "vite.config.js",
+   "pinnedSha256": "9325cced82ead0e79028879afe2b7855295d9389f00970296b7570d6074122d0",
+   "approvedSha256": "1333038d61b0762aa261ced34980741923e331b66b6278ba02ec960f3bcaa73f",
+   "approvingCommits": [
+    "afcd970f0892e339c3949afadbba99cbc45aacb6"
+   ],
+   "reason": "Approved change already on main: build manifest or config introduced by afcd970 \"feat(m01): integrate Argon T50 safely with V7 loader contracts, real progress and lazy game boot\"."
+  }
+ ]
+}

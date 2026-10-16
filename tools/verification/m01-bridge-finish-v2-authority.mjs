@@ -8,6 +8,11 @@ const protectedPaths=currentAuthority?tracked.filter(p=>
   /^(src\/render\/m01-terrain|src\/world\/tczew-world\.js$)/.test(p)||
   ['missions/m01-tczew/map-layout.json','src/render/m01-soldier-variation.js','src/game/simulation.js','src/world/world.js','package.json','package-lock.json'].includes(p)
 ):historicalPaths;
+// Provenance mode (main-based PRs): same pins and protected sets, but drift that is already approved on main is accepted only
+// through the reviewed ledger and --pr-base forbids the PR itself from touching a protected path. See m01-bridge-authority-provenance.mjs.
+if(process.argv.includes('--list-protected')){console.log(JSON.stringify({pin:base,protectedPaths}));process.exit(0);}
+if(process.argv.includes('--provenance')){const {runProvenanceCli}=await import('./m01-bridge-authority-provenance.mjs');runProvenanceCli({argv:process.argv,mode:currentAuthority?'currentAuthority':'historical',pin:base,protectedPaths});process.exit(0);}
+assert.ok(!['--pr-base','--ledger','--ledger-base'].some(f=>process.argv.includes(f)),'--pr-base/--ledger/--ledger-base are only valid together with --provenance');
 if(currentAuthority){const p='assets/models/provisional/m01/m01-bridges/impostors/manifest.json',before=JSON.parse(execFileSync('git',['show',`${base}:${p}`],{encoding:'utf8'})),after=JSON.parse(fs.readFileSync(p));assert.ok(typeof after.author==='string'&&after.author.length>0);delete after.author;assert.deepEqual(after,before,'Only original author metadata may change in impostor manifest');}
 for(const p of protectedPaths)assert.equal(hash(fs.readFileSync(p)),hash(execFileSync('git',['show',`${base}:${p}`],{maxBuffer:32*1048576})),`Protected original changed: ${p}`);
 console.log(`PASS ${protectedPaths.length} exact protected bytes against ${base}; scope=${currentAuthority?'all predecessor assets except author-only impostor manifest, physical world/terrain/layout, French simulation/world, soldier variation and package manifests':'historical all-source guard'}`);
