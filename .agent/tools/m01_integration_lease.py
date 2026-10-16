@@ -61,7 +61,7 @@ def read_state():
         state = json.loads(raw.decode("utf-8"))
     except (ValueError, KeyError, UnicodeError) as exc:
         raise LeaseError("Invalid coordination state (fail closed)") from exc
-    if state.get("schema") != 1 or state.get("status") not in ("FREE", "HELD"):
+    if state.get("schema") != 1 or state.get("status") not in ("FREE", "HELD", "PAUSED"):
         raise LeaseError("Unexpected coordination state (fail closed)")
     return record["sha"], state
 
@@ -92,8 +92,8 @@ def acquire(candidate, owner):
     remote_sha = branch_head(candidate)
     blob, state = read_state()
     if state["status"] != "FREE":
-        raise LeaseError("Integrator occupied by " + str(state.get("owner")) +
-                         "; DO NOT start another integration")
+        raise LeaseError("Integrator unavailable: " + state["status"] +
+                         " (owner=" + str(state.get("owner")) + "); do not integrate")
     token = secrets.token_hex(16)
     previous_handoff = state.get("handoff")
     state.update({"status": "HELD", "owner": owner, "token": token,
@@ -165,6 +165,22 @@ def recover(expected_owner, expected_generation, reason, confirmed_inactive=Fals
     return {"recovered": True, **version}
 
 
+def activate(reason, confirmed_no_old_writers=False):
+    """One-time migration: unlock only after checks and old-session handoffs."""
+    if not confirmed_no_old_writers or len(reason.strip()) < 30:
+        raise LeaseError("Activation requires proof all legacy candidate writers have stopped")
+    blob, state = read_state()
+    if state["status"] != "PAUSED":
+        raise LeaseError("Activation is only valid from PAUSED")
+    # Re-pin the latest candidate SHA because old sessions may have advanced it.
+    current = branch_head(state["candidate"])
+    state.update({"status": "FREE", "owner": None, "token": None,
+                  "candidate_sha": current,
+                  "handoff": "ACTIVATED AFTER OLD-WRITER HANDOFF: " + reason})
+    version = write_state(blob, state, "activate after migration")
+    return {"activated": True, "sha": current, **version}
+
+
 def candidates():
     """Intake only: READY marker is not CI proof and never triggers auto-merge."""
     prs = []
@@ -192,6 +208,9 @@ def main(argv=None):
     actions = parser.add_subparsers(dest="action", required=True)
     actions.add_parser("status")
     actions.add_parser("queue")
+    on = actions.add_parser("activate")
+    on.add_argument("--confirm-no-old-writers", action="store_true")
+    on.add_argument("--reason", required=True)
     ac = actions.add_parser("acquire")
     ac.add_argument("--candidate", required=True)
     ac.add_argument("--owner", required=True, help="unique session identifier")
@@ -214,6 +233,8 @@ def main(argv=None):
             result = {"state_blob_sha": blob, **{k: v for k, v in state.items() if k != "token"}}
         elif a.action == "queue":
             result = {"ready_prs": candidates(), "warning": "Do not integrate without reviewing CI and code"}
+        elif a.action == "activate":
+            result = activate(a.reason, a.confirm_no_old_writers)
         elif a.action == "acquire":
             result = acquire(a.candidate, a.owner)
         elif a.action == "guard":
