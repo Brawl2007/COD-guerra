@@ -1,12 +1,12 @@
-"""Offline tests for single-owner GitHub integration lock; no network or tokens."""
+"""Offline checks for M01 integration lock (no GitHub requests / no paid models)."""
 import importlib.util
 import sys
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-PATH = Path(__file__).resolve().parents[1] / "tools/m01_integration_lease.py"
-spec = importlib.util.spec_from_file_location("m01_integration_lease", PATH)
+FILE = Path(__file__).resolve().parents[1] / "tools/m01_integration_lease.py"
+spec = importlib.util.spec_from_file_location("m01_integration_lease", FILE)
 lease = importlib.util.module_from_spec(spec)
 sys.modules[spec.name] = lease
 spec.loader.exec_module(lease)
@@ -14,109 +14,126 @@ spec.loader.exec_module(lease)
 CANDIDATE = "claude/quirky-heisenberg-9l4m7b"
 PIN = "a" * 40
 NEXT = "b" * 40
-LOCK_HEAD = "c" * 40
+BLOB = "c" * 40
 TOKEN = "token-123"
 
 
-def held(**overrides):
-    data = {"schema": 1, "status": "HELD", "owner": "session-a",
-            "token": TOKEN, "candidate": CANDIDATE, "candidate_sha": PIN,
-            "updated_at": "2026-10-16T15:00:00+00:00", "handoff": None}
-    data.update(overrides)
-    return data
+def record(**changes):
+    value = {
+        "schema": 1, "status": "HELD", "owner": "session-a",
+        "token": TOKEN, "candidate": CANDIDATE, "candidate_sha": PIN,
+        "updated_at": "2026-10-16T20:00:00+00:00",
+        "generation": 3, "handoff": None,
+    }
+    value.update(changes)
+    return value
 
 
-class IntegrationLeaseTests(unittest.TestCase):
-    def test_main_can_never_be_acquired(self):
-        with patch.object(lease, "head") as h:
+class LeaseTests(unittest.TestCase):
+    def test_main_is_never_a_valid_candidate(self):
+        with patch.object(lease, "branch_head") as remote:
             with self.assertRaises(lease.LeaseError):
                 lease.acquire("main", "session-a")
-            h.assert_not_called()
+            remote.assert_not_called()
 
-    def test_active_session_blocks_second_session(self):
-        with patch.object(lease, "head", return_value=PIN), \
-             patch.object(lease, "read_lock", return_value=(LOCK_HEAD, held())), \
-             patch.object(lease, "transition") as transition:
+    def test_active_owner_blocks_new_session_without_write(self):
+        with patch.object(lease, "branch_head", return_value=PIN), \
+             patch.object(lease, "read_state", return_value=(BLOB, record())), \
+             patch.object(lease, "write_state") as write:
             with self.assertRaisesRegex(lease.LeaseError, "occupied"):
                 lease.acquire(CANDIDATE, "session-b")
-            transition.assert_not_called()
+            write.assert_not_called()
 
-    def test_first_claim_uses_atomic_ref_creation(self):
-        seen = []
-        def fake_api(method, path, payload=None, missing_ok=False):
-            seen.append((method, path, payload))
+    def test_acquire_sets_owner_and_pins_remote_head(self):
+        with patch.object(lease, "branch_head", return_value=PIN), \
+             patch.object(lease, "read_state", return_value=(BLOB, record(status="FREE"))), \
+             patch.object(lease, "write_state", return_value={"generation": 4}) as write:
+            data = lease.acquire(CANDIDATE, "session-b")
+        self.assertEqual(data["sha"], PIN)
+        self.assertEqual(data["generation"], 4)
+        self.assertEqual(write.call_args.args[0], BLOB)
+        self.assertEqual(write.call_args.args[1]["owner"], "session-b")
+        self.assertEqual(write.call_args.args[1]["status"], "HELD")
+
+    def test_contents_write_uses_expected_blob_not_force(self):
+        seen = {}
+        def fake_api(method, path, body=None):
+            seen.update({"method": method, "path": path, "body": body})
             return {}
-        with patch.object(lease, "head", return_value=PIN), \
-             patch.object(lease, "read_lock", return_value=(None, None)), \
-             patch.object(lease, "make_commit", return_value=LOCK_HEAD), \
-             patch.object(lease, "api", side_effect=fake_api):
-            result = lease.acquire(CANDIDATE, "session-a")
-        self.assertEqual(result["candidate_sha"], PIN)
-        self.assertTrue(any(m == "POST" and p == "git/refs" and
-                            payload["ref"] == "refs/heads/" + lease.LOCK
-                            for m, p, payload in seen))
+        with patch.object(lease, "api", side_effect=fake_api):
+            lease.write_state(BLOB, record(), "heartbeat")
+        self.assertEqual(seen["method"], "PUT")
+        self.assertEqual(seen["body"]["sha"], BLOB)
+        self.assertEqual(seen["body"]["branch"], lease.COORD_BRANCH)
+        self.assertNotIn("force", seen["body"])
 
-    def test_conflicting_ref_creation_is_not_ignored(self):
-        with patch.object(lease, "head", return_value=PIN), \
-             patch.object(lease, "read_lock", return_value=(None, None)), \
-             patch.object(lease, "make_commit", return_value=LOCK_HEAD), \
-             patch.object(lease, "api", side_effect=lease.LeaseError("422 conflict")):
+    def test_conflicting_update_fails_closed(self):
+        with patch.object(lease, "api", side_effect=lease.LeaseError("409 Conflict")):
             with self.assertRaises(lease.LeaseError):
-                lease.acquire(CANDIDATE, "session-b")
+                lease.write_state(BLOB, record(), "acquire")
 
-    def test_transition_is_non_force_fast_forward(self):
-        with patch.object(lease, "make_commit", return_value=NEXT), \
-             patch.object(lease, "api", return_value={}) as request:
-            self.assertEqual(lease.transition(LOCK_HEAD, held()), NEXT)
-        self.assertEqual(request.call_args.args[0], "PATCH")
-        self.assertEqual(request.call_args.args[2]["force"], False)
+    def test_wrong_session_cannot_release(self):
+        with patch.object(lease, "read_state", return_value=(BLOB, record())), \
+             patch.object(lease, "write_state") as write:
+            with self.assertRaises(lease.LeaseError):
+                lease.release("other-session", "done")
+            write.assert_not_called()
 
-    def test_guard_rejects_candidate_changed_by_another_session(self):
-        with patch.object(lease, "read_lock", return_value=(LOCK_HEAD, held())), \
-             patch.object(lease, "head", return_value=NEXT):
+    def test_guard_detects_candidate_head_drift(self):
+        with patch.object(lease, "read_state", return_value=(BLOB, record())), \
+             patch.object(lease, "branch_head", return_value=NEXT):
             with self.assertRaisesRegex(lease.LeaseError, "HEAD changed"):
                 lease.guard(TOKEN)
 
     def test_guard_accepts_pinned_head_and_owner(self):
-        with patch.object(lease, "read_lock", return_value=(LOCK_HEAD, held())), \
-             patch.object(lease, "head", return_value=PIN):
-            self.assertEqual(lease.guard(TOKEN)["sha"], PIN)
+        with patch.object(lease, "read_state", return_value=(BLOB, record())), \
+             patch.object(lease, "branch_head", return_value=PIN):
+            self.assertTrue(lease.guard(TOKEN)["authorized"])
 
-    def test_wrong_owner_cannot_release(self):
-        with patch.object(lease, "read_lock", return_value=(LOCK_HEAD, held())), \
-             patch.object(lease, "transition") as transition:
-            with self.assertRaises(lease.LeaseError):
-                lease.release("someone-else", "finished")
-            transition.assert_not_called()
-
-    def test_release_records_handoff(self):
-        with patch.object(lease, "read_lock", return_value=(LOCK_HEAD, held())), \
-             patch.object(lease, "transition", return_value=NEXT) as transition:
-            result = lease.release(TOKEN, "CI pending: HEAD abcd")
-        self.assertTrue(result["released"])
-        state = transition.call_args.args[1]
+    def test_release_records_short_handoff(self):
+        with patch.object(lease, "read_state", return_value=(BLOB, record())), \
+             patch.object(lease, "write_state", return_value={"generation": 4}) as write:
+            self.assertTrue(lease.release(TOKEN, "CI pending")["released"])
+        state = write.call_args.args[1]
         self.assertEqual(state["status"], "FREE")
-        self.assertEqual(state["handoff"], "CI pending: HEAD abcd")
+        self.assertEqual(state["handoff"], "CI pending")
+        self.assertIsNone(state["token"])
 
-    def test_advance_refuses_non_ff_branch(self):
-        with patch.object(lease, "read_lock", return_value=(LOCK_HEAD, held())), \
-             patch.object(lease, "head", return_value=NEXT), \
+    def test_recovery_requires_exact_owner_and_generation(self):
+        with patch.object(lease, "read_state", return_value=(BLOB, record())), \
+             patch.object(lease, "write_state") as write:
+            with self.assertRaises(lease.LeaseError):
+                lease.recover("session-a", 2, "Confirmed previous run is no longer running")
+            write.assert_not_called()
+
+    def test_recovery_cannot_use_expiration_without_evidence(self):
+        with patch.object(lease, "read_state", return_value=(BLOB, record())), \
+             patch.object(lease, "write_state") as write:
+            with self.assertRaises(lease.LeaseError):
+                lease.recover("session-a", 3, "expired")
+            write.assert_not_called()
+
+    def test_non_fast_forward_is_rejected(self):
+        with patch.object(lease, "read_state", return_value=(BLOB, record())), \
+             patch.object(lease, "branch_head", return_value=NEXT), \
              patch.object(lease, "api", return_value={"status": "diverged", "behind_by": 1}), \
-             patch.object(lease, "transition") as transition:
-            with self.assertRaisesRegex(lease.LeaseError, "non-fast-forward"):
+             patch.object(lease, "write_state") as write:
+            with self.assertRaisesRegex(lease.LeaseError, "fast-forward"):
                 lease.advance(TOKEN, NEXT)
-            transition.assert_not_called()
+            write.assert_not_called()
 
-    def test_intake_queue_requires_ready_and_not_draft(self):
-        pull = lambda n, ready, draft: {
-            "number": n, "draft": draft, "body": "M01-INTEGRATION: READY" if ready else "",
-            "labels": [], "head": {"ref": "feature", "sha": PIN},
-            "base": {"ref": "main"}, "title": "Example",
-        }
+    def test_ready_queue_ignores_drafts_and_unready(self):
+        def pull(number, ready, draft):
+            return {
+                "number": number, "draft": draft,
+                "body": "M01-INTEGRATION: READY" if ready else "",
+                "labels": [], "head": {"ref": "feature", "sha": PIN},
+                "base": {"ref": "main"}, "title": "Example"
+            }
         with patch.object(lease, "api", return_value=[
             pull(1, True, False), pull(2, False, False), pull(3, True, True)
         ]):
-            self.assertEqual([x["pr"] for x in lease.candidates()], [1])
+            self.assertEqual([i["pr"] for i in lease.candidates()], [1])
 
 
 if __name__ == "__main__":
