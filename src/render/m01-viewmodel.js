@@ -44,7 +44,7 @@ export class M01ViewModel {
   // worldFx (optional) receives world-space brass, clips and muzzle smoke; texture stays for caller compatibility.
   // muzzleLight (optional): the weapon pass's existing muzzle light, shared instead of adding a second one.
   constructor(scene,characters,texture,worldFx=null,{muzzleLight=null}={}){
-    this.native={frame:null,clock:null,triangles:0,calls:0,meshes:[]};this.nativeHooks=new Map();
+    this.native={clock:null,triangles:0,calls:0,meshes:[]};this.nativeFrame=null;this.nativeHooks=new Map();
     this.scene=scene;this.characters=characters;this.root=null;this.lod=null;this.mixer=null;this.worldFx=worldFx;
     // Layered flash, muzzle light and barrel/chamber smoke. `flash` remains the core sprite on the real muzzle socket.
     this.fx=new WeaponViewFx(scene,PROFILE,{light:muzzleLight});this.flash=this.fx.core;this.boltSeconds=BOLT_SECONDS;
@@ -89,8 +89,8 @@ export class M01ViewModel {
       n.onBeforeRender=(renderer,scene,camera,geometry,material,group)=>{
         original?.call(n,renderer,scene,camera,geometry,material,group);
         const frame=renderer.info.render.frame,report=this.native;
-        if(report.frame!==frame){report.frame=frame;report.triangles=0;report.calls=0;report.meshes=[];}
-        const count=n.isSprite?6:Math.min(group?.count??Infinity,geometry.drawRange.count,(geometry.index?.count??geometry.getAttribute('position').count));
+        if(this.nativeFrame!==frame){this.nativeFrame=frame;report.triangles=0;report.calls=0;report.meshes=[];}
+        const count=n.isSprite?6:Math.min(group?.count??Infinity,geometry.drawRange.count,(geometry.index?.count??geometry.getAttribute('position')?.count??0));
         const triangles=count/3;report.triangles+=triangles;report.calls++;
         report.meshes.push({name:n.name||n.type,triangles});
       };
@@ -270,7 +270,7 @@ export class M01ViewModel {
       port:weapon.localToWorld(c.fromArray(this.port)),up:viewUp(p.pitch??0,up),chamberAt:shotAt+PROFILE.mechanics.chamberOpen*BOLT_SECONDS});
     if(this.worldFx&&view&&!carry)this.emitWorld(sim,view,weapon,clip,sample);
     let drawnTriangles=0;const drawnMeshes=[];
-    this.root.traverseVisible(n=>{if(n.isMesh){const triangles=(n.geometry.index?.count??n.geometry.getAttribute('position').count)/3;drawnTriangles+=triangles;drawnMeshes.push({name:n.name||'singleRound',triangles});}});
+    this.root.traverseVisible(n=>{if(n.isMesh){const triangles=(n.geometry.index?.count??n.geometry.getAttribute('position')?.count??0)/3;drawnTriangles+=triangles;drawnMeshes.push({name:n.name||'singleRound',triangles});}});
     this.stats={active:true,visible:true,lod,native:this.native,clock:t,fpVariant:this.fpSource?'fp-arms-v2':'optional-fallback',drawnTriangles,drawnMeshes,carryFrame:carry?this.carryFrame:null,clip,clipTime:sample,carrying:carry,singleRound:this.round.visible,
       armTriangles:this.armGeometry.index.count/3+['fp_sleeve_caps','fp_cuffs','fp_straps','fp_hands'].reduce((n,name)=>n+(this.root.getObjectByName(name)?.geometry.index.count??0)/3,0),aimBlend:this.visual?.aim??null,runBlend:this.visual?.run??null,
       phase:feel.gait,visualMuzzle:this.flash.getWorldPosition(new THREE.Vector3()).toArray(),
