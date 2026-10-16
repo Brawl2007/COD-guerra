@@ -85,6 +85,20 @@ Se a Claude Cloud não tiver gh autenticado, usar o MESMO estado via GitHub MCP,
 - Se não houver prova de que a sessão parou, bloquear a integração, mas permitir tarefas independentes.
 - Falhas de API/credenciais/CI são bloqueios reais; não contornar testes ou proteções.
 
+## Fecho integral — a unidade de entrega é o TASK_ID, não uma fatia
+
+**Regra obrigatória:** uma tarefa não é concluída porque o agente escreveu um módulo, terminou uma fase, gastou uma hora ou abriu PR. O contrato original de aceitação inteiro é o requisito. Manter todas as fases e correções pendentes na **mesma tarefa/PR** e fazer checkpoints de Git somente para preservar trabalho.
+
+- Ao reservar TXX, enumerar todos os critérios de aceitação originais num checklist pequeno, com testes correspondentes e indicação do que muda no jogo. Não reduzir unilateralmente o escopo para entregar mais cedo.
+- Em cada sessão, continuar a mesma tarefa no HEAD da sua branch e a partir do último handoff. O próximo horário não cria nova branch/PR nem repete a primeira fase. Se o dono ainda estiver ativo, respeitar a reserva.
+- Checkpoints de código e fases internas são permitidos e úteis, mas só com estado `PARTIAL`/`IN_PROGRESS`, PR draft e próxima ação precisa. **Jamais usar READY/COMPLETE para uma fatia parcial.**
+- Se o agente encontra um bloqueio externo legítimo, documentar qual critério faltou, o teste que falha, a dependência/decisão necessária e a próxima ação. Marcar `BLOCKED`; não abandonar a tarefa nem tomar outra reservada. Enquanto aguarda, pode atuar noutra tarefa independente efetivamente livre.
+- **Antes de mudar de TASK_ID**, perguntar: "A minha tarefa anterior está realmente COMPLETE ou tem bloqueio externo verificável?" Se a resposta for não, continuar nela. Fim da hora, CI em curso, dificuldades normais de implementação ou necessidade de novos testes **não** são justificações para abandonar a tarefa.
+- Para READY, registar no PR `M01-TASK-ID: TXX`, `M01-ACCEPTANCE: COMPLETE` e `M01-TESTED-SHA: <SHA40>`, com checklist original inteiramente marcado e CI obrigatório comprovado no mesmo HEAD. O integrador confirma tudo independentemente; texto no PR não é prova automática.
+- Não obrigar "conclusão" artificiosamente por contornar proteções, remover testes ou alterar factos históricos. Se houver dependência humana, usar BLOCKED de modo transparente e manter o trabalho recuperável.
+
+**Exemplos atuais:** T38 #82 tem apenas a primeira fatia e incoerência entre postura/tiros; T43 #81 tem integrações e validações parciais que devem ser comparadas com aceitação final; T47 #85 só tem medições e depende de decisão de desenho. Nenhuma deve ser chamada de "tarefa completa" só por possuir um PR.
+
 ## Regra anti-inatividade da Routine (prioridade sobre escolher nova tarefa)
 
 A Routine horária é uma **execução com orçamento de tempo**, não um trabalhador que dura exatamente uma hora. Cada execução deve produzir o próximo progresso seguro, em vez de verificar uma única tarefa e terminar sem procurar alternativas. Não prometer 24/7 contínuo nem inventar progresso.
