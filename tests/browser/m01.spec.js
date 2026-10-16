@@ -323,19 +323,20 @@ test('a missing optional station transition GLB keeps the grounded fallback and 
   await info.attach('station-transition-fallback',{body:JSON.stringify({kind:'production continuation; intentional optional asset failure',data,errors}),contentType:'application/json'});
 });
 test('real keyboard movement traverses the approaches and E delivers the message at the rail bridge',async({page},info)=>{
-  // Slow software rendering needs room for input and the final, paused evidence capture.
-  test.setTimeout(process.env.CI?240000:130000);
+  // Slow software rendering needs room for input and the final, paused evidence capture. The route is frame-bound (each leg is ~34 frames
+  // of 0.25 s mission time): the V7 CI runs took 3.6-3.8 min of the previous 240 s, and every frame of the integrated scene is ~1.4x dearer.
+  test.setTimeout(process.env.CI?420000:130000);
   const {errors,failed}=await open(page);await start(page);await page.keyboard.down('ShiftLeft');
   async function axis(code,axis,target,direction){
     await page.keyboard.down(code);
-    await page.waitForFunction(({axis,target,direction})=>window.gameDiagnostics().player[axis]*direction>=target*direction,{axis,target,direction},{timeout:process.env.CI?90000:45000});
+    await page.waitForFunction(({axis,target,direction})=>window.gameDiagnostics().player[axis]*direction>=target*direction,{axis,target,direction},{timeout:process.env.CI?150000:45000});
     await page.keyboard.up(code);
   }
   await axis('KeyD','z',32,1);await axis('KeyW','x',-15,1);await page.keyboard.up('ShiftLeft');
   // Walk the final approach. A key-up queued behind a slow software-rendered frame
   // can carry a sprint several metres beyond the point's actual interaction radius.
   await axis('KeyA','z',3,-1);await axis('KeyW','x',17,1);
-  await expect(page.locator('#interaction')).toContainText('entregar mensagem');
+  await expect(page.locator('#interaction')).toContainText('entregar mensagem',{timeout:30000});
   await page.keyboard.press('KeyE');await page.waitForFunction(()=>window.gameDiagnostics().m01.objectives.obj_m01_deliver_message.state==='done');
   const data=await page.evaluate(()=>window.gameDiagnostics());expect(data.m01.battleClock).toBeGreaterThanOrEqual(4*3600+33*60+10);expect(data.eventIds).toContain('evt_m01_planes_heard');
   // A real pause stops animation and avoids competing GPU frames during readback.
