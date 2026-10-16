@@ -39,6 +39,12 @@
 - No fim, registar código integrado, SHA, testes, CI pendente, próximos passos e libertar lock. O próximo horário **retoma** este estado, não reinicia tarefa nem reexecuta CI idêntico.
 - Se a sessão anterior desaparecer, não roubar reserva apenas por timeout. Sem prova de encerramento, bloqueia-se a integração e mantém-se trabalho independente. Recuperação exige confirmação de inatividade e CAS.
 
+## Regra anti-inatividade — continuidade produtiva sem duplicações
+
+Se a primeira tarefa escolhida estiver bloqueada, **não terminar a hora automaticamente**. Verificar em sequência: (1) tarefas próprias incompletas e handoff, (2) PR completo READY para integração apenas com lock livre e ativo, (3) CI falhado do HEAD com correção isolada permitida, (4) tarefa parcial livre e recuperável sem violar claims, (5) TASK_ID novo realmente livre e independente. Preferir terminar tarefas existentes a abrir novas fatias. Não ficar à espera com Opus ativo de Sonnet ou CI; recolher o resultado/handoff e executar trabalho independente quando seguro.
+
+Uma sessão da Routine pode executar vários passos úteis, mas não deve iniciar o mesmo trabalho que outra sessão ativa. Se todas as frentes estiverem ocupadas ou dependentes de aprovação humana, terminar rapidamente com uma única linha explicativa para poupar tokens. Seguir `docs/direction/M01_INTEGRATOR_LEASE.md`.
+
 ## Ação em cada execução da Routine
 
 1. A sessão principal Opus é o Capitão; **não iniciar `captain` como subagente**, pois subagentes aninhados foram bloqueados na Cloud. Ler este protocolo e a issue #72.
