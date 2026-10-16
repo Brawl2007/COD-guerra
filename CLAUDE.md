@@ -7,6 +7,8 @@
 
 Ler `docs/direction/M01_INTEGRATOR_LEASE.md`. As sessões Cloud podem sobrepor-se: antes de iniciar qualquer integração, consultar o estado remoto em `coordination/m01-integration-state:.agent/coordination/m01-integrator.json`. Se estiver HELD por outra sessão, **não tocar na candidata**, mesmo após uma hora; encerrar ou continuar uma tarefa comprovadamente independente.
 
+**IMPORTANTE:** o estado de coordenação está PAUSED durante a migração da rotina antiga. Não o tornar FREE sem confirmação verificável de que não há sessões anteriores a modificar #80, e sem revisão do PR #84. A idade de uma sessão não prova inatividade.
+
 Qualquer chat que concluiu uma tarefa integralmente validada pode adquirir a reserva de integrador e colocá-la na fila/candidata. Apenas o detentor da reserva pode atualizar a candidata. Usar o SHA do blob anterior via GitHub Contents API (ou o script `.agent/tools/m01_integration_lease.py`, se gh autenticado); falha do CAS ou identidade incerta exige parar. Antes de cada push, confirmar propriedade e HEAD da candidata. Após o push, atualizar SHA monitorizada, publicar handoff e libertar reserva quando seguro.
 
 Tarefas parciais não entram em READY nem na candidata como concluídas. Não aguardar CI a consumir Opus; handoff com HEAD/checks e retoma posterior. CI vermelho impede promoção. O marcador READY não substitui auditoria. Não alterar main/deploy sem autorização.
