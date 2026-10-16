@@ -9,8 +9,9 @@
   "git": {
     "base_branch": "codex/m01-continuity-raid-integration-v1",
     "base_head": "529e7de5ccbb69408304196a8d4fab27529ecd60",
-    "work_branch": "codex/m01-partials-completion-integration-v1",
-    "starting_head": "529e7de5ccbb69408304196a8d4fab27529ecd60"
+    "work_branch": "codex/m01-partials-browser-sampling-repair-v1",
+    "starting_head": "529e7de5ccbb69408304196a8d4fab27529ecd60",
+    "original_work_branch": "codex/m01-partials-completion-integration-v1"
   },
   "policy": {
     "gameplay_change_allowed": true,
@@ -138,11 +139,13 @@
     ]
   },
   "execution": {
-    "max_fix_attempts": 3,
+    "max_fix_attempts": 4,
     "max_review_rejections": 2,
     "production_mode": "focused",
     "prior_bridge_attempts": 3,
-    "bridge_continuation_authorization": "User on 2026-10-14 explicitly requested completing ALL partial tasks and integrating; renewed scope includes T14/T41. Preserve earlier 3/3 record; this batch has a new bounded correction budget, not a historical reset."
+    "bridge_continuation_authorization": "User on 2026-10-14 explicitly requested completing ALL partial tasks and integrating; renewed scope includes T14/T41. Preserve earlier 3/3 record; this batch has a new bounded correction budget, not a historical reset.",
+    "original_max_fix_attempts": 3,
+    "prospective_extension": "CAPTAIN_EXTENSION_04.json: one extra sampling-harness-only correction under D34/latest user continuation; same RUN, original3/3 and CIretry1/1 preserved. No production changes or assertion relaxation; block if it fails."
   },
   "routing": {
     "policy": "repository required sequential implementer/verifier/reviewer",
@@ -181,9 +184,9 @@
   },
   "state": {
     "status": "RUNNING",
-    "current_node": "verification",
-    "current_owner": "verifier",
-    "next_action": "Final formalcorrection3/3 frozen atddd84ab; production/tests/tools/assets identical016b. Guard requires top-level summaryPASS+everyroute/checkPASS and all12/24counts. Fresh full CI and independentattempt4 required; no remaining verification-fixbudget, review0/2; noacceptance yet."
+    "current_node": "implementation",
+    "current_owner": "implementer",
+    "next_action": "One prospective scoped correction4/4: pre-arm real Stuka sampling before Continue; unchanged production; fresh full Stuka and Node/build; independent verifier5 then critical review. No acceptance yet."
   },
   "result": {
     "final_head": "",
