@@ -40,9 +40,32 @@ class LeaseTests(unittest.TestCase):
         with patch.object(lease, "branch_head", return_value=PIN), \
              patch.object(lease, "read_state", return_value=(BLOB, record())), \
              patch.object(lease, "write_state") as write:
-            with self.assertRaisesRegex(lease.LeaseError, "occupied"):
+            with self.assertRaisesRegex(lease.LeaseError, "unavailable"):
                 lease.acquire(CANDIDATE, "session-b")
             write.assert_not_called()
+
+    def test_paused_migration_blocks_new_integrations(self):
+        with patch.object(lease, "branch_head", return_value=PIN), \
+             patch.object(lease, "read_state", return_value=(BLOB, record(status="PAUSED"))), \
+             patch.object(lease, "write_state") as write:
+            with self.assertRaisesRegex(lease.LeaseError, "PAUSED"):
+                lease.acquire(CANDIDATE, "session-b")
+            write.assert_not_called()
+
+    def test_activation_requires_old_sessions_confirmed_stopped(self):
+        with patch.object(lease, "read_state") as reader:
+            with self.assertRaises(lease.LeaseError):
+                lease.activate("No further writers after current routine handoffs")
+            reader.assert_not_called()
+
+    def test_activation_pins_current_candidate_sha(self):
+        with patch.object(lease, "read_state", return_value=(BLOB, record(status="PAUSED"))), \
+             patch.object(lease, "branch_head", return_value=NEXT), \
+             patch.object(lease, "write_state", return_value={"generation": 4}) as write:
+            result = lease.activate("CI checked and all previous writers stopped", True)
+        self.assertEqual(result["sha"], NEXT)
+        self.assertEqual(write.call_args.args[1]["status"], "FREE")
+        self.assertEqual(write.call_args.args[1]["candidate_sha"], NEXT)
 
     def test_acquire_sets_owner_and_pins_remote_head(self):
         with patch.object(lease, "branch_head", return_value=PIN), \
