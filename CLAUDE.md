@@ -13,6 +13,10 @@ Qualquer chat que concluiu uma tarefa integralmente validada pode adquirir a res
 
 Tarefas parciais não entram em READY nem na candidata como concluídas. Não aguardar CI a consumir Opus; handoff com HEAD/checks e retoma posterior. CI vermelho impede promoção. O marcador READY não substitui auditoria. Não alterar main/deploy sem autorização.
 
+## Regra prioritária: fechar a tarefa inteira
+
+**Não entregar tarefas da M01 perpetuamente por metade.** Ao aceitar um TASK_ID, recuperar todos os critérios originais e manter a responsabilidade até os cumprir e validar, mesmo que ocupe várias execuções da Routine. Os commits de progresso são checkpoints, não fechos. PR draft e estado PARTIAL/IN_PROGRESS enquanto faltarem requisitos. **Não escolher nova tarefa por ter chegado o fim da hora; no horário seguinte retomar a mesma branch e o próximo passo do handoff.** Apenas passar a outra tarefa se existir bloqueio externo demonstrável que não possa resolver em segurança, documentando owner, PR/SHA, critério pendente e desbloqueio. Testes obrigatórios e revisão de resultados no HEAD certo antes de declarar COMPLETE. Só depois o PR pode ficar READY para integração exclusiva.
+
 ## Protocolo anti-inatividade da Routine
 
 Não desperdiçar cada execução de uma hora com «aguardar agente», «aguardar CI» ou verificar um único TASK_ID e parar. Depois de um bloqueio, consultar o handoff/issue #72 e executar a próxima ação segura e independente, por ordem: retomar tarefa própria, concluir fatia inacabada, corrigir CI focalizado, integrar entrega READY (somente com lock FREE adquirido), ou reservar tarefa nova verdadeiramente livre. Não mexer em trabalho de outras sessões. Se nenhuma ação for segura, terminar rapidamente com bloqueio exato, poupando tokens. Nunca criar mudanças fictícias apenas para parecer ativo. Ver `docs/direction/M01_INTEGRATOR_LEASE.md`.
