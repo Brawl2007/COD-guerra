@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "status": "FREE",
+  "owner": null,
+  "token": null,
+  "candidate": "claude/quirky-heisenberg-9l4m7b",
+  "candidate_sha": "c05cca016bb3818a6224cbf8584d280855c9cd21",
+  "generation": 0,
+  "updated_at": "2026-10-16T20:24:44.451Z",
+  "handoff": "Inicializado para a candidata #80. Nao editar candidata sem adquirir esta reserva; verificar CI e HEAD remoto antes de integrar."
+}
