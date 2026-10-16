@@ -19,7 +19,10 @@ from urllib.parse import quote
 REPO = os.environ.get("COD_GUERRA_REPO", "Brawl2007/COD-guerra")
 COORD_BRANCH = "coordination/m01-integration-state"
 STATE_PATH = ".agent/coordination/m01-integrator.json"
-READY = re.compile(r"(?m)^M01-INTEGRATION:\s*READY\s*$")
+READY = re.compile(r"(?m)^M01-INTEGRATION:[ \t]*READY[ \t]*$")
+ACCEPTANCE = re.compile(r"(?m)^M01-ACCEPTANCE:[ \t]*COMPLETE[ \t]*$")
+TASK_IDS = re.compile(r"(?m)^M01-TASK-IDS:[ \t]*(T[0-9]{2}(?:[ \t]*,[ \t]*T[0-9]{2})*)[ \t]*$")
+TESTED_SHA = re.compile(r"(?mi)^M01-TESTED-SHA:[ \t]*([a-f0-9]{40})[ \t]*$")
 
 
 class LeaseError(Exception):
@@ -194,10 +197,19 @@ def candidates():
     items = []
     for pr in prs:
         labels = {item.get("name") for item in pr.get("labels", [])}
-        ready = "m01-ready-to-integrate" in labels or bool(READY.search(pr.get("body") or ""))
-        if not ready or pr.get("draft"):
+        body = pr.get("body") or ""
+        ready = "m01-ready-to-integrate" in labels or bool(READY.search(body))
+        if not ready or pr.get("draft") or not ACCEPTANCE.search(body):
+            continue
+        tasks_match = TASK_IDS.search(body)
+        sha_match = TESTED_SHA.search(body)
+        if not tasks_match or not sha_match or sha_match.group(1).lower() != pr["head"]["sha"].lower():
+            continue
+        task_ids = [task.strip() for task in tasks_match.group(1).split(",")]
+        if len(set(task_ids)) != len(task_ids) or any(int(task[1:]) > 52 for task in task_ids):
             continue
         items.append({"pr": pr["number"], "title": pr["title"],
+                      "task_ids": task_ids,
                       "head": pr["head"]["ref"], "sha": pr["head"]["sha"],
                       "base": pr["base"]["ref"], "status": "REQUIRES_REVIEW_AND_CI"})
     return sorted(items, key=lambda entry: entry["pr"])
