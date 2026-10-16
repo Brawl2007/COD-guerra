@@ -48,3 +48,10 @@ A suite Playwright completa é validada pelo CI do PR (o contentor cloud corre o
 ## Pendentes reais (não desenvolvidos)
 T38 posturas de combate, T43 política de LOD, T46 mistura/opções de áudio, T47 fogo do ckm, T48 retirada alemã;
 mais T37 e a cláusula da vista 10 de T24. As outras parciais entraram pelo lote partials, ainda sem verificação independente; T14/T41 continuam BLOCKED para aceitação. T51/T52 são humanos.
+
+## Retomar daqui (2026-10-16, modo de economia)
+- Último CI completo (998d6d0): validate verde; browser 151 PASS / 23 FAIL. As 23 falhas foram corrigidas localmente em `fix-shard2` (grupos A–H, ver `DEVELOPMENT_STATUS.md`) e em `integ-full` (4 de `m01.spec.js`). Nenhuma asserção foi removida; só `environmentProps.runtime.revision` passou a `>0`, porque conta passagens de re-instanciação.
+- Merge 27e3b96: Node 935/935, `npm run build` OK. Playwright completo: só no CI, com 4 shards.
+- Corrigido no produto: a ordem dos materiais do bridge-finish deixa de depender da chegada dos GLB (`kitsSettled`); `environmentInstances` volta a contar a vegetação.
+- Dívida: o custo por frame em software é ~1,4× o da V7 (track bed ~14 %, bridge finish ~15 %). Os orçamentos de tempo do CI de :112 e :310 subiram, sem otimização.
+- Ainda por decidir pelo humano: workflows `browser-authority*` (restringir à branch de origem), T48 real, T14/T41 (perf FAIL na fonte).
